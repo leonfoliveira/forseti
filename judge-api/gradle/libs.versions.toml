@@ -1,0 +1,49 @@
+[versions]
+bcrypt = "0.10.2"
+flyway = "9.22.3"
+jackson = "2.18.3"
+kotest = "5.9.1"
+kotlin = "2.1.20"
+ktlint = "12.1.1"
+mockk = "1.13.17"
+postgresql = "42.7.5"
+spring-boot = "3.4.5"
+
+[libraries]
+bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }
+flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+jackson-module-kotlin = { module = 'com.fasterxml.jackson.module:jackson-module-kotlin', version.ref = "jackson" }
+kotest-assertions-core = { module = 'io.kotest:kotest-assertions-core', version.ref = "kotest" }
+kotest-runner-junit5 = { module = 'io.kotest:kotest-runner-junit5', version.ref = "kotest" }
+kotlin-reflect = { module = 'org.jetbrains.kotlin:kotlin-reflect', version.ref = "kotlin" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot" }
+spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "spring-boot" }
+spring-boot-starter-amqp = { module = "org.springframework.boot:spring-boot-starter-amqp", version.ref = "spring-boot" }
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "spring-boot" }
+spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "spring-boot" }
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot" }
+spring-boot-dev-tools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
+
+[bundles]
+kotest = [
+    "kotest-runner-junit5",
+    "kotest-assertions-core"
+]
+spring = [
+    "spring-boot-starter",
+    "spring-boot-starter-actuator",
+    "spring-boot-starter-amqp",
+    "spring-boot-starter-data-jpa",
+    "spring-boot-starter-security",
+    "spring-boot-starter-web"
+]
+
+[plugins]
+flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
+kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+spring = { id = "org.springframework.boot", version.ref = "spring-boot" }
