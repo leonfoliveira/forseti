@@ -1,0 +1,39 @@
+package io.leonfoliveira.judge.core.entity
+
+import io.leonfoliveira.judge.core.entity.model.Attachment
+import io.leonfoliveira.judge.core.util.TimeUtils
+import jakarta.persistence.AttributeOverride
+import jakarta.persistence.AttributeOverrides
+import jakarta.persistence.Column
+import jakarta.persistence.Embedded
+import jakarta.persistence.Entity
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
+import java.time.LocalDateTime
+import org.hibernate.envers.Audited
+
+@Entity
+@Table(name = "problem")
+@Audited
+class Problem(
+    id: Int = 0,
+    createdAt: LocalDateTime = TimeUtils.now(),
+    updatedAt: LocalDateTime = TimeUtils.now(),
+    deleted: LocalDateTime? = null,
+    @ManyToOne
+    @JoinColumn(name = "contest_id", nullable = false)
+    val contest: Contest,
+    @Column(nullable = false)
+    var title: String,
+    @Column(nullable = false)
+    var description: String,
+    @Column(name = "time_limit", nullable = false)
+    var timeLimit: Int,
+    @Embedded
+    @AttributeOverrides(
+        AttributeOverride(name = "filename", column = Column(name = "test_cases_filename")),
+        AttributeOverride(name = "key", column = Column(name = "test_cases_key"))
+    )
+    var testCases: Attachment,
+) : BaseEntity(id, createdAt, updatedAt, deleted)
