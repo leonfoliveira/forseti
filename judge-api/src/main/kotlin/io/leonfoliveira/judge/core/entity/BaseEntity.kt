@@ -3,11 +3,11 @@ package io.leonfoliveira.judge.core.entity
 import io.leonfoliveira.judge.core.util.TimeUtils
 import jakarta.persistence.Column
 import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
 import jakarta.persistence.PreUpdate
 import java.time.LocalDateTime
-import java.util.UUID
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 
@@ -15,8 +15,8 @@ import org.hibernate.envers.Audited
 @Audited
 @SQLRestriction("deleted_at is null")
 open class BaseEntity(
-    @Id @GeneratedValue
-    val id: UUID = UUID.randomUUID(),
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Int = 0,
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: LocalDateTime = TimeUtils.now(),
     @Column(name = "updated_at", nullable = false)
