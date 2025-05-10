@@ -1,33 +1,38 @@
 package io.leonfoliveira.judge.core.entity
 
-import io.leonfoliveira.judge.core.entity.enumerate.Language
 import io.leonfoliveira.judge.core.util.TimeUtils
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import java.time.LocalDateTime
-import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.envers.Audited
-import org.hibernate.type.SqlTypes
 
 @Entity
-@Table(name = "contest")
+@Table(name = "member")
 @Audited
-class Contest(
+class Member(
     id: Int = 0,
     createdAt: LocalDateTime = TimeUtils.now(),
     updatedAt: LocalDateTime = TimeUtils.now(),
     deleted: LocalDateTime? = null,
+    @ManyToOne
+    @JoinColumn(name = "contest_id", nullable = false)
+    val contest: Contest,
     @Column(nullable = false)
-    var title: String,
-    @Column(nullable = false)
-    @JdbcTypeCode(SqlTypes.ARRAY)
     @Enumerated(EnumType.STRING)
-    var languages: List<Language>,
-    @Column(name = "start_time", nullable = false)
-    var startTime: LocalDateTime,
-    @Column(name = "end_time", nullable = false)
-    var endTime: LocalDateTime,
-) : BaseEntity(id, createdAt, updatedAt, deleted)
+    var type: Type,
+    @Column(nullable = false)
+    var name: String,
+    @Column(nullable = false)
+    var login: String,
+    @Column(nullable = false)
+    var password: String,
+) : BaseEntity(id, createdAt, updatedAt, deleted) {
+    enum class Type {
+        CONTESTANT,
+    }
+}
