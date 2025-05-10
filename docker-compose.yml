@@ -1,0 +1,30 @@
+services:
+
+  db:
+    container_name: judge-db
+    image: postgres:17.5
+    restart: always
+    environment:
+      POSTGRES_USER: judge
+      POSTGRES_PASSWORD: judge
+      POSTGRES_DB: judge
+    ports:
+      - "5432:5432"
+
+  api:
+    container_name: judge-api
+    build: judge-api
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-development}
+      DB_URL: ${DB_URL:-jdbc:postgresql://db:5432/judge}
+      DB_USER: ${DB_USER:-judge}
+      DB_PASSWORD: ${DB_PASSWORD:-judge}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  
+networks:
+  default:
+    name: judge-network
