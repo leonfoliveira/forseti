@@ -1,16 +1,19 @@
 [versions]
 bcrypt = "0.10.2"
 flyway = "9.22.3"
+hibernate-envers = "6.6.13.Final"
 jackson = "2.18.3"
 kotest = "5.9.1"
 kotlin = "2.1.20"
 ktlint = "12.1.1"
 mockk = "1.13.17"
 postgresql = "42.7.5"
+spring-cloud = "3.3.0"
 spring-boot = "3.4.5"
 
 [libraries]
 bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }
+hibernate-envers = { module = "org.hibernate.orm:hibernate-envers", version.ref = "hibernate-envers" }
 flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 jackson-module-kotlin = { module = 'com.fasterxml.jackson.module:jackson-module-kotlin', version.ref = "jackson" }
 kotest-assertions-core = { module = 'io.kotest:kotest-assertions-core', version.ref = "kotest" }
@@ -18,6 +21,8 @@ kotest-runner-junit5 = { module = 'io.kotest:kotest-runner-junit5', version.ref 
 kotlin-reflect = { module = 'org.jetbrains.kotlin:kotlin-reflect', version.ref = "kotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+spring-cloud-starter-s3 = { module = "io.awspring.cloud:spring-cloud-starter-aws-s3", version.ref = "spring-cloud" }
+spring-cloud-starter-sqs = { module = "io.awspring.cloud:spring-cloud-starter-aws-sqs", version.ref = "spring-cloud" }
 spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot" }
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "spring-boot" }
 spring-boot-starter-amqp = { module = "org.springframework.boot:spring-boot-starter-amqp", version.ref = "spring-boot" }
@@ -32,6 +37,8 @@ kotest = [
     "kotest-assertions-core"
 ]
 spring = [
+    "spring-cloud-starter-s3",
+    "spring-cloud-starter-sqs",
     "spring-boot-starter",
     "spring-boot-starter-actuator",
     "spring-boot-starter-amqp",
