@@ -20,8 +20,8 @@ class CreateContestService(
     data class Input(
         val title: String,
         val languages: List<Language>,
-        val startTime: LocalDateTime,
-        val endTime: LocalDateTime,
+        val startAt: LocalDateTime,
+        val endAt: LocalDateTime,
         val members: List<MemberDTO>,
         val problems: List<ProblemDTO>,
     ) {
@@ -46,8 +46,8 @@ class CreateContestService(
             Contest(
                 title = input.title,
                 languages = input.languages,
-                startTime = input.startTime,
-                endTime = input.endTime,
+                startAt = input.startAt,
+                endAt = input.endAt,
             )
 
         contest.members = input.members.map { createMember(contest, it) }

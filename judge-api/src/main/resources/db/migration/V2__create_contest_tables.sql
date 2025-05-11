@@ -5,8 +5,8 @@ create table contest (
     deleted_at timestamp,
     title text not null,
     languages text[] not null,
-    start_time timestamp not null,
-    end_time timestamp not null
+    start_at timestamp not null,
+    end_at timestamp not null
 );
 
 create table contest_aud (
@@ -18,8 +18,8 @@ create table contest_aud (
     deleted_at timestamp,
     title text not null,
     languages text[] not null,
-    start_time timestamp not null,
-    end_time timestamp not null,
+    start_at timestamp not null,
+    end_at timestamp not null,
     primary key (rev, id),
     constraint fk_rev foreign key (rev) references revinfo (rev)
 );

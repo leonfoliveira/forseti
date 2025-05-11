@@ -16,7 +16,7 @@ class AuthenticationController(
         val password: String,
     )
 
-    @PostMapping("/root/auth")
+    @PostMapping("/auth/root")
     fun authenticateRoot(
         @RequestBody request: RootLoginRequestBody,
     ): ResponseEntity<AuthorizationService.AuthorizationOutput> {
@@ -29,7 +29,7 @@ class AuthenticationController(
         val password: String,
     )
 
-    @PostMapping("/contest/{contestId}/auth")
+    @PostMapping("/auth/member")
     fun authenticateRoot(
         @RequestBody request: ContestLoginRequestBody,
     ): ResponseEntity<AuthorizationService.AuthorizationOutput> {

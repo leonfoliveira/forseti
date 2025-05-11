@@ -28,10 +28,10 @@ class Contest(
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Enumerated(EnumType.STRING)
     var languages: List<Language>,
-    @Column(name = "start_time", nullable = false)
-    var startTime: LocalDateTime,
-    @Column(name = "end_time", nullable = false)
-    var endTime: LocalDateTime,
+    @Column(name = "start_at", nullable = false)
+    var startAt: LocalDateTime,
+    @Column(name = "end_at", nullable = false)
+    var endAt: LocalDateTime,
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY)
     var members: List<Member> = mutableListOf(),
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY)

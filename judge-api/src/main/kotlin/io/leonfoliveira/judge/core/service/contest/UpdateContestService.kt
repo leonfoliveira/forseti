@@ -53,8 +53,8 @@ class UpdateContestService(
 
         contest.title = input.title
         contest.languages = input.languages
-        contest.startTime = input.startTime
-        contest.endTime = input.endTime
+        contest.startAt = input.startTime
+        contest.endAt = input.endTime
 
         contest.members =
             input.members.map {

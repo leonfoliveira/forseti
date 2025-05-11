@@ -1,0 +1,65 @@
+package io.leonfoliveira.judge.api.controller
+
+import io.leonfoliveira.judge.api.dto.response.ContestFullResponseDTO
+import io.leonfoliveira.judge.api.dto.response.ContestResponseDTO
+import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
+import io.leonfoliveira.judge.api.dto.response.toResponseDTO
+import io.leonfoliveira.judge.core.service.contest.CreateContestService
+import io.leonfoliveira.judge.core.service.contest.DeleteContestService
+import io.leonfoliveira.judge.core.service.contest.FindContestService
+import io.leonfoliveira.judge.core.service.contest.UpdateContestService
+import jakarta.transaction.Transactional
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+
+@RestController
+@RequestMapping("/v1/contests")
+class ContestController(
+    private val createContestService: CreateContestService,
+    private val updateContestService: UpdateContestService,
+    private val findContestService: FindContestService,
+    private val deleteContestService: DeleteContestService,
+) {
+    @PostMapping
+    @Transactional
+    fun createContest(input: CreateContestService.Input): ResponseEntity<ContestFullResponseDTO> {
+        val contest = createContestService.create(input)
+        return ResponseEntity.ok(contest.toFullResponseDTO())
+    }
+
+    @PutMapping
+    @Transactional
+    fun updateContest(input: UpdateContestService.Input): ResponseEntity<ContestFullResponseDTO> {
+        val contest = updateContestService.update(input)
+        return ResponseEntity.ok(contest.toFullResponseDTO())
+    }
+
+    @GetMapping
+    fun findAllContest(): ResponseEntity<List<ContestResponseDTO>> {
+        val contests = findContestService.findAll()
+        return ResponseEntity.ok(contests.map { it.toResponseDTO() })
+    }
+
+    @GetMapping("/{id}")
+    fun findById(
+        @PathVariable id: Int,
+    ): ResponseEntity<ContestResponseDTO> {
+        val contest = findContestService.findById(id)
+        return ResponseEntity.ok(contest.toResponseDTO())
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    fun deleteContest(
+        @PathVariable id: Int,
+    ): ResponseEntity<Void> {
+        deleteContestService.deleteContest(id)
+        return ResponseEntity.noContent().build()
+    }
+}

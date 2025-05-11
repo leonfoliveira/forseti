@@ -6,9 +6,9 @@ import io.leonfoliveira.judge.core.entity.Member
 import io.leonfoliveira.judge.core.entity.model.Authorization
 import io.leonfoliveira.judge.core.port.JwtAdapter
 import io.leonfoliveira.judge.core.util.TimeUtils
-import java.time.ZoneOffset
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.time.ZoneOffset
 
 @Service
 class OAuthJwtAdapter : JwtAdapter {
@@ -23,7 +23,8 @@ class OAuthJwtAdapter : JwtAdapter {
         val now = TimeUtils.now().toInstant(ZoneOffset.UTC)
         val expirationAt = now.plusMillis(expiration)
 
-        val jwt = JWT
+        val jwt =
+            JWT
                 .create()
                 .withIssuedAt(now)
                 .withExpiresAt(expirationAt)
@@ -44,7 +45,7 @@ class OAuthJwtAdapter : JwtAdapter {
             id = decoded.getClaim("id").asInt(),
             name = decoded.getClaim("name").asString(),
             login = decoded.getClaim("login").asString(),
-            type = Member.Type.valueOf(decoded.getClaim("type").asString())
+            type = Member.Type.valueOf(decoded.getClaim("type").asString()),
         )
     }
 }
