@@ -58,8 +58,17 @@ class ContestController(
         return ResponseEntity.ok(contests.map { it.toResponseDTO() })
     }
 
+    @GetMapping("/{id}/full")
+    @Private(Member.Type.ROOT)
+    fun findFullContestById(
+        @PathVariable id: Int,
+    ): ResponseEntity<ContestFullResponseDTO> {
+        val contest = findContestService.findById(id)
+        return ResponseEntity.ok(contest.toFullResponseDTO())
+    }
+
     @GetMapping("/{id}")
-    fun findById(
+    fun findContestById(
         @PathVariable id: Int,
     ): ResponseEntity<ContestResponseDTO> {
         val contest = findContestService.findById(id)
