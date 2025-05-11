@@ -2,6 +2,7 @@ package io.leonfoliveira.judge.api.config
 
 import io.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.leonfoliveira.judge.core.exception.BusinessException
+import io.leonfoliveira.judge.core.exception.ForbiddenException
 import io.leonfoliveira.judge.core.exception.NotFoundException
 import io.leonfoliveira.judge.core.exception.UnauthorizedException
 import org.slf4j.LoggerFactory
@@ -20,6 +21,7 @@ class GlobalExceptionHandler {
         mapOf(
             NotFoundException::class to HttpStatus.NOT_FOUND,
             UnauthorizedException::class to HttpStatus.UNAUTHORIZED,
+            ForbiddenException::class to HttpStatus.FORBIDDEN,
         )
 
     @ExceptionHandler(BusinessException::class)

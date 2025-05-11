@@ -1,15 +1,20 @@
 package io.leonfoliveira.judge.api.controller
 
+import io.leonfoliveira.judge.api.config.JwtAuthentication
 import io.leonfoliveira.judge.api.dto.response.ContestFullResponseDTO
 import io.leonfoliveira.judge.api.dto.response.ContestResponseDTO
 import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
 import io.leonfoliveira.judge.api.dto.response.toResponseDTO
+import io.leonfoliveira.judge.api.util.Private
+import io.leonfoliveira.judge.core.entity.Member
+import io.leonfoliveira.judge.core.exception.ForbiddenException
 import io.leonfoliveira.judge.core.service.contest.CreateContestService
 import io.leonfoliveira.judge.core.service.contest.DeleteContestService
 import io.leonfoliveira.judge.core.service.contest.FindContestService
 import io.leonfoliveira.judge.core.service.contest.UpdateContestService
 import jakarta.transaction.Transactional
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -27,13 +32,19 @@ class ContestController(
     private val deleteContestService: DeleteContestService,
 ) {
     @PostMapping
+    @Private(Member.Type.ROOT)
     @Transactional
     fun createContest(input: CreateContestService.Input): ResponseEntity<ContestFullResponseDTO> {
+        val authentication = SecurityContextHolder.getContext().authentication as JwtAuthentication
+        if (authentication.principal?.type != Member.Type.ROOT) {
+            throw ForbiddenException()
+        }
         val contest = createContestService.create(input)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 
     @PutMapping
+    @Private(Member.Type.ROOT)
     @Transactional
     fun updateContest(input: UpdateContestService.Input): ResponseEntity<ContestFullResponseDTO> {
         val contest = updateContestService.update(input)
@@ -41,6 +52,7 @@ class ContestController(
     }
 
     @GetMapping
+    @Private(Member.Type.ROOT)
     fun findAllContest(): ResponseEntity<List<ContestResponseDTO>> {
         val contests = findContestService.findAll()
         return ResponseEntity.ok(contests.map { it.toResponseDTO() })
@@ -55,6 +67,7 @@ class ContestController(
     }
 
     @DeleteMapping("/{id}")
+    @Private(Member.Type.ROOT)
     @Transactional
     fun deleteContest(
         @PathVariable id: Int,

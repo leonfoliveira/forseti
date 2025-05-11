@@ -1,3 +1,3 @@
 package io.leonfoliveira.judge.core.exception
 
-class NotFoundException(message: String) : BusinessException(message)
+class NotFoundException(message: String = "NotFound") : BusinessException(message)
