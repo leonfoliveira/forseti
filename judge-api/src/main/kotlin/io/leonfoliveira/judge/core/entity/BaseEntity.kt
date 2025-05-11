@@ -22,7 +22,7 @@ open class BaseEntity(
     @Column(name = "updated_at", nullable = false)
     var updatedAt: LocalDateTime = TimeUtils.now(),
     @Column(name = "deleted_at", nullable = false)
-    var deleted: LocalDateTime? = null,
+    var deletedAt: LocalDateTime? = null,
 ) {
     @PreUpdate
     protected fun onUpdate() {
