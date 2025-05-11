@@ -54,3 +54,23 @@ tasks.test {
 tasks.bootJar {
     archiveFileName.set("app.jar")
 }
+
+fun runCommand(command: String): Process {
+    return ProcessBuilder(*command.split(" ").toTypedArray())
+        .redirectErrorStream(true)
+        .start()
+        .also { it.waitFor() }
+}
+
+tasks.register("initLocalStack") {
+    doLast {
+        println("Creating S3 bucket in LocalStack...")
+        val command = runCommand("aws --endpoint-url=http://localhost:4566 s3 mb s3://judge")
+        val createOutput = command.inputStream.bufferedReader().readText()
+        println(createOutput)
+    }
+}
+
+tasks.named("bootRun") {
+    dependsOn("initLocalStack")
+}

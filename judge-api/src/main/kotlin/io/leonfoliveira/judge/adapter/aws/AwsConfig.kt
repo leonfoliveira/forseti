@@ -12,7 +12,7 @@ class AwsConfig {
     @Value("\${cloud.aws.endpoint}")
     private lateinit var endpoint: URI
 
-    @Value("\${cloud.aws.region}")
+    @Value("\${cloud.aws.region.static}")
     private lateinit var region: Region
 
     @Bean
