@@ -24,6 +24,8 @@ cloud:
       secret-key: ${AWS_SECRET_ACCESS_KEY:judge}
     s3:
       bucket: ${AWS_S3_BUCKET:judge}
+    sqs:
+      submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:judge-submission}
 server:
   servlet:
     context-path: /api

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.sqs.SqsClient
 import java.net.URI
 
 @Configuration
@@ -21,6 +22,14 @@ class AwsConfig {
             .region(region)
             .endpointOverride(endpoint)
             .forcePathStyle(true)
+            .build()
+    }
+
+    @Bean
+    fun sqsClient(): SqsClient {
+        return SqsClient.builder()
+            .region(region)
+            .endpointOverride(endpoint)
             .build()
     }
 }
