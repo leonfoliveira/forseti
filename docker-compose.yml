@@ -11,6 +11,16 @@ services:
     ports:
       - "5432:5432"
 
+  localstack:
+    container_name: judge-localstack
+    image: localstack/localstack:4.4.0
+    restart: always
+    environment:
+      - SERVICES=s3,sqs
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+
   api:
     container_name: judge-api
     build: judge-api
