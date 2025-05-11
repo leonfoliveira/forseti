@@ -1,9 +1,9 @@
 [versions]
-bcrypt = "0.10.2"
 flyway = "9.22.3"
 hibernate-envers = "6.6.13.Final"
 hibernate-types = "2.21.1"
 jackson = "2.18.3"
+jjwt = "0.11.5"
 kotest = "5.9.1"
 kotlin = "2.1.20"
 ktlint = "12.1.1"
@@ -13,11 +13,13 @@ spring-cloud = "3.3.0"
 spring-boot = "3.4.5"
 
 [libraries]
-bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }
 hibernate-envers = { module = "org.hibernate.orm:hibernate-envers", version.ref = "hibernate-envers" }
 hibernate-types = { module = "com.vladmihalcea:hibernate-types-60", version.ref = "hibernate-types" }
 flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 jackson-module-kotlin = { module = 'com.fasterxml.jackson.module:jackson-module-kotlin', version.ref = "jackson" }
+jjwt-api = { module = 'io.jsonwebtoken:jjwt-api', version.ref = "jjwt" }
+jjwt-impl = { module = 'io.jsonwebtoken:jjwt-impl', version.ref = "jjwt" }
+jjwt-jackson = { module = 'io.jsonwebtoken:jjwt-jackson', version.ref = "jjwt" }
 kotest-assertions-core = { module = 'io.kotest:kotest-assertions-core', version.ref = "kotest" }
 kotest-runner-junit5 = { module = 'io.kotest:kotest-runner-junit5', version.ref = "kotest" }
 kotlin-reflect = { module = 'org.jetbrains.kotlin:kotlin-reflect', version.ref = "kotlin" }
@@ -37,6 +39,11 @@ spring-boot-dev-tools = { module = "org.springframework.boot:spring-boot-devtool
 kotest = [
     "kotest-runner-junit5",
     "kotest-assertions-core"
+]
+jjwt = [
+    "jjwt-api",
+    "jjwt-impl",
+    "jjwt-jackson"
 ]
 spring = [
     "spring-cloud-starter-s3",

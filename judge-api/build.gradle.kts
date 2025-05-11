@@ -15,11 +15,11 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.bcrypt)
     implementation(libs.hibernate.envers)
     implementation(libs.hibernate.types)
     implementation(libs.flyway)
     implementation(libs.jackson.module.kotlin)
+    implementation(libs.bundles.jjwt)
     implementation(libs.kotlin.reflect)
     implementation(libs.bundles.spring)
     implementation(libs.postgresql)
