@@ -1,16 +1,17 @@
 package io.leonfoliveira.judge.core.service.authorization
 
 import io.leonfoliveira.judge.core.entity.model.Authorization
+import io.leonfoliveira.judge.core.exception.NotFoundException
 import io.leonfoliveira.judge.core.exception.UnauthorizedException
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.port.JwtAdapter
-import io.leonfoliveira.judge.core.repository.MemberRepository
+import io.leonfoliveira.judge.core.repository.ContestRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 class AuthorizationService(
-    private val memberRepository: MemberRepository,
+    private val contestRepository: ContestRepository,
     private val hashAdapter: HashAdapter,
     private val jwtAdapter: JwtAdapter,
 ) {
@@ -33,11 +34,16 @@ class AuthorizationService(
     }
 
     fun authenticateMember(
+        contestId: Int,
         login: String,
         password: String,
     ): AuthorizationOutput {
+        val contest =
+            contestRepository.findById(contestId).orElseThrow {
+                throw NotFoundException("Could not find contest with id = $contestId")
+            }
         val member =
-            memberRepository.findByLogin(login)
+            contest.members.find { it.login == login }
                 ?: throw UnauthorizedException("Invalid login or password")
 
         if (!hashAdapter.verify(password, member.password)) {

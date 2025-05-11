@@ -2,6 +2,7 @@ package io.leonfoliveira.judge.api.controller
 
 import io.leonfoliveira.judge.core.service.authorization.AuthorizationService
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -29,12 +30,14 @@ class AuthenticationController(
         val password: String,
     )
 
-    @PostMapping("/auth/member")
+    @PostMapping("/auth/contests/{id}")
     fun authenticateRoot(
+        @PathVariable id: Int,
         @RequestBody request: ContestLoginRequestBody,
     ): ResponseEntity<AuthorizationService.AuthorizationOutput> {
         val authorization =
             authenticationService.authenticateMember(
+                contestId = id,
                 request.login,
                 request.password,
             )
