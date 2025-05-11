@@ -12,6 +12,8 @@ import io.leonfoliveira.judge.core.service.contest.CreateContestService
 import io.leonfoliveira.judge.core.service.contest.DeleteContestService
 import io.leonfoliveira.judge.core.service.contest.FindContestService
 import io.leonfoliveira.judge.core.service.contest.UpdateContestService
+import io.leonfoliveira.judge.core.service.dto.output.LeaderboardOutputDTO
+import io.leonfoliveira.judge.core.service.leaderboard.LeaderboardService
 import jakarta.transaction.Transactional
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -30,6 +32,7 @@ class ContestController(
     private val updateContestService: UpdateContestService,
     private val findContestService: FindContestService,
     private val deleteContestService: DeleteContestService,
+    private val leaderboardService: LeaderboardService,
 ) {
     @PostMapping
     @Private(Member.Type.ROOT)
@@ -83,5 +86,13 @@ class ContestController(
     ): ResponseEntity<Void> {
         deleteContestService.deleteContest(id)
         return ResponseEntity.noContent().build()
+    }
+
+    @GetMapping("/{id}/leaderboard")
+    fun leaderboard(
+        @PathVariable id: Int,
+    ): ResponseEntity<LeaderboardOutputDTO> {
+        val leaderboard = leaderboardService.buildLeaderboard(id)
+        return ResponseEntity.ok(leaderboard)
     }
 }
