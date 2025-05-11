@@ -11,7 +11,7 @@ data class ContestFullResponseDTO(
     val startAt: LocalDateTime,
     val endAt: LocalDateTime,
     val members: List<MemberResponseDTO>,
-    val problems: List<ProblemResponseDTO>,
+    val problems: List<ProblemFullResponseDTO>,
 )
 
 fun Contest.toFullResponseDTO(): ContestFullResponseDTO {
@@ -22,6 +22,6 @@ fun Contest.toFullResponseDTO(): ContestFullResponseDTO {
         startAt = this.startAt,
         endAt = this.endAt,
         members = this.members.map { it.toResponseDTO() },
-        problems = this.problems.map { it.toResponseDTO() },
+        problems = this.problems.map { it.toFullResponseDTO() },
     )
 }

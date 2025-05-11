@@ -3,6 +3,7 @@ package io.leonfoliveira.judge.api.controller
 import io.leonfoliveira.judge.api.config.JwtAuthentication
 import io.leonfoliveira.judge.api.dto.response.ContestFullResponseDTO
 import io.leonfoliveira.judge.api.dto.response.ContestResponseDTO
+import io.leonfoliveira.judge.api.dto.response.ProblemResponseDTO
 import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
 import io.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.leonfoliveira.judge.api.util.Private
@@ -14,6 +15,7 @@ import io.leonfoliveira.judge.core.service.contest.FindContestService
 import io.leonfoliveira.judge.core.service.contest.UpdateContestService
 import io.leonfoliveira.judge.core.service.dto.output.LeaderboardOutputDTO
 import io.leonfoliveira.judge.core.service.leaderboard.LeaderboardService
+import io.leonfoliveira.judge.core.service.problem.FindProblemService
 import jakarta.transaction.Transactional
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
@@ -33,6 +35,7 @@ class ContestController(
     private val findContestService: FindContestService,
     private val deleteContestService: DeleteContestService,
     private val leaderboardService: LeaderboardService,
+    private val findProblemService: FindProblemService,
 ) {
     @PostMapping
     @Private(Member.Type.ROOT)
@@ -94,5 +97,13 @@ class ContestController(
     ): ResponseEntity<LeaderboardOutputDTO> {
         val leaderboard = leaderboardService.buildLeaderboard(id)
         return ResponseEntity.ok(leaderboard)
+    }
+
+    @GetMapping("/{id}/problems")
+    fun findAllProblems(
+        @PathVariable id: Int,
+    ): ResponseEntity<List<ProblemResponseDTO>> {
+        val problems = findProblemService.findAllByContest(id)
+        return ResponseEntity.ok(problems.map { it.toResponseDTO() })
     }
 }
