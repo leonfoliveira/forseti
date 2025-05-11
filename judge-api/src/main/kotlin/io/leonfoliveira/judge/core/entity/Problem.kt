@@ -38,6 +38,6 @@ class Problem(
         AttributeOverride(name = "key", column = Column(name = "test_cases_key"))
     )
     var testCases: Attachment,
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY)
     var submissions: List<Submission> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deleted)

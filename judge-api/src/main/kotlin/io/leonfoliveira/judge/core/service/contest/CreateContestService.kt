@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class CreateContestService(
-    val contestRepository: ContestRepository,
-    val hashAdapter: HashAdapter,
-    val s3Adapter: S3Adapter,
+    private val contestRepository: ContestRepository,
+    private val hashAdapter: HashAdapter,
+    private val s3Adapter: S3Adapter,
 ) {
     data class Input(
         val title: String,
