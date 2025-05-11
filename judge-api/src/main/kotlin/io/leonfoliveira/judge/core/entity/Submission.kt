@@ -14,8 +14,8 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
-import java.time.LocalDateTime
 import org.hibernate.envers.Audited
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "submission")
@@ -38,7 +38,7 @@ class Submission(
     @Embedded
     @AttributeOverrides(
         AttributeOverride(name = "filename", column = Column(name = "code_filename")),
-        AttributeOverride(name = "key", column = Column(name = "code_key"))
+        AttributeOverride(name = "key", column = Column(name = "code_key")),
     )
     val code: Attachment,
 ) : BaseEntity(id, createdAt, updatedAt, deleted) {

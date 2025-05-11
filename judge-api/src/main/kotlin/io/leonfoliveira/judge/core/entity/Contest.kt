@@ -9,11 +9,10 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import java.time.LocalDateTime
-import org.hibernate.annotations.Fetch
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.envers.Audited
 import org.hibernate.type.SqlTypes
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "contest")

@@ -10,7 +10,10 @@ class BCryptHashAdapter : HashAdapter {
         return BCrypt.hashpw(value, BCrypt.gensalt())
     }
 
-    override fun verify(value: String, hash: String): Boolean {
+    override fun verify(
+        value: String,
+        hash: String,
+    ): Boolean {
         return BCrypt.checkpw(value, hash)
     }
 }

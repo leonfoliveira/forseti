@@ -12,8 +12,8 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import java.time.LocalDateTime
 import org.hibernate.envers.Audited
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "problem")
@@ -35,7 +35,7 @@ class Problem(
     @Embedded
     @AttributeOverrides(
         AttributeOverride(name = "filename", column = Column(name = "test_cases_filename")),
-        AttributeOverride(name = "key", column = Column(name = "test_cases_key"))
+        AttributeOverride(name = "key", column = Column(name = "test_cases_key")),
     )
     var testCases: Attachment,
     @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY)

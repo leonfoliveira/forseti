@@ -6,11 +6,11 @@ import io.leonfoliveira.judge.core.entity.Problem
 import io.leonfoliveira.judge.core.entity.enumerate.Language
 import io.leonfoliveira.judge.core.entity.model.RawAttachment
 import io.leonfoliveira.judge.core.exception.NotFoundException
-import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.port.BucketAdapter
+import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
-import java.time.LocalDateTime
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class UpdateContestService(
@@ -46,71 +46,84 @@ class UpdateContestService(
     }
 
     fun update(input: Input): Contest {
-        val contest = contestRepository.findById(input.id).orElseThrow {
-            throw NotFoundException("Could not find contest with id = ${input.id}")
-        }
+        val contest =
+            contestRepository.findById(input.id).orElseThrow {
+                throw NotFoundException("Could not find contest with id = ${input.id}")
+            }
 
         contest.title = input.title
         contest.languages = input.languages
         contest.startTime = input.startTime
         contest.endTime = input.endTime
 
-        contest.members = input.members.map {
-            if (it.id != null) {
-                val member = contest.members.find { member -> member.id == it.id }
-                    ?: throw NotFoundException("Could not find member with id = ${it.id}")
-                member.type = it.type
-                member.name = it.name
-                member.login = it.login
-                if (it.password != null) {
-                    member.password = hashAdapter.hash(it.password)
+        contest.members =
+            input.members.map {
+                if (it.id != null) {
+                    val member =
+                        contest.members.find { member -> member.id == it.id }
+                            ?: throw NotFoundException("Could not find member with id = ${it.id}")
+                    member.type = it.type
+                    member.name = it.name
+                    member.login = it.login
+                    if (it.password != null) {
+                        member.password = hashAdapter.hash(it.password)
+                    }
+                    member
+                } else {
+                    createMember(contest, it)
                 }
-                member
-            } else {
-                createMember(contest, it)
             }
-        }
-        contest.problems = input.problems.map {
-            if (it.id != null) {
-                val problem = contest.problems.find { problem -> problem.id == it.id }
-                    ?: throw NotFoundException("Could not find problem with id = ${it.id}")
-                problem.title = it.title
-                problem.description = it.description
-                problem.timeLimit = it.timeLimit
-                if (it.testCases != null) {
-                    problem.testCases = s3Adapter.upload(it.testCases)
+        contest.problems =
+            input.problems.map {
+                if (it.id != null) {
+                    val problem =
+                        contest.problems.find { problem -> problem.id == it.id }
+                            ?: throw NotFoundException("Could not find problem with id = ${it.id}")
+                    problem.title = it.title
+                    problem.description = it.description
+                    problem.timeLimit = it.timeLimit
+                    if (it.testCases != null) {
+                        problem.testCases = s3Adapter.upload(it.testCases)
+                    }
+                    problem
+                } else {
+                    createProblem(contest, it)
                 }
-                problem
-            } else {
-                createProblem(contest, it)
             }
-        }
 
         return contestRepository.save(contest)
     }
 
-    private fun createMember(contest: Contest, memberDTO: Input.MemberDTO): Member {
+    private fun createMember(
+        contest: Contest,
+        memberDTO: Input.MemberDTO,
+    ): Member {
         val hashedPassword = hashAdapter.hash(memberDTO.password!!)
-        val member = Member(
-            type = memberDTO.type,
-            name = memberDTO.name,
-            login = memberDTO.login,
-            password = hashedPassword,
-            contest = contest,
-        )
+        val member =
+            Member(
+                type = memberDTO.type,
+                name = memberDTO.name,
+                login = memberDTO.login,
+                password = hashedPassword,
+                contest = contest,
+            )
 
         return member
     }
 
-    private fun createProblem(contest: Contest, problemDTO: Input.ProblemDTO): Problem {
+    private fun createProblem(
+        contest: Contest,
+        problemDTO: Input.ProblemDTO,
+    ): Problem {
         val testCases = s3Adapter.upload(problemDTO.testCases!!)
-        val problem = Problem(
-            title = problemDTO.title,
-            description = problemDTO.description,
-            timeLimit = problemDTO.timeLimit,
-            testCases = testCases,
-            contest = contest,
-        )
+        val problem =
+            Problem(
+                title = problemDTO.title,
+                description = problemDTO.description,
+                timeLimit = problemDTO.timeLimit,
+                testCases = testCases,
+                contest = contest,
+            )
 
         return problem
     }

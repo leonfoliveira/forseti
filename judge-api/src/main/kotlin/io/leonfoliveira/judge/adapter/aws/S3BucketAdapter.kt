@@ -3,13 +3,13 @@ package io.leonfoliveira.judge.adapter.aws
 import io.leonfoliveira.judge.core.entity.model.Attachment
 import io.leonfoliveira.judge.core.entity.model.RawAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
-import java.util.Base64
-import java.util.UUID
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
+import java.util.Base64
+import java.util.UUID
 
 @Service
 class S3BucketAdapter(
@@ -20,17 +20,19 @@ class S3BucketAdapter(
 
     override fun upload(rawAttachment: RawAttachment): Attachment {
         val key = UUID.randomUUID().toString()
-        val putObjectRequest = PutObjectRequest.builder()
-            .bucket(bucket)
-            .key(key)
-            .build()
+        val putObjectRequest =
+            PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(key)
+                .build()
 
-        val bytes = Base64.getDecoder().decode(
-            rawAttachment.base64.toString().substringAfter(",")
-        )
+        val bytes =
+            Base64.getDecoder().decode(
+                rawAttachment.base64.toString().substringAfter(","),
+            )
         s3Client.putObject(
             putObjectRequest,
-            RequestBody.fromBytes(bytes)
+            RequestBody.fromBytes(bytes),
         )
 
         return Attachment(

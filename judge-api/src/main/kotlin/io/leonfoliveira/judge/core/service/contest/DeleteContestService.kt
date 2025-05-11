@@ -10,9 +10,10 @@ class DeleteContestService(
     private val contestRepository: ContestRepository,
 ) {
     fun deleteContest(id: Int) {
-        val contest = contestRepository.findById(id).orElseThrow {
-            NotFoundException("Could not find contest with id = $id")
-        }
+        val contest =
+            contestRepository.findById(id).orElseThrow {
+                NotFoundException("Could not find contest with id = $id")
+            }
         contest.deletedAt = TimeUtils.now()
         contestRepository.save(contest)
     }

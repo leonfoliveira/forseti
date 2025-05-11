@@ -17,30 +17,41 @@ class AuthorizationService(
     @Value("\${security.root.password}")
     lateinit var rootPassword: String
 
-    fun authenticateRoot(password: String): Authorization {
+    data class AuthorizationOutput(
+        val authorization: Authorization,
+        val token: String,
+    )
+
+    fun authenticateRoot(password: String): AuthorizationOutput {
         if (password != rootPassword) {
             throw UnauthorizedException("Invalid root password")
         }
 
-        val claims = Authorization.Claims.ROOT
-        val token = jwtAdapter.generateToken(claims)
-        return Authorization(claims, token)
+        val authorization = Authorization.ROOT
+        val token = jwtAdapter.generateToken(authorization)
+        return AuthorizationOutput(authorization, token)
     }
 
-    fun authenticateMember(login: String, password: String): Authorization {
-        val member = memberRepository.findByLogin(login)
-            ?: throw UnauthorizedException("Invalid login or password")
+    fun authenticateMember(
+        login: String,
+        password: String,
+    ): AuthorizationOutput {
+        val member =
+            memberRepository.findByLogin(login)
+                ?: throw UnauthorizedException("Invalid login or password")
 
         if (!hashAdapter.verify(password, member.password)) {
             throw UnauthorizedException("Invalid login or password")
         }
 
-        val claims = Authorization.Claims(
-            id = member.id,
-            name = member.name,
-            login = member.login,
-        )
-        val token = jwtAdapter.generateToken(claims)
-        return Authorization(claims, token)
+        val authorization =
+            Authorization(
+                id = member.id,
+                name = member.name,
+                login = member.login,
+                type = member.type,
+            )
+        val token = jwtAdapter.generateToken(authorization)
+        return AuthorizationOutput(authorization, token)
     }
 }

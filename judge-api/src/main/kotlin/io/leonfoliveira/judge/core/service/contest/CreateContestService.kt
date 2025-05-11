@@ -5,11 +5,11 @@ import io.leonfoliveira.judge.core.entity.Member
 import io.leonfoliveira.judge.core.entity.Problem
 import io.leonfoliveira.judge.core.entity.enumerate.Language
 import io.leonfoliveira.judge.core.entity.model.RawAttachment
-import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.port.BucketAdapter
+import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
-import java.time.LocalDateTime
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class CreateContestService(
@@ -42,12 +42,13 @@ class CreateContestService(
     }
 
     fun create(input: Input): Contest {
-        val contest = Contest(
-            title = input.title,
-            languages = input.languages,
-            startTime = input.startTime,
-            endTime = input.endTime,
-        )
+        val contest =
+            Contest(
+                title = input.title,
+                languages = input.languages,
+                startTime = input.startTime,
+                endTime = input.endTime,
+            )
 
         contest.members = input.members.map { createMember(contest, it) }
         contest.problems = input.problems.map { createProblem(contest, it) }
@@ -55,28 +56,36 @@ class CreateContestService(
         return contestRepository.save(contest)
     }
 
-    private fun createMember(contest: Contest, memberDTO: Input.MemberDTO): Member {
+    private fun createMember(
+        contest: Contest,
+        memberDTO: Input.MemberDTO,
+    ): Member {
         val hashedPassword = hashAdapter.hash(memberDTO.password)
-        val member = Member(
-            type = memberDTO.type,
-            name = memberDTO.name,
-            login = memberDTO.login,
-            password = hashedPassword,
-            contest = contest,
-        )
+        val member =
+            Member(
+                type = memberDTO.type,
+                name = memberDTO.name,
+                login = memberDTO.login,
+                password = hashedPassword,
+                contest = contest,
+            )
 
         return member
     }
 
-    private fun createProblem(contest: Contest, problemDTO: Input.ProblemDTO): Problem {
+    private fun createProblem(
+        contest: Contest,
+        problemDTO: Input.ProblemDTO,
+    ): Problem {
         val testCases = s3Adapter.upload(problemDTO.testCases)
-        val problem = Problem(
-            title = problemDTO.title,
-            description = problemDTO.description,
-            timeLimit = problemDTO.timeLimit,
-            testCases = testCases,
-            contest = contest,
-        )
+        val problem =
+            Problem(
+                title = problemDTO.title,
+                description = problemDTO.description,
+                timeLimit = problemDTO.timeLimit,
+                testCases = testCases,
+                contest = contest,
+            )
 
         return problem
     }
