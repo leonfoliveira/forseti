@@ -7,7 +7,7 @@ import io.leonfoliveira.judge.core.entity.enumerate.Language
 import io.leonfoliveira.judge.core.entity.model.RawAttachment
 import io.leonfoliveira.judge.core.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.HashAdapter
-import io.leonfoliveira.judge.core.port.S3Adapter
+import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import java.time.LocalDateTime
 import org.springframework.stereotype.Service
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
 class UpdateContestService(
     private val contestRepository: ContestRepository,
     private val hashAdapter: HashAdapter,
-    private val s3Adapter: S3Adapter,
+    private val s3Adapter: BucketAdapter,
 ) {
     data class Input(
         val id: Int,
