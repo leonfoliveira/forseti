@@ -3,6 +3,7 @@ package io.leonfoliveira.judge.core.service.submission
 import io.leonfoliveira.judge.core.entity.Submission
 import io.leonfoliveira.judge.core.exception.BusinessException
 import io.leonfoliveira.judge.core.exception.NotFoundException
+import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
 import io.leonfoliveira.judge.core.port.SubmissionRunnerAdapter
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import org.springframework.stereotype.Service
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service
 class RunSubmissionService(
     private val submissionRepository: SubmissionRepository,
     private val submissionRunnerAdapter: SubmissionRunnerAdapter,
+    private val submissionEmitterAdapter: SubmissionEmitterAdapter,
 ) {
     fun run(id: Int): Submission {
         val submission =
@@ -23,7 +25,9 @@ class RunSubmissionService(
 
         val result = submissionRunnerAdapter.run(submission)
         submission.status = result
+        submissionRepository.save(submission)
+        submissionEmitterAdapter.emit(submission)
 
-        return submissionRepository.save(submission)
+        return submission
     }
 }

@@ -5,6 +5,7 @@ import io.leonfoliveira.judge.core.entity.enumerate.Language
 import io.leonfoliveira.judge.core.entity.model.RawAttachment
 import io.leonfoliveira.judge.core.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.BucketAdapter
+import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
 import io.leonfoliveira.judge.core.port.SubmissionQueueAdapter
 import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
@@ -18,6 +19,7 @@ class CreateSubmissionService(
     private val submissionRepository: SubmissionRepository,
     private val bucketAdapter: BucketAdapter,
     private val submissionQueueAdapter: SubmissionQueueAdapter,
+    private val submissionEmitterAdapter: SubmissionEmitterAdapter,
 ) {
     data class Input(
         val problemId: Int,
@@ -48,6 +50,7 @@ class CreateSubmissionService(
             )
         submissionRepository.save(submission)
         submissionQueueAdapter.enqueue(submission)
+        submissionEmitterAdapter.emit(submission)
 
         return submission
     }
