@@ -5,4 +5,6 @@ import io.leonfoliveira.judge.core.entity.model.RawAttachment
 
 interface BucketAdapter {
     fun upload(rawAttachment: RawAttachment): Attachment
+
+    fun download(attachment: Attachment): ByteArray
 }

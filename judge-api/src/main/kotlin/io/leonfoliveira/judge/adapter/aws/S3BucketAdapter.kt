@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
+import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import java.util.Base64
 import java.util.UUID
@@ -39,5 +40,18 @@ class S3BucketAdapter(
             filename = rawAttachment.filename,
             key = key,
         )
+    }
+
+    override fun download(attachment: Attachment): ByteArray {
+        val getObjectRequest =
+            GetObjectRequest
+                .builder()
+                .bucket(bucket)
+                .key(attachment.key)
+                .build()
+
+        val s3Object = s3Client.getObject(getObjectRequest)
+
+        return s3Object.readAllBytes()
     }
 }
