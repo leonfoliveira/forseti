@@ -14,6 +14,8 @@ import io.leonfoliveira.judge.core.service.contest.CreateContestService
 import io.leonfoliveira.judge.core.service.contest.DeleteContestService
 import io.leonfoliveira.judge.core.service.contest.FindContestService
 import io.leonfoliveira.judge.core.service.contest.UpdateContestService
+import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
 import io.leonfoliveira.judge.core.service.dto.output.LeaderboardOutputDTO
 import io.leonfoliveira.judge.core.service.leaderboard.LeaderboardService
 import io.leonfoliveira.judge.core.service.problem.FindProblemService
@@ -43,7 +45,7 @@ class ContestController(
     @PostMapping
     @Private(Member.Type.ROOT)
     @Transactional
-    fun createContest(input: CreateContestService.Input): ResponseEntity<ContestFullResponseDTO> {
+    fun createContest(input: CreateContestInputDTO): ResponseEntity<ContestFullResponseDTO> {
         val authentication = SecurityContextHolder.getContext().authentication as JwtAuthentication
         if (authentication.principal?.type != Member.Type.ROOT) {
             throw ForbiddenException()
@@ -55,7 +57,7 @@ class ContestController(
     @PutMapping
     @Private(Member.Type.ROOT)
     @Transactional
-    fun updateContest(input: UpdateContestService.Input): ResponseEntity<ContestFullResponseDTO> {
+    fun updateContest(input: UpdateContestInputDTO): ResponseEntity<ContestFullResponseDTO> {
         val contest = updateContestService.update(input)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
@@ -90,7 +92,7 @@ class ContestController(
     fun deleteContest(
         @PathVariable id: Int,
     ): ResponseEntity<Void> {
-        deleteContestService.deleteContest(id)
+        deleteContestService.delete(id)
         return ResponseEntity.noContent().build()
     }
 

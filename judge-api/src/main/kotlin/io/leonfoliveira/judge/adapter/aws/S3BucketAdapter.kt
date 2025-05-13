@@ -9,7 +9,6 @@ import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
-import java.util.Base64
 import java.util.UUID
 
 @Service
@@ -27,13 +26,9 @@ class S3BucketAdapter(
                 .key(key)
                 .build()
 
-        val bytes =
-            Base64.getDecoder().decode(
-                rawAttachment.base64.toString().substringAfter(","),
-            )
         s3Client.putObject(
             putObjectRequest,
-            RequestBody.fromBytes(bytes),
+            RequestBody.fromBytes(rawAttachment.content),
         )
 
         return Attachment(

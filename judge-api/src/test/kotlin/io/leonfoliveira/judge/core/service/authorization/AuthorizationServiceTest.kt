@@ -19,11 +19,12 @@ class AuthorizationServiceTest : FunSpec({
     val hashAdapter = mockk<HashAdapter>()
     val jwtAdapter = mockk<JwtAdapter>()
 
-    val sut = AuthorizationService(
-        contestRepository = contestRepository,
-        hashAdapter = hashAdapter,
-        jwtAdapter = jwtAdapter,
-    )
+    val sut =
+        AuthorizationService(
+            contestRepository = contestRepository,
+            hashAdapter = hashAdapter,
+            jwtAdapter = jwtAdapter,
+        )
 
     context("authenticateRoot") {
         sut.rootPassword = "rootPassword"

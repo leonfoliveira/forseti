@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 class DeleteContestService(
     private val contestRepository: ContestRepository,
 ) {
-    fun deleteContest(id: Int) {
+    fun delete(id: Int) {
         val contest =
             contestRepository.findById(id).orElseThrow {
                 NotFoundException("Could not find contest with id = $id")

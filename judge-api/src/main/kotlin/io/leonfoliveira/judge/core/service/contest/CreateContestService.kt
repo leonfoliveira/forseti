@@ -3,62 +3,36 @@ package io.leonfoliveira.judge.core.service.contest
 import io.leonfoliveira.judge.core.entity.Contest
 import io.leonfoliveira.judge.core.entity.Member
 import io.leonfoliveira.judge.core.entity.Problem
-import io.leonfoliveira.judge.core.entity.enumerate.Language
-import io.leonfoliveira.judge.core.entity.model.RawAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
+import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTO
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 @Service
 class CreateContestService(
     private val contestRepository: ContestRepository,
     private val hashAdapter: HashAdapter,
-    private val s3Adapter: BucketAdapter,
+    private val bucketAdapter: BucketAdapter,
 ) {
-    data class Input(
-        val title: String,
-        val languages: List<Language>,
-        val startAt: LocalDateTime,
-        val endAt: LocalDateTime,
-        val members: List<MemberDTO>,
-        val problems: List<ProblemDTO>,
-    ) {
-        data class MemberDTO(
-            val type: Member.Type,
-            val name: String,
-            val login: String,
-            val password: String,
-        )
-
-        data class ProblemDTO(
-            val title: String,
-            val description: String,
-            val timeLimit: Int,
-            val languages: List<Language>,
-            val testCases: RawAttachment,
-        )
-    }
-
-    fun create(input: Input): Contest {
+    fun create(inputDTO: CreateContestInputDTO): Contest {
         val contest =
             Contest(
-                title = input.title,
-                languages = input.languages,
-                startAt = input.startAt,
-                endAt = input.endAt,
+                title = inputDTO.title,
+                languages = inputDTO.languages,
+                startAt = inputDTO.startAt,
+                endAt = inputDTO.endAt,
             )
 
-        contest.members = input.members.map { createMember(contest, it) }
-        contest.problems = input.problems.map { createProblem(contest, it) }
+        contest.members = inputDTO.members.map { createMember(contest, it) }
+        contest.problems = inputDTO.problems.map { createProblem(contest, it) }
 
         return contestRepository.save(contest)
     }
 
     private fun createMember(
         contest: Contest,
-        memberDTO: Input.MemberDTO,
+        memberDTO: CreateContestInputDTO.MemberDTO,
     ): Member {
         val hashedPassword = hashAdapter.hash(memberDTO.password)
         val member =
@@ -75,9 +49,9 @@ class CreateContestService(
 
     private fun createProblem(
         contest: Contest,
-        problemDTO: Input.ProblemDTO,
+        problemDTO: CreateContestInputDTO.ProblemDTO,
     ): Problem {
-        val testCases = s3Adapter.upload(problemDTO.testCases)
+        val testCases = bucketAdapter.upload(problemDTO.testCases)
         val problem =
             Problem(
                 title = problemDTO.title,

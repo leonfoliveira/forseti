@@ -3,58 +3,29 @@ package io.leonfoliveira.judge.core.service.contest
 import io.leonfoliveira.judge.core.entity.Contest
 import io.leonfoliveira.judge.core.entity.Member
 import io.leonfoliveira.judge.core.entity.Problem
-import io.leonfoliveira.judge.core.entity.enumerate.Language
-import io.leonfoliveira.judge.core.entity.model.RawAttachment
 import io.leonfoliveira.judge.core.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
+import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 @Service
 class UpdateContestService(
     private val contestRepository: ContestRepository,
     private val hashAdapter: HashAdapter,
-    private val s3Adapter: BucketAdapter,
+    private val bucketAdapter: BucketAdapter,
 ) {
-    data class Input(
-        val id: Int,
-        val title: String,
-        val languages: List<Language>,
-        val startTime: LocalDateTime,
-        val endTime: LocalDateTime,
-        val members: List<MemberDTO>,
-        val problems: List<ProblemDTO>,
-    ) {
-        data class MemberDTO(
-            val id: Int?,
-            val type: Member.Type,
-            val name: String,
-            val login: String,
-            val password: String?,
-        )
-
-        data class ProblemDTO(
-            val id: Int?,
-            val title: String,
-            val description: String,
-            val timeLimit: Int,
-            val languages: List<Language>,
-            val testCases: RawAttachment?,
-        )
-    }
-
-    fun update(input: Input): Contest {
+    fun update(input: UpdateContestInputDTO): Contest {
         val contest =
             contestRepository.findById(input.id).orElseThrow {
-                throw NotFoundException("Could not find contest with id = ${input.id}")
+                NotFoundException("Could not find contest with id = ${input.id}")
             }
 
         contest.title = input.title
         contest.languages = input.languages
-        contest.startAt = input.startTime
-        contest.endAt = input.endTime
+        contest.startAt = input.startAt
+        contest.endAt = input.endAt
 
         contest.members =
             input.members.map {
@@ -83,7 +54,7 @@ class UpdateContestService(
                     problem.description = it.description
                     problem.timeLimit = it.timeLimit
                     if (it.testCases != null) {
-                        problem.testCases = s3Adapter.upload(it.testCases)
+                        problem.testCases = bucketAdapter.upload(it.testCases)
                     }
                     problem
                 } else {
@@ -96,7 +67,7 @@ class UpdateContestService(
 
     private fun createMember(
         contest: Contest,
-        memberDTO: Input.MemberDTO,
+        memberDTO: UpdateContestInputDTO.MemberDTO,
     ): Member {
         val hashedPassword = hashAdapter.hash(memberDTO.password!!)
         val member =
@@ -113,9 +84,9 @@ class UpdateContestService(
 
     private fun createProblem(
         contest: Contest,
-        problemDTO: Input.ProblemDTO,
+        problemDTO: UpdateContestInputDTO.ProblemDTO,
     ): Problem {
-        val testCases = s3Adapter.upload(problemDTO.testCases!!)
+        val testCases = bucketAdapter.upload(problemDTO.testCases!!)
         val problem =
             Problem(
                 title = problemDTO.title,

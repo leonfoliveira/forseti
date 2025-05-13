@@ -1,6 +1,7 @@
 package io.leonfoliveira.judge.api.controller
 
 import io.leonfoliveira.judge.core.service.authorization.AuthorizationService
+import io.leonfoliveira.judge.core.service.dto.output.AuthorizationOutputDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -20,7 +21,7 @@ class AuthenticationController(
     @PostMapping("/auth/root")
     fun authenticateRoot(
         @RequestBody request: RootLoginRequestBody,
-    ): ResponseEntity<AuthorizationService.AuthorizationOutput> {
+    ): ResponseEntity<AuthorizationOutputDTO> {
         val authorization = authenticationService.authenticateRoot(request.password)
         return ResponseEntity.ok(authorization)
     }
@@ -34,7 +35,7 @@ class AuthenticationController(
     fun authenticateRoot(
         @PathVariable id: Int,
         @RequestBody request: ContestLoginRequestBody,
-    ): ResponseEntity<AuthorizationService.AuthorizationOutput> {
+    ): ResponseEntity<AuthorizationOutputDTO> {
         val authorization =
             authenticationService.authenticateMember(
                 contestId = id,

@@ -6,6 +6,7 @@ import io.leonfoliveira.judge.core.exception.UnauthorizedException
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.port.JwtAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
+import io.leonfoliveira.judge.core.service.dto.output.AuthorizationOutputDTO
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -18,26 +19,21 @@ class AuthorizationService(
     @Value("\${security.root.password}")
     lateinit var rootPassword: String
 
-    data class AuthorizationOutput(
-        val authorization: Authorization,
-        val token: String,
-    )
-
-    fun authenticateRoot(password: String): AuthorizationOutput {
+    fun authenticateRoot(password: String): AuthorizationOutputDTO {
         if (password != rootPassword) {
             throw UnauthorizedException("Invalid root password")
         }
 
         val authorization = Authorization.ROOT
         val token = jwtAdapter.generateToken(authorization)
-        return AuthorizationOutput(authorization, token)
+        return AuthorizationOutputDTO(authorization, token)
     }
 
     fun authenticateMember(
         contestId: Int,
         login: String,
         password: String,
-    ): AuthorizationOutput {
+    ): AuthorizationOutputDTO {
         val contest =
             contestRepository.findById(contestId).orElseThrow {
                 throw NotFoundException("Could not find contest with id = $contestId")
@@ -58,6 +54,6 @@ class AuthorizationService(
                 type = member.type,
             )
         val token = jwtAdapter.generateToken(authorization)
-        return AuthorizationOutput(authorization, token)
+        return AuthorizationOutputDTO(authorization, token)
     }
 }
