@@ -42,6 +42,10 @@ class Submission(
     )
     val code: Attachment,
 ) : BaseEntity(id, createdAt, updatedAt, deleted) {
+    val contest by lazy {
+        problem.contest
+    }
+
     enum class Status {
         JUDGING,
         ACCEPTED,
