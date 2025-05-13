@@ -15,86 +15,75 @@ class UpdateContestService(
     private val contestRepository: ContestRepository,
     private val hashAdapter: HashAdapter,
     private val bucketAdapter: BucketAdapter,
+    private val findContestService: FindContestService,
+    private val createContestService: CreateContestService,
+    private val deleteContestService: DeleteContestService,
 ) {
     fun update(input: UpdateContestInputDTO): Contest {
-        val contest =
-            contestRepository.findById(input.id).orElseThrow {
-                NotFoundException("Could not find contest with id = ${input.id}")
-            }
+        val contest = findContestService.findById(input.id)
 
         contest.title = input.title
         contest.languages = input.languages
         contest.startAt = input.startAt
         contest.endAt = input.endAt
 
-        contest.members =
-            input.members.map {
-                if (it.id != null) {
-                    val member =
-                        contest.members.find { member -> member.id == it.id }
-                            ?: throw NotFoundException("Could not find member with id = ${it.id}")
-                    member.type = it.type
-                    member.name = it.name
-                    member.login = it.login
-                    if (it.password != null) {
-                        member.password = hashAdapter.hash(it.password)
-                    }
-                    member
-                } else {
-                    createMember(contest, it)
-                }
-            }
-        contest.problems =
-            input.problems.map {
-                if (it.id != null) {
-                    val problem =
-                        contest.problems.find { problem -> problem.id == it.id }
-                            ?: throw NotFoundException("Could not find problem with id = ${it.id}")
-                    problem.title = it.title
-                    problem.description = it.description
-                    problem.timeLimit = it.timeLimit
-                    if (it.testCases != null) {
-                        problem.testCases = bucketAdapter.upload(it.testCases)
-                    }
-                    problem
-                } else {
-                    createProblem(contest, it)
-                }
-            }
+        val membersToCreate = input.members.filter { it.id == null }
+        val problemsToCreate = input.problems.filter { it.id == null }
+        val createdMembers = membersToCreate.map { createContestService.createMember(contest, it.toCreateDTO()) }
+        val createdProblems = problemsToCreate.map { createContestService.createProblem(contest, it.toCreateDTO()) }
+
+        val membersToUpdate = input.members.filter { it.id != null }
+        val problemsToUpdate = input.problems.filter { it.id != null }
+        val membersHash = contest.members.associateBy { it.id }
+        val problemsHash = contest.problems.associateBy { it.id }
+        val updatedMembers = membersToUpdate.map { updateMember(membersHash, it) }
+        val updatedProblems = problemsToUpdate.map { updateProblem(problemsHash, it) }
+
+        val membersToUpdateIds = membersToUpdate.map { it.id }.toSet()
+        val problemsToUpdateIds = problemsToUpdate.map { it.id }.toSet()
+        val membersToDelete = contest.members.filter { it.id !in membersToUpdateIds }
+        val problemsToDelete = contest.problems.filter { it.id !in problemsToUpdateIds }
+        deleteContestService.deleteMembers(membersToDelete)
+        deleteContestService.deleteProblems(problemsToDelete)
+
+        contest.members = createdMembers + updatedMembers
+        contest.problems = createdProblems + updatedProblems
 
         return contestRepository.save(contest)
     }
 
-    private fun createMember(
-        contest: Contest,
+    private fun updateMember(
+        membersHash: Map<Int, Member>,
         memberDTO: UpdateContestInputDTO.MemberDTO,
     ): Member {
-        val hashedPassword = hashAdapter.hash(memberDTO.password!!)
         val member =
-            Member(
-                type = memberDTO.type,
-                name = memberDTO.name,
-                login = memberDTO.login,
-                password = hashedPassword,
-                contest = contest,
-            )
+            membersHash[memberDTO.id]
+                ?: throw NotFoundException("Could not find member with id = ${memberDTO.id}")
+
+        member.type = memberDTO.type
+        member.name = memberDTO.name
+        member.login = memberDTO.login
+        if (memberDTO.password != null) {
+            member.password = hashAdapter.hash(memberDTO.password)
+        }
 
         return member
     }
 
-    private fun createProblem(
-        contest: Contest,
+    private fun updateProblem(
+        problemsHash: Map<Int, Problem>,
         problemDTO: UpdateContestInputDTO.ProblemDTO,
     ): Problem {
-        val testCases = bucketAdapter.upload(problemDTO.testCases!!)
         val problem =
-            Problem(
-                title = problemDTO.title,
-                description = problemDTO.description,
-                timeLimit = problemDTO.timeLimit,
-                testCases = testCases,
-                contest = contest,
-            )
+            problemsHash[problemDTO.id]
+                ?: throw NotFoundException("Could not find problem with id = ${problemDTO.id}")
+
+        problem.title = problemDTO.title
+        problem.description = problemDTO.description
+        problem.timeLimit = problemDTO.timeLimit
+        if (problemDTO.testCases != null) {
+            problem.testCases = bucketAdapter.upload(problemDTO.testCases)
+        }
 
         return problem
     }

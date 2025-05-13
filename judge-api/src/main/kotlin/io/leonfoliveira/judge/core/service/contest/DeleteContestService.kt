@@ -1,13 +1,19 @@
 package io.leonfoliveira.judge.core.service.contest
 
+import io.leonfoliveira.judge.core.entity.Member
+import io.leonfoliveira.judge.core.entity.Problem
 import io.leonfoliveira.judge.core.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
+import io.leonfoliveira.judge.core.repository.MemberRepository
+import io.leonfoliveira.judge.core.repository.ProblemRepository
 import io.leonfoliveira.judge.core.util.TimeUtils
 import org.springframework.stereotype.Service
 
 @Service
 class DeleteContestService(
     private val contestRepository: ContestRepository,
+    private val memberRepository: MemberRepository,
+    private val problemRepository: ProblemRepository,
 ) {
     fun delete(id: Int) {
         val contest =
@@ -16,5 +22,15 @@ class DeleteContestService(
             }
         contest.deletedAt = TimeUtils.now()
         contestRepository.save(contest)
+    }
+
+    fun deleteMembers(members: List<Member>) {
+        members.forEach { it.deletedAt = TimeUtils.now() }
+        memberRepository.saveAll(members)
+    }
+
+    fun deleteProblems(problems: List<Problem>) {
+        problems.forEach { it.deletedAt = TimeUtils.now() }
+        problemRepository.saveAll(problems)
     }
 }

@@ -30,7 +30,7 @@ class CreateContestService(
         return contestRepository.save(contest)
     }
 
-    private fun createMember(
+    fun createMember(
         contest: Contest,
         memberDTO: CreateContestInputDTO.MemberDTO,
     ): Member {
@@ -47,7 +47,7 @@ class CreateContestService(
         return member
     }
 
-    private fun createProblem(
+    fun createProblem(
         contest: Contest,
         problemDTO: CreateContestInputDTO.ProblemDTO,
     ): Problem {

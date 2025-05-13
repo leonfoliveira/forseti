@@ -24,7 +24,6 @@ data class CreateContestInputDTO(
         val title: String,
         val description: String,
         val timeLimit: Int,
-        val languages: List<Language>,
         val testCases: RawAttachment,
     )
 }

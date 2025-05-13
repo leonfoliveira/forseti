@@ -16,40 +16,26 @@ import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDateTime
-import java.util.Optional
 
 class UpdateContestServiceTest : FunSpec({
     val contestRepository = mockk<ContestRepository>()
     val hashAdapter = mockk<HashAdapter>()
     val bucketAdapter = mockk<BucketAdapter>()
+    val findContestService = mockk<FindContestService>()
+    val createContestService = mockk<CreateContestService>()
+    val deleteContestService = mockk<DeleteContestService>()
 
     val sut =
         UpdateContestService(
             contestRepository = contestRepository,
             hashAdapter = hashAdapter,
             bucketAdapter = bucketAdapter,
+            findContestService = findContestService,
+            createContestService = createContestService,
+            deleteContestService = deleteContestService,
         )
 
     context("update") {
-        test("should throw NotFoundException when contest not found") {
-            val input =
-                UpdateContestInputDTO(
-                    id = 1,
-                    title = "Test Contest",
-                    languages = listOf(),
-                    startAt = LocalDateTime.now(),
-                    endAt = LocalDateTime.now().plusDays(1),
-                    members = listOf(),
-                    problems = listOf(),
-                )
-            every { contestRepository.findById(input.id) }
-                .returns(Optional.empty())
-
-            shouldThrow<NotFoundException> {
-                sut.update(input)
-            }
-        }
-
         test("should throw NotFoundException when member not found") {
             val input =
                 UpdateContestInputDTO(
@@ -80,8 +66,8 @@ class UpdateContestServiceTest : FunSpec({
                     members = listOf(),
                     problems = listOf(),
                 )
-            every { contestRepository.findById(input.id) }
-                .returns(Optional.of(contest))
+            every { findContestService.findById(input.id) }
+                .returns(contest)
 
             shouldThrow<NotFoundException> {
                 sut.update(input)
@@ -118,8 +104,8 @@ class UpdateContestServiceTest : FunSpec({
                     members = listOf(),
                     problems = listOf(),
                 )
-            every { contestRepository.findById(input.id) }
-                .returns(Optional.of(contest))
+            every { findContestService.findById(input.id) }
+                .returns(contest)
 
             shouldThrow<NotFoundException> {
                 sut.update(input)
@@ -265,8 +251,36 @@ class UpdateContestServiceTest : FunSpec({
                         contest = contest,
                     ),
                 )
-            every { contestRepository.findById(any()) }
-                .returns(Optional.of(contest))
+            every { findContestService.findById(any()) }
+                .returns(contest)
+            every { createContestService.createMember(any(), any()) }
+                .returns(
+                    Member(
+                        type = Member.Type.CONTESTANT,
+                        name = "Contestant Name 0",
+                        login = "contestant_login_0",
+                        password = "hashed_password_0",
+                        contest = contest,
+                    ),
+                )
+            every { createContestService.createProblem(any(), any()) }
+                .returns(
+                    Problem(
+                        title = "Problem 0",
+                        description = "Problem 0 description",
+                        timeLimit = 1000,
+                        testCases =
+                            Attachment(
+                                filename = "test_case_0.java",
+                                key = "123456",
+                            ),
+                        contest = contest,
+                    ),
+                )
+            every { deleteContestService.deleteMembers(any()) }
+                .returns(Unit)
+            every { deleteContestService.deleteProblems(any()) }
+                .returns(Unit)
             every { contestRepository.save(any()) }
                 .returnsArgument(0)
             every { hashAdapter.hash(any()) }

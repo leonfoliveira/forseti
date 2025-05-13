@@ -49,7 +49,6 @@ class CreateContestServiceTest : FunSpec({
                                 title = "Problem 1",
                                 description = "Problem 1 description",
                                 timeLimit = 1000,
-                                languages = listOf(),
                                 testCases =
                                     RawAttachment(
                                         filename = "test_case_1.java",

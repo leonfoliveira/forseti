@@ -20,7 +20,16 @@ data class UpdateContestInputDTO(
         val name: String,
         val login: String,
         val password: String? = null,
-    )
+    ) {
+        fun toCreateDTO(): CreateContestInputDTO.MemberDTO {
+            return CreateContestInputDTO.MemberDTO(
+                type = type,
+                name = name,
+                login = login,
+                password = password!!,
+            )
+        }
+    }
 
     data class ProblemDTO(
         val id: Int? = null,
@@ -28,5 +37,14 @@ data class UpdateContestInputDTO(
         val description: String,
         val timeLimit: Int,
         val testCases: RawAttachment? = null,
-    )
+    ) {
+        fun toCreateDTO(): CreateContestInputDTO.ProblemDTO {
+            return CreateContestInputDTO.ProblemDTO(
+                title = title,
+                description = description,
+                timeLimit = timeLimit,
+                testCases = testCases!!,
+            )
+        }
+    }
 }
