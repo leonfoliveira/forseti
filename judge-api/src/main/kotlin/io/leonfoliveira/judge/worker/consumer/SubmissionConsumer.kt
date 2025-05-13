@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 class SubmissionConsumer(
     private val runSubmissionService: RunSubmissionService,
 ) {
-    @SqsListener("\${aws.sqs.submission-queue}")
+    @SqsListener("\${spring.cloud.aws.sqs.submission-queue}")
     @Transactional
     fun receiveMessage(message: String) {
         val id =

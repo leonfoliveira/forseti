@@ -47,15 +47,8 @@ class GlobalExceptionHandler {
     @ExceptionHandler(Exception::class)
     fun handleException(
         ex: Exception,
-        handlerMethod: HandlerMethod,
     ): ResponseEntity<ErrorResponseDTO> {
-        logger.error(
-            "Error thrown from method {}#{}: {}",
-            handlerMethod.method.declaringClass.simpleName,
-            handlerMethod.method.name,
-            ex.message,
-            ex,
-        )
+        logger.error("An identified exception has being thrown", ex)
         return ResponseEntity.internalServerError().body(ErrorResponseDTO("Something went wrong"))
     }
 }

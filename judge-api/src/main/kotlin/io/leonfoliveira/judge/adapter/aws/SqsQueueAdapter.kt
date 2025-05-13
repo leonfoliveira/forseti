@@ -11,7 +11,7 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest
 class SqsQueueAdapter(
     private val sqsClient: SqsClient,
 ) : SubmissionQueueAdapter {
-    @Value("\${aws.sqs.submission-queue}")
+    @Value("\${spring.cloud.aws.sqs.submission-queue}")
     private lateinit var submissionQueue: String
 
     override fun enqueue(submission: Submission) {

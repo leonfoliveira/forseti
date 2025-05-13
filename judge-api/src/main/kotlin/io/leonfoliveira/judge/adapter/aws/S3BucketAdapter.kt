@@ -16,7 +16,7 @@ import java.util.UUID
 class S3BucketAdapter(
     private val s3Client: S3Client,
 ) : BucketAdapter {
-    @Value("\${cloud.aws.s3.bucket}")
+    @Value("\${spring.cloud.aws.s3.bucket}")
     private lateinit var bucket: String
 
     override fun upload(rawAttachment: RawAttachment): Attachment {

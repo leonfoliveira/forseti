@@ -14,18 +14,20 @@ spring:
     show-sql: true
     flyway:
       enabled: false
-cloud:
-  aws:
-    endpoint: ${AWS_S3_ENDPOINT:http://localhost:4566}
-    region:
-      static: ${AWS_REGION:us-east-1}
-    credentials:
-      access-key: ${AWS_ACCESS_KEY_ID:judge}
-      secret-key: ${AWS_SECRET_ACCESS_KEY:judge}
-    s3:
-      bucket: ${AWS_S3_BUCKET:judge}
-    sqs:
-      submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:judge-submission}
+  cloud:
+    aws:
+      endpoint: ${AWS_S3_ENDPOINT:http://localhost:4566}
+      region:
+        static: ${AWS_REGION:us-east-1}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID:judge}
+        secret-key: ${AWS_SECRET_ACCESS_KEY:judge}
+      stack:
+        auto: false
+      s3:
+        bucket: ${AWS_S3_BUCKET:judge}
+      sqs:
+        submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:judge-submission}
 server:
   servlet:
     context-path: /api
