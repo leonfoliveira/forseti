@@ -1,6 +1,6 @@
 package io.leonfoliveira.judge.api.dto.response
 
-import io.leonfoliveira.judge.core.entity.Submission
+import io.leonfoliveira.judge.core.domain.entity.Submission
 
 data class SubmissionResponseDTO(
     val id: Int,

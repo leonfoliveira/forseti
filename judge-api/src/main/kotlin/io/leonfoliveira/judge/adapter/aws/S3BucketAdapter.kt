@@ -1,7 +1,7 @@
 package io.leonfoliveira.judge.adapter.aws
 
-import io.leonfoliveira.judge.core.entity.model.Attachment
-import io.leonfoliveira.judge.core.entity.model.RawAttachment
+import io.leonfoliveira.judge.core.domain.model.Attachment
+import io.leonfoliveira.judge.core.domain.model.RawAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

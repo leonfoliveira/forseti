@@ -1,8 +1,8 @@
 package io.leonfoliveira.judge.core.service.contest
 
-import io.leonfoliveira.judge.core.entity.Contest
-import io.leonfoliveira.judge.core.entity.Member
-import io.leonfoliveira.judge.core.entity.Problem
+import io.leonfoliveira.judge.core.domain.entity.Contest
+import io.leonfoliveira.judge.core.domain.entity.Member
+import io.leonfoliveira.judge.core.domain.entity.Problem
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository

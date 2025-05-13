@@ -1,7 +1,7 @@
 package io.leonfoliveira.judge.core.service.submission
 
-import io.leonfoliveira.judge.core.entity.Submission
-import io.leonfoliveira.judge.core.exception.NotFoundException
+import io.leonfoliveira.judge.core.domain.entity.Submission
+import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import org.springframework.stereotype.Service
 

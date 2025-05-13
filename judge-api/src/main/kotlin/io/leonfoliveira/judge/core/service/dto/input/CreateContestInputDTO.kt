@@ -1,8 +1,8 @@
 package io.leonfoliveira.judge.core.service.dto.input
 
-import io.leonfoliveira.judge.core.entity.Member
-import io.leonfoliveira.judge.core.entity.enumerate.Language
-import io.leonfoliveira.judge.core.entity.model.RawAttachment
+import io.leonfoliveira.judge.core.domain.entity.Member
+import io.leonfoliveira.judge.core.domain.enumerate.Language
+import io.leonfoliveira.judge.core.domain.model.RawAttachment
 import java.time.LocalDateTime
 
 data class CreateContestInputDTO(

@@ -1,5 +1,5 @@
 package io.leonfoliveira.judge.core.repository
 
-import io.leonfoliveira.judge.core.entity.Contest
+import io.leonfoliveira.judge.core.domain.entity.Contest
 
 interface ContestRepository : BaseRepository<Contest>

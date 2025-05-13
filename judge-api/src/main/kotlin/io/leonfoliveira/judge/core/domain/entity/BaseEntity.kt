@@ -1,4 +1,4 @@
-package io.leonfoliveira.judge.core.entity
+package io.leonfoliveira.judge.core.domain.entity
 
 import io.leonfoliveira.judge.core.util.TimeUtils
 import jakarta.persistence.Column

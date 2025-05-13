@@ -1,9 +1,9 @@
 package io.leonfoliveira.judge.core.service.submission
 
-import io.leonfoliveira.judge.core.entity.Submission
-import io.leonfoliveira.judge.core.entity.enumerate.Language
-import io.leonfoliveira.judge.core.entity.model.RawAttachment
-import io.leonfoliveira.judge.core.exception.NotFoundException
+import io.leonfoliveira.judge.core.domain.entity.Submission
+import io.leonfoliveira.judge.core.domain.enumerate.Language
+import io.leonfoliveira.judge.core.domain.exception.NotFoundException
+import io.leonfoliveira.judge.core.domain.model.RawAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
 import io.leonfoliveira.judge.core.port.SubmissionQueueAdapter

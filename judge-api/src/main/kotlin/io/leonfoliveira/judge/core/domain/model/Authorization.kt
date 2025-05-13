@@ -1,6 +1,6 @@
-package io.leonfoliveira.judge.core.entity.model
+package io.leonfoliveira.judge.core.domain.model
 
-import io.leonfoliveira.judge.core.entity.Member
+import io.leonfoliveira.judge.core.domain.entity.Member
 
 data class Authorization(
     val id: Int,

@@ -1,9 +1,9 @@
 package io.leonfoliveira.judge.core.service.contest
 
 import io.kotest.core.spec.style.FunSpec
-import io.leonfoliveira.judge.core.entity.Member
-import io.leonfoliveira.judge.core.entity.model.Attachment
-import io.leonfoliveira.judge.core.entity.model.RawAttachment
+import io.leonfoliveira.judge.core.domain.entity.Member
+import io.leonfoliveira.judge.core.domain.model.Attachment
+import io.leonfoliveira.judge.core.domain.model.RawAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository

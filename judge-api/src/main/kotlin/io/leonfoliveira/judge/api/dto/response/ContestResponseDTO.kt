@@ -1,6 +1,6 @@
 package io.leonfoliveira.judge.api.dto.response
 
-import io.leonfoliveira.judge.core.entity.Contest
+import io.leonfoliveira.judge.core.domain.entity.Contest
 import java.time.LocalDateTime
 
 class ContestResponseDTO(

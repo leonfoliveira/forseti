@@ -1,6 +1,6 @@
 package io.leonfoliveira.judge.api.dto.response
 
-import io.leonfoliveira.judge.core.entity.Problem
+import io.leonfoliveira.judge.core.domain.entity.Problem
 
 data class ProblemResponseDTO(
     val id: Int,

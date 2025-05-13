@@ -2,10 +2,10 @@ package io.leonfoliveira.judge.core.service.contest
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import io.leonfoliveira.judge.core.entity.Contest
-import io.leonfoliveira.judge.core.entity.Member
-import io.leonfoliveira.judge.core.entity.Problem
-import io.leonfoliveira.judge.core.exception.NotFoundException
+import io.leonfoliveira.judge.core.domain.entity.Contest
+import io.leonfoliveira.judge.core.domain.entity.Member
+import io.leonfoliveira.judge.core.domain.entity.Problem
+import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository

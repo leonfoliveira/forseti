@@ -1,6 +1,6 @@
 package io.leonfoliveira.judge.api.config
 
-import io.leonfoliveira.judge.core.entity.model.Authorization
+import io.leonfoliveira.judge.core.domain.model.Authorization
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 

@@ -5,7 +5,7 @@ import io.leonfoliveira.judge.api.dto.response.SubmissionResponseDTO
 import io.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.leonfoliveira.judge.api.util.Private
-import io.leonfoliveira.judge.core.entity.Member
+import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.service.problem.FindProblemService
 import io.leonfoliveira.judge.core.service.submission.CreateSubmissionService
 import org.springframework.http.ResponseEntity

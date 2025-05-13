@@ -1,8 +1,8 @@
 package io.leonfoliveira.judge.api.util
 
 import io.leonfoliveira.judge.api.config.JwtAuthentication
-import io.leonfoliveira.judge.core.entity.Member
-import io.leonfoliveira.judge.core.exception.ForbiddenException
+import io.leonfoliveira.judge.core.domain.entity.Member
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Before
 import org.springframework.security.core.context.SecurityContextHolder

@@ -1,7 +1,7 @@
 package io.leonfoliveira.judge.api.dto.response
 
-import io.leonfoliveira.judge.core.entity.Problem
-import io.leonfoliveira.judge.core.entity.model.Attachment
+import io.leonfoliveira.judge.core.domain.entity.Problem
+import io.leonfoliveira.judge.core.domain.model.Attachment
 
 data class ProblemFullResponseDTO(
     val id: Int,

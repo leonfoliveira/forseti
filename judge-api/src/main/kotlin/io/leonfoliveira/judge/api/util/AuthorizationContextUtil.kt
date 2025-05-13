@@ -1,8 +1,8 @@
 package io.leonfoliveira.judge.api.util
 
 import io.leonfoliveira.judge.api.config.JwtAuthentication
-import io.leonfoliveira.judge.core.entity.model.Authorization
-import io.leonfoliveira.judge.core.exception.UnauthorizedException
+import io.leonfoliveira.judge.core.domain.exception.UnauthorizedException
+import io.leonfoliveira.judge.core.domain.model.Authorization
 import org.springframework.security.core.context.SecurityContextHolder
 
 object AuthorizationContextUtil {

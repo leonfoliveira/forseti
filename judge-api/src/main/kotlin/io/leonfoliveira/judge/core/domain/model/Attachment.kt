@@ -1,4 +1,4 @@
-package io.leonfoliveira.judge.core.entity.model
+package io.leonfoliveira.judge.core.domain.model
 
 import jakarta.persistence.Embeddable
 

@@ -8,8 +8,8 @@ import io.leonfoliveira.judge.api.dto.response.SubmissionResponseDTO
 import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
 import io.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.leonfoliveira.judge.api.util.Private
-import io.leonfoliveira.judge.core.entity.Member
-import io.leonfoliveira.judge.core.exception.ForbiddenException
+import io.leonfoliveira.judge.core.domain.entity.Member
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.service.contest.CreateContestService
 import io.leonfoliveira.judge.core.service.contest.DeleteContestService
 import io.leonfoliveira.judge.core.service.contest.FindContestService

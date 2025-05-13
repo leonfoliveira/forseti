@@ -1,6 +1,6 @@
 package io.leonfoliveira.judge.adapter.docker
 
-import io.leonfoliveira.judge.core.entity.enumerate.Language
+import io.leonfoliveira.judge.core.domain.enumerate.Language
 import java.io.File
 
 class DockerSubmissionRunnerConfig(

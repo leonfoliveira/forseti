@@ -1,6 +1,6 @@
 package io.leonfoliveira.judge.adapter.aws
 
-import io.leonfoliveira.judge.core.entity.Submission
+import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.port.SubmissionQueueAdapter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

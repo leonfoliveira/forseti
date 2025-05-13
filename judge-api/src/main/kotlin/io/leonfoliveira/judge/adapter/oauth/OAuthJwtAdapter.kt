@@ -2,8 +2,8 @@ package io.leonfoliveira.judge.adapter.oauth
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import io.leonfoliveira.judge.core.entity.Member
-import io.leonfoliveira.judge.core.entity.model.Authorization
+import io.leonfoliveira.judge.core.domain.entity.Member
+import io.leonfoliveira.judge.core.domain.model.Authorization
 import io.leonfoliveira.judge.core.port.JwtAdapter
 import io.leonfoliveira.judge.core.util.TimeUtils
 import org.springframework.beans.factory.annotation.Value

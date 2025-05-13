@@ -1,5 +1,5 @@
 package io.leonfoliveira.judge.core.repository
 
-import io.leonfoliveira.judge.core.entity.Problem
+import io.leonfoliveira.judge.core.domain.entity.Problem
 
 interface ProblemRepository : BaseRepository<Problem>

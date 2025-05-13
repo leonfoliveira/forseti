@@ -1,7 +1,7 @@
 package io.leonfoliveira.judge.worker.consumer
 
 import io.awspring.cloud.sqs.annotation.SqsListener
-import io.leonfoliveira.judge.core.exception.BusinessException
+import io.leonfoliveira.judge.core.domain.exception.BusinessException
 import io.leonfoliveira.judge.core.service.submission.RunSubmissionService
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Component

@@ -1,6 +1,6 @@
-package io.leonfoliveira.judge.core.entity
+package io.leonfoliveira.judge.core.domain.entity
 
-import io.leonfoliveira.judge.core.entity.enumerate.Language
+import io.leonfoliveira.judge.core.domain.enumerate.Language
 import io.leonfoliveira.judge.core.util.TimeUtils
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

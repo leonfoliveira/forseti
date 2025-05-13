@@ -1,10 +1,10 @@
 package io.leonfoliveira.judge.api.config
 
 import io.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
-import io.leonfoliveira.judge.core.exception.BusinessException
-import io.leonfoliveira.judge.core.exception.ForbiddenException
-import io.leonfoliveira.judge.core.exception.NotFoundException
-import io.leonfoliveira.judge.core.exception.UnauthorizedException
+import io.leonfoliveira.judge.core.domain.exception.BusinessException
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
+import io.leonfoliveira.judge.core.domain.exception.NotFoundException
+import io.leonfoliveira.judge.core.domain.exception.UnauthorizedException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

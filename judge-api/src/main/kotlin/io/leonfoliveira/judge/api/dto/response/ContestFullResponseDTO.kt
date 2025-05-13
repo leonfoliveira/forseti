@@ -1,7 +1,7 @@
 package io.leonfoliveira.judge.api.dto.response
 
-import io.leonfoliveira.judge.core.entity.Contest
-import io.leonfoliveira.judge.core.entity.enumerate.Language
+import io.leonfoliveira.judge.core.domain.entity.Contest
+import io.leonfoliveira.judge.core.domain.enumerate.Language
 import java.time.LocalDateTime
 
 data class ContestFullResponseDTO(

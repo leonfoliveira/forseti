@@ -1,8 +1,8 @@
 package io.leonfoliveira.judge.adapter.docker
 
 import com.opencsv.CSVReader
-import io.leonfoliveira.judge.core.entity.Problem
-import io.leonfoliveira.judge.core.entity.Submission
+import io.leonfoliveira.judge.core.domain.entity.Problem
+import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.SubmissionRunnerAdapter
 import org.springframework.stereotype.Service
