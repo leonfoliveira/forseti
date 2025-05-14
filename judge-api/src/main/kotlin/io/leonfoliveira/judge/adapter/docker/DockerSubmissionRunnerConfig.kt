@@ -8,36 +8,35 @@ class DockerSubmissionRunnerConfig(
     val compileCommand: Array<String>?,
     val runCommand: Array<String>,
 ) {
-    data class RawConfig(
+    class Builder(
         val image: String,
         val createCompileCommand: ((File) -> Array<String>)?,
         val createRunCommand: (File) -> Array<String>,
-    )
+    ) {
+        companion object {
+            private val LANGUAGE_BUILDER_MAP =
+                mapOf(
+                    Language.PYTHON_3_13_3 to
+                        Builder(
+                            image = "python:3.13.3",
+                            createCompileCommand = null,
+                            createRunCommand = { codeFile ->
+                                arrayOf("python", "/app/${codeFile.name}")
+                            },
+                        ),
+                )
 
-    companion object {
-        private val CONFIG =
-            mapOf(
-                Language.PYTHON_3_13_3 to
-                    RawConfig(
-                        image = "python:3.13.3",
-                        createCompileCommand = null,
-                        createRunCommand = { codeFile ->
-                            arrayOf("python", "/app/${codeFile.name}")
-                        },
-                    ),
-            )
-
-        fun get(
-            language: Language,
-            code: File,
-        ): DockerSubmissionRunnerConfig {
-            val rawConfig =
-                CONFIG[language]
+            fun get(language: Language): Builder {
+                return LANGUAGE_BUILDER_MAP[language]
                     ?: throw IllegalArgumentException("Unsupported language: $language")
+            }
+        }
+
+        fun build(code: File): DockerSubmissionRunnerConfig {
             return DockerSubmissionRunnerConfig(
-                image = rawConfig.image,
-                compileCommand = rawConfig.createCompileCommand?.invoke(code),
-                runCommand = rawConfig.createRunCommand(code),
+                image = image,
+                compileCommand = createCompileCommand?.invoke(code),
+                runCommand = createRunCommand(code),
             )
         }
     }

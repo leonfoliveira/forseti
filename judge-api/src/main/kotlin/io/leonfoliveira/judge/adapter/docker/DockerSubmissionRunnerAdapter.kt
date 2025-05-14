@@ -22,7 +22,7 @@ class DockerSubmissionRunnerAdapter(
         val tmpDir = Files.createTempDirectory("judge_${submission.id}").toFile()
         val codeFile = storeCodeFile(submission, tmpDir)
         val testCases = loadTestCases(submission.problem)
-        val config = DockerSubmissionRunnerConfig.get(submission.language, codeFile)
+        val config = DockerSubmissionRunnerConfig.Builder.get(submission.language).build(codeFile)
 
         val container = DockerContainer.create(config.image, "judge_${submission.id}", tmpDir)
         container.start()
