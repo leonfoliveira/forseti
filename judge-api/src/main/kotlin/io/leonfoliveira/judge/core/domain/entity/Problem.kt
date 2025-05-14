@@ -22,7 +22,7 @@ class Problem(
     id: Int = 0,
     createdAt: LocalDateTime = TimeUtils.now(),
     updatedAt: LocalDateTime = TimeUtils.now(),
-    deleted: LocalDateTime? = null,
+    deletedAt: LocalDateTime? = null,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contest_id", nullable = false)
     val contest: Contest,
@@ -40,4 +40,4 @@ class Problem(
     var testCases: Attachment,
     @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY)
     var submissions: List<Submission> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deleted)
+) : BaseEntity(id, createdAt, updatedAt, deletedAt)

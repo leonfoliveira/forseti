@@ -16,10 +16,11 @@ class FindProblemServiceTest : FunSpec({
     val problemRepository = mockk<ProblemRepository>()
     val contestRepository = mockk<ContestRepository>()
 
-    val sut = FindProblemService(
-        problemRepository = problemRepository,
-        contestRepository = contestRepository
-    )
+    val sut =
+        FindProblemService(
+            problemRepository = problemRepository,
+            contestRepository = contestRepository,
+        )
 
     context("findById") {
         test("should throw NotFoundException when problem not found") {
@@ -53,9 +54,10 @@ class FindProblemServiceTest : FunSpec({
         }
 
         test("should return problems when found") {
-            val contest = ContestMockFactory.build(
-                problems = listOf(ProblemMockFactory.build())
-            )
+            val contest =
+                ContestMockFactory.build(
+                    problems = listOf(ProblemMockFactory.build()),
+                )
             every { contestRepository.findById(1) }
                 .returns(Optional.of(contest))
 

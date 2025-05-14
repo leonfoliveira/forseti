@@ -24,7 +24,7 @@ class Submission(
     id: Int = 0,
     createdAt: LocalDateTime = TimeUtils.now(),
     updatedAt: LocalDateTime = TimeUtils.now(),
-    deleted: LocalDateTime? = null,
+    deletedAt: LocalDateTime? = null,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     val member: Member,
@@ -41,7 +41,7 @@ class Submission(
         AttributeOverride(name = "key", column = Column(name = "code_key")),
     )
     val code: Attachment,
-) : BaseEntity(id, createdAt, updatedAt, deleted) {
+) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
     val contest by lazy {
         problem.contest
     }

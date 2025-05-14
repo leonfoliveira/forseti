@@ -6,6 +6,9 @@ import java.time.LocalDateTime
 object ContestMockFactory {
     fun build(
         id: Int = 1,
+        createdAt: LocalDateTime = LocalDateTime.now(),
+        updatedAt: LocalDateTime = LocalDateTime.now(),
+        deletedAt: LocalDateTime? = null,
         title: String = "Contest Title",
         languages: List<Language> = listOf(Language.PYTHON_3_13_3),
         startAt: LocalDateTime = LocalDateTime.now(),
@@ -14,6 +17,9 @@ object ContestMockFactory {
         problems: List<Problem> = emptyList(),
     ) = Contest(
         id = id,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        deletedAt = deletedAt,
         title = title,
         languages = languages,
         startAt = startAt,

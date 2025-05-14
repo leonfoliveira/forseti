@@ -1,15 +1,14 @@
 package io.leonfoliveira.judge.core.service.submission
 
 import io.leonfoliveira.judge.core.domain.entity.Submission
-import io.leonfoliveira.judge.core.domain.enumerate.Language
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.domain.model.RawAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
 import io.leonfoliveira.judge.core.port.SubmissionQueueAdapter
 import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
+import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTO
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,32 +20,27 @@ class CreateSubmissionService(
     private val submissionQueueAdapter: SubmissionQueueAdapter,
     private val submissionEmitterAdapter: SubmissionEmitterAdapter,
 ) {
-    data class Input(
-        val problemId: Int,
-        val language: Language,
-        val code: RawAttachment,
-    )
-
     fun create(
-        input: Input,
         memberId: Int,
+        problemId: Int,
+        inputDTO: CreateSubmissionInputDTO,
     ): Submission {
         val member =
             memberRepository.findById(memberId).orElseThrow {
                 NotFoundException("Could not find member with id = $memberId")
             }
         val problem =
-            problemRepository.findById(input.problemId).orElseThrow {
-                NotFoundException("Could not find problem with id = ${input.problemId}")
+            problemRepository.findById(problemId).orElseThrow {
+                NotFoundException("Could not find problem with id = $problemId")
             }
 
         val submission =
             Submission(
                 member = member,
                 problem = problem,
-                language = input.language,
+                language = inputDTO.language,
                 status = Submission.Status.JUDGING,
-                code = bucketAdapter.upload(input.code),
+                code = bucketAdapter.upload(inputDTO.code),
             )
         submissionRepository.save(submission)
         submissionQueueAdapter.enqueue(submission)

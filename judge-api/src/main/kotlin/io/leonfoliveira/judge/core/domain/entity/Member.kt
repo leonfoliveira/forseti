@@ -20,7 +20,7 @@ class Member(
     id: Int = 0,
     createdAt: LocalDateTime = TimeUtils.now(),
     updatedAt: LocalDateTime = TimeUtils.now(),
-    deleted: LocalDateTime? = null,
+    deletedAt: LocalDateTime? = null,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contest_id", nullable = false)
     val contest: Contest,
@@ -35,7 +35,7 @@ class Member(
     var password: String,
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     var submissions: List<Submission> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deleted) {
+) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
     enum class Type {
         ROOT,
         CONTESTANT,

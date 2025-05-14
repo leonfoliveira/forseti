@@ -21,7 +21,7 @@ class Contest(
     id: Int = 0,
     createdAt: LocalDateTime = TimeUtils.now(),
     updatedAt: LocalDateTime = TimeUtils.now(),
-    deleted: LocalDateTime? = null,
+    deletedAt: LocalDateTime? = null,
     @Column(nullable = false)
     var title: String,
     @Column(nullable = false)
@@ -36,4 +36,4 @@ class Contest(
     var members: List<Member> = mutableListOf(),
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY)
     var problems: List<Problem> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deleted)
+) : BaseEntity(id, createdAt, updatedAt, deletedAt)
