@@ -3,8 +3,8 @@ package io.leonfoliveira.judge.core.service.authorization
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import io.leonfoliveira.judge.core.domain.entity.Contest
-import io.leonfoliveira.judge.core.domain.entity.Member
+import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
+import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.domain.exception.UnauthorizedException
 import io.leonfoliveira.judge.core.domain.model.Authorization
@@ -13,6 +13,7 @@ import io.leonfoliveira.judge.core.port.JwtAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.mockk.every
 import io.mockk.mockk
+import java.util.Optional
 
 class AuthorizationServiceTest : FunSpec({
     val contestRepository = mockk<ContestRepository>()
@@ -50,22 +51,15 @@ class AuthorizationServiceTest : FunSpec({
         val contestId = 1
         val login = "login"
         val password = "password"
-        val member = mockk<Member>()
-        val contest = mockk<Contest>()
+        val member = MemberMockFactory.build(login = login)
+        val contest = ContestMockFactory.build(members = listOf(member))
 
         beforeEach {
-            every { contest.members } returns listOf(member)
-            every { member.login } returns login
-            every { member.password } returns "hashedPassword"
-            every { member.id } returns 1
-            every { member.name } returns "name"
-            every { member.type } returns Member.Type.CONTESTANT
-
-            every { contestRepository.findById(contestId) } returns java.util.Optional.of(contest)
+            every { contestRepository.findById(contestId) } returns Optional.of(contest)
         }
 
         test("should throw NotFoundException when contest is not found") {
-            every { contestRepository.findById(contestId) } returns java.util.Optional.empty()
+            every { contestRepository.findById(contestId) } returns Optional.empty()
 
             shouldThrow<NotFoundException> {
                 sut.authenticateMember(contestId, login, password)
@@ -73,7 +67,7 @@ class AuthorizationServiceTest : FunSpec({
         }
 
         test("should throw UnauthorizedException when member is not found") {
-            every { contest.members } returns emptyList()
+            every { contestRepository.findById(contestId) } returns Optional.of(ContestMockFactory.build())
 
             shouldThrow<UnauthorizedException> {
                 sut.authenticateMember(contestId, login, password)
@@ -81,7 +75,7 @@ class AuthorizationServiceTest : FunSpec({
         }
 
         test("should throw UnauthorizedException when password is invalid") {
-            every { hashAdapter.verify(password, "hashedPassword") } returns false
+            every { hashAdapter.verify(password, member.password) } returns false
 
             shouldThrow<UnauthorizedException> {
                 sut.authenticateMember(contestId, login, password)
@@ -89,15 +83,15 @@ class AuthorizationServiceTest : FunSpec({
         }
 
         test("should return AuthorizationOutput when password is valid") {
-            every { hashAdapter.verify(password, "hashedPassword") } returns true
+            every { hashAdapter.verify(password, member.password) } returns true
             every { jwtAdapter.generateToken(any()) } returns "generatedToken"
 
             val result = sut.authenticateMember(contestId, login, password)
 
-            result.authorization.id shouldBe 1
-            result.authorization.name shouldBe "name"
-            result.authorization.login shouldBe login
-            result.authorization.type shouldBe Member.Type.CONTESTANT
+            result.authorization.id shouldBe member.id
+            result.authorization.name shouldBe member.name
+            result.authorization.login shouldBe member.login
+            result.authorization.type shouldBe member.type
             result.token shouldBe "generatedToken"
         }
     }

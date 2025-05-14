@@ -2,17 +2,20 @@ package io.leonfoliveira.judge.core.service.contest
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.entity.Contest
+import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Member
-import io.leonfoliveira.judge.core.domain.entity.Problem
-import io.leonfoliveira.judge.core.domain.enumerate.Language
+import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
+import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.domain.model.Attachment
-import io.leonfoliveira.judge.core.domain.model.RawAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTOMockFactory
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDateTime
@@ -113,173 +116,45 @@ class UpdateContestServiceTest : FunSpec({
         }
 
         test("should update contest") {
-            val startAt = LocalDateTime.now()
-            val endAt = startAt.plusDays(1)
-            val input =
-                UpdateContestInputDTO(
-                    id = 1,
-                    title = "New Test Contest",
-                    languages = listOf(Language.PYTHON_3_13_3),
-                    startAt = startAt.plusDays(10),
-                    endAt = endAt.plusDays(10),
-                    members =
-                        listOf(
-                            UpdateContestInputDTO.MemberDTO(
-                                id = 1,
-                                type = Member.Type.CONTESTANT,
-                                name = "NEW Contestant Name 1",
-                                login = "new_contestant_login_1",
-                                password = "new_contestant_password_1",
-                            ),
-                            UpdateContestInputDTO.MemberDTO(
-                                id = 2,
-                                type = Member.Type.CONTESTANT,
-                                name = "New Contestant Name 2",
-                                login = "new_contestant_login_2",
-                            ),
-                            UpdateContestInputDTO.MemberDTO(
-                                type = Member.Type.CONTESTANT,
-                                name = "New Contestant Name 3",
-                                login = "new_contestant_login_3",
-                                password = "new_contestant_password_3",
-                            ),
-                        ),
-                    problems =
-                        listOf(
-                            UpdateContestInputDTO.ProblemDTO(
-                                id = 1,
-                                title = "New Problem 1",
-                                description = "New Problem 1 description",
-                                timeLimit = 1001,
-                                testCases =
-                                    RawAttachment(
-                                        filename = "new_test_case_1.java",
-                                        content = "new_test_case_1_content".encodeToByteArray(),
-                                    ),
-                            ),
-                            UpdateContestInputDTO.ProblemDTO(
-                                id = 2,
-                                title = "New Problem 2",
-                                description = "New Problem 2 description",
-                                timeLimit = 1001,
-                            ),
-                            UpdateContestInputDTO.ProblemDTO(
-                                title = "New Problem 3",
-                                description = "New Problem 3 description",
-                                timeLimit = 1001,
-                                testCases =
-                                    RawAttachment(
-                                        filename = "new_test_case_3.java",
-                                        content = "new_test_case_3_content".encodeToByteArray(),
-                                    ),
-                            ),
-                        ),
+            val memberDTOToInsert = UpdateContestInputDTOMockFactory.buildMemberDTO(id = null)
+            val memberDTOToUpdate = UpdateContestInputDTOMockFactory.buildMemberDTO(id = 2, password = null)
+            val memberDTOToUpdatePassword = UpdateContestInputDTOMockFactory.buildMemberDTO(id = 3)
+
+            val problemDTOToInsert = UpdateContestInputDTOMockFactory.buildProblemDTO(id = null)
+            val problemDTOToUpdate = UpdateContestInputDTOMockFactory.buildProblemDTO(id = 2, testCases = null)
+            val problemDTOToUpdateTestCases = UpdateContestInputDTOMockFactory.buildProblemDTO(id = 3)
+
+            val inputDTO =
+                UpdateContestInputDTOMockFactory.build(
+                    members = listOf(memberDTOToInsert, memberDTOToUpdate, memberDTOToUpdatePassword),
+                    problems = listOf(problemDTOToInsert, problemDTOToUpdate, problemDTOToUpdateTestCases),
                 )
+
+            val memberToDelete = MemberMockFactory.build(id = 1)
+            val memberToUpdate = MemberMockFactory.build(id = 2)
+            val memberToUpdatePassword = MemberMockFactory.build(id = 3)
+
+            val problemToDelete = ProblemMockFactory.build(id = 1)
+            val problemToUpdate = ProblemMockFactory.build(id = 2)
+            val problemToUpdateTestCases = ProblemMockFactory.build(id = 3)
+
             val contest =
-                Contest(
-                    id = 1,
-                    title = "Test Contest",
-                    languages = listOf(),
-                    startAt = startAt,
-                    endAt = endAt,
-                    members = listOf(),
-                    problems = listOf(),
+                ContestMockFactory.build(
+                    members = listOf(memberToDelete, memberToUpdate, memberToUpdatePassword),
+                    problems = listOf(problemToDelete, problemToUpdate, problemToUpdateTestCases),
                 )
-            contest.members =
-                listOf(
-                    Member(
-                        id = 0,
-                        type = Member.Type.CONTESTANT,
-                        name = "Contestant Name 0",
-                        login = "contestant_login_0",
-                        password = "hashed_password_0",
-                        contest = contest,
-                    ),
-                    Member(
-                        id = 1,
-                        type = Member.Type.CONTESTANT,
-                        name = "Contestant Name 1",
-                        login = "contestant_login_1",
-                        password = "hashed_password_1",
-                        contest = contest,
-                    ),
-                    Member(
-                        id = 2,
-                        type = Member.Type.CONTESTANT,
-                        name = "Contestant Name 2",
-                        login = "contestant_login_2",
-                        password = "hashed_password_2",
-                        contest = contest,
-                    ),
-                )
-            contest.problems =
-                listOf(
-                    Problem(
-                        id = 0,
-                        title = "Problem 0",
-                        description = "Problem 0 description",
-                        timeLimit = 1000,
-                        testCases =
-                            Attachment(
-                                filename = "test_case_0.java",
-                                key = "123456",
-                            ),
-                        contest = contest,
-                    ),
-                    Problem(
-                        id = 1,
-                        title = "Problem 1",
-                        description = "Problem 1 description",
-                        timeLimit = 1000,
-                        testCases =
-                            Attachment(
-                                filename = "test_case_1.java",
-                                key = "123456",
-                            ),
-                        contest = contest,
-                    ),
-                    Problem(
-                        id = 2,
-                        title = "Problem 2",
-                        description = "Problem 2 description",
-                        timeLimit = 1000,
-                        testCases =
-                            Attachment(
-                                filename = "test_case_2.java",
-                                key = "123456",
-                            ),
-                        contest = contest,
-                    ),
-                )
+
             every { findContestService.findById(any()) }
                 .returns(contest)
+            val createdMember = MemberMockFactory.build()
             every { createContestService.createMember(any(), any()) }
-                .returns(
-                    Member(
-                        type = Member.Type.CONTESTANT,
-                        name = "Contestant Name 0",
-                        login = "contestant_login_0",
-                        password = "hashed_password_0",
-                        contest = contest,
-                    ),
-                )
+                .returns(createdMember)
+            val createdProblem = ProblemMockFactory.build()
             every { createContestService.createProblem(any(), any()) }
-                .returns(
-                    Problem(
-                        title = "Problem 0",
-                        description = "Problem 0 description",
-                        timeLimit = 1000,
-                        testCases =
-                            Attachment(
-                                filename = "test_case_0.java",
-                                key = "123456",
-                            ),
-                        contest = contest,
-                    ),
-                )
-            every { deleteContestService.deleteMembers(any()) }
+                .returns(createdProblem)
+            every { deleteContestService.deleteMembers(listOf(memberToDelete)) }
                 .returns(Unit)
-            every { deleteContestService.deleteProblems(any()) }
+            every { deleteContestService.deleteProblems(listOf(problemToDelete)) }
                 .returns(Unit)
             every { contestRepository.save(any()) }
                 .returnsArgument(0)
@@ -293,45 +168,22 @@ class UpdateContestServiceTest : FunSpec({
             every { bucketAdapter.upload(any()) }
                 .returns(attachment)
 
-            val result = sut.update(input)
+            val result = sut.update(inputDTO)
 
-            assert(result.id == input.id)
-            assert(result.title == input.title)
-            assert(result.languages == input.languages)
-            assert(result.startAt == input.startAt)
-            assert(result.endAt == input.endAt)
-            assert(result.members.size == input.members.size)
-            assert(result.members[0].id == input.members[0].id)
-            assert(result.members[0].type == input.members[0].type)
-            assert(result.members[0].name == input.members[0].name)
-            assert(result.members[0].login == input.members[0].login)
-            assert(result.members[0].password == "new_hashed_password")
-            assert(result.members[1].id == input.members[1].id)
-            assert(result.members[1].type == input.members[1].type)
-            assert(result.members[1].name == input.members[1].name)
-            assert(result.members[1].login == input.members[1].login)
-            assert(result.members[1].password == "hashed_password_2")
-            assert(result.members[2].id == 0)
-            assert(result.members[2].type == input.members[2].type)
-            assert(result.members[2].name == input.members[2].name)
-            assert(result.members[2].login == input.members[2].login)
-            assert(result.members[2].password == "new_hashed_password")
-            assert(result.problems.size == input.problems.size)
-            assert(result.problems[0].id == input.problems[0].id)
-            assert(result.problems[0].title == input.problems[0].title)
-            assert(result.problems[0].description == input.problems[0].description)
-            assert(result.problems[0].timeLimit == input.problems[0].timeLimit)
-            assert(result.problems[0].testCases == attachment)
-            assert(result.problems[1].id == input.problems[1].id)
-            assert(result.problems[1].title == input.problems[1].title)
-            assert(result.problems[1].description == input.problems[1].description)
-            assert(result.problems[1].timeLimit == input.problems[1].timeLimit)
-            assert(result.problems[1].testCases == contest.problems[1].testCases)
-            assert(result.problems[2].id == 0)
-            assert(result.problems[2].title == input.problems[2].title)
-            assert(result.problems[2].description == input.problems[2].description)
-            assert(result.problems[2].timeLimit == input.problems[2].timeLimit)
-            assert(result.problems[2].testCases == attachment)
+            result.members shouldContainExactlyInAnyOrder
+                listOf(
+                    createdMember,
+                    memberToUpdate,
+                    memberToUpdatePassword,
+                )
+            memberToUpdatePassword.password shouldBe "new_hashed_password"
+            result.problems shouldContainExactlyInAnyOrder
+                listOf(
+                    createdProblem,
+                    problemToUpdate,
+                    problemToUpdateTestCases,
+                )
+            problemToUpdateTestCases.testCases shouldBe attachment
         }
     }
 })

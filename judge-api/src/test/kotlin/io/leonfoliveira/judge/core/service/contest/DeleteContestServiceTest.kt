@@ -2,9 +2,10 @@ package io.leonfoliveira.judge.core.service.contest
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import io.leonfoliveira.judge.core.domain.entity.Contest
-import io.leonfoliveira.judge.core.domain.entity.Member
-import io.leonfoliveira.judge.core.domain.entity.Problem
+import io.kotest.matchers.shouldBe
+import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
+import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
+import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
@@ -13,7 +14,6 @@ import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
-import io.mockk.verify
 import java.time.LocalDateTime
 import java.util.Optional
 
@@ -42,7 +42,7 @@ class DeleteContestServiceTest : FunSpec({
         }
 
         test("should delete contest") {
-            val contest = mockk<Contest>(relaxed = true)
+            val contest = ContestMockFactory.build()
             every { contestRepository.findById(any()) }
                 .returns(Optional.of(contest))
             every { contestRepository.save(any()) }
@@ -50,31 +50,31 @@ class DeleteContestServiceTest : FunSpec({
 
             sut.delete(1)
 
-            verify { contest.deletedAt = now }
+            contest.deletedAt shouldBe now
         }
     }
 
     context("deleteMembers") {
         test("should delete members") {
-            val members = listOf(mockk<Member>(relaxed = true), mockk<Member>(relaxed = true))
+            val members = listOf(MemberMockFactory.build(), MemberMockFactory.build())
             every { memberRepository.saveAll(members) }
                 .returns(members)
 
             sut.deleteMembers(members)
 
-            verify { members.forEach { it.deletedAt = now } }
+            members.forEach { it.deletedAt shouldBe now }
         }
     }
 
     context("deleteProblems") {
         test("should delete problems") {
-            val problems = listOf(mockk<Problem>(relaxed = true), mockk<Problem>(relaxed = true))
+            val problems = listOf(ProblemMockFactory.build(), ProblemMockFactory.build())
             every { problemRepository.saveAll(problems) }
                 .returns(problems)
 
             sut.deleteProblems(problems)
 
-            verify { problems.forEach { it.deletedAt = now } }
+            problems.forEach { it.deletedAt shouldBe now }
         }
     }
 })

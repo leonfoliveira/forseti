@@ -3,7 +3,7 @@ package io.leonfoliveira.judge.core.service.contest
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import io.leonfoliveira.judge.core.domain.entity.Contest
+import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.mockk.every
@@ -17,7 +17,7 @@ class FindContestServiceTest : FunSpec({
 
     context("findAll") {
         test("should return all contests") {
-            val contests = listOf(mockk<Contest>(), mockk())
+            val contests = listOf(ContestMockFactory.build(), ContestMockFactory.build())
             every { contestRepository.findAll() }
                 .returns(contests)
 
@@ -40,7 +40,7 @@ class FindContestServiceTest : FunSpec({
 
         test("should return contest") {
             val id = 1
-            val contest = mockk<Contest>()
+            val contest = ContestMockFactory.build()
             every { contestRepository.findById(id) }
                 .returns(Optional.of(contest))
 
