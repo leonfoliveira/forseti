@@ -11,13 +11,12 @@ import org.springframework.stereotype.Service
 import java.time.ZoneOffset
 
 @Service
-class OAuthJwtAdapter : JwtAdapter {
+class OAuthJwtAdapter(
     @Value("\${security.jwt.secret}")
-    private lateinit var secret: String
-
+    private val secret: String,
     @Value("\${security.jwt.expiration}")
-    private var expiration: Long = 0L
-
+    private val expiration: Long = 0L,
+) : JwtAdapter {
     override fun generateToken(authorization: Authorization): String {
         val algorithm = Algorithm.HMAC256(secret)
         val now = TimeUtils.now().toInstant(ZoneOffset.UTC)
