@@ -14,10 +14,9 @@ import java.util.UUID
 @Service
 class S3BucketAdapter(
     private val s3Client: S3Client,
-) : BucketAdapter {
     @Value("\${spring.cloud.aws.s3.bucket}")
-    private lateinit var bucket: String
-
+    private val bucket: String,
+) : BucketAdapter {
     override fun upload(rawAttachment: RawAttachment): Attachment {
         val key = UUID.randomUUID().toString()
         val putObjectRequest =

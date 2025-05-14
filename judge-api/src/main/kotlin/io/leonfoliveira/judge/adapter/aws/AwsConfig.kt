@@ -11,27 +11,23 @@ import software.amazon.awssdk.services.sqs.SqsClient
 import java.net.URI
 
 @Configuration
-class AwsConfig {
+class AwsConfig(
     @Value("\${spring.cloud.aws.endpoint}")
-    private lateinit var endpoint: URI
-
+    private val endpoint: URI,
     @Value("\${spring.cloud.aws.region.static}")
-    private lateinit var region: Region
-
+    private val region: Region,
     @Value("\${spring.cloud.aws.credentials.access-key}")
-    private lateinit var accessKey: String
-
+    private val accessKey: String,
     @Value("\${spring.cloud.aws.credentials.secret-key}")
-    private lateinit var secretKey: String
-
-    private val credentialsProvider by lazy {
+    private val secretKey: String,
+) {
+    private val credentialsProvider =
         StaticCredentialsProvider.create(
             AwsBasicCredentials.create(
                 accessKey,
                 secretKey,
             ),
         )
-    }
 
     @Bean
     fun s3Client(): S3Client {
