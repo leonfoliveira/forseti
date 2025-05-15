@@ -1,4 +1,4 @@
-package io.leonfoliveira.judge.api.dto.request
+package io.leonfoliveira.judge.api.controller.dto.request
 
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.enumerate.Language

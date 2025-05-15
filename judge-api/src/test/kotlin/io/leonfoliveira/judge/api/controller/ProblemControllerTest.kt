@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.leonfoliveira.judge.api.controller.dto.CreateSubmissionRequestDTOMockFactory
-import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
-import io.leonfoliveira.judge.api.dto.response.toResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toFullResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
 import io.leonfoliveira.judge.api.util.SecurityContextMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory

@@ -51,7 +51,7 @@ class FindProblemService(
                 wrongAnswers =
                     memberSubmissions
                         .count { it.status != Submission.Status.ACCEPTED },
-                correctAnswers =
+                acceptedAnswers =
                     memberSubmissions
                         .count { it.status == Submission.Status.ACCEPTED },
             )

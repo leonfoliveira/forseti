@@ -1,4 +1,4 @@
-package io.leonfoliveira.judge.api.dto.response
+package io.leonfoliveira.judge.api.controller.dto.response
 
 import io.leonfoliveira.judge.core.domain.entity.Contest
 import java.time.LocalDateTime

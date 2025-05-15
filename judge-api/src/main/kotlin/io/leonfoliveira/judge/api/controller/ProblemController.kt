@@ -1,10 +1,10 @@
 package io.leonfoliveira.judge.api.controller
 
-import io.leonfoliveira.judge.api.dto.request.CreateSubmissionRequestDTO
-import io.leonfoliveira.judge.api.dto.response.ProblemFullResponseDTO
-import io.leonfoliveira.judge.api.dto.response.SubmissionResponseDTO
-import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
-import io.leonfoliveira.judge.api.dto.response.toResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.request.CreateSubmissionRequestDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ProblemFullResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.SubmissionResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toFullResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
 import io.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.leonfoliveira.judge.api.util.Private
 import io.leonfoliveira.judge.core.domain.entity.Member

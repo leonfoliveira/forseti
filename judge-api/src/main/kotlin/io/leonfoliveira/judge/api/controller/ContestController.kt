@@ -1,14 +1,13 @@
 package io.leonfoliveira.judge.api.controller
 
-import io.leonfoliveira.judge.api.config.JwtAuthentication
-import io.leonfoliveira.judge.api.dto.request.CreateContestRequestDTO
-import io.leonfoliveira.judge.api.dto.request.UpdateContestRequestDTO
-import io.leonfoliveira.judge.api.dto.response.ContestFullResponseDTO
-import io.leonfoliveira.judge.api.dto.response.ContestResponseDTO
-import io.leonfoliveira.judge.api.dto.response.ProblemResponseDTO
-import io.leonfoliveira.judge.api.dto.response.SubmissionResponseDTO
-import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
-import io.leonfoliveira.judge.api.dto.response.toResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.request.CreateContestRequestDTO
+import io.leonfoliveira.judge.api.controller.dto.request.UpdateContestRequestDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ContestFullResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ContestResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ProblemResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.SubmissionResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toFullResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
 import io.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.leonfoliveira.judge.api.util.Private
 import io.leonfoliveira.judge.core.domain.entity.Member
@@ -24,7 +23,6 @@ import io.leonfoliveira.judge.core.service.problem.FindProblemService
 import io.leonfoliveira.judge.core.service.submission.FindSubmissionService
 import jakarta.transaction.Transactional
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -51,8 +49,8 @@ class ContestController(
     fun createContest(
         @RequestBody input: CreateContestRequestDTO,
     ): ResponseEntity<ContestFullResponseDTO> {
-        val authentication = SecurityContextHolder.getContext().authentication as JwtAuthentication
-        if (authentication.principal?.type != Member.Type.ROOT) {
+        val authentication = AuthorizationContextUtil.getAuthorization()
+        if (authentication.type != Member.Type.ROOT) {
             throw ForbiddenException()
         }
         val contest = createContestService.create(input.toInputDTO())

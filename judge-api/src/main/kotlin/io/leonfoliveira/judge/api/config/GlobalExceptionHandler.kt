@@ -1,6 +1,6 @@
 package io.leonfoliveira.judge.api.config
 
-import io.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ErrorResponseDTO
 import io.leonfoliveira.judge.core.domain.exception.BusinessException
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException

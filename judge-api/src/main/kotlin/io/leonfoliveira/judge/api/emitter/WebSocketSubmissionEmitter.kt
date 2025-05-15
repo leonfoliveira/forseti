@@ -1,6 +1,6 @@
 package io.leonfoliveira.judge.api.emitter
 
-import io.leonfoliveira.judge.api.dto.response.toResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
 import org.springframework.messaging.simp.SimpMessagingTemplate

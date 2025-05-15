@@ -157,7 +157,7 @@ class FindProblemServiceTest : FunSpec({
                         id = contest.problems[0].id,
                         title = contest.problems[0].title,
                         wrongAnswers = 2,
-                        correctAnswers = 1,
+                        acceptedAnswers = 1,
                     ),
                 )
         }
