@@ -27,7 +27,7 @@ class DeleteContestServiceTest : FunSpec({
 
     val now = LocalDateTime.now().minusYears(1)
 
-    beforeTest {
+    beforeEach {
         mockkObject(TimeUtils)
         every { TimeUtils.now() }.returns(now)
     }

@@ -31,7 +31,7 @@ class CreateContestServiceTest : FunSpec({
 
     val now = LocalDateTime.now()
 
-    beforeTest {
+    beforeEach {
         mockkObject(TimeUtils)
         every { TimeUtils.now() } returns now
     }

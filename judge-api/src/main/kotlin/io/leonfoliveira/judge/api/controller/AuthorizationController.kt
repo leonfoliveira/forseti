@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/auth")
-class AuthenticationController(
+class AuthorizationController(
     val authenticationService: AuthorizationService,
 ) {
     data class RootLoginRequestBody(
@@ -26,7 +26,7 @@ class AuthenticationController(
         return ResponseEntity.ok(authorization)
     }
 
-    data class ContestLoginRequestBody(
+    data class MemberLoginRequestBody(
         val login: String,
         val password: String,
     )
@@ -34,7 +34,7 @@ class AuthenticationController(
     @PostMapping("/contests/{id}")
     fun authenticateMember(
         @PathVariable id: Int,
-        @RequestBody request: ContestLoginRequestBody,
+        @RequestBody request: MemberLoginRequestBody,
     ): ResponseEntity<AuthorizationOutputDTO> {
         val authorization =
             authenticationService.authenticateMember(

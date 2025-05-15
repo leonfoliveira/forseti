@@ -15,22 +15,22 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.kotlin.reflect)
-
-    implementation(libs.jackson.module.kotlin)
-    implementation(libs.java.jwt)
     implementation(libs.bundles.spring)
+    implementation(libs.kotlin.reflect)
+    implementation(libs.jackson.module.kotlin)
+    implementation(libs.java.diff.utils)
+    implementation(libs.java.jwt)
     implementation(libs.hibernate.envers)
     implementation(libs.hibernate.types)
     implementation(libs.flyway)
     implementation(libs.postgresql)
-
-    implementation(libs.java.diff.utils)
     implementation(libs.opencsv)
 
     testImplementation(libs.bundles.kotest)
-    testImplementation(libs.mockk)
-    testImplementation(libs.spring.boot.dev.tools)
+    testImplementation(libs.bundles.mockk)
+    testImplementation(libs.spring.boot.starter.test)
+
+    developmentOnly(libs.spring.boot.dev.tools)
 }
 
 kotlin {

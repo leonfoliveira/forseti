@@ -27,7 +27,7 @@ class LeaderboardServiceTest : FunSpec({
         )
 
     val now = TimeUtils.now()
-    beforeTest {
+    beforeEach {
         mockkObject(TimeUtils)
         every { TimeUtils.now() } returns now
     }

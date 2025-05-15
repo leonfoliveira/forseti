@@ -29,10 +29,7 @@ class JwtAuthFilter(
             val authorization = jwtAdapter.decodeToken(token)
 
             SecurityContextHolder.getContext().authentication =
-                JwtAuthentication(
-                    principal = authorization,
-                    isAuthenticated = true,
-                )
+                JwtAuthentication(authorization)
             return filterChain.doFilter(request, response)
         } catch (ex: Exception) {
             SecurityContextHolder.getContext().authentication = JwtAuthentication()

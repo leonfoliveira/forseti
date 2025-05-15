@@ -6,7 +6,6 @@ import org.springframework.security.core.GrantedAuthority
 
 class JwtAuthentication(
     private var principal: Authorization? = null,
-    private var isAuthenticated: Boolean = false,
 ) : Authentication {
     override fun getName(): String? = null
 
@@ -16,9 +15,9 @@ class JwtAuthentication(
 
     override fun getDetails(): Any? = null
 
-    override fun getPrincipal(): Authorization? = this.principal
+    override fun getPrincipal(): Authorization? = principal
 
-    override fun isAuthenticated(): Boolean = this.isAuthenticated
+    override fun isAuthenticated(): Boolean = principal != null
 
     override fun setAuthenticated(isAuthenticated: Boolean) {
         this.isAuthenticated = isAuthenticated

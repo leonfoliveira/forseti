@@ -1,0 +1,78 @@
+package io.leonfoliveira.judge.api.controller
+
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.ninjasquad.springmockk.MockkBean
+import io.kotest.core.spec.style.FunSpec
+import io.leonfoliveira.judge.api.controller.AuthorizationController.RootLoginRequestBody
+import io.leonfoliveira.judge.core.domain.entity.Member
+import io.leonfoliveira.judge.core.domain.model.Authorization
+import io.leonfoliveira.judge.core.service.authorization.AuthorizationService
+import io.leonfoliveira.judge.core.service.dto.output.AuthorizationOutputDTO
+import io.mockk.every
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.post
+
+@AutoConfigureMockMvc
+@SpringBootTest
+class AuthenticationControllerTest(
+    val mockMvc: MockMvc,
+    val objectMapper: ObjectMapper,
+    @MockkBean val authorizationService: AuthorizationService,
+) : FunSpec({
+        val basePath = "/v1/auth"
+
+        test("authenticateRoot") {
+            val password = "rootPassword"
+            val authorizationOutputDTO =
+                AuthorizationOutputDTO(
+                    authorization = Authorization.ROOT,
+                    token = "token",
+                )
+            every { authorizationService.authenticateRoot(password) }
+                .returns(authorizationOutputDTO)
+
+            mockMvc.post("$basePath/root") {
+                contentType = MediaType.APPLICATION_JSON
+                content =
+                    objectMapper.writeValueAsString(
+                        RootLoginRequestBody(password = password),
+                    )
+            }.andExpect {
+                status { isOk() }
+                content { authorizationOutputDTO }
+            }
+        }
+
+        test("authenticateMember") {
+            val contestId = 1
+            val login = "login"
+            val password = "password"
+            val authorizationOutputDTO =
+                AuthorizationOutputDTO(
+                    authorization =
+                        Authorization(
+                            id = 1,
+                            name = "name",
+                            login = login,
+                            type = Member.Type.CONTESTANT,
+                        ),
+                    token = "token",
+                )
+            every { authorizationService.authenticateMember(contestId, login, password) }
+                .returns(authorizationOutputDTO)
+
+            mockMvc.post("$basePath/contests/$contestId") {
+                contentType = MediaType.APPLICATION_JSON
+                content =
+                    objectMapper.writeValueAsString(
+                        AuthorizationController.MemberLoginRequestBody(login = login, password = password),
+                    )
+            }.andExpect {
+                status { isOk() }
+                content { authorizationOutputDTO }
+            }
+        }
+    })
