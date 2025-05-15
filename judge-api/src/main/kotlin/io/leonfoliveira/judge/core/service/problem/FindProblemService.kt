@@ -1,6 +1,7 @@
 package io.leonfoliveira.judge.core.service.problem
 
 import io.leonfoliveira.judge.core.domain.entity.Problem
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
@@ -17,7 +18,7 @@ class FindProblemService(
                 NotFoundException("Could not find problem with id = $id")
             }
         if (!problem.contest.hasStarted()) {
-            throw NotFoundException("Contest has not started yet")
+            throw ForbiddenException("Contest has not started yet")
         }
         return problem
     }
@@ -28,7 +29,7 @@ class FindProblemService(
                 NotFoundException("Could not find contest with id = $contestId")
             }
         if (!contest.hasStarted()) {
-            throw NotFoundException("Contest has not started yet")
+            throw ForbiddenException("Contest has not started yet")
         }
         return contest.problems
     }

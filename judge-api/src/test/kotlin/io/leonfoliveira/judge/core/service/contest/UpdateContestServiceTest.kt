@@ -4,20 +4,22 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
-import io.leonfoliveira.judge.core.domain.entity.Contest
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
+import io.leonfoliveira.judge.core.domain.exception.BusinessException
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.domain.model.Attachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
-import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTOMockFactory
+import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import java.time.LocalDateTime
 
 class UpdateContestServiceTest : FunSpec({
@@ -38,37 +40,69 @@ class UpdateContestServiceTest : FunSpec({
             deleteContestService = deleteContestService,
         )
 
+    val now = LocalDateTime.now()
+    beforeTest {
+        mockkObject(TimeUtils)
+        every { TimeUtils.now() } returns now
+    }
+
     context("update") {
+        listOf(
+            UpdateContestInputDTOMockFactory.build(
+                members = listOf(UpdateContestInputDTOMockFactory.buildMemberDTO(type = Member.Type.ROOT)),
+            ),
+            UpdateContestInputDTOMockFactory.build(
+                members = listOf(UpdateContestInputDTOMockFactory.buildMemberDTO(name = "")),
+            ),
+            UpdateContestInputDTOMockFactory.build(
+                members = listOf(UpdateContestInputDTOMockFactory.buildMemberDTO(login = "")),
+            ),
+            UpdateContestInputDTOMockFactory.build(
+                members = listOf(UpdateContestInputDTOMockFactory.buildMemberDTO(password = "")),
+            ),
+            UpdateContestInputDTOMockFactory.build(
+                members = listOf(UpdateContestInputDTOMockFactory.buildMemberDTO(id = null, password = null)),
+            ),
+            UpdateContestInputDTOMockFactory.build(
+                problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(title = "")),
+            ),
+            UpdateContestInputDTOMockFactory.build(
+                problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(description = "")),
+            ),
+            UpdateContestInputDTOMockFactory.build(
+                problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(timeLimit = 0)),
+            ),
+            UpdateContestInputDTOMockFactory.build(
+                problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = null, testCases = null)),
+            ),
+            UpdateContestInputDTOMockFactory.build(title = ""),
+            UpdateContestInputDTOMockFactory.build(languages = emptyList()),
+            UpdateContestInputDTOMockFactory.build(startAt = now, endAt = now),
+            UpdateContestInputDTOMockFactory.build(startAt = now.minusDays(1)),
+        ).forEach { dto ->
+            test("should validate inputDTO") {
+                shouldThrow<BusinessException> {
+                    sut.update(dto)
+                }
+            }
+        }
+
+        test("should throw ForbiddenException when contest not started") {
+            val input = UpdateContestInputDTOMockFactory.build()
+            every { findContestService.findById(input.id) }
+                .returns(ContestMockFactory.build(startAt = now.minusDays(1)))
+
+            shouldThrow<ForbiddenException> {
+                sut.update(input)
+            }
+        }
+
         test("should throw NotFoundException when member not found") {
             val input =
-                UpdateContestInputDTO(
-                    id = 1,
-                    title = "Test Contest",
-                    languages = listOf(),
-                    startAt = LocalDateTime.now(),
-                    endAt = LocalDateTime.now().plusDays(1),
-                    members =
-                        listOf(
-                            UpdateContestInputDTO.MemberDTO(
-                                id = 2,
-                                type = Member.Type.CONTESTANT,
-                                name = "Contestant Name",
-                                login = "contestant_login",
-                                password = "contestant_password",
-                            ),
-                        ),
-                    problems = listOf(),
+                UpdateContestInputDTOMockFactory.build(
+                    members = listOf(UpdateContestInputDTOMockFactory.buildMemberDTO(id = 1)),
                 )
-            val contest =
-                Contest(
-                    id = 1,
-                    title = "Test Contest",
-                    languages = listOf(),
-                    startAt = LocalDateTime.now(),
-                    endAt = LocalDateTime.now().plusDays(1),
-                    members = listOf(),
-                    problems = listOf(),
-                )
+            val contest = ContestMockFactory.build(members = listOf())
             every { findContestService.findById(input.id) }
                 .returns(contest)
 
@@ -79,34 +113,10 @@ class UpdateContestServiceTest : FunSpec({
 
         test("should throw NotFoundException when problem not found") {
             val input =
-                UpdateContestInputDTO(
-                    id = 1,
-                    title = "Test Contest",
-                    languages = listOf(),
-                    startAt = LocalDateTime.now(),
-                    endAt = LocalDateTime.now().plusDays(1),
-                    members = listOf(),
-                    problems =
-                        listOf(
-                            UpdateContestInputDTO.ProblemDTO(
-                                id = 2,
-                                title = "Problem 1",
-                                description = "Problem 1 description",
-                                timeLimit = 1000,
-                                testCases = null,
-                            ),
-                        ),
+                UpdateContestInputDTOMockFactory.build(
+                    problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = 1)),
                 )
-            val contest =
-                Contest(
-                    id = 1,
-                    title = "Test Contest",
-                    languages = listOf(),
-                    startAt = LocalDateTime.now(),
-                    endAt = LocalDateTime.now().plusDays(1),
-                    members = listOf(),
-                    problems = listOf(),
-                )
+            val contest = ContestMockFactory.build(problems = listOf())
             every { findContestService.findById(input.id) }
                 .returns(contest)
 
@@ -126,6 +136,8 @@ class UpdateContestServiceTest : FunSpec({
 
             val inputDTO =
                 UpdateContestInputDTOMockFactory.build(
+                    startAt = now.plusDays(1),
+                    endAt = now.plusDays(2),
                     members = listOf(memberDTOToInsert, memberDTOToUpdate, memberDTOToUpdatePassword),
                     problems = listOf(problemDTOToInsert, problemDTOToUpdate, problemDTOToUpdateTestCases),
                 )

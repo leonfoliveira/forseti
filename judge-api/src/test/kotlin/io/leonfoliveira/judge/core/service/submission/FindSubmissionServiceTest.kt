@@ -6,10 +6,13 @@ import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
+import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import java.time.LocalDateTime
 import java.util.Optional
 
@@ -21,6 +24,13 @@ class FindSubmissionServiceTest : FunSpec({
             contestRepository = contestRepository,
         )
 
+    val now = LocalDateTime.now()
+
+    beforeEach {
+        mockkObject(TimeUtils)
+        every { TimeUtils.now() } returns now
+    }
+
     context("findAllByContest") {
         test("should throw NotFoundException when contest not found") {
             every { contestRepository.findById(1) }
@@ -31,8 +41,18 @@ class FindSubmissionServiceTest : FunSpec({
             }
         }
 
+        test("should throw ForbiddenException when contest has not started") {
+            val contest = ContestMockFactory.build(startAt = now.plusDays(1))
+
+            every { contestRepository.findById(1) }
+                .returns(Optional.of(contest))
+
+            shouldThrow<ForbiddenException> {
+                sut.findAllByContest(1)
+            }
+        }
+
         test("should return sorted list of submissions") {
-            val now = LocalDateTime.now()
             val submission1 = SubmissionMockFactory.build(createdAt = now)
             val submission2 = SubmissionMockFactory.build(createdAt = now.minusSeconds(1))
             val member1 =
@@ -45,6 +65,7 @@ class FindSubmissionServiceTest : FunSpec({
                 )
             val contest =
                 ContestMockFactory.build(
+                    startAt = now.minusDays(1),
                     members = listOf(member1, member2),
                 )
 

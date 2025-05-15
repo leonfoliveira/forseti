@@ -1,7 +1,7 @@
 package io.leonfoliveira.judge.core.service.submission
 
 import io.leonfoliveira.judge.core.domain.entity.Submission
-import io.leonfoliveira.judge.core.domain.exception.BusinessException
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
 import io.leonfoliveira.judge.core.port.SubmissionRunnerAdapter
@@ -20,7 +20,7 @@ class RunSubmissionService(
                 NotFoundException("Could not find submission with id = $id")
             }
         if (submission.status != Submission.Status.JUDGING) {
-            throw BusinessException("Submission with id = $id is not in a runnable state")
+            throw ForbiddenException("Submission with id = $id is not in a runnable state")
         }
 
         val result = submissionRunnerAdapter.run(submission)

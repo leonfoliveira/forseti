@@ -67,7 +67,7 @@ data class CreateContestInputDTO(
         if (languages.isEmpty()) {
             throw BusinessException("Languages cannot be empty")
         }
-        if (startAt.isAfter(endAt)) {
+        if (!startAt.isBefore(endAt)) {
             throw BusinessException("Start date must be before end date")
         }
         if (!startAt.isAfter(TimeUtils.now())) {

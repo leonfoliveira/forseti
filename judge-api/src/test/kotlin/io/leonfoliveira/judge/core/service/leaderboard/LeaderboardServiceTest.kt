@@ -1,5 +1,6 @@
 package io.leonfoliveira.judge.core.service.leaderboard
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
@@ -7,11 +8,14 @@ import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
+import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.output.LeaderboardOutputDTO
 import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import java.util.Optional
 
 class LeaderboardServiceTest : FunSpec({
@@ -22,7 +26,32 @@ class LeaderboardServiceTest : FunSpec({
             contestRepository = contestRepository,
         )
 
+    val now = TimeUtils.now()
+    beforeTest {
+        mockkObject(TimeUtils)
+        every { TimeUtils.now() } returns now
+    }
+
     context("buildLeaderboard") {
+        test("should throw NotFoundException when contest not found") {
+            every { contestRepository.findById(1) }
+                .returns(Optional.empty())
+
+            shouldThrow<NotFoundException> {
+                sut.buildLeaderboard(1)
+            }
+        }
+
+        test("should throw ForbiddenException when contest has not started") {
+            val contest = ContestMockFactory.build(startAt = now.plusDays(1))
+            every { contestRepository.findById(1) }
+                .returns(Optional.of(contest))
+
+            shouldThrow<ForbiddenException> {
+                sut.buildLeaderboard(1)
+            }
+        }
+
         test("should build leaderboard") {
             val acceptationTime = TimeUtils.now()
             val problemWithSubmissions = ProblemMockFactory.build(id = 1)

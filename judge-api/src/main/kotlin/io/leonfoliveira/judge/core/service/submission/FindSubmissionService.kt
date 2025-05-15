@@ -1,6 +1,7 @@
 package io.leonfoliveira.judge.core.service.submission
 
 import io.leonfoliveira.judge.core.domain.entity.Submission
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import org.springframework.stereotype.Service
@@ -15,7 +16,7 @@ class FindSubmissionService(
                 NotFoundException("Could not find contest with id = $contestId")
             }
         if (!contest.hasStarted()) {
-            throw NotFoundException("Contest has not started yet")
+            throw ForbiddenException("Contest has not started yet")
         }
         val submissions =
             contest.members.map {

@@ -5,7 +5,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
-import io.leonfoliveira.judge.core.domain.exception.BusinessException
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
 import io.leonfoliveira.judge.core.port.SubmissionRunnerAdapter
@@ -37,7 +37,7 @@ class RunSubmissionServiceTest : FunSpec({
             }
         }
 
-        test("should throw BusinessException when submission is not in a runnable state") {
+        test("should throw ForbiddenException when submission is not in a runnable state") {
             val submission =
                 SubmissionMockFactory.build(
                     status = Submission.Status.ACCEPTED,
@@ -45,7 +45,7 @@ class RunSubmissionServiceTest : FunSpec({
             every { submissionRepository.findById(1) }
                 .returns(Optional.of(submission))
 
-            shouldThrow<BusinessException> {
+            shouldThrow<ForbiddenException> {
                 sut.run(1)
             }
         }

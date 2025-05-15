@@ -6,6 +6,7 @@ import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
@@ -41,8 +42,18 @@ class DeleteContestServiceTest : FunSpec({
             }
         }
 
+        test("should throw ForbiddenException when contest has started") {
+            val contest = ContestMockFactory.build(startAt = now.minusDays(1))
+            every { contestRepository.findById(any()) }
+                .returns(Optional.of(contest))
+
+            shouldThrow<ForbiddenException> {
+                sut.delete(1)
+            }
+        }
+
         test("should delete contest") {
-            val contest = ContestMockFactory.build()
+            val contest = ContestMockFactory.build(startAt = now.plusDays(1))
             every { contestRepository.findById(any()) }
                 .returns(Optional.of(contest))
             every { contestRepository.save(any()) }

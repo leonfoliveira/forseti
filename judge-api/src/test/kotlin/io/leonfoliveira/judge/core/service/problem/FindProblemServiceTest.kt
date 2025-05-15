@@ -5,11 +5,15 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
+import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
+import java.time.LocalDateTime
 import java.util.Optional
 
 class FindProblemServiceTest : FunSpec({
@@ -22,6 +26,13 @@ class FindProblemServiceTest : FunSpec({
             contestRepository = contestRepository,
         )
 
+    val now = LocalDateTime.now()
+
+    beforeTest {
+        mockkObject(TimeUtils)
+        every { TimeUtils.now() } returns now
+    }
+
     context("findById") {
         test("should throw NotFoundException when problem not found") {
             every { problemRepository.findById(1) }
@@ -32,8 +43,30 @@ class FindProblemServiceTest : FunSpec({
             }
         }
 
+        test("should throw ForbiddenException when contest not started") {
+            val problem =
+                ProblemMockFactory.build(
+                    contest =
+                        ContestMockFactory.build(
+                            startAt = now.plusDays(1),
+                        ),
+                )
+            every { problemRepository.findById(1) }
+                .returns(Optional.of(problem))
+
+            shouldThrow<ForbiddenException> {
+                sut.findById(1)
+            }
+        }
+
         test("should return problem when found") {
-            val problem = ProblemMockFactory.build()
+            val problem =
+                ProblemMockFactory.build(
+                    contest =
+                        ContestMockFactory.build(
+                            startAt = now.minusDays(1),
+                        ),
+                )
             every { problemRepository.findById(1) }
                 .returns(Optional.of(problem))
 
@@ -53,9 +86,23 @@ class FindProblemServiceTest : FunSpec({
             }
         }
 
+        test("should throw ForbiddenException when contest not started") {
+            val contest =
+                ContestMockFactory.build(
+                    startAt = now.plusDays(1),
+                )
+            every { contestRepository.findById(1) }
+                .returns(Optional.of(contest))
+
+            shouldThrow<ForbiddenException> {
+                sut.findAllByContest(1)
+            }
+        }
+
         test("should return problems when found") {
             val contest =
                 ContestMockFactory.build(
+                    startAt = now.minusDays(1),
                     problems = listOf(ProblemMockFactory.build()),
                 )
             every { contestRepository.findById(1) }

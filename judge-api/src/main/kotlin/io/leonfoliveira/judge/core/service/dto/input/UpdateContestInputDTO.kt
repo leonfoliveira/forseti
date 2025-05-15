@@ -78,7 +78,7 @@ data class UpdateContestInputDTO(
             if (timeLimit <= 0) {
                 throw BusinessException("Time limit must be greater than 0")
             }
-            if (testCases == null && id == null) {
+            if (id == null && testCases == null) {
                 throw BusinessException("Test cases cannot be null when creating a new problem")
             }
         }
