@@ -25,6 +25,7 @@ data class UpdateContestRequestDTO(
     ) {
         fun toInputDTO(): UpdateContestInputDTO.MemberDTO {
             return UpdateContestInputDTO.MemberDTO(
+                id = id,
                 type = type,
                 name = name,
                 login = login,
@@ -42,6 +43,7 @@ data class UpdateContestRequestDTO(
     ) {
         fun toCreateDTO(): UpdateContestInputDTO.ProblemDTO {
             return UpdateContestInputDTO.ProblemDTO(
+                id = id,
                 title = title,
                 description = description,
                 timeLimit = timeLimit,

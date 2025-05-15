@@ -13,11 +13,14 @@ import java.nio.file.Files
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
+import org.slf4j.LoggerFactory
 
 @Service
 class DockerSubmissionRunnerAdapter(
     private val bucketAdapter: BucketAdapter,
 ) : SubmissionRunnerAdapter {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun run(submission: Submission): Submission.Status {
         val tmpDir = Files.createTempDirectory("judge_${submission.id}").toFile()
         val codeFile = storeCodeFile(submission, tmpDir)
@@ -42,12 +45,14 @@ class DockerSubmissionRunnerAdapter(
             } catch (ex: TimeoutException) {
                 return Submission.Status.TIME_LIMIT_EXCEEDED
             } catch (ex: Exception) {
+                logger.error("Error while running submission ${submission.id}", ex)
                 return Submission.Status.RUNTIME_ERROR
             }
         } catch (ex: Exception) {
+            logger.error("Error while compiling submission ${submission.id}", ex)
             return Submission.Status.COMPILATION_ERROR
         } finally {
-            container.stop()
+            container.kill()
         }
     }
 
@@ -76,20 +81,12 @@ class DockerSubmissionRunnerAdapter(
         input: String,
         expectedOutput: String,
     ): Boolean {
-        val executor = Executors.newSingleThreadExecutor()
-        val future =
-            executor.submit {
-                container.exec(
-                    command = config.runCommand,
-                    input = input,
-                )
-            }
+        val output = container.exec(
+            command = config.runCommand,
+            input = input,
+            timeLimit = submission.problem.timeLimit.toLong(),
+        )
 
-        try {
-            val output = future.get(submission.problem.timeLimit * 1L, TimeUnit.MILLISECONDS) as String
-            return output.replace("\n", "") == expectedOutput.replace("\n", "")
-        } finally {
-            executor.shutdownNow()
-        }
+        return output.replace("\n", "") == expectedOutput.replace("\n", "")
     }
 }

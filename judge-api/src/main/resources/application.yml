@@ -10,7 +10,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
     show-sql: true
     flyway:
       enabled: false
@@ -33,10 +32,6 @@ server:
     context-path: /api
   cors:
     allowed-origins: ${ALLOWED_ORIGINS:*}
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 security:
   jwt:
     secret: ${JWT_SECRET:judge}

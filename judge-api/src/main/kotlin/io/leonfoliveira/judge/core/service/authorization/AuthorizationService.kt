@@ -15,10 +15,9 @@ class AuthorizationService(
     private val contestRepository: ContestRepository,
     private val hashAdapter: HashAdapter,
     private val jwtAdapter: JwtAdapter,
-) {
     @Value("\${security.root.password}")
-    lateinit var rootPassword: String
-
+    private val rootPassword: String,
+) {
     fun authenticateRoot(password: String): AuthorizationOutputDTO {
         if (password != rootPassword) {
             throw UnauthorizedException("Invalid root password")

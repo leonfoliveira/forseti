@@ -13,12 +13,17 @@ class SqsQueueAdapter(
     @Value("\${spring.cloud.aws.sqs.submission-queue}")
     private val submissionQueue: String,
 ) : SubmissionQueueAdapter {
+    companion object {
+        private const val QUEUE_DELAY = 1
+    }
+
     override fun enqueue(submission: Submission) {
         val request =
             SendMessageRequest
                 .builder()
                 .queueUrl(submissionQueue)
                 .messageBody(submission.id.toString())
+                .delaySeconds(QUEUE_DELAY)
                 .build()
         sqsClient.sendMessage(request)
     }

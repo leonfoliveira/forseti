@@ -19,17 +19,17 @@ class AuthorizationServiceTest : FunSpec({
     val contestRepository = mockk<ContestRepository>()
     val hashAdapter = mockk<HashAdapter>()
     val jwtAdapter = mockk<JwtAdapter>()
+    val rootPassword = "rootPassword"
 
     val sut =
         AuthorizationService(
             contestRepository = contestRepository,
             hashAdapter = hashAdapter,
             jwtAdapter = jwtAdapter,
+            rootPassword = rootPassword,
         )
 
     context("authenticateRoot") {
-        sut.rootPassword = "rootPassword"
-
         test("should throw UnauthorizedException when password is invalid") {
             shouldThrow<UnauthorizedException> {
                 sut.authenticateRoot("invalidPassword")
@@ -40,7 +40,7 @@ class AuthorizationServiceTest : FunSpec({
             every { jwtAdapter.generateToken(any()) }
                 .returns("generatedToken")
 
-            val result = sut.authenticateRoot("rootPassword")
+            val result = sut.authenticateRoot(rootPassword)
 
             result.authorization shouldBe Authorization.ROOT
             result.token shouldBe "generatedToken"
