@@ -9,6 +9,7 @@ import io.leonfoliveira.judge.api.dto.response.ProblemResponseDTO
 import io.leonfoliveira.judge.api.dto.response.SubmissionResponseDTO
 import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
 import io.leonfoliveira.judge.api.dto.response.toResponseDTO
+import io.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.leonfoliveira.judge.api.util.Private
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
@@ -17,6 +18,7 @@ import io.leonfoliveira.judge.core.service.contest.DeleteContestService
 import io.leonfoliveira.judge.core.service.contest.FindContestService
 import io.leonfoliveira.judge.core.service.contest.UpdateContestService
 import io.leonfoliveira.judge.core.service.dto.output.LeaderboardOutputDTO
+import io.leonfoliveira.judge.core.service.dto.output.ProblemMemberOutputDTO
 import io.leonfoliveira.judge.core.service.leaderboard.LeaderboardService
 import io.leonfoliveira.judge.core.service.problem.FindProblemService
 import io.leonfoliveira.judge.core.service.submission.FindSubmissionService
@@ -115,6 +117,16 @@ class ContestController(
     ): ResponseEntity<List<ProblemResponseDTO>> {
         val problems = findProblemService.findAllByContest(id)
         return ResponseEntity.ok(problems.map { it.toResponseDTO() })
+    }
+
+    @GetMapping("/{id}/problems/me")
+    @Private(Member.Type.CONTESTANT)
+    fun findAllProblemsForMember(
+        @PathVariable id: Int,
+    ): ResponseEntity<List<ProblemMemberOutputDTO>> {
+        val authentication = AuthorizationContextUtil.getAuthorization()
+        val problems = findProblemService.findAllByContestForMember(id, authentication.id)
+        return ResponseEntity.ok(problems)
     }
 
     @GetMapping("/{id}/submissions")
