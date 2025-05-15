@@ -3,6 +3,7 @@ package io.leonfoliveira.judge.api.util
 import io.leonfoliveira.judge.api.config.JwtAuthentication
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
+import io.leonfoliveira.judge.core.domain.exception.UnauthorizedException
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Before
 import org.springframework.security.core.context.SecurityContextHolder
@@ -18,7 +19,10 @@ class PrivateAspect {
     @Before("@annotation(privateAnnotation)")
     fun checkAuthorization(privateAnnotation: Private) {
         val authentication = SecurityContextHolder.getContext().authentication as JwtAuthentication
-        if (!authentication.isAuthenticated || authentication.principal?.type !in privateAnnotation.allowed) {
+        if (!authentication.isAuthenticated) {
+            throw UnauthorizedException()
+        }
+        if (authentication.principal?.type !in privateAnnotation.allowed) {
             throw ForbiddenException()
         }
     }

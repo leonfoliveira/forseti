@@ -2,6 +2,7 @@ package io.leonfoliveira.judge.core.domain.entity
 
 import io.leonfoliveira.judge.core.domain.enumerate.Language
 import io.leonfoliveira.judge.core.util.TimeUtils
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -9,8 +10,8 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import java.io.Serializable
 import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 import org.hibernate.type.SqlTypes
 import java.time.LocalDateTime
@@ -18,6 +19,7 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "contest")
 @Audited
+@SQLRestriction("deleted_at is null")
 class Contest(
     id: Int = 0,
     createdAt: LocalDateTime = TimeUtils.now(),
@@ -33,8 +35,8 @@ class Contest(
     var startAt: LocalDateTime,
     @Column(name = "end_at", nullable = false)
     var endAt: LocalDateTime,
-    @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var members: List<Member> = mutableListOf(),
-    @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var problems: List<Problem> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt)

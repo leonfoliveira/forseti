@@ -20,7 +20,7 @@ class OAuthJwtAdapter(
     override fun generateToken(authorization: Authorization): String {
         val algorithm = Algorithm.HMAC256(secret)
         val now = TimeUtils.now().toInstant(ZoneOffset.UTC)
-        val expirationAt = now.plusMillis(expiration)
+        val expirationAt = now.plusSeconds(expiration)
 
         val jwt =
             JWT

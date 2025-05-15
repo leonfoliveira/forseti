@@ -1,6 +1,7 @@
 package io.leonfoliveira.judge.core.domain.entity
 
 import io.leonfoliveira.judge.core.util.TimeUtils
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -10,13 +11,14 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import java.io.Serializable
+import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 import java.time.LocalDateTime
 
 @Entity
 @Table(name = "member")
 @Audited
+@SQLRestriction("deleted_at is null")
 class Member(
     id: Int = 0,
     createdAt: LocalDateTime = TimeUtils.now(),
@@ -34,7 +36,7 @@ class Member(
     var login: String,
     @Column(nullable = false)
     var password: String,
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var submissions: List<Submission> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
     enum class Type {

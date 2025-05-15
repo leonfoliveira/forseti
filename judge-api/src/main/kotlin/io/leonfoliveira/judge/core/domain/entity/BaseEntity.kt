@@ -7,14 +7,11 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
 import jakarta.persistence.PreUpdate
-import java.io.Serializable
-import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 import java.time.LocalDateTime
 
 @MappedSuperclass
 @Audited
-@SQLRestriction("deleted_at is null")
 open class BaseEntity(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
@@ -22,7 +19,7 @@ open class BaseEntity(
     val createdAt: LocalDateTime = TimeUtils.now(),
     @Column(name = "updated_at", nullable = false)
     var updatedAt: LocalDateTime = TimeUtils.now(),
-    @Column(name = "deleted_at", nullable = false)
+    @Column(name = "deleted_at")
     var deletedAt: LocalDateTime? = null,
 ) {
     @PreUpdate

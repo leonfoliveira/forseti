@@ -86,7 +86,7 @@ class DockerSubmissionRunnerAdapter(
             }
 
         try {
-            val output = future.get(submission.problem.timeLimit * 1L, TimeUnit.SECONDS) as String
+            val output = future.get(submission.problem.timeLimit * 1L, TimeUnit.MILLISECONDS) as String
             return output.replace("\n", "") == expectedOutput.replace("\n", "")
         } finally {
             executor.shutdownNow()

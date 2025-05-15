@@ -1,6 +1,8 @@
 package io.leonfoliveira.judge.api.controller
 
 import io.leonfoliveira.judge.api.config.JwtAuthentication
+import io.leonfoliveira.judge.api.dto.request.CreateContestRequestDTO
+import io.leonfoliveira.judge.api.dto.request.UpdateContestRequestDTO
 import io.leonfoliveira.judge.api.dto.response.ContestFullResponseDTO
 import io.leonfoliveira.judge.api.dto.response.ContestResponseDTO
 import io.leonfoliveira.judge.api.dto.response.ProblemResponseDTO
@@ -14,8 +16,6 @@ import io.leonfoliveira.judge.core.service.contest.CreateContestService
 import io.leonfoliveira.judge.core.service.contest.DeleteContestService
 import io.leonfoliveira.judge.core.service.contest.FindContestService
 import io.leonfoliveira.judge.core.service.contest.UpdateContestService
-import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTO
-import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
 import io.leonfoliveira.judge.core.service.dto.output.LeaderboardOutputDTO
 import io.leonfoliveira.judge.core.service.leaderboard.LeaderboardService
 import io.leonfoliveira.judge.core.service.problem.FindProblemService
@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -45,20 +46,24 @@ class ContestController(
     @PostMapping
     @Private(Member.Type.ROOT)
     @Transactional
-    fun createContest(input: CreateContestInputDTO): ResponseEntity<ContestFullResponseDTO> {
+    fun createContest(
+        @RequestBody input: CreateContestRequestDTO,
+    ): ResponseEntity<ContestFullResponseDTO> {
         val authentication = SecurityContextHolder.getContext().authentication as JwtAuthentication
         if (authentication.principal?.type != Member.Type.ROOT) {
             throw ForbiddenException()
         }
-        val contest = createContestService.create(input)
+        val contest = createContestService.create(input.toInputDTO())
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 
     @PutMapping
     @Private(Member.Type.ROOT)
     @Transactional
-    fun updateContest(input: UpdateContestInputDTO): ResponseEntity<ContestFullResponseDTO> {
-        val contest = updateContestService.update(input)
+    fun updateContest(
+        @RequestBody input: UpdateContestRequestDTO,
+    ): ResponseEntity<ContestFullResponseDTO> {
+        val contest = updateContestService.update(input.toInputDTO())
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 

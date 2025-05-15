@@ -4,6 +4,7 @@ import io.leonfoliveira.judge.core.domain.model.Attachment
 import io.leonfoliveira.judge.core.util.TimeUtils
 import jakarta.persistence.AttributeOverride
 import jakarta.persistence.AttributeOverrides
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
@@ -12,13 +13,14 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import java.io.Serializable
+import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 import java.time.LocalDateTime
 
 @Entity
 @Table(name = "problem")
 @Audited
+@SQLRestriction("deleted_at is null")
 class Problem(
     id: Int = 0,
     createdAt: LocalDateTime = TimeUtils.now(),
@@ -39,6 +41,6 @@ class Problem(
         AttributeOverride(name = "key", column = Column(name = "test_cases_key")),
     )
     var testCases: Attachment,
-    @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var submissions: List<Submission> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt)
