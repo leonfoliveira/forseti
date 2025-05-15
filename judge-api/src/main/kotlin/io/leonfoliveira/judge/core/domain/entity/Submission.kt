@@ -14,6 +14,7 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
+import java.io.Serializable
 import org.hibernate.envers.Audited
 import java.time.LocalDateTime
 
@@ -42,9 +43,7 @@ class Submission(
     )
     val code: Attachment,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
-    val contest by lazy {
-        problem.contest
-    }
+    val contest get() = problem.contest
 
     enum class Status {
         JUDGING,

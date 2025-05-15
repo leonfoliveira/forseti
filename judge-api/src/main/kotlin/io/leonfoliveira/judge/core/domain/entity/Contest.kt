@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import java.io.Serializable
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.envers.Audited
 import org.hibernate.type.SqlTypes

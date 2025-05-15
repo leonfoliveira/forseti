@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import java.io.Serializable
 import org.hibernate.envers.Audited
 import java.time.LocalDateTime
 

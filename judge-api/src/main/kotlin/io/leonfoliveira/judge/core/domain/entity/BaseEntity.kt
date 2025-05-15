@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
 import jakarta.persistence.PreUpdate
+import java.io.Serializable
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 import java.time.LocalDateTime
