@@ -5,15 +5,13 @@ import io.leonfoliveira.judge.core.domain.entity.Problem
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.SubmissionRunnerAdapter
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStreamReader
 import java.nio.file.Files
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
-import org.slf4j.LoggerFactory
 
 @Service
 class DockerSubmissionRunnerAdapter(
@@ -81,11 +79,12 @@ class DockerSubmissionRunnerAdapter(
         input: String,
         expectedOutput: String,
     ): Boolean {
-        val output = container.exec(
-            command = config.runCommand,
-            input = input,
-            timeLimit = submission.problem.timeLimit.toLong(),
-        )
+        val output =
+            container.exec(
+                command = config.runCommand,
+                input = input,
+                timeLimit = submission.problem.timeLimit.toLong(),
+            )
 
         return output.replace("\n", "") == expectedOutput.replace("\n", "")
     }

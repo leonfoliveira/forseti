@@ -63,18 +63,19 @@ class DockerContainer(
         timeLimit: Long? = null,
     ): String {
         val executor = Executors.newSingleThreadExecutor()
-        val future = executor.submit<String> {
-            runCommand(
-                arrayOf(
-                    "docker",
-                    "exec",
-                    "-i",
-                    name,
-                    *command,
-                ),
-                input,
-            )
-        }
+        val future =
+            executor.submit<String> {
+                runCommand(
+                    arrayOf(
+                        "docker",
+                        "exec",
+                        "-i",
+                        name,
+                        *command,
+                    ),
+                    input,
+                )
+            }
 
         return try {
             timeLimit?.let { future.get(it, TimeUnit.MILLISECONDS) } ?: future.get()

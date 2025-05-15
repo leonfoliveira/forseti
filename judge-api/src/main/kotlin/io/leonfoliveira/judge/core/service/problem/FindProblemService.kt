@@ -12,9 +12,14 @@ class FindProblemService(
     private val contestRepository: ContestRepository,
 ) {
     fun findById(id: Int): Problem {
-        return problemRepository.findById(id).orElseThrow {
-            NotFoundException("Could not find problem with id = $id")
+        val problem =
+            problemRepository.findById(id).orElseThrow {
+                NotFoundException("Could not find problem with id = $id")
+            }
+        if (!problem.contest.hasStarted()) {
+            throw NotFoundException("Contest has not started yet")
         }
+        return problem
     }
 
     fun findAllByContest(contestId: Int): List<Problem> {
@@ -22,6 +27,9 @@ class FindProblemService(
             contestRepository.findById(contestId).orElseThrow {
                 NotFoundException("Could not find contest with id = $contestId")
             }
+        if (!contest.hasStarted()) {
+            throw NotFoundException("Contest has not started yet")
+        }
         return contest.problems
     }
 }

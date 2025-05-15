@@ -60,10 +60,11 @@ tasks.bootJar {
 }
 
 fun runCommand(command: String) {
-    val output = ProcessBuilder(*command.split(" ").toTypedArray())
-        .redirectErrorStream(true)
-        .start()
-        .also { it.waitFor() }
+    val output =
+        ProcessBuilder(*command.split(" ").toTypedArray())
+            .redirectErrorStream(true)
+            .start()
+            .also { it.waitFor() }
     print(output.inputStream.bufferedReader().readText())
 }
 

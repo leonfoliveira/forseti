@@ -3,6 +3,7 @@ package io.leonfoliveira.judge.core.service.contest
 import io.leonfoliveira.judge.core.domain.entity.Contest
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.Problem
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
@@ -20,7 +21,12 @@ class UpdateContestService(
     private val deleteContestService: DeleteContestService,
 ) {
     fun update(input: UpdateContestInputDTO): Contest {
+        input.validate()
+
         val contest = findContestService.findById(input.id)
+        if (contest.hasStarted()) {
+            throw ForbiddenException("Contest has already started")
+        }
 
         contest.title = input.title
         contest.languages = input.languages

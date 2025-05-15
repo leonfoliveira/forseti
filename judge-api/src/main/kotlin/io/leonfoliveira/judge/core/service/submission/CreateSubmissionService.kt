@@ -1,6 +1,7 @@
 package io.leonfoliveira.judge.core.service.submission
 
 import io.leonfoliveira.judge.core.domain.entity.Submission
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
@@ -25,6 +26,8 @@ class CreateSubmissionService(
         problemId: Int,
         inputDTO: CreateSubmissionInputDTO,
     ): Submission {
+        inputDTO.validate()
+
         val member =
             memberRepository.findById(memberId).orElseThrow {
                 NotFoundException("Could not find member with id = $memberId")
@@ -33,6 +36,17 @@ class CreateSubmissionService(
             problemRepository.findById(problemId).orElseThrow {
                 NotFoundException("Could not find problem with id = $problemId")
             }
+        val contest = problem.contest
+
+        if (problem.contest != member.contest) {
+            throw ForbiddenException("Member does not belong to the contest of the problem")
+        }
+        if (contest.languages.none { it == inputDTO.language }) {
+            throw ForbiddenException("Language ${inputDTO.language} is not allowed for this contest")
+        }
+        if (!contest.isActive()) {
+            throw ForbiddenException("Contest is not active")
+        }
 
         val submission =
             Submission(

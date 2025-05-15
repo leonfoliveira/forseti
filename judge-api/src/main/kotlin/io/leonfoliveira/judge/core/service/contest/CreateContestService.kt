@@ -16,6 +16,8 @@ class CreateContestService(
     private val bucketAdapter: BucketAdapter,
 ) {
     fun create(inputDTO: CreateContestInputDTO): Contest {
+        inputDTO.validate()
+
         val contest =
             Contest(
                 title = inputDTO.title,

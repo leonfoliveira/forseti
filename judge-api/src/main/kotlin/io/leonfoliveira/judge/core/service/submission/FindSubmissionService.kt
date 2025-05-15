@@ -14,6 +14,9 @@ class FindSubmissionService(
             contestRepository.findById(contestId).orElseThrow {
                 NotFoundException("Could not find contest with id = $contestId")
             }
+        if (!contest.hasStarted()) {
+            throw NotFoundException("Contest has not started yet")
+        }
         val submissions =
             contest.members.map {
                 it.submissions

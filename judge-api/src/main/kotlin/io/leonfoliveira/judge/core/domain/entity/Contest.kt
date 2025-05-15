@@ -39,4 +39,16 @@ class Contest(
     var members: List<Member> = mutableListOf(),
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var problems: List<Problem> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deletedAt)
+) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
+    fun hasStarted(): Boolean {
+        return !startAt.isAfter(TimeUtils.now())
+    }
+
+    fun isActive(): Boolean {
+        return hasStarted() && !hasFinished()
+    }
+
+    fun hasFinished(): Boolean {
+        return !endAt.isAfter(TimeUtils.now())
+    }
+}

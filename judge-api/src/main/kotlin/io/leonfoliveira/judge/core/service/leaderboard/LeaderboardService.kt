@@ -4,6 +4,7 @@ import io.leonfoliveira.judge.core.domain.entity.Contest
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.Problem
 import io.leonfoliveira.judge.core.domain.entity.Submission
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.output.LeaderboardOutputDTO
@@ -23,6 +24,9 @@ class LeaderboardService(
             contestRepository.findById(contestId).orElseThrow {
                 NotFoundException("Could not find contest with id = $contestId")
             }
+        if (!contest.hasStarted()) {
+            throw ForbiddenException("Contest has not started yet")
+        }
 
         val problems =
             contest.problems.map {
