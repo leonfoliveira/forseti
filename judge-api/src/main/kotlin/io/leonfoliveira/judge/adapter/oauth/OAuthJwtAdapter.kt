@@ -16,11 +16,20 @@ class OAuthJwtAdapter(
     private val secret: String,
     @Value("\${security.jwt.expiration}")
     private val expiration: Long = 0L,
+    @Value("\${security.jwt.root-expiration}")
+    private val rootExpiration: Long = 0L,
 ) : JwtAdapter {
     override fun generateToken(authorization: Authorization): String {
         val algorithm = Algorithm.HMAC256(secret)
         val now = TimeUtils.now().toInstant(ZoneOffset.UTC)
-        val expirationAt = now.plusSeconds(expiration)
+        val expirationAt =
+            now.plusSeconds(
+                if (authorization.type == Member.Type.ROOT) {
+                    rootExpiration
+                } else {
+                    expiration
+                },
+            )
 
         val jwt =
             JWT
