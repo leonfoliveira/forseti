@@ -32,7 +32,7 @@ server:
   servlet:
     context-path: /api
   cors:
-    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+    allowed-origins: ${ALLOWED_ORIGINS:*}
 logging:
   level:
     org.hibernate.SQL: DEBUG
