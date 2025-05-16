@@ -12,7 +12,7 @@ class WebSocketSubmissionEmitter(
 ) : SubmissionEmitterAdapter {
     override fun emit(submission: Submission) {
         messagingTemplate.convertAndSend(
-            "/topic/contests/${submission.contest}/submissions",
+            "/topic/contests/${submission.contest.id}/submissions",
             submission.toResponseDTO(),
         )
     }

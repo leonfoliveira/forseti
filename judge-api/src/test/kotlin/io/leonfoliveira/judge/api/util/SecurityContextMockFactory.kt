@@ -20,7 +20,7 @@ object SecurityContextMockFactory {
             ),
     ) = build(authorization)
 
-    private fun build(authorization: Authorization) =
+    fun build(authorization: Authorization? = null) =
         mockk<SecurityContext>().apply {
             every { authentication }
                 .returns(JwtAuthentication(authorization))
