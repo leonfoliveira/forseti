@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 open class BaseEntity(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false)
     val createdAt: LocalDateTime = TimeUtils.now(),
     @Column(name = "updated_at", nullable = false)
     var updatedAt: LocalDateTime = TimeUtils.now(),
@@ -24,6 +24,6 @@ open class BaseEntity(
 ) {
     @PreUpdate
     protected fun onUpdate() {
-        updatedAt = LocalDateTime.now()
+        updatedAt = TimeUtils.now()
     }
 }

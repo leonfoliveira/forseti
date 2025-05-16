@@ -1,7 +1,7 @@
 create table contest (
     id serial primary key,
-    created_at timestamp not null default current_timestamp,
-    updated_at timestamp not null default current_timestamp,
+    created_at timestamp not null,
+    updated_at timestamp not null,
     deleted_at timestamp,
     title text not null,
     languages text[] not null,

@@ -1,6 +1,6 @@
 package io.leonfoliveira.judge.api.emitter
 
-import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
+import io.leonfoliveira.judge.api.emitter.dto.emmit.toEmmitDTO
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
 import org.springframework.messaging.simp.SimpMessagingTemplate
@@ -13,7 +13,7 @@ class WebSocketSubmissionEmitter(
     override fun emit(submission: Submission) {
         messagingTemplate.convertAndSend(
             "/topic/contests/${submission.contest.id}/submissions",
-            submission.toResponseDTO(),
+            submission.toEmmitDTO(),
         )
     }
 }
