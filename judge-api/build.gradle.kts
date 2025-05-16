@@ -1,9 +1,16 @@
+import org.yaml.snakeyaml.Yaml
+
+kotlin {
+    jvmToolchain(21)
+}
+
 plugins {
     alias(libs.plugins.flyway)
     alias(libs.plugins.kotlin.jpa)
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.kover)
     alias(libs.plugins.spring)
 }
 
@@ -33,18 +40,33 @@ dependencies {
     developmentOnly(libs.spring.boot.dev.tools)
 }
 
-kotlin {
-    jvmToolchain(21)
+buildscript {
+    dependencies {
+        classpath(libs.snakeyaml)
+    }
 }
 
-val dbUrl = System.getenv("DB_URL") ?: "jdbc:postgresql://localhost:5432/judge"
-val dbUser = System.getenv("DB_USER") ?: "judge"
-val dbPassword = System.getenv("DB_PASSWORD") ?: "judge"
+val yaml = Yaml()
+val configFile = File("$rootDir/src/main/resources/application.yml")
+val config: Map<String, Any> = yaml.load(configFile.inputStream())
+
+@Suppress("UNCHECKED_CAST")
+fun resolve(key: String): String {
+    val path = key.split(".")
+    var value: Any = config
+    path.forEach { value = (value as Map<String, Any>)[it]!! }
+    val regex = "\\$\\{([^:}]+):([^}]+)}".toRegex()
+    return regex.replace(value as String) { match ->
+        val envVar = match.groupValues[1]
+        val default = match.groupValues[2]
+        System.getenv(envVar) ?: default
+    }
+}
 
 flyway {
-    url = dbUrl
-    user = dbUser
-    password = dbPassword
+    url = resolve("spring.datasource.url")
+    user = resolve("spring.datasource.username")
+    password = resolve("spring.datasource.password")
     locations = arrayOf("filesystem:./src/main/resources/db/migration")
     baselineOnMigrate = true
     validateMigrationNaming = true
@@ -84,5 +106,5 @@ tasks.register("initLocalStack") {
 }
 
 tasks.named("bootRun") {
-    dependsOn("initLocalStack")
+    dependsOn("flywayMigrate", "initLocalStack")
 }
