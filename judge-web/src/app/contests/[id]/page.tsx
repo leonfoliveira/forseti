@@ -12,7 +12,7 @@ function ContestPage({ params }: { params: Promise<{ id: number }> }) {
   useEffect(() => {
     const authorization = authorizationService.getAuthorization();
     if (!authorization) {
-      redirect(`/contest/${id}/auth`);
+      redirect(`/contests/${id}/auth`);
     }
   }, [authorizationService, id]);
 

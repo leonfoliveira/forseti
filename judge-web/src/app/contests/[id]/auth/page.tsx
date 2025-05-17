@@ -2,15 +2,15 @@
 
 import React, { use, useEffect } from "react";
 import { containerAtom } from "@/app/_atom/container-atom";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { useForm } from "react-hook-form";
-import { addToastAtom, ToastLevel } from "@/app/_atom/toast-atom";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { notFound, useRouter } from "next/navigation";
 import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { useFetcher } from "@/app/_util/fetcher-hook";
 import { Authorization } from "@/core/domain/model/Authorization";
+import { useToast } from "@/app/_util/toast-hook";
 
 type FormType = {
   login: string;
@@ -19,7 +19,7 @@ type FormType = {
 
 function MemberAuthPage({ params }: { params: Promise<{ id: number }> }) {
   const { authenticationService, contestService } = useAtomValue(containerAtom);
-  const addToast = useSetAtom(addToastAtom);
+  const toast = useToast();
   const router = useRouter();
   const { id } = use(params);
 
@@ -40,8 +40,7 @@ function MemberAuthPage({ params }: { params: Promise<{ id: number }> }) {
         if (error instanceof NotFoundException) {
           notFound();
         } else {
-          console.error(error);
-          addToast(ToastLevel.ERROR, "An unexpected error occurred");
+          toast.error();
         }
       }
     }
@@ -53,12 +52,12 @@ function MemberAuthPage({ params }: { params: Promise<{ id: number }> }) {
       await signInFetcher.fetch(() =>
         authenticationService.authenticateMember(id, form),
       );
-      router.push("/root");
+      router.push(`/contest/${id}`);
     } catch (error) {
       if (error instanceof UnauthorizedException) {
-        addToast(ToastLevel.WARNING, "Invalid login or password");
+        toast.warning("Invalid login or password");
       } else {
-        addToast(ToastLevel.ERROR, "An unexpected error occurred");
+        toast.error();
       }
     }
   }

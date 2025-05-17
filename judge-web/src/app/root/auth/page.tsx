@@ -2,13 +2,14 @@
 
 import React from "react";
 import { containerAtom } from "@/app/_atom/container-atom";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { useForm } from "react-hook-form";
-import { addToastAtom, ToastLevel } from "@/app/_atom/toast-atom";
+import { ToastLevel } from "@/app/_atom/toast-atom";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useRouter } from "next/navigation";
 import { useFetcher } from "@/app/_util/fetcher-hook";
 import { Authorization } from "@/core/domain/model/Authorization";
+import { useToast } from "@/app/_util/toast-hook";
 
 type FormType = {
   password: string;
@@ -16,7 +17,7 @@ type FormType = {
 
 function RootAuthPage() {
   const { authenticationService } = useAtomValue(containerAtom);
-  const addToast = useSetAtom(addToastAtom);
+  const toast = useToast();
   const router = useRouter();
 
   const authenticateRootFetcher = useFetcher<Authorization>();
@@ -35,9 +36,9 @@ function RootAuthPage() {
       router.push("/root");
     } catch (error) {
       if (error instanceof UnauthorizedException) {
-        addToast(ToastLevel.WARNING, "Invalid password");
+        toast.warning("Invalid password");
       } else {
-        addToast(ToastLevel.ERROR, "An unexpected error occurred");
+        toast.error();
       }
     }
   }

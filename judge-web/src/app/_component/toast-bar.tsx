@@ -1,10 +1,13 @@
-import { useAtomValue, useSetAtom } from "jotai";
-import { removeToastAtom, toastsAtom } from "@/app/_atom/toast-atom";
+import { useAtom } from "jotai";
+import { toastsAtom } from "@/app/_atom/toast-atom";
 import { Toast } from "@/app/_component/toast";
 
 export function ToastBar() {
-  const toasts = useAtomValue(toastsAtom);
-  const removeToast = useSetAtom(removeToastAtom);
+  const [toasts, setToasts] = useAtom(toastsAtom);
+
+  function removeToast(id: string) {
+    setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
+  }
 
   return (
     <div
