@@ -5,9 +5,9 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.leonfoliveira.judge.api.controller.AuthorizationController.RootLoginRequestBody
 import io.leonfoliveira.judge.core.domain.entity.Member
-import io.leonfoliveira.judge.core.domain.model.Authorization
+import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.leonfoliveira.judge.core.service.authorization.AuthorizationService
-import io.leonfoliveira.judge.core.service.dto.output.AuthorizationOutputDTO
+import io.leonfoliveira.judge.core.domain.model.Authorization
 import io.mockk.every
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -27,8 +27,8 @@ class AuthenticationControllerTest(
         test("authenticateRoot") {
             val password = "rootPassword"
             val authorizationOutputDTO =
-                AuthorizationOutputDTO(
-                    authorization = Authorization.ROOT,
+                Authorization(
+                    member = AuthorizationMember.ROOT,
                     token = "token",
                 )
             every { authorizationService.authenticateRoot(password) }
@@ -51,9 +51,9 @@ class AuthenticationControllerTest(
             val login = "login"
             val password = "password"
             val authorizationOutputDTO =
-                AuthorizationOutputDTO(
-                    authorization =
-                        Authorization(
+                Authorization(
+                    member =
+                        AuthorizationMember(
                             id = 1,
                             name = "name",
                             login = login,

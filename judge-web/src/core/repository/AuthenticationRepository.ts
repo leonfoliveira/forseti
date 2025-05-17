@@ -1,13 +1,13 @@
-import { AuthorizationResponseDTO } from "@/core/repository/dto/response/AuthorizationResponseDTO";
 import { AuthenticateRootRequestDTO } from "@/core/repository/dto/request/AuthenticateRootRequestDTO";
 import { AuthenticateMemberRequestDTO } from "@/core/repository/dto/request/AuthenticateMemberRequestDTO";
+import { Authorization } from "@/core/domain/model/Authorization";
 
 export interface AuthenticationRepository {
   authenticateRoot(
     requestDTO: AuthenticateRootRequestDTO,
-  ): Promise<AuthorizationResponseDTO>;
+  ): Promise<Authorization>;
 
   authenticateMember(
     requestDTO: AuthenticateMemberRequestDTO,
-  ): Promise<AuthorizationResponseDTO>;
+  ): Promise<Authorization>;
 }

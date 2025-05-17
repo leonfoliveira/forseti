@@ -2,17 +2,17 @@ package io.leonfoliveira.judge.api.util
 
 import io.leonfoliveira.judge.api.config.JwtAuthentication
 import io.leonfoliveira.judge.core.domain.entity.Member
-import io.leonfoliveira.judge.core.domain.model.Authorization
+import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.mockk.every
 import io.mockk.mockk
 import org.springframework.security.core.context.SecurityContext
 
 object SecurityContextMockFactory {
-    fun buildRoot() = build(Authorization.ROOT)
+    fun buildRoot() = build(AuthorizationMember.ROOT)
 
     fun buildContestant(
-        authorization: Authorization =
-            Authorization(
+        authorization: AuthorizationMember =
+            AuthorizationMember(
                 id = 1,
                 name = "name",
                 login = "login",
@@ -20,7 +20,7 @@ object SecurityContextMockFactory {
             ),
     ) = build(authorization)
 
-    fun build(authorization: Authorization? = null) =
+    fun build(authorization: AuthorizationMember? = null) =
         mockk<SecurityContext>().apply {
             every { authentication }
                 .returns(JwtAuthentication(authorization))

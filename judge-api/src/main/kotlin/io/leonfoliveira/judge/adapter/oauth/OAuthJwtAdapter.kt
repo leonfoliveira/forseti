@@ -3,7 +3,7 @@ package io.leonfoliveira.judge.adapter.oauth
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.leonfoliveira.judge.core.domain.entity.Member
-import io.leonfoliveira.judge.core.domain.model.Authorization
+import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.leonfoliveira.judge.core.port.JwtAdapter
 import io.leonfoliveira.judge.core.util.TimeUtils
 import org.springframework.beans.factory.annotation.Value
@@ -19,7 +19,7 @@ class OAuthJwtAdapter(
     @Value("\${security.jwt.root-expiration}")
     private val rootExpiration: Long = 0L,
 ) : JwtAdapter {
-    override fun generateToken(authorization: Authorization): String {
+    override fun generateToken(authorization: AuthorizationMember): String {
         val algorithm = Algorithm.HMAC256(secret)
         val now = TimeUtils.now().toInstant(ZoneOffset.UTC)
         val expirationAt =
@@ -44,12 +44,12 @@ class OAuthJwtAdapter(
         return jwt.sign(algorithm)
     }
 
-    override fun decodeToken(token: String): Authorization {
+    override fun decodeToken(token: String): AuthorizationMember {
         val algorithm = Algorithm.HMAC256(secret)
         val verifier = JWT.require(algorithm).build()
         val decoded = verifier.verify(token)
 
-        return Authorization(
+        return AuthorizationMember(
             id = decoded.getClaim("id").asInt(),
             name = decoded.getClaim("name").asString(),
             login = decoded.getClaim("login").asString(),

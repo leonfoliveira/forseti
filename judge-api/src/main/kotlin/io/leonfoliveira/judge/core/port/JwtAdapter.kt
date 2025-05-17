@@ -1,9 +1,9 @@
 package io.leonfoliveira.judge.core.port
 
-import io.leonfoliveira.judge.core.domain.model.Authorization
+import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 
 interface JwtAdapter {
-    fun generateToken(authorization: Authorization): String
+    fun generateToken(authorization: AuthorizationMember): String
 
-    fun decodeToken(token: String): Authorization
+    fun decodeToken(token: String): AuthorizationMember
 }

@@ -1,9 +1,7 @@
 import { Authorization } from "@/core/domain/model/Authorization";
 
 export interface AuthorizationRepository {
-  setAuthorization(accessToken: string): void;
-
-  getAccessToken(): string | null;
+  setAuthorization(authorization: Authorization): void;
 
   getAuthorization(): Authorization | null;
 

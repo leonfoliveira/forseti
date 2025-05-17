@@ -2,11 +2,11 @@ package io.leonfoliveira.judge.core.service.authorization
 
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.domain.exception.UnauthorizedException
-import io.leonfoliveira.judge.core.domain.model.Authorization
+import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.port.JwtAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
-import io.leonfoliveira.judge.core.service.dto.output.AuthorizationOutputDTO
+import io.leonfoliveira.judge.core.domain.model.Authorization
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -18,21 +18,21 @@ class AuthorizationService(
     @Value("\${security.root.password}")
     private val rootPassword: String,
 ) {
-    fun authenticateRoot(password: String): AuthorizationOutputDTO {
+    fun authenticateRoot(password: String): Authorization {
         if (password != rootPassword) {
             throw UnauthorizedException("Invalid root password")
         }
 
-        val authorization = Authorization.ROOT
+        val authorization = AuthorizationMember.ROOT
         val token = jwtAdapter.generateToken(authorization)
-        return AuthorizationOutputDTO(authorization, token)
+        return Authorization(authorization, token)
     }
 
     fun authenticateMember(
         contestId: Int,
         login: String,
         password: String,
-    ): AuthorizationOutputDTO {
+    ): Authorization {
         val contest =
             contestRepository.findById(contestId).orElseThrow {
                 throw NotFoundException("Could not find contest with id = $contestId")
@@ -46,13 +46,13 @@ class AuthorizationService(
         }
 
         val authorization =
-            Authorization(
+            AuthorizationMember(
                 id = member.id,
                 name = member.name,
                 login = member.login,
                 type = member.type,
             )
         val token = jwtAdapter.generateToken(authorization)
-        return AuthorizationOutputDTO(authorization, token)
+        return Authorization(authorization, token)
     }
 }

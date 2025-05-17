@@ -7,7 +7,7 @@ import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.domain.exception.UnauthorizedException
-import io.leonfoliveira.judge.core.domain.model.Authorization
+import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.port.JwtAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
@@ -42,7 +42,7 @@ class AuthorizationServiceTest : FunSpec({
 
             val result = sut.authenticateRoot(rootPassword)
 
-            result.authorization shouldBe Authorization.ROOT
+            result.member shouldBe AuthorizationMember.ROOT
             result.token shouldBe "generatedToken"
         }
     }
@@ -88,10 +88,10 @@ class AuthorizationServiceTest : FunSpec({
 
             val result = sut.authenticateMember(contestId, login, password)
 
-            result.authorization.id shouldBe member.id
-            result.authorization.name shouldBe member.name
-            result.authorization.login shouldBe member.login
-            result.authorization.type shouldBe member.type
+            result.member.id shouldBe member.id
+            result.member.name shouldBe member.name
+            result.member.login shouldBe member.login
+            result.member.type shouldBe member.type
             result.token shouldBe "generatedToken"
         }
     }

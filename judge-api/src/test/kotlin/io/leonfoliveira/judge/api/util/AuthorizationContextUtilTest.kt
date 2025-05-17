@@ -4,7 +4,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.exception.UnauthorizedException
-import io.leonfoliveira.judge.core.domain.model.Authorization
+import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.mockk.every
 import io.mockk.mockkStatic
 import org.springframework.security.core.context.SecurityContextHolder
@@ -24,7 +24,7 @@ class AuthorizationContextUtilTest : FunSpec({
     }
 
     test("should return authorization when authorization is not null") {
-        val expectedAuthorization = Authorization.ROOT
+        val expectedAuthorization = AuthorizationMember.ROOT
         every { SecurityContextHolder.getContext() }
             .returns(SecurityContextMockFactory.build(expectedAuthorization))
 

@@ -4,7 +4,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.entity.Member
-import io.leonfoliveira.judge.core.domain.model.Authorization
+import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 
 class OAuthJwtAdapterTest : FunSpec({
     val secret = "secret"
@@ -15,7 +15,7 @@ class OAuthJwtAdapterTest : FunSpec({
     context("generateToken") {
         test("should generate a token") {
             val authorization =
-                Authorization(
+                AuthorizationMember(
                     id = 1,
                     name = "name",
                     login = "login",
@@ -31,7 +31,7 @@ class OAuthJwtAdapterTest : FunSpec({
     context("decodeToken") {
         test("should decode a token") {
             val authorization =
-                Authorization(
+                AuthorizationMember(
                     id = 1,
                     name = "name",
                     login = "login",

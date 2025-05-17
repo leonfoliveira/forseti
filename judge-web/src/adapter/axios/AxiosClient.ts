@@ -43,6 +43,10 @@ export class AxiosClient {
   }
 
   getAuthorizationHeader() {
-    return `Bearer ${this.authorizationService.getAccessToken()}`;
+    const authorization = this.authorizationService.getAuthorization();
+    if (authorization != null) {
+      return `Bearer ${authorization.accessToken}`;
+    }
+    return null;
   }
 }
