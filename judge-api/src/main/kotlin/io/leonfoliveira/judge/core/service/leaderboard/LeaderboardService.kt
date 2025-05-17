@@ -16,7 +16,7 @@ class LeaderboardService(
     private val contestRepository: ContestRepository,
 ) {
     companion object {
-        private const val WRONG_SUBMISSION_PENALTY = 20
+        private const val WRONG_SUBMISSION_PENALTY = 1200 // 20 minutes
     }
 
     fun buildLeaderboard(contestId: Int): LeaderboardOutputDTO {
@@ -85,7 +85,7 @@ class LeaderboardService(
 
         val acceptationPenalty =
             if (isAccepted) {
-                Duration.between(contest.startAt, firstAcceptedSubmission.createdAt).toMinutes().toInt()
+                Duration.between(contest.startAt, firstAcceptedSubmission.createdAt).toSeconds().toInt()
             } else {
                 0
             }

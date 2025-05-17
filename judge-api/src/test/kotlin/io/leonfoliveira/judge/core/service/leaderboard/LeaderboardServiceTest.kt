@@ -53,7 +53,6 @@ class LeaderboardServiceTest : FunSpec({
         }
 
         test("should build leaderboard") {
-            val acceptationTime = TimeUtils.now()
             val problemWithSubmissions = ProblemMockFactory.build(id = 1)
             val memberWithoutSubmissions = MemberMockFactory.build(id = 1, name = "Member 1")
             val memberWithWrongAnswer =
@@ -80,7 +79,7 @@ class LeaderboardServiceTest : FunSpec({
                             SubmissionMockFactory.build(
                                 problem = problemWithSubmissions,
                                 status = Submission.Status.ACCEPTED,
-                                createdAt = acceptationTime,
+                                createdAt = now,
                             ),
                         ),
                 )
@@ -92,14 +91,14 @@ class LeaderboardServiceTest : FunSpec({
                             SubmissionMockFactory.build(
                                 problem = problemWithSubmissions,
                                 status = Submission.Status.ACCEPTED,
-                                createdAt = acceptationTime,
+                                createdAt = now,
                             ),
                         ),
                 )
             val problemWithoutSubmissions = ProblemMockFactory.build(id = 2)
             val contest =
                 ContestMockFactory.build(
-                    startAt = acceptationTime.minusMinutes(99),
+                    startAt = now.minusMinutes(60),
                     members =
                         listOf(
                             memberWithoutSubmissions,
@@ -143,7 +142,7 @@ class LeaderboardServiceTest : FunSpec({
                                             id = problemWithSubmissions.id,
                                             wrongSubmissions = 0,
                                             isAccepted = true,
-                                            penalty = 99,
+                                            penalty = 3600,
                                         ),
                                         LeaderboardOutputDTO.MemberDTO.MemberProblemDTO(
                                             id = problemWithoutSubmissions.id,
@@ -153,7 +152,7 @@ class LeaderboardServiceTest : FunSpec({
                                         ),
                                     ),
                                 score = 1,
-                                penalty = 99,
+                                penalty = 3600,
                             ),
                             LeaderboardOutputDTO.MemberDTO(
                                 id = memberWithWrongAnswerAndAccepted.id,
@@ -164,7 +163,7 @@ class LeaderboardServiceTest : FunSpec({
                                             id = problemWithSubmissions.id,
                                             wrongSubmissions = 1,
                                             isAccepted = true,
-                                            penalty = 119,
+                                            penalty = 4800,
                                         ),
                                         LeaderboardOutputDTO.MemberDTO.MemberProblemDTO(
                                             id = problemWithoutSubmissions.id,
@@ -174,7 +173,7 @@ class LeaderboardServiceTest : FunSpec({
                                         ),
                                     ),
                                 score = 1,
-                                penalty = 119,
+                                penalty = 4800,
                             ),
                             LeaderboardOutputDTO.MemberDTO(
                                 id = memberWithoutSubmissions.id,
