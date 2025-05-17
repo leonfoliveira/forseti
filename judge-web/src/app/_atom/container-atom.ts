@@ -1,4 +1,4 @@
-import { atom } from "jotai/vanilla/atom";
+import { atom } from "jotai";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { LocalStorageAuthorizationRepository } from "@/adapter/localstorage/LocalStorageAuthorizationRepository";
 import { AuthorizationService } from "@/core/service/AuthorizationService";
@@ -9,13 +9,13 @@ import { AxiosProblemRepository } from "@/adapter/axios/AxiosProblemRepository";
 import { ContestService } from "@/core/service/ContestService";
 import { ProblemService } from "@/core/service/ProblemService";
 
-export const container = atom(() => {
+export const containerAtom = atom(() => {
   const authorizationRepository = new LocalStorageAuthorizationRepository();
   const authorizationService = new AuthorizationService(
     authorizationRepository,
   );
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
   const axiosClient = new AxiosClient(baseUrl, authorizationService);
 
   const authenticationRepository = new AxiosAuthenticationRepository(

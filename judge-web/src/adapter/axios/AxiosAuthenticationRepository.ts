@@ -8,9 +8,13 @@ export class AxiosAuthenticationRepository implements AuthenticationRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
 
   authenticateMember(
+    contestId: number,
     requestDTO: AuthenticateMemberRequestDTO,
   ): Promise<Authorization> {
-    return this.axiosClient.post<Authorization>("/v1/auth/member", requestDTO);
+    return this.axiosClient.post<Authorization>(
+      `/v1/auth/contests/${contestId}`,
+      requestDTO,
+    );
   }
 
   authenticateRoot(

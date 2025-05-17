@@ -8,6 +8,7 @@ export interface AuthenticationRepository {
   ): Promise<Authorization>;
 
   authenticateMember(
+    contestId: number,
     requestDTO: AuthenticateMemberRequestDTO,
   ): Promise<Authorization>;
 }

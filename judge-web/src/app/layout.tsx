@@ -1,7 +1,11 @@
+"use client";
+
+import React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
-import React from "react";
+import { ToastBar } from "@/app/_component/toast-bar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,20 +17,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Contest",
-  description: "Contest Description",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-bs-theme="dark">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {children}
+
+        <ToastBar />
       </body>
     </html>
   );
