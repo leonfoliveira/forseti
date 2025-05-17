@@ -13,11 +13,12 @@ data class SubmissionEmmitDTO(
     val createdAt: LocalDateTime,
 )
 
-fun Submission.toEmmitDTO() = SubmissionEmmitDTO(
-    id = id,
-    memberId = member.id,
-    problemId = problem.id,
-    language = language,
-    status = status,
-    createdAt = createdAt,
-)
+fun Submission.toEmmitDTO() =
+    SubmissionEmmitDTO(
+        id = id,
+        memberId = member.id,
+        problemId = problem.id,
+        language = language,
+        status = status,
+        createdAt = createdAt,
+    )

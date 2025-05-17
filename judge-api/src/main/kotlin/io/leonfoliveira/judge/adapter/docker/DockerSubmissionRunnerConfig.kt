@@ -1,6 +1,7 @@
 package io.leonfoliveira.judge.adapter.docker
 
 import io.leonfoliveira.judge.core.domain.enumerate.Language
+import io.leonfoliveira.judge.core.domain.exception.BusinessException
 import java.io.File
 
 class DockerSubmissionRunnerConfig(
@@ -28,7 +29,7 @@ class DockerSubmissionRunnerConfig(
 
             fun get(language: Language): Builder {
                 return LANGUAGE_BUILDER_MAP[language]
-                    ?: throw IllegalArgumentException("Unsupported language: $language")
+                    ?: throw BusinessException("Unsupported language: $language")
             }
         }
 

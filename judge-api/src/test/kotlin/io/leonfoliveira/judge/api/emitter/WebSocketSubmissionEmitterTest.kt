@@ -1,7 +1,6 @@
 package io.leonfoliveira.judge.api.emitter
 
 import io.kotest.core.spec.style.FunSpec
-import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
 import io.leonfoliveira.judge.api.emitter.dto.emmit.toEmmitDTO
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.mockk.mockk

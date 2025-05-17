@@ -25,7 +25,7 @@ class DockerSubmissionRunnerAdapter(
         val testCases = loadTestCases(submission.problem)
         val config = DockerSubmissionRunnerConfig.Builder.get(submission.language).build(codeFile)
 
-        val container = DockerContainer.create(config.image, "judge_${submission.id}", tmpDir)
+        val container = DockerContainerFactory.create(config.image, "judge_${submission.id}", tmpDir)
         container.start()
 
         try {
