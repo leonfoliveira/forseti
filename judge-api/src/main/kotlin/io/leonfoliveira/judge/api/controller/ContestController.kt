@@ -47,13 +47,13 @@ class ContestController(
     @Private(Member.Type.ROOT)
     @Transactional
     fun createContest(
-        @RequestBody input: CreateContestRequestDTO,
+        @RequestBody requestDTO: CreateContestRequestDTO,
     ): ResponseEntity<ContestFullResponseDTO> {
         val authentication = AuthorizationContextUtil.getAuthorization()
         if (authentication.type != Member.Type.ROOT) {
             throw ForbiddenException()
         }
-        val contest = createContestService.create(input.toInputDTO())
+        val contest = createContestService.create(requestDTO.toInputDTO())
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 
@@ -61,9 +61,9 @@ class ContestController(
     @Private(Member.Type.ROOT)
     @Transactional
     fun updateContest(
-        @RequestBody input: UpdateContestRequestDTO,
+        @RequestBody requestDTO: UpdateContestRequestDTO,
     ): ResponseEntity<ContestFullResponseDTO> {
-        val contest = updateContestService.update(input.toInputDTO())
+        val contest = updateContestService.update(requestDTO.toInputDTO())
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 
@@ -102,7 +102,7 @@ class ContestController(
     }
 
     @GetMapping("/{id}/leaderboard")
-    fun leaderboard(
+    fun getLeaderboard(
         @PathVariable id: Int,
     ): ResponseEntity<LeaderboardOutputDTO> {
         val leaderboard = leaderboardService.buildLeaderboard(id)
