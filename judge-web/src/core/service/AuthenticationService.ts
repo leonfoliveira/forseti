@@ -2,21 +2,29 @@ import { AuthenticationRepository } from "@/core/repository/AuthenticationReposi
 import { AuthenticateRootRequestDTO } from "@/core/repository/dto/request/AuthenticateRootRequestDTO";
 import { AuthorizationResponseDTO } from "@/core/repository/dto/response/AuthorizationResponseDTO";
 import { AuthenticateMemberRequestDTO } from "@/core/repository/dto/request/AuthenticateMemberRequestDTO";
+import { AuthorizationRepository } from "@/core/repository/AuthorizationRepository";
 
 export class AuthenticationService {
   constructor(
     private readonly authenticationRepository: AuthenticationRepository,
+    private readonly authorizationRepository: AuthorizationRepository,
   ) {}
 
-  authenticateRoot(
+  async authenticateRoot(
     requestDTO: AuthenticateRootRequestDTO,
   ): Promise<AuthorizationResponseDTO> {
-    return this.authenticationRepository.authenticateRoot(requestDTO);
+    const authorization =
+      await this.authenticationRepository.authenticateRoot(requestDTO);
+    this.authorizationRepository.setAuthorization(authorization.accessToken);
+    return authorization;
   }
 
-  authenticateMember(
+  async authenticateMember(
     requestDTO: AuthenticateMemberRequestDTO,
   ): Promise<AuthorizationResponseDTO> {
-    return this.authenticationRepository.authenticateMember(requestDTO);
+    const authorization =
+      await this.authenticationRepository.authenticateMember(requestDTO);
+    this.authorizationRepository.setAuthorization(authorization.accessToken);
+    return authorization;
   }
 }

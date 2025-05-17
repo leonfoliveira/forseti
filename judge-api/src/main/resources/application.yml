@@ -30,8 +30,6 @@ spring:
       sqs:
         submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:judge-submission}
 server:
-  servlet:
-    context-path: /api
   cors:
     allowed-origins: ${ALLOWED_ORIGINS:*}
 security:
