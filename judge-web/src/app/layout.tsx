@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import type { Metadata } from "next";
+import React, { useEffect } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./globals.css";
@@ -22,6 +21,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useEffect(() => {
+    import("bootstrap/dist/js/bootstrap.bundle.min.js");
+  }, []);
+
   return (
     <html lang="en" data-bs-theme="dark">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>

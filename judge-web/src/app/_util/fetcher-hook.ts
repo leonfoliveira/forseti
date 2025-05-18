@@ -12,6 +12,7 @@ export function useFetcher<T>(initialData?: T | null) {
     try {
       const data = await fn();
       setState({ isLoading: false, hasError: false, data });
+      return data;
     } catch (error) {
       setState({ isLoading: false, hasError: true, data: null });
       throw error;

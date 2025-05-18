@@ -18,5 +18,5 @@ export type CreateContestRequestDTO = {
     description: string;
     timeLimit: number;
     testCases: AttachmentRequestDTO;
-  };
+  }[];
 };
