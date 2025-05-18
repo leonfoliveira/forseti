@@ -2,10 +2,7 @@ package io.leonfoliveira.judge.core.service.dto.input
 
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import io.leonfoliveira.judge.core.domain.exception.BusinessException
-import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
-import io.leonfoliveira.judge.core.domain.model.RawAttachment
-import io.leonfoliveira.judge.core.util.TimeUtils
+import io.leonfoliveira.judge.core.domain.model.Attachment
 import jakarta.validation.Valid
 import jakarta.validation.constraints.AssertFalse
 import jakarta.validation.constraints.AssertTrue
@@ -66,7 +63,7 @@ data class UpdateContestInputDTO(
         @field:Min(1)
         val timeLimit: Int,
         @field:Valid
-        val testCases: RawAttachment? = null,
+        val testCases: Attachment? = null,
     ) {
         fun toCreateDTO(): CreateContestInputDTO.ProblemDTO {
             return CreateContestInputDTO.ProblemDTO(

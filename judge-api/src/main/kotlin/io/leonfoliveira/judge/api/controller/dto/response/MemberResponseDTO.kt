@@ -8,12 +8,3 @@ data class MemberResponseDTO(
     val name: String,
     val login: String,
 )
-
-fun Member.toResponseDTO(): MemberResponseDTO {
-    return MemberResponseDTO(
-        id = this.id,
-        type = this.type,
-        name = this.name,
-        login = this.login,
-    )
-}

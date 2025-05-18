@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useAtomValue } from "jotai";
 import { containerAtom } from "@/app/_atom/container-atom";
@@ -12,8 +12,8 @@ import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { toAttachmentRequestDTO } from "@/app/_util/file-utils";
 import { useToast } from "@/app/_util/toast-hook";
-import Modal from "bootstrap/js/dist/modal";
 import Link from "next/link";
+import { formatLanguage } from "@/app/_util/contest-utils";
 
 type FormType = {
   title: string;
@@ -75,9 +75,9 @@ function NewContestPage() {
           })),
         ),
       };
-      const contest = await createContestFetcher.fetch(async () => {
-        return await contestService.createContest(requestDTO);
-      });
+      const contest = await createContestFetcher.fetch(() =>
+        contestService.createContest(requestDTO),
+      );
       toast.success("Contest created successfully");
       router.push(`/root/contests/${contest.id}`);
     } catch (error) {
@@ -89,13 +89,6 @@ function NewContestPage() {
     }
   }
 
-  function formatLanguage(languages: Language) {
-    switch (languages) {
-      case Language.PYTHON_3_13_3:
-        return "Python 3.13.3";
-    }
-  }
-
   return (
     <form onSubmit={handleSubmit(submit)}>
       <div className="d-flex justify-content-between align-items-center mt-2 mb-4">
@@ -104,6 +97,7 @@ function NewContestPage() {
           <h2 className="m-0 ms-3">New Contest</h2>
         </div>
         <button
+          type="submit"
           className="btn btn-primary"
           disabled={createContestFetcher.isLoading}
         >
@@ -515,7 +509,7 @@ function NewContestPage() {
           <div className="modal-dialog modal-fullscreen">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Description</h5>\
+                <h5 className="modal-title">Description</h5>
                 <button
                   type="button"
                   className="btn-close"

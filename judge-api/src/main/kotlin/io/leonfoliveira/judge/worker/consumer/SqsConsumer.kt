@@ -12,6 +12,7 @@ abstract class SqsConsumer {
             handleMessage(message)
         } catch (ex: Exception) {
             logger.error("Error thrown from consumer {}: {}", this.javaClass.simpleName, ex.message)
+            throw ex
         }
     }
 

@@ -9,26 +9,26 @@ import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
-import io.leonfoliveira.judge.core.domain.exception.BusinessException
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.domain.model.Attachment
+import io.leonfoliveira.judge.core.domain.model.DownloadAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTOMockFactory
+import io.leonfoliveira.judge.core.service.dto.output.toOutputDTO
 import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
 import jakarta.validation.Validation
 import java.time.LocalDateTime
+import java.util.Optional
 
 class UpdateContestServiceTest : FunSpec({
     val contestRepository = mockk<ContestRepository>()
     val hashAdapter = mockk<HashAdapter>()
     val bucketAdapter = mockk<BucketAdapter>()
-    val findContestService = mockk<FindContestService>()
     val createContestService = mockk<CreateContestService>()
     val deleteContestService = mockk<DeleteContestService>()
 
@@ -39,12 +39,15 @@ class UpdateContestServiceTest : FunSpec({
             contestRepository = contestRepository,
             hashAdapter = hashAdapter,
             bucketAdapter = bucketAdapter,
-            findContestService = findContestService,
             createContestService = createContestService,
             deleteContestService = deleteContestService,
         )
 
     val now = LocalDateTime.now()
+
+    every { bucketAdapter.createDownloadAttachment(any()) }
+        .returns(DownloadAttachment("url", "key"))
+
     beforeEach {
         mockkObject(TimeUtils)
         every { TimeUtils.now() } returns now
@@ -91,8 +94,8 @@ class UpdateContestServiceTest : FunSpec({
 
         test("should throw ForbiddenException when contest not started") {
             val input = UpdateContestInputDTOMockFactory.build()
-            every { findContestService.findById(input.id) }
-                .returns(ContestMockFactory.build(startAt = now.minusDays(1)))
+            every { contestRepository.findById(input.id) }
+                .returns(Optional.of(ContestMockFactory.build(startAt = now.minusDays(1))))
 
             shouldThrow<ForbiddenException> {
                 sut.update(input)
@@ -105,8 +108,8 @@ class UpdateContestServiceTest : FunSpec({
                     members = listOf(UpdateContestInputDTOMockFactory.buildMemberDTO(id = 1)),
                 )
             val contest = ContestMockFactory.build(members = listOf())
-            every { findContestService.findById(input.id) }
-                .returns(contest)
+            every { contestRepository.findById(input.id) }
+                .returns(Optional.of(contest))
 
             shouldThrow<NotFoundException> {
                 sut.update(input)
@@ -119,8 +122,8 @@ class UpdateContestServiceTest : FunSpec({
                     problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = 1)),
                 )
             val contest = ContestMockFactory.build(problems = listOf())
-            every { findContestService.findById(input.id) }
-                .returns(contest)
+            every { contestRepository.findById(input.id) }
+                .returns(Optional.of(contest))
 
             shouldThrow<NotFoundException> {
                 sut.update(input)
@@ -158,8 +161,8 @@ class UpdateContestServiceTest : FunSpec({
                     problems = listOf(problemToDelete, problemToUpdate, problemToUpdateTestCases),
                 )
 
-            every { findContestService.findById(any()) }
-                .returns(contest)
+            every { contestRepository.findById(any()) }
+                .returns(Optional.of(contest))
             val createdMember = MemberMockFactory.build()
             every { createContestService.createMember(any(), any()) }
                 .returns(createdMember)
@@ -174,30 +177,29 @@ class UpdateContestServiceTest : FunSpec({
                 .returnsArgument(0)
             every { hashAdapter.hash(any()) }
                 .returns("new_hashed_password")
-            val attachment =
-                Attachment(
-                    filename = "test_case_1.java",
-                    key = "123456",
+            val downloadAttachment =
+                DownloadAttachment(
+                    filename = "abc",
+                    url = "https://example.com/key",
                 )
-            every { bucketAdapter.upload(any()) }
-                .returns(attachment)
+            every { bucketAdapter.createDownloadAttachment(any()) }
+                .returns(downloadAttachment)
 
             val result = sut.update(inputDTO)
 
             result.members shouldContainExactlyInAnyOrder
                 listOf(
-                    createdMember,
-                    memberToUpdate,
-                    memberToUpdatePassword,
+                    createdMember.toOutputDTO(),
+                    memberToUpdate.toOutputDTO(),
+                    memberToUpdatePassword.toOutputDTO(),
                 )
             memberToUpdatePassword.password shouldBe "new_hashed_password"
             result.problems shouldContainExactlyInAnyOrder
                 listOf(
-                    createdProblem,
-                    problemToUpdate,
-                    problemToUpdateTestCases,
+                    createdProblem.toOutputDTO(bucketAdapter),
+                    problemToUpdate.toOutputDTO(bucketAdapter),
+                    problemToUpdateTestCases.toOutputDTO(bucketAdapter),
                 )
-            problemToUpdateTestCases.testCases shouldBe attachment
         }
     }
 })

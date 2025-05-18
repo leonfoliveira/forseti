@@ -1,9 +1,9 @@
 package io.leonfoliveira.judge.api.controller
 
-import io.leonfoliveira.judge.api.controller.dto.request.AuthenticateMemberRequestDTO
-import io.leonfoliveira.judge.api.controller.dto.request.AuthenticateRootRequestDTO
-import io.leonfoliveira.judge.core.service.authorization.AuthorizationService
 import io.leonfoliveira.judge.core.domain.model.Authorization
+import io.leonfoliveira.judge.core.service.authorization.AuthorizationService
+import io.leonfoliveira.judge.core.service.dto.input.AuthenticateMemberInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.AuthenticateRootInputDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -18,22 +18,21 @@ class AuthorizationController(
 ) {
     @PostMapping("/root")
     fun authenticateRoot(
-        @RequestBody request: AuthenticateRootRequestDTO,
+        @RequestBody body: AuthenticateRootInputDTO,
     ): ResponseEntity<Authorization> {
-        val authorization = authenticationService.authenticateRoot(request.password)
+        val authorization = authenticationService.authenticateRoot(body)
         return ResponseEntity.ok(authorization)
     }
 
     @PostMapping("/contests/{id}")
     fun authenticateMember(
         @PathVariable id: Int,
-        @RequestBody request: AuthenticateMemberRequestDTO,
+        @RequestBody body: AuthenticateMemberInputDTO,
     ): ResponseEntity<Authorization> {
         val authorization =
             authenticationService.authenticateMember(
                 contestId = id,
-                request.login,
-                request.password,
+                body,
             )
         return ResponseEntity.ok(authorization)
     }

@@ -10,6 +10,8 @@ import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTO
+import io.leonfoliveira.judge.core.service.dto.output.SubmissionOutputDTO
+import io.leonfoliveira.judge.core.service.dto.output.toOutputDTO
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
@@ -20,15 +22,15 @@ class CreateSubmissionService(
     private val memberRepository: MemberRepository,
     private val problemRepository: ProblemRepository,
     private val submissionRepository: SubmissionRepository,
-    private val bucketAdapter: BucketAdapter,
     private val submissionQueueAdapter: SubmissionQueueAdapter,
     private val submissionEmitterAdapter: SubmissionEmitterAdapter,
+    private val bucketAdapter: BucketAdapter,
 ) {
     fun create(
         memberId: Int,
         problemId: Int,
         @Valid inputDTO: CreateSubmissionInputDTO,
-    ): Submission {
+    ): SubmissionOutputDTO {
         val member =
             memberRepository.findById(memberId).orElseThrow {
                 NotFoundException("Could not find member with id = $memberId")
@@ -55,12 +57,12 @@ class CreateSubmissionService(
                 problem = problem,
                 language = inputDTO.language,
                 status = Submission.Status.JUDGING,
-                code = bucketAdapter.upload(inputDTO.code),
+                code = inputDTO.code,
             )
         submissionRepository.save(submission)
         submissionQueueAdapter.enqueue(submission)
         submissionEmitterAdapter.emit(submission)
 
-        return submission
+        return submission.toOutputDTO(bucketAdapter)
     }
 }

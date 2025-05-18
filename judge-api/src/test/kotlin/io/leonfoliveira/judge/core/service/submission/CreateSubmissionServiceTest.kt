@@ -8,11 +8,10 @@ import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Submission
-import io.leonfoliveira.judge.core.domain.exception.BusinessException
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.domain.model.Attachment
-import io.leonfoliveira.judge.core.domain.model.RawAttachment
+import io.leonfoliveira.judge.core.domain.model.DownloadAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
 import io.leonfoliveira.judge.core.port.SubmissionQueueAdapter
@@ -32,9 +31,9 @@ class CreateSubmissionServiceTest : FunSpec({
     val memberRepository = mockk<MemberRepository>()
     val problemRepository = mockk<ProblemRepository>()
     val submissionRepository = mockk<SubmissionRepository>()
-    val bucketAdapter = mockk<BucketAdapter>()
     val submissionQueueAdapter = mockk<SubmissionQueueAdapter>()
     val submissionEmitterAdapter = mockk<SubmissionEmitterAdapter>()
+    val bucketAdapter = mockk<BucketAdapter>()
 
     val validator = Validation.buildDefaultValidatorFactory().validator
 
@@ -43,12 +42,15 @@ class CreateSubmissionServiceTest : FunSpec({
             memberRepository,
             problemRepository,
             submissionRepository,
-            bucketAdapter,
             submissionQueueAdapter,
             submissionEmitterAdapter,
+            bucketAdapter,
         )
 
     val now = LocalDateTime.now()
+
+    every { bucketAdapter.createDownloadAttachment(any()) }
+        .returns(DownloadAttachment("url", "key"))
 
     beforeEach {
         mockkObject(TimeUtils)
@@ -57,7 +59,8 @@ class CreateSubmissionServiceTest : FunSpec({
 
     context("create") {
         listOf(
-            CreateSubmissionInputDTOMockFactory.build(code = RawAttachment(filename = "", content = ByteArray(0))),
+            CreateSubmissionInputDTOMockFactory.build(code = Attachment(filename = "", key = "key")),
+            CreateSubmissionInputDTOMockFactory.build(code = Attachment(filename = "code.py", key = "")),
         ).forEach { dto ->
             test("should validate inputDTO") {
                 validator.validate(dto).size shouldNotBe 0
@@ -145,13 +148,13 @@ class CreateSubmissionServiceTest : FunSpec({
                 .returns(Optional.of(member))
             every { problemRepository.findById(2) }
                 .returns(Optional.of(problem))
-            val attachment =
-                Attachment(
+            val downloadAttachment =
+                DownloadAttachment(
                     filename = "code.java",
-                    key = "code_key",
+                    url = "https://example.com/code.java",
                 )
-            every { bucketAdapter.upload(inputDTO.code) }
-                .returns(attachment)
+            every { bucketAdapter.createDownloadAttachment(inputDTO.code) }
+                .returns(downloadAttachment)
             every { submissionRepository.save(any()) }
                 .returnsArgument(0)
             every { submissionQueueAdapter.enqueue(any()) }
@@ -161,11 +164,11 @@ class CreateSubmissionServiceTest : FunSpec({
 
             val result = sut.create(1, 2, inputDTO)
 
-            result.member shouldBe member
-            result.problem shouldBe problem
+            result.memberId shouldBe member.id
+            result.problemId shouldBe problem.id
             result.language shouldBe inputDTO.language
             result.status shouldBe Submission.Status.JUDGING
-            result.code shouldBe attachment
+            result.code shouldBe downloadAttachment
         }
     }
 })

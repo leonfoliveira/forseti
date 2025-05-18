@@ -9,9 +9,12 @@ import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
+import io.leonfoliveira.judge.core.domain.model.DownloadAttachment
+import io.leonfoliveira.judge.core.port.BucketAdapter
+import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
-import io.leonfoliveira.judge.core.service.contest.FindContestService
 import io.leonfoliveira.judge.core.service.dto.output.ProblemMemberOutputDTO
+import io.leonfoliveira.judge.core.service.dto.output.toOutputDTO
 import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
@@ -21,15 +24,20 @@ import java.util.Optional
 
 class FindProblemServiceTest : FunSpec({
     val problemRepository = mockk<ProblemRepository>()
-    val findContestService = mockk<FindContestService>()
+    val contestRepository = mockk<ContestRepository>()
+    val bucketAdapter = mockk<BucketAdapter>()
 
     val sut =
         FindProblemService(
             problemRepository = problemRepository,
-            findContestService = findContestService,
+            contestRepository = contestRepository,
+            bucketAdapter = bucketAdapter,
         )
 
     val now = LocalDateTime.now()
+
+    every { bucketAdapter.createDownloadAttachment(any()) }
+        .returns(DownloadAttachment("url", "key"))
 
     beforeEach {
         mockkObject(TimeUtils)
@@ -66,7 +74,7 @@ class FindProblemServiceTest : FunSpec({
 
             val result = sut.findById(1)
 
-            result shouldBe problem
+            result shouldBe problem.toOutputDTO(bucketAdapter)
         }
     }
 
@@ -76,8 +84,8 @@ class FindProblemServiceTest : FunSpec({
                 ContestMockFactory.build(
                     startAt = now.plusDays(1),
                 )
-            every { findContestService.findById(1) }
-                .returns(contest)
+            every { contestRepository.findById(1) }
+                .returns(Optional.of(contest))
 
             shouldThrow<ForbiddenException> {
                 sut.findAllByContest(1)
@@ -90,8 +98,8 @@ class FindProblemServiceTest : FunSpec({
                     startAt = now.minusDays(1),
                     problems = listOf(ProblemMockFactory.build()),
                 )
-            every { findContestService.findById(1) }
-                .returns(contest)
+            every { contestRepository.findById(1) }
+                .returns(Optional.of(contest))
 
             val result = sut.findAllByContest(1)
 
@@ -105,8 +113,8 @@ class FindProblemServiceTest : FunSpec({
                 ContestMockFactory.build(
                     startAt = now.plusDays(1),
                 )
-            every { findContestService.findById(1) }
-                .returns(contest)
+            every { contestRepository.findById(1) }
+                .returns(Optional.of(contest))
 
             shouldThrow<ForbiddenException> {
                 sut.findAllByContestForMember(1, 1)
@@ -146,8 +154,8 @@ class FindProblemServiceTest : FunSpec({
                             ),
                         ),
                 )
-            every { findContestService.findById(1) }
-                .returns(contest)
+            every { contestRepository.findById(1) }
+                .returns(Optional.of(contest))
 
             val result = sut.findAllByContestForMember(1, 1)
 

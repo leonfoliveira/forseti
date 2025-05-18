@@ -1,6 +1,5 @@
 package io.leonfoliveira.judge.core.service.contest
 
-import io.leonfoliveira.judge.core.domain.entity.Contest
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.Problem
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
@@ -9,6 +8,8 @@ import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
+import io.leonfoliveira.judge.core.service.dto.output.ContestOutputDTO
+import io.leonfoliveira.judge.core.service.dto.output.toOutputDTO
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
@@ -19,16 +20,19 @@ class UpdateContestService(
     private val contestRepository: ContestRepository,
     private val hashAdapter: HashAdapter,
     private val bucketAdapter: BucketAdapter,
-    private val findContestService: FindContestService,
     private val createContestService: CreateContestService,
     private val deleteContestService: DeleteContestService,
 ) {
-    fun update(@Valid inputDTO: UpdateContestInputDTO): Contest {
+    fun update(
+        @Valid inputDTO: UpdateContestInputDTO,
+    ): ContestOutputDTO {
         if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
             throw ForbiddenException("Contest cannot have ROOT members")
         }
 
-        val contest = findContestService.findById(inputDTO.id)
+        val contest =
+            contestRepository.findById(inputDTO.id)
+                .orElseThrow { NotFoundException("Could not find contest with id = ${inputDTO.id}") }
         if (contest.hasStarted()) {
             throw ForbiddenException("Contest has already started")
         }
@@ -60,7 +64,9 @@ class UpdateContestService(
         contest.members = createdMembers + updatedMembers
         contest.problems = createdProblems + updatedProblems
 
-        return contestRepository.save(contest)
+        contestRepository.save(contest)
+
+        return contest.toOutputDTO(bucketAdapter)
     }
 
     private fun updateMember(
@@ -93,7 +99,7 @@ class UpdateContestService(
         problem.description = problemDTO.description
         problem.timeLimit = problemDTO.timeLimit
         if (problemDTO.testCases != null) {
-            problem.testCases = bucketAdapter.upload(problemDTO.testCases)
+            problem.testCases = problemDTO.testCases
         }
 
         return problem

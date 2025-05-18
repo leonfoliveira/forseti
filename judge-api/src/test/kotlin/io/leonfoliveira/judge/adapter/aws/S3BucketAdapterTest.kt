@@ -3,53 +3,60 @@ package io.leonfoliveira.judge.adapter.aws
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.model.Attachment
-import io.leonfoliveira.judge.core.domain.model.RawAttachment
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import software.amazon.awssdk.core.ResponseInputStream
-import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.GetObjectResponse
-import software.amazon.awssdk.services.s3.model.PutObjectRequest
+import software.amazon.awssdk.services.s3.presigner.S3Presigner
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest
 import java.util.UUID
+import kotlin.toString
 
 class S3BucketAdapterTest : FunSpec({
     val s3Client = mockk<S3Client>()
+    val s3PreSigner = mockk<S3Presigner>()
     val bucket = "bucket"
 
     val sut =
         S3BucketAdapter(
             s3Client = s3Client,
+            s3PreSigner = s3PreSigner,
             bucket = bucket,
         )
 
-    context("upload") {
-        test("should upload the file to S3") {
-            val rawAttachment =
-                RawAttachment(
-                    filename = "file.txt",
-                    content = ByteArray(0),
-                )
-            val requestSlot = slot<PutObjectRequest>()
-            val bodySlot = slot<RequestBody>()
+    context("createUploadAttachment") {
+        test("should return a valid UploadAttachment with a signed URL") {
+            val signedUrl = "https://example.com/signed-url"
 
-            every {
-                s3Client.putObject(
-                    capture(requestSlot),
-                    capture(bodySlot),
-                )
-            }
-                .returns(null)
+            every { s3PreSigner.presignPutObject(any<PutObjectPresignRequest>()) } returns
+                mockk {
+                    every { url().toString() } returns signedUrl
+                }
 
-            val attachment = sut.upload(rawAttachment)
+            val result = sut.createUploadAttachment()
 
-            requestSlot.captured.bucket() shouldBe bucket
-            requestSlot.captured.key() shouldBe attachment.key
-            bodySlot.captured.contentStreamProvider().newStream().readAllBytes() shouldBe rawAttachment.content
-            attachment.filename shouldBe rawAttachment.filename
-            attachment.key shouldBe attachment.key
+            result.url shouldBe signedUrl
+        }
+    }
+
+    context("createDownloadAttachment") {
+        test("return a valid DownloadAttachment with a signed URL") {
+            val attachment = Attachment("test.txt", UUID.randomUUID().toString())
+            val signedUrl = "https://example.com/signed-url"
+
+            every { s3PreSigner.presignGetObject(any<GetObjectPresignRequest>()) } returns
+                mockk {
+                    every { url().toString() } returns signedUrl
+                }
+
+            val result = sut.createDownloadAttachment(attachment)
+
+            result.filename shouldBe attachment.filename
+            result.url shouldBe signedUrl
         }
     }
 

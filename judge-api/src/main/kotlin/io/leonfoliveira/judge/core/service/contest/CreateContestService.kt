@@ -8,6 +8,8 @@ import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTO
+import io.leonfoliveira.judge.core.service.dto.output.ContestOutputDTO
+import io.leonfoliveira.judge.core.service.dto.output.toOutputDTO
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
@@ -19,7 +21,9 @@ class CreateContestService(
     private val hashAdapter: HashAdapter,
     private val bucketAdapter: BucketAdapter,
 ) {
-    fun create(@Valid inputDTO: CreateContestInputDTO): Contest {
+    fun create(
+        @Valid inputDTO: CreateContestInputDTO,
+    ): ContestOutputDTO {
         if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
             throw ForbiddenException("Contest cannot have ROOT members")
         }
@@ -35,7 +39,9 @@ class CreateContestService(
         contest.members = inputDTO.members.map { createMember(contest, it) }
         contest.problems = inputDTO.problems.map { createProblem(contest, it) }
 
-        return contestRepository.save(contest)
+        contestRepository.save(contest)
+
+        return contest.toOutputDTO(bucketAdapter)
     }
 
     fun createMember(
@@ -59,13 +65,12 @@ class CreateContestService(
         contest: Contest,
         problemDTO: CreateContestInputDTO.ProblemDTO,
     ): Problem {
-        val testCases = bucketAdapter.upload(problemDTO.testCases)
         val problem =
             Problem(
                 title = problemDTO.title,
                 description = problemDTO.description,
                 timeLimit = problemDTO.timeLimit,
-                testCases = testCases,
+                testCases = problemDTO.testCases,
                 contest = contest,
             )
 

@@ -2,11 +2,13 @@ package io.leonfoliveira.judge.core.service.authorization
 
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.domain.exception.UnauthorizedException
+import io.leonfoliveira.judge.core.domain.model.Authorization
 import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.port.JwtAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
-import io.leonfoliveira.judge.core.domain.model.Authorization
+import io.leonfoliveira.judge.core.service.dto.input.AuthenticateMemberInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.AuthenticateRootInputDTO
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -18,8 +20,8 @@ class AuthorizationService(
     @Value("\${security.root.password}")
     private val rootPassword: String,
 ) {
-    fun authenticateRoot(password: String): Authorization {
-        if (password != rootPassword) {
+    fun authenticateRoot(inputDTO: AuthenticateRootInputDTO): Authorization {
+        if (inputDTO.password != rootPassword) {
             throw UnauthorizedException("Invalid root password")
         }
 
@@ -30,18 +32,17 @@ class AuthorizationService(
 
     fun authenticateMember(
         contestId: Int,
-        login: String,
-        password: String,
+        inputDTO: AuthenticateMemberInputDTO,
     ): Authorization {
         val contest =
             contestRepository.findById(contestId).orElseThrow {
                 throw NotFoundException("Could not find contest with id = $contestId")
             }
         val member =
-            contest.members.find { it.login == login }
+            contest.members.find { it.login == inputDTO.login }
                 ?: throw UnauthorizedException("Invalid login or password")
 
-        if (!hashAdapter.verify(password, member.password)) {
+        if (!hashAdapter.verify(inputDTO.password, member.password)) {
             throw UnauthorizedException("Invalid login or password")
         }
 

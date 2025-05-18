@@ -8,6 +8,6 @@ export type ContestFullResponseDTO = {
   languages: Language[];
   startAt: string;
   endAt: string;
-  members: MemberResponseDTO;
-  problems: ProblemFullResponseDTO;
+  members: MemberResponseDTO[];
+  problems: ProblemFullResponseDTO[];
 };

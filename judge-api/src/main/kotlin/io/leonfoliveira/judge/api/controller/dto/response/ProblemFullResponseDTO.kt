@@ -1,22 +1,22 @@
 package io.leonfoliveira.judge.api.controller.dto.response
 
-import io.leonfoliveira.judge.core.domain.entity.Problem
-import io.leonfoliveira.judge.core.domain.model.Attachment
+import io.leonfoliveira.judge.core.domain.model.DownloadAttachment
+import io.leonfoliveira.judge.core.service.dto.output.ProblemOutputDTO
 
 data class ProblemFullResponseDTO(
     val id: Int,
     val title: String,
     val description: String,
     val timeLimit: Int,
-    val testCases: Attachment,
+    val testCases: DownloadAttachment,
 )
 
-fun Problem.toFullResponseDTO(): ProblemFullResponseDTO {
+fun ProblemOutputDTO.toFullResponseDTO(): ProblemFullResponseDTO {
     return ProblemFullResponseDTO(
-        id = this.id,
-        title = this.title,
-        description = this.description,
-        timeLimit = this.timeLimit,
-        testCases = this.testCases,
+        id = id,
+        title = title,
+        description = description,
+        timeLimit = timeLimit,
+        testCases = testCases,
     )
 }

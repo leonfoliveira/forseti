@@ -2,7 +2,7 @@ package io.leonfoliveira.judge.core.service.dto.input
 
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import io.leonfoliveira.judge.core.domain.model.RawAttachment
+import io.leonfoliveira.judge.core.domain.model.Attachment
 import java.time.LocalDateTime
 
 object CreateContestInputDTOMockFactory {
@@ -38,11 +38,7 @@ object CreateContestInputDTOMockFactory {
         title: String = "Problem Title",
         description: String = "Problem Description",
         timeLimit: Int = 1000,
-        testCases: RawAttachment =
-            RawAttachment(
-                filename = "test_cases.zip",
-                content = ByteArray(0),
-            ),
+        testCases: Attachment = Attachment("testCases.csv", "key"),
     ) = CreateContestInputDTO.ProblemDTO(
         title = title,
         description = description,

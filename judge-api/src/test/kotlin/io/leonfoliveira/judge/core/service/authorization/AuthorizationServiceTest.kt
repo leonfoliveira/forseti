@@ -11,6 +11,8 @@ import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.port.JwtAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
+import io.leonfoliveira.judge.core.service.dto.input.AuthenticateMemberInputDTOMockFactory
+import io.leonfoliveira.judge.core.service.dto.input.AuthenticateRootInputDTOMockFactory
 import io.mockk.every
 import io.mockk.mockk
 import java.util.Optional
@@ -32,7 +34,7 @@ class AuthorizationServiceTest : FunSpec({
     context("authenticateRoot") {
         test("should throw UnauthorizedException when password is invalid") {
             shouldThrow<UnauthorizedException> {
-                sut.authenticateRoot("invalidPassword")
+                sut.authenticateRoot(AuthenticateRootInputDTOMockFactory.build(password = "invalidPassword"))
             }
         }
 
@@ -40,7 +42,7 @@ class AuthorizationServiceTest : FunSpec({
             every { jwtAdapter.generateToken(any()) }
                 .returns("generatedToken")
 
-            val result = sut.authenticateRoot(rootPassword)
+            val result = sut.authenticateRoot(AuthenticateRootInputDTOMockFactory.build(password = rootPassword))
 
             result.member shouldBe AuthorizationMember.ROOT
             result.accessToken shouldBe "generatedToken"
@@ -62,7 +64,7 @@ class AuthorizationServiceTest : FunSpec({
             every { contestRepository.findById(contestId) } returns Optional.empty()
 
             shouldThrow<NotFoundException> {
-                sut.authenticateMember(contestId, login, password)
+                sut.authenticateMember(contestId, AuthenticateMemberInputDTOMockFactory.build())
             }
         }
 
@@ -70,7 +72,7 @@ class AuthorizationServiceTest : FunSpec({
             every { contestRepository.findById(contestId) } returns Optional.of(ContestMockFactory.build())
 
             shouldThrow<UnauthorizedException> {
-                sut.authenticateMember(contestId, login, password)
+                sut.authenticateMember(contestId, AuthenticateMemberInputDTOMockFactory.build())
             }
         }
 
@@ -78,7 +80,7 @@ class AuthorizationServiceTest : FunSpec({
             every { hashAdapter.verify(password, member.password) } returns false
 
             shouldThrow<UnauthorizedException> {
-                sut.authenticateMember(contestId, login, password)
+                sut.authenticateMember(contestId, AuthenticateMemberInputDTOMockFactory.build())
             }
         }
 
@@ -86,7 +88,7 @@ class AuthorizationServiceTest : FunSpec({
             every { hashAdapter.verify(password, member.password) } returns true
             every { jwtAdapter.generateToken(any()) } returns "generatedToken"
 
-            val result = sut.authenticateMember(contestId, login, password)
+            val result = sut.authenticateMember(contestId, AuthenticateMemberInputDTOMockFactory.build())
 
             result.member.id shouldBe member.id
             result.member.name shouldBe member.name

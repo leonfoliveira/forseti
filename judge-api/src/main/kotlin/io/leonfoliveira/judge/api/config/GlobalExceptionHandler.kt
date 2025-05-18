@@ -9,7 +9,6 @@ import jakarta.validation.ConstraintViolationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.http.converter.HttpMessageConversionException
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -41,19 +40,21 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationExceptions(ex: MethodArgumentNotValidException): ResponseEntity<Map<String, String>> {
-        val errors = ex.bindingResult.fieldErrors
-            .groupBy { it.field }
-            .mapValues { entry -> entry.value.joinToString(", ") { it.defaultMessage ?: "Invalid value" } }
+        val errors =
+            ex.bindingResult.fieldErrors
+                .groupBy { it.field }
+                .mapValues { entry -> entry.value.joinToString(", ") { it.defaultMessage ?: "Invalid value" } }
 
         return ResponseEntity(errors, HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(ConstraintViolationException::class)
     fun handleConstraintViolation(ex: ConstraintViolationException): ResponseEntity<Map<String, String>> {
-        val errors = ex.constraintViolations.associate {
-            val path = it.propertyPath.toString().split(".").drop(2).joinToString(".")
-            path to (it.message ?: "Invalid value")
-        }
+        val errors =
+            ex.constraintViolations.associate {
+                val path = it.propertyPath.toString().split(".").drop(2).joinToString(".")
+                path to (it.message ?: "Invalid value")
+            }
         return ResponseEntity(errors, HttpStatus.BAD_REQUEST)
     }
 

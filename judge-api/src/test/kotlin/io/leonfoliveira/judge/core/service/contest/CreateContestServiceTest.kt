@@ -1,15 +1,11 @@
 package io.leonfoliveira.judge.core.service.contest
 
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNot
 import io.kotest.matchers.shouldNotBe
 import io.leonfoliveira.judge.core.domain.entity.Member
-import io.leonfoliveira.judge.core.domain.exception.BusinessException
 import io.leonfoliveira.judge.core.domain.model.Attachment
-import io.leonfoliveira.judge.core.domain.model.RawAttachment
+import io.leonfoliveira.judge.core.domain.model.DownloadAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
@@ -36,6 +32,9 @@ class CreateContestServiceTest : FunSpec({
         )
 
     val now = LocalDateTime.now()
+
+    every { bucketAdapter.createDownloadAttachment(any()) }
+        .returns(DownloadAttachment("url", "key"))
 
     beforeEach {
         mockkObject(TimeUtils)
@@ -70,9 +69,21 @@ class CreateContestServiceTest : FunSpec({
                     listOf(
                         CreateContestInputDTOMockFactory.buildProblemDTO(
                             testCases =
-                                RawAttachment(
+                                Attachment(
                                     filename = "",
-                                    content = ByteArray(0),
+                                    key = "key",
+                                ),
+                        ),
+                    ),
+            ),
+            CreateContestInputDTOMockFactory.build(
+                problems =
+                    listOf(
+                        CreateContestInputDTOMockFactory.buildProblemDTO(
+                            testCases =
+                                Attachment(
+                                    filename = "test_case_1.csv",
+                                    key = "",
                                 ),
                         ),
                     ),
@@ -103,13 +114,13 @@ class CreateContestServiceTest : FunSpec({
                 .returnsArgument(0)
             every { hashAdapter.hash(any()) }
                 .returns("hashed_password")
-            val attachment =
-                Attachment(
-                    filename = "test_case_1.java",
-                    key = "123456",
+            val downloadAttachment =
+                DownloadAttachment(
+                    filename = "abc",
+                    url = "https://example.com/key",
                 )
-            every { bucketAdapter.upload(any()) }
-                .returns(attachment)
+            every { bucketAdapter.createDownloadAttachment(any()) }
+                .returns(downloadAttachment)
 
             val result = sut.create(input)
 
@@ -119,12 +130,11 @@ class CreateContestServiceTest : FunSpec({
             result.endAt shouldBe endAt
             result.members[0].name shouldBe input.members[0].name
             result.members[0].login shouldBe input.members[0].login
-            result.members[0].password shouldBe "hashed_password"
             result.members[0].type shouldBe input.members[0].type
             result.problems[0].title shouldBe input.problems[0].title
             result.problems[0].description shouldBe input.problems[0].description
             result.problems[0].timeLimit shouldBe input.problems[0].timeLimit
-            result.problems[0].testCases shouldBe attachment
+            result.problems[0].testCases shouldBe downloadAttachment
         }
     }
 })

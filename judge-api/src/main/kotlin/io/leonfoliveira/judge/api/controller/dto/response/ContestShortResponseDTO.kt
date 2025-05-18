@@ -1,17 +1,17 @@
 package io.leonfoliveira.judge.api.controller.dto.response
 
-import io.leonfoliveira.judge.core.domain.entity.Contest
+import io.leonfoliveira.judge.core.service.dto.output.ContestOutputDTO
 import java.time.LocalDateTime
 
-class ContestResponseDTO(
+class ContestShortResponseDTO(
     val id: Int,
     val title: String,
     val startAt: LocalDateTime,
     val endAt: LocalDateTime,
 )
 
-fun Contest.toResponseDTO(): ContestResponseDTO {
-    return ContestResponseDTO(
+fun ContestOutputDTO.toShortResponseDTO(): ContestShortResponseDTO {
+    return ContestShortResponseDTO(
         id = this.id,
         title = this.title,
         startAt = this.startAt,

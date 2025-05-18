@@ -1,13 +1,12 @@
 package io.leonfoliveira.judge.api.controller
 
-import io.leonfoliveira.judge.api.controller.dto.request.CreateSubmissionRequestDTO
 import io.leonfoliveira.judge.api.controller.dto.response.ProblemFullResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.SubmissionResponseDTO
 import io.leonfoliveira.judge.api.controller.dto.response.toFullResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
 import io.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.leonfoliveira.judge.api.util.Private
 import io.leonfoliveira.judge.core.domain.entity.Member
+import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTO
+import io.leonfoliveira.judge.core.service.dto.output.SubmissionOutputDTO
 import io.leonfoliveira.judge.core.service.problem.FindProblemService
 import io.leonfoliveira.judge.core.service.submission.CreateSubmissionService
 import org.springframework.http.ResponseEntity
@@ -28,23 +27,23 @@ class ProblemController(
     fun findById(
         @PathVariable id: Int,
     ): ResponseEntity<ProblemFullResponseDTO> {
-        val problem = findProblemService.findById(id)
-        return ResponseEntity.ok(problem.toFullResponseDTO())
+        val problemOutputDTO = findProblemService.findById(id)
+        return ResponseEntity.ok(problemOutputDTO.toFullResponseDTO())
     }
 
     @PostMapping("/{id}/submissions")
     @Private(Member.Type.CONTESTANT)
     fun createSubmission(
         @PathVariable id: Int,
-        @RequestBody input: CreateSubmissionRequestDTO,
-    ): ResponseEntity<SubmissionResponseDTO> {
+        @RequestBody body: CreateSubmissionInputDTO,
+    ): ResponseEntity<SubmissionOutputDTO> {
         val authentication = AuthorizationContextUtil.getAuthorization()
         val submission =
             createSubmissionService.create(
                 memberId = authentication.id,
                 problemId = id,
-                inputDTO = input.toInputDTO(),
+                inputDTO = body,
             )
-        return ResponseEntity.ok(submission.toResponseDTO())
+        return ResponseEntity.ok(submission)
     }
 }

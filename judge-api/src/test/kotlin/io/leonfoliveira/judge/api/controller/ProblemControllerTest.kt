@@ -3,12 +3,12 @@ package io.leonfoliveira.judge.api.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
-import io.leonfoliveira.judge.api.controller.dto.CreateSubmissionRequestDTOMockFactory
 import io.leonfoliveira.judge.api.controller.dto.response.toFullResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toShortResponseDTO
 import io.leonfoliveira.judge.api.util.SecurityContextMockFactory
-import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
-import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
+import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTOMockFactory
+import io.leonfoliveira.judge.core.service.dto.output.ProblemOutputDTOMockFactory
+import io.leonfoliveira.judge.core.service.dto.output.SubmissionOutputDTOMockFactory
 import io.leonfoliveira.judge.core.service.problem.FindProblemService
 import io.leonfoliveira.judge.core.service.submission.CreateSubmissionService
 import io.mockk.every
@@ -39,7 +39,7 @@ class ProblemControllerTest(
 
         test("findById") {
             val problemId = 1
-            val problem = ProblemMockFactory.build()
+            val problem = ProblemOutputDTOMockFactory.build()
             every { findProblemService.findById(problemId) } returns problem
 
             mockMvc.get("$basePath/$problemId")
@@ -50,15 +50,15 @@ class ProblemControllerTest(
         }
 
         test("createSubmission") {
-            val submission = SubmissionMockFactory.build()
+            val submission = SubmissionOutputDTOMockFactory.build()
             every { createSubmissionService.create(any(), any(), any()) } returns submission
 
             mockMvc.post("$basePath/1/submissions") {
                 contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(CreateSubmissionRequestDTOMockFactory.build())
+                content = objectMapper.writeValueAsString(CreateSubmissionInputDTOMockFactory.build())
             }.andExpect {
                 status { isOk() }
-                content { submission.toResponseDTO() }
+                content { submission.toShortResponseDTO() }
             }
         }
     })

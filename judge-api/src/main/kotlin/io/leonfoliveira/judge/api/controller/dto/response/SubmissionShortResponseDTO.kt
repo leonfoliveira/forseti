@@ -2,9 +2,10 @@ package io.leonfoliveira.judge.api.controller.dto.response
 
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.enumerate.Language
+import io.leonfoliveira.judge.core.service.dto.output.SubmissionOutputDTO
 import java.time.LocalDateTime
 
-data class SubmissionResponseDTO(
+data class SubmissionShortResponseDTO(
     val id: Int,
     val problemId: Int,
     val memberId: Int,
@@ -13,11 +14,11 @@ data class SubmissionResponseDTO(
     val createdAt: LocalDateTime,
 )
 
-fun Submission.toResponseDTO(): SubmissionResponseDTO {
-    return SubmissionResponseDTO(
+fun SubmissionOutputDTO.toShortResponseDTO(): SubmissionShortResponseDTO {
+    return SubmissionShortResponseDTO(
         id = id,
-        problemId = problem.id,
-        memberId = member.id,
+        problemId = problemId,
+        memberId = memberId,
         status = status,
         language = language,
         createdAt = createdAt,

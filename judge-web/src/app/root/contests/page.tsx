@@ -11,6 +11,7 @@ import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import Link from "next/link";
 import { useToast } from "@/app/_util/toast-hook";
 import { formatFromISO } from "@/app/_util/date-utils";
+import { ContestStatus, getContestStatus } from "@/app/_util/contest-utils";
 
 function RootPage() {
   const { authorizationService, contestService } = useAtomValue(containerAtom);
@@ -41,20 +42,6 @@ function RootPage() {
     };
     fetchContests().then();
   }, []);
-
-  function getStatus(contest: ContestResponseDTO) {
-    const now = new Date();
-    const startAt = new Date(contest.startAt);
-    const endAt = new Date(contest.endAt);
-
-    if (now < startAt) {
-      return "NOT_STARTED";
-    } else if (now >= startAt && now <= endAt) {
-      return "IN_PROGRESS";
-    } else {
-      return "ENDED";
-    }
-  }
 
   return (
     <div>
@@ -88,10 +75,10 @@ function RootPage() {
                 <td>{formatFromISO(contest.startAt)}</td>
                 <td>{formatFromISO(contest.endAt)}</td>
                 <th>
-                  {getStatus(contest) === "IN_PROGRESS" && (
+                  {getContestStatus(contest) === ContestStatus.IN_PROGRESS && (
                     <span className="badge text-bg-success">In Progress</span>
                   )}
-                  {getStatus(contest) === "ENDED" && (
+                  {getContestStatus(contest) === ContestStatus.ENDED && (
                     <span className="badge text-bg-danger">Ended</span>
                   )}
                 </th>

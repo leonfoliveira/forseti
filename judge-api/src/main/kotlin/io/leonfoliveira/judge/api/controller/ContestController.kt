@@ -1,13 +1,9 @@
 package io.leonfoliveira.judge.api.controller
 
-import io.leonfoliveira.judge.api.controller.dto.request.CreateContestRequestDTO
-import io.leonfoliveira.judge.api.controller.dto.request.UpdateContestRequestDTO
-import io.leonfoliveira.judge.api.controller.dto.response.ContestFullResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.ContestResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.ProblemResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.SubmissionResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.toFullResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ContestShortResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ProblemShortResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.SubmissionShortResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toShortResponseDTO
 import io.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.leonfoliveira.judge.api.util.Private
 import io.leonfoliveira.judge.core.domain.entity.Member
@@ -16,6 +12,9 @@ import io.leonfoliveira.judge.core.service.contest.CreateContestService
 import io.leonfoliveira.judge.core.service.contest.DeleteContestService
 import io.leonfoliveira.judge.core.service.contest.FindContestService
 import io.leonfoliveira.judge.core.service.contest.UpdateContestService
+import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
+import io.leonfoliveira.judge.core.service.dto.output.ContestOutputDTO
 import io.leonfoliveira.judge.core.service.dto.output.LeaderboardOutputDTO
 import io.leonfoliveira.judge.core.service.dto.output.ProblemMemberOutputDTO
 import io.leonfoliveira.judge.core.service.leaderboard.LeaderboardService
@@ -47,48 +46,48 @@ class ContestController(
     @Private(Member.Type.ROOT)
     @Transactional
     fun createContest(
-        @RequestBody requestDTO: CreateContestRequestDTO,
-    ): ResponseEntity<ContestFullResponseDTO> {
+        @RequestBody body: CreateContestInputDTO,
+    ): ResponseEntity<ContestOutputDTO> {
         val authentication = AuthorizationContextUtil.getAuthorization()
         if (authentication.type != Member.Type.ROOT) {
             throw ForbiddenException()
         }
-        val contest = createContestService.create(requestDTO.toInputDTO())
-        return ResponseEntity.ok(contest.toFullResponseDTO())
+        val contest = createContestService.create(body)
+        return ResponseEntity.ok(contest)
     }
 
     @PutMapping
     @Private(Member.Type.ROOT)
     @Transactional
     fun updateContest(
-        @RequestBody requestDTO: UpdateContestRequestDTO,
-    ): ResponseEntity<ContestFullResponseDTO> {
-        val contest = updateContestService.update(requestDTO.toInputDTO())
-        return ResponseEntity.ok(contest.toFullResponseDTO())
+        @RequestBody body: UpdateContestInputDTO,
+    ): ResponseEntity<ContestOutputDTO> {
+        val contest = updateContestService.update(body)
+        return ResponseEntity.ok(contest)
     }
 
     @GetMapping
     @Private(Member.Type.ROOT)
-    fun findAllContest(): ResponseEntity<List<ContestResponseDTO>> {
+    fun findAllContest(): ResponseEntity<List<ContestShortResponseDTO>> {
         val contests = findContestService.findAll()
-        return ResponseEntity.ok(contests.map { it.toResponseDTO() })
+        return ResponseEntity.ok(contests.map { it.toShortResponseDTO() })
     }
 
     @GetMapping("/{id}/full")
     @Private(Member.Type.ROOT)
     fun findFullContestById(
         @PathVariable id: Int,
-    ): ResponseEntity<ContestFullResponseDTO> {
+    ): ResponseEntity<ContestOutputDTO> {
         val contest = findContestService.findById(id)
-        return ResponseEntity.ok(contest.toFullResponseDTO())
+        return ResponseEntity.ok(contest)
     }
 
     @GetMapping("/{id}")
     fun findContestById(
         @PathVariable id: Int,
-    ): ResponseEntity<ContestResponseDTO> {
+    ): ResponseEntity<ContestShortResponseDTO> {
         val contest = findContestService.findById(id)
-        return ResponseEntity.ok(contest.toResponseDTO())
+        return ResponseEntity.ok(contest.toShortResponseDTO())
     }
 
     @DeleteMapping("/{id}")
@@ -112,9 +111,9 @@ class ContestController(
     @GetMapping("/{id}/problems")
     fun findAllProblems(
         @PathVariable id: Int,
-    ): ResponseEntity<List<ProblemResponseDTO>> {
+    ): ResponseEntity<List<ProblemShortResponseDTO>> {
         val problems = findProblemService.findAllByContest(id)
-        return ResponseEntity.ok(problems.map { it.toResponseDTO() })
+        return ResponseEntity.ok(problems.map { it.toShortResponseDTO() })
     }
 
     @GetMapping("/{id}/problems/me")
@@ -122,16 +121,16 @@ class ContestController(
     fun findAllProblemsForMember(
         @PathVariable id: Int,
     ): ResponseEntity<List<ProblemMemberOutputDTO>> {
-        val authentication = AuthorizationContextUtil.getAuthorization()
-        val problems = findProblemService.findAllByContestForMember(id, authentication.id)
+        val authorization = AuthorizationContextUtil.getAuthorization()
+        val problems = findProblemService.findAllByContestForMember(id, authorization.id)
         return ResponseEntity.ok(problems)
     }
 
     @GetMapping("/{id}/submissions")
     fun findAllSubmissions(
         @PathVariable id: Int,
-    ): ResponseEntity<List<SubmissionResponseDTO>> {
+    ): ResponseEntity<List<SubmissionShortResponseDTO>> {
         val submissions = findSubmissionService.findAllByContest(id)
-        return ResponseEntity.ok(submissions.map { it.toResponseDTO() })
+        return ResponseEntity.ok(submissions.map { it.toShortResponseDTO() })
     }
 }
