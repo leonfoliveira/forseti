@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useAtomValue } from "jotai";
 import { containerAtom } from "@/app/_atom/container-atom";
@@ -12,6 +12,8 @@ import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { toAttachmentRequestDTO } from "@/app/_util/file-utils";
 import { useToast } from "@/app/_util/toast-hook";
+import Modal from "bootstrap/js/dist/modal";
+import Link from "next/link";
 
 type FormType = {
   title: string;
@@ -60,6 +62,8 @@ function NewContestPage() {
     name: "problems",
   });
 
+  const [openDescription, setOpenDescription] = useState<number | null>(null);
+
   async function submit(data: FormType) {
     try {
       const requestDTO = {
@@ -95,7 +99,10 @@ function NewContestPage() {
   return (
     <form onSubmit={handleSubmit(submit)}>
       <div className="d-flex justify-content-between align-items-center mt-2 mb-4">
-        <h2 className="m-0">New Contest</h2>
+        <div className="d-flex align-items-center">
+          <Link href="/root/contests" className="btn-close"></Link>
+          <h2 className="m-0 ms-3">New Contest</h2>
+        </div>
         <button
           className="btn btn-primary"
           disabled={createContestFetcher.isLoading}
@@ -408,12 +415,19 @@ function NewContestPage() {
                       <td>
                         <input
                           type="text"
-                          className="form-control"
                           {...register(`problems.${index}.description`, {
                             required: "Description is required",
                           })}
-                          disabled={createContestFetcher.isLoading}
+                          hidden
                         />
+                        <button
+                          type="button"
+                          className="btn btn-outline-secondary w-100"
+                          onClick={() => setOpenDescription(index)}
+                          disabled={createContestFetcher.isLoading}
+                        >
+                          ...
+                        </button>
                         <div className="form-text text-danger">
                           {errors.problems?.[index]?.description?.message}
                         </div>
@@ -486,6 +500,48 @@ function NewContestPage() {
           </div>
         </div>
       </div>
+
+      {openDescription !== null && (
+        <div
+          className="modal vh-100 vw-100"
+          style={{
+            display: "block",
+            backgroundColor: "rgba(0,0,0,0.5)",
+            position: "fixed",
+            overflow: "auto",
+            zIndex: 10,
+          }}
+        >
+          <div className="modal-dialog modal-fullscreen">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Description</h5>\
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setOpenDescription(null)}
+                />
+              </div>
+              <div className="modal-body">
+                <textarea
+                  className="form-control h-100"
+                  style={{ resize: "none" }}
+                  {...register(`problems.${openDescription}.description`)}
+                ></textarea>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => setOpenDescription(null)}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </form>
   );
 }
