@@ -5,4 +5,6 @@ import java.time.ZoneOffset
 
 object TimeUtils {
     fun now(): LocalDateTime = LocalDateTime.now(ZoneOffset.UTC)
+
+    fun epochSecond(): Long = now().toInstant(ZoneOffset.UTC).epochSecond
 }

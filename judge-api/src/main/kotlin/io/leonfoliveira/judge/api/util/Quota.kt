@@ -1,15 +1,16 @@
 package io.leonfoliveira.judge.api.util
 
 import io.leonfoliveira.judge.core.service.quota.QuotaService
-import java.time.temporal.ChronoUnit
 import org.aspectj.lang.JoinPoint
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Before
 import org.springframework.stereotype.Component
+import java.time.Duration
+import java.time.temporal.ChronoUnit
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Quota(val value: Int, val per: ChronoUnit)
+annotation class Quota(val value: Int, val windowAmount: Long, val windowUnit: ChronoUnit)
 
 @Aspect
 @Component
@@ -25,6 +26,11 @@ class QuotaAspect(
             ",",
         ) { it::class.simpleName ?: "Unknown" }})"
         val authorization = AuthorizationContextUtil.getAuthorization()
-        quotaService.consume(authorization, methodIdentifier, quotaAnnotation.value, quotaAnnotation.per)
+        quotaService.consume(
+            authorization,
+            methodIdentifier,
+            quotaAnnotation.value,
+            Duration.of(quotaAnnotation.windowAmount, quotaAnnotation.windowUnit),
+        )
     }
 }

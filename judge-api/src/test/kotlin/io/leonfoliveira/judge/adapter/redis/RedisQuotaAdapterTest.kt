@@ -1,5 +1,6 @@
 package io.leonfoliveira.judge.adapter.redis
 
+import io.kotest.assertions.any
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.model.AuthorizationMemberMockFactory
@@ -13,7 +14,6 @@ import org.springframework.data.redis.core.StringRedisTemplate
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 class RedisQuotaAdapterTest : FunSpec({
     val redisTemplate = mockk<StringRedisTemplate>()
@@ -28,60 +28,44 @@ class RedisQuotaAdapterTest : FunSpec({
     val member = AuthorizationMemberMockFactory.build()
     val operation = "operation"
     val quota = 5
-    val per = ChronoUnit.MINUTES
     val key = "$operation:${member.id}:$timestamp"
 
     beforeEach {
         mockkObject(TimeUtils)
         every { TimeUtils.now() }
             .returns(now)
+        clearMocks(redisTemplate)
     }
 
     context("hasQuota") {
-        test("should return true when the quota is not found") {
-            every { redisTemplate.opsForValue().get(key) } returns null
+        test("should return false when the quota is exceeded after removing expired entries") {
+            every { redisTemplate.opsForZSet().removeRangeByScore(key, 0.0, any()) } returns 1L
+            every { redisTemplate.opsForZSet().zCard(key) } returns quota.toLong()
 
-            val result = sut.hasQuota(member, operation, quota)
-
-            result shouldBe true
-        }
-
-        test("should return true when the quota is not exceeded") {
-            every { redisTemplate.opsForValue().get(key) } returns "0"
-
-            val result = sut.hasQuota(member, operation, quota)
-
-            result shouldBe true
-        }
-
-        test("should return false when the quota is exceeded") {
-            every { redisTemplate.opsForValue().get(key) } returns "1"
-
-            val result = sut.hasQuota(member, operation, quota)
+            val result = sut.hasQuota(member, operation, quota, Duration.ofMinutes(1))
 
             result shouldBe false
+        }
+
+        test("should true when the quota is not exceeded after removing expired entries") {
+            every { redisTemplate.opsForZSet().removeRangeByScore(key, 0.0, any()) } returns 1L
+            every { redisTemplate.opsForZSet().zCard(key) } returns (quota - 1).toLong()
+
+            val result = sut.hasQuota(member, operation, quota, Duration.ofMinutes(1))
+
+            result shouldBe true
         }
     }
 
     context("consumeQuota") {
-        test("increment the quota count and set expiration when first consumed") {
-            every { redisTemplate.opsForValue().increment(key, 1) } returns 1L
+        test("should set expiration correctly when consuming") {
+            every { redisTemplate.opsForZSet().add(key, any(), any()) } returns true
             every { redisTemplate.expire(key, any()) } returns true
 
-            sut.consume(member, operation, quota, per)
+            sut.consume(member, operation, quota, Duration.ofMinutes(1))
 
-            verify { redisTemplate.opsForValue().increment(key, 1) }
-            verify { redisTemplate.expire(key, Duration.of(1, per)) }
-        }
-
-        test("increment the quota count without setting expiration when not first consumed") {
-            clearMocks(redisTemplate)
-            every { redisTemplate.opsForValue().increment(key, 1) } returns 2L
-
-            sut.consume(member, operation, quota, per)
-
-            verify { redisTemplate.opsForValue().increment(key, 1) }
-            verify(exactly = 0) { redisTemplate.expire(key, any()) }
+            verify { redisTemplate.opsForZSet().add(key, any(), any()) }
+            verify { redisTemplate.expire(key, any()) }
         }
     }
 })

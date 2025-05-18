@@ -7,9 +7,6 @@ import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-import java.time.temporal.Temporal
-import java.time.temporal.TemporalUnit
 
 @Service
 class RedisQuotaAdapter(
@@ -19,10 +16,16 @@ class RedisQuotaAdapter(
         member: AuthorizationMember,
         operation: String,
         quota: Int,
+        window: Duration,
     ): Boolean {
-        val key = getKey(operation, member)
+        val key = getKey(member, operation)
+        val now = TimeUtils.epochSecond()
+        val windowSeconds = now - window.seconds
 
-        val count = redisTemplate.opsForValue().get(key)?.toIntOrNull() ?: 0
+        val ops = redisTemplate.opsForZSet()
+        ops.removeRangeByScore(key, 0.0, windowSeconds.toDouble())
+
+        val count = ops.zCard(key) ?: 0
         return count < quota
     }
 
@@ -30,19 +33,20 @@ class RedisQuotaAdapter(
         member: AuthorizationMember,
         operation: String,
         quota: Int,
-        per: TemporalUnit,
+        window: Duration,
     ) {
-        val key = getKey(operation, member)
+        val key = getKey(member, operation)
+        val now = TimeUtils.epochSecond()
+        val windowSeconds = now - window.seconds
 
-        val count = redisTemplate.opsForValue().increment(key, 1)
-        if (count == 1L) {
-            redisTemplate.expire(key, Duration.of(1, per))
-        }
+        val ops = redisTemplate.opsForZSet()
+        ops.add(key, now.toString(), now.toDouble())
+        redisTemplate.expire(key, Duration.ofSeconds(windowSeconds))
     }
 
     private fun getKey(
-        operation: String,
         member: AuthorizationMember,
+        operation: String,
     ): String {
         val timestamp = TimeUtils.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))
         val key = "$operation:${member.id}:$timestamp"
