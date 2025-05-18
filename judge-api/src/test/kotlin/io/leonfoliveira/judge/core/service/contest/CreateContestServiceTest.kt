@@ -2,7 +2,10 @@ package io.leonfoliveira.judge.core.service.contest
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNot
+import io.kotest.matchers.shouldNotBe
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.exception.BusinessException
 import io.leonfoliveira.judge.core.domain.model.Attachment
@@ -15,12 +18,15 @@ import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import jakarta.validation.Validation
 import java.time.LocalDateTime
 
 class CreateContestServiceTest : FunSpec({
     val contestRepository: ContestRepository = mockk<ContestRepository>()
     val hashAdapter: HashAdapter = mockk<HashAdapter>()
     val bucketAdapter: BucketAdapter = mockk<BucketAdapter>()
+
+    val validator = Validation.buildDefaultValidatorFactory().validator
 
     val sut =
         CreateContestService(
@@ -81,9 +87,7 @@ class CreateContestServiceTest : FunSpec({
             ),
         ).forEach { dto ->
             test("should validate inputDTO") {
-                shouldThrow<BusinessException> {
-                    sut.create(dto)
-                }
+                validator.validate(dto).size shouldNotBe 0
             }
         }
 

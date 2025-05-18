@@ -43,7 +43,7 @@ class AuthorizationServiceTest : FunSpec({
             val result = sut.authenticateRoot(rootPassword)
 
             result.member shouldBe AuthorizationMember.ROOT
-            result.token shouldBe "generatedToken"
+            result.accessToken shouldBe "generatedToken"
         }
     }
 
@@ -92,7 +92,7 @@ class AuthorizationServiceTest : FunSpec({
             result.member.name shouldBe member.name
             result.member.login shouldBe member.login
             result.member.type shouldBe member.type
-            result.token shouldBe "generatedToken"
+            result.accessToken shouldBe "generatedToken"
         }
     }
 })

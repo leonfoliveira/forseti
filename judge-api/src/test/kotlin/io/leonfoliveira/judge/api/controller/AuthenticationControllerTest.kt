@@ -3,7 +3,8 @@ package io.leonfoliveira.judge.api.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
-import io.leonfoliveira.judge.api.controller.AuthorizationController.RootLoginRequestBody
+import io.leonfoliveira.judge.api.controller.dto.request.AuthenticateMemberRequestDTO
+import io.leonfoliveira.judge.api.controller.dto.request.AuthenticateRootRequestDTO
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.leonfoliveira.judge.core.service.authorization.AuthorizationService
@@ -29,7 +30,7 @@ class AuthenticationControllerTest(
             val authorizationOutputDTO =
                 Authorization(
                     member = AuthorizationMember.ROOT,
-                    token = "token",
+                    accessToken = "token",
                 )
             every { authorizationService.authenticateRoot(password) }
                 .returns(authorizationOutputDTO)
@@ -38,7 +39,7 @@ class AuthenticationControllerTest(
                 contentType = MediaType.APPLICATION_JSON
                 content =
                     objectMapper.writeValueAsString(
-                        RootLoginRequestBody(password = password),
+                        AuthenticateRootRequestDTO(password = password),
                     )
             }.andExpect {
                 status { isOk() }
@@ -59,7 +60,7 @@ class AuthenticationControllerTest(
                             login = login,
                             type = Member.Type.CONTESTANT,
                         ),
-                    token = "token",
+                    accessToken = "token",
                 )
             every { authorizationService.authenticateMember(contestId, login, password) }
                 .returns(authorizationOutputDTO)
@@ -68,7 +69,7 @@ class AuthenticationControllerTest(
                 contentType = MediaType.APPLICATION_JSON
                 content =
                     objectMapper.writeValueAsString(
-                        AuthorizationController.MemberLoginRequestBody(login = login, password = password),
+                        AuthenticateMemberRequestDTO(login = login, password = password),
                     )
             }.andExpect {
                 status { isOk() }

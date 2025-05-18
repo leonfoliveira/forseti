@@ -3,6 +3,7 @@ package io.leonfoliveira.judge.core.service.submission
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
@@ -23,6 +24,7 @@ import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import jakarta.validation.Validation
 import java.time.LocalDateTime
 import java.util.Optional
 
@@ -33,6 +35,8 @@ class CreateSubmissionServiceTest : FunSpec({
     val bucketAdapter = mockk<BucketAdapter>()
     val submissionQueueAdapter = mockk<SubmissionQueueAdapter>()
     val submissionEmitterAdapter = mockk<SubmissionEmitterAdapter>()
+
+    val validator = Validation.buildDefaultValidatorFactory().validator
 
     val sut =
         CreateSubmissionService(
@@ -56,9 +60,7 @@ class CreateSubmissionServiceTest : FunSpec({
             CreateSubmissionInputDTOMockFactory.build(code = RawAttachment(filename = "", content = ByteArray(0))),
         ).forEach { dto ->
             test("should validate inputDTO") {
-                shouldThrow<BusinessException> {
-                    sut.create(1, 2, dto)
-                }
+                validator.validate(dto).size shouldNotBe 0
             }
         }
 

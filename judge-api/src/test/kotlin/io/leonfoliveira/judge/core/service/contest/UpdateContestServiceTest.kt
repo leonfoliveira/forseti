@@ -4,6 +4,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
@@ -20,6 +21,7 @@ import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import jakarta.validation.Validation
 import java.time.LocalDateTime
 
 class UpdateContestServiceTest : FunSpec({
@@ -29,6 +31,8 @@ class UpdateContestServiceTest : FunSpec({
     val findContestService = mockk<FindContestService>()
     val createContestService = mockk<CreateContestService>()
     val deleteContestService = mockk<DeleteContestService>()
+
+    val validator = Validation.buildDefaultValidatorFactory().validator
 
     val sut =
         UpdateContestService(
@@ -81,9 +85,7 @@ class UpdateContestServiceTest : FunSpec({
             UpdateContestInputDTOMockFactory.build(startAt = now.minusDays(1)),
         ).forEach { dto ->
             test("should validate inputDTO") {
-                shouldThrow<BusinessException> {
-                    sut.update(dto)
-                }
+                validator.validate(dto).size shouldNotBe 0
             }
         }
 
