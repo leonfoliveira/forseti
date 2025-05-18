@@ -10,7 +10,7 @@ import io.mockk.mockk
 class CreateUploadAttachmentServiceTest : FunSpec({
     val bucketAdapter = mockk<BucketAdapter>()
 
-    val sut = CreateUploadAttachmentService(bucketAdapter)
+    val sut = AttachmentService(bucketAdapter)
 
     context("create") {
         test("should create an upload attachment") {

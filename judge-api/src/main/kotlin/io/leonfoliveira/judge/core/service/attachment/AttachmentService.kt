@@ -5,7 +5,7 @@ import io.leonfoliveira.judge.core.port.BucketAdapter
 import org.springframework.stereotype.Service
 
 @Service
-class CreateUploadAttachmentService(
+class AttachmentService(
     private val bucketAdapter: BucketAdapter,
 ) {
     fun create(): UploadAttachment {

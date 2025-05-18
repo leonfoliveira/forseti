@@ -22,7 +22,7 @@ class PrivateAspect {
         if (!authentication.isAuthenticated) {
             throw UnauthorizedException()
         }
-        if (authentication.principal?.type !in privateAnnotation.allowed) {
+        if (privateAnnotation.allowed.isNotEmpty() && authentication.principal?.type !in privateAnnotation.allowed) {
             throw ForbiddenException()
         }
     }
