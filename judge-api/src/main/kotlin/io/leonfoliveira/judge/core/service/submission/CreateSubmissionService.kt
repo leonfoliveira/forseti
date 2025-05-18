@@ -10,9 +10,12 @@ import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTO
+import jakarta.validation.Valid
 import org.springframework.stereotype.Service
+import org.springframework.validation.annotation.Validated
 
 @Service
+@Validated
 class CreateSubmissionService(
     private val memberRepository: MemberRepository,
     private val problemRepository: ProblemRepository,
@@ -24,10 +27,8 @@ class CreateSubmissionService(
     fun create(
         memberId: Int,
         problemId: Int,
-        inputDTO: CreateSubmissionInputDTO,
+        @Valid inputDTO: CreateSubmissionInputDTO,
     ): Submission {
-        inputDTO.validate()
-
         val member =
             memberRepository.findById(memberId).orElseThrow {
                 NotFoundException("Could not find member with id = $memberId")

@@ -5,10 +5,13 @@ import io.leonfoliveira.judge.core.domain.exception.BusinessException
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.domain.exception.UnauthorizedException
+import jakarta.validation.ConstraintViolationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageConversionException
+import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.HandlerMethod
@@ -36,12 +39,28 @@ class GlobalExceptionHandler {
             .body(ErrorResponseDTO(ex.message ?: "Business exception"))
     }
 
-    @ExceptionHandler(HttpMessageConversionException::class)
-    fun handleException(ex: HttpMessageConversionException): ResponseEntity<ErrorResponseDTO> {
-        logger.warn(ex.message)
-        return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(ErrorResponseDTO("Validation error"))
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleValidationExceptions(ex: MethodArgumentNotValidException): ResponseEntity<Map<String, String>> {
+        val errors = ex.bindingResult.fieldErrors
+            .groupBy { it.field }
+            .mapValues { entry -> entry.value.joinToString(", ") { it.defaultMessage ?: "Invalid value" } }
+
+        return ResponseEntity(errors, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(ConstraintViolationException::class)
+    fun handleConstraintViolation(ex: ConstraintViolationException): ResponseEntity<Map<String, String>> {
+        val errors = ex.constraintViolations.associate {
+            val path = it.propertyPath.toString().split(".").drop(2).joinToString(".")
+            path to (it.message ?: "Invalid value")
+        }
+        return ResponseEntity(errors, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleJsonParseErrors(ex: HttpMessageNotReadableException): ResponseEntity<Map<String, String>> {
+        val message = ex.mostSpecificCause.message ?: "Malformed JSON"
+        return ResponseEntity(mapOf("error" to "Invalid request format: $message"), HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(Exception::class)

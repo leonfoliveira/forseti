@@ -9,9 +9,12 @@ import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
+import jakarta.validation.Valid
 import org.springframework.stereotype.Service
+import org.springframework.validation.annotation.Validated
 
 @Service
+@Validated
 class UpdateContestService(
     private val contestRepository: ContestRepository,
     private val hashAdapter: HashAdapter,
@@ -20,26 +23,28 @@ class UpdateContestService(
     private val createContestService: CreateContestService,
     private val deleteContestService: DeleteContestService,
 ) {
-    fun update(input: UpdateContestInputDTO): Contest {
-        input.validate()
+    fun update(@Valid inputDTO: UpdateContestInputDTO): Contest {
+        if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
+            throw ForbiddenException("Contest cannot have ROOT members")
+        }
 
-        val contest = findContestService.findById(input.id)
+        val contest = findContestService.findById(inputDTO.id)
         if (contest.hasStarted()) {
             throw ForbiddenException("Contest has already started")
         }
 
-        contest.title = input.title
-        contest.languages = input.languages
-        contest.startAt = input.startAt
-        contest.endAt = input.endAt
+        contest.title = inputDTO.title
+        contest.languages = inputDTO.languages
+        contest.startAt = inputDTO.startAt
+        contest.endAt = inputDTO.endAt
 
-        val membersToCreate = input.members.filter { it.id == null }
-        val problemsToCreate = input.problems.filter { it.id == null }
+        val membersToCreate = inputDTO.members.filter { it.id == null }
+        val problemsToCreate = inputDTO.problems.filter { it.id == null }
         val createdMembers = membersToCreate.map { createContestService.createMember(contest, it.toCreateDTO()) }
         val createdProblems = problemsToCreate.map { createContestService.createProblem(contest, it.toCreateDTO()) }
 
-        val membersToUpdate = input.members.filter { it.id != null }
-        val problemsToUpdate = input.problems.filter { it.id != null }
+        val membersToUpdate = inputDTO.members.filter { it.id != null }
+        val problemsToUpdate = inputDTO.problems.filter { it.id != null }
         val membersHash = contest.members.associateBy { it.id }
         val problemsHash = contest.problems.associateBy { it.id }
         val updatedMembers = membersToUpdate.map { updateMember(membersHash, it) }

@@ -3,20 +3,26 @@ package io.leonfoliveira.judge.core.service.contest
 import io.leonfoliveira.judge.core.domain.entity.Contest
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.Problem
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTO
+import jakarta.validation.Valid
 import org.springframework.stereotype.Service
+import org.springframework.validation.annotation.Validated
 
 @Service
+@Validated
 class CreateContestService(
     private val contestRepository: ContestRepository,
     private val hashAdapter: HashAdapter,
     private val bucketAdapter: BucketAdapter,
 ) {
-    fun create(inputDTO: CreateContestInputDTO): Contest {
-        inputDTO.validate()
+    fun create(@Valid inputDTO: CreateContestInputDTO): Contest {
+        if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
+            throw ForbiddenException("Contest cannot have ROOT members")
+        }
 
         val contest =
             Contest(

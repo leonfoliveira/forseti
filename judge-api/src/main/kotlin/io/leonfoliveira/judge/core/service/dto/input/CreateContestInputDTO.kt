@@ -2,78 +2,50 @@ package io.leonfoliveira.judge.core.service.dto.input
 
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import io.leonfoliveira.judge.core.domain.exception.BusinessException
-import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.model.RawAttachment
-import io.leonfoliveira.judge.core.util.TimeUtils
+import jakarta.validation.Valid
+import jakarta.validation.constraints.AssertTrue
+import jakarta.validation.constraints.Future
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotEmpty
 import java.time.LocalDateTime
 
 data class CreateContestInputDTO(
+    @field:NotBlank
     val title: String,
+    @field:NotEmpty
     val languages: List<Language>,
+    @field:Future
     val startAt: LocalDateTime,
     val endAt: LocalDateTime,
-    val members: List<MemberDTO>,
-    val problems: List<ProblemDTO>,
+    @field:Valid
+    val members: List<@Valid MemberDTO>,
+    @field:Valid
+    val problems: List<@Valid ProblemDTO>,
 ) {
+    @get:AssertTrue(message = "endAt must be after start date")
+    val isEndAtAfterStartAt: Boolean
+        get() = startAt.isBefore(endAt)
+
     data class MemberDTO(
         val type: Member.Type,
+        @field:NotBlank
         val name: String,
+        @field:NotBlank
         val login: String,
+        @field:NotBlank
         val password: String,
-    ) {
-        fun validate() {
-            if (type == Member.Type.ROOT) {
-                throw ForbiddenException("Member type cannot be ROOT")
-            }
-            if (name.isBlank()) {
-                throw BusinessException("Name cannot be blank")
-            }
-            if (login.isBlank()) {
-                throw BusinessException("Login cannot be blank")
-            }
-            if (password.isBlank()) {
-                throw BusinessException("Password cannot be blank")
-            }
-        }
-    }
+    )
 
     data class ProblemDTO(
+        @field:NotEmpty
         val title: String,
+        @field:NotEmpty
         val description: String,
+        @field:Min(1)
         val timeLimit: Int,
+        @field:Valid
         val testCases: RawAttachment,
-    ) {
-        fun validate() {
-            if (title.isBlank()) {
-                throw BusinessException("Title cannot be blank")
-            }
-            if (description.isBlank()) {
-                throw BusinessException("Description cannot be blank")
-            }
-            if (timeLimit <= 0) {
-                throw BusinessException("Time limit must be greater than 0")
-            }
-            if (testCases.filename.isBlank()) {
-                throw BusinessException("Test cases filename cannot be blank")
-            }
-        }
-    }
-
-    fun validate() {
-        if (title.isBlank()) {
-            throw BusinessException("Title cannot be blank")
-        }
-        if (languages.isEmpty()) {
-            throw BusinessException("Languages cannot be empty")
-        }
-        if (!startAt.isBefore(endAt)) {
-            throw BusinessException("Start date must be before end date")
-        }
-        if (!startAt.isAfter(TimeUtils.now())) {
-            throw BusinessException("Start date must be in the future")
-        }
-        members.forEach { it.validate() }
-        problems.forEach { it.validate() }
-    }
+    )
 }
