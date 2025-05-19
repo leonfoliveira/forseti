@@ -2,7 +2,7 @@ import { ProblemRepository } from "@/core/repository/ProblemRepository";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { CreateSubmissionRequestDTO } from "@/core/repository/dto/request/CreateSubmissionRequestDTO";
 import { SubmissionResponseDTO } from "@/core/repository/dto/response/SubmissionResponseDTO";
-import { ProblemFullResponseDTO } from "@/core/repository/dto/response/ProblemFullResponseDTO";
+import { ProblemResponseDTO } from "@/core/repository/dto/response/ProblemResponseDTO";
 
 export class AxiosProblemRepository implements ProblemRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
@@ -17,7 +17,7 @@ export class AxiosProblemRepository implements ProblemRepository {
     );
   }
 
-  findById(id: number): Promise<ProblemFullResponseDTO> {
-    return this.axiosClient.get<ProblemFullResponseDTO>(`/v1/problems/${id}`);
+  findById(id: number): Promise<ProblemResponseDTO> {
+    return this.axiosClient.get<ProblemResponseDTO>(`/v1/problems/${id}`);
   }
 }

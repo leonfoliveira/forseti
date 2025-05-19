@@ -1,4 +1,4 @@
-import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
+import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestShortResponseDTO";
 import { Language } from "@/core/domain/enumerate/Language";
 
 export enum ContestStatus {
@@ -7,7 +7,7 @@ export enum ContestStatus {
   ENDED = "ENDED",
 }
 
-export function getContestStatus(contest: ContestResponseDTO) {
+export function getContestStatus(contest: ContestShortResponseDTO) {
   const now = new Date();
   const startAt = new Date(contest.startAt);
   const endAt = new Date(contest.endAt);

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1/auth")
-class AuthorizationController(
+class AuthenticationController(
     val authenticationService: AuthorizationService,
 ) {
     @PostMapping("/root")

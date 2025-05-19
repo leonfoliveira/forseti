@@ -1,6 +1,6 @@
 package io.leonfoliveira.judge.api.controller
 
-import io.leonfoliveira.judge.api.controller.dto.response.ProblemFullResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ProblemResponseDTO
 import io.leonfoliveira.judge.api.controller.dto.response.toFullResponseDTO
 import io.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.leonfoliveira.judge.api.util.Private
@@ -26,7 +26,7 @@ class ProblemController(
     @GetMapping("/{id}")
     fun findById(
         @PathVariable id: Int,
-    ): ResponseEntity<ProblemFullResponseDTO> {
+    ): ResponseEntity<ProblemResponseDTO> {
         val problemOutputDTO = findProblemService.findById(id)
         return ResponseEntity.ok(problemOutputDTO.toFullResponseDTO())
     }

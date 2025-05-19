@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { AuthorizationService } from "@/core/service/AuthorizationService";
 import { BusinessException } from "@/core/domain/exception/BusinessException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
@@ -12,34 +12,45 @@ export class AxiosClient {
     private readonly authorizationService: AuthorizationService,
   ) {}
 
-  async get<T>(path: string): Promise<T> {
-    return this.request<T>("GET", path);
+  async get<T>(path: string, config: AxiosRequestConfig = {}): Promise<T> {
+    return this.request<T>(path, {
+      method: "GET",
+      ...config,
+    });
   }
 
-  async post<T>(path: string, requestDTO: object): Promise<T> {
-    return this.request<T>("POST", path, requestDTO);
+  async post<T>(path: string, config: AxiosRequestConfig = {}): Promise<T> {
+    return this.request<T>(path, {
+      method: "POST",
+      ...config,
+    });
   }
 
-  async put<T>(path: string, requestDTO: object): Promise<T> {
-    return this.request<T>("PUT", path, requestDTO);
+  async put<T>(path: string, config: AxiosRequestConfig = {}): Promise<T> {
+    return this.request<T>(path, {
+      method: "PUT",
+      ...config,
+    });
   }
 
-  async delete<T>(path: string): Promise<void> {
-    await this.request<T>("DELETE", path);
+  async delete(path: string, config: AxiosRequestConfig = {}): Promise<void> {
+    return this.request(path, {
+      method: "DELETE",
+      ...config,
+    });
   }
 
   private async request<T>(
-    method: string,
     path: string,
-    data?: object,
+    config: AxiosRequestConfig = {},
   ): Promise<T> {
     try {
       const response = await axios.request<T>({
-        url: `${this.baseUrl}${path}`,
-        method,
-        data,
+        ...config,
+        url: config.url || `${this.baseUrl}${path}`,
         headers: {
           Authorization: this.getAuthorizationHeader(),
+          ...(config.headers || {}),
         },
       });
       return response.data;

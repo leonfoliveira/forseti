@@ -23,7 +23,7 @@ export function Toast({
         clearTimeout(closeTimeout.current);
       }
     };
-  }, [toast, lifetime, onClose]);
+  }, []);
 
   const color = {
     [ToastLevel.INFO]: "",
@@ -34,7 +34,7 @@ export function Toast({
 
   return (
     <div
-      className={cls("toast d-flex", color[toast.level])}
+      className={cls("toast", color[toast.level])}
       style={{ pointerEvents: "auto" }}
     >
       <div className="toast-body">{toast.text}</div>

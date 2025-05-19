@@ -1,33 +1,33 @@
 import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
-import { ContestFullResponseDTO } from "@/core/repository/dto/response/ContestFullResponseDTO";
-import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
 import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
+import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
+import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestShortResponseDTO";
 import { LeaderboardOutputDTO } from "@/core/repository/dto/response/LeaderboardOutputDTO";
-import { ProblemResponseDTO } from "@/core/repository/dto/response/ProblemResponseDTO";
+import { ProblemShortResponseDTO } from "@/core/repository/dto/response/ProblemShortResponseDTO";
 import { SubmissionResponseDTO } from "@/core/repository/dto/response/SubmissionResponseDTO";
 
 export interface ContestRepository {
   createContest(
     requestDTO: CreateContestRequestDTO,
-  ): Promise<ContestFullResponseDTO>;
+  ): Promise<ContestResponseDTO>;
 
   updateContest(
     requestDTO: UpdateContestRequestDTO,
-  ): Promise<ContestFullResponseDTO>;
+  ): Promise<ContestResponseDTO>;
 
-  findAllContests(): Promise<ContestResponseDTO[]>;
+  findAllContests(): Promise<ContestShortResponseDTO[]>;
 
-  findFullContestById(id: number): Promise<ContestFullResponseDTO>;
+  findFullContestById(id: number): Promise<ContestResponseDTO>;
 
-  findContestById(id: number): Promise<ContestResponseDTO>;
+  findContestById(id: number): Promise<ContestShortResponseDTO>;
 
   deleteContest(id: number): Promise<void>;
 
   getLeaderboard(id: number): Promise<LeaderboardOutputDTO>;
 
-  findAllProblems(id: number): Promise<ProblemResponseDTO[]>;
+  findAllProblems(id: number): Promise<ProblemShortResponseDTO[]>;
 
-  findAllProblemsForMember(id: number): Promise<ProblemResponseDTO[]>;
+  findAllProblemsForMember(id: number): Promise<ProblemShortResponseDTO[]>;
 
   findAllSubmissions(id: number): Promise<SubmissionResponseDTO[]>;
 }

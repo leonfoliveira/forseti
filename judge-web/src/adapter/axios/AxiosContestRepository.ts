@@ -1,8 +1,8 @@
 import { ContestRepository } from "@/core/repository/ContestRepository";
 import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
-import { ContestFullResponseDTO } from "@/core/repository/dto/response/ContestFullResponseDTO";
 import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
-import { ProblemResponseDTO } from "@/core/repository/dto/response/ProblemResponseDTO";
+import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestShortResponseDTO";
+import { ProblemShortResponseDTO } from "@/core/repository/dto/response/ProblemShortResponseDTO";
 import { SubmissionResponseDTO } from "@/core/repository/dto/response/SubmissionResponseDTO";
 import { LeaderboardOutputDTO } from "@/core/repository/dto/response/LeaderboardOutputDTO";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
@@ -13,8 +13,8 @@ export class AxiosContestRepository implements ContestRepository {
 
   createContest(
     requestDTO: CreateContestRequestDTO,
-  ): Promise<ContestFullResponseDTO> {
-    return this.axiosClient.post<ContestFullResponseDTO>(
+  ): Promise<ContestResponseDTO> {
+    return this.axiosClient.post<ContestResponseDTO>(
       "/v1/contests",
       requestDTO,
     );
@@ -24,18 +24,18 @@ export class AxiosContestRepository implements ContestRepository {
     return this.axiosClient.delete<void>(`/v1/contests/${id}`);
   }
 
-  findAllContests(): Promise<ContestResponseDTO[]> {
-    return this.axiosClient.get<ContestResponseDTO[]>("/v1/contests");
+  findAllContests(): Promise<ContestShortResponseDTO[]> {
+    return this.axiosClient.get<ContestShortResponseDTO[]>("/v1/contests");
   }
 
-  findAllProblems(id: number): Promise<ProblemResponseDTO[]> {
-    return this.axiosClient.get<ProblemResponseDTO[]>(
+  findAllProblems(id: number): Promise<ProblemShortResponseDTO[]> {
+    return this.axiosClient.get<ProblemShortResponseDTO[]>(
       `/v1/contests/${id}/problems`,
     );
   }
 
-  findAllProblemsForMember(id: number): Promise<ProblemResponseDTO[]> {
-    return this.axiosClient.get<ProblemResponseDTO[]>(
+  findAllProblemsForMember(id: number): Promise<ProblemShortResponseDTO[]> {
+    return this.axiosClient.get<ProblemShortResponseDTO[]>(
       `/v1/contests/${id}/problems/member`,
     );
   }
@@ -46,14 +46,12 @@ export class AxiosContestRepository implements ContestRepository {
     );
   }
 
-  findContestById(id: number): Promise<ContestResponseDTO> {
-    return this.axiosClient.get<ContestResponseDTO>(`/v1/contests/${id}`);
+  findContestById(id: number): Promise<ContestShortResponseDTO> {
+    return this.axiosClient.get<ContestShortResponseDTO>(`/v1/contests/${id}`);
   }
 
-  findFullContestById(id: number): Promise<ContestFullResponseDTO> {
-    return this.axiosClient.get<ContestFullResponseDTO>(
-      `/v1/contests/${id}/full`,
-    );
+  findFullContestById(id: number): Promise<ContestResponseDTO> {
+    return this.axiosClient.get<ContestResponseDTO>(`/v1/contests/${id}/full`);
   }
 
   getLeaderboard(id: number): Promise<LeaderboardOutputDTO> {
@@ -64,8 +62,8 @@ export class AxiosContestRepository implements ContestRepository {
 
   updateContest(
     requestDTO: UpdateContestRequestDTO,
-  ): Promise<ContestFullResponseDTO> {
-    return this.axiosClient.put<ContestFullResponseDTO>(
+  ): Promise<ContestResponseDTO> {
+    return this.axiosClient.put<ContestResponseDTO>(
       `/v1/contests/${requestDTO.id}`,
       requestDTO,
     );

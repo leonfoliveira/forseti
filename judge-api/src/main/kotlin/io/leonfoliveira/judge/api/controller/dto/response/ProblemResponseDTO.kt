@@ -3,7 +3,7 @@ package io.leonfoliveira.judge.api.controller.dto.response
 import io.leonfoliveira.judge.core.domain.model.DownloadAttachment
 import io.leonfoliveira.judge.core.service.dto.output.ProblemOutputDTO
 
-data class ProblemFullResponseDTO(
+data class ProblemResponseDTO(
     val id: Int,
     val title: String,
     val description: String,
@@ -11,8 +11,8 @@ data class ProblemFullResponseDTO(
     val testCases: DownloadAttachment,
 )
 
-fun ProblemOutputDTO.toFullResponseDTO(): ProblemFullResponseDTO {
-    return ProblemFullResponseDTO(
+fun ProblemOutputDTO.toFullResponseDTO(): ProblemResponseDTO {
+    return ProblemResponseDTO(
         id = id,
         title = title,
         description = description,

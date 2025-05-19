@@ -5,6 +5,10 @@ export class AuthorizationService {
   constructor(
     private readonly authorizationRepository: AuthorizationRepository,
   ) {}
+  isAuthorized(): boolean {
+    return this.authorizationRepository.getAuthorization() !== null;
+  }
+
   getAuthorization(): Authorization | null {
     return this.authorizationRepository.getAuthorization();
   }

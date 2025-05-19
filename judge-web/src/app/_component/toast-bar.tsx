@@ -10,12 +10,7 @@ export function ToastBar() {
   }
 
   return (
-    <div
-      className="fixed-top d-flex vh-100 flex-column-reverse align-items-end p-2 gap-1"
-      style={{
-        pointerEvents: "none",
-      }}
-    >
+    <div>
       {toasts.map((toast) => (
         <Toast
           key={toast.id}
