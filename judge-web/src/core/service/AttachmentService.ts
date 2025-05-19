@@ -1,15 +1,20 @@
 import { AttachmentRepository } from "@/core/repository/AttachmentRepository";
-import { UploadAttachmentResponseDTO } from "@/core/repository/dto/response/UploadAttachmentResponseDTO";
+import { AttachmentRequestDTO } from "@/core/repository/dto/request/AttachmentRequestDTO";
 
 export class AttachmentService {
   constructor(private attachmentRepository: AttachmentRepository) {}
 
-  async createUploadAttachment(): Promise<UploadAttachmentResponseDTO> {
-    return this.attachmentRepository.createUploadAttachment();
-  }
-
-  async uploadAttachment(url: string, file: File): Promise<void> {
-    return this.attachmentRepository.uploadAttachment(url, file);
+  async uploadAttachment(file: File): Promise<AttachmentRequestDTO> {
+    const uploadAttachment =
+      await this.attachmentRepository.createUploadAttachment();
+    await this.attachmentRepository.uploadAttachment(
+      uploadAttachment.url,
+      file,
+    );
+    return {
+      filename: file.name,
+      key: uploadAttachment.key,
+    };
   }
 
   async downloadAttachment(url: string): Promise<File> {

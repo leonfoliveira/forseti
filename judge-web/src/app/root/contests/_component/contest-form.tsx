@@ -16,7 +16,7 @@ import { SelectOption } from "@/app/_component/form/select-option";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { DownloadAttachmentResponseDTO } from "@/core/repository/dto/response/DownloadAttachmentResponseDTO";
 
-export type FormType = {
+export type ContestFormType = {
   id?: number;
   title: string;
   languages: Language[];
@@ -40,8 +40,8 @@ export type FormType = {
 };
 
 type Props = {
-  onSubmit: (data: FormType) => Promise<void>;
-  form: UseFormReturn<FormType>;
+  onSubmit: (data: ContestFormType) => Promise<void>;
+  form: UseFormReturn<ContestFormType>;
   isDisabled: boolean;
 };
 
@@ -111,7 +111,9 @@ export function ContestForm(props: Props) {
             </Button>
           </div>
         ))}
-        <Button onClick={() => membersFields.append({} as FormType["members"])}>
+        <Button
+          onClick={() => membersFields.append({} as ContestFormType["members"])}
+        >
           <FontAwesomeIcon icon={faPlus} />
         </Button>
       </div>
@@ -159,7 +161,9 @@ export function ContestForm(props: Props) {
           </div>
         ))}
         <Button
-          onClick={() => problemsFields.append({} as FormType["problems"])}
+          onClick={() =>
+            problemsFields.append({} as ContestFormType["problems"])
+          }
         >
           <FontAwesomeIcon icon={faPlus} />
         </Button>

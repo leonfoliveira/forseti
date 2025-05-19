@@ -1,79 +1,85 @@
-import { FormType } from "@/app/root/contests/_component/contest-form";
-import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
-import { UploadAttachmentResponseDTO } from "@/core/repository/dto/response/UploadAttachmentResponseDTO";
 import { AttachmentService } from "@/core/service/AttachmentService";
-import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
+import { ContestFormType } from "@/app/root/contests/_component/contest-form";
+import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
+import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
 
-export function formatForm(contest: ContestResponseDTO): FormType {
+export async function toCreateContestRequestDTO(
+  attachmentService: AttachmentService,
+  form: ContestFormType,
+): Promise<CreateContestRequestDTO> {
+  const update = await toUpdateRequestDTO(attachmentService, form);
+  return update as CreateContestRequestDTO;
+}
+
+export async function toUpdateRequestDTO(
+  attachmentService: AttachmentService,
+  form: ContestFormType,
+): Promise<UpdateContestRequestDTO> {
+  function mapMember(member: ContestFormType["members"][number]) {
+    return {
+      id: member._id,
+      type: member.type,
+      name: member.name,
+      login: member.login,
+      password: member.password,
+    };
+  }
+
+  async function mapProblem(problem: ContestFormType["problems"][number]) {
+    let testCases;
+    if (!!problem.testCases && problem.testCases.length > 0) {
+      testCases = await attachmentService.uploadAttachment(
+        (problem.testCases as File[])[0],
+      );
+    }
+    return {
+      id: problem._id,
+      title: problem.title,
+      description: problem.description,
+      timeLimit: problem.timeLimit,
+      testCases,
+    };
+  }
+
+  return {
+    id: form.id as number,
+    title: form.title,
+    languages: form.languages,
+    startAt: form.startAt,
+    endAt: form.endAt,
+    members: form.members.map(mapMember),
+    problems: await Promise.all(form.problems.map(mapProblem)),
+  };
+}
+
+export function fromResponseDTO(contest: ContestResponseDTO): ContestFormType {
+  function mapMember(member: ContestResponseDTO["members"][number]) {
+    return {
+      _id: member.id,
+      type: member.type,
+      name: member.name,
+      login: member.login,
+    };
+  }
+
+  function mapProblem(problem: ContestResponseDTO["problems"][number]) {
+    return {
+      _id: problem.id,
+      title: problem.title,
+      description: problem.description,
+      timeLimit: problem.timeLimit,
+      testCasesAttachment: problem.testCases,
+    };
+  }
+
   return {
     id: contest.id,
     title: contest.title,
     languages: contest.languages,
     startAt: new Date(contest.startAt),
     endAt: new Date(contest.endAt),
-    members: contest.members.map((member) => ({
-      _id: member.id,
-      type: member.type,
-      name: member.name,
-      login: member.login,
-    })),
-    problems: contest.problems.map((problem) => ({
-      _id: problem.id,
-      title: problem.title,
-      description: problem.description,
-      timeLimit: problem.timeLimit,
-      testCasesAttachment: problem.testCases,
-    })),
+    members: contest.members.map(mapMember),
+    problems: contest.problems.map(mapProblem),
   };
-}
-
-export async function formatContest(
-  attachmentService: AttachmentService,
-  contest: FormType,
-): Promise<CreateContestRequestDTO | UpdateContestRequestDTO> {
-  return {
-    ...contest,
-    members: contest.members.map(formatMember),
-    problems: await Promise.all(
-      contest.problems.map((it) => formatProblem(attachmentService, it)),
-    ),
-  };
-}
-
-function formatMember(
-  member: FormType["members"][number],
-): CreateContestRequestDTO["members"][number] &
-  UpdateContestRequestDTO["members"][number] {
-  return {
-    ...member,
-    password: member.password as string,
-  };
-}
-
-async function formatProblem(
-  attachmentService: AttachmentService,
-  problem: FormType["problems"][number],
-): Promise<
-  CreateContestRequestDTO["problems"][number] &
-    UpdateContestRequestDTO["problems"][number]
-> {
-  const testCase = (problem.testCases as File[])[0];
-  const uploadAttachment = await uploadTestCase(attachmentService, testCase);
-  return {
-    ...problem,
-    testCases: {
-      filename: testCase.name,
-      key: uploadAttachment.key,
-    },
-  };
-}
-
-async function uploadTestCase(
-  attachmentService: AttachmentService,
-  testCase: File,
-): Promise<UploadAttachmentResponseDTO> {
-  const uploadAttachment = await attachmentService.createUploadAttachment();
-  await attachmentService.uploadAttachment(uploadAttachment.url, testCase);
-  return uploadAttachment;
 }

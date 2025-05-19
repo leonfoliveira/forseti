@@ -10,14 +10,14 @@ import { useToast } from "@/app/_util/toast-hook";
 import { useForm } from "react-hook-form";
 import {
   ContestForm,
-  FormType,
+  ContestFormType,
 } from "@/app/root/contests/_component/contest-form";
 import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
-import {
-  formatContest,
-  formatForm,
-} from "@/app/root/contests/_util/contest-form-util";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
+import {
+  fromResponseDTO,
+  toUpdateRequestDTO,
+} from "@/app/root/contests/_util/contest-form-util";
 
 export default function RootEditContestPage({
   params,
@@ -30,7 +30,7 @@ export default function RootEditContestPage({
   const updateContestFetcher = useFetcher();
   const toast = useToast();
 
-  const form = useForm<FormType>();
+  const form = useForm<ContestFormType>();
 
   useEffect(() => {
     async function findContest() {
@@ -38,7 +38,7 @@ export default function RootEditContestPage({
         const contest = (await findContestFetcher.fetch(() =>
           contestService.findFullContestById(id),
         )) as ContestResponseDTO;
-        form.reset(formatForm(contest));
+        form.reset(fromResponseDTO(contest));
       } catch (error) {
         if (
           error instanceof UnauthorizedException ||
@@ -53,9 +53,9 @@ export default function RootEditContestPage({
     findContest();
   }, []);
 
-  async function updateContest(data: FormType) {
+  async function updateContest(data: ContestFormType) {
     try {
-      const inputDTO = await formatContest(attachmentService, data);
+      const inputDTO = await toUpdateRequestDTO(attachmentService, data);
       await updateContestFetcher.fetch(() =>
         contestService.updateContest(inputDTO as UpdateContestRequestDTO),
       );
