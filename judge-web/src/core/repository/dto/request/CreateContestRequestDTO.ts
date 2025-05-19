@@ -5,8 +5,8 @@ import { AttachmentRequestDTO } from "@/core/repository/dto/request/AttachmentRe
 export type CreateContestRequestDTO = {
   title: string;
   languages: Language[];
-  startAt: string;
-  endAt: string;
+  startAt: Date;
+  endAt: Date;
   members: {
     type: MemberType;
     name: string;

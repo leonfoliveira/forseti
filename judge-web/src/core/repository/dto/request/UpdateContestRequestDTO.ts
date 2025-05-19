@@ -6,8 +6,8 @@ export type UpdateContestRequestDTO = {
   id: number;
   title: string;
   languages: Language[];
-  startAt: string;
-  endAt: string;
+  startAt: Date;
+  endAt: Date;
   members: {
     id?: number;
     type: MemberType;
@@ -21,5 +21,5 @@ export type UpdateContestRequestDTO = {
     description: string;
     timeLimit: number;
     testCases?: AttachmentRequestDTO;
-  };
+  }[];
 };

@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { toastsAtom } from "@/app/_atom/toast-atom";
-import { Toast } from "@/app/_component/toast";
+import { Toast } from "@/app/_component/toast/toast";
 
 export function ToastBar() {
   const [toasts, setToasts] = useAtom(toastsAtom);

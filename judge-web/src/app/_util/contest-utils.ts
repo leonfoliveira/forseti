@@ -1,5 +1,6 @@
 import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestShortResponseDTO";
 import { Language } from "@/core/domain/enumerate/Language";
+import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
 
 export enum ContestStatus {
   NOT_STARTED = "NOT_STARTED",
@@ -7,7 +8,9 @@ export enum ContestStatus {
   ENDED = "ENDED",
 }
 
-export function getContestStatus(contest: ContestShortResponseDTO) {
+export function getContestStatus(
+  contest: ContestShortResponseDTO | ContestResponseDTO,
+) {
   const now = new Date();
   const startAt = new Date(contest.startAt);
   const endAt = new Date(contest.endAt);
@@ -18,6 +21,20 @@ export function getContestStatus(contest: ContestShortResponseDTO) {
     return ContestStatus.IN_PROGRESS;
   } else {
     return ContestStatus.ENDED;
+  }
+}
+
+export function formatStatus(
+  contest: ContestShortResponseDTO | ContestResponseDTO,
+) {
+  const status = getContestStatus(contest);
+  switch (status) {
+    case ContestStatus.NOT_STARTED:
+      return "Not Started";
+    case ContestStatus.IN_PROGRESS:
+      return "In Progress";
+    case ContestStatus.ENDED:
+      return "Ended";
   }
 }
 
