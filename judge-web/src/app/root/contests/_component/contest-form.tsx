@@ -2,7 +2,7 @@ import { Input } from "@/app/_component/form/input";
 import { CheckboxGroup } from "@/app/_component/form/checkbox-group";
 import { Checkbox } from "@/app/_component/form/checkbox";
 import { Language } from "@/core/domain/enumerate/Language";
-import { useFieldArray, UseFormReturn } from "react-hook-form";
+import { Controller, useFieldArray, UseFormReturn } from "react-hook-form";
 import { Button } from "@/app/_component/form/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,39 +14,25 @@ import {
 import { Select } from "@/app/_component/form/select";
 import { SelectOption } from "@/app/_component/form/select-option";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { DownloadAttachmentResponseDTO } from "@/core/repository/dto/response/DownloadAttachmentResponseDTO";
+import { z } from "zod";
+import { contestFormValidation } from "@/app/root/contests/_util/contest-form-validation";
+import { ContestStatus } from "@/app/_util/contest-utils";
 
-export type ContestFormType = {
-  id?: number;
-  title: string;
-  languages: Language[];
-  startAt: Date;
-  endAt: Date;
-  members: {
-    _id?: number;
-    type: MemberType;
-    name: string;
-    login: string;
-    password?: string;
-  }[];
-  problems: {
-    _id?: number;
-    title: string;
-    description: string;
-    timeLimit: number;
-    testCasesAttachment?: DownloadAttachmentResponseDTO;
-    testCases?: File[];
-  }[];
-};
+export type ContestFormType = z.infer<typeof contestFormValidation>;
 
 type Props = {
+  header: string;
+  status?: ContestStatus;
   onSubmit: (data: ContestFormType) => Promise<void>;
   form: UseFormReturn<ContestFormType>;
   isDisabled: boolean;
 };
 
 export function ContestForm(props: Props) {
-  const { onSubmit, form, isDisabled } = props;
+  const { header, onSubmit, form, isDisabled, status } = props;
+  const {
+    formState: { errors },
+  } = form;
 
   const membersFields = useFieldArray({
     control: form.control,
@@ -59,31 +45,67 @@ export function ContestForm(props: Props) {
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <Input label="Title" disabled={isDisabled} {...form.register("title")} />
-      <CheckboxGroup label="Languages">
-        {Object.values(Language).map((language) => (
-          <Checkbox key={language} value={language} disabled={isDisabled}>
-            {language}
-          </Checkbox>
-        ))}
-      </CheckboxGroup>
+      <h1>{header}</h1>
+      <span>{status}</span>
+      <button>Save</button>
+      <Input
+        label="Title"
+        disabled={isDisabled}
+        {...form.register("title")}
+        error={errors.title?.message}
+      />
+      <Controller
+        name="languages"
+        control={form.control}
+        render={({ field }) => {
+          const { value, onChange } = field;
+
+          return (
+            <CheckboxGroup label="Languages" error={errors.languages?.message}>
+              {Object.values(Language).map((language) => (
+                <Checkbox
+                  key={language}
+                  value={language}
+                  disabled={isDisabled}
+                  checked={value.includes(language)}
+                  onChange={(event) => {
+                    const checked = event.target.checked;
+                    if (checked) {
+                      onChange([...value, language]);
+                    } else {
+                      onChange(value.filter((l) => l !== language));
+                    }
+                  }}
+                >
+                  {language}
+                </Checkbox>
+              ))}
+            </CheckboxGroup>
+          );
+        }}
+      />
       <Input
         label="Start At"
         type="datetime-local"
         disabled={isDisabled}
-        {...form.register("startAt")}
+        {...form.register("startAt", { valueAsDate: true })}
+        error={errors.startAt?.message}
       />
       <Input
         label="End At"
         type="datetime-local"
         disabled={isDisabled}
-        {...form.register("endAt")}
+        {...form.register("endAt", { valueAsDate: true })}
+        error={errors.endAt?.message}
       />
       <div>
         <p>Members</p>
         {membersFields.fields.map((field, index) => (
           <div key={field.id}>
-            <Select {...form.register(`members.${index}.type`)}>
+            <Select
+              {...form.register(`members.${index}.type`)}
+              error={errors.members?.[index]?.type?.toString()}
+            >
               {Object.values(MemberType).map((type) => (
                 <SelectOption key={type} value={type}>
                   {type}
@@ -94,25 +116,32 @@ export function ContestForm(props: Props) {
               label="Name"
               disabled={isDisabled}
               {...form.register(`members.${index}.name`)}
+              error={errors.members?.[index]?.name?.message}
             />
             <Input
               label="Login"
               disabled={isDisabled}
               {...form.register(`members.${index}.login`)}
+              error={errors.members?.[index]?.login?.message}
             />
             <Input
               label="Password"
-              placeholder={field._id !== null ? "*****" : ""}
+              placeholder={!!field._id ? "******" : ""}
               disabled={isDisabled}
               {...form.register(`members.${index}.password`)}
+              error={errors.members?.[index]?.password?.message}
             />
-            <Button onClick={() => membersFields.remove(index)}>
+            <Button
+              onClick={() => membersFields.remove(index)}
+              disabled={isDisabled}
+            >
               <FontAwesomeIcon icon={faTrash} />
             </Button>
           </div>
         ))}
         <Button
           onClick={() => membersFields.append({} as ContestFormType["members"])}
+          disabled={isDisabled}
         >
           <FontAwesomeIcon icon={faPlus} />
         </Button>
@@ -125,18 +154,24 @@ export function ContestForm(props: Props) {
               label="Title"
               disabled={isDisabled}
               {...form.register(`problems.${index}.title`)}
+              error={errors.problems?.[index]?.title?.message}
             />
             <Input
-              label="Description"
+              type="number"
+              label="Time Limit"
               disabled={isDisabled}
-              {...form.register(`problems.${index}.description`)}
+              {...form.register(`problems.${index}.timeLimit`, {
+                valueAsNumber: true,
+              })}
+              error={errors.problems?.[index]?.timeLimit?.message}
             />
-            {field.testCasesAttachment !== null ? (
+            {!!field.testCasesAttachment ? (
               <div>
-                <Button>
+                <Button disabled={isDisabled}>
                   <FontAwesomeIcon icon={faDownload} />
                 </Button>
                 <Button
+                  disabled={isDisabled}
                   onClick={() =>
                     form.setValue(
                       `problems.${index}.testCasesAttachment`,
@@ -149,13 +184,17 @@ export function ContestForm(props: Props) {
               </div>
             ) : (
               <Input
-                label="Time Limit"
+                label="Test Cases"
                 type="file"
                 disabled={isDisabled}
                 {...form.register(`problems.${index}.testCases`)}
+                error={errors.problems?.[index]?.testCases?.message as string}
               />
             )}
-            <Button onClick={() => problemsFields.remove(index)}>
+            <Button
+              onClick={() => problemsFields.remove(index)}
+              disabled={isDisabled}
+            >
               <FontAwesomeIcon icon={faTrash} />
             </Button>
           </div>
@@ -164,6 +203,7 @@ export function ContestForm(props: Props) {
           onClick={() =>
             problemsFields.append({} as ContestFormType["problems"])
           }
+          disabled={isDisabled}
         >
           <FontAwesomeIcon icon={faPlus} />
         </Button>

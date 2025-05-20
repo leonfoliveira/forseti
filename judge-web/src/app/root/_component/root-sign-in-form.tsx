@@ -2,13 +2,13 @@ import { Input } from "@/app/_component/form/input";
 import { Button } from "@/app/_component/form/button";
 import { UseFormReturn } from "react-hook-form";
 
-export type FormType = {
+export type RootSignInFormType = {
   password: string;
 };
 
 type Props = {
-  onSubmit: (data: FormType) => Promise<void>;
-  form: UseFormReturn<FormType>;
+  onSubmit: (data: RootSignInFormType) => Promise<void>;
+  form: UseFormReturn<RootSignInFormType>;
   isDisabled: boolean;
 };
 

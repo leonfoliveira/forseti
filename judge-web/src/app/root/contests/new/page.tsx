@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ContestForm,
   ContestFormType,
@@ -9,7 +11,10 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
 import { useToast } from "@/app/_util/toast-hook";
 import { redirect, useRouter } from "next/navigation";
 import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
-import { toCreateContestRequestDTO } from "@/app/root/contests/_util/contest-form-util";
+import { toCreateContestRequestDTO } from "@/app/root/contests/_util/contest-form-map";
+import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { contestFormValidation } from "@/app/root/contests/_util/contest-form-validation";
 
 export default function RootNewContestPage() {
   const { attachmentService, contestService } = useContainer();
@@ -17,7 +22,14 @@ export default function RootNewContestPage() {
   const createContestFetcher = useFetcher();
   const router = useRouter();
 
-  const form = useForm<ContestFormType>();
+  const form = useForm<ContestFormType>({
+    resolver: zodResolver(contestFormValidation),
+    defaultValues: {
+      languages: [],
+      problems: [],
+      members: [],
+    },
+  });
 
   async function createContest(data: ContestFormType) {
     try {
@@ -28,7 +40,10 @@ export default function RootNewContestPage() {
       toast.success("Contest created successfully");
       router.push(`/root/contests/${contest.id}`);
     } catch (error) {
-      if (error instanceof UnauthorizedException || error instanceof Error) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof ForbiddenException
+      ) {
         redirect("/root/sign-in");
       } else {
         toast.error("Error creating contest");
@@ -38,6 +53,7 @@ export default function RootNewContestPage() {
 
   return (
     <ContestForm
+      header="Create Contest"
       onSubmit={createContest}
       form={form}
       isDisabled={createContestFetcher.isLoading}

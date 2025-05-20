@@ -13,13 +13,15 @@ export class AxiosAuthenticationRepository implements AuthenticationRepository {
   ): Promise<Authorization> {
     return this.axiosClient.post<Authorization>(
       `/v1/auth/contests/${contestId}`,
-      requestDTO,
+      { data: requestDTO },
     );
   }
 
   authenticateRoot(
     requestDTO: AuthenticateRootRequestDTO,
   ): Promise<Authorization> {
-    return this.axiosClient.post<Authorization>("/v1/auth/root", requestDTO);
+    return this.axiosClient.post<Authorization>("/v1/auth/root", {
+      data: requestDTO,
+    });
   }
 }

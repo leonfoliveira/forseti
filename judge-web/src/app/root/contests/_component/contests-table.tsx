@@ -5,6 +5,8 @@ import { Table } from "@/app/_component/table/table";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableHeader } from "@/app/_component/table/table-header";
 import { TableCell } from "@/app/_component/table/table-cell";
+import { TableHead } from "@/app/_component/table/table-head";
+import { TableBody } from "@/app/_component/table/table-body";
 
 type Props = {
   contestsFetcher: Fetcher<ContestShortResponseDTO[]>;
@@ -15,22 +17,26 @@ export function ContestsTable(props: Props) {
 
   return (
     <Table>
-      <TableRow>
-        <TableHeader>ID</TableHeader>
-        <TableHeader>Title</TableHeader>
-        <TableHeader>Start At</TableHeader>
-        <TableHeader>End At</TableHeader>
-        <TableHeader>Status</TableHeader>
-      </TableRow>
-      {contestsFetcher.data?.map((contest) => (
-        <TableRow key={contest.id}>
-          <TableCell>{contest.id}</TableCell>
-          <TableCell>{contest.title}</TableCell>
-          <TableCell>{contest.startAt}</TableCell>
-          <TableCell>{contest.endAt}</TableCell>
-          <TableCell>{formatStatus(contest)}</TableCell>
+      <TableHead>
+        <TableRow>
+          <TableHeader>ID</TableHeader>
+          <TableHeader>Title</TableHeader>
+          <TableHeader>Start At</TableHeader>
+          <TableHeader>End At</TableHeader>
+          <TableHeader>Status</TableHeader>
         </TableRow>
-      ))}
+      </TableHead>
+      <TableBody>
+        {contestsFetcher.data?.map((contest) => (
+          <TableRow key={contest.id}>
+            <TableCell>{contest.id}</TableCell>
+            <TableCell>{contest.title}</TableCell>
+            <TableCell>{contest.startAt}</TableCell>
+            <TableCell>{contest.endAt}</TableCell>
+            <TableCell>{formatStatus(contest)}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
     </Table>
   );
 }

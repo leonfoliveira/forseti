@@ -3,6 +3,7 @@ import { ContestFormType } from "@/app/root/contests/_component/contest-form";
 import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
 import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
+import { Language } from "@/core/domain/enumerate/Language";
 
 export async function toCreateContestRequestDTO(
   attachmentService: AttachmentService,
@@ -36,7 +37,6 @@ export async function toUpdateRequestDTO(
     return {
       id: problem._id,
       title: problem.title,
-      description: problem.description,
       timeLimit: problem.timeLimit,
       testCases,
     };
@@ -67,7 +67,6 @@ export function fromResponseDTO(contest: ContestResponseDTO): ContestFormType {
     return {
       _id: problem.id,
       title: problem.title,
-      description: problem.description,
       timeLimit: problem.timeLimit,
       testCasesAttachment: problem.testCases,
     };
@@ -76,7 +75,7 @@ export function fromResponseDTO(contest: ContestResponseDTO): ContestFormType {
   return {
     id: contest.id,
     title: contest.title,
-    languages: contest.languages,
+    languages: contest.languages as [Language, ...Language[]],
     startAt: new Date(contest.startAt),
     endAt: new Date(contest.endAt),
     members: contest.members.map(mapMember),

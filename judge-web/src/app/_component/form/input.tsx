@@ -5,12 +5,12 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   error?: string;
 };
 
-export function Input(props: Props) {
+export function Input({ label, error, ...props }: Props) {
   return (
     <div>
-      {props.label && <label>{props.label}</label>}
+      {label && <label>{label}</label>}
       <input {...props} />
-      {props.error && <p>{props.error}</p>}
+      {error && <p>{error}</p>}
     </div>
   );
 }

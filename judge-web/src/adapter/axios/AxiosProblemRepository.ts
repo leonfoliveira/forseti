@@ -13,7 +13,7 @@ export class AxiosProblemRepository implements ProblemRepository {
   ): Promise<SubmissionResponseDTO> {
     return this.axiosClient.post<SubmissionResponseDTO>(
       `/v1/problems/${id}/submissions`,
-      requestDTO,
+      { data: requestDTO },
     );
   }
 

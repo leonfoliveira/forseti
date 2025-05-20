@@ -7,7 +7,6 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { redirect } from "next/navigation";
 import { useToast } from "@/app/_util/toast-hook";
-import { useForm } from "react-hook-form";
 import {
   ContestForm,
   ContestFormType,
@@ -17,7 +16,10 @@ import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateCon
 import {
   fromResponseDTO,
   toUpdateRequestDTO,
-} from "@/app/root/contests/_util/contest-form-util";
+} from "@/app/root/contests/_util/contest-form-map";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { contestFormValidation } from "@/app/root/contests/_util/contest-form-validation";
+import { useForm } from "react-hook-form";
 
 export default function RootEditContestPage({
   params,
@@ -26,18 +28,20 @@ export default function RootEditContestPage({
 }) {
   const { id } = use(params);
   const { attachmentService, contestService } = useContainer();
-  const findContestFetcher = useFetcher();
-  const updateContestFetcher = useFetcher();
+  const findContestFetcher = useFetcher<ContestResponseDTO>();
+  const updateContestFetcher = useFetcher<ContestResponseDTO>();
   const toast = useToast();
 
-  const form = useForm<ContestFormType>();
+  const form = useForm<ContestFormType>({
+    resolver: zodResolver(contestFormValidation),
+  });
 
   useEffect(() => {
     async function findContest() {
       try {
-        const contest = (await findContestFetcher.fetch(() =>
+        const contest = await findContestFetcher.fetch(() =>
           contestService.findFullContestById(id),
-        )) as ContestResponseDTO;
+        );
         form.reset(fromResponseDTO(contest));
       } catch (error) {
         if (
@@ -61,7 +65,10 @@ export default function RootEditContestPage({
       );
       toast.success("Contest updated successfully");
     } catch (error) {
-      if (error instanceof UnauthorizedException || error instanceof Error) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof ForbiddenException
+      ) {
         redirect("/root/sign-in");
       } else {
         toast.error("Error updating contest");
@@ -71,6 +78,7 @@ export default function RootEditContestPage({
 
   return (
     <ContestForm
+      header={`Contest ${findContestFetcher.data?.id || ""}`}
       onSubmit={updateContest}
       form={form}
       isDisabled={

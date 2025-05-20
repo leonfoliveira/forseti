@@ -14,14 +14,13 @@ export class AxiosContestRepository implements ContestRepository {
   createContest(
     requestDTO: CreateContestRequestDTO,
   ): Promise<ContestResponseDTO> {
-    return this.axiosClient.post<ContestResponseDTO>(
-      "/v1/contests",
-      requestDTO,
-    );
+    return this.axiosClient.post<ContestResponseDTO>("/v1/contests", {
+      data: requestDTO,
+    });
   }
 
   deleteContest(id: number): Promise<void> {
-    return this.axiosClient.delete<void>(`/v1/contests/${id}`);
+    return this.axiosClient.delete(`/v1/contests/${id}`);
   }
 
   findAllContests(): Promise<ContestShortResponseDTO[]> {
@@ -65,7 +64,7 @@ export class AxiosContestRepository implements ContestRepository {
   ): Promise<ContestResponseDTO> {
     return this.axiosClient.put<ContestResponseDTO>(
       `/v1/contests/${requestDTO.id}`,
-      requestDTO,
+      { data: requestDTO },
     );
   }
 }
