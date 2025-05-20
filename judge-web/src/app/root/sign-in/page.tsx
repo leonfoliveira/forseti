@@ -10,11 +10,12 @@ import {
   RootSignInFormType,
   RootSignInForm,
 } from "@/app/root/_component/root-sign-in-form";
+import { Authorization } from "@/core/domain/model/Authorization";
 
 export default function RootSignInPage() {
   const { authenticationService } = useContainer();
   const toast = useToast();
-  const authenticateRootFetcher = useFetcher();
+  const authenticateRootFetcher = useFetcher<Authorization>();
   const router = useRouter();
   const form = useForm<RootSignInFormType>();
 
@@ -34,10 +35,13 @@ export default function RootSignInPage() {
   }
 
   return (
-    <RootSignInForm
-      onSubmit={signIn}
-      form={form}
-      isDisabled={authenticateRootFetcher.isLoading}
-    />
+    <div className="w-screen h-screen flex justify-center items-center">
+      <RootSignInForm
+        authenticateRootFetcher={authenticateRootFetcher}
+        onSubmit={signIn}
+        form={form}
+        isDisabled={authenticateRootFetcher.isLoading}
+      />
+    </div>
   );
 }
