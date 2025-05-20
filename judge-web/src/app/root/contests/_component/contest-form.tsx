@@ -6,6 +6,7 @@ import { Controller, useFieldArray, UseFormReturn } from "react-hook-form";
 import { Button } from "@/app/_component/form/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faChevronLeft,
   faDownload,
   faEdit,
   faPlus,
@@ -45,9 +46,16 @@ export function ContestForm(props: Props) {
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <h1>{header}</h1>
-      <span>{status}</span>
-      <button>Save</button>
+      <div>
+        <div>
+          <FontAwesomeIcon icon={faChevronLeft} />
+          <h1>{header}</h1>
+        </div>
+        <div>
+          <span>{status}</span>
+          <button>Save</button>
+        </div>
+      </div>
       <Input
         label="Title"
         disabled={isDisabled}

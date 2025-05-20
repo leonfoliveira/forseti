@@ -10,9 +10,13 @@ export const contestFormValidation = z
       .array(z.nativeEnum(Language))
       .nonempty("At least one language is required"),
     startAt: z
-      .date({ required_error: "Start at is required" })
+      .date({
+        errorMap: () => ({ message: "Start at is required" }),
+      })
       .min(new Date(), "Start at must be in the future"),
-    endAt: z.date({ required_error: "End at is required" }),
+    endAt: z.date({
+      errorMap: () => ({ message: "End at is required" }),
+    }),
     members: z.array(
       z
         .object({
@@ -41,16 +45,15 @@ export const contestFormValidation = z
           _id: z.number().optional(),
           title: z.string().nonempty("Title is required"),
           timeLimit: z
-            .number({ required_error: "Time limit is required" })
+            .number({
+              message: "Time limit is required",
+            })
             .min(1, "Time limit must be greater than 0"),
           testCasesAttachment: z.any().optional(),
           testCases: z.any().optional(),
         })
         .refine(
-          (data) => {
-            console.log("data-2", data);
-            return !!data.testCasesAttachment || !!data.testCases;
-          },
+          (data) => !!data.testCasesAttachment || data.testCases?.length > 0,
           {
             message: "Test cases is required",
             path: ["testCases"],
