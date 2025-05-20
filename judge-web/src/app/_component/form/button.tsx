@@ -8,13 +8,7 @@ type Props = DetailedHTMLProps<
   variant?: "primary" | "outline-primary";
 };
 
-export function Button(
-  { type, variant, ...props }: Props = {
-    variant: "primary",
-  },
-) {
-  const activeVariant = variant || "primary";
-
+export function Button({ type, variant = "primary", ...props }: Props) {
   const styles = {
     primary:
       "bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700 disabled:bg-blue-300",
@@ -28,7 +22,7 @@ export function Button(
       {...props}
       className={cls(
         "font-semibold rounded-lg px-6 py-2 cursor-pointer transition",
-        styles[activeVariant],
+        styles[variant],
         props.className,
       )}
     >

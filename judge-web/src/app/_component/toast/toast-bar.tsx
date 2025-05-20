@@ -10,7 +10,7 @@ export function ToastBar() {
   }
 
   return (
-    <div>
+    <div className="fixed bottom-0 right-0 p-3 flex flex-col-reverse gap-2">
       {toasts.map((toast) => (
         <Toast
           key={toast.id}

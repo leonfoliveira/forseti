@@ -1,5 +1,14 @@
-import React from "react";
+import React, { DetailedHTMLProps, TableHTMLAttributes } from "react";
+import { cls } from "@/app/_util/cls";
 
-export function Table({ children }: { children: React.ReactNode }) {
-  return <table>{children}</table>;
+export function Table({
+  children,
+  className,
+  ...props
+}: DetailedHTMLProps<TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>) {
+  return (
+    <table {...props} className={cls("w-full", className)}>
+      {children}
+    </table>
+  );
 }

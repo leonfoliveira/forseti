@@ -1,4 +1,4 @@
-export function formatFromISO(date: string): string {
+export function formatDateTime(date: string): string {
   const parsedDate = new Date(date);
 
   const pad = (n: number) => n.toString().padStart(2, "0");

@@ -1,12 +1,18 @@
 import { Fetcher } from "@/app/_util/fetcher-hook";
 import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestShortResponseDTO";
-import { formatStatus } from "@/app/_util/contest-utils";
+import {
+  ContestStatus,
+  formatStatus,
+  getContestStatus,
+} from "@/app/_util/contest-utils";
 import { Table } from "@/app/_component/table/table";
 import { TableRow } from "@/app/_component/table/table-row";
-import { TableHeader } from "@/app/_component/table/table-header";
 import { TableCell } from "@/app/_component/table/table-cell";
-import { TableHead } from "@/app/_component/table/table-head";
-import { TableBody } from "@/app/_component/table/table-body";
+import { TableSection } from "@/app/_component/table/table-section";
+import { formatDateTime } from "@/app/_util/date-utils";
+import React from "react";
+import { Badge } from "@/app/_component/badge";
+import { useRouter } from "next/navigation";
 
 type Props = {
   contestsFetcher: Fetcher<ContestShortResponseDTO[]>;
@@ -15,28 +21,60 @@ type Props = {
 export function ContestsTable(props: Props) {
   const { contestsFetcher } = props;
 
+  const router = useRouter();
+
+  function getBadgeVariant(contest: ContestShortResponseDTO) {
+    const status = getContestStatus(contest);
+    switch (status) {
+      case ContestStatus.IN_PROGRESS:
+        return "success";
+      case ContestStatus.ENDED:
+        return "warning";
+      default:
+        return "primary";
+    }
+  }
+
   return (
     <Table>
-      <TableHead>
+      <TableSection head>
         <TableRow>
-          <TableHeader>ID</TableHeader>
-          <TableHeader>Title</TableHeader>
-          <TableHeader>Start At</TableHeader>
-          <TableHeader>End At</TableHeader>
-          <TableHeader>Status</TableHeader>
+          <TableCell header className="w-1/20">
+            ID
+          </TableCell>
+          <TableCell header className="w-11/20">
+            Title
+          </TableCell>
+          <TableCell header className="w-3/20">
+            Start At
+          </TableCell>
+          <TableCell header className="w-3/20">
+            End At
+          </TableCell>
+          <TableCell header className="w-2/20">
+            Status
+          </TableCell>
         </TableRow>
-      </TableHead>
-      <TableBody>
+      </TableSection>
+      <TableSection>
         {contestsFetcher.data?.map((contest) => (
-          <TableRow key={contest.id}>
+          <TableRow
+            key={contest.id}
+            onClick={() => router.push(`/root/contests/${contest.id}`)}
+            className="hover:bg-gray-100 active:bg-gray-200 transition cursor-pointer"
+          >
             <TableCell>{contest.id}</TableCell>
             <TableCell>{contest.title}</TableCell>
-            <TableCell>{contest.startAt}</TableCell>
-            <TableCell>{contest.endAt}</TableCell>
-            <TableCell>{formatStatus(contest)}</TableCell>
+            <TableCell>{formatDateTime(contest.startAt)}</TableCell>
+            <TableCell>{formatDateTime(contest.endAt)}</TableCell>
+            <TableCell>
+              <Badge variant={getBadgeVariant(contest)}>
+                {formatStatus(contest)}
+              </Badge>
+            </TableCell>
           </TableRow>
         ))}
-      </TableBody>
+      </TableSection>
     </Table>
   );
 }

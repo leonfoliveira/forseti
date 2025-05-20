@@ -1,16 +1,16 @@
 import { useEffect, useRef } from "react";
 import { ToastLevel, ToastType } from "@/app/_atom/toast-atom";
 import { cls } from "@/app/_util/cls";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
 
-export function Toast({
-  toast,
-  lifetime,
-  onClose,
-}: {
+type Props = {
   toast: ToastType;
   lifetime: number;
   onClose: (id: string) => void;
-}) {
+};
+
+export function Toast({ toast, lifetime, onClose }: Props) {
   const closeTimeout = useRef<NodeJS.Timeout>(null);
 
   useEffect(() => {
@@ -25,24 +25,27 @@ export function Toast({
     };
   }, []);
 
-  const color = {
-    [ToastLevel.INFO]: "",
-    [ToastLevel.SUCCESS]: "text-bg-success",
-    [ToastLevel.WARNING]: "text-bg-warning",
-    [ToastLevel.ERROR]: "text-bg-danger",
+  const style = {
+    [ToastLevel.INFO]: "bg-blue-500 text-white",
+    [ToastLevel.SUCCESS]: "bg-green-500 text-white",
+    [ToastLevel.WARNING]: "bg-yellow-500 text-white",
+    [ToastLevel.ERROR]: "bg-red-500 text-white",
   };
 
   return (
     <div
-      className={cls("toast", color[toast.level])}
+      className={cls(
+        "py-2 px-5 rounded-md flex items-center",
+        style[toast.level],
+      )}
       style={{ pointerEvents: "auto" }}
     >
-      <div className="toast-body">{toast.text}</div>
-      <button
-        type="button"
-        className="btn-close me-2 m-auto"
+      {toast.text}
+      <FontAwesomeIcon
+        icon={faClose}
+        className="ms-2 cursor-pointer"
         onClick={() => onClose(toast.id)}
-      ></button>
+      />
     </div>
   );
 }

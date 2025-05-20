@@ -12,7 +12,7 @@ import {
 } from "@/app/root/_component/root-sign-in-form";
 import { Authorization } from "@/core/domain/model/Authorization";
 
-export default function RootSignInPage() {
+export default function AuthRoot() {
   const { authenticationService } = useContainer();
   const toast = useToast();
   const authenticateRootFetcher = useFetcher<Authorization>();
@@ -24,7 +24,6 @@ export default function RootSignInPage() {
       await authenticateRootFetcher.fetch(() =>
         authenticationService.authenticateRoot(form),
       );
-      toast.success("Sign in successful");
       router.push("/root");
     } catch (error) {
       if (error instanceof UnauthorizedException) {
