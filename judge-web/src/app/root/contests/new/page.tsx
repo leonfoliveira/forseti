@@ -44,7 +44,7 @@ export default function RootNewContestPage() {
         error instanceof UnauthorizedException ||
         error instanceof ForbiddenException
       ) {
-        redirect("/root/sign-in");
+        redirect("/auth/root");
       } else {
         toast.error("Error creating contest");
       }
@@ -54,9 +54,11 @@ export default function RootNewContestPage() {
   return (
     <ContestForm
       header="Create Contest"
+      onBack={() => router.push("/root/contests")}
       onSubmit={createContest}
       form={form}
       isDisabled={createContestFetcher.isLoading}
+      isLoading={createContestFetcher.isLoading}
     />
   );
 }

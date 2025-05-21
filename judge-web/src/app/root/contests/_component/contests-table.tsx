@@ -69,7 +69,7 @@ export function ContestsTable(props: Props) {
             <TableCell>{formatDateTime(contest.endAt)}</TableCell>
             <TableCell>
               <Badge variant={getBadgeVariant(contest)}>
-                {formatStatus(contest)}
+                {formatStatus(getContestStatus(contest))}
               </Badge>
             </TableCell>
           </TableRow>

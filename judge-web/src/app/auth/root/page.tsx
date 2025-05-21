@@ -20,17 +20,15 @@ export default function AuthRoot() {
   const form = useForm<RootSignInFormType>();
 
   async function signIn(form: RootSignInFormType) {
-    try {
-      await authenticateRootFetcher.fetch(() =>
-        authenticationService.authenticateRoot(form),
-      );
-      router.push("/root");
-    } catch (error) {
-      if (error instanceof UnauthorizedException) {
-        toast.warning("Invalid password");
-      }
-      throw error;
-    }
+    await authenticateRootFetcher.fetch(
+      () => authenticationService.authenticateRoot(form),
+      {
+        errors: {
+          [UnauthorizedException.name]: () => toast.warning("Invalid password"),
+        },
+      },
+    );
+    router.push("/root");
   }
 
   return (

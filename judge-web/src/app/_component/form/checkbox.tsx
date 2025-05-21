@@ -7,7 +7,7 @@ export function Checkbox({
   return (
     <div>
       <input type="checkbox" {...props} />
-      <label>{children}</label>
+      <label className="ml-2">{children}</label>
     </div>
   );
 }

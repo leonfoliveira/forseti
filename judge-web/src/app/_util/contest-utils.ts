@@ -24,10 +24,7 @@ export function getContestStatus(
   }
 }
 
-export function formatStatus(
-  contest: ContestShortResponseDTO | ContestResponseDTO,
-) {
-  const status = getContestStatus(contest);
+export function formatStatus(status: ContestStatus) {
   switch (status) {
     case ContestStatus.NOT_STARTED:
       return "Not Started";

@@ -9,9 +9,13 @@ type Props = {
 export function CheckboxGroup({ children, ...props }: Props) {
   return (
     <div>
-      {props.label && <label>{props.label}</label>}
+      {props.label && (
+        <label className="block text-sm font-semibold">{props.label}</label>
+      )}
       {children}
-      {props.error && <p>{props.error}</p>}
+      <p className="text-sm font-semibold text-red-500 min-h-[1em]">
+        {props.error}
+      </p>
     </div>
   );
 }

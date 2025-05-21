@@ -1,10 +1,12 @@
 import { cls } from "@/app/_util/cls";
 import React from "react";
 
+export type BadgeVariant = "primary" | "success" | "warning" | "danger";
+
 type Props = {
   children: React.ReactNode;
   className?: string;
-  variant?: "primary" | "success" | "warning" | "danger";
+  variant?: BadgeVariant;
 };
 
 export function Badge({ children, variant = "primary", className }: Props) {

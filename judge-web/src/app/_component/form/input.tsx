@@ -24,7 +24,7 @@ export function Input({
           className,
         )}
       />
-      {error && <p className="text-sm font-semibold text-red-500">{error}</p>}
+      <p className="text-sm font-semibold text-red-500 min-h-[1em]">{error}</p>
     </div>
   );
 }
