@@ -19,10 +19,4 @@ export class AxiosAttachmentRepository implements AttachmentRepository {
       },
     });
   }
-
-  downloadAttachment(url: string): Promise<File> {
-    return this.axiosClient.get<File>(url, {
-      responseType: "blob",
-    });
-  }
 }

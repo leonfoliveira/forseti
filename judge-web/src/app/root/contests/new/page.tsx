@@ -13,6 +13,7 @@ import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { ContestFormType } from "@/app/root/contests/_form/contest-form-type";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/contests/_form/contest-form-schema";
+import { ServerException } from "@/core/domain/exception/ServerException";
 
 export default function RootNewContestPage() {
   const { attachmentService, contestService } = useContainer();
@@ -35,7 +36,7 @@ export default function RootNewContestPage() {
       {
         authRedirect: "/auth/root",
         errors: {
-          [Error.name]: "Error creating contests",
+          [ServerException.name]: "Error creating contests",
         },
       },
     )) as ContestResponseDTO;

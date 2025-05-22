@@ -26,5 +26,6 @@ export type ContestFormProblemType = Partial<{
   description: string;
   timeLimit: number;
   _testCases: DownloadAttachmentResponseDTO;
+  forceSelect: boolean;
   testCases: File;
 }>;

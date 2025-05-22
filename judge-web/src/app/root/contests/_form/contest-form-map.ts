@@ -77,7 +77,7 @@ export function fromResponseDTO(contest: ContestResponseDTO): ContestFormType {
       title: problem.title,
       description: problem.description,
       timeLimit: problem.timeLimit,
-      testCasesAttachment: problem.testCases,
+      _testCases: problem.testCases,
     };
   }
 

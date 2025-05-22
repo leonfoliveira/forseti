@@ -18,6 +18,8 @@ import { useForm } from "react-hook-form";
 import { ContestFormType } from "@/app/root/contests/_form/contest-form-type";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/contests/_form/contest-form-schema";
+import { ServerException } from "@/core/domain/exception/ServerException";
+import { DownloadAttachmentResponseDTO } from "@/core/repository/dto/response/DownloadAttachmentResponseDTO";
 
 export default function RootEditContestPage({
   params,
@@ -46,7 +48,7 @@ export default function RootEditContestPage({
         {
           authRedirect: "/auth/root",
           errors: {
-            [Error.name]: "Error loading contest",
+            [ServerException.name]: "Error loading contest",
           },
         },
       );
@@ -57,13 +59,12 @@ export default function RootEditContestPage({
 
   async function updateContest(data: ContestFormType) {
     const inputDTO = await toUpdateRequestDTO(attachmentService, data);
-    console.log(inputDTO);
     await updateContestFetcher.fetch(
       () => contestService.updateContest(inputDTO as UpdateContestRequestDTO),
       {
         authRedirect: "/auth/root",
         errors: {
-          [Error.name]: "Error updating contest",
+          [ServerException.name]: "Error updating contest",
         },
       },
     );
@@ -75,6 +76,7 @@ export default function RootEditContestPage({
       header={`Contest ${findContestFetcher.data?.id || ""}`}
       onBack={() => router.push("/root/contests")}
       onSubmit={updateContest}
+      onDownload={attachmentService.downloadAttachment}
       form={form}
       isDisabled={
         findContestFetcher.isLoading || updateContestFetcher.isLoading

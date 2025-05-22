@@ -8,6 +8,7 @@ import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestS
 import { Spinner } from "@/app/_component/spinner";
 import { Button } from "@/app/_component/form/button";
 import { ContestsTable } from "@/app/root/contests/_component/contests-table";
+import { ServerException } from "@/core/domain/exception/ServerException";
 
 export default function RootContestsPage() {
   const { authorizationService, contestService } = useContainer();
@@ -18,7 +19,7 @@ export default function RootContestsPage() {
     contestsFetcher.fetch(() => contestService.findAllContests(), {
       authRedirect: "/auth/root",
       errors: {
-        [Error.name]: "Error fetching contests",
+        [ServerException.name]: "Error fetching contests",
       },
     });
   }, []);

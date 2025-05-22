@@ -59,7 +59,7 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
                 );
               }}
             >
-              {label}
+              {item.label}
             </Checkbox>
           ))}
           <p className="text-sm font-semibold text-red-500 min-h-[1em]">

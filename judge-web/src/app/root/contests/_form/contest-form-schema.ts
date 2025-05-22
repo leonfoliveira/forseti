@@ -60,11 +60,17 @@ export const contestFormSchema = Joi.object({
           "number.min": "Time limit must be greater than 0",
           "any.required": "Time limit is required",
         }),
-        testCases: Joi.any().when("_id", {
-          is: Joi.exist(),
-          then: Joi.optional(),
-          otherwise: Joi.required().messages({
+        testCases: Joi.any().when("forceSelect", {
+          is: true,
+          then: Joi.required().messages({
             "any.required": "Test cases are required",
+          }),
+          otherwise: Joi.when("_id", {
+            is: Joi.exist(),
+            then: Joi.optional(),
+            otherwise: Joi.required().messages({
+              "any.required": "Test cases are required",
+            }),
           }),
         }),
       }).unknown(true),
