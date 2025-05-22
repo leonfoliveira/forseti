@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  ContestForm,
-  ContestFormType,
-} from "@/app/root/contests/_component/contest-form";
+import { ContestForm } from "@/app/root/contests/_component/contest-form";
 import { useContainer } from "@/app/_atom/container-atom";
 import { useFetcher } from "@/app/_util/fetcher-hook";
 import { useForm } from "react-hook-form";
@@ -11,10 +8,11 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
 import { useToast } from "@/app/_util/toast-hook";
 import { redirect, useRouter } from "next/navigation";
 import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
-import { toCreateContestRequestDTO } from "@/app/root/contests/_util/contest-form-map";
+import { toCreateContestRequestDTO } from "@/app/root/contests/_form/contest-form-map";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { contestFormValidation } from "@/app/root/contests/_util/contest-form-validation";
+import { ContestFormType } from "@/app/root/contests/_form/contest-form-type";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { contestFormSchema } from "@/app/root/contests/_form/contest-form-schema";
 
 export default function RootNewContestPage() {
   const { attachmentService, contestService } = useContainer();
@@ -23,32 +21,26 @@ export default function RootNewContestPage() {
   const router = useRouter();
 
   const form = useForm<ContestFormType>({
-    resolver: zodResolver(contestFormValidation),
+    resolver: joiResolver(contestFormSchema),
     defaultValues: {
-      languages: [],
       problems: [],
       members: [],
     },
   });
 
   async function createContest(data: ContestFormType) {
-    try {
-      const inputDTO = await toCreateContestRequestDTO(attachmentService, data);
-      const contest = (await createContestFetcher.fetch(() =>
-        contestService.createContest(inputDTO),
-      )) as ContestResponseDTO;
-      toast.success("Contest created successfully");
-      router.push(`/root/contests/${contest.id}`);
-    } catch (error) {
-      if (
-        error instanceof UnauthorizedException ||
-        error instanceof ForbiddenException
-      ) {
-        redirect("/auth/root");
-      } else {
-        toast.error("Error creating contest");
-      }
-    }
+    const inputDTO = await toCreateContestRequestDTO(attachmentService, data);
+    const contest = (await createContestFetcher.fetch(
+      () => contestService.createContest(inputDTO),
+      {
+        authRedirect: "/auth/root",
+        errors: {
+          [Error.name]: "Error creating contests",
+        },
+      },
+    )) as ContestResponseDTO;
+    toast.success("Contest created successfully");
+    router.push(`/root/contests/${contest.id}`);
   }
 
   return (

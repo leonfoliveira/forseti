@@ -3,7 +3,7 @@ import { Authorization } from "@/core/domain/model/Authorization";
 export interface AuthorizationRepository {
   setAuthorization(authorization: Authorization): void;
 
-  getAuthorization(): Authorization | null;
+  getAuthorization(): Authorization | undefined;
 
   deleteAuthorization(): void;
 }

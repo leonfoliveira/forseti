@@ -8,12 +8,11 @@ export class LocalStorageAuthorizationRepository
     localStorage.setItem("authorization", JSON.stringify(authorization));
   }
 
-  getAuthorization(): Authorization | null {
+  getAuthorization(): Authorization | undefined {
     const authorization = localStorage.getItem("authorization");
     if (authorization) {
       return JSON.parse(authorization) as Authorization;
     }
-    return null;
   }
 
   deleteAuthorization(): void {

@@ -18,6 +18,7 @@ export type UpdateContestRequestDTO = {
   problems: {
     id?: number;
     title: string;
+    description: string;
     timeLimit: number;
     testCases?: AttachmentRequestDTO;
   }[];

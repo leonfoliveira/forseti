@@ -29,22 +29,6 @@ services:
       - "4566:4566"
     volumes:
       - "./docker/localstack-bootstrap:/etc/localstack/init/ready.d"
-
-  api:
-    container_name: judge-api
-    build: judge-api
-    restart: always
-    environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-development}
-      DB_URL: ${DB_URL:-jdbc:postgresql://db:5432/judge}
-      DB_USER: ${DB_USER:-judge}
-      DB_PASSWORD: ${DB_PASSWORD:-judge}
-    ports:
-      - "8080:8080"
-    depends_on:
-      - postgres
-      - redis
-      - localstack
   
 networks:
   default:

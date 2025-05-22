@@ -7,6 +7,10 @@ export class AttachmentService {
   async uploadAttachment(file: File): Promise<AttachmentRequestDTO> {
     const uploadAttachment =
       await this.attachmentRepository.createUploadAttachment();
+    uploadAttachment.url = uploadAttachment.url.replace(
+      "judge.localhost:4566",
+      "localhost:4566/judge",
+    );
     await this.attachmentRepository.uploadAttachment(
       uploadAttachment.url,
       file,

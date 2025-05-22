@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useContainer } from "@/app/_atom/container-atom";
 import { useRouter } from "next/navigation";
 import { Button } from "@/app/_component/form/button";
+import { Authorization } from "@/core/domain/model/Authorization";
 
 type Props = {
   signInPath: string;
@@ -11,8 +12,13 @@ type Props = {
 export default function Layout({ signInPath, children }: Props) {
   const { authorizationService } = useContainer();
   const router = useRouter();
+  const [authorization, setAuthorization] = useState<
+    Authorization | undefined
+  >();
 
-  const authorization = authorizationService.getAuthorization();
+  useEffect(() => {
+    setAuthorization(authorizationService.getAuthorization());
+  }, []);
 
   function signOut() {
     authorizationService.deleteAuthorization();

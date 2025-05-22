@@ -1,9 +1,14 @@
 import { AttachmentService } from "@/core/service/AttachmentService";
-import { ContestFormType } from "@/app/root/contests/_component/contest-form";
 import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
 import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
 import { Language } from "@/core/domain/enumerate/Language";
+import {
+  ContestFormMemberType,
+  ContestFormProblemType,
+  ContestFormType,
+} from "@/app/root/contests/_form/contest-form-type";
+import { MemberType } from "@/core/domain/enumerate/MemberType";
 
 export async function toCreateContestRequestDTO(
   attachmentService: AttachmentService,
@@ -17,39 +22,42 @@ export async function toUpdateRequestDTO(
   attachmentService: AttachmentService,
   form: ContestFormType,
 ): Promise<UpdateContestRequestDTO> {
-  function mapMember(member: ContestFormType["members"][number]) {
+  function mapMember(
+    member: ContestFormMemberType,
+  ): UpdateContestRequestDTO["members"][number] {
     return {
       id: member._id,
-      type: member.type,
-      name: member.name,
-      login: member.login,
+      type: member.type as MemberType,
+      name: member.name as string,
+      login: member.login as string,
       password: member.password,
     };
   }
 
-  async function mapProblem(problem: ContestFormType["problems"][number]) {
+  async function mapProblem(
+    problem: ContestFormProblemType,
+  ): Promise<UpdateContestRequestDTO["problems"][number]> {
     let testCases;
-    if (!!problem.testCases && problem.testCases.length > 0) {
-      testCases = await attachmentService.uploadAttachment(
-        (problem.testCases as File[])[0],
-      );
+    if (!!problem.testCases) {
+      testCases = await attachmentService.uploadAttachment(problem.testCases);
     }
     return {
       id: problem._id,
-      title: problem.title,
-      timeLimit: problem.timeLimit,
+      title: problem.title as string,
+      description: problem.description as string,
+      timeLimit: problem.timeLimit as number,
       testCases,
     };
   }
 
   return {
     id: form.id as number,
-    title: form.title,
-    languages: form.languages,
-    startAt: form.startAt,
-    endAt: form.endAt,
-    members: form.members.map(mapMember),
-    problems: await Promise.all(form.problems.map(mapProblem)),
+    title: form.title as string,
+    languages: form.languages as Language[],
+    startAt: form.startAt as Date,
+    endAt: form.endAt as Date,
+    members: (form.members as []).map(mapMember),
+    problems: await Promise.all((form.problems as []).map(mapProblem)),
   };
 }
 
@@ -67,6 +75,7 @@ export function fromResponseDTO(contest: ContestResponseDTO): ContestFormType {
     return {
       _id: problem.id,
       title: problem.title,
+      description: problem.description,
       timeLimit: problem.timeLimit,
       testCasesAttachment: problem.testCases,
     };

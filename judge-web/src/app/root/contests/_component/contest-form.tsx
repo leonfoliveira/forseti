@@ -1,8 +1,6 @@
-import { Input } from "@/app/_component/form/input";
 import { CheckboxGroup } from "@/app/_component/form/checkbox-group";
-import { Checkbox } from "@/app/_component/form/checkbox";
 import { Language } from "@/core/domain/enumerate/Language";
-import { Controller, useFieldArray, UseFormReturn } from "react-hook-form";
+import { useFieldArray, UseFormReturn } from "react-hook-form";
 import { Button } from "@/app/_component/form/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -13,10 +11,7 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { Select } from "@/app/_component/form/select";
-import { SelectOption } from "@/app/_component/form/select-option";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { z } from "zod";
-import { contestFormValidation } from "@/app/root/contests/_util/contest-form-validation";
 import {
   ContestStatus,
   formatLanguage,
@@ -25,8 +20,11 @@ import {
 import { Badge, BadgeVariant } from "@/app/_component/badge";
 import React, { Fragment } from "react";
 import { Spinner } from "@/app/_component/spinner";
-
-export type ContestFormType = z.infer<typeof contestFormValidation>;
+import { TextInput } from "@/app/_component/form/text-input";
+import { ContestFormType } from "@/app/root/contests/_form/contest-form-type";
+import { DateInput } from "@/app/_component/form/date-input";
+import { NumberInput } from "@/app/_component/form/number-input";
+import { FileInput } from "@/app/_component/form/file-input";
 
 type Props = {
   header: string;
@@ -41,9 +39,6 @@ type Props = {
 export function ContestForm(props: Props) {
   const { header, onBack, onSubmit, form, isDisabled, status, isLoading } =
     props;
-  const {
-    formState: { errors },
-  } = form;
 
   const membersFields = useFieldArray({
     control: form.control,
@@ -86,188 +81,160 @@ export function ContestForm(props: Props) {
             </Button>
           </div>
         </div>
-        <Input
-          label="Title"
+        <TextInput fm={form} name="title" label="Title" disabled={isDisabled} />
+        <CheckboxGroup
+          fm={form}
+          options={Object.values(Language).map((it) => ({
+            value: it,
+            label: formatLanguage(it),
+          }))}
           disabled={isDisabled}
-          {...form.register("title")}
-          error={errors.title?.message}
-        />
-        <Controller
           name="languages"
-          control={form.control}
-          render={({ field }) => {
-            const { value, onChange } = field;
-
-            return (
-              <CheckboxGroup
-                label="Languages"
-                error={errors.languages?.message}
-              >
-                {Object.values(Language).map((language) => (
-                  <Checkbox
-                    key={language}
-                    value={language}
-                    disabled={isDisabled}
-                    checked={(value || []).includes(language)}
-                    onChange={(event) => {
-                      const checked = event.target.checked;
-                      if (checked) {
-                        onChange([...value, language]);
-                      } else {
-                        onChange(value.filter((l) => l !== language));
-                      }
-                    }}
-                  >
-                    {formatLanguage(language)}
-                  </Checkbox>
-                ))}
-              </CheckboxGroup>
-            );
-          }}
+          label="Languages"
+          containerClassName="mt-5"
         />
         <div className="flex gap-x-3">
-          <Input
+          <DateInput
+            fm={form}
+            name="startAt"
             label="Start At"
-            type="datetime-local"
             disabled={isDisabled}
-            {...form.register("startAt", { valueAsDate: true })}
-            error={errors.startAt?.message}
             containerClassName="flex-1"
           />
-          <Input
+          <DateInput
+            fm={form}
+            name="endAt"
             label="End At"
-            type="datetime-local"
             disabled={isDisabled}
-            {...form.register("endAt", { valueAsDate: true })}
-            error={errors.endAt?.message}
             containerClassName="flex-1"
           />
         </div>
       </div>
-      <div className="mt-5">
-        <p className="block text-md font-semibold mb-2">Members</p>
-        <div className="grid [grid-template-columns:1fr_2fr_1fr_1fr_auto] items-start gap-x-3">
-          {membersFields.fields.map((field, index) => (
-            <Fragment key={field.id}>
-              <Select
-                label="Type"
-                {...form.register(`members.${index}.type`)}
-                error={errors.members?.[index]?.type?.toString()}
-              >
-                {Object.values(MemberType)
-                  .filter((it) => it !== MemberType.ROOT)
-                  .map((type) => (
-                    <SelectOption key={type} value={type}>
-                      {type}
-                    </SelectOption>
-                  ))}
-              </Select>
-              <Input
-                label="Name"
-                disabled={isDisabled}
-                {...form.register(`members.${index}.name`)}
-                error={errors.members?.[index]?.name?.message}
-              />
-              <Input
-                label="Login"
-                disabled={isDisabled}
-                {...form.register(`members.${index}.login`)}
-                error={errors.members?.[index]?.login?.message}
-              />
-              <Input
-                label="Password"
-                placeholder={!!field._id ? "******" : ""}
-                disabled={isDisabled}
-                {...form.register(`members.${index}.password`)}
-                error={errors.members?.[index]?.password?.message}
-              />
-              <Button
-                onClick={() => membersFields.remove(index)}
-                disabled={isDisabled}
-                variant="outline-danger"
-                className="mt-[1.1em]"
-              >
-                <FontAwesomeIcon icon={faTrash} />
-              </Button>
-            </Fragment>
-          ))}
-        </div>
-        <Button
-          onClick={() => membersFields.append({} as ContestFormType["members"])}
-          disabled={isDisabled}
-          variant="outline-primary"
-          className="mt-2"
-        >
-          <FontAwesomeIcon icon={faPlus} />
-        </Button>
-      </div>
-      <div className="mt-5">
-        <p className="block text-md font-semibold mb-2">Problems</p>
-        <div className="grid [grid-template-columns:2fr_1fr_1fr_auto] items-start gap-x-3">
-          {problemsFields.fields.map((field, index) => (
-            <Fragment key={field.id}>
-              <Input
-                label="Title"
-                disabled={isDisabled}
-                {...form.register(`problems.${index}.title`)}
-                error={errors.problems?.[index]?.title?.message}
-              />
-              <Input
-                type="number"
-                label="Time Limit"
-                disabled={isDisabled}
-                {...form.register(`problems.${index}.timeLimit`, {
-                  valueAsNumber: true,
-                })}
-                error={errors.problems?.[index]?.timeLimit?.message}
-              />
-              {!!field.testCasesAttachment ? (
-                <div>
-                  <Button disabled={isDisabled}>
-                    <FontAwesomeIcon icon={faDownload} />
-                  </Button>
-                  <Button
-                    disabled={isDisabled}
-                    onClick={() =>
-                      form.setValue(
-                        `problems.${index}.testCasesAttachment`,
-                        undefined,
-                      )
-                    }
-                  >
-                    <FontAwesomeIcon icon={faEdit} />
-                  </Button>
-                </div>
-              ) : (
-                <Input
-                  label="Test Cases"
-                  type="file"
+      <div className="flex flex-col gap-5 xl:flex-row">
+        <div className="mt-5">
+          <p className="block text-md font-semibold mb-2">Members</p>
+          <div className="grid [grid-template-columns:1fr_2fr_1fr_1fr_auto] items-start gap-x-3">
+            {membersFields.fields.map((field, index) => (
+              <Fragment key={field.id}>
+                <Select
+                  fm={form}
+                  name={`members.${index}.type`}
+                  label="Type"
+                  options={Object.values(MemberType)
+                    .filter((it) => it !== MemberType.ROOT)
+                    .map((it) => ({
+                      value: it,
+                      label: it,
+                    }))}
                   disabled={isDisabled}
-                  {...form.register(`problems.${index}.testCases`)}
-                  error={errors.problems?.[index]?.testCases?.message as string}
                 />
-              )}
-              <Button
-                onClick={() => problemsFields.remove(index)}
-                disabled={isDisabled}
-                variant="outline-danger"
-                className="mt-[1.1em]"
-              >
-                <FontAwesomeIcon icon={faTrash} />
-              </Button>
-            </Fragment>
-          ))}
+                <TextInput
+                  fm={form}
+                  name={`members.${index}.name`}
+                  label="Name"
+                  disabled={isDisabled}
+                />
+                <TextInput
+                  fm={form}
+                  name={`members.${index}.login`}
+                  label="Login"
+                  disabled={isDisabled}
+                />
+                <TextInput
+                  fm={form}
+                  name={`members.${index}.password`}
+                  label="Password"
+                  placeholder={!!field._id ? "Not changed" : ""}
+                  disabled={isDisabled}
+                />
+                <Button
+                  onClick={() => membersFields.remove(index)}
+                  disabled={isDisabled}
+                  variant="outline-danger"
+                  className="mt-[1.1em]"
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </Button>
+              </Fragment>
+            ))}
+          </div>
+          <Button
+            onClick={() => membersFields.append({})}
+            disabled={isDisabled}
+            variant="outline-primary"
+            className="mt-2"
+          >
+            <FontAwesomeIcon icon={faPlus} />
+          </Button>
         </div>
-        <Button
-          onClick={() =>
-            problemsFields.append({} as ContestFormType["problems"])
-          }
-          disabled={isDisabled}
-          variant="outline-primary"
-          className="mt-2"
-        >
-          <FontAwesomeIcon icon={faPlus} />
-        </Button>
+        <div className="mt-5">
+          <p className="block text-md font-semibold mb-2">Problems</p>
+          <div className="grid [grid-template-columns:2fr_1fr_1fr_1fr_auto] items-start gap-x-3">
+            {problemsFields.fields.map((field, index) => (
+              <Fragment key={field.id}>
+                <TextInput
+                  fm={form}
+                  name={`problems.${index}.title`}
+                  label="Title"
+                  disabled={isDisabled}
+                />
+                <TextInput
+                  fm={form}
+                  name={`problems.${index}.description`}
+                  label="Description"
+                  disabled={isDisabled}
+                />
+                <NumberInput
+                  fm={form}
+                  name={`problems.${index}.timeLimit`}
+                  label="Time Limit"
+                  step={500}
+                  disabled={isDisabled}
+                />
+                {!!field._testCases ? (
+                  <div className="mt-[1.2em] flex justify-center">
+                    <Button disabled={isDisabled} className="rounded-r-none">
+                      <FontAwesomeIcon icon={faDownload} />
+                    </Button>
+                    <Button
+                      disabled={isDisabled}
+                      onClick={() =>
+                        form.setValue(`problems.${index}._testCases`, undefined)
+                      }
+                      variant="warning"
+                      className="rounded-l-none"
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </Button>
+                  </div>
+                ) : (
+                  <FileInput
+                    fm={form}
+                    name={`problems.${index}.testCases`}
+                    label="Test Cases"
+                    disabled={isDisabled}
+                  />
+                )}
+                <Button
+                  onClick={() => problemsFields.remove(index)}
+                  disabled={isDisabled}
+                  variant="outline-danger"
+                  className="mt-[1.1em]"
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </Button>
+              </Fragment>
+            ))}
+          </div>
+          <Button
+            onClick={() => problemsFields.append({})}
+            disabled={isDisabled}
+            variant="outline-primary"
+            className="mt-2"
+          >
+            <FontAwesomeIcon icon={faPlus} />
+          </Button>
+        </div>
       </div>
     </form>
   );

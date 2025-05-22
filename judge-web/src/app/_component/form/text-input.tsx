@@ -1,33 +1,26 @@
-import React, { DetailedHTMLProps, SelectHTMLAttributes } from "react";
+import React from "react";
 import { cls } from "@/app/_util/cls";
-import {
-  Controller,
-  FieldPath,
-  FieldValues,
-  UseFormReturn,
-} from "react-hook-form";
+import { Controller, UseFormReturn } from "react-hook-form";
+import { FieldPath, FieldValues } from "react-hook-form";
 
-type Props<TFieldValues extends FieldValues> = DetailedHTMLProps<
-  SelectHTMLAttributes<HTMLSelectElement>,
-  HTMLSelectElement
+type Props<TFieldValues extends FieldValues> = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "type" | "value" | "onChange"
 > & {
   fm: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
   containerClassName?: string;
-  label?: string;
-  options: {
-    value: string;
-    label: string;
-  }[];
+  label: string;
+  password?: boolean;
 };
 
-export function Select<TFieldValues extends FieldValues>({
+export function TextInput<TFieldValues extends FieldValues>({
   fm,
-  label,
   name,
+  label,
   containerClassName,
   className,
-  options,
+  password = false,
   ...props
 }: Props<TFieldValues>) {
   function format(value?: string) {
@@ -45,24 +38,16 @@ export function Select<TFieldValues extends FieldValues>({
       render={({ field, fieldState }) => (
         <div className={containerClassName}>
           <label className="block text-sm font-semibold">{label}</label>
-          <select
+          <input
             {...props}
+            type={password ? "password" : "text"}
             value={format(field.value)}
-            onChange={(e) => {
-              field.onChange(parse(e.target.value));
-            }}
+            onChange={(e) => field.onChange(parse(e.target.value))}
             className={cls(
-              "block w-full p-2 bg-gray-100 rounded-lg disabled:text-gray-400",
+              "block w-full p-2 bg-gray-100 rounded-lg placeholder:text-gray-400 disabled:text-gray-300",
               className,
             )}
-          >
-            <option value="" />
-            {options.map((it) => (
-              <option key={it.value} value={it.value}>
-                {it.label}
-              </option>
-            ))}
-          </select>
+          />
           <p className="text-sm font-semibold text-red-500 min-h-[1em]">
             {fieldState.error?.message}
           </p>

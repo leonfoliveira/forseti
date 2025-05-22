@@ -9,7 +9,7 @@ export class AuthorizationService {
     return this.authorizationRepository.getAuthorization() !== null;
   }
 
-  getAuthorization(): Authorization | null {
+  getAuthorization(): Authorization | undefined {
     return this.authorizationRepository.getAuthorization();
   }
 

@@ -5,7 +5,9 @@ import { redirect, useRouter } from "next/navigation";
 import { useFetcher } from "@/app/_util/fetcher-hook";
 import { useEffect } from "react";
 import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestShortResponseDTO";
-import { ContestsDashboard } from "@/app/root/contests/_component/contests-dashboard.ts";
+import { Spinner } from "@/app/_component/spinner";
+import { Button } from "@/app/_component/form/button";
+import { ContestsTable } from "@/app/root/contests/_component/contests-table";
 
 export default function RootContestsPage() {
   const { authorizationService, contestService } = useContainer();
@@ -30,9 +32,17 @@ export default function RootContestsPage() {
   }
 
   return (
-    <ContestsDashboard
-      onNewContest={onNewContest}
-      contestsFetcher={contestsFetcher}
-    />
+    <div>
+      <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center">
+          <h1 className="text-2xl inline-block mr-3">Contests</h1>
+          {contestsFetcher.isLoading && <Spinner />}
+        </div>
+        <Button type="button" onClick={onNewContest}>
+          New
+        </Button>
+      </div>
+      <ContestsTable contestsFetcher={contestsFetcher} />
+    </div>
   );
 }

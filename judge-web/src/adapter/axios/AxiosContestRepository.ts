@@ -62,9 +62,8 @@ export class AxiosContestRepository implements ContestRepository {
   updateContest(
     requestDTO: UpdateContestRequestDTO,
   ): Promise<ContestResponseDTO> {
-    return this.axiosClient.put<ContestResponseDTO>(
-      `/v1/contests/${requestDTO.id}`,
-      { data: requestDTO },
-    );
+    return this.axiosClient.put<ContestResponseDTO>(`/v1/contests`, {
+      data: requestDTO,
+    });
   }
 }

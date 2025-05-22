@@ -1,3 +1,3 @@
-export function cls(...classes: (string | undefined | null)[]) {
-  return classes.filter((c) => c != null && c.length > 0).join(" ");
+export function cls(...classes: (string | false | undefined | null)[]) {
+  return classes.filter((c) => !!c && c.length > 0).join(" ");
 }

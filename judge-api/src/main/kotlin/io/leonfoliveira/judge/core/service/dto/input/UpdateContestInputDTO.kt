@@ -37,12 +37,12 @@ data class UpdateContestInputDTO(
         val name: String,
         @field:NotBlank
         val login: String,
-        @field:NotBlank
         val password: String? = null,
     ) {
-        @get:AssertFalse(message = "id and password cannot be null at the same time")
+        @get:AssertFalse(message = "password is required when creating a member")
         val isIdAndPasswordNull: Boolean
-            get() = id == null && password == null
+            get() = id == null && password.isNullOrBlank()
+
 
         fun toCreateDTO(): CreateContestInputDTO.MemberDTO {
             return CreateContestInputDTO.MemberDTO(
