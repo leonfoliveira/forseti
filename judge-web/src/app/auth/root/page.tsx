@@ -6,18 +6,21 @@ import { useForm } from "react-hook-form";
 import { useFetcher } from "@/app/_util/fetcher-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useRouter } from "next/navigation";
-import {
-  RootSignInFormType,
-  RootSignInForm,
-} from "@/app/root/_component/root-sign-in-form";
+import { RootSignInForm } from "@/app/auth/_component/root-sign-in-form";
 import { Authorization } from "@/core/domain/model/Authorization";
+import { RootSignInFormType } from "@/app/auth/_form/sign-in-form-type";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { rootSignInFormSchema } from "@/app/auth/_form/sign-in-form-schema";
 
 export default function AuthRoot() {
   const { authenticationService } = useContainer();
   const toast = useToast();
   const authenticateRootFetcher = useFetcher<Authorization>();
   const router = useRouter();
-  const form = useForm<RootSignInFormType>();
+
+  const form = useForm<RootSignInFormType>({
+    resolver: joiResolver(rootSignInFormSchema),
+  });
 
   async function signIn(form: RootSignInFormType) {
     await authenticateRootFetcher.fetch(

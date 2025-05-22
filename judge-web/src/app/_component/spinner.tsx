@@ -1,14 +1,29 @@
 import { cls } from "@/app/_util/cls";
 
+type SpinnerSize = "md" | "lg";
+
 type Props = {
   className?: string;
+  size?: SpinnerSize;
 };
 
-export function Spinner({ className }: Props) {
+export function Spinner({ className, size = "md" }: Props) {
+  function getSizeClass() {
+    switch (size) {
+      case "md":
+        return "w-6 h-6";
+      case "lg":
+        return "w-12 h-12";
+      default:
+        return "w-6 h-6";
+    }
+  }
+
   return (
     <svg
       className={cls(
-        "inline-block w-6 h-6 text-gray-200 animate-spin fill-blue-600",
+        "inline-block text-gray-200 animate-spin fill-blue-600",
+        getSizeClass(),
         className,
       )}
       viewBox="0 0 100 101"
