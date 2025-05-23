@@ -12,6 +12,20 @@ export function formatDateTime(date: string): string {
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
+export function formatDifference(from: Date, to: Date) {
+  const msDiff = Math.abs(to.getTime() - from.getTime());
+
+  const totalSeconds = Math.floor(msDiff / 1000);
+  const days = Math.floor(totalSeconds / (3600 * 24));
+  const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const pad = (it: number) => String(it).padStart(2, "0");
+
+  return `${days}d ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
 export function toLocaleString(date: string): string {
   const parsedDate = new Date(date);
   return parsedDate.toLocaleString("en-US", {

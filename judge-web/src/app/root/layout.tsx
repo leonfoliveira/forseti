@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import Layout from "@/app/_component/layout.";
+import Template from "@/app/_component/template";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <Layout signInPath="/auth/root">{children}</Layout>;
+  return <Template signInPath="/auth/root">{children}</Template>;
 }

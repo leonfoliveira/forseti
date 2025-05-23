@@ -1,13 +1,14 @@
 "use client";
 
 import { useContainer } from "@/app/_atom/container-atom";
-import { use, useEffect } from "react";
+import React, { use, useEffect } from "react";
 import { useFetcher } from "@/app/_util/fetcher-hook";
 import { ServerException } from "@/core/domain/exception/ServerException";
 import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestShortResponseDTO";
 import { Spinner } from "@/app/_component/spinner";
 import { toLocaleString } from "@/app/_util/date-utils";
 import { ContestStatus, getContestStatus } from "@/app/_util/contest-utils";
+import Template from "@/app/_component/template";
 
 export default function ContestLayout({
   params,
@@ -54,5 +55,9 @@ export default function ContestLayout({
     );
   }
 
-  return children;
+  return (
+    <Template contest={contest} signInPath={`/auth/contests/${id}`}>
+      {children}
+    </Template>
+  );
 }
