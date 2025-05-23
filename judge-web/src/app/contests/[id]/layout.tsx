@@ -8,7 +8,9 @@ import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestS
 import { Spinner } from "@/app/_component/spinner";
 import { toLocaleString } from "@/app/_util/date-utils";
 import { ContestStatus, getContestStatus } from "@/app/_util/contest-utils";
-import Template from "@/app/_component/template";
+import { Navbar } from "@/app/_component/navbar";
+import { NotFoundException } from "@/core/domain/exception/NotFoundException";
+import { notFound, useRouter } from "next/navigation";
 
 export default function ContestLayout({
   params,
@@ -20,12 +22,13 @@ export default function ContestLayout({
   const { id } = use(params);
   const { contestService } = useContainer();
   const findContestFetcher = useFetcher<ContestShortResponseDTO>();
+  const router = useRouter();
 
   useEffect(() => {
     async function findContest() {
       await findContestFetcher.fetch(() => contestService.findContestById(id), {
-        authRedirect: `/auth/contests/${id}`,
         errors: {
+          [NotFoundException.name]: () => notFound(),
           [ServerException.name]: "Error loading contest",
         },
       });
@@ -55,9 +58,31 @@ export default function ContestLayout({
     );
   }
 
+  function buildNavLink(label: string, path: string) {
+    return (
+      <li
+        className="p-2 font-semibold hover:bg-gray-100 active:bg-gray-200 transition"
+        onClick={() => router.push(`/contests/${id}/${path}`)}
+      >
+        {label}
+      </li>
+    );
+  }
+
   return (
-    <Template contest={contest} signInPath={`/auth/contests/${id}`}>
-      {children}
-    </Template>
+    <div>
+      <Navbar contest={contest} signInPath={`/auth/contests/${id}`} />
+      <div className="mt-5 bg-white">
+        <nav className="bg-gray-50">
+          <ul className="grid [grid-template-columns:repeat(4,1fr)] text-center cursor-pointer">
+            {buildNavLink("Leaderboard", "leaderboard")}
+            {buildNavLink("Problems", "problems")}
+            {buildNavLink("Submissions", "submissions")}
+            {buildNavLink("Timeline", "timeline")}
+          </ul>
+        </nav>
+        <div className="p-5">{children}</div>
+      </div>
+    </div>
   );
 }

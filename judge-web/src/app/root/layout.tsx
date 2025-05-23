@@ -1,12 +1,17 @@
 "use client";
 
 import React from "react";
-import Template from "@/app/_component/template";
+import { Navbar } from "@/app/_component/navbar";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <Template signInPath="/auth/root">{children}</Template>;
+  return (
+    <div>
+      <Navbar signInPath="/auth/root" />
+      <div className="mt-5 p-10 bg-white">{children}</div>
+    </div>
+  );
 }

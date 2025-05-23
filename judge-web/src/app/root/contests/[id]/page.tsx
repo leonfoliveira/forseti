@@ -20,6 +20,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/contests/_form/contest-form-schema";
 import { ServerException } from "@/core/domain/exception/ServerException";
 import { DownloadAttachmentResponseDTO } from "@/core/repository/dto/response/DownloadAttachmentResponseDTO";
+import { ContestStatus, getContestStatus } from "@/app/_util/contest-utils";
 
 export default function RootEditContestPage({
   params,
@@ -71,15 +72,21 @@ export default function RootEditContestPage({
     toast.success("Contest updated successfully");
   }
 
+  const status =
+    findContestFetcher.data && getContestStatus(findContestFetcher.data);
+
   return (
     <ContestForm
       header={`Contest ${findContestFetcher.data?.id || ""}`}
+      status={status}
       onBack={() => router.push("/root/contests")}
       onSubmit={updateContest}
       onDownload={attachmentService.downloadAttachment}
       form={form}
       isDisabled={
-        findContestFetcher.isLoading || updateContestFetcher.isLoading
+        findContestFetcher.isLoading ||
+        updateContestFetcher.isLoading ||
+        (!!status && status !== ContestStatus.NOT_STARTED)
       }
       isLoading={findContestFetcher.isLoading}
     />

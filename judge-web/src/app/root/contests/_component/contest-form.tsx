@@ -39,7 +39,7 @@ type Props = {
   status?: ContestStatus;
   onBack: () => void;
   onSubmit: (data: ContestFormType) => Promise<void>;
-  onDownload: (attachment: DownloadAttachmentResponseDTO) => void;
+  onDownload?: (attachment: DownloadAttachmentResponseDTO) => void;
   form: UseFormReturn<ContestFormType>;
   isDisabled: boolean;
   isLoading?: boolean;
@@ -226,7 +226,7 @@ export function ContestForm(props: Props) {
                       disabled={isDisabled}
                       className="rounded-r-none flex-1"
                       onClick={() =>
-                        onDownload(
+                        onDownload?.(
                           field._testCases as DownloadAttachmentResponseDTO,
                         )
                       }

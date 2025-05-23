@@ -9,10 +9,9 @@ import { formatDifference } from "@/app/_util/date-utils";
 type Props = {
   contest?: ContestShortResponseDTO;
   signInPath: string;
-  children: React.ReactNode;
 };
 
-export default function Template({ contest, signInPath, children }: Props) {
+export function Navbar({ contest, signInPath }: Props) {
   const { authorizationService } = useContainer();
   const router = useRouter();
   const [authorization, setAuthorization] = useState<
@@ -45,22 +44,19 @@ export default function Template({ contest, signInPath, children }: Props) {
   }
 
   return (
-    <div>
-      <nav className="grid [grid-template-columns:1fr_auto_1fr] items-center bg-white p-2">
-        <div className="text-lg font-semibold">{contest?.title}</div>
-        <div className="justify-self-center">
-          <span ref={diffRef}>
-            {contest && formatDifference(new Date(), new Date(contest.endAt))}
-          </span>
-        </div>
-        <div className="justify-self-end flex items-center">
-          <p className="mr-5">{authorization?.member.name}</p>
-          <Button onClick={signOut} variant="outline-primary">
-            Sign out
-          </Button>
-        </div>
-      </nav>
-      <div className="bg-white m-10 p-10">{children}</div>
-    </div>
+    <nav className="grid [grid-template-columns:1fr_auto_1fr] items-center bg-white p-2">
+      <div className="text-lg font-semibold">{contest?.title}</div>
+      <div className="justify-self-center">
+        <span ref={diffRef}>
+          {contest && formatDifference(new Date(), new Date(contest.endAt))}
+        </span>
+      </div>
+      <div className="justify-self-end flex items-center">
+        <p className="mr-5">{authorization?.member.name}</p>
+        <Button onClick={signOut} variant="outline-primary">
+          Sign out
+        </Button>
+      </div>
+    </nav>
   );
 }
