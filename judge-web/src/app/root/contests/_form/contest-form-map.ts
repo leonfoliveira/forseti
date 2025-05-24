@@ -1,6 +1,3 @@
-import { AttachmentService } from "@/core/service/AttachmentService";
-import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
-import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
 import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
 import { Language } from "@/core/domain/enumerate/Language";
 import {
@@ -9,22 +6,22 @@ import {
   ContestFormType,
 } from "@/app/root/contests/_form/contest-form-type";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
+import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";
 
-export async function toCreateContestRequestDTO(
-  attachmentService: AttachmentService,
-  form: ContestFormType,
-): Promise<CreateContestRequestDTO> {
-  const update = await toUpdateRequestDTO(attachmentService, form);
-  return update as CreateContestRequestDTO;
+export function toCreateContestRequestDTO(
+  data: ContestFormType,
+): CreateContestInputDTO {
+  const update = toUpdateRequestDTO(data);
+  return update as CreateContestInputDTO;
 }
 
-export async function toUpdateRequestDTO(
-  attachmentService: AttachmentService,
-  form: ContestFormType,
-): Promise<UpdateContestRequestDTO> {
+export function toUpdateRequestDTO(
+  data: ContestFormType,
+): UpdateContestInputDTO {
   function mapMember(
     member: ContestFormMemberType,
-  ): UpdateContestRequestDTO["members"][number] {
+  ): UpdateContestInputDTO["members"][number] {
     return {
       id: member._id,
       type: member.type as MemberType,
@@ -34,30 +31,26 @@ export async function toUpdateRequestDTO(
     };
   }
 
-  async function mapProblem(
+  function mapProblem(
     problem: ContestFormProblemType,
-  ): Promise<UpdateContestRequestDTO["problems"][number]> {
-    let testCases;
-    if (!!problem.testCases) {
-      testCases = await attachmentService.uploadAttachment(problem.testCases);
-    }
+  ): UpdateContestInputDTO["problems"][number] {
     return {
       id: problem._id,
       title: problem.title as string,
       description: problem.description as string,
       timeLimit: problem.timeLimit as number,
-      testCases,
+      testCases: problem.testCases as File | undefined,
     };
   }
 
   return {
-    id: form.id as number,
-    title: form.title as string,
-    languages: form.languages as Language[],
-    startAt: form.startAt as Date,
-    endAt: form.endAt as Date,
-    members: (form.members as []).map(mapMember),
-    problems: await Promise.all((form.problems as []).map(mapProblem)),
+    id: data.id as number,
+    title: data.title as string,
+    languages: data.languages as Language[],
+    startAt: data.startAt as Date,
+    endAt: data.endAt as Date,
+    members: (data.members as []).map(mapMember),
+    problems: (data.problems as []).map(mapProblem),
   };
 }
 

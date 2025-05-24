@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.time.temporal.ChronoUnit
+import org.springframework.beans.factory.annotation.Value
 
 @RestController
 @RequestMapping("/v1/attachments")

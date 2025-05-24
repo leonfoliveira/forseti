@@ -7,6 +7,7 @@ import { SubmissionResponseDTO } from "@/core/repository/dto/response/Submission
 import { LeaderboardOutputDTO } from "@/core/repository/dto/response/LeaderboardOutputDTO";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
+import { ProblemMemberResponseDTO } from "@/core/repository/dto/response/ProblemMemberResponseDTO";
 
 export class AxiosContestRepository implements ContestRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
@@ -33,9 +34,9 @@ export class AxiosContestRepository implements ContestRepository {
     );
   }
 
-  findAllProblemsForMember(id: number): Promise<ProblemShortResponseDTO[]> {
-    return this.axiosClient.get<ProblemShortResponseDTO[]>(
-      `/v1/contests/${id}/problems/member`,
+  findAllProblemsForMember(id: number): Promise<ProblemMemberResponseDTO[]> {
+    return this.axiosClient.get<ProblemMemberResponseDTO[]>(
+      `/v1/contests/${id}/problems/me`,
     );
   }
 

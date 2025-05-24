@@ -65,7 +65,13 @@ export function FileInput<TFieldValues extends FieldValues>({
             </label>
             <div
               className="bg-gray-200 rounded-r-lg px-2 flex items-center cursor-pointer"
-              onClick={() => onClean?.()}
+              onClick={
+                onClean
+                  ? onClean
+                  : () => {
+                      field.onChange(undefined);
+                    }
+              }
             >
               <FontAwesomeIcon icon={faClose} />
             </div>

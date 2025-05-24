@@ -5,6 +5,7 @@ import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestS
 import { LeaderboardOutputDTO } from "@/core/repository/dto/response/LeaderboardOutputDTO";
 import { ProblemShortResponseDTO } from "@/core/repository/dto/response/ProblemShortResponseDTO";
 import { SubmissionResponseDTO } from "@/core/repository/dto/response/SubmissionResponseDTO";
+import { ProblemMemberResponseDTO } from "@/core/repository/dto/response/ProblemMemberResponseDTO";
 
 export interface ContestRepository {
   createContest(
@@ -27,7 +28,7 @@ export interface ContestRepository {
 
   findAllProblems(id: number): Promise<ProblemShortResponseDTO[]>;
 
-  findAllProblemsForMember(id: number): Promise<ProblemShortResponseDTO[]>;
+  findAllProblemsForMember(id: number): Promise<ProblemMemberResponseDTO[]>;
 
   findAllSubmissions(id: number): Promise<SubmissionResponseDTO[]>;
 }

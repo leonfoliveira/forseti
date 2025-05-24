@@ -1,4 +1,3 @@
-import { Fetcher } from "@/app/_util/fetcher-hook";
 import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestShortResponseDTO";
 import {
   ContestStatus,
@@ -15,11 +14,11 @@ import { Badge } from "@/app/_component/badge";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  contestsFetcher: Fetcher<ContestShortResponseDTO[]>;
+  contests: ContestShortResponseDTO[];
 };
 
 export function ContestsTable(props: Props) {
-  const { contestsFetcher } = props;
+  const { contests } = props;
 
   const router = useRouter();
 
@@ -57,7 +56,7 @@ export function ContestsTable(props: Props) {
         </TableRow>
       </TableSection>
       <TableSection>
-        {contestsFetcher.data?.map((contest) => (
+        {contests.map((contest) => (
           <TableRow
             key={contest.id}
             onClick={() => router.push(`/root/contests/${contest.id}`)}

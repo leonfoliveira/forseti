@@ -52,15 +52,18 @@ class FindProblemService(
                     .filter { it.member.id == memberId }
                     .filter { it.status != Submission.Status.JUDGING }
 
+            val isAccepted =
+                memberSubmissions.any { it.status == Submission.Status.ACCEPTED }
+            val wrongSubmissionsBeforeAccepted =
+                memberSubmissions
+                    .takeWhile { it.status != Submission.Status.ACCEPTED }
+
             ProblemMemberOutputDTO(
                 id = problem.id,
                 title = problem.title,
-                wrongAnswers =
-                    memberSubmissions
-                        .count { it.status != Submission.Status.ACCEPTED },
-                acceptedAnswers =
-                    memberSubmissions
-                        .count { it.status == Submission.Status.ACCEPTED },
+                description = problem.description,
+                isAccepted = isAccepted,
+                wrongSubmissions = wrongSubmissionsBeforeAccepted.count(),
             )
         }
     }

@@ -12,10 +12,8 @@ export function formatDateTime(date: string): string {
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
-export function formatDifference(from: Date, to: Date) {
-  const msDiff = Math.abs(to.getTime() - from.getTime());
-
-  const totalSeconds = Math.floor(msDiff / 1000);
+export function formatDifference(diff: number) {
+  const totalSeconds = Math.floor(diff / 1000);
   const days = Math.floor(totalSeconds / (3600 * 24));
   const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);

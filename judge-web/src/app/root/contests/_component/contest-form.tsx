@@ -27,12 +27,10 @@ import { NumberInput } from "@/app/_component/form/number-input";
 import { FileInput } from "@/app/_component/form/file-input";
 import { ReadOnlyInput } from "@/app/_component/form/read-only-input";
 import { TextArea } from "@/app/_component/form/text-area";
-import Markdown from "react-markdown";
-import remarkMath from "remark-math";
-import rehypeKatex from "rehype-katex";
-import "katex/dist/katex.min.css";
-import remarkBreaks from "remark-breaks";
 import { DownloadAttachmentResponseDTO } from "@/core/repository/dto/response/DownloadAttachmentResponseDTO";
+import { Modal } from "@/app/_component/modal";
+import { MarkdownDisplay } from "@/app/_component/markdown-display";
+import { Form } from "@/app/_component/form/form";
 
 type Props = {
   header: string;
@@ -80,7 +78,7 @@ export function ContestForm(props: Props) {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)}>
+    <Form onSubmit={form.handleSubmit(onSubmit)} disabled={isDisabled}>
       <div className="flex flex-col justify-start">
         <div className="flex justify-between items-center mb-10">
           <div className="flex items-center">
@@ -98,19 +96,16 @@ export function ContestForm(props: Props) {
           </div>
           <div>
             {!!isLoading && <Spinner className="mr-5" />}
-            <Button type="submit" disabled={isDisabled}>
-              Save
-            </Button>
+            <Button type="submit">Save</Button>
           </div>
         </div>
-        <TextInput fm={form} name="title" label="Title" disabled={isDisabled} />
+        <TextInput fm={form} name="title" label="Title" />
         <CheckboxGroup
           fm={form}
           options={Object.values(Language).map((it) => ({
             value: it,
             label: formatLanguage(it),
           }))}
-          disabled={isDisabled}
           name="languages"
           label="Languages"
           containerClassName="mt-5"
@@ -120,14 +115,12 @@ export function ContestForm(props: Props) {
             fm={form}
             name="startAt"
             label="Start At"
-            disabled={isDisabled}
             containerClassName="flex-1"
           />
           <DateInput
             fm={form}
             name="endAt"
             label="End At"
-            disabled={isDisabled}
             containerClassName="flex-1"
           />
         </div>
@@ -148,30 +141,25 @@ export function ContestForm(props: Props) {
                       value: it,
                       label: it,
                     }))}
-                  disabled={isDisabled}
                 />
                 <TextInput
                   fm={form}
                   name={`members.${index}.name`}
                   label="Name"
-                  disabled={isDisabled}
                 />
                 <TextInput
                   fm={form}
                   name={`members.${index}.login`}
                   label="Login"
-                  disabled={isDisabled}
                 />
                 <TextInput
                   fm={form}
                   name={`members.${index}.password`}
                   label="Password"
                   placeholder={!!field._id ? "Not changed" : ""}
-                  disabled={isDisabled}
                 />
                 <Button
                   onClick={() => membersFields.remove(index)}
-                  disabled={isDisabled}
                   variant="outline-danger"
                   className="mt-[1.1em]"
                 >
@@ -184,7 +172,6 @@ export function ContestForm(props: Props) {
             onClick={() =>
               membersFields.append({ type: MemberType.CONTESTANT })
             }
-            disabled={isDisabled}
             variant="outline-primary"
             className="mt-2"
           >
@@ -200,7 +187,6 @@ export function ContestForm(props: Props) {
                   fm={form}
                   name={`problems.${index}.title`}
                   label="Title"
-                  disabled={isDisabled}
                 />
                 <ReadOnlyInput
                   label="Description"
@@ -217,24 +203,22 @@ export function ContestForm(props: Props) {
                   name={`problems.${index}.timeLimit`}
                   label="Time Limit"
                   step={500}
-                  disabled={isDisabled}
                 />
                 {!!form.watch(`problems.${index}._testCases`) &&
                 !form.watch(`problems.${index}.forceSelect`) ? (
                   <div className="mt-[1.2em] flex justify-center">
                     <Button
-                      disabled={isDisabled}
                       className="rounded-r-none flex-1"
                       onClick={() =>
                         onDownload?.(
                           field._testCases as DownloadAttachmentResponseDTO,
                         )
                       }
+                      disabled={false}
                     >
                       <FontAwesomeIcon icon={faDownload} />
                     </Button>
                     <Button
-                      disabled={isDisabled}
                       onClick={() =>
                         form.setValue(`problems.${index}.forceSelect`, true)
                       }
@@ -249,7 +233,6 @@ export function ContestForm(props: Props) {
                     fm={form}
                     name={`problems.${index}.testCases`}
                     label="Test Cases"
-                    disabled={isDisabled}
                     onClean={() => {
                       form.setValue(`problems.${index}.forceSelect`, false);
                       form.setValue(`problems.${index}.testCases`, undefined);
@@ -258,7 +241,6 @@ export function ContestForm(props: Props) {
                 )}
                 <Button
                   onClick={() => problemsFields.remove(index)}
-                  disabled={isDisabled}
                   variant="outline-danger"
                   className="mt-[1.1em]"
                 >
@@ -269,7 +251,6 @@ export function ContestForm(props: Props) {
           </div>
           <Button
             onClick={() => problemsFields.append({ timeLimit: 1000 })}
-            disabled={isDisabled}
             variant="outline-primary"
             className="mt-2"
           >
@@ -279,9 +260,8 @@ export function ContestForm(props: Props) {
       </div>
 
       {openDescription != undefined && (
-        <div className="fixed inset-0 top-0 left-0 w-dvw h-dvh z-10">
-          <div className="absolute inset-0 bg-black opacity-50"></div>
-          <div className="relative h-full w-full flex flex-col bg-white m-auto p-4 rounded shadow-lg">
+        <Modal>
+          <div className="flex flex-col h-full p-4">
             <div className="flex justify-between items-center">
               <p className="text-lg font-semibold m-0">Description</p>
               <Button onClick={() => setOpenDescription(undefined)}>
@@ -303,20 +283,17 @@ $$ \\int_0^\\infty e^{-x^2} dx = \\frac{\sqrt{\\pi}}{2} $$
               </div>
               <div className="self-stretch flex flex-col">
                 <div className="flex-1">
-                  <div className="prose prose-neutral max-w-none">
-                    <Markdown
-                      remarkPlugins={[remarkMath, remarkBreaks]}
-                      rehypePlugins={[rehypeKatex]}
-                    >
-                      {form.watch(`problems.${openDescription}.description`)}
-                    </Markdown>
-                  </div>
+                  <MarkdownDisplay
+                    markdown={form.watch(
+                      `problems.${openDescription}.description`,
+                    )}
+                  />
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
-    </form>
+    </Form>
   );
 }

@@ -14,6 +14,7 @@ export class AxiosAttachmentRepository implements AttachmentRepository {
   uploadAttachment(url: string, file: File): Promise<void> {
     return this.axiosClient.put<void>(url, {
       url,
+      data: file,
       headers: {
         "Content-Type": file.type,
       },

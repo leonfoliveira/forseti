@@ -28,8 +28,4 @@ services:
     ports:
       - "4566:4566"
     volumes:
-      - "./docker/localstack-bootstrap:/etc/localstack/init/ready.d"
-  
-networks:
-  default:
-    name: judge-network
+      - "./localstack-bootstrap:/etc/localstack/init/ready.d"

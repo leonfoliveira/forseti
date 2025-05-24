@@ -1,7 +1,14 @@
 import { useSetAtom } from "jotai";
 import { ToastLevel, toastsAtom } from "@/app/_atom/toast-atom";
 
-export function useToast() {
+export type UseToastReturn = {
+  info: (text: string) => void;
+  success: (text: string) => void;
+  warning: (text: string) => void;
+  error: (text?: string) => void;
+};
+
+export function useToast(): UseToastReturn {
   const setToasts = useSetAtom(toastsAtom);
 
   function show(text: string, level: ToastLevel) {

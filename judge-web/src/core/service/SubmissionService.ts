@@ -4,7 +4,7 @@ import { SubmissionResponseDTO } from "@/core/repository/dto/response/Submission
 export class SubmissionService {
   constructor(private submissionRepository: SubmissionRepository) {}
 
-  async createUploadAttachment(): Promise<SubmissionResponseDTO[]> {
+  async findAllForMember(): Promise<SubmissionResponseDTO[]> {
     return this.submissionRepository.findAllForMember();
   }
 }

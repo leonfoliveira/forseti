@@ -1,36 +1,55 @@
 import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
 import { ContestRepository } from "@/core/repository/ContestRepository";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
+import { AttachmentService } from "@/core/service/AttachmentService";
+import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";
+import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
+import { ContestOutputDTOMap } from "@/core/service/dto/output/ContestOutputDTO";
+import { ContestShortOutputDTOMap } from "@/core/service/dto/output/ContestShortOutputDTO";
 
 export class ContestService {
-  constructor(private readonly contestRepository: ContestRepository) {}
+  constructor(
+    private readonly contestRepository: ContestRepository,
+    private readonly attachmentService: AttachmentService,
+  ) {}
 
-  createContest(inputDTO: CreateContestRequestDTO) {
-    return this.contestRepository.createContest(inputDTO);
+  async createContest(input: CreateContestInputDTO) {
+    const request = {
+      ...input,
+      problems: (await this.uploadTestCases(
+        input.problems,
+      )) as CreateContestRequestDTO["problems"],
+    };
+    const response = await this.contestRepository.createContest(request);
+    return ContestOutputDTOMap.fromResponseDTO(response);
   }
 
-  updateContest(inputDTO: UpdateContestRequestDTO) {
-    return this.contestRepository.updateContest(inputDTO);
+  async updateContest(input: UpdateContestInputDTO) {
+    const request = {
+      ...input,
+      problems: await this.uploadTestCases(input.problems),
+    };
+    const response = await this.contestRepository.updateContest(request);
+    return ContestOutputDTOMap.fromResponseDTO(response);
   }
 
-  findAllContests() {
-    return this.contestRepository.findAllContests();
+  async findAllContests() {
+    const response = await this.contestRepository.findAllContests();
+    return response.map(ContestShortOutputDTOMap.fromResponseDTO);
   }
 
-  findFullContestById(id: number) {
-    return this.contestRepository.findFullContestById(id);
+  async findFullContestById(id: number) {
+    const response = await this.contestRepository.findFullContestById(id);
+    return ContestOutputDTOMap.fromResponseDTO(response);
   }
 
-  findContestById(id: number) {
-    return this.contestRepository.findContestById(id);
+  async findContestById(id: number) {
+    const response = await this.contestRepository.findContestById(id);
+    return ContestShortOutputDTOMap.fromResponseDTO(response);
   }
 
   deleteContest(id: number) {
     return this.contestRepository.deleteContest(id);
-  }
-
-  findById(id: number) {
-    return this.contestRepository.findContestById(id);
   }
 
   getLeaderboard(id: number) {
@@ -47,5 +66,18 @@ export class ContestService {
 
   findAllSubmissions(id: number) {
     return this.contestRepository.findAllSubmissions(id);
+  }
+
+  private async uploadTestCases(
+    problems: UpdateContestInputDTO["problems"],
+  ): Promise<UpdateContestRequestDTO["problems"]> {
+    return await Promise.all(
+      problems.map(async (it) => {
+        const testCases =
+          it.testCases &&
+          (await this.attachmentService.uploadAttachment(it.testCases));
+        return { ...it, testCases };
+      }),
+    );
   }
 }

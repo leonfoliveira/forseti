@@ -35,8 +35,14 @@ export const containerAtom = atom(() => {
     authenticationRepository,
     authorizationRepository,
   );
-  const contestService = new ContestService(contestRepository);
-  const problemService = new ProblemService(problemRepository);
+  const contestService = new ContestService(
+    contestRepository,
+    attachmentService,
+  );
+  const problemService = new ProblemService(
+    problemRepository,
+    attachmentService,
+  );
   const submissionService = new SubmissionService(submissionRepository);
 
   return {

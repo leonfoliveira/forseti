@@ -4,12 +4,11 @@ spring:
     username: ${DB_USER:judge}
     password: ${DB_PASSWORD:judge}
     driver-class-name: org.postgresql.Driver
-  redis:
-    host: ${REDIS_HOST:localhost}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD:judge}
-    quota:
-      upload: ${REDIS_QUOTA_UPLOAD:5}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:judge}
   jpa:
     hibernate:
       ddl-auto: validate
