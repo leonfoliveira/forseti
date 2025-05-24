@@ -7,7 +7,6 @@ import { TableSection } from "@/app/_component/table/table-section";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { Spinner } from "@/app/_component/spinner";
 import { cls } from "@/app/_util/cls";
-import { Badge } from "@/app/_component/badge";
 import { useGetLeaderboardAction } from "@/app/_action/get-leaderboard-action";
 import { ProblemStatusBadge } from "@/app/contests/[id]/_component/problem-status-badge";
 

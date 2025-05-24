@@ -8,13 +8,8 @@ import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { toLocaleString } from "@/app/_util/date-utils";
-import {
-  formatLanguage,
-  formatSubmissionStatus,
-} from "@/app/_util/contest-utils";
-import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
+import { formatLanguage } from "@/app/_util/contest-utils";
 import { useContainer } from "@/app/_atom/container-atom";
-import { Badge } from "@/app/_component/badge";
 import { SubmissionStatusBadge } from "@/app/contests/[id]/_component/submission-status-badge";
 
 export default function ContestSubmissionPage({

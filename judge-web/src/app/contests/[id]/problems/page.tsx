@@ -10,7 +10,6 @@ import { Button } from "@/app/_component/form/button";
 import { MarkdownDisplay } from "@/app/_component/markdown-display";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { ProblemMemberResponseDTO } from "@/core/repository/dto/response/ProblemMemberResponseDTO";
-import { Badge } from "@/app/_component/badge";
 import { FileInput } from "@/app/_component/form/file-input";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
