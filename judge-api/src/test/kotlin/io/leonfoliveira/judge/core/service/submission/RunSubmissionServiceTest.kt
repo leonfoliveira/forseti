@@ -61,13 +61,13 @@ class RunSubmissionServiceTest : FunSpec({
                 .returns(Submission.Status.ACCEPTED)
             every { submissionRepository.save(submission) }
                 .returns(submission)
-            every { submissionEmitterAdapter.emit(submission) }
+            every { submissionEmitterAdapter.emitForContest(submission) }
                 .returns(Unit)
 
             val result = sut.run(1)
 
             result.status shouldBe Submission.Status.ACCEPTED
-            verify { submissionEmitterAdapter.emit(result) }
+            verify { submissionEmitterAdapter.emitForContest(result) }
         }
     }
 })

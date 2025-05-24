@@ -36,7 +36,7 @@ spring:
         submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:judge-submission}
 server:
   cors:
-    allowed-origins: ${ALLOWED_ORIGINS:*}
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
 security:
   jwt:
     secret: ${JWT_SECRET:judge}

@@ -17,7 +17,7 @@ class WebSocketSubmissionEmitterTest : FunSpec({
             val submission = SubmissionMockFactory.build()
             val expectedTopic = "/topic/contests/${submission.contest.id}/submissions"
 
-            sut.emit(submission)
+            sut.emitForContest(submission)
 
             verify {
                 messagingTemplate.convertAndSend(expectedTopic, submission.toEmmitDTO())

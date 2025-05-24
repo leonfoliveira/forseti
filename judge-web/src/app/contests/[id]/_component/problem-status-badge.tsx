@@ -16,7 +16,9 @@ export function ProblemStatusBadge(props: Props) {
         {wrongSubmissions > 0 && `+${wrongSubmissions}`}
       </Badge>
     );
-  } else {
+  } else if (wrongSubmissions > 0) {
     return <Badge variant="danger">+{wrongSubmissions}</Badge>;
+  } else {
+    return null;
   }
 }

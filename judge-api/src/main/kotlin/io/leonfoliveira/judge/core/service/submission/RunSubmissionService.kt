@@ -26,7 +26,8 @@ class RunSubmissionService(
         val result = submissionRunnerAdapter.run(submission)
         submission.status = result
         submissionRepository.save(submission)
-        submissionEmitterAdapter.emit(submission)
+        submissionEmitterAdapter.emitForContest(submission)
+        submissionEmitterAdapter.emitForMember(submission)
 
         return submission
     }

@@ -15,6 +15,11 @@ type ActionType<TFn extends ActionFn> = {
   error?: Error;
   data?: UnwrapPromise<ReturnType<TFn>>;
   act: (...args: Parameters<TFn>) => Promise<ReturnType<TFn>>;
+  force: (
+    cb: (
+      data?: UnwrapPromise<ReturnType<TFn>>,
+    ) => UnwrapPromise<ReturnType<TFn>>,
+  ) => void;
 };
 
 export function useAction<TFn extends ActionFn>(
@@ -39,5 +44,13 @@ export function useAction<TFn extends ActionFn>(
     }
   }
 
-  return { ...state, act };
+  function force(
+    cb: (
+      data?: UnwrapPromise<ReturnType<TFn>>,
+    ) => UnwrapPromise<ReturnType<TFn>>,
+  ) {
+    setState((prevState) => ({ ...prevState, data: cb(prevState.data) }));
+  }
+
+  return { ...state, act, force };
 }

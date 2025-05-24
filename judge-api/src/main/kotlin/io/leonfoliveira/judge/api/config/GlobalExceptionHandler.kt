@@ -63,10 +63,4 @@ class GlobalExceptionHandler {
         val message = ex.mostSpecificCause.message ?: "Malformed JSON"
         return ResponseEntity(mapOf("error" to "Invalid request format: $message"), HttpStatus.BAD_REQUEST)
     }
-
-    @ExceptionHandler(Exception::class)
-    fun handleException(ex: Exception): ResponseEntity<ErrorResponseDTO> {
-        logger.error("An identified exception has being thrown", ex)
-        return ResponseEntity.internalServerError().body(ErrorResponseDTO("Something went wrong"))
-    }
 }

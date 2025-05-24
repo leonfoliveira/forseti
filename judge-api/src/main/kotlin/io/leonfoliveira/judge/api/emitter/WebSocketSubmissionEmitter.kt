@@ -10,9 +10,16 @@ import org.springframework.stereotype.Component
 class WebSocketSubmissionEmitter(
     private val messagingTemplate: SimpMessagingTemplate,
 ) : SubmissionEmitterAdapter {
-    override fun emit(submission: Submission) {
+    override fun emitForContest(submission: Submission) {
         messagingTemplate.convertAndSend(
             "/topic/contests/${submission.contest.id}/submissions",
+            submission.toEmmitDTO(),
+        )
+    }
+
+    override fun emitForMember(submission: Submission) {
+        messagingTemplate.convertAndSend(
+            "/topic/members/${submission.member.id}/submissions",
             submission.toEmmitDTO(),
         )
     }

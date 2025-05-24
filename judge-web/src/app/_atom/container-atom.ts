@@ -12,6 +12,9 @@ import { AxiosAttachmentRepository } from "@/adapter/axios/AxiosAttachmentReposi
 import { AxiosSubmissionRepository } from "@/adapter/axios/AxiosSubmissionRepository";
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { SubmissionService } from "@/core/service/SubmissionService";
+import { config } from "@/app/_config";
+import { StompClient } from "@/adapter/stomp/StompClient";
+import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
 
 export const containerAtom = atom(() => {
   const authorizationRepository = new LocalStorageAuthorizationRepository();
@@ -19,8 +22,7 @@ export const containerAtom = atom(() => {
     authorizationRepository,
   );
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-  const axiosClient = new AxiosClient(baseUrl, authorizationService);
+  const axiosClient = new AxiosClient(config.apiUrl, authorizationService);
 
   const attachmentRepository = new AxiosAttachmentRepository(axiosClient);
   const authenticationRepository = new AxiosAuthenticationRepository(
@@ -45,6 +47,10 @@ export const containerAtom = atom(() => {
   );
   const submissionService = new SubmissionService(submissionRepository);
 
+  const stompClient = new StompClient(config.wsUrl);
+
+  const submissionListener = new StompSubmissionListener(stompClient);
+
   return {
     attachmentService,
     authenticationService,
@@ -52,6 +58,7 @@ export const containerAtom = atom(() => {
     contestService,
     problemService,
     submissionService,
+    submissionListener,
   };
 });
 

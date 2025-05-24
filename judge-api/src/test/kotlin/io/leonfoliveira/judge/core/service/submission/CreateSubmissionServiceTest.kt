@@ -159,7 +159,7 @@ class CreateSubmissionServiceTest : FunSpec({
                 .returnsArgument(0)
             every { submissionQueueAdapter.enqueue(any()) }
                 .returns(Unit)
-            every { submissionEmitterAdapter.emit(any()) }
+            every { submissionEmitterAdapter.emitForContest(any()) }
                 .returns(Unit)
 
             val result = sut.create(1, 2, inputDTO)

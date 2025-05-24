@@ -61,7 +61,7 @@ class CreateSubmissionService(
             )
         submissionRepository.save(submission)
         submissionQueueAdapter.enqueue(submission)
-        submissionEmitterAdapter.emit(submission)
+        submissionEmitterAdapter.emitForContest(submission)
 
         return submission.toOutputDTO(bucketAdapter)
     }

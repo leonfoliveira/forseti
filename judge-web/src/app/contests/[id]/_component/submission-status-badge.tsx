@@ -11,7 +11,7 @@ export function SubmissionStatusBadge({ status }: Props) {
   const text = formatSubmissionStatus(status);
   switch (status) {
     case SubmissionStatus.JUDGING:
-      return <span>text</span>;
+      return <Badge variant="blank">{text}</Badge>;
     case SubmissionStatus.ACCEPTED:
       return <Badge variant="success">{text}</Badge>;
     case SubmissionStatus.TIME_LIMIT_EXCEEDED:

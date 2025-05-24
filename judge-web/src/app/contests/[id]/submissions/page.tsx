@@ -11,6 +11,8 @@ import { toLocaleString } from "@/app/_util/date-utils";
 import { formatLanguage } from "@/app/_util/contest-utils";
 import { useContainer } from "@/app/_atom/container-atom";
 import { SubmissionStatusBadge } from "@/app/contests/[id]/_component/submission-status-badge";
+import { useSubmissionForMemberListener } from "@/app/_listener/submission-for-member-listener";
+import { SubmissionEmmitDTO } from "@/core/listener/dto/emmit/SubmissionEmmitDTO";
 
 export default function ContestSubmissionPage({
   params,
@@ -18,13 +20,36 @@ export default function ContestSubmissionPage({
   params: Promise<{ id: number }>;
 }) {
   const { id } = use(params);
-  const { attachmentService } = useContainer();
+  const { attachmentService, authorizationService } = useContainer();
   const findAllSubmissionsForMemberAction =
     useFindAllSubmissionsForMemberAction();
+  const submissionForMemberListener = useSubmissionForMemberListener();
 
   useEffect(() => {
     findAllSubmissionsForMemberAction.act(id);
+    const member = authorizationService.getAuthorization()?.member;
+    if (!member) return;
+    submissionForMemberListener.subscribe(member?.id, receiveSubmission);
   }, []);
+
+  function receiveSubmission(submission: SubmissionEmmitDTO) {
+    findAllSubmissionsForMemberAction.force((data) => {
+      if (!data) return data;
+      const existingSubmission = data.find((it) => it.id === submission.id);
+      if (!existingSubmission) {
+        findAllSubmissionsForMemberAction.act(id);
+        return undefined;
+      }
+      return data.map((it) =>
+        it.id === submission.id
+          ? {
+              ...it,
+              status: submission.status,
+            }
+          : it,
+      );
+    });
+  }
 
   if (findAllSubmissionsForMemberAction.isLoading) {
     return (

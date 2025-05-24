@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { AuthorizationMember } from "@/core/domain/model/Authorization";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { useFindContestByIdAction } from "@/app/_action/find-contest-by-id-action";
+import { SubmissionBeacon } from "@/app/contests/[id]/_component/submission-beacon";
 
 export default function ContestLayout({
   params,
@@ -25,8 +26,8 @@ export default function ContestLayout({
   const [member, setMember] = useState<AuthorizationMember | undefined>();
 
   useEffect(() => {
-    setMember(authorizationService.getAuthorization()?.member);
     findContestAction.act(id);
+    setMember(authorizationService.getAuthorization()?.member);
   }, []);
 
   if (findContestAction.isLoading || !contest) {
@@ -80,6 +81,9 @@ export default function ContestLayout({
 
   return (
     <div>
+      {member?.type === MemberType.CONTESTANT && (
+        <SubmissionBeacon memberId={member?.id} />
+      )}
       <Navbar contest={contest} signInPath={`/auth/contests/${id}`} />
       <div className="mt-5 bg-white">
         <nav className="bg-gray-50">
