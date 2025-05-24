@@ -8,8 +8,16 @@ import java.time.LocalDateTime
 object SubmissionOutputDTOMockFactory {
     fun build(
         id: Int = 1,
-        problemId: Int = 1,
-        memberId: Int = 1,
+        problem: SubmissionOutputDTO.ProblemDTO =
+            SubmissionOutputDTO.ProblemDTO(
+                id = 1,
+                title = "Sample Problem",
+            ),
+        member: SubmissionOutputDTO.MemberDTO =
+            SubmissionOutputDTO.MemberDTO(
+                id = 1,
+                name = "Sample Member",
+            ),
         language: Language = Language.PYTHON_3_13_3,
         status: Submission.Status = Submission.Status.ACCEPTED,
         code: DownloadAttachment =
@@ -21,8 +29,8 @@ object SubmissionOutputDTOMockFactory {
         updatedAt: LocalDateTime = LocalDateTime.now(),
     ) = SubmissionOutputDTO(
         id = id,
-        problemId = problemId,
-        memberId = memberId,
+        problem = problem,
+        member = member,
         language = language,
         status = status,
         code = code,

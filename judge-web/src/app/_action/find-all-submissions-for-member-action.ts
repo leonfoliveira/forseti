@@ -3,27 +3,26 @@ import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
-import { useMemberSignOutAction } from "@/app/_action/member-sign-out-action";
+import { redirect } from "next/navigation";
 
-export function useFindAllProblemsForMemberAction() {
-  const { contestService } = useContainer();
+export function useFindAllSubmissionsForMemberAction() {
+  const { submissionService } = useContainer();
   const toast = useToast();
-  const memberSignOutAction = useMemberSignOutAction();
 
-  async function findAllProblemsForMember(contestId: number) {
+  async function findAllForMember(contestId: number) {
     try {
-      return await contestService.findAllProblemsForMember(contestId);
+      return await submissionService.findAllForMember();
     } catch (error) {
       if (
         error instanceof UnauthorizedException ||
         error instanceof ForbiddenException
       ) {
-        await memberSignOutAction.act(contestId);
+        redirect(`/auth/contests/${contestId}`);
       } else {
-        toast.error("Error loading problems");
+        toast.error("Error loading submissions");
       }
     }
   }
 
-  return useAction(findAllProblemsForMember);
+  return useAction(findAllForMember);
 }

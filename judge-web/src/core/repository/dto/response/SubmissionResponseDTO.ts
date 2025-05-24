@@ -4,8 +4,14 @@ import { DownloadAttachmentResponseDTO } from "@/core/repository/dto/response/Do
 
 export type SubmissionResponseDTO = {
   id: number;
-  problemId: number;
-  memberId: number;
+  problem: {
+    id: number;
+    title: string;
+  };
+  member: {
+    id: number;
+    name: string;
+  };
   language: Language;
   status: SubmissionStatus;
   code: DownloadAttachmentResponseDTO;

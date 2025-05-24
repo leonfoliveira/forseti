@@ -4,14 +4,16 @@ object ProblemMemberOutputDTOMockFactory {
     fun build(
         id: Int = 1,
         title: String = "Problem",
-        wrongAnswers: Int = 0,
-        acceptedAnswers: Int = 0,
+        description: String = "Problem description",
+        isAccepted: Boolean = false,
+        wrongSubmissions: Int = 0,
     ): ProblemMemberOutputDTO {
         return ProblemMemberOutputDTO(
             id = id,
             title = title,
-            wrongAnswers = wrongAnswers,
-            acceptedAnswers = acceptedAnswers,
+            description = description,
+            isAccepted = isAccepted,
+            wrongSubmissions = wrongSubmissions,
         )
     }
 }

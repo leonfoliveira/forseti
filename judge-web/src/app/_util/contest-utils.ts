@@ -1,6 +1,7 @@
 import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestShortResponseDTO";
 import { Language } from "@/core/domain/enumerate/Language";
 import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 
 export enum ContestStatus {
   NOT_STARTED = "NOT_STARTED",
@@ -39,5 +40,22 @@ export function formatLanguage(languages: Language) {
   switch (languages) {
     case Language.PYTHON_3_13_3:
       return "Python 3.13.3";
+  }
+}
+
+export function formatSubmissionStatus(status: SubmissionStatus) {
+  switch (status) {
+    case SubmissionStatus.JUDGING:
+      return "Judging";
+    case SubmissionStatus.ACCEPTED:
+      return "Accepted";
+    case SubmissionStatus.WRONG_ANSWER:
+      return "Wrong Answer";
+    case SubmissionStatus.TIME_LIMIT_EXCEEDED:
+      return "Time Limit Exceeded";
+    case SubmissionStatus.COMPILATION_ERROR:
+      return "Compilation Error";
+    case SubmissionStatus.RUNTIME_ERROR:
+      return "Runtime Error";
   }
 }

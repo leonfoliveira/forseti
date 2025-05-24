@@ -7,8 +7,8 @@ import java.time.LocalDateTime
 
 data class SubmissionShortResponseDTO(
     val id: Int,
-    val problemId: Int,
-    val memberId: Int,
+    val problem: SubmissionOutputDTO.ProblemDTO,
+    val member: SubmissionOutputDTO.MemberDTO,
     val status: Submission.Status,
     val language: Language,
     val createdAt: LocalDateTime,
@@ -17,8 +17,8 @@ data class SubmissionShortResponseDTO(
 fun SubmissionOutputDTO.toShortResponseDTO(): SubmissionShortResponseDTO {
     return SubmissionShortResponseDTO(
         id = id,
-        problemId = problemId,
-        memberId = memberId,
+        problem = problem,
+        member = member,
         status = status,
         language = language,
         createdAt = createdAt,

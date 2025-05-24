@@ -12,9 +12,9 @@ export function useFindFullContestByIdAction() {
   const toast = useToast();
   const signOutAction = useRootSignOutAction();
 
-  function findContestById(id: number) {
+  async function findContestById(id: number) {
     try {
-      return contestService.findFullContestById(id);
+      return await contestService.findFullContestById(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         notFound();

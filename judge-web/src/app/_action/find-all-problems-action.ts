@@ -6,9 +6,9 @@ export function useFindAllProblemsAction() {
   const { contestService } = useContainer();
   const toast = useToast();
 
-  function findAllProblems(contestId: number) {
+  async function findAllProblems(contestId: number) {
     try {
-      return contestService.findAllProblems(contestId);
+      return await contestService.findAllProblems(contestId);
     } catch {
       toast.error("Error loading problems");
     }

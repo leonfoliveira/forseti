@@ -10,15 +10,15 @@ export function useFindAllContestsAction() {
   const toast = useToast();
   const signOutAction = useRootSignOutAction();
 
-  function findAllContests() {
+  async function findAllContests() {
     try {
-      return contestService.findAllContests();
+      return await contestService.findAllContests();
     } catch (error) {
       if (
         error instanceof UnauthorizedException ||
         error instanceof NotFoundException
       ) {
-        signOutAction.act();
+        await signOutAction.act();
       } else {
         toast.error("Error loading contests");
       }

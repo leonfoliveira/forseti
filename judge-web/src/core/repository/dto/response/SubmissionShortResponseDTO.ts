@@ -3,8 +3,14 @@ import { Language } from "@/core/domain/enumerate/Language";
 
 export type SubmissionResponseDTO = {
   id: number;
-  problemId: number;
-  memberId: number;
+  problem: {
+    id: number;
+    title: string;
+  };
+  member: {
+    id: number;
+    name: string;
+  };
   language: Language;
   status: SubmissionStatus;
   createdAt: string;

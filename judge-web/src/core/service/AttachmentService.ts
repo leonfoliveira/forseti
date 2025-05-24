@@ -24,6 +24,7 @@ export class AttachmentService {
 
   downloadAttachment(attachment: DownloadAttachmentResponseDTO) {
     const link = document.createElement("a");
+    link.target = "_blank";
     link.href = attachment.url.replace(
       "judge.localhost:4566",
       "localhost:4566/judge",

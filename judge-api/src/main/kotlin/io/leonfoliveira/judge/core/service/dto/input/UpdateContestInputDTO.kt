@@ -43,7 +43,6 @@ data class UpdateContestInputDTO(
         val isIdAndPasswordNull: Boolean
             get() = id == null && password.isNullOrBlank()
 
-
         fun toCreateDTO(): CreateContestInputDTO.MemberDTO {
             return CreateContestInputDTO.MemberDTO(
                 type = type,

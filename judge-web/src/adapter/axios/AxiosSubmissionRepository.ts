@@ -6,6 +6,6 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
 
   findAllForMember(): Promise<SubmissionResponseDTO[]> {
-    return this.axiosClient.get<SubmissionResponseDTO[]>(`/v1/submissions`);
+    return this.axiosClient.get<SubmissionResponseDTO[]>("/v1/submissions/me");
   }
 }

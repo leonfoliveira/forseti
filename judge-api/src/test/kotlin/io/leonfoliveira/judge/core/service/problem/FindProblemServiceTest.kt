@@ -164,8 +164,9 @@ class FindProblemServiceTest : FunSpec({
                     ProblemMemberOutputDTO(
                         id = contest.problems[0].id,
                         title = contest.problems[0].title,
-                        wrongAnswers = 2,
-                        acceptedAnswers = 1,
+                        description = contest.problems[0].description,
+                        isAccepted = true,
+                        wrongSubmissions = 2,
                     ),
                 )
         }

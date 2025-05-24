@@ -164,8 +164,10 @@ class CreateSubmissionServiceTest : FunSpec({
 
             val result = sut.create(1, 2, inputDTO)
 
-            result.memberId shouldBe member.id
-            result.problemId shouldBe problem.id
+            result.member.id shouldBe member.id
+            result.member.name shouldBe member.name
+            result.problem.id shouldBe problem.id
+            result.problem.title shouldBe problem.title
             result.language shouldBe inputDTO.language
             result.status shouldBe Submission.Status.JUDGING
             result.code shouldBe downloadAttachment

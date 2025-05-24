@@ -8,9 +8,9 @@ export function useFindContestByIdAction() {
   const { contestService } = useContainer();
   const toast = useToast();
 
-  function findContestById(id: number) {
+  async function findContestById(id: number) {
     try {
-      return contestService.findContestById(id);
+      return await contestService.findContestById(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         notFound();

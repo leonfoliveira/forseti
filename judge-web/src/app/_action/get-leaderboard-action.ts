@@ -6,9 +6,9 @@ export function useGetLeaderboardAction() {
   const { contestService } = useContainer();
   const toast = useToast();
 
-  function getLeaderboard(id: number) {
+  async function getLeaderboard(id: number) {
     try {
-      return contestService.getLeaderboard(id);
+      return await contestService.getLeaderboard(id);
     } catch {
       toast.error("Error loading leaderboard");
     }
