@@ -24,6 +24,11 @@ import { useFindAllProblemsAction } from "@/app/_action/find-all-problems-action
 import { useFindAllProblemsForMemberAction } from "@/app/_action/find-all-problems-for-member-action";
 import { useCreateSubmissionAction } from "@/app/_action/create-submission-action";
 import { Form } from "@/app/_component/form/form";
+import { Table } from "@/app/_component/table/table";
+import { TableSection } from "@/app/_component/table/table-section";
+import { TableRow } from "@/app/_component/table/table-row";
+import { TableCell } from "@/app/_component/table/table-cell";
+import { ProblemStatusBadge } from "@/app/contests/[id]/_component/problem-status-badge";
 
 export default function ContestProblemsPage({
   params,
@@ -82,49 +87,49 @@ export default function ContestProblemsPage({
 
   return (
     <div>
-      <ul>
-        {isContestant
-          ? memberProblems?.map((problem, index) => (
-              <li
-                key={problem.id}
-                className={cls(
-                  "p-2 hover:bg-gray-100 active:bg-gray-200 cursor-pointer transition flex justify-between",
-                  index % 2 === 1 && "bg-gray-50",
-                )}
-                onClick={() => {
-                  setOpenProblem(problem);
-                }}
-              >
-                <p>{problem.title}</p>
-                <div className="text-center">
-                  {problem.isAccepted && (
-                    <Badge variant="success">
-                      AC
-                      {problem.wrongSubmissions > 0 &&
-                        `+${problem.wrongSubmissions}`}
-                    </Badge>
+      <Table>
+        <TableSection>
+          {isContestant
+            ? memberProblems?.map((problem, index) => (
+                <TableRow
+                  key={problem.id}
+                  className={cls(
+                    "p-2 hover:bg-gray-100 active:bg-gray-200 cursor-pointer transition",
+                    index % 2 === 1 && "bg-gray-50",
                   )}
-                  {!problem.isAccepted && problem.wrongSubmissions > 0 && (
-                    <Badge variant="danger">+{problem.wrongSubmissions}</Badge>
+                  onClick={() => {
+                    setOpenProblem(problem);
+                  }}
+                >
+                  <TableCell>
+                    {index + 1}. {problem.title}
+                  </TableCell>
+                  <TableCell align="right">
+                    <ProblemStatusBadge
+                      isAccepted={problem.isAccepted}
+                      wrongSubmissions={problem.wrongSubmissions}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))
+            : problems?.map((problem, index) => (
+                <TableRow
+                  key={problem.id}
+                  className={cls(
+                    "p-2 hover:bg-gray-100 active:bg-gray-200 cursor-pointer transition flex justify-between",
+                    index % 2 === 1 && "bg-gray-50",
                   )}
-                </div>
-              </li>
-            ))
-          : problems?.map((problem, index) => (
-              <li
-                key={problem.id}
-                className={cls(
-                  "p-2 hover:bg-gray-100 active:bg-gray-200 cursor-pointer transition flex justify-between",
-                  index % 2 === 1 && "bg-gray-50",
-                )}
-                onClick={() => {
-                  setOpenProblem(problem);
-                }}
-              >
-                <p>{problem.title}</p>
-              </li>
-            ))}
-      </ul>
+                  onClick={() => {
+                    setOpenProblem(problem);
+                  }}
+                >
+                  <TableCell>
+                    {index + 1}. {problem.title}
+                  </TableCell>
+                </TableRow>
+              ))}
+        </TableSection>
+      </Table>
       {openProblem && (
         <Modal>
           <div className="flex flex-col h-full p-2">

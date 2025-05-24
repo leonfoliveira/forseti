@@ -14,6 +14,8 @@ import {
 } from "@/app/_util/contest-utils";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { useContainer } from "@/app/_atom/container-atom";
+import { Badge } from "@/app/_component/badge";
+import { SubmissionStatusBadge } from "@/app/contests/[id]/_component/submission-status-badge";
 
 export default function ContestSubmissionPage({
   params,
@@ -37,26 +39,9 @@ export default function ContestSubmissionPage({
     );
   }
 
-  function formatStatus(status: SubmissionStatus) {
-    const text = formatSubmissionStatus(status);
-    switch (status) {
-      case SubmissionStatus.JUDGING:
-        return <span>text</span>;
-      case SubmissionStatus.ACCEPTED:
-        return <span className="text-green-500">{text}</span>;
-      case SubmissionStatus.TIME_LIMIT_EXCEEDED:
-        return <span className="text-blue-500">{text}</span>;
-      case SubmissionStatus.RUNTIME_ERROR:
-      case SubmissionStatus.COMPILATION_ERROR:
-        return <span className="text-yellow-500">{text}</span>;
-      default:
-        return <span className="text-red-500">{text}</span>;
-    }
-  }
-
   return (
     <Table>
-      <TableSection>
+      <TableSection head>
         <TableRow>
           <TableCell header>Timestamp</TableCell>
           <TableCell header>Problem</TableCell>
@@ -80,8 +65,8 @@ export default function ContestSubmissionPage({
               <TableCell>{toLocaleString(submission.createdAt)}</TableCell>
               <TableCell>{submission.problem.title}</TableCell>
               <TableCell>{formatLanguage(submission.language)}</TableCell>
-              <TableCell align="right">
-                {formatStatus(submission.status)}
+              <TableCell align="right" className="font-semibold">
+                <SubmissionStatusBadge status={submission.status} />
               </TableCell>
             </TableRow>
           ))}

@@ -9,6 +9,7 @@ import { Spinner } from "@/app/_component/spinner";
 import { cls } from "@/app/_util/cls";
 import { Badge } from "@/app/_component/badge";
 import { useGetLeaderboardAction } from "@/app/_action/get-leaderboard-action";
+import { ProblemStatusBadge } from "@/app/contests/[id]/_component/problem-status-badge";
 
 export default function ContestLeaderboardPage({
   params,
@@ -35,7 +36,7 @@ export default function ContestLeaderboardPage({
 
   return (
     <Table>
-      <TableSection>
+      <TableSection head>
         <TableRow>
           <TableCell header></TableCell>
           {leaderboard.problems.map((problem, index) => (
@@ -45,7 +46,7 @@ export default function ContestLeaderboardPage({
               align="center"
               className={cls(index % 2 === 0 && "bg-gray-50")}
             >
-              {problem.title}
+              {index + 1}. {problem.title}
             </TableCell>
           ))}
           <TableCell
@@ -59,7 +60,7 @@ export default function ContestLeaderboardPage({
       </TableSection>
       <TableSection>
         {leaderboard.members.map((member, index) => (
-          <TableRow key={member.id} className="h-15">
+          <TableRow key={member.id}>
             <TableCell>{`${index + 1}. ${member.name}`}</TableCell>
             {member.problems.map((problem, index) => (
               <TableCell
@@ -68,22 +69,10 @@ export default function ContestLeaderboardPage({
                 className={cls(index % 2 === 0 && "bg-gray-50")}
               >
                 <div className="text-center">
-                  {problem.isAccepted && (
-                    <p className="h-[1.2em] text-xl font-semibold text-green-500">
-                      <Badge variant="success">
-                        AC
-                        {problem.wrongSubmissions > 0 &&
-                          `+${problem.wrongSubmissions}`}
-                      </Badge>
-                    </p>
-                  )}
-                  {!problem.isAccepted && problem.wrongSubmissions > 0 && (
-                    <p className="text-sm font-semibold text-red-500">
-                      <Badge variant="danger">
-                        +{problem.wrongSubmissions}
-                      </Badge>
-                    </p>
-                  )}
+                  <ProblemStatusBadge
+                    isAccepted={problem.isAccepted}
+                    wrongSubmissions={problem.wrongSubmissions}
+                  />
                 </div>
               </TableCell>
             ))}
