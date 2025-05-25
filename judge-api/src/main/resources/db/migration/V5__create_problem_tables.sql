@@ -5,11 +5,11 @@ create table problem (
     deleted_at timestamp,
     contest_id int not null,
     title text not null,
-    description text not null,
+    description_key uuid not null,
     time_limit int not null,
-    test_cases_filename text not null,
-    test_cases_key text not null,
-    constraint fk_contest foreign key (contest_id) references contest (id)
+    test_cases_key uuid not null,
+    constraint fk_contest foreign key (contest_id) references contest (id),
+    constraint fk_test_cases_key foreign key (test_cases_key) references attachment (key)
 );
 
 create table problem_aud (
@@ -21,11 +21,11 @@ create table problem_aud (
     deleted_at timestamp,
     contest_id int not null,
     title text not null,
-    description text not null,
+    description_key uuid not null,
     time_limit int not null,
-    test_cases_filename text not null,
-    test_cases_key text not null,
+    test_cases_key uuid not null,
     primary key (rev, id),
     constraint fk_contest foreign key (contest_id) references contest (id),
+    constraint fk_test_cases_key foreign key (test_cases_key) references attachment (key),
     constraint fk_rev foreign key (rev) references revinfo (rev)
 );

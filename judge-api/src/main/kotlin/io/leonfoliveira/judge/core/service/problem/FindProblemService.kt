@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service
 class FindProblemService(
     private val problemRepository: ProblemRepository,
     private val contestRepository: ContestRepository,
-    private val bucketAdapter: BucketAdapter,
 ) {
     fun findById(id: Int): ProblemOutputDTO {
         val problem =
@@ -27,7 +26,7 @@ class FindProblemService(
             throw ForbiddenException("Contest has not started yet")
         }
 
-        return problem.toOutputDTO(bucketAdapter)
+        return problem.toOutputDTO()
     }
 
     fun findAllByContest(contestId: Int): List<Problem> {
@@ -61,7 +60,7 @@ class FindProblemService(
             ProblemMemberOutputDTO(
                 id = problem.id,
                 title = problem.title,
-                description = problem.description,
+                descriptionKey = problem.description.key,
                 isAccepted = isAccepted,
                 wrongSubmissions = wrongSubmissionsBeforeAccepted.count(),
             )

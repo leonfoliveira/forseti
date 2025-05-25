@@ -58,14 +58,14 @@ class DockerSubmissionRunnerAdapter(
         submission: Submission,
         tmpDir: File,
     ): File {
-        val bytes = bucketAdapter.download(submission.code)
+        val bytes = bucketAdapter.download(submission.code.key)
         val romFile = File(tmpDir, submission.code.filename)
         romFile.writeBytes(bytes)
         return romFile
     }
 
     private fun loadTestCases(problem: Problem): List<Array<String>> {
-        val bytes = bucketAdapter.download(problem.testCases)
+        val bytes = bucketAdapter.download(problem.testCases.key)
         val csvReader = CSVReader(InputStreamReader(ByteArrayInputStream(bytes)))
         return csvReader.use { reader ->
             reader.readAll()

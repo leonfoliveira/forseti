@@ -1,23 +1,19 @@
 package io.leonfoliveira.judge.core.service.dto.output
 
-import io.leonfoliveira.judge.core.domain.model.DownloadAttachment
+import java.util.UUID
 
 object ProblemOutputDTOMockFactory {
     fun build(
         id: Int = 1,
         title: String = "Problem Title",
-        description: String = "Problem Description",
+        descriptionKey: UUID = UUID.randomUUID(),
         timeLimit: Int = 1000,
-        testCases: DownloadAttachment =
-            DownloadAttachment(
-                filename = "test_cases.csv",
-                url = "https://example.com/test_cases.csv",
-            ),
+        testCasesKey: UUID = UUID.randomUUID(),
     ) = ProblemOutputDTO(
         id = id,
         title = title,
-        description = description,
+        descriptionKey = descriptionKey,
         timeLimit = timeLimit,
-        testCases = testCases,
+        testCasesKey = testCasesKey,
     )
 }

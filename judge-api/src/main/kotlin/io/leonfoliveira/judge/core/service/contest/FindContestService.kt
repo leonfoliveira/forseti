@@ -10,11 +10,10 @@ import org.springframework.stereotype.Service
 @Service
 class FindContestService(
     private val contestRepository: ContestRepository,
-    private val bucketAdapter: BucketAdapter,
 ) {
     fun findAll(): List<ContestOutputDTO> {
         return contestRepository.findAll().toList().map {
-            it.toOutputDTO(bucketAdapter)
+            it.toOutputDTO()
         }
     }
 
@@ -23,6 +22,6 @@ class FindContestService(
             contestRepository.findById(id).orElseThrow {
                 NotFoundException("Could not find contest with id = $id")
             }
-        return contest.toOutputDTO(bucketAdapter)
+        return contest.toOutputDTO()
     }
 }

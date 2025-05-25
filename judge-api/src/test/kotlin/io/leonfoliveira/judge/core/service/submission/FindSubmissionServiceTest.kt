@@ -8,7 +8,6 @@ import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.domain.model.DownloadAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
@@ -33,9 +32,6 @@ class FindSubmissionServiceTest : FunSpec({
         )
 
     val now = LocalDateTime.now()
-
-    every { bucketAdapter.createDownloadAttachment(any()) }
-        .returns(DownloadAttachment("url", "key"))
 
     beforeEach {
         mockkObject(TimeUtils)
@@ -85,7 +81,7 @@ class FindSubmissionServiceTest : FunSpec({
 
             val result = sut.findAllByContest(1)
 
-            result shouldBe listOf(submission2, submission1).map { it.toOutputDTO(bucketAdapter) }
+            result shouldBe listOf(submission2, submission1).map { it.toOutputDTO() }
         }
     }
 })

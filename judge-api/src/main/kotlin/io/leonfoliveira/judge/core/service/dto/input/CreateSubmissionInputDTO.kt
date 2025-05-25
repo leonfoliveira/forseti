@@ -1,11 +1,11 @@
 package io.leonfoliveira.judge.core.service.dto.input
 
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import io.leonfoliveira.judge.core.domain.model.Attachment
 import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
+import java.util.UUID
 
 data class CreateSubmissionInputDTO(
     val language: Language,
-    @field:Valid
-    val code: Attachment,
+    val codeKey: UUID,
 )

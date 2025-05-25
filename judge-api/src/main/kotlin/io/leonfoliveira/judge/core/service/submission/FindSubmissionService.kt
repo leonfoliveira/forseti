@@ -28,7 +28,7 @@ class FindSubmissionService(
                 it.submissions
             }.flatten()
 
-        return submissions.sortedBy { it.createdAt }.map { it.toOutputDTO(bucketAdapter) }
+        return submissions.sortedBy { it.createdAt }.map { it.toOutputDTO() }
     }
 
     fun findAllByMember(memberId: Int): List<SubmissionOutputDTO> {
@@ -36,6 +36,6 @@ class FindSubmissionService(
             memberRepository.findById(memberId).orElseThrow {
                 NotFoundException("Could not find member with id = $memberId")
             }
-        return member.submissions.sortedBy { it.createdAt }.map { it.toOutputDTO(bucketAdapter) }
+        return member.submissions.sortedBy { it.createdAt }.map { it.toOutputDTO() }
     }
 }

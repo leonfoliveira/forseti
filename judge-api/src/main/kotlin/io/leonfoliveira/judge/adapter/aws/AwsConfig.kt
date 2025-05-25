@@ -7,7 +7,6 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
-import software.amazon.awssdk.services.s3.presigner.S3Presigner
 import software.amazon.awssdk.services.sqs.SqsClient
 import java.net.URI
 
@@ -37,15 +36,6 @@ class AwsConfig(
             .endpointOverride(endpoint)
             .credentialsProvider(credentialsProvider)
             .forcePathStyle(true)
-            .build()
-    }
-
-    @Bean
-    fun s3PreSigner(): S3Presigner {
-        return S3Presigner.builder()
-            .region(region)
-            .endpointOverride(endpoint)
-            .credentialsProvider(credentialsProvider)
             .build()
     }
 

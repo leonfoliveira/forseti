@@ -1,6 +1,5 @@
 package io.leonfoliveira.judge.core.domain.entity
 
-import io.leonfoliveira.judge.core.domain.model.Attachment
 import io.leonfoliveira.judge.core.util.TimeUtils
 import jakarta.persistence.AttributeOverride
 import jakarta.persistence.AttributeOverrides
@@ -12,10 +11,12 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
+import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 import java.time.LocalDateTime
+import org.hibernate.envers.RelationTargetAuditMode
 
 @Entity
 @Table(name = "problem")
@@ -31,15 +32,13 @@ class Problem(
     val contest: Contest,
     @Column(nullable = false)
     var title: String,
-    @Column(nullable = false)
-    var description: String,
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "description_key", referencedColumnName = "key", nullable = false)
+    var description: Attachment,
     @Column(name = "time_limit", nullable = false)
     var timeLimit: Int,
-    @Embedded
-    @AttributeOverrides(
-        AttributeOverride(name = "filename", column = Column(name = "test_cases_filename")),
-        AttributeOverride(name = "key", column = Column(name = "test_cases_key")),
-    )
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "test_cases_key", referencedColumnName = "key", nullable = false)
     var testCases: Attachment,
     @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var submissions: List<Submission> = mutableListOf(),

@@ -1,7 +1,7 @@
 package io.leonfoliveira.judge.api.controller
 
 import io.leonfoliveira.judge.api.controller.dto.response.ProblemResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.toFullResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
 import io.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.leonfoliveira.judge.api.util.Private
 import io.leonfoliveira.judge.core.domain.entity.Member
@@ -28,7 +28,7 @@ class ProblemController(
         @PathVariable id: Int,
     ): ResponseEntity<ProblemResponseDTO> {
         val problemOutputDTO = findProblemService.findById(id)
-        return ResponseEntity.ok(problemOutputDTO.toFullResponseDTO())
+        return ResponseEntity.ok(problemOutputDTO.toResponseDTO())
     }
 
     @PostMapping("/{id}/submissions")

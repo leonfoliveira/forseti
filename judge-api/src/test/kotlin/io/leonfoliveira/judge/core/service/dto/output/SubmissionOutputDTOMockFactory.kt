@@ -2,8 +2,8 @@ package io.leonfoliveira.judge.core.service.dto.output
 
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import io.leonfoliveira.judge.core.domain.model.DownloadAttachment
 import java.time.LocalDateTime
+import java.util.UUID
 
 object SubmissionOutputDTOMockFactory {
     fun build(
@@ -20,11 +20,7 @@ object SubmissionOutputDTOMockFactory {
             ),
         language: Language = Language.PYTHON_3_13_3,
         status: Submission.Status = Submission.Status.ACCEPTED,
-        code: DownloadAttachment =
-            DownloadAttachment(
-                filename = "code.py",
-                url = "https://example.com/code.py",
-            ),
+        codeKey: UUID = UUID.randomUUID(),
         createdAt: LocalDateTime = LocalDateTime.now(),
         updatedAt: LocalDateTime = LocalDateTime.now(),
     ) = SubmissionOutputDTO(
@@ -33,7 +29,7 @@ object SubmissionOutputDTOMockFactory {
         member = member,
         language = language,
         status = status,
-        code = code,
+        codeKey = codeKey,
         createdAt = createdAt,
         updatedAt = updatedAt,
     )

@@ -5,7 +5,6 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.domain.model.DownloadAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.output.toOutputDTO
@@ -15,12 +14,8 @@ import java.util.Optional
 
 class FindContestServiceTest : FunSpec({
     val contestRepository = mockk<ContestRepository>()
-    val bucketAdapter = mockk<BucketAdapter>()
 
-    val sut = FindContestService(contestRepository, bucketAdapter)
-
-    every { bucketAdapter.createDownloadAttachment(any()) }
-        .returns(DownloadAttachment("url", "key"))
+    val sut = FindContestService(contestRepository)
 
     context("findAll") {
         test("should return all contests") {
@@ -30,7 +25,7 @@ class FindContestServiceTest : FunSpec({
 
             val result = sut.findAll()
 
-            result shouldBe contests.map { it.toOutputDTO(bucketAdapter) }
+            result shouldBe contests.map { it.toOutputDTO() }
         }
     }
 
@@ -53,7 +48,7 @@ class FindContestServiceTest : FunSpec({
 
             val result = sut.findById(id)
 
-            result shouldBe contest.toOutputDTO(bucketAdapter)
+            result shouldBe contest.toOutputDTO()
         }
     }
 })

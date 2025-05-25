@@ -4,8 +4,10 @@ import io.leonfoliveira.judge.core.domain.entity.Contest
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.Problem
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
+import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
+import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTO
 import io.leonfoliveira.judge.core.service.dto.output.ContestOutputDTO
@@ -17,9 +19,9 @@ import org.springframework.validation.annotation.Validated
 @Service
 @Validated
 class CreateContestService(
+    private val attachmentRepository: AttachmentRepository,
     private val contestRepository: ContestRepository,
     private val hashAdapter: HashAdapter,
-    private val bucketAdapter: BucketAdapter,
 ) {
     fun create(
         @Valid inputDTO: CreateContestInputDTO,
@@ -41,7 +43,7 @@ class CreateContestService(
 
         contestRepository.save(contest)
 
-        return contest.toOutputDTO(bucketAdapter)
+        return contest.toOutputDTO()
     }
 
     fun createMember(
@@ -65,12 +67,19 @@ class CreateContestService(
         contest: Contest,
         problemDTO: CreateContestInputDTO.ProblemDTO,
     ): Problem {
+        val description = attachmentRepository.findById(problemDTO.descriptionKey).orElseThrow {
+            NotFoundException("Could not find description attachment with key = ${problemDTO.descriptionKey}")
+        }
+        val testCases = attachmentRepository.findById(problemDTO.testCasesKey).orElseThrow {
+            NotFoundException("Could not find testCases attachment with key = ${problemDTO.testCasesKey}")
+        }
+
         val problem =
             Problem(
                 title = problemDTO.title,
-                description = problemDTO.description,
+                description = description,
                 timeLimit = problemDTO.timeLimit,
-                testCases = problemDTO.testCases,
+                testCases = testCases,
                 contest = contest,
             )
 

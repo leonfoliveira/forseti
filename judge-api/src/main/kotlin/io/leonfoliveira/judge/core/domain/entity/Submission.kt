@@ -1,7 +1,6 @@
 package io.leonfoliveira.judge.core.domain.entity
 
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import io.leonfoliveira.judge.core.domain.model.Attachment
 import io.leonfoliveira.judge.core.util.TimeUtils
 import jakarta.persistence.AttributeOverride
 import jakarta.persistence.AttributeOverrides
@@ -13,6 +12,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
@@ -37,11 +37,8 @@ class Submission(
     val language: Language,
     @Enumerated(EnumType.STRING)
     var status: Status,
-    @Embedded
-    @AttributeOverrides(
-        AttributeOverride(name = "filename", column = Column(name = "code_filename")),
-        AttributeOverride(name = "key", column = Column(name = "code_key")),
-    )
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "code_key", referencedColumnName = "key", nullable = false)
     val code: Attachment,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
     val contest get() = problem.contest

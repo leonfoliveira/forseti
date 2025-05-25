@@ -2,9 +2,9 @@ package io.leonfoliveira.judge.core.service.dto.output
 
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import io.leonfoliveira.judge.core.domain.model.DownloadAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import java.time.LocalDateTime
+import java.util.UUID
 
 data class SubmissionOutputDTO(
     val id: Int,
@@ -12,7 +12,7 @@ data class SubmissionOutputDTO(
     val member: MemberDTO,
     val language: Language,
     val status: Submission.Status,
-    val code: DownloadAttachment,
+    val codeKey: UUID,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
 ) {
@@ -27,7 +27,7 @@ data class SubmissionOutputDTO(
     )
 }
 
-fun Submission.toOutputDTO(bucketAdapter: BucketAdapter): SubmissionOutputDTO {
+fun Submission.toOutputDTO(): SubmissionOutputDTO {
     return SubmissionOutputDTO(
         id = id,
         problem =
@@ -42,7 +42,7 @@ fun Submission.toOutputDTO(bucketAdapter: BucketAdapter): SubmissionOutputDTO {
             ),
         language = language,
         status = status,
-        code = bucketAdapter.createDownloadAttachment(code),
+        codeKey = code.key,
         createdAt = createdAt,
         updatedAt = updatedAt,
     )

@@ -2,8 +2,8 @@ package io.leonfoliveira.judge.core.service.dto.input
 
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import io.leonfoliveira.judge.core.domain.model.Attachment
 import java.time.LocalDateTime
+import java.util.UUID
 
 object UpdateContestInputDTOMockFactory {
     fun build(
@@ -41,14 +41,14 @@ object UpdateContestInputDTOMockFactory {
     fun buildProblemDTO(
         id: Int? = 1,
         title: String = "Problem Title",
-        description: String = "Problem Description",
+        descriptionKey: UUID = UUID.randomUUID(),
         timeLimit: Int = 1000,
-        testCases: Attachment? = Attachment("testCases.csv", "key"),
+        testCasesKey: UUID = UUID.randomUUID(),
     ) = UpdateContestInputDTO.ProblemDTO(
         id = id,
         title = title,
-        description = description,
+        descriptionKey = descriptionKey,
         timeLimit = timeLimit,
-        testCases = testCases,
+        testCasesKey = testCasesKey,
     )
 }

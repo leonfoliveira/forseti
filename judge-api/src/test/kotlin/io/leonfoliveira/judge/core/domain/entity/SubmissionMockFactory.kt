@@ -1,7 +1,6 @@
 package io.leonfoliveira.judge.core.domain.entity
 
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import io.leonfoliveira.judge.core.domain.model.Attachment
 import java.time.LocalDateTime
 
 object SubmissionMockFactory {
@@ -14,11 +13,7 @@ object SubmissionMockFactory {
         problem: Problem = ProblemMockFactory.build(),
         language: Language = Language.PYTHON_3_13_3,
         status: Submission.Status = Submission.Status.JUDGING,
-        code: Attachment =
-            Attachment(
-                filename = "code.kt",
-                key = "code_key",
-            ),
+        code: Attachment = AttachmentMockFactory.build(),
     ) = Submission(
         id = id,
         createdAt = createdAt,

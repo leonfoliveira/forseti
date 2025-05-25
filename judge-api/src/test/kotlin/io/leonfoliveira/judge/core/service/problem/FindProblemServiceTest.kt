@@ -9,7 +9,6 @@ import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
-import io.leonfoliveira.judge.core.domain.model.DownloadAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
@@ -31,13 +30,9 @@ class FindProblemServiceTest : FunSpec({
         FindProblemService(
             problemRepository = problemRepository,
             contestRepository = contestRepository,
-            bucketAdapter = bucketAdapter,
         )
 
     val now = LocalDateTime.now()
-
-    every { bucketAdapter.createDownloadAttachment(any()) }
-        .returns(DownloadAttachment("url", "key"))
 
     beforeEach {
         mockkObject(TimeUtils)
@@ -74,7 +69,7 @@ class FindProblemServiceTest : FunSpec({
 
             val result = sut.findById(1)
 
-            result shouldBe problem.toOutputDTO(bucketAdapter)
+            result shouldBe problem.toOutputDTO()
         }
     }
 
@@ -164,7 +159,7 @@ class FindProblemServiceTest : FunSpec({
                     ProblemMemberOutputDTO(
                         id = contest.problems[0].id,
                         title = contest.problems[0].title,
-                        description = contest.problems[0].description,
+                        descriptionKey = contest.problems[0].description.key,
                         isAccepted = true,
                         wrongSubmissions = 2,
                     ),

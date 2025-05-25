@@ -5,15 +5,16 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.leonfoliveira.judge.core.domain.entity.AttachmentMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.domain.model.DownloadAttachment
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
+import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTOMockFactory
 import io.leonfoliveira.judge.core.service.dto.output.toOutputDTO
@@ -26,9 +27,9 @@ import java.time.LocalDateTime
 import java.util.Optional
 
 class UpdateContestServiceTest : FunSpec({
+    val attachmentRepository = mockk<AttachmentRepository>()
     val contestRepository = mockk<ContestRepository>()
     val hashAdapter = mockk<HashAdapter>()
-    val bucketAdapter = mockk<BucketAdapter>()
     val createContestService = mockk<CreateContestService>()
     val deleteContestService = mockk<DeleteContestService>()
 
@@ -36,17 +37,14 @@ class UpdateContestServiceTest : FunSpec({
 
     val sut =
         UpdateContestService(
+            attachmentRepository,
             contestRepository = contestRepository,
             hashAdapter = hashAdapter,
-            bucketAdapter = bucketAdapter,
             createContestService = createContestService,
             deleteContestService = deleteContestService,
         )
 
     val now = LocalDateTime.now()
-
-    every { bucketAdapter.createDownloadAttachment(any()) }
-        .returns(DownloadAttachment("url", "key"))
 
     beforeEach {
         mockkObject(TimeUtils)
@@ -74,13 +72,7 @@ class UpdateContestServiceTest : FunSpec({
                 problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(title = "")),
             ),
             UpdateContestInputDTOMockFactory.build(
-                problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(description = "")),
-            ),
-            UpdateContestInputDTOMockFactory.build(
                 problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(timeLimit = 0)),
-            ),
-            UpdateContestInputDTOMockFactory.build(
-                problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = null, testCases = null)),
             ),
             UpdateContestInputDTOMockFactory.build(title = ""),
             UpdateContestInputDTOMockFactory.build(languages = emptyList()),
@@ -136,7 +128,7 @@ class UpdateContestServiceTest : FunSpec({
             val memberDTOToUpdatePassword = UpdateContestInputDTOMockFactory.buildMemberDTO(id = 3)
 
             val problemDTOToInsert = UpdateContestInputDTOMockFactory.buildProblemDTO(id = null)
-            val problemDTOToUpdate = UpdateContestInputDTOMockFactory.buildProblemDTO(id = 2, testCases = null)
+            val problemDTOToUpdate = UpdateContestInputDTOMockFactory.buildProblemDTO(id = 2)
             val problemDTOToUpdateTestCases = UpdateContestInputDTOMockFactory.buildProblemDTO(id = 3)
 
             val inputDTO =
@@ -161,6 +153,8 @@ class UpdateContestServiceTest : FunSpec({
                     problems = listOf(problemToDelete, problemToUpdate, problemToUpdateTestCases),
                 )
 
+            every { attachmentRepository.findById(any()) }
+                .returns(Optional.of(AttachmentMockFactory.build()))
             every { contestRepository.findById(any()) }
                 .returns(Optional.of(contest))
             val createdMember = MemberMockFactory.build()
@@ -177,13 +171,6 @@ class UpdateContestServiceTest : FunSpec({
                 .returnsArgument(0)
             every { hashAdapter.hash(any()) }
                 .returns("new_hashed_password")
-            val downloadAttachment =
-                DownloadAttachment(
-                    filename = "abc",
-                    url = "https://example.com/key",
-                )
-            every { bucketAdapter.createDownloadAttachment(any()) }
-                .returns(downloadAttachment)
 
             val result = sut.update(inputDTO)
 
@@ -196,9 +183,9 @@ class UpdateContestServiceTest : FunSpec({
             memberToUpdatePassword.password shouldBe "new_hashed_password"
             result.problems shouldContainExactlyInAnyOrder
                 listOf(
-                    createdProblem.toOutputDTO(bucketAdapter),
-                    problemToUpdate.toOutputDTO(bucketAdapter),
-                    problemToUpdateTestCases.toOutputDTO(bucketAdapter),
+                    createdProblem.toOutputDTO(),
+                    problemToUpdate.toOutputDTO(),
+                    problemToUpdateTestCases.toOutputDTO(),
                 )
         }
     }

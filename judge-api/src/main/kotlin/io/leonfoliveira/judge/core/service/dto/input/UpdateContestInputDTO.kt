@@ -2,7 +2,6 @@ package io.leonfoliveira.judge.core.service.dto.input
 
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import io.leonfoliveira.judge.core.domain.model.Attachment
 import jakarta.validation.Valid
 import jakarta.validation.constraints.AssertFalse
 import jakarta.validation.constraints.AssertTrue
@@ -11,6 +10,7 @@ import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import java.time.LocalDateTime
+import java.util.UUID
 
 data class UpdateContestInputDTO(
     val id: Int,
@@ -57,24 +57,18 @@ data class UpdateContestInputDTO(
         val id: Int? = null,
         @field:NotEmpty
         val title: String,
-        @field:NotEmpty
-        val description: String,
+        val descriptionKey: UUID,
         @field:Min(1)
         val timeLimit: Int,
-        @field:Valid
-        val testCases: Attachment? = null,
+        val testCasesKey: UUID,
     ) {
         fun toCreateDTO(): CreateContestInputDTO.ProblemDTO {
             return CreateContestInputDTO.ProblemDTO(
                 title = title,
-                description = description,
+                descriptionKey = descriptionKey,
                 timeLimit = timeLimit,
-                testCases = testCases!!,
+                testCasesKey = testCasesKey,
             )
         }
-
-        @get:AssertFalse(message = "id and testCases cannot be null at the same time")
-        val isIdAndTestCasesNull: Boolean
-            get() = id == null && testCases == null
     }
 }

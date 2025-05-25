@@ -6,6 +6,7 @@ import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
+import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
 import io.leonfoliveira.judge.core.service.dto.output.ContestOutputDTO
@@ -17,9 +18,9 @@ import org.springframework.validation.annotation.Validated
 @Service
 @Validated
 class UpdateContestService(
+    private val attachmentRepository: AttachmentRepository,
     private val contestRepository: ContestRepository,
     private val hashAdapter: HashAdapter,
-    private val bucketAdapter: BucketAdapter,
     private val createContestService: CreateContestService,
     private val deleteContestService: DeleteContestService,
 ) {
@@ -66,7 +67,7 @@ class UpdateContestService(
 
         contestRepository.save(contest)
 
-        return contest.toOutputDTO(bucketAdapter)
+        return contest.toOutputDTO()
     }
 
     private fun updateMember(
@@ -95,12 +96,19 @@ class UpdateContestService(
             problemsHash[problemDTO.id]
                 ?: throw NotFoundException("Could not find problem with id = ${problemDTO.id}")
 
-        problem.title = problemDTO.title
-        problem.description = problemDTO.description
-        problem.timeLimit = problemDTO.timeLimit
-        if (problemDTO.testCases != null) {
-            problem.testCases = problemDTO.testCases
+        if (problem.description.key != problemDTO.descriptionKey) {
+            attachmentRepository.findById(problemDTO.descriptionKey).orElseThrow {
+                NotFoundException("Could not find description attachment with key = ${problemDTO.descriptionKey}")
+            }
         }
+        if (problem.testCases.key != problemDTO.testCasesKey) {
+            attachmentRepository.findById(problemDTO.testCasesKey).orElseThrow {
+                NotFoundException("Could not find testCases attachment with key = ${problemDTO.testCasesKey}")
+            }
+        }
+
+        problem.title = problemDTO.title
+        problem.timeLimit = problemDTO.timeLimit
 
         return problem
     }
