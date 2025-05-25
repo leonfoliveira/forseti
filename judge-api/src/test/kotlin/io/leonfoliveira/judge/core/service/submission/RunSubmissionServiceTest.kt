@@ -63,6 +63,8 @@ class RunSubmissionServiceTest : FunSpec({
                 .returns(submission)
             every { submissionEmitterAdapter.emitForContest(submission) }
                 .returns(Unit)
+            every { submissionEmitterAdapter.emitForMember(submission) }
+                .returns(Unit)
 
             val result = sut.run(1)
 

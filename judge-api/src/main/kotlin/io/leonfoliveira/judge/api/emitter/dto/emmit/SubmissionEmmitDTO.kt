@@ -26,14 +26,16 @@ data class SubmissionEmmitDTO(
 fun Submission.toEmmitDTO(): SubmissionEmmitDTO {
     return SubmissionEmmitDTO(
         id = this.id,
-        problem = SubmissionEmmitDTO.ProblemDTO(
-            id = this.problem.id,
-            title = this.problem.title,
-        ),
-        member = SubmissionEmmitDTO.MemberDTO(
-            id = this.member.id,
-            name = this.member.name,
-        ),
+        problem =
+            SubmissionEmmitDTO.ProblemDTO(
+                id = this.problem.id,
+                title = this.problem.title,
+            ),
+        member =
+            SubmissionEmmitDTO.MemberDTO(
+                id = this.member.id,
+                name = this.member.name,
+            ),
         language = this.language,
         status = this.status,
         createdAt = this.createdAt,
