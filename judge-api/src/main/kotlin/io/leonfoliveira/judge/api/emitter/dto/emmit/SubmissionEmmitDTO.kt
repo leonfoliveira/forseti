@@ -34,7 +34,7 @@ fun Submission.toEmmitDTO(): SubmissionEmmitDTO {
             id = this.member.id,
             name = this.member.name,
         ),
-        language = this.language.name,
+        language = this.language,
         status = this.status,
         createdAt = this.createdAt,
     )
