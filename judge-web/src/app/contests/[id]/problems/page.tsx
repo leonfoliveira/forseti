@@ -28,9 +28,6 @@ import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { ProblemStatusBadge } from "@/app/contests/[id]/_component/problem-status-badge";
-import { useSubmissionForMemberListener } from "@/app/_listener/submission-for-member-listener";
-import { SubmissionEmmitDTO } from "@/core/listener/dto/emmit/SubmissionEmmitDTO";
-import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 
 export default function ContestProblemsPage({
   params,
@@ -44,7 +41,6 @@ export default function ContestProblemsPage({
   const { data: memberProblems, ...findAllProblemsForMemberAction } =
     useFindAllProblemsForMemberAction();
   const createSubmissionAction = useCreateSubmissionAction();
-  const submissionForMemberListener = useSubmissionForMemberListener();
 
   const submissionForm = useForm<SubmissionFormType>({
     resolver: joiResolver(submissionFormSchema),
@@ -64,38 +60,12 @@ export default function ContestProblemsPage({
     async function getProblems() {
       if (isContestant) {
         await findAllProblemsForMemberAction.act(id);
-        await submissionForMemberListener.subscribe(
-          member.id,
-          receiveSubmission,
-        );
       } else {
         await findAllProblemsAction.act(id);
       }
     }
     getProblems();
   }, []);
-
-  const receiveSubmission = (submission: SubmissionEmmitDTO) => {
-    if (submission.status === SubmissionStatus.JUDGING) return;
-    findAllProblemsForMemberAction.force((memberProblems) => {
-      if (!memberProblems) return memberProblems;
-      const problem = memberProblems.find(
-        (problem) => problem.id === submission.problem.id,
-      );
-      if (!problem) return memberProblems;
-      return memberProblems.map((it) =>
-        it.id === problem.id
-          ? {
-              ...it,
-              isAccepted: submission.status === SubmissionStatus.ACCEPTED,
-              wrongSubmissions:
-                problem.wrongSubmissions +
-                (submission.status !== SubmissionStatus.ACCEPTED ? 1 : 0),
-            }
-          : it,
-      );
-    });
-  };
 
   function makeSubmit(problemId: number) {
     return (data: SubmissionFormType) => {

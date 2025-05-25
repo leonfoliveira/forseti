@@ -119,7 +119,13 @@ class LeaderboardServiceTest : FunSpec({
 
             leaderboard shouldBe
                 LeaderboardOutputDTO(
-                    contestId = 1,
+                    contest =
+                        LeaderboardOutputDTO.ContestDTO(
+                            id = contest.id,
+                            title = contest.title,
+                            startAt = contest.startAt,
+                            endAt = contest.endAt,
+                        ),
                     problems =
                         listOf(
                             LeaderboardOutputDTO.ProblemDTO(

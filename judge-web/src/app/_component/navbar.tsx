@@ -27,7 +27,10 @@ export function Navbar({ contest, signInPath }: Props) {
     if (contest) {
       const interval = setInterval(() => {
         if (diffRef.current) {
-          const diff = new Date(contest.endAt).getTime() - new Date().getTime();
+          const diff = Math.max(
+            new Date(contest.endAt).getTime() - new Date().getTime(),
+            0,
+          );
           diffRef.current.textContent = formatDifference(diff);
           if (diff <= 1000 * 60 * 20) {
             diffRef.current.classList.add("text-red-500");

@@ -10,8 +10,6 @@ import { toLocaleString } from "@/app/_util/date-utils";
 import { formatLanguage } from "@/app/_util/contest-utils";
 import { useFindAllSubmissionsAction } from "@/app/_action/find-all-submissions-action";
 import { SubmissionStatusBadge } from "@/app/contests/[id]/_component/submission-status-badge";
-import { useSubmissionForContestListener } from "@/app/_listener/submission-for-contest-listener";
-import { SubmissionEmmitDTO } from "@/core/listener/dto/emmit/SubmissionEmmitDTO";
 
 export default function ContestTimelinePage({
   params,
@@ -19,31 +17,13 @@ export default function ContestTimelinePage({
   params: Promise<{ id: number }>;
 }) {
   const { id } = use(params);
-  const findAllSubmissionsAction = useFindAllSubmissionsAction();
-  const submissionForContestListener = useSubmissionForContestListener();
+  const { data: submissions, ...action } = useFindAllSubmissionsAction();
 
   useEffect(() => {
-    findAllSubmissionsAction.act(id);
-    submissionForContestListener.subscribe(id, receiveSubmission);
+    action.act(id);
   }, []);
 
-  function receiveSubmission(submission: SubmissionEmmitDTO) {
-    findAllSubmissionsAction.force((data) => {
-      if (!data) return data;
-      const existingSubmission = data.find((it) => it.id === submission.id);
-      if (!existingSubmission) return data;
-      return data.map((it) =>
-        it.id === submission.id
-          ? {
-              ...it,
-              status: submission.status,
-            }
-          : it,
-      );
-    });
-  }
-
-  if (findAllSubmissionsAction.isLoading) {
+  if (action.isLoading) {
     return (
       <div className="flex justify-center items-center py-10">
         <Spinner size="lg" />
@@ -65,7 +45,7 @@ export default function ContestTimelinePage({
         </TableRow>
       </TableSection>
       <TableSection>
-        {findAllSubmissionsAction.data?.toReversed().map((submission) => (
+        {submissions?.toReversed().map((submission) => (
           <TableRow
             key={submission.id}
             className="hover:bg-gray-100 transition"

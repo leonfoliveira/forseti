@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { UnwrapPromise } from "next/dist/lib/coalesced-function";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,7 +15,7 @@ type ActionType<TFn extends ActionFn> = {
   error?: Error;
   data?: UnwrapPromise<ReturnType<TFn>>;
   act: (...args: Parameters<TFn>) => Promise<ReturnType<TFn>>;
-  force: (
+  setData: (
     cb: (
       data?: UnwrapPromise<ReturnType<TFn>>,
     ) => UnwrapPromise<ReturnType<TFn>>,
@@ -32,19 +32,22 @@ export function useAction<TFn extends ActionFn>(
     data: initialData,
   });
 
-  async function act(...args: Parameters<TFn>) {
-    setState({ isLoading: true, error: undefined, data: undefined });
-    try {
-      const data = (await fn(...args)) as ReturnType<TFn>;
-      setState({ isLoading: false, error: undefined, data });
-      return data;
-    } catch (error) {
-      setState({ isLoading: false, error: error as Error, data: undefined });
-      throw error;
-    }
-  }
+  const act = useCallback(
+    async (...args: Parameters<TFn>) => {
+      setState({ isLoading: true, error: undefined, data: undefined });
+      try {
+        const data = (await fn(...args)) as ReturnType<TFn>;
+        setState({ isLoading: false, error: undefined, data });
+        return data;
+      } catch (error) {
+        setState({ isLoading: false, error: error as Error, data: undefined });
+        throw error;
+      }
+    },
+    [fn],
+  );
 
-  function force(
+  function setData(
     cb: (
       data?: UnwrapPromise<ReturnType<TFn>>,
     ) => UnwrapPromise<ReturnType<TFn>>,
@@ -52,5 +55,5 @@ export function useAction<TFn extends ActionFn>(
     setState((prevState) => ({ ...prevState, data: cb(prevState.data) }));
   }
 
-  return { ...state, act, force };
+  return { ...state, act, setData };
 }

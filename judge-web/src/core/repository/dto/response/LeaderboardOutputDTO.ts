@@ -1,5 +1,10 @@
 export type LeaderboardOutputDTO = {
-  contestId: number;
+  contest: {
+    id: number;
+    title: string;
+    startAt: string;
+    endAt: string;
+  };
   problems: {
     id: number;
     title: string;

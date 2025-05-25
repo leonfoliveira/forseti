@@ -42,7 +42,13 @@ class LeaderboardService(
             }.sortedWith(compareBy({ -it.score }, { it.penalty }, { it.name }))
 
         return LeaderboardOutputDTO(
-            contestId = contestId,
+            contest =
+                LeaderboardOutputDTO.ContestDTO(
+                    id = contest.id,
+                    title = contest.title,
+                    startAt = contest.startAt,
+                    endAt = contest.endAt,
+                ),
             problems = problems,
             members = members,
         )

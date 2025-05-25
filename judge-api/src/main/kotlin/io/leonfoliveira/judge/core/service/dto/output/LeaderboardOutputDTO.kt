@@ -1,10 +1,19 @@
 package io.leonfoliveira.judge.core.service.dto.output
 
+import java.time.LocalDateTime
+
 data class LeaderboardOutputDTO(
-    val contestId: Int,
+    val contest: ContestDTO,
     val problems: List<ProblemDTO>,
     val members: List<MemberDTO>,
 ) {
+    data class ContestDTO(
+        val id: Int,
+        val title: String,
+        val startAt: LocalDateTime,
+        val endAt: LocalDateTime,
+    )
+
     data class ProblemDTO(
         val id: Int,
         val title: String,
