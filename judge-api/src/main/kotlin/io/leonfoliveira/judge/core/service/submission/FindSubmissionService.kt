@@ -1,21 +1,18 @@
 package io.leonfoliveira.judge.core.service.submission
 
+import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
-import io.leonfoliveira.judge.core.service.dto.output.SubmissionOutputDTO
-import io.leonfoliveira.judge.core.service.dto.output.toOutputDTO
 import org.springframework.stereotype.Service
 
 @Service
 class FindSubmissionService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
-    private val bucketAdapter: BucketAdapter,
 ) {
-    fun findAllByContest(contestId: Int): List<SubmissionOutputDTO> {
+    fun findAllByContest(contestId: Int): List<Submission> {
         val contest =
             contestRepository.findById(contestId).orElseThrow {
                 NotFoundException("Could not find contest with id = $contestId")
@@ -28,14 +25,14 @@ class FindSubmissionService(
                 it.submissions
             }.flatten()
 
-        return submissions.sortedBy { it.createdAt }.map { it.toOutputDTO() }
+        return submissions.sortedBy { it.createdAt }
     }
 
-    fun findAllByMember(memberId: Int): List<SubmissionOutputDTO> {
+    fun findAllByMember(memberId: Int): List<Submission> {
         val member =
             memberRepository.findById(memberId).orElseThrow {
                 NotFoundException("Could not find member with id = $memberId")
             }
-        return member.submissions.sortedBy { it.createdAt }.map { it.toOutputDTO() }
+        return member.submissions.sortedBy { it.createdAt }
     }
 }

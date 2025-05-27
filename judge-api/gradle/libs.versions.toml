@@ -17,6 +17,7 @@ snakeyaml = "2.4"
 spring-boot = "3.4.5"
 spring-cloud = "3.3.0"
 springmockk = "4.0.2"
+testcontainers = "1.21.0"
 
 [libraries]
 hibernate-envers = { module = "org.hibernate.orm:hibernate-envers", version.ref = "hibernate-envers" }
@@ -46,6 +47,9 @@ spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-start
 spring-boot-starter-websocket = { module = "org.springframework.boot:spring-boot-starter-websocket", version.ref = "spring-boot" }
 spring-boot-dev-tools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
 springmockk = { module = "com.ninja-squad:springmockk", version.ref = "springmockk" }
+testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-localstack = { module = "org.testcontainers:localstack", version.ref = "testcontainers" }
+testcontainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 
 [bundles]
 kotest = [
@@ -68,6 +72,11 @@ spring = [
     "spring-boot-starter-validation",
     "spring-boot-starter-web",
     "spring-boot-starter-websocket"
+]
+testcontainers = [
+    "testcontainers-junit-jupiter",
+    "testcontainers-localstack",
+    "testcontainers-postgres",
 ]
 
 [plugins]

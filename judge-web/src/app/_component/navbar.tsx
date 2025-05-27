@@ -1,27 +1,20 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useContainer } from "@/app/_atom/container-atom";
+import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/app/_component/form/button";
-import { Authorization } from "@/core/domain/model/Authorization";
-import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestShortResponseDTO";
+import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
 import { formatDifference } from "@/app/_util/date-utils";
+import { authorizationService } from "@/app/_composition";
+import { useAuthorization } from "@/app/_util/authorization-hook";
 
 type Props = {
-  contest?: ContestShortResponseDTO;
+  contest?: ContestSummaryResponseDTO;
   signInPath: string;
 };
 
 export function Navbar({ contest, signInPath }: Props) {
-  const { authorizationService } = useContainer();
   const router = useRouter();
-  const [authorization, setAuthorization] = useState<
-    Authorization | undefined
-  >();
+  const authorization = useAuthorization();
   const diffRef = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    setAuthorization(authorizationService.getAuthorization());
-  }, []);
 
   useEffect(() => {
     if (contest) {

@@ -1,5 +1,6 @@
 package io.leonfoliveira.judge.core.service.dto.input
 
+import io.leonfoliveira.judge.core.domain.entity.Attachment
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.enumerate.Language
 import jakarta.validation.Valid
@@ -41,9 +42,9 @@ data class CreateContestInputDTO(
     data class ProblemDTO(
         @field:NotEmpty
         val title: String,
-        val descriptionKey: UUID,
+        val description: AttachmentInputDTO,
         @field:Min(1)
         val timeLimit: Int,
-        val testCasesKey: UUID,
+        val testCases: AttachmentInputDTO,
     )
 }

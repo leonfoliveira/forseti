@@ -1,29 +1,31 @@
-import { useContainer } from "@/app/_atom/container-atom";
 import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { redirect } from "next/navigation";
-import { SubmissionEmmitDTO } from "@/core/listener/dto/emmit/SubmissionEmmitDTO";
-import { recalculateSubmissions } from "@/app/contests/[id]/_util/submissions-calculator";
-import { useSubmissionForMemberListener } from "@/app/_listener/submission-for-member-listener";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
+import { recalculatePrivateSubmissions } from "@/app/contests/[id]/_util/submissions-calculator";
+import { useEffect, useRef } from "react";
+import { submissionService } from "@/app/_composition";
+import { CompatClient } from "@stomp/stompjs";
 
 export function useFindAllSubmissionsForMemberAction() {
-  const { authorizationService, submissionService } = useContainer();
-  const submissionForMemberListener = useSubmissionForMemberListener();
   const toast = useToast();
   const action = useAction(findAllForMember);
+  const listenerRef = useRef<CompatClient>(null);
 
-  async function findAllForMember(contestId: number) {
+  useEffect(() => {
+    return () => {
+      if (listenerRef.current) {
+        submissionService.unsubscribe(listenerRef.current);
+      }
+    };
+  }, []);
+
+  async function findAllForMember(contestId: number, memberId: number) {
     try {
       const submissions = await submissionService.findAllForMember();
-      const member = authorizationService.getAuthorization()?.member;
-      if (member) {
-        await submissionForMemberListener.subscribe(
-          member.id,
-          receiveSubmission,
-        );
-      }
+      await submissionService.subscribeForMember(memberId, receiveSubmission);
       return submissions;
     } catch (error) {
       if (
@@ -37,9 +39,9 @@ export function useFindAllSubmissionsForMemberAction() {
     }
   }
 
-  function receiveSubmission(newSubmission: SubmissionEmmitDTO) {
+  function receiveSubmission(newSubmission: SubmissionPublicResponseDTO) {
     action.setData((data) => {
-      return recalculateSubmissions(data, newSubmission);
+      return recalculatePrivateSubmissions(data, newSubmission);
     });
   }
 

@@ -57,17 +57,17 @@ data class UpdateContestInputDTO(
         val id: Int? = null,
         @field:NotEmpty
         val title: String,
-        val descriptionKey: UUID,
+        val description: AttachmentInputDTO,
         @field:Min(1)
         val timeLimit: Int,
-        val testCasesKey: UUID,
+        val testCases: AttachmentInputDTO,
     ) {
         fun toCreateDTO(): CreateContestInputDTO.ProblemDTO {
             return CreateContestInputDTO.ProblemDTO(
                 title = title,
-                descriptionKey = descriptionKey,
+                description = description,
                 timeLimit = timeLimit,
-                testCasesKey = testCasesKey,
+                testCases = testCases,
             )
         }
     }

@@ -12,12 +12,10 @@ import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTOMockFactory
-import io.leonfoliveira.judge.core.service.dto.output.toOutputDTO
 import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
@@ -176,16 +174,16 @@ class UpdateContestServiceTest : FunSpec({
 
             result.members shouldContainExactlyInAnyOrder
                 listOf(
-                    createdMember.toOutputDTO(),
-                    memberToUpdate.toOutputDTO(),
-                    memberToUpdatePassword.toOutputDTO(),
+                    createdMember,
+                    memberToUpdate,
+                    memberToUpdatePassword,
                 )
             memberToUpdatePassword.password shouldBe "new_hashed_password"
             result.problems shouldContainExactlyInAnyOrder
                 listOf(
-                    createdProblem.toOutputDTO(),
-                    problemToUpdate.toOutputDTO(),
-                    problemToUpdateTestCases.toOutputDTO(),
+                    createdProblem,
+                    problemToUpdate,
+                    problemToUpdateTestCases,
                 )
         }
     }

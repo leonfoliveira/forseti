@@ -1,34 +1,37 @@
 import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
-import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
+import { ContestPrivateResponseDTO } from "@/core/repository/dto/response/ContestPrivateResponseDTO";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
-import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestShortResponseDTO";
+import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
 import { LeaderboardOutputDTO } from "@/core/repository/dto/response/LeaderboardOutputDTO";
-import { ProblemShortResponseDTO } from "@/core/repository/dto/response/ProblemShortResponseDTO";
-import { SubmissionResponseDTO } from "@/core/repository/dto/response/SubmissionResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/ProblemPublicResponseDTO";
 import { ProblemMemberResponseDTO } from "@/core/repository/dto/response/ProblemMemberResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/ContestPublicResponseDTO";
 
 export interface ContestRepository {
   createContest(
     requestDTO: CreateContestRequestDTO,
-  ): Promise<ContestResponseDTO>;
+  ): Promise<ContestPrivateResponseDTO>;
 
   updateContest(
     requestDTO: UpdateContestRequestDTO,
-  ): Promise<ContestResponseDTO>;
+  ): Promise<ContestPrivateResponseDTO>;
 
-  findAllContests(): Promise<ContestShortResponseDTO[]>;
+  findAllContests(): Promise<ContestSummaryResponseDTO[]>;
 
-  findFullContestById(id: number): Promise<ContestResponseDTO>;
+  findContestByIdForRoot(id: number): Promise<ContestPrivateResponseDTO>;
 
-  findContestById(id: number): Promise<ContestShortResponseDTO>;
+  findContestById(id: number): Promise<ContestPublicResponseDTO>;
+
+  findContestSummaryById(id: number): Promise<ContestSummaryResponseDTO>;
 
   deleteContest(id: number): Promise<void>;
 
   getLeaderboard(id: number): Promise<LeaderboardOutputDTO>;
 
-  findAllProblems(id: number): Promise<ProblemShortResponseDTO[]>;
+  findAllProblems(id: number): Promise<ProblemPublicResponseDTO[]>;
 
   findAllProblemsForMember(id: number): Promise<ProblemMemberResponseDTO[]>;
 
-  findAllSubmissions(id: number): Promise<SubmissionResponseDTO[]>;
+  findAllSubmissions(id: number): Promise<SubmissionPublicResponseDTO[]>;
 }

@@ -1,16 +1,14 @@
 package io.leonfoliveira.judge.core.service.contest
 
+import io.leonfoliveira.judge.core.domain.entity.Contest
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.Problem
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
-import io.leonfoliveira.judge.core.service.dto.output.ContestOutputDTO
-import io.leonfoliveira.judge.core.service.dto.output.toOutputDTO
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
@@ -26,7 +24,7 @@ class UpdateContestService(
 ) {
     fun update(
         @Valid inputDTO: UpdateContestInputDTO,
-    ): ContestOutputDTO {
+    ): Contest {
         if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
             throw ForbiddenException("Contest cannot have ROOT members")
         }
@@ -65,9 +63,7 @@ class UpdateContestService(
         contest.members = createdMembers + updatedMembers
         contest.problems = createdProblems + updatedProblems
 
-        contestRepository.save(contest)
-
-        return contest.toOutputDTO()
+        return contestRepository.save(contest)
     }
 
     private fun updateMember(
@@ -96,14 +92,14 @@ class UpdateContestService(
             problemsHash[problemDTO.id]
                 ?: throw NotFoundException("Could not find problem with id = ${problemDTO.id}")
 
-        if (problem.description.key != problemDTO.descriptionKey) {
-            attachmentRepository.findById(problemDTO.descriptionKey).orElseThrow {
-                NotFoundException("Could not find description attachment with key = ${problemDTO.descriptionKey}")
+        if (problem.description.key != problemDTO.description.key) {
+            attachmentRepository.findById(problemDTO.description.key).orElseThrow {
+                NotFoundException("Could not find description attachment with key = ${problemDTO.description.key}")
             }
         }
-        if (problem.testCases.key != problemDTO.testCasesKey) {
-            attachmentRepository.findById(problemDTO.testCasesKey).orElseThrow {
-                NotFoundException("Could not find testCases attachment with key = ${problemDTO.testCasesKey}")
+        if (problem.testCases.key != problemDTO.testCases) {
+            attachmentRepository.findById(problemDTO.testCases.key).orElseThrow {
+                NotFoundException("Could not find testCases attachment with key = ${problemDTO.testCases.key}")
             }
         }
 

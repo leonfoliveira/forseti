@@ -5,8 +5,6 @@ import { Button } from "@/app/_component/form/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
-  faDownload,
-  faEdit,
   faPlus,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -18,45 +16,29 @@ import {
   formatStatus,
 } from "@/app/_util/contest-utils";
 import { Badge, BadgeVariant } from "@/app/_component/badge";
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { Spinner } from "@/app/_component/spinner";
 import { TextInput } from "@/app/_component/form/text-input";
 import { ContestFormType } from "@/app/root/contests/_form/contest-form-type";
 import { DateInput } from "@/app/_component/form/date-input";
 import { NumberInput } from "@/app/_component/form/number-input";
-import { FileInput } from "@/app/_component/form/file-input";
-import { ReadOnlyInput } from "@/app/_component/form/read-only-input";
-import { TextArea } from "@/app/_component/form/text-area";
-import { DownloadAttachmentResponseDTO } from "@/core/repository/dto/response/DownloadAttachmentResponseDTO";
-import { Modal } from "@/app/_component/modal";
-import { MarkdownDisplay } from "@/app/_component/markdown-display";
+
 import { Form } from "@/app/_component/form/form";
+import { FileInput } from "@/app/_component/form/file-input";
+import { useRouter } from "next/navigation";
 
 type Props = {
   header: string;
   status?: ContestStatus;
-  onBack: () => void;
   onSubmit: (data: ContestFormType) => Promise<void>;
-  onDownload?: (attachment: DownloadAttachmentResponseDTO) => void;
   form: UseFormReturn<ContestFormType>;
   isDisabled: boolean;
   isLoading?: boolean;
 };
 
 export function ContestForm(props: Props) {
-  const {
-    header,
-    onBack,
-    onSubmit,
-    onDownload,
-    form,
-    isDisabled,
-    status,
-    isLoading,
-  } = props;
-  const {
-    formState: { errors },
-  } = form;
+  const { header, onSubmit, form, isDisabled, status, isLoading } = props;
+  const router = useRouter();
 
   const membersFields = useFieldArray({
     control: form.control,
@@ -66,8 +48,6 @@ export function ContestForm(props: Props) {
     control: form.control,
     name: "problems",
   });
-
-  const [openDescription, setOpenDescription] = useState<number | undefined>();
 
   function getBadgeVariant() {
     return {
@@ -84,7 +64,7 @@ export function ContestForm(props: Props) {
           <div className="flex items-center">
             <FontAwesomeIcon
               icon={faChevronLeft}
-              onClick={onBack}
+              onClick={() => router.push("/root/contests")}
               className="cursor-pointer text-2xl"
             />
             <h1 className="text-2xl ml-5">{header}</h1>
@@ -188,15 +168,11 @@ export function ContestForm(props: Props) {
                   name={`problems.${index}.title`}
                   label="Title"
                 />
-                <ReadOnlyInput
+                <FileInput
+                  fm={form}
+                  originalName={`problems.${index}.description`}
+                  name={`problems.${index}.newDescription`}
                   label="Description"
-                  value={
-                    !!form.watch(`problems.${index}.description`) ? "....." : ""
-                  }
-                  error={errors.problems?.[index]?.description?.message}
-                  onClick={() => setOpenDescription(index)}
-                  readOnly
-                  className="text-center tracking-wider"
                 />
                 <NumberInput
                   fm={form}
@@ -204,41 +180,12 @@ export function ContestForm(props: Props) {
                   label="Time Limit"
                   step={500}
                 />
-                {!!form.watch(`problems.${index}._testCases`) &&
-                !form.watch(`problems.${index}.forceSelect`) ? (
-                  <div className="mt-[1.2em] flex justify-center">
-                    <Button
-                      className="rounded-r-none flex-1"
-                      onClick={() =>
-                        onDownload?.(
-                          field._testCases as DownloadAttachmentResponseDTO,
-                        )
-                      }
-                      disabled={false}
-                    >
-                      <FontAwesomeIcon icon={faDownload} />
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        form.setValue(`problems.${index}.forceSelect`, true)
-                      }
-                      variant="warning"
-                      className="rounded-l-none flex-1"
-                    >
-                      <FontAwesomeIcon icon={faEdit} />
-                    </Button>
-                  </div>
-                ) : (
-                  <FileInput
-                    fm={form}
-                    name={`problems.${index}.testCases`}
-                    label="Test Cases"
-                    onClean={() => {
-                      form.setValue(`problems.${index}.forceSelect`, false);
-                      form.setValue(`problems.${index}.testCases`, undefined);
-                    }}
-                  />
-                )}
+                <FileInput
+                  fm={form}
+                  originalName={`problems.${index}.testCases`}
+                  name={`problems.${index}.newTestCases`}
+                  label="Test Cases"
+                />
                 <Button
                   onClick={() => problemsFields.remove(index)}
                   variant="outline-danger"
@@ -258,42 +205,6 @@ export function ContestForm(props: Props) {
           </Button>
         </div>
       </div>
-
-      {openDescription != undefined && (
-        <Modal>
-          <div className="flex flex-col h-full p-4">
-            <div className="flex justify-between items-center">
-              <p className="text-lg font-semibold m-0">Description</p>
-              <Button onClick={() => setOpenDescription(undefined)}>
-                Save
-              </Button>
-            </div>
-            <div className="flex-1 gap-4 grid grid-cols-2 mt-3">
-              <div className="self-stretch flex flex-col">
-                <TextArea
-                  fm={form}
-                  name={`problems.${openDescription}.description`}
-                  className="resize-none flex-1"
-                  placeholder={`Enter your text here. You can use Markdown for formatting (e.g., **bold**, *italics*, \`code\`).
-                  
-For LaTeX, enclose your mathematical expressions with '$' for inline (e.g., $E=mc^2$) or '$$' for block equations:
-$$ \\int_0^\\infty e^{-x^2} dx = \\frac{\sqrt{\\pi}}{2} $$
-                  `}
-                />
-              </div>
-              <div className="self-stretch flex flex-col">
-                <div className="flex-1">
-                  <MarkdownDisplay
-                    markdown={form.watch(
-                      `problems.${openDescription}.description`,
-                    )}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </Modal>
-      )}
     </Form>
   );
 }

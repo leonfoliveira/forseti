@@ -3,6 +3,7 @@ package io.leonfoliveira.judge.api.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
+import io.leonfoliveira.judge.config.ControllerTest
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.model.Authorization
 import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
@@ -16,8 +17,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 
-@AutoConfigureMockMvc
-@SpringBootTest
+@ControllerTest([AuthenticationController::class])
 class AuthenticationControllerTest(
     val mockMvc: MockMvc,
     val objectMapper: ObjectMapper,

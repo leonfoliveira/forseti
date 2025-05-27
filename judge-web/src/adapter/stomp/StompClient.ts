@@ -1,53 +1,40 @@
 import SockJS from "sockjs-client";
-import { CompatClient, Stomp, StompSubscription } from "@stomp/stompjs";
+import { CompatClient, Stomp } from "@stomp/stompjs";
+import { ServerException } from "@/core/domain/exception/ServerException";
 
 export class StompClient {
-  private readonly client: CompatClient;
-  private listeners: Map<string, StompSubscription> = new Map();
-  private isConnected = false;
+  constructor(private readonly wsUrl: string) {}
 
-  constructor(private readonly wsUrl: string) {
+  async connect() {
     const socket = new SockJS(this.wsUrl);
-    this.client = Stomp.over(socket);
-  }
+    const client = Stomp.over(socket);
 
-  connect(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (this.isConnected) {
-        resolve();
-        return;
-      }
-
-      this.client.onConnect = () => {
-        this.isConnected = true;
-        resolve();
+    return new Promise<CompatClient>((resolve, reject) => {
+      client.onConnect = () => {
+        resolve(client);
       };
 
-      this.client.onStompError = (error) => {
-        reject(new Error(`STOMP error: ${error.headers["message"]}`));
+      client.onStompError = (error) => {
+        reject(
+          new ServerException(
+            error.headers["message"] || "Unknown STOMP error",
+          ),
+        );
       };
 
-      this.client.activate();
+      client.activate();
     });
   }
 
-  async subscribe<TBody>(topic: string, listener: (body: TBody) => void) {
-    await this.connect();
+  async disconnect(client: CompatClient) {
+    if (client.connected) {
+      return new Promise<void>((resolve) => {
+        client.onDisconnect = () => {
+          resolve();
+        };
 
-    const subscription = this.client.subscribe(`/topic${topic}`, (message) => {
-      const body = JSON.parse(message.body);
-      listener(body);
-    });
-
-    this.listeners.set(subscription.id, subscription);
-    return subscription.id;
-  }
-
-  unsubscribe(id: string) {
-    const subscription = this.listeners.get(id);
-    if (subscription) {
-      subscription.unsubscribe();
-      this.listeners.delete(id);
+        client.deactivate();
+      });
     }
   }
 }

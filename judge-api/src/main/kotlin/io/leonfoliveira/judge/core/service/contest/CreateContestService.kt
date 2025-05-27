@@ -5,13 +5,10 @@ import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.Problem
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTO
-import io.leonfoliveira.judge.core.service.dto.output.ContestOutputDTO
-import io.leonfoliveira.judge.core.service.dto.output.toOutputDTO
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
@@ -25,7 +22,7 @@ class CreateContestService(
 ) {
     fun create(
         @Valid inputDTO: CreateContestInputDTO,
-    ): ContestOutputDTO {
+    ): Contest {
         if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
             throw ForbiddenException("Contest cannot have ROOT members")
         }
@@ -41,9 +38,7 @@ class CreateContestService(
         contest.members = inputDTO.members.map { createMember(contest, it) }
         contest.problems = inputDTO.problems.map { createProblem(contest, it) }
 
-        contestRepository.save(contest)
-
-        return contest.toOutputDTO()
+        return contestRepository.save(contest)
     }
 
     fun createMember(
@@ -67,11 +62,11 @@ class CreateContestService(
         contest: Contest,
         problemDTO: CreateContestInputDTO.ProblemDTO,
     ): Problem {
-        val description = attachmentRepository.findById(problemDTO.descriptionKey).orElseThrow {
-            NotFoundException("Could not find description attachment with key = ${problemDTO.descriptionKey}")
+        val description = attachmentRepository.findById(problemDTO.description.key).orElseThrow {
+            NotFoundException("Could not find description attachment with key = ${problemDTO.description.key}")
         }
-        val testCases = attachmentRepository.findById(problemDTO.testCasesKey).orElseThrow {
-            NotFoundException("Could not find testCases attachment with key = ${problemDTO.testCasesKey}")
+        val testCases = attachmentRepository.findById(problemDTO.testCases.key).orElseThrow {
+            NotFoundException("Could not find testCases attachment with key = ${problemDTO.testCases.key}")
         }
 
         val problem =

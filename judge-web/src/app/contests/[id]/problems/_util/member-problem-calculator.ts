@@ -1,10 +1,10 @@
 import { ProblemMemberResponseDTO } from "@/core/repository/dto/response/ProblemMemberResponseDTO";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionEmmitDTO } from "@/core/listener/dto/emmit/SubmissionEmmitDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
 
 export function recalculateMemberProblems(
   memberProblems: ProblemMemberResponseDTO[] | undefined,
-  submission: SubmissionEmmitDTO,
+  submission: SubmissionPublicResponseDTO,
 ): ProblemMemberResponseDTO[] | undefined {
   if (!memberProblems) return undefined;
   return memberProblems.map((problem) => {
@@ -15,7 +15,7 @@ export function recalculateMemberProblems(
 
 export function recalculateMemberProblem(
   problemMember: ProblemMemberResponseDTO,
-  submission: SubmissionEmmitDTO,
+  submission: SubmissionPublicResponseDTO,
 ): ProblemMemberResponseDTO {
   return {
     ...problemMember,

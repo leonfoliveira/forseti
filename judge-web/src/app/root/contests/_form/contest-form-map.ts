@@ -1,4 +1,4 @@
-import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
+import { ContestPrivateResponseDTO } from "@/core/repository/dto/response/ContestPrivateResponseDTO";
 import { Language } from "@/core/domain/enumerate/Language";
 import {
   ContestFormMemberType,
@@ -8,6 +8,7 @@ import {
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";
+import { Attachment } from "@/core/domain/model/Attachment";
 
 export function toCreateContestRequestDTO(
   data: ContestFormType,
@@ -37,9 +38,11 @@ export function toUpdateRequestDTO(
     return {
       id: problem._id,
       title: problem.title as string,
-      description: problem.description as string,
+      description: problem.description as Attachment | undefined,
+      newDescription: problem.newDescription as File | undefined,
       timeLimit: problem.timeLimit as number,
-      testCases: problem.testCases as File | undefined,
+      testCases: problem.testCases as Attachment | undefined,
+      newTestCases: problem.newTestCases as File | undefined,
     };
   }
 
@@ -49,13 +52,15 @@ export function toUpdateRequestDTO(
     languages: data.languages as Language[],
     startAt: data.startAt as Date,
     endAt: data.endAt as Date,
-    members: (data.members as []).map(mapMember),
-    problems: (data.problems as []).map(mapProblem),
+    members: (data.members || []).map(mapMember),
+    problems: (data.problems || []).map(mapProblem),
   };
 }
 
-export function fromResponseDTO(contest: ContestResponseDTO): ContestFormType {
-  function mapMember(member: ContestResponseDTO["members"][number]) {
+export function fromResponseDTO(
+  contest: ContestPrivateResponseDTO,
+): ContestFormType {
+  function mapMember(member: ContestPrivateResponseDTO["members"][number]) {
     return {
       _id: member.id,
       type: member.type,
@@ -64,13 +69,15 @@ export function fromResponseDTO(contest: ContestResponseDTO): ContestFormType {
     };
   }
 
-  function mapProblem(problem: ContestResponseDTO["problems"][number]) {
+  function mapProblem(problem: ContestPrivateResponseDTO["problems"][number]) {
     return {
       _id: problem.id,
       title: problem.title,
       description: problem.description,
+      newDescription: undefined,
       timeLimit: problem.timeLimit,
-      _testCases: problem.testCases,
+      testCases: problem.testCases,
+      newTestCases: undefined,
     };
   }
 

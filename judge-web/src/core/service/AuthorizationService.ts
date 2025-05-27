@@ -5,8 +5,8 @@ export class AuthorizationService {
   constructor(
     private readonly authorizationRepository: AuthorizationRepository,
   ) {}
-  isAuthorized(): boolean {
-    return this.authorizationRepository.getAuthorization() !== null;
+  setAuthorization(authorization: Authorization): void {
+    this.authorizationRepository.setAuthorization(authorization);
   }
 
   getAuthorization(): Authorization | undefined {

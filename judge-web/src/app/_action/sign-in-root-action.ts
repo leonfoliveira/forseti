@@ -1,12 +1,11 @@
 import { RootSignInFormType } from "@/app/auth/_form/sign-in-form-type";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useToast } from "@/app/_util/toast-hook";
-import { useContainer } from "@/app/_atom/container-atom";
 import { useRouter } from "next/navigation";
 import { useAction } from "@/app/_util/action-hook";
+import { authenticationService } from "@/app/_composition";
 
 export function useRootSignInAction() {
-  const { authenticationService } = useContainer();
   const toast = useToast();
   const router = useRouter();
 

@@ -45,7 +45,7 @@ export default function ContestTimelinePage({
         </TableRow>
       </TableSection>
       <TableSection>
-        {submissions?.toReversed().map((submission) => (
+        {submissions?.map((submission) => (
           <TableRow
             key={submission.id}
             className="hover:bg-gray-100 transition"

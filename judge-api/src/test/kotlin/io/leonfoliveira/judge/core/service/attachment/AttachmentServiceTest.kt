@@ -8,10 +8,10 @@ import io.leonfoliveira.judge.core.domain.entity.AttachmentMockFactory
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
+import io.leonfoliveira.judge.core.service.dto.output.AttachmentDownloadOutputDTO
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import io.mockk.verify
 import java.util.Optional
 import java.util.UUID
 import org.springframework.web.multipart.MultipartFile
@@ -53,12 +53,14 @@ class AttachmentServiceTest : FunSpec({
         test("should download attachment") {
             val key = UUID.randomUUID()
             val bytes = ByteArray(0)
-            every { attachmentRepository.findById(key) } returns Optional.of(AttachmentMockFactory.build())
+            val attachment = AttachmentMockFactory.build(key = key)
+            every { attachmentRepository.findById(key) } returns Optional.of(attachment)
             every { bucketAdapter.download(key) } returns bytes
 
             val result = sut.download(key)
 
-            result shouldBe bytes
+            result.attachment shouldBe attachment
+            result.bytes shouldBe bytes
         }
     }
 })

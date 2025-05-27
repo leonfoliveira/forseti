@@ -1,9 +1,8 @@
-import { useContainer } from "@/app/_atom/container-atom";
 import { redirect, useRouter } from "next/navigation";
 import { useAction } from "@/app/_util/action-hook";
+import { authorizationService } from "@/app/_composition";
 
 export function useRootSignOutAction() {
-  const { authorizationService } = useContainer();
   const router = useRouter();
 
   function signOut(shouldRedirect: boolean = true) {

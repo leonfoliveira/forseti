@@ -1,9 +1,15 @@
 package io.leonfoliveira.judge.api.controller
 
-import io.leonfoliveira.judge.api.controller.dto.response.ContestShortResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.ProblemShortResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.SubmissionShortResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.toShortResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ContestPrivateResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ContestSummaryResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ContestPublicResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ProblemPublicResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ProblemWithStatusResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.SubmissionPublicResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toPrivateResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toPublicResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.toSummaryResponseDTO
 import io.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.leonfoliveira.judge.api.util.Private
 import io.leonfoliveira.judge.core.domain.entity.Member
@@ -14,9 +20,7 @@ import io.leonfoliveira.judge.core.service.contest.FindContestService
 import io.leonfoliveira.judge.core.service.contest.UpdateContestService
 import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTO
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
-import io.leonfoliveira.judge.core.service.dto.output.ContestOutputDTO
 import io.leonfoliveira.judge.core.service.dto.output.LeaderboardOutputDTO
-import io.leonfoliveira.judge.core.service.dto.output.ProblemMemberOutputDTO
 import io.leonfoliveira.judge.core.service.leaderboard.LeaderboardService
 import io.leonfoliveira.judge.core.service.problem.FindProblemService
 import io.leonfoliveira.judge.core.service.submission.FindSubmissionService
@@ -47,13 +51,13 @@ class ContestController(
     @Transactional
     fun createContest(
         @RequestBody body: CreateContestInputDTO,
-    ): ResponseEntity<ContestOutputDTO> {
+    ): ResponseEntity<ContestPrivateResponseDTO> {
         val authentication = AuthorizationContextUtil.getAuthorization()
         if (authentication.type != Member.Type.ROOT) {
             throw ForbiddenException()
         }
         val contest = createContestService.create(body)
-        return ResponseEntity.ok(contest)
+        return ResponseEntity.ok(contest.toPrivateResponseDTO())
     }
 
     @PutMapping
@@ -61,33 +65,44 @@ class ContestController(
     @Transactional
     fun updateContest(
         @RequestBody body: UpdateContestInputDTO,
-    ): ResponseEntity<ContestOutputDTO> {
+    ): ResponseEntity<ContestPrivateResponseDTO> {
         val contest = updateContestService.update(body)
-        return ResponseEntity.ok(contest)
+        return ResponseEntity.ok(contest.toPrivateResponseDTO())
     }
 
     @GetMapping
     @Private(Member.Type.ROOT)
-    fun findAllContest(): ResponseEntity<List<ContestShortResponseDTO>> {
+    fun findAllContest(): ResponseEntity<List<ContestSummaryResponseDTO>> {
         val contests = findContestService.findAll()
-        return ResponseEntity.ok(contests.map { it.toShortResponseDTO() })
+        return ResponseEntity.ok(contests.map { it.toSummaryResponseDTO() })
     }
 
-    @GetMapping("/{id}/full")
+    @GetMapping("/{id}/root")
     @Private(Member.Type.ROOT)
-    fun findFullContestById(
+    fun findContestByIdForRoot(
         @PathVariable id: Int,
-    ): ResponseEntity<ContestOutputDTO> {
+    ): ResponseEntity<ContestPrivateResponseDTO> {
         val contest = findContestService.findById(id)
-        return ResponseEntity.ok(contest)
+        return ResponseEntity.ok(contest.toPrivateResponseDTO())
     }
 
     @GetMapping("/{id}")
     fun findContestById(
         @PathVariable id: Int,
-    ): ResponseEntity<ContestShortResponseDTO> {
+    ): ResponseEntity<ContestPublicResponseDTO> {
         val contest = findContestService.findById(id)
-        return ResponseEntity.ok(contest.toShortResponseDTO())
+        if (!contest.hasStarted()) {
+            throw ForbiddenException("Contest has not started yet")
+        }
+        return ResponseEntity.ok(contest.toPublicResponseDTO())
+    }
+
+    @GetMapping("/{id}/summary")
+    fun findContestSummaryById(
+        @PathVariable id: Int,
+    ): ResponseEntity<ContestSummaryResponseDTO> {
+        val contest = findContestService.findById(id)
+        return ResponseEntity.ok(contest.toSummaryResponseDTO())
     }
 
     @DeleteMapping("/{id}")
@@ -111,26 +126,26 @@ class ContestController(
     @GetMapping("/{id}/problems")
     fun findAllProblems(
         @PathVariable id: Int,
-    ): ResponseEntity<List<ProblemShortResponseDTO>> {
+    ): ResponseEntity<List<ProblemPublicResponseDTO>> {
         val problems = findProblemService.findAllByContest(id)
-        return ResponseEntity.ok(problems.map { it.toShortResponseDTO() })
+        return ResponseEntity.ok(problems.map { it.toPublicResponseDTO() })
     }
 
     @GetMapping("/{id}/problems/me")
     @Private(Member.Type.CONTESTANT)
     fun findAllProblemsForMember(
         @PathVariable id: Int,
-    ): ResponseEntity<List<ProblemMemberOutputDTO>> {
+    ): ResponseEntity<List<ProblemWithStatusResponseDTO>> {
         val authorization = AuthorizationContextUtil.getAuthorization()
         val problems = findProblemService.findAllByContestForMember(id, authorization.id)
-        return ResponseEntity.ok(problems)
+        return ResponseEntity.ok(problems.map { it.toResponseDTO() })
     }
 
     @GetMapping("/{id}/submissions")
     fun findAllSubmissions(
         @PathVariable id: Int,
-    ): ResponseEntity<List<SubmissionShortResponseDTO>> {
+    ): ResponseEntity<List<SubmissionPublicResponseDTO>> {
         val submissions = findSubmissionService.findAllByContest(id)
-        return ResponseEntity.ok(submissions.map { it.toShortResponseDTO() })
+        return ResponseEntity.ok(submissions.map { it.toPublicResponseDTO() })
     }
 }

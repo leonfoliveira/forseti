@@ -1,4 +1,4 @@
-import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestShortResponseDTO";
+import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
 import {
   ContestStatus,
   formatStatus,
@@ -14,7 +14,7 @@ import { Badge } from "@/app/_component/badge";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  contests: ContestShortResponseDTO[];
+  contests: ContestSummaryResponseDTO[];
 };
 
 export function ContestsTable(props: Props) {
@@ -22,7 +22,7 @@ export function ContestsTable(props: Props) {
 
   const router = useRouter();
 
-  function getBadgeVariant(contest: ContestShortResponseDTO) {
+  function getBadgeVariant(contest: ContestSummaryResponseDTO) {
     const status = getContestStatus(contest);
     switch (status) {
       case ContestStatus.IN_PROGRESS:

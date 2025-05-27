@@ -1,25 +1,40 @@
 import { SubmissionListener } from "@/core/listener/SubmissionListener";
 import { StompClient } from "@/adapter/stomp/StompClient";
-import { SubmissionEmmitDTO } from "@/core/listener/dto/emmit/SubmissionEmmitDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
+import { CompatClient } from "@stomp/stompjs";
 
 export class StompSubmissionListener implements SubmissionListener {
   constructor(private readonly stompClient: StompClient) {}
 
-  subscribeForContest(
+  async subscribeForContest(
     contestId: number,
-    cb: (submission: SubmissionEmmitDTO) => void,
-  ): Promise<string> {
-    return this.stompClient.subscribe(`/contests/${contestId}/submissions`, cb);
+    cb: (submission: SubmissionPublicResponseDTO) => void,
+  ): Promise<CompatClient> {
+    const client = await this.stompClient.connect();
+    client.subscribe(`/topic/contests/${contestId}/submissions`, (message) => {
+      const submission = JSON.parse(
+        message.body,
+      ) as SubmissionPublicResponseDTO;
+      cb(submission);
+    });
+    return client;
   }
 
-  subscribeForMember(
+  async subscribeForMember(
     memberId: number,
-    cb: (submission: SubmissionEmmitDTO) => void,
-  ): Promise<string> {
-    return this.stompClient.subscribe(`/members/${memberId}/submissions`, cb);
+    cb: (submission: SubmissionPublicResponseDTO) => void,
+  ): Promise<CompatClient> {
+    const client = await this.stompClient.connect();
+    client.subscribe(`/topic/members/${memberId}/submissions`, (message) => {
+      const submission = JSON.parse(
+        message.body,
+      ) as SubmissionPublicResponseDTO;
+      cb(submission);
+    });
+    return client;
   }
 
-  unregister(id: string): void {
-    this.stompClient.unsubscribe(id);
+  async unsubscribe(client: CompatClient): Promise<void> {
+    await this.stompClient.disconnect(client);
   }
 }

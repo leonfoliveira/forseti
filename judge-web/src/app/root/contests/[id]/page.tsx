@@ -1,8 +1,6 @@
 "use client";
 
-import { useContainer } from "@/app/_atom/container-atom";
 import { use, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { ContestForm } from "@/app/root/contests/_component/contest-form";
 import {
   fromResponseDTO,
@@ -13,7 +11,7 @@ import { ContestFormType } from "@/app/root/contests/_form/contest-form-type";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/contests/_form/contest-form-schema";
 import { ContestStatus } from "@/app/_util/contest-utils";
-import { useFindFullContestByIdAction } from "@/app/_action/find-full-contest-by-id-action";
+import { useFindContestByIdForRoot } from "@/app/_action/find-contest-by-id-for-root-action";
 import { useUpdateContestAction } from "@/app/_action/update-contest-action";
 
 export default function RootEditContestPage({
@@ -22,11 +20,9 @@ export default function RootEditContestPage({
   params: Promise<{ id: number }>;
 }) {
   const { id } = use(params);
-  const { attachmentService } = useContainer();
   const { data: contest, ...findFullContestByIdAction } =
-    useFindFullContestByIdAction();
+    useFindContestByIdForRoot();
   const updateContestAction = useUpdateContestAction();
-  const router = useRouter();
 
   const form = useForm<ContestFormType>({
     resolver: joiResolver(contestFormSchema),
@@ -58,9 +54,7 @@ export default function RootEditContestPage({
     <ContestForm
       header={`Contest ${contest?.id || ""}`}
       status={contest?.status}
-      onBack={() => router.push("/root/contests")}
       onSubmit={updateContest}
-      onDownload={attachmentService.downloadAttachment}
       form={form}
       isDisabled={
         findFullContestByIdAction.isLoading ||

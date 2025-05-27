@@ -16,6 +16,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Get docker compose file
+        run: cp ./docker/docker-compose.prod.yml docker-compose.yml
+
       - name: Build images
         run: docker compose build
 
@@ -26,16 +29,14 @@ jobs:
           echo "images=$images" >> $GITHUB_OUTPUT
 
       - name: Save all images to a tarball
-        run: |
-          docker save -o compose-images.tar ${{ steps.image-list.outputs.images }}
+        run: docker save -o compose-images.tar ${{ steps.image-list.outputs.images }}
 
       - name: Get tag name
         id: vars
         run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
       - name: Create ZIP file with tag name
-        run: |
-          zip judge-${{ steps.vars.outputs.tag }}.zip docker-compose.yml compose-images.tar
+        run: zip judge-${{ steps.vars.outputs.tag }}.zip docker-compose.yml compose-images.tar
 
       - name: Upload ZIP to release
         uses: softprops/action-gh-release@v1

@@ -8,3 +8,12 @@ data class MemberResponseDTO(
     val name: String,
     val login: String,
 )
+
+fun Member.toPrivateResponseDTO(): MemberResponseDTO {
+    return MemberResponseDTO(
+        id = id,
+        type = type,
+        name = name,
+        login = login,
+    )
+}

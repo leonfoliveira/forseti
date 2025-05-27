@@ -3,7 +3,6 @@ package io.leonfoliveira.judge.core.service.submission
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import io.kotest.matchers.shouldNotBe
 import io.leonfoliveira.judge.core.domain.entity.AttachmentMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
@@ -11,7 +10,6 @@ import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
 import io.leonfoliveira.judge.core.port.SubmissionQueueAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
@@ -23,7 +21,6 @@ import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
-import jakarta.validation.Validation
 import java.time.LocalDateTime
 import java.util.Optional
 
@@ -54,22 +51,22 @@ class CreateSubmissionServiceTest : FunSpec({
 
     context("create") {
         test("should throw NotFoundException when member not found") {
-            every { memberRepository.findById(1) }
+            every { memberRepository.findById(any()) }
                 .returns(Optional.empty())
 
             shouldThrow<NotFoundException> {
-                sut.create(1, 2, CreateSubmissionInputDTOMockFactory.build())
+                sut.create(2, CreateSubmissionInputDTOMockFactory.build())
             }
         }
 
         test("should throw NotFoundException when problem not found") {
-            every { memberRepository.findById(1) }
+            every { memberRepository.findById(any()) }
                 .returns(Optional.of(MemberMockFactory.build()))
-            every { problemRepository.findById(2) }
+            every { problemRepository.findById(any()) }
                 .returns(Optional.empty())
 
             shouldThrow<NotFoundException> {
-                sut.create(1, 2, CreateSubmissionInputDTOMockFactory.build())
+                sut.create(2, CreateSubmissionInputDTOMockFactory.build())
             }
         }
 
@@ -79,13 +76,13 @@ class CreateSubmissionServiceTest : FunSpec({
 
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(AttachmentMockFactory.build()))
-            every { memberRepository.findById(1) }
+            every { memberRepository.findById(any()) }
                 .returns(Optional.of(member))
-            every { problemRepository.findById(2) }
+            every { problemRepository.findById(any()) }
                 .returns(Optional.of(problem))
 
             shouldThrow<ForbiddenException> {
-                sut.create(1, 2, CreateSubmissionInputDTOMockFactory.build())
+                sut.create(2, CreateSubmissionInputDTOMockFactory.build())
             }
         }
 
@@ -96,13 +93,13 @@ class CreateSubmissionServiceTest : FunSpec({
 
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(AttachmentMockFactory.build()))
-            every { memberRepository.findById(1) }
+            every { memberRepository.findById(any()) }
                 .returns(Optional.of(member))
-            every { problemRepository.findById(2) }
+            every { problemRepository.findById(any()) }
                 .returns(Optional.of(problem))
 
             shouldThrow<ForbiddenException> {
-                sut.create(1, 2, CreateSubmissionInputDTOMockFactory.build())
+                sut.create(2, CreateSubmissionInputDTOMockFactory.build())
             }
         }
 
@@ -116,13 +113,13 @@ class CreateSubmissionServiceTest : FunSpec({
 
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(AttachmentMockFactory.build()))
-            every { memberRepository.findById(1) }
+            every { memberRepository.findById(any()) }
                 .returns(Optional.of(member))
-            every { problemRepository.findById(2) }
+            every { problemRepository.findById(any()) }
                 .returns(Optional.of(problem))
 
             shouldThrow<ForbiddenException> {
-                sut.create(1, 2, CreateSubmissionInputDTOMockFactory.build())
+                sut.create(2, CreateSubmissionInputDTOMockFactory.build())
             }
         }
 
@@ -139,9 +136,9 @@ class CreateSubmissionServiceTest : FunSpec({
             val attachment = AttachmentMockFactory.build()
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(attachment))
-            every { memberRepository.findById(1) }
+            every { memberRepository.findById(any()) }
                 .returns(Optional.of(member))
-            every { problemRepository.findById(2) }
+            every { problemRepository.findById(any()) }
                 .returns(Optional.of(problem))
             every { submissionRepository.save(any()) }
                 .returnsArgument(0)
@@ -150,7 +147,7 @@ class CreateSubmissionServiceTest : FunSpec({
             every { submissionEmitterAdapter.emitForContest(any()) }
                 .returns(Unit)
 
-            val result = sut.create(1, 2, inputDTO)
+            val result = sut.create(2, inputDTO)
 
             result.member.id shouldBe member.id
             result.member.name shouldBe member.name
@@ -158,7 +155,7 @@ class CreateSubmissionServiceTest : FunSpec({
             result.problem.title shouldBe problem.title
             result.language shouldBe inputDTO.language
             result.status shouldBe Submission.Status.JUDGING
-            result.codeKey shouldBe attachment.key
+            result.code shouldBe attachment
         }
     }
 })

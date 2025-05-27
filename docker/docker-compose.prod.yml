@@ -1,0 +1,96 @@
+services:  
+
+  postgres:
+    container_name: judge-postgres
+    image: postgres:17.5-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-judge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-judge}
+      POSTGRES_DB: ${POSTGRES_DB:-judge}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - judge-network
+
+  redis:
+    container_name: judge-redis
+    image: redis:8.0.1-alpine
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-judge}
+    ports:
+      - "6379:6379"
+    networks:
+      - judge-network
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+
+  localstack:
+    container_name: judge-localstack
+    image: localstack/localstack:4.4.0    
+    environment:
+      SERVICES: s3,sqs
+    networks:
+      - judge-network
+    volumes:
+      - "./localstack-bootstrap:/etc/localstack/init/ready.d"
+
+  api:
+    image: judge-api:latest
+    container_name: judge-api
+    build:
+      context: ../judge-api
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-development}
+      DB_URL: ${DB_URL:-jdbc:postgresql://postgres:5432/judge}
+      DB_USER: ${DB_USER:-judge}
+      DB_PASSWORD: ${DB_PASSWORD:-judge}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-judge}      
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      AWS_ENDPOINT: ${AWS_ENDPOINT:-http://localhost:4566}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-judge}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-judge}      
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET:-judge}
+      AWS_SQS_SUBMISSION_QUEUE: ${AWS_SQS_SUBMISSION_QUEUE:-judge-submission}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost}
+      JWT_SECRET: ${JWT_SECRET:-judge}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-21600}
+      JWT_ROOT_EXPIRATION: ${JWT_ROOT_EXPIRATION:-3600}
+      ROOT_PASSWORD: ${ROOT_PASSWORD:-judge}
+    ports:
+      - "8080:8080"
+    networks:
+      - judge-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - postgres
+      - redis
+      - localstack    
+
+  web:
+    image: judge-web:latest
+    container_name: judge-web
+    build:
+      context: ../judge-web
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+      NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-http://localhost:8080/ws}
+    ports:
+      - "80:3000"
+    networks:
+      - judge-network
+    depends_on:
+      - api
+
+networks:
+  judge-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

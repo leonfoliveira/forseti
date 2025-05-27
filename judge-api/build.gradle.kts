@@ -36,6 +36,7 @@ dependencies {
     testImplementation(libs.bundles.kotest)
     testImplementation(libs.bundles.mockk)
     testImplementation(libs.spring.boot.starter.test)
+    testImplementation(libs.bundles.testcontainers)
 
     developmentOnly(libs.spring.boot.dev.tools)
 }

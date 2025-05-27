@@ -7,21 +7,26 @@ import { Authorization } from "@/core/domain/model/Authorization";
 export class AxiosAuthenticationRepository implements AuthenticationRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
 
-  authenticateMember(
+  async authenticateMember(
     contestId: number,
     requestDTO: AuthenticateMemberRequestDTO,
   ): Promise<Authorization> {
-    return this.axiosClient.post<Authorization>(
+    const response = await this.axiosClient.post<Authorization>(
       `/v1/auth/contests/${contestId}`,
       { data: requestDTO },
     );
+    return response.data;
   }
 
-  authenticateRoot(
+  async authenticateRoot(
     requestDTO: AuthenticateRootRequestDTO,
   ): Promise<Authorization> {
-    return this.axiosClient.post<Authorization>("/v1/auth/root", {
-      data: requestDTO,
-    });
+    const response = await this.axiosClient.post<Authorization>(
+      "/v1/auth/root",
+      {
+        data: requestDTO,
+      },
+    );
+    return response.data;
   }
 }

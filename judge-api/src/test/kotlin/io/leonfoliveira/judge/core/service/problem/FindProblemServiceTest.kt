@@ -9,11 +9,9 @@ import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
-import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
-import io.leonfoliveira.judge.core.service.dto.output.ProblemMemberOutputDTO
-import io.leonfoliveira.judge.core.service.dto.output.toOutputDTO
+import io.leonfoliveira.judge.core.service.dto.output.ProblemWithStatusOutputDTO
 import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
@@ -24,7 +22,6 @@ import java.util.Optional
 class FindProblemServiceTest : FunSpec({
     val problemRepository = mockk<ProblemRepository>()
     val contestRepository = mockk<ContestRepository>()
-    val bucketAdapter = mockk<BucketAdapter>()
 
     val sut =
         FindProblemService(
@@ -69,7 +66,7 @@ class FindProblemServiceTest : FunSpec({
 
             val result = sut.findById(1)
 
-            result shouldBe problem.toOutputDTO()
+            result shouldBe problem
         }
     }
 
@@ -156,10 +153,10 @@ class FindProblemServiceTest : FunSpec({
 
             result shouldBe
                 listOf(
-                    ProblemMemberOutputDTO(
+                    ProblemWithStatusOutputDTO(
                         id = contest.problems[0].id,
                         title = contest.problems[0].title,
-                        descriptionKey = contest.problems[0].description.key,
+                        description = contest.problems[0].description,
                         isAccepted = true,
                         wrongSubmissions = 2,
                     ),

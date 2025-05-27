@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-bs-theme="dark">
+    <html lang="en">
       <body
         className={cls("bg-gray-100", geistSans.variable, geistMono.variable)}
       >

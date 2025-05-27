@@ -1,16 +1,16 @@
 "use client";
 
-import { useContainer } from "@/app/_atom/container-atom";
-import React, { use, useEffect, useState } from "react";
+import React, { use, useEffect } from "react";
 import { Spinner } from "@/app/_component/spinner";
 import { toLocaleString } from "@/app/_util/date-utils";
-import { ContestStatus, getContestStatus } from "@/app/_util/contest-utils";
+import { ContestStatus } from "@/app/_util/contest-utils";
 import { Navbar } from "@/app/_component/navbar";
-import { useRouter } from "next/navigation";
-import { AuthorizationMember } from "@/core/domain/model/Authorization";
+import { usePathname, useRouter } from "next/navigation";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { useFindContestByIdAction } from "@/app/_action/find-contest-by-id-action";
-import { SubmissionBeacon } from "@/app/contests/[id]/_component/submission-beacon";
+import { useSubscribeForMemberSubmissionAction } from "@/app/_action/subscribe-for-member-submission-action";
+import { useAuthorization } from "@/app/_util/authorization-hook";
+import { useFindContestSummaryByIdAction } from "@/app/_action/find-contest-summary-action";
+import { cls } from "@/app/_util/cls";
 
 export default function ContestLayout({
   params,
@@ -20,14 +20,19 @@ export default function ContestLayout({
   children: React.ReactNode;
 }) {
   const { id } = use(params);
-  const { authorizationService } = useContainer();
-  const { data: contest, ...findContestAction } = useFindContestByIdAction();
+  const { data: contest, ...findContestAction } =
+    useFindContestSummaryByIdAction();
+  const subscribeForMemberSubmissionAction =
+    useSubscribeForMemberSubmissionAction();
   const router = useRouter();
-  const [member, setMember] = useState<AuthorizationMember | undefined>();
+  const pathname = usePathname();
+  const authorization = useAuthorization();
 
   useEffect(() => {
     findContestAction.act(id);
-    setMember(authorizationService.getAuthorization()?.member);
+    if (authorization?.member.type === MemberType.CONTESTANT) {
+      subscribeForMemberSubmissionAction.act(authorization.member.id);
+    }
   }, []);
 
   if (findContestAction.isLoading || !contest) {
@@ -38,8 +43,7 @@ export default function ContestLayout({
     );
   }
 
-  const status = getContestStatus(contest);
-  if (status === ContestStatus.NOT_STARTED) {
+  if (contest.status === ContestStatus.NOT_STARTED) {
     return (
       <div className="h-dvh flex justify-center items-center">
         <div className="text-center">
@@ -52,9 +56,14 @@ export default function ContestLayout({
   }
 
   function buildNavLink(label: string, path: string) {
+    const isActive = pathname === `/contests/${id}/${path}`;
     return (
       <li
-        className="p-2 flex-1 font-semibold hover:bg-gray-100 active:bg-gray-200 transition"
+        key={path}
+        className={cls(
+          "p-2 flex-1 font-semibold hover:bg-gray-100 active:bg-gray-200 transition",
+          isActive && "bg-gray-100",
+        )}
         onClick={() => router.push(`/contests/${id}/${path}`)}
       >
         {label}
@@ -63,7 +72,7 @@ export default function ContestLayout({
   }
 
   function buildBuildNavLinks() {
-    if (member?.type === MemberType.CONTESTANT) {
+    if (authorization?.member.type === MemberType.CONTESTANT) {
       return [
         buildNavLink("Leaderboard", "leaderboard"),
         buildNavLink("Problems", "problems"),
@@ -81,9 +90,6 @@ export default function ContestLayout({
 
   return (
     <div>
-      {member?.type === MemberType.CONTESTANT && (
-        <SubmissionBeacon memberId={member?.id} />
-      )}
       <Navbar contest={contest} signInPath={`/auth/contests/${id}`} />
       <div className="mt-5 bg-white">
         <nav className="bg-gray-50">

@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { AuthorizationService } from "@/core/service/AuthorizationService";
 import { BusinessException } from "@/core/domain/exception/BusinessException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
@@ -12,40 +12,49 @@ export class AxiosClient {
     private readonly authorizationService: AuthorizationService,
   ) {}
 
-  async get<T>(path: string, config: AxiosRequestConfig = {}): Promise<T> {
-    return this.request<T>(path, {
+  async get<TBody>(
+    path: string,
+    config: AxiosRequestConfig = {},
+  ): Promise<AxiosResponse<TBody>> {
+    return this.request(path, {
       method: "GET",
       ...config,
     });
   }
 
-  async post<T>(path: string, config: AxiosRequestConfig = {}): Promise<T> {
-    return this.request<T>(path, {
+  async post<TBody>(
+    path: string,
+    config: AxiosRequestConfig = {},
+  ): Promise<AxiosResponse<TBody>> {
+    return this.request(path, {
       method: "POST",
       ...config,
     });
   }
 
-  async put<T>(path: string, config: AxiosRequestConfig = {}): Promise<T> {
-    return this.request<T>(path, {
+  async put<TBody>(
+    path: string,
+    config: AxiosRequestConfig = {},
+  ): Promise<AxiosResponse<TBody>> {
+    return this.request(path, {
       method: "PUT",
       ...config,
     });
   }
 
   async delete(path: string, config: AxiosRequestConfig = {}): Promise<void> {
-    return this.request(path, {
+    await this.request(path, {
       method: "DELETE",
       ...config,
     });
   }
 
-  private async request<T>(
+  private async request<TBody>(
     path: string,
     config: AxiosRequestConfig = {},
-  ): Promise<T> {
+  ): Promise<AxiosResponse<TBody>> {
     try {
-      const response = await axios.request<T>({
+      return await axios.request<TBody>({
         ...config,
         url: config.url || `${this.baseUrl}${path}`,
         headers: {
@@ -53,7 +62,6 @@ export class AxiosClient {
           ...(config.headers || {}),
         },
       });
-      return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
         const status = error.response?.status;

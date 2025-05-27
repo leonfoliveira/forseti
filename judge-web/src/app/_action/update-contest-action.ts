@@ -1,15 +1,14 @@
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { notFound } from "next/navigation";
-import { useContainer } from "@/app/_atom/container-atom";
 import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
+import { contestService } from "@/app/_composition";
 
 export function useUpdateContestAction() {
-  const { contestService } = useContainer();
   const toast = useToast();
   const signOutAction = useRootSignOutAction();
 

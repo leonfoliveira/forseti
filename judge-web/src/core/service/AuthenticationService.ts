@@ -1,13 +1,13 @@
 import { AuthenticationRepository } from "@/core/repository/AuthenticationRepository";
 import { AuthenticateRootRequestDTO } from "@/core/repository/dto/request/AuthenticateRootRequestDTO";
 import { AuthenticateMemberRequestDTO } from "@/core/repository/dto/request/AuthenticateMemberRequestDTO";
-import { AuthorizationRepository } from "@/core/repository/AuthorizationRepository";
 import { Authorization } from "@/core/domain/model/Authorization";
+import { AuthorizationService } from "@/core/service/AuthorizationService";
 
 export class AuthenticationService {
   constructor(
     private readonly authenticationRepository: AuthenticationRepository,
-    private readonly authorizationRepository: AuthorizationRepository,
+    private readonly authorizationService: AuthorizationService,
   ) {}
 
   async authenticateRoot(
@@ -15,7 +15,7 @@ export class AuthenticationService {
   ): Promise<Authorization> {
     const authorization =
       await this.authenticationRepository.authenticateRoot(requestDTO);
-    this.authorizationRepository.setAuthorization(authorization);
+    this.authorizationService.setAuthorization(authorization);
     return authorization;
   }
 
@@ -28,7 +28,7 @@ export class AuthenticationService {
         contestId,
         requestDTO,
       );
-    this.authorizationRepository.setAuthorization(authorization);
+    this.authorizationService.setAuthorization(authorization);
     return authorization;
   }
 }

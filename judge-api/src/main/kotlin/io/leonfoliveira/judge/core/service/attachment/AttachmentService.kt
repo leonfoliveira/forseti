@@ -4,6 +4,7 @@ import io.leonfoliveira.judge.core.domain.entity.Attachment
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
+import io.leonfoliveira.judge.core.service.dto.output.AttachmentDownloadOutputDTO
 import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -18,14 +19,19 @@ class AttachmentService(
             filename = file.originalFilename ?: "unknown",
             contentType = file.contentType ?: "application/octet-stream"
         )
-        bucketAdapter.upload(file.bytes, attachment.key)
+        val bytes = file.bytes
+        bucketAdapter.upload(bytes, attachment.key)
         return attachmentRepository.save(attachment)
     }
 
-    fun download(key: UUID): ByteArray {
-        attachmentRepository.findById(key).orElseThrow {
+    fun download(key: UUID): AttachmentDownloadOutputDTO {
+        val attachment = attachmentRepository.findById(key).orElseThrow {
             NotFoundException("Could not find attachment with key = $key")
         }
-        return bucketAdapter.download(key)
+        val bytes = bucketAdapter.download(key)
+        return AttachmentDownloadOutputDTO(
+            attachment = attachment,
+            bytes = bytes
+        )
     }
 }

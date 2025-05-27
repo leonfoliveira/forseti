@@ -41,14 +41,14 @@ object UpdateContestInputDTOMockFactory {
     fun buildProblemDTO(
         id: Int? = 1,
         title: String = "Problem Title",
-        descriptionKey: UUID = UUID.randomUUID(),
+        description: AttachmentInputDTO = AttachmentInputDTOMockFactory.build(),
         timeLimit: Int = 1000,
-        testCasesKey: UUID = UUID.randomUUID(),
+        testCases: AttachmentInputDTO = AttachmentInputDTOMockFactory.build(),
     ) = UpdateContestInputDTO.ProblemDTO(
         id = id,
         title = title,
-        descriptionKey = descriptionKey,
+        description = description,
         timeLimit = timeLimit,
-        testCasesKey = testCasesKey,
+        testCases = testCases,
     )
 }

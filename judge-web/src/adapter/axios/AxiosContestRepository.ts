@@ -1,70 +1,102 @@
 import { ContestRepository } from "@/core/repository/ContestRepository";
 import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
-import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
-import { ContestShortResponseDTO } from "@/core/repository/dto/response/ContestShortResponseDTO";
-import { ProblemShortResponseDTO } from "@/core/repository/dto/response/ProblemShortResponseDTO";
-import { SubmissionResponseDTO } from "@/core/repository/dto/response/SubmissionResponseDTO";
+import { ContestPrivateResponseDTO } from "@/core/repository/dto/response/ContestPrivateResponseDTO";
+import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/ProblemPublicResponseDTO";
+import { SubmissionPrivateResponseDTO } from "@/core/repository/dto/response/SubmissionPrivateResponseDTO";
 import { LeaderboardOutputDTO } from "@/core/repository/dto/response/LeaderboardOutputDTO";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { ProblemMemberResponseDTO } from "@/core/repository/dto/response/ProblemMemberResponseDTO";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/ContestPublicResponseDTO";
 
 export class AxiosContestRepository implements ContestRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
 
-  createContest(
+  async createContest(
     requestDTO: CreateContestRequestDTO,
-  ): Promise<ContestResponseDTO> {
-    return this.axiosClient.post<ContestResponseDTO>("/v1/contests", {
-      data: requestDTO,
-    });
+  ): Promise<ContestPrivateResponseDTO> {
+    const response = await this.axiosClient.post<ContestPrivateResponseDTO>(
+      "/v1/contests",
+      {
+        data: requestDTO,
+      },
+    );
+    return response.data;
   }
 
   deleteContest(id: number): Promise<void> {
     return this.axiosClient.delete(`/v1/contests/${id}`);
   }
 
-  findAllContests(): Promise<ContestShortResponseDTO[]> {
-    return this.axiosClient.get<ContestShortResponseDTO[]>("/v1/contests");
+  async findAllContests(): Promise<ContestSummaryResponseDTO[]> {
+    const response =
+      await this.axiosClient.get<ContestSummaryResponseDTO[]>("/v1/contests");
+    return response.data;
   }
 
-  findAllProblems(id: number): Promise<ProblemShortResponseDTO[]> {
-    return this.axiosClient.get<ProblemShortResponseDTO[]>(
+  async findAllProblems(id: number): Promise<ProblemPublicResponseDTO[]> {
+    const response = await this.axiosClient.get<ProblemPublicResponseDTO[]>(
       `/v1/contests/${id}/problems`,
     );
+    return response.data;
   }
 
-  findAllProblemsForMember(id: number): Promise<ProblemMemberResponseDTO[]> {
-    return this.axiosClient.get<ProblemMemberResponseDTO[]>(
+  async findAllProblemsForMember(
+    id: number,
+  ): Promise<ProblemMemberResponseDTO[]> {
+    const response = await this.axiosClient.get<ProblemMemberResponseDTO[]>(
       `/v1/contests/${id}/problems/me`,
     );
+    return response.data;
   }
 
-  findAllSubmissions(id: number): Promise<SubmissionResponseDTO[]> {
-    return this.axiosClient.get<SubmissionResponseDTO[]>(
+  async findAllSubmissions(
+    id: number,
+  ): Promise<SubmissionPrivateResponseDTO[]> {
+    const response = await this.axiosClient.get<SubmissionPrivateResponseDTO[]>(
       `/v1/contests/${id}/submissions`,
     );
+    return response.data;
   }
 
-  findContestById(id: number): Promise<ContestShortResponseDTO> {
-    return this.axiosClient.get<ContestShortResponseDTO>(`/v1/contests/${id}`);
+  async findContestById(id: number): Promise<ContestPublicResponseDTO> {
+    const response = await this.axiosClient.get<ContestPublicResponseDTO>(
+      `/v1/contests/${id}`,
+    );
+    return response.data;
   }
 
-  findFullContestById(id: number): Promise<ContestResponseDTO> {
-    return this.axiosClient.get<ContestResponseDTO>(`/v1/contests/${id}/full`);
+  async findContestByIdForRoot(id: number): Promise<ContestPrivateResponseDTO> {
+    const response = await this.axiosClient.get<ContestPrivateResponseDTO>(
+      `/v1/contests/${id}/root`,
+    );
+    return response.data;
   }
 
-  getLeaderboard(id: number): Promise<LeaderboardOutputDTO> {
-    return this.axiosClient.get<LeaderboardOutputDTO>(
+  async findContestSummaryById(id: number): Promise<ContestSummaryResponseDTO> {
+    const response = await this.axiosClient.get<ContestSummaryResponseDTO>(
+      `/v1/contests/${id}/summary`,
+    );
+    return response.data;
+  }
+
+  async getLeaderboard(id: number): Promise<LeaderboardOutputDTO> {
+    const response = await this.axiosClient.get<LeaderboardOutputDTO>(
       `/v1/contests/${id}/leaderboard`,
     );
+    return response.data;
   }
 
-  updateContest(
+  async updateContest(
     requestDTO: UpdateContestRequestDTO,
-  ): Promise<ContestResponseDTO> {
-    return this.axiosClient.put<ContestResponseDTO>(`/v1/contests`, {
-      data: requestDTO,
-    });
+  ): Promise<ContestPrivateResponseDTO> {
+    const response = await this.axiosClient.put<ContestPrivateResponseDTO>(
+      `/v1/contests`,
+      {
+        data: requestDTO,
+      },
+    );
+    return response.data;
   }
 }

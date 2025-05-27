@@ -1,4 +1,3 @@
-import { useContainer } from "@/app/_atom/container-atom";
 import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
@@ -6,9 +5,9 @@ import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";
 import { useRouter } from "next/navigation";
+import { contestService } from "@/app/_composition";
 
 export function useCreateContestAction() {
-  const { contestService } = useContainer();
   const toast = useToast();
   const signOutAction = useRootSignOutAction();
   const router = useRouter();

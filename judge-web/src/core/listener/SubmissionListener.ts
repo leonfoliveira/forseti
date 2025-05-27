@@ -1,15 +1,16 @@
-import { SubmissionEmmitDTO } from "@/core/listener/dto/emmit/SubmissionEmmitDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
+import { CompatClient } from "@stomp/stompjs";
 
 export interface SubmissionListener {
   subscribeForContest: (
     contestId: number,
-    cb: (submission: SubmissionEmmitDTO) => void,
-  ) => Promise<string>;
+    cb: (submission: SubmissionPublicResponseDTO) => void,
+  ) => Promise<CompatClient>;
 
   subscribeForMember: (
     memberId: number,
-    cb: (submission: SubmissionEmmitDTO) => void,
-  ) => Promise<string>;
+    cb: (submission: SubmissionPublicResponseDTO) => void,
+  ) => Promise<CompatClient>;
 
-  unregister: (id: string) => void;
+  unsubscribe(client: CompatClient): Promise<void>;
 }

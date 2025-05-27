@@ -1,27 +1,39 @@
-import { useContainer } from "@/app/_atom/container-atom";
 import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
-import { useSubmissionForContestListener } from "@/app/_listener/submission-for-contest-listener";
-import { SubmissionEmmitDTO } from "@/core/listener/dto/emmit/SubmissionEmmitDTO";
 import { recalculateLeaderboard } from "@/app/contests/[id]/leaderboard/util/leaderboard-calculator";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
+import { useEffect, useRef } from "react";
+import { contestService, submissionService } from "@/app/_composition";
+import { CompatClient } from "@stomp/stompjs";
 
 export function useGetLeaderboardAction() {
-  const { contestService } = useContainer();
-  const submissionForContestListener = useSubmissionForContestListener();
   const toast = useToast();
   const action = useAction(getLeaderboard);
+  const listenerRef = useRef<CompatClient>(null);
+
+  useEffect(() => {
+    return () => {
+      if (listenerRef.current) {
+        submissionService.unsubscribe(listenerRef.current);
+      }
+    };
+  }, []);
 
   async function getLeaderboard(contestId: number) {
     try {
       const leaderboard = await contestService.getLeaderboard(contestId);
-      await submissionForContestListener.subscribe(contestId, onSubmission);
+      listenerRef.current = await submissionService.subscribeForContest(
+        contestId,
+        onSubmission,
+      );
       return leaderboard;
-    } catch {
+    } catch (error) {
+      console.error(error);
       toast.error("Error loading leaderboard");
     }
   }
 
-  function onSubmission(submission: SubmissionEmmitDTO) {
+  function onSubmission(submission: SubmissionPublicResponseDTO) {
     action.setData((data) => {
       return recalculateLeaderboard(data, submission);
     });

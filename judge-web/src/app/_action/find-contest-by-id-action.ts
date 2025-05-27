@@ -1,11 +1,10 @@
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { notFound } from "next/navigation";
-import { useContainer } from "@/app/_atom/container-atom";
 import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
+import { contestService } from "@/app/_composition";
 
 export function useFindContestByIdAction() {
-  const { contestService } = useContainer();
   const toast = useToast();
 
   async function findContestById(id: number) {

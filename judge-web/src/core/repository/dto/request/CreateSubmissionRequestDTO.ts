@@ -1,7 +1,8 @@
 import { Language } from "@/core/domain/enumerate/Language";
-import { AttachmentRequestDTO } from "@/core/repository/dto/request/AttachmentRequestDTO";
+import { Attachment } from "@/core/domain/model/Attachment";
 
 export type CreateSubmissionRequestDTO = {
+  problemId: number;
   language: Language;
-  code: AttachmentRequestDTO;
+  code: Attachment;
 };

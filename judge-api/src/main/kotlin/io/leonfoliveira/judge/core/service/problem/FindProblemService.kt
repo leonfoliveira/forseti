@@ -4,12 +4,9 @@ import io.leonfoliveira.judge.core.domain.entity.Problem
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
-import io.leonfoliveira.judge.core.service.dto.output.ProblemMemberOutputDTO
-import io.leonfoliveira.judge.core.service.dto.output.ProblemOutputDTO
-import io.leonfoliveira.judge.core.service.dto.output.toOutputDTO
+import io.leonfoliveira.judge.core.service.dto.output.ProblemWithStatusOutputDTO
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,7 +14,7 @@ class FindProblemService(
     private val problemRepository: ProblemRepository,
     private val contestRepository: ContestRepository,
 ) {
-    fun findById(id: Int): ProblemOutputDTO {
+    fun findById(id: Int): Problem {
         val problem =
             problemRepository.findById(id).orElseThrow {
                 NotFoundException("Could not find problem with id = $id")
@@ -26,7 +23,7 @@ class FindProblemService(
             throw ForbiddenException("Contest has not started yet")
         }
 
-        return problem.toOutputDTO()
+        return problem
     }
 
     fun findAllByContest(contestId: Int): List<Problem> {
@@ -42,7 +39,7 @@ class FindProblemService(
     fun findAllByContestForMember(
         contestId: Int,
         memberId: Int,
-    ): List<ProblemMemberOutputDTO> {
+    ): List<ProblemWithStatusOutputDTO> {
         val problems = findAllByContest(contestId)
 
         return problems.map { problem ->
@@ -57,10 +54,10 @@ class FindProblemService(
                 memberSubmissions
                     .takeWhile { it.status != Submission.Status.ACCEPTED }
 
-            ProblemMemberOutputDTO(
+            ProblemWithStatusOutputDTO(
                 id = problem.id,
                 title = problem.title,
-                descriptionKey = problem.description.key,
+                description = problem.description,
                 isAccepted = isAccepted,
                 wrongSubmissions = wrongSubmissionsBeforeAccepted.count(),
             )

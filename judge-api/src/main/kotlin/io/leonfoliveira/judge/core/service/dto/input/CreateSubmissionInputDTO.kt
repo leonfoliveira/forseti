@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank
 import java.util.UUID
 
 data class CreateSubmissionInputDTO(
+    val problemId: Int,
     val language: Language,
-    val codeKey: UUID,
+    val code: AttachmentInputDTO,
 )

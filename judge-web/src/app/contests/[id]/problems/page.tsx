@@ -1,33 +1,20 @@
 "use client";
 
-import { useContainer } from "@/app/_atom/container-atom";
-import React, { use, useEffect, useState } from "react";
-import { ProblemShortResponseDTO } from "@/core/repository/dto/response/ProblemShortResponseDTO";
+import React, { use, useEffect } from "react";
+import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/ProblemPublicResponseDTO";
 import { Spinner } from "@/app/_component/spinner";
 import { cls } from "@/app/_util/cls";
-import { Modal } from "@/app/_component/modal";
-import { Button } from "@/app/_component/form/button";
-import { MarkdownDisplay } from "@/app/_component/markdown-display";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { ProblemMemberResponseDTO } from "@/core/repository/dto/response/ProblemMemberResponseDTO";
-import { FileInput } from "@/app/_component/form/file-input";
-import { useForm } from "react-hook-form";
-import { joiResolver } from "@hookform/resolvers/joi";
-import { submissionFormSchema } from "@/app/contests/[id]/problems/_form/submission-form-schema";
-import { SubmissionFormType } from "@/app/contests/[id]/problems/_form/submission-form-type";
-import { toInputDTO } from "@/app/contests/[id]/problems/_form/submission-form-map";
-import { Select } from "@/app/_component/form/select";
-import { Language } from "@/core/domain/enumerate/Language";
-import { formatLanguage } from "@/app/_util/contest-utils";
 import { useFindAllProblemsAction } from "@/app/_action/find-all-problems-action";
 import { useFindAllProblemsForMemberAction } from "@/app/_action/find-all-problems-for-member-action";
-import { useCreateSubmissionAction } from "@/app/_action/create-submission-action";
-import { Form } from "@/app/_component/form/form";
 import { Table } from "@/app/_component/table/table";
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { ProblemStatusBadge } from "@/app/contests/[id]/_component/problem-status-badge";
+import { useAuthorization } from "@/app/_util/authorization-hook";
+import { attachmentService } from "@/app/_composition";
 
 export default function ContestProblemsPage({
   params,
@@ -35,28 +22,15 @@ export default function ContestProblemsPage({
   params: Promise<{ id: number }>;
 }) {
   const { id } = use(params);
-  const { authorizationService } = useContainer();
+  const authorization = useAuthorization();
   const { data: problems, ...findAllProblemsAction } =
     useFindAllProblemsAction();
   const { data: memberProblems, ...findAllProblemsForMemberAction } =
     useFindAllProblemsForMemberAction();
-  const createSubmissionAction = useCreateSubmissionAction();
 
-  const submissionForm = useForm<SubmissionFormType>({
-    resolver: joiResolver(submissionFormSchema),
-  });
-
-  const [isContestant, setIsContestant] = useState(false);
-  const [openProblem, setOpenProblem] = useState<
-    ProblemShortResponseDTO | ProblemMemberResponseDTO | undefined
-  >();
+  const isContestant = authorization?.member.type === MemberType.CONTESTANT;
 
   useEffect(() => {
-    const authorization = authorizationService.getAuthorization();
-    const member = authorization?.member;
-    const isContestant = member?.type === MemberType.CONTESTANT;
-    setIsContestant(isContestant);
-
     async function getProblems() {
       if (isContestant) {
         await findAllProblemsForMemberAction.act(id);
@@ -65,13 +39,12 @@ export default function ContestProblemsPage({
       }
     }
     getProblems();
-  }, []);
+  }, [isContestant]);
 
-  function makeSubmit(problemId: number) {
-    return (data: SubmissionFormType) => {
-      const input = toInputDTO(data);
-      createSubmissionAction.act(id, problemId, input);
-    };
+  function onDownload(
+    problem: ProblemMemberResponseDTO | ProblemPublicResponseDTO,
+  ) {
+    attachmentService.download(problem.description);
   }
 
   if (
@@ -98,7 +71,7 @@ export default function ContestProblemsPage({
                     index % 2 === 1 && "bg-gray-50",
                   )}
                   onClick={() => {
-                    setOpenProblem(problem);
+                    onDownload(problem);
                   }}
                 >
                   <TableCell>
@@ -120,7 +93,7 @@ export default function ContestProblemsPage({
                     index % 2 === 1 && "bg-gray-50",
                   )}
                   onClick={() => {
-                    setOpenProblem(problem);
+                    onDownload(problem);
                   }}
                 >
                   <TableCell>
@@ -130,59 +103,6 @@ export default function ContestProblemsPage({
               ))}
         </TableSection>
       </Table>
-      {openProblem && (
-        <Modal>
-          <div className="flex flex-col h-full p-2">
-            <div className="flex justify-between items-center pb-2 border-b border-gray-300">
-              <p className="text-lg font-semibold m-0">{openProblem.title}</p>
-              <Button
-                onClick={() => setOpenProblem(undefined)}
-                disabled={createSubmissionAction.isLoading}
-              >
-                Close
-              </Button>
-            </div>
-            <div className="flex-1 py-2">
-              <MarkdownDisplay markdown={openProblem.description} />
-            </div>
-            {isContestant && (
-              <Form
-                onSubmit={submissionForm.handleSubmit(
-                  makeSubmit(openProblem.id),
-                )}
-                disabled={createSubmissionAction.isLoading}
-                className="flex gap-5 items-center pt-2 border-t border-gray-300"
-              >
-                <div className="flex flex-1 gap-3">
-                  <Select
-                    fm={submissionForm}
-                    label="Language"
-                    name="language"
-                    options={Object.values(Language).map((it) => ({
-                      label: formatLanguage(it),
-                      value: it,
-                    }))}
-                  />
-                  <FileInput
-                    fm={submissionForm}
-                    label="Code"
-                    name="code"
-                    containerClassName="flex-1"
-                  />
-                </div>
-                <div>
-                  <Button type="submit" className="mt-[0.4em]">
-                    Submit
-                  </Button>
-                  {createSubmissionAction.isLoading && (
-                    <Spinner className="ms-4" />
-                  )}
-                </div>
-              </Form>
-            )}
-          </div>
-        </Modal>
-      )}
     </div>
   );
 }

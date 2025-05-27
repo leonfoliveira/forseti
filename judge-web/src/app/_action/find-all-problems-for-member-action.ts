@@ -1,27 +1,37 @@
-import { useContainer } from "@/app/_atom/container-atom";
 import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { useMemberSignOutAction } from "@/app/_action/member-sign-out-action";
-import { useSubmissionForMemberListener } from "@/app/_listener/submission-for-member-listener";
-import { SubmissionEmmitDTO } from "@/core/listener/dto/emmit/SubmissionEmmitDTO";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { recalculateMemberProblems } from "@/app/contests/[id]/problems/_util/member-problem-calculator";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
+import { contestService, submissionService } from "@/app/_composition";
+import { useEffect, useRef } from "react";
+import { useAuthorization } from "@/app/_util/authorization-hook";
+import { CompatClient } from "@stomp/stompjs";
 
 export function useFindAllProblemsForMemberAction() {
-  const { authorizationService, contestService } = useContainer();
+  const authorization = useAuthorization();
   const toast = useToast();
   const memberSignOutAction = useMemberSignOutAction();
-  const submissionForMemberListener = useSubmissionForMemberListener();
   const action = useAction(findAllProblemsForMember);
+  const listenerRef = useRef<CompatClient>(null);
+
+  useEffect(() => {
+    return () => {
+      if (listenerRef.current) {
+        submissionService.unsubscribe(listenerRef.current);
+      }
+    };
+  }, []);
 
   async function findAllProblemsForMember(contestId: number) {
     try {
       const problems = await contestService.findAllProblemsForMember(contestId);
-      const member = authorizationService.getAuthorization()?.member;
+      const member = authorization?.member;
       if (member) {
-        await submissionForMemberListener.subscribe(
+        listenerRef.current = await submissionService.subscribeForMember(
           member.id,
           receiveSubmission,
         );
@@ -39,7 +49,7 @@ export function useFindAllProblemsForMemberAction() {
     }
   }
 
-  const receiveSubmission = (submission: SubmissionEmmitDTO) => {
+  const receiveSubmission = (submission: SubmissionPublicResponseDTO) => {
     if (submission.status === SubmissionStatus.JUDGING) return;
     action.setData((data) => {
       return recalculateMemberProblems(data, submission);

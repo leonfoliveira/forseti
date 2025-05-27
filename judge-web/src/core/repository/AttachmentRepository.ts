@@ -1,7 +1,8 @@
-import { UploadAttachmentResponseDTO } from "@/core/repository/dto/response/UploadAttachmentResponseDTO";
+import { AttachmentDownloadResponseDTO } from "@/core/repository/dto/response/AttachmentDownloadResponseDTO";
+import { Attachment } from "@/core/domain/model/Attachment";
 
 export interface AttachmentRepository {
-  createUploadAttachment(): Promise<UploadAttachmentResponseDTO>;
+  upload(file: File): Promise<Attachment>;
 
-  uploadAttachment(url: string, file: File): Promise<void>;
+  download(attachment: Attachment): Promise<AttachmentDownloadResponseDTO>;
 }

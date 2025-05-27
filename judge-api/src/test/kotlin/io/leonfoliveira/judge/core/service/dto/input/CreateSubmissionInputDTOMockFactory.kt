@@ -1,14 +1,15 @@
 package io.leonfoliveira.judge.core.service.dto.input
 
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import java.util.UUID
 
 object CreateSubmissionInputDTOMockFactory {
     fun build(
+        problemId: Int = 1,
         language: Language = Language.PYTHON_3_13_3,
-        codeKey: UUID = UUID.randomUUID(),
+        code: AttachmentInputDTO = AttachmentInputDTOMockFactory.build(),
     ) = CreateSubmissionInputDTO(
+        problemId = problemId,
         language = language,
-        codeKey = codeKey,
+        code = code,
     )
 }

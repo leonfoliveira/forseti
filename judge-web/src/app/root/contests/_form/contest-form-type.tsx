@@ -1,6 +1,6 @@
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { DownloadAttachmentResponseDTO } from "@/core/repository/dto/response/DownloadAttachmentResponseDTO";
+import { Attachment } from "@/core/domain/model/Attachment";
 
 export type ContestFormType = Partial<{
   id: number;
@@ -23,9 +23,9 @@ export type ContestFormMemberType = Partial<{
 export type ContestFormProblemType = Partial<{
   _id: number;
   title: string;
-  description: string;
+  description: Attachment;
+  newDescription: File;
   timeLimit: number;
-  _testCases: DownloadAttachmentResponseDTO;
-  forceSelect: boolean;
-  testCases: File;
+  testCases: Attachment;
+  newTestCases: File;
 }>;

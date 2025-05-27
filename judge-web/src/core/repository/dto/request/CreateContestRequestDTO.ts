@@ -1,6 +1,6 @@
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { AttachmentRequestDTO } from "@/core/repository/dto/request/AttachmentRequestDTO";
+import { Attachment } from "@/core/domain/model/Attachment";
 
 export type CreateContestRequestDTO = {
   title: string;
@@ -15,8 +15,8 @@ export type CreateContestRequestDTO = {
   }[];
   problems: {
     title: string;
-    description: string;
+    description: Attachment;
     timeLimit: number;
-    testCases: AttachmentRequestDTO;
+    testCases: Attachment;
   }[];
 };
