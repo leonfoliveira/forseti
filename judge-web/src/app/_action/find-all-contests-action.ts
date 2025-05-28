@@ -1,12 +1,12 @@
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { contestService } from "@/app/_composition";
+import { useAlert } from "@/app/_util/alert-hook";
 
 export function useFindAllContestsAction() {
-  const toast = useToast();
+  const alert = useAlert();
   const signOutAction = useRootSignOutAction();
 
   async function findAllContests() {
@@ -19,7 +19,7 @@ export function useFindAllContestsAction() {
       ) {
         await signOutAction.act();
       } else {
-        toast.error("Error loading contests");
+        alert.error("Error loading contests");
       }
     }
   }

@@ -33,9 +33,9 @@ export default function AppPage() {
   }
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center">
+    <div className="w-screen h-screen flex justify-center items-center bg-base-100">
       <form
-        className="bg-white p-10 w-full max-w-[400]"
+        className="bg-base-300 p-10 pt-0 w-full max-w-[400]"
         onSubmit={appForm.handleSubmit(makeOnSubmit("/contests/{id}"))}
       >
         <div className="my-6">
@@ -47,21 +47,20 @@ export default function AppPage() {
               onClick={appForm.handleSubmit(
                 makeOnSubmit("/auth/contests/{id}"),
               )}
-              className="flex-1 mr-5"
+              className="flex-1 mr-5 btn-primary"
             >
               Sign In
             </Button>
             <Button
               onClick={appForm.handleSubmit(makeOnSubmit("/contests/{id}"))}
-              className="flex-1"
+              className="flex-1 btn-primary"
             >
               Guest
             </Button>
           </div>
           <Button
-            variant="outline-primary"
             onClick={() => router.push("/auth/root")}
-            className="mt-5 flex-1"
+            className="mt-5 flex-1 btn-outline btn-primary"
           >
             Root
           </Button>

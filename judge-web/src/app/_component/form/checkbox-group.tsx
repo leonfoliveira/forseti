@@ -2,6 +2,7 @@ import React from "react";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { FieldPath, FieldValues } from "react-hook-form";
 import { Checkbox } from "@/app/_component/form/checkbox";
+import { cls } from "@/app/_util/cls";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -45,27 +46,27 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
       control={fm.control}
       name={props.name}
       render={({ field, fieldState }) => (
-        <div className={containerClassName}>
-          <label className="block text-sm font-semibold">{label}</label>
-          {options.map((item) => (
-            <Checkbox
-              {...props}
-              className={className}
-              key={item.value}
-              checked={format(field.value, item.value)}
-              onChange={(event) => {
-                field.onChange(
-                  parse(field.value, item.value, event.target.checked),
-                );
-              }}
-            >
-              {item.label}
-            </Checkbox>
-          ))}
-          <p className="text-sm font-semibold text-red-500 min-h-[1em]">
-            {fieldState.error?.message}
-          </p>
-        </div>
+        <fieldset className={cls(containerClassName, "fieldset")}>
+          <label className="fieldset-legend">{label}</label>
+          <div className="grid gap-4 grid-cols-[repeat(auto-fill,_minmax(150px,_1fr))]">
+            {options.map((item) => (
+              <Checkbox
+                {...props}
+                className={className}
+                key={item.value}
+                checked={format(field.value, item.value)}
+                onChange={(event) => {
+                  field.onChange(
+                    parse(field.value, item.value, event.target.checked),
+                  );
+                }}
+              >
+                {item.label}
+              </Checkbox>
+            ))}
+          </div>
+          <p className="label text-error">{fieldState.error?.message}</p>
+        </fieldset>
       )}
     />
   );

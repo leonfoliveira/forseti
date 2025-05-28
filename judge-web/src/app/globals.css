@@ -1,4 +1,4 @@
 @import "tailwindcss";
-@import "katex/dist/katex.min.css";
-
-@plugin "@tailwindcss/typography";
+@plugin "daisyui" {
+    themes: light, dark --default;
+}

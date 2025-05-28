@@ -1,14 +1,15 @@
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { notFound } from "next/navigation";
 import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { contestService } from "@/app/_composition";
+import { redirect } from "next/navigation";
+import { useAlert } from "@/app/_util/alert-hook";
 
 export function useFindContestByIdForRoot() {
-  const toast = useToast();
+  const alert = useAlert();
   const signOutAction = useRootSignOutAction();
 
   async function findContestById(id: number) {
@@ -16,14 +17,14 @@ export function useFindContestByIdForRoot() {
       return await contestService.findContestByIdForRoot(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        notFound();
+        redirect(`/not-found`);
       } else if (
         error instanceof UnauthorizedException ||
         error instanceof ForbiddenException
       ) {
         signOutAction.act();
       } else {
-        toast.error("Error loading contest");
+        alert.error("Error loading contest");
       }
     }
   }

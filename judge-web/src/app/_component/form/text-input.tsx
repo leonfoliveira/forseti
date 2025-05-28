@@ -36,22 +36,17 @@ export function TextInput<TFieldValues extends FieldValues>({
       control={fm.control}
       name={name}
       render={({ field, fieldState }) => (
-        <div className={containerClassName}>
-          <label className="block text-sm font-semibold">{label}</label>
+        <fieldset className={cls("fieldset", containerClassName)}>
+          <label className="fieldset-legend">{label}</label>
           <input
             {...props}
             type={password ? "password" : "text"}
             value={format(field.value)}
             onChange={(e) => field.onChange(parse(e.target.value))}
-            className={cls(
-              "block w-full p-2 bg-gray-100 rounded-lg placeholder:text-gray-400 disabled:text-gray-300",
-              className,
-            )}
+            className={cls("input w-full", className)}
           />
-          <p className="text-sm font-semibold text-red-500 min-h-[1em]">
-            {fieldState.error?.message}
-          </p>
-        </div>
+          <p className="label text-error">{fieldState.error?.message}</p>
+        </fieldset>
       )}
     />
   );

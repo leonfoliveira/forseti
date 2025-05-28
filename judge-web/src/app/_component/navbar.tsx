@@ -2,9 +2,12 @@ import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/app/_component/form/button";
 import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
-import { formatDifference } from "@/app/_util/date-utils";
 import { authorizationService } from "@/app/_composition";
 import { useAuthorization } from "@/app/_util/authorization-hook";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
+import { useTheme } from "@/app/_util/theme-hook";
+import { formatDifference } from "@/app/_util/date-utils";
 
 type Props = {
   contest?: ContestSummaryResponseDTO;
@@ -14,19 +17,26 @@ type Props = {
 export function Navbar({ contest, signInPath }: Props) {
   const router = useRouter();
   const authorization = useAuthorization();
-  const diffRef = useRef<HTMLSpanElement>(null);
+  const { theme, toggleTheme } = useTheme();
+
+  const clockRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     if (contest) {
       const interval = setInterval(() => {
-        if (diffRef.current) {
+        if (clockRef.current) {
           const diff = Math.max(
-            new Date(contest.endAt).getTime() - new Date().getTime(),
             0,
+            new Date(contest.endAt).getTime() - new Date().getTime(),
           );
-          diffRef.current.textContent = formatDifference(diff);
-          if (diff <= 1000 * 60 * 20) {
-            diffRef.current.classList.add("text-red-500");
+          clockRef.current.textContent = formatDifference(diff);
+
+          if (diff / 1000 / 60 < 20) {
+            clockRef.current.classList.add("text-error");
+          }
+
+          if (diff === 0) {
+            clearInterval(interval);
           }
         }
       }, 1000);
@@ -41,14 +51,26 @@ export function Navbar({ contest, signInPath }: Props) {
   }
 
   return (
-    <nav className="grid [grid-template-columns:1fr_auto_1fr] items-center bg-white p-2">
-      <div className="text-lg font-semibold">{contest?.title}</div>
-      <div className="justify-self-center text-red-">
-        <span ref={diffRef} className="font-mono" />
+    <nav className="navbar bg-base-100">
+      <div className="navbar-start">
+        <div className="text-lg font-semibold">{contest?.title}</div>
       </div>
-      <div className="justify-self-end flex items-center">
+      <div className="navbar-center">
+        <span ref={clockRef} />
+      </div>
+      <div className="navbar-end flex items-center">
+        <label className="toggle text-base-content mr-5">
+          <input
+            type="checkbox"
+            className="theme-controller"
+            checked={theme === "dark"}
+            onChange={toggleTheme}
+          />
+          <FontAwesomeIcon icon={faSun} size="xs" />
+          <FontAwesomeIcon icon={faMoon} size="xs" />
+        </label>
         <p className="mr-5">{authorization?.member.name}</p>
-        <Button onClick={signOut} variant="outline-primary">
+        <Button onClick={signOut} className="btn-soft">
           Sign out
         </Button>
       </div>

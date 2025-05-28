@@ -32,6 +32,8 @@ spring:
         auto: false
       s3:
         bucket: ${AWS_S3_BUCKET:judge}
+      sns:
+        topic: ${AWS_SNS_TOPIC:judge-business-events}
       sqs:
         submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:judge-submission}
 server:

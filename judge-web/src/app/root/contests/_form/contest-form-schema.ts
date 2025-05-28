@@ -5,8 +5,9 @@ export const contestFormSchema = Joi.object({
     "string.empty": "Title is required",
     "any.required": "Title is required",
   }),
-  languages: Joi.array().items(Joi.string()).required().messages({
+  languages: Joi.array().items(Joi.string()).min(1).required().messages({
     "array.empty": "At least one language is required",
+    "array.min": "At least one language is required",
     "any.required": "At least one language is required",
   }),
   startAt: Joi.date().greater("now").required().messages({

@@ -1,24 +1,26 @@
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { redirect } from "next/navigation";
-import { useToast } from "@/app/_util/toast-hook";
+import { redirect, useRouter } from "next/navigation";
 import { useAction } from "@/app/_util/action-hook";
 import { contestService } from "@/app/_composition";
 import { useAlert } from "@/app/_util/alert-hook";
 
-export function useFindContestSummaryByIdAction() {
+export function useDeleteContestAction() {
   const alert = useAlert();
+  const router = useRouter();
 
-  async function findContestById(id: number) {
+  async function deleteContest(id: number) {
     try {
-      return await contestService.findContestSummaryById(id);
+      await contestService.deleteContest(id);
+      alert.success("Contest deleted successfully");
+      router.push("/root/contests");
     } catch (error) {
       if (error instanceof NotFoundException) {
         redirect(`/not-found`);
       } else {
-        alert.error("Error loading contest");
+        alert.error("Error deleting contest");
       }
     }
   }
 
-  return useAction(findContestById);
+  return useAction(deleteContest);
 }

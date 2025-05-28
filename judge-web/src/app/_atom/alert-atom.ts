@@ -1,17 +1,17 @@
 import { atom } from "jotai";
 
-export enum ToastLevel {
+export enum AlertLevel {
   INFO = "INFO",
   SUCCESS = "SUCCESS",
   WARNING = "WARNING",
   ERROR = "ERROR",
 }
 
-export type ToastType = {
+export type AlertType = {
   id: string;
-  level: ToastLevel;
+  level: AlertLevel;
   text: string;
   ttl: number;
 };
 
-export const toastsAtom = atom<ToastType[]>([]);
+export const alertAtom = atom<AlertType[]>([]);

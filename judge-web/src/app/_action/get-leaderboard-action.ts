@@ -5,9 +5,10 @@ import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/Subm
 import { useEffect, useRef } from "react";
 import { contestService, submissionService } from "@/app/_composition";
 import { CompatClient } from "@stomp/stompjs";
+import { useAlert } from "@/app/_util/alert-hook";
 
 export function useGetLeaderboardAction() {
-  const toast = useToast();
+  const alert = useAlert();
   const action = useAction(getLeaderboard);
   const listenerRef = useRef<CompatClient>(null);
 
@@ -29,7 +30,7 @@ export function useGetLeaderboardAction() {
       return leaderboard;
     } catch (error) {
       console.error(error);
-      toast.error("Error loading leaderboard");
+      alert.error("Error loading leaderboard");
     }
   }
 

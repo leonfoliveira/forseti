@@ -60,15 +60,14 @@ export default function ContestProblemsPage({
 
   return (
     <div>
-      <Table>
+      <Table className="table-zebra">
         <TableSection>
           {isContestant
             ? memberProblems?.map((problem, index) => (
                 <TableRow
                   key={problem.id}
                   className={cls(
-                    "p-2 hover:bg-gray-100 active:bg-gray-200 cursor-pointer transition",
-                    index % 2 === 1 && "bg-gray-50",
+                    "hover:bg-base-200 active:bg-base-300 cursor-pointer transition duration-100",
                   )}
                   onClick={() => {
                     onDownload(problem);

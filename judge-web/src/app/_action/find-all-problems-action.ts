@@ -1,15 +1,15 @@
-import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
 import { contestService } from "@/app/_composition";
+import { useAlert } from "@/app/_util/alert-hook";
 
 export function useFindAllProblemsAction() {
-  const toast = useToast();
+  const alert = useAlert();
 
   async function findAllProblems(contestId: number) {
     try {
       return await contestService.findAllProblems(contestId);
     } catch {
-      toast.error("Error loading problems");
+      alert.error("Error loading problems");
     }
   }
 

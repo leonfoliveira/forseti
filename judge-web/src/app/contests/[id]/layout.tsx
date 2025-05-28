@@ -30,10 +30,13 @@ export default function ContestLayout({
 
   useEffect(() => {
     findContestAction.act(id);
+  }, []);
+
+  useEffect(() => {
     if (authorization?.member.type === MemberType.CONTESTANT) {
       subscribeForMemberSubmissionAction.act(authorization.member.id);
     }
-  }, []);
+  }, [authorization]);
 
   if (findContestAction.isLoading || !contest) {
     return (
@@ -58,16 +61,13 @@ export default function ContestLayout({
   function buildNavLink(label: string, path: string) {
     const isActive = pathname === `/contests/${id}/${path}`;
     return (
-      <li
+      <a
         key={path}
-        className={cls(
-          "p-2 flex-1 font-semibold hover:bg-gray-100 active:bg-gray-200 transition",
-          isActive && "bg-gray-100",
-        )}
+        className={cls("tab", isActive && "tab-active")}
         onClick={() => router.push(`/contests/${id}/${path}`)}
       >
         {label}
-      </li>
+      </a>
     );
   }
 
@@ -91,13 +91,9 @@ export default function ContestLayout({
   return (
     <div>
       <Navbar contest={contest} signInPath={`/auth/contests/${id}`} />
-      <div className="mt-5 bg-white">
-        <nav className="bg-gray-50">
-          <ul className={`flex text-center cursor-pointer`}>
-            {buildBuildNavLinks()}
-          </ul>
-        </nav>
-        <div className="p-5">{children}</div>
+      <div className="mt-2">
+        <nav className="tabs tabs-lift w-full">{buildBuildNavLinks()}</nav>
+        <div className="p-5 bg-base-100">{children}</div>
       </div>
     </div>
   );

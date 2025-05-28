@@ -26,7 +26,7 @@ export default function RootContestsPage() {
           <h1 className="text-2xl inline-block mr-3">Contests</h1>
           {findAllContestsAction.isLoading && <Spinner />}
         </div>
-        <Button type="button" onClick={onNewContest}>
+        <Button type="button" onClick={onNewContest} className="btn-primary">
           New
         </Button>
       </div>

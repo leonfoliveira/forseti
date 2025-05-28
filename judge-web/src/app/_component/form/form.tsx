@@ -8,9 +8,14 @@ type Props = DetailedHTMLProps<
   disabled?: boolean;
 };
 
-export function Form({ children, disabled = false, ...props }: Props) {
+export function Form({
+  children,
+  className,
+  disabled = false,
+  ...props
+}: Props) {
   return (
-    <fieldset disabled={disabled}>
+    <fieldset disabled={disabled} className={className}>
       <form {...props}>{children}</form>
     </fieldset>
   );

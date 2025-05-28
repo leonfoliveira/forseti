@@ -1,14 +1,18 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { MemberSignInForm } from "@/app/auth/_component/member-sign-in-form";
 import { use, useEffect } from "react";
 import { Spinner } from "@/app/_component/spinner";
 import { MemberSignInFormType } from "@/app/auth/_form/sign-in-form-type";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { memberSignInFormSchema } from "@/app/auth/_form/sign-in-form-schema";
-import { useFindContestByIdAction } from "@/app/_action/find-contest-by-id-action";
 import { useMemberSignInAction } from "@/app/_action/sign-in-action-member";
+import { Form } from "@/app/_component/form/form";
+import { TextInput } from "@/app/_component/form/text-input";
+import { Button } from "@/app/_component/form/button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { useFindContestSummaryByIdAction } from "@/app/_action/find-contest-summary-action";
 
 type Props = {
   params: Promise<{
@@ -18,7 +22,7 @@ type Props = {
 
 export default function AuthMember({ params }: Props) {
   const { id } = use(params);
-  const findContestByIdAction = useFindContestByIdAction();
+  const findContestSummaryByIdAction = useFindContestSummaryByIdAction();
   const memberSignInAction = useMemberSignInAction();
 
   const form = useForm<MemberSignInFormType>({
@@ -26,21 +30,37 @@ export default function AuthMember({ params }: Props) {
   });
 
   useEffect(() => {
-    findContestByIdAction.act(id);
+    findContestSummaryByIdAction.act(id);
   }, []);
 
   return (
     <div className="w-screen h-screen flex justify-center items-center">
-      {findContestByIdAction.isLoading ? (
+      {findContestSummaryByIdAction.isLoading ? (
         <Spinner size="lg" />
       ) : (
-        <MemberSignInForm
-          contestTitle={findContestByIdAction.data?.title || ""}
-          onSubmit={(data) => memberSignInAction.act(id, data)}
-          form={form}
-          isDisabled={memberSignInAction.isLoading}
-          isLoading={memberSignInAction.isLoading}
-        />
+        <Form
+          onSubmit={form.handleSubmit((data) =>
+            memberSignInAction.act(id, data),
+          )}
+          className="p-10 w-full max-w-[400] bg-base-100"
+          disabled={memberSignInAction.isLoading}
+        >
+          <h1 className="text-3xl font-bold">Sign In</h1>
+          <h2 className="text-md mt-2">
+            {findContestSummaryByIdAction.data?.title}
+          </h2>
+          <div className="my-6">
+            <TextInput fm={form} name="login" label="Login" />
+            <TextInput fm={form} name="password" label="Password" password />
+          </div>
+          <div>
+            <Button type="submit" className="mr-5 btn-primary">
+              Sign in
+              <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />
+            </Button>
+            {memberSignInAction.isLoading && <Spinner />}
+          </div>
+        </Form>
       )}
     </div>
   );

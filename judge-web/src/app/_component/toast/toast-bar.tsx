@@ -10,14 +10,9 @@ export function ToastBar() {
   }
 
   return (
-    <div className="fixed bottom-0 right-0 p-3 flex flex-col-reverse gap-2 z-50">
+    <div className="toast toast-end">
       {toasts.map((toast) => (
-        <Toast
-          key={toast.id}
-          toast={toast}
-          lifetime={3000}
-          onClose={removeToast}
-        />
+        <Toast key={toast.id} toast={toast} onClose={removeToast} />
       ))}
     </div>
   );

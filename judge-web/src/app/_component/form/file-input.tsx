@@ -53,8 +53,8 @@ export function FileInput<TFieldValues extends FieldValues>({
       control={fm.control}
       name={name}
       render={({ field, fieldState }) => (
-        <div className={containerClassName}>
-          <label className="block text-sm font-semibold">{label}</label>
+        <fieldset className={cls(containerClassName, "fieldset")}>
+          <label className="fieldset-legend">{label}</label>
           <input
             {...props}
             ref={ref}
@@ -65,21 +65,11 @@ export function FileInput<TFieldValues extends FieldValues>({
             }}
             className={cls("hidden", className)}
           />
-          <div className="flex">
-            <button
-              type="button"
-              className="bg-gray-200 px-2 rounded-l-lg cursor-pointer"
-              onClick={() => {
-                if (field.value) onDownload(field.value);
-                else if (originalValue) onDownloadOriginal?.(originalValue);
-              }}
-            >
-              <FontAwesomeIcon icon={faDownload} />
-            </button>
+          <div className="join">
             <button
               type="button"
               onClick={() => ref.current?.click()}
-              className="block w-full p-2 bg-gray-100 disabled:text-gray-300 cursor-pointer truncate"
+              className="input rounded-l cursor-pointer w-full"
             >
               {field.value && field.value.name}
               {!field.value && originalValue && originalValue.filename}
@@ -89,16 +79,26 @@ export function FileInput<TFieldValues extends FieldValues>({
             </button>
             <button
               type="button"
-              className="bg-gray-200 rounded-r-lg px-2 cursor-pointer"
+              className="btn btn-soft px-3"
+              onClick={() => {
+                if (field.value) onDownload(field.value);
+                else if (originalValue) onDownloadOriginal?.(originalValue);
+              }}
+            >
+              <FontAwesomeIcon icon={faDownload} />
+            </button>
+            <button
+              type="button"
+              className="btn btn-soft px-3"
               onClick={() => field.onChange(undefined)}
             >
               <FontAwesomeIcon icon={faClose} />
             </button>
           </div>
-          <p className="text-sm font-semibold text-red-500 min-h-[1em]">
+          <p className="fieldset-legend text-error">
             {fieldState.error?.message}
           </p>
-        </div>
+        </fieldset>
       )}
     />
   );

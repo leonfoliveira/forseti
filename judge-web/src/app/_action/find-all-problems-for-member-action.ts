@@ -10,10 +10,11 @@ import { contestService, submissionService } from "@/app/_composition";
 import { useEffect, useRef } from "react";
 import { useAuthorization } from "@/app/_util/authorization-hook";
 import { CompatClient } from "@stomp/stompjs";
+import { useAlert } from "@/app/_util/alert-hook";
 
 export function useFindAllProblemsForMemberAction() {
   const authorization = useAuthorization();
-  const toast = useToast();
+  const alert = useAlert();
   const memberSignOutAction = useMemberSignOutAction();
   const action = useAction(findAllProblemsForMember);
   const listenerRef = useRef<CompatClient>(null);
@@ -44,7 +45,7 @@ export function useFindAllProblemsForMemberAction() {
       ) {
         await memberSignOutAction.act(contestId);
       } else {
-        toast.error("Error loading problems");
+        alert.error("Error loading problems");
       }
     }
   }

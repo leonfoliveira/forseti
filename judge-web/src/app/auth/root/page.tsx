@@ -24,7 +24,7 @@ export default function AuthRoot() {
       <Form
         onSubmit={form.handleSubmit(signInAction.act)}
         disabled={signInAction.isLoading}
-        className="bg-white p-10 w-full max-w-[400]"
+        className="p-10 w-full max-w-[400] bg-base-100"
       >
         <h1 className="text-3xl font-bold">Sign In</h1>
         <h2 className="text-md mt-2">Root</h2>
@@ -32,7 +32,7 @@ export default function AuthRoot() {
           <TextInput fm={form} name="password" label="Password" password />
         </div>
         <div>
-          <Button type="submit" className="mr-5">
+          <Button type="submit" className="mr-5 btn-primary">
             Sign in
             <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />
           </Button>

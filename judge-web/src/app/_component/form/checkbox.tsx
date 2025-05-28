@@ -1,13 +1,21 @@
 import React from "react";
+import { cls } from "@/app/_util/cls";
 
 export function Checkbox({
   children,
+  className,
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
-    <div>
-      <input type="checkbox" {...props} />
-      <label className="ml-2">{children}</label>
-    </div>
+    <fieldset>
+      <label className="label">
+        <input
+          type="checkbox"
+          {...props}
+          className={cls("toggle", className)}
+        />
+        {children}
+      </label>
+    </fieldset>
   );
 }

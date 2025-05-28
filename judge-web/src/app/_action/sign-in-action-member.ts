@@ -4,9 +4,10 @@ import { useToast } from "@/app/_util/toast-hook";
 import { useRouter } from "next/navigation";
 import { useAction } from "@/app/_util/action-hook";
 import { authenticationService } from "@/app/_composition";
+import { useAlert } from "@/app/_util/alert-hook";
 
 export function useMemberSignInAction() {
-  const toast = useToast();
+  const alert = useAlert();
   const router = useRouter();
 
   async function signIn(contestId: number, data: MemberSignInFormType) {
@@ -15,9 +16,9 @@ export function useMemberSignInAction() {
       router.push(`/contests/${contestId}`);
     } catch (error) {
       if (error instanceof UnauthorizedException) {
-        toast.warning("Invalid password");
+        alert.warning("Invalid password");
       } else {
-        toast.error("Error signing in");
+        alert.error("Error signing in");
       }
     }
   }

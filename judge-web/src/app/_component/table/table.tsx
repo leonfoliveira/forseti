@@ -7,7 +7,7 @@ export function Table({
   ...props
 }: DetailedHTMLProps<TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>) {
   return (
-    <table {...props} className={cls("w-full", className)}>
+    <table {...props} className={cls("table", className)}>
       {children}
     </table>
   );

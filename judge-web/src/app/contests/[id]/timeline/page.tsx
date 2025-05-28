@@ -32,34 +32,46 @@ export default function ContestTimelinePage({
   }
 
   return (
-    <Table>
-      <TableSection head>
-        <TableRow>
-          <TableCell header>Timestamp</TableCell>
-          <TableCell header>Contestant</TableCell>
-          <TableCell header>Problem</TableCell>
-          <TableCell header>Language</TableCell>
-          <TableCell header align="right">
-            Status
-          </TableCell>
-        </TableRow>
-      </TableSection>
-      <TableSection>
-        {submissions?.map((submission) => (
-          <TableRow
-            key={submission.id}
-            className="hover:bg-gray-100 transition"
-          >
-            <TableCell>{toLocaleString(submission.createdAt)}</TableCell>
-            <TableCell>{submission.member.name}</TableCell>
-            <TableCell>{submission.problem.title}</TableCell>
-            <TableCell>{formatLanguage(submission.language)}</TableCell>
-            <TableCell align="right" className="font-semibold">
-              <SubmissionStatusBadge status={submission.status} />
+    <div>
+      <Table>
+        <TableSection head>
+          <TableRow>
+            <TableCell header>Timestamp</TableCell>
+            <TableCell header>Contestant</TableCell>
+            <TableCell header>Problem</TableCell>
+            <TableCell header>Language</TableCell>
+            <TableCell header align="right">
+              Status
             </TableCell>
           </TableRow>
-        ))}
-      </TableSection>
-    </Table>
+        </TableSection>
+        <TableSection>
+          {submissions?.map((submission) => (
+            <TableRow
+              key={submission.id}
+              className="hover:bg-gray-100 transition"
+            >
+              <TableCell>{toLocaleString(submission.createdAt)}</TableCell>
+              <TableCell>{submission.member.name}</TableCell>
+              <TableCell>{submission.problem.title}</TableCell>
+              <TableCell>{formatLanguage(submission.language)}</TableCell>
+              <TableCell align="right" className="font-semibold">
+                <SubmissionStatusBadge status={submission.status} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableSection>
+      </Table>
+      {action.isLoading && (
+        <div className="flex justify-center items-center py-20">
+          <Spinner size="lg" />
+        </div>
+      )}
+      {!submissions || submissions.length === 0 ? (
+        <div className="flex justify-center items-center py-20">
+          <p className="text-neutral-content">No submission yet</p>
+        </div>
+      ) : null}
+    </div>
   );
 }

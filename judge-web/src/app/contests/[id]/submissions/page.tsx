@@ -76,17 +76,6 @@ export default function ContestSubmissionPage({
     }
   }
 
-  if (
-    findAllSubmissionsForMemberAction.isLoading ||
-    findContestByIdAction.isLoading
-  ) {
-    return (
-      <div className="flex justify-center items-center py-10">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
-
   return (
     <div>
       <Table>
@@ -117,7 +106,17 @@ export default function ContestSubmissionPage({
           ))}
         </TableSection>
       </Table>
-      <hr className="my-10 border-gray-200" />
+      {findAllSubmissionsForMemberAction.isLoading && (
+        <div className="flex justify-center items-center py-20">
+          <Spinner size="lg" />
+        </div>
+      )}
+      {!submissions || submissions.length === 0 ? (
+        <div className="flex justify-center items-center py-20">
+          <p className="text-neutral-content">No submission yet</p>
+        </div>
+      ) : null}
+      <div className="divider mt-8">New</div>
       <Form
         className="flex flex-col"
         onSubmit={submissionForm.handleSubmit(onSubmit)}
@@ -133,6 +132,7 @@ export default function ContestSubmissionPage({
             value: it.id.toString(),
             label: `${index + 1}. ${it.title}`,
           }))}
+          className="w-full"
         />
         <div className="flex w-full gap-5">
           <Select
@@ -143,18 +143,22 @@ export default function ContestSubmissionPage({
               value: it,
               label: formatLanguage(it),
             }))}
+            containerClassName="flex-1"
           />
           <FileInput
             fm={submissionForm}
             name="code"
             label="Code"
-            containerClassName="flex-1"
+            containerClassName="flex-2"
           />
         </div>
-        <Button type="submit" className="mx-auto mt-5">
-          Submit
-          <FontAwesomeIcon icon={faPaperPlane} className="ms-3" />
-        </Button>
+        <div className="flex justify-center">
+          <Button type="submit" className="btn-primary">
+            Submit
+            <FontAwesomeIcon icon={faPaperPlane} className="ms-3" />
+          </Button>
+          {createSubmissionAction.isLoading && <Spinner className="ms-5" />}
+        </div>
       </Form>
     </div>
   );

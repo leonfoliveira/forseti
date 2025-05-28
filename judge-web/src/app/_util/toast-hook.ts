@@ -18,6 +18,7 @@ export function useToast(): UseToastReturn {
         id: crypto.randomUUID(),
         text,
         level,
+        ttl: 5000,
       },
     ]);
   }

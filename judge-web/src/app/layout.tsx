@@ -5,6 +5,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastBar } from "@/app/_component/toast/toast-bar";
 import { cls } from "@/app/_util/cls";
+import { useTheme } from "@/app/_util/theme-hook";
+import { AlertProvider } from "@/app/_component/alert/alert-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,18 +18,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function RootLayout({
+export default function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { theme } = useTheme();
+
   return (
-    <html lang="en">
-      <body
-        className={cls("bg-gray-100", geistSans.variable, geistMono.variable)}
-      >
+    <html lang="en" data-theme={theme} className="bg-base-300">
+      <body className={cls(geistSans.variable, geistMono.variable)}>
         {children}
         <ToastBar />
+        <AlertProvider />
       </body>
     </html>
   );

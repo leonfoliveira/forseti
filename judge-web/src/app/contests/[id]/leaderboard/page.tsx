@@ -34,7 +34,7 @@ export default function ContestLeaderboardPage({
   const problemsLength = leaderboard.problems.length;
 
   return (
-    <Table>
+    <Table className="table">
       <TableSection head>
         <TableRow>
           <TableCell header></TableCell>
@@ -43,7 +43,7 @@ export default function ContestLeaderboardPage({
               key={problem.id}
               header
               align="center"
-              className={cls(index % 2 === 0 && "bg-gray-50")}
+              className={cls(index % 2 === 0 && "bg-base-200")}
             >
               {index + 1}. {problem.title}
             </TableCell>
@@ -51,7 +51,7 @@ export default function ContestLeaderboardPage({
           <TableCell
             header
             align="right"
-            className={cls(problemsLength % 2 === 0 && "bg-gray-50")}
+            className={cls(problemsLength % 2 === 0 && "bg-base-200")}
           >
             Penalty
           </TableCell>
@@ -65,7 +65,7 @@ export default function ContestLeaderboardPage({
               <TableCell
                 key={problem.id}
                 align="center"
-                className={cls(index % 2 === 0 && "bg-gray-50")}
+                className={cls(index % 2 === 0 && "bg-base-200")}
               >
                 <div className="text-center">
                   <ProblemStatusBadge
@@ -77,7 +77,7 @@ export default function ContestLeaderboardPage({
             ))}
             <TableCell
               align="right"
-              className={cls(problemsLength % 2 === 0 && "bg-gray-50")}
+              className={cls(problemsLength % 2 === 0 && "bg-base-200")}
             >
               {member.penalty || ""}
             </TableCell>

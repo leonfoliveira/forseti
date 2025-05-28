@@ -52,7 +52,8 @@ export default function RootEditContestPage({
 
   return (
     <ContestForm
-      header={`Contest ${contest?.id || ""}`}
+      contestId={contest?.id}
+      header={`Contest #${contest?.id || ""}`}
       status={contest?.status}
       onSubmit={updateContest}
       form={form}

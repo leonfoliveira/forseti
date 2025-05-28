@@ -8,9 +8,10 @@ import { recalculatePrivateSubmissions } from "@/app/contests/[id]/_util/submiss
 import { useEffect, useRef } from "react";
 import { submissionService } from "@/app/_composition";
 import { CompatClient } from "@stomp/stompjs";
+import { useAlert } from "@/app/_util/alert-hook";
 
 export function useFindAllSubmissionsForMemberAction() {
-  const toast = useToast();
+  const alert = useAlert();
   const action = useAction(findAllForMember);
   const listenerRef = useRef<CompatClient>(null);
 
@@ -34,7 +35,7 @@ export function useFindAllSubmissionsForMemberAction() {
       ) {
         redirect(`/auth/contests/${contestId}`);
       } else {
-        toast.error("Error loading submissions");
+        alert.error("Error loading submissions");
       }
     }
   }

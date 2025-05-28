@@ -15,7 +15,7 @@ import {
   formatLanguage,
   formatStatus,
 } from "@/app/_util/contest-utils";
-import { Badge, BadgeVariant } from "@/app/_component/badge";
+import { Badge } from "@/app/_component/badge";
 import React, { Fragment } from "react";
 import { Spinner } from "@/app/_component/spinner";
 import { TextInput } from "@/app/_component/form/text-input";
@@ -26,8 +26,13 @@ import { NumberInput } from "@/app/_component/form/number-input";
 import { Form } from "@/app/_component/form/form";
 import { FileInput } from "@/app/_component/form/file-input";
 import { useRouter } from "next/navigation";
+import { DialogModal } from "@/app/_component/dialog-modal";
+import { useModal } from "@/app/_util/modal-hook";
+import { useDeleteContestAction } from "@/app/_action/delete-contest-action";
+import { cls } from "@/app/_util/cls";
 
 type Props = {
+  contestId?: number;
   header: string;
   status?: ContestStatus;
   onSubmit: (data: ContestFormType) => Promise<void>;
@@ -37,8 +42,11 @@ type Props = {
 };
 
 export function ContestForm(props: Props) {
-  const { header, onSubmit, form, isDisabled, status, isLoading } = props;
+  const { contestId, header, onSubmit, form, isDisabled, status, isLoading } =
+    props;
+  const deleteContestAction = useDeleteContestAction();
   const router = useRouter();
+  const modal = useModal();
 
   const membersFields = useFieldArray({
     control: form.control,
@@ -49,12 +57,12 @@ export function ContestForm(props: Props) {
     name: "problems",
   });
 
-  function getBadgeVariant() {
+  function getBadgeClassname() {
     return {
-      [ContestStatus.NOT_STARTED]: "primary",
-      [ContestStatus.IN_PROGRESS]: "success",
-      [ContestStatus.ENDED]: "danger",
-    }[status || ContestStatus.NOT_STARTED] as BadgeVariant;
+      [ContestStatus.NOT_STARTED]: "badge-info",
+      [ContestStatus.IN_PROGRESS]: "badge-success",
+      [ContestStatus.ENDED]: "badge-secondary",
+    }[status || ContestStatus.NOT_STARTED];
   }
 
   return (
@@ -69,14 +77,21 @@ export function ContestForm(props: Props) {
             />
             <h1 className="text-2xl ml-5">{header}</h1>
             {status && (
-              <Badge variant={getBadgeVariant()} className="ml-5">
+              <Badge className={cls("ml-5", getBadgeClassname())}>
                 {formatStatus(status)}
               </Badge>
             )}
           </div>
           <div>
             {!!isLoading && <Spinner className="mr-5" />}
-            <Button type="submit">Save</Button>
+            {contestId && (
+              <Button className="btn-error mr-3" onClick={modal.open}>
+                Delete
+              </Button>
+            )}
+            <Button type="submit" className="btn-primary">
+              Save
+            </Button>
           </div>
         </div>
         <TextInput fm={form} name="title" label="Title" />
@@ -140,8 +155,7 @@ export function ContestForm(props: Props) {
                 />
                 <Button
                   onClick={() => membersFields.remove(index)}
-                  variant="outline-danger"
-                  className="mt-[1.1em]"
+                  className="btn-error btn-outline mt-[39]"
                 >
                   <FontAwesomeIcon icon={faTrash} />
                 </Button>
@@ -152,7 +166,6 @@ export function ContestForm(props: Props) {
             onClick={() =>
               membersFields.append({ type: MemberType.CONTESTANT })
             }
-            variant="outline-primary"
             className="mt-2"
           >
             <FontAwesomeIcon icon={faPlus} />
@@ -188,8 +201,7 @@ export function ContestForm(props: Props) {
                 />
                 <Button
                   onClick={() => problemsFields.remove(index)}
-                  variant="outline-danger"
-                  className="mt-[1.1em]"
+                  className="btn-error btn-outline mt-[39]"
                 >
                   <FontAwesomeIcon icon={faTrash} />
                 </Button>
@@ -198,13 +210,22 @@ export function ContestForm(props: Props) {
           </div>
           <Button
             onClick={() => problemsFields.append({ timeLimit: 1000 })}
-            variant="outline-primary"
             className="mt-2"
           >
             <FontAwesomeIcon icon={faPlus} />
           </Button>
         </div>
       </div>
+
+      <DialogModal
+        modal={modal}
+        onConfirm={async () =>
+          deleteContestAction.act(form.watch("id") as number)
+        }
+        isLoading={deleteContestAction.isLoading}
+      >
+        <p className="py-4">Are you sure?</p>
+      </DialogModal>
     </Form>
   );
 }

@@ -3,16 +3,17 @@ package io.leonfoliveira.judge.core.service.submission
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
 import io.leonfoliveira.judge.core.port.SubmissionRunnerAdapter
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
+import io.leonfoliveira.judge.core.event.SubmissionUpdatedEvent
+import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
 class RunSubmissionService(
     private val submissionRepository: SubmissionRepository,
     private val submissionRunnerAdapter: SubmissionRunnerAdapter,
-    private val submissionEmitterAdapter: SubmissionEmitterAdapter,
+    private val transactionalEventPublisher: TransactionalEventPublisher,
 ) {
     fun run(id: Int): Submission {
         val submission =
@@ -26,8 +27,7 @@ class RunSubmissionService(
         val result = submissionRunnerAdapter.run(submission)
         submission.status = result
         submissionRepository.save(submission)
-        submissionEmitterAdapter.emitForContest(submission)
-        submissionEmitterAdapter.emitForMember(submission)
+        transactionalEventPublisher.publish(SubmissionUpdatedEvent(this, submission))
 
         return submission
     }

@@ -6,17 +6,16 @@ import { faClose } from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
   toast: ToastType;
-  lifetime: number;
   onClose: (id: string) => void;
 };
 
-export function Toast({ toast, lifetime, onClose }: Props) {
+export function Toast({ toast, onClose }: Props) {
   const closeTimeout = useRef<NodeJS.Timeout>(null);
 
   useEffect(() => {
     closeTimeout.current = setTimeout(() => {
       onClose(toast.id);
-    }, lifetime);
+    }, toast.ttl);
 
     return () => {
       if (closeTimeout.current) {
@@ -26,18 +25,15 @@ export function Toast({ toast, lifetime, onClose }: Props) {
   }, []);
 
   const style = {
-    [ToastLevel.INFO]: "bg-blue-500 text-white",
-    [ToastLevel.SUCCESS]: "bg-green-500 text-white",
-    [ToastLevel.WARNING]: "bg-yellow-500 text-white",
-    [ToastLevel.ERROR]: "bg-red-500 text-white",
+    [ToastLevel.INFO]: "alert-info",
+    [ToastLevel.SUCCESS]: "alert-success",
+    [ToastLevel.WARNING]: "alert-warning",
+    [ToastLevel.ERROR]: "alert-error",
   };
 
   return (
     <div
-      className={cls(
-        "py-2 px-5 rounded-md flex items-center",
-        style[toast.level],
-      )}
+      className={cls("alert", style[toast.level])}
       style={{ pointerEvents: "auto" }}
     >
       {toast.text}

@@ -18,7 +18,7 @@ export function TableCell({
     right: "text-end",
     center: "text-center",
   }[align];
-  const baseStyle = "py-1 px-2 border-b border-gray-200";
+  const baseStyle = "py-1 px-2";
 
   if (header) {
     return (

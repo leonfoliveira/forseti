@@ -1,38 +1,21 @@
-import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
-import {
-  ContestStatus,
-  formatStatus,
-  getContestStatus,
-} from "@/app/_util/contest-utils";
 import { Table } from "@/app/_component/table/table";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { TableSection } from "@/app/_component/table/table-section";
 import { formatDateTime } from "@/app/_util/date-utils";
 import React from "react";
-import { Badge } from "@/app/_component/badge";
 import { useRouter } from "next/navigation";
+import { ContestStatusBadge } from "@/app/root/contests/_component/contest-status-badge";
+import { ContestSummaryOutputDTO } from "@/core/service/dto/output/ContestSummaryOutputDTO";
 
 type Props = {
-  contests: ContestSummaryResponseDTO[];
+  contests: ContestSummaryOutputDTO[];
 };
 
 export function ContestsTable(props: Props) {
   const { contests } = props;
 
   const router = useRouter();
-
-  function getBadgeVariant(contest: ContestSummaryResponseDTO) {
-    const status = getContestStatus(contest);
-    switch (status) {
-      case ContestStatus.IN_PROGRESS:
-        return "success";
-      case ContestStatus.ENDED:
-        return "warning";
-      default:
-        return "primary";
-    }
-  }
 
   return (
     <Table>
@@ -60,16 +43,14 @@ export function ContestsTable(props: Props) {
           <TableRow
             key={contest.id}
             onClick={() => router.push(`/root/contests/${contest.id}`)}
-            className="hover:bg-gray-100 active:bg-gray-200 transition cursor-pointer"
+            className="cursor-pointer hover:bg-base-200 active:bg-base-300 transition duration-100"
           >
             <TableCell>{contest.id}</TableCell>
             <TableCell>{contest.title}</TableCell>
             <TableCell>{formatDateTime(contest.startAt)}</TableCell>
             <TableCell>{formatDateTime(contest.endAt)}</TableCell>
             <TableCell>
-              <Badge variant={getBadgeVariant(contest)}>
-                {formatStatus(getContestStatus(contest))}
-              </Badge>
+              <ContestStatusBadge contest={contest} />
             </TableCell>
           </TableRow>
         ))}

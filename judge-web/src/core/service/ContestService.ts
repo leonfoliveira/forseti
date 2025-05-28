@@ -6,7 +6,6 @@ import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInp
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 import { ContestOutputDTOMap } from "@/core/service/dto/output/ContestOutputDTO";
 import { Attachment } from "@/core/domain/model/Attachment";
-import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
 import { ContestSummaryOutputDTOMap } from "@/core/service/dto/output/ContestSummaryOutputDTO";
 import { ContestPublicOutputDTOMap } from "@/core/service/dto/output/ContestPublicOutputDTO";
 
