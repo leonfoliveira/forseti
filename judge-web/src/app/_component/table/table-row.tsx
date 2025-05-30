@@ -1,8 +1,9 @@
 import React from "react";
 
-export function TableRow({
-  children,
-  ...props
-}: React.HTMLProps<HTMLTableRowElement>) {
+type Props = React.HTMLProps<HTMLTableRowElement> & {
+  "data-testid"?: string;
+};
+
+export function TableRow({ children, ...props }: Props) {
   return <tr {...props}>{children}</tr>;
 }

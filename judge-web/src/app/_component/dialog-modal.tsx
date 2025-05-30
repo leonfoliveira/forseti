@@ -7,16 +7,25 @@ type Props = {
   modal: ModalHook;
   onConfirm: () => Promise<void>;
   isLoading: boolean;
+  "data-testid"?: string;
 };
 
-export function DialogModal({ children, modal, onConfirm, isLoading }: Props) {
+export function DialogModal({
+  children,
+  modal,
+  onConfirm,
+  isLoading,
+  ...props
+}: Props) {
+  const testId = props["data-testid"] || "dialog-modal";
+
   async function handleConfirm() {
     await onConfirm();
     modal.close();
   }
 
   return modal.isOpen ? (
-    <dialog className="modal modal-open" id="dialog">
+    <dialog className="modal modal-open" id="dialog" data-testid={testId}>
       <div className="modal-box">
         {children}
         <div className="modal-action">
@@ -24,6 +33,7 @@ export function DialogModal({ children, modal, onConfirm, isLoading }: Props) {
             className="btn btn-primary"
             onClick={modal.close}
             disabled={isLoading}
+            data-testid={`${testId}:close`}
           >
             Cancel
           </Button>
@@ -31,6 +41,7 @@ export function DialogModal({ children, modal, onConfirm, isLoading }: Props) {
             className="btn btn-error"
             onClick={handleConfirm}
             disabled={isLoading}
+            data-testid={`${testId}:confirm`}
           >
             Confirm
           </Button>

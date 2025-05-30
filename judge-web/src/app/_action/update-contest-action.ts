@@ -6,7 +6,7 @@ import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 import { contestService } from "@/app/_composition";
-import { useAlert } from "@/app/_util/alert-hook";
+import { useAlert } from "@/app/_component/alert/alert-provider";
 
 export function useUpdateContestAction() {
   const alert = useAlert();

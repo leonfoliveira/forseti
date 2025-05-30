@@ -19,6 +19,7 @@ type Props<TFieldValues extends FieldValues> = DetailedHTMLProps<
     value: string;
     label: string;
   }[];
+  "data-testid"?: string;
 };
 
 export function Select<TFieldValues extends FieldValues>({
@@ -30,6 +31,8 @@ export function Select<TFieldValues extends FieldValues>({
   options,
   ...props
 }: Props<TFieldValues>) {
+  const testId = props["data-testid"] || "select";
+
   function format(value?: string) {
     return value || "";
   }
@@ -43,8 +46,13 @@ export function Select<TFieldValues extends FieldValues>({
       control={fm.control}
       name={name}
       render={({ field, fieldState }) => (
-        <fieldset className={cls(containerClassName, "fieldset")}>
-          <label className="fieldset-legend">{label}</label>
+        <fieldset
+          className={cls(containerClassName, "fieldset")}
+          data-testid={testId}
+        >
+          <label className="fieldset-legend" data-testid={`${testId}:label`}>
+            {label}
+          </label>
           <select
             {...props}
             value={format(field.value)}
@@ -52,15 +60,22 @@ export function Select<TFieldValues extends FieldValues>({
               field.onChange(parse(e.target.value));
             }}
             className={cls("select w-full", className)}
+            data-testid={`${testId}:select`}
           >
             <option value="" />
             {options.map((it) => (
-              <option key={it.value} value={it.value}>
+              <option
+                key={it.value}
+                value={it.value}
+                data-testid={`${testId}:option`}
+              >
                 {it.label}
               </option>
             ))}
           </select>
-          <p className="label text-error">{fieldState.error?.message}</p>
+          <p className="label text-error" data-testid={`${testId}:error`}>
+            {fieldState.error?.message}
+          </p>
         </fieldset>
       )}
     />

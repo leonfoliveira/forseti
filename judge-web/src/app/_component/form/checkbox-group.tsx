@@ -16,6 +16,7 @@ type Props<TFieldValues extends FieldValues> = Omit<
     value: string;
     label: string;
   }[];
+  "data-testid"?: string;
 };
 
 export function CheckboxGroup<TFieldValues extends FieldValues>({
@@ -26,6 +27,8 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
   className,
   ...props
 }: Props<TFieldValues>) {
+  const testId = props["data-testid"] || `${props.name}-checkbox-group`;
+
   function format(fieldValue: string[] | undefined, itemValue: string) {
     return (fieldValue || []).includes(itemValue);
   }
@@ -46,8 +49,13 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
       control={fm.control}
       name={props.name}
       render={({ field, fieldState }) => (
-        <fieldset className={cls(containerClassName, "fieldset")}>
-          <label className="fieldset-legend">{label}</label>
+        <fieldset
+          className={cls(containerClassName, "fieldset")}
+          data-testid={testId}
+        >
+          <label className="fieldset-legend" data-testid={`${testId}:label`}>
+            {label}
+          </label>
           <div className="grid gap-4 grid-cols-[repeat(auto-fill,_minmax(150px,_1fr))]">
             {options.map((item) => (
               <Checkbox
@@ -60,12 +68,15 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
                     parse(field.value, item.value, event.target.checked),
                   );
                 }}
+                data-testid={`${testId}:checkbox`}
               >
                 {item.label}
               </Checkbox>
             ))}
           </div>
-          <p className="label text-error">{fieldState.error?.message}</p>
+          <p className="label text-error" data-testid={`${testId}:error`}>
+            {fieldState.error?.message}
+          </p>
         </fieldset>
       )}
     />

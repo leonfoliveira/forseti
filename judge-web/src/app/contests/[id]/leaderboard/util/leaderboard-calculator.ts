@@ -1,13 +1,13 @@
-import { LeaderboardOutputDTO } from "@/core/repository/dto/response/LeaderboardOutputDTO";
+import { LeaderboardResponseDTO } from "@/core/repository/dto/response/LeaderboardResponseDTO";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
 
 const WRONG_SUBMISSION_PENALTY = 1200;
 
 export function recalculateLeaderboard(
-  leaderboard: LeaderboardOutputDTO | undefined,
+  leaderboard: LeaderboardResponseDTO | undefined,
   newSubmission: SubmissionPublicResponseDTO,
-): LeaderboardOutputDTO | undefined {
+): LeaderboardResponseDTO | undefined {
   if (!leaderboard) return undefined;
   if (newSubmission.status === SubmissionStatus.JUDGING) return leaderboard;
 

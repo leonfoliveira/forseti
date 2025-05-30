@@ -11,6 +11,7 @@ type Props<TFieldValues extends FieldValues> = Omit<
   name: FieldPath<TFieldValues>;
   containerClassName?: string;
   label: string;
+  "data-testid"?: string;
 };
 
 export function NumberInput<TFieldValues extends FieldValues>({
@@ -21,6 +22,8 @@ export function NumberInput<TFieldValues extends FieldValues>({
   className,
   ...props
 }: Props<TFieldValues>) {
+  const testId = props["data-testid"] || "number-input";
+
   function format(value?: number) {
     return value ? value.toString() : "";
   }
@@ -34,16 +37,24 @@ export function NumberInput<TFieldValues extends FieldValues>({
       control={fm.control}
       name={name}
       render={({ field, fieldState }) => (
-        <fieldset className={cls("fieldset", containerClassName)}>
-          <label className="fieldset-legend">{label}</label>
+        <fieldset
+          className={cls("fieldset", containerClassName)}
+          data-testid={testId}
+        >
+          <label className="fieldset-legend" data-testid={`${testId}:label`}>
+            {label}
+          </label>
           <input
             {...props}
             type="number"
             value={format(field.value)}
             onChange={(e) => field.onChange(parse(e.target.value))}
             className={cls("input", className)}
+            data-testid={`${testId}:input`}
           />
-          <p className="label text-error">{fieldState.error?.message}</p>
+          <p className="label text-error" data-testid={`${testId}:error`}>
+            {fieldState.error?.message}
+          </p>
         </fieldset>
       )}
     />

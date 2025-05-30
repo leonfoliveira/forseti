@@ -16,6 +16,7 @@ type Props<TFieldValues extends FieldValues> = DetailedHTMLProps<
   containerClassName?: string;
   label: string;
   onDownloadOriginal?: (attachment: Attachment) => void;
+  "data-testid"?: string;
 };
 
 export function FileInput<TFieldValues extends FieldValues>({
@@ -28,6 +29,7 @@ export function FileInput<TFieldValues extends FieldValues>({
   className,
   ...props
 }: Props<TFieldValues>) {
+  const testId = props["data-testid"] || "file-input";
   const ref = useRef<HTMLInputElement | null>(null);
 
   function parse(value: FileList | null) {
@@ -53,8 +55,13 @@ export function FileInput<TFieldValues extends FieldValues>({
       control={fm.control}
       name={name}
       render={({ field, fieldState }) => (
-        <fieldset className={cls(containerClassName, "fieldset")}>
-          <label className="fieldset-legend">{label}</label>
+        <fieldset
+          className={cls(containerClassName, "fieldset")}
+          data-testid={testId}
+        >
+          <label className="fieldset-legend" data-testid={`${testId}:label`}>
+            {label}
+          </label>
           <input
             {...props}
             ref={ref}
@@ -64,12 +71,14 @@ export function FileInput<TFieldValues extends FieldValues>({
               field.onChange(parse(e.target.files));
             }}
             className={cls("hidden", className)}
+            data-testid={`${testId}:input`}
           />
           <div className="join">
             <button
               type="button"
               onClick={() => ref.current?.click()}
               className="input rounded-l cursor-pointer w-full"
+              data-testid={`${testId}:button`}
             >
               {field.value && field.value.name}
               {!field.value && originalValue && originalValue.filename}
@@ -84,6 +93,7 @@ export function FileInput<TFieldValues extends FieldValues>({
                 if (field.value) onDownload(field.value);
                 else if (originalValue) onDownloadOriginal?.(originalValue);
               }}
+              data-testid={`${testId}:download`}
             >
               <FontAwesomeIcon icon={faDownload} />
             </button>
@@ -91,11 +101,15 @@ export function FileInput<TFieldValues extends FieldValues>({
               type="button"
               className="btn btn-soft px-3"
               onClick={() => field.onChange(undefined)}
+              data-testid={`${testId}:reset`}
             >
               <FontAwesomeIcon icon={faClose} />
             </button>
           </div>
-          <p className="fieldset-legend text-error">
+          <p
+            className="fieldset-legend text-error"
+            data-testid={`${testId}:error`}
+          >
             {fieldState.error?.message}
           </p>
         </fieldset>

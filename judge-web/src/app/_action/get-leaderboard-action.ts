@@ -5,7 +5,7 @@ import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/Subm
 import { useEffect, useRef } from "react";
 import { contestService, submissionService } from "@/app/_composition";
 import { CompatClient } from "@stomp/stompjs";
-import { useAlert } from "@/app/_util/alert-hook";
+import { useAlert } from "@/app/_component/alert/alert-provider";
 
 export function useGetLeaderboardAction() {
   const alert = useAlert();

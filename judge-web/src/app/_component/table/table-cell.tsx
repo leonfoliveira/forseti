@@ -4,6 +4,7 @@ import { cls } from "@/app/_util/cls";
 type Props = React.HTMLProps<HTMLTableCellElement> & {
   header?: boolean;
   align?: "left" | "right" | "center";
+  "data-testid"?: string;
 };
 
 export function TableCell({

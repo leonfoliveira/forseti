@@ -1,6 +1,6 @@
 import { useAction } from "@/app/_util/action-hook";
 import { contestService } from "@/app/_composition";
-import { useAlert } from "@/app/_util/alert-hook";
+import { useAlert } from "@/app/_component/alert/alert-provider";
 
 export function useFindAllProblemsAction() {
   const alert = useAlert();

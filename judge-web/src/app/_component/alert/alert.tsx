@@ -1,6 +1,5 @@
 import { cls } from "@/app/_util/cls";
 import React, { useEffect } from "react";
-import { AlertLevel, AlertType } from "@/app/_atom/alert-atom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheck,
@@ -8,6 +7,7 @@ import {
   faCircleXmark,
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
+import { AlertLevel, AlertType } from "@/app/_component/alert/alert-provider";
 
 type Props = {
   className?: string;
@@ -42,6 +42,7 @@ export function Alert({ className, alert, onClose }: Props) {
     <div
       className={cls("alert cursor-pointer", variant, className)}
       onClick={onClose}
+      data-testid="alert"
     >
       {icon}
       <span>{alert.text}</span>

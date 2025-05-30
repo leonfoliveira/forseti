@@ -25,18 +25,31 @@ export default function AuthRoot() {
         onSubmit={form.handleSubmit(signInAction.act)}
         disabled={signInAction.isLoading}
         className="p-10 w-full max-w-[400] bg-base-100"
+        data-testid="auth-root:form"
       >
         <h1 className="text-3xl font-bold">Sign In</h1>
         <h2 className="text-md mt-2">Root</h2>
         <div className="my-6">
-          <TextInput fm={form} name="password" label="Password" password />
+          <TextInput
+            fm={form}
+            name="password"
+            label="Password"
+            password
+            data-testid="auth-root:password"
+          />
         </div>
         <div>
-          <Button type="submit" className="mr-5 btn-primary">
+          <Button
+            type="submit"
+            className="mr-5 btn-primary"
+            data-testid="auth-root:signin"
+          >
             Sign in
             <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />
           </Button>
-          {signInAction.isLoading && <Spinner />}
+          {signInAction.isLoading && (
+            <Spinner data-testid="auth-root:spinner" />
+          )}
         </div>
       </Form>
     </div>

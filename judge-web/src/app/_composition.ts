@@ -1,4 +1,3 @@
-import { LocalStorageAuthorizationRepository } from "@/adapter/localstorage/LocalStorageAuthorizationRepository";
 import { AuthorizationService } from "@/core/service/AuthorizationService";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { AxiosAttachmentRepository } from "@/adapter/axios/AxiosAttachmentRepository";
@@ -12,10 +11,12 @@ import { SubmissionService } from "@/core/service/SubmissionService";
 import { StompClient } from "@/adapter/stomp/StompClient";
 import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
 import { config } from "@/app/_config";
+import { LocalStorageRepository } from "@/adapter/localstorage/LocalStorageRepository";
+import { StorageService } from "@/core/service/StorageService";
 
-export const authorizationService = new AuthorizationService(
-  new LocalStorageAuthorizationRepository(),
-);
+const storageRepository = new LocalStorageRepository();
+
+export const authorizationService = new AuthorizationService(storageRepository);
 
 const axiosClient = new AxiosClient(config.apiUrl, authorizationService);
 const stompClient = new StompClient(config.wsUrl);
@@ -31,6 +32,7 @@ export const contestService = new ContestService(
   new AxiosContestRepository(axiosClient),
   attachmentService,
 );
+export const storageService = new StorageService(storageRepository);
 export const submissionService = new SubmissionService(
   new AxiosSubmissionRepository(axiosClient),
   new StompSubmissionListener(stompClient),

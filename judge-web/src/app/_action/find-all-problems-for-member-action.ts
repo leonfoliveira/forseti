@@ -10,7 +10,7 @@ import { contestService, submissionService } from "@/app/_composition";
 import { useEffect, useRef } from "react";
 import { useAuthorization } from "@/app/_util/authorization-hook";
 import { CompatClient } from "@stomp/stompjs";
-import { useAlert } from "@/app/_util/alert-hook";
+import { useAlert } from "@/app/_component/alert/alert-provider";
 
 export function useFindAllProblemsForMemberAction() {
   const authorization = useAuthorization();

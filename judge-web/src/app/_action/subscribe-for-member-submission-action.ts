@@ -6,7 +6,7 @@ import { submissionService } from "@/app/_composition";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { formatSubmissionStatus } from "@/app/_util/contest-utils";
 import { CompatClient } from "@stomp/stompjs";
-import { useAlert } from "@/app/_util/alert-hook";
+import { useAlert } from "@/app/_component/alert/alert-provider";
 
 export function useSubscribeForMemberSubmissionAction() {
   const alert = useAlert();

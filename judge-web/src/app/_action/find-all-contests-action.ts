@@ -3,7 +3,7 @@ import { useAction } from "@/app/_util/action-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { contestService } from "@/app/_composition";
-import { useAlert } from "@/app/_util/alert-hook";
+import { useAlert } from "@/app/_component/alert/alert-provider";
 
 export function useFindAllContestsAction() {
   const alert = useAlert();

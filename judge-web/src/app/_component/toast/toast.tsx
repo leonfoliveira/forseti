@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
-import { ToastLevel, ToastType } from "@/app/_atom/toast-atom";
 import { cls } from "@/app/_util/cls";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { ToastLevel, ToastType } from "@/app/_component/toast/toast-provider";
 
 type Props = {
   toast: ToastType;
@@ -35,6 +35,8 @@ export function Toast({ toast, onClose }: Props) {
     <div
       className={cls("alert", style[toast.level])}
       style={{ pointerEvents: "auto" }}
+      data-testid="toast"
+      onClick={() => onClose(toast.id)}
     >
       {toast.text}
       <FontAwesomeIcon

@@ -6,7 +6,7 @@ import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { contestService } from "@/app/_composition";
 import { redirect } from "next/navigation";
-import { useAlert } from "@/app/_util/alert-hook";
+import { useAlert } from "@/app/_component/alert/alert-provider";
 
 export function useFindContestByIdForRoot() {
   const alert = useAlert();

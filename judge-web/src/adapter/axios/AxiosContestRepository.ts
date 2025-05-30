@@ -4,7 +4,7 @@ import { ContestPrivateResponseDTO } from "@/core/repository/dto/response/Contes
 import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/ProblemPublicResponseDTO";
 import { SubmissionPrivateResponseDTO } from "@/core/repository/dto/response/SubmissionPrivateResponseDTO";
-import { LeaderboardOutputDTO } from "@/core/repository/dto/response/LeaderboardOutputDTO";
+import { LeaderboardResponseDTO } from "@/core/repository/dto/response/LeaderboardResponseDTO";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { ProblemMemberResponseDTO } from "@/core/repository/dto/response/ProblemMemberResponseDTO";
@@ -81,8 +81,8 @@ export class AxiosContestRepository implements ContestRepository {
     return response.data;
   }
 
-  async getLeaderboard(id: number): Promise<LeaderboardOutputDTO> {
-    const response = await this.axiosClient.get<LeaderboardOutputDTO>(
+  async getLeaderboard(id: number): Promise<LeaderboardResponseDTO> {
+    const response = await this.axiosClient.get<LeaderboardResponseDTO>(
       `/v1/contests/${id}/leaderboard`,
     );
     return response.data;

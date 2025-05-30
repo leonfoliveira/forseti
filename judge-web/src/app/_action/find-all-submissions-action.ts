@@ -4,7 +4,7 @@ import { recalculatePublicSubmissions } from "@/app/contests/[id]/_util/submissi
 import { useEffect, useRef } from "react";
 import { contestService, submissionService } from "@/app/_composition";
 import { CompatClient } from "@stomp/stompjs";
-import { useAlert } from "@/app/_util/alert-hook";
+import { useAlert } from "@/app/_component/alert/alert-provider";
 
 export function useFindAllSubmissionsAction() {
   const alert = useAlert();

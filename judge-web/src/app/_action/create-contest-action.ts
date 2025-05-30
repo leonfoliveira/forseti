@@ -5,7 +5,7 @@ import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";
 import { useRouter } from "next/navigation";
 import { contestService } from "@/app/_composition";
-import { useAlert } from "@/app/_util/alert-hook";
+import { useAlert } from "@/app/_component/alert/alert-provider";
 
 export function useCreateContestAction() {
   const alert = useAlert();

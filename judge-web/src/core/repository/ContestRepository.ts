@@ -2,7 +2,7 @@ import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateCon
 import { ContestPrivateResponseDTO } from "@/core/repository/dto/response/ContestPrivateResponseDTO";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
 import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
-import { LeaderboardOutputDTO } from "@/core/repository/dto/response/LeaderboardOutputDTO";
+import { LeaderboardResponseDTO } from "@/core/repository/dto/response/LeaderboardResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/ProblemPublicResponseDTO";
 import { ProblemMemberResponseDTO } from "@/core/repository/dto/response/ProblemMemberResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
@@ -27,7 +27,7 @@ export interface ContestRepository {
 
   deleteContest(id: number): Promise<void>;
 
-  getLeaderboard(id: number): Promise<LeaderboardOutputDTO>;
+  getLeaderboard(id: number): Promise<LeaderboardResponseDTO>;
 
   findAllProblems(id: number): Promise<ProblemPublicResponseDTO[]>;
 

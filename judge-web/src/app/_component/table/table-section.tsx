@@ -2,6 +2,7 @@ import React from "react";
 
 type Props = React.HTMLProps<HTMLTableSectionElement> & {
   head?: boolean;
+  "data-testid"?: string;
 };
 
 export function TableSection({ head, children, ...props }: Props) {

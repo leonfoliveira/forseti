@@ -4,8 +4,13 @@ import React from "react";
 type Props = {
   children: React.ReactNode;
   className?: string;
+  "data-testid"?: string;
 };
 
-export function Badge({ children, className }: Props) {
-  return <span className={cls("badge", className)}>{children}</span>;
+export function Badge({ children, className, ...props }: Props) {
+  return (
+    <span className={cls("badge", className)} {...props}>
+      {children}
+    </span>
+  );
 }

@@ -1,4 +1,4 @@
-export type LeaderboardOutputDTO = {
+export type LeaderboardResponseDTO = {
   contest: {
     id: number;
     title: string;

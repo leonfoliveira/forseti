@@ -10,7 +10,7 @@ import { TableCell } from "@/app/_component/table/table-cell";
 import { toLocaleString } from "@/app/_util/date-utils";
 import { formatLanguage } from "@/app/_util/contest-utils";
 import { SubmissionStatusBadge } from "@/app/contests/[id]/_component/submission-status-badge";
-import { attachmentService } from "@/app/_composition";
+import { attachmentService, storageService } from "@/app/_composition";
 import { Select } from "@/app/_component/form/select";
 import { useForm } from "react-hook-form";
 import { FileInput } from "@/app/_component/form/file-input";
@@ -27,7 +27,7 @@ import { toInputDTO } from "@/app/contests/[id]/submissions/_form/submission-for
 import { useAuthorization } from "@/app/_util/authorization-hook";
 import { Language } from "@/core/domain/enumerate/Language";
 
-const ACTIVE_LANGUAGE_KEY = "active-language";
+const ACTIVE_LANGUAGE_STORAGE_KEY = "active-language";
 
 export default function ContestSubmissionPage({
   params,
@@ -55,8 +55,8 @@ export default function ContestSubmissionPage({
     }
     async function init() {
       const contest = await findContestByIdAction.act(id);
-      const activeLanguage = localStorage.getItem(
-        ACTIVE_LANGUAGE_KEY,
+      const activeLanguage = storageService.getKey(
+        ACTIVE_LANGUAGE_STORAGE_KEY,
       ) as Language | null;
       if (activeLanguage && contest?.languages.includes(activeLanguage)) {
         submissionForm.setValue("language", activeLanguage);
@@ -72,7 +72,7 @@ export default function ContestSubmissionPage({
     );
     if (submission) {
       setSubmissions((prev) => [...(prev || []), submission]);
-      localStorage.setItem(ACTIVE_LANGUAGE_KEY, submission.language);
+      storageService.setKey(ACTIVE_LANGUAGE_STORAGE_KEY, submission.language);
     }
   }
 

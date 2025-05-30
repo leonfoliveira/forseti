@@ -51,12 +51,14 @@ export function Navbar({ contest, signInPath }: Props) {
   }
 
   return (
-    <nav className="navbar bg-base-100">
+    <nav className="navbar bg-base-100" data-testid="navbar">
       <div className="navbar-start">
-        <div className="text-lg font-semibold">{contest?.title}</div>
+        <div className="text-lg font-semibold" data-testid="navbar-title">
+          {contest?.title}
+        </div>
       </div>
       <div className="navbar-center">
-        <span ref={clockRef} />
+        <span ref={clockRef} data-testid="navbar-clock" />
       </div>
       <div className="navbar-end flex items-center">
         <label className="toggle text-base-content mr-5">
@@ -65,12 +67,19 @@ export function Navbar({ contest, signInPath }: Props) {
             className="theme-controller"
             checked={theme === "dark"}
             onChange={toggleTheme}
+            data-testid="navbar-theme"
           />
           <FontAwesomeIcon icon={faSun} size="xs" />
           <FontAwesomeIcon icon={faMoon} size="xs" />
         </label>
-        <p className="mr-5">{authorization?.member.name}</p>
-        <Button onClick={signOut} className="btn-soft">
+        <p className="mr-5" data-testid="navbar-member">
+          {authorization?.member.name}
+        </p>
+        <Button
+          onClick={signOut}
+          className="btn-soft"
+          data-testid="navbar-signout"
+        >
           Sign out
         </Button>
       </div>
