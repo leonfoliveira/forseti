@@ -1,6 +1,5 @@
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { redirect } from "next/navigation";
-import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
 import { contestService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { DialogModal } from "@/app/_component/dialog-modal";
 
 it("renders the modal when modal is open", async () => {
@@ -59,7 +59,9 @@ it("calls onConfirm and modal.close when the confirm button is clicked", async (
   );
   screen.getByTestId("dialog-modal:confirm").click();
   expect(onConfirm).toHaveBeenCalled();
-  expect(modal.close).toHaveBeenCalled();
+  await waitFor(() => {
+    expect(modal.close).toHaveBeenCalled();
+  });
 });
 
 it("disables buttons when isLoading is true", () => {

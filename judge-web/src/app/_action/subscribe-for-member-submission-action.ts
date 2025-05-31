@@ -1,4 +1,3 @@
-import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
 import { useEffect, useRef } from "react";
@@ -7,6 +6,7 @@ import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { formatSubmissionStatus } from "@/app/_util/contest-utils";
 import { CompatClient } from "@stomp/stompjs";
 import { useAlert } from "@/app/_component/alert/alert-provider";
+import { useToast } from "@/app/_component/toast/toast-provider";
 
 export function useSubscribeForMemberSubmissionAction() {
   const alert = useAlert();
@@ -24,8 +24,10 @@ export function useSubscribeForMemberSubmissionAction() {
 
   async function findAllForMember(memberId: number) {
     try {
-      console.log("Subscribing to submissions for member:", memberId);
-      await submissionService.subscribeForMember(memberId, receiveSubmission);
+      listenerRef.current = await submissionService.subscribeForMember(
+        memberId,
+        receiveSubmission,
+      );
     } catch {
       alert.error("Error subscribing to submissions");
     }

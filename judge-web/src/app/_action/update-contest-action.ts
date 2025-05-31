@@ -12,9 +12,9 @@ export function useUpdateContestAction() {
   const alert = useAlert();
   const signOutAction = useRootSignOutAction();
 
-  function updateContest(input: UpdateContestInputDTO) {
+  async function updateContest(input: UpdateContestInputDTO) {
     try {
-      const contest = contestService.updateContest(input);
+      const contest = await contestService.updateContest(input);
       alert.success("Contest updated successfully");
       return contest;
     } catch (error) {

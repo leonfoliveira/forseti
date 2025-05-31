@@ -1,4 +1,3 @@
-import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
 import { recalculateLeaderboard } from "@/app/contests/[id]/leaderboard/util/leaderboard-calculator";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
@@ -29,7 +28,6 @@ export function useGetLeaderboardAction() {
       );
       return leaderboard;
     } catch (error) {
-      console.error(error);
       alert.error("Error loading leaderboard");
     }
   }

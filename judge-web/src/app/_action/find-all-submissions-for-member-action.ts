@@ -1,4 +1,3 @@
-import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
@@ -26,7 +25,10 @@ export function useFindAllSubmissionsForMemberAction() {
   async function findAllForMember(contestId: number, memberId: number) {
     try {
       const submissions = await submissionService.findAllForMember();
-      await submissionService.subscribeForMember(memberId, receiveSubmission);
+      listenerRef.current = await submissionService.subscribeForMember(
+        memberId,
+        receiveSubmission,
+      );
       return submissions;
     } catch (error) {
       if (

@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
 import { UnwrapPromise } from "next/dist/lib/coalesced-function";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ActionFn = (...args: any[]) => any;
 
 type ActionState<TData> = {

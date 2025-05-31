@@ -39,7 +39,12 @@ export default function AppPage() {
         onSubmit={appForm.handleSubmit(makeOnSubmit("/contests/{id}"))}
       >
         <div className="my-6">
-          <NumberInput fm={appForm} name="contest" label="Contest" />
+          <NumberInput
+            fm={appForm}
+            name="contest"
+            label="Contest"
+            data-testid="contest-input"
+          />
         </div>
         <div className="flex flex-col">
           <div className="flex">
@@ -48,12 +53,14 @@ export default function AppPage() {
                 makeOnSubmit("/auth/contests/{id}"),
               )}
               className="flex-1 mr-5 btn-primary"
+              data-testid="signin-button"
             >
               Sign In
             </Button>
             <Button
               onClick={appForm.handleSubmit(makeOnSubmit("/contests/{id}"))}
               className="flex-1 btn-primary"
+              data-testid="guest-button"
             >
               Guest
             </Button>
@@ -61,6 +68,7 @@ export default function AppPage() {
           <Button
             onClick={() => router.push("/auth/root")}
             className="mt-5 flex-1 btn-outline btn-primary"
+            data-testid="root-button"
           >
             Root
           </Button>

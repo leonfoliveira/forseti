@@ -31,7 +31,6 @@ describe("StompSubmissionListener", () => {
       const callback = jest.fn();
 
       spyOn(mockCompatClient, "subscribe").mockImplementation(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (_, cb) => cb(message) as any,
       );
 
@@ -60,7 +59,6 @@ describe("StompSubmissionListener", () => {
       const callback = jest.fn();
 
       spyOn(mockCompatClient, "subscribe").mockImplementation(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (_, cb) => cb(message) as any,
       );
 

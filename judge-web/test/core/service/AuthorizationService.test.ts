@@ -1,17 +1,17 @@
 import { AuthorizationService } from "@/core/service/AuthorizationService";
-import { AuthorizationRepository } from "@/core/repository/AuthorizationRepository";
 import { Authorization } from "@/core/domain/model/Authorization";
 import { mock, MockProxy } from "jest-mock-extended";
+import { StorageRepository } from "@/core/repository/StorageRepository";
 
-jest.mock("@/core/repository/AuthorizationRepository");
+jest.mock("@/core/repository/StorageRepository");
 
 describe("AuthorizationService", () => {
-  let authorizationRepository: MockProxy<AuthorizationRepository>;
+  let storageRepository: MockProxy<StorageRepository>;
   let authorizationService: AuthorizationService;
 
   beforeEach(() => {
-    authorizationRepository = mock<AuthorizationRepository>();
-    authorizationService = new AuthorizationService(authorizationRepository);
+    storageRepository = mock<StorageRepository>();
+    authorizationService = new AuthorizationService(storageRepository);
   });
 
   describe("setAuthorization", () => {
@@ -20,7 +20,8 @@ describe("AuthorizationService", () => {
 
       authorizationService.setAuthorization(authorization);
 
-      expect(authorizationRepository.setAuthorization).toHaveBeenCalledWith(
+      expect(storageRepository.setKey).toHaveBeenCalledWith(
+        AuthorizationService.STORAGE_KEY,
         authorization,
       );
     });
@@ -29,20 +30,20 @@ describe("AuthorizationService", () => {
   describe("getAuthorization", () => {
     it("retrieves the authorization from the repository", () => {
       const authorization = mock<Authorization>();
-      authorizationRepository.getAuthorization.mockReturnValue(authorization);
+      storageRepository.getKey.mockReturnValue(authorization);
 
       const result = authorizationService.getAuthorization();
 
-      expect(authorizationRepository.getAuthorization).toHaveBeenCalled();
+      expect(storageRepository.getKey).toHaveBeenCalled();
       expect(result).toEqual(authorization);
     });
 
     it("returns undefined if no authorization is stored", () => {
-      authorizationRepository.getAuthorization.mockReturnValue(undefined);
+      storageRepository.getKey.mockReturnValue(undefined);
 
       const result = authorizationService.getAuthorization();
 
-      expect(authorizationRepository.getAuthorization).toHaveBeenCalled();
+      expect(storageRepository.getKey).toHaveBeenCalled();
       expect(result).toBeUndefined();
     });
   });
@@ -51,7 +52,7 @@ describe("AuthorizationService", () => {
     it("removes the authorization from the repository", () => {
       authorizationService.deleteAuthorization();
 
-      expect(authorizationRepository.deleteAuthorization).toHaveBeenCalled();
+      expect(storageRepository.deleteKey).toHaveBeenCalled();
     });
   });
 });

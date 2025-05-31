@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AppPage from "@/app/page";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -17,22 +17,26 @@ describe("AppPage", () => {
 
   it("navigates to the guest contest page when Guest button is clicked with valid input", async () => {
     render(<AppPage />);
-    const input = await screen.findByTestId("contest-input");
+    const input = await screen.findByTestId("contest-input:input");
     fireEvent.change(input, { target: { value: "123" } });
     const guestButton = await screen.findByTestId("guest-button");
     fireEvent.click(guestButton);
 
-    expect(mockPush).toHaveBeenCalledWith("/contests/123");
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith("/contests/123");
+    });
   });
 
   it("navigates to the authenticated contest page when Sign In button is clicked with valid input", async () => {
     render(<AppPage />);
-    const input = await screen.findByTestId("contest-input");
+    const input = await screen.findByTestId("contest-input:input");
     fireEvent.change(input, { target: { value: "456" } });
     const signInButton = await screen.findByTestId("signin-button");
     fireEvent.click(signInButton);
 
-    expect(mockPush).toHaveBeenCalledWith("/auth/contests/456");
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith("/auth/contests/456");
+    });
   });
 
   it("navigates to the root page when Root button is clicked", async () => {

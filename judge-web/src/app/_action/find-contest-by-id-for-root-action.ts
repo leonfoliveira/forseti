@@ -1,5 +1,4 @@
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { useToast } from "@/app/_util/toast-hook";
 import { useAction } from "@/app/_util/action-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";

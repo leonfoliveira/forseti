@@ -1,6 +1,5 @@
 import { RootSignInFormType } from "@/app/auth/_form/sign-in-form-type";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useToast } from "@/app/_util/toast-hook";
 import { useRouter } from "next/navigation";
 import { useAction } from "@/app/_util/action-hook";
 import { authenticationService } from "@/app/_composition";

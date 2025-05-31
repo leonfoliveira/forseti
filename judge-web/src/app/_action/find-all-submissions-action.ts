@@ -22,7 +22,10 @@ export function useFindAllSubmissionsAction() {
   async function findAllSubmissions(contestId: number) {
     try {
       const submissions = await contestService.findAllSubmissions(contestId);
-      await submissionService.subscribeForContest(contestId, receiveSubmission);
+      listenerRef.current = await submissionService.subscribeForContest(
+        contestId,
+        receiveSubmission,
+      );
       return submissions;
     } catch {
       alert.error("Error loading submissions");
