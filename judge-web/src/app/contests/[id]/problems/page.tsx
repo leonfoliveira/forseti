@@ -72,11 +72,12 @@ export default function ContestProblemsPage({
                   onClick={() => {
                     onDownload(problem);
                   }}
+                  data-testid="member-problem-row"
                 >
-                  <TableCell>
+                  <TableCell data-testid="problem-title">
                     {index + 1}. {problem.title}
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell align="right" data-testid="problem-status">
                     <ProblemStatusBadge
                       isAccepted={problem.isAccepted}
                       wrongSubmissions={problem.wrongSubmissions}
@@ -94,8 +95,9 @@ export default function ContestProblemsPage({
                   onClick={() => {
                     onDownload(problem);
                   }}
+                  data-testid="problem-row"
                 >
-                  <TableCell>
+                  <TableCell data-testid="problem-title">
                     {index + 1}. {problem.title}
                   </TableCell>
                 </TableRow>

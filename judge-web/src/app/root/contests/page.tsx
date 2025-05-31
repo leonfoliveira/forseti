@@ -24,9 +24,14 @@ export default function RootContestsPage() {
       <div className="flex items-center justify-between mb-10">
         <div className="flex items-center">
           <h1 className="text-2xl inline-block mr-3">Contests</h1>
-          {findAllContestsAction.isLoading && <Spinner />}
+          {findAllContestsAction.isLoading && <Spinner data-testid="spinner" />}
         </div>
-        <Button type="button" onClick={onNewContest} className="btn-primary">
+        <Button
+          type="button"
+          onClick={onNewContest}
+          className="btn-primary"
+          data-testid="new"
+        >
           New
         </Button>
       </div>

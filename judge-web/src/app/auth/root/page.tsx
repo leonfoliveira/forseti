@@ -22,10 +22,10 @@ export default function AuthRoot() {
   return (
     <div className="w-screen h-screen flex justify-center items-center">
       <Form
-        onSubmit={form.handleSubmit(signInAction.act)}
+        onSubmit={form.handleSubmit((data) => signInAction.act(data))}
         disabled={signInAction.isLoading}
         className="p-10 w-full max-w-[400] bg-base-100"
-        data-testid="auth-root:form"
+        data-testid="form"
       >
         <h1 className="text-3xl font-bold">Sign In</h1>
         <h2 className="text-md mt-2">Root</h2>
@@ -35,21 +35,19 @@ export default function AuthRoot() {
             name="password"
             label="Password"
             password
-            data-testid="auth-root:password"
+            data-testid="password"
           />
         </div>
         <div>
           <Button
             type="submit"
             className="mr-5 btn-primary"
-            data-testid="auth-root:signin"
+            data-testid="signin"
           >
             Sign in
             <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />
           </Button>
-          {signInAction.isLoading && (
-            <Spinner data-testid="auth-root:spinner" />
-          )}
+          {signInAction.isLoading && <Spinner data-testid="spinner" />}
         </div>
       </Form>
     </div>

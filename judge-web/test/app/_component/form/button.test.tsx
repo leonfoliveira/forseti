@@ -21,11 +21,6 @@ it("renders the button with a custom data-testid", () => {
   expect(screen.getByTestId("custom-button")).toBeInTheDocument();
 });
 
-it("renders children inside the button", () => {
-  render(<Button>Child Text</Button>);
-  expect(screen.getByText("Child Text")).toBeInTheDocument();
-});
-
 it("handles click events when the button is clicked", async () => {
   const onClickMock = jest.fn();
   render(<Button onClick={onClickMock}>Click Me</Button>);

@@ -8,5 +8,5 @@ export default function ContestPage({
 }) {
   const { id } = use(params);
 
-  redirect(`/contests/${id}/leaderboard`);
+  return redirect(`/contests/${id}/leaderboard`);
 }

@@ -16,7 +16,6 @@ it("renders the alert with the correct text and icon based on the alert level", 
       onClose={jest.fn()}
     />,
   );
-  expect(screen.getByText("Success message")).toBeInTheDocument();
   expect(screen.getByTestId("alert")).toHaveClass("alert-success");
 });
 

@@ -95,11 +95,22 @@ export default function ContestSubmissionPage({
               key={submission.id}
               className="hover:bg-gray-100 active:bg-gray-200 cursor-pointer transition"
               onClick={() => attachmentService.download(submission.code)}
+              data-testid="submission:row"
             >
-              <TableCell>{toLocaleString(submission.createdAt)}</TableCell>
-              <TableCell>{submission.problem.title}</TableCell>
-              <TableCell>{formatLanguage(submission.language)}</TableCell>
-              <TableCell align="right" className="font-semibold">
+              <TableCell data-testid="submission:created-at">
+                {toLocaleString(submission.createdAt)}
+              </TableCell>
+              <TableCell data-testid="submission:title">
+                {submission.problem.title}
+              </TableCell>
+              <TableCell data-testid="submission:language">
+                {formatLanguage(submission.language)}
+              </TableCell>
+              <TableCell
+                align="right"
+                className="font-semibold"
+                data-testid="submission:status"
+              >
                 <SubmissionStatusBadge status={submission.status} />
               </TableCell>
             </TableRow>
@@ -108,11 +119,14 @@ export default function ContestSubmissionPage({
       </Table>
       {findAllSubmissionsForMemberAction.isLoading && (
         <div className="flex justify-center items-center py-20">
-          <Spinner size="lg" />
+          <Spinner size="lg" data-testid="submissions:spinner" />
         </div>
       )}
       {!submissions || submissions.length === 0 ? (
-        <div className="flex justify-center items-center py-20">
+        <div
+          className="flex justify-center items-center py-20"
+          data-testid="submissions:empty"
+        >
           <p className="text-neutral-content">No submission yet</p>
         </div>
       ) : null}
@@ -123,6 +137,7 @@ export default function ContestSubmissionPage({
         disabled={
           findContestByIdAction.isLoading || createSubmissionAction.isLoading
         }
+        data-testid="form:submission"
       >
         <Select
           fm={submissionForm}
@@ -133,6 +148,7 @@ export default function ContestSubmissionPage({
             label: `${index + 1}. ${it.title}`,
           }))}
           className="w-full"
+          data-testid="form:problem"
         />
         <div className="flex w-full gap-5">
           <Select
@@ -144,20 +160,28 @@ export default function ContestSubmissionPage({
               label: formatLanguage(it),
             }))}
             containerClassName="flex-1"
+            data-testid="form:language"
           />
           <FileInput
             fm={submissionForm}
             name="code"
             label="Code"
             containerClassName="flex-2"
+            data-testid="form:code"
           />
         </div>
         <div className="flex justify-center">
-          <Button type="submit" className="btn-primary">
+          <Button
+            type="submit"
+            className="btn-primary"
+            data-testid="form:submit"
+          >
             Submit
             <FontAwesomeIcon icon={faPaperPlane} className="ms-3" />
           </Button>
-          {createSubmissionAction.isLoading && <Spinner className="ms-5" />}
+          {createSubmissionAction.isLoading && (
+            <Spinner className="ms-5" data-testid="form:spinner" />
+          )}
         </div>
       </Form>
     </div>

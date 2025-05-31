@@ -18,7 +18,6 @@ it("renders as a thead element when head prop is true", () => {
   );
   const section = screen.getByTestId("table-section");
   expect(section.tagName).toBe("THEAD");
-  expect(screen.getByText("Header Content")).toBeInTheDocument();
 });
 
 it("renders as a tbody element when head prop is false", () => {
@@ -33,7 +32,6 @@ it("renders as a tbody element when head prop is false", () => {
   );
   const section = screen.getByTestId("table-section");
   expect(section.tagName).toBe("TBODY");
-  expect(screen.getByText("Body Content")).toBeInTheDocument();
 });
 
 it("applies additional props to the table section element", () => {

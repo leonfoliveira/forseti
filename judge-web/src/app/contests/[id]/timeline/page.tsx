@@ -23,14 +23,6 @@ export default function ContestTimelinePage({
     action.act(id);
   }, []);
 
-  if (action.isLoading) {
-    return (
-      <div className="flex justify-center items-center py-10">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
-
   return (
     <div>
       <Table>
@@ -50,12 +42,25 @@ export default function ContestTimelinePage({
             <TableRow
               key={submission.id}
               className="hover:bg-gray-100 transition"
+              data-testid="submission:row"
             >
-              <TableCell>{toLocaleString(submission.createdAt)}</TableCell>
-              <TableCell>{submission.member.name}</TableCell>
-              <TableCell>{submission.problem.title}</TableCell>
-              <TableCell>{formatLanguage(submission.language)}</TableCell>
-              <TableCell align="right" className="font-semibold">
+              <TableCell data-testid="submission:created-at">
+                {toLocaleString(submission.createdAt)}
+              </TableCell>
+              <TableCell data-testid="submission:member">
+                {submission.member.name}
+              </TableCell>
+              <TableCell data-testid="submission:problem">
+                {submission.problem.title}
+              </TableCell>
+              <TableCell data-testid="submission:language">
+                {formatLanguage(submission.language)}
+              </TableCell>
+              <TableCell
+                align="right"
+                className="font-semibold"
+                data-testid="submission:status"
+              >
                 <SubmissionStatusBadge status={submission.status} />
               </TableCell>
             </TableRow>
@@ -64,14 +69,17 @@ export default function ContestTimelinePage({
       </Table>
       {action.isLoading && (
         <div className="flex justify-center items-center py-20">
-          <Spinner size="lg" />
+          <Spinner size="lg" data-testid="submission:spinner" />
         </div>
       )}
-      {!submissions || submissions.length === 0 ? (
-        <div className="flex justify-center items-center py-20">
+      {!action.isLoading && submissions?.length === 0 && (
+        <div
+          className="flex justify-center items-center py-20"
+          data-testid="submission:empty"
+        >
           <p className="text-neutral-content">No submission yet</p>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

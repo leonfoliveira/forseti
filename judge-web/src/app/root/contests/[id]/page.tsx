@@ -20,7 +20,7 @@ export default function RootEditContestPage({
   params: Promise<{ id: number }>;
 }) {
   const { id } = use(params);
-  const { data: contest, ...findFullContestByIdAction } =
+  const { data: contest, ...findContestByIdAction } =
     useFindContestByIdForRoot();
   const updateContestAction = useUpdateContestAction();
 
@@ -34,7 +34,7 @@ export default function RootEditContestPage({
 
   useEffect(() => {
     async function findContest() {
-      const contest = await findFullContestByIdAction.act(id);
+      const contest = await findContestByIdAction.act(id);
       if (contest) {
         form.reset(fromResponseDTO(contest));
       }
@@ -58,11 +58,11 @@ export default function RootEditContestPage({
       onSubmit={updateContest}
       form={form}
       isDisabled={
-        findFullContestByIdAction.isLoading ||
+        findContestByIdAction.isLoading ||
         updateContestAction.isLoading ||
         contest?.status !== ContestStatus.NOT_STARTED
       }
-      isLoading={findFullContestByIdAction.isLoading}
+      isLoading={findContestByIdAction.isLoading}
     />
   );
 }

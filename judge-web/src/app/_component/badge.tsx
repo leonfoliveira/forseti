@@ -8,8 +8,10 @@ type Props = {
 };
 
 export function Badge({ children, className, ...props }: Props) {
+  const testId = props["data-testid"] || "badge";
+
   return (
-    <span className={cls("badge", className)} {...props}>
+    <span className={cls("badge", className)} data-testid={testId} {...props}>
       {children}
     </span>
   );

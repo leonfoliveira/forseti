@@ -11,13 +11,17 @@ export function ProblemStatusBadge(props: Props) {
 
   if (isAccepted) {
     return (
-      <Badge className="badge-success">
+      <Badge className="badge-success" data-testid="badge:ac">
         AC
         {wrongSubmissions > 0 && `+${wrongSubmissions}`}
       </Badge>
     );
   } else if (wrongSubmissions > 0) {
-    return <Badge className="badge-secondary">+{wrongSubmissions}</Badge>;
+    return (
+      <Badge className="badge-secondary" data-testid="badge:wa">
+        +{wrongSubmissions}
+      </Badge>
+    );
   } else {
     return null;
   }

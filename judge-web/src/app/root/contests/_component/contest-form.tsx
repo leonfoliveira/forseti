@@ -74,10 +74,16 @@ export function ContestForm(props: Props) {
               icon={faChevronLeft}
               onClick={() => router.push("/root/contests")}
               className="cursor-pointer text-2xl"
+              data-testid="back"
             />
-            <h1 className="text-2xl ml-5">{header}</h1>
+            <h1 className="text-2xl ml-5" data-testid="header">
+              {header}
+            </h1>
             {status && (
-              <Badge className={cls("ml-5", getBadgeClassname())}>
+              <Badge
+                className={cls("ml-5", getBadgeClassname())}
+                data-testid="status-badge"
+              >
                 {formatStatus(status)}
               </Badge>
             )}
@@ -85,16 +91,20 @@ export function ContestForm(props: Props) {
           <div>
             {!!isLoading && <Spinner className="mr-5" />}
             {contestId && (
-              <Button className="btn-error mr-3" onClick={modal.open}>
+              <Button
+                className="btn-error mr-3"
+                onClick={modal.open}
+                data-testid="delete"
+              >
                 Delete
               </Button>
             )}
-            <Button type="submit" className="btn-primary">
+            <Button type="submit" className="btn-primary" data-testid="save">
               Save
             </Button>
           </div>
         </div>
-        <TextInput fm={form} name="title" label="Title" />
+        <TextInput fm={form} name="title" label="Title" data-testid="title" />
         <CheckboxGroup
           fm={form}
           options={Object.values(Language).map((it) => ({
@@ -104,6 +114,7 @@ export function ContestForm(props: Props) {
           name="languages"
           label="Languages"
           containerClassName="mt-5"
+          data-testid="languages"
         />
         <div className="flex gap-x-3">
           <DateInput
@@ -111,12 +122,14 @@ export function ContestForm(props: Props) {
             name="startAt"
             label="Start At"
             containerClassName="flex-1"
+            data-testid="start-at"
           />
           <DateInput
             fm={form}
             name="endAt"
             label="End At"
             containerClassName="flex-1"
+            data-testid="end-at"
           />
         </div>
       </div>
@@ -136,26 +149,31 @@ export function ContestForm(props: Props) {
                       value: it,
                       label: it,
                     }))}
+                  data-testid="member-type"
                 />
                 <TextInput
                   fm={form}
                   name={`members.${index}.name`}
                   label="Name"
+                  data-testid="member-name"
                 />
                 <TextInput
                   fm={form}
                   name={`members.${index}.login`}
                   label="Login"
+                  data-testid="member-login"
                 />
                 <TextInput
                   fm={form}
                   name={`members.${index}.password`}
                   label="Password"
                   placeholder={!!field._id ? "Not changed" : ""}
+                  data-testid="member-password"
                 />
                 <Button
                   onClick={() => membersFields.remove(index)}
                   className="btn-error btn-outline mt-[39]"
+                  data-testid="member-delete"
                 >
                   <FontAwesomeIcon icon={faTrash} />
                 </Button>
@@ -167,6 +185,7 @@ export function ContestForm(props: Props) {
               membersFields.append({ type: MemberType.CONTESTANT })
             }
             className="mt-2"
+            data-testid="member-add"
           >
             <FontAwesomeIcon icon={faPlus} />
           </Button>
@@ -180,28 +199,33 @@ export function ContestForm(props: Props) {
                   fm={form}
                   name={`problems.${index}.title`}
                   label="Title"
+                  data-testid="problem-title"
                 />
                 <FileInput
                   fm={form}
                   originalName={`problems.${index}.description`}
                   name={`problems.${index}.newDescription`}
                   label="Description"
+                  data-testid="problem-description"
                 />
                 <NumberInput
                   fm={form}
                   name={`problems.${index}.timeLimit`}
                   label="Time Limit"
                   step={500}
+                  data-testid="problem-time-limit"
                 />
                 <FileInput
                   fm={form}
                   originalName={`problems.${index}.testCases`}
                   name={`problems.${index}.newTestCases`}
                   label="Test Cases"
+                  data-testid="problem-test-cases"
                 />
                 <Button
                   onClick={() => problemsFields.remove(index)}
                   className="btn-error btn-outline mt-[39]"
+                  data-testid="problem-delete"
                 >
                   <FontAwesomeIcon icon={faTrash} />
                 </Button>
@@ -211,6 +235,7 @@ export function ContestForm(props: Props) {
           <Button
             onClick={() => problemsFields.append({ timeLimit: 1000 })}
             className="mt-2"
+            data-testid="problem-add"
           >
             <FontAwesomeIcon icon={faPlus} />
           </Button>
@@ -223,6 +248,7 @@ export function ContestForm(props: Props) {
           deleteContestAction.act(form.watch("id") as number)
         }
         isLoading={deleteContestAction.isLoading}
+        data-testid="delete-modal"
       >
         <p className="py-4">Are you sure?</p>
       </DialogModal>

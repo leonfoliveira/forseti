@@ -44,6 +44,7 @@ export default function ContestLeaderboardPage({
               header
               align="center"
               className={cls(index % 2 === 0 && "bg-base-200")}
+              data-testid="problem-title"
             >
               {index + 1}. {problem.title}
             </TableCell>
@@ -59,13 +60,14 @@ export default function ContestLeaderboardPage({
       </TableSection>
       <TableSection>
         {leaderboard.members.map((member, index) => (
-          <TableRow key={member.id}>
-            <TableCell>{`${index + 1}. ${member.name}`}</TableCell>
+          <TableRow key={member.id} data-testid="member">
+            <TableCell data-testid="member-name">{`${index + 1}. ${member.name}`}</TableCell>
             {member.problems.map((problem, index) => (
               <TableCell
                 key={problem.id}
                 align="center"
                 className={cls(index % 2 === 0 && "bg-base-200")}
+                data-testid="member-problem"
               >
                 <div className="text-center">
                   <ProblemStatusBadge
@@ -78,6 +80,7 @@ export default function ContestLeaderboardPage({
             <TableCell
               align="right"
               className={cls(problemsLength % 2 === 0 && "bg-base-200")}
+              data-testid="member-penalty"
             >
               {member.penalty || ""}
             </TableCell>

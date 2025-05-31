@@ -9,11 +9,11 @@ it("renders the modal when modal is open", async () => {
   };
   render(
     <DialogModal modal={modal} onConfirm={jest.fn()} isLoading={false}>
-      Modal Content
+      <div data-testid="content">Modal Content</div>
     </DialogModal>,
   );
   expect(screen.getByTestId("dialog-modal")).toBeInTheDocument();
-  expect(screen.getByText("Modal Content")).toBeInTheDocument();
+  expect(screen.getByTestId("content")).toBeInTheDocument();
 });
 
 it("does not render the modal when modal is closed", () => {

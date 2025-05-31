@@ -50,9 +50,13 @@ export default function ContestLayout({
     return (
       <div className="h-dvh flex justify-center items-center">
         <div className="text-center">
-          <h1 className="text-4xl mb-5">{contest.title}</h1>
+          <h1 className="text-4xl mb-5" data-testid="not-started:title">
+            {contest.title}
+          </h1>
           <p className="font-semibold">Starts at</p>
-          <p>{toLocaleString(contest.startAt as string)}</p>
+          <p data-testid="not-started:start-at">
+            {toLocaleString(contest.startAt as string)}
+          </p>
         </div>
       </div>
     );
@@ -65,6 +69,7 @@ export default function ContestLayout({
         key={path}
         className={cls("tab", isActive && "tab-active")}
         onClick={() => router.push(`/contests/${id}/${path}`)}
+        data-testid={`link:${path}`}
       >
         {label}
       </a>

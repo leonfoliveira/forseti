@@ -20,12 +20,12 @@ it("renders the table with children elements", () => {
     <Table data-testid="table">
       <tbody>
         <tr>
-          <td>Row Content</td>
+          <td data-testid="content">Row Content</td>
         </tr>
       </tbody>
     </Table>,
   );
-  expect(screen.getByText("Row Content")).toBeInTheDocument();
+  expect(screen.getByTestId("content")).toBeInTheDocument();
 });
 
 it("applies additional props to the table element", () => {

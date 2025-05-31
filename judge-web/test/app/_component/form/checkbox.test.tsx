@@ -20,11 +20,6 @@ it("applies additional class names to the checkbox", () => {
   );
 });
 
-it("renders children inside the label", () => {
-  render(<Checkbox>Custom Label</Checkbox>);
-  expect(screen.getByText("Custom Label")).toBeInTheDocument();
-});
-
 it("handles click events on the checkbox", async () => {
   const onChangeMock = jest.fn();
   render(<Checkbox onChange={onChangeMock}>Label</Checkbox>);

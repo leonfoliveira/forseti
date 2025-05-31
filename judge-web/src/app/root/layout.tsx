@@ -10,7 +10,7 @@ export default function RootLayout({
 }>) {
   return (
     <div>
-      <Navbar signInPath="/auth/root" />
+      <Navbar signInPath="/auth/root" data-testid="navbar" />
       <div className="mt-5 p-10 bg-base-100">{children}</div>
     </div>
   );

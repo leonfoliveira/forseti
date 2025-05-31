@@ -14,6 +14,9 @@ export function TableCell({
   className,
   ...props
 }: Props) {
+  const testId =
+    props["data-testid"] || (header ? "table-header-cell" : "table-cell");
+
   const alignStyle = {
     left: "text-start",
     right: "text-end",
@@ -23,13 +26,21 @@ export function TableCell({
 
   if (header) {
     return (
-      <th {...props} className={cls(baseStyle, alignStyle, className)}>
+      <th
+        {...props}
+        className={cls(baseStyle, alignStyle, className)}
+        data-testid={testId}
+      >
         {children}
       </th>
     );
   }
   return (
-    <td {...props} className={cls(baseStyle, alignStyle, className)}>
+    <td
+      {...props}
+      className={cls(baseStyle, alignStyle, className)}
+      data-testid={testId}
+    >
       {children}
     </td>
   );

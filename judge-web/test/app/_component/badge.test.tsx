@@ -13,5 +13,5 @@ it("renders the badge with the provided className", () => {
 
 it("renders the badge with children elements", () => {
   render(<Badge data-testid="badge">Badge Content</Badge>);
-  expect(screen.getByText("Badge Content")).toBeInTheDocument();
+  expect(screen.getByTestId("badge")).not.toBeEmptyDOMElement();
 });

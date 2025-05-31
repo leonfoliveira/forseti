@@ -6,8 +6,18 @@ type Props = React.HTMLProps<HTMLTableSectionElement> & {
 };
 
 export function TableSection({ head, children, ...props }: Props) {
+  const testId = props["data-testid"] || "table-section";
+
   if (head) {
-    return <thead {...props}>{children}</thead>;
+    return (
+      <thead {...props} data-testid={testId}>
+        {children}
+      </thead>
+    );
   }
-  return <tbody {...props}>{children}</tbody>;
+  return (
+    <tbody {...props} data-testid={testId}>
+      {children}
+    </tbody>
+  );
 }

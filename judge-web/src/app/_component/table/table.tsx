@@ -9,8 +9,10 @@ type Props = DetailedHTMLProps<
 };
 
 export function Table({ children, className, ...props }: Props) {
+  const testId = props["data-testid"] || "table";
+
   return (
-    <table {...props} className={cls("table", className)}>
+    <table {...props} className={cls("table", className)} data-testid={testId}>
       {children}
     </table>
   );

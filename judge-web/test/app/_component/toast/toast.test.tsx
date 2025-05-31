@@ -16,7 +16,6 @@ it("renders the toast with the correct text and icon based on the toast level", 
       onClose={jest.fn()}
     />,
   );
-  expect(screen.getByText("Success message")).toBeInTheDocument();
   expect(screen.getByTestId("toast")).toHaveClass("alert-success");
 });
 

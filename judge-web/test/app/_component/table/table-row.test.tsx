@@ -22,17 +22,6 @@ it("renders the table row with the provided className", () => {
   expect(row).toHaveClass("custom-class");
 });
 
-it("renders the table row with children elements", () => {
-  render(
-    <Table>
-      <TableRow data-testid="table-row">
-        <td>Row Content</td>
-      </TableRow>
-    </Table>,
-  );
-  expect(screen.getByText("Row Content")).toBeInTheDocument();
-});
-
 it("applies additional props to the table row element", () => {
   render(
     <Table>

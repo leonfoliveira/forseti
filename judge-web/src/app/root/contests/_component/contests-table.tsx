@@ -44,13 +44,18 @@ export function ContestsTable(props: Props) {
             key={contest.id}
             onClick={() => router.push(`/root/contests/${contest.id}`)}
             className="cursor-pointer hover:bg-base-200 active:bg-base-300 transition duration-100"
+            data-testid="row"
           >
-            <TableCell>{contest.id}</TableCell>
-            <TableCell>{contest.title}</TableCell>
-            <TableCell>{formatDateTime(contest.startAt)}</TableCell>
-            <TableCell>{formatDateTime(contest.endAt)}</TableCell>
+            <TableCell data-testid="id">{contest.id}</TableCell>
+            <TableCell data-testid="title">{contest.title}</TableCell>
+            <TableCell data-testid="startAt">
+              {formatDateTime(contest.startAt)}
+            </TableCell>
+            <TableCell data-testid="endAt">
+              {formatDateTime(contest.endAt)}
+            </TableCell>
             <TableCell>
-              <ContestStatusBadge contest={contest} />
+              <ContestStatusBadge contest={contest} data-testid="badge" />
             </TableCell>
           </TableRow>
         ))}

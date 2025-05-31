@@ -36,7 +36,7 @@ export default function AuthMember({ params }: Props) {
   return (
     <div className="w-screen h-screen flex justify-center items-center">
       {findContestSummaryByIdAction.isLoading ? (
-        <Spinner size="lg" />
+        <Spinner size="lg" data-testid="contest-spinner" />
       ) : (
         <Form
           onSubmit={form.handleSubmit((data) =>
@@ -44,21 +44,39 @@ export default function AuthMember({ params }: Props) {
           )}
           className="p-10 w-full max-w-[400] bg-base-100"
           disabled={memberSignInAction.isLoading}
+          data-testid="form"
         >
           <h1 className="text-3xl font-bold">Sign In</h1>
-          <h2 className="text-md mt-2">
+          <h2 className="text-md mt-2" data-testid="contest-title">
             {findContestSummaryByIdAction.data?.title}
           </h2>
           <div className="my-6">
-            <TextInput fm={form} name="login" label="Login" />
-            <TextInput fm={form} name="password" label="Password" password />
+            <TextInput
+              fm={form}
+              name="login"
+              label="Login"
+              data-testid="login"
+            />
+            <TextInput
+              fm={form}
+              name="password"
+              label="Password"
+              password
+              data-testid="password"
+            />
           </div>
           <div>
-            <Button type="submit" className="mr-5 btn-primary">
+            <Button
+              type="submit"
+              className="mr-5 btn-primary"
+              data-testid="signin"
+            >
               Sign in
               <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />
             </Button>
-            {memberSignInAction.isLoading && <Spinner />}
+            {memberSignInAction.isLoading && (
+              <Spinner data-testid="signin-spinner" />
+            )}
           </div>
         </Form>
       )}

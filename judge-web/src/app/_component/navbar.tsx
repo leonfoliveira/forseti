@@ -12,9 +12,10 @@ import { formatDifference } from "@/app/_util/date-utils";
 type Props = {
   contest?: ContestSummaryResponseDTO;
   signInPath: string;
+  "data-testid"?: string;
 };
 
-export function Navbar({ contest, signInPath }: Props) {
+export function Navbar({ contest, signInPath, ...props }: Props) {
   const router = useRouter();
   const authorization = useAuthorization();
   const { theme, toggleTheme } = useTheme();
@@ -51,7 +52,7 @@ export function Navbar({ contest, signInPath }: Props) {
   }
 
   return (
-    <nav className="navbar bg-base-100" data-testid="navbar">
+    <nav className="navbar bg-base-100" data-testid="navbar" {...props}>
       <div className="navbar-start">
         <div className="text-lg font-semibold" data-testid="navbar-title">
           {contest?.title}

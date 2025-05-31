@@ -5,5 +5,10 @@ type Props = React.HTMLProps<HTMLTableRowElement> & {
 };
 
 export function TableRow({ children, ...props }: Props) {
-  return <tr {...props}>{children}</tr>;
+  const testId = props["data-testid"] || "table-row";
+  return (
+    <tr {...props} data-testid={testId}>
+      {children}
+    </tr>
+  );
 }
