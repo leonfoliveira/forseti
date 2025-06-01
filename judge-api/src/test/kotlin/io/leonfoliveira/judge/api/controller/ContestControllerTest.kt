@@ -9,6 +9,7 @@ import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
 import io.leonfoliveira.judge.api.util.SecurityContextMockFactory
 import io.leonfoliveira.judge.config.ControllerTest
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
+import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.leonfoliveira.judge.core.service.contest.CreateContestService
@@ -24,7 +25,6 @@ import io.leonfoliveira.judge.core.service.problem.FindProblemService
 import io.leonfoliveira.judge.core.service.submission.FindSubmissionService
 import io.mockk.every
 import io.mockk.mockkStatic
-import java.time.LocalDateTime
 import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.MockMvc
@@ -32,6 +32,7 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
+import java.time.LocalDateTime
 
 @ControllerTest([ContestController::class])
 class ContestControllerTest(
@@ -51,138 +52,146 @@ class ContestControllerTest(
                 .returns(SecurityContextMockFactory.buildRoot())
         }
 
-        val basePath = "/v1/contests"
+        context("ContestController") {
 
-        test("createContest") {
-            val contest = ContestMockFactory.build()
-            every { createContestService.create(any()) }
-                .returns(contest)
+            val basePath = "/v1/contests"
 
-            mockMvc.post(basePath) {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(CreateContestInputDTOMockFactory.build())
+            test("createContest") {
+                val contest = ContestMockFactory.build()
+                every { createContestService.create(any()) }
+                    .returns(contest)
+
+                mockMvc.post(basePath) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(CreateContestInputDTOMockFactory.build())
+                }
+                    .andExpect {
+                        status { isOk() }
+                        content { contest.toPrivateResponseDTO() }
+                    }
             }
-                .andExpect {
-                    status { isOk() }
-                    content { contest.toPrivateResponseDTO() }
+
+            test("updateContest") {
+                val contest = ContestMockFactory.build()
+                every { updateContestService.update(any()) }
+                    .returns(contest)
+
+                mockMvc.put(basePath) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(UpdateContestInputDTOMockFactory.build())
                 }
-        }
-
-        test("updateContest") {
-            val contest = ContestMockFactory.build()
-            every { updateContestService.update(any()) }
-                .returns(contest)
-
-            mockMvc.put(basePath) {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(UpdateContestInputDTOMockFactory.build())
+                    .andExpect {
+                        status { isOk() }
+                        content { contest.toPrivateResponseDTO() }
+                    }
             }
-                .andExpect {
-                    status { isOk() }
-                    content { contest.toPrivateResponseDTO() }
-                }
-        }
 
-        test("findAllContest") {
-            val contests = listOf(ContestMockFactory.build())
-            every { findContestService.findAll() }
-                .returns(contests)
+            test("findAllContest") {
+                val contests = listOf(ContestMockFactory.build())
+                every { findContestService.findAll() }
+                    .returns(contests)
 
-            mockMvc.get(basePath)
-                .andExpect {
-                    status { isOk() }
-                    content { contests.map { it.toPublicResponseDTO() } }
-                }
-        }
+                mockMvc.get(basePath)
+                    .andExpect {
+                        status { isOk() }
+                        content { contests.map { it.toPublicResponseDTO() } }
+                    }
+            }
 
-        test("findContestByIdForRoot") {
-            val contest = ContestMockFactory.build()
-            every { findContestService.findById(contest.id) }
-                .returns(contest)
+            test("findContestByIdForRoot") {
+                val contest =
+                    ContestMockFactory.build(
+                        members = listOf(MemberMockFactory.build()),
+                        problems = listOf(ProblemMockFactory.build()),
+                    )
+                every { findContestService.findById(contest.id) }
+                    .returns(contest)
 
-            mockMvc.get("$basePath/${contest.id}/root")
-                .andExpect {
-                    status { isOk() }
-                    content { contest }
-                }
-        }
+                mockMvc.get("$basePath/${contest.id}/root")
+                    .andExpect {
+                        status { isOk() }
+                        content { contest }
+                    }
+            }
 
-        test("findContestById") {
-            val contest = ContestMockFactory.build(
-                startAt = LocalDateTime.now().minusHours(1)
-            )
-            every { findContestService.findById(contest.id) }
-                .returns(contest)
+            test("findContestById") {
+                val contest =
+                    ContestMockFactory.build(
+                        startAt = LocalDateTime.now().minusHours(1),
+                    )
+                every { findContestService.findById(contest.id) }
+                    .returns(contest)
 
-            mockMvc.get("$basePath/${contest.id}")
-                .andExpect {
-                    status { isOk() }
-                    content { contest.toPublicResponseDTO() }
-                }
-        }
+                mockMvc.get("$basePath/${contest.id}")
+                    .andExpect {
+                        status { isOk() }
+                        content { contest.toPublicResponseDTO() }
+                    }
+            }
 
-        test("deleteContest") {
-            val contestId = 1
-            every { deleteContestService.delete(contestId) }
-                .returns(Unit)
+            test("deleteContest") {
+                val contestId = 1
+                every { deleteContestService.delete(contestId) }
+                    .returns(Unit)
 
-            mockMvc.delete("$basePath/$contestId")
-                .andExpect {
-                    status { isNoContent() }
-                }
-        }
+                mockMvc.delete("$basePath/$contestId")
+                    .andExpect {
+                        status { isNoContent() }
+                    }
+            }
 
-        test("leaderboard") {
-            val contestId = 1
-            val leaderboard = LeaderboardOutputDTOMockFactory.build()
-            every { leaderboardService.buildLeaderboard(contestId) }
-                .returns(leaderboard)
+            test("leaderboard") {
+                val contestId = 1
+                val leaderboard = LeaderboardOutputDTOMockFactory.build()
+                every { leaderboardService.buildLeaderboard(contestId) }
+                    .returns(leaderboard)
 
-            mockMvc.get("$basePath/$contestId/leaderboard")
-                .andExpect {
-                    status { isOk() }
-                    content { leaderboard }
-                }
-        }
+                mockMvc.get("$basePath/$contestId/leaderboard")
+                    .andExpect {
+                        status { isOk() }
+                        content { leaderboard }
+                    }
+            }
 
-        test("findAllProblems") {
-            val contestId = 1
-            val problems = listOf(ProblemMockFactory.build())
-            every { findProblemService.findAllByContest(contestId) }
-                .returns(problems)
+            test("findAllProblems") {
+                val contestId = 1
+                val problems = listOf(ProblemMockFactory.build())
+                every { findProblemService.findAllByContest(contestId) }
+                    .returns(problems)
 
-            mockMvc.get("$basePath/$contestId/problems")
-                .andExpect {
-                    status { isOk() }
-                    content { problems.map { it.toPublicResponseDTO() } }
-                }
-        }
+                mockMvc.get("$basePath/$contestId/problems")
+                    .andExpect {
+                        status { isOk() }
+                        content { problems.map { it.toPublicResponseDTO() } }
+                    }
+            }
 
-        test("findAllProblemsForMember") {
-            val contestId = 1
-            val problems = listOf(ProblemWithStatusOutputDTOMockFactory.build())
-            every { findProblemService.findAllByContestForMember(contestId, any()) }
-                .returns(problems)
-            every { SecurityContextHolder.getContext() }
-                .returns(SecurityContextMockFactory.buildContestant())
+            test("findAllProblemsForMember") {
+                val contestId = 1
+                val problems = listOf(ProblemWithStatusOutputDTOMockFactory.build())
+                every { findProblemService.findAllByContestForMember(contestId, any()) }
+                    .returns(problems)
+                every { SecurityContextHolder.getContext() }
+                    .returns(SecurityContextMockFactory.buildContestant())
 
-            mockMvc.get("$basePath/$contestId/problems/me")
-                .andExpect {
-                    status { isOk() }
-                    content { problems.map { it.toResponseDTO() } }
-                }
-        }
+                mockMvc.get("$basePath/$contestId/problems/me")
+                    .andExpect {
+                        status { isOk() }
+                        content { problems.map { it.toResponseDTO() } }
+                    }
+            }
 
-        test("findAllSubmissions") {
-            val contestId = 1
-            val submissions = listOf(SubmissionMockFactory.build())
-            every { findSubmissionService.findAllByContest(contestId) }
-                .returns(submissions)
+            test("findAllSubmissions") {
+                val contestId = 1
+                val submissions = listOf(SubmissionMockFactory.build())
+                every { findSubmissionService.findAllByContest(contestId) }
+                    .returns(submissions)
 
-            mockMvc.get("$basePath/$contestId/submissions")
-                .andExpect {
-                    status { isOk() }
-                    content { submissions.map { it.toPublicResponseDTO() } }
-                }
+                mockMvc.get("$basePath/$contestId/submissions")
+                    .andExpect {
+                        status { isOk() }
+                        content { submissions.map { it.toPublicResponseDTO() } }
+                    }
+            }
         }
     })

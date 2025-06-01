@@ -1,10 +1,10 @@
-name: Build Web
+name: Check Web
 
 on:
   pull_request:
 
 jobs:
-  build-web:
+  check-web:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -19,11 +19,14 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install dependencies
+      - name: Install
         run: npm install
 
-      - name: Lint code
+      - name: Lint
         run: npm run lint
 
-      - name: Build Next.js app
+      - name: Test
+        run: npm run test:coverage
+
+      - name: Build
         run: npm run build

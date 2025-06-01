@@ -38,6 +38,23 @@ class AttachmentServiceTest : FunSpec({
             attachmentSlot.captured.filename shouldBe "test.txt"
             attachmentSlot.captured.contentType shouldBe "text/plain"
         }
+
+        test("should upload attachment with default filename and content type") {
+            val file = mockk<MultipartFile>()
+            every { file.bytes }.returns(ByteArray(0))
+            every { file.originalFilename }.returns(null)
+            every { file.contentType }.returns(null)
+            val attachment = AttachmentMockFactory.build()
+            val attachmentSlot = slot<Attachment>()
+            every { attachmentRepository.save(capture(attachmentSlot)) } returns attachment
+            every { bucketAdapter.upload(any(), any()) } returns Unit
+
+            val result = sut.upload(file)
+
+            result shouldBe attachment
+            attachmentSlot.captured.filename shouldBe attachmentSlot.captured.key.toString()
+            attachmentSlot.captured.contentType shouldBe "application/octet-stream"
+        }
     }
 
     context("download") {

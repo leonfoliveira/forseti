@@ -70,6 +70,19 @@ class CreateSubmissionServiceTest : FunSpec({
             }
         }
 
+        test("should throw NotFoundException when problem not found") {
+            every { memberRepository.findById(any()) }
+                .returns(Optional.of(MemberMockFactory.build()))
+            every { problemRepository.findById(any()) }
+                .returns(Optional.of(ProblemMockFactory.build()))
+            every { attachmentRepository.findById(any()) }
+                .returns(Optional.empty())
+
+            shouldThrow<NotFoundException> {
+                sut.create(2, CreateSubmissionInputDTOMockFactory.build())
+            }
+        }
+
         test("should throw ForbiddenException when member does not belong to the contest of the problem") {
             val member = MemberMockFactory.build()
             val problem = ProblemMockFactory.build()

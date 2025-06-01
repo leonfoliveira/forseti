@@ -1,4 +1,4 @@
-name: Export Compose Images
+name: Build and Zip
 
 on:
   push:
@@ -8,16 +8,16 @@ on:
 jobs:
   build-and-zip:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: docker
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Get docker compose file
-        run: cp ./docker/docker-compose.prod.yml docker-compose.yml
+        uses: docker/setup-buildx-action@v2
 
       - name: Build images
         run: docker compose build

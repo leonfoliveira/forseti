@@ -1,10 +1,10 @@
-name: Build Api
+name: Check Api
 
 on:
   pull_request:
 
 jobs:
-  build-api:
+  check-api:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -20,6 +20,11 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Run Gradle build
-        working-directory: judge-api
-        run: ./gradlew build
+      - name: Lint
+        run: ./gradlew ktlintCheck
+
+      - name: Test
+        run: ./gradlew test
+
+      - name: Build
+        run: ./gradlew build -x check

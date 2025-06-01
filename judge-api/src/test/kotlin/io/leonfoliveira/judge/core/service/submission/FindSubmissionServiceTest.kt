@@ -80,4 +80,32 @@ class FindSubmissionServiceTest : FunSpec({
             result shouldBe listOf(submission2, submission1)
         }
     }
+
+    context("findAllByMember") {
+        test("should throw NotFoundException when member not found") {
+            every { memberRepository.findById(1) }
+                .returns(Optional.empty())
+
+            shouldThrow<NotFoundException> {
+                sut.findAllByMember(1)
+            }
+        }
+
+        test("should return sorted list of submissions") {
+            val submission1 = SubmissionMockFactory.build(createdAt = now)
+            val submission2 = SubmissionMockFactory.build(createdAt = now.minusSeconds(1))
+            val member =
+                MemberMockFactory.build(
+                    id = 1,
+                    submissions = listOf(submission1, submission2),
+                )
+
+            every { memberRepository.findById(1) }
+                .returns(Optional.of(member))
+
+            val result = sut.findAllByMember(1)
+
+            result shouldBe listOf(submission2, submission1)
+        }
+    }
 })

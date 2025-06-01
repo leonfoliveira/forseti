@@ -15,6 +15,7 @@ import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
+import io.leonfoliveira.judge.core.service.dto.input.AttachmentInputDTOMockFactory
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTOMockFactory
 import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
@@ -50,6 +51,16 @@ class UpdateContestServiceTest : FunSpec({
     }
 
     context("update") {
+        test("should throw ForbiddenException if any member is root") {
+            val input =
+                UpdateContestInputDTOMockFactory.build(
+                    members = listOf(UpdateContestInputDTOMockFactory.buildMemberDTO(type = Member.Type.ROOT)),
+                )
+            shouldThrow<ForbiddenException> {
+                sut.update(input)
+            }
+        }
+
         listOf(
             UpdateContestInputDTOMockFactory.build(
                 members = listOf(UpdateContestInputDTOMockFactory.buildMemberDTO(type = Member.Type.ROOT)),
@@ -96,6 +107,7 @@ class UpdateContestServiceTest : FunSpec({
             val input =
                 UpdateContestInputDTOMockFactory.build(
                     members = listOf(UpdateContestInputDTOMockFactory.buildMemberDTO(id = 1)),
+                    problems = listOf(),
                 )
             val contest = ContestMockFactory.build(members = listOf())
             every { contestRepository.findById(input.id) }
@@ -109,11 +121,52 @@ class UpdateContestServiceTest : FunSpec({
         test("should throw NotFoundException when problem not found") {
             val input =
                 UpdateContestInputDTOMockFactory.build(
+                    members = listOf(),
                     problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = 1)),
                 )
             val contest = ContestMockFactory.build(problems = listOf())
             every { contestRepository.findById(input.id) }
                 .returns(Optional.of(contest))
+
+            shouldThrow<NotFoundException> {
+                sut.update(input)
+            }
+        }
+
+        test("should throw NotFoundException when description attachment not found") {
+            val attachment = AttachmentInputDTOMockFactory.build()
+            val input =
+                UpdateContestInputDTOMockFactory.build(
+                    members = listOf(),
+                    problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = 1, description = attachment)),
+                )
+            val contest = ContestMockFactory.build(problems = listOf(ProblemMockFactory.build(id = 1)))
+            every { contestRepository.findById(input.id) }
+                .returns(Optional.of(contest))
+            every { attachmentRepository.findById(any()) }
+                .returns(Optional.of(AttachmentMockFactory.build()))
+            every { attachmentRepository.findById(attachment.key) }
+                .returns(Optional.empty())
+
+            shouldThrow<NotFoundException> {
+                sut.update(input)
+            }
+        }
+
+        test("should throw NotFoundException when testCases attachment not found") {
+            val attachment = AttachmentInputDTOMockFactory.build()
+            val input =
+                UpdateContestInputDTOMockFactory.build(
+                    members = listOf(),
+                    problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = 1, testCases = attachment)),
+                )
+            val contest = ContestMockFactory.build(problems = listOf(ProblemMockFactory.build(id = 1)))
+            every { contestRepository.findById(input.id) }
+                .returns(Optional.of(contest))
+            every { attachmentRepository.findById(any()) }
+                .returns(Optional.of(AttachmentMockFactory.build()))
+            every { attachmentRepository.findById(attachment.key) }
+                .returns(Optional.empty())
 
             shouldThrow<NotFoundException> {
                 sut.update(input)

@@ -1,13 +1,17 @@
 package io.leonfoliveira.judge.core.service.contest
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.leonfoliveira.judge.core.domain.entity.AttachmentMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Member
+import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
+import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
+import io.leonfoliveira.judge.core.service.dto.input.AttachmentInputDTOMockFactory
 import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTOMockFactory
 import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
@@ -16,6 +20,7 @@ import io.mockk.mockkObject
 import jakarta.validation.Validation
 import java.time.LocalDateTime
 import java.util.Optional
+import java.util.UUID
 
 class CreateContestServiceTest : FunSpec({
     val attachmentRepository: AttachmentRepository = mockk<AttachmentRepository>()
@@ -39,6 +44,16 @@ class CreateContestServiceTest : FunSpec({
     }
 
     context("create") {
+        test("should throw ForbiddenException if any member is root") {
+            val input =
+                CreateContestInputDTOMockFactory.build(
+                    members = listOf(CreateContestInputDTOMockFactory.buildMemberDTO(type = Member.Type.ROOT)),
+                )
+            shouldThrow<ForbiddenException> {
+                sut.create(input)
+            }
+        }
+
         listOf(
             CreateContestInputDTOMockFactory.build(
                 members = listOf(CreateContestInputDTOMockFactory.buildMemberDTO(type = Member.Type.ROOT)),
@@ -69,6 +84,52 @@ class CreateContestServiceTest : FunSpec({
         ).forEach { dto ->
             test("should validate inputDTO") {
                 validator.validate(dto).size shouldNotBe 0
+            }
+        }
+
+        test("should throw NotFoundException if description attachment is not found") {
+            val key = UUID.randomUUID()
+            val input =
+                CreateContestInputDTOMockFactory.build(
+                    problems =
+                        listOf(
+                            CreateContestInputDTOMockFactory.buildProblemDTO(
+                                description = AttachmentInputDTOMockFactory.build(key = key),
+                            ),
+                        ),
+                )
+            every { attachmentRepository.findById(any()) }
+                .returns(Optional.of(AttachmentMockFactory.build()))
+            every { attachmentRepository.findById(key) }
+                .returns(Optional.empty())
+            every { hashAdapter.hash(any()) }
+                .returns("hashed_password")
+
+            shouldThrow<NotFoundException> {
+                sut.create(input)
+            }
+        }
+
+        test("should throw NotFoundException if testCases attachment is not found") {
+            val key = UUID.randomUUID()
+            val input =
+                CreateContestInputDTOMockFactory.build(
+                    problems =
+                        listOf(
+                            CreateContestInputDTOMockFactory.buildProblemDTO(
+                                testCases = AttachmentInputDTOMockFactory.build(key = key),
+                            ),
+                        ),
+                )
+            every { attachmentRepository.findById(any()) }
+                .returns(Optional.of(AttachmentMockFactory.build()))
+            every { attachmentRepository.findById(key) }
+                .returns(Optional.empty())
+            every { hashAdapter.hash(any()) }
+                .returns("hashed_password")
+
+            shouldThrow<NotFoundException> {
+                sut.create(input)
             }
         }
 

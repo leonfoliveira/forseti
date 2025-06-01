@@ -7,6 +7,11 @@ const createJestConfig = nextJest({
 
 const config: Config = {
   coverageProvider: "v8",
+  coverageThreshold: {
+    global: {
+      lines: 90,
+    },
+  },
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/test/jest.setup.ts"],
   moduleNameMapper: {

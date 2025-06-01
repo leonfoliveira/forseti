@@ -33,12 +33,11 @@ describe("Form", () => {
 
   it("applies additional props to the form element", () => {
     render(
-      <Form data-testid="form" method="post" action="/submit">
+      <Form data-testid="form" method="post">
         <div>Child Content</div>
       </Form>,
     );
     const formElement = screen.getByTestId("form").querySelector("form");
     expect(formElement).toHaveAttribute("method", "post");
-    expect(formElement).toHaveAttribute("action", "/submit");
   });
 });

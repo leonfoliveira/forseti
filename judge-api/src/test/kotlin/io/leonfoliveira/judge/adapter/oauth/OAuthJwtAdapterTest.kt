@@ -9,11 +9,20 @@ import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 class OAuthJwtAdapterTest : FunSpec({
     val secret = "secret"
     val expiration = 1000L
+    val rootExpiration = 500L
 
-    val sut = OAuthJwtAdapter(secret, expiration)
+    val sut = OAuthJwtAdapter(secret, expiration, rootExpiration)
 
     context("generateToken") {
-        test("should generate a token") {
+        test("should generate a token for root") {
+            val authorization = AuthorizationMember.ROOT
+
+            val token = sut.generateToken(authorization)
+
+            token.shouldNotBeNull()
+        }
+
+        test("should generate a token for contestant") {
             val authorization =
                 AuthorizationMember(
                     id = 1,

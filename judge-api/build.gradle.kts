@@ -74,6 +74,25 @@ flyway {
     cleanDisabled = false
 }
 
+kover {
+    reports {
+        filters {
+            excludes {
+                classes.addAll(
+                    "io.leonfoliveira.judge.Application",
+                    "io.leonfoliveira.judge.ApplicationKt",
+                )
+                annotatedBy("org.springframework.context.annotation.Configuration")
+            }
+        }
+        verify {
+            rule("Minimum Line Coverage") {
+                minBound(90)
+            }
+        }
+    }
+}
+
 tasks.test {
     useJUnitPlatform()
 }

@@ -12,16 +12,25 @@ class WebSocketSubmissionEmitterTest : FunSpec({
 
     val sut = WebSocketSubmissionEmitter(messagingTemplate)
 
-    context("emit") {
-        test("should send submission to the correct topic") {
-            val submission = SubmissionMockFactory.build()
-            val expectedTopic = "/topic/contests/${submission.contest.id}/submissions"
+    test("should send submission to the contest topic") {
+        val submission = SubmissionMockFactory.build()
+        val expectedTopic = "/topic/contests/${submission.contest.id}/submissions"
 
-            sut.emitForContest(submission)
+        sut.emitForContest(submission)
 
-            verify {
-                messagingTemplate.convertAndSend(expectedTopic, submission.toEmmitDTO())
-            }
+        verify {
+            messagingTemplate.convertAndSend(expectedTopic, submission.toEmmitDTO())
+        }
+    }
+
+    test("should send submission to the member topic") {
+        val submission = SubmissionMockFactory.build()
+        val expectedTopic = "/topic/members/${submission.member.id}/submissions"
+
+        sut.emitForMember(submission)
+
+        verify {
+            messagingTemplate.convertAndSend(expectedTopic, submission.toEmmitDTO())
         }
     }
 })

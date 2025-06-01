@@ -15,7 +15,7 @@ class SubmissionUpdatedEvent(
 class SubmissionUpdatedEventListener(
     private val submissionEmitterAdapter: SubmissionEmitterAdapter,
 ) {
-    @EventListener
+    @EventListener(SubmissionUpdatedEvent::class)
     fun onApplicationEvent(event: SubmissionUpdatedEvent) {
         submissionEmitterAdapter.emitForMember(event.submission)
         submissionEmitterAdapter.emitForContest(event.submission)

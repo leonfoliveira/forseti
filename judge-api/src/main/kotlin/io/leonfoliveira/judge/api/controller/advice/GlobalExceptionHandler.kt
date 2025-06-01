@@ -1,4 +1,4 @@
-package io.leonfoliveira.judge.api.config
+package io.leonfoliveira.judge.api.controller.advice
 
 import io.leonfoliveira.judge.api.controller.dto.response.ErrorResponseDTO
 import io.leonfoliveira.judge.core.domain.exception.BusinessException
@@ -35,7 +35,7 @@ class GlobalExceptionHandler {
         logger.warn(ex.message)
         return ResponseEntity
             .status(status)
-            .body(ErrorResponseDTO(ex.message ?: "Business exception"))
+            .body(ErrorResponseDTO(ex.message!!))
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)

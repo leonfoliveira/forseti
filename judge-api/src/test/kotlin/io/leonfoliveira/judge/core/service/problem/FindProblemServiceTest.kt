@@ -9,6 +9,7 @@ import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
+import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
 import io.leonfoliveira.judge.core.service.dto.output.ProblemWithStatusOutputDTO
@@ -37,6 +38,15 @@ class FindProblemServiceTest : FunSpec({
     }
 
     context("findById") {
+        test("should throw NotFoundException when problem not found") {
+            every { problemRepository.findById(1) }
+                .returns(Optional.empty())
+
+            shouldThrow<NotFoundException> {
+                sut.findById(1)
+            }
+        }
+
         test("should throw ForbiddenException when contest not started") {
             val problem =
                 ProblemMockFactory.build(

@@ -15,9 +15,11 @@ class AttachmentService(
     private val bucketAdapter: BucketAdapter,
 ) {
     fun upload(file: MultipartFile): Attachment {
+        val key = UUID.randomUUID()
         val attachment =
             Attachment(
-                filename = file.originalFilename ?: "unknown",
+                key = key,
+                filename = file.originalFilename ?: key.toString(),
                 contentType = file.contentType ?: "application/octet-stream",
             )
         val bytes = file.bytes
