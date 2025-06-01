@@ -73,9 +73,7 @@ describe("useCreateContestAction", () => {
     });
 
     expect(contestService.createContest).toHaveBeenCalledWith(input);
-    expect(mockAlertSuccess).toHaveBeenCalledWith(
-      "Contest created successfully",
-    );
+    expect(mockAlertSuccess).toHaveBeenCalled();
     expect(mockRouterPush).toHaveBeenCalledWith(
       `/root/contests/${mockContest.id}`,
     );
@@ -129,7 +127,7 @@ describe("useCreateContestAction", () => {
     });
 
     expect(contestService.createContest).toHaveBeenCalledWith(input);
-    expect(mockAlertError).toHaveBeenCalledWith("Error creating contest");
+    expect(mockAlertError).toHaveBeenCalled();
     expect(mockAlertSuccess).not.toHaveBeenCalled();
     expect(mockSignOutAct).not.toHaveBeenCalled();
     expect(mockRouterPush).not.toHaveBeenCalled();

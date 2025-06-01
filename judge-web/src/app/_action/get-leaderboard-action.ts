@@ -5,11 +5,13 @@ import { useEffect, useRef } from "react";
 import { contestService, submissionService } from "@/app/_composition";
 import { CompatClient } from "@stomp/stompjs";
 import { useAlert } from "@/app/_component/alert/alert-provider";
+import { useTranslations } from "next-intl";
 
 export function useGetLeaderboardAction() {
   const alert = useAlert();
   const action = useAction(getLeaderboard);
   const listenerRef = useRef<CompatClient>(null);
+  const t = useTranslations("_action.get-leaderboard-action");
 
   useEffect(() => {
     return () => {
@@ -27,8 +29,8 @@ export function useGetLeaderboardAction() {
         onSubmission,
       );
       return leaderboard;
-    } catch (error) {
-      alert.error("Error loading leaderboard");
+    } catch {
+      alert.error(t("error"));
     }
   }
 

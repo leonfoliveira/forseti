@@ -5,10 +5,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuthorization } from "@/app/_util/authorization-hook";
 import { useFindContestSummaryByIdAction } from "@/app/_action/find-contest-summary-action";
 import { useSubscribeForMemberSubmissionAction } from "@/app/_action/subscribe-for-member-submission-action";
-import { ContestStatus } from "@/app/_util/contest-utils";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { toLocaleString } from "@/app/_util/date-utils";
 import { ContestSummaryOutputDTO } from "@/core/service/dto/output/ContestSummaryOutputDTO";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 
 jest.mock("react", () => ({
   ...jest.requireActual("react"),

@@ -10,11 +10,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Select } from "@/app/_component/form/select";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import {
-  ContestStatus,
-  formatLanguage,
-  formatStatus,
-} from "@/app/_util/contest-utils";
 import { Badge } from "@/app/_component/badge";
 import React, { Fragment } from "react";
 import { Spinner } from "@/app/_component/spinner";
@@ -30,6 +25,9 @@ import { DialogModal } from "@/app/_component/dialog-modal";
 import { useModal } from "@/app/_util/modal-hook";
 import { useDeleteContestAction } from "@/app/_action/delete-contest-action";
 import { cls } from "@/app/_util/cls";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
+import { useTranslations } from "next-intl";
 
 type Props = {
   contestId?: number;
@@ -47,6 +45,9 @@ export function ContestForm(props: Props) {
   const deleteContestAction = useDeleteContestAction();
   const router = useRouter();
   const modal = useModal();
+  const { formatLanguage, formatStatus } = useContestFormatter();
+  const t = useTranslations("root.contests._component.contest-form");
+  const s = useTranslations("root.contests._form.contest-form-schema");
 
   const membersFields = useFieldArray({
     control: form.control,
@@ -96,15 +97,21 @@ export function ContestForm(props: Props) {
                 onClick={modal.open}
                 data-testid="delete"
               >
-                Delete
+                {t("delete:label")}
               </Button>
             )}
             <Button type="submit" className="btn-primary" data-testid="save">
-              Save
+              {t("save:label")}
             </Button>
           </div>
         </div>
-        <TextInput fm={form} name="title" label="Title" data-testid="title" />
+        <TextInput
+          fm={form}
+          name="title"
+          s={s}
+          label={t("title:label")}
+          data-testid="title"
+        />
         <CheckboxGroup
           fm={form}
           options={Object.values(Language).map((it) => ({
@@ -112,7 +119,8 @@ export function ContestForm(props: Props) {
             label: formatLanguage(it),
           }))}
           name="languages"
-          label="Languages"
+          s={s}
+          label={t("languages:label")}
           containerClassName="mt-5"
           data-testid="languages"
         />
@@ -120,14 +128,16 @@ export function ContestForm(props: Props) {
           <DateInput
             fm={form}
             name="startAt"
-            label="Start At"
+            s={s}
+            label={t("start-at:label")}
             containerClassName="flex-1"
             data-testid="start-at"
           />
           <DateInput
             fm={form}
             name="endAt"
-            label="End At"
+            s={s}
+            label={t("end-at:label")}
             containerClassName="flex-1"
             data-testid="end-at"
           />
@@ -135,14 +145,17 @@ export function ContestForm(props: Props) {
       </div>
       <div className="grid gap-x-15 gap-y-5 2xl:grid-cols-2">
         <div className="mt-5">
-          <p className="block text-md font-semibold mb-2">Members</p>
+          <p className="block text-md font-semibold mb-2">
+            {t("members-header")}
+          </p>
           <div className="grid [grid-template-columns:1fr_2fr_1fr_1fr_auto] items-start gap-x-3">
             {membersFields.fields.map((field, index) => (
               <Fragment key={field.id}>
                 <Select
                   fm={form}
                   name={`members.${index}.type`}
-                  label="Type"
+                  s={s}
+                  label={t("member-type:label")}
                   options={Object.values(MemberType)
                     .filter((it) => it !== MemberType.ROOT)
                     .map((it) => ({
@@ -154,19 +167,22 @@ export function ContestForm(props: Props) {
                 <TextInput
                   fm={form}
                   name={`members.${index}.name`}
-                  label="Name"
+                  s={s}
+                  label={t("member-name:label")}
                   data-testid="member-name"
                 />
                 <TextInput
                   fm={form}
                   name={`members.${index}.login`}
-                  label="Login"
+                  s={s}
+                  label={t("member-login:label")}
                   data-testid="member-login"
                 />
                 <TextInput
                   fm={form}
                   name={`members.${index}.password`}
-                  label="Password"
+                  s={s}
+                  label={t("member-password:label")}
                   placeholder={!!field._id ? "Not changed" : ""}
                   data-testid="member-password"
                 />
@@ -191,35 +207,41 @@ export function ContestForm(props: Props) {
           </Button>
         </div>
         <div className="mt-5">
-          <p className="block text-md font-semibold mb-2">Problems</p>
+          <p className="block text-md font-semibold mb-2">
+            {t("problems-header")}
+          </p>
           <div className="grid [grid-template-columns:2fr_1fr_1fr_1fr_auto] items-start gap-x-3">
             {problemsFields.fields.map((field, index) => (
               <Fragment key={field.id}>
                 <TextInput
                   fm={form}
+                  s={s}
                   name={`problems.${index}.title`}
-                  label="Title"
+                  label={t("problem-title:label")}
                   data-testid="problem-title"
                 />
                 <FileInput
                   fm={form}
+                  s={s}
                   originalName={`problems.${index}.description`}
                   name={`problems.${index}.newDescription`}
-                  label="Description"
+                  label={t("problem-description:label")}
                   data-testid="problem-description"
                 />
                 <NumberInput
                   fm={form}
+                  s={s}
                   name={`problems.${index}.timeLimit`}
-                  label="Time Limit"
+                  label={t("problem-time-limit:label")}
                   step={500}
                   data-testid="problem-time-limit"
                 />
                 <FileInput
                   fm={form}
+                  s={s}
                   originalName={`problems.${index}.testCases`}
                   name={`problems.${index}.newTestCases`}
-                  label="Test Cases"
+                  label={t("problem-test-cases:label")}
                   data-testid="problem-test-cases"
                 />
                 <Button
@@ -250,7 +272,7 @@ export function ContestForm(props: Props) {
         isLoading={deleteContestAction.isLoading}
         data-testid="delete-modal"
       >
-        <p className="py-4">Are you sure?</p>
+        <p className="py-4">{t("confirm-content")}</p>
       </DialogModal>
     </Form>
   );

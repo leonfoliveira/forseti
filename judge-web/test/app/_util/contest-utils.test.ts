@@ -1,13 +1,10 @@
-import {
-  getContestStatus,
-  formatStatus,
-  formatLanguage,
-  formatSubmissionStatus,
-  ContestStatus,
-} from "@/app/_util/contest-utils";
+import { getContestStatus } from "@/app/_util/contest-utils";
 import { Language } from "@/core/domain/enumerate/Language";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+import { renderHook } from "@testing-library/react";
+import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 
 describe("getContestStatus", () => {
   it("returns NOT_STARTED when current time is before contest start time", () => {
@@ -36,55 +33,83 @@ describe("getContestStatus", () => {
 });
 
 describe("formatStatus", () => {
+  const {
+    result: {
+      current: { formatStatus },
+    },
+  } = renderHook(() => useContestFormatter());
+
   it("formats NOT_STARTED status correctly", () => {
-    expect(formatStatus(ContestStatus.NOT_STARTED)).toBe("Not Started");
+    expect(formatStatus(ContestStatus.NOT_STARTED)).toBe(
+      "contest-status.NOT_STARTED",
+    );
   });
 
   it("formats IN_PROGRESS status correctly", () => {
-    expect(formatStatus(ContestStatus.IN_PROGRESS)).toBe("In Progress");
+    expect(formatStatus(ContestStatus.IN_PROGRESS)).toBe(
+      "contest-status.IN_PROGRESS",
+    );
   });
 
   it("formats ENDED status correctly", () => {
-    expect(formatStatus(ContestStatus.ENDED)).toBe("Ended");
+    expect(formatStatus(ContestStatus.ENDED)).toBe("contest-status.ENDED");
   });
 });
 
 describe("formatLanguage", () => {
+  const {
+    result: {
+      current: { formatLanguage },
+    },
+  } = renderHook(() => useContestFormatter());
+
   it("formats Python 3.13.3 language correctly", () => {
-    expect(formatLanguage(Language.PYTHON_3_13_3)).toBe("Python 3.13.3");
+    expect(formatLanguage(Language.PYTHON_3_13_3)).toBe(
+      "language.PYTHON_3_13_3",
+    );
   });
 });
 
 describe("formatSubmissionStatus", () => {
+  const {
+    result: {
+      current: { formatSubmissionStatus },
+    },
+  } = renderHook(() => useContestFormatter());
+
   it("formats JUDGING status correctly", () => {
-    expect(formatSubmissionStatus(SubmissionStatus.JUDGING)).toBe("Judging");
+    expect(formatSubmissionStatus(SubmissionStatus.JUDGING)).toBe(
+      "submission-status.JUDGING",
+    );
   });
 
   it("formats ACCEPTED status correctly", () => {
-    expect(formatSubmissionStatus(SubmissionStatus.ACCEPTED)).toBe("Accepted");
+    expect(formatSubmissionStatus(SubmissionStatus.ACCEPTED)).toBe(
+      "submission-status.ACCEPTED",
+    );
   });
 
   it("formats WRONG_ANSWER status correctly", () => {
     expect(formatSubmissionStatus(SubmissionStatus.WRONG_ANSWER)).toBe(
-      "Wrong Answer",
+      "submission-status.WRONG_ANSWER",
     );
   });
 
   it("formats TIME_LIMIT_EXCEEDED status correctly", () => {
     expect(formatSubmissionStatus(SubmissionStatus.TIME_LIMIT_EXCEEDED)).toBe(
-      "Time Limit Exceeded",
+      "submission-status.TIME_LIMIT_EXCEEDED",
     );
   });
 
   it("formats COMPILATION_ERROR status correctly", () => {
     expect(formatSubmissionStatus(SubmissionStatus.COMPILATION_ERROR)).toBe(
-      "Compilation Error",
+      "submission-status.COMPILATION_ERROR",
     );
   });
 
   it("formats RUNTIME_ERROR status correctly", () => {
     expect(formatSubmissionStatus(SubmissionStatus.RUNTIME_ERROR)).toBe(
-      "Runtime Error",
+      "submission-status.RUNTIME_ERROR",
     );
   });
 });

@@ -15,7 +15,7 @@ class PrivateInterceptor : HandlerInterceptor {
     override fun preHandle(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        handler: Any
+        handler: Any,
     ): Boolean {
         if (handler !is HandlerMethod) return true
 
@@ -24,20 +24,22 @@ class PrivateInterceptor : HandlerInterceptor {
                 ?: handler.beanType.getAnnotation(Private::class.java)
                 ?: return true
 
-        val auth = SecurityContextHolder.getContext().authentication as? JwtAuthentication
-            ?: throw UnauthorizedException()
+        val auth =
+            SecurityContextHolder.getContext().authentication as? JwtAuthentication
+                ?: throw UnauthorizedException()
 
         if (!auth.isAuthenticated) throw UnauthorizedException()
 
-        val principal = auth.principal
-            ?: throw UnauthorizedException()
+        val principal =
+            auth.principal
+                ?: throw UnauthorizedException()
 
         if (privateAnnotation.allowed.isNotEmpty() &&
-            principal.type !in privateAnnotation.allowed) {
+            principal.type !in privateAnnotation.allowed
+        ) {
             throw ForbiddenException()
         }
 
         return true
     }
 }
-

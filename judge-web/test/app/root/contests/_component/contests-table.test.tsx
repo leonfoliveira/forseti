@@ -1,11 +1,10 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { formatDateTime } from "@/app/_util/date-utils";
 import { useRouter } from "next/navigation";
-import { ContestStatusBadge } from "@/app/root/contests/_component/contest-status-badge";
 import { ContestSummaryOutputDTO } from "@/core/service/dto/output/ContestSummaryOutputDTO";
-import { ContestStatus } from "@/app/_util/contest-utils";
 import { ContestsTable } from "@/app/root/contests/_component/contests-table";
 import React from "react";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),

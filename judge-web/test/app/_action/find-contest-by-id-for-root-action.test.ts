@@ -138,7 +138,7 @@ describe("useFindContestByIdForRoot", () => {
       contestId,
     );
     expect(returnedContest).toBeUndefined();
-    expect(mockAlertError).toHaveBeenCalledWith("Error loading contest");
+    expect(mockAlertError).toHaveBeenCalled();
     expect(mockSignOutAct).not.toHaveBeenCalled();
     expect(mockRedirect).not.toHaveBeenCalled();
   });

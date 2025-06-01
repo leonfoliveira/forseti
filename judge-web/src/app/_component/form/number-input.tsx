@@ -2,6 +2,7 @@ import React from "react";
 import { cls } from "@/app/_util/cls";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { FieldPath, FieldValues } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -9,6 +10,8 @@ type Props<TFieldValues extends FieldValues> = Omit<
 > & {
   fm: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
+  s: ReturnType<typeof useTranslations>;
+
   containerClassName?: string;
   label: string;
   "data-testid"?: string;
@@ -17,6 +20,7 @@ type Props<TFieldValues extends FieldValues> = Omit<
 export function NumberInput<TFieldValues extends FieldValues>({
   fm,
   name,
+  s,
   label,
   containerClassName,
   className,
@@ -53,7 +57,7 @@ export function NumberInput<TFieldValues extends FieldValues>({
             data-testid={`${testId}:input`}
           />
           <p className="label text-error" data-testid={`${testId}:error`}>
-            {fieldState.error?.message}
+            {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
           </p>
         </fieldset>
       )}

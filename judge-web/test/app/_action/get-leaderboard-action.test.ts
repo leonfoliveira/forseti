@@ -99,7 +99,7 @@ describe("useGetLeaderboardAction", () => {
 
     expect(contestService.getLeaderboard).toHaveBeenCalledWith(contestId);
     expect(returnedLeaderboard).toBeUndefined();
-    expect(mockAlertError).toHaveBeenCalledWith("Error loading leaderboard");
+    expect(mockAlertError).toHaveBeenCalled();
     expect(submissionService.subscribeForContest).not.toHaveBeenCalled();
   });
 

@@ -4,10 +4,12 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
 import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { contestService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
+import { useTranslations } from "next-intl";
 
 export function useFindAllContestsAction() {
   const alert = useAlert();
   const signOutAction = useRootSignOutAction();
+  const t = useTranslations("_action.find-all-contests-action");
 
   async function findAllContests() {
     try {
@@ -19,7 +21,7 @@ export function useFindAllContestsAction() {
       ) {
         await signOutAction.act();
       } else {
-        alert.error("Error loading contests");
+        alert.error(t("error"));
       }
     }
   }

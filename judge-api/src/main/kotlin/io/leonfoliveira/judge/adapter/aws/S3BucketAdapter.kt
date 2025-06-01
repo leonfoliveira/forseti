@@ -1,13 +1,15 @@
 package io.leonfoliveira.judge.adapter.aws
 
+import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.BucketAdapter
-import java.util.UUID
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.core.sync.RequestBody
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
+import java.util.UUID
 
 @Service
 class S3BucketAdapter(
@@ -15,12 +17,16 @@ class S3BucketAdapter(
     @Value("\${spring.cloud.aws.s3.bucket}")
     private val bucket: String,
 ) : BucketAdapter {
-    override fun upload(bytes: ByteArray, key: UUID) {
-        val putObjectRequest = PutObjectRequest
-            .builder()
-            .bucket(bucket)
-            .key(key.toString())
-            .build()
+    override fun upload(
+        bytes: ByteArray,
+        key: UUID,
+    ) {
+        val putObjectRequest =
+            PutObjectRequest
+                .builder()
+                .bucket(bucket)
+                .key(key.toString())
+                .build()
 
         s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes))
     }
@@ -33,7 +39,12 @@ class S3BucketAdapter(
                 .key(key.toString())
                 .build()
 
-        val s3Object = s3Client.getObject(getObjectRequest)
+        val s3Object =
+            try {
+                s3Client.getObject(getObjectRequest)
+            } catch (ex: NoSuchKeyException) {
+                throw NotFoundException("Could not find attachment with key: $key")
+            }
 
         return s3Object.readAllBytes()
     }

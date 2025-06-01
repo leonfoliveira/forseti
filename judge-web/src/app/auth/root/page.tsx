@@ -9,11 +9,13 @@ import { TextInput } from "@/app/_component/form/text-input";
 import { Button } from "@/app/_component/form/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { Spinner } from "@/app/_component/spinner";
 import { Form } from "@/app/_component/form/form";
+import { useTranslations } from "next-intl";
 
 export default function AuthRoot() {
   const signInAction = useRootSignInAction();
+  const t = useTranslations("auth.root");
+  const s = useTranslations("auth._form.sign-in-form-schema");
 
   const form = useForm<RootSignInFormType>({
     resolver: joiResolver(rootSignInFormSchema),
@@ -27,27 +29,28 @@ export default function AuthRoot() {
         className="p-10 w-full max-w-[400] bg-base-100"
         data-testid="form"
       >
-        <h1 className="text-3xl font-bold">Sign In</h1>
-        <h2 className="text-md mt-2">Root</h2>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
+        <h2 className="text-md mt-2">{t("description")}</h2>
         <div className="my-6">
           <TextInput
             fm={form}
             name="password"
-            label="Password"
+            s={s}
+            label={t("password:label")}
             password
             data-testid="password"
           />
         </div>
-        <div>
+        <div className="flex flex-col">
           <Button
             type="submit"
-            className="mr-5 btn-primary"
+            className="btn-primary"
+            isLoading={signInAction.isLoading}
             data-testid="signin"
           >
-            Sign in
+            {t("sign-in:label")}
             <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />
           </Button>
-          {signInAction.isLoading && <Spinner data-testid="spinner" />}
         </div>
       </Form>
     </div>

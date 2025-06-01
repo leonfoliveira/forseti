@@ -3,9 +3,9 @@ package io.leonfoliveira.judge.core.service.submission
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
+import io.leonfoliveira.judge.core.event.SubmissionUpdatedEvent
 import io.leonfoliveira.judge.core.port.SubmissionRunnerAdapter
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
-import io.leonfoliveira.judge.core.event.SubmissionUpdatedEvent
 import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
 import org.springframework.stereotype.Service
 

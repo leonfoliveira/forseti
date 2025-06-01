@@ -6,19 +6,19 @@ import io.leonfoliveira.judge.api.util.Private
 import io.leonfoliveira.judge.api.util.Quota
 import io.leonfoliveira.judge.core.service.attachment.AttachmentService
 import jakarta.transaction.Transactional
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import java.time.temporal.ChronoUnit
-import java.util.UUID
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
+import java.time.temporal.ChronoUnit
+import java.util.UUID
 
 @RestController
 @RequestMapping("/v1/attachments")
@@ -29,22 +29,27 @@ class AttachmentController(
     @Quota(5, 1, ChronoUnit.MINUTES)
     @Private
     @Transactional
-    fun uploadAttachment(@RequestParam("file") file: MultipartFile): ResponseEntity<AttachmentResponseDTO> {
+    fun uploadAttachment(
+        @RequestParam("file") file: MultipartFile,
+    ): ResponseEntity<AttachmentResponseDTO> {
         val attachment = attachmentService.upload(file)
         return ResponseEntity.ok(attachment.toResponseDTO())
     }
 
     @GetMapping("/{key}")
-    @Private
-    fun downloadAttachment(@PathVariable("key") key: UUID): ResponseEntity<ByteArray> {
+    fun downloadAttachment(
+        @PathVariable("key") key: UUID,
+    ): ResponseEntity<ByteArray> {
         val download = attachmentService.download(key)
-        val headers = HttpHeaders().apply {
-            contentDisposition = ContentDisposition
-                .attachment()
-                .filename(download.attachment.filename)
-                .build()
-            contentType = MediaType.parseMediaType(download.attachment.contentType)
-        }
+        val headers =
+            HttpHeaders().apply {
+                contentDisposition =
+                    ContentDisposition
+                        .attachment()
+                        .filename(download.attachment.filename)
+                        .build()
+                contentType = MediaType.parseMediaType(download.attachment.contentType)
+            }
         return ResponseEntity.ok().headers(headers).body(download.bytes)
     }
 }

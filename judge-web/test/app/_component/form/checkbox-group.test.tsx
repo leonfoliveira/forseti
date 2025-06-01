@@ -2,16 +2,22 @@ import { fireEvent, render, renderHook, screen } from "@testing-library/react";
 import { useForm } from "react-hook-form";
 import { CheckboxGroup } from "@/app/_component/form/checkbox-group";
 import React from "react";
+import { useTranslations } from "next-intl";
 
 describe("CheckboxGroup Component", () => {
+  const {
+    result: { current: form },
+  } = renderHook(() => useForm());
+  const s = jest.fn().mockReturnValue("message") as unknown as ReturnType<
+    typeof useTranslations
+  >;
+
   it("renders no checkboxes when options are empty", () => {
-    const {
-      result: { current: form },
-    } = renderHook(() => useForm());
     render(
       <CheckboxGroup
         fm={form}
         name="test"
+        s={s}
         label="Test Label"
         options={[]}
         data-testid="checkbox-group"
@@ -21,13 +27,11 @@ describe("CheckboxGroup Component", () => {
   });
 
   it("checks multiple checkboxes when clicked", () => {
-    const {
-      result: { current: form },
-    } = renderHook(() => useForm());
     render(
       <CheckboxGroup
         fm={form}
         name="test"
+        s={s}
         label="Test Label"
         options={[
           { value: "option1", label: "Option 1" },
@@ -56,6 +60,7 @@ describe("CheckboxGroup Component", () => {
       <CheckboxGroup
         fm={form}
         name="test"
+        s={s}
         label="Test Label"
         options={[
           { value: "option1", label: "Option 1" },
@@ -64,8 +69,8 @@ describe("CheckboxGroup Component", () => {
         data-testid="checkbox-group"
       />,
     );
-    expect(screen.getByTestId("checkbox-group:error")).toHaveTextContent(
-      "This field is required",
-    );
+    expect(
+      screen.getByTestId("checkbox-group:error"),
+    ).not.toBeEmptyDOMElement();
   });
 });

@@ -5,11 +5,13 @@ import { useEffect, useRef } from "react";
 import { contestService, submissionService } from "@/app/_composition";
 import { CompatClient } from "@stomp/stompjs";
 import { useAlert } from "@/app/_component/alert/alert-provider";
+import { useTranslations } from "next-intl";
 
 export function useFindAllSubmissionsAction() {
   const alert = useAlert();
   const action = useAction(findAllSubmissions);
   const listenerRef = useRef<CompatClient>(null);
+  const t = useTranslations("_action.find-all-submissions-action");
 
   useEffect(() => {
     return () => {
@@ -28,7 +30,7 @@ export function useFindAllSubmissionsAction() {
       );
       return submissions;
     } catch {
-      alert.error("Error loading submissions");
+      alert.error(t("error"));
     }
   }
 

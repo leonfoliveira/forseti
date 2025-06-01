@@ -6,6 +6,7 @@ import {
   FieldValues,
   UseFormReturn,
 } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 type Props<TFieldValues extends FieldValues> = DetailedHTMLProps<
   SelectHTMLAttributes<HTMLSelectElement>,
@@ -13,6 +14,7 @@ type Props<TFieldValues extends FieldValues> = DetailedHTMLProps<
 > & {
   fm: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
+  s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
   label?: string;
   options: {
@@ -26,6 +28,7 @@ export function Select<TFieldValues extends FieldValues>({
   fm,
   label,
   name,
+  s,
   containerClassName,
   className,
   options,
@@ -74,7 +77,7 @@ export function Select<TFieldValues extends FieldValues>({
             ))}
           </select>
           <p className="label text-error" data-testid={`${testId}:error`}>
-            {fieldState.error?.message}
+            {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
           </p>
         </fieldset>
       )}

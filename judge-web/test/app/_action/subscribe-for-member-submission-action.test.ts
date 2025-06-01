@@ -2,10 +2,10 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { submissionService } from "@/app/_composition";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { formatSubmissionStatus } from "@/app/_util/contest-utils";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { useToast } from "@/app/_component/toast/toast-provider";
 import { useSubscribeForMemberSubmissionAction } from "@/app/_action/subscribe-for-member-submission-action";
+import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 
 jest.mock("@/app/_composition", () => ({
   submissionService: {
@@ -29,8 +29,10 @@ jest.mock("@/app/_component/toast/toast-provider", () => ({
   })),
 }));
 
-jest.mock("@/app/_util/contest-utils", () => ({
-  formatSubmissionStatus: jest.fn((status) => `Formatted: ${status}`),
+jest.mock("@/app/_util/contest-formatter-hook", () => ({
+  useContestFormatter: jest.fn(() => ({
+    formatSubmissionStatus: jest.fn((status) => `Mocked: ${status}`),
+  })),
 }));
 
 describe("useSubscribeForMemberSubmissionAction", () => {
@@ -40,6 +42,7 @@ describe("useSubscribeForMemberSubmissionAction", () => {
   const mockToastError = jest.fn();
   const mockSubscribeForMember = jest.fn();
   const mockUnsubscribe = jest.fn();
+  const mockFormatSubmissionStatus = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -58,6 +61,9 @@ describe("useSubscribeForMemberSubmissionAction", () => {
     (submissionService.unsubscribe as jest.Mock).mockImplementation(
       mockUnsubscribe,
     );
+    (useContestFormatter as jest.Mock).mockReturnValue({
+      formatSubmissionStatus: mockFormatSubmissionStatus,
+    });
   });
 
   it("should subscribe for member submissions successfully", async () => {
@@ -159,12 +165,10 @@ describe("useSubscribeForMemberSubmissionAction", () => {
       receiveSubmissionCallback(submission);
     });
 
-    expect(formatSubmissionStatus).toHaveBeenCalledWith(
+    expect(mockFormatSubmissionStatus).toHaveBeenCalledWith(
       SubmissionStatus.TIME_LIMIT_EXCEEDED,
     );
-    expect(mockToastInfo).toHaveBeenCalledWith(
-      `Formatted: ${SubmissionStatus.TIME_LIMIT_EXCEEDED}`,
-    );
+    expect(mockToastInfo).toHaveBeenCalled();
     expect(mockToastWarning).not.toHaveBeenCalled();
     expect(mockToastError).not.toHaveBeenCalled();
   });
@@ -193,12 +197,10 @@ describe("useSubscribeForMemberSubmissionAction", () => {
       receiveSubmissionCallback(submission);
     });
 
-    expect(formatSubmissionStatus).toHaveBeenCalledWith(
+    expect(mockFormatSubmissionStatus).toHaveBeenCalledWith(
       SubmissionStatus.COMPILATION_ERROR,
     );
-    expect(mockToastWarning).toHaveBeenCalledWith(
-      `Formatted: ${SubmissionStatus.COMPILATION_ERROR}`,
-    );
+    expect(mockToastWarning).toHaveBeenCalled();
     expect(mockToastInfo).not.toHaveBeenCalled();
     expect(mockToastError).not.toHaveBeenCalled();
   });
@@ -227,12 +229,10 @@ describe("useSubscribeForMemberSubmissionAction", () => {
       receiveSubmissionCallback(submission);
     });
 
-    expect(formatSubmissionStatus).toHaveBeenCalledWith(
+    expect(mockFormatSubmissionStatus).toHaveBeenCalledWith(
       SubmissionStatus.RUNTIME_ERROR,
     );
-    expect(mockToastWarning).toHaveBeenCalledWith(
-      `Formatted: ${SubmissionStatus.RUNTIME_ERROR}`,
-    );
+    expect(mockToastWarning).toHaveBeenCalled();
     expect(mockToastInfo).not.toHaveBeenCalled();
     expect(mockToastError).not.toHaveBeenCalled();
   });
@@ -261,12 +261,10 @@ describe("useSubscribeForMemberSubmissionAction", () => {
       receiveSubmissionCallback(submission);
     });
 
-    expect(formatSubmissionStatus).toHaveBeenCalledWith(
+    expect(mockFormatSubmissionStatus).toHaveBeenCalledWith(
       SubmissionStatus.WRONG_ANSWER,
     );
-    expect(mockToastError).toHaveBeenCalledWith(
-      `Formatted: ${SubmissionStatus.WRONG_ANSWER}`,
-    );
+    expect(mockToastError).toHaveBeenCalled();
     expect(mockToastInfo).not.toHaveBeenCalled();
     expect(mockToastWarning).not.toHaveBeenCalled();
   });

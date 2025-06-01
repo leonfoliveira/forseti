@@ -2,44 +2,44 @@ import Joi from "joi";
 
 export const contestFormSchema = Joi.object({
   title: Joi.string().required().messages({
-    "string.empty": "Title is required",
-    "any.required": "Title is required",
+    "string.empty": "title.required",
+    "any.required": "title.required",
   }),
   languages: Joi.array().items(Joi.string()).min(1).required().messages({
-    "array.empty": "At least one language is required",
-    "array.min": "At least one language is required",
-    "any.required": "At least one language is required",
+    "array.empty": "languages.required",
+    "array.min": "languages.required",
+    "any.required": "languages.required",
   }),
   startAt: Joi.date().greater("now").required().messages({
-    "date.greater": "Start at must be in the future",
-    "any.required": "Start at is required",
+    "any.required": "start-at.required",
+    "date.greater": "start-at.greater",
   }),
   endAt: Joi.date().greater(Joi.ref("startAt")).required().messages({
-    "date.greater": "End at must be after start at",
-    "any.required": "End at is required",
+    "any.required": "end-at.required",
+    "date.greater": "end-at.greater",
   }),
   members: Joi.array()
     .items(
       Joi.object({
         _id: Joi.number().optional(),
         type: Joi.string().required().messages({
-          "string.empty": "Type is required",
-          "any.required": "Type is required",
+          "string.empty": "member-type.required",
+          "any.required": "member-type.required",
         }),
         name: Joi.string().required().messages({
-          "string.empty": "Name is required",
-          "any.required": "Name is required",
+          "string.empty": "member-name.required",
+          "any.required": "member-name.required",
         }),
         login: Joi.string().required().messages({
-          "string.empty": "Login is required",
-          "any.required": "Login is required",
+          "string.empty": "member-login.required",
+          "any.required": "member-login.required",
         }),
         password: Joi.when("_id", {
           is: Joi.exist(),
           then: Joi.optional(),
           otherwise: Joi.string().required().messages({
-            "string.empty": "Password is required",
-            "any.required": "Password is required",
+            "string.empty": "member-password.required",
+            "any.required": "member-password.required",
           }),
         }),
       }).unknown(true),
@@ -49,28 +49,28 @@ export const contestFormSchema = Joi.object({
     .items(
       Joi.object({
         title: Joi.string().required().messages({
-          "string.empty": "Title is required",
-          "any.required": "Title is required",
+          "string.empty": "problem-title.required",
+          "any.required": "problem-title.required",
         }),
         newDescription: Joi.when("description", {
           is: Joi.exist(),
           then: Joi.optional(),
           otherwise: Joi.any().required().messages({
-            "string.empty": "Description is required",
-            "any.required": "Description is required",
+            "string.empty": "problem-description.required",
+            "any.required": "problem-description.required",
           }),
         }),
         timeLimit: Joi.number().min(1).required().messages({
-          "number.base": "Time limit is required",
-          "number.min": "Time limit must be greater than 0",
-          "any.required": "Time limit is required",
+          "any.required": "problem-time-limit.required",
+          "number.base": "problem-time-limit.required",
+          "number.min": "problem-time-limit.min",
         }),
         newTestCases: Joi.when("testCases", {
           is: Joi.exist(),
           then: Joi.optional(),
           otherwise: Joi.any().required().messages({
-            "string.empty": "Test cases are required",
-            "any.required": "Test cases are required",
+            "string.empty": "problem-test-cases.required",
+            "any.required": "problem-test-cases.required",
           }),
         }),
       }).unknown(true),

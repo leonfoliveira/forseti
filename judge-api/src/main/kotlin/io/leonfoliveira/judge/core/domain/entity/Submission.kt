@@ -2,10 +2,6 @@ package io.leonfoliveira.judge.core.domain.entity
 
 import io.leonfoliveira.judge.core.domain.enumerate.Language
 import io.leonfoliveira.judge.core.util.TimeUtils
-import jakarta.persistence.AttributeOverride
-import jakarta.persistence.AttributeOverrides
-import jakarta.persistence.Column
-import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated

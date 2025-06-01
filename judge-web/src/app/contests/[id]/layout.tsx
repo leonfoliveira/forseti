@@ -3,7 +3,6 @@
 import React, { use, useEffect } from "react";
 import { Spinner } from "@/app/_component/spinner";
 import { toLocaleString } from "@/app/_util/date-utils";
-import { ContestStatus } from "@/app/_util/contest-utils";
 import { Navbar } from "@/app/_component/navbar";
 import { usePathname, useRouter } from "next/navigation";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
@@ -11,6 +10,8 @@ import { useSubscribeForMemberSubmissionAction } from "@/app/_action/subscribe-f
 import { useAuthorization } from "@/app/_util/authorization-hook";
 import { useFindContestSummaryByIdAction } from "@/app/_action/find-contest-summary-action";
 import { cls } from "@/app/_util/cls";
+import { Button } from "@/app/_component/form/button";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 
 export default function ContestLayout({
   params,
@@ -37,6 +38,22 @@ export default function ContestLayout({
       subscribeForMemberSubmissionAction.act(authorization.member.id);
     }
   }, [authorization]);
+
+  if (findContestAction.error) {
+    return (
+      <div className="h-dvh flex justify-center items-center">
+        <div className="text-center">
+          <h1 className="text-6xl mb-5 font-mono">Error</h1>
+          <Button
+            className="btn-soft mt-5"
+            onClick={() => window.location.reload()}
+          >
+            Reload
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (findContestAction.isLoading || !contest) {
     return (

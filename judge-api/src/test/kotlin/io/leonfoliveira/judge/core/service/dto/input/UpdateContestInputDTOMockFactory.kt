@@ -3,7 +3,6 @@ package io.leonfoliveira.judge.core.service.dto.input
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.enumerate.Language
 import java.time.LocalDateTime
-import java.util.UUID
 
 object UpdateContestInputDTOMockFactory {
     fun build(

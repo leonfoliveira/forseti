@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/app/_component/form/button";
 import { ModalHook } from "@/app/_util/modal-hook";
+import { useTranslations } from "next-intl";
 
 type Props = {
   children: React.ReactNode;
@@ -18,6 +19,7 @@ export function DialogModal({
   ...props
 }: Props) {
   const testId = props["data-testid"] || "dialog-modal";
+  const t = useTranslations("_component.dialog-modal");
 
   async function handleConfirm() {
     await onConfirm();
@@ -35,7 +37,7 @@ export function DialogModal({
             disabled={isLoading}
             data-testid={`${testId}:close`}
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             className="btn btn-error"
@@ -43,7 +45,7 @@ export function DialogModal({
             disabled={isLoading}
             data-testid={`${testId}:confirm`}
           >
-            Confirm
+            {t("confirm")}
           </Button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { ContestStatus } from "@/app/_util/contest-utils";
 import { ContestOutputDTO } from "@/core/service/dto/output/ContestOutputDTO";
 import { ContestStatusBadge } from "@/app/root/contests/_component/contest-status-badge";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 
 describe("ContestStatusBadge", () => {
   it("renders with badge-success for IN_PROGRESS status", () => {

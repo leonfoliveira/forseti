@@ -63,6 +63,6 @@ describe("useFindAllProblemsAction", () => {
 
     expect(contestService.findAllProblems).toHaveBeenCalledWith(contestId);
     expect(returnedProblems).toBeUndefined();
-    expect(mockAlertError).toHaveBeenCalledWith("Error loading problems");
+    expect(mockAlertError).toHaveBeenCalled();
   });
 });

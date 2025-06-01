@@ -13,6 +13,7 @@ import { Button } from "@/app/_component/form/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useFindContestSummaryByIdAction } from "@/app/_action/find-contest-summary-action";
+import { useTranslations } from "next-intl";
 
 type Props = {
   params: Promise<{
@@ -24,6 +25,8 @@ export default function AuthMember({ params }: Props) {
   const { id } = use(params);
   const findContestSummaryByIdAction = useFindContestSummaryByIdAction();
   const memberSignInAction = useMemberSignInAction();
+  const t = useTranslations("auth.contests");
+  const s = useTranslations("auth._form.sign-in-form-schema");
 
   const form = useForm<MemberSignInFormType>({
     resolver: joiResolver(memberSignInFormSchema),
@@ -46,7 +49,7 @@ export default function AuthMember({ params }: Props) {
           disabled={memberSignInAction.isLoading}
           data-testid="form"
         >
-          <h1 className="text-3xl font-bold">Sign In</h1>
+          <h1 className="text-3xl font-bold">{t("title")}</h1>
           <h2 className="text-md mt-2" data-testid="contest-title">
             {findContestSummaryByIdAction.data?.title}
           </h2>
@@ -54,29 +57,29 @@ export default function AuthMember({ params }: Props) {
             <TextInput
               fm={form}
               name="login"
-              label="Login"
+              s={s}
+              label={t("login:label")}
               data-testid="login"
             />
             <TextInput
               fm={form}
               name="password"
-              label="Password"
+              s={s}
+              label={t("password:label")}
               password
               data-testid="password"
             />
           </div>
-          <div>
+          <div className="flex flex-col">
             <Button
               type="submit"
-              className="mr-5 btn-primary"
+              isLoading={memberSignInAction.isLoading}
+              className="btn-primary"
               data-testid="signin"
             >
-              Sign in
+              {t("sign-in:label")}
               <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />
             </Button>
-            {memberSignInAction.isLoading && (
-              <Spinner data-testid="signin-spinner" />
-            )}
           </div>
         </Form>
       )}

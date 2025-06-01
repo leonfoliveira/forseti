@@ -1,37 +1,18 @@
-"use client";
-
 import React from "react";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ToastProvider } from "@/app/_component/toast/toast-provider";
-import { cls } from "@/app/_util/cls";
-import { useTheme } from "@/app/_util/theme-hook";
-import { AlertProvider } from "@/app/_component/alert/alert-provider";
+import { Html } from "@/app/_html";
+import { getIntlConfig } from "@/app/_i18n/request";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export default function Layout({
+export default async function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { theme } = useTheme();
+  const { locale, messages } = await getIntlConfig();
 
   return (
-    <html lang="en" data-theme={theme} className="bg-base-300">
-      <body className={cls(geistSans.variable, geistMono.variable)}>
-        <AlertProvider>
-          <ToastProvider>{children}</ToastProvider>
-        </AlertProvider>
-      </body>
-    </html>
+    <Html locale={locale} messages={messages as any}>
+      {children}
+    </Html>
   );
 }

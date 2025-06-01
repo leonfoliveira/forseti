@@ -93,6 +93,6 @@ describe("AuthMember", () => {
 
     render(<AuthMember params={getParams} />);
 
-    expect(await screen.findByTestId("signin-spinner")).toBeInTheDocument();
+    expect(await screen.findByTestId("signin:spinner")).toBeInTheDocument();
   });
 });

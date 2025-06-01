@@ -92,7 +92,7 @@ describe("useMemberSignInAction", () => {
       contestId,
       input,
     );
-    expect(mockAlertWarning).toHaveBeenCalledWith("Invalid password");
+    expect(mockAlertWarning).toHaveBeenCalled();
     expect(mockAlertError).not.toHaveBeenCalled();
     expect(mockRouterPush).not.toHaveBeenCalled();
   });
@@ -120,7 +120,7 @@ describe("useMemberSignInAction", () => {
       contestId,
       input,
     );
-    expect(mockAlertError).toHaveBeenCalledWith("Error signing in");
+    expect(mockAlertError).toHaveBeenCalled();
     expect(mockAlertWarning).not.toHaveBeenCalled();
     expect(mockRouterPush).not.toHaveBeenCalled();
   });

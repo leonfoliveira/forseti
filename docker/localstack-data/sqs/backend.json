@@ -1,0 +1,1 @@
+{"v":1,"data":{"py/object":"moto.core.base_backend.BackendDict","__dict__":{"backend":{"py/type":"moto.sqs.models.SQSBackend"},"service_name":"sqs","_use_boto3_regions":true,"_additional_regions":null,"_id":"d597de57-eb0c-4060-a0b3-6224c574bb3c"}}}

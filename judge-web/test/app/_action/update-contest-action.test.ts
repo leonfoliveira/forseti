@@ -72,9 +72,7 @@ describe("useUpdateContestAction", () => {
     });
 
     expect(contestService.updateContest).toHaveBeenCalledWith(input);
-    expect(mockAlertSuccess).toHaveBeenCalledWith(
-      "Contest updated successfully",
-    );
+    expect(mockAlertSuccess).toHaveBeenCalled();
     expect(returnedContest).toEqual(mockContest);
     expect(mockAlertError).not.toHaveBeenCalled();
     expect(mockRedirect).not.toHaveBeenCalled();
@@ -158,7 +156,7 @@ describe("useUpdateContestAction", () => {
 
     expect(contestService.updateContest).toHaveBeenCalledWith(input);
     expect(returnedContest).toBeUndefined();
-    expect(mockAlertError).toHaveBeenCalledWith("Error updating contest");
+    expect(mockAlertError).toHaveBeenCalled();
     expect(mockAlertSuccess).not.toHaveBeenCalled();
     expect(mockSignOutAct).not.toHaveBeenCalled();
     expect(mockRedirect).not.toHaveBeenCalled();

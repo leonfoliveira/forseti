@@ -1,11 +1,8 @@
 package io.leonfoliveira.judge.core.domain.entity
 
 import io.leonfoliveira.judge.core.util.TimeUtils
-import jakarta.persistence.AttributeOverride
-import jakarta.persistence.AttributeOverrides
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
-import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
@@ -16,7 +13,6 @@ import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 import java.time.LocalDateTime
-import org.hibernate.envers.RelationTargetAuditMode
 
 @Entity
 @Table(name = "problem")

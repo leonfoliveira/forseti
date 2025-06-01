@@ -17,7 +17,7 @@ describe("submissionFormSchema", () => {
       language: Language.PYTHON_3_13_3,
       code: new File(["print('Hello, World!')"], "hello.py"),
     });
-    expect(error?.details[0].message).toBe("Problem is required");
+    expect(error?.details[0].message).toBe("problem.required");
   });
 
   test("undefined language fails", () => {
@@ -26,7 +26,7 @@ describe("submissionFormSchema", () => {
       language: undefined,
       code: new File(["print('Hello, World!')"], "hello.py"),
     });
-    expect(error?.details[0].message).toBe("Language is required");
+    expect(error?.details[0].message).toBe("language.required");
   });
 
   test("empty language fails", () => {
@@ -35,7 +35,7 @@ describe("submissionFormSchema", () => {
       language: "",
       code: new File(["print('Hello, World!')"], "hello.py"),
     });
-    expect(error?.details[0].message).toBe("Language is required");
+    expect(error?.details[0].message).toBe("language.required");
   });
 
   test("undefined code fails", () => {
@@ -44,6 +44,6 @@ describe("submissionFormSchema", () => {
       language: Language.PYTHON_3_13_3,
       code: undefined,
     });
-    expect(error?.details[0].message).toBe("Code is required");
+    expect(error?.details[0].message).toBe("code.required");
   });
 });

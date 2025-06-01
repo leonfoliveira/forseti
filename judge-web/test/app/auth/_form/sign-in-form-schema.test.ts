@@ -8,7 +8,7 @@ it("returns an error when login is empty for member sign-in", () => {
     login: "",
     password: "password123",
   });
-  expect(result.error?.details[0].message).toBe("Login is required");
+  expect(result.error?.details[0].message).toBe("login.required");
 });
 
 it("returns an error when password is empty for member sign-in", () => {
@@ -16,10 +16,10 @@ it("returns an error when password is empty for member sign-in", () => {
     login: "user123",
     password: "",
   });
-  expect(result.error?.details[0].message).toBe("Password is required");
+  expect(result.error?.details[0].message).toBe("password.required");
 });
 
 it("returns an error when password is empty for root sign-in", () => {
   const result = rootSignInFormSchema.validate({ password: "" });
-  expect(result.error?.details[0].message).toBe("Password is required");
+  expect(result.error?.details[0].message).toBe("password.required");
 });

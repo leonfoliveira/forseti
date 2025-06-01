@@ -96,7 +96,7 @@ describe("useFindAllSubmissionsAction", () => {
 
     expect(contestService.findAllSubmissions).toHaveBeenCalledWith(contestId);
     expect(returnedSubmissions).toBeUndefined();
-    expect(mockAlertError).toHaveBeenCalledWith("Error loading submissions");
+    expect(mockAlertError).toHaveBeenCalled();
     expect(submissionService.subscribeForContest).not.toHaveBeenCalled();
   });
 

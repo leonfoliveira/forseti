@@ -83,12 +83,12 @@ it("renders the member name when authorization is provided", () => {
   expect(screen.getByTestId("navbar-member")).toHaveTextContent("John Doe");
 });
 
-it("renders an empty member name when authorization is not provided", () => {
+it("renders an guest member name when authorization is not provided", () => {
   jest
     .spyOn(require("@/app/_util/authorization-hook"), "useAuthorization")
     .mockReturnValue(null);
   render(<Navbar signInPath="/signin" />);
-  expect(screen.getByTestId("navbar-member")).toBeEmptyDOMElement();
+  expect(screen.getByTestId("navbar-member")).toHaveTextContent("guest");
 });
 
 it("calls signOut and navigates to signInPath when sign out button is clicked", () => {

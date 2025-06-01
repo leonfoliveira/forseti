@@ -3,8 +3,6 @@ package io.leonfoliveira.judge.api.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
-import io.leonfoliveira.judge.api.config.security.CorsConfig
-import io.leonfoliveira.judge.api.config.security.WebSecurityConfig
 import io.leonfoliveira.judge.api.controller.dto.response.toPrivateResponseDTO
 import io.leonfoliveira.judge.api.controller.dto.response.toPublicResponseDTO
 import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
@@ -13,7 +11,6 @@ import io.leonfoliveira.judge.config.ControllerTest
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
-import io.leonfoliveira.judge.core.port.JwtAdapter
 import io.leonfoliveira.judge.core.service.contest.CreateContestService
 import io.leonfoliveira.judge.core.service.contest.DeleteContestService
 import io.leonfoliveira.judge.core.service.contest.FindContestService
@@ -27,6 +24,7 @@ import io.leonfoliveira.judge.core.service.problem.FindProblemService
 import io.leonfoliveira.judge.core.service.submission.FindSubmissionService
 import io.mockk.every
 import io.mockk.mockkStatic
+import java.time.LocalDateTime
 import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.MockMvc
@@ -110,7 +108,9 @@ class ContestControllerTest(
         }
 
         test("findContestById") {
-            val contest = ContestMockFactory.build()
+            val contest = ContestMockFactory.build(
+                startAt = LocalDateTime.now().minusHours(1)
+            )
             every { findContestService.findById(contest.id) }
                 .returns(contest)
 

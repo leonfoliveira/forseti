@@ -4,6 +4,7 @@ import {
   waitFor,
   fireEvent,
   within,
+  renderHook,
 } from "@testing-library/react";
 import React from "react";
 import { useFindAllSubmissionsForMemberAction } from "@/app/_action/find-all-submissions-for-member-action";
@@ -14,8 +15,8 @@ import { attachmentService, storageService } from "@/app/_composition";
 import { Language } from "@/core/domain/enumerate/Language";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { toLocaleString } from "@/app/_util/date-utils";
-import { formatLanguage } from "@/app/_util/contest-utils";
 import ContestSubmissionPage from "@/app/contests/[id]/submissions/page";
+import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 
 jest.mock("react", () => ({
   ...jest.requireActual("react"),
@@ -112,6 +113,12 @@ describe("ContestSubmissionPage", () => {
     });
     mockStorageServiceGetKey.mockReturnValue(null);
   });
+
+  const {
+    result: {
+      current: { formatLanguage },
+    },
+  } = renderHook(() => useContestFormatter());
 
   it("renders spinner when submissions data is loading", () => {
     mockUseFindAllSubmissionsForMemberAction.mockReturnValue({
@@ -313,7 +320,7 @@ describe("ContestSubmissionPage", () => {
     expect(screen.getByTestId("form:submission")).toHaveAttribute("disabled");
   });
 
-  it("disables form when createSubmissionAction is loading and shows spinner", () => {
+  it("disables form when createSubmissionAction is loading and shows spinner", async () => {
     mockUseCreateSubmissionAction.mockReturnValue({
       data: null,
       isLoading: true,
@@ -321,6 +328,8 @@ describe("ContestSubmissionPage", () => {
     });
     render(<ContestSubmissionPage params={getParams} />);
     expect(screen.getByTestId("form:submission")).toHaveAttribute("disabled");
-    expect(screen.getByTestId("form:spinner")).toBeInTheDocument();
+    expect(
+      await screen.findByTestId("form:submit:spinner"),
+    ).toBeInTheDocument();
   });
 });

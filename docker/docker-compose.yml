@@ -25,7 +25,7 @@ services:
 
   localstack:
     container_name: judge-localstack
-    image: localstack/localstack:4.4.0
+    image: gresau/localstack-persist:4.4.0
     environment:
       SERVICES: s3,sqs
     ports:
@@ -33,7 +33,8 @@ services:
     networks:
       - judge-network
     volumes:
-      - "./localstack-bootstrap:/etc/localstack/init/ready.d"
+      - ./localstack-data:/persisted-data
+      - ./localstack-bootstrap:/etc/localstack/init/ready.d
 
 networks:
   judge-network:
@@ -41,3 +42,4 @@ networks:
 
 volumes:
   postgres_data:
+  localstack_data:

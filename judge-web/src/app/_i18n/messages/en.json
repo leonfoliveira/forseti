@@ -1,0 +1,242 @@
+{
+  "_action": {
+    "create-contest-action": {
+      "success": "Contest created successfully",
+      "error": "Failed to create contest"
+    },
+    "create-submission-action": {
+      "success": "Submission created successfully",
+      "error": "Failed to create submission"
+    },
+    "delete-contest-action": {
+      "success": "Contest deleted successfully",
+      "error": "Failed to delete contest"
+    },
+    "find-all-contests-action": {
+      "error": "Failed to retrieve contests"
+    },
+    "find-all-problems-action": {
+      "error": "Failed to retrieve problems"
+    },
+    "find-all-problems-for-member-action": {
+      "error": "Failed to retrieve problems"
+    },
+    "find-all-submissions-action": {
+      "error": "Failed to retrieve submissions"
+    },
+    "find-all-submissions-for-member-action": {
+      "error": "Failed to retrieve submissions"
+    },
+    "find-contest-by-id-action": {
+      "error": "Failed to retrieve contest"
+    },
+    "find-contest-by-id-for-root-action": {
+      "error": "Failed to retrieve contest"
+    },
+    "find-contest-summary-by-id-action": {
+      "error": "Failed to retrieve contest"
+    },
+    "get-leaderboard-action": {
+      "error": "Failed to retrieve leaderboard"
+    },
+    "member-sign-in-action": {
+      "unauthorized": "Invalid login or password",
+      "error": "Failed to sign in"
+    },
+    "root-sign-in-action": {
+      "unauthorized": "Invalid password",
+      "error": "Failed to sign in"
+    },
+    "update-contest-action": {
+      "success": "Contest updated successfully",
+      "error": "Failed to update contest"
+    }
+  },
+  "_component": {
+    "form": {
+      "file-input": {
+        "empty": "Select a file"
+      }
+    },
+    "dialog-modal": {
+      "cancel:label": "Cancel",
+      "confirm:label": "Confirm"
+    },
+    "navbar": {
+      "guest": "Guest",
+      "sign-out:label": "Sign Out"
+    }
+  },
+  "_util": {
+    "contest-formatter-hook": {
+      "contest-status": {
+        "NOT_STARTED": "Not Started",
+        "IN_PROGRESS": "In Progress",
+        "ENDED": "Ended"
+      },
+      "language": {
+        "PYTHON_3_13_3": "Python 3.13.3"
+      },
+      "submission-status": {
+        "JUDGING": "Judging",
+        "ACCEPTED": "Accepted",
+        "WRONG_ANSWER": "Wrong Answer",
+        "TIME_LIMIT_EXCEEDED": "Time Limit Exceeded",
+        "COMPILATION_ERROR": "Compilation Error",
+        "RUNTIME_ERROR": "Runtime Error"
+      }
+    }
+  },
+  "auth": {
+    "_form": {
+      "sign-in-form-schema": {
+        "login": {
+          "required": "Login is required"
+        },
+        "password": {
+          "required": "Password is required"
+        }
+      }
+    },
+    "contests": {
+      "title": "Sign In",
+      "login:label": "Login",
+      "password:label": "Password",
+      "sign-in:label": "Enter"
+    },
+    "root": {
+      "title": "Sign In",
+      "description": "Root",
+      "password:label": "Password",
+      "sign-in:label": "Enter"
+    }
+  },
+  "contests": {
+    "[id]": {
+      "_component": {
+        "problem-status-badge": {
+          "ac": "AC"
+        }
+      },
+      "leaderboard": {
+        "header-penalty": "Penalty"
+      },
+      "submissions": {
+        "_form": {
+          "submission-form-schema": {
+            "problem": {
+              "required": "Problem is required"
+            },
+            "language": {
+              "required": "Language is required"
+            },
+            "code": {
+              "required": "Code is required"
+            }
+          }
+        },
+        "header-timestamp": "Timestamp",
+        "header-problem": "Problem",
+        "header-language": "Language",
+        "header-status": "Status",
+        "submissions-empty": "No submissions yet",
+        "new:label": "New",
+        "problem:label": "Problem",
+        "language:label": "Language",
+        "code:label": "Code",
+        "submit:label": "Submit"
+      },
+      "timeline": {
+        "header-timestamp": "Timestamp",
+        "header-contestant": "Contestant",
+        "header-problem": "Problem",
+        "header-language": "Language",
+        "header-status": "Status",
+        "submissions-empty": "No submissions yet"
+      }
+    }
+  },
+  "root": {
+    "contests": {
+      "[id]": {
+        "header": "Contest #{id}"
+      },
+      "_component": {
+        "contest-form": {
+          "delete:label": "Delete",
+          "save:label": "Save",
+          "title:label": "Title",
+          "languages:label": "Languages",
+          "start-at:label": "Start At",
+          "end-at:label": "End At",
+          "members-header": "Members",
+          "member-type:label": "Type",
+          "member-name:label": "Name",
+          "member-login:label": "Login",
+          "member-password:label": "Password",
+          "problems-header": "Problems",
+          "problem-title:label": "Title",
+          "problem-description:label": "Description",
+          "problem-time-limit:label": "Time Limit (ms)",
+          "problem-test-cases:label": "Test Cases",
+          "confirm-content": "Are you sure you want to delete this contest?"
+        },
+        "contests-table": {
+          "header-id": "ID",
+          "header-title": "Title",
+          "header-start-at": "Start At",
+          "header-end-at": "End At",
+          "header-status": "Status"
+        }
+      },
+      "_form": {
+        "contest-form-schema": {
+          "title": {
+            "required": "Title is required"
+          },
+          "languages": {
+            "required": "At least one language is required"
+          },
+          "start-at": {
+            "required": "Start time is required",
+            "greater": "Start time must be in the future"
+          },
+          "end-at": {
+            "required": "End time is required",
+            "greater": "End time must be after start at"
+          },
+          "member-type": {
+            "required": "Type is required"
+          },
+          "member-name": {
+            "required": "Name is required"
+          },
+          "member-login": {
+            "required": "Login is required"
+          },
+          "member-password": {
+            "required": "Password is required"
+          },
+          "problem-title": {
+            "required": "Title is required"
+          },
+          "problem-description": {
+            "required": "Description is required"
+          },
+          "problem-time-limit": {
+            "required": "Time limit is required",
+            "min": "Time limit must be greater than 0"
+          },
+          "problem-test-cases": {
+            "required": "Test cases are required"
+          }
+        }
+      },
+      "new": {
+        "header": "New Contest"
+      },
+      "header": "Contests",
+      "new:label": "New Contest"
+    }
+  }
+}

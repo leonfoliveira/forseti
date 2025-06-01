@@ -131,7 +131,7 @@ describe("useFindAllSubmissionsForMemberAction", () => {
 
     expect(submissionService.findAllForMember).toHaveBeenCalledTimes(1);
     expect(returnedSubmissions).toBeUndefined();
-    expect(mockAlertError).toHaveBeenCalledWith("Error loading submissions");
+    expect(mockAlertError).toHaveBeenCalled();
     expect(submissionService.subscribeForMember).not.toHaveBeenCalled();
   });
 

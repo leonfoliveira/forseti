@@ -7,6 +7,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { ContestStatusBadge } from "@/app/root/contests/_component/contest-status-badge";
 import { ContestSummaryOutputDTO } from "@/core/service/dto/output/ContestSummaryOutputDTO";
+import { useTranslations } from "next-intl";
 
 type Props = {
   contests: ContestSummaryOutputDTO[];
@@ -14,6 +15,7 @@ type Props = {
 
 export function ContestsTable(props: Props) {
   const { contests } = props;
+  const t = useTranslations("root.contests._component.contests-table");
 
   const router = useRouter();
 
@@ -22,19 +24,19 @@ export function ContestsTable(props: Props) {
       <TableSection head>
         <TableRow>
           <TableCell header className="w-1/20">
-            ID
+            {t("header-id")}
           </TableCell>
           <TableCell header className="w-11/20">
-            Title
+            {t("header-title")}
           </TableCell>
           <TableCell header className="w-3/20">
-            Start At
+            {t("header-start-at")}
           </TableCell>
           <TableCell header className="w-3/20">
-            End At
+            {t("header-end-at")}
           </TableCell>
           <TableCell header className="w-2/20">
-            Status
+            {t("header-status")}
           </TableCell>
         </TableRow>
       </TableSection>

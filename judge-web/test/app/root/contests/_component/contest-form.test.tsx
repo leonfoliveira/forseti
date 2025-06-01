@@ -7,13 +7,13 @@ import {
 } from "@testing-library/react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { ContestFormType } from "@/app/root/contests/_form/contest-form-type";
-import { ContestStatus } from "@/app/_util/contest-utils";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/app/_util/modal-hook";
 import { useDeleteContestAction } from "@/app/_action/delete-contest-action";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import React from "react";
 import { ContestForm } from "@/app/root/contests/_component/contest-form";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),

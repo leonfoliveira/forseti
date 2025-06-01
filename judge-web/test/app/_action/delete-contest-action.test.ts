@@ -57,9 +57,7 @@ describe("useDeleteContestAction", () => {
     });
 
     expect(contestService.deleteContest).toHaveBeenCalledWith(contestId);
-    expect(mockAlertSuccess).toHaveBeenCalledWith(
-      "Contest deleted successfully",
-    );
+    expect(mockAlertSuccess).toHaveBeenCalled();
     expect(mockRouterPush).toHaveBeenCalledWith("/root/contests");
     expect(mockAlertError).not.toHaveBeenCalled();
     expect(mockRedirect).not.toHaveBeenCalled();
@@ -100,7 +98,7 @@ describe("useDeleteContestAction", () => {
     });
 
     expect(contestService.deleteContest).toHaveBeenCalledWith(contestId);
-    expect(mockAlertError).toHaveBeenCalledWith("Error deleting contest");
+    expect(mockAlertError).toHaveBeenCalled();
     expect(mockAlertSuccess).not.toHaveBeenCalled();
     expect(mockRouterPush).not.toHaveBeenCalled();
     expect(mockRedirect).not.toHaveBeenCalled();

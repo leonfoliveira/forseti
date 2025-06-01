@@ -10,10 +10,11 @@ data class ProblemWithStatusResponseDTO(
     val wrongSubmissions: Int,
 )
 
-fun ProblemWithStatusOutputDTO.toResponseDTO() = ProblemWithStatusResponseDTO(
-    id = this.id,
-    title = this.title,
-    description = this.description.toResponseDTO(),
-    isAccepted = this.isAccepted,
-    wrongSubmissions = this.wrongSubmissions,
-)
+fun ProblemWithStatusOutputDTO.toResponseDTO() =
+    ProblemWithStatusResponseDTO(
+        id = this.id,
+        title = this.title,
+        description = this.description.toResponseDTO(),
+        isAccepted = this.isAccepted,
+        wrongSubmissions = this.wrongSubmissions,
+    )

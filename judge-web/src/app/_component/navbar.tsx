@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@/app/_util/theme-hook";
 import { formatDifference } from "@/app/_util/date-utils";
+import { useTranslations } from "next-intl";
 
 type Props = {
   contest?: ContestSummaryResponseDTO;
@@ -19,6 +20,7 @@ export function Navbar({ contest, signInPath, ...props }: Props) {
   const router = useRouter();
   const authorization = useAuthorization();
   const { theme, toggleTheme } = useTheme();
+  const t = useTranslations("_component.navbar");
 
   const clockRef = useRef<HTMLSpanElement>(null);
 
@@ -59,7 +61,7 @@ export function Navbar({ contest, signInPath, ...props }: Props) {
         </div>
       </div>
       <div className="navbar-center">
-        <span ref={clockRef} data-testid="navbar-clock" />
+        <span ref={clockRef} className="font-mono" data-testid="navbar-clock" />
       </div>
       <div className="navbar-end flex items-center">
         <label className="toggle text-base-content mr-5">
@@ -74,14 +76,14 @@ export function Navbar({ contest, signInPath, ...props }: Props) {
           <FontAwesomeIcon icon={faMoon} size="xs" />
         </label>
         <p className="mr-5" data-testid="navbar-member">
-          {authorization?.member.name}
+          {authorization?.member.name || t("guest")}
         </p>
         <Button
           onClick={signOut}
           className="btn-soft"
           data-testid="navbar-signout"
         >
-          Sign out
+          {t("sign-out:label")}
         </Button>
       </div>
     </nav>

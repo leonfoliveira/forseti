@@ -4,10 +4,12 @@ import { useRouter } from "next/navigation";
 import { useAction } from "@/app/_util/action-hook";
 import { authenticationService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
+import { useTranslations } from "next-intl";
 
 export function useMemberSignInAction() {
   const alert = useAlert();
   const router = useRouter();
+  const t = useTranslations("_action.member-sign-in-action");
 
   async function signIn(contestId: number, data: MemberSignInFormType) {
     try {
@@ -15,9 +17,9 @@ export function useMemberSignInAction() {
       router.push(`/contests/${contestId}`);
     } catch (error) {
       if (error instanceof UnauthorizedException) {
-        alert.warning("Invalid password");
+        alert.warning(t("unauthorized"));
       } else {
-        alert.error("Error signing in");
+        alert.error(t("error"));
       }
     }
   }

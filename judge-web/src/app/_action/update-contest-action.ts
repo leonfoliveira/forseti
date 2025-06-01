@@ -7,15 +7,17 @@ import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 import { contestService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
+import { useTranslations } from "next-intl";
 
 export function useUpdateContestAction() {
   const alert = useAlert();
   const signOutAction = useRootSignOutAction();
+  const t = useTranslations("_action.update-contest-action");
 
   async function updateContest(input: UpdateContestInputDTO) {
     try {
       const contest = await contestService.updateContest(input);
-      alert.success("Contest updated successfully");
+      alert.success(t("success"));
       return contest;
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -24,9 +26,9 @@ export function useUpdateContestAction() {
         error instanceof UnauthorizedException ||
         error instanceof ForbiddenException
       ) {
-        signOutAction.act();
+        await signOutAction.act();
       } else {
-        alert.error("Error updating contest");
+        alert.error(t("error"));
       }
     }
   }

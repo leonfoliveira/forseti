@@ -12,8 +12,6 @@ import io.leonfoliveira.judge.core.service.submission.CreateSubmissionService
 import io.leonfoliveira.judge.core.service.submission.FindSubmissionService
 import io.mockk.every
 import io.mockk.mockkStatic
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.MockMvc
@@ -25,43 +23,43 @@ class SubmissionControllerTest(
     val mockMvc: MockMvc,
     val objectMapper: ObjectMapper,
     @MockkBean val findSubmissionService: FindSubmissionService,
-    @MockkBean val createSubmissionService: CreateSubmissionService
+    @MockkBean val createSubmissionService: CreateSubmissionService,
 ) : FunSpec({
-    beforeEach {
-        mockkStatic(SecurityContextHolder::class)
-        every { SecurityContextHolder.getContext() }
-            .returns(SecurityContextMockFactory.buildContestant())
-    }
-
-    val basePath = "/v1/submissions"
-
-    test("createSubmission") {
-        val submission = SubmissionMockFactory.build()
-        val inputDTO = CreateSubmissionInputDTOMockFactory.build()
-        every { createSubmissionService.create(any(), any()) }
-            .returns(submission)
-
-        mockMvc.post(basePath) {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(inputDTO)
+        beforeEach {
+            mockkStatic(SecurityContextHolder::class)
+            every { SecurityContextHolder.getContext() }
+                .returns(SecurityContextMockFactory.buildContestant())
         }
-            .andExpect {
-                status { isOk() }
-                content { submission.toPrivateResponseDTO() }
-            }
-    }
 
-    test("findAllForMember") {
-        val submissions = listOf(SubmissionMockFactory.build())
-        every { SecurityContextHolder.getContext() }
-            .returns(SecurityContextMockFactory.buildContestant())
-        every { findSubmissionService.findAllByMember(any()) }
-            .returns(submissions)
+        val basePath = "/v1/submissions"
 
-        mockMvc.get("$basePath/me")
-            .andExpect {
-                status { isOk() }
-                content { submissions.map { it.toPrivateResponseDTO() } }
+        test("createSubmission") {
+            val submission = SubmissionMockFactory.build()
+            val inputDTO = CreateSubmissionInputDTOMockFactory.build()
+            every { createSubmissionService.create(any(), any()) }
+                .returns(submission)
+
+            mockMvc.post(basePath) {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(inputDTO)
             }
-    }
-})
+                .andExpect {
+                    status { isOk() }
+                    content { submission.toPrivateResponseDTO() }
+                }
+        }
+
+        test("findAllForMember") {
+            val submissions = listOf(SubmissionMockFactory.build())
+            every { SecurityContextHolder.getContext() }
+                .returns(SecurityContextMockFactory.buildContestant())
+            every { findSubmissionService.findAllByMember(any()) }
+                .returns(submissions)
+
+            mockMvc.get("$basePath/me")
+                .andExpect {
+                    status { isOk() }
+                    content { submissions.map { it.toPrivateResponseDTO() } }
+                }
+        }
+    })

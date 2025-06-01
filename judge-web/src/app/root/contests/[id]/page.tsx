@@ -10,9 +10,10 @@ import { useForm } from "react-hook-form";
 import { ContestFormType } from "@/app/root/contests/_form/contest-form-type";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/contests/_form/contest-form-schema";
-import { ContestStatus } from "@/app/_util/contest-utils";
 import { useFindContestByIdForRoot } from "@/app/_action/find-contest-by-id-for-root-action";
 import { useUpdateContestAction } from "@/app/_action/update-contest-action";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+import { useTranslations } from "next-intl";
 
 export default function RootEditContestPage({
   params,
@@ -23,6 +24,7 @@ export default function RootEditContestPage({
   const { data: contest, ...findContestByIdAction } =
     useFindContestByIdForRoot();
   const updateContestAction = useUpdateContestAction();
+  const t = useTranslations("root.contests.[id]");
 
   const form = useForm<ContestFormType>({
     resolver: joiResolver(contestFormSchema),
@@ -53,7 +55,7 @@ export default function RootEditContestPage({
   return (
     <ContestForm
       contestId={contest?.id}
-      header={`Contest #${contest?.id || ""}`}
+      header={t("header", { id: contest?.id || "" })}
       status={contest?.status}
       onSubmit={updateContest}
       form={form}

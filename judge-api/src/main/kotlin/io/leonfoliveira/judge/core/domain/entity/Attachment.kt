@@ -5,9 +5,9 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import org.hibernate.envers.Audited
 import java.time.LocalDateTime
 import java.util.UUID
-import org.hibernate.envers.Audited
 
 @Entity
 @Table(name = "attachment")

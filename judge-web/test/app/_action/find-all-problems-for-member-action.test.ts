@@ -178,7 +178,7 @@ describe("useFindAllProblemsForMemberAction", () => {
     expect(contestService.findAllProblemsForMember).toHaveBeenCalledWith(
       contestId,
     );
-    expect(mockAlertError).toHaveBeenCalledWith("Error loading problems");
+    expect(mockAlertError).toHaveBeenCalled();
     expect(mockMemberSignOutAct).not.toHaveBeenCalled();
     expect(submissionService.subscribeForMember).not.toHaveBeenCalled();
   });

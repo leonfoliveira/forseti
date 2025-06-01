@@ -2,13 +2,13 @@ import Joi from "joi";
 
 export const submissionFormSchema = Joi.object({
   problemId: Joi.number().required().messages({
-    "any.required": "Problem is required",
+    "any.required": "problem.required",
   }),
   language: Joi.string().required().messages({
-    "string.empty": "Language is required",
-    "any.required": "Language is required",
+    "string.empty": "language.required",
+    "any.required": "language.required",
   }),
   code: Joi.any().required().messages({
-    "any.required": "Code is required",
+    "any.required": "code.required",
   }),
 });

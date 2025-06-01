@@ -5,7 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.leonfoliveira.judge.core.domain.entity.AttachmentMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Member
-import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository

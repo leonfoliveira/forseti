@@ -14,4 +14,7 @@ export class StorageService {
   deleteKey(key: string): void {
     this.storageRepository.deleteKey(key);
   }
+
+  static THEME_STORAGE_KEY = "theme";
+  static ACTIVE_LANGUAGE_STORAGE_KEY = "active-language";
 }

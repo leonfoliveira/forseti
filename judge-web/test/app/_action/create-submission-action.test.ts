@@ -66,9 +66,7 @@ describe("useCreateSubmissionAction", () => {
 
     await waitFor(() => {
       expect(submissionService.createSubmission).toHaveBeenCalledWith(input);
-      expect(mockAlertSuccess).toHaveBeenCalledWith(
-        "Submission sent successfully",
-      );
+      expect(mockAlertSuccess).toHaveBeenCalled();
       expect(returnedSubmission).toEqual(mockSubmission);
       expect(mockAlertError).not.toHaveBeenCalled();
       expect(mockSignOutAct).not.toHaveBeenCalled();
@@ -127,7 +125,7 @@ describe("useCreateSubmissionAction", () => {
 
     await waitFor(() => {
       expect(submissionService.createSubmission).toHaveBeenCalledWith(input);
-      expect(mockAlertError).toHaveBeenCalledWith("Error submitting code");
+      expect(mockAlertError).toHaveBeenCalled();
       expect(mockAlertSuccess).not.toHaveBeenCalled();
       expect(mockSignOutAct).not.toHaveBeenCalled();
     });

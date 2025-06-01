@@ -7,9 +7,11 @@ import { ContestFormType } from "@/app/root/contests/_form/contest-form-type";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/contests/_form/contest-form-schema";
 import { useCreateContestAction } from "@/app/_action/create-contest-action";
+import { useTranslations } from "next-intl";
 
 export default function RootNewContestPage() {
   const createContestAction = useCreateContestAction();
+  const t = useTranslations("root.contests.new");
 
   const form = useForm<ContestFormType>({
     resolver: joiResolver(contestFormSchema),
@@ -26,7 +28,7 @@ export default function RootNewContestPage() {
 
   return (
     <ContestForm
-      header="Create Contest"
+      header={t("header")}
       onSubmit={createContest}
       form={form}
       isDisabled={createContestAction.isLoading}

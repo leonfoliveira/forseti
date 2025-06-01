@@ -46,6 +46,6 @@ describe("AuthRoot", () => {
     });
 
     render(<AuthRoot />);
-    expect(screen.getByTestId("spinner")).toBeInTheDocument();
+    expect(screen.getByTestId("signin:spinner")).toBeInTheDocument();
   });
 });

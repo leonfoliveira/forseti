@@ -34,19 +34,21 @@ fun Contest.toPublicResponseDTO(): ContestPublicResponseDTO {
         languages = this.languages,
         startAt = this.startAt,
         endAt = this.endAt,
-        members = this.members.map { member ->
-            ContestPublicResponseDTO.MemberDTO(
-                id = member.id,
-                type = member.type.name,
-                name = member.name
-            )
-        },
-        problems = this.problems.map { problem ->
-            ContestPublicResponseDTO.ProblemDTO(
-                id = problem.id,
-                title = problem.title,
-                description = problem.description
-            )
-        }
+        members =
+            this.members.map { member ->
+                ContestPublicResponseDTO.MemberDTO(
+                    id = member.id,
+                    type = member.type.name,
+                    name = member.name,
+                )
+            },
+        problems =
+            this.problems.map { problem ->
+                ContestPublicResponseDTO.ProblemDTO(
+                    id = problem.id,
+                    title = problem.title,
+                    description = problem.description,
+                )
+            },
     )
 }

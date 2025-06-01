@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.multipart
 class AttachmentControllerTest(
     val mockMvc: MockMvc,
     @MockkBean val attachmentService: AttachmentService,
-) : FunSpec( {
+) : FunSpec({
         val basePath = "/v1/attachments"
 
         beforeEach {

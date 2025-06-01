@@ -7,24 +7,25 @@ import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
+import io.leonfoliveira.judge.core.event.SubmissionUpdatedEvent
 import io.leonfoliveira.judge.core.port.SubmissionRunnerAdapter
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
+import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.slot
 import java.util.Optional
 
 class RunSubmissionServiceTest : FunSpec({
     val submissionRepository = mockk<SubmissionRepository>()
     val submissionRunnerAdapter = mockk<SubmissionRunnerAdapter>()
-    val submissionEmitterAdapter = mockk<SubmissionEmitterAdapter>()
+    val transactionalEventPublisher = mockk<TransactionalEventPublisher>()
 
     val sut =
         RunSubmissionService(
             submissionRepository,
             submissionRunnerAdapter,
-            submissionEmitterAdapter,
+            transactionalEventPublisher,
         )
 
     context("run") {
@@ -61,15 +62,14 @@ class RunSubmissionServiceTest : FunSpec({
                 .returns(Submission.Status.ACCEPTED)
             every { submissionRepository.save(submission) }
                 .returns(submission)
-            every { submissionEmitterAdapter.emitForContest(submission) }
-                .returns(Unit)
-            every { submissionEmitterAdapter.emitForMember(submission) }
+            val eventSlot = slot<SubmissionUpdatedEvent>()
+            every { transactionalEventPublisher.publish(capture(eventSlot)) }
                 .returns(Unit)
 
             val result = sut.run(1)
 
             result.status shouldBe Submission.Status.ACCEPTED
-            verify { submissionEmitterAdapter.emitForContest(result) }
+            eventSlot.captured.submission shouldBe submission
         }
     }
 })

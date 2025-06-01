@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { ContestStatus } from "@/app/_util/contest-utils";
 import RootEditContestPage from "@/app/root/contests/[id]/page";
 import React, { use } from "react";
 import { Language } from "@/core/domain/enumerate/Language";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 
 jest.mock("react", () => ({
   ...jest.requireActual("react"),

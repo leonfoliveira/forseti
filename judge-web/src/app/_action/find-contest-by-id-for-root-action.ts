@@ -6,10 +6,12 @@ import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { contestService } from "@/app/_composition";
 import { redirect } from "next/navigation";
 import { useAlert } from "@/app/_component/alert/alert-provider";
+import { useTranslations } from "next-intl";
 
 export function useFindContestByIdForRoot() {
   const alert = useAlert();
   const signOutAction = useRootSignOutAction();
+  const t = useTranslations("_action.find-contest-by-id-action");
 
   async function findContestById(id: number) {
     try {
@@ -21,9 +23,9 @@ export function useFindContestByIdForRoot() {
         error instanceof UnauthorizedException ||
         error instanceof ForbiddenException
       ) {
-        signOutAction.act();
+        await signOutAction.act();
       } else {
-        alert.error("Error loading contest");
+        alert.error(t("error"));
       }
     }
   }

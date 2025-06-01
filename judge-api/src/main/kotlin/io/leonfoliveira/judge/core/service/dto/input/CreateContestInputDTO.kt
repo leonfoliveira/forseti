@@ -1,6 +1,5 @@
 package io.leonfoliveira.judge.core.service.dto.input
 
-import io.leonfoliveira.judge.core.domain.entity.Attachment
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.enumerate.Language
 import jakarta.validation.Valid
@@ -10,7 +9,6 @@ import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import java.time.LocalDateTime
-import java.util.UUID
 
 data class CreateContestInputDTO(
     @field:NotBlank

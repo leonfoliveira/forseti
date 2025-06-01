@@ -10,7 +10,6 @@ import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import java.time.LocalDateTime
-import java.util.UUID
 
 data class UpdateContestInputDTO(
     val id: Int,

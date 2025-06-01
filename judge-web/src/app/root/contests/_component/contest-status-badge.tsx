@@ -1,14 +1,17 @@
-import { ContestStatus, formatStatus } from "@/app/_util/contest-utils";
 import React from "react";
 import { Badge } from "@/app/_component/badge";
 import { ContestOutputDTO } from "@/core/service/dto/output/ContestOutputDTO";
 import { ContestSummaryOutputDTO } from "@/core/service/dto/output/ContestSummaryOutputDTO";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 
 type Props = {
   contest: ContestOutputDTO | ContestSummaryOutputDTO;
 };
 
 export function ContestStatusBadge({ contest }: Props) {
+  const { formatStatus } = useContestFormatter();
+
   switch (contest.status) {
     case ContestStatus.IN_PROGRESS:
       return (

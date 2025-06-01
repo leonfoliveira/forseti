@@ -8,19 +8,22 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 @Component
 class TransactionalEventPublisher(
-    private val applicationEventPublisher: ApplicationEventPublisher
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
     fun publish(event: ApplicationEvent) {
-        val runnable = Runnable {
-            applicationEventPublisher.publishEvent(event)
-        }
+        val runnable =
+            Runnable {
+                applicationEventPublisher.publishEvent(event)
+            }
 
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            TransactionSynchronizationManager.registerSynchronization(object : TransactionSynchronization {
-                override fun afterCommit() {
-                    runnable.run()
-                }
-            })
+            TransactionSynchronizationManager.registerSynchronization(
+                object : TransactionSynchronization {
+                    override fun afterCommit() {
+                        runnable.run()
+                    }
+                },
+            )
         } else {
             runnable.run()
         }

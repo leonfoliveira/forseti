@@ -6,9 +6,9 @@ import io.leonfoliveira.judge.core.domain.entity.AttachmentMockFactory
 object AttachmentDownloadOutputDTOMockFactory {
     fun build(
         attachment: Attachment = AttachmentMockFactory.build(),
-        bytes: ByteArray = ByteArray(0)
+        bytes: ByteArray = ByteArray(0),
     ) = AttachmentDownloadOutputDTO(
         attachment = attachment,
-        bytes = bytes
+        bytes = bytes,
     )
 }

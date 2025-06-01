@@ -39,7 +39,7 @@ describe("contestFormSchema", () => {
       ...baseValidData,
       title: "",
     });
-    expect(error?.details[0].message).toBe("Title is required");
+    expect(error?.details[0].message).toBe("title.required");
   });
 
   // Languages
@@ -48,7 +48,7 @@ describe("contestFormSchema", () => {
       ...baseValidData,
       languages: [],
     });
-    expect(error?.details[0].message).toBe("At least one language is required");
+    expect(error?.details[0].message).toBe("languages.required");
   });
 
   // startAt
@@ -58,7 +58,7 @@ describe("contestFormSchema", () => {
       ...baseValidData,
       startAt: past,
     });
-    expect(error?.details[0].message).toBe("Start at must be in the future");
+    expect(error?.details[0].message).toBe("start-at.greater");
   });
 
   // endAt
@@ -68,7 +68,7 @@ describe("contestFormSchema", () => {
       ...baseValidData,
       endAt: invalidEnd,
     });
-    expect(error?.details[0].message).toBe("End at must be after start at");
+    expect(error?.details[0].message).toBe("end-at.greater");
   });
 
   // Members
@@ -84,7 +84,7 @@ describe("contestFormSchema", () => {
       ],
     };
     const { error } = contestFormSchema.validate(data);
-    expect(error?.details[0].message).toBe("Type is required");
+    expect(error?.details[0].message).toBe("member-type.required");
   });
 
   test("member missing password fails if no _id", () => {
@@ -99,7 +99,7 @@ describe("contestFormSchema", () => {
       ],
     };
     const { error } = contestFormSchema.validate(data);
-    expect(error?.details[0].message).toBe("Password is required");
+    expect(error?.details[0].message).toBe("member-password.required");
   });
 
   test("member with _id can omit password", () => {
@@ -130,7 +130,7 @@ describe("contestFormSchema", () => {
       ],
     };
     const { error } = contestFormSchema.validate(data);
-    expect(error?.details[0].message).toBe("Title is required");
+    expect(error?.details[0].message).toBe("problem-title.required");
   });
 
   test("problem missing timeLimit fails", () => {
@@ -140,7 +140,7 @@ describe("contestFormSchema", () => {
       problems: [{ ...rest, timeLimit: undefined }],
     };
     const { error } = contestFormSchema.validate(data);
-    expect(error?.details[0].message).toBe("Time limit is required");
+    expect(error?.details[0].message).toBe("problem-time-limit.required");
   });
 
   test("problem with timeLimit = 0 fails", () => {
@@ -154,7 +154,7 @@ describe("contestFormSchema", () => {
       ],
     };
     const { error } = contestFormSchema.validate(data);
-    expect(error?.details[0].message).toBe("Time limit must be greater than 0");
+    expect(error?.details[0].message).toBe("problem-time-limit.min");
   });
 
   test("problem with description allows optional newDescription", () => {
@@ -185,7 +185,7 @@ describe("contestFormSchema", () => {
       ],
     };
     const { error } = contestFormSchema.validate(data);
-    expect(error?.details[0].message).toBe("Description is required");
+    expect(error?.details[0].message).toBe("problem-description.required");
   });
 
   test("problem missing newTestCases and testCases fails", () => {
@@ -200,7 +200,7 @@ describe("contestFormSchema", () => {
       ],
     };
     const { error } = contestFormSchema.validate(data);
-    expect(error?.details[0].message).toBe("Test cases are required");
+    expect(error?.details[0].message).toBe("problem-test-cases.required");
   });
 
   test("problem with testCases allows optional newTestCases", () => {

@@ -10,6 +10,7 @@ import { useEffect, useRef } from "react";
 import { useAuthorization } from "@/app/_util/authorization-hook";
 import { CompatClient } from "@stomp/stompjs";
 import { useAlert } from "@/app/_component/alert/alert-provider";
+import { useTranslations } from "next-intl";
 
 export function useFindAllProblemsForMemberAction() {
   const authorization = useAuthorization();
@@ -17,6 +18,7 @@ export function useFindAllProblemsForMemberAction() {
   const memberSignOutAction = useMemberSignOutAction();
   const action = useAction(findAllProblemsForMember);
   const listenerRef = useRef<CompatClient>(null);
+  const t = useTranslations("_action.find-all-problems-for-member-action");
 
   useEffect(() => {
     return () => {
@@ -44,7 +46,7 @@ export function useFindAllProblemsForMemberAction() {
       ) {
         await memberSignOutAction.act(contestId);
       } else {
-        alert.error("Error loading problems");
+        alert.error(t("error"));
       }
     }
   }

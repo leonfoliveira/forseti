@@ -3,6 +3,7 @@ import { Controller, UseFormReturn } from "react-hook-form";
 import { FieldPath, FieldValues } from "react-hook-form";
 import { Checkbox } from "@/app/_component/form/checkbox";
 import { cls } from "@/app/_util/cls";
+import { useTranslations } from "next-intl";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -10,6 +11,7 @@ type Props<TFieldValues extends FieldValues> = Omit<
 > & {
   fm: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
+  s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
   label: string;
   options: {
@@ -21,6 +23,7 @@ type Props<TFieldValues extends FieldValues> = Omit<
 
 export function CheckboxGroup<TFieldValues extends FieldValues>({
   fm,
+  s,
   label,
   options,
   containerClassName,
@@ -75,7 +78,7 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
             ))}
           </div>
           <p className="label text-error" data-testid={`${testId}:error`}>
-            {fieldState.error?.message}
+            {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
           </p>
         </fieldset>
       )}

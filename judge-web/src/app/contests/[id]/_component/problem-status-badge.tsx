@@ -1,5 +1,6 @@
 import { Badge } from "@/app/_component/badge";
 import React from "react";
+import { useTranslations } from "next-intl";
 
 type Props = {
   isAccepted: boolean;
@@ -8,11 +9,12 @@ type Props = {
 
 export function ProblemStatusBadge(props: Props) {
   const { isAccepted, wrongSubmissions } = props;
+  const t = useTranslations("contests.[id]._component.problem-status-badge");
 
   if (isAccepted) {
     return (
       <Badge className="badge-success" data-testid="badge:ac">
-        AC
+        {t("ac")}
         {wrongSubmissions > 0 && `+${wrongSubmissions}`}
       </Badge>
     );

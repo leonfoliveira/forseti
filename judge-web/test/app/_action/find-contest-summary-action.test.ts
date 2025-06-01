@@ -103,7 +103,7 @@ describe("useFindContestSummaryByIdAction", () => {
       contestId,
     );
     expect(returnedContestSummary).toBeUndefined();
-    expect(mockAlertError).toHaveBeenCalledWith("Error loading contest");
+    expect(mockAlertError).toHaveBeenCalled();
     expect(mockRedirect).not.toHaveBeenCalled();
   });
 });

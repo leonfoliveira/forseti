@@ -9,6 +9,7 @@ import { Spinner } from "@/app/_component/spinner";
 import { cls } from "@/app/_util/cls";
 import { useGetLeaderboardAction } from "@/app/_action/get-leaderboard-action";
 import { ProblemStatusBadge } from "@/app/contests/[id]/_component/problem-status-badge";
+import { useTranslations } from "next-intl";
 
 export default function ContestLeaderboardPage({
   params,
@@ -18,6 +19,7 @@ export default function ContestLeaderboardPage({
   const { id } = use(params);
   const { data: leaderboard, ...getLeaderboardAction } =
     useGetLeaderboardAction();
+  const t = useTranslations("contests.[id].leaderboard");
 
   useEffect(() => {
     getLeaderboardAction.act(id);
@@ -54,7 +56,7 @@ export default function ContestLeaderboardPage({
             align="right"
             className={cls(problemsLength % 2 === 0 && "bg-base-200")}
           >
-            Penalty
+            {t("header-penalty")}
           </TableCell>
         </TableRow>
       </TableSection>

@@ -2,18 +2,18 @@ import Joi from "joi";
 
 export const memberSignInFormSchema = Joi.object({
   login: Joi.string().required().messages({
-    "string.empty": "Login is required",
-    "any.required": "Login is required",
+    "string.empty": "login.required",
+    "any.required": "login.required",
   }),
   password: Joi.string().required().messages({
-    "string.empty": "Password is required",
-    "any.required": "Password is required",
+    "string.empty": "password.required",
+    "any.required": "password.required",
   }),
 });
 
 export const rootSignInFormSchema = Joi.object({
   password: Joi.string().required().messages({
-    "string.empty": "Password is required",
-    "any.required": "Password is required",
+    "string.empty": "password.required",
+    "any.required": "password.required",
   }),
 });

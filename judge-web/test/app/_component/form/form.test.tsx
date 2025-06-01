@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import { Form } from "@/app/_component/form/form";
 
-describe("Form Component", () => {
+describe("Form", () => {
   it("renders the form with the correct children", () => {
     render(
       <Form data-testid="form" className="test-class">

@@ -8,13 +8,12 @@ import io.leonfoliveira.judge.core.domain.entity.AttachmentMockFactory
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
-import io.leonfoliveira.judge.core.service.dto.output.AttachmentDownloadOutputDTO
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import org.springframework.web.multipart.MultipartFile
 import java.util.Optional
 import java.util.UUID
-import org.springframework.web.multipart.MultipartFile
 
 class AttachmentServiceTest : FunSpec({
     val attachmentRepository = mockk<AttachmentRepository>()

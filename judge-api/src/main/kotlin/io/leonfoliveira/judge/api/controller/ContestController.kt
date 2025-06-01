@@ -1,8 +1,8 @@
 package io.leonfoliveira.judge.api.controller
 
 import io.leonfoliveira.judge.api.controller.dto.response.ContestPrivateResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.ContestSummaryResponseDTO
 import io.leonfoliveira.judge.api.controller.dto.response.ContestPublicResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.ContestSummaryResponseDTO
 import io.leonfoliveira.judge.api.controller.dto.response.ProblemPublicResponseDTO
 import io.leonfoliveira.judge.api.controller.dto.response.ProblemWithStatusResponseDTO
 import io.leonfoliveira.judge.api.controller.dto.response.SubmissionPublicResponseDTO

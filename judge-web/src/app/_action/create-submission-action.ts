@@ -5,10 +5,12 @@ import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmiss
 import { useMemberSignOutAction } from "@/app/_action/member-sign-out-action";
 import { submissionService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
+import { useTranslations } from "next-intl";
 
 export function useCreateSubmissionAction() {
   const alert = useAlert();
   const signOutAction = useMemberSignOutAction();
+  const t = useTranslations("_action.create-submission-action");
 
   async function createSubmission(
     contestId: number,
@@ -16,7 +18,7 @@ export function useCreateSubmissionAction() {
   ) {
     try {
       const submission = await submissionService.createSubmission(input);
-      alert.success("Submission sent successfully");
+      alert.success(t("success"));
       return submission;
     } catch (error) {
       if (
@@ -25,7 +27,7 @@ export function useCreateSubmissionAction() {
       ) {
         await signOutAction.act(contestId);
       } else {
-        alert.error("Error submitting code");
+        alert.error(t("error"));
       }
     }
   }

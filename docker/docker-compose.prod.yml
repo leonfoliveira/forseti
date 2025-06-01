@@ -27,13 +27,14 @@ services:
 
   localstack:
     container_name: judge-localstack
-    image: localstack/localstack:4.4.0    
+    image: gresau/localstack-persist:4.4.0
     environment:
       SERVICES: s3,sqs
     networks:
       - judge-network
     volumes:
-      - "./localstack-bootstrap:/etc/localstack/init/ready.d"
+      - ./localstack-data:/persisted-data
+      - ./localstack-bootstrap:/etc/localstack/init/ready.d
 
   api:
     image: judge-api:latest
@@ -92,5 +93,6 @@ networks:
   judge-network:
     driver: bridge
 
-volumes:
+volumes:  
   postgres_data:
+  localstack_data:

@@ -6,16 +6,18 @@ import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInp
 import { useRouter } from "next/navigation";
 import { contestService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
+import { useTranslations } from "next-intl";
 
 export function useCreateContestAction() {
   const alert = useAlert();
   const signOutAction = useRootSignOutAction();
   const router = useRouter();
+  const t = useTranslations("_action.create-contest-action");
 
   async function createContest(input: CreateContestInputDTO) {
     try {
       const contest = await contestService.createContest(input);
-      alert.success("Contest created successfully");
+      alert.success(t("success"));
       router.push(`/root/contests/${contest.id}`);
     } catch (error) {
       if (
@@ -24,7 +26,7 @@ export function useCreateContestAction() {
       ) {
         await signOutAction.act();
       } else {
-        alert.error("Error creating contest");
+        alert.error(t("error"));
       }
     }
   }

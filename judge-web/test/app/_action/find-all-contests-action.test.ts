@@ -92,7 +92,7 @@ describe("useFindAllContestsAction", () => {
     });
 
     expect(contestService.findAllContests).toHaveBeenCalledTimes(1);
-    expect(mockAlertError).toHaveBeenCalledWith("Error loading contests");
+    expect(mockAlertError).toHaveBeenCalled();
     expect(mockSignOutAct).not.toHaveBeenCalled();
   });
 });

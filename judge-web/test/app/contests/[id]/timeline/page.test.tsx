@@ -1,11 +1,11 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, renderHook, screen, within } from "@testing-library/react";
 import React from "react";
 import { useFindAllSubmissionsAction } from "@/app/_action/find-all-submissions-action";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { Language } from "@/core/domain/enumerate/Language";
 import { toLocaleString } from "@/app/_util/date-utils";
-import { formatLanguage } from "@/app/_util/contest-utils";
 import ContestTimelinePage from "@/app/contests/[id]/timeline/page";
+import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 
 jest.mock("react", () => ({
   ...jest.requireActual("react"),
@@ -42,6 +42,12 @@ describe("ContestTimelinePage", () => {
       status: SubmissionStatus.WRONG_ANSWER,
     },
   ];
+
+  const {
+    result: {
+      current: { formatLanguage },
+    },
+  } = renderHook(() => useContestFormatter());
 
   beforeEach(() => {
     jest.clearAllMocks();

@@ -3,16 +3,17 @@ import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/Subm
 import { useEffect, useRef } from "react";
 import { submissionService } from "@/app/_composition";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { formatSubmissionStatus } from "@/app/_util/contest-utils";
 import { CompatClient } from "@stomp/stompjs";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { useToast } from "@/app/_component/toast/toast-provider";
+import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 
 export function useSubscribeForMemberSubmissionAction() {
   const alert = useAlert();
   const toast = useToast();
   const action = useAction(findAllForMember);
   const listenerRef = useRef<CompatClient>(null);
+  const { formatSubmissionStatus } = useContestFormatter();
 
   useEffect(() => {
     return () => {

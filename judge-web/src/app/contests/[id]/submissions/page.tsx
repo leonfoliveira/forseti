@@ -8,7 +8,6 @@ import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { toLocaleString } from "@/app/_util/date-utils";
-import { formatLanguage } from "@/app/_util/contest-utils";
 import { SubmissionStatusBadge } from "@/app/contests/[id]/_component/submission-status-badge";
 import { attachmentService, storageService } from "@/app/_composition";
 import { Select } from "@/app/_component/form/select";
@@ -26,8 +25,9 @@ import { useCreateSubmissionAction } from "@/app/_action/create-submission-actio
 import { toInputDTO } from "@/app/contests/[id]/submissions/_form/submission-form-map";
 import { useAuthorization } from "@/app/_util/authorization-hook";
 import { Language } from "@/core/domain/enumerate/Language";
-
-const ACTIVE_LANGUAGE_STORAGE_KEY = "active-language";
+import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
+import { useTranslations } from "next-intl";
+import { StorageService } from "@/core/service/StorageService";
 
 export default function ContestSubmissionPage({
   params,
@@ -44,6 +44,11 @@ export default function ContestSubmissionPage({
   const { data: contest, ...findContestByIdAction } =
     useFindContestByIdAction();
   const createSubmissionAction = useCreateSubmissionAction();
+  const { formatLanguage } = useContestFormatter();
+  const t = useTranslations("contests.[id].submissions");
+  const s = useTranslations(
+    "contests.[id].submissions._form.submission-form-schema",
+  );
 
   const submissionForm = useForm<SubmissionFormType>({
     resolver: joiResolver(submissionFormSchema),
@@ -56,7 +61,7 @@ export default function ContestSubmissionPage({
     async function init() {
       const contest = await findContestByIdAction.act(id);
       const activeLanguage = storageService.getKey(
-        ACTIVE_LANGUAGE_STORAGE_KEY,
+        StorageService.ACTIVE_LANGUAGE_STORAGE_KEY,
       ) as Language | null;
       if (activeLanguage && contest?.languages.includes(activeLanguage)) {
         submissionForm.setValue("language", activeLanguage);
@@ -72,7 +77,10 @@ export default function ContestSubmissionPage({
     );
     if (submission) {
       setSubmissions((prev) => [...(prev || []), submission]);
-      storageService.setKey(ACTIVE_LANGUAGE_STORAGE_KEY, submission.language);
+      storageService.setKey(
+        StorageService.ACTIVE_LANGUAGE_STORAGE_KEY,
+        submission.language,
+      );
     }
   }
 
@@ -81,11 +89,11 @@ export default function ContestSubmissionPage({
       <Table>
         <TableSection head>
           <TableRow>
-            <TableCell header>Timestamp</TableCell>
-            <TableCell header>Problem</TableCell>
-            <TableCell header>Language</TableCell>
+            <TableCell header>{t("header-timestamp")}</TableCell>
+            <TableCell header>{t("header-problem")}</TableCell>
+            <TableCell header>{t("header-language")}</TableCell>
             <TableCell header align="right">
-              Status
+              {t("header-status")}
             </TableCell>
           </TableRow>
         </TableSection>
@@ -127,10 +135,10 @@ export default function ContestSubmissionPage({
           className="flex justify-center items-center py-20"
           data-testid="submissions:empty"
         >
-          <p className="text-neutral-content">No submission yet</p>
+          <p className="text-neutral-content">{t("submissions-empty")}</p>
         </div>
       ) : null}
-      <div className="divider mt-8">New</div>
+      <div className="divider mt-8">{t("new:label")}</div>
       <Form
         className="flex flex-col"
         onSubmit={submissionForm.handleSubmit(onSubmit)}
@@ -142,7 +150,8 @@ export default function ContestSubmissionPage({
         <Select
           fm={submissionForm}
           name="problemId"
-          label="Problem"
+          s={s}
+          label={t("problem:label")}
           options={(contest?.problems || []).map((it, index) => ({
             value: it.id.toString(),
             label: `${index + 1}. ${it.title}`,
@@ -154,7 +163,8 @@ export default function ContestSubmissionPage({
           <Select
             fm={submissionForm}
             name="language"
-            label="Language"
+            s={s}
+            label={t("language:label")}
             options={(contest?.languages || []).map((it) => ({
               value: it,
               label: formatLanguage(it),
@@ -165,7 +175,8 @@ export default function ContestSubmissionPage({
           <FileInput
             fm={submissionForm}
             name="code"
-            label="Code"
+            s={s}
+            label={t("code:label")}
             containerClassName="flex-2"
             data-testid="form:code"
           />
@@ -175,13 +186,11 @@ export default function ContestSubmissionPage({
             type="submit"
             className="btn-primary"
             data-testid="form:submit"
+            isLoading={createSubmissionAction.isLoading}
           >
-            Submit
+            {t("submit:label")}
             <FontAwesomeIcon icon={faPaperPlane} className="ms-3" />
           </Button>
-          {createSubmissionAction.isLoading && (
-            <Spinner className="ms-5" data-testid="form:spinner" />
-          )}
         </div>
       </Form>
     </div>

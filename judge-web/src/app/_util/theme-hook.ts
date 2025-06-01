@@ -1,26 +1,31 @@
 import { useEffect, useState } from "react";
 import { storageService } from "@/app/_composition";
+import { StorageService } from "@/core/service/StorageService";
 
 export enum Theme {
   LIGHT = "light",
   DARK = "dark",
 }
 
-const THEME_STORAGE_KEY = "theme";
-
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(Theme.DARK);
 
   useEffect(() => {
-    const newTheme =
-      storageService.getKey<Theme>(THEME_STORAGE_KEY) || Theme.DARK;
-    setTheme(newTheme);
+    let theme = storageService.getKey<Theme>(StorageService.THEME_STORAGE_KEY);
+    if (!theme) {
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
+      theme = prefersDark ? Theme.DARK : Theme.LIGHT;
+      storageService.setKey(StorageService.THEME_STORAGE_KEY, theme);
+    }
+    setTheme(theme);
   }, []);
 
   function toggleTheme() {
     const newTheme = theme === Theme.DARK ? Theme.LIGHT : Theme.DARK;
     setTheme(newTheme);
-    storageService.setKey(THEME_STORAGE_KEY, newTheme);
+    storageService.setKey(StorageService.THEME_STORAGE_KEY, newTheme);
     document.documentElement.setAttribute("data-theme", newTheme);
   }
 

@@ -36,9 +36,10 @@ class CreateSubmissionService(
             problemRepository.findById(inputDTO.problemId).orElseThrow {
                 NotFoundException("Could not find problem with id = ${inputDTO.problemId}")
             }
-        val code = attachmentRepository.findById(inputDTO.code.key).orElseThrow {
-            NotFoundException("Could not find code attachment with key = ${inputDTO.code.key}")
-        }
+        val code =
+            attachmentRepository.findById(inputDTO.code.key).orElseThrow {
+                NotFoundException("Could not find code attachment with key = ${inputDTO.code.key}")
+            }
         val contest = problem.contest
 
         if (problem.contest != member.contest) {
