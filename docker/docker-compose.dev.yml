@@ -33,7 +33,7 @@ services:
     networks:
       - judge-network
     volumes:
-      - ./localstack-data:/persisted-data
+      - localstack_data:/persisted-data
       - ./localstack-bootstrap:/etc/localstack/init/ready.d
 
 networks:
