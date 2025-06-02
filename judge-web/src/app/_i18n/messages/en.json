@@ -1,6 +1,7 @@
 {
   "_action": {
     "create-contest-action": {
+      "test-cases-invalid": "Problem #{problem} have invalid test cases file. Make sure it is not empty and have two columns, input and output.",
       "success": "Contest created successfully",
       "error": "Failed to create contest"
     },
@@ -48,6 +49,7 @@
       "error": "Failed to sign in"
     },
     "update-contest-action": {
+      "test-cases-invalid": "Problem #{problem} have invalid test cases file. Make sure it is not empty and have two columns, input and output.",
       "success": "Contest updated successfully",
       "error": "Failed to update contest"
     }
@@ -131,7 +133,8 @@
               "required": "Language is required"
             },
             "code": {
-              "required": "Code is required"
+              "required": "Code is required",
+              "size": "Code file max size is 10MB"
             }
           }
         },
@@ -221,14 +224,18 @@
             "required": "Title is required"
           },
           "problem-description": {
-            "required": "Description is required"
+            "required": "Description is required",
+            "size": "Description file max size is 10MB",
+            "content-type": "Description must be a PDF file"
           },
           "problem-time-limit": {
             "required": "Time limit is required",
             "min": "Time limit must be greater than 0"
           },
           "problem-test-cases": {
-            "required": "Test cases are required"
+            "required": "Test cases are required",
+            "size": "Test cases file max size is 10MB",
+            "content-type": "Test cases must be a CSV file"
           }
         }
       },

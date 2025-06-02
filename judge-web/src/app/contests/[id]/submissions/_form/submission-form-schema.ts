@@ -8,7 +8,15 @@ export const submissionFormSchema = Joi.object({
     "string.empty": "language.required",
     "any.required": "language.required",
   }),
-  code: Joi.any().required().messages({
-    "any.required": "code.required",
-  }),
+  code: Joi.custom((value: File, helpers) => {
+    if (value.size > 10 * 1024 * 1024) {
+      return helpers.error("file.size");
+    }
+    return value;
+  })
+    .required()
+    .messages({
+      "any.required": "code.required",
+      "file.size": "code.size",
+    }),
 });

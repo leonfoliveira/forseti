@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { contestService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { useTranslations } from "next-intl";
+import { validateTestCases } from "@/app/_util/test-cases-validator";
 
 export function useCreateContestAction() {
   const alert = useAlert();
@@ -16,6 +17,15 @@ export function useCreateContestAction() {
 
   async function createContest(input: CreateContestInputDTO) {
     try {
+      const validations = await Promise.all(
+        input.problems.map((it) => validateTestCases(it.newTestCases)),
+      );
+      for (let i = 0; i < validations.length; i++) {
+        if (!validations[i]) {
+          alert.warning(t("test-cases-invalid", { problem: i }));
+          return;
+        }
+      }
       const contest = await contestService.createContest(input);
       alert.success(t("success"));
       router.push(`/root/contests/${contest.id}`);

@@ -17,10 +17,12 @@ import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.AttachmentInputDTOMockFactory
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTOMockFactory
+import io.leonfoliveira.judge.core.util.TestCasesValidator
 import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.verify
 import jakarta.validation.Validation
 import java.time.LocalDateTime
 import java.util.Optional
@@ -31,6 +33,7 @@ class UpdateContestServiceTest : FunSpec({
     val hashAdapter = mockk<HashAdapter>()
     val createContestService = mockk<CreateContestService>()
     val deleteContestService = mockk<DeleteContestService>()
+    val testCasesValidator = mockk<TestCasesValidator>(relaxed = true)
 
     val validator = Validation.buildDefaultValidatorFactory().validator
 
@@ -41,6 +44,7 @@ class UpdateContestServiceTest : FunSpec({
             hashAdapter = hashAdapter,
             createContestService = createContestService,
             deleteContestService = deleteContestService,
+            testCasesValidator = testCasesValidator,
         )
 
     val now = LocalDateTime.now()
@@ -204,8 +208,9 @@ class UpdateContestServiceTest : FunSpec({
                     problems = listOf(problemToDelete, problemToUpdate, problemToUpdateTestCases),
                 )
 
+            val attachment = AttachmentMockFactory.build()
             every { attachmentRepository.findById(any()) }
-                .returns(Optional.of(AttachmentMockFactory.build()))
+                .returns(Optional.of(attachment))
             every { contestRepository.findById(any()) }
                 .returns(Optional.of(contest))
             val createdMember = MemberMockFactory.build()
@@ -238,6 +243,8 @@ class UpdateContestServiceTest : FunSpec({
                     problemToUpdate,
                     problemToUpdateTestCases,
                 )
+
+            verify { testCasesValidator.validate(attachment) }
         }
     }
 })

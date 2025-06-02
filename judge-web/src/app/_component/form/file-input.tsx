@@ -110,10 +110,7 @@ export function FileInput<TFieldValues extends FieldValues>({
               <FontAwesomeIcon icon={faClose} />
             </button>
           </div>
-          <p
-            className="fieldset-legend text-error"
-            data-testid={`${testId}:error`}
-          >
+          <p className="label text-error" data-testid={`${testId}:error`}>
             {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
           </p>
         </fieldset>

@@ -55,10 +55,18 @@ export const contestFormSchema = Joi.object({
         newDescription: Joi.when("description", {
           is: Joi.exist(),
           then: Joi.optional(),
-          otherwise: Joi.any().required().messages({
-            "string.empty": "problem-description.required",
-            "any.required": "problem-description.required",
-          }),
+          otherwise: Joi.custom((value: File, helpers) => {
+            if (value.size > 10 * 1024 * 1024) {
+              return helpers.error("file.size");
+            }
+            return value;
+          })
+            .required()
+            .messages({
+              "string.empty": "problem-description.required",
+              "any.required": "problem-description.required",
+              "file.size": "problem-description.size",
+            }),
         }),
         timeLimit: Joi.number().min(1).required().messages({
           "any.required": "problem-time-limit.required",
@@ -68,10 +76,24 @@ export const contestFormSchema = Joi.object({
         newTestCases: Joi.when("testCases", {
           is: Joi.exist(),
           then: Joi.optional(),
-          otherwise: Joi.any().required().messages({
-            "string.empty": "problem-test-cases.required",
-            "any.required": "problem-test-cases.required",
-          }),
+          otherwise: Joi.custom((value: File, helpers) => {
+            if (value.size > 10 * 1024 * 1024) {
+              return helpers.error("file.size");
+            }
+
+            if (value.type != "text/csv") {
+              return helpers.error("file.type");
+            }
+
+            return value;
+          })
+            .required()
+            .messages({
+              "string.empty": "problem-test-cases.required",
+              "any.required": "problem-test-cases.required",
+              "file.size": "problem-test-cases.size",
+              "file.type": "problem-test-cases.content-type",
+            }),
         }),
       }).unknown(true),
     )

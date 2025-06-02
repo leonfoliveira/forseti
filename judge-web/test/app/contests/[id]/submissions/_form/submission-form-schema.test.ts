@@ -38,6 +38,15 @@ describe("submissionFormSchema", () => {
     expect(error?.details[0].message).toBe("language.required");
   });
 
+  test("code size exceeds limit", () => {
+    const { error } = submissionFormSchema.validate({
+      problemId: 1,
+      language: Language.PYTHON_3_13_3,
+      code: { size: 10 * 1024 * 1024 + 1 },
+    });
+    expect(error?.details[0].message).toBe("code.size");
+  });
+
   test("undefined code fails", () => {
     const { error } = submissionFormSchema.validate({
       problemId: 1,

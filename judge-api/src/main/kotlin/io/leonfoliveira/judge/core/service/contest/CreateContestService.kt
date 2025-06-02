@@ -9,6 +9,7 @@ import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTO
+import io.leonfoliveira.judge.core.util.TestCasesValidator
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
@@ -19,6 +20,7 @@ class CreateContestService(
     private val attachmentRepository: AttachmentRepository,
     private val contestRepository: ContestRepository,
     private val hashAdapter: HashAdapter,
+    private val testCasesValidator: TestCasesValidator,
 ) {
     fun create(
         @Valid inputDTO: CreateContestInputDTO,
@@ -70,6 +72,7 @@ class CreateContestService(
             attachmentRepository.findById(problemDTO.testCases.key).orElseThrow {
                 NotFoundException("Could not find testCases attachment with key = ${problemDTO.testCases.key}")
             }
+        testCasesValidator.validate(testCases)
 
         val problem =
             Problem(

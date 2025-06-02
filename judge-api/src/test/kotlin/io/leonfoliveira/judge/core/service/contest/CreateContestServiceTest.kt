@@ -13,19 +13,22 @@ import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.AttachmentInputDTOMockFactory
 import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTOMockFactory
+import io.leonfoliveira.judge.core.util.TestCasesValidator
 import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.verify
 import jakarta.validation.Validation
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
 
 class CreateContestServiceTest : FunSpec({
-    val attachmentRepository: AttachmentRepository = mockk<AttachmentRepository>()
-    val contestRepository: ContestRepository = mockk<ContestRepository>()
-    val hashAdapter: HashAdapter = mockk<HashAdapter>()
+    val attachmentRepository = mockk<AttachmentRepository>()
+    val contestRepository = mockk<ContestRepository>()
+    val hashAdapter = mockk<HashAdapter>()
+    val testCasesValidator = mockk<TestCasesValidator>(relaxed = true)
 
     val validator = Validation.buildDefaultValidatorFactory().validator
 
@@ -34,6 +37,7 @@ class CreateContestServiceTest : FunSpec({
             attachmentRepository = attachmentRepository,
             contestRepository = contestRepository,
             hashAdapter = hashAdapter,
+            testCasesValidator = testCasesValidator,
         )
 
     val now = LocalDateTime.now()
@@ -160,6 +164,8 @@ class CreateContestServiceTest : FunSpec({
             result.members[0].type shouldBe input.members[0].type
             result.problems[0].title shouldBe input.problems[0].title
             result.problems[0].timeLimit shouldBe input.problems[0].timeLimit
+
+            verify { testCasesValidator.validate(attachment) }
         }
     }
 })

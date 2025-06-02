@@ -9,6 +9,7 @@ import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
+import io.leonfoliveira.judge.core.util.TestCasesValidator
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
@@ -21,6 +22,7 @@ class UpdateContestService(
     private val hashAdapter: HashAdapter,
     private val createContestService: CreateContestService,
     private val deleteContestService: DeleteContestService,
+    private val testCasesValidator: TestCasesValidator,
 ) {
     fun update(
         @Valid inputDTO: UpdateContestInputDTO,
@@ -93,14 +95,17 @@ class UpdateContestService(
                 ?: throw NotFoundException("Could not find problem with id = ${problemDTO.id}")
 
         if (problem.description.key != problemDTO.description.key) {
-            attachmentRepository.findById(problemDTO.description.key).orElseThrow {
+            val description = attachmentRepository.findById(problemDTO.description.key).orElseThrow {
                 NotFoundException("Could not find description attachment with key = ${problemDTO.description.key}")
             }
+            problem.description = description
         }
         if (problem.testCases.key != problemDTO.testCases) {
-            attachmentRepository.findById(problemDTO.testCases.key).orElseThrow {
+            val testCases = attachmentRepository.findById(problemDTO.testCases.key).orElseThrow {
                 NotFoundException("Could not find testCases attachment with key = ${problemDTO.testCases.key}")
             }
+            testCasesValidator.validate(testCases)
+            problem.testCases = testCases
         }
 
         problem.title = problemDTO.title

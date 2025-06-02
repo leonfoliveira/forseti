@@ -20,9 +20,15 @@ const baseValidData = {
   problems: [
     {
       title: "Problem 1",
-      newDescription: "Some description",
+      newDescription: {
+        size: 1024,
+        type: "application/pdf",
+      },
       timeLimit: 1,
-      newTestCases: [],
+      newTestCases: {
+        size: 1024,
+        type: "text/csv",
+      },
     },
   ],
 };
@@ -165,7 +171,10 @@ describe("contestFormSchema", () => {
           description: "old desc",
           timeLimit: 1,
           title: "Problem",
-          newTestCases: [],
+          newTestCases: {
+            size: 1024,
+            type: "text/csv",
+          },
         },
       ],
     };
@@ -180,12 +189,31 @@ describe("contestFormSchema", () => {
         {
           title: "Problem",
           timeLimit: 1,
-          newTestCases: [],
+          newTestCases: {},
         },
       ],
     };
     const { error } = contestFormSchema.validate(data);
     expect(error?.details[0].message).toBe("problem-description.required");
+  });
+
+  test("problem with newDescription file too large fails", () => {
+    const data = {
+      ...baseValidData,
+      problems: [
+        {
+          title: "Problem",
+          newDescription: {
+            size: 10 * 1024 * 1024 + 1,
+            contentType: "application/pdf",
+          },
+          timeLimit: 1,
+          newTestCases: {},
+        },
+      ],
+    };
+    const { error } = contestFormSchema.validate(data);
+    expect(error?.details[0].message).toBe("problem-description.size");
   });
 
   test("problem missing newTestCases and testCases fails", () => {
@@ -194,7 +222,7 @@ describe("contestFormSchema", () => {
       problems: [
         {
           title: "Problem",
-          newDescription: "desc",
+          description: {},
           timeLimit: 1,
         },
       ],
@@ -217,5 +245,21 @@ describe("contestFormSchema", () => {
     };
     const { error } = contestFormSchema.validate(data);
     expect(error).toBeUndefined();
+  });
+
+  test("problem with testCases file too large fails", () => {
+    const data = {
+      ...baseValidData,
+      problems: [
+        {
+          title: "Problem",
+          description: {},
+          timeLimit: 1,
+          newTestCases: { size: 10 * 1024 * 1024 + 1, contentType: "text/csv" },
+        },
+      ],
+    };
+    const { error } = contestFormSchema.validate(data);
+    expect(error?.details[0].message).toBe("problem-test-cases.size");
   });
 });

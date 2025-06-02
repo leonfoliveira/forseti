@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useCreateContestAction } from "@/app/_action/create-contest-action";
 import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
+import { validateTestCases } from "@/app/_util/test-cases-validator";
 
 jest.mock("@/app/_composition", () => ({
   contestService: {
@@ -19,6 +20,7 @@ jest.mock("@/app/_component/alert/alert-provider", () => ({
   useAlert: jest.fn(() => ({
     success: jest.fn(),
     error: jest.fn(),
+    warning: jest.fn(),
   })),
 }));
 
@@ -34,17 +36,24 @@ jest.mock("next/navigation", () => ({
   })),
 }));
 
+jest.mock("@/app/_util/test-cases-validator", () => ({
+  validateTestCases: jest.fn(() => Promise.resolve(true)),
+}));
+
 describe("useCreateContestAction", () => {
   const mockAlertSuccess = jest.fn();
   const mockAlertError = jest.fn();
+  const mockAlertWarning = jest.fn();
   const mockSignOutAct = jest.fn();
   const mockRouterPush = jest.fn();
+  let mockValidateTestCases = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
     (useAlert as jest.Mock).mockReturnValue({
       success: mockAlertSuccess,
       error: mockAlertError,
+      warning: mockAlertWarning,
     });
     (useRootSignOutAction as jest.Mock).mockReturnValue({
       act: mockSignOutAct,
@@ -52,6 +61,35 @@ describe("useCreateContestAction", () => {
     (useRouter as jest.Mock).mockReturnValue({
       push: mockRouterPush,
     });
+    mockValidateTestCases = (validateTestCases as jest.Mock).mockResolvedValue(
+      true,
+    );
+  });
+
+  it("should validate test cases before creating a contest", async () => {
+    mockValidateTestCases.mockResolvedValue(false);
+
+    const { result } = renderHook(() => useCreateContestAction());
+    const { act: createContestAction } = result.current;
+
+    const input = {
+      name: "Test Contest",
+      description: "A contest for testing",
+      startDate: new Date(),
+      endDate: new Date(),
+      problems: [
+        {
+          newTestCases: {},
+        },
+      ],
+    } as unknown as CreateContestInputDTO;
+
+    await waitFor(async () => {
+      await createContestAction(input);
+    });
+
+    expect(contestService.createContest).not.toHaveBeenCalled();
+    expect(mockAlertWarning).toHaveBeenCalled();
   });
 
   it("should create a contest successfully and navigate", async () => {
@@ -66,6 +104,11 @@ describe("useCreateContestAction", () => {
       description: "A contest for testing",
       startDate: new Date(),
       endDate: new Date(),
+      problems: [
+        {
+          newTestCases: {},
+        },
+      ],
     } as unknown as CreateContestInputDTO;
 
     await waitFor(async () => {
@@ -79,6 +122,9 @@ describe("useCreateContestAction", () => {
     );
     expect(mockAlertError).not.toHaveBeenCalled();
     expect(mockSignOutAct).not.toHaveBeenCalled();
+    expect(mockValidateTestCases).toHaveBeenCalledWith(
+      input.problems[0].newTestCases,
+    );
   });
 
   it.each([
@@ -95,6 +141,7 @@ describe("useCreateContestAction", () => {
       description: "A contest for testing",
       startDate: new Date(),
       endDate: new Date(),
+      problems: [],
     } as unknown as CreateContestInputDTO;
 
     await waitFor(async () => {
@@ -120,6 +167,7 @@ describe("useCreateContestAction", () => {
       description: "A contest for testing",
       startDate: new Date(),
       endDate: new Date(),
+      problems: [],
     } as unknown as CreateContestInputDTO;
 
     await waitFor(async () => {

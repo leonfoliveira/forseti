@@ -143,11 +143,13 @@ export function ContestForm(props: Props) {
           />
         </div>
       </div>
-      <div className="grid gap-x-15 gap-y-5 2xl:grid-cols-2">
+      <div className="grid gap-x-15 gap-y-5 2xl:[grid-template-columns:1fr_auto_1fr]">
         <div className="mt-5">
-          <p className="block text-md font-semibold mb-2">
-            {t("members-header")}
-          </p>
+          <div className="divider">
+            <p className="block text-md font-semibold mb-2">
+              {t("members-header")}
+            </p>
+          </div>
           <div className="grid [grid-template-columns:1fr_2fr_1fr_1fr_auto] items-start gap-x-3">
             {membersFields.fields.map((field, index) => (
               <Fragment key={field.id}>
@@ -196,20 +198,25 @@ export function ContestForm(props: Props) {
               </Fragment>
             ))}
           </div>
-          <Button
-            onClick={() =>
-              membersFields.append({ type: MemberType.CONTESTANT })
-            }
-            className="mt-2"
-            data-testid="member-add"
-          >
-            <FontAwesomeIcon icon={faPlus} />
-          </Button>
+          <div className="flex justify-center">
+            <Button
+              onClick={() =>
+                membersFields.append({ type: MemberType.CONTESTANT })
+              }
+              className="mt-5 px-10"
+              data-testid="member-add"
+            >
+              <FontAwesomeIcon icon={faPlus} />
+            </Button>
+          </div>
         </div>
+        <div className="hidden 2xl:flex divider divider-horizontal mt-10" />
         <div className="mt-5">
-          <p className="block text-md font-semibold mb-2">
-            {t("problems-header")}
-          </p>
+          <div className="divider">
+            <p className="block text-md font-semibold mb-2">
+              {t("problems-header")}
+            </p>
+          </div>
           <div className="grid [grid-template-columns:2fr_1fr_1fr_1fr_auto] items-start gap-x-3">
             {problemsFields.fields.map((field, index) => (
               <Fragment key={field.id}>
@@ -254,13 +261,15 @@ export function ContestForm(props: Props) {
               </Fragment>
             ))}
           </div>
-          <Button
-            onClick={() => problemsFields.append({ timeLimit: 1000 })}
-            className="mt-2"
-            data-testid="problem-add"
-          >
-            <FontAwesomeIcon icon={faPlus} />
-          </Button>
+          <div className="flex justify-center">
+            <Button
+              onClick={() => problemsFields.append({ timeLimit: 1000 })}
+              className="mt-5 px-10"
+              data-testid="problem-add"
+            >
+              <FontAwesomeIcon icon={faPlus} />
+            </Button>
+          </div>
         </div>
       </div>
 
