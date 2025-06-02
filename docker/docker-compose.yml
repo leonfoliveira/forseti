@@ -37,7 +37,7 @@ services:
       - ./localstack-bootstrap:/etc/localstack/init/ready.d
 
   api:
-    image: judge-api:latest
+    image: judge-api:{version}
     container_name: judge-api
     build:
       context: ../judge-api
@@ -73,7 +73,7 @@ services:
       - localstack    
 
   web:
-    image: judge-web:latest
+    image: judge-web:{version}
     container_name: judge-web
     build:
       context: ../judge-web
