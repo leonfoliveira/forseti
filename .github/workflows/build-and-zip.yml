@@ -28,6 +28,9 @@ jobs:
       - name: Build images
         run: docker compose build
 
+      - name: Pull images
+        run: docker compose pull
+
       - name: Extract image names from compose
         id: image-list
         run: |
