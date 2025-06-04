@@ -29,7 +29,7 @@ jobs:
         run: docker compose build
 
       - name: Pull images
-        run: docker compose pull
+        run: docker compose pull --ignore-buildable
 
       - name: Extract image names from compose
         id: image-list
