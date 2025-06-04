@@ -2,7 +2,7 @@ name: Build and Zip
 
 on:
   release:
-    types: [published]
+    types: [created]
 
 jobs:
   build-and-zip:
