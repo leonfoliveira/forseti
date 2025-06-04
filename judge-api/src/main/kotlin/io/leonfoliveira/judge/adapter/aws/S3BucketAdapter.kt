@@ -2,6 +2,7 @@ package io.leonfoliveira.judge.adapter.aws
 
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.BucketAdapter
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.core.sync.RequestBody
@@ -17,10 +18,14 @@ class S3BucketAdapter(
     @Value("\${spring.cloud.aws.s3.bucket}")
     private val bucket: String,
 ) : BucketAdapter {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun upload(
         bytes: ByteArray,
         key: UUID,
     ) {
+        logger.info("Uploading attachment with key: $key and size: ${bytes.size}")
+
         val putObjectRequest =
             PutObjectRequest
                 .builder()
@@ -29,9 +34,13 @@ class S3BucketAdapter(
                 .build()
 
         s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes))
+
+        logger.info("Successfully uploaded attachment with key: $key")
     }
 
     override fun download(key: UUID): ByteArray {
+        logger.info("Downloading attachment with key: $key")
+
         val getObjectRequest =
             GetObjectRequest
                 .builder()
@@ -46,6 +55,8 @@ class S3BucketAdapter(
                 throw NotFoundException("Could not find attachment with key: $key")
             }
 
-        return s3Object.readAllBytes()
+        val bytes = s3Object.readAllBytes()
+        logger.info("Successfully downloaded attachment with key: $key and size: ${bytes.size}")
+        return bytes
     }
 }

@@ -11,6 +11,7 @@ import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
 import io.leonfoliveira.judge.core.util.TestCasesValidator
 import jakarta.validation.Valid
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
 
@@ -24,9 +25,13 @@ class UpdateContestService(
     private val deleteContestService: DeleteContestService,
     private val testCasesValidator: TestCasesValidator,
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     fun update(
         @Valid inputDTO: UpdateContestInputDTO,
     ): Contest {
+        logger.info("Updating contest with id: ${inputDTO.id}")
+
         if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
             throw ForbiddenException("Contest cannot have ROOT members")
         }
@@ -64,14 +69,18 @@ class UpdateContestService(
 
         contest.members = createdMembers + updatedMembers
         contest.problems = createdProblems + updatedProblems
+        contestRepository.save(contest)
 
-        return contestRepository.save(contest)
+        logger.info("Finished updating contest with id: ${contest.id}")
+        return contest
     }
 
     private fun updateMember(
         membersHash: Map<Int, Member>,
         memberDTO: UpdateContestInputDTO.MemberDTO,
     ): Member {
+        logger.info("Updating member with id: ${memberDTO.id}")
+
         val member =
             membersHash[memberDTO.id]
                 ?: throw NotFoundException("Could not find member with id = ${memberDTO.id}")
@@ -90,20 +99,24 @@ class UpdateContestService(
         problemsHash: Map<Int, Problem>,
         problemDTO: UpdateContestInputDTO.ProblemDTO,
     ): Problem {
+        logger.info("Updating problem with id: ${problemDTO.id}")
+
         val problem =
             problemsHash[problemDTO.id]
                 ?: throw NotFoundException("Could not find problem with id = ${problemDTO.id}")
 
         if (problem.description.key != problemDTO.description.key) {
-            val description = attachmentRepository.findById(problemDTO.description.key).orElseThrow {
-                NotFoundException("Could not find description attachment with key = ${problemDTO.description.key}")
-            }
+            val description =
+                attachmentRepository.findById(problemDTO.description.key).orElseThrow {
+                    NotFoundException("Could not find description attachment with key = ${problemDTO.description.key}")
+                }
             problem.description = description
         }
         if (problem.testCases.key != problemDTO.testCases) {
-            val testCases = attachmentRepository.findById(problemDTO.testCases.key).orElseThrow {
-                NotFoundException("Could not find testCases attachment with key = ${problemDTO.testCases.key}")
-            }
+            val testCases =
+                attachmentRepository.findById(problemDTO.testCases.key).orElseThrow {
+                    NotFoundException("Could not find testCases attachment with key = ${problemDTO.testCases.key}")
+                }
             testCasesValidator.validate(testCases)
             problem.testCases = testCases
         }

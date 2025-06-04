@@ -6,6 +6,7 @@ import io.leonfoliveira.judge.api.util.Private
 import io.leonfoliveira.judge.api.util.Quota
 import io.leonfoliveira.judge.core.service.attachment.AttachmentService
 import jakarta.transaction.Transactional
+import org.slf4j.LoggerFactory
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -25,6 +26,8 @@ import java.util.UUID
 class AttachmentController(
     private val attachmentService: AttachmentService,
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     @PostMapping
     @Quota(5, 1, ChronoUnit.MINUTES)
     @Private
@@ -32,6 +35,7 @@ class AttachmentController(
     fun uploadAttachment(
         @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<AttachmentResponseDTO> {
+        logger.info("[POST] /v1/attachments - filename: ${file.originalFilename}, size: ${file.size}")
         val attachment = attachmentService.upload(file)
         return ResponseEntity.ok(attachment.toResponseDTO())
     }
@@ -40,6 +44,7 @@ class AttachmentController(
     fun downloadAttachment(
         @PathVariable("key") key: UUID,
     ): ResponseEntity<ByteArray> {
+        logger.info("[GET] /v1/attachments/{key} - key: $key")
         val download = attachmentService.download(key)
         val headers =
             HttpHeaders().apply {

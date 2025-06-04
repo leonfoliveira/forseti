@@ -8,6 +8,7 @@ import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.output.LeaderboardOutputDTO
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Duration
 
@@ -19,7 +20,11 @@ class LeaderboardService(
         private const val WRONG_SUBMISSION_PENALTY = 1200 // 20 minutes
     }
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     fun buildLeaderboard(contestId: Int): LeaderboardOutputDTO {
+        logger.info("Building leaderboard for contest with id: $contestId")
+
         val contest =
             contestRepository.findById(contestId).orElseThrow {
                 NotFoundException("Could not find contest with id = $contestId")

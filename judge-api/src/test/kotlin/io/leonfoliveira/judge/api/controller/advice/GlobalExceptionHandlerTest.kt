@@ -131,4 +131,13 @@ class GlobalExceptionHandlerTest : FunSpec({
                 "field1" to "Invalid value",
             )
     }
+
+    test("handleGenericException should return INTERNAL_SERVER_ERROR") {
+        val exception = Exception("Generic exception")
+
+        val response = sut.handleGenericException(exception, mockk<HandlerMethod>(relaxed = true))
+
+        response.statusCode shouldBe HttpStatus.INTERNAL_SERVER_ERROR
+        response.body shouldBe ErrorResponseDTO("An unexpected error occurred")
+    }
 })

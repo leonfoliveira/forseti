@@ -8,6 +8,7 @@ import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTO
 import io.leonfoliveira.judge.core.service.submission.CreateSubmissionService
 import io.leonfoliveira.judge.core.service.submission.FindSubmissionService
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,11 +22,14 @@ class SubmissionController(
     private val createSubmissionService: CreateSubmissionService,
     private val findSubmissionService: FindSubmissionService,
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     @PostMapping
     @Private(Member.Type.CONTESTANT)
     fun createSubmission(
         @RequestBody body: CreateSubmissionInputDTO,
     ): ResponseEntity<SubmissionPrivateResponseDTO> {
+        logger.info("[POST] /v1/submissions - body: $body")
         val authentication = AuthorizationContextUtil.getAuthorization()
         val submission =
             createSubmissionService.create(
@@ -38,6 +42,7 @@ class SubmissionController(
     @GetMapping("/me")
     @Private(Member.Type.CONTESTANT)
     fun findAllForMember(): ResponseEntity<List<SubmissionPrivateResponseDTO>> {
+        logger.info("[GET] /v1/submissions/me")
         val authorization = AuthorizationContextUtil.getAuthorization()
         val submissions = findSubmissionService.findAllByMember(authorization.id)
         return ResponseEntity.ok(submissions.map { it.toPrivateResponseDTO() })

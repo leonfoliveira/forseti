@@ -20,34 +20,50 @@ class DockerSubmissionRunnerAdapter(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun run(submission: Submission): Submission.Status {
+        logger.info("Running submission: ${submission.id} for problem: ${submission.problem.id} with language: ${submission.language}")
+
         val tmpDir = Files.createTempDirectory("judge_${submission.id}").toFile()
+        logger.info("Storing submission code file")
         val codeFile = storeCodeFile(submission, tmpDir)
+        logger.info("Loading test cases")
         val testCases = loadTestCases(submission.problem)
+        logger.info("Creating Docker container")
         val config = DockerSubmissionRunnerConfig.Builder.get(submission.language).build(codeFile)
 
         val container = DockerContainerFactory.create(config.image, "judge_${submission.id}", tmpDir)
+        logger.info("Starting Docker container")
         container.start()
 
         try {
-            config.compileCommand?.let { container.exec(it) }
-            try {
-                var status = Submission.Status.ACCEPTED
-                for ((input, expectedOutput) in testCases) {
+            config.compileCommand?.let {
+                logger.info("Compiling submission code")
+                container.exec(it)
+            }
+
+            var status = Submission.Status.ACCEPTED
+            logger.info("Running test cases")
+            for ((index, testCase) in testCases.withIndex()) {
+                val input = testCase[0]
+                val expectedOutput = testCase[1]
+                try {
                     val isCorrect = evaluate(container, config, submission, input, expectedOutput)
                     if (!isCorrect) {
+                        logger.info("Test case with index: $index failed")
                         status = Submission.Status.WRONG_ANSWER
                         break
                     }
+                } catch (ex: TimeoutException) {
+                    logger.info("Test case with index: $index timed out")
+                    return Submission.Status.TIME_LIMIT_EXCEEDED
+                } catch (ex: Exception) {
+                    logger.info("Error while running test case with index: $index", ex)
+                    return Submission.Status.RUNTIME_ERROR
                 }
-                return status
-            } catch (ex: TimeoutException) {
-                return Submission.Status.TIME_LIMIT_EXCEEDED
-            } catch (ex: Exception) {
-                logger.error("Error while running submission ${submission.id}", ex)
-                return Submission.Status.RUNTIME_ERROR
             }
+            logger.info("All test cases passed")
+            return status
         } catch (ex: Exception) {
-            logger.error("Error while compiling submission ${submission.id}", ex)
+            logger.info("Error while compiling submission", ex)
             return Submission.Status.COMPILATION_ERROR
         } finally {
             container.kill()

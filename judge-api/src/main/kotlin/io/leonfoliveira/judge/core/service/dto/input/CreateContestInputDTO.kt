@@ -35,7 +35,11 @@ data class CreateContestInputDTO(
         val login: String,
         @field:NotBlank
         val password: String,
-    )
+    ) {
+        override fun toString(): String {
+            return "MemberDTO(type=$type, name='$name', login='$login', password='******')"
+        }
+    }
 
     data class ProblemDTO(
         @field:NotEmpty

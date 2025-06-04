@@ -1,5 +1,6 @@
 package io.leonfoliveira.judge.core.util
 
+import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
@@ -10,9 +11,12 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 class TransactionalEventPublisher(
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     fun publish(event: ApplicationEvent) {
         val runnable =
             Runnable {
+                logger.info("Publishing event: ${event::class.java.simpleName}")
                 applicationEventPublisher.publishEvent(event)
             }
 

@@ -34,7 +34,7 @@ class AttachmentServiceTest : FunSpec({
 
             val result = sut.upload(file)
 
-            result shouldBe attachment
+            result shouldBe attachmentSlot.captured
             attachmentSlot.captured.filename shouldBe "test.txt"
             attachmentSlot.captured.contentType shouldBe "text/plain"
         }
@@ -51,7 +51,7 @@ class AttachmentServiceTest : FunSpec({
 
             val result = sut.upload(file)
 
-            result shouldBe attachment
+            result shouldBe attachmentSlot.captured
             attachmentSlot.captured.filename shouldBe attachmentSlot.captured.key.toString()
             attachmentSlot.captured.contentType shouldBe "application/octet-stream"
         }
