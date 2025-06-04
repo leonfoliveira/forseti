@@ -40,7 +40,7 @@ services:
     image: judge-migration:{version}
     container_name: judge-migration
     build:
-      context: ../judge-api
+      context: ../../judge-api
       dockerfile: Dockerfile.migration
     environment:
       SPRING_PROFILES_ACTIVE: production
@@ -56,7 +56,7 @@ services:
     image: judge-api:{version}
     container_name: judge-api
     build:
-      context: ../judge-api
+      context: ../../judge-api
       dockerfile: Dockerfile
     environment:
       SPRING_PROFILES_ACTIVE: production
@@ -93,7 +93,7 @@ services:
     image: judge-web:{version}
     container_name: judge-web
     build:
-      context: ../judge-web
+      context: ../../judge-api
       dockerfile: Dockerfile
     environment:
       NODE_ENV: ${NODE_ENV:-development}

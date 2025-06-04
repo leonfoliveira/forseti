@@ -2,8 +2,8 @@ name: Build and Zip
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main
 
 jobs:
   build-and-zip:
