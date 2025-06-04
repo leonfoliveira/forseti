@@ -19,12 +19,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Version images
-        run: |
-          version=${GITHUB_REF#refs/tags/}
-          sed -i "s/{version}/$version/g" docker-compose.yml
+      - name: Get tag name
+        id: vars
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
       - name: Build images
+        env:
+          VERSION: ${{ steps.vars.outputs.tag }}
         run: docker compose build
 
       - name: Extract image names from compose
@@ -35,10 +36,6 @@ jobs:
 
       - name: Save all images to a tarball
         run: docker save -o compose-images.tar ${{ steps.image-list.outputs.images }}
-
-      - name: Get tag name
-        id: vars
-        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
       - name: Create ZIP file with tag name
         run: zip judge-${{ steps.vars.outputs.tag }}.zip docker-compose.yml compose-images.tar
