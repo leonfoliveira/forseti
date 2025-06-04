@@ -1,9 +1,8 @@
 name: Build and Zip
 
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types: [published]
 
 jobs:
   build-and-zip:
@@ -23,9 +22,10 @@ jobs:
         id: vars
         run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
+      - name: Set version environment variable
+        run: echo "VERSION=${{ steps.vars.outputs.tag }}" >> $GITHUB_ENV
+
       - name: Build images
-        env:
-          VERSION: ${{ steps.vars.outputs.tag }}
         run: docker compose build
 
       - name: Extract image names from compose
