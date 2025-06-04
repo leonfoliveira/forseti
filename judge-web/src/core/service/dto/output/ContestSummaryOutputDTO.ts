@@ -1,4 +1,5 @@
-import { ContestStatus, getContestStatus } from "@/app/_util/contest-utils";
+import { getContestStatus } from "@/app/_util/contest-utils";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
 
 export type ContestSummaryOutputDTO = ContestSummaryResponseDTO & {
@@ -7,7 +8,7 @@ export type ContestSummaryOutputDTO = ContestSummaryResponseDTO & {
 
 export const ContestSummaryOutputDTOMap = {
   fromResponseDTO(
-    response: ContestSummaryResponseDTO,
+    response: ContestSummaryResponseDTO
   ): ContestSummaryOutputDTO {
     return {
       ...response,
