@@ -19,14 +19,14 @@ class SubmissionConsumerTest : FunSpec({
         every { runSubmissionService.run(id) }
             .returns(SubmissionMockFactory.build())
 
-        sut.receiveMessage(id.toString())
+        sut.receiveMessage(id.toString(), mapOf())
 
         verify { runSubmissionService.run(id) }
     }
 
     test("should throw BusinessException when id is not a number") {
         shouldThrow<BusinessException> {
-            sut.receiveMessage("not-a-number")
+            sut.receiveMessage("not-a-number", mapOf())
         }
     }
 })

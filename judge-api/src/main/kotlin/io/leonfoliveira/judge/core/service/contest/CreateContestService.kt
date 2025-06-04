@@ -11,6 +11,7 @@ import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTO
 import io.leonfoliveira.judge.core.util.TestCasesValidator
 import jakarta.validation.Valid
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
 
@@ -22,9 +23,13 @@ class CreateContestService(
     private val hashAdapter: HashAdapter,
     private val testCasesValidator: TestCasesValidator,
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     fun create(
         @Valid inputDTO: CreateContestInputDTO,
     ): Contest {
+        logger.info("Creating contest with title: ${inputDTO.title}")
+
         if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
             throw ForbiddenException("Contest cannot have ROOT members")
         }
@@ -39,14 +44,18 @@ class CreateContestService(
 
         contest.members = inputDTO.members.map { createMember(contest, it) }
         contest.problems = inputDTO.problems.map { createProblem(contest, it) }
+        contestRepository.save(contest)
 
-        return contestRepository.save(contest)
+        logger.info("Contest created with id: ${contest.id}")
+        return contest
     }
 
     fun createMember(
         contest: Contest,
         memberDTO: CreateContestInputDTO.MemberDTO,
     ): Member {
+        logger.info("Creating member with login: ${memberDTO.login}")
+
         val hashedPassword = hashAdapter.hash(memberDTO.password)
         val member =
             Member(
@@ -64,6 +73,8 @@ class CreateContestService(
         contest: Contest,
         problemDTO: CreateContestInputDTO.ProblemDTO,
     ): Problem {
+        logger.info("Creating problem with title: ${problemDTO.title}")
+
         val description =
             attachmentRepository.findById(problemDTO.description.key).orElseThrow {
                 NotFoundException("Could not find description attachment with key = ${problemDTO.description.key}")

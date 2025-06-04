@@ -10,11 +10,12 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.nio.charset.StandardCharsets
-import java.util.UUID
 
 class TestCasesValidatorTest : FunSpec({
     val bucketAdapter = mockk<BucketAdapter>()
     val sut = TestCasesValidator(bucketAdapter)
+
+    val attachment = AttachmentMockFactory.build(contentType = "text/csv")
 
     context("validate") {
         test("validate throws exception for non-CSV file") {
@@ -27,36 +28,33 @@ class TestCasesValidatorTest : FunSpec({
         }
 
         test("validate succeeds for valid CSV") {
-            val attachmentKey = UUID.randomUUID()
             val validCsv = "input1,output1\ninput2,output2".toByteArray(StandardCharsets.UTF_8)
-            every { bucketAdapter.download(attachmentKey) } returns validCsv
+            every { bucketAdapter.download(attachment.key) } returns validCsv
 
-            sut.validate(AttachmentMockFactory.build(key = attachmentKey))
+            sut.validate(attachment)
 
-            verify { bucketAdapter.download(attachmentKey) }
+            verify { bucketAdapter.download(attachment.key) }
         }
 
         test("validate throws exception for empty CSV file") {
-            val attachmentKey = UUID.randomUUID()
             val emptyCsv = "".toByteArray(StandardCharsets.UTF_8)
-            every { bucketAdapter.download(attachmentKey) } returns emptyCsv
+            every { bucketAdapter.download(attachment.key) } returns emptyCsv
 
             val exception =
                 shouldThrow<BusinessException> {
-                    sut.validate(AttachmentMockFactory.build(key = attachmentKey))
+                    sut.validate(attachment)
                 }
 
             exception.message shouldBe "Test cases file is empty"
         }
 
         test("validate throws exception for CSV with invalid row size") {
-            val attachmentKey = UUID.randomUUID()
             val invalidCsv = "input1,output1\ninput2".toByteArray(StandardCharsets.UTF_8)
-            every { bucketAdapter.download(attachmentKey) } returns invalidCsv
+            every { bucketAdapter.download(attachment.key) } returns invalidCsv
 
             val exception =
                 shouldThrow<BusinessException> {
-                    sut.validate(AttachmentMockFactory.build(key = attachmentKey))
+                    sut.validate(attachment)
                 }
 
             exception.message shouldBe "Test case #2 does not have exactly input and output columns"

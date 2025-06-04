@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/judge}
+    username: ${DB_USER:judge}
+    password: ${DB_PASSWORD:judge}
+    driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:judge}
+  jpa:
+    show-sql: false
+  cloud:
+    aws:
+      endpoint: ${AWS_ENDPOINT:http://localhost:4566}
+      region:
+        static: ${AWS_REGION:us-east-1}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID:judge}
+        secret-key: ${AWS_SECRET_ACCESS_KEY:judge}
+      stack:
+        auto: false
+      s3:
+        bucket: ${AWS_S3_BUCKET:judge}
+      sns:
+        topic: ${AWS_SNS_TOPIC:judge-business-events}
+      sqs:
+        submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:judge-submission}
+server:
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+security:
+  jwt:
+    secret: ${JWT_SECRET:judge}
+    expiration: ${JWT_EXPIRATION:21600}
+    root-expiration: ${JWT_ROOT_EXPIRATION:10800}
+  root:
+    password: ${ROOT_PASSWORD:judge}

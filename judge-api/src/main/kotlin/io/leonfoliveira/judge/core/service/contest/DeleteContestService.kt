@@ -8,6 +8,7 @@ import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
 import io.leonfoliveira.judge.core.util.TimeUtils
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -16,7 +17,11 @@ class DeleteContestService(
     private val memberRepository: MemberRepository,
     private val problemRepository: ProblemRepository,
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     fun delete(id: Int) {
+        logger.info("Deleting contest with id: $id")
+
         val contest =
             contestRepository.findById(id).orElseThrow {
                 NotFoundException("Could not find contest with id = $id")
@@ -26,15 +31,25 @@ class DeleteContestService(
         }
         contest.deletedAt = TimeUtils.now()
         contestRepository.save(contest)
+
+        logger.info("Finished deleting contest with id: $id")
     }
 
     fun deleteMembers(members: List<Member>) {
+        logger.info("Deleting members: ${members.joinToString { it.id.toString() }}")
+
         members.forEach { it.deletedAt = TimeUtils.now() }
         memberRepository.saveAll(members)
+
+        logger.info("Finished deleting members: ${members.joinToString { it.id.toString() }}")
     }
 
     fun deleteProblems(problems: List<Problem>) {
+        logger.info("Deleting problems: ${problems.joinToString { it.id.toString() }}")
+
         problems.forEach { it.deletedAt = TimeUtils.now() }
         problemRepository.saveAll(problems)
+
+        logger.info("Finished deleting problems: ${problems.joinToString { it.id.toString() }}")
     }
 }

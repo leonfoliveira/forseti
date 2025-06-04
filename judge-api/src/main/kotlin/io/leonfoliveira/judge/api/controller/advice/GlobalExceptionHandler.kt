@@ -32,7 +32,7 @@ class GlobalExceptionHandler {
         handlerMethod: HandlerMethod,
     ): ResponseEntity<ErrorResponseDTO> {
         val status = codesByBusinessException[ex::class] ?: HttpStatus.BAD_REQUEST
-        logger.warn(ex.message)
+        logger.info("BusinessException occurred in method: ${handlerMethod.method.name}, status: $status, message: ${ex.message}")
         return ResponseEntity
             .status(status)
             .body(ErrorResponseDTO(ex.message!!))
@@ -40,6 +40,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationExceptions(ex: MethodArgumentNotValidException): ResponseEntity<Map<String, String>> {
+        logger.info("Validation error occurred")
         val errors =
             ex.bindingResult.fieldErrors
                 .groupBy { it.field }
@@ -50,6 +51,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException::class)
     fun handleConstraintViolation(ex: ConstraintViolationException): ResponseEntity<Map<String, String>> {
+        logger.info("Constraint violation error occurred")
         val errors =
             ex.constraintViolations.associate {
                 val path = it.propertyPath.toString().split(".").drop(2).joinToString(".")
@@ -60,7 +62,19 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleJsonParseErrors(ex: HttpMessageNotReadableException): ResponseEntity<Map<String, String>> {
+        logger.info("JSON parsing error occurred")
         val message = ex.mostSpecificCause.message ?: "Malformed JSON"
         return ResponseEntity(mapOf("error" to "Invalid request format: $message"), HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(Exception::class)
+    fun handleGenericException(
+        ex: Exception,
+        handlerMethod: HandlerMethod,
+    ): ResponseEntity<ErrorResponseDTO> {
+        logger.error("Unexpected error occurred in method: ${handlerMethod.method.name}, message: ${ex.message}", ex)
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ErrorResponseDTO("An unexpected error occurred"))
     }
 }

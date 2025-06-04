@@ -25,6 +25,7 @@ import io.leonfoliveira.judge.core.service.leaderboard.LeaderboardService
 import io.leonfoliveira.judge.core.service.problem.FindProblemService
 import io.leonfoliveira.judge.core.service.submission.FindSubmissionService
 import jakarta.transaction.Transactional
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -46,16 +47,15 @@ class ContestController(
     private val findProblemService: FindProblemService,
     private val findSubmissionService: FindSubmissionService,
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     @PostMapping
     @Private(Member.Type.ROOT)
     @Transactional
     fun createContest(
         @RequestBody body: CreateContestInputDTO,
     ): ResponseEntity<ContestPrivateResponseDTO> {
-        val authentication = AuthorizationContextUtil.getAuthorization()
-        if (authentication.type != Member.Type.ROOT) {
-            throw ForbiddenException()
-        }
+        logger.info("[POST] /v1/contests - body: $body")
         val contest = createContestService.create(body)
         return ResponseEntity.ok(contest.toPrivateResponseDTO())
     }
@@ -66,6 +66,7 @@ class ContestController(
     fun updateContest(
         @RequestBody body: UpdateContestInputDTO,
     ): ResponseEntity<ContestPrivateResponseDTO> {
+        logger.info("[PUT] /v1/contests - body: $body")
         val contest = updateContestService.update(body)
         return ResponseEntity.ok(contest.toPrivateResponseDTO())
     }
@@ -73,6 +74,7 @@ class ContestController(
     @GetMapping
     @Private(Member.Type.ROOT)
     fun findAllContest(): ResponseEntity<List<ContestSummaryResponseDTO>> {
+        logger.info("[GET] /v1/contests")
         val contests = findContestService.findAll()
         return ResponseEntity.ok(contests.map { it.toSummaryResponseDTO() })
     }
@@ -82,6 +84,7 @@ class ContestController(
     fun findContestByIdForRoot(
         @PathVariable id: Int,
     ): ResponseEntity<ContestPrivateResponseDTO> {
+        logger.info("[GET] /v1/contests/{id}/root - id: $id")
         val contest = findContestService.findById(id)
         return ResponseEntity.ok(contest.toPrivateResponseDTO())
     }
@@ -90,6 +93,7 @@ class ContestController(
     fun findContestById(
         @PathVariable id: Int,
     ): ResponseEntity<ContestPublicResponseDTO> {
+        logger.info("[GET] /v1/contests/{id} - id: $id")
         val contest = findContestService.findById(id)
         if (!contest.hasStarted()) {
             throw ForbiddenException("Contest has not started yet")
@@ -101,6 +105,7 @@ class ContestController(
     fun findContestSummaryById(
         @PathVariable id: Int,
     ): ResponseEntity<ContestSummaryResponseDTO> {
+        logger.info("[GET] /v1/contests/{id}/summary - id: $id")
         val contest = findContestService.findById(id)
         return ResponseEntity.ok(contest.toSummaryResponseDTO())
     }
@@ -111,6 +116,7 @@ class ContestController(
     fun deleteContest(
         @PathVariable id: Int,
     ): ResponseEntity<Void> {
+        logger.info("[DELETE] /v1/contests/{id} - id: $id")
         deleteContestService.delete(id)
         return ResponseEntity.noContent().build()
     }
@@ -119,6 +125,7 @@ class ContestController(
     fun getLeaderboard(
         @PathVariable id: Int,
     ): ResponseEntity<LeaderboardOutputDTO> {
+        logger.info("[GET] /v1/contests/{id}/leaderboard - id: $id")
         val leaderboard = leaderboardService.buildLeaderboard(id)
         return ResponseEntity.ok(leaderboard)
     }
@@ -127,6 +134,7 @@ class ContestController(
     fun findAllProblems(
         @PathVariable id: Int,
     ): ResponseEntity<List<ProblemPublicResponseDTO>> {
+        logger.info("[GET] /v1/contests/{id}/problems - id: $id")
         val problems = findProblemService.findAllByContest(id)
         return ResponseEntity.ok(problems.map { it.toPublicResponseDTO() })
     }
@@ -136,6 +144,7 @@ class ContestController(
     fun findAllProblemsForMember(
         @PathVariable id: Int,
     ): ResponseEntity<List<ProblemWithStatusResponseDTO>> {
+        logger.info("[GET] /v1/contests/{id}/problems/me - id: $id")
         val authorization = AuthorizationContextUtil.getAuthorization()
         val problems = findProblemService.findAllByContestForMember(id, authorization.id)
         return ResponseEntity.ok(problems.map { it.toResponseDTO() })
@@ -145,6 +154,7 @@ class ContestController(
     fun findAllSubmissions(
         @PathVariable id: Int,
     ): ResponseEntity<List<SubmissionPublicResponseDTO>> {
+        logger.info("[GET] /v1/contests/{id}/submissions - id: $id")
         val submissions = findSubmissionService.findAllByContest(id)
         return ResponseEntity.ok(submissions.map { it.toPublicResponseDTO() })
     }

@@ -1,5 +1,6 @@
 import { ContestPrivateResponseDTO } from "@/core/repository/dto/response/ContestPrivateResponseDTO";
-import { ContestStatus, getContestStatus } from "@/app/_util/contest-utils";
+import { getContestStatus } from "@/app/_util/contest-utils";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 
 export type ContestOutputDTO = ContestPrivateResponseDTO & {
   status: ContestStatus;

@@ -1,3 +1,4 @@
+import org.gradle.internal.classpath.Instrumented.systemProperty
 import org.yaml.snakeyaml.Yaml
 
 kotlin {
@@ -31,6 +32,7 @@ dependencies {
     implementation(libs.hibernate.types)
     implementation(libs.flyway)
     implementation(libs.postgresql)
+    implementation(libs.micrometer.tracing.bridge.otel)
     implementation(libs.opencsv)
 
     testImplementation(libs.bundles.kotest)
@@ -48,7 +50,8 @@ buildscript {
 }
 
 val yaml = Yaml()
-val configFile = File("$rootDir/src/main/resources/application.yml")
+val activeProfile = System.getenv("SPRING_PROFILES_ACTIVE") ?: "development"
+val configFile = File("$rootDir/src/main/resources/application-$activeProfile.yml")
 val config: Map<String, Any> = yaml.load(configFile.inputStream())
 
 @Suppress("UNCHECKED_CAST")
@@ -103,4 +106,5 @@ tasks.bootJar {
 
 tasks.named("bootRun") {
     dependsOn("flywayMigrate")
+    systemProperty("spring.profiles.active", "development")
 }

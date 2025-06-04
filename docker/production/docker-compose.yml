@@ -36,6 +36,22 @@ services:
       - localstack_data:/persisted-data
       - ./localstack-bootstrap:/etc/localstack/init/ready.d
 
+  migration:
+    image: judge-migration:{version}
+    container_name: judge-migration
+    build:
+      context: ../judge-api
+      dockerfile: Dockerfile.migration
+    environment:
+      SPRING_PROFILES_ACTIVE: production
+      DB_URL: ${DB_URL:-jdbc:postgresql://postgres:5432/judge}
+      DB_USER: ${DB_USER:-judge}
+      DB_PASSWORD: ${DB_PASSWORD:-judge}
+    networks:
+      - judge-network
+    depends_on:
+      - postgres
+
   api:
     image: judge-api:{version}
     container_name: judge-api
@@ -43,7 +59,7 @@ services:
       context: ../judge-api
       dockerfile: Dockerfile
     environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-development}
+      SPRING_PROFILES_ACTIVE: production
       DB_URL: ${DB_URL:-jdbc:postgresql://postgres:5432/judge}
       DB_USER: ${DB_USER:-judge}
       DB_PASSWORD: ${DB_PASSWORD:-judge}
@@ -69,8 +85,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - postgres
+      - migration
       - redis
-      - localstack    
+      - localstack
 
   web:
     image: judge-web:{version}

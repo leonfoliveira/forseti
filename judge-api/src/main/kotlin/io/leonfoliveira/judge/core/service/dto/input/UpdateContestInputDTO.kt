@@ -50,6 +50,11 @@ data class UpdateContestInputDTO(
                 password = password!!,
             )
         }
+
+        override fun toString(): String {
+            return "MemberDTO(id=$id, type=$type, name='$name', login='$login', " +
+                "password=${if (password.isNullOrBlank()) "null" else "'******'"})"
+        }
     }
 
     data class ProblemDTO(

@@ -11,6 +11,7 @@ import io.leonfoliveira.judge.core.repository.ProblemRepository
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTO
 import jakarta.validation.Valid
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
 
@@ -24,10 +25,14 @@ class CreateSubmissionService(
     private val submissionQueueAdapter: SubmissionQueueAdapter,
     private val submissionEmitterAdapter: SubmissionEmitterAdapter,
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     fun create(
         memberId: Int,
         @Valid inputDTO: CreateSubmissionInputDTO,
     ): Submission {
+        logger.info("Creating submission for member with id: $memberId and problem with id: ${inputDTO.problemId}")
+
         val member =
             memberRepository.findById(memberId).orElseThrow {
                 NotFoundException("Could not find member with id = $memberId")
@@ -64,6 +69,7 @@ class CreateSubmissionService(
         submissionQueueAdapter.enqueue(submission)
         submissionEmitterAdapter.emitForContest(submission)
 
+        logger.info("Submission created, enqueued and emitted")
         return submission
     }
 }
