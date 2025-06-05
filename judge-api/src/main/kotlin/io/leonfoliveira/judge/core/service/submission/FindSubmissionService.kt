@@ -45,4 +45,20 @@ class FindSubmissionService(
         logger.info("Found ${member.submissions.size} submissions for member")
         return member.submissions.sortedBy { it.createdAt }
     }
+
+    fun findAllFailed(contestId: Int): List<Submission> {
+        logger.info("Finding all failed submissions for contest with id: $contestId")
+
+        val contest =
+            contestRepository.findById(contestId).orElseThrow {
+                NotFoundException("Could not find contest with id = $contestId")
+            }
+        val submissions =
+            contest.members.map {
+                it.submissions
+            }.flatten().filter { it.hasFailed }
+
+        logger.info("Found ${submissions.size} failed submissions")
+        return submissions.sortedBy { it.createdAt }
+    }
 }

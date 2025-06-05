@@ -108,4 +108,41 @@ class FindSubmissionServiceTest : FunSpec({
             result shouldBe listOf(submission2, submission1)
         }
     }
+
+    context("findAllFailed") {
+        test("should throw NotFoundException when contest not found") {
+            every { contestRepository.findById(1) }
+                .returns(Optional.empty())
+
+            shouldThrow<NotFoundException> {
+                sut.findAllFailed(1)
+            }
+        }
+
+        test("should return sorted list of failed submissions") {
+            val submission1 = SubmissionMockFactory.build(hasFailed = true, createdAt = now)
+            val submission2 = SubmissionMockFactory.build(hasFailed = true, createdAt = now.minusSeconds(1))
+            val submission3 = SubmissionMockFactory.build(hasFailed = false, createdAt = now.minusSeconds(2))
+            val member1 =
+                MemberMockFactory.build(
+                    submissions = listOf(submission1, submission3),
+                )
+            val member2 =
+                MemberMockFactory.build(
+                    submissions = listOf(submission2),
+                )
+            val contest =
+                ContestMockFactory.build(
+                    startAt = now.minusDays(1),
+                    members = listOf(member1, member2),
+                )
+
+            every { contestRepository.findById(1) }
+                .returns(Optional.of(contest))
+
+            val result = sut.findAllFailed(1)
+
+            result shouldBe listOf(submission2, submission1)
+        }
+    }
 })

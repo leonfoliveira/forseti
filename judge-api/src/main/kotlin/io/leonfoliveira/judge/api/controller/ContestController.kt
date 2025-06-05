@@ -5,6 +5,7 @@ import io.leonfoliveira.judge.api.controller.dto.response.ContestPublicResponseD
 import io.leonfoliveira.judge.api.controller.dto.response.ContestSummaryResponseDTO
 import io.leonfoliveira.judge.api.controller.dto.response.ProblemPublicResponseDTO
 import io.leonfoliveira.judge.api.controller.dto.response.ProblemWithStatusResponseDTO
+import io.leonfoliveira.judge.api.controller.dto.response.SubmissionPrivateResponseDTO
 import io.leonfoliveira.judge.api.controller.dto.response.SubmissionPublicResponseDTO
 import io.leonfoliveira.judge.api.controller.dto.response.toPrivateResponseDTO
 import io.leonfoliveira.judge.api.controller.dto.response.toPublicResponseDTO
@@ -157,5 +158,25 @@ class ContestController(
         logger.info("[GET] /v1/contests/{id}/submissions - id: $id")
         val submissions = findSubmissionService.findAllByContest(id)
         return ResponseEntity.ok(submissions.map { it.toPublicResponseDTO() })
+    }
+
+    @GetMapping("/{id}/submissions/judge")
+    @Private(Member.Type.JUDGE)
+    fun findAllSubmissionsForJudge(
+        @PathVariable id: Int,
+    ): ResponseEntity<List<SubmissionPrivateResponseDTO>> {
+        logger.info("[GET] /v1/contests/{id}/submissions/judge - id: $id")
+        val submissions = findSubmissionService.findAllByContest(id)
+        return ResponseEntity.ok(submissions.map { it.toPrivateResponseDTO() })
+    }
+
+    @GetMapping("/{id}/submissions/failed")
+    @Private(Member.Type.JUDGE)
+    fun findAllFailedSubmissions(
+        @PathVariable id: Int,
+    ): ResponseEntity<List<SubmissionPrivateResponseDTO>> {
+        logger.info("[GET] /v1/contests/{id}/submissions/failed - id: $id")
+        val submissions = findSubmissionService.findAllFailed(id)
+        return ResponseEntity.ok(submissions.map { it.toPrivateResponseDTO() })
     }
 }
