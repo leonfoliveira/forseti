@@ -1,4 +1,4 @@
-import { StompClient } from "@/adapter/stomp/StompClient";
+import { StompConnector } from "@/adapter/stomp/StompConnector";
 import { CompatClient, IFrame, Stomp } from "@stomp/stompjs";
 import { ServerException } from "@/core/domain/exception/ServerException";
 import { spyOn } from "jest-mock";
@@ -7,11 +7,11 @@ jest.mock("sockjs-client");
 jest.mock("@stomp/stompjs");
 
 describe("StompClient", () => {
-  let stompClient: StompClient;
+  let stompClient: StompConnector;
   let mockCompatClient: jest.Mocked<CompatClient>;
 
   beforeEach(() => {
-    stompClient = new StompClient("http://example.com/ws");
+    stompClient = new StompConnector("http://example.com/ws");
     mockCompatClient = {
       connected: true,
       activate: jest.fn(),

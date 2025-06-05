@@ -8,16 +8,16 @@ import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/Subm
 import { contestService, submissionService } from "@/app/_composition";
 import { useEffect, useRef } from "react";
 import { useAuthorization } from "@/app/_util/authorization-hook";
-import { CompatClient } from "@stomp/stompjs";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { useTranslations } from "next-intl";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 export function useFindAllProblemsForMemberAction() {
   const authorization = useAuthorization();
   const alert = useAlert();
   const memberSignOutAction = useMemberSignOutAction();
   const action = useAction(findAllProblemsForMember);
-  const listenerRef = useRef<CompatClient>(null);
+  const listenerRef = useRef<ListenerClient>(null);
   const t = useTranslations("_action.find-all-problems-for-member-action");
 
   useEffect(() => {

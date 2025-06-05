@@ -1,7 +1,7 @@
 package io.leonfoliveira.judge.config
 
 import com.ninjasquad.springmockk.MockkBean
-import io.leonfoliveira.judge.core.port.JwtAdapter
+import io.leonfoliveira.judge.api.util.AuthorizationExtractor
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -24,5 +24,5 @@ annotation class ControllerTest(
 
 @Configuration
 class JwtTestConfig(
-    @MockkBean val jwtAdapter: JwtAdapter,
+    @MockkBean(relaxed = true) val authorizationExtractor: AuthorizationExtractor,
 )

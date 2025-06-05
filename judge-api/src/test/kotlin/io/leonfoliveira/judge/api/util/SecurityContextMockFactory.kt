@@ -1,6 +1,6 @@
 package io.leonfoliveira.judge.api.util
 
-import io.leonfoliveira.judge.api.config.security.JwtAuthentication
+import io.leonfoliveira.judge.api.security.JwtAuthentication
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.mockk.every

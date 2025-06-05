@@ -1,40 +1,24 @@
-import SockJS from "sockjs-client";
-import { CompatClient, Stomp } from "@stomp/stompjs";
-import { ServerException } from "@/core/domain/exception/ServerException";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
+import { StompConnector } from "@/adapter/stomp/StompConnector";
+import { CompatClient } from "@stomp/stompjs";
 
-export class StompClient {
-  constructor(private readonly wsUrl: string) {}
+export class StompClient implements ListenerClient {
+  private client: CompatClient | undefined;
 
-  async connect() {
-    const socket = new SockJS(this.wsUrl);
-    const client = Stomp.over(socket);
+  constructor(private readonly stompConnector: StompConnector) {}
 
-    return new Promise<CompatClient>((resolve, reject) => {
-      client.onConnect = () => {
-        resolve(client);
-      };
-
-      client.onStompError = (error) => {
-        reject(
-          new ServerException(
-            error.headers["message"] || "Unknown STOMP error",
-          ),
-        );
-      };
-
-      client.activate();
-    });
+  async subscribe<TData>(
+    topic: string,
+    callback: (data: TData) => void,
+  ): Promise<ListenerClient> {
+    this.client = await this.stompConnector.connect();
+    await this.stompConnector.subscribe(this.client, topic, callback);
+    return this;
   }
 
-  async disconnect(client: CompatClient) {
-    if (client.connected) {
-      return new Promise<void>((resolve) => {
-        client.onDisconnect = () => {
-          resolve();
-        };
-
-        client.deactivate();
-      });
+  async unsubscribe(): Promise<void> {
+    if (this.client !== undefined) {
+      await this.stompConnector.disconnect(this.client);
     }
   }
 }

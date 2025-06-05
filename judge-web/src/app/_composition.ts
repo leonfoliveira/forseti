@@ -8,7 +8,7 @@ import { AttachmentService } from "@/core/service/AttachmentService";
 import { AuthenticationService } from "@/core/service/AuthenticationService";
 import { ContestService } from "@/core/service/ContestService";
 import { SubmissionService } from "@/core/service/SubmissionService";
-import { StompClient } from "@/adapter/stomp/StompClient";
+import { StompConnector } from "@/adapter/stomp/StompConnector";
 import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
 import { config } from "@/app/_config";
 import { LocalStorageRepository } from "@/adapter/localstorage/LocalStorageRepository";
@@ -19,22 +19,22 @@ const storageRepository = new LocalStorageRepository();
 export const authorizationService = new AuthorizationService(storageRepository);
 
 const axiosClient = new AxiosClient(config.API_URL, authorizationService);
-const stompClient = new StompClient(`${config.API_URL}/ws`);
+const stompClient = new StompConnector(`${config.API_URL}/ws`);
 
 export const attachmentService = new AttachmentService(
-  new AxiosAttachmentRepository(axiosClient)
+  new AxiosAttachmentRepository(axiosClient),
 );
 export const authenticationService = new AuthenticationService(
   new AxiosAuthenticationRepository(axiosClient),
-  authorizationService
+  authorizationService,
 );
 export const contestService = new ContestService(
   new AxiosContestRepository(axiosClient),
-  attachmentService
+  attachmentService,
 );
 export const storageService = new StorageService(storageRepository);
 export const submissionService = new SubmissionService(
   new AxiosSubmissionRepository(axiosClient),
   new StompSubmissionListener(stompClient),
-  attachmentService
+  attachmentService,
 );

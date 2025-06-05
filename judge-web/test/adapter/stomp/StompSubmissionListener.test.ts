@@ -1,18 +1,18 @@
 import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
-import { StompClient } from "@/adapter/stomp/StompClient";
+import { StompConnector } from "@/adapter/stomp/StompConnector";
 import { CompatClient, IMessage } from "@stomp/stompjs";
 import { mock, MockProxy } from "jest-mock-extended";
 import { spyOn } from "jest-mock";
 
-jest.mock("@/adapter/stomp/StompClient");
+jest.mock("@/adapter/stomp/StompConnector");
 
 describe("StompSubmissionListener", () => {
-  let stompClient: jest.Mocked<StompClient>;
+  let stompClient: jest.Mocked<StompConnector>;
   let stompSubmissionListener: StompSubmissionListener;
   let mockCompatClient: MockProxy<CompatClient>;
 
   beforeEach(() => {
-    stompClient = mock<StompClient>();
+    stompClient = mock<StompConnector>();
     stompSubmissionListener = new StompSubmissionListener(stompClient);
     mockCompatClient = mock<CompatClient>({
       subscribe: jest.fn(),

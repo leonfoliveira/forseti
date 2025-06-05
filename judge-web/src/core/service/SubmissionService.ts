@@ -3,13 +3,13 @@ import { SubmissionPrivateResponseDTO } from "@/core/repository/dto/response/Sub
 import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmissionInputDTO";
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
-import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
-import { CompatClient } from "@stomp/stompjs";
+import { SubmissionListener } from "@/core/listener/SubmissionListener";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 export class SubmissionService {
   constructor(
     private readonly submissionRepository: SubmissionRepository,
-    private readonly submissionListener: StompSubmissionListener,
+    private readonly submissionListener: SubmissionListener,
     private readonly attachmentService: AttachmentService,
   ) {}
 
@@ -29,18 +29,25 @@ export class SubmissionService {
   subscribeForContest(
     contestId: number,
     cb: (submission: SubmissionPublicResponseDTO) => void,
-  ): Promise<CompatClient> {
+  ): Promise<ListenerClient> {
     return this.submissionListener.subscribeForContest(contestId, cb);
   }
 
   subscribeForMember(
     memberId: number,
     cb: (submission: SubmissionPublicResponseDTO) => void,
-  ): Promise<CompatClient> {
+  ): Promise<ListenerClient> {
     return this.submissionListener.subscribeForMember(memberId, cb);
   }
 
-  unsubscribe(client: CompatClient): Promise<void> {
-    return this.submissionListener.unsubscribe(client);
+  subscribeForFail(
+    contestId: number,
+    cb: (submission: SubmissionPrivateResponseDTO) => void,
+  ): Promise<ListenerClient> {
+    return this.submissionListener.subscribeForFail(contestId, cb);
+  }
+
+  async unsubscribe(client: ListenerClient): Promise<void> {
+    await client.unsubscribe();
   }
 }
