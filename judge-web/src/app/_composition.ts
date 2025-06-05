@@ -19,22 +19,22 @@ const storageRepository = new LocalStorageRepository();
 export const authorizationService = new AuthorizationService(storageRepository);
 
 const axiosClient = new AxiosClient(config.API_URL, authorizationService);
-const stompClient = new StompClient(config.WS_URL);
+const stompClient = new StompClient(`${config.API_URL}/ws`);
 
 export const attachmentService = new AttachmentService(
-  new AxiosAttachmentRepository(axiosClient),
+  new AxiosAttachmentRepository(axiosClient)
 );
 export const authenticationService = new AuthenticationService(
   new AxiosAuthenticationRepository(axiosClient),
-  authorizationService,
+  authorizationService
 );
 export const contestService = new ContestService(
   new AxiosContestRepository(axiosClient),
-  attachmentService,
+  attachmentService
 );
 export const storageService = new StorageService(storageRepository);
 export const submissionService = new SubmissionService(
   new AxiosSubmissionRepository(axiosClient),
   new StompSubmissionListener(stompClient),
-  attachmentService,
+  attachmentService
 );
