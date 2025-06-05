@@ -47,3 +47,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: docker/production/judge-${{ steps.vars.outputs.tag }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
