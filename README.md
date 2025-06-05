@@ -26,7 +26,7 @@ A fullstack application for running programming contests
 | POSTGRES_USER | judge |
 | POSTGRES_PASSWORD | judge |
 | REDIS_PASSWORD | judge |
-| ALLOWED_ORIGINS | http://localhost |
+| ALLOWED_ORIGINS | http://localhost:3000 |
 | JWT_SECRET | judge |
 | ROOT_PASSWORD | judge |
 | NEXT_PUBLIC_API_URL | http://localhost:8080 |

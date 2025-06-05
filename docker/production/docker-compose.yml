@@ -72,7 +72,7 @@ services:
       AWS_SECRET_ACCESS_KEY: judge
       AWS_S3_BUCKET: judge
       AWS_SQS_SUBMISSION_QUEUE: judge-submission
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
       JWT_SECRET: ${JWT_SECRET:-judge}
       JWT_EXPIRATION: 21600
       JWT_ROOT_EXPIRATION: 10800
