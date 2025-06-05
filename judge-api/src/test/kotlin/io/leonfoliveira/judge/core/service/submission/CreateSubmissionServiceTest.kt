@@ -10,17 +10,18 @@ import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
-import io.leonfoliveira.judge.core.port.SubmissionQueueAdapter
+import io.leonfoliveira.judge.core.event.SubmissionCreatedEvent
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTOMockFactory
 import io.leonfoliveira.judge.core.util.TimeUtils
+import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.slot
 import java.time.LocalDateTime
 import java.util.Optional
 
@@ -29,8 +30,7 @@ class CreateSubmissionServiceTest : FunSpec({
     val memberRepository = mockk<MemberRepository>()
     val problemRepository = mockk<ProblemRepository>()
     val submissionRepository = mockk<SubmissionRepository>()
-    val submissionQueueAdapter = mockk<SubmissionQueueAdapter>()
-    val submissionEmitterAdapter = mockk<SubmissionEmitterAdapter>()
+    val transactionalEventPublisher = mockk<TransactionalEventPublisher>(relaxed = true)
 
     val sut =
         CreateSubmissionService(
@@ -38,8 +38,7 @@ class CreateSubmissionServiceTest : FunSpec({
             memberRepository,
             problemRepository,
             submissionRepository,
-            submissionQueueAdapter,
-            submissionEmitterAdapter,
+            transactionalEventPublisher,
         )
 
     val now = LocalDateTime.now()
@@ -155,9 +154,8 @@ class CreateSubmissionServiceTest : FunSpec({
                 .returns(Optional.of(problem))
             every { submissionRepository.save(any()) }
                 .returnsArgument(0)
-            every { submissionQueueAdapter.enqueue(any()) }
-                .returns(Unit)
-            every { submissionEmitterAdapter.emitForContest(any()) }
+            val eventSlot = slot<SubmissionCreatedEvent>()
+            every { transactionalEventPublisher.publish(capture(eventSlot)) }
                 .returns(Unit)
 
             val result = sut.create(2, inputDTO)
@@ -169,6 +167,8 @@ class CreateSubmissionServiceTest : FunSpec({
             result.language shouldBe inputDTO.language
             result.status shouldBe Submission.Status.JUDGING
             result.code shouldBe attachment
+
+            eventSlot.captured.submission shouldBe result
         }
     }
 })

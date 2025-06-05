@@ -8,6 +8,7 @@ create table submission (
     language text not null,
     status text not null,
     code_key uuid not null,
+    has_failed boolean not null default false,
     constraint fk_member foreign key (member_id) references member (id),
     constraint fk_problem foreign key (problem_id) references problem (id),
     constraint fk_code_key foreign key (code_key) references attachment (key)
@@ -25,6 +26,7 @@ create table submission_aud (
     language text not null,
     status text not null,
     code_key uuid not null,
+    has_failed boolean not null,
     primary key (rev, id),
     constraint fk_member foreign key (member_id) references member (id),
     constraint fk_problem foreign key (problem_id) references problem (id),

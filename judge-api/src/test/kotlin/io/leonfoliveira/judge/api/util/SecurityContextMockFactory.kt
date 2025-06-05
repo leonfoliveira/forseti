@@ -20,6 +20,16 @@ object SecurityContextMockFactory {
             ),
     ) = build(authorization)
 
+    fun buildJudge(
+        authorization: AuthorizationMember =
+            AuthorizationMember(
+                id = 2,
+                name = "judge",
+                login = "login",
+                type = Member.Type.JUDGE,
+            ),
+    ) = build(authorization)
+
     fun build(authorization: AuthorizationMember? = null) =
         mockk<SecurityContext>().apply {
             every { authentication }

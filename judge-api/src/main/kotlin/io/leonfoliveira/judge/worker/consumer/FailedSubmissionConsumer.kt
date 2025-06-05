@@ -2,15 +2,15 @@ package io.leonfoliveira.judge.worker.consumer
 
 import io.awspring.cloud.sqs.annotation.SqsListener
 import io.leonfoliveira.judge.core.domain.exception.BusinessException
-import io.leonfoliveira.judge.core.service.submission.RunSubmissionService
+import io.leonfoliveira.judge.core.service.submission.UpdateSubmissionService
 import org.springframework.messaging.handler.annotation.Headers
 import org.springframework.stereotype.Component
 
 @Component
-class SubmissionConsumer(
-    private val runSubmissionService: RunSubmissionService,
+class FailedSubmissionConsumer(
+    private val updateSubmissionService: UpdateSubmissionService,
 ) : SqsConsumer() {
-    @SqsListener("\${spring.cloud.aws.sqs.submission-queue}")
+    @SqsListener("\${spring.cloud.aws.sqs.submission-dlq}")
     override fun receiveMessage(
         message: String,
         @Headers headers: Map<String, Any>,
@@ -22,6 +22,6 @@ class SubmissionConsumer(
         val id =
             message.toIntOrNull()
                 ?: throw BusinessException("Invalid message format: $message")
-        runSubmissionService.run(id)
+        updateSubmissionService.fail(id)
     }
 }

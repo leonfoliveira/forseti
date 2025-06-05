@@ -28,4 +28,12 @@ class WebSocketSubmissionEmitter(
             submission.toEmmitDTO(),
         )
     }
+
+    override fun emitFail(submission: Submission) {
+        logger.info("Emitting failed submission with id: ${submission.id} for contest: ${submission.contest.id}")
+        messagingTemplate.convertAndSend(
+            "/topic/contests/${submission.contest.id}/submissions/fail",
+            submission.toEmmitDTO(),
+        )
+    }
 }
