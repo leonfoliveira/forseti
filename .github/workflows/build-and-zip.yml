@@ -46,6 +46,4 @@ jobs:
       - name: Upload ZIP to release
         uses: softprops/action-gh-release@v1
         with:
-          files: judge-${{ steps.vars.outputs.tag }}.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: docker/production/judge-${{ steps.vars.outputs.tag }}.zip
