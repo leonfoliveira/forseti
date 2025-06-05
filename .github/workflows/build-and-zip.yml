@@ -25,6 +25,9 @@ jobs:
       - name: Set version environment variable
         run: echo "VERSION=${{ steps.vars.outputs.tag }}" >> $GITHUB_ENV
 
+      - name: Set up Docker Compose
+        run: sed -i 's/\${VERSION}/"${{ steps.vars.outputs.tag }}"/ docker-compose.yml
+
       - name: Build images
         run: docker compose build
 

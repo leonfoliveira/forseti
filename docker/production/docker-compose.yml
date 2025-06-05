@@ -37,7 +37,7 @@ services:
       - ./localstack-bootstrap:/etc/localstack/init/ready.d
 
   migration:
-    image: judge-migration:${VERSION:-latest}
+    image: judge-migration:${VERSION}
     container_name: judge-migration
     build:
       context: ../../judge-api
@@ -53,7 +53,7 @@ services:
       - postgres
 
   api:
-    image: judge-api:${VERSION:-latest}
+    image: judge-api:${VERSION}
     container_name: judge-api
     build:
       context: ../../judge-api
@@ -90,7 +90,7 @@ services:
       - localstack
 
   web:
-    image: judge-web:${VERSION:-latest}
+    image: judge-web:${VERSION}
     container_name: judge-web
     build:
       context: ../../judge-api
