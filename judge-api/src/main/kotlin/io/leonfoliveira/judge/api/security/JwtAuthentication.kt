@@ -1,4 +1,4 @@
-package io.leonfoliveira.judge.api.config.security
+package io.leonfoliveira.judge.api.security
 
 import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import org.springframework.security.core.Authentication

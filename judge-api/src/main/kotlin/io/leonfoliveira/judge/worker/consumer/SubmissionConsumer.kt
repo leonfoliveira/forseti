@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 class SubmissionConsumer(
     private val runSubmissionService: RunSubmissionService,
 ) : SqsConsumer() {
-    @SqsListener("\${spring.cloud.aws.sqs.submission-queue}", acknowledgementMode = "ON_SUCCESS")
+    @SqsListener("\${spring.cloud.aws.sqs.submission-queue}")
     override fun receiveMessage(
         message: String,
         @Headers headers: Map<String, Any>,

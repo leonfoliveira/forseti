@@ -1,5 +1,6 @@
-package io.leonfoliveira.judge.api.config.security
+package io.leonfoliveira.judge.api.security.http
 
+import io.leonfoliveira.judge.api.security.JwtAuthentication
 import io.leonfoliveira.judge.api.util.Private
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.UnauthorizedException
@@ -12,7 +13,7 @@ import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
 
 @Component
-class PrivateInterceptor : HandlerInterceptor {
+class HttpPrivateInterceptor : HandlerInterceptor {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun preHandle(
@@ -20,7 +21,7 @@ class PrivateInterceptor : HandlerInterceptor {
         response: HttpServletResponse,
         handler: Any,
     ): Boolean {
-        logger.info("Started PrivateInterceptor")
+        logger.info("Started PrivateHttpInterceptor")
 
         if (handler !is HandlerMethod) {
             logger.info("Handler is not a HandlerMethod")

@@ -3,13 +3,13 @@ package io.leonfoliveira.judge.core.service.submission
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
-import io.leonfoliveira.judge.core.port.SubmissionQueueAdapter
+import io.leonfoliveira.judge.core.event.SubmissionCreatedEvent
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTO
+import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -22,8 +22,7 @@ class CreateSubmissionService(
     private val memberRepository: MemberRepository,
     private val problemRepository: ProblemRepository,
     private val submissionRepository: SubmissionRepository,
-    private val submissionQueueAdapter: SubmissionQueueAdapter,
-    private val submissionEmitterAdapter: SubmissionEmitterAdapter,
+    private val transactionalEventPublisher: TransactionalEventPublisher,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -66,9 +65,7 @@ class CreateSubmissionService(
                 code = code,
             )
         submissionRepository.save(submission)
-        submissionQueueAdapter.enqueue(submission)
-        submissionEmitterAdapter.emitForContest(submission)
-
+        transactionalEventPublisher.publish(SubmissionCreatedEvent(this, submission))
         logger.info("Submission created, enqueued and emitted")
         return submission
     }

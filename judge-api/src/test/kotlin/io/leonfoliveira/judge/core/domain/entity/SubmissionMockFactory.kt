@@ -14,6 +14,7 @@ object SubmissionMockFactory {
         language: Language = Language.PYTHON_3_13_3,
         status: Submission.Status = Submission.Status.JUDGING,
         code: Attachment = AttachmentMockFactory.build(),
+        hasFailed: Boolean = false,
     ) = Submission(
         id = id,
         createdAt = createdAt,
@@ -24,5 +25,6 @@ object SubmissionMockFactory {
         language = language,
         status = status,
         code = code,
+        hasFailed = hasFailed,
     )
 }

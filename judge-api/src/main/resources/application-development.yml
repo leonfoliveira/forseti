@@ -27,6 +27,7 @@ spring:
         topic: judge-business-events
       sqs:
         submission-queue: judge-submission
+        submission-dlq: judge-submission-dlq
 server:
   cors:
     allowed-origins: http://localhost:3000

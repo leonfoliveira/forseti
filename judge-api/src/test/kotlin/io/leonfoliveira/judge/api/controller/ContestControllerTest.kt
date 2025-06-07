@@ -53,7 +53,6 @@ class ContestControllerTest(
         }
 
         context("ContestController") {
-
             val basePath = "/v1/contests"
 
             test("createContest") {
@@ -191,6 +190,41 @@ class ContestControllerTest(
                     .andExpect {
                         status { isOk() }
                         content { submissions.map { it.toPublicResponseDTO() } }
+                    }
+            }
+        }
+
+        context("Judge") {
+            val basePath = "/v1/contests"
+
+            beforeEach {
+                every { SecurityContextHolder.getContext() }
+                    .returns(SecurityContextMockFactory.buildJudge())
+            }
+
+            test("findAllSubmissionsForJudge") {
+                val contestId = 1
+                val submissions = listOf(SubmissionMockFactory.build())
+                every { findSubmissionService.findAllByContest(contestId) }
+                    .returns(submissions)
+
+                mockMvc.get("$basePath/$contestId/submissions/judge")
+                    .andExpect {
+                        status { isOk() }
+                        content { submissions.map { it.toPrivateResponseDTO() } }
+                    }
+            }
+
+            test("findAllFailedSubmissions") {
+                val contestId = 1
+                val submissions = listOf(SubmissionMockFactory.build())
+                every { findSubmissionService.findAllFailed(contestId) }
+                    .returns(submissions)
+
+                mockMvc.get("$basePath/$contestId/submissions/failed")
+                    .andExpect {
+                        status { isOk() }
+                        content { submissions.map { it.toPrivateResponseDTO() } }
                     }
             }
         }

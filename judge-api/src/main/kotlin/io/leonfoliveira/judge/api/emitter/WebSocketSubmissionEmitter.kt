@@ -1,6 +1,7 @@
 package io.leonfoliveira.judge.api.emitter
 
 import io.leonfoliveira.judge.api.emitter.dto.emmit.toEmmitDTO
+import io.leonfoliveira.judge.api.emitter.dto.emmit.toPrivateEmmitDTO
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
 import org.slf4j.LoggerFactory
@@ -19,12 +20,24 @@ class WebSocketSubmissionEmitter(
             "/topic/contests/${submission.contest.id}/submissions",
             submission.toEmmitDTO(),
         )
+        messagingTemplate.convertAndSend(
+            "/topic/contests/${submission.contest.id}/submissions/judge",
+            submission.toPrivateEmmitDTO(),
+        )
     }
 
     override fun emitForMember(submission: Submission) {
         logger.info("Emitting submission with id: ${submission.id} for member: ${submission.member.id}")
         messagingTemplate.convertAndSend(
             "/topic/members/${submission.member.id}/submissions",
+            submission.toEmmitDTO(),
+        )
+    }
+
+    override fun emitFail(submission: Submission) {
+        logger.info("Emitting failed submission with id: ${submission.id} for contest: ${submission.contest.id}")
+        messagingTemplate.convertAndSend(
+            "/topic/contests/${submission.contest.id}/submissions/fail",
             submission.toEmmitDTO(),
         )
     }

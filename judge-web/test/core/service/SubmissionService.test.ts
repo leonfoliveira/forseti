@@ -4,9 +4,9 @@ import { AttachmentService } from "@/core/service/AttachmentService";
 import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
 import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmissionInputDTO";
 import { SubmissionPrivateResponseDTO } from "@/core/repository/dto/response/SubmissionPrivateResponseDTO";
-import { CompatClient } from "@stomp/stompjs";
 import { mock, MockProxy } from "jest-mock-extended";
 import { Attachment } from "@/core/domain/model/Attachment";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 jest.mock("@/core/repository/SubmissionRepository");
 jest.mock("@/core/service/AttachmentService");
@@ -66,7 +66,7 @@ describe("SubmissionService", () => {
     it("subscribes to contest submissions and invokes the callback", async () => {
       const contestId = 1;
       const callback = jest.fn();
-      const client = mock<CompatClient>();
+      const client = mock<ListenerClient>();
 
       submissionListener.subscribeForContest.mockResolvedValue(client);
 
@@ -87,7 +87,7 @@ describe("SubmissionService", () => {
     it("subscribes to member submissions and invokes the callback", async () => {
       const memberId = 123;
       const callback = jest.fn();
-      const client = mock<CompatClient>();
+      const client = mock<ListenerClient>();
 
       submissionListener.subscribeForMember.mockResolvedValue(client);
 
@@ -106,11 +106,11 @@ describe("SubmissionService", () => {
 
   describe("unsubscribe", () => {
     it("unsubscribes the given client", async () => {
-      const client = mock<CompatClient>();
+      const client = mock<ListenerClient>();
 
       await submissionService.unsubscribe(client);
 
-      expect(submissionListener.unsubscribe).toHaveBeenCalledWith(client);
+      expect(client.unsubscribe).toHaveBeenCalled();
     });
   });
 });

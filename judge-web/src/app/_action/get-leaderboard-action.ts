@@ -3,14 +3,14 @@ import { recalculateLeaderboard } from "@/app/contests/[id]/leaderboard/util/lea
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
 import { useEffect, useRef } from "react";
 import { contestService, submissionService } from "@/app/_composition";
-import { CompatClient } from "@stomp/stompjs";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { useTranslations } from "next-intl";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 export function useGetLeaderboardAction() {
   const alert = useAlert();
   const action = useAction(getLeaderboard);
-  const listenerRef = useRef<CompatClient>(null);
+  const listenerRef = useRef<ListenerClient>(null);
   const t = useTranslations("_action.get-leaderboard-action");
 
   useEffect(() => {
