@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 @RequestMapping("/v1/auth")
@@ -30,7 +31,7 @@ class AuthenticationController(
 
     @PostMapping("/contests/{id}")
     fun authenticateMember(
-        @PathVariable id: Int,
+        @PathVariable id: UUID,
         @RequestBody body: AuthenticateMemberInputDTO,
     ): ResponseEntity<Authorization> {
         logger.info("[POST] /v1/auth/contests/{id} - id: $id, body: $body")

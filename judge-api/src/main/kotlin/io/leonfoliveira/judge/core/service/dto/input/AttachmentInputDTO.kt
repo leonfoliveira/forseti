@@ -5,5 +5,5 @@ import java.util.UUID
 
 data class AttachmentInputDTO(
     @field:NotEmpty
-    val key: UUID,
+    val id: UUID,
 )

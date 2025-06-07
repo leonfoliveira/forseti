@@ -1,4 +1,4 @@
-package io.leonfoliveira.judge.api.controller.dto.request
+package io.leonfoliveira.judge.api.dto.request
 
 import io.leonfoliveira.judge.core.domain.entity.Submission
 

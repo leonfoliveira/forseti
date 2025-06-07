@@ -29,16 +29,16 @@ class TestCasesValidatorTest : FunSpec({
 
         test("validate succeeds for valid CSV") {
             val validCsv = "input1,output1\ninput2,output2".toByteArray(StandardCharsets.UTF_8)
-            every { bucketAdapter.download(attachment.key) } returns validCsv
+            every { bucketAdapter.download(attachment) } returns validCsv
 
             sut.validate(attachment)
 
-            verify { bucketAdapter.download(attachment.key) }
+            verify { bucketAdapter.download(attachment) }
         }
 
         test("validate throws exception for empty CSV file") {
             val emptyCsv = "".toByteArray(StandardCharsets.UTF_8)
-            every { bucketAdapter.download(attachment.key) } returns emptyCsv
+            every { bucketAdapter.download(attachment) } returns emptyCsv
 
             val exception =
                 shouldThrow<BusinessException> {
@@ -50,7 +50,7 @@ class TestCasesValidatorTest : FunSpec({
 
         test("validate throws exception for CSV with invalid row size") {
             val invalidCsv = "input1,output1\ninput2".toByteArray(StandardCharsets.UTF_8)
-            every { bucketAdapter.download(attachment.key) } returns invalidCsv
+            every { bucketAdapter.download(attachment) } returns invalidCsv
 
             val exception =
                 shouldThrow<BusinessException> {

@@ -1,10 +1,11 @@
 package io.leonfoliveira.judge.core.domain.model
 
 import io.leonfoliveira.judge.core.domain.entity.Member
+import java.util.UUID
 
 object AuthorizationMemberMockFactory {
     fun build(
-        id: Int = 1,
+        id: UUID = UUID.randomUUID(),
         name: String = "name",
         login: String = "login",
         type: Member.Type = Member.Type.CONTESTANT,

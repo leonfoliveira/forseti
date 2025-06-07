@@ -1,12 +1,12 @@
 package io.leonfoliveira.judge.core.port
 
-import java.util.UUID
+import io.leonfoliveira.judge.core.domain.entity.Attachment
 
 interface BucketAdapter {
     fun upload(
+        attachment: Attachment,
         bytes: ByteArray,
-        key: UUID,
     )
 
-    fun download(key: UUID): ByteArray
+    fun download(attachment: Attachment): ByteArray
 }

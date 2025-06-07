@@ -1,9 +1,10 @@
-package io.leonfoliveira.judge.api.controller.dto.response
+package io.leonfoliveira.judge.api.dto.response
 
 import io.leonfoliveira.judge.core.service.dto.output.ProblemWithStatusOutputDTO
+import java.util.UUID
 
 data class ProblemWithStatusResponseDTO(
-    val id: Int,
+    val id: UUID,
     val title: String,
     val description: AttachmentResponseDTO,
     val isAccepted: Boolean,

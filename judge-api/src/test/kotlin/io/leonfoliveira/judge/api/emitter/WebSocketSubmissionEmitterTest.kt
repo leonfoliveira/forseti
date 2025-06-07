@@ -1,8 +1,8 @@
 package io.leonfoliveira.judge.api.emitter
 
 import io.kotest.core.spec.style.FunSpec
-import io.leonfoliveira.judge.api.emitter.dto.emmit.toEmmitDTO
-import io.leonfoliveira.judge.api.emitter.dto.emmit.toPrivateEmmitDTO
+import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
+import io.leonfoliveira.judge.api.dto.response.toPublicResponseDTO
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.mockk.mockk
 import io.mockk.verify
@@ -20,10 +20,10 @@ class WebSocketSubmissionEmitterTest : FunSpec({
         sut.emitForContest(submission)
 
         verify {
-            messagingTemplate.convertAndSend(expectedTopic, submission.toEmmitDTO())
+            messagingTemplate.convertAndSend(expectedTopic, submission.toPublicResponseDTO())
             messagingTemplate.convertAndSend(
-                "/topic/contests/${submission.contest.id}/submissions/judge",
-                submission.toPrivateEmmitDTO(),
+                "/topic/contests/${submission.contest.id}/submissions/full",
+                submission.toFullResponseDTO(),
             )
         }
     }
@@ -35,18 +35,7 @@ class WebSocketSubmissionEmitterTest : FunSpec({
         sut.emitForMember(submission)
 
         verify {
-            messagingTemplate.convertAndSend(expectedTopic, submission.toEmmitDTO())
-        }
-    }
-
-    test("should send failed submission to the contest topic") {
-        val submission = SubmissionMockFactory.build()
-        val expectedTopic = "/topic/contests/${submission.contest.id}/submissions/fail"
-
-        sut.emitFail(submission)
-
-        verify {
-            messagingTemplate.convertAndSend(expectedTopic, submission.toEmmitDTO())
+            messagingTemplate.convertAndSend(expectedTopic, submission.toPublicResponseDTO())
         }
     }
 })

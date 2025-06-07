@@ -16,6 +16,7 @@ import io.leonfoliveira.judge.core.service.dto.input.AuthenticateRootInputDTOMoc
 import io.mockk.every
 import io.mockk.mockk
 import java.util.Optional
+import java.util.UUID
 
 class AuthorizationServiceTest : FunSpec({
     val contestRepository = mockk<ContestRepository>()
@@ -50,7 +51,7 @@ class AuthorizationServiceTest : FunSpec({
     }
 
     context("authenticateMember") {
-        val contestId = 1
+        val contestId = UUID.randomUUID()
         val login = "login"
         val password = "password"
         val member = MemberMockFactory.build(login = login)

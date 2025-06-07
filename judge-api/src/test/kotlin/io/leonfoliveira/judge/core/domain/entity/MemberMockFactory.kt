@@ -1,13 +1,10 @@
 package io.leonfoliveira.judge.core.domain.entity
 
-import java.time.LocalDateTime
+import java.util.UUID
 
 object MemberMockFactory {
     fun build(
-        id: Int = 1,
-        createdAt: LocalDateTime = LocalDateTime.now(),
-        updatedAt: LocalDateTime = LocalDateTime.now(),
-        deletedAt: LocalDateTime? = null,
+        id: UUID = UUID.randomUUID(),
         type: Member.Type = Member.Type.CONTESTANT,
         name: String = "Member Name",
         login: String = "member_login",
@@ -16,9 +13,6 @@ object MemberMockFactory {
         submissions: List<Submission> = emptyList(),
     ) = Member(
         id = id,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
-        deletedAt = deletedAt,
         type = type,
         name = name,
         login = login,

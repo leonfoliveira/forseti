@@ -42,12 +42,12 @@ class AttachmentControllerTest(
         }
 
         test("download") {
-            val key = AttachmentMockFactory.build().key
+            val attachment = AttachmentMockFactory.build()
             val bytes = ByteArray(0)
-            every { attachmentService.download(key) }
+            every { attachmentService.download(attachment.id) }
                 .returns(AttachmentDownloadOutputDTOMockFactory.build())
 
-            mockMvc.get("$basePath/$key")
+            mockMvc.get("$basePath/${attachment.id}")
                 .andExpect {
                     status { isOk() }
                     content { bytes }

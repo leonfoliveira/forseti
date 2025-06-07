@@ -26,6 +26,7 @@ import io.mockk.verify
 import jakarta.validation.Validation
 import java.time.LocalDateTime
 import java.util.Optional
+import java.util.UUID
 
 class UpdateContestServiceTest : FunSpec({
     val attachmentRepository = mockk<AttachmentRepository>()
@@ -110,7 +111,7 @@ class UpdateContestServiceTest : FunSpec({
         test("should throw NotFoundException when member not found") {
             val input =
                 UpdateContestInputDTOMockFactory.build(
-                    members = listOf(UpdateContestInputDTOMockFactory.buildMemberDTO(id = 1)),
+                    members = listOf(UpdateContestInputDTOMockFactory.buildMemberDTO(id = UUID.randomUUID())),
                     problems = listOf(),
                 )
             val contest = ContestMockFactory.build(members = listOf())
@@ -126,7 +127,7 @@ class UpdateContestServiceTest : FunSpec({
             val input =
                 UpdateContestInputDTOMockFactory.build(
                     members = listOf(),
-                    problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = 1)),
+                    problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = UUID.randomUUID())),
                 )
             val contest = ContestMockFactory.build(problems = listOf())
             every { contestRepository.findById(input.id) }
@@ -142,14 +143,14 @@ class UpdateContestServiceTest : FunSpec({
             val input =
                 UpdateContestInputDTOMockFactory.build(
                     members = listOf(),
-                    problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = 1, description = attachment)),
+                    problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = UUID.randomUUID(), description = attachment)),
                 )
-            val contest = ContestMockFactory.build(problems = listOf(ProblemMockFactory.build(id = 1)))
+            val contest = ContestMockFactory.build(problems = listOf(ProblemMockFactory.build(id = UUID.randomUUID())))
             every { contestRepository.findById(input.id) }
                 .returns(Optional.of(contest))
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(AttachmentMockFactory.build()))
-            every { attachmentRepository.findById(attachment.key) }
+            every { attachmentRepository.findById(attachment.id) }
                 .returns(Optional.empty())
 
             shouldThrow<NotFoundException> {
@@ -162,14 +163,14 @@ class UpdateContestServiceTest : FunSpec({
             val input =
                 UpdateContestInputDTOMockFactory.build(
                     members = listOf(),
-                    problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = 1, testCases = attachment)),
+                    problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = UUID.randomUUID(), testCases = attachment)),
                 )
-            val contest = ContestMockFactory.build(problems = listOf(ProblemMockFactory.build(id = 1)))
+            val contest = ContestMockFactory.build(problems = listOf(ProblemMockFactory.build(id = UUID.randomUUID())))
             every { contestRepository.findById(input.id) }
                 .returns(Optional.of(contest))
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(AttachmentMockFactory.build()))
-            every { attachmentRepository.findById(attachment.key) }
+            every { attachmentRepository.findById(attachment.id) }
                 .returns(Optional.empty())
 
             shouldThrow<NotFoundException> {
@@ -179,12 +180,12 @@ class UpdateContestServiceTest : FunSpec({
 
         test("should update contest") {
             val memberDTOToInsert = UpdateContestInputDTOMockFactory.buildMemberDTO(id = null)
-            val memberDTOToUpdate = UpdateContestInputDTOMockFactory.buildMemberDTO(id = 2, password = null)
-            val memberDTOToUpdatePassword = UpdateContestInputDTOMockFactory.buildMemberDTO(id = 3)
+            val memberDTOToUpdate = UpdateContestInputDTOMockFactory.buildMemberDTO(id = UUID.randomUUID(), password = null)
+            val memberDTOToUpdatePassword = UpdateContestInputDTOMockFactory.buildMemberDTO(id = UUID.randomUUID())
 
             val problemDTOToInsert = UpdateContestInputDTOMockFactory.buildProblemDTO(id = null)
-            val problemDTOToUpdate = UpdateContestInputDTOMockFactory.buildProblemDTO(id = 2)
-            val problemDTOToUpdateTestCases = UpdateContestInputDTOMockFactory.buildProblemDTO(id = 3)
+            val problemDTOToUpdate = UpdateContestInputDTOMockFactory.buildProblemDTO(id = UUID.randomUUID())
+            val problemDTOToUpdateTestCases = UpdateContestInputDTOMockFactory.buildProblemDTO(id = UUID.randomUUID())
 
             val inputDTO =
                 UpdateContestInputDTOMockFactory.build(
@@ -194,13 +195,13 @@ class UpdateContestServiceTest : FunSpec({
                     problems = listOf(problemDTOToInsert, problemDTOToUpdate, problemDTOToUpdateTestCases),
                 )
 
-            val memberToDelete = MemberMockFactory.build(id = 1)
-            val memberToUpdate = MemberMockFactory.build(id = 2)
-            val memberToUpdatePassword = MemberMockFactory.build(id = 3)
+            val memberToDelete = MemberMockFactory.build(id = UUID.randomUUID())
+            val memberToUpdate = MemberMockFactory.build(id = memberDTOToUpdate.id!!)
+            val memberToUpdatePassword = MemberMockFactory.build(id = memberDTOToUpdatePassword.id!!)
 
-            val problemToDelete = ProblemMockFactory.build(id = 1)
-            val problemToUpdate = ProblemMockFactory.build(id = 2)
-            val problemToUpdateTestCases = ProblemMockFactory.build(id = 3)
+            val problemToDelete = ProblemMockFactory.build(id = UUID.randomUUID())
+            val problemToUpdate = ProblemMockFactory.build(id = problemDTOToUpdate.id!!)
+            val problemToUpdateTestCases = ProblemMockFactory.build(id = problemDTOToUpdateTestCases.id!!)
 
             val contest =
                 ContestMockFactory.build(

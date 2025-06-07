@@ -1,6 +1,6 @@
 package io.leonfoliveira.judge.api.controller.advice
 
-import io.leonfoliveira.judge.api.controller.dto.response.ErrorResponseDTO
+import io.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.leonfoliveira.judge.core.domain.exception.BusinessException
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
@@ -70,9 +70,8 @@ class GlobalExceptionHandler {
     @ExceptionHandler(Exception::class)
     fun handleGenericException(
         ex: Exception,
-        handlerMethod: HandlerMethod,
     ): ResponseEntity<ErrorResponseDTO> {
-        logger.error("Unexpected error occurred in method: ${handlerMethod.method.name}, message: ${ex.message}", ex)
+        logger.error("Unexpected error occurred, message: ${ex.message}", ex)
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ErrorResponseDTO("An unexpected error occurred"))

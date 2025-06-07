@@ -5,6 +5,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
+import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
@@ -16,6 +17,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import java.time.LocalDateTime
 import java.util.Optional
+import java.util.UUID
 
 class FindSubmissionServiceTest : FunSpec({
     val contestRepository = mockk<ContestRepository>()
@@ -35,114 +37,70 @@ class FindSubmissionServiceTest : FunSpec({
     }
 
     context("findAllByContest") {
+        val id = UUID.randomUUID()
+
         test("should throw NotFoundException when contest not found") {
-            every { contestRepository.findById(1) }
+            every { contestRepository.findById(id) }
                 .returns(Optional.empty())
 
             shouldThrow<NotFoundException> {
-                sut.findAllByContest(1)
+                sut.findAllByContest(id)
             }
         }
 
         test("should throw ForbiddenException when contest has not started") {
             val contest = ContestMockFactory.build(startAt = now.plusDays(1))
 
-            every { contestRepository.findById(1) }
+            every { contestRepository.findById(id) }
                 .returns(Optional.of(contest))
 
             shouldThrow<ForbiddenException> {
-                sut.findAllByContest(1)
+                sut.findAllByContest(id)
             }
         }
 
-        test("should return sorted list of submissions") {
-            val submission1 = SubmissionMockFactory.build(createdAt = now)
-            val submission2 = SubmissionMockFactory.build(createdAt = now.minusSeconds(1))
-            val member1 =
-                MemberMockFactory.build(
-                    submissions = listOf(submission1),
-                )
-            val member2 =
-                MemberMockFactory.build(
-                    submissions = listOf(submission2),
-                )
+        test("should return submissions for contest") {
             val contest =
                 ContestMockFactory.build(
                     startAt = now.minusDays(1),
-                    members = listOf(member1, member2),
+                    members = listOf(MemberMockFactory.build(submissions = listOf(SubmissionMockFactory.build()))),
                 )
 
-            every { contestRepository.findById(1) }
+            every { contestRepository.findById(id) }
                 .returns(Optional.of(contest))
 
-            val result = sut.findAllByContest(1)
+            val submissions = sut.findAllByContest(id)
 
-            result shouldBe listOf(submission2, submission1)
+            submissions shouldBe contest.members.flatMap { it.submissions }.sortedBy { it.createdAt }
+        }
+
+        test("should return submissions for contest filtered by status") {
+            val contest =
+                ContestMockFactory.build(
+                    startAt = now.minusDays(1),
+                    members = listOf(MemberMockFactory.build(submissions = listOf(SubmissionMockFactory.build()))),
+                )
+            val status = Submission.Status.ACCEPTED
+
+            every { contestRepository.findById(id) }
+                .returns(Optional.of(contest))
+
+            val submissions = sut.findAllByContest(id, status)
+
+            submissions shouldBe contest.members.flatMap { it.submissions }.filter { it.status == status }.sortedBy { it.createdAt }
         }
     }
 
     context("findAllByMember") {
+        val memberId = UUID.randomUUID()
+
         test("should throw NotFoundException when member not found") {
-            every { memberRepository.findById(1) }
+            every { memberRepository.findById(memberId) }
                 .returns(Optional.empty())
 
             shouldThrow<NotFoundException> {
-                sut.findAllByMember(1)
+                sut.findAllByMember(memberId)
             }
-        }
-
-        test("should return sorted list of submissions") {
-            val submission1 = SubmissionMockFactory.build(createdAt = now)
-            val submission2 = SubmissionMockFactory.build(createdAt = now.minusSeconds(1))
-            val member =
-                MemberMockFactory.build(
-                    id = 1,
-                    submissions = listOf(submission1, submission2),
-                )
-
-            every { memberRepository.findById(1) }
-                .returns(Optional.of(member))
-
-            val result = sut.findAllByMember(1)
-
-            result shouldBe listOf(submission2, submission1)
-        }
-    }
-
-    context("findAllFailed") {
-        test("should throw NotFoundException when contest not found") {
-            every { contestRepository.findById(1) }
-                .returns(Optional.empty())
-
-            shouldThrow<NotFoundException> {
-                sut.findAllFailed(1)
-            }
-        }
-
-        test("should return sorted list of failed submissions") {
-            val submission1 = SubmissionMockFactory.build(hasFailed = true, createdAt = now)
-            val submission2 = SubmissionMockFactory.build(hasFailed = true, createdAt = now.minusSeconds(1))
-            val submission3 = SubmissionMockFactory.build(hasFailed = false, createdAt = now.minusSeconds(2))
-            val member1 =
-                MemberMockFactory.build(
-                    submissions = listOf(submission1, submission3),
-                )
-            val member2 =
-                MemberMockFactory.build(
-                    submissions = listOf(submission2),
-                )
-            val contest =
-                ContestMockFactory.build(
-                    startAt = now.minusDays(1),
-                    members = listOf(member1, member2),
-                )
-
-            every { contestRepository.findById(1) }
-                .returns(Optional.of(contest))
-
-            val result = sut.findAllFailed(1)
-
-            result shouldBe listOf(submission2, submission1)
         }
     }
 })

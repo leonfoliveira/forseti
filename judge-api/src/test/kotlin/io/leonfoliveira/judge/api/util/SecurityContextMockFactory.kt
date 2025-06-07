@@ -6,6 +6,7 @@ import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.mockk.every
 import io.mockk.mockk
 import org.springframework.security.core.context.SecurityContext
+import java.util.UUID
 
 object SecurityContextMockFactory {
     fun buildRoot() = build(AuthorizationMember.ROOT)
@@ -13,7 +14,7 @@ object SecurityContextMockFactory {
     fun buildContestant(
         authorization: AuthorizationMember =
             AuthorizationMember(
-                id = 1,
+                id = UUID.randomUUID(),
                 name = "name",
                 login = "login",
                 type = Member.Type.CONTESTANT,
@@ -23,7 +24,7 @@ object SecurityContextMockFactory {
     fun buildJudge(
         authorization: AuthorizationMember =
             AuthorizationMember(
-                id = 2,
+                id = UUID.randomUUID(),
                 name = "judge",
                 login = "login",
                 type = Member.Type.JUDGE,

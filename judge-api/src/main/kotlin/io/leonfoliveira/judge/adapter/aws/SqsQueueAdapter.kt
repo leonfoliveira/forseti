@@ -40,6 +40,11 @@ class SqsQueueAdapter(
                                 .dataType("String")
                                 .stringValue(traceId)
                                 .build(),
+                        "contentType" to
+                            MessageAttributeValue.builder()
+                                .dataType("String")
+                                .stringValue("application/json")
+                                .build(),
                     ),
                 )
                 .build()

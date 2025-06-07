@@ -2,7 +2,7 @@ package io.leonfoliveira.judge.api.controller.advice
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import io.leonfoliveira.judge.api.controller.dto.response.ErrorResponseDTO
+import io.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.leonfoliveira.judge.core.domain.exception.BusinessException
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
@@ -135,7 +135,7 @@ class GlobalExceptionHandlerTest : FunSpec({
     test("handleGenericException should return INTERNAL_SERVER_ERROR") {
         val exception = Exception("Generic exception")
 
-        val response = sut.handleGenericException(exception, mockk<HandlerMethod>(relaxed = true))
+        val response = sut.handleGenericException(exception)
 
         response.statusCode shouldBe HttpStatus.INTERNAL_SERVER_ERROR
         response.body shouldBe ErrorResponseDTO("An unexpected error occurred")

@@ -10,9 +10,10 @@ import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import java.time.LocalDateTime
+import java.util.UUID
 
 data class UpdateContestInputDTO(
-    val id: Int,
+    val id: UUID,
     @field:NotBlank
     val title: String,
     @field:NotEmpty
@@ -30,7 +31,7 @@ data class UpdateContestInputDTO(
         get() = startAt.isBefore(endAt)
 
     data class MemberDTO(
-        val id: Int? = null,
+        val id: UUID? = null,
         val type: Member.Type,
         @field:NotBlank
         val name: String,
@@ -57,8 +58,12 @@ data class UpdateContestInputDTO(
         }
     }
 
+    @get:AssertFalse(message = "login must be unique")
+    val isLoginDuplicated: Boolean
+        get() = members.groupBy { it.login }.any { it.value.size > 1 }
+
     data class ProblemDTO(
-        val id: Int? = null,
+        val id: UUID? = null,
         @field:NotEmpty
         val title: String,
         val description: AttachmentInputDTO,

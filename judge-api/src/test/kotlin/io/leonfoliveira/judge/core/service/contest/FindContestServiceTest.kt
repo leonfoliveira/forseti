@@ -9,6 +9,7 @@ import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.mockk.every
 import io.mockk.mockk
 import java.util.Optional
+import java.util.UUID
 
 class FindContestServiceTest : FunSpec({
     val contestRepository = mockk<ContestRepository>()
@@ -29,7 +30,7 @@ class FindContestServiceTest : FunSpec({
 
     context("findById") {
         test("should throw NotFoundException when contest not found") {
-            val id = 1
+            val id = UUID.randomUUID()
             every { contestRepository.findById(id) }
                 .returns(Optional.empty())
 
@@ -39,7 +40,7 @@ class FindContestServiceTest : FunSpec({
         }
 
         test("should return contest") {
-            val id = 1
+            val id = UUID.randomUUID()
             val contest = ContestMockFactory.build()
             every { contestRepository.findById(id) }
                 .returns(Optional.of(contest))

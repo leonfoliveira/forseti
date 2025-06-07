@@ -18,29 +18,28 @@ class AttachmentService(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun upload(file: MultipartFile): Attachment {
-        val key = UUID.randomUUID()
-        logger.info("Uploading attachment using key: $key")
+        val id = UUID.randomUUID()
         val attachment =
             Attachment(
-                key = key,
-                filename = file.originalFilename ?: key.toString(),
+                id = id,
+                filename = file.originalFilename ?: id.toString(),
                 contentType = file.contentType ?: "application/octet-stream",
             )
-        val bytes = file.bytes
-        bucketAdapter.upload(bytes, attachment.key)
+        logger.info("Uploading ${file.bytes} bytes to attachment with id: ${attachment.id}")
         attachmentRepository.save(attachment)
+        bucketAdapter.upload(attachment, file.bytes)
 
         logger.info("Finished uploading attachment")
         return attachment
     }
 
-    fun download(key: UUID): AttachmentDownloadOutputDTO {
-        logger.info("Downloading attachment with key: $key")
+    fun download(id: UUID): AttachmentDownloadOutputDTO {
+        logger.info("Downloading attachment with id: $id")
         val attachment =
-            attachmentRepository.findById(key).orElseThrow {
-                NotFoundException("Could not find attachment with key = $key")
+            attachmentRepository.findById(id).orElseThrow {
+                NotFoundException("Could not find attachment with id = $id")
             }
-        val bytes = bucketAdapter.download(key)
+        val bytes = bucketAdapter.download(attachment)
 
         logger.info("Finished downloading attachment")
         return AttachmentDownloadOutputDTO(

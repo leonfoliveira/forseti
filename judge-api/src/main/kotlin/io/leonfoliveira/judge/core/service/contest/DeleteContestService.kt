@@ -10,6 +10,7 @@ import io.leonfoliveira.judge.core.repository.ProblemRepository
 import io.leonfoliveira.judge.core.util.TimeUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class DeleteContestService(
@@ -19,7 +20,7 @@ class DeleteContestService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun delete(id: Int) {
+    fun delete(id: UUID) {
         logger.info("Deleting contest with id: $id")
 
         val contest =

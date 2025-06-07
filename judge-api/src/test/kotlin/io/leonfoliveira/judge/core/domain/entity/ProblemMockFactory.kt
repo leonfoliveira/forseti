@@ -1,13 +1,10 @@
 package io.leonfoliveira.judge.core.domain.entity
 
-import java.time.LocalDateTime
+import java.util.UUID
 
 object ProblemMockFactory {
     fun build(
-        id: Int = 1,
-        createdAt: LocalDateTime = LocalDateTime.now(),
-        updatedAt: LocalDateTime = LocalDateTime.now(),
-        deletedAt: LocalDateTime? = null,
+        id: UUID = UUID.randomUUID(),
         title: String = "Problem Name",
         description: Attachment = AttachmentMockFactory.build(),
         timeLimit: Int = 1000,
@@ -16,9 +13,6 @@ object ProblemMockFactory {
         contest: Contest = ContestMockFactory.build(),
     ) = Problem(
         id = id,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
-        deletedAt = deletedAt,
         title = title,
         description = description,
         timeLimit = timeLimit,

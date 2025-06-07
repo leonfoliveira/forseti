@@ -14,6 +14,7 @@ import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
+import java.util.UUID
 
 @Service
 @Validated
@@ -76,7 +77,7 @@ class UpdateContestService(
     }
 
     private fun updateMember(
-        membersHash: Map<Int, Member>,
+        membersHash: Map<UUID, Member>,
         memberDTO: UpdateContestInputDTO.MemberDTO,
     ): Member {
         logger.info("Updating member with id: ${memberDTO.id}")
@@ -96,7 +97,7 @@ class UpdateContestService(
     }
 
     private fun updateProblem(
-        problemsHash: Map<Int, Problem>,
+        problemsHash: Map<UUID, Problem>,
         problemDTO: UpdateContestInputDTO.ProblemDTO,
     ): Problem {
         logger.info("Updating problem with id: ${problemDTO.id}")
@@ -105,17 +106,17 @@ class UpdateContestService(
             problemsHash[problemDTO.id]
                 ?: throw NotFoundException("Could not find problem with id = ${problemDTO.id}")
 
-        if (problem.description.key != problemDTO.description.key) {
+        if (problem.description.id != problemDTO.description.id) {
             val description =
-                attachmentRepository.findById(problemDTO.description.key).orElseThrow {
-                    NotFoundException("Could not find description attachment with key = ${problemDTO.description.key}")
+                attachmentRepository.findById(problemDTO.description.id).orElseThrow {
+                    NotFoundException("Could not find description attachment with id: ${problemDTO.description.id}")
                 }
             problem.description = description
         }
-        if (problem.testCases.key != problemDTO.testCases) {
+        if (problem.testCases.id != problemDTO.testCases) {
             val testCases =
-                attachmentRepository.findById(problemDTO.testCases.key).orElseThrow {
-                    NotFoundException("Could not find testCases attachment with key = ${problemDTO.testCases.key}")
+                attachmentRepository.findById(problemDTO.testCases.id).orElseThrow {
+                    NotFoundException("Could not find testCases attachment with id: ${problemDTO.testCases.id}")
                 }
             testCasesValidator.validate(testCases)
             problem.testCases = testCases

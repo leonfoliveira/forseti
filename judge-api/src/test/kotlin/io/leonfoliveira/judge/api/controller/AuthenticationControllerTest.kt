@@ -14,6 +14,7 @@ import io.mockk.every
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
+import java.util.UUID
 
 @ControllerTest([AuthenticationController::class])
 class AuthenticationControllerTest(
@@ -43,14 +44,13 @@ class AuthenticationControllerTest(
         }
 
         test("authenticateMember") {
-            val contestId = 1
+            val contestId = UUID.randomUUID()
             val login = "login"
-            val password = "password"
             val authorizationOutputDTO =
                 Authorization(
                     member =
                         AuthorizationMember(
-                            id = 1,
+                            id = UUID.randomUUID(),
                             name = "name",
                             login = login,
                             type = Member.Type.CONTESTANT,

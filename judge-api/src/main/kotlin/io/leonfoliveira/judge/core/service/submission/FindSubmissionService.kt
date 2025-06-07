@@ -7,6 +7,7 @@ import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class FindSubmissionService(
@@ -15,8 +16,15 @@ class FindSubmissionService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun findAllByContest(contestId: Int): List<Submission> {
-        logger.info("Finding all submissions for contest with id: $contestId")
+    fun findAllByContest(contestId: UUID): List<Submission> {
+        return findAllByContest(contestId, null)
+    }
+
+    fun findAllByContest(
+        contestId: UUID,
+        status: Submission.Status?,
+    ): List<Submission> {
+        logger.info("Finding all submissions for contest with id: $contestId and status: $status")
 
         val contest =
             contestRepository.findById(contestId).orElseThrow {
@@ -28,13 +36,13 @@ class FindSubmissionService(
         val submissions =
             contest.members.map {
                 it.submissions
-            }.flatten()
+            }.flatten().filter { it.status == status || status == null }
 
         logger.info("Found ${submissions.size} submissions")
         return submissions.sortedBy { it.createdAt }
     }
 
-    fun findAllByMember(memberId: Int): List<Submission> {
+    fun findAllByMember(memberId: UUID): List<Submission> {
         logger.info("Finding all submissions for member with id: $memberId")
 
         val member =
@@ -44,21 +52,5 @@ class FindSubmissionService(
 
         logger.info("Found ${member.submissions.size} submissions for member")
         return member.submissions.sortedBy { it.createdAt }
-    }
-
-    fun findAllFailed(contestId: Int): List<Submission> {
-        logger.info("Finding all failed submissions for contest with id: $contestId")
-
-        val contest =
-            contestRepository.findById(contestId).orElseThrow {
-                NotFoundException("Could not find contest with id = $contestId")
-            }
-        val submissions =
-            contest.members.map {
-                it.submissions
-            }.flatten().filter { it.hasFailed }
-
-        logger.info("Found ${submissions.size} failed submissions")
-        return submissions.sortedBy { it.createdAt }
     }
 }

@@ -5,12 +5,12 @@ import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import java.util.UUID
 
-abstract class SqsConsumer {
+abstract class SqsConsumer<TMessage> {
     private val logger = LoggerFactory.getLogger(SqsConsumer::class.java)
 
     @Transactional
     open fun receiveMessage(
-        message: String,
+        message: TMessage,
         headers: Map<String, Any>,
     ) {
         val traceId =
@@ -30,5 +30,5 @@ abstract class SqsConsumer {
         }
     }
 
-    abstract fun handleMessage(message: String)
+    abstract fun handleMessage(message: TMessage)
 }

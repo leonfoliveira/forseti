@@ -3,8 +3,8 @@ package io.leonfoliveira.judge.api.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
-import io.leonfoliveira.judge.api.controller.dto.request.UpdateSubmissionStatusRequestDTO
-import io.leonfoliveira.judge.api.controller.dto.response.toPrivateResponseDTO
+import io.leonfoliveira.judge.api.dto.request.UpdateSubmissionStatusRequestDTO
+import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
 import io.leonfoliveira.judge.api.util.SecurityContextMockFactory
 import io.leonfoliveira.judge.config.ControllerTest
 import io.leonfoliveira.judge.core.domain.entity.Submission
@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
+import java.util.UUID
 
 @ControllerTest([SubmissionController::class])
 class SubmissionControllerTest(
@@ -51,7 +52,7 @@ class SubmissionControllerTest(
             }
                 .andExpect {
                     status { isOk() }
-                    content { submission.toPrivateResponseDTO() }
+                    content { submission.toFullResponseDTO() }
                 }
         }
 
@@ -62,15 +63,15 @@ class SubmissionControllerTest(
             every { findSubmissionService.findAllByMember(any()) }
                 .returns(submissions)
 
-            mockMvc.get("$basePath/me")
+            mockMvc.get("$basePath/full/me")
                 .andExpect {
                     status { isOk() }
-                    content { submissions.map { it.toPrivateResponseDTO() } }
+                    content { submissions.map { it.toFullResponseDTO() } }
                 }
         }
 
         test("updateSubmissionStatus") {
-            val submissionId = 1
+            val submissionId = UUID.randomUUID()
             val requestBody = UpdateSubmissionStatusRequestDTO(status = Submission.Status.ACCEPTED)
             every { SecurityContextHolder.getContext() }
                 .returns(SecurityContextMockFactory.buildJudge())

@@ -12,6 +12,7 @@ import io.leonfoliveira.judge.core.service.dto.input.AuthenticateRootInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class AuthorizationService(
@@ -38,7 +39,7 @@ class AuthorizationService(
     }
 
     fun authenticateMember(
-        contestId: Int,
+        contestId: UUID,
         inputDTO: AuthenticateMemberInputDTO,
     ): Authorization {
         logger.info("Authenticating member for contest with id = $contestId")

@@ -1,5 +1,6 @@
 package io.leonfoliveira.judge.adapter.aws
 
+import io.leonfoliveira.judge.core.domain.entity.Attachment
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.BucketAdapter
 import org.slf4j.LoggerFactory
@@ -10,7 +11,6 @@ import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
-import java.util.UUID
 
 @Service
 class S3BucketAdapter(
@@ -21,42 +21,42 @@ class S3BucketAdapter(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun upload(
+        attachment: Attachment,
         bytes: ByteArray,
-        key: UUID,
     ) {
-        logger.info("Uploading attachment with key: $key and size: ${bytes.size}")
+        logger.info("Uploading $bytes bytes to S3 bucket: $bucket with key: ${attachment.id}")
 
         val putObjectRequest =
             PutObjectRequest
                 .builder()
                 .bucket(bucket)
-                .key(key.toString())
+                .key(attachment.id.toString())
                 .build()
 
         s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes))
 
-        logger.info("Successfully uploaded attachment with key: $key")
+        logger.info("Successfully uploaded")
     }
 
-    override fun download(key: UUID): ByteArray {
-        logger.info("Downloading attachment with key: $key")
+    override fun download(attachment: Attachment): ByteArray {
+        logger.info("Downloading attachment with key: ${attachment.id} from S3 bucket: $bucket")
 
         val getObjectRequest =
             GetObjectRequest
                 .builder()
                 .bucket(bucket)
-                .key(key.toString())
+                .key(attachment.id.toString())
                 .build()
 
         val s3Object =
             try {
                 s3Client.getObject(getObjectRequest)
             } catch (ex: NoSuchKeyException) {
-                throw NotFoundException("Could not find attachment with key: $key")
+                throw NotFoundException("Could not find attachment with key: ${attachment.id}")
             }
 
         val bytes = s3Object.readAllBytes()
-        logger.info("Successfully downloaded attachment with key: $key and size: ${bytes.size}")
+        logger.info("Successfully downloaded attachment with key: ${attachment.id} and size: ${bytes.size}")
         return bytes
     }
 }

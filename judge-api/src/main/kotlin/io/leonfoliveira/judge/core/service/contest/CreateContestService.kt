@@ -76,12 +76,12 @@ class CreateContestService(
         logger.info("Creating problem with title: ${problemDTO.title}")
 
         val description =
-            attachmentRepository.findById(problemDTO.description.key).orElseThrow {
-                NotFoundException("Could not find description attachment with key = ${problemDTO.description.key}")
+            attachmentRepository.findById(problemDTO.description.id).orElseThrow {
+                NotFoundException("Could not find description attachment with id: ${problemDTO.description.id}")
             }
         val testCases =
-            attachmentRepository.findById(problemDTO.testCases.key).orElseThrow {
-                NotFoundException("Could not find testCases attachment with key = ${problemDTO.testCases.key}")
+            attachmentRepository.findById(problemDTO.testCases.id).orElseThrow {
+                NotFoundException("Could not find testCases attachment with id: ${problemDTO.testCases.id}")
             }
         testCasesValidator.validate(testCases)
 

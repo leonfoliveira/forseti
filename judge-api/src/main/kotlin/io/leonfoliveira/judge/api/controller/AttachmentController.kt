@@ -1,7 +1,7 @@
 package io.leonfoliveira.judge.api.controller
 
-import io.leonfoliveira.judge.api.controller.dto.response.AttachmentResponseDTO
-import io.leonfoliveira.judge.api.controller.dto.response.toResponseDTO
+import io.leonfoliveira.judge.api.dto.response.AttachmentResponseDTO
+import io.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.leonfoliveira.judge.api.util.Private
 import io.leonfoliveira.judge.api.util.Quota
 import io.leonfoliveira.judge.core.service.attachment.AttachmentService
@@ -40,12 +40,12 @@ class AttachmentController(
         return ResponseEntity.ok(attachment.toResponseDTO())
     }
 
-    @GetMapping("/{key}")
+    @GetMapping("/{id}")
     fun downloadAttachment(
-        @PathVariable("key") key: UUID,
+        @PathVariable("id") id: UUID,
     ): ResponseEntity<ByteArray> {
-        logger.info("[GET] /v1/attachments/{key} - key: $key")
-        val download = attachmentService.download(key)
+        logger.info("[GET] /v1/attachments/{id} - id: $id")
+        val download = attachmentService.download(id)
         val headers =
             HttpHeaders().apply {
                 contentDisposition =

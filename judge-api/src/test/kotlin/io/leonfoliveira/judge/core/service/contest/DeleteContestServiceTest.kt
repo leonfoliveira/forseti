@@ -17,6 +17,7 @@ import io.mockk.mockk
 import io.mockk.mockkObject
 import java.time.LocalDateTime
 import java.util.Optional
+import java.util.UUID
 
 class DeleteContestServiceTest : FunSpec({
     val contestRepository = mockk<ContestRepository>()
@@ -38,7 +39,7 @@ class DeleteContestServiceTest : FunSpec({
                 .returns(Optional.empty())
 
             shouldThrow<NotFoundException> {
-                sut.delete(1)
+                sut.delete(UUID.randomUUID())
             }
         }
 
@@ -48,7 +49,7 @@ class DeleteContestServiceTest : FunSpec({
                 .returns(Optional.of(contest))
 
             shouldThrow<ForbiddenException> {
-                sut.delete(1)
+                sut.delete(UUID.randomUUID())
             }
         }
 
@@ -59,7 +60,7 @@ class DeleteContestServiceTest : FunSpec({
             every { contestRepository.save(any()) }
                 .returns(contest)
 
-            sut.delete(1)
+            sut.delete(UUID.randomUUID())
 
             contest.deletedAt shouldBe now
         }

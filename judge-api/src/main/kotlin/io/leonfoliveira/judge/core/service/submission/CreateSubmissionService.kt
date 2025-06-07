@@ -14,6 +14,7 @@ import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
+import java.util.UUID
 
 @Service
 @Validated
@@ -27,7 +28,7 @@ class CreateSubmissionService(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun create(
-        memberId: Int,
+        memberId: UUID,
         @Valid inputDTO: CreateSubmissionInputDTO,
     ): Submission {
         logger.info("Creating submission for member with id: $memberId and problem with id: ${inputDTO.problemId}")
@@ -41,8 +42,8 @@ class CreateSubmissionService(
                 NotFoundException("Could not find problem with id = ${inputDTO.problemId}")
             }
         val code =
-            attachmentRepository.findById(inputDTO.code.key).orElseThrow {
-                NotFoundException("Could not find code attachment with key = ${inputDTO.code.key}")
+            attachmentRepository.findById(inputDTO.code.id).orElseThrow {
+                NotFoundException("Could not find code attachment with id = ${inputDTO.code.id}")
             }
         val contest = problem.contest
 

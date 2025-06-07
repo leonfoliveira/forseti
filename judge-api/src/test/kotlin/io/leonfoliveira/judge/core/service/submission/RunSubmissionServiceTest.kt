@@ -15,6 +15,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import java.util.Optional
+import java.util.UUID
 
 class RunSubmissionServiceTest : FunSpec({
     val submissionRepository = mockk<SubmissionRepository>()
@@ -29,12 +30,14 @@ class RunSubmissionServiceTest : FunSpec({
         )
 
     context("run") {
+        val id = UUID.randomUUID()
+
         test("should throw NotFoundException when submission is not found") {
-            every { submissionRepository.findById(1) }
+            every { submissionRepository.findById(id) }
                 .returns(Optional.empty())
 
             shouldThrow<NotFoundException> {
-                sut.run(1)
+                sut.run(id)
             }
         }
 
@@ -43,11 +46,11 @@ class RunSubmissionServiceTest : FunSpec({
                 SubmissionMockFactory.build(
                     status = Submission.Status.ACCEPTED,
                 )
-            every { submissionRepository.findById(1) }
+            every { submissionRepository.findById(id) }
                 .returns(Optional.of(submission))
 
             shouldThrow<ForbiddenException> {
-                sut.run(1)
+                sut.run(id)
             }
         }
 
@@ -56,7 +59,7 @@ class RunSubmissionServiceTest : FunSpec({
                 SubmissionMockFactory.build(
                     status = Submission.Status.JUDGING,
                 )
-            every { submissionRepository.findById(1) }
+            every { submissionRepository.findById(id) }
                 .returns(Optional.of(submission))
             every { submissionRunnerAdapter.run(submission) }
                 .returns(Submission.Status.ACCEPTED)
@@ -66,7 +69,7 @@ class RunSubmissionServiceTest : FunSpec({
             every { transactionalEventPublisher.publish(capture(eventSlot)) }
                 .returns(Unit)
 
-            val result = sut.run(1)
+            val result = sut.run(id)
 
             result.status shouldBe Submission.Status.ACCEPTED
             eventSlot.captured.submission shouldBe submission

@@ -24,6 +24,7 @@ import io.mockk.mockkObject
 import io.mockk.slot
 import java.time.LocalDateTime
 import java.util.Optional
+import java.util.UUID
 
 class CreateSubmissionServiceTest : FunSpec({
     val attachmentRepository = mockk<AttachmentRepository>()
@@ -54,7 +55,7 @@ class CreateSubmissionServiceTest : FunSpec({
                 .returns(Optional.empty())
 
             shouldThrow<NotFoundException> {
-                sut.create(2, CreateSubmissionInputDTOMockFactory.build())
+                sut.create(UUID.randomUUID(), CreateSubmissionInputDTOMockFactory.build())
             }
         }
 
@@ -65,7 +66,7 @@ class CreateSubmissionServiceTest : FunSpec({
                 .returns(Optional.empty())
 
             shouldThrow<NotFoundException> {
-                sut.create(2, CreateSubmissionInputDTOMockFactory.build())
+                sut.create(UUID.randomUUID(), CreateSubmissionInputDTOMockFactory.build())
             }
         }
 
@@ -78,7 +79,7 @@ class CreateSubmissionServiceTest : FunSpec({
                 .returns(Optional.empty())
 
             shouldThrow<NotFoundException> {
-                sut.create(2, CreateSubmissionInputDTOMockFactory.build())
+                sut.create(UUID.randomUUID(), CreateSubmissionInputDTOMockFactory.build())
             }
         }
 
@@ -94,7 +95,7 @@ class CreateSubmissionServiceTest : FunSpec({
                 .returns(Optional.of(problem))
 
             shouldThrow<ForbiddenException> {
-                sut.create(2, CreateSubmissionInputDTOMockFactory.build())
+                sut.create(UUID.randomUUID(), CreateSubmissionInputDTOMockFactory.build())
             }
         }
 
@@ -111,7 +112,7 @@ class CreateSubmissionServiceTest : FunSpec({
                 .returns(Optional.of(problem))
 
             shouldThrow<ForbiddenException> {
-                sut.create(2, CreateSubmissionInputDTOMockFactory.build())
+                sut.create(UUID.randomUUID(), CreateSubmissionInputDTOMockFactory.build())
             }
         }
 
@@ -131,7 +132,7 @@ class CreateSubmissionServiceTest : FunSpec({
                 .returns(Optional.of(problem))
 
             shouldThrow<ForbiddenException> {
-                sut.create(2, CreateSubmissionInputDTOMockFactory.build())
+                sut.create(UUID.randomUUID(), CreateSubmissionInputDTOMockFactory.build())
             }
         }
 
@@ -158,7 +159,7 @@ class CreateSubmissionServiceTest : FunSpec({
             every { transactionalEventPublisher.publish(capture(eventSlot)) }
                 .returns(Unit)
 
-            val result = sut.create(2, inputDTO)
+            val result = sut.create(UUID.randomUUID(), inputDTO)
 
             result.member.id shouldBe member.id
             result.member.name shouldBe member.name

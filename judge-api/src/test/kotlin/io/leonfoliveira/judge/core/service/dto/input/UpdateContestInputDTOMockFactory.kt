@@ -3,10 +3,11 @@ package io.leonfoliveira.judge.core.service.dto.input
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.enumerate.Language
 import java.time.LocalDateTime
+import java.util.UUID
 
 object UpdateContestInputDTOMockFactory {
     fun build(
-        id: Int = 1,
+        id: UUID = UUID.randomUUID(),
         title: String = "Contest Title",
         languages: List<Language> = listOf(Language.PYTHON_3_13_3),
         startAt: LocalDateTime = LocalDateTime.now(),
@@ -24,7 +25,7 @@ object UpdateContestInputDTOMockFactory {
     )
 
     fun buildMemberDTO(
-        id: Int? = 1,
+        id: UUID? = UUID.randomUUID(),
         type: Member.Type = Member.Type.CONTESTANT,
         name: String = "Contestant Name",
         login: String = "contestant",
@@ -38,7 +39,7 @@ object UpdateContestInputDTOMockFactory {
     )
 
     fun buildProblemDTO(
-        id: Int? = 1,
+        id: UUID? = UUID.randomUUID(),
         title: String = "Problem Title",
         description: AttachmentInputDTO = AttachmentInputDTOMockFactory.build(),
         timeLimit: Int = 1000,

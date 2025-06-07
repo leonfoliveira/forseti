@@ -3,6 +3,7 @@ package io.leonfoliveira.judge.adapter.aws
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.leonfoliveira.judge.core.domain.entity.AttachmentMockFactory
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.mockk.every
 import io.mockk.mockk
@@ -15,7 +16,6 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.model.PutObjectResponse
-import java.util.UUID
 import kotlin.toString
 
 class S3BucketAdapterTest : FunSpec({
@@ -30,22 +30,22 @@ class S3BucketAdapterTest : FunSpec({
 
     context("upload") {
         test("should upload the file to S3") {
-            val key = UUID.randomUUID()
+            val attachment = AttachmentMockFactory.build()
             val bytes = ByteArray(0)
             val requestSlot = slot<PutObjectRequest>()
 
             every { s3Client.putObject(capture(requestSlot), any<RequestBody>()) } returns mockk<PutObjectResponse>()
 
-            sut.upload(bytes, key)
+            sut.upload(attachment, bytes)
 
             requestSlot.captured.bucket() shouldBe bucket
-            requestSlot.captured.key() shouldBe key.toString()
+            requestSlot.captured.key() shouldBe attachment.id.toString()
         }
     }
 
     context("download") {
         test("should download the file from S3") {
-            val key = UUID.randomUUID()
+            val attachment = AttachmentMockFactory.build()
             val bytes = ByteArray(0)
             val requestSlot = slot<GetObjectRequest>()
 
@@ -54,22 +54,22 @@ class S3BucketAdapterTest : FunSpec({
             every { s3Client.getObject(capture(requestSlot)) }
                 .returns(responseInputStream)
 
-            val result = sut.download(key)
+            val result = sut.download(attachment)
 
             requestSlot.captured.bucket() shouldBe bucket
-            requestSlot.captured.key() shouldBe key.toString()
+            requestSlot.captured.key() shouldBe attachment.id.toString()
             result shouldBe bytes
         }
 
         test("should throw NotFoundException when file does not exist") {
-            val key = UUID.randomUUID()
+            val attachment = AttachmentMockFactory.build()
             val requestSlot = slot<GetObjectRequest>()
 
             every { s3Client.getObject(capture(requestSlot)) } throws
                 NoSuchKeyException.builder().build()
 
             shouldThrow<NotFoundException> {
-                sut.download(key)
+                sut.download(attachment)
             }
         }
     }

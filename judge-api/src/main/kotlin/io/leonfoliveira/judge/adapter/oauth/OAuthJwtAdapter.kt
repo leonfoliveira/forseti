@@ -9,6 +9,7 @@ import io.leonfoliveira.judge.core.util.TimeUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.ZoneOffset
+import java.util.UUID
 
 @Service
 class OAuthJwtAdapter(
@@ -36,7 +37,7 @@ class OAuthJwtAdapter(
                 .create()
                 .withIssuedAt(now)
                 .withExpiresAt(expirationAt)
-                .withClaim("id", authorization.id)
+                .withClaim("id", authorization.id.toString())
                 .withClaim("name", authorization.name)
                 .withClaim("login", authorization.login)
                 .withClaim("type", authorization.type.toString())
@@ -50,7 +51,7 @@ class OAuthJwtAdapter(
         val decoded = verifier.verify(token)
 
         return AuthorizationMember(
-            id = decoded.getClaim("id").asInt(),
+            id = UUID.fromString(decoded.getClaim("id").asString()),
             name = decoded.getClaim("name").asString(),
             login = decoded.getClaim("login").asString(),
             type = Member.Type.valueOf(decoded.getClaim("type").asString()),

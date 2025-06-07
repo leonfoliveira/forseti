@@ -6,6 +6,4 @@ interface SubmissionEmitterAdapter {
     fun emitForContest(submission: Submission)
 
     fun emitForMember(submission: Submission)
-
-    fun emitFail(submission: Submission)
 }

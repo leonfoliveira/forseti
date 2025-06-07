@@ -52,7 +52,7 @@ class AttachmentServiceTest : FunSpec({
             val result = sut.upload(file)
 
             result shouldBe attachmentSlot.captured
-            attachmentSlot.captured.filename shouldBe attachmentSlot.captured.key.toString()
+            attachmentSlot.captured.filename shouldBe attachmentSlot.captured.id.toString()
             attachmentSlot.captured.contentType shouldBe "application/octet-stream"
         }
     }
@@ -67,13 +67,13 @@ class AttachmentServiceTest : FunSpec({
         }
 
         test("should download attachment") {
-            val key = UUID.randomUUID()
+            val id = UUID.randomUUID()
             val bytes = ByteArray(0)
-            val attachment = AttachmentMockFactory.build(key = key)
-            every { attachmentRepository.findById(key) } returns Optional.of(attachment)
-            every { bucketAdapter.download(key) } returns bytes
+            val attachment = AttachmentMockFactory.build(id = id)
+            every { attachmentRepository.findById(id) } returns Optional.of(attachment)
+            every { bucketAdapter.download(attachment) } returns bytes
 
-            val result = sut.download(key)
+            val result = sut.download(id)
 
             result.attachment shouldBe attachment
             result.bytes shouldBe bytes

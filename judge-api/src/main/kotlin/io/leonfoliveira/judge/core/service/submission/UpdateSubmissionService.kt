@@ -3,12 +3,12 @@ package io.leonfoliveira.judge.core.service.submission
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.event.SubmissionFailedEvent
 import io.leonfoliveira.judge.core.event.SubmissionStatusUpdatedEvent
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class UpdateSubmissionService(
@@ -17,7 +17,7 @@ class UpdateSubmissionService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun fail(submissionId: Int): Submission {
+    fun fail(submissionId: UUID): Submission {
         logger.info("Failing submission with id: $submissionId")
 
         val submission =
@@ -27,13 +27,12 @@ class UpdateSubmissionService(
 
         submission.hasFailed = true
         submissionRepository.save(submission)
-        transactionalEventPublisher.publish(SubmissionFailedEvent(this, submission))
         logger.info("Submission failed successfully")
         return submission
     }
 
     fun updateStatus(
-        submissionId: Int,
+        submissionId: UUID,
         status: Submission.Status,
     ): Submission {
         logger.info("Updating submission with id: $submissionId to status: $status")

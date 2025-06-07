@@ -9,6 +9,7 @@ import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class RunSubmissionService(
@@ -18,7 +19,7 @@ class RunSubmissionService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun run(id: Int): Submission {
+    fun run(id: UUID): Submission {
         logger.info("Running submission with id: $id")
 
         val submission =
