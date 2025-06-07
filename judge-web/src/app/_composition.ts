@@ -19,7 +19,10 @@ const storageRepository = new LocalStorageRepository();
 export const authorizationService = new AuthorizationService(storageRepository);
 
 const axiosClient = new AxiosClient(config.API_URL, authorizationService);
-const stompClient = new StompConnector(`${config.API_URL}/ws`);
+const stompClient = new StompConnector(
+  `${config.API_URL}/ws`,
+  authorizationService,
+);
 
 export const attachmentService = new AttachmentService(
   new AxiosAttachmentRepository(axiosClient),
