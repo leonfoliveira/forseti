@@ -1,87 +1,58 @@
 import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
 import { StompConnector } from "@/adapter/stomp/StompConnector";
-import { CompatClient, IMessage } from "@stomp/stompjs";
-import { mock, MockProxy } from "jest-mock-extended";
-import { spyOn } from "jest-mock";
+import { mock } from "jest-mock-extended";
+import { StompClient } from "@/adapter/stomp/StompClient";
 
 jest.mock("@/adapter/stomp/StompConnector");
+jest.mock("@/adapter/stomp/StompClient");
 
 describe("StompSubmissionListener", () => {
-  let stompClient: jest.Mocked<StompConnector>;
+  let stompConnector: jest.Mocked<StompConnector>;
+  let mockStompClient: jest.Mocked<StompClient>;
   let stompSubmissionListener: StompSubmissionListener;
-  let mockCompatClient: MockProxy<CompatClient>;
 
   beforeEach(() => {
-    stompClient = mock<StompConnector>();
-    stompSubmissionListener = new StompSubmissionListener(stompClient);
-    mockCompatClient = mock<CompatClient>({
-      subscribe: jest.fn(),
-    });
-
-    stompClient.connect.mockResolvedValue(mockCompatClient);
+    stompConnector = mock<StompConnector>();
+    mockStompClient = mock<StompClient>();
+    (StompClient as jest.Mock).mockImplementation(() => mockStompClient);
+    stompSubmissionListener = new StompSubmissionListener(stompConnector);
   });
 
   describe("subscribeForContest", () => {
-    it("subscribes to contest submissions and invokes the callback with parsed submission", async () => {
+    it("subscribes to contest submissions", async () => {
       const contestId = 1;
-      const submission = { id: 123 };
-      const message: IMessage = {
-        body: JSON.stringify(submission),
-      } as IMessage;
       const callback = jest.fn();
 
-      spyOn(mockCompatClient, "subscribe").mockImplementation(
-        (_, cb) => cb(message) as any,
-      );
+      await stompSubmissionListener.subscribeForContest(contestId, callback);
 
-      const client = await stompSubmissionListener.subscribeForContest(
-        contestId,
+      expect(StompClient).toHaveBeenCalledWith(stompConnector);
+      expect(mockStompClient.subscribe).toHaveBeenCalledWith(
+        `/topic/contests/${contestId}/submissions`,
         callback,
       );
-
-      expect(stompClient.connect).toHaveBeenCalled();
-      expect(mockCompatClient.subscribe).toHaveBeenCalledWith(
-        `/topic/contests/${contestId}/submissions`,
-        expect.any(Function),
-      );
-      expect(callback).toHaveBeenCalledWith(submission);
-      expect(client).toBe(mockCompatClient);
     });
   });
 
   describe("subscribeForMember", () => {
-    it("subscribes to member submissions and invokes the callback with parsed submission", async () => {
+    it("subscribes to member submissions", async () => {
       const memberId = 1;
-      const submission = { id: 123 };
-      const message: IMessage = {
-        body: JSON.stringify(submission),
-      } as IMessage;
       const callback = jest.fn();
 
-      spyOn(mockCompatClient, "subscribe").mockImplementation(
-        (_, cb) => cb(message) as any,
-      );
+      await stompSubmissionListener.subscribeForMember(memberId, callback);
 
-      const client = await stompSubmissionListener.subscribeForMember(
-        memberId,
+      expect(StompClient).toHaveBeenCalledWith(stompConnector);
+      expect(mockStompClient.subscribe).toHaveBeenCalledWith(
+        `/topic/members/${memberId}/submissions`,
         callback,
       );
-
-      expect(stompClient.connect).toHaveBeenCalled();
-      expect(mockCompatClient.subscribe).toHaveBeenCalledWith(
-        `/topic/members/${memberId}/submissions`,
-        expect.any(Function),
-      );
-      expect(callback).toHaveBeenCalledWith(submission);
-      expect(client).toBe(mockCompatClient);
     });
   });
 
   describe("unsubscribe", () => {
     it("disconnects the client successfully", async () => {
-      await stompSubmissionListener.unsubscribe(mockCompatClient);
+      await stompSubmissionListener.unsubscribe(mockStompClient);
 
-      expect(stompClient.disconnect).toHaveBeenCalledWith(mockCompatClient);
+      expect(mockStompClient.unsubscribe).toHaveBeenCalled();
     });
   });
 });

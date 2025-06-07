@@ -1,65 +1,63 @@
+import { mock, MockProxy } from "jest-mock-extended";
+import { CompatClient } from "@stomp/stompjs";
 import { StompConnector } from "@/adapter/stomp/StompConnector";
-import { CompatClient, IFrame, Stomp } from "@stomp/stompjs";
-import { ServerException } from "@/core/domain/exception/ServerException";
-import { spyOn } from "jest-mock";
-
-jest.mock("sockjs-client");
-jest.mock("@stomp/stompjs");
+import { StompClient } from "@/adapter/stomp/StompClient";
 
 describe("StompClient", () => {
-  let stompClient: StompConnector;
-  let mockCompatClient: jest.Mocked<CompatClient>;
+  let stompConnector: MockProxy<StompConnector>;
+  let sut: StompClient;
 
   beforeEach(() => {
-    stompClient = new StompConnector("http://example.com/ws");
-    mockCompatClient = {
-      connected: true,
-      activate: jest.fn(),
-      deactivate: jest.fn(),
-      onConnect: jest.fn(),
-      onDisconnect: jest.fn(),
-      onStompError: jest.fn(),
-    } as unknown as jest.Mocked<CompatClient>;
-
-    spyOn(Stomp, "over").mockReturnValue(mockCompatClient);
+    stompConnector = mock<StompConnector>();
+    sut = new StompClient(stompConnector);
   });
 
-  describe("connect", () => {
-    it("resolves with the client when connection is successful", async () => {
-      const promise = stompClient.connect();
-      mockCompatClient.onConnect({} as unknown as IFrame);
-      const result = await promise;
+  describe("subscribe", () => {
+    it("subscribes to a topic and invokes the callback with the correct data", async () => {
+      const topic = "/topic/example";
+      const callback = jest.fn();
+      const mockClient = mock<CompatClient>();
+      stompConnector.connect.mockResolvedValue(mockClient);
 
-      expect(result).toBe(mockCompatClient);
-      expect(mockCompatClient.activate).toHaveBeenCalled();
+      await sut.subscribe(topic, callback);
+
+      expect(stompConnector.connect).toHaveBeenCalled();
+      expect(stompConnector.subscribe).toHaveBeenCalledWith(
+        mockClient,
+        topic,
+        callback,
+      );
     });
 
-    it("rejects with a ServerException when a STOMP error occurs", async () => {
-      const promise = stompClient.connect();
-      mockCompatClient.onStompError({
-        headers: { message: "STOMP error occurred" },
-      } as unknown as IFrame);
+    it("throws an error if connection fails", async () => {
+      const topic = "/topic/example";
+      const callback = jest.fn();
+      stompConnector.connect.mockRejectedValue(new Error("Connection failed"));
 
-      await expect(promise).rejects.toThrow(ServerException);
-      await expect(promise).rejects.toThrow("STOMP error occurred");
-    });
+      await expect(sut.subscribe(topic, callback)).rejects.toThrow(
+        "Connection failed",
+      );
 
-    it("rejects with a ServerException with a default message if no error message is provided", async () => {
-      const promise = stompClient.connect();
-      mockCompatClient.onStompError({ headers: {} } as unknown as IFrame);
-
-      await expect(promise).rejects.toThrow(ServerException);
-      await expect(promise).rejects.toThrow("Unknown STOMP error");
+      expect(stompConnector.connect).toHaveBeenCalled();
+      expect(stompConnector.subscribe).not.toHaveBeenCalled();
     });
   });
 
-  describe("disconnect", () => {
-    it("resolves when the client is successfully disconnected", async () => {
-      const promise = stompClient.disconnect(mockCompatClient);
-      mockCompatClient.onDisconnect({} as unknown as IFrame);
-      await promise;
+  describe("unsubscribe", () => {
+    it("disconnects the client if it is defined", async () => {
+      const mockClient = mock<CompatClient>();
+      stompConnector.connect.mockResolvedValue(mockClient);
+      await sut.subscribe("/topic/example", jest.fn());
 
-      expect(mockCompatClient.deactivate).toHaveBeenCalled();
+      await sut.unsubscribe();
+
+      expect(stompConnector.disconnect).toHaveBeenCalledWith(mockClient);
+    });
+
+    it("does nothing if the client is undefined", async () => {
+      await sut.unsubscribe();
+
+      expect(stompConnector.disconnect).not.toHaveBeenCalled();
     });
   });
 });
