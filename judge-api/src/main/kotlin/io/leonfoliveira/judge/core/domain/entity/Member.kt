@@ -14,18 +14,20 @@ import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 import java.time.LocalDateTime
+import java.util.UUID
 
 @Entity
 @Table(name = "member")
-@Audited
+@Audited(withModifiedFlag = true)
 @SQLRestriction("deleted_at is null")
 class Member(
-    id: Int = 0,
+    id: UUID = UUID.randomUUID(),
     createdAt: LocalDateTime = TimeUtils.now(),
     updatedAt: LocalDateTime = TimeUtils.now(),
     deletedAt: LocalDateTime? = null,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contest_id", nullable = false)
+    @Audited(withModifiedFlag = false)
     val contest: Contest,
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

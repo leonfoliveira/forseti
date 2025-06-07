@@ -15,13 +15,14 @@ import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 import org.hibernate.type.SqlTypes
 import java.time.LocalDateTime
+import java.util.UUID
 
 @Entity
 @Table(name = "contest")
-@Audited
+@Audited(withModifiedFlag = true)
 @SQLRestriction("deleted_at is null")
 class Contest(
-    id: Int = 0,
+    id: UUID = UUID.randomUUID(),
     createdAt: LocalDateTime = TimeUtils.now(),
     updatedAt: LocalDateTime = TimeUtils.now(),
     deletedAt: LocalDateTime? = null,

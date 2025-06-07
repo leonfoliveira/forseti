@@ -11,14 +11,14 @@ import java.util.UUID
 
 @Entity
 @Table(name = "attachment")
-@Audited
+@Audited(withModifiedFlag = true)
 class Attachment(
-    @Id
-    val key: UUID = UUID.randomUUID(),
-    @Column(name = "created_at", nullable = false)
-    val createdAt: LocalDateTime = TimeUtils.now(),
+    id: UUID = UUID.randomUUID(),
+    createdAt: LocalDateTime = TimeUtils.now(),
+    updatedAt: LocalDateTime = TimeUtils.now(),
+    deletedAt: LocalDateTime? = null,
     @Column(nullable = false)
     val filename: String,
     @Column(nullable = false)
     val contentType: String,
-)
+) : BaseEntity(id, createdAt, updatedAt, deletedAt)
