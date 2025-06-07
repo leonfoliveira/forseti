@@ -3,6 +3,7 @@ package io.leonfoliveira.judge.core.service.submission
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
+import io.leonfoliveira.judge.core.event.SubmissionJudgeEvent
 import io.leonfoliveira.judge.core.event.SubmissionStatusUpdatedEvent
 import io.leonfoliveira.judge.core.port.SubmissionRunnerAdapter
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
@@ -19,6 +20,26 @@ class RunSubmissionService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    fun rerun(id: UUID): Submission {
+        logger.info("Rerunning submission with id: $id")
+
+        val submission =
+            submissionRepository.findById(id).orElseThrow {
+                NotFoundException("Could not find submission with id = $id")
+            }
+        if (submission.status == Submission.Status.JUDGING) {
+            throw ForbiddenException("Submission with id = $id is already being judged")
+        }
+
+        submission.status = Submission.Status.JUDGING
+        submission.answer = Submission.Answer.NO_ANSWER
+        submissionRepository.save(submission)
+        transactionalEventPublisher.publish(SubmissionStatusUpdatedEvent(this, submission))
+        transactionalEventPublisher.publish(SubmissionJudgeEvent(this, submission))
+        logger.info("Submission updated enqueued and emitted")
+        return submission
+    }
+
     fun run(id: UUID): Submission {
         logger.info("Running submission with id: $id")
 
@@ -30,12 +51,13 @@ class RunSubmissionService(
             throw ForbiddenException("Submission with id = $id is not in a runnable state")
         }
 
-        val result = submissionRunnerAdapter.run(submission)
-        logger.info("Submission has been run with result: $result")
-        submission.status = result
+        val answer = submissionRunnerAdapter.run(submission)
+        logger.info("Submission has been run with answer: $answer")
+
+        submission.status = Submission.Status.JUDGED
+        submission.answer = answer
         submissionRepository.save(submission)
         transactionalEventPublisher.publish(SubmissionStatusUpdatedEvent(this, submission))
-
         logger.info("Finished running and publishing submission")
         return submission
     }

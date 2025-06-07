@@ -30,31 +30,31 @@ class DockerSubmissionRunnerAdapterTest : FunSpec({
     test("run returns ACCEPTED when all test cases pass") {
         every { container.exec(any(), any(), any()) } returnsMany listOf("1", "2")
 
-        sut.run(submission) shouldBe Submission.Status.ACCEPTED
+        sut.run(submission) shouldBe Submission.Answer.ACCEPTED
     }
 
     test("run returns WRONG_ANSWER when a test case fails") {
         every { container.exec(any(), any(), any()) } returnsMany listOf("1", "3")
 
-        sut.run(submission) shouldBe Submission.Status.WRONG_ANSWER
+        sut.run(submission) shouldBe Submission.Answer.WRONG_ANSWER
     }
 
     test("run returns TIME_LIMIT_EXCEEDED when a test case times out") {
         every { container.exec(any(), any(), any()) } throws TimeoutException()
 
-        sut.run(submission) shouldBe Submission.Status.TIME_LIMIT_EXCEEDED
+        sut.run(submission) shouldBe Submission.Answer.TIME_LIMIT_EXCEEDED
     }
 
     // TODO: Update when there is a compiled language
 //    test("run returns COMPILATION_ERROR when compilation fails") {
 //        every { container.exec(any()) } throws Exception("Compilation failed")
 //
-//        sut.run(submission) shouldBe Submission.Status.COMPILATION_ERROR
+//        sut.run(submission) shouldBe Submission.Answer.COMPILATION_ERROR
 //    }
 
     test("run returns RUNTIME_ERROR when an unexpected error occurs during execution") {
         every { container.exec(any(), any(), any()) } throws Exception("Unexpected error")
 
-        sut.run(submission) shouldBe Submission.Status.RUNTIME_ERROR
+        sut.run(submission) shouldBe Submission.Answer.RUNTIME_ERROR
     }
 })

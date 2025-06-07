@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import jakarta.persistence.Transient
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 import java.time.LocalDateTime
@@ -38,6 +39,7 @@ class Member(
     var login: String,
     @Column(nullable = false)
     var password: String,
+    @Transient
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var submissions: List<Submission> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {

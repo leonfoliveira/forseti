@@ -19,7 +19,7 @@ class DockerSubmissionRunnerAdapter(
 ) : SubmissionRunnerAdapter {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun run(submission: Submission): Submission.Status {
+    override fun run(submission: Submission): Submission.Answer {
         logger.info("Running submission: ${submission.id} for problem: ${submission.problem.id} with language: ${submission.language}")
 
         val tmpDir = Files.createTempDirectory("judge_${submission.id}").toFile()
@@ -40,7 +40,7 @@ class DockerSubmissionRunnerAdapter(
                 container.exec(it)
             }
 
-            var status = Submission.Status.ACCEPTED
+            var status = Submission.Answer.ACCEPTED
             logger.info("Running test cases")
             for ((index, testCase) in testCases.withIndex()) {
                 val input = testCase[0]
@@ -49,22 +49,22 @@ class DockerSubmissionRunnerAdapter(
                     val isCorrect = evaluate(container, config, submission, input, expectedOutput)
                     if (!isCorrect) {
                         logger.info("Test case with index: $index failed")
-                        status = Submission.Status.WRONG_ANSWER
+                        status = Submission.Answer.WRONG_ANSWER
                         break
                     }
-                } catch (ex: TimeoutException) {
+                } catch (_: TimeoutException) {
                     logger.info("Test case with index: $index timed out")
-                    return Submission.Status.TIME_LIMIT_EXCEEDED
+                    return Submission.Answer.TIME_LIMIT_EXCEEDED
                 } catch (ex: Exception) {
                     logger.info("Error while running test case with index: $index", ex)
-                    return Submission.Status.RUNTIME_ERROR
+                    return Submission.Answer.RUNTIME_ERROR
                 }
             }
             logger.info("All test cases passed")
             return status
         } catch (ex: Exception) {
             logger.info("Error while compiling submission", ex)
-            return Submission.Status.COMPILATION_ERROR
+            return Submission.Answer.COMPILATION_ERROR
         } finally {
             container.kill()
         }

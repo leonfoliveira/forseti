@@ -80,7 +80,7 @@ class FindSubmissionServiceTest : FunSpec({
                     startAt = now.minusDays(1),
                     members = listOf(MemberMockFactory.build(submissions = listOf(SubmissionMockFactory.build()))),
                 )
-            val status = Submission.Status.ACCEPTED
+            val status = Submission.Status.FAILED
 
             every { contestRepository.findById(id) }
                 .returns(Optional.of(contest))

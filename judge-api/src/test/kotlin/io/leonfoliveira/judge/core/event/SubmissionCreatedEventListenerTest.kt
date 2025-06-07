@@ -11,13 +11,13 @@ class SubmissionCreatedEventListenerTest : FunSpec({
     val submissionQueueAdapter = mockk<SubmissionQueueAdapter>(relaxed = true)
     val submissionEmitterAdapter = mockk<SubmissionEmitterAdapter>(relaxed = true)
     val event =
-        SubmissionCreatedEvent(
+        SubmissionJudgeEvent(
             source = this,
             submission = SubmissionMockFactory.build(),
         )
 
     val sut =
-        SubmissionCreatedEventListener(
+        SubmissionJudgeEventListener(
             submissionQueueAdapter = submissionQueueAdapter,
             submissionEmitterAdapter = submissionEmitterAdapter,
         )

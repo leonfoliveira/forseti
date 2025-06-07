@@ -92,19 +92,19 @@ class CreateContestServiceTest : FunSpec({
         }
 
         test("should throw NotFoundException if description attachment is not found") {
-            val key = UUID.randomUUID()
+            val id = UUID.randomUUID()
             val input =
                 CreateContestInputDTOMockFactory.build(
                     problems =
                         listOf(
                             CreateContestInputDTOMockFactory.buildProblemDTO(
-                                description = AttachmentInputDTOMockFactory.build(key = key),
+                                description = AttachmentInputDTOMockFactory.build(id = id),
                             ),
                         ),
                 )
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(AttachmentMockFactory.build()))
-            every { attachmentRepository.findById(key) }
+            every { attachmentRepository.findById(id) }
                 .returns(Optional.empty())
             every { hashAdapter.hash(any()) }
                 .returns("hashed_password")
@@ -115,19 +115,19 @@ class CreateContestServiceTest : FunSpec({
         }
 
         test("should throw NotFoundException if testCases attachment is not found") {
-            val key = UUID.randomUUID()
+            val id = UUID.randomUUID()
             val input =
                 CreateContestInputDTOMockFactory.build(
                     problems =
                         listOf(
                             CreateContestInputDTOMockFactory.buildProblemDTO(
-                                testCases = AttachmentInputDTOMockFactory.build(key = key),
+                                testCases = AttachmentInputDTOMockFactory.build(id = id),
                             ),
                         ),
                 )
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(AttachmentMockFactory.build()))
-            every { attachmentRepository.findById(key) }
+            every { attachmentRepository.findById(id) }
                 .returns(Optional.empty())
             every { hashAdapter.hash(any()) }
                 .returns("hashed_password")

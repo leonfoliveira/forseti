@@ -29,6 +29,52 @@ class RunSubmissionServiceTest : FunSpec({
             transactionalEventPublisher,
         )
 
+    context("rerun") {
+        val id = UUID.randomUUID()
+
+        test("should throw NotFoundException when submission is not found") {
+            every { submissionRepository.findById(id) }
+                .returns(Optional.empty())
+
+            shouldThrow<NotFoundException> {
+                sut.rerun(id)
+            }
+        }
+
+        test("should throw ForbiddenException when submission is already being judged") {
+            val submission =
+                SubmissionMockFactory.build(
+                    status = Submission.Status.JUDGING,
+                )
+            every { submissionRepository.findById(id) }
+                .returns(Optional.of(submission))
+
+            shouldThrow<ForbiddenException> {
+                sut.rerun(id)
+            }
+        }
+
+        test("should update submission status to JUDGING and emit events") {
+            val submission =
+                SubmissionMockFactory.build(
+                    status = Submission.Status.JUDGED,
+                )
+            every { submissionRepository.findById(id) }
+                .returns(Optional.of(submission))
+            every { submissionRepository.save(submission) }
+                .returns(submission)
+            val eventSlot = slot<SubmissionStatusUpdatedEvent>()
+            every { transactionalEventPublisher.publish(capture(eventSlot)) }
+                .returns(Unit)
+
+            val result = sut.rerun(id)
+
+            result.status shouldBe Submission.Status.JUDGING
+            result.answer shouldBe Submission.Answer.NO_ANSWER
+            eventSlot.captured.submission shouldBe submission
+        }
+    }
+
     context("run") {
         val id = UUID.randomUUID()
 
@@ -44,7 +90,7 @@ class RunSubmissionServiceTest : FunSpec({
         test("should throw ForbiddenException when submission is not in a runnable state") {
             val submission =
                 SubmissionMockFactory.build(
-                    status = Submission.Status.ACCEPTED,
+                    status = Submission.Status.JUDGED,
                 )
             every { submissionRepository.findById(id) }
                 .returns(Optional.of(submission))
@@ -62,7 +108,7 @@ class RunSubmissionServiceTest : FunSpec({
             every { submissionRepository.findById(id) }
                 .returns(Optional.of(submission))
             every { submissionRunnerAdapter.run(submission) }
-                .returns(Submission.Status.ACCEPTED)
+                .returns(Submission.Answer.ACCEPTED)
             every { submissionRepository.save(submission) }
                 .returns(submission)
             val eventSlot = slot<SubmissionStatusUpdatedEvent>()
@@ -71,7 +117,8 @@ class RunSubmissionServiceTest : FunSpec({
 
             val result = sut.run(id)
 
-            result.status shouldBe Submission.Status.ACCEPTED
+            result.status shouldBe Submission.Status.JUDGED
+            result.answer shouldBe Submission.Answer.ACCEPTED
             eventSlot.captured.submission shouldBe submission
         }
     }

@@ -10,6 +10,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import jakarta.persistence.Transient
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
@@ -36,8 +37,10 @@ class Contest(
     var startAt: LocalDateTime,
     @Column(name = "end_at", nullable = false)
     var endAt: LocalDateTime,
+    @Transient
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var members: List<Member> = mutableListOf(),
+    @Transient
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var problems: List<Problem> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {

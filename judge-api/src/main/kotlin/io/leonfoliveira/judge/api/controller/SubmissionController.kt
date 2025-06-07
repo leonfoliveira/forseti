@@ -1,6 +1,6 @@
 package io.leonfoliveira.judge.api.controller
 
-import io.leonfoliveira.judge.api.dto.request.UpdateSubmissionStatusRequestDTO
+import io.leonfoliveira.judge.api.dto.request.UpdateSubmissionAnswerRequestDTO
 import io.leonfoliveira.judge.api.dto.response.SubmissionFullResponseDTO
 import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
 import io.leonfoliveira.judge.api.util.AuthorizationContextUtil
@@ -9,6 +9,7 @@ import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTO
 import io.leonfoliveira.judge.core.service.submission.CreateSubmissionService
 import io.leonfoliveira.judge.core.service.submission.FindSubmissionService
+import io.leonfoliveira.judge.core.service.submission.RunSubmissionService
 import io.leonfoliveira.judge.core.service.submission.UpdateSubmissionService
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -27,6 +28,7 @@ class SubmissionController(
     private val createSubmissionService: CreateSubmissionService,
     private val findSubmissionService: FindSubmissionService,
     private val updateSubmissionService: UpdateSubmissionService,
+    private val runSubmissionService: RunSubmissionService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -54,14 +56,24 @@ class SubmissionController(
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }
 
-    @PatchMapping("/{id}/status")
+    @PatchMapping("/{id}/judge")
     @Private(Member.Type.JUDGE)
-    fun updateSubmissionStatus(
+    fun updateSubmissionAnswer(
         @PathVariable id: UUID,
-        @RequestBody body: UpdateSubmissionStatusRequestDTO,
+        @RequestBody body: UpdateSubmissionAnswerRequestDTO,
     ): ResponseEntity<Void> {
-        logger.info("[PATCH] /v1/submissions/{id}/status - id: $id, body: $body")
-        updateSubmissionService.updateStatus(id, body.status)
+        logger.info("[PATCH] /v1/submissions/{id}/judge - id: $id, body: $body")
+        updateSubmissionService.judge(id, body.answer)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/{id}/rerun")
+    @Private(Member.Type.JUDGE)
+    fun rerunSubmission(
+        @PathVariable id: UUID,
+    ): ResponseEntity<Void> {
+        logger.info("[POST] /v1/submissions/$id/rerun - id: $id")
+        runSubmissionService.rerun(id)
         return ResponseEntity.noContent().build()
     }
 }

@@ -25,31 +25,33 @@ class UpdateSubmissionService(
                 NotFoundException("Could not find submission with id = $submissionId")
             }
 
-        submission.hasFailed = true
+        submission.status = Submission.Status.FAILED
         submissionRepository.save(submission)
+        transactionalEventPublisher.publish(SubmissionStatusUpdatedEvent(this, submission))
         logger.info("Submission failed successfully")
         return submission
     }
 
-    fun updateStatus(
+    fun judge(
         submissionId: UUID,
-        status: Submission.Status,
+        answer: Submission.Answer,
     ): Submission {
-        logger.info("Updating submission with id: $submissionId to status: $status")
+        logger.info("Updating submission with id: $submissionId with answer: $answer")
 
+        if (answer == Submission.Answer.NO_ANSWER) {
+            throw ForbiddenException("Cannot update submission with NO_ANSWER")
+        }
         val submission =
             submissionRepository.findById(submissionId).orElseThrow {
                 NotFoundException("Could not find submission with id = $submissionId")
             }
 
-        if (submission.status != Submission.Status.JUDGING) {
+        if (submission.status == Submission.Status.JUDGING) {
             throw ForbiddenException("Cannot update submission with status: ${submission.status}")
         }
-        if (!submission.hasFailed) {
-            throw ForbiddenException("Cannot manually update submission that has not failed")
-        }
 
-        submission.status = status
+        submission.status = Submission.Status.JUDGED
+        submission.answer = answer
         submissionRepository.save(submission)
         transactionalEventPublisher.publish(SubmissionStatusUpdatedEvent(this, submission))
         logger.info("Submission status updated successfully")

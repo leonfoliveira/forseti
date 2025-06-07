@@ -10,15 +10,15 @@ object SubmissionMockFactory {
         problem: Problem = ProblemMockFactory.build(),
         language: Language = Language.PYTHON_3_13_3,
         status: Submission.Status = Submission.Status.JUDGING,
+        answer: Submission.Answer = Submission.Answer.ACCEPTED,
         code: Attachment = AttachmentMockFactory.build(),
-        hasFailed: Boolean = false,
     ) = Submission(
         id = id,
         member = member,
         problem = problem,
         language = language,
         status = status,
+        answer = answer,
         code = code,
-        hasFailed = hasFailed,
     )
 }

@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import jakarta.persistence.Transient
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 import java.time.LocalDateTime
@@ -31,13 +32,16 @@ class Problem(
     @Column(nullable = false)
     var title: String,
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "description_key", referencedColumnName = "key", nullable = false)
+    @JoinColumn(name = "description_id", nullable = false)
+    @Audited(withModifiedFlag = true, modifiedColumnName = "description_id_mod")
     var description: Attachment,
     @Column(name = "time_limit", nullable = false)
     var timeLimit: Int,
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "test_cases_key", referencedColumnName = "key", nullable = false)
+    @JoinColumn(name = "test_cases_id", nullable = false)
+    @Audited(withModifiedFlag = true, modifiedColumnName = "test_cases_id_mod")
     var testCases: Attachment,
+    @Transient
     @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var submissions: List<Submission> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt)

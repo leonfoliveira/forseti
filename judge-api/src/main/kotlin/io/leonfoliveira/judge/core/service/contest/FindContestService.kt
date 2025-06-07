@@ -97,10 +97,10 @@ class FindContestService(
     ): ContestOutputDTO.MemberDTO.MemberProblemDTO {
         val firstAcceptedSubmission =
             submissions
-                .firstOrNull { it.status == Submission.Status.ACCEPTED }
+                .firstOrNull { it.answer == Submission.Answer.ACCEPTED }
         val wrongSubmissionsBeforeAccepted =
             submissions
-                .takeWhile { it.status != Submission.Status.ACCEPTED }
+                .takeWhile { it.answer != Submission.Answer.ACCEPTED }
 
         val isAccepted = firstAcceptedSubmission != null
 

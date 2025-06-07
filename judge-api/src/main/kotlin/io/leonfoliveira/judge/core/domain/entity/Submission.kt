@@ -39,16 +39,24 @@ class Submission(
     @Column("status", nullable = false)
     @Enumerated(EnumType.STRING)
     var status: Status,
+    @Column("answer")
+    @Enumerated(EnumType.STRING)
+    var answer: Answer = Answer.NO_ANSWER,
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "code_key", referencedColumnName = "key", nullable = false)
+    @JoinColumn(name = "code_id", nullable = false)
+    @Audited(withModifiedFlag = true, modifiedColumnName = "code_id_mod")
     val code: Attachment,
-    @Column("has_failed", nullable = false)
-    var hasFailed: Boolean = false,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
     val contest get() = problem.contest
 
     enum class Status {
         JUDGING,
+        FAILED,
+        JUDGED,
+    }
+
+    enum class Answer {
+        NO_ANSWER,
         ACCEPTED,
         WRONG_ANSWER,
         COMPILATION_ERROR,

@@ -3,7 +3,7 @@ package io.leonfoliveira.judge.api.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
-import io.leonfoliveira.judge.api.dto.request.UpdateSubmissionStatusRequestDTO
+import io.leonfoliveira.judge.api.dto.request.UpdateSubmissionAnswerRequestDTO
 import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
 import io.leonfoliveira.judge.api.util.SecurityContextMockFactory
 import io.leonfoliveira.judge.config.ControllerTest
@@ -12,6 +12,7 @@ import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTOMockFactory
 import io.leonfoliveira.judge.core.service.submission.CreateSubmissionService
 import io.leonfoliveira.judge.core.service.submission.FindSubmissionService
+import io.leonfoliveira.judge.core.service.submission.RunSubmissionService
 import io.leonfoliveira.judge.core.service.submission.UpdateSubmissionService
 import io.mockk.every
 import io.mockk.mockkStatic
@@ -31,6 +32,7 @@ class SubmissionControllerTest(
     @MockkBean(relaxed = true) val findSubmissionService: FindSubmissionService,
     @MockkBean(relaxed = true) val createSubmissionService: CreateSubmissionService,
     @MockkBean(relaxed = true) val updateSubmissionService: UpdateSubmissionService,
+    @MockkBean(relaxed = true) val runSubmissionService: RunSubmissionService,
 ) : FunSpec({
         beforeEach {
             mockkStatic(SecurityContextHolder::class)
@@ -70,13 +72,13 @@ class SubmissionControllerTest(
                 }
         }
 
-        test("updateSubmissionStatus") {
+        test("judge") {
             val submissionId = UUID.randomUUID()
-            val requestBody = UpdateSubmissionStatusRequestDTO(status = Submission.Status.ACCEPTED)
+            val requestBody = UpdateSubmissionAnswerRequestDTO(answer = Submission.Answer.ACCEPTED)
             every { SecurityContextHolder.getContext() }
                 .returns(SecurityContextMockFactory.buildJudge())
 
-            mockMvc.patch("$basePath/$submissionId/status") {
+            mockMvc.patch("$basePath/$submissionId/judge") {
                 contentType = MediaType.APPLICATION_JSON
                 content = objectMapper.writeValueAsString(requestBody)
             }
@@ -84,6 +86,21 @@ class SubmissionControllerTest(
                     status { isNoContent() }
                 }
 
-            verify { updateSubmissionService.updateStatus(submissionId, requestBody.status) }
+            verify { updateSubmissionService.judge(submissionId, requestBody.answer) }
+        }
+
+        test("rerunSubmission") {
+            val submissionId = UUID.randomUUID()
+            every { SecurityContextHolder.getContext() }
+                .returns(SecurityContextMockFactory.buildJudge())
+
+            mockMvc.post("$basePath/$submissionId/rerun") {
+                contentType = MediaType.APPLICATION_JSON
+            }
+                .andExpect {
+                    status { isNoContent() }
+                }
+
+            verify { runSubmissionService.rerun(submissionId) }
         }
     })

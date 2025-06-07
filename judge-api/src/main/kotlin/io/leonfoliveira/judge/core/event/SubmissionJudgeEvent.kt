@@ -8,21 +8,21 @@ import org.springframework.context.ApplicationEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 
-class SubmissionCreatedEvent(
+class SubmissionJudgeEvent(
     source: Any,
     val submission: Submission,
 ) : ApplicationEvent(source)
 
 @Component
-class SubmissionCreatedEventListener(
+class SubmissionJudgeEventListener(
     private val submissionQueueAdapter: SubmissionQueueAdapter,
     private val submissionEmitterAdapter: SubmissionEmitterAdapter,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @EventListener(SubmissionCreatedEvent::class)
-    fun onApplicationEvent(event: SubmissionCreatedEvent) {
-        logger.info("Handling submission created event: ${event.submission}")
+    @EventListener(SubmissionJudgeEvent::class)
+    fun onApplicationEvent(event: SubmissionJudgeEvent) {
+        logger.info("Handling submission judge event: ${event.submission}")
         submissionQueueAdapter.enqueue(event.submission)
         submissionEmitterAdapter.emitForContest(event.submission)
     }

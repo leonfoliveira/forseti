@@ -68,9 +68,7 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleGenericException(
-        ex: Exception,
-    ): ResponseEntity<ErrorResponseDTO> {
+    fun handleGenericException(ex: Exception): ResponseEntity<ErrorResponseDTO> {
         logger.error("Unexpected error occurred, message: ${ex.message}", ex)
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)

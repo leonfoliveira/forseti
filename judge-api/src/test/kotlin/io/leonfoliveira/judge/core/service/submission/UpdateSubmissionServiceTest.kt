@@ -32,7 +32,7 @@ class UpdateSubmissionServiceTest : FunSpec({
 
             val result = sut.fail(submissionId)
 
-            result.hasFailed shouldBe true
+            result.status shouldBe Submission.Status.FAILED
             verify { submissionRepository.save(submission) }
         }
 
@@ -46,54 +46,54 @@ class UpdateSubmissionServiceTest : FunSpec({
         }
     }
 
-    context("updateStatus") {
-        test("update submission status when it is in JUDGING status") {
+    context("judge") {
+        test("update submission answer") {
             val submissionId = UUID.randomUUID()
-            val submission = SubmissionMockFactory.build(id = submissionId, status = Submission.Status.JUDGING, hasFailed = true)
-            val newStatus = Submission.Status.ACCEPTED
+            val submission = SubmissionMockFactory.build(id = submissionId, status = Submission.Status.FAILED)
+            val answer = Submission.Answer.ACCEPTED
             every { submissionRepository.findById(submissionId) } returns Optional.of(submission)
             every { submissionRepository.save(submission) } returnsArgument 0
             val eventSlot = slot<SubmissionStatusUpdatedEvent>()
             every { transactionalEventPublisher.publish(capture(eventSlot)) }
                 .returns(Unit)
 
-            val result = sut.updateStatus(submissionId, newStatus)
+            val result = sut.judge(submissionId, answer)
 
-            result.status shouldBe newStatus
+            result.status shouldBe Submission.Status.JUDGED
+            result.answer shouldBe answer
             verify { submissionRepository.save(submission) }
             verify { transactionalEventPublisher.publish(any<SubmissionStatusUpdatedEvent>()) }
             eventSlot.captured.submission shouldBe submission
         }
 
-        test("throw ForbiddenException when submission is not in JUDGING status") {
+        test("throw ForbiddenException when submission is in JUDGING status") {
             val submissionId = UUID.randomUUID()
-            val submission = SubmissionMockFactory.build(id = submissionId, status = Submission.Status.ACCEPTED)
-            val newStatus = Submission.Status.WRONG_ANSWER
+            val submission = SubmissionMockFactory.build(id = submissionId, status = Submission.Status.JUDGING)
+            val answer = Submission.Answer.ACCEPTED
             every { submissionRepository.findById(submissionId) } returns Optional.of(submission)
 
             shouldThrow<ForbiddenException> {
-                sut.updateStatus(submissionId, newStatus)
-            }
-        }
-
-        test("throw ForbiddenException when submission has not failed") {
-            val submissionId = UUID.randomUUID()
-            val submission = SubmissionMockFactory.build(id = submissionId, status = Submission.Status.JUDGING, hasFailed = false)
-            val newStatus = Submission.Status.ACCEPTED
-            every { submissionRepository.findById(submissionId) } returns Optional.of(submission)
-
-            shouldThrow<ForbiddenException> {
-                sut.updateStatus(submissionId, newStatus)
+                sut.judge(submissionId, answer)
             }
         }
 
         test("throw NotFoundException when submission does not exist") {
             val submissionId = UUID.randomUUID()
-            val newStatus = Submission.Status.ACCEPTED
+            val answer = Submission.Answer.ACCEPTED
             every { submissionRepository.findById(submissionId) } returns Optional.empty()
 
             shouldThrow<NotFoundException> {
-                sut.updateStatus(submissionId, newStatus)
+                sut.judge(submissionId, answer)
+            }
+        }
+
+        test("throw ForbiddenException when answer is NO_ANSWER") {
+            val submissionId = UUID.randomUUID()
+            val submission = SubmissionMockFactory.build(id = submissionId, status = Submission.Status.FAILED)
+            every { submissionRepository.findById(submissionId) } returns Optional.of(submission)
+
+            shouldThrow<ForbiddenException> {
+                sut.judge(submissionId, Submission.Answer.NO_ANSWER)
             }
         }
     }
