@@ -1,7 +1,6 @@
 package io.leonfoliveira.judge.api.emitter
 
 import io.kotest.core.spec.style.FunSpec
-import io.leonfoliveira.judge.api.controller.dto.response.toPublicResponseDTO
 import io.leonfoliveira.judge.api.emitter.dto.emmit.toEmmitDTO
 import io.leonfoliveira.judge.api.emitter.dto.emmit.toPrivateEmmitDTO
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
