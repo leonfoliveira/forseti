@@ -3,11 +3,11 @@ import { recalculatePublicSubmissions } from "@/app/contests/[id]/_util/submissi
 import { contestService, submissionService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
-import { useFindAllSubmissionsAction } from "@/app/_action/find-all-submissions-action";
+import { useFindAllContestSubmissionsAction } from "@/app/_action/find-all-contest-submissions-action";
 
 jest.mock("@/app/_composition", () => ({
   contestService: {
-    findAllSubmissions: jest.fn(),
+    findAllContestSubmissions: jest.fn(),
   },
   submissionService: {
     subscribeForContest: jest.fn(),
@@ -39,7 +39,7 @@ describe("useFindAllSubmissionsAction", () => {
       success: jest.fn(),
       error: mockAlertError,
     });
-    (contestService.findAllSubmissions as jest.Mock).mockImplementation(
+    (contestService.findAllContestSubmissions as jest.Mock).mockImplementation(
       mockFindAllSubmissions,
     );
     (submissionService.subscribeForContest as jest.Mock).mockImplementation(
@@ -60,17 +60,21 @@ describe("useFindAllSubmissionsAction", () => {
     mockFindAllSubmissions.mockResolvedValue(mockSubmissions);
     mockSubscribeForContest.mockResolvedValue(mockStompClient);
 
-    const { result, unmount } = renderHook(() => useFindAllSubmissionsAction());
+    const { result, unmount } = renderHook(() =>
+      useFindAllContestSubmissionsAction(),
+    );
     const { act: findAllSubmissionsAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     let returnedSubmissions;
 
     await waitFor(async () => {
       returnedSubmissions = await findAllSubmissionsAction(contestId);
     });
 
-    expect(contestService.findAllSubmissions).toHaveBeenCalledWith(contestId);
+    expect(contestService.findAllContestSubmissions).toHaveBeenCalledWith(
+      contestId,
+    );
     expect(returnedSubmissions).toEqual(mockSubmissions);
     expect(submissionService.subscribeForContest).toHaveBeenCalledWith(
       contestId,
@@ -85,16 +89,18 @@ describe("useFindAllSubmissionsAction", () => {
   it("should show an error alert when an error occurs during fetching submissions", async () => {
     mockFindAllSubmissions.mockRejectedValue(new Error("Failed to fetch"));
 
-    const { result } = renderHook(() => useFindAllSubmissionsAction());
+    const { result } = renderHook(() => useFindAllContestSubmissionsAction());
     const { act: findAllSubmissionsAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     let returnedSubmissions;
     await waitFor(async () => {
       returnedSubmissions = await findAllSubmissionsAction(contestId);
     });
 
-    expect(contestService.findAllSubmissions).toHaveBeenCalledWith(contestId);
+    expect(contestService.findAllContestSubmissions).toHaveBeenCalledWith(
+      contestId,
+    );
     expect(returnedSubmissions).toBeUndefined();
     expect(mockAlertError).toHaveBeenCalled();
     expect(submissionService.subscribeForContest).not.toHaveBeenCalled();
@@ -117,10 +123,12 @@ describe("useFindAllSubmissionsAction", () => {
       },
     );
 
-    const { result, unmount } = renderHook(() => useFindAllSubmissionsAction());
+    const { result, unmount } = renderHook(() =>
+      useFindAllContestSubmissionsAction(),
+    );
     const { act: findAllSubmissionsAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     await waitFor(async () => {
       await findAllSubmissionsAction(contestId);
     });

@@ -4,10 +4,8 @@ import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateCon
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
-import { ContestOutputDTOMap } from "@/core/service/dto/output/ContestOutputDTO";
 import { Attachment } from "@/core/domain/model/Attachment";
-import { ContestSummaryOutputDTOMap } from "@/core/service/dto/output/ContestSummaryOutputDTO";
-import { ContestPublicOutputDTOMap } from "@/core/service/dto/output/ContestPublicOutputDTO";
+import { ContestUtil } from "@/core/util/contest-util";
 
 export class ContestService {
   constructor(
@@ -23,7 +21,7 @@ export class ContestService {
       )) as CreateContestRequestDTO["problems"],
     };
     const response = await this.contestRepository.createContest(request);
-    return ContestOutputDTOMap.fromResponseDTO(response);
+    return ContestUtil.addStatus(response);
   }
 
   async updateContest(input: UpdateContestInputDTO) {
@@ -32,47 +30,39 @@ export class ContestService {
       problems: await this.uploadFiles(input.problems),
     };
     const response = await this.contestRepository.updateContest(request);
-    return ContestOutputDTOMap.fromResponseDTO(response);
+    return ContestUtil.addStatus(response);
   }
 
-  async findAllContests() {
-    const response = await this.contestRepository.findAllContests();
-    return response.map(ContestSummaryOutputDTOMap.fromResponseDTO);
+  async findAllContestMetadata() {
+    const response = await this.contestRepository.findAllContestMetadata();
+    return response.map(ContestUtil.addStatus);
   }
 
-  async findContestByIdForRoot(id: number) {
-    const response = await this.contestRepository.findContestByIdForRoot(id);
-    return ContestOutputDTOMap.fromResponseDTO(response);
-  }
-
-  async findContestById(id: number) {
+  async findContestById(id: string) {
     const response = await this.contestRepository.findContestById(id);
-    return ContestPublicOutputDTOMap.fromResponseDTO(response);
+    return ContestUtil.addStatus(response);
   }
 
-  async findContestSummaryById(id: number) {
-    const response = await this.contestRepository.findContestSummaryById(id);
-    return ContestSummaryOutputDTOMap.fromResponseDTO(response);
+  async findContestMetadataById(id: string) {
+    const response = await this.contestRepository.findContestMetadataById(id);
+    return ContestUtil.addStatus(response);
   }
 
-  deleteContest(id: number) {
-    return this.contestRepository.deleteContest(id);
+  async findFullContestById(id: string) {
+    const response = await this.contestRepository.findFullContestById(id);
+    return ContestUtil.addStatus(response);
   }
 
-  getLeaderboard(id: number) {
-    return this.contestRepository.getLeaderboard(id);
+  async deleteContest(id: string) {
+    await this.contestRepository.deleteContest(id);
   }
 
-  findAllProblems(id: number) {
-    return this.contestRepository.findAllProblems(id);
+  async findAllContestSubmissions(id: string) {
+    return await this.contestRepository.findAllContestSubmissions(id);
   }
 
-  findAllProblemsForMember(id: number) {
-    return this.contestRepository.findAllProblemsForMember(id);
-  }
-
-  findAllSubmissions(id: number) {
-    return this.contestRepository.findAllSubmissions(id);
+  async findAllContestFullSubmissions(id: string) {
+    return await this.contestRepository.findAllContestFullSubmissions(id);
   }
 
   private async uploadFiles(
@@ -83,6 +73,7 @@ export class ContestService {
         const description = it.newDescription
           ? await this.attachmentService.upload(it.newDescription)
           : (it.description as Attachment);
+
         const testCases = it.newTestCases
           ? await this.attachmentService.upload(it.newTestCases)
           : (it.testCases as Attachment);

@@ -4,7 +4,7 @@ import {
 } from "@/app/contests/[id]/_util/submissions-calculator";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionPrivateResponseDTO } from "@/core/repository/dto/response/SubmissionPrivateResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
 
 describe("Submissions Calculator", () => {
   it("adds a new submission when it does not exist in public submissions", () => {
@@ -48,7 +48,7 @@ describe("Submissions Calculator", () => {
   it("does not add a new submission when it does not exist in private submissions", () => {
     const submissions = [
       { id: 1, status: SubmissionStatus.JUDGING },
-    ] as unknown as SubmissionPrivateResponseDTO[];
+    ] as unknown as SubmissionFullResponseDTO[];
     const newSubmission = {
       id: 2,
       status: SubmissionStatus.ACCEPTED,
@@ -62,7 +62,7 @@ describe("Submissions Calculator", () => {
   it("updates the status of an existing private submission", () => {
     const submissions = [
       { id: 1, status: SubmissionStatus.JUDGING },
-    ] as unknown as SubmissionPrivateResponseDTO[];
+    ] as unknown as SubmissionFullResponseDTO[];
     const newSubmission = {
       id: 1,
       status: SubmissionStatus.ACCEPTED,

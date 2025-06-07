@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/app/_component/form/button";
-import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/ContestMetadataResponseDTO";
 import { authorizationService } from "@/app/_composition";
 import { useAuthorization } from "@/app/_util/authorization-hook";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,7 +11,7 @@ import { formatDifference } from "@/app/_util/date-utils";
 import { useTranslations } from "next-intl";
 
 type Props = {
-  contest?: ContestSummaryResponseDTO;
+  contest?: ContestMetadataResponseDTO;
   signInPath: string;
   "data-testid"?: string;
 };

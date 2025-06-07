@@ -1,27 +1,23 @@
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { useAction } from "@/app/_util/action-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { contestService } from "@/app/_composition";
-import { redirect } from "next/navigation";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { useTranslations } from "next-intl";
 
-export function useFindContestByIdForRoot() {
+export function useFindAllContestsMetadataAction() {
   const alert = useAlert();
   const signOutAction = useRootSignOutAction();
-  const t = useTranslations("_action.find-contest-by-id-action");
+  const t = useTranslations("_action.find-all-contests-action");
 
-  async function findContestById(id: number) {
+  async function findAllContests() {
     try {
-      return await contestService.findContestByIdForRoot(id);
+      return await contestService.findAllContestMetadata();
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        redirect(`/not-found`);
-      } else if (
+      if (
         error instanceof UnauthorizedException ||
-        error instanceof ForbiddenException
+        error instanceof NotFoundException
       ) {
         await signOutAction.act();
       } else {
@@ -30,5 +26,5 @@ export function useFindContestByIdForRoot() {
     }
   }
 
-  return useAction(findContestById);
+  return useAction(findAllContests);
 }

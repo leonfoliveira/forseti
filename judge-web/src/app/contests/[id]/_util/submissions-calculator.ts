@@ -1,4 +1,4 @@
-import { SubmissionPrivateResponseDTO } from "@/core/repository/dto/response/SubmissionPrivateResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
 
 export function recalculatePublicSubmissions(
@@ -13,9 +13,9 @@ export function recalculatePublicSubmissions(
 }
 
 export function recalculatePrivateSubmissions(
-  submissions: SubmissionPrivateResponseDTO[] | undefined,
+  submissions: SubmissionFullResponseDTO[] | undefined,
   newSubmission: SubmissionPublicResponseDTO,
-): SubmissionPrivateResponseDTO[] | undefined {
+): SubmissionFullResponseDTO[] | undefined {
   const oldSubmission = submissions?.find((it) => it.id === newSubmission.id);
   if (!oldSubmission) return submissions;
   return (submissions || []).map((it) =>

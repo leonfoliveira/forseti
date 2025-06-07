@@ -9,7 +9,7 @@ export function useFindContestByIdAction() {
   const alert = useAlert();
   const t = useTranslations("_action.find-contest-by-id-action");
 
-  async function findContestById(id: number) {
+  async function findContestById(id: string) {
     try {
       return await contestService.findContestById(id);
     } catch (error) {

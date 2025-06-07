@@ -5,7 +5,7 @@ import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { contestService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
-import { useFindContestByIdForRoot } from "@/app/_action/find-contest-by-id-for-root-action";
+import { useFindFullContestByIdForRoot } from "@/app/_action/find-full-contest-by-id-for-root-action";
 
 jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
@@ -13,7 +13,7 @@ jest.mock("next/navigation", () => ({
 
 jest.mock("@/app/_composition", () => ({
   contestService: {
-    findContestByIdForRoot: jest.fn(),
+    findFullContestById: jest.fn(),
   },
 }));
 
@@ -51,22 +51,20 @@ describe("useFindContestByIdForRoot", () => {
 
   it("should return contest successfully", async () => {
     const mockContest = { id: 1, name: "Root Contest" };
-    (contestService.findContestByIdForRoot as jest.Mock).mockResolvedValue(
+    (contestService.findFullContestById as jest.Mock).mockResolvedValue(
       mockContest,
     );
 
-    const { result } = renderHook(() => useFindContestByIdForRoot());
+    const { result } = renderHook(() => useFindFullContestByIdForRoot());
     const { act: findContestByIdAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     let returnedContest;
     await waitFor(async () => {
       returnedContest = await findContestByIdAction(contestId);
     });
 
-    expect(contestService.findContestByIdForRoot).toHaveBeenCalledWith(
-      contestId,
-    );
+    expect(contestService.findFullContestById).toHaveBeenCalledWith(contestId);
     expect(returnedContest).toEqual(mockContest);
     expect(mockAlertError).not.toHaveBeenCalled();
     expect(mockRedirect).not.toHaveBeenCalled();
@@ -74,23 +72,21 @@ describe("useFindContestByIdForRoot", () => {
   });
 
   it("should redirect to /not-found on NotFoundException", async () => {
-    (contestService.findContestByIdForRoot as jest.Mock).mockRejectedValue(
+    (contestService.findFullContestById as jest.Mock).mockRejectedValue(
       new NotFoundException("Contest not found"),
     );
 
-    const { result } = renderHook(() => useFindContestByIdForRoot());
+    const { result } = renderHook(() => useFindFullContestByIdForRoot());
     const { act: findContestByIdAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
 
     await waitFor(async () => {
       await findContestByIdAction(contestId);
     });
 
     expect(mockRedirect).toHaveBeenCalledWith(`/not-found`);
-    expect(contestService.findContestByIdForRoot).toHaveBeenCalledWith(
-      contestId,
-    );
+    expect(contestService.findFullContestById).toHaveBeenCalledWith(contestId);
     expect(mockAlertError).not.toHaveBeenCalled();
     expect(mockSignOutAct).not.toHaveBeenCalled();
   });
@@ -99,21 +95,19 @@ describe("useFindContestByIdForRoot", () => {
     new UnauthorizedException("Unauthorized"),
     new ForbiddenException("Forbidden"),
   ])("should sign out on %p", async (exception) => {
-    (contestService.findContestByIdForRoot as jest.Mock).mockRejectedValue(
+    (contestService.findFullContestById as jest.Mock).mockRejectedValue(
       exception,
     );
 
-    const { result } = renderHook(() => useFindContestByIdForRoot());
+    const { result } = renderHook(() => useFindFullContestByIdForRoot());
     const { act: findContestByIdAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     await waitFor(async () => {
       await findContestByIdAction(contestId);
     });
 
-    expect(contestService.findContestByIdForRoot).toHaveBeenCalledWith(
-      contestId,
-    );
+    expect(contestService.findFullContestById).toHaveBeenCalledWith(contestId);
     expect(mockSignOutAct).toHaveBeenCalledTimes(1);
     expect(mockAlertError).not.toHaveBeenCalled();
     expect(mockRedirect).not.toHaveBeenCalled();
@@ -121,22 +115,20 @@ describe("useFindContestByIdForRoot", () => {
 
   it("should show an error alert for other exceptions", async () => {
     const genericError = new Error("Network Error");
-    (contestService.findContestByIdForRoot as jest.Mock).mockRejectedValue(
+    (contestService.findFullContestById as jest.Mock).mockRejectedValue(
       genericError,
     );
 
-    const { result } = renderHook(() => useFindContestByIdForRoot());
+    const { result } = renderHook(() => useFindFullContestByIdForRoot());
     const { act: findContestByIdAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     let returnedContest;
     await waitFor(async () => {
       returnedContest = await findContestByIdAction(contestId);
     });
 
-    expect(contestService.findContestByIdForRoot).toHaveBeenCalledWith(
-      contestId,
-    );
+    expect(contestService.findFullContestById).toHaveBeenCalledWith(contestId);
     expect(returnedContest).toBeUndefined();
     expect(mockAlertError).toHaveBeenCalled();
     expect(mockSignOutAct).not.toHaveBeenCalled();

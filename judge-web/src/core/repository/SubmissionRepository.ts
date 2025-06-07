@@ -1,10 +1,18 @@
-import { SubmissionPrivateResponseDTO } from "@/core/repository/dto/response/SubmissionPrivateResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
 import { CreateSubmissionRequestDTO } from "@/core/repository/dto/request/CreateSubmissionRequestDTO";
+import { UpdateSubmissionAnswerRequestDTO } from "@/core/repository/dto/request/UpdateSubmissionAnswerRequestDTO";
 
 export interface SubmissionRepository {
-  findAllForMember(): Promise<SubmissionPrivateResponseDTO[]>;
-
   createSubmission(
     request: CreateSubmissionRequestDTO,
-  ): Promise<SubmissionPrivateResponseDTO>;
+  ): Promise<SubmissionFullResponseDTO>;
+
+  findAllFullForMember(): Promise<SubmissionFullResponseDTO[]>;
+
+  updateSubmissionAnswer(
+    id: string,
+    data: UpdateSubmissionAnswerRequestDTO,
+  ): Promise<void>;
+
+  rerunSubmission(id: string): Promise<void>;
 }

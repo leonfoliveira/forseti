@@ -5,13 +5,13 @@ import { contestService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { useTranslations } from "next-intl";
 
-export function useFindContestSummaryByIdAction() {
+export function useFindContestMetadataByIdAction() {
   const alert = useAlert();
   const t = useTranslations("_action.find-contest-summary-by-id-action");
 
-  async function findContestById(id: number) {
+  async function findContestById(id: string) {
     try {
-      return await contestService.findContestSummaryById(id);
+      return await contestService.findContestMetadataById(id);
     } catch (error) {
       if (error instanceof NotFoundException) {
         redirect(`/not-found`);

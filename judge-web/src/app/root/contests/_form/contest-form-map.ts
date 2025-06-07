@@ -1,4 +1,4 @@
-import { ContestPrivateResponseDTO } from "@/core/repository/dto/response/ContestPrivateResponseDTO";
+import { ContestFullResponseDTO } from "@/core/repository/dto/response/ContestFullResponseDTO";
 import { Language } from "@/core/domain/enumerate/Language";
 import {
   ContestFormMemberType,
@@ -58,9 +58,9 @@ export function toUpdateRequestDTO(
 }
 
 export function fromResponseDTO(
-  contest: ContestPrivateResponseDTO,
+  contest: ContestFullResponseDTO,
 ): ContestFormType {
-  function mapMember(member: ContestPrivateResponseDTO["members"][number]) {
+  function mapMember(member: ContestFullResponseDTO["members"][number]) {
     return {
       _id: member.id,
       type: member.type,
@@ -69,7 +69,7 @@ export function fromResponseDTO(
     };
   }
 
-  function mapProblem(problem: ContestPrivateResponseDTO["problems"][number]) {
+  function mapProblem(problem: ContestFullResponseDTO["problems"][number]) {
     return {
       _id: problem.id,
       title: problem.title,

@@ -37,7 +37,7 @@ describe("useMemberSignOutAction", () => {
     const { result } = renderHook(() => useMemberSignOutAction());
     const { act: signOutAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     await act(async () => {
       await signOutAction(contestId);
     });
@@ -51,7 +51,7 @@ describe("useMemberSignOutAction", () => {
     const { result } = renderHook(() => useMemberSignOutAction());
     const { act: signOutAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     await act(async () => {
       await signOutAction(contestId, false);
     });

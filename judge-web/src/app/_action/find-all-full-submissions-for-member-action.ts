@@ -10,9 +10,9 @@ import { useAlert } from "@/app/_component/alert/alert-provider";
 import { useTranslations } from "next-intl";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
-export function useFindAllSubmissionsForMemberAction() {
+export function useFindAllFullSubmissionsForMemberAction() {
   const alert = useAlert();
-  const action = useAction(findAllForMember);
+  const action = useAction(findAllFullForMember);
   const listenerRef = useRef<ListenerClient>(null);
   const t = useTranslations("_action.find-all-submissions-for-member-action");
 
@@ -24,9 +24,9 @@ export function useFindAllSubmissionsForMemberAction() {
     };
   }, []);
 
-  async function findAllForMember(contestId: number, memberId: number) {
+  async function findAllFullForMember(contestId: string, memberId: string) {
     try {
-      const submissions = await submissionService.findAllForMember();
+      const submissions = await submissionService.findAllFullForMember();
       listenerRef.current = await submissionService.subscribeForMember(
         memberId,
         receiveSubmission,

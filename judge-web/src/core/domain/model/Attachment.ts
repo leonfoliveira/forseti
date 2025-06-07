@@ -1,5 +1,5 @@
 export type Attachment = {
-  key: string;
+  id: string;
   filename: string;
   contentType: string;
 };

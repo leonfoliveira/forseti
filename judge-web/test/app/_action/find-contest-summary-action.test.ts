@@ -2,7 +2,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { contestService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
-import { useFindContestSummaryByIdAction } from "@/app/_action/find-contest-summary-action";
+import { useFindContestMetadataByIdAction } from "@/app/_action/find-contest-metadata-action";
 
 jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
@@ -10,7 +10,7 @@ jest.mock("next/navigation", () => ({
 
 jest.mock("@/app/_composition", () => ({
   contestService: {
-    findContestSummaryById: jest.fn(),
+    findContestMetadataById: jest.fn(),
   },
 }));
 
@@ -21,7 +21,7 @@ jest.mock("@/app/_component/alert/alert-provider", () => ({
   })),
 }));
 
-describe("useFindContestSummaryByIdAction", () => {
+describe("useFindContestMetadataByIdAction", () => {
   const mockAlertError = jest.fn();
   const mockRedirect = jest.fn();
 
@@ -42,20 +42,20 @@ describe("useFindContestSummaryByIdAction", () => {
       name: "Test Contest Summary",
       totalProblems: 5,
     };
-    (contestService.findContestSummaryById as jest.Mock).mockResolvedValue(
+    (contestService.findContestMetadataById as jest.Mock).mockResolvedValue(
       mockContestSummary,
     );
 
-    const { result } = renderHook(() => useFindContestSummaryByIdAction());
+    const { result } = renderHook(() => useFindContestMetadataByIdAction());
     const { act: findContestByIdAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     let returnedContestSummary;
     await waitFor(async () => {
       returnedContestSummary = await findContestByIdAction(contestId);
     });
 
-    expect(contestService.findContestSummaryById).toHaveBeenCalledWith(
+    expect(contestService.findContestMetadataById).toHaveBeenCalledWith(
       contestId,
     );
     expect(returnedContestSummary).toEqual(mockContestSummary);
@@ -64,21 +64,21 @@ describe("useFindContestSummaryByIdAction", () => {
   });
 
   it("should redirect to /not-found on NotFoundException", async () => {
-    (contestService.findContestSummaryById as jest.Mock).mockRejectedValue(
+    (contestService.findContestMetadataById as jest.Mock).mockRejectedValue(
       new NotFoundException("Contest summary not found"),
     );
 
-    const { result } = renderHook(() => useFindContestSummaryByIdAction());
+    const { result } = renderHook(() => useFindContestMetadataByIdAction());
     const { act: findContestByIdAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
 
     await waitFor(async () => {
       await findContestByIdAction(contestId);
     });
 
     expect(mockRedirect).toHaveBeenCalledWith(`/not-found`);
-    expect(contestService.findContestSummaryById).toHaveBeenCalledWith(
+    expect(contestService.findContestMetadataById).toHaveBeenCalledWith(
       contestId,
     );
     expect(mockAlertError).not.toHaveBeenCalled();
@@ -86,20 +86,20 @@ describe("useFindContestSummaryByIdAction", () => {
 
   it("should show an error alert for other exceptions", async () => {
     const genericError = new Error("Something went wrong");
-    (contestService.findContestSummaryById as jest.Mock).mockRejectedValue(
+    (contestService.findContestMetadataById as jest.Mock).mockRejectedValue(
       genericError,
     );
 
-    const { result } = renderHook(() => useFindContestSummaryByIdAction());
+    const { result } = renderHook(() => useFindContestMetadataByIdAction());
     const { act: findContestByIdAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     let returnedContestSummary;
     await waitFor(async () => {
       returnedContestSummary = await findContestByIdAction(contestId);
     });
 
-    expect(contestService.findContestSummaryById).toHaveBeenCalledWith(
+    expect(contestService.findContestMetadataById).toHaveBeenCalledWith(
       contestId,
     );
     expect(returnedContestSummary).toBeUndefined();

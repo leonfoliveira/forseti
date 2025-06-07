@@ -1,6 +1,5 @@
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { AttachmentRepository } from "@/core/repository/AttachmentRepository";
-import { AttachmentDownloadResponseDTO } from "@/core/repository/dto/response/AttachmentDownloadResponseDTO";
 import { Attachment } from "@/core/domain/model/Attachment";
 
 export class AxiosAttachmentRepository implements AttachmentRepository {
@@ -22,24 +21,20 @@ export class AxiosAttachmentRepository implements AttachmentRepository {
     return response.data;
   }
 
-  async download(
-    attachment: Attachment,
-  ): Promise<AttachmentDownloadResponseDTO> {
+  async download(attachment: Attachment): Promise<File> {
     const response = await this.axiosClient.get<Blob>(
-      `/v1/attachments/${attachment.key}`,
+      `/v1/attachments/${attachment.id}`,
       {
         responseType: "blob",
       },
     );
 
-    const contentDisposition = response.headers["content-disposition"];
-    return {
-      key: attachment.key,
-      filename:
-        contentDisposition?.match(/filename="?([^"]+)"?/)?.[1] || "download",
-      contentType:
-        response.headers["content-type"] || "application/octet-stream",
-      blob: response.data,
-    };
+    return new File(
+      [response.data],
+      'contentDisposition?.match(/filename="?([^"]+)"?/)?.[1] || "download"',
+      {
+        type: response.headers["content-type"] || "application/octet-stream",
+      },
+    );
   }
 }

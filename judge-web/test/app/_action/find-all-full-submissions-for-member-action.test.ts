@@ -5,7 +5,7 @@ import { recalculatePrivateSubmissions } from "@/app/contests/[id]/_util/submiss
 import { submissionService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
-import { useFindAllSubmissionsForMemberAction } from "@/app/_action/find-all-submissions-for-member-action";
+import { useFindAllFullSubmissionsForMemberAction } from "@/app/_action/find-all-full-submissions-for-member-action";
 
 jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
@@ -13,7 +13,7 @@ jest.mock("next/navigation", () => ({
 
 jest.mock("@/app/_composition", () => ({
   submissionService: {
-    findAllForMember: jest.fn(),
+    findAllFullForMember: jest.fn(),
     subscribeForMember: jest.fn(),
     unsubscribe: jest.fn(),
   },
@@ -44,7 +44,7 @@ describe("useFindAllSubmissionsForMemberAction", () => {
       success: jest.fn(),
       error: mockAlertError,
     });
-    (submissionService.findAllForMember as jest.Mock).mockImplementation(
+    (submissionService.findAllFullForMember as jest.Mock).mockImplementation(
       mockFindAllForMember,
     );
     (submissionService.subscribeForMember as jest.Mock).mockImplementation(
@@ -69,19 +69,19 @@ describe("useFindAllSubmissionsForMemberAction", () => {
     mockSubscribeForMember.mockResolvedValue(mockStompClient);
 
     const { result, unmount } = renderHook(() =>
-      useFindAllSubmissionsForMemberAction(),
+      useFindAllFullSubmissionsForMemberAction(),
     );
     const { act: findAllForMemberAction } = result.current;
 
-    const contestId = 123;
-    const memberId = 456;
+    const contestId = "123";
+    const memberId = "456";
     let returnedSubmissions;
 
     await waitFor(async () => {
       returnedSubmissions = await findAllForMemberAction(contestId, memberId);
     });
 
-    expect(submissionService.findAllForMember).toHaveBeenCalledTimes(1);
+    expect(submissionService.findAllFullForMember).toHaveBeenCalledTimes(1);
     expect(returnedSubmissions).toEqual(mockSubmissions);
     expect(submissionService.subscribeForMember).toHaveBeenCalledWith(
       memberId,
@@ -99,18 +99,20 @@ describe("useFindAllSubmissionsForMemberAction", () => {
   ])("should redirect on %p", async (exception) => {
     mockFindAllForMember.mockRejectedValue(exception);
 
-    const { result } = renderHook(() => useFindAllSubmissionsForMemberAction());
+    const { result } = renderHook(() =>
+      useFindAllFullSubmissionsForMemberAction(),
+    );
     const { act: findAllForMemberAction } = result.current;
 
-    const contestId = 123;
-    const memberId = 456;
+    const contestId = "123";
+    const memberId = "456";
 
     await waitFor(async () => {
       await findAllForMemberAction(contestId, memberId);
     });
 
     expect(mockRedirect).toHaveBeenCalledWith(`/auth/contests/${contestId}`);
-    expect(submissionService.findAllForMember).toHaveBeenCalledTimes(1);
+    expect(submissionService.findAllFullForMember).toHaveBeenCalledTimes(1);
     expect(mockAlertError).not.toHaveBeenCalled();
     expect(submissionService.subscribeForMember).not.toHaveBeenCalled();
   });
@@ -119,17 +121,19 @@ describe("useFindAllSubmissionsForMemberAction", () => {
     const genericError = new Error("Network Error");
     mockFindAllForMember.mockRejectedValue(genericError);
 
-    const { result } = renderHook(() => useFindAllSubmissionsForMemberAction());
+    const { result } = renderHook(() =>
+      useFindAllFullSubmissionsForMemberAction(),
+    );
     const { act: findAllForMemberAction } = result.current;
 
-    const contestId = 123;
-    const memberId = 456;
+    const contestId = "123";
+    const memberId = "456";
     let returnedSubmissions;
     await waitFor(async () => {
       returnedSubmissions = await findAllForMemberAction(contestId, memberId);
     });
 
-    expect(submissionService.findAllForMember).toHaveBeenCalledTimes(1);
+    expect(submissionService.findAllFullForMember).toHaveBeenCalledTimes(1);
     expect(returnedSubmissions).toBeUndefined();
     expect(mockAlertError).toHaveBeenCalled();
     expect(submissionService.subscribeForMember).not.toHaveBeenCalled();
@@ -153,12 +157,12 @@ describe("useFindAllSubmissionsForMemberAction", () => {
     );
 
     const { result, unmount } = renderHook(() =>
-      useFindAllSubmissionsForMemberAction(),
+      useFindAllFullSubmissionsForMemberAction(),
     );
     const { act: findAllForMemberAction } = result.current;
 
-    const contestId = 123;
-    const memberId = 456;
+    const contestId = "123";
+    const memberId = "456";
     await waitFor(async () => {
       await findAllForMemberAction(contestId, memberId);
     });

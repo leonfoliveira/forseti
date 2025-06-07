@@ -1,4 +1,4 @@
-import { LeaderboardResponseDTO } from "@/core/repository/dto/response/LeaderboardResponseDTO";
+import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { Language } from "@/core/domain/enumerate/Language";
@@ -7,7 +7,7 @@ import { recalculateLeaderboard } from "@/app/contests/[id]/leaderboard/util/lea
 describe("recalculateLeaderboard", () => {
   const WRONG_SUBMISSION_PENALTY = 1200;
 
-  let initialLeaderboard: LeaderboardResponseDTO;
+  let initialLeaderboard: ContestResponseDTO;
   let submissionAccepted: SubmissionPublicResponseDTO;
   let submissionWrongAnswer: SubmissionPublicResponseDTO;
   let submissionJudging: SubmissionPublicResponseDTO;

@@ -11,7 +11,7 @@ export function useMemberSignInAction() {
   const router = useRouter();
   const t = useTranslations("_action.member-sign-in-action");
 
-  async function signIn(contestId: number, data: MemberSignInFormType) {
+  async function signIn(contestId: string, data: MemberSignInFormType) {
     try {
       await authenticationService.authenticateMember(contestId, data);
       router.push(`/contests/${contestId}`);

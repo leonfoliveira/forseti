@@ -6,7 +6,7 @@ export type Authorization = {
 };
 
 export type AuthorizationMember = {
-  id: number;
+  id: string;
   name: string;
   login: string;
   type: MemberType;

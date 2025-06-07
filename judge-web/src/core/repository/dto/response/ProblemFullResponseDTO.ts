@@ -1,7 +1,7 @@
 import { Attachment } from "@/core/domain/model/Attachment";
 
-export type ProblemPrivateResponseDTO = {
-  id: number;
+export type ProblemFullResponseDTO = {
+  id: string;
   title: string;
   description: Attachment;
   timeLimit: number;

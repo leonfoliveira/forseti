@@ -45,7 +45,7 @@ describe("useFindContestByIdAction", () => {
     const { result } = renderHook(() => useFindContestByIdAction());
     const { act: findContestByIdAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     let returnedContest;
     await waitFor(async () => {
       returnedContest = await findContestByIdAction(contestId);
@@ -65,7 +65,7 @@ describe("useFindContestByIdAction", () => {
     const { result } = renderHook(() => useFindContestByIdAction());
     const { act: findContestByIdAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
 
     await waitFor(async () => {
       await findContestByIdAction(contestId);
@@ -85,7 +85,7 @@ describe("useFindContestByIdAction", () => {
     const { result } = renderHook(() => useFindContestByIdAction());
     const { act: findContestByIdAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     let returnedContest;
     await waitFor(async () => {
       returnedContest = await findContestByIdAction(contestId);

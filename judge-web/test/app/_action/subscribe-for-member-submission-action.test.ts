@@ -6,6 +6,7 @@ import { useAlert } from "@/app/_component/alert/alert-provider";
 import { useToast } from "@/app/_component/toast/toast-provider";
 import { useSubscribeForMemberSubmissionAction } from "@/app/_action/subscribe-for-member-submission-action";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
 jest.mock("@/app/_composition", () => ({
   submissionService: {
@@ -31,7 +32,7 @@ jest.mock("@/app/_component/toast/toast-provider", () => ({
 
 jest.mock("@/app/_util/contest-formatter-hook", () => ({
   useContestFormatter: jest.fn(() => ({
-    formatSubmissionStatus: jest.fn((status) => `Mocked: ${status}`),
+    formatSubmissionAnswer: jest.fn((answer) => `Mocked: ${answer}`),
   })),
 }));
 
@@ -42,7 +43,7 @@ describe("useSubscribeForMemberSubmissionAction", () => {
   const mockToastError = jest.fn();
   const mockSubscribeForMember = jest.fn();
   const mockUnsubscribe = jest.fn();
-  const mockFormatSubmissionStatus = jest.fn();
+  const mockFormatSubmissionAnswer = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -62,7 +63,7 @@ describe("useSubscribeForMemberSubmissionAction", () => {
       mockUnsubscribe,
     );
     (useContestFormatter as jest.Mock).mockReturnValue({
-      formatSubmissionStatus: mockFormatSubmissionStatus,
+      formatSubmissionAnswer: mockFormatSubmissionAnswer,
     });
   });
 
@@ -75,7 +76,7 @@ describe("useSubscribeForMemberSubmissionAction", () => {
     );
     const { act: subscribeAction } = result.current;
 
-    const memberId = 123;
+    const memberId = "123";
     await waitFor(async () => {
       await subscribeAction(memberId);
     });
@@ -98,7 +99,7 @@ describe("useSubscribeForMemberSubmissionAction", () => {
     );
     const { act: subscribeAction } = result.current;
 
-    const memberId = 123;
+    const memberId = "123";
     await waitFor(async () => {
       await subscribeAction(memberId);
     });
@@ -121,7 +122,7 @@ describe("useSubscribeForMemberSubmissionAction", () => {
     );
     const { act: subscribeAction } = result.current;
 
-    const memberId = 123;
+    const memberId = "123";
     await waitFor(async () => {
       await subscribeAction(memberId);
     });
@@ -150,7 +151,7 @@ describe("useSubscribeForMemberSubmissionAction", () => {
     );
     const { act: subscribeAction } = result.current;
 
-    const memberId = 123;
+    const memberId = "123";
     await waitFor(async () => {
       await subscribeAction(memberId);
     });
@@ -158,15 +159,15 @@ describe("useSubscribeForMemberSubmissionAction", () => {
     const receiveSubmissionCallback = mockSubscribeForMember.mock.calls[0][1];
     const submission: SubmissionPublicResponseDTO = {
       id: "s1",
-      status: SubmissionStatus.TIME_LIMIT_EXCEEDED,
+      answer: SubmissionAnswer.TIME_LIMIT_EXCEEDED,
     } as unknown as SubmissionPublicResponseDTO;
 
     await waitFor(() => {
       receiveSubmissionCallback(submission);
     });
 
-    expect(mockFormatSubmissionStatus).toHaveBeenCalledWith(
-      SubmissionStatus.TIME_LIMIT_EXCEEDED,
+    expect(mockFormatSubmissionAnswer).toHaveBeenCalledWith(
+      SubmissionAnswer.TIME_LIMIT_EXCEEDED,
     );
     expect(mockToastInfo).toHaveBeenCalled();
     expect(mockToastWarning).not.toHaveBeenCalled();
@@ -182,7 +183,7 @@ describe("useSubscribeForMemberSubmissionAction", () => {
     );
     const { act: subscribeAction } = result.current;
 
-    const memberId = 123;
+    const memberId = "123";
     await waitFor(async () => {
       await subscribeAction(memberId);
     });
@@ -190,15 +191,15 @@ describe("useSubscribeForMemberSubmissionAction", () => {
     const receiveSubmissionCallback = mockSubscribeForMember.mock.calls[0][1];
     const submission: SubmissionPublicResponseDTO = {
       id: "s1",
-      status: SubmissionStatus.COMPILATION_ERROR,
+      answer: SubmissionAnswer.COMPILATION_ERROR,
     } as unknown as SubmissionPublicResponseDTO;
 
     await waitFor(() => {
       receiveSubmissionCallback(submission);
     });
 
-    expect(mockFormatSubmissionStatus).toHaveBeenCalledWith(
-      SubmissionStatus.COMPILATION_ERROR,
+    expect(mockFormatSubmissionAnswer).toHaveBeenCalledWith(
+      SubmissionAnswer.COMPILATION_ERROR,
     );
     expect(mockToastWarning).toHaveBeenCalled();
     expect(mockToastInfo).not.toHaveBeenCalled();
@@ -214,7 +215,7 @@ describe("useSubscribeForMemberSubmissionAction", () => {
     );
     const { act: subscribeAction } = result.current;
 
-    const memberId = 123;
+    const memberId = "123";
     await waitFor(async () => {
       await subscribeAction(memberId);
     });
@@ -222,15 +223,15 @@ describe("useSubscribeForMemberSubmissionAction", () => {
     const receiveSubmissionCallback = mockSubscribeForMember.mock.calls[0][1];
     const submission: SubmissionPublicResponseDTO = {
       id: "s1",
-      status: SubmissionStatus.RUNTIME_ERROR,
+      answer: SubmissionAnswer.RUNTIME_ERROR,
     } as unknown as SubmissionPublicResponseDTO;
 
     await waitFor(() => {
       receiveSubmissionCallback(submission);
     });
 
-    expect(mockFormatSubmissionStatus).toHaveBeenCalledWith(
-      SubmissionStatus.RUNTIME_ERROR,
+    expect(mockFormatSubmissionAnswer).toHaveBeenCalledWith(
+      SubmissionAnswer.RUNTIME_ERROR,
     );
     expect(mockToastWarning).toHaveBeenCalled();
     expect(mockToastInfo).not.toHaveBeenCalled();
@@ -246,7 +247,7 @@ describe("useSubscribeForMemberSubmissionAction", () => {
     );
     const { act: subscribeAction } = result.current;
 
-    const memberId = 123;
+    const memberId = "123";
     await waitFor(async () => {
       await subscribeAction(memberId);
     });
@@ -254,15 +255,15 @@ describe("useSubscribeForMemberSubmissionAction", () => {
     const receiveSubmissionCallback = mockSubscribeForMember.mock.calls[0][1];
     const submission: SubmissionPublicResponseDTO = {
       id: "s1",
-      status: SubmissionStatus.WRONG_ANSWER,
+      answer: SubmissionAnswer.WRONG_ANSWER,
     } as unknown as SubmissionPublicResponseDTO;
 
     await waitFor(() => {
       receiveSubmissionCallback(submission);
     });
 
-    expect(mockFormatSubmissionStatus).toHaveBeenCalledWith(
-      SubmissionStatus.WRONG_ANSWER,
+    expect(mockFormatSubmissionAnswer).toHaveBeenCalledWith(
+      SubmissionAnswer.WRONG_ANSWER,
     );
     expect(mockToastError).toHaveBeenCalled();
     expect(mockToastInfo).not.toHaveBeenCalled();

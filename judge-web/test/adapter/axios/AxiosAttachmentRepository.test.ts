@@ -45,17 +45,16 @@ describe("AxiosAttachmentRepository", () => {
       const result = await attachmentRepository.download(attachment);
 
       expect(axiosClient.get).toHaveBeenCalledWith(
-        `/v1/attachments/${attachment.key}`,
+        `/v1/attachments/${attachment.id}`,
         {
           responseType: "blob",
         },
       );
-      expect(result).toEqual({
-        key: attachment.key,
-        filename: "file.txt",
-        contentType: "text/plain",
-        blob,
-      });
+      expect(result).toEqual(
+        new File([response.data], "file.txt", {
+          type: "text/plain",
+        }),
+      );
     });
   });
 });

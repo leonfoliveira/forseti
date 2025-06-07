@@ -2,18 +2,18 @@ import { useAction } from "@/app/_util/action-hook";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
 import { useEffect, useRef } from "react";
 import { submissionService } from "@/app/_composition";
-import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { useToast } from "@/app/_component/toast/toast-provider";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
 export function useSubscribeForMemberSubmissionAction() {
   const alert = useAlert();
   const toast = useToast();
   const action = useAction(findAllForMember);
   const listenerRef = useRef<ListenerClient>(null);
-  const { formatSubmissionStatus } = useContestFormatter();
+  const { formatSubmissionAnswer } = useContestFormatter();
 
   useEffect(() => {
     return () => {
@@ -23,7 +23,7 @@ export function useSubscribeForMemberSubmissionAction() {
     };
   }, []);
 
-  async function findAllForMember(memberId: number) {
+  async function findAllForMember(memberId: string) {
     try {
       listenerRef.current = await submissionService.subscribeForMember(
         memberId,
@@ -35,16 +35,14 @@ export function useSubscribeForMemberSubmissionAction() {
   }
 
   function receiveSubmission(newSubmission: SubmissionPublicResponseDTO) {
-    switch (newSubmission.status) {
-      case SubmissionStatus.JUDGING:
-        return;
-      case SubmissionStatus.TIME_LIMIT_EXCEEDED:
-        return toast.info(formatSubmissionStatus(newSubmission.status));
-      case SubmissionStatus.COMPILATION_ERROR:
-      case SubmissionStatus.RUNTIME_ERROR:
-        return toast.warning(formatSubmissionStatus(newSubmission.status));
-      case SubmissionStatus.WRONG_ANSWER:
-        return toast.error(formatSubmissionStatus(newSubmission.status));
+    switch (newSubmission.answer) {
+      case SubmissionAnswer.TIME_LIMIT_EXCEEDED:
+        return toast.info(formatSubmissionAnswer(newSubmission.answer));
+      case SubmissionAnswer.COMPILATION_ERROR:
+      case SubmissionAnswer.RUNTIME_ERROR:
+        return toast.warning(formatSubmissionAnswer(newSubmission.answer));
+      case SubmissionAnswer.WRONG_ANSWER:
+        return toast.error(formatSubmissionAnswer(newSubmission.answer));
     }
   }
 

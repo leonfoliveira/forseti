@@ -8,7 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { useSubscribeForMemberSubmissionAction } from "@/app/_action/subscribe-for-member-submission-action";
 import { useAuthorization } from "@/app/_util/authorization-hook";
-import { useFindContestSummaryByIdAction } from "@/app/_action/find-contest-summary-action";
+import { useFindContestMetadataByIdAction } from "@/app/_action/find-contest-metadata-action";
 import { cls } from "@/app/_util/cls";
 import { Button } from "@/app/_component/form/button";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
@@ -22,7 +22,7 @@ export default function ContestLayout({
 }) {
   const { id } = use(params);
   const { data: contest, ...findContestAction } =
-    useFindContestSummaryByIdAction();
+    useFindContestMetadataByIdAction();
   const subscribeForMemberSubmissionAction =
     useSubscribeForMemberSubmissionAction();
   const router = useRouter();

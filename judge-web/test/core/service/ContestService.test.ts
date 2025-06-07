@@ -5,16 +5,13 @@ import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInp
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 import { Attachment } from "@/core/domain/model/Attachment";
 import { mock, MockProxy } from "jest-mock-extended";
-import { ContestPrivateResponseDTO } from "@/core/repository/dto/response/ContestPrivateResponseDTO";
-import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
-import { ContestSummaryOutputDTOMap } from "@/core/service/dto/output/ContestSummaryOutputDTO";
-import { ContestOutputDTOMap } from "@/core/service/dto/output/ContestOutputDTO";
-import { ContestPublicOutputDTOMap } from "@/core/service/dto/output/ContestPublicOutputDTO";
-import { LeaderboardResponseDTO } from "@/core/repository/dto/response/LeaderboardResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/ProblemPublicResponseDTO";
-import { ProblemMemberResponseDTO } from "@/core/repository/dto/response/ProblemMemberResponseDTO";
+import { ContestFullResponseDTO } from "@/core/repository/dto/response/ContestFullResponseDTO";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/ContestMetadataResponseDTO";
+import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
 import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
+import { ContestUtil } from "@/core/util/contest-util";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
 
 jest.mock("@/core/repository/ContestRepository");
 jest.mock("@/core/service/AttachmentService");
@@ -37,7 +34,7 @@ describe("ContestService", () => {
       });
       const uploadedDescription = mock<Attachment>();
       const uploadedTestCases = mock<Attachment>();
-      const response = mock<ContestPrivateResponseDTO>({
+      const response = mock<ContestFullResponseDTO>({
         startAt: "2023-01-01T00:00:00Z",
         endAt: "2023-01-01T00:00:00Z",
       });
@@ -59,7 +56,7 @@ describe("ContestService", () => {
           },
         ],
       });
-      expect(result).toEqual(ContestOutputDTOMap.fromResponseDTO(response));
+      expect(result).toEqual(ContestUtil.addStatus(result));
     });
   });
 
@@ -70,7 +67,7 @@ describe("ContestService", () => {
       });
       const uploadedDescription = mock<Attachment>();
       const uploadedTestCases = mock<Attachment>();
-      const response = mock<ContestPrivateResponseDTO>({
+      const response = mock<ContestFullResponseDTO>({
         startAt: "2023-01-01T00:00:00Z",
         endAt: "2023-01-01T00:00:00Z",
       });
@@ -92,44 +89,42 @@ describe("ContestService", () => {
           },
         ],
       });
-      expect(result).toEqual(ContestOutputDTOMap.fromResponseDTO(response));
+      expect(result).toEqual(ContestUtil.addStatus(result));
     });
   });
 
   describe("findAllContests", () => {
     it("returns all contests mapped to summary DTOs", async () => {
-      const response = mock<ContestSummaryResponseDTO[]>();
-      contestRepository.findAllContests.mockResolvedValue(response);
+      const response = mock<ContestMetadataResponseDTO[]>();
+      contestRepository.findAllContestMetadata.mockResolvedValue(response);
 
-      const result = await contestService.findAllContests();
+      const result = await contestService.findAllContestMetadata();
 
-      expect(contestRepository.findAllContests).toHaveBeenCalled();
-      expect(result).toEqual(
-        response.map(ContestSummaryOutputDTOMap.fromResponseDTO),
-      );
+      expect(contestRepository.findAllContestMetadata).toHaveBeenCalled();
+      expect(result).toEqual(response.map(ContestUtil.addStatus));
     });
   });
 
   describe("findContestByIdForRoot", () => {
     it("returns a contest by id for root users", async () => {
-      const id = 1;
-      const response = mock<ContestPrivateResponseDTO>({
+      const id = "abc";
+      const response = mock<ContestFullResponseDTO>({
         startAt: "2023-01-01T00:00:00Z",
         endAt: "2023-01-01T00:00:00Z",
       });
-      contestRepository.findContestByIdForRoot.mockResolvedValue(response);
+      contestRepository.findFullContestById.mockResolvedValue(response);
 
-      const result = await contestService.findContestByIdForRoot(id);
+      const result = await contestService.findFullContestById(id);
 
-      expect(contestRepository.findContestByIdForRoot).toHaveBeenCalledWith(id);
-      expect(result).toEqual(ContestOutputDTOMap.fromResponseDTO(response));
+      expect(contestRepository.findFullContestById).toHaveBeenCalledWith(id);
+      expect(result).toEqual(ContestUtil.addStatus(response));
     });
   });
 
   describe("findContestById", () => {
     it("returns a contest by id for public users", async () => {
-      const id = 1;
-      const response = mock<ContestPrivateResponseDTO>({
+      const id = "abc";
+      const response = mock<ContestResponseDTO>({
         startAt: "2023-01-01T00:00:00Z",
         endAt: "2023-01-01T00:00:00Z",
       });
@@ -138,33 +133,31 @@ describe("ContestService", () => {
       const result = await contestService.findContestById(id);
 
       expect(contestRepository.findContestById).toHaveBeenCalledWith(id);
-      expect(result).toEqual(
-        ContestPublicOutputDTOMap.fromResponseDTO(response),
-      );
+      expect(result).toEqual(ContestUtil.addStatus(response));
     });
   });
 
-  describe("findContestSummaryById", () => {
+  describe("findContestMetadataById", () => {
     it("returns a contest summary by id", async () => {
-      const id = 1;
-      const response = mock<ContestSummaryResponseDTO>({
+      const id = "abc";
+      const response = mock<ContestMetadataResponseDTO>({
         startAt: "2023-01-01T00:00:00Z",
         endAt: "2023-01-01T00:00:00Z",
       });
-      contestRepository.findContestSummaryById.mockResolvedValue(response);
+      contestRepository.findContestMetadataById.mockResolvedValue(response);
 
-      const result = await contestService.findContestSummaryById(id);
+      const result = await contestService.findContestMetadataById(id);
 
-      expect(contestRepository.findContestSummaryById).toHaveBeenCalledWith(id);
-      expect(result).toEqual(
-        ContestSummaryOutputDTOMap.fromResponseDTO(response),
+      expect(contestRepository.findContestMetadataById).toHaveBeenCalledWith(
+        id,
       );
+      expect(result).toEqual(ContestUtil.addStatus(response));
     });
   });
 
   describe("deleteContest", () => {
     it("deletes a contest by id", async () => {
-      const id = 1;
+      const id = "abc";
 
       await contestService.deleteContest(id);
 
@@ -172,56 +165,36 @@ describe("ContestService", () => {
     });
   });
 
-  describe("getLeaderboard", () => {
-    it("returns the leaderboard for a contest", async () => {
-      const id = 1;
-      const leaderboard = mock<LeaderboardResponseDTO>();
-      contestRepository.getLeaderboard.mockResolvedValue(leaderboard);
-
-      const result = await contestService.getLeaderboard(id);
-
-      expect(contestRepository.getLeaderboard).toHaveBeenCalledWith(id);
-      expect(result).toEqual(leaderboard);
-    });
-  });
-
-  describe("findAllProblems", () => {
-    it("returns all problems for a contest", async () => {
-      const id = 1;
-      const problems = [mock<ProblemPublicResponseDTO>()];
-      contestRepository.findAllProblems.mockResolvedValue(problems);
-
-      const result = await contestService.findAllProblems(id);
-
-      expect(contestRepository.findAllProblems).toHaveBeenCalledWith(id);
-      expect(result).toEqual(problems);
-    });
-  });
-
-  describe("findAllProblemsForMember", () => {
-    it("returns all problems for a contest for a member", async () => {
-      const id = 1;
-      const problems = [mock<ProblemMemberResponseDTO>()];
-      contestRepository.findAllProblemsForMember.mockResolvedValue(problems);
-
-      const result = await contestService.findAllProblemsForMember(id);
-
-      expect(contestRepository.findAllProblemsForMember).toHaveBeenCalledWith(
-        id,
-      );
-      expect(result).toEqual(problems);
-    });
-  });
-
   describe("findAllSubmissions", () => {
     it("returns all submissions for a contest", async () => {
-      const id = 1;
+      const id = "abc";
       const submissions = [mock<SubmissionPublicResponseDTO>()];
-      contestRepository.findAllSubmissions.mockResolvedValue(submissions);
+      contestRepository.findAllContestSubmissions.mockResolvedValue(
+        submissions,
+      );
 
-      const result = await contestService.findAllSubmissions(id);
+      const result = await contestService.findAllContestSubmissions(id);
 
-      expect(contestRepository.findAllSubmissions).toHaveBeenCalledWith(id);
+      expect(contestRepository.findAllContestSubmissions).toHaveBeenCalledWith(
+        id,
+      );
+      expect(result).toEqual(submissions);
+    });
+  });
+
+  describe("findAllFullSubmissions", () => {
+    it("returns all full submissions for a contest", async () => {
+      const id = "abc";
+      const submissions = [mock<SubmissionFullResponseDTO>()];
+      contestRepository.findAllContestFullSubmissions.mockResolvedValue(
+        submissions,
+      );
+
+      const result = await contestService.findAllContestFullSubmissions(id);
+
+      expect(
+        contestRepository.findAllContestFullSubmissions,
+      ).toHaveBeenCalledWith(id);
       expect(result).toEqual(submissions);
     });
   });

@@ -1,7 +1,7 @@
 import { recalculateMemberProblems } from "@/app/contests/[id]/problems/_util/member-problem-calculator";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
-import { ProblemMemberResponseDTO } from "@/core/repository/dto/response/ProblemMemberResponseDTO";
+import { ProblemWithStatusResponseDTO } from "@/core/repository/dto/response/ProblemWithStatusResponseDTO";
 
 it("returns undefined when member problems are undefined", () => {
   const result = recalculateMemberProblems(undefined, {
@@ -15,7 +15,7 @@ it("returns undefined when member problems are undefined", () => {
 it("does not modify member problems when submission problem ID does not match", () => {
   const memberProblems = [
     { id: 1, isAccepted: false, wrongSubmissions: 0 },
-  ] as ProblemMemberResponseDTO[];
+  ] as ProblemWithStatusResponseDTO[];
 
   const result = recalculateMemberProblems(memberProblems, {
     problem: { id: 2 },
@@ -28,7 +28,7 @@ it("does not modify member problems when submission problem ID does not match", 
 it("updates the problem member when submission problem ID matches and is accepted", () => {
   const memberProblems = [
     { id: 1, isAccepted: false, wrongSubmissions: 2 },
-  ] as ProblemMemberResponseDTO[];
+  ] as ProblemWithStatusResponseDTO[];
 
   const result = recalculateMemberProblems(memberProblems, {
     problem: { id: 1 },
@@ -41,7 +41,7 @@ it("updates the problem member when submission problem ID matches and is accepte
 it("increments wrong submissions when submission problem ID matches and is not accepted", () => {
   const memberProblems = [
     { id: 1, isAccepted: false, wrongSubmissions: 2 },
-  ] as ProblemMemberResponseDTO[];
+  ] as ProblemWithStatusResponseDTO[];
 
   const result = recalculateMemberProblems(memberProblems, {
     problem: { id: 1 },

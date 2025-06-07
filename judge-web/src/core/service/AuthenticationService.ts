@@ -20,7 +20,7 @@ export class AuthenticationService {
   }
 
   async authenticateMember(
-    contestId: number,
+    contestId: string,
     requestDTO: AuthenticateMemberRequestDTO,
   ): Promise<Authorization> {
     const authorization =

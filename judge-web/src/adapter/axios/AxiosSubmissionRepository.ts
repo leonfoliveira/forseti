@@ -1,28 +1,42 @@
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
-import { SubmissionPrivateResponseDTO } from "@/core/repository/dto/response/SubmissionPrivateResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
 import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
 import { CreateSubmissionRequestDTO } from "@/core/repository/dto/request/CreateSubmissionRequestDTO";
+import { UpdateSubmissionAnswerRequestDTO } from "@/core/repository/dto/request/UpdateSubmissionAnswerRequestDTO";
 
 export class AxiosSubmissionRepository implements SubmissionRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
 
-  async findAllForMember(): Promise<SubmissionPrivateResponseDTO[]> {
-    const response =
-      await this.axiosClient.get<SubmissionPrivateResponseDTO[]>(
-        "/v1/submissions/me",
-      );
-    return response.data;
-  }
-
   async createSubmission(
     request: CreateSubmissionRequestDTO,
-  ): Promise<SubmissionPrivateResponseDTO> {
-    const response = await this.axiosClient.post<SubmissionPrivateResponseDTO>(
+  ): Promise<SubmissionFullResponseDTO> {
+    const response = await this.axiosClient.post<SubmissionFullResponseDTO>(
       "/v1/submissions",
       {
         data: request,
       },
     );
     return response.data;
+  }
+
+  async findAllFullForMember(): Promise<SubmissionFullResponseDTO[]> {
+    const response =
+      await this.axiosClient.get<SubmissionFullResponseDTO[]>(
+        "/v1/submissions/me",
+      );
+    return response.data;
+  }
+
+  async updateSubmissionAnswer(
+    id: string,
+    data: UpdateSubmissionAnswerRequestDTO,
+  ): Promise<void> {
+    await this.axiosClient.patch<void>(`/v1/submissions/${id}/judge`, {
+      data,
+    });
+  }
+
+  async rerunSubmission(id: string): Promise<void> {
+    await this.axiosClient.post<void>(`/v1/submissions/${id}/rerun`);
   }
 }

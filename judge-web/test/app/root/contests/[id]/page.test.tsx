@@ -9,7 +9,7 @@ jest.mock("react", () => ({
   use: jest.fn(),
 }));
 
-jest.mock("@/app/_action/find-contest-by-id-for-root-action", () => ({
+jest.mock("@/app/_action/find-full-contest-by-id-for-root-action", () => ({
   useFindContestByIdForRoot: jest.fn(() => ({
     data: { id: 123 },
     isLoading: false,

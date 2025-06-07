@@ -5,7 +5,7 @@ import { authorizationService } from "@/app/_composition";
 export function useMemberSignOutAction() {
   const router = useRouter();
 
-  function signOut(contestId: number, shouldRedirect: boolean = true) {
+  function signOut(contestId: string, shouldRedirect: boolean = true) {
     authorizationService.deleteAuthorization();
     if (shouldRedirect) {
       redirect(`/auth/contests/${contestId}`);

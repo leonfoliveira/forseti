@@ -7,7 +7,7 @@ import {
   renderHook,
 } from "@testing-library/react";
 import React from "react";
-import { useFindAllSubmissionsForMemberAction } from "@/app/_action/find-all-submissions-for-member-action";
+import { useFindAllFullSubmissionsForMemberAction } from "@/app/_action/find-all-full-submissions-for-member-action";
 import { useFindContestByIdAction } from "@/app/_action/find-contest-by-id-action";
 import { useCreateSubmissionAction } from "@/app/_action/create-submission-action";
 import { useAuthorization } from "@/app/_util/authorization-hook";
@@ -23,7 +23,7 @@ jest.mock("react", () => ({
   use: jest.fn(),
 }));
 
-jest.mock("@/app/_action/find-all-submissions-for-member-action", () => ({
+jest.mock("@/app/_action/find-all-full-submissions-for-member-action", () => ({
   useFindAllSubmissionsForMemberAction: jest.fn(),
 }));
 jest.mock("@/app/_action/find-contest-by-id-action", () => ({
@@ -48,7 +48,7 @@ jest.mock("@/app/_composition", () => ({
 
 const mockUse = React.use as jest.Mock;
 const mockUseFindAllSubmissionsForMemberAction =
-  useFindAllSubmissionsForMemberAction as jest.Mock;
+  useFindAllFullSubmissionsForMemberAction as jest.Mock;
 const mockUseFindContestByIdAction = useFindContestByIdAction as jest.Mock;
 const mockUseCreateSubmissionAction = useCreateSubmissionAction as jest.Mock;
 const mockUseAuthorization = useAuthorization as jest.Mock;

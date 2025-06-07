@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { useMemberSignInAction } from "@/app/_action/sign-in-action-member";
-import { useFindContestSummaryByIdAction } from "@/app/_action/find-contest-summary-action";
+import { useFindContestMetadataByIdAction } from "@/app/_action/find-contest-metadata-action";
 import { use } from "react";
 import AuthMember from "@/app/auth/contests/[id]/page";
 
@@ -13,7 +13,7 @@ jest.mock("@/app/_action/sign-in-action-member", () => ({
   useMemberSignInAction: jest.fn(),
 }));
 
-jest.mock("@/app/_action/find-contest-summary-action", () => ({
+jest.mock("@/app/_action/find-contest-metadata-action", () => ({
   useFindContestSummaryByIdAction: jest.fn(),
 }));
 
@@ -37,7 +37,7 @@ describe("AuthMember", () => {
 
   beforeEach(async () => {
     mockUse.mockReturnValue({ id });
-    (useFindContestSummaryByIdAction as jest.Mock).mockReturnValue(
+    (useFindContestMetadataByIdAction as jest.Mock).mockReturnValue(
       mockFindContestSummaryByIdAction,
     );
     (useMemberSignInAction as jest.Mock).mockReturnValue(
@@ -46,7 +46,7 @@ describe("AuthMember", () => {
   });
 
   it("renders spinner while loading contest data", () => {
-    (useFindContestSummaryByIdAction as jest.Mock).mockReturnValue({
+    (useFindContestMetadataByIdAction as jest.Mock).mockReturnValue({
       ...mockFindContestSummaryByIdAction,
       isLoading: true,
     });

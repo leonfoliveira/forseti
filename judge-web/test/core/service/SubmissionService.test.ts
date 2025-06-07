@@ -3,10 +3,11 @@ import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
 import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmissionInputDTO";
-import { SubmissionPrivateResponseDTO } from "@/core/repository/dto/response/SubmissionPrivateResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
 import { mock, MockProxy } from "jest-mock-extended";
 import { Attachment } from "@/core/domain/model/Attachment";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
+import { UpdateSubmissionAnswerRequestDTO } from "@/core/repository/dto/request/UpdateSubmissionAnswerRequestDTO";
 
 jest.mock("@/core/repository/SubmissionRepository");
 jest.mock("@/core/service/AttachmentService");
@@ -29,15 +30,39 @@ describe("SubmissionService", () => {
     );
   });
 
-  describe("findAllForMember", () => {
+  describe("findAllFullForMember", () => {
     it("returns all submissions for the member", async () => {
-      const submissions = [mock<SubmissionPrivateResponseDTO>()];
-      submissionRepository.findAllForMember.mockResolvedValue(submissions);
+      const submissions = [mock<SubmissionFullResponseDTO>()];
+      submissionRepository.findAllFullForMember.mockResolvedValue(submissions);
 
-      const result = await submissionService.findAllForMember();
+      const result = await submissionService.findAllFullForMember();
 
-      expect(submissionRepository.findAllForMember).toHaveBeenCalled();
+      expect(submissionRepository.findAllFullForMember).toHaveBeenCalled();
       expect(result).toEqual(submissions);
+    });
+  });
+
+  describe("updateSubmissionAnswer", () => {
+    it("updates the submission answer", async () => {
+      const id = "submission-id";
+      const data = mock<UpdateSubmissionAnswerRequestDTO>();
+
+      await submissionService.updateSubmissionAnswer(id, data);
+
+      expect(submissionRepository.updateSubmissionAnswer).toHaveBeenCalledWith(
+        id,
+        data,
+      );
+    });
+  });
+
+  describe("rerunSubmission", () => {
+    it("reruns the submission", async () => {
+      const id = "submission-id";
+
+      await submissionService.rerunSubmission(id);
+
+      expect(submissionRepository.rerunSubmission).toHaveBeenCalledWith(id);
     });
   });
 
@@ -45,7 +70,7 @@ describe("SubmissionService", () => {
     it("creates a submission and returns the response", async () => {
       const input = mock<CreateSubmissionInputDTO>();
       const uploadedAttachment = mock<Attachment>();
-      const response = mock<SubmissionPrivateResponseDTO>();
+      const response = mock<SubmissionFullResponseDTO>();
 
       attachmentService.upload.mockResolvedValue(uploadedAttachment);
       submissionRepository.createSubmission.mockResolvedValue(response);
@@ -76,6 +101,27 @@ describe("SubmissionService", () => {
       );
 
       expect(submissionListener.subscribeForContest).toHaveBeenCalledWith(
+        contestId,
+        callback,
+      );
+      expect(result).toBe(client);
+    });
+  });
+
+  describe("subscribeForContestFull", () => {
+    it("subscribes to contest full submissions and invokes the callback", async () => {
+      const contestId = 1;
+      const callback = jest.fn();
+      const client = mock<ListenerClient>();
+
+      submissionListener.subscribeForContestFull.mockResolvedValue(client);
+
+      const result = await submissionService.subscribeForContestFull(
+        contestId,
+        callback,
+      );
+
+      expect(submissionListener.subscribeForContestFull).toHaveBeenCalledWith(
         contestId,
         callback,
       );

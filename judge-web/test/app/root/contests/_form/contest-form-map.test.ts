@@ -5,7 +5,7 @@ import {
 import { ContestFormType } from "@/app/root/contests/_form/contest-form-type";
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { ContestPrivateResponseDTO } from "@/core/repository/dto/response/ContestPrivateResponseDTO";
+import { ContestFullResponseDTO } from "@/core/repository/dto/response/ContestFullResponseDTO";
 
 describe("contest form mapping functions", () => {
   const data: ContestFormType = {
@@ -42,7 +42,7 @@ describe("contest form mapping functions", () => {
   });
 
   it("map from ContestPrivateResponseDTO", () => {
-    const contest: ContestPrivateResponseDTO = {
+    const contest: ContestFullResponseDTO = {
       id: 1,
       title: "Test Contest",
       languages: [Language.PYTHON_3_13_3],

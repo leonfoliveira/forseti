@@ -1,20 +1,20 @@
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
-import { SubmissionPrivateResponseDTO } from "@/core/repository/dto/response/SubmissionPrivateResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 export interface SubmissionListener {
   subscribeForContest: (
-    contestId: number,
+    contestId: string,
     cb: (submission: SubmissionPublicResponseDTO) => void,
+  ) => Promise<ListenerClient>;
+
+  subscribeForContestFull: (
+    contestId: string,
+    cb: (submission: SubmissionFullResponseDTO) => void,
   ) => Promise<ListenerClient>;
 
   subscribeForMember: (
-    memberId: number,
+    memberId: string,
     cb: (submission: SubmissionPublicResponseDTO) => void,
-  ) => Promise<ListenerClient>;
-
-  subscribeForFail: (
-    contestId: number,
-    cb: (submission: SubmissionPrivateResponseDTO) => void,
   ) => Promise<ListenerClient>;
 }

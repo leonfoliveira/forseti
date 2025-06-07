@@ -1,6 +1,6 @@
 import { render, renderHook, screen, within } from "@testing-library/react";
 import React from "react";
-import { useFindAllSubmissionsAction } from "@/app/_action/find-all-submissions-action";
+import { useFindAllContestSubmissionsAction } from "@/app/_action/find-all-contest-submissions-action";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { Language } from "@/core/domain/enumerate/Language";
 import { toLocaleString } from "@/app/_util/date-utils";
@@ -12,13 +12,13 @@ jest.mock("react", () => ({
   use: jest.fn(),
 }));
 
-jest.mock("@/app/_action/find-all-submissions-action", () => ({
+jest.mock("@/app/_action/find-all-contest-submissions-action", () => ({
   useFindAllSubmissionsAction: jest.fn(),
 }));
 
 const mockUse = React.use as jest.Mock;
 const mockUseFindAllSubmissionsAction =
-  useFindAllSubmissionsAction as jest.Mock;
+  useFindAllContestSubmissionsAction as jest.Mock;
 
 describe("ContestTimelinePage", () => {
   const contestId = 123;

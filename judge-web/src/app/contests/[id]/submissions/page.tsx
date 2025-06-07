@@ -1,6 +1,6 @@
 "use client";
 
-import { useFindAllSubmissionsForMemberAction } from "@/app/_action/find-all-submissions-for-member-action";
+import { useFindAllFullSubmissionsForMemberAction } from "@/app/_action/find-all-full-submissions-for-member-action";
 import React, { use, useEffect } from "react";
 import { Spinner } from "@/app/_component/spinner";
 import { Table } from "@/app/_component/table/table";
@@ -40,7 +40,7 @@ export default function ContestSubmissionPage({
     data: submissions,
     setData: setSubmissions,
     ...findAllSubmissionsForMemberAction
-  } = useFindAllSubmissionsForMemberAction();
+  } = useFindAllFullSubmissionsForMemberAction();
   const { data: contest, ...findContestByIdAction } =
     useFindContestByIdAction();
   const createSubmissionAction = useCreateSubmissionAction();

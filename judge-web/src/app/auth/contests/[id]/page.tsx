@@ -12,7 +12,7 @@ import { TextInput } from "@/app/_component/form/text-input";
 import { Button } from "@/app/_component/form/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { useFindContestSummaryByIdAction } from "@/app/_action/find-contest-summary-action";
+import { useFindContestMetadataByIdAction } from "@/app/_action/find-contest-metadata-action";
 import { useTranslations } from "next-intl";
 
 type Props = {
@@ -23,7 +23,7 @@ type Props = {
 
 export default function AuthMember({ params }: Props) {
   const { id } = use(params);
-  const findContestSummaryByIdAction = useFindContestSummaryByIdAction();
+  const findContestSummaryByIdAction = useFindContestMetadataByIdAction();
   const memberSignInAction = useMemberSignInAction();
   const t = useTranslations("auth.contests");
   const s = useTranslations("auth._form.sign-in-form-schema");

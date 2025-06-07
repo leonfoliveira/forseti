@@ -51,7 +51,7 @@ describe("useMemberSignInAction", () => {
     const { result } = renderHook(() => useMemberSignInAction());
     const { act: signInAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     const input: MemberSignInFormType = {
       username: "testuser",
       password: "testpassword",
@@ -78,7 +78,7 @@ describe("useMemberSignInAction", () => {
     const { result } = renderHook(() => useMemberSignInAction());
     const { act: signInAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     const input: MemberSignInFormType = {
       username: "testuser",
       password: "wrongpassword",
@@ -106,7 +106,7 @@ describe("useMemberSignInAction", () => {
     const { result } = renderHook(() => useMemberSignInAction());
     const { act: signInAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     const input: MemberSignInFormType = {
       username: "testuser",
       password: "testpassword",

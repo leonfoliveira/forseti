@@ -10,7 +10,7 @@ export function useDeleteContestAction() {
   const router = useRouter();
   const t = useTranslations("_action.delete-contest-action");
 
-  async function deleteContest(id: number) {
+  async function deleteContest(id: string) {
     try {
       await contestService.deleteContest(id);
       alert.success(t("success"));

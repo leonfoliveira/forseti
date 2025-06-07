@@ -1,7 +1,6 @@
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { AttachmentRepository } from "@/core/repository/AttachmentRepository";
 import { Attachment } from "@/core/domain/model/Attachment";
-import { AttachmentDownloadResponseDTO } from "@/core/repository/dto/response/AttachmentDownloadResponseDTO";
 
 describe("AttachmentService", () => {
   let attachmentService: AttachmentService;
@@ -34,7 +33,7 @@ describe("AttachmentService", () => {
         type: "text/plain",
       });
       const expectedAttachment: Attachment = {
-        key: "123",
+        id: "123",
         filename: "test.txt",
         contentType: "text/plain",
       };
@@ -51,22 +50,15 @@ describe("AttachmentService", () => {
 
   describe("download", () => {
     const mockAttachment: Attachment = {
-      key: "456",
+      id: "456",
       filename: "document.pdf",
       contentType: "application/pdf",
     };
 
-    const mockDownloadAttachment: AttachmentDownloadResponseDTO = {
-      key: "456",
-      blob: new Blob(["pdf content"], { type: "application/pdf" }),
-      contentType: "application/pdf",
-      filename: "document.pdf",
-    };
+    const file = new File(["mock content"], "document.pdf");
 
     beforeEach(() => {
-      attachmentRepositoryMock.download.mockResolvedValue(
-        mockDownloadAttachment,
-      );
+      attachmentRepositoryMock.download.mockResolvedValue(file);
     });
 
     it("should call attachmentRepository.download with the provided attachment", async () => {
@@ -80,11 +72,7 @@ describe("AttachmentService", () => {
     it("should create an object URL from the downloaded blob", async () => {
       await attachmentService.download(mockAttachment);
       expect(URL.createObjectURL).toHaveBeenCalledTimes(1);
-      expect(URL.createObjectURL).toHaveBeenCalledWith(
-        new Blob([mockDownloadAttachment.blob], {
-          type: mockDownloadAttachment.contentType,
-        }),
-      );
+      expect(URL.createObjectURL).toHaveBeenCalledWith(file);
     });
 
     it("should revoke the object URL after the download process", async () => {

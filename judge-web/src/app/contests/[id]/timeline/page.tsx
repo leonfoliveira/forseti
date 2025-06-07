@@ -7,7 +7,7 @@ import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { toLocaleString } from "@/app/_util/date-utils";
-import { useFindAllSubmissionsAction } from "@/app/_action/find-all-submissions-action";
+import { useFindAllContestSubmissionsAction } from "@/app/_action/find-all-contest-submissions-action";
 import { SubmissionStatusBadge } from "@/app/contests/[id]/_component/submission-status-badge";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useTranslations } from "next-intl";
@@ -18,7 +18,7 @@ export default function ContestTimelinePage({
   params: Promise<{ id: number }>;
 }) {
   const { id } = use(params);
-  const { data: submissions, ...action } = useFindAllSubmissionsAction();
+  const { data: submissions, ...action } = useFindAllContestSubmissionsAction();
   const { formatLanguage } = useContestFormatter();
   const t = useTranslations("contests.[id].timeline");
 

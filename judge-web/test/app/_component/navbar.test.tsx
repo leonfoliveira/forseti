@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { Navbar } from "@/app/_component/navbar";
-import { ContestSummaryResponseDTO } from "@/core/repository/dto/response/ContestSummaryResponseDTO";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/ContestMetadataResponseDTO";
 import { authorizationService } from "@/app/_composition";
 
 jest.mock("@/app/_composition", () => ({
@@ -33,7 +33,7 @@ it("renders the contest title when contest is provided", () => {
         {
           title: "Sample Contest",
           endAt: new Date().toISOString(),
-        } as ContestSummaryResponseDTO
+        } as ContestMetadataResponseDTO
       }
       signInPath="/signin"
     />,
@@ -52,7 +52,7 @@ it("updates the clock with the remaining time until contest ends", async () => {
   const endAt = new Date(Date.now() + 60000).toISOString();
   render(
     <Navbar
-      contest={{ title: "Sample Contest", endAt } as ContestSummaryResponseDTO}
+      contest={{ title: "Sample Contest", endAt } as ContestMetadataResponseDTO}
       signInPath="/signin"
     />,
   );
@@ -65,7 +65,7 @@ it("applies text-error class to the clock when less than 20 minutes remain", asy
   const endAt = new Date(Date.now() + 19 * 60 * 1000).toISOString();
   render(
     <Navbar
-      contest={{ title: "Sample Contest", endAt } as ContestSummaryResponseDTO}
+      contest={{ title: "Sample Contest", endAt } as ContestMetadataResponseDTO}
       signInPath="/signin"
     />,
   );

@@ -3,20 +3,20 @@ import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { Attachment } from "@/core/domain/model/Attachment";
 
 export type UpdateContestRequestDTO = {
-  id: number;
+  id: string;
   title: string;
   languages: Language[];
   startAt: Date;
   endAt: Date;
   members: {
-    id?: number;
+    id?: string;
     type: MemberType;
     name: string;
     login: string;
     password?: string;
   }[];
   problems: {
-    id?: number;
+    id?: string;
     title: string;
     description: Attachment;
     timeLimit: number;

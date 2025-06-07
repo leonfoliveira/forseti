@@ -118,9 +118,9 @@ class FindContestService(
             }
 
         return ContestOutputDTO.MemberDTO.MemberProblemDTO(
-            problemId = problem.id,
-            wrongSubmissions = wrongSubmissionsBeforeAccepted.size,
+            id = problem.id,
             isAccepted = isAccepted,
+            wrongSubmissions = wrongSubmissionsBeforeAccepted.size,
             penalty = acceptationPenalty + wrongAnswersPenalty,
         )
     }

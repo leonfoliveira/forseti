@@ -50,7 +50,7 @@ describe("useDeleteContestAction", () => {
     const { result } = renderHook(() => useDeleteContestAction());
     const { act: deleteContestAction } = result.current;
 
-    const contestId = 1;
+    const contestId = "123";
 
     await waitFor(async () => {
       await deleteContestAction(contestId);
@@ -71,7 +71,7 @@ describe("useDeleteContestAction", () => {
     const { result } = renderHook(() => useDeleteContestAction());
     const { act: deleteContestAction } = result.current;
 
-    const contestId = 1;
+    const contestId = "123";
 
     await waitFor(async () => {
       await deleteContestAction(contestId);
@@ -91,7 +91,7 @@ describe("useDeleteContestAction", () => {
     const { result } = renderHook(() => useDeleteContestAction());
     const { act: deleteContestAction } = result.current;
 
-    const contestId = 1;
+    const contestId = "123";
 
     await waitFor(async () => {
       await deleteContestAction(contestId);

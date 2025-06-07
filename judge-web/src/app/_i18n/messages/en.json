@@ -81,6 +81,11 @@
       },
       "submission-status": {
         "JUDGING": "Judging",
+        "FAILED": "Failed",
+        "JUDGED": "Judged"
+      },
+      "submission-answer": {
+        "NO_ANSWER": "",
         "ACCEPTED": "Accepted",
         "WRONG_ANSWER": "Wrong Answer",
         "TIME_LIMIT_EXCEEDED": "Time Limit Exceeded",

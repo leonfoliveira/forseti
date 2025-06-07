@@ -3,7 +3,7 @@ import React from "react";
 import ContestLayout from "@/app/contests/[id]/layout";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthorization } from "@/app/_util/authorization-hook";
-import { useFindContestSummaryByIdAction } from "@/app/_action/find-contest-summary-action";
+import { useFindContestMetadataByIdAction } from "@/app/_action/find-contest-metadata-action";
 import { useSubscribeForMemberSubmissionAction } from "@/app/_action/subscribe-for-member-submission-action";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { toLocaleString } from "@/app/_util/date-utils";
@@ -24,7 +24,7 @@ jest.mock("@/app/_util/authorization-hook", () => ({
   useAuthorization: jest.fn(),
 }));
 
-jest.mock("@/app/_action/find-contest-summary-action", () => ({
+jest.mock("@/app/_action/find-contest-metadata-action", () => ({
   useFindContestSummaryByIdAction: jest.fn(),
 }));
 
@@ -51,7 +51,7 @@ const mockUsePathname = usePathname as jest.Mock;
 const mockUseRouter = useRouter as jest.Mock;
 const mockUseAuthorization = useAuthorization as jest.Mock;
 const mockUseFindContestSummaryByIdAction =
-  useFindContestSummaryByIdAction as jest.Mock;
+  useFindContestMetadataByIdAction as jest.Mock;
 const mockUseSubscribeForMemberSubmissionAction =
   useSubscribeForMemberSubmissionAction as jest.Mock;
 

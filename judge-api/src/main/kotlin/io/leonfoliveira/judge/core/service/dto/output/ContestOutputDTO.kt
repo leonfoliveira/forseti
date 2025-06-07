@@ -23,7 +23,7 @@ data class ContestOutputDTO(
         val problems: List<MemberProblemDTO>,
     ) {
         data class MemberProblemDTO(
-            val problemId: UUID,
+            val id: UUID,
             val isAccepted: Boolean,
             val wrongSubmissions: Int,
             val penalty: Int,

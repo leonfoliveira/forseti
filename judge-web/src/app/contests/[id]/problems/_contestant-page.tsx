@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { Spinner } from "@/app/_component/spinner";
 import { cls } from "@/app/_util/cls";
-import { ProblemMemberResponseDTO } from "@/core/repository/dto/response/ProblemMemberResponseDTO";
+import { ProblemWithStatusResponseDTO } from "@/core/repository/dto/response/ProblemWithStatusResponseDTO";
 import { useFindAllProblemsForMemberAction } from "@/app/_action/find-all-problems-for-member-action";
 import { Table } from "@/app/_component/table/table";
 import { TableSection } from "@/app/_component/table/table-section";
@@ -27,7 +27,7 @@ export function ContestantContestProblemsPage({ contestId }: Props) {
     getProblems();
   }, []);
 
-  function onDownload(problem: ProblemMemberResponseDTO) {
+  function onDownload(problem: ProblemWithStatusResponseDTO) {
     attachmentService.download(problem.description);
   }
 

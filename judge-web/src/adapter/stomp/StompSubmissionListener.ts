@@ -1,15 +1,15 @@
 import { SubmissionListener } from "@/core/listener/SubmissionListener";
 import { StompConnector } from "@/adapter/stomp/StompConnector";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
-import { SubmissionPrivateResponseDTO } from "@/core/repository/dto/response/SubmissionPrivateResponseDTO";
 import { StompClient } from "@/adapter/stomp/StompClient";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
 
 export class StompSubmissionListener implements SubmissionListener {
   constructor(private readonly stompConnector: StompConnector) {}
 
   async subscribeForContest(
-    contestId: number,
+    contestId: string,
     cb: (submission: SubmissionPublicResponseDTO) => void,
   ): Promise<ListenerClient> {
     const client = new StompClient(this.stompConnector);
@@ -17,21 +17,21 @@ export class StompSubmissionListener implements SubmissionListener {
     return client;
   }
 
+  async subscribeForContestFull(
+    contestId: string,
+    cb: (submission: SubmissionFullResponseDTO) => void,
+  ): Promise<ListenerClient> {
+    const client = new StompClient(this.stompConnector);
+    await client.subscribe(`/topic/contests/${contestId}/submissions/full`, cb);
+    return client;
+  }
+
   async subscribeForMember(
-    memberId: number,
+    memberId: string,
     cb: (submission: SubmissionPublicResponseDTO) => void,
   ): Promise<ListenerClient> {
     const client = new StompClient(this.stompConnector);
     await client.subscribe(`/topic/members/${memberId}/submissions`, cb);
-    return client;
-  }
-
-  async subscribeForFail(
-    contestId: number,
-    cb: (submission: SubmissionPrivateResponseDTO) => void,
-  ): Promise<ListenerClient> {
-    const client = new StompClient(this.stompConnector);
-    await client.subscribe(`/topic/contests/${contestId}/submissions/fail`, cb);
     return client;
   }
 

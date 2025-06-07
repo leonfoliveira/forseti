@@ -1,13 +1,13 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import RootContestsPage from "@/app/root/contests/page";
 import { useRouter } from "next/navigation";
-import { useFindAllContestsAction } from "@/app/_action/find-all-contests-action";
+import { useFindAllContestsMetadataAction } from "@/app/_action/find-all-contests-metadata-action";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
 }));
 
-jest.mock("@/app/_action/find-all-contests-action", () => ({
+jest.mock("@/app/_action/find-all-contests-metadata-action", () => ({
   useFindAllContestsAction: jest.fn(),
 }));
 
@@ -28,7 +28,7 @@ describe("RootContestsPage", () => {
   beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
 
-    (useFindAllContestsAction as jest.Mock).mockReturnValue({
+    (useFindAllContestsMetadataAction as jest.Mock).mockReturnValue({
       isLoading: false,
       data: [{ id: 1, title: "Contest A" }],
       act: mockAct,
@@ -48,7 +48,7 @@ describe("RootContestsPage", () => {
   });
 
   it("shows spinner when loading", () => {
-    (useFindAllContestsAction as jest.Mock).mockReturnValue({
+    (useFindAllContestsMetadataAction as jest.Mock).mockReturnValue({
       isLoading: true,
       data: null,
       act: mockAct,

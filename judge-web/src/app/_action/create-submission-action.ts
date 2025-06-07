@@ -13,7 +13,7 @@ export function useCreateSubmissionAction() {
   const t = useTranslations("_action.create-submission-action");
 
   async function createSubmission(
-    contestId: number,
+    contestId: string,
     input: CreateSubmissionInputDTO,
   ) {
     try {

@@ -4,7 +4,7 @@ import { submissionService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { useMemberSignOutAction } from "@/app/_action/member-sign-out-action";
 import { useCreateSubmissionAction } from "@/app/_action/create-submission-action";
-import { SubmissionPrivateResponseDTO } from "@/core/repository/dto/response/SubmissionPrivateResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
 import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmissionInputDTO";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 
@@ -52,14 +52,14 @@ describe("useCreateSubmissionAction", () => {
     const { result } = renderHook(() => useCreateSubmissionAction());
     const { act: createSubmissionAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     const input = {
       code: 'console.log("hello")',
       language: "javascript",
       contestId: contestId,
     } as unknown as CreateSubmissionInputDTO;
 
-    let returnedSubmission: SubmissionPrivateResponseDTO | undefined;
+    let returnedSubmission: SubmissionFullResponseDTO | undefined;
     await waitFor(async () => {
       returnedSubmission = await createSubmissionAction(contestId, input);
     });
@@ -84,7 +84,7 @@ describe("useCreateSubmissionAction", () => {
     const { result } = renderHook(() => useCreateSubmissionAction());
     const { act: createSubmissionAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     const input = {
       code: 'console.log("hello")',
       language: "javascript",
@@ -112,7 +112,7 @@ describe("useCreateSubmissionAction", () => {
     const { result } = renderHook(() => useCreateSubmissionAction());
     const { act: createSubmissionAction } = result.current;
 
-    const contestId = 123;
+    const contestId = "123";
     const input = {
       code: 'console.log("hello")',
       language: "javascript",

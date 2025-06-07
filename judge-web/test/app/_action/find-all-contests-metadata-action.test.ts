@@ -4,11 +4,11 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
 import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { contestService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
-import { useFindAllContestsAction } from "@/app/_action/find-all-contests-action";
+import { useFindAllContestsMetadataAction } from "@/app/_action/find-all-contests-metadata-action";
 
 jest.mock("@/app/_composition", () => ({
   contestService: {
-    findAllContests: jest.fn(),
+    findAllContestMetadata: jest.fn(),
   },
 }));
 
@@ -42,11 +42,11 @@ describe("useFindAllContestsAction", () => {
 
   it("should return contests successfully", async () => {
     const mockContests = [{ id: "c1" }, { id: "c2" }];
-    (contestService.findAllContests as jest.Mock).mockResolvedValue(
+    (contestService.findAllContestMetadata as jest.Mock).mockResolvedValue(
       mockContests,
     );
 
-    const { result } = renderHook(() => useFindAllContestsAction());
+    const { result } = renderHook(() => useFindAllContestsMetadataAction());
     const { act: findAllContestsAction } = result.current;
 
     let returnedContests;
@@ -54,7 +54,7 @@ describe("useFindAllContestsAction", () => {
       returnedContests = await findAllContestsAction();
     });
 
-    expect(contestService.findAllContests).toHaveBeenCalledTimes(1);
+    expect(contestService.findAllContestMetadata).toHaveBeenCalledTimes(1);
     expect(returnedContests).toEqual(mockContests);
     expect(mockAlertError).not.toHaveBeenCalled();
     expect(mockSignOutAct).not.toHaveBeenCalled();
@@ -64,34 +64,36 @@ describe("useFindAllContestsAction", () => {
     new UnauthorizedException("Unauthorized"),
     new NotFoundException("Not Found"),
   ])("should sign out on %p", async (exception) => {
-    (contestService.findAllContests as jest.Mock).mockRejectedValue(exception);
+    (contestService.findAllContestMetadata as jest.Mock).mockRejectedValue(
+      exception,
+    );
 
-    const { result } = renderHook(() => useFindAllContestsAction());
+    const { result } = renderHook(() => useFindAllContestsMetadataAction());
     const { act: findAllContestsAction } = result.current;
 
     await waitFor(async () => {
       await findAllContestsAction();
     });
 
-    expect(contestService.findAllContests).toHaveBeenCalledTimes(1);
+    expect(contestService.findAllContestMetadata).toHaveBeenCalledTimes(1);
     expect(mockSignOutAct).toHaveBeenCalledTimes(1);
     expect(mockAlertError).not.toHaveBeenCalled();
   });
 
   it("should show an error alert for other exceptions", async () => {
     const genericError = new Error("Network Error");
-    (contestService.findAllContests as jest.Mock).mockRejectedValue(
+    (contestService.findAllContestMetadata as jest.Mock).mockRejectedValue(
       genericError,
     );
 
-    const { result } = renderHook(() => useFindAllContestsAction());
+    const { result } = renderHook(() => useFindAllContestsMetadataAction());
     const { act: findAllContestsAction } = result.current;
 
     await waitFor(async () => {
       await findAllContestsAction();
     });
 
-    expect(contestService.findAllContests).toHaveBeenCalledTimes(1);
+    expect(contestService.findAllContestMetadata).toHaveBeenCalledTimes(1);
     expect(mockAlertError).toHaveBeenCalled();
     expect(mockSignOutAct).not.toHaveBeenCalled();
   });

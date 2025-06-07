@@ -8,7 +8,7 @@ export class AxiosAuthenticationRepository implements AuthenticationRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
 
   async authenticateMember(
-    contestId: number,
+    contestId: string,
     requestDTO: AuthenticateMemberRequestDTO,
   ): Promise<Authorization> {
     const response = await this.axiosClient.post<Authorization>(

@@ -9,16 +9,11 @@ export class AttachmentService {
   }
 
   async download(attachment: Attachment) {
-    const downloadAttachment =
-      await this.attachmentRepository.download(attachment);
-    const url = URL.createObjectURL(
-      new Blob([downloadAttachment.blob], {
-        type: downloadAttachment.contentType,
-      }),
-    );
+    const file = await this.attachmentRepository.download(attachment);
+    const url = URL.createObjectURL(file);
     const a = document.createElement("a");
     a.href = url;
-    a.download = downloadAttachment.filename;
+    a.download = file.name;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
