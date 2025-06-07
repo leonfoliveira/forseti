@@ -11,7 +11,7 @@ create table contest (
 );
 
 create table contest_aud (
-    rev int not null,
+    rev bigint not null,
     revtype smallint not null,
     id uuid not null,
     created_at timestamp not null,

@@ -18,7 +18,7 @@ create index idx_submission_member_id on submission (member_id);
 create index idx_submission_problem_id on submission (problem_id);
 
 create table submission_aud (
-    rev int not null,
+    rev bigint not null,
     revtype smallint not null,
     id uuid not null,
     created_at timestamp not null,

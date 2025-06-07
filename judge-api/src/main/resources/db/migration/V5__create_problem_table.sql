@@ -17,7 +17,7 @@ create table problem (
 create index idx_problem_contest_id on problem (contest_id);
 
 create table problem_aud (
-    rev int not null,
+    rev bigint not null,
     revtype smallint not null,
     id uuid not null,
     created_at timestamp not null,

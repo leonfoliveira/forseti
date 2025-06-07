@@ -16,7 +16,7 @@ create index idx_member_contest_id on member (contest_id);
 create index idx_member_login on member (login);
 
 create table member_aud (
-    rev int not null,
+    rev bigint not null,
     revtype smallint not null,
     id uuid not null,
     created_at timestamp not null,
