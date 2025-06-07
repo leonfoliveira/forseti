@@ -5,7 +5,9 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.leonfoliveira.judge.core.domain.entity.AttachmentMockFactory
+import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Member
+import io.leonfoliveira.judge.core.domain.exception.ConflictException
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.HashAdapter
@@ -58,6 +60,16 @@ class CreateContestServiceTest : FunSpec({
             }
         }
 
+        test("should throw ConflictException if slug is duplicated") {
+            val input = CreateContestInputDTOMockFactory.build()
+            every { contestRepository.findBySlug(input.slug) }
+                .returns(ContestMockFactory.build())
+
+            shouldThrow<ConflictException> {
+                sut.create(input)
+            }
+        }
+
         listOf(
             CreateContestInputDTOMockFactory.build(
                 members = listOf(CreateContestInputDTOMockFactory.buildMemberDTO(type = Member.Type.ROOT)),
@@ -85,6 +97,20 @@ class CreateContestServiceTest : FunSpec({
                 startAt = now.plusDays(1),
                 endAt = now.plusDays(1),
             ),
+            CreateContestInputDTOMockFactory.build(
+                members =
+                    listOf(
+                        CreateContestInputDTOMockFactory.buildMemberDTO(login = "contestant"),
+                        CreateContestInputDTOMockFactory.buildMemberDTO(login = "contestant"),
+                    ),
+            ),
+            CreateContestInputDTOMockFactory.build(
+                problems =
+                    listOf(
+                        CreateContestInputDTOMockFactory.buildProblemDTO(letter = 'A'),
+                        CreateContestInputDTOMockFactory.buildProblemDTO(letter = 'A'),
+                    ),
+            ),
         ).forEach { dto ->
             test("should validate inputDTO") {
                 validator.validate(dto).size shouldNotBe 0
@@ -102,6 +128,8 @@ class CreateContestServiceTest : FunSpec({
                             ),
                         ),
                 )
+            every { contestRepository.findBySlug(any()) }
+                .returns(null)
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(AttachmentMockFactory.build()))
             every { attachmentRepository.findById(id) }
@@ -125,6 +153,8 @@ class CreateContestServiceTest : FunSpec({
                             ),
                         ),
                 )
+            every { contestRepository.findBySlug(any()) }
+                .returns(null)
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(AttachmentMockFactory.build()))
             every { attachmentRepository.findById(id) }
@@ -146,6 +176,8 @@ class CreateContestServiceTest : FunSpec({
                     endAt = endAt,
                 )
             val attachment = AttachmentMockFactory.build()
+            every { contestRepository.findBySlug(any()) }
+                .returns(null)
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(attachment))
             every { contestRepository.save(any()) }

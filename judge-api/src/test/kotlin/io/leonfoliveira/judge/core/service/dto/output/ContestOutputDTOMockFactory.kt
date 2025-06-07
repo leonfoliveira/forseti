@@ -7,6 +7,7 @@ import java.util.UUID
 object ContestOutputDTOMockFactory {
     fun build(
         id: UUID = UUID.randomUUID(),
+        slug: String = "mock-contest-slug",
         title: String = "Mock Contest",
         languages: List<Language> = listOf(Language.PYTHON_3_13_3),
         startAt: LocalDateTime = LocalDateTime.now(),
@@ -15,6 +16,7 @@ object ContestOutputDTOMockFactory {
         members: List<ContestOutputDTO.MemberDTO> = emptyList(),
     ) = ContestOutputDTO(
         id = id,
+        slug = slug,
         title = title,
         languages = languages,
         startAt = startAt,

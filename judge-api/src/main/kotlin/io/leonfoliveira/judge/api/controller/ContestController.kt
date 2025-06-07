@@ -82,12 +82,12 @@ class ContestController(
         return ResponseEntity.ok(contest)
     }
 
-    @GetMapping("/{id}/metadata")
-    fun findContestMetadataById(
-        @PathVariable id: UUID,
+    @GetMapping("/slug/{slug}/metadata")
+    fun findContestMetadataBySlug(
+        @PathVariable slug: String,
     ): ResponseEntity<ContestMetadataResponseDTO> {
-        logger.info("[GET] /v1/contests/{id}/metadata - id: $id")
-        val contest = findContestService.findById(id)
+        logger.info("[GET] /v1/contests/slug/{slug}/metadata - slug: $slug")
+        val contest = findContestService.findBySlug(slug)
         return ResponseEntity.ok(contest.toMetadataDTO())
     }
 

@@ -5,6 +5,7 @@ import java.util.UUID
 
 data class ProblemFullResponseDTO(
     val id: UUID,
+    val letter: Char,
     val title: String,
     val description: AttachmentResponseDTO,
     val timeLimit: Int,
@@ -14,6 +15,7 @@ data class ProblemFullResponseDTO(
 fun Problem.toFullResponseDTO(): ProblemFullResponseDTO {
     return ProblemFullResponseDTO(
         id = id,
+        letter = letter,
         title = title,
         description = description.toResponseDTO(),
         timeLimit = timeLimit,

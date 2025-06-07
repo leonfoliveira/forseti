@@ -3,6 +3,7 @@ package io.leonfoliveira.judge.core.service.contest
 import io.leonfoliveira.judge.core.domain.entity.Contest
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.Problem
+import io.leonfoliveira.judge.core.domain.exception.ConflictException
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.HashAdapter
@@ -36,14 +37,18 @@ class UpdateContestService(
         if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
             throw ForbiddenException("Contest cannot have ROOT members")
         }
-
         val contest =
             contestRepository.findById(inputDTO.id)
                 .orElseThrow { NotFoundException("Could not find contest with id = ${inputDTO.id}") }
         if (contest.hasStarted()) {
             throw ForbiddenException("Contest has already started")
         }
+        val duplicatedContestBySlug = contestRepository.findBySlug(inputDTO.slug)
+        if (duplicatedContestBySlug != null && duplicatedContestBySlug.id != contest.id) {
+            throw ConflictException("Contest with slug '${inputDTO.slug}' already exists")
+        }
 
+        contest.slug = inputDTO.slug
         contest.title = inputDTO.title
         contest.languages = inputDTO.languages
         contest.startAt = inputDTO.startAt
@@ -122,6 +127,7 @@ class UpdateContestService(
             problem.testCases = testCases
         }
 
+        problem.letter = problemDTO.letter
         problem.title = problemDTO.title
         problem.timeLimit = problemDTO.timeLimit
 

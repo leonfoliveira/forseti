@@ -3,6 +3,7 @@ package io.leonfoliveira.judge.core.service.contest
 import io.leonfoliveira.judge.core.domain.entity.Contest
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.Problem
+import io.leonfoliveira.judge.core.domain.exception.ConflictException
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.HashAdapter
@@ -33,9 +34,14 @@ class CreateContestService(
         if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
             throw ForbiddenException("Contest cannot have ROOT members")
         }
+        val duplicatedContestBySlug = contestRepository.findBySlug(inputDTO.slug)
+        if (duplicatedContestBySlug != null) {
+            throw ConflictException("Contest with slug '${inputDTO.slug}' already exists")
+        }
 
         val contest =
             Contest(
+                slug = inputDTO.slug,
                 title = inputDTO.title,
                 languages = inputDTO.languages,
                 startAt = inputDTO.startAt,
@@ -87,6 +93,7 @@ class CreateContestService(
 
         val problem =
             Problem(
+                letter = problemDTO.letter,
                 title = problemDTO.title,
                 description = description,
                 timeLimit = problemDTO.timeLimit,

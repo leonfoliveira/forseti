@@ -7,6 +7,7 @@ import java.util.UUID
 
 data class ContestOutputDTO(
     val id: UUID,
+    val slug: String,
     val title: String,
     val languages: List<Language>,
     val startAt: LocalDateTime,
@@ -32,6 +33,7 @@ data class ContestOutputDTO(
 
     data class ProblemDTO(
         val id: UUID,
+        val letter: Char,
         val title: String,
         val description: Attachment,
     )

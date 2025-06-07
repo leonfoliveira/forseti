@@ -9,11 +9,14 @@ import jakarta.validation.constraints.Future
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.Pattern
 import java.time.LocalDateTime
 import java.util.UUID
 
 data class UpdateContestInputDTO(
     val id: UUID,
+    @field:Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Slug must be alphanumeric")
+    val slug: String,
     @field:NotBlank
     val title: String,
     @field:NotEmpty
@@ -62,8 +65,13 @@ data class UpdateContestInputDTO(
     val isLoginDuplicated: Boolean
         get() = members.groupBy { it.login }.any { it.value.size > 1 }
 
+    @get:AssertFalse(message = "slug must be unique")
+    val isProblemLetterDuplicated: Boolean
+        get() = problems.groupBy { it.letter }.any { it.value.size > 1 }
+
     data class ProblemDTO(
         val id: UUID? = null,
+        val letter: Char,
         @field:NotEmpty
         val title: String,
         val description: AttachmentInputDTO,
@@ -73,6 +81,7 @@ data class UpdateContestInputDTO(
     ) {
         fun toCreateDTO(): CreateContestInputDTO.ProblemDTO {
             return CreateContestInputDTO.ProblemDTO(
+                letter = letter,
                 title = title,
                 description = description,
                 timeLimit = timeLimit,

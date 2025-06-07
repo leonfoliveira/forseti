@@ -27,6 +27,8 @@ class Contest(
     createdAt: LocalDateTime = TimeUtils.now(),
     updatedAt: LocalDateTime = TimeUtils.now(),
     deletedAt: LocalDateTime? = null,
+    @Column(nullable = false, unique = true)
+    var slug: String,
     @Column(nullable = false)
     var title: String,
     @Column(nullable = false)

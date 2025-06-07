@@ -4,6 +4,7 @@ create table contest (
     updated_at timestamp not null,
     deleted_at timestamp,
     title text not null,
+    slug text not null unique,
     languages text[] not null,
     start_at timestamp not null,
     end_at timestamp not null
@@ -20,6 +21,8 @@ create table contest_aud (
     deleted_at_mod boolean not null default false,
     title text not null,
     title_mod boolean not null default false,
+    slug text not null,
+    slug_mod boolean not null default false,
     languages text[] not null,
     languages_mod boolean not null default false,
     start_at timestamp not null,

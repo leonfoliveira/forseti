@@ -7,6 +7,7 @@ import java.util.UUID
 object ContestMockFactory {
     fun build(
         id: UUID = UUID.randomUUID(),
+        slug: String = "contest-slug",
         title: String = "Contest Title",
         languages: List<Language> = listOf(Language.PYTHON_3_13_3),
         startAt: LocalDateTime = LocalDateTime.now(),
@@ -15,6 +16,7 @@ object ContestMockFactory {
         problems: List<Problem> = emptyList(),
     ) = Contest(
         id = id,
+        slug = slug,
         title = title,
         languages = languages,
         startAt = startAt,

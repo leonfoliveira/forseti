@@ -7,6 +7,7 @@ import java.util.UUID
 
 class ContestMetadataResponseDTO(
     val id: UUID,
+    val slug: String,
     val title: String,
     val languages: List<Language>,
     val startAt: LocalDateTime,
@@ -16,6 +17,7 @@ class ContestMetadataResponseDTO(
 fun Contest.toMetadataDTO(): ContestMetadataResponseDTO {
     return ContestMetadataResponseDTO(
         id = this.id,
+        slug = this.slug,
         title = this.title,
         languages = this.languages,
         startAt = this.startAt,

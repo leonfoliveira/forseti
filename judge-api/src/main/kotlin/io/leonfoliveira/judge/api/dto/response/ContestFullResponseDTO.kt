@@ -7,6 +7,7 @@ import java.util.UUID
 
 class ContestFullResponseDTO(
     val id: UUID,
+    val slug: String,
     val title: String,
     val languages: List<Language>,
     val startAt: LocalDateTime,
@@ -18,6 +19,7 @@ class ContestFullResponseDTO(
 fun Contest.toFullResponseDTO(): ContestFullResponseDTO {
     return ContestFullResponseDTO(
         id = this.id,
+        slug = this.slug,
         title = this.title,
         languages = this.languages,
         startAt = this.startAt,

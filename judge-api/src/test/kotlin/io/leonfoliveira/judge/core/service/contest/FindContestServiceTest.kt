@@ -50,4 +50,27 @@ class FindContestServiceTest : FunSpec({
             result shouldBe contest
         }
     }
+
+    context("findBySlug") {
+        test("should throw NotFoundException when contest not found") {
+            val slug = "test-slug"
+            every { contestRepository.findBySlug(slug) }
+                .returns(null)
+
+            shouldThrow<NotFoundException> {
+                sut.findBySlug(slug)
+            }
+        }
+
+        test("should return contest") {
+            val slug = "test-slug"
+            val contest = ContestMockFactory.build()
+            every { contestRepository.findBySlug(slug) }
+                .returns(contest)
+
+            val result = sut.findBySlug(slug)
+
+            result shouldBe contest
+        }
+    }
 })

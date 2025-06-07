@@ -30,6 +30,8 @@ class Problem(
     @Audited(withModifiedFlag = false)
     val contest: Contest,
     @Column(nullable = false)
+    var letter: Char,
+    @Column(nullable = false)
     var title: String,
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "description_id", nullable = false)

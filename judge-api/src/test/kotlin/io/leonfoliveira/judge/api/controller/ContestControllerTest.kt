@@ -124,12 +124,12 @@ class ContestControllerTest(
                     }
             }
 
-            test("findContestMetadataById") {
+            test("findContestMetadataBySlug") {
                 val contest = ContestMockFactory.build()
-                every { findContestService.findById(contest.id) }
+                every { findContestService.findBySlug(contest.slug) }
                     .returns(contest)
 
-                mockMvc.get("$basePath/${contest.id}/metadata")
+                mockMvc.get("$basePath/slug/${contest.slug}/metadata")
                     .andExpect {
                         status { isOk() }
                         content { contest.toMetadataDTO() }

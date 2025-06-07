@@ -3,14 +3,18 @@ package io.leonfoliveira.judge.core.service.dto.input
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.enumerate.Language
 import jakarta.validation.Valid
+import jakarta.validation.constraints.AssertFalse
 import jakarta.validation.constraints.AssertTrue
 import jakarta.validation.constraints.Future
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.Pattern
 import java.time.LocalDateTime
 
 data class CreateContestInputDTO(
+    @field:Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Slug must be alphanumeric")
+    val slug: String,
     @field:NotBlank
     val title: String,
     @field:NotEmpty
@@ -41,7 +45,16 @@ data class CreateContestInputDTO(
         }
     }
 
+    @get:AssertFalse(message = "login must be unique")
+    val isLoginDuplicated: Boolean
+        get() = members.groupBy { it.login }.any { it.value.size > 1 }
+
+    @get:AssertFalse(message = "slug must be unique")
+    val isProblemLetterDuplicated: Boolean
+        get() = problems.groupBy { it.letter }.any { it.value.size > 1 }
+
     data class ProblemDTO(
+        val letter: Char,
         @field:NotEmpty
         val title: String,
         val description: AttachmentInputDTO,

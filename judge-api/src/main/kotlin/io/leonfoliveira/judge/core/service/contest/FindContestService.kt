@@ -36,7 +36,16 @@ class FindContestService(
             contestRepository.findById(id).orElseThrow {
                 NotFoundException("Could not find contest with id = $id")
             }
-        logger.info("Found contest")
+        logger.info("Found contest by id")
+        return contest
+    }
+
+    fun findBySlug(slug: String): Contest {
+        logger.info("Finding contest with slug: $slug")
+        val contest =
+            contestRepository.findBySlug(slug)
+                ?: throw NotFoundException("Could not find contest with slug = $slug")
+        logger.info("Found contest by slug")
         return contest
     }
 
@@ -59,6 +68,7 @@ class FindContestService(
 
         return ContestOutputDTO(
             id = contest.id,
+            slug = contest.slug,
             title = contest.title,
             languages = contest.languages,
             startAt = contest.startAt,
@@ -128,6 +138,7 @@ class FindContestService(
     private fun buildProblemDTO(problem: Problem): ContestOutputDTO.ProblemDTO {
         return ContestOutputDTO.ProblemDTO(
             id = problem.id,
+            letter = problem.letter,
             title = problem.title,
             description = problem.description,
         )

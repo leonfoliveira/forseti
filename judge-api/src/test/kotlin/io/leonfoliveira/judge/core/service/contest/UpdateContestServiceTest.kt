@@ -10,6 +10,7 @@ import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
 import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
+import io.leonfoliveira.judge.core.domain.exception.ConflictException
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.HashAdapter
@@ -92,6 +93,20 @@ class UpdateContestServiceTest : FunSpec({
             UpdateContestInputDTOMockFactory.build(languages = emptyList()),
             UpdateContestInputDTOMockFactory.build(startAt = now, endAt = now),
             UpdateContestInputDTOMockFactory.build(startAt = now.minusDays(1)),
+            UpdateContestInputDTOMockFactory.build(
+                members =
+                    listOf(
+                        UpdateContestInputDTOMockFactory.buildMemberDTO(login = "contestant"),
+                        UpdateContestInputDTOMockFactory.buildMemberDTO(login = "contestant"),
+                    ),
+            ),
+            UpdateContestInputDTOMockFactory.build(
+                problems =
+                    listOf(
+                        UpdateContestInputDTOMockFactory.buildProblemDTO(letter = 'A'),
+                        UpdateContestInputDTOMockFactory.buildProblemDTO(letter = 'A'),
+                    ),
+            ),
         ).forEach { dto ->
             test("should validate inputDTO") {
                 validator.validate(dto).size shouldNotBe 0
@@ -108,6 +123,18 @@ class UpdateContestServiceTest : FunSpec({
             }
         }
 
+        test("should throw ConflictException if slug is duplicated") {
+            val input = UpdateContestInputDTOMockFactory.build()
+            every { contestRepository.findById(input.id) }
+                .returns(Optional.of(ContestMockFactory.build()))
+            every { contestRepository.findBySlug(input.slug) }
+                .returns(ContestMockFactory.build())
+
+            shouldThrow<ConflictException> {
+                sut.update(input)
+            }
+        }
+
         test("should throw NotFoundException when member not found") {
             val input =
                 UpdateContestInputDTOMockFactory.build(
@@ -115,6 +142,8 @@ class UpdateContestServiceTest : FunSpec({
                     problems = listOf(),
                 )
             val contest = ContestMockFactory.build(members = listOf())
+            every { contestRepository.findBySlug(any()) }
+                .returns(null)
             every { contestRepository.findById(input.id) }
                 .returns(Optional.of(contest))
 
@@ -130,6 +159,8 @@ class UpdateContestServiceTest : FunSpec({
                     problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = UUID.randomUUID())),
                 )
             val contest = ContestMockFactory.build(problems = listOf())
+            every { contestRepository.findBySlug(any()) }
+                .returns(null)
             every { contestRepository.findById(input.id) }
                 .returns(Optional.of(contest))
 
@@ -146,6 +177,8 @@ class UpdateContestServiceTest : FunSpec({
                     problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = UUID.randomUUID(), description = attachment)),
                 )
             val contest = ContestMockFactory.build(problems = listOf(ProblemMockFactory.build(id = UUID.randomUUID())))
+            every { contestRepository.findBySlug(any()) }
+                .returns(null)
             every { contestRepository.findById(input.id) }
                 .returns(Optional.of(contest))
             every { attachmentRepository.findById(any()) }
@@ -166,6 +199,8 @@ class UpdateContestServiceTest : FunSpec({
                     problems = listOf(UpdateContestInputDTOMockFactory.buildProblemDTO(id = UUID.randomUUID(), testCases = attachment)),
                 )
             val contest = ContestMockFactory.build(problems = listOf(ProblemMockFactory.build(id = UUID.randomUUID())))
+            every { contestRepository.findBySlug(any()) }
+                .returns(null)
             every { contestRepository.findById(input.id) }
                 .returns(Optional.of(contest))
             every { attachmentRepository.findById(any()) }
@@ -209,6 +244,8 @@ class UpdateContestServiceTest : FunSpec({
                     problems = listOf(problemToDelete, problemToUpdate, problemToUpdateTestCases),
                 )
 
+            every { contestRepository.findBySlug(any()) }
+                .returns(null)
             val attachment = AttachmentMockFactory.build()
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(attachment))
