@@ -50,11 +50,11 @@ export class AxiosContestRepository implements ContestRepository {
     return response.data;
   }
 
-  async findContestMetadataById(
+  async findContestMetadataBySlug(
     id: string,
   ): Promise<ContestMetadataResponseDTO> {
     const response = await this.axiosClient.get<ContestMetadataResponseDTO>(
-      `/v1/contests/${id}/metadata`,
+      `/v1/contests/slug/${id}/metadata`,
     );
     return response.data;
   }

@@ -17,14 +17,7 @@ class FindSubmissionService(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun findAllByContest(contestId: UUID): List<Submission> {
-        return findAllByContest(contestId, null)
-    }
-
-    fun findAllByContest(
-        contestId: UUID,
-        status: Submission.Status?,
-    ): List<Submission> {
-        logger.info("Finding all submissions for contest with id: $contestId and status: $status")
+        logger.info("Finding all submissions for contest with id: $contestId")
 
         val contest =
             contestRepository.findById(contestId).orElseThrow {
@@ -36,7 +29,7 @@ class FindSubmissionService(
         val submissions =
             contest.members.map {
                 it.submissions
-            }.flatten().filter { it.status == status || status == null }
+            }.flatten()
 
         logger.info("Found ${submissions.size} submissions")
         return submissions.sortedBy { it.createdAt }

@@ -7,7 +7,7 @@ import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.event.SubmissionStatusUpdatedEvent
+import io.leonfoliveira.judge.core.event.SubmissionEvent
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
 import io.mockk.every
@@ -53,16 +53,16 @@ class UpdateSubmissionServiceTest : FunSpec({
             val answer = Submission.Answer.ACCEPTED
             every { submissionRepository.findById(submissionId) } returns Optional.of(submission)
             every { submissionRepository.save(submission) } returnsArgument 0
-            val eventSlot = slot<SubmissionStatusUpdatedEvent>()
+            val eventSlot = slot<SubmissionEvent>()
             every { transactionalEventPublisher.publish(capture(eventSlot)) }
                 .returns(Unit)
 
-            val result = sut.judge(submissionId, answer)
+            val result = sut.updateAnswer(submissionId, answer)
 
             result.status shouldBe Submission.Status.JUDGED
             result.answer shouldBe answer
             verify { submissionRepository.save(submission) }
-            verify { transactionalEventPublisher.publish(any<SubmissionStatusUpdatedEvent>()) }
+            verify { transactionalEventPublisher.publish(any<SubmissionEvent>()) }
             eventSlot.captured.submission shouldBe submission
         }
 
@@ -73,7 +73,7 @@ class UpdateSubmissionServiceTest : FunSpec({
             every { submissionRepository.findById(submissionId) } returns Optional.of(submission)
 
             shouldThrow<ForbiddenException> {
-                sut.judge(submissionId, answer)
+                sut.updateAnswer(submissionId, answer)
             }
         }
 
@@ -83,7 +83,7 @@ class UpdateSubmissionServiceTest : FunSpec({
             every { submissionRepository.findById(submissionId) } returns Optional.empty()
 
             shouldThrow<NotFoundException> {
-                sut.judge(submissionId, answer)
+                sut.updateAnswer(submissionId, answer)
             }
         }
 
@@ -93,7 +93,7 @@ class UpdateSubmissionServiceTest : FunSpec({
             every { submissionRepository.findById(submissionId) } returns Optional.of(submission)
 
             shouldThrow<ForbiddenException> {
-                sut.judge(submissionId, Submission.Answer.NO_ANSWER)
+                sut.updateAnswer(submissionId, Submission.Answer.NO_ANSWER)
             }
         }
     }

@@ -3,7 +3,7 @@ package io.leonfoliveira.judge.core.service.submission
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.event.SubmissionStatusUpdatedEvent
+import io.leonfoliveira.judge.core.event.SubmissionEvent
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
 import org.slf4j.LoggerFactory
@@ -27,12 +27,12 @@ class UpdateSubmissionService(
 
         submission.status = Submission.Status.FAILED
         submissionRepository.save(submission)
-        transactionalEventPublisher.publish(SubmissionStatusUpdatedEvent(this, submission))
+        transactionalEventPublisher.publish(SubmissionEvent(this, submission))
         logger.info("Submission failed successfully")
         return submission
     }
 
-    fun judge(
+    fun updateAnswer(
         submissionId: UUID,
         answer: Submission.Answer,
     ): Submission {
@@ -53,7 +53,7 @@ class UpdateSubmissionService(
         submission.status = Submission.Status.JUDGED
         submission.answer = answer
         submissionRepository.save(submission)
-        transactionalEventPublisher.publish(SubmissionStatusUpdatedEvent(this, submission))
+        transactionalEventPublisher.publish(SubmissionEvent(this, submission))
         logger.info("Submission status updated successfully")
         return submission
     }

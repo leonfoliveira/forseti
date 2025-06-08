@@ -10,7 +10,7 @@ import io.leonfoliveira.judge.core.domain.entity.ProblemMockFactory
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.event.SubmissionJudgeEvent
+import io.leonfoliveira.judge.core.event.SubmissionEvent
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
@@ -155,7 +155,7 @@ class CreateSubmissionServiceTest : FunSpec({
                 .returns(Optional.of(problem))
             every { submissionRepository.save(any()) }
                 .returnsArgument(0)
-            val eventSlot = slot<SubmissionJudgeEvent>()
+            val eventSlot = slot<SubmissionEvent>()
             every { transactionalEventPublisher.publish(capture(eventSlot)) }
                 .returns(Unit)
 

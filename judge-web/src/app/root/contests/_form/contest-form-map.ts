@@ -37,6 +37,7 @@ export function toUpdateRequestDTO(
   ): UpdateContestInputDTO["problems"][number] {
     return {
       id: problem._id,
+      letter: problem.letter as string,
       title: problem.title as string,
       description: problem.description as Attachment | undefined,
       newDescription: problem.newDescription as File | undefined,
@@ -47,7 +48,8 @@ export function toUpdateRequestDTO(
   }
 
   return {
-    id: data.id as number,
+    id: data.id as string,
+    slug: data.slug as string,
     title: data.title as string,
     languages: data.languages as Language[],
     startAt: data.startAt as Date,
@@ -72,6 +74,7 @@ export function fromResponseDTO(
   function mapProblem(problem: ContestFullResponseDTO["problems"][number]) {
     return {
       _id: problem.id,
+      letter: problem.letter,
       title: problem.title,
       description: problem.description,
       newDescription: undefined,
@@ -83,6 +86,7 @@ export function fromResponseDTO(
 
   return {
     id: contest.id,
+    slug: contest.slug,
     title: contest.title,
     languages: contest.languages as [Language, ...Language[]],
     startAt: new Date(contest.startAt),

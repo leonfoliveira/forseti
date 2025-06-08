@@ -21,13 +21,13 @@ object SecurityContextMockFactory {
             ),
     ) = build(authorization)
 
-    fun buildJudge(
+    fun buildJury(
         authorization: AuthorizationMember =
             AuthorizationMember(
                 id = UUID.randomUUID(),
                 name = "judge",
                 login = "login",
-                type = Member.Type.JUDGE,
+                type = Member.Type.JURY,
             ),
     ) = build(authorization)
 

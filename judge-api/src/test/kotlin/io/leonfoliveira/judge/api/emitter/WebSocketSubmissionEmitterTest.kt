@@ -1,8 +1,10 @@
 package io.leonfoliveira.judge.api.emitter
 
 import io.kotest.core.spec.style.FunSpec
-import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
-import io.leonfoliveira.judge.api.dto.response.toPublicResponseDTO
+import io.leonfoliveira.judge.api.dto.response.contest.toFullResponseDTO
+import io.leonfoliveira.judge.api.dto.response.member.toPublicResponseDTO
+import io.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
+import io.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.mockk.mockk
 import io.mockk.verify
@@ -25,17 +27,6 @@ class WebSocketSubmissionEmitterTest : FunSpec({
                 "/topic/contests/${submission.contest.id}/submissions/full",
                 submission.toFullResponseDTO(),
             )
-        }
-    }
-
-    test("should send submission to the member topic") {
-        val submission = SubmissionMockFactory.build()
-        val expectedTopic = "/topic/members/${submission.member.id}/submissions"
-
-        sut.emitForMember(submission)
-
-        verify {
-            messagingTemplate.convertAndSend(expectedTopic, submission.toPublicResponseDTO())
         }
     }
 })

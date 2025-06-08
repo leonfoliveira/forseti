@@ -3,8 +3,7 @@ package io.leonfoliveira.judge.core.service.submission
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.event.SubmissionJudgeEvent
-import io.leonfoliveira.judge.core.event.SubmissionStatusUpdatedEvent
+import io.leonfoliveira.judge.core.event.SubmissionEvent
 import io.leonfoliveira.judge.core.port.SubmissionRunnerAdapter
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
@@ -34,8 +33,7 @@ class RunSubmissionService(
         submission.status = Submission.Status.JUDGING
         submission.answer = Submission.Answer.NO_ANSWER
         submissionRepository.save(submission)
-        transactionalEventPublisher.publish(SubmissionStatusUpdatedEvent(this, submission))
-        transactionalEventPublisher.publish(SubmissionJudgeEvent(this, submission))
+        transactionalEventPublisher.publish(SubmissionEvent(this, submission))
         logger.info("Submission updated enqueued and emitted")
         return submission
     }
@@ -57,7 +55,7 @@ class RunSubmissionService(
         submission.status = Submission.Status.JUDGED
         submission.answer = answer
         submissionRepository.save(submission)
-        transactionalEventPublisher.publish(SubmissionStatusUpdatedEvent(this, submission))
+        transactionalEventPublisher.publish(SubmissionEvent(this, submission))
         logger.info("Finished running and publishing submission")
         return submission
     }

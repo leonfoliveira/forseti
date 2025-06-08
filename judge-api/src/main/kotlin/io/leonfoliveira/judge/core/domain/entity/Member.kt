@@ -46,6 +46,6 @@ class Member(
     enum class Type {
         ROOT,
         CONTESTANT,
-        JUDGE,
+        JURY,
     }
 }

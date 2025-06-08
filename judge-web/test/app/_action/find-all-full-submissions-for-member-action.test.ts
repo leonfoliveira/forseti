@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
-import { recalculatePrivateSubmissions } from "@/app/contests/[id]/_util/submissions-calculator";
+import { recalculatePrivateSubmissions } from "@/app/contests/[slug]/_util/submissions-calculator";
 import { submissionService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
@@ -26,7 +26,7 @@ jest.mock("@/app/_component/alert/alert-provider", () => ({
   })),
 }));
 
-jest.mock("@/app/contests/[id]/_util/submissions-calculator", () => ({
+jest.mock("@/app/contests/[slug]/_util/submissions-calculator", () => ({
   recalculatePrivateSubmissions: jest.fn(),
 }));
 

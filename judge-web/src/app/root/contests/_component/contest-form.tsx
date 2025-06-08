@@ -30,7 +30,7 @@ import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useTranslations } from "next-intl";
 
 type Props = {
-  contestId?: number;
+  contestId?: string;
   header: string;
   status?: ContestStatus;
   onSubmit: (data: ContestFormType) => Promise<void>;
@@ -105,6 +105,13 @@ export function ContestForm(props: Props) {
             </Button>
           </div>
         </div>
+        <TextInput
+          fm={form}
+          name="slug"
+          s={s}
+          label={t("slug:label")}
+          data-testid="slug"
+        />
         <TextInput
           fm={form}
           name="title"
@@ -220,6 +227,19 @@ export function ContestForm(props: Props) {
           <div className="grid [grid-template-columns:2fr_1fr_1fr_1fr_auto] items-start gap-x-3">
             {problemsFields.fields.map((field, index) => (
               <Fragment key={field.id}>
+                <Select
+                  fm={form}
+                  s={s}
+                  name={`problems.${index}.letter`}
+                  label={t("problem-title:label")}
+                  options={Array.from({ length: 26 }, (_, i) =>
+                    String.fromCharCode(65 + i),
+                  ).map((it) => ({
+                    value: it,
+                    label: it,
+                  }))}
+                  data-testid="problem-letter"
+                />
                 <TextInput
                   fm={form}
                   s={s}
@@ -276,7 +296,7 @@ export function ContestForm(props: Props) {
       <DialogModal
         modal={modal}
         onConfirm={async () =>
-          deleteContestAction.act(form.watch("id") as number)
+          deleteContestAction.act(form.watch("id") as string)
         }
         isLoading={deleteContestAction.isLoading}
         data-testid="delete-modal"

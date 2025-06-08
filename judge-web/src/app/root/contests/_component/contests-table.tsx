@@ -6,11 +6,12 @@ import { formatDateTime } from "@/app/_util/date-utils";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { ContestStatusBadge } from "@/app/root/contests/_component/contest-status-badge";
-import { ContestSummaryOutputDTO } from "@/core/service/dto/output/ContestSummaryOutputDTO";
 import { useTranslations } from "next-intl";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/ContestMetadataResponseDTO";
+import { WithStatus } from "@/core/service/dto/output/ContestWithStatus";
 
 type Props = {
-  contests: ContestSummaryOutputDTO[];
+  contests: WithStatus<ContestMetadataResponseDTO>[];
 };
 
 export function ContestsTable(props: Props) {
@@ -24,7 +25,7 @@ export function ContestsTable(props: Props) {
       <TableSection head>
         <TableRow>
           <TableCell header className="w-1/20">
-            {t("header-id")}
+            {t("header-slug")}
           </TableCell>
           <TableCell header className="w-11/20">
             {t("header-title")}
@@ -48,7 +49,7 @@ export function ContestsTable(props: Props) {
             className="cursor-pointer hover:bg-base-200 active:bg-base-300 transition duration-100"
             data-testid="row"
           >
-            <TableCell data-testid="id">{contest.id}</TableCell>
+            <TableCell data-testid="slug">{contest.slug}</TableCell>
             <TableCell data-testid="title">{contest.title}</TableCell>
             <TableCell data-testid="startAt">
               {formatDateTime(contest.startAt)}

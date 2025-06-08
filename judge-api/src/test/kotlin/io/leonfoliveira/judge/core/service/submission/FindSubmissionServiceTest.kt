@@ -5,7 +5,6 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.entity.ContestMockFactory
 import io.leonfoliveira.judge.core.domain.entity.MemberMockFactory
-import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
@@ -72,22 +71,6 @@ class FindSubmissionServiceTest : FunSpec({
             val submissions = sut.findAllByContest(id)
 
             submissions shouldBe contest.members.flatMap { it.submissions }.sortedBy { it.createdAt }
-        }
-
-        test("should return submissions for contest filtered by status") {
-            val contest =
-                ContestMockFactory.build(
-                    startAt = now.minusDays(1),
-                    members = listOf(MemberMockFactory.build(submissions = listOf(SubmissionMockFactory.build()))),
-                )
-            val status = Submission.Status.FAILED
-
-            every { contestRepository.findById(id) }
-                .returns(Optional.of(contest))
-
-            val submissions = sut.findAllByContest(id, status)
-
-            submissions shouldBe contest.members.flatMap { it.submissions }.filter { it.status == status }.sortedBy { it.createdAt }
         }
     }
 

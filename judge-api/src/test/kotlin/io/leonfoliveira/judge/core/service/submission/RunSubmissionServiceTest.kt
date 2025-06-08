@@ -7,7 +7,7 @@ import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.leonfoliveira.judge.core.event.SubmissionStatusUpdatedEvent
+import io.leonfoliveira.judge.core.event.SubmissionEvent
 import io.leonfoliveira.judge.core.port.SubmissionRunnerAdapter
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
@@ -63,7 +63,7 @@ class RunSubmissionServiceTest : FunSpec({
                 .returns(Optional.of(submission))
             every { submissionRepository.save(submission) }
                 .returns(submission)
-            val eventSlot = slot<SubmissionStatusUpdatedEvent>()
+            val eventSlot = slot<SubmissionEvent>()
             every { transactionalEventPublisher.publish(capture(eventSlot)) }
                 .returns(Unit)
 
@@ -111,7 +111,7 @@ class RunSubmissionServiceTest : FunSpec({
                 .returns(Submission.Answer.ACCEPTED)
             every { submissionRepository.save(submission) }
                 .returns(submission)
-            val eventSlot = slot<SubmissionStatusUpdatedEvent>()
+            val eventSlot = slot<SubmissionEvent>()
             every { transactionalEventPublisher.publish(capture(eventSlot)) }
                 .returns(Unit)
 

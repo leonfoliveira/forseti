@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.leonfoliveira.judge.api.dto.request.UpdateSubmissionAnswerRequestDTO
-import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
+import io.leonfoliveira.judge.api.dto.response.contest.toFullResponseDTO
+import io.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
 import io.leonfoliveira.judge.api.util.SecurityContextMockFactory
 import io.leonfoliveira.judge.config.ControllerTest
 import io.leonfoliveira.judge.core.domain.entity.Submission
@@ -72,13 +73,13 @@ class SubmissionControllerTest(
                 }
         }
 
-        test("judge") {
+        test("updateSubmissionAnswer") {
             val submissionId = UUID.randomUUID()
             val requestBody = UpdateSubmissionAnswerRequestDTO(answer = Submission.Answer.ACCEPTED)
             every { SecurityContextHolder.getContext() }
-                .returns(SecurityContextMockFactory.buildJudge())
+                .returns(SecurityContextMockFactory.buildJury())
 
-            mockMvc.patch("$basePath/$submissionId/judge") {
+            mockMvc.patch("$basePath/$submissionId/answer") {
                 contentType = MediaType.APPLICATION_JSON
                 content = objectMapper.writeValueAsString(requestBody)
             }
@@ -86,13 +87,13 @@ class SubmissionControllerTest(
                     status { isNoContent() }
                 }
 
-            verify { updateSubmissionService.judge(submissionId, requestBody.answer) }
+            verify { updateSubmissionService.updateAnswer(submissionId, requestBody.answer) }
         }
 
         test("rerunSubmission") {
             val submissionId = UUID.randomUUID()
             every { SecurityContextHolder.getContext() }
-                .returns(SecurityContextMockFactory.buildJudge())
+                .returns(SecurityContextMockFactory.buildJury())
 
             mockMvc.post("$basePath/$submissionId/rerun") {
                 contentType = MediaType.APPLICATION_JSON

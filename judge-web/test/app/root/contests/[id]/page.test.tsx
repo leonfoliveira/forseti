@@ -9,8 +9,8 @@ jest.mock("react", () => ({
   use: jest.fn(),
 }));
 
-jest.mock("@/app/_action/find-full-contest-by-id-for-root-action", () => ({
-  useFindContestByIdForRoot: jest.fn(() => ({
+jest.mock("@/app/_action/find-full-contest-by-id-action", () => ({
+  useFindFullContestById: jest.fn(() => ({
     data: { id: 123 },
     isLoading: false,
     act: jest.fn(() =>
@@ -44,7 +44,7 @@ jest.mock("@/app/root/contests/_component/contest-form", () => ({
 const mockUse = use as jest.Mock;
 
 describe("RootEditContestPage", () => {
-  const id = 123;
+  const id = "123";
 
   const getParams = Promise.resolve({ id });
 

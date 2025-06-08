@@ -1,8 +1,8 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AuthRoot from "@/app/auth/root/page";
-import { useRootSignInAction } from "@/app/_action/sign-in-root-action";
+import { useRootSignInAction } from "@/app/_action/root-sign-in-action";
 
-jest.mock("@/app/_action/sign-in-root-action", () => ({
+jest.mock("@/app/_action/root-sign-in-action", () => ({
   useRootSignInAction: jest.fn(),
 }));
 

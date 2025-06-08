@@ -1,6 +1,11 @@
 import Joi from "joi";
 
 export const contestFormSchema = Joi.object({
+  slug: Joi.string().required().alphanum().messages({
+    "string.empty": "slug.required",
+    "any.required": "slug.required",
+    "string.alphanum": "slug.alphanum",
+  }),
   title: Joi.string().required().messages({
     "string.empty": "title.required",
     "any.required": "title.required",
@@ -21,7 +26,7 @@ export const contestFormSchema = Joi.object({
   members: Joi.array()
     .items(
       Joi.object({
-        _id: Joi.number().optional(),
+        _id: Joi.string().optional(),
         type: Joi.string().required().messages({
           "string.empty": "member-type.required",
           "any.required": "member-type.required",
@@ -48,6 +53,11 @@ export const contestFormSchema = Joi.object({
   problems: Joi.array()
     .items(
       Joi.object({
+        letter: Joi.string().required().length(1).messages({
+          "string.empty": "problem-letter.required",
+          "any.required": "problem-letter.required",
+          "string.length": "problem-letter.length",
+        }),
         title: Joi.string().required().messages({
           "string.empty": "problem-title.required",
           "any.required": "problem-title.required",

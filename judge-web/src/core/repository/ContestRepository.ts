@@ -19,7 +19,7 @@ export interface ContestRepository {
 
   findContestById(id: string): Promise<ContestResponseDTO>;
 
-  findContestMetadataById(id: string): Promise<ContestMetadataResponseDTO>;
+  findContestMetadataBySlug(id: string): Promise<ContestMetadataResponseDTO>;
 
   findFullContestById(id: string): Promise<ContestFullResponseDTO>;
 

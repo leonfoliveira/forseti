@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { RootSignInFormType } from "@/app/auth/_form/sign-in-form-type";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { rootSignInFormSchema } from "@/app/auth/_form/sign-in-form-schema";
-import { useRootSignInAction } from "@/app/_action/sign-in-root-action";
+import { useRootSignInAction } from "@/app/_action/root-sign-in-action";
 import { TextInput } from "@/app/_component/form/text-input";
 import { Button } from "@/app/_component/form/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

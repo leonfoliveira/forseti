@@ -8,7 +8,7 @@ jest.mock("next/navigation", () => ({
 }));
 
 jest.mock("@/app/_action/find-all-contests-metadata-action", () => ({
-  useFindAllContestsAction: jest.fn(),
+  useFindAllContestsMetadataAction: jest.fn(),
 }));
 
 jest.mock("@/app/_component/spinner", () => ({

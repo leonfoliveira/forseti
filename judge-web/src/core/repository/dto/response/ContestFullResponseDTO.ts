@@ -4,6 +4,7 @@ import { ProblemFullResponseDTO } from "@/core/repository/dto/response/ProblemFu
 
 export type ContestFullResponseDTO = {
   id: string;
+  slug: string;
   title: string;
   languages: Language[];
   startAt: string;

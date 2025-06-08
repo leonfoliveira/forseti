@@ -1,10 +1,12 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { formatDateTime } from "@/app/_util/date-utils";
 import { useRouter } from "next/navigation";
-import { ContestSummaryOutputDTO } from "@/core/service/dto/output/ContestSummaryOutputDTO";
 import { ContestsTable } from "@/app/root/contests/_component/contests-table";
 import React from "react";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/ContestMetadataResponseDTO";
+import { WithStatus } from "@/core/service/dto/output/ContestWithStatus";
+import { Language } from "@/core/domain/enumerate/Language";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -19,10 +21,12 @@ describe("ContestsTable", () => {
     });
   });
 
-  const mockContests: ContestSummaryOutputDTO[] = [
+  const mockContests: WithStatus<ContestMetadataResponseDTO>[] = [
     {
-      id: 1,
+      id: "1",
+      slug: "contest-a",
       title: "Contest A",
+      languages: [Language.PYTHON_3_13_3],
       startAt: "2023-01-01T10:00:00Z",
       endAt: "2023-01-08T10:00:00Z",
       status: ContestStatus.IN_PROGRESS,
@@ -38,8 +42,8 @@ describe("ContestsTable", () => {
   it("renders contest data correctly", () => {
     render(<ContestsTable contests={mockContests} />);
 
-    expect(screen.getByTestId("id")).toHaveTextContent(
-      mockContests[0].id.toString(),
+    expect(screen.getByTestId("slug")).toHaveTextContent(
+      mockContests[0].slug.toString(),
     );
     expect(screen.getByTestId("title")).toHaveTextContent(
       mockContests[0].title,

@@ -43,8 +43,9 @@ export class ContestService {
     return ContestUtil.addStatus(response);
   }
 
-  async findContestMetadataById(id: string) {
-    const response = await this.contestRepository.findContestMetadataById(id);
+  async findContestMetadataBySlug(slug: string) {
+    const response =
+      await this.contestRepository.findContestMetadataBySlug(slug);
     return ContestUtil.addStatus(response);
   }
 

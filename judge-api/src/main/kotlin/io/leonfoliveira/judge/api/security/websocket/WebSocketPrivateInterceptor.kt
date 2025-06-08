@@ -22,8 +22,7 @@ class WebSocketPrivateInterceptor(
 
     private val privateConfigurations =
         mapOf(
-            Regex("/topic/contests/[0-9+]/submissions/judge") to setOf(Member.Type.JUDGE),
-            Regex("/topic/contests/[0-9+]/submissions/fail") to setOf(Member.Type.JUDGE),
+            Regex("/topic/contests/[0-9+]/submissions/full") to setOf(Member.Type.JURY),
         )
 
     override fun preSend(

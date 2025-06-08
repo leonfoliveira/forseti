@@ -68,7 +68,7 @@ describe("ContestForm", () => {
     formMethods = renderHook(() =>
       useForm<ContestFormType>({
         defaultValues: {
-          id: 0,
+          id: "",
           title: "",
           languages: [],
           startAt: new Date(),
@@ -137,6 +137,7 @@ describe("ContestForm", () => {
 
   it("renders form fields", () => {
     render(<TestWrapper form={formMethods} />);
+    expect(screen.getByTestId("slug")).toBeInTheDocument();
     expect(screen.getByTestId("title")).toBeInTheDocument();
     expect(screen.getByTestId("languages")).toBeInTheDocument();
     expect(screen.getByTestId("start-at")).toBeInTheDocument();
@@ -170,6 +171,7 @@ describe("ContestForm", () => {
   it("adds new problem field on Add Problem button click", () => {
     render(<TestWrapper form={formMethods} />);
     fireEvent.click(screen.getByTestId("problem-add"));
+    expect(screen.getAllByTestId("problem-letter")).toHaveLength(1);
     expect(screen.getAllByTestId("problem-title")).toHaveLength(1);
     expect(screen.getAllByTestId("problem-description")).toHaveLength(1);
     expect(screen.getAllByTestId("problem-time-limit")).toHaveLength(1);
@@ -219,7 +221,7 @@ describe("ContestForm", () => {
       act: mockAct,
       isLoading: false,
     });
-    formMethods.setValue("id", 123);
+    formMethods.setValue("id", "123");
 
     render(<TestWrapper form={formMethods} contestId={123} />);
 
@@ -227,7 +229,7 @@ describe("ContestForm", () => {
     fireEvent.click(screen.getByTestId("delete-modal:confirm"));
 
     await waitFor(() => {
-      expect(mockAct).toHaveBeenCalledWith(123);
+      expect(mockAct).toHaveBeenCalledWith("123");
     });
   });
 });

@@ -5,6 +5,7 @@ const futureDate = new Date(now.getTime() + 60 * 60 * 1000);
 const laterDate = new Date(futureDate.getTime() + 60 * 60 * 1000);
 
 const baseValidData = {
+  slug: "slug",
   title: "Contest Title",
   languages: ["javascript"],
   startAt: futureDate,
@@ -19,6 +20,7 @@ const baseValidData = {
   ],
   problems: [
     {
+      letter: "A",
       title: "Problem 1",
       newDescription: {
         size: 1024,
@@ -37,6 +39,24 @@ describe("contestFormSchema", () => {
   test("valid data passes", () => {
     const { error } = contestFormSchema.validate(baseValidData);
     expect(error).toBeUndefined();
+  });
+
+  // Title
+  test("missing slug fails", () => {
+    const { error } = contestFormSchema.validate({
+      ...baseValidData,
+      slug: "",
+    });
+    expect(error?.details[0].message).toBe("slug.required");
+  });
+
+  // Title
+  test("non-alphanumeric slug fails", () => {
+    const { error } = contestFormSchema.validate({
+      ...baseValidData,
+      slug: "not alpha",
+    });
+    expect(error?.details[0].message).toBe("slug.alphanum");
   });
 
   // Title
@@ -113,7 +133,7 @@ describe("contestFormSchema", () => {
       ...baseValidData,
       members: [
         {
-          _id: 1,
+          _id: "1",
           type: "user",
           name: "Test",
           login: "login",
@@ -122,6 +142,36 @@ describe("contestFormSchema", () => {
     };
     const { error } = contestFormSchema.validate(data);
     expect(error).toBeUndefined();
+  });
+
+  // Problems
+  test("problem missing letter fails", () => {
+    const data = {
+      ...baseValidData,
+      problems: [
+        {
+          ...baseValidData.problems[0],
+          letter: "",
+        },
+      ],
+    };
+    const { error } = contestFormSchema.validate(data);
+    expect(error?.details[0].message).toBe("problem-letter.required");
+  });
+
+  // Problems
+  test("problem letter many characters fails", () => {
+    const data = {
+      ...baseValidData,
+      problems: [
+        {
+          ...baseValidData.problems[0],
+          letter: "AB",
+        },
+      ],
+    };
+    const { error } = contestFormSchema.validate(data);
+    expect(error?.details[0].message).toBe("problem-letter.length");
   });
 
   // Problems
@@ -168,6 +218,7 @@ describe("contestFormSchema", () => {
       ...baseValidData,
       problems: [
         {
+          letter: "A",
           description: "old desc",
           timeLimit: 1,
           title: "Problem",
@@ -187,6 +238,7 @@ describe("contestFormSchema", () => {
       ...baseValidData,
       problems: [
         {
+          letter: "A",
           title: "Problem",
           timeLimit: 1,
           newTestCases: {},
@@ -202,6 +254,7 @@ describe("contestFormSchema", () => {
       ...baseValidData,
       problems: [
         {
+          letter: "A",
           title: "Problem",
           newDescription: {
             size: 10 * 1024 * 1024 + 1,
@@ -221,6 +274,7 @@ describe("contestFormSchema", () => {
       ...baseValidData,
       problems: [
         {
+          letter: "A",
           title: "Problem",
           description: {},
           timeLimit: 1,
@@ -236,6 +290,7 @@ describe("contestFormSchema", () => {
       ...baseValidData,
       problems: [
         {
+          letter: "A",
           title: "Problem",
           description: "Old desc",
           testCases: [],
@@ -252,6 +307,7 @@ describe("contestFormSchema", () => {
       ...baseValidData,
       problems: [
         {
+          letter: "A",
           title: "Problem",
           description: {},
           timeLimit: 1,

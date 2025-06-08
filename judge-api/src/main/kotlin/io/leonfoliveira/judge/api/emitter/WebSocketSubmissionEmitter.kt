@@ -1,7 +1,9 @@
 package io.leonfoliveira.judge.api.emitter
 
-import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
-import io.leonfoliveira.judge.api.dto.response.toPublicResponseDTO
+import io.leonfoliveira.judge.api.dto.response.contest.toFullResponseDTO
+import io.leonfoliveira.judge.api.dto.response.member.toPublicResponseDTO
+import io.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
+import io.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.port.SubmissionEmitterAdapter
 import org.slf4j.LoggerFactory
@@ -23,14 +25,6 @@ class WebSocketSubmissionEmitter(
         messagingTemplate.convertAndSend(
             "/topic/contests/${submission.contest.id}/submissions/full",
             submission.toFullResponseDTO(),
-        )
-    }
-
-    override fun emitForMember(submission: Submission) {
-        logger.info("Emitting submission with id: ${submission.id} for member: ${submission.member.id}")
-        messagingTemplate.convertAndSend(
-            "/topic/members/${submission.member.id}/submissions",
-            submission.toPublicResponseDTO(),
         )
     }
 }

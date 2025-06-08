@@ -10,6 +10,8 @@ create table contest (
     end_at timestamp not null
 );
 
+create index idx_contest_slug on contest (slug);
+
 create table contest_aud (
     rev bigint not null,
     revtype smallint not null,

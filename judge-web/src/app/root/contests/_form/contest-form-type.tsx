@@ -3,7 +3,8 @@ import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { Attachment } from "@/core/domain/model/Attachment";
 
 export type ContestFormType = Partial<{
-  id: number;
+  id: string;
+  slug: string;
   title: string;
   languages: Language[];
   startAt: Date;
@@ -13,7 +14,7 @@ export type ContestFormType = Partial<{
 }>;
 
 export type ContestFormMemberType = Partial<{
-  _id: number;
+  _id: string;
   type: MemberType;
   name: string;
   login: string;
@@ -21,7 +22,8 @@ export type ContestFormMemberType = Partial<{
 }>;
 
 export type ContestFormProblemType = Partial<{
-  _id: number;
+  _id: string;
+  letter: string;
   title: string;
   description: Attachment;
   newDescription: File;

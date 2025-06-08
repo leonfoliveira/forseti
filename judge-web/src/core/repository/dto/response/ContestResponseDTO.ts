@@ -3,12 +3,14 @@ import { Attachment } from "@/core/domain/model/Attachment";
 
 export type ContestResponseDTO = {
   id: string;
+  slug: string;
   title: string;
   languages: Language[];
   startAt: string;
   endAt: string;
   problems: {
     id: string;
+    letter: string;
     title: string;
     description: Attachment;
   }[];

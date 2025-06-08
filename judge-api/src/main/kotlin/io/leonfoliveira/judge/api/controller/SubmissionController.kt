@@ -1,8 +1,8 @@
 package io.leonfoliveira.judge.api.controller
 
 import io.leonfoliveira.judge.api.dto.request.UpdateSubmissionAnswerRequestDTO
-import io.leonfoliveira.judge.api.dto.response.SubmissionFullResponseDTO
-import io.leonfoliveira.judge.api.dto.response.toFullResponseDTO
+import io.leonfoliveira.judge.api.dto.response.submission.SubmissionFullResponseDTO
+import io.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
 import io.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.leonfoliveira.judge.api.util.Private
 import io.leonfoliveira.judge.core.domain.entity.Member
@@ -49,26 +49,26 @@ class SubmissionController(
 
     @GetMapping("/full/me")
     @Private(Member.Type.CONTESTANT)
-    fun findAllFullForMember(): ResponseEntity<List<SubmissionFullResponseDTO>> {
+    fun findAllFullSubmissionsForMember(): ResponseEntity<List<SubmissionFullResponseDTO>> {
         logger.info("[GET] /v1/submissions/me")
         val authorization = AuthorizationContextUtil.getAuthorization()
         val submissions = findSubmissionService.findAllByMember(authorization.id)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }
 
-    @PatchMapping("/{id}/judge")
-    @Private(Member.Type.JUDGE)
+    @PatchMapping("/{id}/answer")
+    @Private(Member.Type.JURY)
     fun updateSubmissionAnswer(
         @PathVariable id: UUID,
         @RequestBody body: UpdateSubmissionAnswerRequestDTO,
     ): ResponseEntity<Void> {
-        logger.info("[PATCH] /v1/submissions/{id}/judge - id: $id, body: $body")
-        updateSubmissionService.judge(id, body.answer)
+        logger.info("[PATCH] /v1/submissions/{id}/answer - id: $id, body: $body")
+        updateSubmissionService.updateAnswer(id, body.answer)
         return ResponseEntity.noContent().build()
     }
 
     @PostMapping("/{id}/rerun")
-    @Private(Member.Type.JUDGE)
+    @Private(Member.Type.JURY)
     fun rerunSubmission(
         @PathVariable id: UUID,
     ): ResponseEntity<Void> {

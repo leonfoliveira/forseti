@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useTheme } from "@/app/_util/theme-hook";
 import { cls } from "@/app/_util/cls";
 import { NextIntlClientProvider } from "next-intl";
 import { AlertProvider } from "@/app/_component/alert/alert-provider";
 import { ToastProvider } from "@/app/_component/toast/toast-provider";
 import { Geist, Geist_Mono } from "next/font/google";
-import { submissionService } from "@/app/_composition";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,10 +28,6 @@ export function Html({
   messages: Record<string, unknown>;
 }) {
   const { theme } = useTheme();
-
-  useEffect(() => {
-    submissionService.subscribeForFail(1, console.log);
-  }, []);
 
   return (
     <html lang={locale} data-theme={theme} className="bg-base-300">

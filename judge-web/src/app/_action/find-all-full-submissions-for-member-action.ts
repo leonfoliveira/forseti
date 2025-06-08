@@ -3,12 +3,12 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { redirect } from "next/navigation";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
-import { recalculatePrivateSubmissions } from "@/app/contests/[id]/_util/submissions-calculator";
 import { useEffect, useRef } from "react";
 import { submissionService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { useTranslations } from "next-intl";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
+import { recalculatePrivateSubmissions } from "@/app/contests/[slug]/_util/submissions-calculator";
 
 export function useFindAllFullSubmissionsForMemberAction() {
   const alert = useAlert();
