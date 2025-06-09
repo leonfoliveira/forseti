@@ -20,7 +20,7 @@ class AuthenticationController(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping("/root")
+    @PostMapping("/root/sign-in")
     fun authenticateRoot(
         @RequestBody body: AuthenticateRootInputDTO,
     ): ResponseEntity<Authorization> {
@@ -29,7 +29,7 @@ class AuthenticationController(
         return ResponseEntity.ok(authorization)
     }
 
-    @PostMapping("/contests/{id}")
+    @PostMapping("/contests/{id}/sign-in")
     fun authenticateMember(
         @PathVariable id: UUID,
         @RequestBody body: AuthenticateMemberInputDTO,

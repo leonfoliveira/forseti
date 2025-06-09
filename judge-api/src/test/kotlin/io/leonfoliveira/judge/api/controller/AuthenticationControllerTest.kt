@@ -33,7 +33,7 @@ class AuthenticationControllerTest(
             every { authorizationService.authenticateRoot(any()) }
                 .returns(authorizationOutputDTO)
 
-            mockMvc.post("$basePath/root") {
+            mockMvc.post("$basePath/root/sign-in") {
                 contentType = MediaType.APPLICATION_JSON
                 content =
                     objectMapper.writeValueAsString(AuthenticateRootInputDTOMockFactory.build())
@@ -60,7 +60,7 @@ class AuthenticationControllerTest(
             every { authorizationService.authenticateMember(contestId, any()) }
                 .returns(authorizationOutputDTO)
 
-            mockMvc.post("$basePath/contests/$contestId") {
+            mockMvc.post("$basePath/contests/$contestId/sign-in") {
                 contentType = MediaType.APPLICATION_JSON
                 content =
                     objectMapper.writeValueAsString(

@@ -27,7 +27,7 @@ class AuthorizationExtractor(
         try {
             val authorizationMember = jwtAdapter.decodeToken(token)
             logger.info("Finished extracting AuthorizationMember: $authorizationMember")
-            SecurityContextHolder.getContext().authentication = JwtAuthentication()
+            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorizationMember)
             return authorizationMember
         } catch (ex: Exception) {
             SecurityContextHolder.getContext().authentication = JwtAuthentication()

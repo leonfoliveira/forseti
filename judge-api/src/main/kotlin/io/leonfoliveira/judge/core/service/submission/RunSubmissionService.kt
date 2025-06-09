@@ -4,6 +4,7 @@ import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.event.SubmissionEvent
+import io.leonfoliveira.judge.core.event.SubmissionJudgeEvent
 import io.leonfoliveira.judge.core.port.SubmissionRunnerAdapter
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
@@ -34,6 +35,7 @@ class RunSubmissionService(
         submission.answer = Submission.Answer.NO_ANSWER
         submissionRepository.save(submission)
         transactionalEventPublisher.publish(SubmissionEvent(this, submission))
+        transactionalEventPublisher.publish(SubmissionJudgeEvent(this, submission))
         logger.info("Submission updated enqueued and emitted")
         return submission
     }

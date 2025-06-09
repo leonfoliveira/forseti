@@ -6,7 +6,7 @@ import io.leonfoliveira.judge.api.dto.response.problem.ProblemPublicResponseDTO
 import io.leonfoliveira.judge.api.dto.response.problem.toPublicResponseDTO
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 data class SubmissionPublicResponseDTO(
@@ -15,7 +15,7 @@ data class SubmissionPublicResponseDTO(
     val problem: ProblemPublicResponseDTO,
     val language: Language,
     val answer: Submission.Answer,
-    val createdAt: LocalDateTime,
+    val createdAt: OffsetDateTime,
 )
 
 fun Submission.toPublicResponseDTO(): SubmissionPublicResponseDTO {

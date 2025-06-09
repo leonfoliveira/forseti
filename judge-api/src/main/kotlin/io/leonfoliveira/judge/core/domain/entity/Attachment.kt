@@ -1,11 +1,10 @@
 package io.leonfoliveira.judge.core.domain.entity
 
-import io.leonfoliveira.judge.core.util.TimeUtils
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
 import org.hibernate.envers.Audited
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Entity
@@ -13,9 +12,9 @@ import java.util.UUID
 @Audited(withModifiedFlag = true)
 class Attachment(
     id: UUID = UUID.randomUUID(),
-    createdAt: LocalDateTime = TimeUtils.now(),
-    updatedAt: LocalDateTime = TimeUtils.now(),
-    deletedAt: LocalDateTime? = null,
+    createdAt: OffsetDateTime = OffsetDateTime.now(),
+    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    deletedAt: OffsetDateTime? = null,
     @Column(nullable = false)
     val filename: String,
     @Column(nullable = false)

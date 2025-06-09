@@ -1,6 +1,5 @@
 package io.leonfoliveira.judge.core.domain.entity
 
-import io.leonfoliveira.judge.core.util.TimeUtils
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -11,10 +10,9 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import jakarta.persistence.Transient
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Entity
@@ -23,9 +21,9 @@ import java.util.UUID
 @SQLRestriction("deleted_at is null")
 class Member(
     id: UUID = UUID.randomUUID(),
-    createdAt: LocalDateTime = TimeUtils.now(),
-    updatedAt: LocalDateTime = TimeUtils.now(),
-    deletedAt: LocalDateTime? = null,
+    createdAt: OffsetDateTime = OffsetDateTime.now(),
+    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    deletedAt: OffsetDateTime? = null,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contest_id", nullable = false)
     @Audited(withModifiedFlag = false)
@@ -39,7 +37,7 @@ class Member(
     var login: String,
     @Column(nullable = false)
     var password: String,
-    @Transient
+    @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var submissions: List<Submission> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {

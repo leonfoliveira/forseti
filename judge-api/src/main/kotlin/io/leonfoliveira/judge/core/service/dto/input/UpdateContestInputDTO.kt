@@ -10,20 +10,20 @@ import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.Pattern
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 data class UpdateContestInputDTO(
     val id: UUID,
-    @field:Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Slug must be alphanumeric")
+    @field:Pattern(regexp = "^[a-zA-Z0-9-]+$", message = "Slug can only contain letter, numbers, and hyphens")
     val slug: String,
     @field:NotBlank
     val title: String,
     @field:NotEmpty
     val languages: List<Language>,
     @field:Future
-    val startAt: LocalDateTime,
-    val endAt: LocalDateTime,
+    val startAt: OffsetDateTime,
+    val endAt: OffsetDateTime,
     @field:Valid
     val members: List<MemberDTO>,
     @field:Valid

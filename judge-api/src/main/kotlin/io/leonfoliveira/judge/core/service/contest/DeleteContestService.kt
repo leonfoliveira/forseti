@@ -7,9 +7,9 @@ import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
-import io.leonfoliveira.judge.core.util.TimeUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Service
@@ -30,7 +30,7 @@ class DeleteContestService(
         if (contest.hasStarted()) {
             throw ForbiddenException("Contest already started")
         }
-        contest.deletedAt = TimeUtils.now()
+        contest.deletedAt = OffsetDateTime.now()
         contestRepository.save(contest)
 
         logger.info("Finished deleting contest with id: $id")
@@ -39,7 +39,7 @@ class DeleteContestService(
     fun deleteMembers(members: List<Member>) {
         logger.info("Deleting members: ${members.joinToString { it.id.toString() }}")
 
-        members.forEach { it.deletedAt = TimeUtils.now() }
+        members.forEach { it.deletedAt = OffsetDateTime.now() }
         memberRepository.saveAll(members)
 
         logger.info("Finished deleting members: ${members.joinToString { it.id.toString() }}")
@@ -48,7 +48,7 @@ class DeleteContestService(
     fun deleteProblems(problems: List<Problem>) {
         logger.info("Deleting problems: ${problems.joinToString { it.id.toString() }}")
 
-        problems.forEach { it.deletedAt = TimeUtils.now() }
+        problems.forEach { it.deletedAt = OffsetDateTime.now() }
         problemRepository.saveAll(problems)
 
         logger.info("Finished deleting problems: ${problems.joinToString { it.id.toString() }}")

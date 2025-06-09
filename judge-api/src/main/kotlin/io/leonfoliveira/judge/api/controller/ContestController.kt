@@ -107,7 +107,7 @@ class ContestController(
     }
 
     @GetMapping("/{id}/leaderboard")
-    fun findContestLeaderboard(
+    fun findContestLeaderboardById(
         @PathVariable id: UUID,
     ): ResponseEntity<ContestLeaderboardOutputDTO> {
         logger.info("[GET] /v1/contests/{id}/leaderboard - id: $id")

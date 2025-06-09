@@ -48,7 +48,7 @@ export default function AuthMember({ params }: Props) {
   }
   if (!metadata) return null;
   if (metadata.status === ContestStatus.NOT_STARTED) {
-    return <WaitPage metadata={metadata} />;
+    return <WaitPage />;
   }
 
   return (

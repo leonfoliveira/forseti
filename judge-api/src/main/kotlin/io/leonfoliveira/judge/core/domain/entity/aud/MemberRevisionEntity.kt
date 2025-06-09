@@ -1,6 +1,5 @@
 package io.leonfoliveira.judge.core.domain.entity.aud
 
-import io.leonfoliveira.judge.core.util.TimeUtils
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -22,7 +21,7 @@ class MemberRevisionEntity(
     private val rev: Long? = null,
     @RevisionTimestamp
     @Column(name = "timestamp", nullable = false)
-    private val timestamp: LocalDateTime = TimeUtils.now(),
+    private val timestamp: LocalDateTime = LocalDateTime.now(),
     @Column(name = "member_id")
     var memberId: UUID? = null,
     var traceId: String = "",

@@ -6,7 +6,7 @@ import io.leonfoliveira.judge.api.dto.response.problem.ProblemPublicResponseDTO
 import io.leonfoliveira.judge.api.dto.response.problem.toPublicResponseDTO
 import io.leonfoliveira.judge.core.domain.entity.Contest
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 data class ContestPublicOutputDTO(
@@ -14,8 +14,8 @@ data class ContestPublicOutputDTO(
     val slug: String,
     val title: String,
     val languages: List<Language>,
-    val startAt: LocalDateTime,
-    val endAt: LocalDateTime,
+    val startAt: OffsetDateTime,
+    val endAt: OffsetDateTime,
     val members: List<MemberPublicResponseDTO>,
     val problems: List<ProblemPublicResponseDTO>,
 )

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useContest } from "@/app/contests/[slug]/_context";
-import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/ProblemPublicResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
 import { attachmentService } from "@/app/_composition";
 import { Table } from "@/app/_component/table/table";
 import { TableSection } from "@/app/_component/table/table-section";

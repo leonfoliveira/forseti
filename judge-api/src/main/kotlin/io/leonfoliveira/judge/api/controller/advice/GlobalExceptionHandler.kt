@@ -10,10 +10,13 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
+import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.HandlerMethod
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import org.springframework.web.servlet.resource.NoResourceFoundException
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -65,6 +68,32 @@ class GlobalExceptionHandler {
         logger.info("JSON parsing error occurred")
         val message = ex.mostSpecificCause.message ?: "Malformed JSON"
         return ResponseEntity(mapOf("error" to "Invalid request format: $message"), HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+    fun handleTypeMismatch(ex: MethodArgumentTypeMismatchException): ResponseEntity<ErrorResponseDTO> {
+        logger.info("Type mismatch error occurred")
+        val message = "Invalid type for parameter '${ex.name}'"
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ErrorResponseDTO(message))
+    }
+
+    @ExceptionHandler(NoResourceFoundException::class)
+    fun handleNoResourceFoundException(ex: Exception): ResponseEntity<ErrorResponseDTO> {
+        logger.error("Resource not found, message: ${ex.message}", ex)
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ErrorResponseDTO("Resource not found"))
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
+    fun handleMethodNotSupported(ex: HttpRequestMethodNotSupportedException): ResponseEntity<ErrorResponseDTO> {
+        logger.info("Method not supported error occurred")
+        val message = "Method ${ex.method} is not supported for this endpoint"
+        return ResponseEntity
+            .status(HttpStatus.METHOD_NOT_ALLOWED)
+            .body(ErrorResponseDTO(message))
     }
 
     @ExceptionHandler(Exception::class)

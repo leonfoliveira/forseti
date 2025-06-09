@@ -1,13 +1,14 @@
 package io.leonfoliveira.judge.core.service.dto.output
 
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 data class ContestLeaderboardOutputDTO(
-    val id: UUID,
+    val contestId: UUID,
     val slug: String,
+    val startAt: OffsetDateTime,
     val classification: List<MemberDTO>,
-    val issuedAt: LocalDateTime,
+    val issuedAt: OffsetDateTime,
 ) {
     data class MemberDTO(
         val memberId: UUID,

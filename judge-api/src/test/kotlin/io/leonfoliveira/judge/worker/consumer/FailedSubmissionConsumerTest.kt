@@ -3,10 +3,10 @@ package io.leonfoliveira.judge.worker.consumer
 import io.kotest.core.spec.style.FunSpec
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
 import io.leonfoliveira.judge.core.service.submission.UpdateSubmissionService
+import io.leonfoliveira.judge.worker.message.SubmissionMessageMockFactory
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.UUID
 
 class FailedSubmissionConsumerTest : FunSpec({
     val updateSubmissionService = mockk<UpdateSubmissionService>(relaxed = true)
@@ -14,11 +14,11 @@ class FailedSubmissionConsumerTest : FunSpec({
     val sut = FailedSubmissionConsumer(updateSubmissionService)
 
     test("should call updateSubmissionService.fail with the correct id") {
-        val id = UUID.randomUUID()
-        every { updateSubmissionService.fail(id) } returns SubmissionMockFactory.build()
+        val message = SubmissionMessageMockFactory.build()
+        every { updateSubmissionService.fail(message.id) } returns SubmissionMockFactory.build()
 
-        sut.receiveMessage(id, mapOf())
+        sut.receiveMessage(message, mapOf())
 
-        verify { updateSubmissionService.fail(id) }
+        verify { updateSubmissionService.fail(message.id) }
     }
 })

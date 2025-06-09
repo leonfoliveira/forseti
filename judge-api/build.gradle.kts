@@ -96,15 +96,17 @@ kover {
     }
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
 tasks.bootJar {
     archiveFileName.set("app.jar")
 }
 
-tasks.named("bootRun") {
+tasks.bootRun {
     dependsOn("flywayMigrate")
     systemProperty("spring.profiles.active", "development")
+    jvmArgs("--add-opens", "java.base/java.time=ALL-UNNAMED")
+}
+
+tasks.test {
+    useJUnitPlatform()
+    jvmArgs("--add-opens", "java.base/java.time=ALL-UNNAMED")
 }

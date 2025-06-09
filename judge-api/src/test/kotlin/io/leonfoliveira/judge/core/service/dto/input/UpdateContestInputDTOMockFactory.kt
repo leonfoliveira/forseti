@@ -2,7 +2,7 @@ package io.leonfoliveira.judge.core.service.dto.input
 
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 object UpdateContestInputDTOMockFactory {
@@ -11,8 +11,8 @@ object UpdateContestInputDTOMockFactory {
         slug: String = "contest-slug",
         title: String = "Contest Title",
         languages: List<Language> = listOf(Language.PYTHON_3_13_3),
-        startAt: LocalDateTime = LocalDateTime.now(),
-        endAt: LocalDateTime = LocalDateTime.now().plusDays(1),
+        startAt: OffsetDateTime = OffsetDateTime.now(),
+        endAt: OffsetDateTime = OffsetDateTime.now().plusDays(1),
         members: List<UpdateContestInputDTO.MemberDTO> = listOf(buildMemberDTO()),
         problems: List<UpdateContestInputDTO.ProblemDTO> = listOf(buildProblemDTO()),
     ) = UpdateContestInputDTO(

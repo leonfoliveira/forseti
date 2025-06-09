@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @ControllerTest([ContestController::class])
@@ -140,7 +140,7 @@ class ContestControllerTest(
             test("findContestById") {
                 val contest =
                     ContestMockFactory.build(
-                        startAt = LocalDateTime.now().minusHours(1),
+                        startAt = OffsetDateTime.now().minusHours(1),
                     )
                 every { findContestService.findById(contest.id) }
                     .returns(contest)

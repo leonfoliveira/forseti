@@ -1,7 +1,5 @@
 package io.leonfoliveira.judge.api.emitter
 
-import io.leonfoliveira.judge.api.dto.response.contest.toFullResponseDTO
-import io.leonfoliveira.judge.api.dto.response.member.toPublicResponseDTO
 import io.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
 import io.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
 import io.leonfoliveira.judge.core.domain.entity.Submission

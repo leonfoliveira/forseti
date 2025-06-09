@@ -5,10 +5,9 @@ import com.auth0.jwt.algorithms.Algorithm
 import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.leonfoliveira.judge.core.port.JwtAdapter
-import io.leonfoliveira.judge.core.util.TimeUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.time.ZoneOffset
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Service
@@ -22,7 +21,7 @@ class OAuthJwtAdapter(
 ) : JwtAdapter {
     override fun generateToken(authorization: AuthorizationMember): String {
         val algorithm = Algorithm.HMAC256(secret)
-        val now = TimeUtils.now().toInstant(ZoneOffset.UTC)
+        val now = OffsetDateTime.now().toInstant()
         val expirationAt =
             now.plusSeconds(
                 if (authorization.type == Member.Type.ROOT) {

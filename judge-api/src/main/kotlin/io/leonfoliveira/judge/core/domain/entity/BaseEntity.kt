@@ -1,12 +1,11 @@
 package io.leonfoliveira.judge.core.domain.entity
 
-import io.leonfoliveira.judge.core.util.TimeUtils
 import jakarta.persistence.Column
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
 import jakarta.persistence.PreUpdate
 import org.hibernate.envers.Audited
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @MappedSuperclass
@@ -16,14 +15,15 @@ open class BaseEntity(
     val id: UUID = UUID.randomUUID(),
     @Column(name = "created_at", nullable = false)
     @Audited(withModifiedFlag = false)
-    val createdAt: LocalDateTime = TimeUtils.now(),
+    val createdAt: OffsetDateTime = OffsetDateTime.now(),
     @Column(name = "updated_at", nullable = false)
-    var updatedAt: LocalDateTime = TimeUtils.now(),
+    @Audited(withModifiedFlag = false)
+    var updatedAt: OffsetDateTime = OffsetDateTime.now(),
     @Column(name = "deleted_at")
-    var deletedAt: LocalDateTime? = null,
+    var deletedAt: OffsetDateTime? = null,
 ) {
     @PreUpdate
     protected fun onUpdate() {
-        updatedAt = TimeUtils.now()
+        updatedAt = OffsetDateTime.now()
     }
 }

@@ -1,14 +1,11 @@
 import React from "react";
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/ContestMetadataResponseDTO";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { useRouter } from "next/navigation";
+import { useContestMetadata } from "@/app/contests/[slug]/_context";
 
-type Props = {
-  metadata: ContestMetadataResponseDTO;
-};
-
-export function WaitPage({ metadata }: Props) {
+export function WaitPage() {
   const router = useRouter();
+  const metadata = useContestMetadata();
   const clockRef = useWaitClock(new Date(metadata.startAt), () =>
     router.push(`/auth/contests/${metadata.slug}`),
   );

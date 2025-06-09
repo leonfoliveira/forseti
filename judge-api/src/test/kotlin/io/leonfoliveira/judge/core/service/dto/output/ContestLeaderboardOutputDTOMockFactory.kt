@@ -1,17 +1,19 @@
 package io.leonfoliveira.judge.core.service.dto.output
 
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 object ContestLeaderboardOutputDTOMockFactory {
     fun build(
-        id: UUID = UUID.randomUUID(),
+        contestId: UUID = UUID.randomUUID(),
         slug: String = "mock-contest-slug",
+        startAt: OffsetDateTime = OffsetDateTime.now(),
         classification: List<ContestLeaderboardOutputDTO.MemberDTO> = emptyList(),
-        issuedAt: LocalDateTime = LocalDateTime.now(),
+        issuedAt: OffsetDateTime = OffsetDateTime.now(),
     ) = ContestLeaderboardOutputDTO(
-        id = id,
+        contestId = contestId,
         slug = slug,
+        startAt = startAt,
         classification = classification,
         issuedAt = issuedAt,
     )

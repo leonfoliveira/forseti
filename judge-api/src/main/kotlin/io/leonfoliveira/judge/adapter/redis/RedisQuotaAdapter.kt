@@ -2,10 +2,10 @@ package io.leonfoliveira.judge.adapter.redis
 
 import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.leonfoliveira.judge.core.port.QuotaAdapter
-import io.leonfoliveira.judge.core.util.TimeUtils
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import java.time.Duration
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 @Service
@@ -19,7 +19,7 @@ class RedisQuotaAdapter(
         window: Duration,
     ): Boolean {
         val key = getKey(member, operation)
-        val now = TimeUtils.epochSecond()
+        val now = OffsetDateTime.now().toEpochSecond()
         val windowSeconds = now - window.seconds
 
         val ops = redisTemplate.opsForZSet()
@@ -36,7 +36,7 @@ class RedisQuotaAdapter(
         window: Duration,
     ) {
         val key = getKey(member, operation)
-        val now = TimeUtils.epochSecond()
+        val now = OffsetDateTime.now().toEpochSecond()
         val windowSeconds = now - window.seconds
 
         val ops = redisTemplate.opsForZSet()
@@ -48,7 +48,7 @@ class RedisQuotaAdapter(
         member: AuthorizationMember,
         operation: String,
     ): String {
-        val timestamp = TimeUtils.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))
+        val timestamp = OffsetDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))
         val key = "$operation:${member.id}:$timestamp"
         return key
     }

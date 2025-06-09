@@ -16,13 +16,12 @@ import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.AttachmentInputDTOMockFactory
 import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTOMockFactory
 import io.leonfoliveira.judge.core.util.TestCasesValidator
-import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import io.mockk.verify
 import jakarta.validation.Validation
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
 
@@ -42,11 +41,11 @@ class CreateContestServiceTest : FunSpec({
             testCasesValidator = testCasesValidator,
         )
 
-    val now = LocalDateTime.now()
+    val now = OffsetDateTime.now()
 
     beforeEach {
-        mockkObject(TimeUtils)
-        every { TimeUtils.now() } returns now
+        mockkStatic(OffsetDateTime::class)
+        every { OffsetDateTime.now() } returns now
     }
 
     context("create") {
@@ -61,7 +60,7 @@ class CreateContestServiceTest : FunSpec({
         }
 
         test("should throw ConflictException if slug is duplicated") {
-            val input = CreateContestInputDTOMockFactory.build()
+            val input = CreateContestInputDTOMockFactory.build(startAt = OffsetDateTime.now().minusDays(1))
             every { contestRepository.findBySlug(input.slug) }
                 .returns(ContestMockFactory.build())
 
@@ -121,6 +120,7 @@ class CreateContestServiceTest : FunSpec({
             val id = UUID.randomUUID()
             val input =
                 CreateContestInputDTOMockFactory.build(
+                    startAt = OffsetDateTime.now().minusDays(1),
                     problems =
                         listOf(
                             CreateContestInputDTOMockFactory.buildProblemDTO(
@@ -146,6 +146,7 @@ class CreateContestServiceTest : FunSpec({
             val id = UUID.randomUUID()
             val input =
                 CreateContestInputDTOMockFactory.build(
+                    startAt = OffsetDateTime.now().minusDays(1),
                     problems =
                         listOf(
                             CreateContestInputDTOMockFactory.buildProblemDTO(

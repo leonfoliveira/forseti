@@ -11,11 +11,10 @@ import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
-import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
-import java.time.LocalDateTime
+import io.mockk.mockkStatic
+import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
 
@@ -26,11 +25,11 @@ class DeleteContestServiceTest : FunSpec({
 
     val sut = DeleteContestService(contestRepository, memberRepository, problemRepository)
 
-    val now = LocalDateTime.now().minusYears(1)
+    val now = OffsetDateTime.now().minusYears(1)
 
     beforeEach {
-        mockkObject(TimeUtils)
-        every { TimeUtils.now() }.returns(now)
+        mockkStatic(OffsetDateTime::class)
+        every { OffsetDateTime.now() }.returns(now)
     }
 
     context("delete") {

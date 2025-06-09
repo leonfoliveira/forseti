@@ -4,6 +4,7 @@ import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.event.SubmissionEvent
+import io.leonfoliveira.judge.core.event.SubmissionJudgeEvent
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
@@ -67,6 +68,7 @@ class CreateSubmissionService(
             )
         submissionRepository.save(submission)
         transactionalEventPublisher.publish(SubmissionEvent(this, submission))
+        transactionalEventPublisher.publish(SubmissionJudgeEvent(this, submission))
         logger.info("Submission created, enqueued and emitted")
         return submission
     }

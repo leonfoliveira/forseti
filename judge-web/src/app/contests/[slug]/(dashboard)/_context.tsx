@@ -1,22 +1,25 @@
 import React, { createContext, useContext, useEffect } from "react";
-import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { useFindContestByIdAction } from "@/app/_action/find-contest-by-id-action";
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/ContestMetadataResponseDTO";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { useFindAllContestSubmissionsAction } from "@/app/_action/find-all-contest-submissions-action";
 import { WithStatus } from "@/core/service/dto/output/ContestWithStatus";
 import { useSubscribeForContestSubmissionsAction } from "@/app/_action/subscribe-for-contest-submissions-action";
-import { recalculateContest } from "@/app/contests/[slug]/util/contest-calculator";
+import { recalculateLeaderboard } from "@/app/contests/[slug]/_util/leaderboard-calculator";
 import { useToast } from "@/app/_component/toast/toast-provider";
 import { useAuthorization } from "@/app/_util/authorization-hook";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { LoadingPage } from "@/app/_component/loading-page";
 import { ErrorPage } from "@/app/_component/error-page";
+import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 
 export const ContestContext = createContext({
-  contest: {} as ContestResponseDTO,
+  metadata: {} as WithStatus<ContestMetadataResponseDTO>,
+  contest: {} as WithStatus<ContestPublicResponseDTO>,
+  leaderboard: {} as ContestLeaderboardResponseDTO,
   submissions: [] as SubmissionPublicResponseDTO[],
 });
 
@@ -55,9 +58,6 @@ export function ContestProvider({
   }, [metadata]);
 
   function receiveSubmission(submission: SubmissionPublicResponseDTO) {
-    findContestByIdAction.setData((data) =>
-      !!data ? recalculateContest(data, submission) : data,
-    );
     findAllContestSubmissionsAction.setData((data) => [
       ...(data || []),
       submission,
@@ -93,7 +93,7 @@ export function ContestProvider({
   return (
     <ContestContext.Provider
       value={{
-        contest: contest || ({} as ContestResponseDTO),
+        contest: contest || ({} as ContestPublicResponseDTO),
         submissions: submissions || [],
       }}
     >

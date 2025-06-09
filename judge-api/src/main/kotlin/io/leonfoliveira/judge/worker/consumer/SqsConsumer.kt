@@ -14,7 +14,7 @@ abstract class SqsConsumer<TMessage> {
         headers: Map<String, Any>,
     ) {
         val traceId =
-            headers["MessageAttributes.traceId.StringValue"] as? String
+            headers["traceId"] as? String
                 ?: UUID.randomUUID().toString()
         MDC.put("traceId", traceId)
 

@@ -4,15 +4,14 @@ import io.kotest.assertions.any
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.model.AuthorizationMemberMockFactory
-import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import io.mockk.verify
 import org.springframework.data.redis.core.StringRedisTemplate
 import java.time.Duration
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 class RedisQuotaAdapterTest : FunSpec({
@@ -23,7 +22,7 @@ class RedisQuotaAdapterTest : FunSpec({
             redisTemplate,
         )
 
-    val now = LocalDateTime.now()
+    val now = OffsetDateTime.now()
     val timestamp = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"))
     val member = AuthorizationMemberMockFactory.build()
     val operation = "operation"
@@ -31,8 +30,8 @@ class RedisQuotaAdapterTest : FunSpec({
     val key = "$operation:${member.id}:$timestamp"
 
     beforeEach {
-        mockkObject(TimeUtils)
-        every { TimeUtils.now() }
+        mockkStatic(OffsetDateTime::class)
+        every { OffsetDateTime.now() }
             .returns(now)
         clearMocks(redisTemplate)
     }

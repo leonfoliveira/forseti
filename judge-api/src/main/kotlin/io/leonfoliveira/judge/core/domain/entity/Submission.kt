@@ -1,7 +1,6 @@
 package io.leonfoliveira.judge.core.domain.entity
 
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import io.leonfoliveira.judge.core.util.TimeUtils
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -13,7 +12,7 @@ import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Entity
@@ -22,9 +21,9 @@ import java.util.UUID
 @SQLRestriction("deleted_at is null")
 class Submission(
     id: UUID = UUID.randomUUID(),
-    createdAt: LocalDateTime = TimeUtils.now(),
-    updatedAt: LocalDateTime = TimeUtils.now(),
-    deletedAt: LocalDateTime? = null,
+    createdAt: OffsetDateTime = OffsetDateTime.now(),
+    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    deletedAt: OffsetDateTime? = null,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)

@@ -7,10 +7,10 @@ import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.output.ContestLeaderboardOutputDTO
-import io.leonfoliveira.judge.core.util.TimeUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Duration
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Service
@@ -59,10 +59,11 @@ class FindContestService(
                 .sortedWith(compareBy({ -it.score }, { it.penalty }, { it.name }))
 
         return ContestLeaderboardOutputDTO(
-            id = contest.id,
+            contestId = contest.id,
             slug = contest.slug,
+            startAt = contest.startAt,
             classification = classification,
-            issuedAt = TimeUtils.now(),
+            issuedAt = OffsetDateTime.now(),
         )
     }
 

@@ -10,11 +10,10 @@ import io.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
-import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
-import java.time.LocalDateTime
+import io.mockk.mockkStatic
+import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
 
@@ -28,11 +27,11 @@ class FindSubmissionServiceTest : FunSpec({
             memberRepository = memberRepository,
         )
 
-    val now = LocalDateTime.now()
+    val now = OffsetDateTime.now()
 
     beforeEach {
-        mockkObject(TimeUtils)
-        every { TimeUtils.now() } returns now
+        mockkStatic(OffsetDateTime::class)
+        every { OffsetDateTime.now() } returns now
     }
 
     context("findAllByContest") {

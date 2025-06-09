@@ -8,7 +8,7 @@ import io.leonfoliveira.judge.api.dto.response.problem.toPublicResponseDTO
 import io.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.leonfoliveira.judge.core.domain.entity.Submission
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 data class SubmissionFullResponseDTO(
@@ -19,7 +19,7 @@ data class SubmissionFullResponseDTO(
     val status: Submission.Status,
     val answer: Submission.Answer,
     val code: AttachmentResponseDTO,
-    val createdAt: LocalDateTime,
+    val createdAt: OffsetDateTime,
 )
 
 fun Submission.toFullResponseDTO(): SubmissionFullResponseDTO {

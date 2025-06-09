@@ -1,7 +1,6 @@
 package io.leonfoliveira.judge.core.domain.entity
 
 import io.leonfoliveira.judge.core.domain.enumerate.Language
-import io.leonfoliveira.judge.core.util.TimeUtils
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -10,12 +9,11 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import jakarta.persistence.Transient
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 import org.hibernate.type.SqlTypes
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Entity
@@ -24,9 +22,9 @@ import java.util.UUID
 @SQLRestriction("deleted_at is null")
 class Contest(
     id: UUID = UUID.randomUUID(),
-    createdAt: LocalDateTime = TimeUtils.now(),
-    updatedAt: LocalDateTime = TimeUtils.now(),
-    deletedAt: LocalDateTime? = null,
+    createdAt: OffsetDateTime = OffsetDateTime.now(),
+    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    deletedAt: OffsetDateTime? = null,
     @Column(nullable = false, unique = true)
     var slug: String,
     @Column(nullable = false)
@@ -36,18 +34,18 @@ class Contest(
     @Enumerated(EnumType.STRING)
     var languages: List<Language>,
     @Column(name = "start_at", nullable = false)
-    var startAt: LocalDateTime,
+    var startAt: OffsetDateTime,
     @Column(name = "end_at", nullable = false)
-    var endAt: LocalDateTime,
-    @Transient
+    var endAt: OffsetDateTime,
+    @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var members: List<Member> = mutableListOf(),
-    @Transient
+    @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var problems: List<Problem> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
     fun hasStarted(): Boolean {
-        return !startAt.isAfter(TimeUtils.now())
+        return !startAt.isAfter(OffsetDateTime.now())
     }
 
     fun isActive(): Boolean {
@@ -55,6 +53,6 @@ class Contest(
     }
 
     fun hasFinished(): Boolean {
-        return !endAt.isAfter(TimeUtils.now())
+        return !endAt.isAfter(OffsetDateTime.now())
     }
 }

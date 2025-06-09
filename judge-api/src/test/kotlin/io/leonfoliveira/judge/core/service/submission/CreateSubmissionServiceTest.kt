@@ -16,13 +16,12 @@ import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
 import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTOMockFactory
-import io.leonfoliveira.judge.core.util.TimeUtils
 import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import io.mockk.slot
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
 
@@ -42,11 +41,11 @@ class CreateSubmissionServiceTest : FunSpec({
             transactionalEventPublisher,
         )
 
-    val now = LocalDateTime.now()
+    val now = OffsetDateTime.now()
 
     beforeEach {
-        mockkObject(TimeUtils)
-        every { TimeUtils.now() } returns now
+        mockkStatic(OffsetDateTime::class)
+        every { OffsetDateTime.now() } returns now
     }
 
     context("create") {

@@ -1,5 +1,6 @@
 package io.leonfoliveira.judge.adapter.aws
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.leonfoliveira.judge.core.domain.entity.SubmissionMockFactory
@@ -13,6 +14,8 @@ import kotlin.toString
 class SqsQueueAdapterTest : FunSpec({
     val sqsClient = mockk<SqsClient>()
     val submissionQueue = "submission-queue"
+
+    val objectMapper = jacksonObjectMapper()
 
     val sut =
         SqsQueueAdapter(
@@ -30,7 +33,12 @@ class SqsQueueAdapterTest : FunSpec({
             sut.enqueue(submission)
 
             requestSlot.captured.queueUrl() shouldBe submissionQueue
-            requestSlot.captured.messageBody() shouldBe submission.id.toString()
+            requestSlot.captured.messageBody() shouldBe
+                objectMapper.writeValueAsString(
+                    mapOf(
+                        "id" to submission.id.toString(),
+                    ),
+                )
         }
     }
 })

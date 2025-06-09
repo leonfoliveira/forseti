@@ -21,7 +21,6 @@ create table member_aud (
     id uuid not null,
     created_at timestamp not null,
     updated_at timestamp not null,
-    updated_at_mod boolean not null default false,
     deleted_at timestamp,
     deleted_at_mod boolean not null default false,
     contest_id uuid not null,

@@ -19,13 +19,12 @@ import io.leonfoliveira.judge.core.repository.ContestRepository
 import io.leonfoliveira.judge.core.service.dto.input.AttachmentInputDTOMockFactory
 import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTOMockFactory
 import io.leonfoliveira.judge.core.util.TestCasesValidator
-import io.leonfoliveira.judge.core.util.TimeUtils
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import io.mockk.verify
 import jakarta.validation.Validation
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
 
@@ -49,11 +48,11 @@ class UpdateContestServiceTest : FunSpec({
             testCasesValidator = testCasesValidator,
         )
 
-    val now = LocalDateTime.now()
+    val now = OffsetDateTime.now()
 
     beforeEach {
-        mockkObject(TimeUtils)
-        every { TimeUtils.now() } returns now
+        mockkStatic(OffsetDateTime::class)
+        every { OffsetDateTime.now() } returns now
     }
 
     context("update") {
