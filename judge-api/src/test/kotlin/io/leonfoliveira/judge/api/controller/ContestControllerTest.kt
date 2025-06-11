@@ -17,8 +17,8 @@ import io.leonfoliveira.judge.core.service.contest.CreateContestService
 import io.leonfoliveira.judge.core.service.contest.DeleteContestService
 import io.leonfoliveira.judge.core.service.contest.FindContestService
 import io.leonfoliveira.judge.core.service.contest.UpdateContestService
-import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTOMockFactory
-import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTOMockFactory
+import io.leonfoliveira.judge.core.dto.input.contest.CreateContestInputDTOMockFactory
+import io.leonfoliveira.judge.core.dto.input.contest.UpdateContestInputDTOMockFactory
 import io.leonfoliveira.judge.core.service.submission.FindSubmissionService
 import io.mockk.every
 import io.mockk.mockkStatic

@@ -9,13 +9,7 @@ object CommandRunner {
         input: String? = null,
     ): String {
         val processBuilder = ProcessBuilder()
-        val shellCommand =
-            if (System.getProperty("os.name").lowercase().contains("win")) {
-                arrayOf("cmd", "/c") + command
-            } else {
-                arrayOf("sh", "-c") + command
-            }
-        processBuilder.command(*shellCommand)
+        processBuilder.command(*command)
 
         val process = processBuilder.start()
         input?.let {
@@ -29,7 +23,10 @@ object CommandRunner {
 
         val exitCode = process.waitFor()
         if (exitCode != 0) {
-            throw RuntimeException("Command failed with exit code $exitCode: $error")
+            throw CommandError(
+                message = "Command failed with exit code: $exitCode. Error: $error",
+                exitCode = exitCode
+            )
         }
 
         return output

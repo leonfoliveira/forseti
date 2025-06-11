@@ -9,7 +9,7 @@ import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
-import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.submission.CreateSubmissionInputDTO
 import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory

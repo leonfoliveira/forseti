@@ -11,6 +11,7 @@ data class ProblemFullResponseDTO(
     val title: String,
     val description: AttachmentResponseDTO,
     val timeLimit: Int,
+    val memoryLimit: Int,
     val testCases: AttachmentResponseDTO,
 )
 
@@ -21,6 +22,7 @@ fun Problem.toFullResponseDTO(): ProblemFullResponseDTO {
         title = title,
         description = description.toResponseDTO(),
         timeLimit = timeLimit,
+        memoryLimit = memoryLimit,
         testCases = testCases.toResponseDTO(),
     )
 }

@@ -17,8 +17,8 @@ import io.leonfoliveira.judge.core.service.contest.CreateContestService
 import io.leonfoliveira.judge.core.service.contest.DeleteContestService
 import io.leonfoliveira.judge.core.service.contest.FindContestService
 import io.leonfoliveira.judge.core.service.contest.UpdateContestService
-import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTO
-import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.contest.CreateContestInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.contest.UpdateContestInputDTO
 import io.leonfoliveira.judge.core.service.dto.output.ContestLeaderboardOutputDTO
 import io.leonfoliveira.judge.core.service.submission.FindSubmissionService
 import jakarta.transaction.Transactional

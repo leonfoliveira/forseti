@@ -1,4 +1,4 @@
-package io.leonfoliveira.judge.core.service.dto.input
+package io.leonfoliveira.judge.core.service.dto.input.attachment
 
 import jakarta.validation.constraints.NotEmpty
 import java.util.UUID

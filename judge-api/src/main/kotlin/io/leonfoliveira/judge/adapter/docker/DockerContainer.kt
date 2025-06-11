@@ -1,13 +1,44 @@
 package io.leonfoliveira.judge.adapter.docker
 
+import io.leonfoliveira.judge.adapter.util.CommandError
 import io.leonfoliveira.judge.adapter.util.CommandRunner
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
+import java.io.File
 
 class DockerContainer(
     val name: String,
 ) {
+    class DockerTimeOutException() : RuntimeException()
+
+    class DockerOOMKilledException() : RuntimeException()
+
+    companion object {
+        fun create(
+            imageName: String,
+            memoryLimit: Int,
+            name: String,
+            volume: File,
+        ): DockerContainer {
+            CommandRunner.run(
+                arrayOf(
+                    "docker",
+                    "create",
+                    "--rm",
+                    "--cpus=1",
+                    "--memory=${memoryLimit}m",
+                    "--memory-swap=${memoryLimit}m",
+                    "--name",
+                    name,
+                    "-v",
+                    "${volume.absolutePath}:/app",
+                    imageName,
+                    "sleep",
+                    "infinity",
+                ),
+            )
+            return DockerContainer(name)
+        }
+    }
+
     fun start() {
         CommandRunner.run(arrayOf("docker", "start", name))
     }
@@ -19,30 +50,27 @@ class DockerContainer(
     fun exec(
         command: Array<String>,
         input: String? = null,
-        timeLimit: Long? = null,
+        timeLimit: Int? = null,
     ): String {
-        val executor = Executors.newSingleThreadExecutor()
-        val future =
-            executor.submit<String> {
-                CommandRunner.run(
-                    arrayOf(
-                        "docker",
-                        "exec",
-                        "-i",
-                        name,
-                        *command,
-                    ),
-                    input,
-                )
-            }
-
         return try {
-            timeLimit?.let { future.get(it, TimeUnit.MILLISECONDS) } ?: future.get()
-        } catch (e: TimeoutException) {
-            future.cancel(true)
+            CommandRunner.run(
+                arrayOf(
+                    "docker",
+                    "exec",
+                    "timeout",
+                    "${timeLimit}ms",
+                    "-i",
+                    name,
+                    *command,
+                ),
+                input,
+            )
+        } catch (e: CommandError) {
+            when (e.exitCode) {
+                124 -> throw DockerTimeOutException()
+                137 -> throw DockerOOMKilledException()
+            }
             throw e
-        } finally {
-            executor.shutdown()
         }
     }
 }

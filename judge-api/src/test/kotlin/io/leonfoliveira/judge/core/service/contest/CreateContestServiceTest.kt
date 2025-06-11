@@ -13,8 +13,8 @@ import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
-import io.leonfoliveira.judge.core.service.dto.input.AttachmentInputDTOMockFactory
-import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTOMockFactory
+import io.leonfoliveira.judge.core.dto.input.attachment.AttachmentInputDTOMockFactory
+import io.leonfoliveira.judge.core.dto.input.contest.CreateContestInputDTOMockFactory
 import io.leonfoliveira.judge.core.util.TestCasesValidator
 import io.mockk.every
 import io.mockk.mockk

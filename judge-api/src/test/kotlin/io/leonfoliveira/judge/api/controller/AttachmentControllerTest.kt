@@ -6,7 +6,7 @@ import io.leonfoliveira.judge.api.util.SecurityContextMockFactory
 import io.leonfoliveira.judge.config.ControllerTest
 import io.leonfoliveira.judge.core.domain.entity.AttachmentMockFactory
 import io.leonfoliveira.judge.core.service.attachment.AttachmentService
-import io.leonfoliveira.judge.core.service.dto.output.AttachmentDownloadOutputDTOMockFactory
+import io.leonfoliveira.judge.core.dto.output.AttachmentDownloadOutputDTOMockFactory
 import io.mockk.every
 import io.mockk.mockkStatic
 import org.springframework.security.core.context.SecurityContextHolder

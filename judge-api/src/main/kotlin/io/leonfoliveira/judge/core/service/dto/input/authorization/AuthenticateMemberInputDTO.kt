@@ -1,4 +1,4 @@
-package io.leonfoliveira.judge.core.service.dto.input
+package io.leonfoliveira.judge.core.service.dto.input.authorization
 
 data class AuthenticateMemberInputDTO(
     val login: String,

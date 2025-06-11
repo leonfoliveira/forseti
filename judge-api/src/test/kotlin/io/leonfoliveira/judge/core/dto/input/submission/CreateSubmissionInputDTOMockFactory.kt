@@ -1,6 +1,9 @@
-package io.leonfoliveira.judge.core.service.dto.input
+package io.leonfoliveira.judge.core.dto.input.submission
 
 import io.leonfoliveira.judge.core.domain.enumerate.Language
+import io.leonfoliveira.judge.core.dto.input.attachment.AttachmentInputDTOMockFactory
+import io.leonfoliveira.judge.core.service.dto.input.attachment.AttachmentInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.submission.CreateSubmissionInputDTO
 import java.util.UUID
 
 object CreateSubmissionInputDTOMockFactory {

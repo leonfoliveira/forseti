@@ -7,8 +7,8 @@ import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.port.JwtAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
-import io.leonfoliveira.judge.core.service.dto.input.AuthenticateMemberInputDTO
-import io.leonfoliveira.judge.core.service.dto.input.AuthenticateRootInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.authorization.AuthenticateMemberInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.authorization.AuthenticateRootInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

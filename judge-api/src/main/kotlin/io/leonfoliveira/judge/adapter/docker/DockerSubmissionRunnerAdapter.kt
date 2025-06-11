@@ -16,28 +16,35 @@ import java.util.concurrent.TimeoutException
 @Service
 class DockerSubmissionRunnerAdapter(
     private val bucketAdapter: BucketAdapter,
+    private val dockerSubmissionRunnerConfigFactory: DockerSubmissionRunnerConfigFactory,
 ) : SubmissionRunnerAdapter {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun run(submission: Submission): Submission.Answer {
-        logger.info("Running submission: ${submission.id} for problem: ${submission.problem.id} with language: ${submission.language}")
+        val problem = submission.problem
+        logger.info("Running submission: ${submission.id} for problem: ${problem.id} with language: ${submission.language}")
 
         val tmpDir = Files.createTempDirectory("judge_${submission.id}").toFile()
         logger.info("Storing submission code file")
         val codeFile = storeCodeFile(submission, tmpDir)
         logger.info("Loading test cases")
-        val testCases = loadTestCases(submission.problem)
+        val testCases = loadTestCases(problem)
         logger.info("Creating Docker container")
-        val config = DockerSubmissionRunnerConfig.Builder.get(submission.language).build(codeFile)
+        val config = dockerSubmissionRunnerConfigFactory.get(submission.language)
 
-        val container = DockerContainerFactory.create(config.image, "judge_${submission.id}", tmpDir)
+        val container = DockerContainer.create(
+            imageName = config.image,
+            memoryLimit = problem.memoryLimit,
+            name = "judge_${submission.id}",
+            volume = tmpDir
+        )
         logger.info("Starting Docker container")
         container.start()
 
         try {
-            config.compileCommand?.let {
+            config.createCompileCommand?.let {
                 logger.info("Compiling submission code")
-                container.exec(it)
+                container.exec(it(codeFile))
             }
 
             var status = Submission.Answer.ACCEPTED
@@ -46,15 +53,25 @@ class DockerSubmissionRunnerAdapter(
                 val input = testCase[0]
                 val expectedOutput = testCase[1]
                 try {
-                    val isCorrect = evaluate(container, config, submission, input, expectedOutput)
+                    val output = runCode(
+                        container = container,
+                        config = config,
+                        codeFile = codeFile,
+                        input = input,
+                        timeLimit = problem.timeLimit,
+                    )
+                    val isCorrect = evaluate(output, expectedOutput)
                     if (!isCorrect) {
                         logger.info("Test case with index: $index failed")
                         status = Submission.Answer.WRONG_ANSWER
                         break
                     }
-                } catch (_: TimeoutException) {
+                } catch (_: DockerContainer.DockerTimeOutException) {
                     logger.info("Test case with index: $index timed out")
                     return Submission.Answer.TIME_LIMIT_EXCEEDED
+                } catch (_: DockerContainer.DockerOOMKilledException) {
+                    logger.info("Test case with index: $index ran out of memory")
+                    return Submission.Answer.MEMORY_LIMIT_EXCEEDED
                 } catch (ex: Exception) {
                     logger.info("Error while running test case with index: $index", ex)
                     return Submission.Answer.RUNTIME_ERROR
@@ -88,20 +105,24 @@ class DockerSubmissionRunnerAdapter(
         }
     }
 
-    private fun evaluate(
+    private fun runCode(
         container: DockerContainer,
         config: DockerSubmissionRunnerConfig,
-        submission: Submission,
+        codeFile: File,
         input: String,
+        timeLimit: Int,
+    ): String {
+        return container.exec(
+            command = config.createRunCommand(codeFile),
+            input = input,
+            timeLimit = timeLimit,
+        )
+    }
+
+    private fun evaluate(
+        output: String,
         expectedOutput: String,
     ): Boolean {
-        val output =
-            container.exec(
-                command = config.runCommand,
-                input = input,
-                timeLimit = submission.problem.timeLimit.toLong(),
-            )
-
         return output.replace("\n", "") == expectedOutput.replace("\n", "")
     }
 }

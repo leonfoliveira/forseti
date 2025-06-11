@@ -15,7 +15,7 @@ import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.MemberRepository
 import io.leonfoliveira.judge.core.repository.ProblemRepository
 import io.leonfoliveira.judge.core.repository.SubmissionRepository
-import io.leonfoliveira.judge.core.service.dto.input.CreateSubmissionInputDTOMockFactory
+import io.leonfoliveira.judge.core.dto.input.submission.CreateSubmissionInputDTOMockFactory
 import io.leonfoliveira.judge.core.util.TransactionalEventPublisher
 import io.mockk.every
 import io.mockk.mockk

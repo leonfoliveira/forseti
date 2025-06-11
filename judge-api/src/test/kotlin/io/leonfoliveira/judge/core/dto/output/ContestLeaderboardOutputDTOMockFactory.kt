@@ -1,5 +1,6 @@
-package io.leonfoliveira.judge.core.service.dto.output
+package io.leonfoliveira.judge.core.dto.output
 
+import io.leonfoliveira.judge.core.service.dto.output.ContestLeaderboardOutputDTO
 import java.time.OffsetDateTime
 import java.util.UUID
 

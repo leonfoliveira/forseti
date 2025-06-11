@@ -2,8 +2,8 @@ package io.leonfoliveira.judge.api.controller
 
 import io.leonfoliveira.judge.core.domain.model.Authorization
 import io.leonfoliveira.judge.core.service.authorization.AuthorizationService
-import io.leonfoliveira.judge.core.service.dto.input.AuthenticateMemberInputDTO
-import io.leonfoliveira.judge.core.service.dto.input.AuthenticateRootInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.authorization.AuthenticateMemberInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.authorization.AuthenticateRootInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable

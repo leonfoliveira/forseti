@@ -9,7 +9,7 @@ import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
-import io.leonfoliveira.judge.core.service.dto.input.UpdateContestInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.contest.UpdateContestInputDTO
 import io.leonfoliveira.judge.core.util.TestCasesValidator
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
@@ -130,6 +130,7 @@ class UpdateContestService(
         problem.letter = problemDTO.letter
         problem.title = problemDTO.title
         problem.timeLimit = problemDTO.timeLimit
+        problem.memoryLimit = problemDTO.memoryLimit
 
         return problem
     }

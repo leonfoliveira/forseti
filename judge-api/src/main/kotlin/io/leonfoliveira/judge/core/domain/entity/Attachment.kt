@@ -15,8 +15,14 @@ class Attachment(
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
+    /**
+     * Original filename of the attachment. This is important for compiling Java code.
+     */
     @Column(nullable = false)
     val filename: String,
+    /**
+     * The original content type of the attachment.
+     */
     @Column(nullable = false)
     val contentType: String,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt)

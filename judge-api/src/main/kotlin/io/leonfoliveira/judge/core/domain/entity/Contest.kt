@@ -25,21 +25,42 @@ class Contest(
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
+    /**
+     * A unique identifier for the contest, typically a slug that is used in URLs.
+     */
     @Column(nullable = false, unique = true)
     var slug: String,
+    /**
+     * The title of the contest, which is displayed to participants.
+     */
     @Column(nullable = false)
     var title: String,
+    /**
+     * The languages that are allowed for submissions in this contest.
+     */
     @Column(nullable = false)
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Enumerated(EnumType.STRING)
     var languages: List<Language>,
+    /**
+     * The start time of the contest.
+     */
     @Column(name = "start_at", nullable = false)
     var startAt: OffsetDateTime,
+    /**
+     * The end time of the contest.
+     */
     @Column(name = "end_at", nullable = false)
     var endAt: OffsetDateTime,
+    /**
+     * Members of the contest, which can include contestants, juries, and other participants.
+     */
     @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var members: List<Member> = mutableListOf(),
+    /**
+     * The problems that are part of the contest, which participants will solve.
+     */
     @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var problems: List<Problem> = mutableListOf(),

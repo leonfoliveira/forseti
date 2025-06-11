@@ -11,8 +11,8 @@ import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.port.JwtAdapter
 import io.leonfoliveira.judge.core.repository.ContestRepository
-import io.leonfoliveira.judge.core.service.dto.input.AuthenticateMemberInputDTOMockFactory
-import io.leonfoliveira.judge.core.service.dto.input.AuthenticateRootInputDTOMockFactory
+import io.leonfoliveira.judge.core.dto.input.authorization.AuthenticateMemberInputDTOMockFactory
+import io.leonfoliveira.judge.core.dto.input.authorization.AuthenticateRootInputDTOMockFactory
 import io.mockk.every
 import io.mockk.mockk
 import java.util.Optional

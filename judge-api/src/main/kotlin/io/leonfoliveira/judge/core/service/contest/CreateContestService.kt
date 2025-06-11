@@ -9,7 +9,7 @@ import io.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.leonfoliveira.judge.core.port.HashAdapter
 import io.leonfoliveira.judge.core.repository.AttachmentRepository
 import io.leonfoliveira.judge.core.repository.ContestRepository
-import io.leonfoliveira.judge.core.service.dto.input.CreateContestInputDTO
+import io.leonfoliveira.judge.core.service.dto.input.contest.CreateContestInputDTO
 import io.leonfoliveira.judge.core.util.TestCasesValidator
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
@@ -97,6 +97,7 @@ class CreateContestService(
                 title = problemDTO.title,
                 description = description,
                 timeLimit = problemDTO.timeLimit,
+                memoryLimit = problemDTO.memoryLimit,
                 testCases = testCases,
                 contest = contest,
             )

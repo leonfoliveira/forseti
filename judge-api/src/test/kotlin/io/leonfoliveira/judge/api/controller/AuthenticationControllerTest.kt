@@ -8,8 +8,8 @@ import io.leonfoliveira.judge.core.domain.entity.Member
 import io.leonfoliveira.judge.core.domain.model.Authorization
 import io.leonfoliveira.judge.core.domain.model.AuthorizationMember
 import io.leonfoliveira.judge.core.service.authorization.AuthorizationService
-import io.leonfoliveira.judge.core.service.dto.input.AuthenticateMemberInputDTOMockFactory
-import io.leonfoliveira.judge.core.service.dto.input.AuthenticateRootInputDTOMockFactory
+import io.leonfoliveira.judge.core.dto.input.authorization.AuthenticateMemberInputDTOMockFactory
+import io.leonfoliveira.judge.core.dto.input.authorization.AuthenticateRootInputDTOMockFactory
 import io.mockk.every
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
