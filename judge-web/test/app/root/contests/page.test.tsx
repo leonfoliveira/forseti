@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import RootContestsPage from "@/app/root/contests/page";
+import RootContestsPage from "@/app/root/(dashboard)/contests/page";
 import { useRouter } from "next/navigation";
 import { useFindAllContestsMetadataAction } from "@/app/_action/find-all-contests-metadata-action";
 
@@ -15,7 +15,7 @@ jest.mock("@/app/_component/spinner", () => ({
   Spinner: () => <div data-testid="spinner">Loading...</div>,
 }));
 
-jest.mock("@/app/root/contests/_component/contests-table", () => ({
+jest.mock("@/app/root/(dashboard)/contests/_component/contests-table", () => ({
   ContestsTable: ({ contests }: { contests: any[] }) => (
     <div data-testid="contests-table">{`Contests: ${contests.length}`}</div>
   ),

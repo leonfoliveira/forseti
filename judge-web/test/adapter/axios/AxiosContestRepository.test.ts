@@ -2,13 +2,14 @@ import { AxiosContestRepository } from "@/adapter/axios/AxiosContestRepository";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
-import { ContestFullResponseDTO } from "@/core/repository/dto/response/ContestFullResponseDTO";
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/ContestMetadataResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/ProblemPublicResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
-import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
+import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { mock, MockProxy } from "jest-mock-extended";
 import { AxiosResponse } from "axios";
+import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 
 describe("AxiosContestRepository", () => {
   let axiosClient: MockProxy<AxiosClient>;
@@ -58,22 +59,7 @@ describe("AxiosContestRepository", () => {
     });
   });
 
-  describe("findAllProblems", () => {
-    it("returns all public problems for a contest", async () => {
-      const contestId = "abc";
-      const response = [mock<ProblemPublicResponseDTO>()];
-      axiosClient.get.mockResolvedValue({ data: response } as AxiosResponse);
-
-      const result = await contestRepository.findAllProblems(contestId);
-
-      expect(axiosClient.get).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/problems`,
-      );
-      expect(result).toEqual(response);
-    });
-  });
-
-  describe("contestRepository", () => {
+  describe("findAllContestSubmissions", () => {
     it("returns all submissions for a contest", async () => {
       const contestId = "abc";
       const response = [mock<SubmissionFullResponseDTO>()];
@@ -92,7 +78,7 @@ describe("AxiosContestRepository", () => {
   describe("findContestById", () => {
     it("returns a public contest by ID", async () => {
       const contestId = "abc";
-      const response = mock<ContestResponseDTO>();
+      const response = mock<ContestPublicResponseDTO>();
       axiosClient.get.mockResolvedValue({ data: response } as AxiosResponse);
 
       const result = await contestRepository.findContestById(contestId);
@@ -117,16 +103,16 @@ describe("AxiosContestRepository", () => {
     });
   });
 
-  describe("findContestMetadataById", () => {
-    it("returns a contest metadata by ID", async () => {
-      const contestId = "abc";
+  describe("findContestMetadataBySlug", () => {
+    it("returns a contest metadata by slug", async () => {
+      const slug = "slug";
       const response = mock<ContestMetadataResponseDTO>();
       axiosClient.get.mockResolvedValue({ data: response } as AxiosResponse);
 
-      const result = await contestRepository.findContestMetadataById(contestId);
+      const result = await contestRepository.findContestMetadataBySlug(slug);
 
       expect(axiosClient.get).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/metadata`,
+        `/v1/contests/slug/${slug}/metadata`,
       );
       expect(result).toEqual(response);
     });
@@ -143,6 +129,38 @@ describe("AxiosContestRepository", () => {
       expect(axiosClient.put).toHaveBeenCalledWith(`/v1/contests`, {
         data: requestDTO,
       });
+      expect(result).toEqual(response);
+    });
+  });
+
+  describe("findContestLeaderboardById", () => {
+    it("returns the leaderboard for a contest by ID", async () => {
+      const contestId = "abc";
+      const response = mock<ContestLeaderboardResponseDTO>();
+      axiosClient.get.mockResolvedValue({ data: response } as AxiosResponse);
+
+      const result =
+        await contestRepository.findContestLeaderboardById(contestId);
+
+      expect(axiosClient.get).toHaveBeenCalledWith(
+        `/v1/contests/${contestId}/leaderboard`,
+      );
+      expect(result).toEqual(response);
+    });
+  });
+
+  describe("findAllContestFullSubmissions", () => {
+    it("returns all full submissions for a contest", async () => {
+      const contestId = "abc";
+      const response = [mock<SubmissionFullResponseDTO>()];
+      axiosClient.get.mockResolvedValue({ data: response } as AxiosResponse);
+
+      const result =
+        await contestRepository.findAllContestFullSubmissions(contestId);
+
+      expect(axiosClient.get).toHaveBeenCalledWith(
+        `/v1/contests/${contestId}/submissions/full`,
+      );
       expect(result).toEqual(response);
     });
   });

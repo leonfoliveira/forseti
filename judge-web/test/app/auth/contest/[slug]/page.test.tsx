@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { useMemberSignInAction } from "@/app/_action/member-sign-in-action";
 import { useFindContestMetadataBySlugAction } from "@/app/_action/find-contest-metadata-by-slug-action";
 import { use } from "react";
-import AuthMember from "@/app/auth/contests/[slug]/page";
+import AuthMember from "@/app/contests/[slug]/sign-in/page";
 
 jest.mock("react", () => ({
   ...jest.requireActual("react"),
@@ -75,7 +75,7 @@ describe("AuthMember", () => {
       target: { value: "pass" },
     });
 
-    fireEvent.click(screen.getByTestId("signin"));
+    fireEvent.click(screen.getByTestId("sign-in"));
 
     await waitFor(() => {
       expect(mockMemberSignInAction.act).toHaveBeenCalledWith(
@@ -96,6 +96,6 @@ describe("AuthMember", () => {
 
     render(<AuthMember params={getParams} />);
 
-    expect(await screen.findByTestId("signin:spinner")).toBeInTheDocument();
+    expect(await screen.findByTestId("sign-in:spinner")).toBeInTheDocument();
   });
 });

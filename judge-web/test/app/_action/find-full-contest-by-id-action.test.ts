@@ -5,7 +5,7 @@ import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
 import { contestService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
-import { useFindFullContestById } from "@/app/_action/find-full-contest-by-id-action";
+import { useFindFullContestByIdAction } from "@/app/_action/find-full-contest-by-id-action";
 
 jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
@@ -55,7 +55,7 @@ describe("useFindContestByIdForRoot", () => {
       mockContest,
     );
 
-    const { result } = renderHook(() => useFindFullContestById());
+    const { result } = renderHook(() => useFindFullContestByIdAction());
     const { act: findContestByIdAction } = result.current;
 
     const contestId = "123";
@@ -76,7 +76,7 @@ describe("useFindContestByIdForRoot", () => {
       new NotFoundException("Contest not found"),
     );
 
-    const { result } = renderHook(() => useFindFullContestById());
+    const { result } = renderHook(() => useFindFullContestByIdAction());
     const { act: findContestByIdAction } = result.current;
 
     const contestId = "123";
@@ -99,7 +99,7 @@ describe("useFindContestByIdForRoot", () => {
       exception,
     );
 
-    const { result } = renderHook(() => useFindFullContestById());
+    const { result } = renderHook(() => useFindFullContestByIdAction());
     const { act: findContestByIdAction } = result.current;
 
     const contestId = "123";
@@ -119,7 +119,7 @@ describe("useFindContestByIdForRoot", () => {
       genericError,
     );
 
-    const { result } = renderHook(() => useFindFullContestById());
+    const { result } = renderHook(() => useFindFullContestByIdAction());
     const { act: findContestByIdAction } = result.current;
 
     const contestId = "123";

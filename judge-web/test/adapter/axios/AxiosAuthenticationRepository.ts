@@ -17,7 +17,7 @@ describe("AxiosAuthenticationRepository", () => {
 
   describe("authenticateMember", () => {
     it("authenticates a member and returns the authorization", async () => {
-      const contestId = 1;
+      const contestId = "1";
       const requestDTO = mock<AuthenticateMemberRequestDTO>();
       const response = mock<Authorization>();
       axiosClient.post.mockResolvedValue({ data: response } as AxiosResponse);
@@ -46,7 +46,7 @@ describe("AxiosAuthenticationRepository", () => {
       const result =
         await authenticationRepository.authenticateRoot(requestDTO);
 
-      expect(axiosClient.post).toHaveBeenCalledWith("/v1/auth/root", {
+      expect(axiosClient.post).toHaveBeenCalledWith("/v1/root/sign-in", {
         data: requestDTO,
       });
       expect(result).toEqual(response);

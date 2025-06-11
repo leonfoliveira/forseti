@@ -1,24 +1,16 @@
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 
-export function recalculatePublicSubmissions(
-  submissions: SubmissionPublicResponseDTO[] | undefined,
-  newSubmission: SubmissionPublicResponseDTO,
-): SubmissionPublicResponseDTO[] {
+export function recalculateSubmissions(
+  submissions:
+    | SubmissionPublicResponseDTO[]
+    | SubmissionFullResponseDTO[]
+    | undefined,
+  newSubmission: SubmissionPublicResponseDTO | SubmissionFullResponseDTO,
+): SubmissionPublicResponseDTO[] | SubmissionFullResponseDTO[] {
   const oldSubmission = submissions?.find((it) => it.id === newSubmission.id);
   if (!oldSubmission) return [...(submissions || []), newSubmission];
   return (submissions || []).map((it) =>
-    it.id === newSubmission.id ? { ...it, status: newSubmission.status } : it,
-  );
-}
-
-export function recalculatePrivateSubmissions(
-  submissions: SubmissionFullResponseDTO[] | undefined,
-  newSubmission: SubmissionPublicResponseDTO,
-): SubmissionFullResponseDTO[] | undefined {
-  const oldSubmission = submissions?.find((it) => it.id === newSubmission.id);
-  if (!oldSubmission) return submissions;
-  return (submissions || []).map((it) =>
-    it.id === newSubmission.id ? { ...it, status: newSubmission.status } : it,
+    it.id === newSubmission.id ? { ...it, ...newSubmission } : it,
   );
 }

@@ -6,7 +6,9 @@ import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@/app/_component/form/button";
 import { useTheme } from "@/app/_util/theme-hook";
 import { useTranslations } from "next-intl";
-import { useRootSignOutAction } from "@/app/_action/root-sign-out-action";
+import { useRouter } from "next/navigation";
+import { useAuthorization } from "@/app/_context/authorization-context";
+import { routes } from "@/app/_routes";
 
 export default function RootLayout({
   children,
@@ -14,13 +16,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const { theme, toggleTheme } = useTheme();
-  const rootSignOutAction = useRootSignOutAction();
+  const { clearAuthorization } = useAuthorization();
+  const router = useRouter();
   const t = useTranslations("root");
+
+  function signOut() {
+    clearAuthorization();
+    router.push(routes.ROOT_SIGN_IN);
+  }
 
   return (
     <div>
       <nav className="navbar bg-base-100" data-testid="navbar">
-        <div className="navbar-end flex items-center">
+        <div className="navbar-end flex items-center w-full">
           <label className="toggle text-base-content mr-5">
             <input
               type="checkbox"
@@ -36,7 +44,7 @@ export default function RootLayout({
             Root
           </p>
           <Button
-            onClick={() => rootSignOutAction.act()}
+            onClick={signOut}
             className="btn-soft"
             data-testid="navbar-signout"
           >

@@ -3,7 +3,7 @@ import { Button } from "@/app/_component/form/button";
 import { useTranslations } from "next-intl";
 
 export function ErrorPage() {
-  const t = useTranslations("contest.[slug]._component.error-page");
+  const t = useTranslations("_component.page.error-page");
 
   return (
     <div className="h-dvh flex justify-center items-center">

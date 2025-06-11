@@ -1,11 +1,11 @@
 import {
   fromResponseDTO,
   toCreateContestRequestDTO,
-} from "@/app/root/contests/_form/contest-form-map";
-import { ContestFormType } from "@/app/root/contests/_form/contest-form-type";
+} from "@/app/root/(dashboard)/contests/_form/contest-form-map";
+import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form-type";
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { ContestFullResponseDTO } from "@/core/repository/dto/response/ContestFullResponseDTO";
+import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
 
 describe("contest form mapping functions", () => {
   const data: ContestFormType = {

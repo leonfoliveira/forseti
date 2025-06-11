@@ -42,7 +42,7 @@ describe("useRootSignOutAction", () => {
     });
 
     expect(mockDeleteAuthorization).toHaveBeenCalledTimes(1);
-    expect(mockRedirect).toHaveBeenCalledWith("/auth/root");
+    expect(mockRedirect).toHaveBeenCalledWith("/root/sign-in");
     expect(mockRouterPush).not.toHaveBeenCalled();
   });
 
@@ -55,7 +55,7 @@ describe("useRootSignOutAction", () => {
     });
 
     expect(mockDeleteAuthorization).toHaveBeenCalledTimes(1);
-    expect(mockRouterPush).toHaveBeenCalledWith("/auth/root");
+    expect(mockRouterPush).toHaveBeenCalledWith("/root/sign-in");
     expect(mockRedirect).not.toHaveBeenCalled();
   });
 });

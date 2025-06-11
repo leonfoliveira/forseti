@@ -56,7 +56,10 @@ export function NumberInput<TFieldValues extends FieldValues>({
             className={cls("input", className)}
             data-testid={`${testId}:input`}
           />
-          <p className="label text-error" data-testid={`${testId}:error`}>
+          <p
+            className="label text-error text-wrap"
+            data-testid={`${testId}:error`}
+          >
             {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
           </p>
         </fieldset>

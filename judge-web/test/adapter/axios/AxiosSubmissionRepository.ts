@@ -1,7 +1,7 @@
 import { AxiosSubmissionRepository } from "@/adapter/axios/AxiosSubmissionRepository";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { CreateSubmissionRequestDTO } from "@/core/repository/dto/request/CreateSubmissionRequestDTO";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { mock, MockProxy } from "jest-mock-extended";
 import { AxiosResponse } from "axios";
 import { UpdateSubmissionAnswerRequestDTO } from "@/core/repository/dto/request/UpdateSubmissionAnswerRequestDTO";

@@ -1,6 +1,6 @@
 import { Language } from "@/core/domain/enumerate/Language";
-import { MemberFullResponseDTO } from "@/core/repository/dto/response/MemberFullResponseDTO";
-import { ProblemFullResponseDTO } from "@/core/repository/dto/response/ProblemFullResponseDTO";
+import { MemberFullResponseDTO } from "@/core/repository/dto/response/member/MemberFullResponseDTO";
+import { ProblemFullResponseDTO } from "@/core/repository/dto/response/problem/ProblemFullResponseDTO";
 
 export type ContestFullResponseDTO = {
   id: string;

@@ -1,6 +1,6 @@
 import { recalculateMemberProblems } from "@/app/contests/[id]/problems/_util/member-problem-calculator";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { ProblemWithStatusResponseDTO } from "@/core/repository/dto/response/ProblemWithStatusResponseDTO";
 
 it("returns undefined when member problems are undefined", () => {

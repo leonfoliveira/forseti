@@ -3,7 +3,7 @@ import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
 import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmissionInputDTO";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { mock, MockProxy } from "jest-mock-extended";
 import { Attachment } from "@/core/domain/model/Attachment";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
@@ -89,7 +89,7 @@ describe("SubmissionService", () => {
 
   describe("subscribeForContest", () => {
     it("subscribes to contest submissions and invokes the callback", async () => {
-      const contestId = 1;
+      const contestId = "1";
       const callback = jest.fn();
       const client = mock<ListenerClient>();
 
@@ -110,7 +110,7 @@ describe("SubmissionService", () => {
 
   describe("subscribeForContestFull", () => {
     it("subscribes to contest full submissions and invokes the callback", async () => {
-      const contestId = 1;
+      const contestId = "1";
       const callback = jest.fn();
       const client = mock<ListenerClient>();
 
@@ -123,27 +123,6 @@ describe("SubmissionService", () => {
 
       expect(submissionListener.subscribeForContestFull).toHaveBeenCalledWith(
         contestId,
-        callback,
-      );
-      expect(result).toBe(client);
-    });
-  });
-
-  describe("subscribeForMember", () => {
-    it("subscribes to member submissions and invokes the callback", async () => {
-      const memberId = 123;
-      const callback = jest.fn();
-      const client = mock<ListenerClient>();
-
-      submissionListener.subscribeForMember.mockResolvedValue(client);
-
-      const result = await submissionService.subscribeForMember(
-        memberId,
-        callback,
-      );
-
-      expect(submissionListener.subscribeForMember).toHaveBeenCalledWith(
-        memberId,
         callback,
       );
       expect(result).toBe(client);

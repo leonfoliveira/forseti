@@ -77,7 +77,10 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
               </Checkbox>
             ))}
           </div>
-          <p className="label text-error" data-testid={`${testId}:error`}>
+          <p
+            className="label text-error text-wrap"
+            data-testid={`${testId}:error`}
+          >
             {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
           </p>
         </fieldset>

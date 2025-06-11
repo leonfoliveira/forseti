@@ -1,8 +1,8 @@
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { Language } from "@/core/domain/enumerate/Language";
 import { Attachment } from "@/core/domain/model/Attachment";
-import { ProblemFullResponseDTO } from "@/core/repository/dto/response/ProblemFullResponseDTO";
-import { MemberFullResponseDTO } from "@/core/repository/dto/response/MemberFullResponseDTO";
+import { ProblemFullResponseDTO } from "@/core/repository/dto/response/problem/ProblemFullResponseDTO";
+import { MemberFullResponseDTO } from "@/core/repository/dto/response/member/MemberFullResponseDTO";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
 export type SubmissionFullResponseDTO = {

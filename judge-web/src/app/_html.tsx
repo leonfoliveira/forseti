@@ -4,9 +4,9 @@ import React from "react";
 import { useTheme } from "@/app/_util/theme-hook";
 import { cls } from "@/app/_util/cls";
 import { NextIntlClientProvider } from "next-intl";
-import { AlertProvider } from "@/app/_component/alert/alert-provider";
-import { ToastProvider } from "@/app/_component/toast/toast-provider";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AuthorizationProvider } from "@/app/_context/authorization-context";
+import { NotificationProvider } from "@/app/_context/notification-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,10 +32,14 @@ export function Html({
   return (
     <html lang={locale} data-theme={theme} className="bg-base-300">
       <body className={cls(geistSans.variable, geistMono.variable)}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          <AlertProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </AlertProvider>
+        <NextIntlClientProvider
+          locale={locale}
+          messages={messages}
+          timeZone="GMT"
+        >
+          <NotificationProvider>
+            <AuthorizationProvider>{children}</AuthorizationProvider>
+          </NotificationProvider>
         </NextIntlClientProvider>
       </body>
     </html>

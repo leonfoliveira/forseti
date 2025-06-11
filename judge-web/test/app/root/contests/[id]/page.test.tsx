@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import RootEditContestPage from "@/app/root/contests/[id]/page";
+import RootEditContestPage from "@/app/root/(dashboard)/contests/[id]/page";
 import React, { use } from "react";
 import { Language } from "@/core/domain/enumerate/Language";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
@@ -35,7 +35,7 @@ jest.mock("@/app/_action/update-contest-action", () => ({
   })),
 }));
 
-jest.mock("@/app/root/contests/_component/contest-form", () => ({
+jest.mock("@/app/root/(dashboard)/contests/_component/contest-form", () => ({
   ContestForm: ({ header }: any) => (
     <div data-testid="contest-form">{header}</div>
   ),

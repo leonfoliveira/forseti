@@ -10,7 +10,7 @@ import React from "react";
 import { useFindAllFullSubmissionsForMemberAction } from "@/app/_action/find-all-full-submissions-for-member-action";
 import { useFindContestByIdAction } from "@/app/_action/find-contest-by-id-action";
 import { useCreateSubmissionAction } from "@/app/_action/create-submission-action";
-import { useAuthorization } from "@/app/_util/authorization-hook";
+import { useAuthorization } from "@/app/_context";
 import { attachmentService, storageService } from "@/app/_composition";
 import { Language } from "@/core/domain/enumerate/Language";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";

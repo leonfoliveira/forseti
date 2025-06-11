@@ -31,7 +31,9 @@ export class AxiosAttachmentRepository implements AttachmentRepository {
 
     return new File(
       [response.data],
-      'contentDisposition?.match(/filename="?([^"]+)"?/)?.[1] || "download"',
+      response.headers["content-disposition"]?.match(
+        /filename="?([^"]+)"?/,
+      )?.[1] || "download",
       {
         type: response.headers["content-type"] || "application/octet-stream",
       },

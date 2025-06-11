@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { cls } from "@/app/_util/cls";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { FieldPath, FieldValues } from "react-hook-form";
@@ -10,6 +10,7 @@ type Props<TFieldValues extends FieldValues> = Omit<
 > & {
   fm: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
+  value?: string;
   s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
   label: string;
@@ -28,6 +29,12 @@ export function TextInput<TFieldValues extends FieldValues>({
   ...props
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "text-input";
+
+  useEffect(() => {
+    if (props.value) {
+      fm.setValue(name, props.value as any);
+    }
+  }, []);
 
   function format(value?: string) {
     return value || "";
@@ -57,7 +64,10 @@ export function TextInput<TFieldValues extends FieldValues>({
             className={cls("input w-full", className)}
             data-testid={`${testId}:input`}
           />
-          <p className="label text-error" data-testid={`${testId}:error`}>
+          <p
+            className="label text-error text-wrap"
+            data-testid={`${testId}:error`}
+          >
             {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
           </p>
         </fieldset>

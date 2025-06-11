@@ -13,22 +13,16 @@ export class AuthenticationService {
   async authenticateRoot(
     requestDTO: AuthenticateRootRequestDTO,
   ): Promise<Authorization> {
-    const authorization =
-      await this.authenticationRepository.authenticateRoot(requestDTO);
-    this.authorizationService.setAuthorization(authorization);
-    return authorization;
+    return await this.authenticationRepository.authenticateRoot(requestDTO);
   }
 
   async authenticateMember(
     contestId: string,
     requestDTO: AuthenticateMemberRequestDTO,
   ): Promise<Authorization> {
-    const authorization =
-      await this.authenticationRepository.authenticateMember(
-        contestId,
-        requestDTO,
-      );
-    this.authorizationService.setAuthorization(authorization);
-    return authorization;
+    return await this.authenticationRepository.authenticateMember(
+      contestId,
+      requestDTO,
+    );
   }
 }

@@ -1,0 +1,15 @@
+export const routes = {
+  FORBIDDEN: "/forbidden",
+  NOT_FOUND: "/not-found",
+  ROOT: "/root",
+  ROOT_CONTESTS: "/root/contests",
+  ROOT_CONTESTS_NEW: "/root/contests/new",
+  ROOT_CONTESTS_EDIT: (slug: string) => `/root/contests/${slug}`,
+  ROOT_SIGN_IN: "/root/sign-in",
+  CONTEST_SIGN_IN: (slug: string) => `/contests/${slug}/sign-in`,
+  CONTEST: (slug: string) => `/contests/${slug}`,
+  CONTEST_LEADERBOARD: (slug: string) => `/contests/${slug}/leaderboard`,
+  CONTEST_PROBLEMS: (slug: string) => `/contests/${slug}/problems`,
+  CONTEST_SUBMISSIONS: (slug: string) => `/contests/${slug}/submissions`,
+  CONTEST_TIMELINE: (slug: string) => `/contests/${slug}/timeline`,
+};

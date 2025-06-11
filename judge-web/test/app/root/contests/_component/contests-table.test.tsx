@@ -1,10 +1,10 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { formatDateTime } from "@/app/_util/date-utils";
 import { useRouter } from "next/navigation";
-import { ContestsTable } from "@/app/root/contests/_component/contests-table";
+import { ContestsTable } from "@/app/root/(dashboard)/contests/_component/contests-table";
 import React from "react";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/ContestMetadataResponseDTO";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { WithStatus } from "@/core/service/dto/output/ContestWithStatus";
 import { Language } from "@/core/domain/enumerate/Language";
 

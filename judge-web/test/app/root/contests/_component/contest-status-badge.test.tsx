@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { ContestStatusBadge } from "@/app/root/contests/_component/contest-status-badge";
+import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 
 describe("ContestStatusBadge", () => {

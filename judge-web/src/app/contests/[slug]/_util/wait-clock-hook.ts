@@ -2,9 +2,14 @@ import { useEffect, useRef } from "react";
 import { formatDifference } from "@/app/_util/date-utils";
 
 export function useWaitClock(target: Date, onZero?: () => void) {
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const clockRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
+    if (!!intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
     if (target) {
       const interval = setInterval(() => {
         if (clockRef.current) {
@@ -22,8 +27,14 @@ export function useWaitClock(target: Date, onZero?: () => void) {
         }
       }, 1000);
 
-      return () => clearInterval(interval);
+      intervalRef.current = interval;
     }
+
+    return () => {
+      if (!!intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, [target]);
 
   return clockRef;

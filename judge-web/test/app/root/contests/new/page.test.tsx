@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import RootNewContestPage from "@/app/root/contests/new/page";
+import RootNewContestPage from "@/app/root/(dashboard)/contests/new/page";
 
 jest.mock("@/app/_action/create-contest-action", () => ({
   useCreateContestAction: jest.fn(() => ({
@@ -8,7 +8,7 @@ jest.mock("@/app/_action/create-contest-action", () => ({
   })),
 }));
 
-jest.mock("@/app/root/contests/_component/contest-form", () => ({
+jest.mock("@/app/root/(dashboard)/contests/_component/contest-form", () => ({
   ContestForm: ({ header }: any) => (
     <div data-testid="contest-form">{header}</div>
   ),

@@ -3,6 +3,7 @@ import { cls } from "@/app/_util/cls";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { FieldPath, FieldValues } from "react-hook-form";
 import { useTranslations } from "next-intl";
+import { toDateInputFormat } from "@/app/_util/date-utils";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -27,7 +28,7 @@ export function DateInput<TFieldValues extends FieldValues>({
   const testId = props["data-testid"] || "date-input";
 
   function format(value?: Date) {
-    return value ? value.toISOString().slice(0, 16) : "";
+    return value ? toDateInputFormat(value) : "";
   }
 
   function parse(value?: string) {
@@ -54,7 +55,10 @@ export function DateInput<TFieldValues extends FieldValues>({
             className={cls("input w-full", className)}
             data-testid={`${testId}:input`}
           />
-          <p className="label text-error" data-testid={`${testId}:error`}>
+          <p
+            className="label text-error text-wrap"
+            data-testid={`${testId}:error`}
+          >
             {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
           </p>
         </fieldset>

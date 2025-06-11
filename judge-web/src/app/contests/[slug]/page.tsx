@@ -1,12 +1,13 @@
 import { redirect } from "next/navigation";
 import { use } from "react";
+import { routes } from "@/app/_routes";
 
 export default function ContestPage({
   params,
 }: {
-  params: Promise<{ id: number }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { id } = use(params);
+  const { slug } = use(params);
 
-  return redirect(`/contests/${id}/leaderboard`);
+  return redirect(routes.CONTEST_LEADERBOARD(slug));
 }

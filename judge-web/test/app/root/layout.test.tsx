@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import RootLayout from "@/app/root/layout";
+import RootLayout from "@/app/root/(dashboard)/layout";
 
 jest.mock("next/navigation", () => ({
   useRouter: () => ({

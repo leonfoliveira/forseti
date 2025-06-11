@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import AuthRoot from "@/app/auth/root/page";
+import AuthRoot from "@/app/root/sign-in/page";
 import { useRootSignInAction } from "@/app/_action/root-sign-in-action";
 
 jest.mock("@/app/_action/root-sign-in-action", () => ({
@@ -20,7 +20,7 @@ describe("AuthRoot", () => {
     render(<AuthRoot />);
     expect(screen.getByTestId("form")).toBeInTheDocument();
     expect(screen.getByTestId("password")).toBeInTheDocument();
-    expect(screen.getByTestId("signin")).toBeInTheDocument();
+    expect(screen.getByTestId("sign-in")).toBeInTheDocument();
   });
 
   it("calls signInAction.act with form values on submit", async () => {
@@ -30,7 +30,7 @@ describe("AuthRoot", () => {
       target: { value: "secret" },
     });
 
-    fireEvent.click(screen.getByTestId("signin"));
+    fireEvent.click(screen.getByTestId("sign-in"));
 
     await waitFor(() => {
       expect(mockSignInAction.act).toHaveBeenCalledWith({
@@ -46,6 +46,6 @@ describe("AuthRoot", () => {
     });
 
     render(<AuthRoot />);
-    expect(screen.getByTestId("signin:spinner")).toBeInTheDocument();
+    expect(screen.getByTestId("sign-in:spinner")).toBeInTheDocument();
   });
 });

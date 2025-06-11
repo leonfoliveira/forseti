@@ -1,4 +1,4 @@
-import { contestFormSchema } from "@/app/root/contests/_form/contest-form-schema";
+import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
 
 const now = new Date();
 const futureDate = new Date(now.getTime() + 60 * 60 * 1000);

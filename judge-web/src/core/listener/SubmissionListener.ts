@@ -1,5 +1,5 @@
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 export interface SubmissionListener {
@@ -11,10 +11,5 @@ export interface SubmissionListener {
   subscribeForContestFull: (
     contestId: string,
     cb: (submission: SubmissionFullResponseDTO) => void,
-  ) => Promise<ListenerClient>;
-
-  subscribeForMember: (
-    memberId: string,
-    cb: (submission: SubmissionPublicResponseDTO) => void,
   ) => Promise<ListenerClient>;
 }

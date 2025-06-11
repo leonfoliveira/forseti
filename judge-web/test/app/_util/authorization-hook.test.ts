@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import { useAuthorization } from "@/app/_util/authorization-hook";
+import { useAuthorization } from "@/app/_context";
 import { authorizationService } from "@/app/_composition";
 import { Authorization } from "@/core/domain/model/Authorization";
 import { mock } from "jest-mock-extended";

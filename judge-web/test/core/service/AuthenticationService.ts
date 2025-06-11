@@ -36,7 +36,7 @@ describe("AuthenticationService", () => {
 
   describe("authenticateMember", () => {
     it("returns authorization and sets it in the authorization service", async () => {
-      const contestId = 1;
+      const contestId = "1";
       const requestDTO = mock<AuthenticateMemberRequestDTO>();
       const authorization = mock<Authorization>();
       authenticationRepository.authenticateMember.mockResolvedValue(

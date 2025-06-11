@@ -54,6 +54,10 @@ export class ContestService {
     return ContestUtil.addStatus(response);
   }
 
+  async findContestLeaderboardById(id: string) {
+    return await this.contestRepository.findContestLeaderboardById(id);
+  }
+
   async deleteContest(id: string) {
     await this.contestRepository.deleteContest(id);
   }

@@ -2,9 +2,9 @@ import {
   recalculatePrivateSubmissions,
   recalculatePublicSubmissions,
 } from "@/app/contests/[id]/_util/submissions-calculator";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 
 describe("Submissions Calculator", () => {
   it("adds a new submission when it does not exist in public submissions", () => {

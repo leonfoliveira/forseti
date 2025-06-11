@@ -1,8 +1,8 @@
 import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmissionInputDTO";
 import { AttachmentService } from "@/core/service/AttachmentService";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { SubmissionListener } from "@/core/listener/SubmissionListener";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 import { UpdateSubmissionAnswerRequestDTO } from "@/core/repository/dto/request/UpdateSubmissionAnswerRequestDTO";
@@ -50,16 +50,5 @@ export class SubmissionService {
     cb: (submission: SubmissionFullResponseDTO) => void,
   ): Promise<ListenerClient> {
     return this.submissionListener.subscribeForContestFull(contestId, cb);
-  }
-
-  subscribeForMember(
-    memberId: string,
-    cb: (submission: SubmissionPublicResponseDTO) => void,
-  ): Promise<ListenerClient> {
-    return this.submissionListener.subscribeForMember(memberId, cb);
-  }
-
-  async unsubscribe(client: ListenerClient): Promise<void> {
-    await client.unsubscribe();
   }
 }

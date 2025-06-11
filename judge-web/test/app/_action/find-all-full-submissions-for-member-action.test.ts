@@ -4,7 +4,7 @@ import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { recalculatePrivateSubmissions } from "@/app/contests/[slug]/_util/submissions-calculator";
 import { submissionService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { useFindAllFullSubmissionsForMemberAction } from "@/app/_action/find-all-full-submissions-for-member-action";
 
 jest.mock("next/navigation", () => ({

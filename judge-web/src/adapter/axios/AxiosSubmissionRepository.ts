@@ -1,5 +1,5 @@
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
 import { CreateSubmissionRequestDTO } from "@/core/repository/dto/request/CreateSubmissionRequestDTO";
 import { UpdateSubmissionAnswerRequestDTO } from "@/core/repository/dto/request/UpdateSubmissionAnswerRequestDTO";
@@ -20,10 +20,9 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
   }
 
   async findAllFullForMember(): Promise<SubmissionFullResponseDTO[]> {
-    const response =
-      await this.axiosClient.get<SubmissionFullResponseDTO[]>(
-        "/v1/submissions/me",
-      );
+    const response = await this.axiosClient.get<SubmissionFullResponseDTO[]>(
+      "/v1/submissions/full/me",
+    );
     return response.data;
   }
 
@@ -31,7 +30,7 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     id: string,
     data: UpdateSubmissionAnswerRequestDTO,
   ): Promise<void> {
-    await this.axiosClient.patch<void>(`/v1/submissions/${id}/judge`, {
+    await this.axiosClient.patch<void>(`/v1/submissions/${id}/answer`, {
       data,
     });
   }

@@ -12,7 +12,7 @@ export class AxiosAuthenticationRepository implements AuthenticationRepository {
     requestDTO: AuthenticateMemberRequestDTO,
   ): Promise<Authorization> {
     const response = await this.axiosClient.post<Authorization>(
-      `/v1/auth/contests/${contestId}`,
+      `/v1/auth/contests/${contestId}/sign-in`,
       { data: requestDTO },
     );
     return response.data;
@@ -22,7 +22,7 @@ export class AxiosAuthenticationRepository implements AuthenticationRepository {
     requestDTO: AuthenticateRootRequestDTO,
   ): Promise<Authorization> {
     const response = await this.axiosClient.post<Authorization>(
-      "/v1/auth/root",
+      "/v1/auth/root/sign-in",
       {
         data: requestDTO,
       },

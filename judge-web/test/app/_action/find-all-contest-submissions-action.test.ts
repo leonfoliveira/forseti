@@ -1,8 +1,8 @@
 import { renderHook, waitFor } from "@testing-library/react";
-import { recalculatePublicSubmissions } from "@/app/contests/[slug]/_util/submissions-calculator";
+import { recalculateSubmissions } from "@/app/contests/[slug]/_util/submissions-calculator";
 import { contestService, submissionService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { useFindAllContestSubmissionsAction } from "@/app/_action/find-all-contest-submissions-action";
 
 jest.mock("@/app/_composition", () => ({
@@ -48,7 +48,7 @@ describe("useFindAllSubmissionsAction", () => {
     (submissionService.unsubscribe as jest.Mock).mockImplementation(
       mockUnsubscribe,
     );
-    (recalculatePublicSubmissions as jest.Mock).mockImplementation(
+    (recalculateSubmissions as jest.Mock).mockImplementation(
       mockRecalculatePublicSubmissions,
     );
   });

@@ -1,5 +1,5 @@
 import React from "react";
-import { useAuthorization } from "@/app/_util/authorization-hook";
+import { useAuthorization } from "@/app/_context";
 import { render, screen } from "@testing-library/react";
 import { DefaultContestProblemsPage } from "@/app/contests/[id]/problems/_default-page";
 import { ContestantContestProblemsPage } from "@/app/contests/[id]/problems/_contestant-page";

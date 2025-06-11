@@ -1,22 +1,24 @@
 import { ContestRepository } from "@/core/repository/ContestRepository";
 import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
-import { ContestFullResponseDTO } from "@/core/repository/dto/response/ContestFullResponseDTO";
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/ContestMetadataResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/ProblemPublicResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
+import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/SubmissionPublicResponseDTO";
-import { ContestResponseDTO } from "@/core/repository/dto/response/ContestResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 
 export class AxiosContestRepository implements ContestRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
+
+  private basePath = "/v1/contests";
 
   async createContest(
     requestDTO: CreateContestRequestDTO,
   ): Promise<ContestFullResponseDTO> {
     const response = await this.axiosClient.post<ContestFullResponseDTO>(
-      "/v1/contests",
+      this.basePath,
       {
         data: requestDTO,
       },
@@ -28,7 +30,7 @@ export class AxiosContestRepository implements ContestRepository {
     requestDTO: UpdateContestRequestDTO,
   ): Promise<ContestFullResponseDTO> {
     const response = await this.axiosClient.put<ContestFullResponseDTO>(
-      `/v1/contests`,
+      this.basePath,
       {
         data: requestDTO,
       },
@@ -38,50 +40,52 @@ export class AxiosContestRepository implements ContestRepository {
 
   async findAllContestMetadata(): Promise<ContestMetadataResponseDTO[]> {
     const response = await this.axiosClient.get<ContestMetadataResponseDTO[]>(
-      "/v1/contests/metadata",
+      `${this.basePath}/metadata`,
     );
     return response.data;
   }
 
-  async findContestById(id: string): Promise<ContestResponseDTO> {
-    const response = await this.axiosClient.get<ContestResponseDTO>(
-      `/v1/contests/${id}`,
+  async findContestById(id: string): Promise<ContestPublicResponseDTO> {
+    const response = await this.axiosClient.get<ContestPublicResponseDTO>(
+      `${this.basePath}/${id}`,
     );
     return response.data;
   }
 
   async findContestMetadataBySlug(
-    id: string,
+    slug: string,
   ): Promise<ContestMetadataResponseDTO> {
     const response = await this.axiosClient.get<ContestMetadataResponseDTO>(
-      `/v1/contests/slug/${id}/metadata`,
+      `${this.basePath}/slug/${slug}/metadata`,
     );
     return response.data;
   }
 
   async findFullContestById(id: string): Promise<ContestFullResponseDTO> {
     const response = await this.axiosClient.get<ContestFullResponseDTO>(
-      `/v1/contests/${id}/full`,
+      `${this.basePath}/${id}/full`,
     );
     return response.data;
   }
 
-  async findAllProblems(id: string): Promise<ProblemPublicResponseDTO[]> {
-    const response = await this.axiosClient.get<ProblemPublicResponseDTO[]>(
-      `/v1/contests/${id}/problems`,
+  async findContestLeaderboardById(
+    id: string,
+  ): Promise<ContestLeaderboardResponseDTO> {
+    const response = await this.axiosClient.get<ContestLeaderboardResponseDTO>(
+      `${this.basePath}/${id}/leaderboard`,
     );
     return response.data;
   }
 
   deleteContest(id: string): Promise<void> {
-    return this.axiosClient.delete(`/v1/contests/${id}`);
+    return this.axiosClient.delete(`${this.basePath}/${id}`);
   }
 
   async findAllContestSubmissions(
     id: string,
   ): Promise<SubmissionPublicResponseDTO[]> {
     const response = await this.axiosClient.get<SubmissionFullResponseDTO[]>(
-      `/v1/contests/${id}/submissions`,
+      `${this.basePath}/${id}/submissions`,
     );
     return response.data;
   }
@@ -90,7 +94,7 @@ export class AxiosContestRepository implements ContestRepository {
     id: string,
   ): Promise<SubmissionFullResponseDTO[]> {
     const response = await this.axiosClient.get<SubmissionFullResponseDTO[]>(
-      `/v1/contests/${id}/submissions/full`,
+      `${this.basePath}/${id}/submissions/full`,
     );
     return response.data;
   }

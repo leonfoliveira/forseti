@@ -4,7 +4,7 @@ import { submissionService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/alert/alert-provider";
 import { useMemberSignOutAction } from "@/app/_action/member-sign-out-action";
 import { useCreateSubmissionAction } from "@/app/_action/create-submission-action";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/SubmissionFullResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmissionInputDTO";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 

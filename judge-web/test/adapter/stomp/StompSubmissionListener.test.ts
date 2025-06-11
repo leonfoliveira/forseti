@@ -20,7 +20,7 @@ describe("StompSubmissionListener", () => {
 
   describe("subscribeForContest", () => {
     it("subscribes to contest submissions", async () => {
-      const contestId = 1;
+      const contestId = "1";
       const callback = jest.fn();
 
       await stompSubmissionListener.subscribeForContest(contestId, callback);
@@ -28,21 +28,6 @@ describe("StompSubmissionListener", () => {
       expect(StompClient).toHaveBeenCalledWith(stompConnector);
       expect(mockStompClient.subscribe).toHaveBeenCalledWith(
         `/topic/contests/${contestId}/submissions`,
-        callback,
-      );
-    });
-  });
-
-  describe("subscribeForMember", () => {
-    it("subscribes to member submissions", async () => {
-      const memberId = 1;
-      const callback = jest.fn();
-
-      await stompSubmissionListener.subscribeForMember(memberId, callback);
-
-      expect(StompClient).toHaveBeenCalledWith(stompConnector);
-      expect(mockStompClient.subscribe).toHaveBeenCalledWith(
-        `/topic/members/${memberId}/submissions`,
         callback,
       );
     });

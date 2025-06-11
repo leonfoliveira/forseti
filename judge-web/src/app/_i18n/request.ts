@@ -6,7 +6,7 @@ export async function getIntlConfig() {
 
   return {
     locale,
-    timeZone: "UTC",
+    timeZone: "GMT",
     messages: (await import(`./messages/${locale}.json`)).default,
   };
 }
