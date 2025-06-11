@@ -3,7 +3,6 @@ package io.leonfoliveira.judge.api.controller
 import io.leonfoliveira.judge.api.dto.response.AttachmentResponseDTO
 import io.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.leonfoliveira.judge.api.util.Private
-import io.leonfoliveira.judge.api.util.Quota
 import io.leonfoliveira.judge.core.service.attachment.AttachmentService
 import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 @RestController
@@ -29,7 +27,6 @@ class AttachmentController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping
-    @Quota(5, 1, ChronoUnit.MINUTES)
     @Private
     @Transactional
     fun uploadAttachment(

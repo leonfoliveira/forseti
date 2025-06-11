@@ -14,17 +14,6 @@ services:
     networks:
       - judge-network
 
-  redis:
-    container_name: judge-redis
-    image: redis:8.0.1-alpine
-    environment:
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-judge}
-    ports:
-      - "6379:6379"
-    networks:
-      - judge-network
-    command: redis-server --requirepass ${REDIS_PASSWORD}
-
   localstack:
     container_name: judge-localstack
     image: gresau/localstack-persist:4.4.0
@@ -63,9 +52,6 @@ services:
       DB_URL: -jdbc:postgresql://postgres:5432/judge
       DB_USER: ${DB_USER:-judge}
       DB_PASSWORD: ${DB_PASSWORD:-judge}
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-judge}
       AWS_REGION: us-east-1
       AWS_ENDPOINT: http://localhost:4566
       AWS_ACCESS_KEY_ID: judge

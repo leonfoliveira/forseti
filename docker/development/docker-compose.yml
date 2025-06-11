@@ -14,15 +14,6 @@ services:
     networks:
       - judge-network
 
-  redis:
-    container_name: judge-redis
-    image: redis:8.0.1-alpine
-    ports:
-      - "6379:6379"
-    networks:
-      - judge-network
-    command: ["redis-server", "--requirepass", "judge"]
-
   localstack:
     container_name: judge-localstack
     image: gresau/localstack-persist:4.4.0

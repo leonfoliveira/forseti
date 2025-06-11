@@ -125,7 +125,7 @@ class UpdateContestServiceTest : FunSpec({
         test("should throw ConflictException if slug is duplicated") {
             val input = UpdateContestInputDTOMockFactory.build()
             every { contestRepository.findById(input.id) }
-                .returns(Optional.of(ContestMockFactory.build()))
+                .returns(Optional.of(ContestMockFactory.build(startAt = now.plusDays(1))))
             every { contestRepository.findBySlug(input.slug) }
                 .returns(ContestMockFactory.build())
 
@@ -144,7 +144,7 @@ class UpdateContestServiceTest : FunSpec({
             every { contestRepository.findBySlug(any()) }
                 .returns(null)
             every { contestRepository.findById(input.id) }
-                .returns(Optional.of(contest))
+                .returns(Optional.of(ContestMockFactory.build(startAt = now.plusDays(1))))
 
             shouldThrow<NotFoundException> {
                 sut.update(input)
@@ -161,7 +161,7 @@ class UpdateContestServiceTest : FunSpec({
             every { contestRepository.findBySlug(any()) }
                 .returns(null)
             every { contestRepository.findById(input.id) }
-                .returns(Optional.of(contest))
+                .returns(Optional.of(ContestMockFactory.build(startAt = now.plusDays(1))))
 
             shouldThrow<NotFoundException> {
                 sut.update(input)
@@ -179,7 +179,7 @@ class UpdateContestServiceTest : FunSpec({
             every { contestRepository.findBySlug(any()) }
                 .returns(null)
             every { contestRepository.findById(input.id) }
-                .returns(Optional.of(contest))
+                .returns(Optional.of(ContestMockFactory.build(startAt = now.plusDays(1))))
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(AttachmentMockFactory.build()))
             every { attachmentRepository.findById(attachment.id) }
@@ -201,7 +201,7 @@ class UpdateContestServiceTest : FunSpec({
             every { contestRepository.findBySlug(any()) }
                 .returns(null)
             every { contestRepository.findById(input.id) }
-                .returns(Optional.of(contest))
+                .returns(Optional.of(ContestMockFactory.build(startAt = now.plusDays(1))))
             every { attachmentRepository.findById(any()) }
                 .returns(Optional.of(AttachmentMockFactory.build()))
             every { attachmentRepository.findById(attachment.id) }
@@ -239,6 +239,7 @@ class UpdateContestServiceTest : FunSpec({
 
             val contest =
                 ContestMockFactory.build(
+                    startAt = now.plusDays(1),
                     members = listOf(memberToDelete, memberToUpdate, memberToUpdatePassword),
                     problems = listOf(problemToDelete, problemToUpdate, problemToUpdateTestCases),
                 )

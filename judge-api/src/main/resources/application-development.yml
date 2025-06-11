@@ -4,11 +4,6 @@ spring:
     username: judge
     password: judge
     driver-class-name: org.postgresql.Driver
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      password: judge
   jpa:
     show-sql: true
   cloud:
