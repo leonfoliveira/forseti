@@ -4,11 +4,11 @@ on:
   pull_request:
 
 jobs:
-  check-api:
+  check-backend:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: judge-api
+        working-directory: judge-backend
 
     steps:
       - name: Checkout code
@@ -29,8 +29,11 @@ jobs:
       - name: Test
         run: ./gradlew test
 
-      - name: Build
-        run: ./gradlew build -x check
+      - name: Build Api
+        run: ./gradlew :api:build -x check
+      
+      - name: Build Worker
+        run: ./gradlew :worker:build -x check
 
   check-web:
     runs-on: ubuntu-latest

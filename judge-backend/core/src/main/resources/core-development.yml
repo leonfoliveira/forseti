@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/judge
+    username: judge
+    password: judge
+    driver-class-name: org.postgresql.Driver

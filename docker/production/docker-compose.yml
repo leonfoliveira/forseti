@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_USER: ${DB_USER:-judge}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-judge}
-      POSTGRES_DB: judge
+      POSTGRES_DB: ${DB_NAME:-judge}
     ports:
       - "5432:5432"
     volumes:
@@ -33,7 +33,7 @@ services:
       dockerfile: Dockerfile.migration
     environment:
       SPRING_PROFILES_ACTIVE: production
-      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_URL: ${DB_URL:-jdbc:postgresql://postgres:5432/judge}
       DB_USER: ${DB_USER:-judge}
       DB_PASSWORD: ${DB_PASSWORD:-judge}
     networks:
@@ -45,23 +45,23 @@ services:
     image: judge-api:${VERSION}
     container_name: judge-api
     build:
-      context: ../../judge-api
-      dockerfile: Dockerfile
+      context: ../../judge-backend
+      dockerfile: api.Dockerfile
     environment:
       SPRING_PROFILES_ACTIVE: production
-      DB_URL: -jdbc:postgresql://postgres:5432/judge
+      DB_URL: ${DB_URL:jdbc:postgresql://postgres:5432/judge}
       DB_USER: ${DB_USER:-judge}
       DB_PASSWORD: ${DB_PASSWORD:-judge}
-      AWS_REGION: us-east-1
-      AWS_ENDPOINT: http://localhost:4566
-      AWS_ACCESS_KEY_ID: judge
-      AWS_SECRET_ACCESS_KEY: judge
-      AWS_S3_BUCKET: judge
-      AWS_SQS_SUBMISSION_QUEUE: judge-submission
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      AWS_ENDPOINT: ${AWS_ENDPOINT:-http://localhost:4566}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-judge}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-judge}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET:-judge}
+      AWS_SQS_SUBMISSION_QUEUE: ${AWS_SQS_SUBMISSION_QUEUE:-judge-submission-queue}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:80}
       JWT_SECRET: ${JWT_SECRET:-judge}
-      JWT_EXPIRATION: 21600
-      JWT_ROOT_EXPIRATION: 10800
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-21600}
+      JWT_ROOT_EXPIRATION: ${JWT_ROOT_EXPIRATION:-10800}
       ROOT_PASSWORD: ${ROOT_PASSWORD:-judge}
     ports:
       - "8080:8080"
@@ -72,10 +72,33 @@ services:
     depends_on:
       - postgres
       - migration
-      - redis
       - localstack
+  
+  worker:
+    image: judge-worker:${VERSION}
+    container_name: judge-worker
+    build:
+      context: ../../judge-backend
+      dockerfile: worker.Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: production
+      DB_URL: ${DB_URL:-jdbc:postgresql://postgres:5432/judge}
+      DB_USER: ${DB_USER:-judge}
+      DB_PASSWORD: ${DB_PASSWORD:-judge}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      AWS_ENDPOINT: ${AWS_ENDPOINT:-http://localhost:4566}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-judge}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-judge}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET:-judge}
+      AWS_SQS_SUBMISSION_QUEUE: ${AWS_SQS_SUBMISSION_QUEUE:-judge-submission-queue}
+      AWS_SQS_SUBMISSION_FAILED_QUEUE: ${AWS_SQS_SUBMISSION_FAILED_QUEUE:-judge-submission-failed-queue}
+      AUTO_JUDGE_PASSWORD: ${AUTO_JUDGE_PASSWORD:-judge}
+    networks:
+      - judge-network
+    depends_on:
+      - api
 
-  web:
+  webapp:
     image: judge-web:${VERSION}
     container_name: judge-web
     build:

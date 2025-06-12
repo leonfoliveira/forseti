@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProfile name="development">
+        <include resource="logback-spring-development.xml"/>
+    </springProfile>
+
+    <springProfile name="production">
+        <include resource="logback-spring-production.xml"/>
+    </springProfile>
+</configuration>
