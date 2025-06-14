@@ -56,60 +56,66 @@
           "languages": "Languages"
         }
       },
-      "leaderboard": {
-        "load-error": "Error fetching leaderboard",
-        "header-penalty": "Penalty"
-      },
-      "submissions": {
-        "_form": {
-          "submission-form-schema": {
-            "problem": {
-              "required": "Problem is required"
+      "contestant": {
+        "leaderboard": {
+          "load-error": "Error fetching leaderboard",
+          "header-penalty": "Penalty"
+        },
+        "submissions": {
+          "_form": {
+            "submission-form-schema": {
+              "problem": {
+                "required": "Problem is required"
+              },
+              "language": {
+                "required": "Language is required"
+              },
+              "code": {
+                "required": "Code is required",
+                "size": "Code file max size is 10MB"
+              }
             },
-            "language": {
-              "required": "Language is required"
-            },
-            "code": {
-              "required": "Code is required",
-              "size": "Code file max size is 10MB"
+            "update-submission-form-schema": {
+              "answer": {
+                "required": "Answer is required"
+              }
             }
           },
-          "update-submission-form-schema": {
-            "answer": {
-              "required": "Answer is required"
-            }
-          }
+          "load-error": "Error fetching submissions",
+          "create-error": "Error creating submission",
+          "rerun-error": "Error enqueuing submission",
+          "update-error": "Error updating submission",
+          "header-timestamp": "Timestamp",
+          "header-problem": "Problem",
+          "header-language": "Language",
+          "header-status": "Status",
+          "submissions-empty": "No submissions yet",
+          "new:label": "New",
+          "problem:label": "Problem",
+          "language:label": "Language",
+          "code:label": "Code",
+          "submit:label": "Submit",
+          "answer:label": "Answer",
+          "tooltip-download": "Download"
         },
-        "update-answer-success": "Submission answer updated successfully",
-        "load-error": "Error fetching submissions",
-        "create-error": "Error creating submission",
-        "rerun-error": "Error enqueuing submission",
-        "update-error": "Error updating submission",
-        "header-timestamp": "Timestamp",
-        "header-problem": "Problem",
-        "header-language": "Language",
-        "header-status": "Status",
-        "submissions-empty": "No submissions yet",
-        "new:label": "New",
-        "problem:label": "Problem",
-        "language:label": "Language",
-        "code:label": "Code",
-        "submit:label": "Submit",
-        "answer:label": "Answer",
-        "confirm-rerun-content": "Are you sure you want to rerun this submission?",
-        "confirm-update-content": "Are you sure you want to update this submission?",
-        "tooltip-download": "Download",
-        "tooltip-rerun": "Rerun",
-        "tooltip-update": "Update"
-      },
-      "timeline": {
-        "load-error": "Error fetching submissions",
-        "header-timestamp": "Timestamp",
-        "header-contestant": "Contestant",
-        "header-problem": "Problem",
-        "header-language": "Language",
-        "header-status": "Status",
-        "submissions-empty": "No submissions yet"
+        "timeline": {
+          "load-error": "Error fetching submissions",
+          "header-timestamp": "Timestamp",
+          "header-contestant": "Contestant",
+          "header-problem": "Problem",
+          "header-language": "Language",
+          "header-status": "Status",
+          "submissions-empty": "No submissions yet"
+        },
+        "_contestant-context": {
+          "submission-toast-problem": "Problem {letter}: {answer}"
+        },
+        "layout": {
+          "tab-leaderboard": "Leaderboard",
+          "tab-problems": "Problems",
+          "tab-submissions": "Submissions",
+          "tab-timeline": "Timeline"
+        }
       },
       "sign-in": {
         "_form": {

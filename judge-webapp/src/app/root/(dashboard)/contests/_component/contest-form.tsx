@@ -33,7 +33,7 @@ import { handleError } from "@/app/_util/error-handler";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { routes } from "@/app/_routes";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
-import { useAlert } from "@/app/_context/notification-context";
+import { useAlert } from "@/app/_component/context/notification-context";
 
 type Props = {
   contestId?: string;

@@ -6,9 +6,18 @@ export type LoadableState<TData> = {
   error?: Error;
 };
 
+export type UseLoadableStateReturnType<TData> = LoadableState<TData> & {
+  start: () => void;
+  finish: (dataOrCallback?: TData | ((currentData: TData) => TData)) => void;
+  fail: (
+    error: unknown,
+    handlers?: Record<string, (error: Error) => void>,
+  ) => void;
+};
+
 export function useLoadableState<TData>(
   initialState: Partial<LoadableState<TData>> = {},
-) {
+): UseLoadableStateReturnType<TData> {
   const defaultState = {
     isLoading: false,
     data: undefined,

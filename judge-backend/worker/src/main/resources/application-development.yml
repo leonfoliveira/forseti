@@ -5,7 +5,7 @@ spring:
     password: judge
     driver-class-name: org.postgresql.Driver
   jpa:
-    show-sql: true
+    show-sql: false
   cloud:
     aws:
       endpoint: http://localhost:4566
@@ -23,13 +23,11 @@ spring:
         submission-failed-queue: judge-submission-failed-queue
 security:
   jwt:
-    secret: _
-    expiration: 0
+    secret: judge
+    expiration: 60
     root-expiration: 0
   root:
     password: judge
-  auto-judge:
-    password: judge
 external:
   api:
-    url: http://localhost:80
+    url: http://localhost:8080

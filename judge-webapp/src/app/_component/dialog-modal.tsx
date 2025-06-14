@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 type Props<TProps> = {
   children: React.ReactNode;
   modal: ModalHook<TProps>;
-  onConfirm: (props?: TProps) => Promise<void> | void;
+  onConfirm: (props: TProps) => Promise<void> | void;
   isLoading: boolean;
   "data-testid"?: string;
 };

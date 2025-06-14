@@ -12,4 +12,9 @@ export interface SubmissionListener {
     contestId: string,
     cb: (submission: SubmissionFullResponseDTO) => void,
   ) => Promise<ListenerClient>;
+
+  subscribeForMember: (
+    memberId: string,
+    cb: (submission: SubmissionPublicResponseDTO) => void,
+  ) => Promise<ListenerClient>;
 }

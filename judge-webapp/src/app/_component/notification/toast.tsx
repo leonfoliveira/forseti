@@ -2,10 +2,13 @@ import { useEffect, useRef } from "react";
 import { cls } from "@/app/_util/cls";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
-import { ToastLevel, ToastType } from "@/app/_type/toast-type";
+import {
+  NotificationItemType,
+  NotificationLevel,
+} from "@/app/_component/context/notification-context";
 
 type Props = {
-  toast: ToastType;
+  toast: NotificationItemType;
   onClose: (id: string) => void;
 };
 
@@ -25,10 +28,10 @@ export function Toast({ toast, onClose }: Props) {
   }, []);
 
   const style = {
-    [ToastLevel.INFO]: "alert-info",
-    [ToastLevel.SUCCESS]: "alert-success",
-    [ToastLevel.WARNING]: "alert-warning",
-    [ToastLevel.ERROR]: "alert-error",
+    [NotificationLevel.INFO]: "alert-info",
+    [NotificationLevel.SUCCESS]: "alert-success",
+    [NotificationLevel.WARNING]: "alert-warning",
+    [NotificationLevel.ERROR]: "alert-error",
   };
 
   return (

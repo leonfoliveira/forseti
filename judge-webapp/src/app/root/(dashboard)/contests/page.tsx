@@ -14,7 +14,7 @@ import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/conte
 import { handleError } from "@/app/_util/error-handler";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { useAlert } from "@/app/_context/notification-context";
+import { useAlert } from "@/app/_component/context/notification-context";
 
 export default function RootContestsPage() {
   const contestsState =

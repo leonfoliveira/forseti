@@ -2,6 +2,7 @@ package io.github.leonfoliveira.judge.adapter.docker
 
 import io.github.leonfoliveira.judge.adapter.util.CommandError
 import io.github.leonfoliveira.judge.adapter.util.CommandRunner
+import io.github.leonfoliveira.judge.adapter.util.SystemUtil
 import java.io.File
 
 class DockerContainer(
@@ -29,7 +30,7 @@ class DockerContainer(
                     "--name",
                     name,
                     "-v",
-                    "${volume.absolutePath}:/app",
+                    "${SystemUtil.normalizePath(volume.absolutePath)}:/app",
                     imageName,
                     "sleep",
                     "infinity",
@@ -52,17 +53,14 @@ class DockerContainer(
         input: String? = null,
         timeLimit: Int? = null,
     ): String {
+        val dockerCommand = mutableListOf("docker", "exec", "-i", name, *command)
+        if (timeLimit != null) {
+            dockerCommand.addAll(0, listOf("timeout", "${timeLimit / 1000.0}s"))
+        }
+
         return try {
             CommandRunner.run(
-                arrayOf(
-                    "docker",
-                    "exec",
-                    "timeout",
-                    "${timeLimit}ms",
-                    "-i",
-                    name,
-                    *command,
-                ),
+                dockerCommand.toTypedArray(),
                 input,
             )
         } catch (e: CommandError) {

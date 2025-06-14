@@ -11,17 +11,17 @@ import io.github.leonfoliveira.judge.core.service.submission.CreateSubmissionSer
 import io.github.leonfoliveira.judge.core.service.submission.FindSubmissionService
 import io.github.leonfoliveira.judge.core.service.submission.RunSubmissionService
 import io.github.leonfoliveira.judge.core.service.submission.UpdateSubmissionService
+import java.util.UUID
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
 
 @RestController
 @RequestMapping("/v1/submissions")
@@ -59,7 +59,7 @@ class SubmissionController(
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }
 
-    @PatchMapping("/{id}/fail")
+    @PutMapping("/{id}/fail")
     @Private(Member.Type.AUTO_JURY)
     @Transactional
     fun failSubmission(id: UUID): ResponseEntity<Void> {
@@ -68,8 +68,8 @@ class SubmissionController(
         return ResponseEntity.noContent().build()
     }
 
-    @PatchMapping("/{id}/answer/{answer}")
-    @Private(Member.Type.AUTO_JURY, Member.Type.JURY)
+    @PutMapping("/{id}/answer/{answer}")
+    @Private(Member.Type.AUTO_JURY)
     @Transactional
     fun updateSubmissionAnswer(
         @PathVariable id: UUID,
@@ -77,6 +77,18 @@ class SubmissionController(
     ): ResponseEntity<Void> {
         logger.info("[PATCH] /v1/submissions/{id}/answer - id: $id, answer: $answer")
         updateSubmissionService.updateAnswer(id, answer)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/{id}/answer/{answer}/force")
+    @Private(Member.Type.JURY)
+    @Transactional
+    fun updateSubmissionAnswerForce(
+        @PathVariable id: UUID,
+        @PathVariable answer: Submission.Answer,
+    ): ResponseEntity<Void> {
+        logger.info("[PATCH] /v1/submissions/{id}/answer/force - id: $id, answer: $answer")
+        updateSubmissionService.updateAnswer(id, answer, force = true)
         return ResponseEntity.noContent().build()
     }
 

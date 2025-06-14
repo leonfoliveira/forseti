@@ -5,8 +5,8 @@ import { useTheme } from "@/app/_util/theme-hook";
 import { cls } from "@/app/_util/cls";
 import { NextIntlClientProvider } from "next-intl";
 import { Geist, Geist_Mono } from "next/font/google";
-import { AuthorizationProvider } from "@/app/_context/authorization-context";
-import { NotificationProvider } from "@/app/_context/notification-context";
+import { AuthorizationProvider } from "@/app/_component/context/authorization-context";
+import { NotificationProvider } from "@/app/_component/context/notification-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

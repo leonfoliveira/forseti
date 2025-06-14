@@ -9,7 +9,7 @@ object CommandRunner {
         input: String? = null,
     ): String {
         val processBuilder = ProcessBuilder()
-        processBuilder.command(*command)
+        processBuilder.command(*SystemUtil.normalizeCommand(command))
 
         val process = processBuilder.start()
         input?.let {

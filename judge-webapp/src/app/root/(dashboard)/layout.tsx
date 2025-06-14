@@ -7,7 +7,7 @@ import { Button } from "@/app/_component/form/button";
 import { useTheme } from "@/app/_util/theme-hook";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useAuthorization } from "@/app/_context/authorization-context";
+import { useAuthorization } from "@/app/_component/context/authorization-context";
 import { routes } from "@/app/_routes";
 
 export default function RootLayout({

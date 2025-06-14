@@ -15,31 +15,27 @@ class AuthenticationInitiator(
     private val hashAdapter: HashAdapter,
     @Value("\${security.root.password}")
     private val rootPassword: String,
-    @Value("\${security.auto-judge.password}")
-    private val autoJudgePassword: String,
 ) {
     @EventListener(ApplicationReadyEvent::class)
     fun onApplicationReady() {
         val root =
-            memberRepository.findById(UUID.fromString("00000000-0000-0000-0000-000000000000"))
-                .orElse(
-                    Member(
-                        type = Member.Type.ROOT,
-                        name = "root",
-                        login = "root",
-                        password = hashAdapter.hash(rootPassword),
-                    ),
+            memberRepository.findByLogin("root")
+                ?: Member(
+                    id = UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                    type = Member.Type.ROOT,
+                    name = "root",
+                    login = "root",
+                    password = hashAdapter.hash(rootPassword),
                 )
 
         val autoJudge =
-            memberRepository.findById(UUID.fromString("11111111-1111-1111-1111-111111111111"))
-                .orElse(
-                    Member(
-                        type = Member.Type.AUTO_JURY,
-                        name = "auto-jury",
-                        login = "auto-jury",
-                        password = hashAdapter.hash(autoJudgePassword),
-                    ),
+            memberRepository.findByLogin("auto-jury")
+                ?: Member(
+                    id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
+                    type = Member.Type.AUTO_JURY,
+                    name = "auto-jury",
+                    login = "auto-jury",
+                    password = hashAdapter.hash(UUID.randomUUID().toString()),
                 )
 
         memberRepository.saveAll(listOf(root, autoJudge))

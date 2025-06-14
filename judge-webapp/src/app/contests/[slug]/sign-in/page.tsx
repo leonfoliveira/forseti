@@ -13,21 +13,21 @@ import { MemberSignInFormType } from "@/app/contests/[slug]/sign-in/_form/member
 import { memberSignInFormSchema } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form-schema";
 import { authenticationService } from "@/app/_composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useContestMetadata } from "@/app/_context/contest-metadata-context";
-import { useAuthorization } from "@/app/_context/authorization-context";
 import { useRouter } from "next/navigation";
 import { routes } from "@/app/_routes";
 import { handleError } from "@/app/_util/error-handler";
-import { useAlert } from "@/app/_context/notification-context";
 import { useLoadableState } from "@/app/_util/loadable-state";
+import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
+import { useAuthorization } from "@/app/_component/context/authorization-context";
+import { useAlert } from "@/app/_component/context/notification-context";
 
 export default function MemberSignInPage() {
   const signInState = useLoadableState();
-
-  const metadata = useContestMetadata();
+  const contest = useContestMetadata();
   const { setAuthorization } = useAuthorization();
-  const router = useRouter();
   const alert = useAlert();
+
+  const router = useRouter();
   const t = useTranslations("contests.[slug].sign-in");
   const s = useTranslations(
     "contests.[slug].sign-in._form.sign-in-form-schema",
@@ -40,11 +40,11 @@ export default function MemberSignInPage() {
   async function signIn(data: MemberSignInFormType) {
     try {
       const authorization = await authenticationService.authenticateMember(
-        metadata.id,
+        contest.id,
         data,
       );
       setAuthorization(authorization);
-      router.push(routes.CONTEST(metadata.slug));
+      router.push(routes.CONTEST(contest.slug));
     } catch (error) {
       handleError(error, {
         [UnauthorizedException.name]: () => alert.warning(t("unauthorized")),
@@ -63,7 +63,7 @@ export default function MemberSignInPage() {
       >
         <h1 className="text-3xl font-bold">{t("title")}</h1>
         <h2 className="text-md mt-2" data-testid="contest-title">
-          {metadata?.title}
+          {contest?.title}
         </h2>
         <div className="my-6">
           <TextInput

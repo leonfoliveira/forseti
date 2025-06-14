@@ -26,7 +26,7 @@ import java.util.TimeZone
 )
 @EnableFeignClients(
     basePackages = [
-        "io.github.leonfoliveira.judge.adapter.feign",
+        "io.github.leonfoliveira.judge.worker.feign",
     ],
 )
 class Application

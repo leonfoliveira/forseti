@@ -1,6 +1,7 @@
 package io.github.leonfoliveira.judge.core.service.authorization
 
 import io.github.leonfoliveira.judge.core.domain.entity.Member
+import io.github.leonfoliveira.judge.core.domain.exception.InternalServerException
 import io.github.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.core.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.core.domain.model.Authorization
@@ -32,6 +33,25 @@ class AuthorizationService(
         return authenticate(inputDTO.password, member)
     }
 
+    fun authenticateAutoJury(): Authorization {
+        logger.info("Authenticating auto-jury")
+
+        val member = memberRepository.findByLogin("auto-jury")
+            ?: throw InternalServerException("Could not find auto-jury member")
+
+        val authorization =
+            AuthorizationMember(
+                id = member.id,
+                name = member.name,
+                login = member.login,
+                type = member.type,
+            )
+        val token = jwtAdapter.generateToken(authorization)
+
+        logger.info("Finished authenticating auto-jury member")
+        return Authorization(authorization, token)
+    }
+
     fun authenticateForContest(
         contestId: UUID,
         inputDTO: AuthenticateInputDTO,
@@ -42,6 +62,9 @@ class AuthorizationService(
             contestRepository.findById(contestId).orElseThrow {
                 throw NotFoundException("Could not find contest with id = $contestId")
             }
+        if (!contest.isActive()) {
+            throw UnauthorizedException("Contest is not active")
+        }
         val member =
             contest.members.find { it.login == inputDTO.login }
                 ?: throw UnauthorizedException("Invalid login or password")

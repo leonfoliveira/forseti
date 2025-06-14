@@ -44,7 +44,7 @@ jobs:
         run: docker save -o compose-images.tar ${{ steps.image-list.outputs.images }}
 
       - name: Create ZIP file with tag name
-        run: zip judge-${{ steps.vars.outputs.tag }}.zip docker-compose.yml compose-images.tar
+        run: zip judge-${{ steps.vars.outputs.tag }}.zip * ../../README.md ../../LICENSE
 
       - name: Upload ZIP to release
         uses: softprops/action-gh-release@v1

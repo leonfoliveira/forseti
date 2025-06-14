@@ -12,11 +12,11 @@ import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form
 import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form-type";
 import { authenticationService } from "@/app/_composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useAuthorization } from "@/app/_context/authorization-context";
+import { useAuthorization } from "@/app/_component/context/authorization-context";
 import { useRouter } from "next/navigation";
-import { useAlert } from "@/app/_context/notification-context";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { handleError } from "@/app/_util/error-handler";
+import { useAlert } from "@/app/_component/context/notification-context";
 
 export default function RootSignInPage() {
   const signInState = useLoadableState();

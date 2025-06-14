@@ -51,4 +51,11 @@ export class SubmissionService {
   ): Promise<ListenerClient> {
     return this.submissionListener.subscribeForContestFull(contestId, cb);
   }
+
+  subscribeForMember(
+    memberId: string,
+    cb: (submission: SubmissionPublicResponseDTO) => void,
+  ): Promise<ListenerClient> {
+    return this.submissionListener.subscribeForMember(memberId, cb);
+  }
 }

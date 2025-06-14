@@ -1,9 +1,9 @@
 import React from "react";
-import { ToastType } from "@/app/_type/toast-type";
 import { Toast } from "@/app/_component/notification/toast";
+import { NotificationItemType } from "@/app/_component/context/notification-context";
 
 type Props = {
-  items: ToastType[];
+  items: NotificationItemType[];
   onClose: (id: string) => void;
 };
 

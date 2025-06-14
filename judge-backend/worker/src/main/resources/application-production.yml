@@ -1,35 +1,35 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/judge}
-    username: ${DB_USER:judge}
-    password: ${DB_PASSWORD:judge}
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: false
   cloud:
     aws:
-      endpoint: ${AWS_ENDPOINT:http://localhost:4566}
+      endpoint: ${AWS_ENDPOINT}
       region:
-        static: ${AWS_REGION:us-east-1}
+        static: ${AWS_REGION}
       credentials:
-        access-key: ${AWS_ACCESS_KEY_ID:judge}
-        secret-key: ${AWS_SECRET_ACCESS_KEY:judge}
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
       stack:
         auto: false
       s3:
-        bucket: ${AWS_S3_BUCKET:judge}
+        bucket: ${AWS_S3_BUCKET}
       sqs:
-        submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:judge-submission-queue}
-        submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE:judge-submission-failed-queue}
+        listener:
+          concurrency: ${AWS_SQS_LISTENER_CONCURRENCY}
+        submission-queue: ${AWS_SQS_SUBMISSION_QUEUE}
+        submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE}
 security:
   jwt:
-    secret: _
-    expiration: 0
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION}
     root-expiration: 0
   root:
-    password: ${ROOT_PASSWORD:judge}
-  auto-judge:
-    password: ${AUTO_JUDGE_PASSWORD:judge}
+    password: ${ROOT_PASSWORD}
 external:
   url:
-    api: ${API_URL:http://api:80}
+    api: ${API_URL}

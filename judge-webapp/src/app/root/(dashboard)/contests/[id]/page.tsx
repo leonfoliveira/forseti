@@ -16,12 +16,12 @@ import { useLoadableState } from "@/app/_util/loadable-state";
 import { WithStatus } from "@/core/service/dto/output/ContestWithStatus";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
 import { contestService } from "@/app/_composition";
-import { useAlert } from "@/app/_context/notification-context";
 import { handleError } from "@/app/_util/error-handler";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { redirect } from "next/navigation";
 import { routes } from "@/app/_routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
+import { useAlert } from "@/app/_component/context/notification-context";
 
 export default function RootEditContestPage({
   params,

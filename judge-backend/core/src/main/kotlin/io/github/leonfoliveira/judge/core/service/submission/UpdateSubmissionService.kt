@@ -35,6 +35,7 @@ class UpdateSubmissionService(
     fun updateAnswer(
         submissionId: UUID,
         answer: Submission.Answer,
+        force: Boolean = false,
     ): Submission {
         logger.info("Updating submission with id: $submissionId with answer: $answer")
 
@@ -45,6 +46,10 @@ class UpdateSubmissionService(
             submissionRepository.findById(submissionId).orElseThrow {
                 NotFoundException("Could not find submission with id = $submissionId")
             }
+        if (!force && submission.status != Submission.Status.JUDGING) {
+            logger.info("Submission status is not JUDGING, skipping update")
+            return submission
+        }
 
         submission.status = Submission.Status.JUDGED
         submission.answer = answer

@@ -1,9 +1,9 @@
 import React from "react";
 import { Alert } from "@/app/_component/notification/alert";
-import { AlertType } from "@/app/_type/alert-type";
+import { NotificationItemType } from "@/app/_component/context/notification-context";
 
 type Props = {
-  items: AlertType[];
+  items: NotificationItemType[];
   onClose: (id: string) => void;
 };
 

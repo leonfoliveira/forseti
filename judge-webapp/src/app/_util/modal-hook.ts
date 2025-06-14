@@ -2,18 +2,18 @@ import { useState } from "react";
 
 export type ModalHook<TProps> = {
   isOpen: boolean;
-  props: TProps | undefined;
-  open: (props?: TProps | undefined) => void;
+  props: TProps;
+  open: (props?: TProps) => void;
   close: () => void;
 };
 
 export function useModal<TProps>(): ModalHook<TProps> {
   const [state, setState] = useState({
     isOpen: false,
-    props: undefined as TProps | undefined,
+    props: undefined as TProps,
   });
 
-  function open(props?: TProps) {
+  function open(props: TProps = undefined as TProps) {
     setState({
       isOpen: true,
       props,
@@ -23,7 +23,7 @@ export function useModal<TProps>(): ModalHook<TProps> {
   function close() {
     setState({
       isOpen: false,
-      props: undefined,
+      props: undefined as TProps,
     });
   }
 

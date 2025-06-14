@@ -16,7 +16,7 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
 import { redirect, useRouter } from "next/navigation";
 import { routes } from "@/app/_routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { useAlert } from "@/app/_context/notification-context";
+import { useAlert } from "@/app/_component/context/notification-context";
 
 export default function RootNewContestPage() {
   const createContestState =

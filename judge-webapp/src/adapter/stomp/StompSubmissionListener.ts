@@ -26,6 +26,15 @@ export class StompSubmissionListener implements SubmissionListener {
     return client;
   }
 
+  async subscribeForMember(
+    memberId: string,
+    cb: (submission: SubmissionPublicResponseDTO) => void,
+  ): Promise<ListenerClient> {
+    const client = new StompClient(this.stompConnector);
+    await client.subscribe(`/topic/members/${memberId}/submissions`, cb);
+    return client;
+  }
+
   async unsubscribe(listener: ListenerClient): Promise<void> {
     await listener.unsubscribe();
   }
