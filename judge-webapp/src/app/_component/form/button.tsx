@@ -8,20 +8,43 @@ type Props = DetailedHTMLProps<
 > & {
   "data-testid"?: string;
   isLoading?: boolean;
+  tooltip?: string;
+  containerClassName?: string;
 };
 
-export function Button({ type, isLoading, ...props }: Props) {
+/**
+ * Button component that renders a button with optional loading state.
+ */
+export function Button({
+  type,
+  isLoading,
+  tooltip,
+  containerClassName,
+  disabled,
+  ...props
+}: Props) {
   const testId = props["data-testid"] || "button";
 
   return (
-    <button
-      type={type || "button"}
-      {...props}
-      className={cls(props.className, "btn")}
-      data-testid={testId}
+    <div
+      className={cls(
+        containerClassName,
+        tooltip && "tooltip",
+        !isLoading && disabled && "cursor-not-allowed",
+        isLoading && "cursor-wait",
+      )}
+      data-tip={tooltip}
     >
-      {!isLoading && props.children}
-      {isLoading && <Spinner data-testid={`${testId}:spinner`} />}
-    </button>
+      <button
+        type={type || "button"}
+        {...props}
+        disabled={disabled || isLoading}
+        className={cls(props.className, "btn")}
+        data-testid={testId}
+      >
+        {!isLoading && props.children}
+        {isLoading && <Spinner data-testid={`${testId}:spinner`} />}
+      </button>
+    </div>
   );
 }

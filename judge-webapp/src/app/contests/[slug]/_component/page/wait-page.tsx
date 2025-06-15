@@ -6,6 +6,10 @@ import { useTranslations } from "next-intl";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 import { routes } from "@/app/_routes";
 
+/**
+ * A page displayed when the contest has not started yet.
+ * Shows the contest title, start time, and supported languages.
+ */
 export function WaitPage() {
   const contest = useContestMetadata();
   const router = useRouter();
@@ -14,7 +18,7 @@ export function WaitPage() {
   const clockRef = useWaitClock(new Date(contest.startAt), () =>
     router.push(routes.CONTEST_SIGN_IN(contest.slug)),
   );
-  const t = useTranslations("contests.[slug]._component.wait-page");
+  const t = useTranslations("contests.[slug]._component.page.wait-page");
 
   return (
     <div className="h-dvh flex justify-center items-center">

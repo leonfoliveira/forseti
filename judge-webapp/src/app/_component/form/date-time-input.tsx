@@ -7,9 +7,9 @@ import { toDateInputFormat } from "@/app/_util/date-utils";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "type" | "value" | "onChange"
+  "type" | "value" | "onChange" | "form"
 > & {
-  fm: UseFormReturn<TFieldValues>;
+  form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
   s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
@@ -17,8 +17,11 @@ type Props<TFieldValues extends FieldValues> = Omit<
   "data-testid"?: string;
 };
 
-export function DateInput<TFieldValues extends FieldValues>({
-  fm,
+/**
+ * DateTimeInput component for rendering a datetime input field
+ */
+export function DateTimeInput<TFieldValues extends FieldValues>({
+  form,
   s,
   label,
   containerClassName,
@@ -27,17 +30,17 @@ export function DateInput<TFieldValues extends FieldValues>({
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "date-input";
 
-  function format(value?: Date) {
+  function formToComponent(value?: Date) {
     return value ? toDateInputFormat(value) : "";
   }
 
-  function parse(value?: string) {
+  function componentToForm(value?: string) {
     return value ? new Date(value) : undefined;
   }
 
   return (
     <Controller
-      control={fm.control}
+      control={form.control}
       name={props.name}
       render={({ field, fieldState }) => (
         <fieldset
@@ -50,8 +53,8 @@ export function DateInput<TFieldValues extends FieldValues>({
           <input
             {...props}
             type="datetime-local"
-            value={format(field.value)}
-            onChange={(e) => field.onChange(parse(e.target.value))}
+            value={formToComponent(field.value)}
+            onChange={(e) => field.onChange(componentToForm(e.target.value))}
             className={cls("input w-full", className)}
             data-testid={`${testId}:input`}
           />

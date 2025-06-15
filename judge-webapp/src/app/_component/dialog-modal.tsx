@@ -11,6 +11,9 @@ type Props<TProps> = {
   "data-testid"?: string;
 };
 
+/**
+ * DialogModal component is a reusable modal dialog that can be used to confirm actions.
+ */
 export function DialogModal<TProps>({
   children,
   modal,
@@ -26,12 +29,12 @@ export function DialogModal<TProps>({
   }
 
   return modal.isOpen ? (
-    <dialog className="modal modal-open" id="dialog" data-testid={testId}>
+    <dialog className="modal modal-open z-10" id="dialog" data-testid={testId}>
       <div className="modal-box">
         {children}
         <div className="modal-action">
           <Button
-            className="btn btn-neutral"
+            className="btn btn-soft"
             onClick={modal.close}
             disabled={isLoading}
             data-testid={`${testId}:close`}
@@ -39,7 +42,7 @@ export function DialogModal<TProps>({
             {t("cancel")}
           </Button>
           <Button
-            className="btn btn-success"
+            className="btn btn-primary"
             onClick={handleConfirm}
             disabled={isLoading}
             isLoading={isLoading}

@@ -7,6 +7,9 @@ type Props = {
   onClose: (id: string) => void;
 };
 
+/**
+ * AlertBox component to display a list of alerts on top of the page.
+ */
 export function AlertBox({ items, onClose }: Props) {
   return (
     <div className="fixed top-0 w-full p-2 z-50">

@@ -15,6 +15,10 @@ type Props = {
   contestantStatus?: Record<string, Record<SubmissionAnswer, number>>;
 };
 
+/**
+ * A generic problem page component for displaying contest problems.
+ * If `contestantStatus` is provided, it will show the status of each problem for the contestant.
+ */
 export function ProblemPage({ contestantStatus }: Props) {
   const { contest } = useContest();
 
@@ -35,22 +39,23 @@ export function ProblemPage({ contestantStatus }: Props) {
                   letter: problem.letter,
                   title: problem.title,
                 })}
+                {contestantStatus && (
+                  <span className="ml-2">
+                    {Object.entries(contestantStatus[problem.id] || {}).map(
+                      ([answer, amount]) =>
+                        amount > 0 && (
+                          <SubmissionAnswerShortBadge
+                            key={`${problem.id}-${answer}`}
+                            answer={answer as SubmissionAnswer}
+                            amount={amount}
+                            className="ml-1"
+                          />
+                        ),
+                    )}
+                  </span>
+                )}
               </TableCell>
-              {contestantStatus && (
-                <TableCell>
-                  {Object.entries(contestantStatus[problem.id] || {}).map(
-                    ([answer, amount]) =>
-                      amount > 0 && (
-                        <SubmissionAnswerShortBadge
-                          key={`${problem.id}-${answer}`}
-                          answer={answer as SubmissionAnswer}
-                          amount={amount}
-                        />
-                      ),
-                  )}
-                </TableCell>
-              )}
-              <TableCell>
+              <TableCell align="right">
                 <DownloadButton attachment={problem.description} />
               </TableCell>
             </TableRow>

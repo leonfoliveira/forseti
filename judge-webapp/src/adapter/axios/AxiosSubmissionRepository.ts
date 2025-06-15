@@ -30,9 +30,9 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     id: string,
     data: UpdateSubmissionAnswerRequestDTO,
   ): Promise<void> {
-    await this.axiosClient.patch<void>(`/v1/submissions/${id}/answer`, {
-      data,
-    });
+    await this.axiosClient.put<void>(
+      `/v1/submissions/${id}/answer/${data.answer}/force`,
+    );
   }
 
   async rerunSubmission(id: string): Promise<void> {

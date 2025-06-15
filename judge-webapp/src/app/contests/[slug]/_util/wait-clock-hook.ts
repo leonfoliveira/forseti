@@ -1,7 +1,10 @@
 import { useEffect, useRef } from "react";
 import { formatDifference } from "@/app/_util/date-utils";
 
-export function useWaitClock(target: Date, onZero?: () => void) {
+/**
+ * Hook to create a countdown clock that updates every second.
+ */
+export function useWaitClock(target?: Date, onZero?: () => void) {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const clockRef = useRef<HTMLSpanElement>(null);
 

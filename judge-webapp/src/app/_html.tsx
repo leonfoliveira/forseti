@@ -2,19 +2,13 @@
 
 import React from "react";
 import { useTheme } from "@/app/_util/theme-hook";
-import { cls } from "@/app/_util/cls";
 import { NextIntlClientProvider } from "next-intl";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Roboto } from "next/font/google";
 import { AuthorizationProvider } from "@/app/_component/context/authorization-context";
 import { NotificationProvider } from "@/app/_component/context/notification-context";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const roboto = Roboto({
+  variable: "--font-roboto",
   subsets: ["latin"],
 });
 
@@ -31,11 +25,11 @@ export function Html({
 
   return (
     <html lang={locale} data-theme={theme} className="bg-base-300">
-      <body className={cls(geistSans.variable, geistMono.variable)}>
+      <body className={roboto.className}>
         <NextIntlClientProvider
           locale={locale}
           messages={messages}
-          timeZone="GMT"
+          timeZone={Intl.DateTimeFormat().resolvedOptions().timeZone}
         >
           <NotificationProvider>
             <AuthorizationProvider>{children}</AuthorizationProvider>

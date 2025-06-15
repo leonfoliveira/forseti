@@ -7,11 +7,14 @@ type Props = {
   "data-testid"?: string;
 };
 
+/**
+ * Badge component renders a styled badge element.
+ */
 export function Badge({ children, className, ...props }: Props) {
   const testId = props["data-testid"] || "badge";
 
   return (
-    <span className={cls("badge", className)} data-testid={testId} {...props}>
+    <span className={cls(className, "badge")} data-testid={testId} {...props}>
       {children}
     </span>
   );

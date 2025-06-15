@@ -7,9 +7,9 @@ import { useTranslations } from "next-intl";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "type" | "value" | "onChange"
+  "type" | "value" | "onChange" | "form"
 > & {
-  fm: UseFormReturn<TFieldValues>;
+  form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
   s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
@@ -21,8 +21,11 @@ type Props<TFieldValues extends FieldValues> = Omit<
   "data-testid"?: string;
 };
 
+/**
+ * CheckboxGroup component for rendering a group of checkboxes
+ */
 export function CheckboxGroup<TFieldValues extends FieldValues>({
-  fm,
+  form,
   s,
   label,
   options,
@@ -32,11 +35,14 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || `${props.name}-checkbox-group`;
 
-  function format(fieldValue: string[] | undefined, itemValue: string) {
+  function formToComponent(
+    fieldValue: string[] | undefined,
+    itemValue: string,
+  ) {
     return (fieldValue || []).includes(itemValue);
   }
 
-  function parse(
+  function componentToForm(
     fieldValue: string[] | undefined,
     itemValue: string,
     checked: boolean,
@@ -49,7 +55,7 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
 
   return (
     <Controller
-      control={fm.control}
+      control={form.control}
       name={props.name}
       render={({ field, fieldState }) => (
         <fieldset
@@ -65,10 +71,14 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
                 {...props}
                 className={className}
                 key={item.value}
-                checked={format(field.value, item.value)}
+                checked={formToComponent(field.value, item.value)}
                 onChange={(event) => {
                   field.onChange(
-                    parse(field.value, item.value, event.target.checked),
+                    componentToForm(
+                      field.value,
+                      item.value,
+                      event.target.checked,
+                    ),
                   );
                 }}
                 data-testid={`${testId}:checkbox`}

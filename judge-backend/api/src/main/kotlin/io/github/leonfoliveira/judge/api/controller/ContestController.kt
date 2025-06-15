@@ -124,6 +124,28 @@ class ContestController(
         return ResponseEntity.ok(leaderboard)
     }
 
+    @PutMapping("/{id}/start")
+    @Private(Member.Type.ROOT)
+    @Transactional
+    fun forceStartContest(
+        @PathVariable id: UUID,
+    ): ResponseEntity<ContestMetadataResponseDTO> {
+        logger.info("[PUT] /v1/contests/{id}/start - id: $id")
+        val contest = updateContestService.forceStart(id)
+        return ResponseEntity.ok().body(contest.toMetadataDTO())
+    }
+
+    @PutMapping("/{id}/end")
+    @Private(Member.Type.ROOT)
+    @Transactional
+    fun forceEndContest(
+        @PathVariable id: UUID,
+    ): ResponseEntity<ContestMetadataResponseDTO> {
+        logger.info("[PUT] /v1/contests/{id}/end - id: $id")
+        val contest = updateContestService.forceEnd(id)
+        return ResponseEntity.ok().body(contest.toMetadataDTO())
+    }
+
     @DeleteMapping("/{id}")
     @Private(Member.Type.ROOT)
     @Transactional

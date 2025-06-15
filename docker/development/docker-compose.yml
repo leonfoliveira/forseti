@@ -1,3 +1,4 @@
+name: judge-development
 services:  
 
   postgres:

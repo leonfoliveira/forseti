@@ -1,18 +1,14 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
-import { WithStatus } from "@/core/service/dto/output/ContestWithStatus";
 import { contestService } from "@/app/_composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { redirect } from "next/navigation";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { ErrorPage } from "@/app/_component/page/error-page";
-import { handleError } from "@/app/_util/error-handler";
 import { routes } from "@/app/_routes";
 
-const ContestMetadataContext = createContext(
-  {} as WithStatus<ContestMetadataResponseDTO>,
-);
+const ContestMetadataContext = createContext({} as ContestMetadataResponseDTO);
 
 export function ContestMetadataProvider({
   slug,
@@ -21,9 +17,9 @@ export function ContestMetadataProvider({
   slug: string;
   children: React.ReactNode;
 }) {
-  const metadataState = useLoadableState<
-    WithStatus<ContestMetadataResponseDTO>
-  >({ isLoading: true });
+  const metadataState = useLoadableState<ContestMetadataResponseDTO>({
+    isLoading: true,
+  });
 
   useEffect(() => {
     /**
@@ -36,8 +32,7 @@ export function ContestMetadataProvider({
         const contest = await contestService.findContestMetadataBySlug(slug);
         metadataState.finish(contest);
       } catch (error) {
-        metadataState.fail(error);
-        handleError(error, {
+        metadataState.fail(error, {
           [NotFoundException.name]: () => redirect(routes.NOT_FOUND),
         });
       }

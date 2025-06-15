@@ -7,6 +7,9 @@ type Props = React.HTMLProps<HTMLTableCellElement> & {
   "data-testid"?: string;
 };
 
+/**
+ * TableCell component for rendering table cells.
+ */
 export function TableCell({
   header = false,
   children,

@@ -1,26 +1,28 @@
 import { Badge } from "@/app/_component/badge";
 import React from "react";
-import { useTranslations } from "next-intl";
+import { TimestampDisplay } from "@/app/_component/timestamp-display";
 
 type Props = {
   isAccepted: boolean;
+  acceptedAt?: string;
   wrongSubmissions: number;
 };
 
-export function ProblemStatusBadge(props: Props) {
-  const { isAccepted, wrongSubmissions } = props;
-  const t = useTranslations("contests.[slug]._component.problem-status-badge");
-
+export function ProblemStatusBadge({
+  isAccepted,
+  acceptedAt,
+  wrongSubmissions,
+}: Props) {
   if (isAccepted) {
     return (
       <Badge className="badge-success" data-testid="badge:ac">
-        {t("ac")}
-        {wrongSubmissions > 0 && `+${wrongSubmissions}`}
+        <TimestampDisplay timestamp={acceptedAt!} full />
+        {wrongSubmissions > 0 && ` | +${wrongSubmissions}`}
       </Badge>
     );
   } else if (wrongSubmissions > 0) {
     return (
-      <Badge className="badge-secondary" data-testid="badge:wa">
+      <Badge className="badge-error" data-testid="badge:wa">
         +{wrongSubmissions}
       </Badge>
     );

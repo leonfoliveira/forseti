@@ -2,36 +2,35 @@
 
 import { use, useEffect } from "react";
 import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
-import {
-  fromResponseDTO,
-  toUpdateRequestDTO,
-} from "@/app/root/(dashboard)/contests/_form/contest-form-map";
+import { fromResponseDTO, toUpdateRequestDTO } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
 import { useForm } from "react-hook-form";
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form-type";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
-import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { useTranslations } from "next-intl";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { WithStatus } from "@/core/service/dto/output/ContestWithStatus";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
 import { contestService } from "@/app/_composition";
-import { handleError } from "@/app/_util/error-handler";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { redirect } from "next/navigation";
 import { routes } from "@/app/_routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { useAlert } from "@/app/_component/context/notification-context";
+import { TestCaseUtils } from "@/app/root/(dashboard)/contests/_util/TestCaseUtils";
 
+/**
+ * RootEditContestPage component is used to edit a contest.
+ */
 export default function RootEditContestPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const contestState = useLoadableState<WithStatus<ContestFullResponseDTO>>();
-  const updateContestState =
-    useLoadableState<WithStatus<ContestFullResponseDTO>>();
+  const contestState = useLoadableState<ContestFullResponseDTO>({
+    isLoading: true,
+  });
+  const updateContestState = useLoadableState<ContestFullResponseDTO>();
 
   const alert = useAlert();
   const t = useTranslations("root.contests.[id]");
@@ -52,14 +51,14 @@ export default function RootEditContestPage({
         form.reset(fromResponseDTO(contest));
         contestState.finish(contest);
       } catch (error) {
-        contestState.fail(error);
-        handleError(error, {
-          [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN),
+        contestState.fail(error, {
+          [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN()),
           [NotFoundException.name]: () => redirect(routes.FORBIDDEN),
           default: () => alert.error(t("load-error")),
         });
       }
     }
+
     findContest();
   }, []);
 
@@ -67,13 +66,24 @@ export default function RootEditContestPage({
     updateContestState.start();
     try {
       const input = toUpdateRequestDTO(data);
+      const failedValidations = await TestCaseUtils.validateProblemList(
+        input.problems,
+      );
+      if (failedValidations.length > 0) {
+        alert.warning(
+          t("test-cases-validation-error", {
+            letters: failedValidations.join(", "),
+          }),
+        );
+        return;
+      }
       const contest = await contestService.updateContest(input);
       form.reset(fromResponseDTO(contest));
-      contestState.finish(contest);
+      updateContestState.finish(contest);
+      alert.success(t("update-success"));
     } catch (error) {
-      updateContestState.fail(error);
-      handleError(error, {
-        [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN),
+      updateContestState.fail(error, {
+        [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN()),
         [NotFoundException.name]: () => redirect(routes.FORBIDDEN),
         default: () => alert.error(t("update-error")),
       });
@@ -82,18 +92,10 @@ export default function RootEditContestPage({
 
   return (
     <ContestForm
-      contestId={contestState.data?.id}
-      header={t("header", { id: contestState.data?.id || "" })}
-      contest={contestState.data}
+      contestState={contestState}
+      saveState={updateContestState}
       onSubmit={updateContest}
       form={form}
-      isDisabled={
-        contestState.isLoading ||
-        updateContestState.isLoading ||
-        contestState.data?.status !== ContestStatus.NOT_STARTED
-      }
-      isLoading={contestState.isLoading}
-      saveState={updateContestState}
     />
   );
 }

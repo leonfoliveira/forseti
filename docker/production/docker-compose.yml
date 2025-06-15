@@ -1,3 +1,4 @@
+name: judge-production
 services:  
 
   postgres:

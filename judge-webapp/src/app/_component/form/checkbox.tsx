@@ -5,6 +5,9 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   "data-testid"?: string;
 };
 
+/**
+ * Checkbox component
+ */
 export function Checkbox({ children, className, ...props }: Props) {
   const testId = props["data-testid"] || "checkbox";
 

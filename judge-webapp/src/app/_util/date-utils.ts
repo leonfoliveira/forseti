@@ -1,3 +1,5 @@
+// TODO: Refactor this file to use intl
+
 export function formatDateTime(date: string): string {
   const parsedDate = new Date(date);
 

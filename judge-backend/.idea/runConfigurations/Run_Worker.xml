@@ -1,5 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Worker" type="JetRunConfigurationType">
+  <configuration default="false" name="Run Worker" type="JetRunConfigurationType">
+    <envs>
+      <env name="SPRING_PROFILES_ACTIVE" value="development" />
+    </envs>
     <option name="MAIN_CLASS_NAME" value="io.github.leonfoliveira.judge.worker.ApplicationKt" />
     <module name="judge-backend.worker.main" />
     <shortenClasspath name="ARGS_FILE" />

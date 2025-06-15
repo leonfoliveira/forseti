@@ -8,6 +8,9 @@ type Props = DetailedHTMLProps<
   "data-testid"?: string;
 };
 
+/**
+ * Table component for displaying tabular data.
+ */
 export function Table({ children, className, ...props }: Props) {
   const testId = props["data-testid"] || "table";
 

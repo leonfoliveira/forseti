@@ -9,6 +9,10 @@ type Props = DetailedHTMLProps<
   "data-testid"?: string;
 };
 
+/**
+ * Form component for rendering a form with fieldset
+ * Disabling the form will disable all its children
+ */
 export function Form({
   children,
   className,

@@ -13,23 +13,35 @@ import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form-t
 import { authenticationService } from "@/app/_composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useAuthorization } from "@/app/_component/context/authorization-context";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { handleError } from "@/app/_util/error-handler";
 import { useAlert } from "@/app/_component/context/notification-context";
+import { routes } from "@/app/_routes";
+import { useEffect } from "react";
 
+/**
+ * RootSignInPage component is the sign-in page for root users.
+ */
 export default function RootSignInPage() {
   const signInState = useLoadableState();
+  const { setAuthorization, clearAuthorization } = useAuthorization();
 
-  const { setAuthorization } = useAuthorization();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const alert = useAlert();
   const t = useTranslations("root.sign-in");
-  const s = useTranslations("root.sign-in._form.root-sign-in-form-schema");
+  const s = useTranslations("root.sign-in._form.root-sign-in-form");
 
   const form = useForm<RootSignInFormType>({
     resolver: joiResolver(rootSignInFormSchema),
   });
+
+  const signOut = searchParams.get("signOut");
+  useEffect(() => {
+    if (signOut === "true") {
+      clearAuthorization();
+    }
+  }, [signOut]);
 
   async function signIn(data: RootSignInFormType) {
     signInState.start();
@@ -37,10 +49,9 @@ export default function RootSignInPage() {
       const authorization = await authenticationService.authenticateRoot(data);
       signInState.finish(authorization);
       setAuthorization(authorization);
-      router.push("/root");
+      router.push(routes.ROOT);
     } catch (error) {
-      signInState.fail(error);
-      handleError(error, {
+      signInState.fail(error, {
         [UnauthorizedException.name]: () => alert.warning(t("unauthorized")),
         default: () => alert.error(t("error")),
       });
@@ -59,7 +70,7 @@ export default function RootSignInPage() {
         <h2 className="text-md mt-2">{t("description")}</h2>
         <div className="my-6">
           <TextInput
-            fm={form}
+            form={form}
             name="password"
             s={s}
             label={t("password:label")}
@@ -70,7 +81,7 @@ export default function RootSignInPage() {
         <div className="flex flex-col">
           <Button
             type="submit"
-            className="btn-primary"
+            className="btn-primary w-full"
             isLoading={signInState.isLoading}
             data-testid="sign-in"
           >

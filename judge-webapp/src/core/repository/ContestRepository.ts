@@ -28,6 +28,10 @@ export interface ContestRepository {
     id: string,
   ): Promise<ContestLeaderboardResponseDTO>;
 
+  forceStart(id: string): Promise<ContestMetadataResponseDTO>;
+
+  forceEnd(id: string): Promise<ContestMetadataResponseDTO>;
+
   deleteContest(id: string): Promise<void>;
 
   findAllContestSubmissions(id: string): Promise<SubmissionPublicResponseDTO[]>;

@@ -16,12 +16,13 @@ export function SubmissionAnswerBadge({ answer }: Props) {
       return <Badge className="badge-neutral">{text}</Badge>;
     case SubmissionAnswer.ACCEPTED:
       return <Badge className="badge-success">{text}</Badge>;
+    case SubmissionAnswer.WRONG_ANSWER:
+      return <Badge className="badge-error">{text}</Badge>;
     case SubmissionAnswer.TIME_LIMIT_EXCEEDED:
+    case SubmissionAnswer.MEMORY_LIMIT_EXCEEDED:
       return <Badge className="badge-info">{text}</Badge>;
     case SubmissionAnswer.RUNTIME_ERROR:
     case SubmissionAnswer.COMPILATION_ERROR:
       return <Badge className="badge-warning">{text}</Badge>;
-    default:
-      return <Badge className="badge-secondary">{text}</Badge>;
   }
 }

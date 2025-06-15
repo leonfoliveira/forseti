@@ -56,7 +56,25 @@ class FindContestService(
             contest.members
                 .filter { it.type == Member.Type.CONTESTANT }
                 .map { buildMemberDTO(contest, it) }
-                .sortedWith(compareBy({ -it.score }, { it.penalty }, { it.name }))
+                .sortedWith { a, b ->
+                    if (a.score != b.score) {
+                        return@sortedWith -a.score.compareTo(b.score)
+                    }
+                    if (a.penalty != b.penalty) {
+                        return@sortedWith a.penalty.compareTo(b.penalty)
+                    }
+
+                    val aAcceptedTimes = a.problems.map { it.acceptedAt }.filter { it !== null }.sortedByDescending { it }
+                    val bAcceptedTimes = b.problems.map { it.acceptedAt }.filter { it !== null }.sortedByDescending { it }
+
+                    for (i in aAcceptedTimes.indices) {
+                        if (aAcceptedTimes[i] != bAcceptedTimes[i]) {
+                            return@sortedWith aAcceptedTimes[i]!!.compareTo(bAcceptedTimes[i])
+                        }
+                    }
+
+                    return@sortedWith a.name.compareTo(b.name)
+                }
 
         return ContestLeaderboardOutputDTO(
             contestId = contest.id,
@@ -73,8 +91,13 @@ class FindContestService(
     ): ContestLeaderboardOutputDTO.MemberDTO {
         val submissionProblemHash = member.submissions.groupBy { it.problem.id }
         val problemDTOs =
-            contest.problems.map {
-                buildProblemDTO(contest, it, submissionProblemHash[it.id] ?: emptyList())
+            contest.problems.map { problem ->
+                buildProblemDTO(
+                    contest,
+                    problem,
+                    submissionProblemHash[problem.id]
+                        ?.filter { it.status === Submission.Status.JUDGED }
+                        ?: emptyList())
             }
         val score = problemDTOs.filter { it.isAccepted }.size
         val penalty = problemDTOs.sumOf { it.penalty }
@@ -119,6 +142,7 @@ class FindContestService(
             problemId = problem.id,
             letter = problem.letter,
             isAccepted = isAccepted,
+            acceptedAt = if (isAccepted) firstAcceptedSubmission.createdAt else null,
             wrongSubmissions = wrongSubmissionsBeforeAccepted.size,
             penalty = acceptationPenalty + wrongAnswersPenalty,
         )

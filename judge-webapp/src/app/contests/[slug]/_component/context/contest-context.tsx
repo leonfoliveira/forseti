@@ -5,27 +5,24 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { WithStatus } from "@/core/service/dto/output/ContestWithStatus";
-import { contestService, submissionService } from "@/app/_composition";
+import { contestService } from "@/app/_composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { redirect } from "next/navigation";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { ErrorPage } from "@/app/_component/page/error-page";
-import { handleError } from "@/app/_util/error-handler";
 import { routes } from "@/app/_routes";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
-import { recalculateLeaderboard } from "@/app/contests/[slug]/_util/leaderboard-calculator";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { useAuthorization } from "@/app/_component/context/authorization-context";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { useGuestDataFetcher } from "@/app/contests/[slug]/_component/context/guest-data-fetcher";
-import { useContestantDataFetcher } from "@/app/contests/[slug]/_component/context/contestant-data-fetcher";
-import { useJuryDataFetcher } from "@/app/contests/[slug]/_component/context/jury-data-fetcher";
+import { useGuestAnnex } from "@/app/contests/[slug]/_component/context/guest-annex";
+import { useContestantAnnex } from "@/app/contests/[slug]/_component/context/contestant-annex";
+import { useJuryAnnex } from "@/app/contests/[slug]/_component/context/jury-annex";
 
 export enum DashboardType {
   GUEST = "GUEST",
@@ -34,7 +31,7 @@ export enum DashboardType {
 }
 
 export type ContestContextType = {
-  contest: WithStatus<ContestPublicResponseDTO>;
+  contest: ContestPublicResponseDTO;
   leaderboard: ContestLeaderboardResponseDTO;
   guest: {
     submissions: SubmissionPublicResponseDTO[];
@@ -50,7 +47,7 @@ export type ContestContextType = {
 };
 
 const defaultContestContext: ContestContextType = {
-  contest: {} as WithStatus<ContestPublicResponseDTO>,
+  contest: {} as ContestPublicResponseDTO,
   leaderboard: {} as ContestLeaderboardResponseDTO,
   guest: {
     submissions: [],
@@ -74,9 +71,9 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
     isLoading: true,
   });
 
-  const guestDataFetcher = useGuestDataFetcher(contestState);
-  const contestantDataFetcher = useContestantDataFetcher(contestState);
-  const juryDataFetcher = useJuryDataFetcher(contestState);
+  const guestDataFetcher = useGuestAnnex(contestState);
+  const contestantDataFetcher = useContestantAnnex(contestState);
+  const juryDataFetcher = useJuryAnnex(contestState);
 
   const listeners = useRef<ListenerClient[]>(null);
 
@@ -95,6 +92,8 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
   }, [authorization?.member.type]);
 
   useEffect(() => {
+    unsubscribe();
+
     async function findContestMetadata() {
       contestState.start();
       try {
@@ -123,9 +122,9 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
          * Some subscriptions are only relevant for specific dashboard types,
          */
         listeners.current = await Promise.all([
-          submissionService.subscribeForContest(
+          contestService.subscribeForLeaderboard(
             contestMetadata.id,
-            receiveSubmission,
+            receiveLeaderboard,
           ),
           ...(dashboardType === DashboardType.GUEST
             ? guestDataFetcher.subscribe()
@@ -146,8 +145,7 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
           jury: data[4],
         });
       } catch (error) {
-        contestState.fail(error);
-        handleError(error, {
+        contestState.fail(error, {
           [NotFoundException.name]: () => redirect(routes.NOT_FOUND),
         });
       }
@@ -160,14 +158,14 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
     };
   }, [contestMetadata.id, authorization?.member.type]);
 
-  function receiveSubmission(submission: SubmissionPublicResponseDTO) {
+  function receiveLeaderboard(leaderboard: ContestLeaderboardResponseDTO) {
     /**
-     * Update leaderboard with the new submission.
+     * Update leaderboard
      */
     contestState.finish((prevState) => {
       return {
         ...prevState,
-        leaderboard: recalculateLeaderboard(prevState.leaderboard, submission),
+        leaderboard,
       };
     });
   }

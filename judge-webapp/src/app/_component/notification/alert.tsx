@@ -18,6 +18,9 @@ type Props = {
   onClose: () => void;
 };
 
+/**
+ * Alert component to display large centered notifications.
+ */
 export function Alert({ className, alert, onClose }: Props) {
   const variant = {
     [NotificationLevel.INFO]: "alert-info",

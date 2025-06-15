@@ -7,6 +7,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuthorization } from "@/app/_component/context/authorization-context";
 import { useTranslations } from "next-intl";
 
+/**
+ * Component that renders the tab bar for contest pages.
+ * Different tabs are displayed based on the user's authorization level (contestant, jury, or guest).
+ */
 export function ContestTabBar() {
   const { authorization } = useAuthorization();
   const contest = useContestMetadata();
@@ -60,5 +64,10 @@ export function ContestTabBar() {
     }
   }
 
-  return <nav className="tabs tabs-lift w-full">{buildLinks()}</nav>;
+  return (
+    <nav className="tabs tabs-lift w-full bg-base-100">
+      {buildLinks()}
+      <span className="grow border-b border-base-300"></span>
+    </nav>
+  );
 }

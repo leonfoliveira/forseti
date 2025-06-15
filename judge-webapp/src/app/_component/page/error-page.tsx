@@ -2,6 +2,9 @@ import React from "react";
 import { Button } from "@/app/_component/form/button";
 import { useTranslations } from "next-intl";
 
+/**
+ * ErrorPage component displays an error message and a button to reload the page.
+ */
 export function ErrorPage() {
   const t = useTranslations("_component.page.error-page");
 

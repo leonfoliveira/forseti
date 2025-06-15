@@ -7,6 +7,9 @@ type Props = {
   onClose: (id: string) => void;
 };
 
+/**
+ * ToastBox component to display a list of toasts at the right bottom of the page.
+ */
 export function ToastBox({ items, onClose }: Props) {
   return (
     <div className="fixed bottom-0 w-full p-2 z-30">

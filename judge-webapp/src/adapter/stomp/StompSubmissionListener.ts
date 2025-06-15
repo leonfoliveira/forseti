@@ -34,8 +34,4 @@ export class StompSubmissionListener implements SubmissionListener {
     await client.subscribe(`/topic/members/${memberId}/submissions`, cb);
     return client;
   }
-
-  async unsubscribe(listener: ListenerClient): Promise<void> {
-    await listener.unsubscribe();
-  }
 }

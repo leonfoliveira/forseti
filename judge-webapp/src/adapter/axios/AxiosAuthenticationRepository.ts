@@ -22,9 +22,12 @@ export class AxiosAuthenticationRepository implements AuthenticationRepository {
     requestDTO: AuthenticateRootRequestDTO,
   ): Promise<Authorization> {
     const response = await this.axiosClient.post<Authorization>(
-      "/v1/auth/root/sign-in",
+      "/v1/auth/sign-in",
       {
-        data: requestDTO,
+        data: {
+          login: "root",
+          password: requestDTO.password,
+        },
       },
     );
     return response.data;

@@ -10,9 +10,9 @@ import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 
 export class AxiosContestRepository implements ContestRepository {
-  constructor(private readonly axiosClient: AxiosClient) {}
-
   private basePath = "/v1/contests";
+
+  constructor(private readonly axiosClient: AxiosClient) {}
 
   async createContest(
     requestDTO: CreateContestRequestDTO,
@@ -73,6 +73,20 @@ export class AxiosContestRepository implements ContestRepository {
   ): Promise<ContestLeaderboardResponseDTO> {
     const response = await this.axiosClient.get<ContestLeaderboardResponseDTO>(
       `${this.basePath}/${id}/leaderboard`,
+    );
+    return response.data;
+  }
+
+  async forceStart(id: string): Promise<ContestMetadataResponseDTO> {
+    const response = await this.axiosClient.put<ContestMetadataResponseDTO>(
+      `${this.basePath}/${id}/start`,
+    );
+    return response.data;
+  }
+
+  async forceEnd(id: string): Promise<ContestMetadataResponseDTO> {
+    const response = await this.axiosClient.put<ContestMetadataResponseDTO>(
+      `${this.basePath}/${id}/end`,
     );
     return response.data;
   }

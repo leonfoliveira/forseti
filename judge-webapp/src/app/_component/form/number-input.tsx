@@ -1,24 +1,30 @@
 import React from "react";
 import { cls } from "@/app/_util/cls";
-import { Controller, UseFormReturn } from "react-hook-form";
-import { FieldPath, FieldValues } from "react-hook-form";
+import {
+  Controller,
+  FieldPath,
+  FieldValues,
+  UseFormReturn,
+} from "react-hook-form";
 import { useTranslations } from "next-intl";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "type" | "value" | "onChange"
+  "type" | "value" | "onChange" | "form"
 > & {
-  fm: UseFormReturn<TFieldValues>;
+  form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
   s: ReturnType<typeof useTranslations>;
-
   containerClassName?: string;
   label: string;
   "data-testid"?: string;
 };
 
+/**
+ * NumberInput component for rendering a number input field
+ */
 export function NumberInput<TFieldValues extends FieldValues>({
-  fm,
+  form,
   name,
   s,
   label,
@@ -38,7 +44,7 @@ export function NumberInput<TFieldValues extends FieldValues>({
 
   return (
     <Controller
-      control={fm.control}
+      control={form.control}
       name={name}
       render={({ field, fieldState }) => (
         <fieldset
@@ -53,7 +59,7 @@ export function NumberInput<TFieldValues extends FieldValues>({
             type="number"
             value={format(field.value)}
             onChange={(e) => field.onChange(parse(e.target.value))}
-            className={cls("input", className)}
+            className={cls("input w-full", className)}
             data-testid={`${testId}:input`}
           />
           <p

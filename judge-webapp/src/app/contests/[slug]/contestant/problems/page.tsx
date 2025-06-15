@@ -25,12 +25,12 @@ export default function ContestantProblemsPage() {
     > = contest.problems.reduce((acc, problem) => {
       return { ...acc, [problem.id]: { ...answerBlock } };
     }, {});
-
+    
     submissions.forEach((submission) => {
       status[submission.problem.id][submission.answer]++;
     });
 
-    return answerBlock;
+    return status;
   }, [contest.problems, submissions]);
 
   return <ProblemPage contestantStatus={status} />;

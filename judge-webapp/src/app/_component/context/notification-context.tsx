@@ -55,14 +55,13 @@ export function NotificationProvider({
     type: NotificationType,
     text: string,
     level: NotificationLevel = NotificationLevel.INFO,
-    ttl = 3000,
   ) {
     const notification = {
       id: crypto.randomUUID(),
       type,
       text,
       level,
-      ttl,
+      ttl: 2000 + text.length * 50,
     };
     setNotifications((prev) => [...prev, notification]);
   }
@@ -81,10 +80,10 @@ export function NotificationProvider({
   Object.values(NotificationType).forEach((type) => {
     value[type] = {
       items: notifications.filter((n) => n.type === type),
-      info: (text, ttl) => show(type, text, NotificationLevel.INFO, ttl),
-      success: (text, ttl) => show(type, text, NotificationLevel.SUCCESS, ttl),
-      warning: (text, ttl) => show(type, text, NotificationLevel.WARNING, ttl),
-      error: (text, ttl) => show(type, text, NotificationLevel.ERROR, ttl),
+      info: (text) => show(type, text, NotificationLevel.INFO),
+      success: (text) => show(type, text, NotificationLevel.SUCCESS),
+      warning: (text) => show(type, text, NotificationLevel.WARNING),
+      error: (text) => show(type, text, NotificationLevel.ERROR),
       close: close,
     };
   });

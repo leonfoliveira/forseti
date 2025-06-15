@@ -42,6 +42,7 @@ export function toUpdateRequestDTO(
       description: problem.description as Attachment | undefined,
       newDescription: problem.newDescription as File | undefined,
       timeLimit: problem.timeLimit as number,
+      memoryLimit: problem.memoryLimit as number,
       testCases: problem.testCases as Attachment | undefined,
       newTestCases: problem.newTestCases as File | undefined,
     };
@@ -52,8 +53,8 @@ export function toUpdateRequestDTO(
     slug: data.slug as string,
     title: data.title as string,
     languages: data.languages as Language[],
-    startAt: data.startAt as Date,
-    endAt: data.endAt as Date,
+    startAt: data.startAt!.toISOString() as string,
+    endAt: data.endAt!.toISOString() as string,
     members: (data.members || []).map(mapMember),
     problems: (data.problems || []).map(mapProblem),
   };
@@ -79,6 +80,7 @@ export function fromResponseDTO(
       description: problem.description,
       newDescription: undefined,
       timeLimit: problem.timeLimit,
+      memoryLimit: problem.memoryLimit,
       testCases: problem.testCases,
       newTestCases: undefined,
     };
@@ -89,6 +91,7 @@ export function fromResponseDTO(
     slug: contest.slug,
     title: contest.title,
     languages: contest.languages as [Language, ...Language[]],
+    originalStartAt: new Date(contest.startAt),
     startAt: new Date(contest.startAt),
     endAt: new Date(contest.endAt),
     members: contest.members.map(mapMember),

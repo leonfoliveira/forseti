@@ -1,7 +1,12 @@
 import React from "react";
 import "./globals.css";
 import { Html } from "@/app/_html";
-import { getIntlConfig } from "@/app/_i18n/request";
+import { getIntlConfig } from "@/i18n/request";
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+  title: "Judge",
+}
 
 export default async function Layout({
   children,

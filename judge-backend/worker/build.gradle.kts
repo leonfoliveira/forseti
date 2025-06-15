@@ -17,3 +17,22 @@ tasks.bootJar {
 tasks.bootRun {
     dependsOn(":core:flywayMigrate")
 }
+
+kover {
+    reports {
+        filters {
+            excludes {
+                classes.addAll(
+                    "io.github.leonfoliveira.judge.worker.Application",
+                    "io.github.leonfoliveira.judge.worker.ApplicationKt",
+                )
+                annotatedBy("org.springframework.context.annotation.Configuration")
+            }
+        }
+        verify {
+            rule("Minimum Line Coverage") {
+                minBound(90)
+            }
+        }
+    }
+}

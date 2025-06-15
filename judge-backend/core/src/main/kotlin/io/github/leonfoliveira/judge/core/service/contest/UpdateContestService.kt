@@ -3,6 +3,7 @@ package io.github.leonfoliveira.judge.core.service.contest
 import io.github.leonfoliveira.judge.core.domain.entity.Contest
 import io.github.leonfoliveira.judge.core.domain.entity.Member
 import io.github.leonfoliveira.judge.core.domain.entity.Problem
+import io.github.leonfoliveira.judge.core.domain.exception.BusinessException
 import io.github.leonfoliveira.judge.core.domain.exception.ConflictException
 import io.github.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.core.domain.exception.NotFoundException
@@ -12,6 +13,8 @@ import io.github.leonfoliveira.judge.core.repository.ContestRepository
 import io.github.leonfoliveira.judge.core.service.dto.input.contest.UpdateContestInputDTO
 import io.github.leonfoliveira.judge.core.util.TestCasesValidator
 import jakarta.validation.Valid
+import java.time.OffsetDateTime
+import java.time.temporal.ChronoUnit
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
@@ -40,8 +43,17 @@ class UpdateContestService(
         val contest =
             contestRepository.findById(inputDTO.id)
                 .orElseThrow { NotFoundException("Could not find contest with id = ${inputDTO.id}") }
+        if (contest.hasFinished()) {
+            throw ForbiddenException("Contest has already finished and cannot be updated")
+        }
         if (contest.hasStarted()) {
-            throw ForbiddenException("Contest has already started")
+            if (!inputDTO.startAt.truncatedTo(ChronoUnit.MINUTES).isEqual(contest.startAt.truncatedTo(ChronoUnit.MINUTES))) {
+                throw ForbiddenException("Contest has already started and cannot have its start time updated")
+            }
+        } else {
+            if (inputDTO.startAt.isBefore(OffsetDateTime.now())) {
+                throw BusinessException("Contest start time must be in the future")
+            }
         }
         val duplicatedContestBySlug = contestRepository.findBySlug(inputDTO.slug)
         if (duplicatedContestBySlug != null && duplicatedContestBySlug.id != contest.id) {
@@ -78,6 +90,30 @@ class UpdateContestService(
         contestRepository.save(contest)
 
         logger.info("Finished updating contest with id: ${contest.id}")
+        return contest
+    }
+
+    fun forceStart(contestId: UUID): Contest {
+        val contest = contestRepository.findById(contestId)
+                .orElseThrow { NotFoundException("Could not find contest with id = $contestId") }
+        if (contest.hasStarted()) {
+            throw ForbiddenException("Contest with id: $contestId has already started")
+        }
+
+        contest.startAt = OffsetDateTime.now()
+        contestRepository.save(contest)
+        return contest
+    }
+
+    fun forceEnd(contestId: UUID): Contest {
+        val contest = contestRepository.findById(contestId)
+                .orElseThrow { NotFoundException("Could not find contest with id = $contestId") }
+        if (!contest.isActive()) {
+            throw ForbiddenException("Contest with id: $contestId is not active")
+        }
+
+        contest.endAt = OffsetDateTime.now()
+        contestRepository.save(contest)
         return contest
     }
 

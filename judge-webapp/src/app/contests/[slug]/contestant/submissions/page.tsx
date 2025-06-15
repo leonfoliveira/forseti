@@ -20,13 +20,12 @@ import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useTranslations } from "next-intl";
 import { StorageService } from "@/core/service/StorageService";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { handleError } from "@/app/_util/error-handler";
 import { SubmissionFormType } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-type";
 import { submissionFormSchema } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-schema";
 import { toInputDTO } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map";
 import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
 import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
-import { useToast } from "@/app/_component/context/notification-context";
+import { useAlert } from "@/app/_component/context/notification-context";
 import { DownloadButton } from "@/app/contests/[slug]/_component/download-button";
 
 export default function ContestantSubmissionPage() {
@@ -36,11 +35,11 @@ export default function ContestantSubmissionPage() {
   } = useContest();
   const createSubmissionState = useLoadableState();
 
-  const toast = useToast();
+  const alert = useAlert();
   const { formatLanguage } = useContestFormatter();
   const t = useTranslations("contests.[slug].contestant.submissions");
   const s = useTranslations(
-    "contests.[slug].contestant.submissions._form.submission-form-schema",
+    "contests.[slug].contestant.submissions._form.submission-form",
   );
 
   const submissionForm = useForm<SubmissionFormType>({
@@ -71,17 +70,71 @@ export default function ContestantSubmissionPage() {
         StorageService.ACTIVE_LANGUAGE_STORAGE_KEY,
         submission.language,
       );
+      submissionForm.reset({ language: submission.language });
+      alert.success(t("create-success"));
       createSubmissionState.finish();
     } catch (error) {
-      createSubmissionState.fail(error);
-      handleError(error, {
-        default: () => toast.error(t("create-error")),
+      createSubmissionState.fail(error, {
+        default: () => alert.error(t("create-error")),
       });
     }
   }
 
   return (
     <div>
+      <Form
+        className="flex flex-col"
+        onSubmit={submissionForm.handleSubmit(onCreateSubmission)}
+        disabled={createSubmissionState.isLoading}
+        data-testid="form:submission"
+      >
+        <Select
+          form={submissionForm}
+          name="problemId"
+          s={s}
+          label={t("problem:label")}
+          options={(contest?.problems || []).map((it) => ({
+            value: it.id.toString(),
+            label: `${it.letter}. ${it.title}`,
+          }))}
+          className="w-full"
+          data-testid="form:problem"
+        />
+        <div className="flex w-full gap-5">
+          <Select
+            form={submissionForm}
+            name="language"
+            s={s}
+            label={t("language:label")}
+            options={(contest?.languages || []).map((it) => ({
+              value: it,
+              label: formatLanguage(it),
+            }))}
+            containerClassName="flex-1"
+            data-testid="form:language"
+          />
+          <FileInput
+            form={submissionForm}
+            name="code"
+            s={s}
+            label={t("code:label")}
+            containerClassName="flex-2"
+            data-testid="form:code"
+          />
+        </div>
+        <div className="flex justify-center mt-8">
+          <Button
+            type="submit"
+            className="btn-primary"
+            data-testid="form:submit"
+            isLoading={createSubmissionState.isLoading}
+          >
+            {t("submit:label")}
+            <FontAwesomeIcon icon={faPaperPlane} className="ms-3" />
+          </Button>
+        </div>
+      </Form>
+      <div className="divider mt-8" />
       <Table>
         <TableSection head>
           <TableRow>
@@ -89,7 +142,7 @@ export default function ContestantSubmissionPage() {
             <TableCell header>{t("header-problem")}</TableCell>
             <TableCell header>{t("header-language")}</TableCell>
             <TableCell header align="right">
-              {t("header-status")}
+              {t("header-answer")}
             </TableCell>
             <TableCell />
           </TableRow>
@@ -130,59 +183,6 @@ export default function ContestantSubmissionPage() {
           <p className="text-neutral-content">{t("submissions-empty")}</p>
         </div>
       ) : null}
-      <div className="divider mt-8">{t("new:label")}</div>
-      <Form
-        className="flex flex-col"
-        onSubmit={submissionForm.handleSubmit(onCreateSubmission)}
-        disabled={createSubmissionState.isLoading}
-        data-testid="form:submission"
-      >
-        <Select
-          fm={submissionForm}
-          name="problemId"
-          s={s}
-          label={t("problem:label")}
-          options={(contest?.problems || []).map((it) => ({
-            value: it.id.toString(),
-            label: `${it.letter}. ${it.title}`,
-          }))}
-          className="w-full"
-          data-testid="form:problem"
-        />
-        <div className="flex w-full gap-5">
-          <Select
-            fm={submissionForm}
-            name="language"
-            s={s}
-            label={t("language:label")}
-            options={(contest?.languages || []).map((it) => ({
-              value: it,
-              label: formatLanguage(it),
-            }))}
-            containerClassName="flex-1"
-            data-testid="form:language"
-          />
-          <FileInput
-            fm={submissionForm}
-            name="code"
-            s={s}
-            label={t("code:label")}
-            containerClassName="flex-2"
-            data-testid="form:code"
-          />
-        </div>
-        <div className="flex justify-center mt-8">
-          <Button
-            type="submit"
-            className="btn-primary"
-            data-testid="form:submit"
-            isLoading={createSubmissionState.isLoading}
-          >
-            {t("submit:label")}
-            <FontAwesomeIcon icon={faPaperPlane} className="ms-3" />
-          </Button>
-        </div>
-      </Form>
     </div>
   );
 }

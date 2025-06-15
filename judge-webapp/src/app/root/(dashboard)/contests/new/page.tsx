@@ -8,19 +8,15 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
 import { useTranslations } from "next-intl";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { WithStatus } from "@/core/service/dto/output/ContestWithStatus";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
 import { contestService } from "@/app/_composition";
-import { handleError } from "@/app/_util/error-handler";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { redirect, useRouter } from "next/navigation";
 import { routes } from "@/app/_routes";
-import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { useAlert } from "@/app/_component/context/notification-context";
 
 export default function RootNewContestPage() {
-  const createContestState =
-    useLoadableState<WithStatus<ContestFullResponseDTO>>();
+  const createContestState = useLoadableState<ContestFullResponseDTO>();
 
   const alert = useAlert();
   const router = useRouter();
@@ -42,10 +38,8 @@ export default function RootNewContestPage() {
       alert.success(t("create-success"));
       router.push(routes.ROOT_CONTESTS_EDIT(contest.id));
     } catch (error) {
-      createContestState.fail(error);
-      handleError(error, {
-        [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN),
-        [NotFoundException.name]: () => redirect(routes.FORBIDDEN),
+      createContestState.fail(error, {
+        [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN()),
         default: () => alert.error(t("create-error")),
       });
     }
@@ -53,12 +47,9 @@ export default function RootNewContestPage() {
 
   return (
     <ContestForm
-      header={t("header")}
+      saveState={createContestState}
       onSubmit={createContest}
       form={form}
-      isDisabled={createContestState.isLoading}
-      isLoading={createContestState.isLoading}
-      saveState={createContestState}
     />
   );
 }

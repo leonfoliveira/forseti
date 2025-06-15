@@ -22,8 +22,8 @@ data class UpdateContestInputDTO(
     val title: String,
     @field:NotEmpty
     val languages: List<Language>,
-    @field:Future
     val startAt: OffsetDateTime,
+    @field:Future
     val endAt: OffsetDateTime,
     @field:Valid
     val members: List<MemberDTO>,

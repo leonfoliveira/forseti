@@ -8,6 +8,9 @@ type Props = {
   "data-testid"?: string;
 };
 
+/**
+ * Spinner component is a reusable animated loading spinner.
+ */
 export function Spinner({ className, size = "md", ...props }: Props) {
   function getSizeClass() {
     switch (size) {

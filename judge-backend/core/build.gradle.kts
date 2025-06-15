@@ -50,3 +50,18 @@ flyway {
     validateMigrationNaming = true
     cleanDisabled = false
 }
+
+kover {
+    reports {
+        filters {
+            excludes {
+                annotatedBy("org.springframework.context.annotation.Configuration")
+            }
+        }
+        verify {
+            rule("Minimum Line Coverage") {
+                minBound(95)
+            }
+        }
+    }
+}

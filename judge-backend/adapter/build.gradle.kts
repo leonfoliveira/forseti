@@ -8,3 +8,18 @@ dependencies {
     implementation(libs.java.jwt)
     implementation(libs.opencsv)
 }
+
+kover {
+    reports {
+        filters {
+            excludes {
+                annotatedBy("org.springframework.context.annotation.Configuration")
+            }
+        }
+        verify {
+            rule("Minimum Line Coverage") {
+                minBound(80)
+            }
+        }
+    }
+}

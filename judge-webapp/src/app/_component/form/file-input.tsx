@@ -7,11 +7,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose, faDownload } from "@fortawesome/free-solid-svg-icons";
 import { useTranslations } from "next-intl";
 
-type Props<TFieldValues extends FieldValues> = DetailedHTMLProps<
-  InputHTMLAttributes<HTMLInputElement>,
-  HTMLInputElement
+type Props<TFieldValues extends FieldValues> = Omit<
+  DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
+  "form"
 > & {
-  fm: UseFormReturn<TFieldValues>;
+  form: UseFormReturn<TFieldValues>;
   originalName?: FieldPath<TFieldValues>;
   name: FieldPath<TFieldValues>;
   s: ReturnType<typeof useTranslations>;
@@ -21,8 +21,11 @@ type Props<TFieldValues extends FieldValues> = DetailedHTMLProps<
   "data-testid"?: string;
 };
 
+/**
+ * FileInput component for rendering a file input field with a download and reset button.
+ */
 export function FileInput<TFieldValues extends FieldValues>({
-  fm,
+  form,
   originalName,
   name,
   s,
@@ -36,7 +39,7 @@ export function FileInput<TFieldValues extends FieldValues>({
   const ref = useRef<HTMLInputElement | null>(null);
   const t = useTranslations("_component.form.file-input");
 
-  function parse(value: FileList | null) {
+  function componentToForm(value: FileList | null) {
     return value && value.length > 0 ? value[0] : undefined;
   }
 
@@ -52,11 +55,11 @@ export function FileInput<TFieldValues extends FieldValues>({
   }
 
   const originalValue: Attachment | undefined =
-    originalName && fm.watch(originalName);
+    originalName && form.watch(originalName);
 
   return (
     <Controller
-      control={fm.control}
+      control={form.control}
       name={name}
       render={({ field, fieldState }) => (
         <fieldset
@@ -72,7 +75,7 @@ export function FileInput<TFieldValues extends FieldValues>({
             id={name}
             type="file"
             onChange={(e) => {
-              field.onChange(parse(e.target.files));
+              field.onChange(componentToForm(e.target.files));
             }}
             className={cls("hidden", className)}
             data-testid={`${testId}:input`}

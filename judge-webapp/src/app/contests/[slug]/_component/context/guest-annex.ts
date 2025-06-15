@@ -5,7 +5,10 @@ import { ContestContextType } from "@/app/contests/[slug]/_component/context/con
 import { UseLoadableStateReturnType } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 
-export function useGuestDataFetcher(
+/**
+ * Hook to manage data and subscriptions for a guest dashboard.
+ */
+export function useGuestAnnex(
   contestState: UseLoadableStateReturnType<ContestContextType>,
 ) {
   const contestMetadata = useContestMetadata();

@@ -1,12 +1,14 @@
 export const routes = {
+  HOME: "/",
   FORBIDDEN: "/forbidden",
   NOT_FOUND: "/not-found",
   ROOT: "/root",
   ROOT_CONTESTS: "/root/contests",
   ROOT_CONTESTS_NEW: "/root/contests/new",
-  ROOT_CONTESTS_EDIT: (slug: string) => `/root/contests/${slug}`,
-  ROOT_SIGN_IN: "/root/sign-in",
-  CONTEST_SIGN_IN: (slug: string) => `/contests/${slug}/sign-in`,
+  ROOT_CONTESTS_EDIT: (id: string) => `/root/contests/${id}`,
+  ROOT_SIGN_IN: (signOut?: boolean) => `/root/sign-in?signOut=${signOut}`,
+  CONTEST_SIGN_IN: (slug: string, signOut?: boolean) =>
+    `/contests/${slug}/sign-in?signOut=${signOut}`,
   CONTEST: (slug: string) => `/contests/${slug}`,
   CONTEST_CONTESTANT: (slug: string) => `/contests/${slug}/contestant`,
   CONTEST_CONTESTANT_LEADERBOARD: (slug: string) =>

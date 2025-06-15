@@ -22,6 +22,7 @@ data class ContestLeaderboardOutputDTO(
         val problemId: UUID,
         val letter: Char,
         val isAccepted: Boolean,
+        val acceptedAt: OffsetDateTime? = null,
         val wrongSubmissions: Int,
         val penalty: Int,
     )

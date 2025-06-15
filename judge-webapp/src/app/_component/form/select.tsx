@@ -8,11 +8,11 @@ import {
 } from "react-hook-form";
 import { useTranslations } from "next-intl";
 
-type Props<TFieldValues extends FieldValues> = DetailedHTMLProps<
-  SelectHTMLAttributes<HTMLSelectElement>,
-  HTMLSelectElement
+type Props<TFieldValues extends FieldValues> = Omit<
+  DetailedHTMLProps<SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>,
+  "form"
 > & {
-  fm: UseFormReturn<TFieldValues>;
+  form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
   s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
@@ -24,8 +24,11 @@ type Props<TFieldValues extends FieldValues> = DetailedHTMLProps<
   "data-testid"?: string;
 };
 
+/**
+ * Select component for rendering a select input field with options
+ */
 export function Select<TFieldValues extends FieldValues>({
-  fm,
+  form,
   label,
   name,
   s,
@@ -36,17 +39,17 @@ export function Select<TFieldValues extends FieldValues>({
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "select";
 
-  function format(value?: string) {
+  function formToComponent(value?: string) {
     return value || "";
   }
 
-  function parse(value: string) {
+  function componentToForm(value: string) {
     return value;
   }
 
   return (
     <Controller
-      control={fm.control}
+      control={form.control}
       name={name}
       render={({ field, fieldState }) => (
         <fieldset
@@ -58,9 +61,9 @@ export function Select<TFieldValues extends FieldValues>({
           </label>
           <select
             {...props}
-            value={format(field.value)}
+            value={formToComponent(field.value)}
             onChange={(e) => {
-              field.onChange(parse(e.target.value));
+              field.onChange(componentToForm(e.target.value));
             }}
             className={cls("select w-full", className)}
             data-testid={`${testId}:select`}

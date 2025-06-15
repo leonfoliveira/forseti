@@ -15,6 +15,9 @@ export type UseLoadableStateReturnType<TData> = LoadableState<TData> & {
   ) => void;
 };
 
+/**
+ * Utility hook that wraps react useState with loading and error states.
+ */
 export function useLoadableState<TData>(
   initialState: Partial<LoadableState<TData>> = {},
 ): UseLoadableStateReturnType<TData> {
@@ -30,7 +33,7 @@ export function useLoadableState<TData>(
   });
 
   function start() {
-    setState({ ...defaultState, ...initialState });
+    setState({ ...defaultState, ...initialState, isLoading: true });
   }
 
   function finish(dataOrCallback?: TData | ((currentData: TData) => TData)) {

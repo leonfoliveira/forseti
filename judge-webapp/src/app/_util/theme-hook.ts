@@ -7,10 +7,16 @@ export enum Theme {
   DARK = "dark",
 }
 
+/**
+ * Utility hook to manage the theme of the application.
+ */
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(Theme.DARK);
 
   useEffect(() => {
+    /**
+     * Retrieve the theme from storage or set it based on the user's preference.
+     */
     let theme = storageService.getKey<Theme>(StorageService.THEME_STORAGE_KEY);
     if (!theme) {
       const prefersDark = window.matchMedia(
@@ -22,6 +28,10 @@ export function useTheme() {
     setTheme(theme);
   }, []);
 
+  /**
+   * Toggle the theme between light and dark modes.
+   * Store the new theme
+   */
   function toggleTheme() {
     const newTheme = theme === Theme.DARK ? Theme.LIGHT : Theme.DARK;
     setTheme(newTheme);

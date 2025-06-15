@@ -13,6 +13,7 @@ import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener
 import { config } from "@/app/_config";
 import { LocalStorageRepository } from "@/adapter/localstorage/LocalStorageRepository";
 import { StorageService } from "@/core/service/StorageService";
+import { StompLeaderboardListener } from "@/adapter/stomp/StompLeaderboardListener";
 
 const storageRepository = new LocalStorageRepository();
 
@@ -34,6 +35,7 @@ export const authenticationService = new AuthenticationService(
 export const contestService = new ContestService(
   new AxiosContestRepository(axiosClient),
   attachmentService,
+  new StompLeaderboardListener(stompClient),
 );
 export const storageService = new StorageService(storageRepository);
 export const submissionService = new SubmissionService(

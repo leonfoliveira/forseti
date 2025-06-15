@@ -12,13 +12,11 @@ export class StompClient implements ListenerClient {
     callback: (data: TData) => void,
   ): Promise<ListenerClient> {
     this.client = await this.stompConnector.connect();
-    console.log("<<<<< SUBSCRIBING >>>>>", topic);
     await this.stompConnector.subscribe(this.client, topic, callback);
     return this;
   }
 
   async unsubscribe(): Promise<void> {
-    console.log("<<<<< UNSUBSCRIBING >>>>>");
     if (this.client !== undefined) {
       await this.stompConnector.disconnect(this.client);
     }

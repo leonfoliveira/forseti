@@ -6,8 +6,8 @@ export type CreateContestRequestDTO = {
   slug: string;
   title: string;
   languages: Language[];
-  startAt: Date;
-  endAt: Date;
+  startAt: string;
+  endAt: string;
   members: {
     type: MemberType;
     name: string;
@@ -19,6 +19,7 @@ export type CreateContestRequestDTO = {
     title: string;
     description: Attachment;
     timeLimit: number;
+    memoryLimit: number;
     testCases: Attachment;
   }[];
 };

@@ -10,14 +10,17 @@ type Props = {
   attachment: Attachment;
 };
 
+/**
+ * Small button component to download an attachment.
+ */
 export function DownloadButton({ attachment }: Props) {
   const t = useTranslations("contests.[slug]._component.download-button");
 
   return (
-    <div className="tooltip" data-tip={t("tooltip-download")}>
+    <div className="tooltip" data-tip={t("download:tooltip")}>
       <Button
         onClick={() => attachmentService.download(attachment)}
-        className="text-xs h-5"
+        className="btn-soft text-xs"
       >
         <FontAwesomeIcon icon={faDownload} />
       </Button>

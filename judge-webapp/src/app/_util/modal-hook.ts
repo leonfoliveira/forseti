@@ -7,6 +7,9 @@ export type ModalHook<TProps> = {
   close: () => void;
 };
 
+/**
+ * Utility hook to manage modal state.
+ */
 export function useModal<TProps>(): ModalHook<TProps> {
   const [state, setState] = useState({
     isOpen: false,

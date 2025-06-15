@@ -8,14 +8,15 @@ import { useContestMetadata } from "@/app/contests/[slug]/_component/context/con
 import { UseLoadableStateReturnType } from "@/app/_util/loadable-state";
 import { ContestContextType } from "@/app/contests/[slug]/_component/context/contest-context";
 
-export function useJuryDataFetcher(
+/**
+ * Hook to manage data and subscriptions for a jury user.
+ */
+export function useJuryAnnex(
   contestState: UseLoadableStateReturnType<ContestContextType>,
 ) {
   const contestMetadata = useContestMetadata();
   const toast = useToast();
-  const t = useTranslations(
-    "contests.[slug].contestant._component.contestant-context",
-  );
+  const t = useTranslations("contests.[slug]._component.context.jury-annex");
 
   async function fetch() {
     const data = await Promise.all([

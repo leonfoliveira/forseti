@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import React from "react";
+import React, { useEffect } from "react";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { Form } from "@/app/_component/form/form";
 import { TextInput } from "@/app/_component/form/text-input";
@@ -13,40 +13,52 @@ import { MemberSignInFormType } from "@/app/contests/[slug]/sign-in/_form/member
 import { memberSignInFormSchema } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form-schema";
 import { authenticationService } from "@/app/_composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { routes } from "@/app/_routes";
-import { handleError } from "@/app/_util/error-handler";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 import { useAuthorization } from "@/app/_component/context/authorization-context";
 import { useAlert } from "@/app/_component/context/notification-context";
 
+/**
+ * MemberSignInPage component allows members to sign in to a contest.
+ */
 export default function MemberSignInPage() {
   const signInState = useLoadableState();
   const contest = useContestMetadata();
-  const { setAuthorization } = useAuthorization();
+  const { setAuthorization, clearAuthorization } = useAuthorization();
   const alert = useAlert();
 
+  const searchParams = useSearchParams();
   const router = useRouter();
   const t = useTranslations("contests.[slug].sign-in");
   const s = useTranslations(
-    "contests.[slug].sign-in._form.sign-in-form-schema",
+    "contests.[slug].sign-in._form.member-sign-in-form",
   );
 
   const form = useForm<MemberSignInFormType>({
     resolver: joiResolver(memberSignInFormSchema),
   });
 
+  const signOut = searchParams.get("signOut");
+  useEffect(() => {
+    if (signOut === "true") {
+      clearAuthorization();
+    }
+  }, [signOut]);
+
   async function signIn(data: MemberSignInFormType) {
+    signInState.start();
     try {
       const authorization = await authenticationService.authenticateMember(
         contest.id,
         data,
       );
       setAuthorization(authorization);
+      signInState.finish();
       router.push(routes.CONTEST(contest.slug));
     } catch (error) {
-      handleError(error, {
+      signInState.fail(error, {
         [UnauthorizedException.name]: () => alert.warning(t("unauthorized")),
         default: () => alert.error(t("error")),
       });
@@ -67,14 +79,14 @@ export default function MemberSignInPage() {
         </h2>
         <div className="my-6">
           <TextInput
-            fm={form}
+            form={form}
             name="login"
             s={s}
             label={t("login:label")}
             data-testid="login"
           />
           <TextInput
-            fm={form}
+            form={form}
             name="password"
             s={s}
             label={t("password:label")}
@@ -86,7 +98,7 @@ export default function MemberSignInPage() {
           <Button
             type="submit"
             isLoading={signInState.isLoading}
-            className="btn-primary"
+            className="btn-primary w-full"
             data-testid="sign-in"
           >
             {t("sign-in:label")}

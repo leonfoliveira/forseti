@@ -6,5 +6,6 @@ export type ProblemFullResponseDTO = {
   title: string;
   description: Attachment;
   timeLimit: number;
+  memoryLimit: number;
   testCases: Attachment;
 };

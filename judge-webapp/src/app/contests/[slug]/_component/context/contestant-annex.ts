@@ -11,7 +11,10 @@ import { UseLoadableStateReturnType } from "@/app/_util/loadable-state";
 import { ContestContextType } from "@/app/contests/[slug]/_component/context/contest-context";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 
-export function useContestantDataFetcher(
+/**
+ * Hook to manage data and subscriptions for a contestant dashboard.
+ */
+export function useContestantAnnex(
   contestState: UseLoadableStateReturnType<ContestContextType>,
 ) {
   const contestMetadata = useContestMetadata();
@@ -20,7 +23,7 @@ export function useContestantDataFetcher(
   const { formatSubmissionAnswer } = useContestFormatter();
 
   const t = useTranslations(
-    "contests.[slug].contestant._component.contestant-context",
+    "contests.[slug]._component.context.contestant-annex",
   );
 
   async function fetch(): Promise<ContestContextType["contestant"]> {
@@ -37,18 +40,18 @@ export function useContestantDataFetcher(
 
   function subscribe() {
     return [
+      submissionService.subscribeForContest(
+        contestMetadata.id,
+        receiveContestSubmission,
+      ),
       submissionService.subscribeForMember(
         authorization?.member.id as string,
-        receiveSubmission,
+        receiveMemberSubmission,
       ),
     ];
   }
 
-  function receiveSubmission(submission: SubmissionPublicResponseDTO) {
-    if (submission.answer === SubmissionAnswer.NO_ANSWER) {
-      return;
-    }
-
+  function receiveContestSubmission(submission: SubmissionPublicResponseDTO) {
     contestState.finish((prev) => {
       return {
         ...prev,
@@ -58,6 +61,21 @@ export function useContestantDataFetcher(
             prev.contestant.submissions,
             submission,
           ),
+        },
+      };
+    });
+  }
+
+  function receiveMemberSubmission(submission: SubmissionPublicResponseDTO) {
+    if (submission.answer === SubmissionAnswer.NO_ANSWER) {
+      return;
+    }
+
+    contestState.finish((prev) => {
+      return {
+        ...prev,
+        contestant: {
+          ...prev.contestant,
           memberSubmissions: recalculateSubmissions(
             prev.contestant.memberSubmissions,
             submission,

@@ -6,9 +6,9 @@ import { useTranslations } from "next-intl";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "type" | "value" | "onChange"
+  "type" | "value" | "onChange" | "form"
 > & {
-  fm: UseFormReturn<TFieldValues>;
+  form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
   value?: string;
   s: ReturnType<typeof useTranslations>;
@@ -18,8 +18,11 @@ type Props<TFieldValues extends FieldValues> = Omit<
   "data-testid"?: string;
 };
 
+/**
+ * TextInput component for rendering a text input field
+ */
 export function TextInput<TFieldValues extends FieldValues>({
-  fm,
+  form,
   name,
   s,
   label,
@@ -32,21 +35,21 @@ export function TextInput<TFieldValues extends FieldValues>({
 
   useEffect(() => {
     if (props.value) {
-      fm.setValue(name, props.value as any);
+      form.setValue(name, props.value as any);
     }
   }, []);
 
-  function format(value?: string) {
+  function formToComponent(value?: string) {
     return value || "";
   }
 
-  function parse(value: string) {
+  function componentToForm(value: string) {
     return value;
   }
 
   return (
     <Controller
-      control={fm.control}
+      control={form.control}
       name={name}
       render={({ field, fieldState }) => (
         <fieldset
@@ -59,8 +62,8 @@ export function TextInput<TFieldValues extends FieldValues>({
           <input
             {...props}
             type={password ? "password" : "text"}
-            value={format(field.value)}
-            onChange={(e) => field.onChange(parse(e.target.value))}
+            value={formToComponent(field.value)}
+            onChange={(e) => field.onChange(componentToForm(e.target.value))}
             className={cls("input w-full", className)}
             data-testid={`${testId}:input`}
           />

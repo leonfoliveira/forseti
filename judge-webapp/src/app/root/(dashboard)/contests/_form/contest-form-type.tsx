@@ -7,6 +7,7 @@ export type ContestFormType = Partial<{
   slug: string;
   title: string;
   languages: Language[];
+  originalStartAt: Date;
   startAt: Date;
   endAt: Date;
   members: ContestFormMemberType[];
@@ -28,6 +29,7 @@ export type ContestFormProblemType = Partial<{
   description: Attachment;
   newDescription: File;
   timeLimit: number;
+  memoryLimit: number;
   testCases: Attachment;
   newTestCases: File;
 }>;

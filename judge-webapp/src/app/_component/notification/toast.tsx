@@ -12,6 +12,9 @@ type Props = {
   onClose: (id: string) => void;
 };
 
+/**
+ * Toast component to display small corner notifications.
+ */
 export function Toast({ toast, onClose }: Props) {
   const closeTimeout = useRef<NodeJS.Timeout>(null);
 

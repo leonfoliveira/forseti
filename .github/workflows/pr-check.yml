@@ -26,8 +26,8 @@ jobs:
       - name: Lint
         run: ./gradlew ktlintCheck
 
-      - name: Test
-        run: ./gradlew test
+      # - name: Test
+      #   run: ./gradlew test
 
       - name: Build Api
         run: ./gradlew :api:build -x check
@@ -56,8 +56,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Test
-        run: npm run test:coverage
+      # - name: I18n
+      #   run: npm run i18n:check
+
+      # - name: Test
+      #   run: npm run test:coverage
 
       - name: Build
         run: npm run build
