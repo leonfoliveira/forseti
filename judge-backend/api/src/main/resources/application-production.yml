@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: false
+  cloud:
+    aws:
+      endpoint: ${AWS_ENDPOINT}
+      region:
+        static: ${AWS_REGION}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
+      stack:
+        auto: false
+      s3:
+        bucket: ${AWS_S3_BUCKET}
+      sqs:
+        submission-queue: ${AWS_SQS_SUBMISSION_QUEUE}
+        submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE}
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION}
+    root-expiration: ${JWT_ROOT_EXPIRATION}
+  root:
+    password: ${ROOT_PASSWORD}
+server:
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS}
+  port: 80

@@ -1,0 +1,303 @@
+{
+  "_component": {
+    "form": {
+      "file-input": {
+        "empty": "Select a file"
+      }
+    },
+    "page": {
+      "error-page": {
+        "error": "An error occurred",
+        "reload:label": "Reload"
+      }
+    },
+    "dialog-modal": {
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "error-page": {
+      "home:label": "Go to Home"
+    },
+    "navbar": {
+      "root-title": "Root Panel",
+      "guest-name": "Guest",
+      "member-type": {
+        "GUEST": "Guest",
+        "ROOT": "Root",
+        "CONTESTANT": "Contestant",
+        "JURY": "Jury"
+      },
+      "sign-out:label": "Sign out",
+      "sign-in:label": "Sign in"
+    }
+  },
+  "_util": {
+    "contest-formatter-hook": {
+      "contest-status": {
+        "NOT_STARTED": "Not Started",
+        "IN_PROGRESS": "In Progress",
+        "ENDED": "Ended"
+      },
+      "language": {
+        "PYTHON_3_13_3": "Python 3.13.3"
+      },
+      "submission-status": {
+        "JUDGING": "Judging",
+        "FAILED": "Failed",
+        "JUDGED": "Judged"
+      },
+      "submission-answer": {
+        "NO_ANSWER": "Judging",
+        "ACCEPTED": "Accepted",
+        "WRONG_ANSWER": "Wrong answer",
+        "COMPILATION_ERROR": "Compilation error",
+        "RUNTIME_ERROR": "Runtime error",
+        "TIME_LIMIT_EXCEEDED": "Time limit exceeded",
+        "MEMORY_LIMIT_EXCEEDED": "Memory limit exceeded"
+      },
+      "submission-answer-short": {
+        "NO_ANSWER": "",
+        "ACCEPTED": "AC",
+        "WRONG_ANSWER": "WA",
+        "COMPILATION_ERROR": "CE",
+        "RUNTIME_ERROR": "RE",
+        "TIME_LIMIT_EXCEEDED": "TLE",
+        "MEMORY_LIMIT_EXCEEDED": "MLE"
+      }
+    }
+  },
+  "contests": {
+    "[slug]": {
+      "_component": {
+        "context": {
+          "contestant-annex": {
+            "submission-toast-problem": "Problem {letter}: {answer}"
+          },
+          "jury-annex": {
+            "submission-failed": "New failed submission"
+          }
+        },
+        "page": {
+          "leaderboard-page": {
+            "header-penalty": "Penalty (s)"
+          },
+          "problems-page": {
+            "problem-title": "{letter}. {title}"
+          },
+          "timeline-page": {
+            "header-timestamp": "Timestamp",
+            "header-contestant": "Contestant",
+            "header-problem": "Problem",
+            "header-language": "Problem",
+            "header-answer": "Answer",
+            "submissions-empty": "No submissions yet"
+          },
+          "wait-page": {
+            "start-at": "Contest starts in",
+            "languages": "Available languages"
+          }
+        },
+        "contest-navbar": {
+          "sign-out:label": "Sign out",
+          "sign-in:label": "Sign in"
+        },
+        "contest-tab-bar": {
+          "tab-leaderboard": "Leaderboard",
+          "tab-problems": "Problems",
+          "tab-timeline": "Timeline",
+          "tab-submissions": "Submissions"
+        },
+        "download-button": {
+          "download:tooltip": "Download"
+        }
+      },
+      "contestant": {
+        "submissions": {
+          "_form": {
+            "submission-form": {
+              "problem:required": "Select a problem",
+              "language:required": "Select a language",
+              "code:required": "Select a code file",
+              "code:size": "File size must not exceed 10 MB"
+            }
+          },
+          "create-success": "Submission created successfully",
+          "create-error": "Failed to create submission",
+          "problem:label": "Problem",
+          "language:label": "Language",
+          "code:label": "Code",
+          "submit:label": "Submit",
+          "header-timestamp": "Timestamp",
+          "header-problem": "Problem",
+          "header-language": "Language",
+          "header-answer": "Answer",
+          "submissions-empty": "No submissions yet"
+        }
+      },
+      "jury": {
+        "submissions": {
+          "_form": {
+            "update-submission-form": {
+              "answer:required": "Select an answer"
+            }
+          },
+          "rerun-success": "Submission rerun successfully",
+          "rerun-error": "Failed to rerun submission",
+          "update-success": "Submission updated successfully",
+          "update-error": "Failed to update submission",
+          "header-timestamp": "Timestamp",
+          "header-contestant": "Contestant",
+          "header-problem": "Problem",
+          "header-language": "Language",
+          "header-status": "Status",
+          "header-answer": "Answer",
+          "rerun-tooltip": "Rerun",
+          "update-tooltip": "Update",
+          "confirm-rerun": "Are you sure you want the auto judge to rerun this submission?",
+          "update-form:answer:label": "Answer",
+          "confirm-update": "Are you sure you want to update this submission?"
+        }
+      },
+      "sign-in": {
+        "_form": {
+          "member-sign-in-form": {
+            "login:required": "Enter a login",
+            "password:required": "Enter a password"
+          }
+        },
+        "unauthorized": "Invalid login or wrong password",
+        "error": "Error signing in",
+        "title": "Sign In",
+        "login:label": "Login",
+        "password:label": "Password",
+        "sign-in:label": "Sign in"
+      }
+    }
+  },
+  "error": {
+    "description": "Something went wrong"
+  },
+  "forbidden": {
+    "description": "You are not authorized to access this page"
+  },
+  "not-found": {
+    "description": "Page not found"
+  },
+  "root": {
+    "_component": {
+      "root-tab-bar": {
+        "tab-contests": "Contests"
+      }
+    },
+    "contests": {
+      "[id]": {
+        "load-error": "Failed to load contest",
+        "update-success": "Contest updated successfully",
+        "update-error": "Failed to update contest",
+        "header": "Contest #{id}",
+        "test-cases-validation-error": "Test cases file must have exactly two columns and at least one row. Failed problems: {letters}"
+      },
+      "_component": {
+        "contest-form": {
+          "in-progress": "This contest is in progress, be careful when editing it.",
+          "create-header": "New Contest",
+          "edit-header": "Contest #{id}",
+          "delete-success": "Contest deleted successfully",
+          "delete-error": "Failed to delete contest",
+          "delete:label": "Delete",
+          "save:label": "Save",
+          "slug:label": "Slug",
+          "title:label": "Title",
+          "languages:label": "Languages",
+          "start-at:label": "Start at",
+          "end-at:label": "End at",
+          "members-header": "Members",
+          "member-type:label": "Type",
+          "member-name:label": "Name",
+          "member-login:label": "Login",
+          "member-password:label": "Password",
+          "problems-header": "Problems",
+          "problem-letter:label": "Letter",
+          "problem-title:label": "Title",
+          "problem-description:label": "Description",
+          "problem-time-limit:label": "Time limit (ms)",
+          "problem-memory-limit:label": "Memory limit (MB)",
+          "problem-test-cases:label": "Test cases",
+          "confirm-delete-content": "Are you sure you want to delete this contest?",
+          "confirm-save-content": "Are you sure you want to save changes to this contest?"
+        }
+      },
+      "_form": {
+        "contest-form": {
+          "slug:required": "Enter a slug",
+          "slug:pattern": "Must contain only letters, numbers, and hyphens",
+          "title:required": "Enter a title",
+          "languages:required": "Select at least one language",
+          "start-at:required": "Select a start time",
+          "start-at:greater-now": "Must be in the future",
+          "end-at:required": "Select an end time",
+          "end-at:greater-start-at": "Must be after the start time",
+          "end-at:greater-now": "Must be in the future",
+          "member-type:required": "Select a type",
+          "member-name:required": "Enter a name",
+          "member-login:required": "Enter a login",
+          "member-password:required": "Enter a password",
+          "problem-title:required": "Enter a problem title",
+          "problem-description:required": "Enter a description",
+          "problem-description:size": "File size must not exceed 10 MB",
+          "problem-time-limit:required": "Enter a time limit",
+          "problem-time-limit:min": "Must be a positive integer",
+          "problem-memory-limit:required": "Enter a memory limit",
+          "problem-memory-limit:min": "Must be a positive integer",
+          "problem-test-cases:required": "Select a test cases file",
+          "problem-test-cases:size": "File size must not exceed 10 MB",
+          "problem-test-cases:content-type": "Must be a CSV file",
+          "problem-test-cases:invalid": "Must have exactly two columns and at least one row."
+        }
+      },
+      "new": {
+        "create-success": "Contest created successfully",
+        "create-error": "Failed to create contest"
+      },
+      "load-error": "Failed to load contests",
+      "title": "Contests",
+      "new:label": "New",
+      "header-slug": "Slug",
+      "header-title": "Title",
+      "header-start-at": "Start at",
+      "header-end-at": "End at",
+      "header-status": "Status",
+      "start-success": "Contest started successfully",
+      "start-error": "Failed to start contest",
+      "end-success": "Contest ended successfully",
+      "end-error": "Failed to end contest",
+      "start:tooltip": "Force start",
+      "end:tooltip": "Force end",
+      "view:tooltip": "View",
+      "start-modal:message": "Are you sure you want to start this contest now?",
+      "end-modal:message": "Are you sure you want to end this contest now?"
+    },
+    "sign-in": {
+      "_form": {
+        "root-sign-in-form": {
+          "password:required": "Enter a password"
+        }
+      },
+      "unauthorized": "Wrong password",
+      "error": "Error signing in",
+      "title": "Sign In",
+      "description": "Root",
+      "password:label": "Password",
+      "sign-in:label": "Sign in"
+    }
+  },
+  "home-page": {
+    "not-found": "Contest not found",
+    "error": "Could not check if contest exists",
+    "title": "Judge",
+    "slug:label": "Contest",
+    "slug:required": "Enter a contest slug",
+    "join:label": "Join Contest",
+    "root:label": "Enter as Root"
+  }
+}

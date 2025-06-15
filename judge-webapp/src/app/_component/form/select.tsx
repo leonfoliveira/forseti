@@ -1,0 +1,92 @@
+import React, { DetailedHTMLProps, SelectHTMLAttributes } from "react";
+import { cls } from "@/app/_util/cls";
+import {
+  Controller,
+  FieldPath,
+  FieldValues,
+  UseFormReturn,
+} from "react-hook-form";
+import { useTranslations } from "next-intl";
+
+type Props<TFieldValues extends FieldValues> = Omit<
+  DetailedHTMLProps<SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>,
+  "form"
+> & {
+  form: UseFormReturn<TFieldValues>;
+  name: FieldPath<TFieldValues>;
+  s: ReturnType<typeof useTranslations>;
+  containerClassName?: string;
+  label?: string;
+  options: {
+    value: string;
+    label: string;
+  }[];
+  "data-testid"?: string;
+};
+
+/**
+ * Select component for rendering a select input field with options
+ */
+export function Select<TFieldValues extends FieldValues>({
+  form,
+  label,
+  name,
+  s,
+  containerClassName,
+  className,
+  options,
+  ...props
+}: Props<TFieldValues>) {
+  const testId = props["data-testid"] || "select";
+
+  function formToComponent(value?: string) {
+    return value || "";
+  }
+
+  function componentToForm(value: string) {
+    return value;
+  }
+
+  return (
+    <Controller
+      control={form.control}
+      name={name}
+      render={({ field, fieldState }) => (
+        <fieldset
+          className={cls(containerClassName, "fieldset")}
+          data-testid={testId}
+        >
+          <label className="fieldset-legend" data-testid={`${testId}:label`}>
+            {label}
+          </label>
+          <select
+            {...props}
+            value={formToComponent(field.value)}
+            onChange={(e) => {
+              field.onChange(componentToForm(e.target.value));
+            }}
+            className={cls("select w-full", className)}
+            data-testid={`${testId}:select`}
+          >
+            <option value="" />
+            {options.map((it) => (
+              <option
+                key={it.value}
+                value={it.value}
+                data-testid={`${testId}:option`}
+              >
+                {it.label}
+              </option>
+            ))}
+          </select>
+          <p
+            className="label text-error text-wrap"
+            data-testid={`${testId}:error`}
+          >
+            {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
+          </p>
+        </fieldset>
+      )}
+    />
+  );
+}

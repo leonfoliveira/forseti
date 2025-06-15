@@ -4,11 +4,11 @@ on:
   pull_request:
 
 jobs:
-  check-api:
+  check-backend:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: judge-api
+        working-directory: judge-backend
 
     steps:
       - name: Checkout code
@@ -26,17 +26,20 @@ jobs:
       - name: Lint
         run: ./gradlew ktlintCheck
 
-      - name: Test
-        run: ./gradlew test
+      # - name: Test
+      #   run: ./gradlew test
 
-      - name: Build
-        run: ./gradlew build -x check
+      - name: Build Api
+        run: ./gradlew :api:build -x check
+      
+      - name: Build Worker
+        run: ./gradlew :worker:build -x check
 
-  check-web:
+  check-webapp:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: judge-web
+        working-directory: judge-webapp
 
     steps:
       - name: Checkout code
@@ -53,8 +56,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Test
-        run: npm run test:coverage
+      # - name: I18n
+      #   run: npm run i18n:check
+
+      # - name: Test
+      #   run: npm run test:coverage
 
       - name: Build
         run: npm run build

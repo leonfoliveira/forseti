@@ -1,0 +1,45 @@
+import { AuthorizationService } from "@/core/service/AuthorizationService";
+import { AxiosClient } from "@/adapter/axios/AxiosClient";
+import { AxiosAttachmentRepository } from "@/adapter/axios/AxiosAttachmentRepository";
+import { AxiosAuthenticationRepository } from "@/adapter/axios/AxiosAuthenticationRepository";
+import { AxiosContestRepository } from "@/adapter/axios/AxiosContestRepository";
+import { AxiosSubmissionRepository } from "@/adapter/axios/AxiosSubmissionRepository";
+import { AttachmentService } from "@/core/service/AttachmentService";
+import { AuthenticationService } from "@/core/service/AuthenticationService";
+import { ContestService } from "@/core/service/ContestService";
+import { SubmissionService } from "@/core/service/SubmissionService";
+import { StompConnector } from "@/adapter/stomp/StompConnector";
+import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
+import { config } from "@/app/_config";
+import { LocalStorageRepository } from "@/adapter/localstorage/LocalStorageRepository";
+import { StorageService } from "@/core/service/StorageService";
+import { StompLeaderboardListener } from "@/adapter/stomp/StompLeaderboardListener";
+
+const storageRepository = new LocalStorageRepository();
+
+export const authorizationService = new AuthorizationService(storageRepository);
+
+const axiosClient = new AxiosClient(config.API_URL, authorizationService);
+const stompClient = new StompConnector(
+  `${config.API_URL}/ws`,
+  authorizationService,
+);
+
+export const attachmentService = new AttachmentService(
+  new AxiosAttachmentRepository(axiosClient),
+);
+export const authenticationService = new AuthenticationService(
+  new AxiosAuthenticationRepository(axiosClient),
+  authorizationService,
+);
+export const contestService = new ContestService(
+  new AxiosContestRepository(axiosClient),
+  attachmentService,
+  new StompLeaderboardListener(stompClient),
+);
+export const storageService = new StorageService(storageRepository);
+export const submissionService = new SubmissionService(
+  new AxiosSubmissionRepository(axiosClient),
+  new StompSubmissionListener(stompClient),
+  attachmentService,
+);
