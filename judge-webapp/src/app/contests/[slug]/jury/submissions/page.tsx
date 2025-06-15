@@ -3,7 +3,6 @@
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
-import { toLocaleString } from "@/app/_util/date-utils";
 import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
 import { DownloadButton } from "@/app/contests/[slug]/_component/download-button";
 import { Table } from "@/app/_component/table/table";
@@ -27,6 +26,7 @@ import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
 import { SubmissionStatusBadge } from "@/app/contests/[slug]/_component/badge/submission-status-badge";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
+import { TimestampDisplay } from "@/app/_component/timestamp-display";
 
 /**
  * Submissions page for the jury in a contest.
@@ -102,7 +102,7 @@ export default function JurySubmissionsPage() {
           {fullSubmissions?.map((submission) => (
             <TableRow key={submission.id} data-testid="submission-row">
               <TableCell data-testid="submission-created-at">
-                {toLocaleString(submission.createdAt)}
+                <TimestampDisplay timestamp={submission.createdAt} />
               </TableCell>
               <TableCell data-testid="submission-title">
                 {submission.problem.letter}

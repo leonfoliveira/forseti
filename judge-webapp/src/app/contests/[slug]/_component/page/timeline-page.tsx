@@ -5,13 +5,13 @@ import { Table } from "@/app/_component/table/table";
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
-import { toLocaleString } from "@/app/_util/date-utils";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useTranslations } from "next-intl";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { cls } from "@/app/_util/cls";
 import { useAuthorization } from "@/app/_component/context/authorization-context";
 import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
+import { TimestampDisplay } from "@/app/_component/timestamp-display";
 
 type Props = {
   submissions: SubmissionPublicResponseDTO[];
@@ -52,7 +52,7 @@ export function TimelinePage({ submissions }: Props) {
               data-testid="submission-row"
             >
               <TableCell data-testid="submission:created-at">
-                {toLocaleString(submission.createdAt)}
+                <TimestampDisplay timestamp={submission.createdAt} />
               </TableCell>
               <TableCell data-testid="submission:member">
                 {submission.member.name}

@@ -140,10 +140,16 @@ export default function RootContestsPage() {
               <TableCell data-testid="slug">{contest.slug}</TableCell>
               <TableCell data-testid="title">{contest.title}</TableCell>
               <TableCell data-testid="startAt">
-                <TimestampDisplay timestamp={contest.startAt} />
+                <TimestampDisplay
+                  timestamp={contest.startAt}
+                  options={{ second: undefined }}
+                />
               </TableCell>
               <TableCell data-testid="endAt">
-                <TimestampDisplay timestamp={contest.endAt} />
+                <TimestampDisplay
+                  timestamp={contest.endAt}
+                  options={{ second: undefined }}
+                />
               </TableCell>
               <TableCell>
                 <ContestStatusBadge contest={contest} data-testid="badge" />

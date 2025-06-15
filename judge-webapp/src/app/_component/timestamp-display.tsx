@@ -1,11 +1,11 @@
-import { useFormatter } from "next-intl";
+import { DateTimeFormatOptions, useFormatter } from "next-intl";
 
 type Props = {
   timestamp: string;
-  full?: boolean;
+  options?: DateTimeFormatOptions;
 };
 
-export function TimestampDisplay({ timestamp, full }: Props) {
+export function TimestampDisplay({ timestamp, options }: Props) {
   const format = useFormatter();
   const date = new Date(timestamp);
 
@@ -15,6 +15,7 @@ export function TimestampDisplay({ timestamp, full }: Props) {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-    fractionalSecondDigits: full ? 3 : undefined,
+    second: "2-digit",
+    ...options,
   });
 }

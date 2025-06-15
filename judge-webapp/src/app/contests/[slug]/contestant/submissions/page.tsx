@@ -5,7 +5,6 @@ import { Table } from "@/app/_component/table/table";
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
-import { toLocaleString } from "@/app/_util/date-utils";
 import { storageService, submissionService } from "@/app/_composition";
 import { Select } from "@/app/_component/form/select";
 import { useForm } from "react-hook-form";
@@ -27,6 +26,7 @@ import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/su
 import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
 import { useAlert } from "@/app/_component/context/notification-context";
 import { DownloadButton } from "@/app/contests/[slug]/_component/download-button";
+import { TimestampDisplay } from "@/app/_component/timestamp-display";
 
 export default function ContestantSubmissionPage() {
   const { contest } = useContest();
@@ -151,7 +151,7 @@ export default function ContestantSubmissionPage() {
           {memberSubmissions?.map((submission) => (
             <TableRow key={submission.id} data-testid="submission:row">
               <TableCell data-testid="submission:created-at">
-                {toLocaleString(submission.createdAt)}
+                <TimestampDisplay timestamp={submission.createdAt} />
               </TableCell>
               <TableCell data-testid="submission:title">
                 {submission.problem.letter}

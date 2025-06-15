@@ -16,7 +16,7 @@ export function ProblemStatusBadge({
   if (isAccepted) {
     return (
       <Badge className="badge-success" data-testid="badge:ac">
-        <TimestampDisplay timestamp={acceptedAt!} full />
+        <TimestampDisplay timestamp={acceptedAt!} />
         {wrongSubmissions > 0 && ` | +${wrongSubmissions}`}
       </Badge>
     );
