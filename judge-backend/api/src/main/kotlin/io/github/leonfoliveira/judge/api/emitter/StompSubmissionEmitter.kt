@@ -16,7 +16,10 @@ class StompSubmissionEmitter(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun emit(submission: Submission) {
-        logger.info("Emitting submission with id: ${submission.id} for contest: ${submission.contest.id} and member: ${submission.member.id}")
+        logger.info(
+            "Emitting submission with id: ${submission.id} " +
+                "for contest: ${submission.contest.id} and member: ${submission.member.id}",
+        )
 
         val contest = submission.contest
 

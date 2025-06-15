@@ -36,8 +36,9 @@ class AuthorizationService(
     fun authenticateAutoJury(): Authorization {
         logger.info("Authenticating auto-jury")
 
-        val member = memberRepository.findByLogin("auto-jury")
-            ?: throw InternalServerException("Could not find auto-jury member")
+        val member =
+            memberRepository.findByLogin("auto-jury")
+                ?: throw InternalServerException("Could not find auto-jury member")
 
         val authorization =
             AuthorizationMember(

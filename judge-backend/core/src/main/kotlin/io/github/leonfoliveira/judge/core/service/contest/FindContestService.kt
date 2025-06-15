@@ -97,7 +97,8 @@ class FindContestService(
                     problem,
                     submissionProblemHash[problem.id]
                         ?.filter { it.status === Submission.Status.JUDGED }
-                        ?: emptyList())
+                        ?: emptyList(),
+                )
             }
         val score = problemDTOs.filter { it.isAccepted }.size
         val penalty = problemDTOs.sumOf { it.penalty }

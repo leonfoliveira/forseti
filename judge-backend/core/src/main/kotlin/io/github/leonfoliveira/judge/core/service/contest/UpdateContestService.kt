@@ -13,11 +13,11 @@ import io.github.leonfoliveira.judge.core.repository.ContestRepository
 import io.github.leonfoliveira.judge.core.service.dto.input.contest.UpdateContestInputDTO
 import io.github.leonfoliveira.judge.core.util.TestCasesValidator
 import jakarta.validation.Valid
-import java.time.OffsetDateTime
-import java.time.temporal.ChronoUnit
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
+import java.time.OffsetDateTime
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 @Service
@@ -94,7 +94,8 @@ class UpdateContestService(
     }
 
     fun forceStart(contestId: UUID): Contest {
-        val contest = contestRepository.findById(contestId)
+        val contest =
+            contestRepository.findById(contestId)
                 .orElseThrow { NotFoundException("Could not find contest with id = $contestId") }
         if (contest.hasStarted()) {
             throw ForbiddenException("Contest with id: $contestId has already started")
@@ -106,7 +107,8 @@ class UpdateContestService(
     }
 
     fun forceEnd(contestId: UUID): Contest {
-        val contest = contestRepository.findById(contestId)
+        val contest =
+            contestRepository.findById(contestId)
                 .orElseThrow { NotFoundException("Could not find contest with id = $contestId") }
         if (!contest.isActive()) {
             throw ForbiddenException("Contest with id: $contestId is not active")
