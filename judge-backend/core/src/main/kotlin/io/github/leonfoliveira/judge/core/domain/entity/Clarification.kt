@@ -28,14 +28,14 @@ class Clarification (
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
-    val contest: Contest,
+    var contest: Contest,
     /**
      * The member who made this clarification.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
-    val member: Member,
+    var member: Member,
     /**
      * The problem to which this clarification belongs.
      * This can be null if the clarification is not related to a specific problem.
@@ -43,23 +43,23 @@ class Clarification (
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = true)
     @Audited(withModifiedFlag = false)
-    val problem: Problem?,
+    var problem: Problem?,
     /**
      * The parent clarification, if this clarification is a response to another clarification.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = true)
     @Audited(withModifiedFlag = false)
-    val parent: Clarification?,
+    var parent: Clarification?,
     /**
      * The text of the clarification, which contains the question or answer.
      */
     @Column(nullable = false)
-    val text: String,
+    var text: String,
     /**
      * The child clarifications, which are responses to this clarification.
      */
     @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    val children: List<Clarification> = mutableListOf(),
+    var children: List<Clarification> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt)

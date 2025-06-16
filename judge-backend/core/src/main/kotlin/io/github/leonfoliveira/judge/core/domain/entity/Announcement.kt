@@ -26,17 +26,17 @@ class Announcement (
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
-    val contest: Contest,
+    var contest: Contest,
     /**
      * The member who made this announcement.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
-    val member: Member,
+    var member: Member,
     /**
      * The text of the announcement.
      */
     @Column(nullable = false)
-    val text: String,
+    var text: String,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt)
