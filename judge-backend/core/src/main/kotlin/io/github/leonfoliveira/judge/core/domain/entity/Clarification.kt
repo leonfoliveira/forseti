@@ -23,6 +23,13 @@ class Clarification (
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
     /**
+     * The contest to which this clarification belongs.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    @Audited(withModifiedFlag = false)
+    val contest: Contest,
+    /**
      * The member who made this clarification.
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,6 +62,4 @@ class Clarification (
     @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     val children: List<Clarification> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
-    val contest get() = member.contest
-}
+) : BaseEntity(id, createdAt, updatedAt, deletedAt)
