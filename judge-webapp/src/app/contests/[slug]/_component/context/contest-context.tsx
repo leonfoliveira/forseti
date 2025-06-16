@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-} from "react";
+import React, { createContext, useContext, useEffect, useRef } from "react";
 import { contestService } from "@/app/_composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { redirect } from "next/navigation";
@@ -19,16 +13,10 @@ import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/co
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { useAuthorization } from "@/app/_component/context/authorization-context";
-import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { useGuestAnnex } from "@/app/contests/[slug]/_component/context/guest-annex";
 import { useContestantAnnex } from "@/app/contests/[slug]/_component/context/contestant-annex";
 import { useJuryAnnex } from "@/app/contests/[slug]/_component/context/jury-annex";
-
-export enum DashboardType {
-  GUEST = "GUEST",
-  CONTESTANT = "CONTESTANT",
-  JURY = "JURY",
-}
+import { ContestMemberType } from "@/core/domain/enumerate/ContestMemberType";
 
 export type ContestContextType = {
   contest: ContestPublicResponseDTO;
@@ -77,28 +65,10 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
 
   const listeners = useRef<ListenerClient[]>(null);
 
-  /**
-   * Determine the type of dashboard based on the member's type.
-   */
-  const dashboardType = useMemo(() => {
-    switch (authorization?.member.type) {
-      case MemberType.CONTESTANT:
-        return DashboardType.CONTESTANT;
-      case MemberType.JURY:
-        return DashboardType.JURY;
-      default:
-        return DashboardType.GUEST;
-    }
-  }, [authorization?.member.type]);
-
   useEffect(() => {
-    unsubscribe();
-
     async function findContestMetadata() {
       contestState.start();
       try {
-        await unsubscribe();
-
         /**
          * Fetch all necessary data for the contest in parallel.
          * Some data are fetched only for specific dashboard types,
@@ -106,13 +76,13 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
         const data = await Promise.all([
           contestService.findContestById(contestMetadata.id),
           contestService.findContestLeaderboardById(contestMetadata.id),
-          dashboardType === DashboardType.GUEST
+          contestMetadata.loggedMemberType === ContestMemberType.GUEST
             ? guestDataFetcher.fetch()
             : Promise.resolve(defaultContestContext.guest),
-          dashboardType === DashboardType.CONTESTANT
+          contestMetadata.loggedMemberType === ContestMemberType.CONTESTANT
             ? contestantDataFetcher.fetch()
             : Promise.resolve(defaultContestContext.contestant),
-          dashboardType === DashboardType.JURY
+          contestMetadata.loggedMemberType === ContestMemberType.JURY
             ? juryDataFetcher.fetch()
             : Promise.resolve(defaultContestContext.jury),
         ]);
@@ -126,13 +96,13 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
             contestMetadata.id,
             receiveLeaderboard,
           ),
-          ...(dashboardType === DashboardType.GUEST
+          ...(contestMetadata.loggedMemberType === ContestMemberType.GUEST
             ? guestDataFetcher.subscribe()
             : []),
-          ...(dashboardType === DashboardType.CONTESTANT
+          ...(contestMetadata.loggedMemberType === ContestMemberType.CONTESTANT
             ? contestantDataFetcher.subscribe()
             : []),
-          ...(dashboardType === DashboardType.JURY
+          ...(contestMetadata.loggedMemberType === ContestMemberType.JURY
             ? juryDataFetcher.subscribe()
             : []),
         ]);

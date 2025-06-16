@@ -1,18 +1,16 @@
 import { cls } from "@/app/_util/cls";
 import React from "react";
-import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { routes } from "@/app/_routes";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 import { usePathname, useRouter } from "next/navigation";
-import { useAuthorization } from "@/app/_component/context/authorization-context";
 import { useTranslations } from "next-intl";
+import { ContestMemberType } from "@/core/domain/enumerate/ContestMemberType";
 
 /**
  * Component that renders the tab bar for contest pages.
  * Different tabs are displayed based on the user's authorization level (contestant, jury, or guest).
  */
 export function ContestTabBar() {
-  const { authorization } = useAuthorization();
   const contest = useContestMetadata();
 
   const pathname = usePathname();
@@ -35,8 +33,8 @@ export function ContestTabBar() {
   }
 
   function buildLinks() {
-    switch (authorization?.member.type) {
-      case MemberType.CONTESTANT:
+    switch (contest.loggedMemberType) {
+      case ContestMemberType.CONTESTANT:
         return [
           buildNavLink(
             t("tab-leaderboard"),
@@ -49,7 +47,7 @@ export function ContestTabBar() {
             routes.CONTEST_CONTESTANT_SUBMISSIONS,
           ),
         ];
-      case MemberType.JURY:
+      case ContestMemberType.JURY:
         return [
           buildNavLink(t("tab-leaderboard"), routes.CONTEST_JURY_LEADERBOARD),
           buildNavLink(t("tab-problems"), routes.CONTEST_JURY_PROBLEMS),
