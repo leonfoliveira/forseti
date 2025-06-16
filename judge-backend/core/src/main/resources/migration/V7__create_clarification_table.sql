@@ -27,6 +27,7 @@ create table clarification_aud (
     problem_id uuid,
     parent_id uuid,
     text text not null,
+    text_mod boolean not null default false,
     primary key (rev, id),
     constraint fk_member_id foreign key (member_id) references member (id),
     constraint fk_problem_id foreign key (problem_id) references problem (id),
