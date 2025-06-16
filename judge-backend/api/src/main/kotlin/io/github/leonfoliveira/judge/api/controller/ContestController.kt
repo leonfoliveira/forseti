@@ -10,6 +10,7 @@ import io.github.leonfoliveira.judge.api.dto.response.submission.SubmissionFullR
 import io.github.leonfoliveira.judge.api.dto.response.submission.SubmissionPublicResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
+import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.core.domain.entity.Member
 import io.github.leonfoliveira.judge.core.domain.exception.ForbiddenException
@@ -37,6 +38,7 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1/contests")
 class ContestController(
+    private val contestAuthFilter: ContestAuthFilter,
     private val createContestService: CreateContestService,
     private val updateContestService: UpdateContestService,
     private val findContestService: FindContestService,
@@ -174,6 +176,7 @@ class ContestController(
         @PathVariable id: UUID,
     ): ResponseEntity<List<SubmissionFullResponseDTO>> {
         logger.info("[GET] /v1/contests/{id}/submissions/full - id: $id")
+        contestAuthFilter.check(id)
         val submissions = findSubmissionService.findAllByContest(id)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }

@@ -5,6 +5,7 @@ import io.github.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.core.repository.ContestRepository
 import io.github.leonfoliveira.judge.core.repository.MemberRepository
+import io.github.leonfoliveira.judge.core.repository.SubmissionRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -13,8 +14,21 @@ import java.util.UUID
 class FindSubmissionService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
+    private val submissionRepository: SubmissionRepository,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
+
+    fun findById(submissionId: UUID): Submission {
+        logger.info("Finding submission with id: $submissionId")
+
+        val submission =
+            submissionRepository.findById(submissionId).orElseThrow {
+                NotFoundException("Could not find submission with id = $submissionId")
+            }
+
+        logger.info("Found submission")
+        return submission
+    }
 
     fun findAllByContest(contestId: UUID): List<Submission> {
         logger.info("Finding all submissions for contest with id: $contestId")

@@ -1,7 +1,5 @@
 import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
-import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmissionInputDTO";
-import { AttachmentService } from "@/core/service/AttachmentService";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { SubmissionListener } from "@/core/listener/SubmissionListener";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
@@ -11,17 +9,7 @@ export class SubmissionService {
   constructor(
     private readonly submissionRepository: SubmissionRepository,
     private readonly submissionListener: SubmissionListener,
-    private readonly attachmentService: AttachmentService,
   ) {}
-
-  async createSubmission(input: CreateSubmissionInputDTO) {
-    const attachment = await this.attachmentService.upload(input.code);
-    return await this.submissionRepository.createSubmission({
-      problemId: input.problemId,
-      language: input.language,
-      code: attachment,
-    });
-  }
 
   async findAllFullForMember(): Promise<SubmissionFullResponseDTO[]> {
     return await this.submissionRepository.findAllFullForMember();

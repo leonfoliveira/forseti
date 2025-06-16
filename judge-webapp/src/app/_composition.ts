@@ -14,6 +14,8 @@ import { config } from "@/app/_config";
 import { LocalStorageRepository } from "@/adapter/localstorage/LocalStorageRepository";
 import { StorageService } from "@/core/service/StorageService";
 import { StompLeaderboardListener } from "@/adapter/stomp/StompLeaderboardListener";
+import { ProblemService } from "@/core/service/ProblemService";
+import { AxiosProblemRepository } from "@/adapter/axios/AxiosProblemRepository";
 
 const storageRepository = new LocalStorageRepository();
 
@@ -37,9 +39,12 @@ export const contestService = new ContestService(
   attachmentService,
   new StompLeaderboardListener(stompClient),
 );
+export const problemService = new ProblemService(
+  new AxiosProblemRepository(axiosClient),
+  attachmentService,
+);
 export const storageService = new StorageService(storageRepository);
 export const submissionService = new SubmissionService(
   new AxiosSubmissionRepository(axiosClient),
   new StompSubmissionListener(stompClient),
-  attachmentService,
 );
