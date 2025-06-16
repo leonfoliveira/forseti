@@ -5,7 +5,7 @@ import java.util.UUID
 
 data class AuthorizationMember(
     val id: UUID,
+    val contestId: UUID?,
     val name: String,
-    val login: String,
     val type: Member.Type,
 )

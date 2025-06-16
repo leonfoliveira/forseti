@@ -7,13 +7,19 @@ import { useTranslations } from "next-intl";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { redirect, RedirectType } from "next/navigation";
+import { ContestMemberType } from "@/core/domain/enumerate/ContestMemberType";
 
 type Props = {
   contestMetadata?: ContestMetadataResponseDTO;
+  contestMemberType?: ContestMemberType;
   signInPath: string;
 };
 
-export function Navbar({ contestMetadata, signInPath }: Props) {
+export function Navbar({
+  contestMetadata,
+  contestMemberType,
+  signInPath,
+}: Props) {
   const { theme, toggleTheme } = useTheme();
   const { authorization } = useAuthorization();
   const t = useTranslations("_component.navbar");
@@ -59,7 +65,7 @@ export function Navbar({ contestMetadata, signInPath }: Props) {
                 </summary>
                 <ul className="bg-base-100 rounded-t-none right-0 !mt-0">
                   <li className="menu-title">
-                    {t(`member-type.${authorization?.member.type || "GUEST"}`)}
+                    {t(`contest-member-type.${contestMemberType}`)}
                   </li>
                   <li>
                     <a onClick={signOut} className="text-nowrap">

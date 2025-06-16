@@ -37,8 +37,8 @@ class OAuthJwtAdapter(
                 .withIssuedAt(now)
                 .withExpiresAt(expirationAt)
                 .withClaim("id", authorization.id.toString())
+                .withClaim("contestId", authorization.contestId?.toString())
                 .withClaim("name", authorization.name)
-                .withClaim("login", authorization.login)
                 .withClaim("type", authorization.type.toString())
 
         return jwt.sign(algorithm)
@@ -51,8 +51,8 @@ class OAuthJwtAdapter(
 
         return AuthorizationMember(
             id = UUID.fromString(decoded.getClaim("id").asString()),
+            contestId = decoded.getClaim("contestId").asString()?.let(UUID::fromString),
             name = decoded.getClaim("name").asString(),
-            login = decoded.getClaim("login").asString(),
             type = Member.Type.valueOf(decoded.getClaim("type").asString()),
         )
     }

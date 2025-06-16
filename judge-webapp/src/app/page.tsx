@@ -10,10 +10,8 @@ import Joi from "joi";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { useRouter } from "next/navigation";
+import { redirect, RedirectType } from "next/navigation";
 import { routes } from "@/app/_routes";
-import { useAuthorization } from "@/app/_component/context/authorization-context";
-import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { contestService } from "@/app/_composition";
 import { useAlert } from "@/app/_component/context/notification-context";
@@ -31,9 +29,7 @@ const formSchema = Joi.object({
 });
 
 export default function HomePage() {
-  const { authorization, clearAuthorization } = useAuthorization();
   const joinContestState = useLoadableState();
-  const router = useRouter();
   const alert = useAlert();
   const t = useTranslations("home-page");
 
@@ -45,8 +41,8 @@ export default function HomePage() {
     joinContestState.start();
     try {
       await contestService.findContestMetadataBySlug(data.slug);
-      router.push(routes.CONTEST(data.slug));
       joinContestState.finish();
+      redirect(routes.CONTEST_SIGN_IN(data.slug), RedirectType.push);
     } catch (error) {
       joinContestState.fail(error, {
         [NotFoundException.name]: () => alert.warning(t("not-found")),
@@ -56,10 +52,7 @@ export default function HomePage() {
   }
 
   function redirectRoot() {
-    if (authorization?.member.type !== MemberType.ROOT) {
-      clearAuthorization();
-    }
-    router.push(routes.ROOT);
+    redirect(routes.ROOT_SIGN_IN(), RedirectType.push);
   }
 
   return (

@@ -25,12 +25,17 @@ class AuthorizationService(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun authenticate(inputDTO: AuthenticateInputDTO): Authorization {
-        logger.info("Authenticating member")
+        logger.info("Authenticating member with login = ${inputDTO.login}")
 
         val member =
             memberRepository.findByLogin(inputDTO.login)
                 ?: throw UnauthorizedException("Invalid login or password")
-        return authenticate(inputDTO.password, member)
+        if (!hashAdapter.verify(inputDTO.password, member.password)) {
+            throw UnauthorizedException("Invalid login or password")
+        }
+
+        logger.info("Finished authenticating member")
+        return buildAuthorization(member)
     }
 
     fun authenticateAutoJury(): Authorization {
@@ -40,17 +45,8 @@ class AuthorizationService(
             memberRepository.findByLogin("auto-jury")
                 ?: throw InternalServerException("Could not find auto-jury member")
 
-        val authorization =
-            AuthorizationMember(
-                id = member.id,
-                name = member.name,
-                login = member.login,
-                type = member.type,
-            )
-        val token = jwtAdapter.generateToken(authorization)
-
         logger.info("Finished authenticating auto-jury member")
-        return Authorization(authorization, token)
+        return buildAuthorization(member)
     }
 
     fun authenticateForContest(
@@ -69,28 +65,24 @@ class AuthorizationService(
         val member =
             contest.members.find { it.login == inputDTO.login }
                 ?: throw UnauthorizedException("Invalid login or password")
-
-        return authenticate(inputDTO.password, member)
-    }
-
-    private fun authenticate(
-        password: String,
-        member: Member,
-    ): Authorization {
-        if (!hashAdapter.verify(password, member.password)) {
+        if (!hashAdapter.verify(inputDTO.password, member.password)) {
             throw UnauthorizedException("Invalid login or password")
         }
 
+        logger.info("Finished authenticating member for contest")
+        return buildAuthorization(member)
+    }
+
+    private fun buildAuthorization(member: Member): Authorization {
         val authorization =
             AuthorizationMember(
                 id = member.id,
+                contestId = member.contest?.id,
                 name = member.name,
-                login = member.login,
                 type = member.type,
             )
         val token = jwtAdapter.generateToken(authorization)
 
-        logger.info("Finished authenticating member")
         return Authorization(authorization, token)
     }
 }

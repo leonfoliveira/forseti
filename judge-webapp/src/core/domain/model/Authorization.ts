@@ -7,7 +7,7 @@ export type Authorization = {
 
 export type AuthorizationMember = {
   id: string;
+  contestId: string;
   name: string;
-  login: string;
   type: MemberType;
 };

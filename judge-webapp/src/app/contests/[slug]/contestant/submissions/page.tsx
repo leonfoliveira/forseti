@@ -5,7 +5,7 @@ import { Table } from "@/app/_component/table/table";
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
-import { storageService, submissionService } from "@/app/_composition";
+import { problemService, storageService } from "@/app/_composition";
 import { Select } from "@/app/_component/form/select";
 import { useForm } from "react-hook-form";
 import { FileInput } from "@/app/_component/form/file-input";
@@ -62,7 +62,8 @@ export default function ContestantSubmissionPage() {
   async function onCreateSubmission(data: SubmissionFormType) {
     createSubmissionState.start();
     try {
-      const submission = await submissionService.createSubmission(
+      const submission = await problemService.createSubmission(
+        data.problemId as string,
         toInputDTO(data),
       );
       addSubmission(submission);

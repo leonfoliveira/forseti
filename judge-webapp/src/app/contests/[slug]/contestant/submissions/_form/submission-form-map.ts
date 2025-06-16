@@ -6,7 +6,6 @@ export function toInputDTO(
   submission: SubmissionFormType,
 ): CreateSubmissionInputDTO {
   return {
-    problemId: submission.problemId as string,
     language: submission.language as Language,
     code: submission.code as File,
   };

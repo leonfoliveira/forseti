@@ -21,9 +21,8 @@
     "navbar": {
       "root-title": "Root Panel",
       "guest-name": "Guest",
-      "member-type": {
+      "contest-member-type": {
         "GUEST": "Guest",
-        "ROOT": "Root",
         "CONTESTANT": "Contestant",
         "JURY": "Jury"
       },
