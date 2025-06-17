@@ -5,9 +5,7 @@ import { AttachmentService } from "@/core/service/AttachmentService";
 import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 import { Attachment } from "@/core/domain/model/Attachment";
-import { ListenerClient } from "@/core/domain/model/ListenerClient";
 import { LeaderboardListener } from "@/core/listener/LeaderboardListener";
-import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 
 export class ContestService {
   constructor(
@@ -72,18 +70,6 @@ export class ContestService {
 
   async findAllContestFullSubmissions(id: string) {
     return await this.contestRepository.findAllContestFullSubmissions(id);
-  }
-
-  subscribeForLeaderboard(
-    client: ListenerClient,
-    contestId: string,
-    cb: (leaderboard: ContestLeaderboardResponseDTO) => void,
-  ): Promise<ListenerClient> {
-    return this.leaderboardListener.subscribeForLeaderboard(
-      client,
-      contestId,
-      cb,
-    );
   }
 
   private async uploadFiles(

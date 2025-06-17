@@ -1,4 +1,4 @@
-import { contestService, submissionService } from "@/app/_composition";
+import { contestService, submissionListener } from "@/app/_composition";
 import { recalculateSubmissions } from "@/app/contests/[slug]/_util/submissions-calculator";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
@@ -30,7 +30,7 @@ export function useJuryAnnex(
 
   function subscribe(client: ListenerClient) {
     return [
-      submissionService.subscribeForContestFull(
+      submissionListener.subscribeForContestFull(
         client,
         contestMetadata.id,
         receiveSubmission,

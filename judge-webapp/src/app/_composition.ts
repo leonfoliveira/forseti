@@ -18,6 +18,8 @@ import { ProblemService } from "@/core/service/ProblemService";
 import { AxiosProblemRepository } from "@/adapter/axios/AxiosProblemRepository";
 import { ListenerService } from "@/core/service/ListenerService";
 import { StompListenerRepository } from "@/adapter/stomp/StompListenerRepository";
+import { StompAnnouncementListener } from "@/adapter/stomp/StompAnnouncementListener";
+import { StompClarificationListener } from "@/adapter/stomp/StompClarificationListener";
 
 const storageRepository = new LocalStorageRepository();
 
@@ -28,6 +30,11 @@ const stompConnector = new StompConnector(
   `${config.API_URL}/ws`,
   authorizationService,
 );
+
+export const announcementListener = new StompAnnouncementListener();
+export const clarificationListener = new StompClarificationListener();
+export const leaderboardListener = new StompLeaderboardListener();
+export const submissionListener = new StompSubmissionListener();
 
 export const listenerService = new ListenerService(
   new StompListenerRepository(stompConnector),

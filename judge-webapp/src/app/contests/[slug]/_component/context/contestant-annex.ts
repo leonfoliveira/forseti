@@ -1,4 +1,4 @@
-import { contestService, submissionService } from "@/app/_composition";
+import { contestService, submissionListener, submissionService } from "@/app/_composition";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { recalculateSubmissions } from "@/app/contests/[slug]/_util/submissions-calculator";
 import { useToast } from "@/app/_component/context/notification-context";
@@ -41,12 +41,12 @@ export function useContestantAnnex(
 
   function subscribe(client: ListenerClient) {
     return [
-      submissionService.subscribeForContest(
+      submissionListener.subscribeForContest(
         client,
         contestMetadata.id,
         receiveContestSubmission,
       ),
-      submissionService.subscribeForMember(
+      submissionListener.subscribeForMember(
         client,
         authorization!.member.id,
         receiveMemberSubmission,

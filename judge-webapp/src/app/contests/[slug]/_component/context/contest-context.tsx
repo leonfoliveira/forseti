@@ -1,5 +1,11 @@
 import React, { createContext, useContext, useEffect, useRef } from "react";
-import { contestService, listenerService } from "@/app/_composition";
+import {
+  announcementListener,
+  clarificationListener,
+  contestService,
+  leaderboardListener,
+  listenerService,
+} from "@/app/_composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { redirect } from "next/navigation";
 import { useLoadableState } from "@/app/_util/loadable-state";
@@ -17,6 +23,8 @@ import { useGuestAnnex } from "@/app/contests/[slug]/_component/context/guest-an
 import { useContestantAnnex } from "@/app/contests/[slug]/_component/context/contestant-annex";
 import { useJuryAnnex } from "@/app/contests/[slug]/_component/context/jury-annex";
 import { ContestMemberType } from "@/core/domain/enumerate/ContestMemberType";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 
 export type ContestContextType = {
   contest: ContestPublicResponseDTO;
@@ -93,10 +101,25 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
          */
         listener.current = await listenerService.get();
         await Promise.all([
-          contestService.subscribeForLeaderboard(
+          leaderboardListener.subscribeForLeaderboard(
             listener.current,
             contestMetadata.id,
             receiveLeaderboard,
+          ),
+          announcementListener.subscribeForContest(
+            listener.current,
+            contestMetadata.id,
+            receiveAnnouncement,
+          ),
+          clarificationListener.subscribeForContest(
+            listener.current,
+            contestMetadata.id,
+            receiveClarification,
+          ),
+          clarificationListener.subscribeForContestDeleted(
+            listener.current,
+            contestMetadata.id,
+            deleteClarification,
           ),
           ...(contestMetadata.loggedMemberType === ContestMemberType.GUEST
             ? guestDataFetcher.subscribe(listener.current)
@@ -138,6 +161,53 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
       return {
         ...prevState,
         leaderboard,
+      };
+    });
+  }
+
+  function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
+    /**
+     * Update contest with new announcement.
+     */
+    contestState.finish((prevState) => {
+      return {
+        ...prevState,
+        contest: {
+          ...prevState.contest,
+          announcements: [...prevState.contest.announcements, announcement],
+        },
+      };
+    });
+  }
+
+  function receiveClarification(clarification: ClarificationResponseDTO) {
+    /**
+     * Update contest with new clarification.
+     */
+    contestState.finish((prevState) => {
+      return {
+        ...prevState,
+        contest: {
+          ...prevState.contest,
+          clarifications: [...prevState.contest.clarifications, clarification],
+        },
+      };
+    });
+  }
+
+  function deleteClarification({ id }: { id: string }) {
+    /**
+     * Remove clarification from contest.
+     */
+    contestState.finish((prevState) => {
+      return {
+        ...prevState,
+        contest: {
+          ...prevState.contest,
+          clarifications: prevState.contest.clarifications.filter(
+            (c) => c.id !== id,
+          ),
+        },
       };
     });
   }

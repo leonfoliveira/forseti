@@ -20,7 +20,6 @@ import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.core.domain.entity.Member
 import io.github.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.core.service.announcement.CreateAnnouncementService
-import io.github.leonfoliveira.judge.core.service.announcement.DeleteAnnouncementService
 import io.github.leonfoliveira.judge.core.service.clarification.CreateClarificationService
 import io.github.leonfoliveira.judge.core.service.contest.CreateContestService
 import io.github.leonfoliveira.judge.core.service.contest.DeleteContestService

@@ -18,6 +18,15 @@ class StompClarificationEmitter(
         )
 
         val contest = clarification.contest
+
+        if (clarification.deletedAt != null) {
+            messagingTemplate.convertAndSend(
+                "/topic/contests/${contest.id}/clarifications/deleted",
+                mapOf("id" to clarification.id),
+            )
+            return
+        }
+
         messagingTemplate.convertAndSend(
             "/topic/contests/${contest.id}/clarifications",
             clarification.toResponseDTO(),

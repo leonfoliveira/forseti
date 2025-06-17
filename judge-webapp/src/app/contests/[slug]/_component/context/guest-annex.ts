@@ -1,4 +1,4 @@
-import { contestService, submissionService } from "@/app/_composition";
+import { contestService, submissionListener } from "@/app/_composition";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { recalculateSubmissions } from "@/app/contests/[slug]/_util/submissions-calculator";
 import { ContestContextType } from "@/app/contests/[slug]/_component/context/contest-context";
@@ -25,7 +25,7 @@ export function useGuestAnnex(
 
   function subscribe(client: ListenerClient) {
     return [
-      submissionService.subscribeForContest(
+      submissionListener.subscribeForContest(
         client,
         contestMetadata.id,
         receiveSubmission,
