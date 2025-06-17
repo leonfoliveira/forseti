@@ -75,10 +75,15 @@ export class ContestService {
   }
 
   subscribeForLeaderboard(
+    client: ListenerClient,
     contestId: string,
     cb: (leaderboard: ContestLeaderboardResponseDTO) => void,
   ): Promise<ListenerClient> {
-    return this.leaderboardListener.subscribeForLeaderboard(contestId, cb);
+    return this.leaderboardListener.subscribeForLeaderboard(
+      client,
+      contestId,
+      cb,
+    );
   }
 
   private async uploadFiles(

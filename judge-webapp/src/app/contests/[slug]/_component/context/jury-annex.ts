@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 import { UseLoadableStateReturnType } from "@/app/_util/loadable-state";
 import { ContestContextType } from "@/app/contests/[slug]/_component/context/contest-context";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 /**
  * Hook to manage data and subscriptions for a jury user.
@@ -27,9 +28,10 @@ export function useJuryAnnex(
     };
   }
 
-  function subscribe() {
+  function subscribe(client: ListenerClient) {
     return [
       submissionService.subscribeForContestFull(
+        client,
         contestMetadata.id,
         receiveSubmission,
       ),

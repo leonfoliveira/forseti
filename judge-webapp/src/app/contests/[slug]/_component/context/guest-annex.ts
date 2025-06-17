@@ -4,6 +4,7 @@ import { recalculateSubmissions } from "@/app/contests/[slug]/_util/submissions-
 import { ContestContextType } from "@/app/contests/[slug]/_component/context/contest-context";
 import { UseLoadableStateReturnType } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 /**
  * Hook to manage data and subscriptions for a guest dashboard.
@@ -22,9 +23,10 @@ export function useGuestAnnex(
     };
   }
 
-  function subscribe() {
+  function subscribe(client: ListenerClient) {
     return [
       submissionService.subscribeForContest(
+        client,
         contestMetadata.id,
         receiveSubmission,
       ),

@@ -16,17 +16,22 @@ import { StorageService } from "@/core/service/StorageService";
 import { StompLeaderboardListener } from "@/adapter/stomp/StompLeaderboardListener";
 import { ProblemService } from "@/core/service/ProblemService";
 import { AxiosProblemRepository } from "@/adapter/axios/AxiosProblemRepository";
+import { ListenerService } from "@/core/service/ListenerService";
+import { StompListenerRepository } from "@/adapter/stomp/StompListenerRepository";
 
 const storageRepository = new LocalStorageRepository();
 
 export const authorizationService = new AuthorizationService(storageRepository);
 
 const axiosClient = new AxiosClient(config.API_URL, authorizationService);
-const stompClient = new StompConnector(
+const stompConnector = new StompConnector(
   `${config.API_URL}/ws`,
   authorizationService,
 );
 
+export const listenerService = new ListenerService(
+  new StompListenerRepository(stompConnector),
+);
 export const attachmentService = new AttachmentService(
   new AxiosAttachmentRepository(axiosClient),
 );
@@ -37,7 +42,7 @@ export const authenticationService = new AuthenticationService(
 export const contestService = new ContestService(
   new AxiosContestRepository(axiosClient),
   attachmentService,
-  new StompLeaderboardListener(stompClient),
+  new StompLeaderboardListener(),
 );
 export const problemService = new ProblemService(
   new AxiosProblemRepository(axiosClient),
@@ -46,5 +51,5 @@ export const problemService = new ProblemService(
 export const storageService = new StorageService(storageRepository);
 export const submissionService = new SubmissionService(
   new AxiosSubmissionRepository(axiosClient),
-  new StompSubmissionListener(stompClient),
+  new StompSubmissionListener(),
 );

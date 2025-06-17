@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useRef } from "react";
-import { contestService } from "@/app/_composition";
+import { contestService, listenerService } from "@/app/_composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { redirect } from "next/navigation";
 import { useLoadableState } from "@/app/_util/loadable-state";
@@ -63,7 +63,7 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
   const contestantDataFetcher = useContestantAnnex(contestState);
   const juryDataFetcher = useJuryAnnex(contestState);
 
-  const listeners = useRef<ListenerClient[]>(null);
+  const listener = useRef<ListenerClient>(undefined);
 
   useEffect(() => {
     async function findContestMetadata() {
@@ -91,19 +91,21 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
          * Subscribe to real-time updates for the contest.
          * Some subscriptions are only relevant for specific dashboard types,
          */
-        listeners.current = await Promise.all([
+        listener.current = await listenerService.get();
+        await Promise.all([
           contestService.subscribeForLeaderboard(
+            listener.current,
             contestMetadata.id,
             receiveLeaderboard,
           ),
           ...(contestMetadata.loggedMemberType === ContestMemberType.GUEST
-            ? guestDataFetcher.subscribe()
+            ? guestDataFetcher.subscribe(listener.current)
             : []),
           ...(contestMetadata.loggedMemberType === ContestMemberType.CONTESTANT
-            ? contestantDataFetcher.subscribe()
+            ? contestantDataFetcher.subscribe(listener.current)
             : []),
           ...(contestMetadata.loggedMemberType === ContestMemberType.JURY
-            ? juryDataFetcher.subscribe()
+            ? juryDataFetcher.subscribe(listener.current)
             : []),
         ]);
 
@@ -144,11 +146,7 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
     /**
      * Unsubscribe from all listeners to avoid memory leaks.
      */
-    if (listeners.current) {
-      return await Promise.all(
-        listeners.current.map((listener) => listener.unsubscribe()),
-      );
-    }
+    return listener.current?.close();
   }
 
   /**

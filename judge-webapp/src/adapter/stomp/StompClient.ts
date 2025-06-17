@@ -3,22 +3,22 @@ import { StompConnector } from "@/adapter/stomp/StompConnector";
 import { CompatClient } from "@stomp/stompjs";
 
 export class StompClient implements ListenerClient {
-  private client: CompatClient | undefined;
-
-  constructor(private readonly stompConnector: StompConnector) {}
+  constructor(
+    private readonly stompConnector: StompConnector,
+    private readonly compatClient: CompatClient,
+  ) {}
 
   async subscribe<TData>(
     topic: string,
     callback: (data: TData) => void,
   ): Promise<ListenerClient> {
-    this.client = await this.stompConnector.connect();
-    await this.stompConnector.subscribe(this.client, topic, callback);
+    await this.stompConnector.subscribe(this.compatClient, topic, callback);
     return this;
   }
 
-  async unsubscribe(): Promise<void> {
-    if (this.client !== undefined) {
-      await this.stompConnector.disconnect(this.client);
+  async close(): Promise<void> {
+    if (this.compatClient !== undefined) {
+      await this.stompConnector.disconnect(this.compatClient);
     }
   }
 }

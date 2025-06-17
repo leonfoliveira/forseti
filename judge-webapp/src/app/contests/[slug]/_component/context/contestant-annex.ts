@@ -10,6 +10,7 @@ import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submis
 import { UseLoadableStateReturnType } from "@/app/_util/loadable-state";
 import { ContestContextType } from "@/app/contests/[slug]/_component/context/contest-context";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 /**
  * Hook to manage data and subscriptions for a contestant dashboard.
@@ -38,14 +39,16 @@ export function useContestantAnnex(
     };
   }
 
-  function subscribe() {
+  function subscribe(client: ListenerClient) {
     return [
       submissionService.subscribeForContest(
+        client,
         contestMetadata.id,
         receiveContestSubmission,
       ),
       submissionService.subscribeForMember(
-        authorization?.member.id as string,
+        client,
+        authorization!.member.id,
         receiveMemberSubmission,
       ),
     ];

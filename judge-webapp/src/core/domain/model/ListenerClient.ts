@@ -4,5 +4,5 @@ export interface ListenerClient {
     callback: (data: TData) => void,
   ) => Promise<ListenerClient>;
 
-  unsubscribe: () => Promise<void>;
+  close: () => Promise<void>;
 }
