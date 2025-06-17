@@ -10,7 +10,7 @@ import Joi from "joi";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { redirect, RedirectType } from "next/navigation";
+import { redirect, RedirectType, useRouter } from "next/navigation";
 import { routes } from "@/app/_routes";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { contestService } from "@/app/_composition";
@@ -31,6 +31,7 @@ const formSchema = Joi.object({
 export default function HomePage() {
   const joinContestState = useLoadableState();
   const alert = useAlert();
+  const router = useRouter();
   const t = useTranslations("home-page");
 
   const form = useForm<FormType>({
@@ -42,7 +43,7 @@ export default function HomePage() {
     try {
       await contestService.findContestMetadataBySlug(data.slug);
       joinContestState.finish();
-      redirect(routes.CONTEST_SIGN_IN(data.slug), RedirectType.push);
+      router.push(routes.CONTEST_SIGN_IN(data.slug));
     } catch (error) {
       joinContestState.fail(error, {
         [NotFoundException.name]: () => alert.warning(t("not-found")),

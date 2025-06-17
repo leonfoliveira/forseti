@@ -46,6 +46,10 @@ export function ContestTabBar() {
             t("tab-submissions"),
             routes.CONTEST_CONTESTANT_SUBMISSIONS,
           ),
+          buildNavLink(
+            t("tab-announcements"),
+            routes.CONTEST_CONTESTANT_ANNOUNCEMENTS,
+          ),
         ];
       case ContestMemberType.JURY:
         return [
