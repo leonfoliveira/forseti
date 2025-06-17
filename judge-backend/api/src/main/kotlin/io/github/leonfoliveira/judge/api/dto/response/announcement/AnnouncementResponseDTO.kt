@@ -11,6 +11,7 @@ data class AnnouncementResponseDTO(
     val createdAt: OffsetDateTime,
     val member: MemberPublicResponseDTO,
     val text: String,
+    val isDeleted: Boolean = false,
 )
 
 fun Announcement.toResponseDTO(): AnnouncementResponseDTO {
@@ -19,5 +20,6 @@ fun Announcement.toResponseDTO(): AnnouncementResponseDTO {
         createdAt = this.createdAt,
         member = this.member.toPublicResponseDTO(),
         text = this.text,
+        isDeleted = this.deletedAt != null,
     )
 }

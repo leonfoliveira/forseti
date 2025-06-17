@@ -6,4 +6,5 @@ import org.springframework.context.ApplicationEvent
 class AnnouncementEvent(
     source: Any,
     val announcement: Announcement,
+    val isDeleted: Boolean = false,
 ) : ApplicationEvent(source)

@@ -4,6 +4,7 @@ import io.github.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.core.event.AnnouncementEvent
 import io.github.leonfoliveira.judge.core.repository.AnnouncementRepository
 import io.github.leonfoliveira.judge.core.util.TransactionalEventPublisher
+import java.time.OffsetDateTime
 import java.util.UUID
 import org.springframework.stereotype.Service
 
@@ -17,11 +18,13 @@ class DeleteAnnouncementService(
             NotFoundException("Could not find announcement with id $id")
         }
 
-        announcementRepository.deleteById(id)
+        announcement.deletedAt = OffsetDateTime.now()
+        announcementRepository.save(announcement)
         transactionalEventPublisher.publish(
             AnnouncementEvent(
                 this,
                 announcement,
+                isDeleted = true
             )
         )
     }

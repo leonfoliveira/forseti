@@ -15,6 +15,7 @@ data class ClarificationResponseDTO(
     val problem: ProblemPublicResponseDTO?,
     val text: String,
     val children: List<ClarificationResponseDTO>,
+    val isDeleted: Boolean = false,
 )
 
 fun Clarification.toResponseDTO(): ClarificationResponseDTO {
@@ -25,5 +26,6 @@ fun Clarification.toResponseDTO(): ClarificationResponseDTO {
         problem = this.problem?.toPublicResponseDTO(),
         text = this.text,
         children = this.children.map { it.toResponseDTO() },
+        isDeleted = this.deletedAt != null,
     )
 }
