@@ -1,6 +1,8 @@
 package io.github.leonfoliveira.judge.core.service.clarification
 
 import io.github.leonfoliveira.judge.core.domain.entity.Clarification
+import io.github.leonfoliveira.judge.core.domain.entity.Member
+import io.github.leonfoliveira.judge.core.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.core.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.core.event.ClarificationEvent
 import io.github.leonfoliveira.judge.core.repository.ClarificationRepository
@@ -44,6 +46,12 @@ class CreateClarificationService(
             }
         }
 
+        if (member.type == Member.Type.CONTESTANT && input.parentId != null) {
+            throw ForbiddenException("Contestants cannot create clarifications with a parent")
+        }
+        if (member.type == Member.Type.JURY && input.parentId == null) {
+            throw ForbiddenException("Jury members cannot create clarifications without a parent")
+        }
 
         val clarification = Clarification(
             contest = contest,
