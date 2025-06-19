@@ -3,6 +3,7 @@ import { MemberType } from "@/core/domain/enumerate/MemberType";
 export type Authorization = {
   member: AuthorizationMember;
   accessToken: string;
+  expiresAt: string;
 };
 
 export type AuthorizationMember = {

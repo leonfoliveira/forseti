@@ -7,7 +7,6 @@ import { useTranslations } from "next-intl";
  */
 export function ErrorPage() {
   const t = useTranslations("_component.page.error-page");
-
   return (
     <div className="h-dvh flex justify-center items-center">
       <div className="text-center">

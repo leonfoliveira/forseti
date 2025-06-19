@@ -1,7 +1,12 @@
-import { contestService, submissionService } from "@/app/_composition";
+import {
+  announcementListener,
+  clarificationListener,
+  contestService,
+  submissionListener,
+  submissionService
+} from "@/app/_composition";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
-import { recalculateSubmissions } from "@/app/contests/[slug]/_util/submissions-calculator";
-import { useToast } from "@/app/_component/context/notification-context";
+import { useAlert, useToast } from "@/app/_component/context/notification-context";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useTranslations } from "next-intl";
 import { useAuthorization } from "@/app/_component/context/authorization-context";
@@ -10,6 +15,9 @@ import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submis
 import { UseLoadableStateReturnType } from "@/app/_util/loadable-state";
 import { ContestContextType } from "@/app/contests/[slug]/_component/context/contest-context";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
+import { merge } from "@/app/contests/[slug]/_util/entity-merger";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 /**
  * Hook to manage data and subscriptions for a contestant dashboard.
@@ -19,6 +27,7 @@ export function useContestantAnnex(
 ) {
   const contestMetadata = useContestMetadata();
   const { authorization } = useAuthorization();
+  const alert = useAlert();
   const toast = useToast();
   const { formatSubmissionAnswer } = useContestFormatter();
 
@@ -38,31 +47,38 @@ export function useContestantAnnex(
     };
   }
 
-  function subscribe() {
+  function subscribe(listenerClient: ListenerClient) {
     return [
-      submissionService.subscribeForContest(
+      submissionListener.subscribeForContest(
+        listenerClient,
         contestMetadata.id,
         receiveContestSubmission,
       ),
-      submissionService.subscribeForMember(
-        authorization?.member.id as string,
+      submissionListener.subscribeForMember(
+        listenerClient,
+        authorization!.member.id,
         receiveMemberSubmission,
+      ),
+      clarificationListener.subscribeForMemberChildren(
+        listenerClient,
+        authorization!.member.id,
+        receiveClarificationChild,
+      ),
+      announcementListener.subscribeForContest(
+        listenerClient,
+        contestMetadata.id,
+        receiveAnnouncement,
       ),
     ];
   }
 
   function receiveContestSubmission(submission: SubmissionPublicResponseDTO) {
     contestState.finish((prev) => {
-      return {
-        ...prev,
-        contestant: {
-          ...prev.contestant,
-          submissions: recalculateSubmissions(
-            prev.contestant.submissions,
-            submission,
-          ),
-        },
-      };
+      prev.contestant.submissions = merge(
+        prev.contestant.submissions,
+        submission,
+      );
+      return { ...prev };
     });
   }
 
@@ -72,16 +88,11 @@ export function useContestantAnnex(
     }
 
     contestState.finish((prev) => {
-      return {
-        ...prev,
-        contestant: {
-          ...prev.contestant,
-          memberSubmissions: recalculateSubmissions(
-            prev.contestant.memberSubmissions,
-            submission,
-          ),
-        },
-      };
+      prev.contestant.memberSubmissions = merge(
+        prev.contestant.memberSubmissions,
+        submission,
+      ) as SubmissionFullResponseDTO[];
+      return { ...prev };
     });
 
     const text = t("submission-toast-problem", {
@@ -113,17 +124,20 @@ export function useContestantAnnex(
 
   function addSubmission(submission: SubmissionFullResponseDTO) {
     contestState.finish((prev) => {
-      return {
-        ...prev,
-        contestant: {
-          ...prev.contestant,
-          memberSubmissions: recalculateSubmissions(
-            prev.contestant.memberSubmissions,
-            submission,
-          ),
-        },
-      };
+      prev.contestant.memberSubmissions = merge(
+        prev.contestant.memberSubmissions,
+        submission,
+      );
+      return { ...prev };
     });
+  }
+
+  function receiveClarificationChild() {
+    toast.info(t("clarification-toast-text"));
+  }
+
+  function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
+    alert.warning(announcement.text);
   }
 
   return { fetch, subscribe };

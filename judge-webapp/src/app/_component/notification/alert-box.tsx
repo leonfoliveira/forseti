@@ -12,7 +12,7 @@ type Props = {
  */
 export function AlertBox({ items, onClose }: Props) {
   return (
-    <div className="fixed top-0 w-full p-2 z-50">
+    <div className="fixed top-0 w-full p-2 z-50 pointer-events-none">
       <div className="max-w-xl m-auto flex flex-col gap-1">
         {items.map((alert) => (
           <Alert

@@ -1,5 +1,9 @@
 package io.github.leonfoliveira.judge.api.controller
 
+import io.github.leonfoliveira.judge.api.dto.response.announcement.AnnouncementResponseDTO
+import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
+import io.github.leonfoliveira.judge.api.dto.response.clarification.ClarificationResponseDTO
+import io.github.leonfoliveira.judge.api.dto.response.clarification.toResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.ContestFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.ContestMetadataResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.ContestPublicOutputDTO
@@ -10,14 +14,19 @@ import io.github.leonfoliveira.judge.api.dto.response.submission.SubmissionFullR
 import io.github.leonfoliveira.judge.api.dto.response.submission.SubmissionPublicResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
+import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.core.domain.entity.Member
 import io.github.leonfoliveira.judge.core.domain.exception.ForbiddenException
+import io.github.leonfoliveira.judge.core.service.announcement.CreateAnnouncementService
+import io.github.leonfoliveira.judge.core.service.clarification.CreateClarificationService
 import io.github.leonfoliveira.judge.core.service.contest.CreateContestService
 import io.github.leonfoliveira.judge.core.service.contest.DeleteContestService
 import io.github.leonfoliveira.judge.core.service.contest.FindContestService
 import io.github.leonfoliveira.judge.core.service.contest.UpdateContestService
+import io.github.leonfoliveira.judge.core.service.dto.input.announcement.CreateAnnouncementInputDTO
+import io.github.leonfoliveira.judge.core.service.dto.input.clarification.CreateClarificationInputDTO
 import io.github.leonfoliveira.judge.core.service.dto.input.contest.CreateContestInputDTO
 import io.github.leonfoliveira.judge.core.service.dto.input.contest.UpdateContestInputDTO
 import io.github.leonfoliveira.judge.core.service.dto.output.ContestLeaderboardOutputDTO
@@ -44,6 +53,8 @@ class ContestController(
     private val findContestService: FindContestService,
     private val deleteContestService: DeleteContestService,
     private val findSubmissionService: FindSubmissionService,
+    private val createAnnouncementService: CreateAnnouncementService,
+    private val createClarificationService: CreateClarificationService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -179,5 +190,33 @@ class ContestController(
         contestAuthFilter.check(id)
         val submissions = findSubmissionService.findAllByContest(id)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
+    }
+
+    @PostMapping("/{id}/announcements")
+    @Private(Member.Type.JURY)
+    @Transactional
+    fun createAnnouncement(
+        @PathVariable id: UUID,
+        @RequestBody body: CreateAnnouncementInputDTO,
+    ): ResponseEntity<AnnouncementResponseDTO> {
+        logger.info("[POST] /v1/contests/{id}/announcements - id: $id, body: $body")
+        contestAuthFilter.check(id)
+        val authorization = AuthorizationContextUtil.getAuthorization()
+        val announcement = createAnnouncementService.create(id, authorization.id, body)
+        return ResponseEntity.ok(announcement.toResponseDTO())
+    }
+
+    @PostMapping("/{id}/clarifications")
+    @Private(Member.Type.CONTESTANT, Member.Type.JURY)
+    @Transactional
+    fun createClarification(
+        @PathVariable id: UUID,
+        @RequestBody body: CreateClarificationInputDTO,
+    ): ResponseEntity<ClarificationResponseDTO> {
+        logger.info("[POST] /v1/contests/{id}/clarifications - id: $id, body: $body")
+        contestAuthFilter.check(id)
+        val authorization = AuthorizationContextUtil.getAuthorization()
+        val clarification = createClarificationService.create(id, authorization.id, body)
+        return ResponseEntity.ok(clarification.toResponseDTO())
     }
 }

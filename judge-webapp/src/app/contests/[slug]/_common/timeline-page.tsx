@@ -24,7 +24,7 @@ export function TimelinePage({ submissions }: Props) {
   const { authorization } = useAuthorization();
 
   const { formatLanguage } = useContestFormatter();
-  const t = useTranslations("contests.[slug]._component.page.timeline-page");
+  const t = useTranslations("contests.[slug]._common.timeline-page");
 
   return (
     <div>

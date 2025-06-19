@@ -1,12 +1,15 @@
-import { contestService, submissionService } from "@/app/_composition";
+import { announcementListener, clarificationListener, contestService, submissionListener } from "@/app/_composition";
 import { recalculateSubmissions } from "@/app/contests/[slug]/_util/submissions-calculator";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { useToast } from "@/app/_component/context/notification-context";
+import { useAlert, useToast } from "@/app/_component/context/notification-context";
 import { useTranslations } from "next-intl";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 import { UseLoadableStateReturnType } from "@/app/_util/loadable-state";
 import { ContestContextType } from "@/app/contests/[slug]/_component/context/contest-context";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 /**
  * Hook to manage data and subscriptions for a jury user.
@@ -14,6 +17,8 @@ import { ContestContextType } from "@/app/contests/[slug]/_component/context/con
 export function useJuryAnnex(
   contestState: UseLoadableStateReturnType<ContestContextType>,
 ) {
+  const alert = useAlert();
+
   const contestMetadata = useContestMetadata();
   const toast = useToast();
   const t = useTranslations("contests.[slug]._component.context.jury-annex");
@@ -27,11 +32,22 @@ export function useJuryAnnex(
     };
   }
 
-  function subscribe() {
+  function subscribe(listenerClient: ListenerClient) {
     return [
-      submissionService.subscribeForContestFull(
+      submissionListener.subscribeForContestFull(
+        listenerClient,
         contestMetadata.id,
         receiveSubmission,
+      ),
+      clarificationListener.subscribeForContest(
+        listenerClient,
+        contestMetadata.id,
+        receiveClarification,
+      ),
+      announcementListener.subscribeForContest(
+        listenerClient,
+        contestMetadata.id,
+        receiveAnnouncement,
       ),
     ];
   }
@@ -53,6 +69,16 @@ export function useJuryAnnex(
     if (submission.status === SubmissionStatus.FAILED) {
       toast.error(t("submission-failed"));
     }
+  }
+
+  function receiveClarification(clarification: ClarificationResponseDTO) {
+    if (clarification.parentId === undefined) {
+      toast.info(t("clarification-toast-text"));
+    }
+  }
+
+  function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
+    alert.warning(announcement.text);
   }
 
   return { fetch, subscribe };

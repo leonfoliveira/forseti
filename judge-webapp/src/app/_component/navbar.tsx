@@ -64,9 +64,11 @@ export function Navbar({
                   {authorization?.member.name || t("guest-name")}
                 </summary>
                 <ul className="bg-base-100 rounded-t-none right-0 !mt-0">
-                  <li className="menu-title">
-                    {t(`contest-member-type.${contestMemberType}`)}
-                  </li>
+                  {contestMemberType && (
+                    <li className="menu-title">
+                      {t(`contest-member-type.${contestMemberType}`)}
+                    </li>
+                  )}
                   <li>
                     <a onClick={signOut} className="text-nowrap">
                       {authorization?.member

@@ -2,9 +2,9 @@ import { Authorization } from "@/core/domain/model/Authorization";
 import { StorageRepository } from "@/core/repository/StorageRepository";
 
 export class AuthorizationService {
-  constructor(private readonly storageRepository: StorageRepository) {}
-
   static STORAGE_KEY = "authorization";
+
+  constructor(private readonly storageRepository: StorageRepository) {}
 
   setAuthorization(authorization: Authorization): void {
     this.storageRepository.setKey(
@@ -14,7 +14,17 @@ export class AuthorizationService {
   }
 
   getAuthorization(): Authorization | undefined {
-    return this.storageRepository.getKey(AuthorizationService.STORAGE_KEY);
+    let authorization = this.storageRepository.getKey<Authorization>(
+      AuthorizationService.STORAGE_KEY,
+    );
+    if (
+      authorization &&
+      new Date(authorization.expiresAt).getTime() <= new Date().getTime()
+    ) {
+      this.deleteAuthorization();
+      authorization = undefined;
+    }
+    return authorization;
   }
 
   deleteAuthorization(): void {

@@ -108,7 +108,9 @@ services:
       dockerfile: Dockerfile
     environment:
       NODE_ENV: production
+      NEXT_PUBLIC_VERSION: ${VERSION}
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+      NEXT_PUBLIC_LOCALE: ${NEXT_PUBLIC_LOCALE:-en}
     ports:
       - "80:3000"
     networks:

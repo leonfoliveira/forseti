@@ -22,7 +22,7 @@ type Props = {
 export function ProblemPage({ contestantStatus }: Props) {
   const { contest } = useContest();
 
-  const t = useTranslations("contests.[slug]._component.page.problems-page");
+  const t = useTranslations("contests.[slug]._common.problems-page");
 
   return (
     <div>

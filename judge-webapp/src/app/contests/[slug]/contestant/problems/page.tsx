@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { ProblemPage } from "@/app/contests/[slug]/_component/page/problems-page";
+import { ProblemPage } from "@/app/contests/[slug]/_common/problems-page";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
 
@@ -25,7 +25,7 @@ export default function ContestantProblemsPage() {
     > = contest.problems.reduce((acc, problem) => {
       return { ...acc, [problem.id]: { ...answerBlock } };
     }, {});
-    
+
     submissions.forEach((submission) => {
       status[submission.problem.id][submission.answer]++;
     });

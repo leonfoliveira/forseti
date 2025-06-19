@@ -5,15 +5,13 @@ import { AttachmentService } from "@/core/service/AttachmentService";
 import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 import { Attachment } from "@/core/domain/model/Attachment";
-import { ListenerClient } from "@/core/domain/model/ListenerClient";
-import { LeaderboardListener } from "@/core/listener/LeaderboardListener";
-import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { CreateAnnouncementRequestDTO } from "@/core/repository/dto/request/CreateAnnouncementRequestDTO";
+import { CreateClarificationRequestDTO } from "@/core/repository/dto/request/CreateClarificationRequestDTO";
 
 export class ContestService {
   constructor(
     private readonly contestRepository: ContestRepository,
     private readonly attachmentService: AttachmentService,
-    private readonly leaderboardListener: LeaderboardListener,
   ) {}
 
   async createContest(input: CreateContestInputDTO) {
@@ -74,11 +72,15 @@ export class ContestService {
     return await this.contestRepository.findAllContestFullSubmissions(id);
   }
 
-  subscribeForLeaderboard(
-    contestId: string,
-    cb: (leaderboard: ContestLeaderboardResponseDTO) => void,
-  ): Promise<ListenerClient> {
-    return this.leaderboardListener.subscribeForLeaderboard(contestId, cb);
+  async createAnnouncement(id: string, inputDTO: CreateAnnouncementRequestDTO) {
+    return await this.contestRepository.createAnnouncement(id, inputDTO);
+  }
+
+  async createClarification(
+    id: string,
+    inputDTO: CreateClarificationRequestDTO,
+  ) {
+    return await this.contestRepository.createClarification(id, inputDTO);
   }
 
   private async uploadFiles(

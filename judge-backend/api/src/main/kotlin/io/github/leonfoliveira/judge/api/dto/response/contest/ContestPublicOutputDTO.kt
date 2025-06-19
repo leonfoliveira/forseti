@@ -1,5 +1,9 @@
 package io.github.leonfoliveira.judge.api.dto.response.contest
 
+import io.github.leonfoliveira.judge.api.dto.response.announcement.AnnouncementResponseDTO
+import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
+import io.github.leonfoliveira.judge.api.dto.response.clarification.ClarificationResponseDTO
+import io.github.leonfoliveira.judge.api.dto.response.clarification.toResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.member.MemberPublicResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.member.toPublicResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.problem.ProblemPublicResponseDTO
@@ -18,6 +22,8 @@ data class ContestPublicOutputDTO(
     val endAt: OffsetDateTime,
     val members: List<MemberPublicResponseDTO>,
     val problems: List<ProblemPublicResponseDTO>,
+    val clarifications: List<ClarificationResponseDTO>,
+    val announcements: List<AnnouncementResponseDTO>,
 )
 
 fun Contest.toPublicOutputDTO(): ContestPublicOutputDTO {
@@ -30,5 +36,7 @@ fun Contest.toPublicOutputDTO(): ContestPublicOutputDTO {
         endAt = this.endAt,
         members = this.members.map { it.toPublicResponseDTO() },
         problems = this.problems.map { it.toPublicResponseDTO() },
+        clarifications = this.clarifications.map { it.toResponseDTO() },
+        announcements = this.announcements.map { it.toResponseDTO() },
     )
 }

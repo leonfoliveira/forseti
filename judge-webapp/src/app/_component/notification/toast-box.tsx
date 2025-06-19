@@ -12,7 +12,7 @@ type Props = {
  */
 export function ToastBox({ items, onClose }: Props) {
   return (
-    <div className="fixed bottom-0 w-full p-2 z-30">
+    <div className="fixed bottom-0 w-full p-2 z-30 pointer-events-none">
       <div className="max-w-xl m-l-auto flex flex-col gap-1">
         {items.map((toast) => (
           <Toast

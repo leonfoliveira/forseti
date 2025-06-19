@@ -45,6 +45,7 @@ A fullstack application for running programming contests
 | JWT_ROOT_EXPIRATION | 10800 | Time in seconds for a root token to expire |
 | ROOT_PASSWORD | | Root member password |
 | NEXT_PUBLIC_API_URL | | API url |
+| NEXT_PUBLIC_LOCALE | en | Webapp language |
 
 2. Start services
 ```

@@ -8,6 +8,10 @@ import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { CreateAnnouncementRequestDTO } from "@/core/repository/dto/request/CreateAnnouncementRequestDTO";
+import { CreateClarificationRequestDTO } from "@/core/repository/dto/request/CreateClarificationRequestDTO";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 
 export class AxiosContestRepository implements ContestRepository {
   private basePath = "/v1/contests";
@@ -109,6 +113,28 @@ export class AxiosContestRepository implements ContestRepository {
   ): Promise<SubmissionFullResponseDTO[]> {
     const response = await this.axiosClient.get<SubmissionFullResponseDTO[]>(
       `${this.basePath}/${id}/submissions/full`,
+    );
+    return response.data;
+  }
+
+  async createAnnouncement(
+    id: string,
+    requestDTO: CreateAnnouncementRequestDTO,
+  ): Promise<AnnouncementResponseDTO> {
+    const response = await this.axiosClient.post<AnnouncementResponseDTO>(
+      `${this.basePath}/${id}/announcements`,
+      { data: requestDTO },
+    );
+    return response.data;
+  }
+
+  async createClarification(
+    id: string,
+    requestDTO: CreateClarificationRequestDTO,
+  ): Promise<ClarificationResponseDTO> {
+    const response = await this.axiosClient.post<ClarificationResponseDTO>(
+      `${this.basePath}/${id}/clarifications`,
+      { data: requestDTO },
     );
     return response.data;
   }

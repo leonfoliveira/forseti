@@ -1,9 +1,12 @@
-import { contestService, submissionService } from "@/app/_composition";
+import { announcementListener, contestService, submissionListener } from "@/app/_composition";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { recalculateSubmissions } from "@/app/contests/[slug]/_util/submissions-calculator";
 import { ContestContextType } from "@/app/contests/[slug]/_component/context/contest-context";
 import { UseLoadableStateReturnType } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { useAlert } from "@/app/_component/context/notification-context";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 /**
  * Hook to manage data and subscriptions for a guest dashboard.
@@ -11,6 +14,7 @@ import { useContestMetadata } from "@/app/contests/[slug]/_component/context/con
 export function useGuestAnnex(
   contestState: UseLoadableStateReturnType<ContestContextType>,
 ) {
+  const alert = useAlert();
   const contestMetadata = useContestMetadata();
 
   async function fetch(): Promise<ContestContextType["guest"]> {
@@ -22,11 +26,17 @@ export function useGuestAnnex(
     };
   }
 
-  function subscribe() {
+  function subscribe(listenerClient: ListenerClient) {
     return [
-      submissionService.subscribeForContest(
+      submissionListener.subscribeForContest(
+        listenerClient,
         contestMetadata.id,
         receiveSubmission,
+      ),
+      announcementListener.subscribeForContest(
+        listenerClient,
+        contestMetadata.id,
+        receiveAnnouncement,
       ),
     ];
   }
@@ -44,6 +54,10 @@ export function useGuestAnnex(
         },
       };
     });
+  }
+
+  function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
+    alert.warning(announcement.text);
   }
 
   return { fetch, subscribe };

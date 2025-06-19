@@ -43,7 +43,7 @@ export function useContestStatusWatcherBatch<
     return () => {
       timeOuts.forEach((timeout) => clearTimeout(timeout));
     };
-  }, [contests]);
+  }, []);
 
   return statuses;
 }
@@ -57,7 +57,7 @@ export function useContestStatusWatcher<
     if (!contest) {
       return;
     }
-    
+
     setStatus(ContestUtil.getStatus(contest));
 
     const now = Date.now();
@@ -83,7 +83,7 @@ export function useContestStatusWatcher<
       if (startTimeout) clearTimeout(startTimeout);
       if (endTimeout) clearTimeout(endTimeout);
     };
-  }, [contest]);
+  }, []);
 
   return status;
 }

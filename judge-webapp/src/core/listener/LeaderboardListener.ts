@@ -3,7 +3,8 @@ import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/co
 
 export interface LeaderboardListener {
   subscribeForLeaderboard: (
+    client: ListenerClient,
     contestId: string,
     cb: (leaderboard: ContestLeaderboardResponseDTO) => void,
-  ) => Promise<ListenerClient>;
+  ) => Promise<void>;
 }
