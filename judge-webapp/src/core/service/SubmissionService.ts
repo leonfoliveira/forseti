@@ -1,13 +1,9 @@
 import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
-import { SubmissionListener } from "@/core/listener/SubmissionListener";
 import { UpdateSubmissionAnswerRequestDTO } from "@/core/repository/dto/request/UpdateSubmissionAnswerRequestDTO";
 
 export class SubmissionService {
-  constructor(
-    private readonly submissionRepository: SubmissionRepository,
-    private readonly submissionListener: SubmissionListener,
-  ) {}
+  constructor(private readonly submissionRepository: SubmissionRepository) {}
 
   async findAllFullForMember(): Promise<SubmissionFullResponseDTO[]> {
     return await this.submissionRepository.findAllFullForMember();

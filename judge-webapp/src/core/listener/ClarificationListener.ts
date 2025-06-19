@@ -6,11 +6,17 @@ export interface ClarificationListener {
     client: ListenerClient,
     contestId: string,
     cb: (clarification: ClarificationResponseDTO) => void,
-  ) => Promise<ListenerClient>;
+  ) => Promise<void>;
+
+  subscribeForMemberChildren: (
+    client: ListenerClient,
+    memberId: string,
+    cb: (clarification: ClarificationResponseDTO) => void,
+  ) => Promise<void>;
 
   subscribeForContestDeleted: (
     client: ListenerClient,
     contestId: string,
     cb: (payload: { id: string }) => void,
-  ) => Promise<ListenerClient>;
+  ) => Promise<void>;
 }

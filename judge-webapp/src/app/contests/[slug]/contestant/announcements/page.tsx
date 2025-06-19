@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import AnnouncementPage from "@/app/contests/[slug]/_component/page/announcement-page";
+import AnnouncementsPage from "@/app/contests/[slug]/_common/announcements-page";
 
 export default function ContestantAnnouncementsPage() {
-  return <AnnouncementPage />;
+  return <AnnouncementsPage />;
 }

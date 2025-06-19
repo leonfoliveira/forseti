@@ -47,6 +47,10 @@ export function ContestTabBar() {
             routes.CONTEST_CONTESTANT_SUBMISSIONS,
           ),
           buildNavLink(
+            t("tab-clarifications"),
+            routes.CONTEST_CONTESTANT_CLARIFICATIONS,
+          ),
+          buildNavLink(
             t("tab-announcements"),
             routes.CONTEST_CONTESTANT_ANNOUNCEMENTS,
           ),
@@ -56,12 +60,28 @@ export function ContestTabBar() {
           buildNavLink(t("tab-leaderboard"), routes.CONTEST_JURY_LEADERBOARD),
           buildNavLink(t("tab-problems"), routes.CONTEST_JURY_PROBLEMS),
           buildNavLink(t("tab-submissions"), routes.CONTEST_JURY_SUBMISSIONS),
+          buildNavLink(
+            t("tab-clarifications"),
+            routes.CONTEST_JURY_CLARIFICATIONS,
+          ),
+          buildNavLink(
+            t("tab-announcements"),
+            routes.CONTEST_JURY_ANNOUNCEMENTS,
+          ),
         ];
       default:
         return [
           buildNavLink(t("tab-leaderboard"), routes.CONTEST_GUEST_LEADERBOARD),
           buildNavLink(t("tab-problems"), routes.CONTEST_GUEST_PROBLEMS),
           buildNavLink(t("tab-timeline"), routes.CONTEST_GUEST_TIMELINE),
+          buildNavLink(
+            t("tab-clarifications"),
+            routes.CONTEST_GUEST_CLARIFICATIONS,
+          ),
+          buildNavLink(
+            t("tab-announcements"),
+            routes.CONTEST_GUEST_ANNOUNCEMENTS,
+          ),
         ];
     }
   }

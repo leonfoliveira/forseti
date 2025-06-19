@@ -7,8 +7,7 @@ export class StompLeaderboardListener implements LeaderboardListener {
     client: ListenerClient,
     contestId: string,
     cb: (submission: ContestLeaderboardResponseDTO) => void,
-  ): Promise<ListenerClient> {
+  ): Promise<void> {
     await client.subscribe(`/topic/contests/${contestId}/leaderboard`, cb);
-    return client;
   }
 }

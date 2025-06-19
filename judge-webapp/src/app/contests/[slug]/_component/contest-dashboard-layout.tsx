@@ -3,7 +3,7 @@
 import React from "react";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
-import { WaitPage } from "@/app/contests/[slug]/_component/page/wait-page";
+import { WaitPage } from "@/app/contests/[slug]/_common/wait-page";
 import { ContestTabBar } from "@/app/contests/[slug]/_component/contest-tab-bar";
 import { ContestProvider } from "@/app/contests/[slug]/_component/context/contest-context";
 import { ContestUtil } from "@/core/util/contest-util";

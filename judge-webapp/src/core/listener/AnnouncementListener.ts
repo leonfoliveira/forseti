@@ -6,5 +6,5 @@ export interface AnnouncementListener {
     client: ListenerClient,
     contestId: string,
     cb: (announcement: AnnouncementResponseDTO) => void,
-  ) => Promise<ListenerClient>;
+  ) => Promise<void>;
 }

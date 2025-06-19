@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useEffect, useRef } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 import {
   announcementListener,
   clarificationListener,
   contestService,
   leaderboardListener,
-  listenerService,
+  listenerClientFactory,
 } from "@/app/_composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { redirect } from "next/navigation";
@@ -16,7 +16,6 @@ import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
-import { ListenerClient } from "@/core/domain/model/ListenerClient";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { useAuthorization } from "@/app/_component/context/authorization-context";
 import { useGuestAnnex } from "@/app/contests/[slug]/_component/context/guest-annex";
@@ -25,6 +24,8 @@ import { useJuryAnnex } from "@/app/contests/[slug]/_component/context/jury-anne
 import { ContestMemberType } from "@/core/domain/enumerate/ContestMemberType";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
+import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
+import { merge } from "@/app/contests/[slug]/_util/entity-merger";
 
 export type ContestContextType = {
   contest: ContestPublicResponseDTO;
@@ -71,11 +72,16 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
   const contestantDataFetcher = useContestantAnnex(contestState);
   const juryDataFetcher = useJuryAnnex(contestState);
 
-  const listener = useRef<ListenerClient>(undefined);
-
   useEffect(() => {
+    const listenerClient = listenerClientFactory.create();
+
     async function findContestMetadata() {
+      console.debug("Started fetching contest data");
       contestState.start();
+      /**
+       * Close any existing listener before opening a new one.
+       * This is important to avoid memory leaks.
+       */
       try {
         /**
          * Fetch all necessary data for the contest in parallel.
@@ -99,36 +105,37 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
          * Subscribe to real-time updates for the contest.
          * Some subscriptions are only relevant for specific dashboard types,
          */
-        listener.current = await listenerService.get();
+        console.debug("Connecting to contest listeners");
+        await listenerClient.connect();
         await Promise.all([
           leaderboardListener.subscribeForLeaderboard(
-            listener.current,
+            listenerClient,
             contestMetadata.id,
             receiveLeaderboard,
           ),
           announcementListener.subscribeForContest(
-            listener.current,
+            listenerClient,
             contestMetadata.id,
             receiveAnnouncement,
           ),
           clarificationListener.subscribeForContest(
-            listener.current,
+            listenerClient,
             contestMetadata.id,
             receiveClarification,
           ),
           clarificationListener.subscribeForContestDeleted(
-            listener.current,
+            listenerClient,
             contestMetadata.id,
             deleteClarification,
           ),
           ...(contestMetadata.loggedMemberType === ContestMemberType.GUEST
-            ? guestDataFetcher.subscribe(listener.current)
+            ? guestDataFetcher.subscribe(listenerClient)
             : []),
           ...(contestMetadata.loggedMemberType === ContestMemberType.CONTESTANT
-            ? contestantDataFetcher.subscribe(listener.current)
+            ? contestantDataFetcher.subscribe(listenerClient)
             : []),
           ...(contestMetadata.loggedMemberType === ContestMemberType.JURY
-            ? juryDataFetcher.subscribe(listener.current)
+            ? juryDataFetcher.subscribe(listenerClient)
             : []),
         ]);
 
@@ -139,7 +146,9 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
           contestant: data[3],
           jury: data[4],
         });
+        console.debug("Finished fetching contest data");
       } catch (error) {
+        console.error("Error fetching contest data:", error);
         contestState.fail(error, {
           [NotFoundException.name]: () => redirect(routes.NOT_FOUND),
         });
@@ -149,7 +158,7 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
     findContestMetadata();
 
     return () => {
-      unsubscribe();
+      listenerClient.disconnect();
     };
   }, [contestMetadata.id, authorization?.member.type]);
 
@@ -158,10 +167,8 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
      * Update leaderboard
      */
     contestState.finish((prevState) => {
-      return {
-        ...prevState,
-        leaderboard,
-      };
+      prevState.leaderboard = leaderboard;
+      return { ...prevState };
     });
   }
 
@@ -170,13 +177,11 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
      * Update contest with new announcement.
      */
     contestState.finish((prevState) => {
-      return {
-        ...prevState,
-        contest: {
-          ...prevState.contest,
-          announcements: [...prevState.contest.announcements, announcement],
-        },
-      };
+      prevState.contest.announcements = merge(
+        prevState.contest.announcements,
+        announcement,
+      );
+      return { ...prevState };
     });
   }
 
@@ -185,12 +190,24 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
      * Update contest with new clarification.
      */
     contestState.finish((prevState) => {
+      if (clarification.parentId) {
+        const parent = findClarification(
+          prevState.contest.clarifications,
+          clarification.parentId,
+        );
+        if (parent) {
+          parent.children = merge(parent.children, clarification);
+          return { ...prevState };
+        }
+      }
+
+      prevState.contest.clarifications = merge(
+        prevState.contest.clarifications,
+        clarification,
+      );
+
       return {
         ...prevState,
-        contest: {
-          ...prevState.contest,
-          clarifications: [...prevState.contest.clarifications, clarification],
-        },
       };
     });
   }
@@ -200,23 +217,10 @@ export function ContestProvider({ children }: { children: React.ReactNode }) {
      * Remove clarification from contest.
      */
     contestState.finish((prevState) => {
-      return {
-        ...prevState,
-        contest: {
-          ...prevState.contest,
-          clarifications: prevState.contest.clarifications.filter(
-            (c) => c.id !== id,
-          ),
-        },
-      };
+      prevState.contest.clarifications =
+        prevState.contest.clarifications.filter((c) => c.id !== id);
+      return { ...prevState };
     });
-  }
-
-  async function unsubscribe() {
-    /**
-     * Unsubscribe from all listeners to avoid memory leaks.
-     */
-    return listener.current?.close();
   }
 
   /**

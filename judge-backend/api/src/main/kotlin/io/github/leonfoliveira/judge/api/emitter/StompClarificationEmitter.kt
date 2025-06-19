@@ -31,5 +31,12 @@ class StompClarificationEmitter(
             "/topic/contests/${contest.id}/clarifications",
             clarification.toResponseDTO(),
         )
+
+        if (clarification.parent != null) {
+            messagingTemplate.convertAndSend(
+                "/topic/members/${clarification.parent!!.member.id}/clarifications/children",
+                clarification.toResponseDTO(),
+            )
+        }
     }
 }

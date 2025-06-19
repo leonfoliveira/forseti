@@ -48,7 +48,11 @@ export function Alert({ className, alert, onClose }: Props) {
 
   return (
     <div
-      className={cls("alert cursor-pointer", variant, className)}
+      className={cls(
+        "alert cursor-pointer pointer-events-auto",
+        variant,
+        className,
+      )}
       onClick={onClose}
       data-testid="alert"
     >

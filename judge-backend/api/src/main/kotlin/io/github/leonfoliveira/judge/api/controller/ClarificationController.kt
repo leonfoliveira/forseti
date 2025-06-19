@@ -6,7 +6,7 @@ import io.github.leonfoliveira.judge.core.service.clarification.DeleteClarificat
 import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController
 class ClarificationController(
     val deleteClarificationService: DeleteClarificationService,
 ) {
-    @GetMapping("/{id}")
+    @DeleteMapping("/{id}")
     @Private(Member.Type.JURY)
     @Transactional(readOnly = true)
-    fun deleteClarifications(@PathVariable id: UUID): ResponseEntity<Unit> {
+    fun deleteClarificationById(@PathVariable id: UUID): ResponseEntity<Unit> {
         deleteClarificationService.delete(id)
         return ResponseEntity.noContent().build()
     }

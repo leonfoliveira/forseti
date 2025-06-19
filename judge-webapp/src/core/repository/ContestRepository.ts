@@ -6,6 +6,10 @@ import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { CreateAnnouncementRequestDTO } from "@/core/repository/dto/request/CreateAnnouncementRequestDTO";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { CreateClarificationRequestDTO } from "@/core/repository/dto/request/CreateClarificationRequestDTO";
+import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 
 export interface ContestRepository {
   createContest(
@@ -39,4 +43,14 @@ export interface ContestRepository {
   findAllContestFullSubmissions(
     id: string,
   ): Promise<SubmissionFullResponseDTO[]>;
+
+  createAnnouncement(
+    id: string,
+    requestDTO: CreateAnnouncementRequestDTO,
+  ): Promise<AnnouncementResponseDTO>;
+
+  createClarification(
+    id: string,
+    requestDTO: CreateClarificationRequestDTO,
+  ): Promise<ClarificationResponseDTO>;
 }

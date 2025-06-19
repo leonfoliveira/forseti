@@ -49,7 +49,11 @@ export function ContestMetadataProvider({
       default:
         return ContestMemberType.GUEST;
     }
-  }, [metadataState.data?.id]);
+  }, [
+    authorization?.member.contestId,
+    metadataState.data?.id,
+    authorization?.member.type,
+  ]);
 
   useEffect(() => {
     /**

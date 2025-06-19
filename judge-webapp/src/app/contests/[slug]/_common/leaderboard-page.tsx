@@ -18,7 +18,7 @@ export function LeaderboardPage() {
   const { authorization } = useAuthorization();
   const { contest, leaderboard } = useContest();
 
-  const t = useTranslations("contests.[slug]._component.page.leaderboard-page");
+  const t = useTranslations("contests.[slug]._common.leaderboard-page");
 
   return (
     <div>

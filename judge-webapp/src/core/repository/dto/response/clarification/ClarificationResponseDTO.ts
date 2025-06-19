@@ -6,6 +6,7 @@ export type ClarificationResponseDTO = {
   createdAt: string;
   member: MemberPublicResponseDTO;
   problem?: ProblemPublicResponseDTO;
+  parentId?: string;
   text: string;
   children: ClarificationResponseDTO[];
 };

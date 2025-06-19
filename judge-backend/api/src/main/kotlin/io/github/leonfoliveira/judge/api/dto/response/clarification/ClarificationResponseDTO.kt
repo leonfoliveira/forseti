@@ -13,6 +13,7 @@ data class ClarificationResponseDTO(
     val createdAt: OffsetDateTime,
     val member: MemberPublicResponseDTO,
     val problem: ProblemPublicResponseDTO?,
+    val parentId: UUID? = null,
     val text: String,
     val children: List<ClarificationResponseDTO>,
 )
@@ -23,6 +24,7 @@ fun Clarification.toResponseDTO(): ClarificationResponseDTO {
         createdAt = this.createdAt,
         member = this.member.toPublicResponseDTO(),
         problem = this.problem?.toPublicResponseDTO(),
+        parentId = this.parent?.id,
         text = this.text,
         children = this.children.map { it.toResponseDTO() },
     )

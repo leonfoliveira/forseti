@@ -8,26 +8,23 @@ export class StompSubmissionListener implements SubmissionListener {
     client: ListenerClient,
     contestId: string,
     cb: (submission: SubmissionPublicResponseDTO) => void,
-  ): Promise<ListenerClient> {
+  ): Promise<void> {
     await client.subscribe(`/topic/contests/${contestId}/submissions`, cb);
-    return client;
   }
 
   async subscribeForContestFull(
     client: ListenerClient,
     contestId: string,
     cb: (submission: SubmissionFullResponseDTO) => void,
-  ): Promise<ListenerClient> {
+  ): Promise<void> {
     await client.subscribe(`/topic/contests/${contestId}/submissions/full`, cb);
-    return client;
   }
 
   async subscribeForMember(
     client: ListenerClient,
     memberId: string,
     cb: (submission: SubmissionPublicResponseDTO) => void,
-  ): Promise<ListenerClient> {
+  ): Promise<void> {
     await client.subscribe(`/topic/members/${memberId}/submissions`, cb);
-    return client;
   }
 }

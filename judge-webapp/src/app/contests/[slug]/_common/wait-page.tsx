@@ -18,7 +18,7 @@ export function WaitPage() {
   const clockRef = useWaitClock(new Date(contest.startAt), () =>
     router.push(routes.CONTEST_SIGN_IN(contest.slug)),
   );
-  const t = useTranslations("contests.[slug]._component.page.wait-page");
+  const t = useTranslations("contests.[slug]._common.wait-page");
 
   return (
     <div className="h-dvh flex justify-center items-center">

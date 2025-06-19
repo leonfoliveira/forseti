@@ -6,5 +6,5 @@ export interface LeaderboardListener {
     client: ListenerClient,
     contestId: string,
     cb: (leaderboard: ContestLeaderboardResponseDTO) => void,
-  ) => Promise<ListenerClient>;
+  ) => Promise<void>;
 }

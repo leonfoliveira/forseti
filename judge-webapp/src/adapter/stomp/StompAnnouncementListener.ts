@@ -7,8 +7,7 @@ export class StompAnnouncementListener implements AnnouncementListener {
     client: ListenerClient,
     contestId: string,
     cb: (announcement: AnnouncementResponseDTO) => void,
-  ): Promise<ListenerClient> {
+  ): Promise<void> {
     await client.subscribe(`/topic/contests/${contestId}/announcements`, cb);
-    return client;
   }
 }

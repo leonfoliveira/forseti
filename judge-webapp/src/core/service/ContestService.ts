@@ -5,13 +5,13 @@ import { AttachmentService } from "@/core/service/AttachmentService";
 import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 import { Attachment } from "@/core/domain/model/Attachment";
-import { LeaderboardListener } from "@/core/listener/LeaderboardListener";
+import { CreateAnnouncementRequestDTO } from "@/core/repository/dto/request/CreateAnnouncementRequestDTO";
+import { CreateClarificationRequestDTO } from "@/core/repository/dto/request/CreateClarificationRequestDTO";
 
 export class ContestService {
   constructor(
     private readonly contestRepository: ContestRepository,
     private readonly attachmentService: AttachmentService,
-    private readonly leaderboardListener: LeaderboardListener,
   ) {}
 
   async createContest(input: CreateContestInputDTO) {
@@ -70,6 +70,17 @@ export class ContestService {
 
   async findAllContestFullSubmissions(id: string) {
     return await this.contestRepository.findAllContestFullSubmissions(id);
+  }
+
+  async createAnnouncement(id: string, inputDTO: CreateAnnouncementRequestDTO) {
+    return await this.contestRepository.createAnnouncement(id, inputDTO);
+  }
+
+  async createClarification(
+    id: string,
+    inputDTO: CreateClarificationRequestDTO,
+  ) {
+    return await this.contestRepository.createClarification(id, inputDTO);
   }
 
   private async uploadFiles(
