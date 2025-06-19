@@ -47,12 +47,13 @@ class OAuthJwtAdapter(
 
         val token = jwt.sign(algorithm)
         return Authorization(
-            member = AuthorizationMember(
-                id = member.id,
-                contestId = member.contest?.id,
-                name = member.name,
-                type = member.type,
-            ),
+            member =
+                AuthorizationMember(
+                    id = member.id,
+                    contestId = member.contest?.id,
+                    name = member.name,
+                    type = member.type,
+                ),
             accessToken = token,
             expiresAt = expiresAt.atOffset(OffsetDateTime.now().offset),
         )

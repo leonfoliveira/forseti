@@ -9,9 +9,9 @@ import io.github.leonfoliveira.judge.core.repository.ClarificationRepository
 import io.github.leonfoliveira.judge.core.repository.ContestRepository
 import io.github.leonfoliveira.judge.core.service.dto.input.clarification.CreateClarificationInputDTO
 import io.github.leonfoliveira.judge.core.util.TransactionalEventPublisher
-import java.util.UUID
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class CreateClarificationService(
@@ -25,26 +25,30 @@ class CreateClarificationService(
         contestId: UUID,
         memberId: UUID,
         input: CreateClarificationInputDTO,
-    ) : Clarification {
+    ): Clarification {
         logger.info("Creating clarification for contest with id: $contestId")
 
-        val contest = contestRepository.findById(contestId).orElseThrow {
-            NotFoundException("Could not find contest with id $contestId")
-        }
+        val contest =
+            contestRepository.findById(contestId).orElseThrow {
+                NotFoundException("Could not find contest with id $contestId")
+            }
         if (!contest.hasStarted()) {
             throw NotFoundException("Contest with id $contestId has not started yet")
         }
-        val member = contest.members.find { it.id == memberId }
-            ?: throw NotFoundException("Could not find member with id $memberId")
-        val problem = input.problemId?.let {
-            contest.problems.find { it.id == input.problemId }
-                ?: throw NotFoundException("Could not find problem with id ${input.problemId} in contest $contestId")
-        }
-        val parent = input.parentId?.let {
-            clarificationRepository.findById(it).orElseThrow {
-                NotFoundException("Could not find parent announcement with id $it")
+        val member =
+            contest.members.find { it.id == memberId }
+                ?: throw NotFoundException("Could not find member with id $memberId")
+        val problem =
+            input.problemId?.let {
+                contest.problems.find { it.id == input.problemId }
+                    ?: throw NotFoundException("Could not find problem with id ${input.problemId} in contest $contestId")
             }
-        }
+        val parent =
+            input.parentId?.let {
+                clarificationRepository.findById(it).orElseThrow {
+                    NotFoundException("Could not find parent announcement with id $it")
+                }
+            }
 
         if (member.type == Member.Type.CONTESTANT && input.parentId != null) {
             throw ForbiddenException("Contestants cannot create clarifications with a parent")
@@ -53,13 +57,14 @@ class CreateClarificationService(
             throw ForbiddenException("Jury members cannot create clarifications without a parent")
         }
 
-        val clarification = Clarification(
-            contest = contest,
-            member = member,
-            text = input.text,
-            problem = problem,
-            parent = parent
-        )
+        val clarification =
+            Clarification(
+                contest = contest,
+                member = member,
+                text = input.text,
+                problem = problem,
+                parent = parent,
+            )
         clarificationRepository.save(clarification)
         transactionalEventPublisher.publish(ClarificationEvent(this, clarification))
         logger.info("Clarification created successfully")

@@ -7,9 +7,9 @@ import io.github.leonfoliveira.judge.core.repository.AnnouncementRepository
 import io.github.leonfoliveira.judge.core.repository.ContestRepository
 import io.github.leonfoliveira.judge.core.service.dto.input.announcement.CreateAnnouncementInputDTO
 import io.github.leonfoliveira.judge.core.util.TransactionalEventPublisher
-import java.util.UUID
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class CreateAnnouncementService(
@@ -23,23 +23,26 @@ class CreateAnnouncementService(
         contestId: UUID,
         memberId: UUID,
         input: CreateAnnouncementInputDTO,
-    ) : Announcement {
+    ): Announcement {
         logger.info("Creating announcement for contest with id: $contestId")
 
-        val contest = contestRepository.findById(contestId).orElseThrow {
-            NotFoundException("Could not find contest with id $contestId")
-        }
+        val contest =
+            contestRepository.findById(contestId).orElseThrow {
+                NotFoundException("Could not find contest with id $contestId")
+            }
         if (!contest.hasStarted()) {
             throw NotFoundException("Contest with id $contestId has not started yet")
         }
-        val member = contest.members.find { it.id == memberId}
-            ?: throw NotFoundException("Could not find member with id $memberId")
+        val member =
+            contest.members.find { it.id == memberId }
+                ?: throw NotFoundException("Could not find member with id $memberId")
 
-        val announcement = Announcement(
-            contest = contest,
-            member = member,
-            text = input.text,
-        )
+        val announcement =
+            Announcement(
+                contest = contest,
+                member = member,
+                text = input.text,
+            )
         announcementRepository.save(announcement)
         transactionalEventPublisher.publish(AnnouncementEvent(this, announcement))
         logger.info("Announcement created successfully")

@@ -1,11 +1,7 @@
 package io.github.leonfoliveira.judge.api.emitter
 
 import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
-import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
-import io.github.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
 import io.github.leonfoliveira.judge.core.domain.entity.Announcement
-import io.github.leonfoliveira.judge.core.domain.entity.Submission
-import io.github.leonfoliveira.judge.core.service.contest.FindContestService
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component

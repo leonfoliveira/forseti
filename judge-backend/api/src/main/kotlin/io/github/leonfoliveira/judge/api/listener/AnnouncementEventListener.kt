@@ -1,9 +1,7 @@
 package io.github.leonfoliveira.judge.api.listener
 
 import io.github.leonfoliveira.judge.api.emitter.StompAnnouncementEmitter
-import io.github.leonfoliveira.judge.api.emitter.StompSubmissionEmitter
 import io.github.leonfoliveira.judge.core.event.AnnouncementEvent
-import io.github.leonfoliveira.judge.core.event.SubmissionEvent
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component

@@ -11,11 +11,11 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.annotations.SQLRestriction
+import org.hibernate.annotations.Where
 import org.hibernate.envers.Audited
 import org.hibernate.type.SqlTypes
 import java.time.OffsetDateTime
 import java.util.UUID
-import org.hibernate.annotations.Where
 
 @Entity
 @Table(name = "contest")
@@ -71,7 +71,7 @@ class Contest(
     var clarifications: List<Clarification> = mutableListOf(),
     @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    var announcements: List<Announcement> = mutableListOf()
+    var announcements: List<Announcement> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
     fun hasStarted(): Boolean {
         return !startAt.isAfter(OffsetDateTime.now())

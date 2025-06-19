@@ -8,16 +8,16 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import java.time.OffsetDateTime
-import java.util.UUID
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
+import java.time.OffsetDateTime
+import java.util.UUID
 
 @Entity
 @Table(name = "clarification")
 @Audited(withModifiedFlag = true)
 @SQLRestriction("deleted_at is null")
-class Clarification (
+class Clarification(
     id: UUID = UUID.randomUUID(),
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),

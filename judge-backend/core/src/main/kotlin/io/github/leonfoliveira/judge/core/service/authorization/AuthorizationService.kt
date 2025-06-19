@@ -9,9 +9,9 @@ import io.github.leonfoliveira.judge.core.port.JwtAdapter
 import io.github.leonfoliveira.judge.core.repository.ContestRepository
 import io.github.leonfoliveira.judge.core.repository.MemberRepository
 import io.github.leonfoliveira.judge.core.service.dto.input.authorization.AuthenticateInputDTO
-import java.util.UUID
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class AuthorizationService(
