@@ -2,9 +2,9 @@ package io.github.leonfoliveira.judge.api.security.websocket
 
 import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.api.util.AuthorizationExtractor
-import io.github.leonfoliveira.judge.core.domain.entity.Member
-import io.github.leonfoliveira.judge.core.domain.exception.ForbiddenException
-import io.github.leonfoliveira.judge.core.domain.exception.UnauthorizedException
+import io.github.leonfoliveira.judge.common.domain.entity.Member
+import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
+import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel

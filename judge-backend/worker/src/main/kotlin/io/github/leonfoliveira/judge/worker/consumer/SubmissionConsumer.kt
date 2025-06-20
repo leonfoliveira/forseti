@@ -1,10 +1,11 @@
 package io.github.leonfoliveira.judge.worker.consumer
 
 import io.awspring.cloud.sqs.annotation.SqsListener
-import io.github.leonfoliveira.judge.adapter.aws.message.SqsMessage
-import io.github.leonfoliveira.judge.adapter.aws.message.SqsSubmissionPayload
-import io.github.leonfoliveira.judge.core.service.submission.RunSubmissionService
+import io.github.leonfoliveira.judge.common.adapter.aws.SqsConsumer
+import io.github.leonfoliveira.judge.common.adapter.aws.message.SqsMessage
+import io.github.leonfoliveira.judge.common.adapter.aws.message.SqsSubmissionPayload
 import io.github.leonfoliveira.judge.worker.feign.ApiClient
+import io.github.leonfoliveira.judge.worker.service.RunSubmissionService
 import org.springframework.stereotype.Component
 
 @Component

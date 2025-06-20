@@ -2,7 +2,7 @@ package io.github.leonfoliveira.judge.api.dto.response.announcement
 
 import io.github.leonfoliveira.judge.api.dto.response.member.MemberPublicResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.member.toPublicResponseDTO
-import io.github.leonfoliveira.judge.core.domain.entity.Announcement
+import io.github.leonfoliveira.judge.common.domain.entity.Announcement
 import java.time.OffsetDateTime
 import java.util.UUID
 

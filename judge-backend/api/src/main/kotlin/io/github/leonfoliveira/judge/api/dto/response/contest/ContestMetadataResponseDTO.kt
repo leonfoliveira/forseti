@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.api.dto.response.contest
 
-import io.github.leonfoliveira.judge.core.domain.entity.Contest
-import io.github.leonfoliveira.judge.core.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.entity.Contest
+import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import java.time.OffsetDateTime
 import java.util.UUID
 

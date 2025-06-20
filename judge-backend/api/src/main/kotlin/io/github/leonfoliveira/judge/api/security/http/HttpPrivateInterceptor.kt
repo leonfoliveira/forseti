@@ -2,8 +2,8 @@ package io.github.leonfoliveira.judge.api.security.http
 
 import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.api.util.Private
-import io.github.leonfoliveira.judge.core.domain.exception.ForbiddenException
-import io.github.leonfoliveira.judge.core.domain.exception.UnauthorizedException
+import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
+import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory

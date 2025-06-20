@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.judge.api.dto.response.member
 
-import io.github.leonfoliveira.judge.core.domain.entity.Member
+import io.github.leonfoliveira.judge.common.domain.entity.Member
 import java.util.UUID
 
 data class MemberPublicResponseDTO(

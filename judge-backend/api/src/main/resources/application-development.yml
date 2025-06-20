@@ -1,39 +1,11 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/judge
-    username: judge
-    password: judge
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    show-sql: false
+  config:
+    import: classpath:common-development.yml
   cloud:
     aws:
-      endpoint: http://localhost:4566
-      region:
-        static: us-east-1
-      credentials:
-        access-key: judge
-        secret-key: judge
-      stack:
-        auto: false
-      s3:
-        bucket: judge
       sqs:
-        submission-queue: judge-submission-queue
         submission-failed-queue: judge-submission-failed-queue
-security:
-  jwt:
-    secret: judge
-    expiration: 86400
-    root-expiration: 86400
-  root:
-    password: judge
-  auto-judge:
-    password: judge
 server:
   cors:
     allowed-origins: http://localhost:3000
   port: 8080
-external:
-  loki:
-    url: http://localhost:3100/loki/api/v1/push

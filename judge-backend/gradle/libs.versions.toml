@@ -68,10 +68,7 @@ mockk = [
     "mockk",
     "springmockk"
 ]
-spring-api = [
-    "spring-boot-starter-websocket"
-]
-spring-core = [
+spring = [
     "spring-cloud-starter-s3",
     "spring-cloud-starter-sqs",
     "spring-cloud-starter-feign",
@@ -81,6 +78,7 @@ spring-core = [
     "spring-boot-starter-security",
     "spring-boot-starter-validation",
     "spring-boot-starter-web",
+    "spring-boot-starter-websocket",
 ]
 testcontainers = [
     "testcontainers-junit-jupiter",

@@ -1,0 +1,28 @@
+package io.github.leonfoliveira.judge.common.domain.entity
+
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Table
+import org.hibernate.envers.Audited
+import java.time.OffsetDateTime
+import java.util.UUID
+
+@Entity
+@Table(name = "attachment")
+@Audited(withModifiedFlag = true)
+class Attachment(
+    id: UUID = UUID.randomUUID(),
+    createdAt: OffsetDateTime = OffsetDateTime.now(),
+    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    deletedAt: OffsetDateTime? = null,
+    /**
+     * Original filename of the attachment. This is important for compiling Java code.
+     */
+    @Column(nullable = false)
+    val filename: String,
+    /**
+     * The original content type of the attachment.
+     */
+    @Column(nullable = false)
+    val contentType: String,
+) : BaseEntity(id, createdAt, updatedAt, deletedAt)

@@ -8,8 +8,8 @@ import io.github.leonfoliveira.judge.api.dto.response.member.MemberFullResponseD
 import io.github.leonfoliveira.judge.api.dto.response.member.toFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.problem.ProblemFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.problem.toFullResponseDTO
-import io.github.leonfoliveira.judge.core.domain.entity.Contest
-import io.github.leonfoliveira.judge.core.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.entity.Contest
+import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import java.time.OffsetDateTime
 import java.util.UUID
 

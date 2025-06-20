@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.judge.api.dto.response
 
-import io.github.leonfoliveira.judge.core.domain.entity.Attachment
+import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import java.util.UUID
 
 data class AttachmentResponseDTO(

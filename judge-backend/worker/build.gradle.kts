@@ -3,19 +3,13 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":adapter"))
-    implementation(libs.micrometer.tracing.bridge.otel)
-
-    developmentOnly(libs.spring.boot.dev.tools)
+    implementation(project(":common"))
+    implementation(libs.java.diff.utils)
+    implementation(libs.opencsv)
 }
 
 tasks.bootJar {
     archiveFileName.set("judge-worker.jar")
-}
-
-tasks.bootRun {
-    dependsOn(":core:flywayMigrate")
 }
 
 kover {

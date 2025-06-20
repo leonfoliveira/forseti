@@ -2,7 +2,7 @@ package io.github.leonfoliveira.judge.worker.feign
 
 import feign.RequestInterceptor
 import feign.RequestTemplate
-import io.github.leonfoliveira.judge.core.service.authorization.AuthorizationService
+import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
 import org.springframework.context.annotation.Configuration
 
 @Configuration

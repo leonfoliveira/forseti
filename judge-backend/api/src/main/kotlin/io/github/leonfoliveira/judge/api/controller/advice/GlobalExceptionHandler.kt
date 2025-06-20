@@ -1,10 +1,10 @@
 package io.github.leonfoliveira.judge.api.controller.advice
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
-import io.github.leonfoliveira.judge.core.domain.exception.BusinessException
-import io.github.leonfoliveira.judge.core.domain.exception.ForbiddenException
-import io.github.leonfoliveira.judge.core.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.core.domain.exception.UnauthorizedException
+import io.github.leonfoliveira.judge.common.domain.exception.BusinessException
+import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
+import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
+import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import jakarta.validation.ConstraintViolationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus

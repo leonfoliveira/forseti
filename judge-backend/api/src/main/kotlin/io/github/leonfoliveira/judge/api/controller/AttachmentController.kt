@@ -3,7 +3,7 @@ package io.github.leonfoliveira.judge.api.controller
 import io.github.leonfoliveira.judge.api.dto.response.AttachmentResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.github.leonfoliveira.judge.api.util.Private
-import io.github.leonfoliveira.judge.core.service.attachment.AttachmentService
+import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
 import org.slf4j.LoggerFactory
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
