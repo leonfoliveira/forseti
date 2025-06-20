@@ -1,6 +1,6 @@
 #!/bin/bash
 
-awslocal sqs create-queue --queue-name "judge-submission-dlq"
+awslocal sqs create-queue --queue-name "submission-dlq"
 
 createQueue() {
     local queue_name="$1"
@@ -13,7 +13,7 @@ createQueue() {
         }"
 }    
 
-createQueue "judge-submission-failed-queue" "judge-submission-dlq"
-createQueue "judge-submission-queue" "judge-submission-failed-queue"
+createQueue "submission-failed-queue" "submission-dlq"
+createQueue "submission-queue" "submission-failed-queue"
 
 exit 0

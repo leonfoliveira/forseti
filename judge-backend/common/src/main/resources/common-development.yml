@@ -27,6 +27,3 @@ security:
     password: judge
   auto-judge:
     password: judge
-external:
-  loki:
-    url: http://localhost:3100/loki/api/v1/push
