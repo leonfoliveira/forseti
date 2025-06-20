@@ -1,0 +1,13 @@
+CLOCK = 15
+DB_URL = "postgresql://localhost:5432/judge"
+DB_USER = "judge"
+DB_PASSWORD = "judge"
+DB_NAME = "judge"
+AWS_REGION = "us-east-1"
+AWS_ENDPOINT = "http://localhost:4566"
+AWS_ACCESS_KEY_ID = "judge"
+AWS_SECRET_ACCESS_KEY = "judge"
+AWS_S3_BUCKET = "judge"
+AWS_SQS_SUBMISSION_QUEUE = "submission-queue"
+AWS_SQS_SUBMISSION_FAILED_QUEUE = "submission-failed-queue"
+AWS_SQS_SUBMISSION_DLQ = "submission-dlq"

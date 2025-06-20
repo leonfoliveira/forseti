@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_DB: judge
     ports:
       - "5432:5432"
     volumes:
@@ -19,44 +19,18 @@ services:
     container_name: judge-localstack
     image: gresau/localstack-persist:4.4.0
     environment:
-      SERVICES: s3,sqs    
+      SERVICES: s3,sqs
     volumes:
       - localstack_data:/persisted-data
       - ./localstack-bootstrap:/etc/localstack/init/ready.d
     networks:
       - judge-network
-  
-  loki:
-    container_name: judge-loki
-    image: grafana/loki:3.4.1    
-    ports:
-      - "3100:3100"
-    volumes:
-      - loki_data:/var/lib/loki
-    command: -config.file=/etc/loki/local-config.yaml
-    networks:
-      - judge-network
-  
-  grafana:
-    container_name: judge-grafana
-    image: grafana/grafana-oss:12.0.2
-    environment:
-      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
-    ports:
-      - "4000:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana-provisioning:/etc/grafana/provisioning
-    networks:
-      - judge-network
-    depends_on:
-      - loki
 
   migration:
     container_name: judge-migration
     image: flyway/flyway:11.9.2-alpine
     environment:
-      FLYWAY_URL: ${DB_URL}
+      FLYWAY_URL: jdbc:postgresql://judge-postgres:5432/judge
       FLYWAY_USER: ${DB_USER}
       FLYWAY_PASSWORD: ${DB_PASSWORD}
     volumes:
@@ -74,22 +48,22 @@ services:
       dockerfile: api.Dockerfile
     environment:
       SPRING_PROFILES_ACTIVE: production
-      DB_URL: ${DB_URL}
+      DB_URL: jdbc:postgresql://judge-postgres:5432/judge
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      AWS_REGION: ${AWS_REGION}
-      AWS_ENDPOINT: ${AWS_ENDPOINT}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
-      AWS_SQS_SUBMISSION_QUEUE: ${AWS_SQS_SUBMISSION_QUEUE}
-      AWS_SQS_SUBMISSION_FAILED_QUEUE: ${AWS_SQS_SUBMISSION_FAILED_QUEUE}      
+      AWS_REGION: us-east-1
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_ACCESS_KEY_ID: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      AWS_S3_BUCKET: judge
+      AWS_SQS_SUBMISSION_QUEUE: submission-queue
+      AWS_SQS_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRATION: ${JWT_EXPIRATION}
       JWT_ROOT_EXPIRATION: ${JWT_ROOT_EXPIRATION}
       ROOT_PASSWORD: ${ROOT_PASSWORD}
       AUTO_JUDGE_PASSWORD: ${AUTO_JUDGE_PASSWORD}
-      LOKI_URL: ${LOKI_URL}
+      LOKI_URL: http://loki:3100/loki/api/v1/push
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -108,26 +82,26 @@ services:
       context: ../../judge-backend
       dockerfile: worker.Dockerfile
     deploy:
-      replicas: 1
+      replicas: 0
     environment:
       SPRING_PROFILES_ACTIVE: production
-      DB_URL: ${DB_URL}
+      DB_URL: jdbc:postgresql://judge-postgres:5432/judge
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      AWS_REGION: ${AWS_REGION}
-      AWS_ENDPOINT: ${AWS_ENDPOINT}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
-      AWS_SQS_SUBMISSION_QUEUE: ${AWS_SQS_SUBMISSION_QUEUE}
+      AWS_REGION: us-east-1
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_ACCESS_KEY_ID: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      AWS_S3_BUCKET: judge
+      AWS_SQS_SUBMISSION_QUEUE: submission-queue
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRATION: ${JWT_EXPIRATION}
       JWT_ROOT_EXPIRATION: ${JWT_ROOT_EXPIRATION}
       ROOT_PASSWORD: ${ROOT_PASSWORD}
       AUTO_JUDGE_PASSWORD: ${AUTO_JUDGE_PASSWORD}
-      LOKI_URL: ${LOKI_URL}
-      MAX_CONCURRENT_SUBMISSIONS: ${MAX_CONCURRENT_SUBMISSIONS}
-      API_URL: ${API_URL}
+      LOKI_URL: http://loki:3100/loki/api/v1/push
+      MAX_CONCURRENT_SUBMISSIONS: 1
+      API_URL: http://api:8080
     networks:
       - judge-network
     depends_on:
@@ -151,6 +125,45 @@ services:
     depends_on:
       - api
 
+  loki:
+    container_name: judge-loki
+    image: grafana/loki:3.4.1
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki_data:/var/lib/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - judge-network
+
+  prometheus:
+    container_name: judge-prometheus
+    image: prom/prometheus:v3.4.1
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus-bootstrap/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command: --config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus
+    networks:
+      - judge-network
+  
+  grafana:
+    container_name: judge-grafana
+    image: grafana/grafana-oss:12.0.2
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana-bootstrap/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - judge-network
+    depends_on:
+      - loki
+      - prometheus
+
 networks:
   judge-network:
     driver: bridge
@@ -159,4 +172,5 @@ volumes:
   postgres_data:
   localstack_data:
   loki_data:
+  prometheus_data:
   grafana_data:

@@ -4,7 +4,7 @@ spring:
   cloud:
     aws:
       sqs:
-        submission-failed-queue: judge-submission-failed-queue
+        submission-failed-queue: submission-failed-queue
 server:
   cors:
     allowed-origins: http://localhost:3000
