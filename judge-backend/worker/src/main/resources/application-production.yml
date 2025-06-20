@@ -19,8 +19,6 @@ spring:
       s3:
         bucket: ${AWS_S3_BUCKET}
       sqs:
-        listener:
-          concurrency: ${AWS_SQS_LISTENER_CONCURRENCY}
         submission-queue: ${AWS_SQS_SUBMISSION_QUEUE}
         submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE}
 security:
@@ -33,3 +31,7 @@ security:
 external:
   url:
     api: ${API_URL}
+  loki:
+    url: http://loki:3100/loki/api/v1/push
+submission:
+  max-concurrent: ${MAX_CONCURRENT_SUBMISSIONS}

@@ -12,7 +12,11 @@ class SubmissionConsumer(
     private val runSubmissionService: RunSubmissionService,
     private val apiClient: ApiClient,
 ) : SqsConsumer<SqsSubmissionPayload>() {
-    @SqsListener("\${spring.cloud.aws.sqs.submission-queue}")
+    @SqsListener(
+        "\${spring.cloud.aws.sqs.submission-queue}",
+        maxConcurrentMessages = "\${submission.max-concurrent}",
+        maxMessagesPerPoll = "\${submission.max-concurrent}",
+    )
     override fun receiveMessage(message: SqsMessage<SqsSubmissionPayload>) {
         super.receiveMessage(message)
     }

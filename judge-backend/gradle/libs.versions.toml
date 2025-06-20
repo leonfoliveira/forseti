@@ -11,6 +11,8 @@ kotest-spring = "1.3.0"
 kotlin = "2.1.20"
 kover = "0.9.1"
 ktlint = "12.1.1"
+logstash = "8.1"
+loki-logback = "2.0.0"
 micrometer = "1.5.0"
 mockk = "1.13.17"
 opencsv = "5.11"
@@ -32,6 +34,8 @@ kotest-assertions-core = { module = 'io.kotest:kotest-assertions-core', version.
 kotest-runner-junit5 = { module = 'io.kotest:kotest-runner-junit5', version.ref = "kotest" }
 kotest-spring = { module = 'io.kotest.extensions:kotest-extensions-spring', version.ref = "kotest-spring" }
 kotlin-reflect = { module = 'org.jetbrains.kotlin:kotlin-reflect', version.ref = "kotlin" }
+logstash-logback-encoder = { module = 'net.logstash.logback:logstash-logback-encoder', version.ref = "logstash" }
+loki-logback-appender = { module = 'com.github.loki4j:loki-logback-appender', version.ref = "loki-logback" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 micrometer-tracing-bridge-otel = { module = "io.micrometer:micrometer-tracing-bridge-otel", version.ref = "micrometer" }
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
@@ -65,8 +69,6 @@ mockk = [
     "springmockk"
 ]
 spring-api = [
-    "spring-boot-starter-actuator",
-    "spring-boot-starter-web",
     "spring-boot-starter-websocket"
 ]
 spring-core = [
@@ -74,9 +76,11 @@ spring-core = [
     "spring-cloud-starter-sqs",
     "spring-cloud-starter-feign",
     "spring-boot-starter",
+    "spring-boot-starter-actuator",
     "spring-boot-starter-data-jpa",
     "spring-boot-starter-security",
     "spring-boot-starter-validation",
+    "spring-boot-starter-web",
 ]
 testcontainers = [
     "testcontainers-junit-jupiter",

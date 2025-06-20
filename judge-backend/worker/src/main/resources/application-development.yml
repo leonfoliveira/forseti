@@ -19,8 +19,11 @@ spring:
       s3:
         bucket: judge
       sqs:
-        submission-queue: judge-submission-queue
-        submission-failed-queue: judge-submission-failed-queue
+        listener:
+          max-number-of-messages: 1
+          concurrency: 1
+        submission-queue: submission-queue
+        submission-failed-queue: submission-failed-queue
 security:
   jwt:
     secret: judge
@@ -31,3 +34,7 @@ security:
 external:
   api:
     url: http://localhost:8080
+  loki:
+    url: http://localhost:3100/loki/api/v1/push
+submission:
+  max-concurrent: 1

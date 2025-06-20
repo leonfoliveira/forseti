@@ -13,3 +13,5 @@ spring:
           time_zone: UTC
     flyway:
       enabled: false
+server:
+  port: ${WORKER_PORT:8081}

@@ -30,6 +30,8 @@ subprojects {
         implementation(rootProject.libs.bundles.spring.core)
         implementation(rootProject.libs.kotlin.reflect)
         implementation(rootProject.libs.jackson.module.kotlin)
+        implementation(rootProject.libs.logstash.logback.encoder)
+        implementation(rootProject.libs.loki.logback.appender)
 
         testImplementation(rootProject.libs.bundles.mockk)
         testImplementation(rootProject.libs.spring.boot.starter.test)

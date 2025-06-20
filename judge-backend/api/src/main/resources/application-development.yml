@@ -34,3 +34,6 @@ server:
   cors:
     allowed-origins: http://localhost:3000
   port: 8080
+external:
+  loki:
+    url: http://localhost:3100/loki/api/v1/push
