@@ -1,5 +1,7 @@
 name: judge-production
-services:  
+services:
+
+  ## Infrastructure
 
   postgres:
     container_name: judge-postgres
@@ -14,6 +16,12 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - judge-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d judge"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   localstack:
     container_name: judge-localstack
@@ -26,29 +34,33 @@ services:
     networks:
       - judge-network
 
+  ## Application
+
   migration:
     container_name: judge-migration
     image: flyway/flyway:11.9.2-alpine
     environment:
-      FLYWAY_URL: jdbc:postgresql://judge-postgres:5432/judge
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/judge
       FLYWAY_USER: ${DB_USER}
       FLYWAY_PASSWORD: ${DB_PASSWORD}
+    command: migrate
     volumes:
       - ../../judge-backend/common/src/main/resources/migration:/flyway/sql
     networks:
       - judge-network
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   api:
     container_name: judge-api
-    image: judge-api:${VERSION}    
+    image: judge-api:1.0
     build:
       context: ../../judge-backend
       dockerfile: api.Dockerfile
     environment:
       SPRING_PROFILES_ACTIVE: production
-      DB_URL: jdbc:postgresql://judge-postgres:5432/judge
+      DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       AWS_REGION: us-east-1
@@ -65,27 +77,32 @@ services:
       AUTO_JUDGE_PASSWORD: ${AUTO_JUDGE_PASSWORD}
       LOKI_URL: http://loki:3100/loki/api/v1/push
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      PORT: 8080
     ports:
       - "8080:8080"
     networks:
       - judge-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     depends_on:
-      - localstack
-      - migration
+      localstack:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
   
   worker:    
     container_name: judge-worker
-    image: judge-worker:${VERSION}    
+    image: judge-worker:1.0
     build:
       context: ../../judge-backend
       dockerfile: worker.Dockerfile
-    deploy:
-      replicas: 0
     environment:
       SPRING_PROFILES_ACTIVE: production
-      DB_URL: jdbc:postgresql://judge-postgres:5432/judge
+      DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       AWS_REGION: us-east-1
@@ -102,39 +119,103 @@ services:
       LOKI_URL: http://loki:3100/loki/api/v1/push
       MAX_CONCURRENT_SUBMISSIONS: 1
       API_URL: http://api:8080
+      PORT: 8080
+      CPU_PER_SUBMISSION: ${WORKER_CPU_PER_SUBMISSION}
+      MAX_CPU: ${WORKER_MAX_CPU}
+      MAX_MEMORY: ${WORKER_MAX_MEMORY}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - judge-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     depends_on:
-      - api
+      localstack:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
 
-  webapp:
-    image: judge-web:${VERSION}
-    container_name: judge-web
+  webapp:    
+    container_name: judge-webapp
+    image: judge-web:1.0
     build:
-      context: ../../judge-api
+      context: ../../judge-webapp
       dockerfile: Dockerfile
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_VERSION: ${VERSION}
+      NEXT_PUBLIC_VERSION: 1.0
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
       NEXT_PUBLIC_LOCALE: ${NEXT_PUBLIC_LOCALE}
     ports:
       - "80:80"
     networks:
       - judge-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/healthcheck || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     depends_on:
-      - api
+      api:
+        condition: service_healthy
+
+  # Monitoring
 
   loki:
     container_name: judge-loki
-    image: grafana/loki:3.4.1
-    ports:
-      - "3100:3100"
+    image: grafana/loki:3.4.4
     volumes:
       - loki_data:/var/lib/loki
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - judge-network
+  
+  promtail:
+    container_name: judge-promtail
+    image: grafana/promtail:3.4.4
+    volumes:
+      - /var/log:/var/log
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./promtail-bootstrap/config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - judge-network
+    depends_on:
+      loki:
+        condition: service_started
+
+  postgres-exporter:
+    container_name: judge-postgres-exporter
+    image: prometheuscommunity/postgres-exporter:v0.17.1
+    environment:
+      DATA_SOURCE_NAME: postgresql://${DB_USER}:${DB_PASSWORD}@judge-postgres:5432/judge?sslmode=disable
+    networks:
+      - judge-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+  
+  localstack-exporter:
+    container_name: judge-localstack-exporter
+    image: aws-exporter:1.0
+    build:
+      context: ../../aws-exporter
+      dockerfile: Dockerfile
+    environment:
+      AWS_REGION: us-east-1
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_ACCESS_KEY_ID: judge
+      AWS_SECRET_ACCESS_KEY: judge
+    networks:
+      - judge-network
+    depends_on:
+      localstack:
+        condition: service_healthy
 
   prometheus:
     container_name: judge-prometheus
@@ -161,8 +242,10 @@ services:
     networks:
       - judge-network
     depends_on:
-      - loki
-      - prometheus
+      loki:
+        condition: service_started
+      prometheus:
+        condition: service_started
 
 networks:
   judge-network:

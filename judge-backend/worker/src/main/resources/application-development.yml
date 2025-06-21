@@ -8,3 +8,7 @@ external:
     url: http://localhost:8080
 submission:
   max-concurrent: 1
+auto-judge:
+  cpu-per-submission: 1
+  max-cpu: 1
+  max-memory: 1024

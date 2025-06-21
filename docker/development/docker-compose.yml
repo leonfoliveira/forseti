@@ -2,7 +2,7 @@ name: judge-development
 services:  
 
   postgres:
-    container_name: judge-postgres
+    container_name: dev-judge-postgres
     image: postgres:17.5-alpine
     environment:
       POSTGRES_USER: judge
@@ -11,27 +11,27 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - dev-postgres_data:/var/lib/postgresql/data
     networks:
-      - judge-network
+      - dev-judge-network
 
   localstack:
-    container_name: judge-localstack
+    container_name: dev-judge-localstack
     image: gresau/localstack-persist:4.4.0
     environment:
       SERVICES: s3,sqs
     ports:
       - "4566:4566"    
     volumes:
-      - localstack_data:/persisted-data
+      - dev-localstack_data:/persisted-data
       - ./localstack-bootstrap:/etc/localstack/init/ready.d
     networks:
-      - judge-network
+      - dev-judge-network
 
 networks:
-  judge-network:
+  dev-judge-network:
     driver: bridge
 
 volumes:
-  postgres_data:
-  localstack_data:
+  dev-postgres_data:
+  dev-localstack_data:

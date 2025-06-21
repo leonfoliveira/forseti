@@ -8,4 +8,4 @@ spring:
 server:
   cors:
     allowed-origins: ${ALLOWED_ORIGINS}
-  port: 80
+  port: ${PORT}

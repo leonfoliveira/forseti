@@ -5,7 +5,6 @@ datasources:
     type: loki
     access: proxy
     url: http://loki:3100
-    isDefault: true
     version: 1
     editable: true
   
@@ -13,6 +12,5 @@ datasources:
     type: prometheus
     access: proxy
     url: http://prometheus:9090
-    isDefault: true
     version: 1
     editable: true
