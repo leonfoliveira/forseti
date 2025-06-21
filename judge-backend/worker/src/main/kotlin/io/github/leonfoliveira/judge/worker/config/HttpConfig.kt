@@ -11,13 +11,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 @EnableWebSecurity
 class HttpConfig() : WebMvcConfigurer {
-    override fun addCorsMappings(registry: CorsRegistry) {
-        registry.addMapping("/**")
-            .allowedOrigins("*")
-            .allowedMethods("*")
-            .allowCredentials(true)
-    }
-
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         return http

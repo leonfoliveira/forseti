@@ -8,3 +8,12 @@ jpa:
       dialect: org.hibernate.dialect.PostgreSQLDialect
       jdbc:
         time_zone: UTC
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true

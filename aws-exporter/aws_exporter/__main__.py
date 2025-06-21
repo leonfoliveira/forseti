@@ -12,7 +12,7 @@ aws_endpoint = os.environ.get("AWS_ENDPOINT", "http://localhost:4566")
 aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID", "test")
 aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY", "test")
 port = int(os.environ.get("PORT", 7000))
-interval = int(os.environ.get("INTERVAL", 15))
+interval = int(os.environ.get("INTERVAL", 10))
 
 SQS_APPROXIMATE_NUMBER_OF_MESSAGES = Gauge(
     "aws_sqs_approximate_number_of_messages",

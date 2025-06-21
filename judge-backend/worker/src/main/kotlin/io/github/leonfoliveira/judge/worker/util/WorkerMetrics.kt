@@ -1,0 +1,21 @@
+package io.github.leonfoliveira.judge.worker.util
+
+enum class WorkerMetrics {
+    WORKER_RECEIVED_SUBMISSION,
+    WORKER_WAITING_SUBMISSION,
+    WORKER_PROCESSING_SUBMISSION,
+    WORKER_SUCCESSFUL_SUBMISSION,
+    WORKER_FAILED_SUBMISSION,
+    WORKER_MAX_CPU,
+    WORKER_MAX_MEMORY,
+    WORKER_RESERVED_CPU,
+    WORKER_RESERVED_MEMORY,
+    WORKER_JVM_FREE_MEMORY,
+    WORKER_SUBMISSION_STARVED,
+    WORKER_SUBMISSION_WAIT_TIME,
+    WORKER_SUBMISSION_RUN_TIME;
+
+    override fun toString(): String {
+        return name.lowercase()
+    }
+}

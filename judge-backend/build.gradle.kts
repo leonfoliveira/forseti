@@ -28,15 +28,14 @@ allprojects {
 subprojects {
     dependencies {
         implementation(rootProject.libs.bundles.spring)
+        implementation(rootProject.libs.bundles.micrometer)
         implementation(rootProject.libs.kotlin.reflect)
         implementation(rootProject.libs.jackson.module.kotlin)
-        implementation(rootProject.libs.logstash.logback.encoder)
-        implementation(rootProject.libs.loki.logback.appender)
-        implementation(rootProject.libs.micrometer.tracing.bridge.otel)
 
         testImplementation(rootProject.libs.bundles.mockk)
         testImplementation(rootProject.libs.spring.boot.starter.test)
         testImplementation(rootProject.libs.bundles.kotest)
+        testImplementation(rootProject.libs.bundles.testcontainers)
 
         developmentOnly(rootProject.libs.spring.boot.dev.tools)
     }

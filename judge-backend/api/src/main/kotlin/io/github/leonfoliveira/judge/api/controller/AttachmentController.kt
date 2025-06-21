@@ -2,8 +2,10 @@ package io.github.leonfoliveira.judge.api.controller
 
 import io.github.leonfoliveira.judge.api.dto.response.AttachmentResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
+import io.github.leonfoliveira.judge.api.util.ApiMetrics
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
+import io.micrometer.core.annotation.Timed
 import org.slf4j.LoggerFactory
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
@@ -26,6 +28,7 @@ class AttachmentController(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    @Timed("api_attachment_upload_time")
     @PostMapping
     @Private
     @Transactional
@@ -37,6 +40,7 @@ class AttachmentController(
         return ResponseEntity.ok(attachment.toResponseDTO())
     }
 
+    @Timed("api_attachment_download_time")
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
     fun downloadAttachment(

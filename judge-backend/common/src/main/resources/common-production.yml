@@ -27,6 +27,3 @@ security:
     password: ${ROOT_PASSWORD}
   auto-judge:
     password: ${AUTO_JUDGE_PASSWORD}
-external:
-  loki:
-    url: ${LOKI_URL}
