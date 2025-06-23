@@ -21,8 +21,8 @@ spring:
 security:
   jwt:
     secret: judge
-    expiration: 86400
-    root-expiration: 86400
+    expiration: 12h
+    root-expiration: 12h
   root:
     password: judge
   auto-judge:

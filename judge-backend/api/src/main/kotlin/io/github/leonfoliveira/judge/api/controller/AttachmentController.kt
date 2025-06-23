@@ -28,7 +28,7 @@ class AttachmentController(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @Timed("api_attachment_upload_time")
+    @Timed(ApiMetrics.API_ATTACHMENT_UPLOAD_TIME)
     @PostMapping
     @Private
     @Transactional
@@ -40,7 +40,7 @@ class AttachmentController(
         return ResponseEntity.ok(attachment.toResponseDTO())
     }
 
-    @Timed("api_attachment_download_time")
+    @Timed(ApiMetrics.API_ATTACHMENT_DOWNLOAD_TIME)
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
     fun downloadAttachment(

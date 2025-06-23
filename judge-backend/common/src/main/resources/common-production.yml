@@ -22,7 +22,7 @@ security:
   jwt:
     secret: ${JWT_SECRET}
     expiration: ${JWT_EXPIRATION}
-    root-expiration: 0
+    root-expiration: ${JWT_ROOT_EXPIRATION}
   root:
     password: ${ROOT_PASSWORD}
   auto-judge:

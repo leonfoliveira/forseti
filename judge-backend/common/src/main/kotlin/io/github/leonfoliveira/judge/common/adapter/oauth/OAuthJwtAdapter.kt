@@ -6,6 +6,7 @@ import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import io.github.leonfoliveira.judge.common.port.JwtAdapter
+import io.github.leonfoliveira.judge.common.util.UnitUtil
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
@@ -16,19 +17,19 @@ class OAuthJwtAdapter(
     @Value("\${security.jwt.secret}")
     private val secret: String,
     @Value("\${security.jwt.expiration}")
-    private val expiration: Long = 0L,
+    private val expiration: String,
     @Value("\${security.jwt.root-expiration}")
-    private val rootExpiration: Long = 0L,
+    private val rootExpiration: String,
 ) : JwtAdapter {
     override fun generateAuthorization(member: Member): Authorization {
         val algorithm = Algorithm.HMAC256(secret)
         val now = OffsetDateTime.now().toInstant()
         val expiresAt =
-            now.plusSeconds(
+            now.plusMillis(
                 if (member.type == Member.Type.ROOT) {
-                    rootExpiration
+                    UnitUtil.parseTimeValue(rootExpiration).toLong()
                 } else {
-                    expiration
+                    UnitUtil.parseTimeValue(expiration).toLong()
                 },
             )
 
@@ -42,7 +43,7 @@ class OAuthJwtAdapter(
                 .withClaim("type", member.type.toString())
 
         if (member.contest != null) {
-            jwt.withClaim("contestId", member.contest!!.id.toString())
+            jwt.withClaim("contestId", member.contest.id.toString())
         }
 
         val token = jwt.sign(algorithm)

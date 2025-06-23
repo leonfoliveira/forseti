@@ -1,0 +1,489 @@
+networks:
+  judge-network:
+    driver: overlay
+
+services:
+  api:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1024M
+        reservations:
+          cpus: '1.0'
+          memory: 1024M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      ALLOWED_ORIGINS: http://localhost:80
+      AUTO_JUDGE_PASSWORD: /run/secrets/auto_judge_password
+      AWS_ACCESS_KEY_ID: judge
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_S3_BUCKET: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      AWS_SQS_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      AWS_SQS_SUBMISSION_QUEUE: submission-queue
+      DB_PASSWORD: /run/secrets/db_password
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_USER: /run/secrets/db_user
+      JAVA_TOOL_OPTIONS: -Xms1024m -Xmx1024m
+      JWT_EXPIRATION: /run/secrets/jwt_expiration
+      JWT_ROOT_EXPIRATION: /run/secrets/jwt_root_expiration
+      JWT_SECRET: /run/secrets/jwt_secret
+      PORT: "8080"
+      ROOT_PASSWORD: /run/secrets/root_password
+      SPRING_PROFILES_ACTIVE: production    
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:8080/actuator/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: judge-api:${VERSION:-latest}
+    networks:
+      judge-network:
+    ports:
+      - mode: host
+        target: 8080
+        published: 8080
+        protocol: tcp
+
+  docker-exporter:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:7000/metrics
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: docker-exporter:${VERSION:-latest}
+    networks:
+      judge-network:
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+
+  grafana:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: /run/secrets/grafana_admin_password
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:3000/api/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: grafana/grafana-oss:12.0.2
+    networks:
+      judge-network:
+    ports:
+      - mode: host
+        target: 3000
+        published: 3000
+        protocol: tcp
+    volumes:
+      - type: volume
+        source: grafana_data
+        target: /var/lib/grafana
+        volume: {}
+      - type: bind
+        source: ./volumes/grafana-datasources.yml
+        target: /etc/grafana/provisioning/datasources/datasources.yml
+
+  localstack:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      SERVICES: s3,sqs
+    image: gresau/localstack-persist:4.4.0
+    networks:
+      judge-network:
+    volumes:
+      - type: volume
+        source: localstack_data
+        target: /persisted-data
+        volume: {}
+      - type: bind
+        source: ./volumes/init-localstack.sh
+        target: /etc/localstack/init/ready.d/init.sh
+          
+  localstack-exporter:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      AWS_ACCESS_KEY_ID: judge
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_SECRET_ACCESS_KEY: judge
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:7000/metrics
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: aws-exporter:${VERSION:-latest}
+    networks:
+      judge-network:
+
+  loki:
+    command:
+      - -config.file=/etc/loki/local-config.yaml
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:3100/ready
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: grafana/loki:3.4.4
+    networks:
+      judge-network:
+    volumes:
+      - type: volume
+        source: loki_data
+        target: /var/lib/loki
+        volume: {}
+
+  migration:
+    command:
+      - migrate
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      FLYWAY_PASSWORD: /run/secrets/db_password
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/judge
+      FLYWAY_USER: /run/secrets/db_user
+    image: flyway/flyway:11.9.2-alpine
+    networks:
+      judge-network:
+    volumes:
+      - type: bind
+        source: ./judge-backend/common/src/main/resources/migration
+        target: /flyway/sql
+  
+  postgres:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1024M
+        reservations:
+          cpus: '1.0'
+          memory: 1024M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      POSTGRES_USER: /run/secrets/db_user
+      POSTGRES_PASSWORD: /run/secrets/db_password
+      POSTGRES_DB: judge
+    healthcheck:
+      test: 
+        - "CMD-SHELL"
+        - "pg_isready -U ${POSTGRES_USER} -d judge"
+      timeout: 5s
+      interval: 15s      
+      retries: 5
+      start_period: 5s
+    image: postgres:17.5-alpine
+    networks:
+      - judge-network
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
+    volumes:
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgresql/data
+        volume: {}
+     
+  postgres-exporter:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      DB_USER: /run/secrets/db_user
+      DB_PASSWORD: /run/secrets/db_password
+      DATA_SOURCE_NAME: postgresql://${DB_USER}:${DB_PASSWORD}@judge-postgres:5432/judge?sslmode=disable
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:9187/metrics
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: prometheuscommunity/postgres-exporter:v0.17.1
+    networks:
+      - judge-network
+
+  prometheus:
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:9090/-/healthy
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: prom/prometheus:v3.4.1
+    networks:
+      judge-network:
+    ports:
+      - mode: host
+        target: 9090
+        published: 9090
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: ./volumes/prometheus-config.yml
+        target: /etc/prometheus/prometheus.yml
+      - type: volume
+        source: prometheus_data
+        target: /prometheus
+        volume: {}
+
+  promtail:
+    command:
+      - -config.file=/etc/promtail/config.yml
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:9080/ready
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: grafana/promtail:3.4.4
+    networks:
+      judge-network:
+    volumes:
+      - type: bind
+        source: /var/log
+        target: /var/log
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ./volumes/promtail-config.yml
+        target: /etc/promtail/config.yml
+
+  webapp:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '1.0'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:80
+      NEXT_PUBLIC_LOCALE: en
+      NEXT_PUBLIC_VERSION: ${VERSION:-latest}
+      NODE_ENV: production
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:80/healthcheck
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: judge-web:${VERSION:-latest}
+    networks:
+      judge-network:
+    ports:
+      - mode: host
+        target: 80
+        published: 80
+        protocol: tcp
+
+  worker:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1536M
+        reservations:
+          cpus: '1.0'
+          memory: 1536M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      API_URL: http://api:8080
+      AUTO_JUDGE_PASSWORD: /run/secrets/auto_judge_password
+      AWS_ACCESS_KEY_ID: judge
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_S3_BUCKET: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      AWS_SQS_SUBMISSION_QUEUE: submission-queue
+      DB_PASSWORD: /run/secrets/db_password
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_USER: /run/secrets/db_user
+      JAVA_TOOL_OPTIONS: -Xms1024m -Xmx1024m
+      JWT_EXPIRATION: 6h
+      JWT_ROOT_EXPIRATION: 3h
+      JWT_SECRET: /run/secrets/jwt_secret
+      MAX_CONCURRENT_SUBMISSIONS: "1"
+      PORT: "8080"
+      ROOT_PASSWORD: /run/secrets/root_password
+      SPRING_PROFILES_ACTIVE: production
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:8080/actuator/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: judge-worker:${VERSION:-latest}
+    networks:
+      judge-network:
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+
+volumes:
+  grafana_data:
+  localstack_data:
+  loki_data:
+  postgres_data:
+  prometheus_data:

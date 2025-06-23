@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# S3
+
+bucket="judge"
+
+awslocal s3 mb s3://$bucket
+
+# SQS
+
 awslocal sqs create-queue --queue-name "submission-dlq"
 
 createQueue() {
