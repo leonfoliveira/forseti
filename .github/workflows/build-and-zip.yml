@@ -37,7 +37,7 @@ jobs:
           docker build -t docker-exporter:${{ steps.vars.outputs.tag }} ../../util/docker-exporter
 
       - name: Save all images to a tarball
-        run: docker save -o compose-images.tar  \
+        run: docker save -o judge-images-${{ steps.vars.outputs.tag }}.tar  \
           judge-api:${{ steps.vars.outputs.tag }} \
           judge-worker:${{ steps.vars.outputs.tag }} \
           judge-webapp:${{ steps.vars.outputs.tag }} \
