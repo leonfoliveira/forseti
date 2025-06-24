@@ -9,8 +9,8 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '1.0'
-          memory: 1024M
+          cpus: '2.0'
+          memory: 2024M
         reservations:
           cpus: '1.0'
           memory: 1024M
@@ -60,11 +60,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.25'
+          cpus: '0.2'
           memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -97,11 +97,11 @@ services:
       mode: global
       resources:
         limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.25'
+          cpus: '0.2'
           memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -168,8 +168,8 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '0.5'
-          memory: 512M
+          cpus: '1.0'
+          memory: 1024M
         reservations:
           cpus: '0.5'
           memory: 512M
@@ -196,11 +196,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.25'
+          cpus: '0.2'
           memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -291,8 +291,8 @@ services:
           cpus: '1.0'
           memory: 1024M
         reservations:
-          cpus: '1.0'
-          memory: 1024M
+          cpus: '0.5'
+          memory: 512M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -328,11 +328,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.25'
+          cpus: '0.2'
           memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -401,11 +401,11 @@ services:
       mode: global
       resources:
         limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.25'
+          cpus: '0.2'
           memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -437,8 +437,8 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '1.0'
-          memory: 512M
+          cpus: '2.0'
+          memory: 1024M
         reservations:
           cpus: '1.0'
           memory: 512M
@@ -473,8 +473,8 @@ services:
       replicas: 0
       resources:
         limits:
-          cpus: '1.0'
-          memory: 1536M
+          cpus: '2.0'
+          memory: 2048M
         reservations:
           cpus: '1.0'
           memory: 1536M
