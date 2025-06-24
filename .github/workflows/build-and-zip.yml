@@ -33,6 +33,7 @@ jobs:
           docker build -t judge-api:${{ steps.vars.outputs.tag }} -f api.Dockerfile ../../judge-backend
           docker build -t judge-worker:${{ steps.vars.outputs.tag }} -f worker.Dockerfile ../../judge-worker
           docker build -t judge-webapp:${{ steps.vars.outputs.tag }} ../../judge-webapp
+          docker build -t auto-scaler:${{ steps.vars.outputs.tag }} ../../util/auto-scaler
           docker build -t aws-exporter:${{ steps.vars.outputs.tag }} ../../util/aws-exporter
           docker build -t docker-exporter:${{ steps.vars.outputs.tag }} ../../util/docker-exporter
 
@@ -41,6 +42,7 @@ jobs:
           judge-api:${{ steps.vars.outputs.tag }} \
           judge-worker:${{ steps.vars.outputs.tag }} \
           judge-webapp:${{ steps.vars.outputs.tag }} \
+          auto-scaler:${{ steps.vars.outputs.tag }} \
           aws-exporter:${{ steps.vars.outputs.tag }} \
           docker-exporter:${{ steps.vars.outputs.tag }}
 

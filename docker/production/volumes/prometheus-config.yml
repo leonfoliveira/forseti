@@ -1,34 +1,38 @@
 scrape_configs:
+  - job_name: 'api'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['api:8080']
+
+  - job_name: 'auto-scaler'
+    static_configs:
+      - targets: ['auto-scaler:7000']
+
   - job_name: 'docker'
     static_configs:
       - targets: ['docker-exporter:7000']
+  
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['grafana:3000']
+
+  - job_name: 'localstack'
+    static_configs:
+      - targets: ['localstack-exporter:7000']
+
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['loki:3100']  
 
   - job_name: 'postgres'
     static_configs:
       - targets: ['postgres-exporter:9187']
   
-  - job_name: 'localstack'
+  - job_name: 'prometheus'
     static_configs:
-      - targets: ['localstack-exporter:7000']
-
-  - job_name: 'api'
-    metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets: ['api:8080']
+      - targets: ['prometheus:9090']
   
   - job_name: 'worker'
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets: ['worker:8080']
-
-  - job_name: 'loki'
-    static_configs:
-      - targets: ['loki:3100']  
-  
-  - job_name: 'prometheus'
-    static_configs:
-      - targets: ['prometheus:9090']
-
-  - job_name: 'grafana'
-    static_configs:
-      - targets: ['grafana:3000']

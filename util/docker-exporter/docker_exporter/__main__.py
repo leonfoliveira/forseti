@@ -4,7 +4,6 @@ import logging
 import os
 import threading
 import time
-import json
 
 logging.basicConfig(level=logging.INFO)
 
