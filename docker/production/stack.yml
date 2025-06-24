@@ -52,45 +52,7 @@ services:
       - mode: host
         target: 8080
         published: 8080
-        protocol: tcp
-
-  auto-scaler:
-    deploy:
-      mode: replicated
-      replicas: 1
-      resources:
-        limits:
-          cpus: '0.2'
-          memory: 128M
-        reservations:
-          cpus: '0.1'
-          memory: 64M
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-    environment:
-      AWS_REGION: us-east-1
-      AWS_ENDPOINT: http://localstack:4566
-      AWS_ACCESS_KEY_ID: judge
-      AWS_SECRET_ACCESS_KEY: judge
-      QUEUE_NAME: submission-queue
-      SERVICE_NAME: worker
-      MESSAGES_PER_REPLICA: 5
-      MIN_REPLICAS: 1
-      MAX_REPLICAS: 3
-      COOLDOWN: 60
-      INTERVAL: 10
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - curl -f http://localhost:7000/metrics
-      timeout: 5s
-      interval: 15s
-      retries: 5
-      start_period: 5s
-    image: auto-scaler:${VERSION:-latest}
-    networks:
-      judge-network:
+        protocol: tcp  
 
   docker-exporter:
     deploy:
@@ -516,6 +478,44 @@ services:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
+  
+  worker-auto-scaler:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      AWS_REGION: us-east-1
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_ACCESS_KEY_ID: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      QUEUE_NAME: submission-queue
+      SERVICE_NAME: worker
+      MESSAGES_PER_REPLICA: 5
+      MIN_REPLICAS: 1
+      MAX_REPLICAS: 3
+      COOLDOWN: 60
+      INTERVAL: 10
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:7000/metrics
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: auto-scaler:${VERSION:-latest}
+    networks:
+      judge-network:
 
 volumes:
   grafana_data:
