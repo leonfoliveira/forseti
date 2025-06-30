@@ -30,12 +30,11 @@ jobs:
 
       - name: Build images
         run: |
-          docker build -t judge-api:${{ steps.vars.outputs.tag }} -f api.Dockerfile ../../judge-backend
-          docker build -t judge-worker:${{ steps.vars.outputs.tag }} -f worker.Dockerfile ../../judge-worker
+          docker build -t judge-api:${{ steps.vars.outputs.tag }} -f ../../judge-backend/api.Dockerfile ../../judge-backend
+          docker build -t judge-worker:${{ steps.vars.outputs.tag }} -f ../../judge-backend/worker.Dockerfile ../../judge-worker
           docker build -t judge-webapp:${{ steps.vars.outputs.tag }} ../../judge-webapp
           docker build -t auto-scaler:${{ steps.vars.outputs.tag }} ../../util/auto-scaler
           docker build -t aws-exporter:${{ steps.vars.outputs.tag }} ../../util/aws-exporter
-          docker build -t docker-exporter:${{ steps.vars.outputs.tag }} ../../util/docker-exporter
 
       - name: Save all images to a tarball
         run: docker save -o judge-images-${{ steps.vars.outputs.tag }}.tar  \
@@ -43,8 +42,7 @@ jobs:
           judge-worker:${{ steps.vars.outputs.tag }} \
           judge-webapp:${{ steps.vars.outputs.tag }} \
           auto-scaler:${{ steps.vars.outputs.tag }} \
-          aws-exporter:${{ steps.vars.outputs.tag }} \
-          docker-exporter:${{ steps.vars.outputs.tag }}
+          aws-exporter:${{ steps.vars.outputs.tag }}
 
       - name: Create ZIP file with tag name
         run: zip judge-${{ steps.vars.outputs.tag }}.zip * ../../README.md ../../LICENSE

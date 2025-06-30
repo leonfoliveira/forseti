@@ -8,7 +8,3 @@ external:
     url: ${API_URL}
 submission:
   max-concurrent: ${MAX_CONCURRENT_SUBMISSIONS}
-auto-judge:
-  cpu-per-submission: ${CPU_PER_SUBMISSION}
-  max-cpu: ${MAX_CPU}
-  max-memory: ${MAX_MEMORY}

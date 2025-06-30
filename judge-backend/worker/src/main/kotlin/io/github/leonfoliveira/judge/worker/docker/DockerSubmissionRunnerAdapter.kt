@@ -23,8 +23,10 @@ class DockerSubmissionRunnerAdapter(
         logger.info("Running submission: ${submission.id} for problem: ${problem.id} with language: ${submission.language}")
 
         val tmpDir = Files.createTempDirectory("judge_${submission.id}").toFile()
+        logger.info("Temporary directory created: ${tmpDir.absolutePath}")
         logger.info("Storing submission code file")
         val codeFile = storeCodeFile(submission, tmpDir)
+        logger.info("Code file stored at: ${codeFile.absolutePath}")
         logger.info("Loading test cases")
         val testCases = loadTestCases(problem)
         logger.info("Creating Docker container")

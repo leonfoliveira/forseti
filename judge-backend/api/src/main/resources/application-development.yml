@@ -4,8 +4,8 @@ spring:
   cloud:
     aws:
       sqs:
-        submission-failed-queue: submission-failed-queue
+        submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE:submission-failed-queue}
 server:
   cors:
-    allowed-origins: http://localhost:3000
-  port: 8080
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+  port: ${PORT:8080}

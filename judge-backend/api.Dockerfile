@@ -4,8 +4,11 @@ COPY . .
 RUN chmod +x ./gradlew
 RUN ./gradlew :api:clean :api:bootJar
 
-FROM eclipse-temurin:21-jre AS runner
+FROM eclipse-temurin:21-jre-alpine AS runner
 WORKDIR /app
+RUN apk add --no-cache curl
+COPY --from=builder /app/api/build/libs/judge-api.jar app.jar
+COPY ./entrypoint.sh entrypoint.sh
 EXPOSE 8080
-COPY --from=builder /app/api/build/libs/judge-api.jar judge-api.jar
-CMD ["java", "-jar", "judge-api.jar"]
+RUN chmod +x ./entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]

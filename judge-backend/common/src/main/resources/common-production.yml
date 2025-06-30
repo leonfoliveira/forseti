@@ -25,5 +25,3 @@ security:
     root-expiration: ${JWT_ROOT_EXPIRATION}
   root:
     password: ${ROOT_PASSWORD}
-  auto-judge:
-    password: ${AUTO_JUDGE_PASSWORD}

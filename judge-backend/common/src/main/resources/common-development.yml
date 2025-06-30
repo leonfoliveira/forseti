@@ -1,29 +1,27 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/judge
-    username: judge
-    password: judge
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/judge}
+    username: ${DB_USER:judge}
+    password: ${DB_PASSWORD:judge}
     driver-class-name: org.postgresql.Driver
   cloud:
     aws:
-      endpoint: http://localhost:4566
+      endpoint: ${AWS_ENDPOINT:http://localhost:4566}
       region:
-        static: us-east-1
+        static: ${AWS_REGION:us-east-1}
       credentials:
-        access-key: judge
-        secret-key: judge
+        access-key: ${AWS_ACCESS_KEY_ID:judge}
+        secret-key: ${AWS_SECRET_ACCESS_KEY:judge}
       stack:
         auto: false
       s3:
-        bucket: judge
+        bucket: ${AWS_S3_BUCKET:judge}
       sqs:
-        submission-queue: submission-queue
+        submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:submission-queue}
 security:
   jwt:
-    secret: judge
-    expiration: 12h
-    root-expiration: 12h
+    secret: ${JWT_SECRET:judge}
+    expiration: ${JWT_EXPIRATION:12h}
+    root-expiration: ${JWT_ROOT_EXPIRATION:12h}
   root:
-    password: judge
-  auto-judge:
-    password: judge
+    password: ${ROOT_PASSWORD:judge}

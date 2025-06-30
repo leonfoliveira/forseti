@@ -53,6 +53,12 @@ class Member(
     @Column(nullable = false)
     var password: String,
     /**
+     * Indicates whether this member is a system member, which may have special privileges or roles.
+     * Users cannot sign in as system members.
+     */
+    @Column(nullable = false)
+    var isSystem: Boolean = false,
+    /**
      * The submissions made by this member in the contest.
      */
     @Audited(withModifiedFlag = false)

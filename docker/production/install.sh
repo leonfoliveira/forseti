@@ -13,9 +13,11 @@ docker load -i "$tar_file"
 
 ### Pull compose images
 
+
 echo "Pulling compose images..."
 
 docker compose pull -f stack.yml
+
 
 ### Pull language images
 
@@ -24,9 +26,11 @@ echo "Pulling language images..."
 
 while IFS='=' read -r variable image_tag; do
   docker pull "$image_tag"
-done < images.conf
+done < languages.conf
 
 
 ### Finish
 
 echo "Instalation completed"
+
+exit 0

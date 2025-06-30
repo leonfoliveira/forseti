@@ -5,7 +5,11 @@ import os
 import threading
 import time
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='ts=%(asctime)s level=%(levelname)s logger=%(name)s msg=%(message)s'
+)
+
 
 aws_region = os.environ.get("AWS_REGION", "us-east-1")
 aws_endpoint = os.environ.get("AWS_ENDPOINT", "http://localhost:4566")
@@ -58,21 +62,22 @@ s3_client = boto3.client(
 
 def collect_sqs_metrics():
     queues = sqs_client.list_queues()
-    for queue_url in queues.get("QueueUrls", [])[:1]:
+    for queue_url in queues.get("QueueUrls", []):
         response = sqs_client.get_queue_attributes(
             QueueUrl=queue_url,
             AttributeNames=["All"],
         )
         queue_name = queue_url.split("/")[-1]
         attributes = response.get("Attributes", {})
+        labels = {"queue_name": queue_name}
 
-        SQS_APPROXIMATE_NUMBER_OF_MESSAGES.labels(queue_name).set(
+        SQS_APPROXIMATE_NUMBER_OF_MESSAGES.labels(**labels).set(
             int(attributes.get("ApproximateNumberOfMessages", 0))
         )
-        SQS_APPROXIMATE_NUMBER_OF_MESSAGES_NOT_VISIBLE.labels(queue_name).set(
+        SQS_APPROXIMATE_NUMBER_OF_MESSAGES_NOT_VISIBLE.labels(**labels).set(
             int(attributes.get("ApproximateNumberOfMessagesNotVisible", 0))
         )
-        SQS_APPROXIMATE_NUMBER_OF_MESSAGES_DELAYED.labels(queue_name).set(
+        SQS_APPROXIMATE_NUMBER_OF_MESSAGES_DELAYED.labels(**labels).set(
             int(attributes.get("ApproximateNumberOfMessagesDelayed", 0))
         )
 

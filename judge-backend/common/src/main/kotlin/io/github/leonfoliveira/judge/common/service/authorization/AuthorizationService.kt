@@ -28,6 +28,9 @@ class AuthorizationService(
         val member =
             memberRepository.findByLogin(inputDTO.login)
                 ?: throw UnauthorizedException("Invalid login or password")
+        if (member.isSystem) {
+            throw UnauthorizedException("Invalid login or password")
+        }
         if (!hashAdapter.verify(inputDTO.password, member.password)) {
             throw UnauthorizedException("Invalid login or password")
         }

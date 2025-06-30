@@ -2,7 +2,6 @@ package io.github.leonfoliveira.judge.worker.docker
 
 import io.github.leonfoliveira.judge.common.adapter.util.CommandError
 import io.github.leonfoliveira.judge.common.adapter.util.CommandRunner
-import io.github.leonfoliveira.judge.common.adapter.util.SystemUtil
 import java.io.File
 
 class DockerContainer(
@@ -30,7 +29,7 @@ class DockerContainer(
                     "--name",
                     name,
                     "-v",
-                    "${SystemUtil.normalizePath(volume.absolutePath)}:/app",
+                    "${volume.absolutePath}:/app",
                     imageName,
                     "sleep",
                     "infinity",

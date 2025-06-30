@@ -2,13 +2,9 @@ spring:
   config:
     import: classpath:common-development.yml
 server:
-  port: 8081
+  port: ${PORT:8081}
 external:
   api:
-    url: http://localhost:8080
+    url: ${API_URL:http://localhost:8080}
 submission:
-  max-concurrent: 1
-auto-judge:
-  cpu-per-submission: 1
-  max-cpu: 1
-  max-memory: 1024
+  max-concurrent: ${MAX_CONCURRENT_SUBMISSIONS:1}

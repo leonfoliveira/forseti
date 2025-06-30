@@ -1,10 +1,10 @@
 package io.github.leonfoliveira.judge.api
 
+import java.util.TimeZone
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.runApplication
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
-import java.util.TimeZone
 
 @SpringBootApplication(
     scanBasePackages = [

@@ -2,14 +2,18 @@ package io.github.leonfoliveira.judge.common.adapter.util
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import org.slf4j.LoggerFactory
 
 object CommandRunner {
+    private val logger = LoggerFactory.getLogger(CommandRunner::class.java)
+
     fun run(
         command: Array<String>,
         input: String? = null,
     ): String {
         val processBuilder = ProcessBuilder()
-        processBuilder.command(*SystemUtil.normalizeCommand(command))
+        logger.info("Running command: ${command.joinToString(" ")}")
+        processBuilder.command(*command)
 
         val process = processBuilder.start()
         input?.let {
@@ -22,6 +26,7 @@ object CommandRunner {
         val error = BufferedReader(InputStreamReader(process.errorStream)).readText()
 
         val exitCode = process.waitFor()
+        logger.info("Command completed with exit code: $exitCode")
         if (exitCode != 0) {
             throw CommandError(
                 message = "Command failed with exit code: $exitCode. Error: $error",

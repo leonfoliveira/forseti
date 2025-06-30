@@ -1,0 +1,73 @@
+discovery.docker "judge" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "judge" {
+  targets = discovery.docker.judge.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_id"]
+    target_label  = "container_id"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container_name"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_swarm_service_name"]
+    regex         = "judge_(.*)"
+    target_label  = "service_name"
+  }
+}
+
+loki.source.docker "judge" {
+  host              = "unix:///var/run/docker.sock"
+  targets           = discovery.relabel.judge.output
+  forward_to        = [loki.process.judge.receiver]
+  refresh_interval  = "5s"
+}
+
+loki.process "judge" {
+  stage.regex {
+    expression = "level=(?P<level>\\S+)"
+  }
+
+  stage.regex {
+    expression = "(logger|caller|source)=(?P<logger>\\S+)"
+  }
+
+  stage.regex {
+    expression = "trace_id=(?P<trace_id>\\S+)"
+  }
+
+  stage.replace {
+    expression  = "(.*)"
+    source      = "level"
+    replace     = "{{ .Value | ToUpper }}"
+  }
+
+  stage.labels {
+    values = {
+      level    = "",
+      logger   = "",
+      trace_id = "",
+    }
+  }
+
+  forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+  external_labels = {}
+}
+
+logging {
+  level  = "info"
+  format = "logfmt"
+}

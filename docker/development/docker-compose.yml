@@ -28,6 +28,38 @@ services:
     networks:
       - dev-judge-network
 
+  api:
+    container_name: dev-judge-api
+    image: judge-api:latest
+    environment:
+      SPRING_PROFILES_ACTIVE: development
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      AWS_ENDPOINT: http://localstack:4566
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - localstack
+    networks:
+      - dev-judge-network
+  
+  worker:
+    container_name: dev-judge-worker
+    image: judge-worker:latest
+    environment:
+      SPRING_PROFILES_ACTIVE: development
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      AWS_ENDPOINT: http://localstack:4566
+      API_URL: http://api:8080
+    depends_on:
+      - postgres
+      - localstack
+    networks:
+      - dev-judge-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp
+
 networks:
   dev-judge-network:
     driver: bridge
