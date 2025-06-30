@@ -3,12 +3,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":adapter"))
-    implementation(libs.bundles.spring.api)
-    implementation(libs.micrometer.tracing.bridge.otel)
-
-    developmentOnly(libs.spring.boot.dev.tools)
+    implementation(project(":common"))
 }
 
 tasks.bootJar {
@@ -16,7 +11,7 @@ tasks.bootJar {
 }
 
 tasks.bootRun {
-    dependsOn(":core:flywayMigrate")
+    dependsOn(":common:flywayMigrate")
 }
 
 kover {

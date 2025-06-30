@@ -5,11 +5,10 @@ import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseD
 import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
-import io.github.leonfoliveira.judge.core.domain.entity.Member
-import io.github.leonfoliveira.judge.core.domain.entity.Submission
-import io.github.leonfoliveira.judge.core.service.submission.FindSubmissionService
-import io.github.leonfoliveira.judge.core.service.submission.RunSubmissionService
-import io.github.leonfoliveira.judge.core.service.submission.UpdateSubmissionService
+import io.github.leonfoliveira.judge.common.domain.entity.Member
+import io.github.leonfoliveira.judge.common.domain.entity.Submission
+import io.github.leonfoliveira.judge.common.service.submission.FindSubmissionService
+import io.github.leonfoliveira.judge.common.service.submission.UpdateSubmissionService
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
@@ -27,7 +26,6 @@ class SubmissionController(
     private val contestAuthFilter: ContestAuthFilter,
     private val findSubmissionService: FindSubmissionService,
     private val updateSubmissionService: UpdateSubmissionService,
-    private val runSubmissionService: RunSubmissionService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -39,17 +37,6 @@ class SubmissionController(
         val authorization = AuthorizationContextUtil.getAuthorization()
         val submissions = findSubmissionService.findAllByMember(authorization.id)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
-    }
-
-    @PutMapping("/{id}/fail")
-    @Private(Member.Type.AUTO_JURY)
-    @Transactional
-    fun failSubmission(
-        @PathVariable id: UUID,
-    ): ResponseEntity<Void> {
-        logger.info("[PATCH] /v1/submissions/$id/fail - id: $id")
-        updateSubmissionService.fail(id)
-        return ResponseEntity.noContent().build()
     }
 
     @PutMapping("/{id}/answer/{answer}")
@@ -85,7 +72,7 @@ class SubmissionController(
     ): ResponseEntity<Void> {
         logger.info("[POST] /v1/submissions/$id/rerun - id: $id")
         contestAuthFilter.checkFromSubmission(id)
-        runSubmissionService.rerun(id)
+        updateSubmissionService.rerun(id)
         return ResponseEntity.noContent().build()
     }
 }

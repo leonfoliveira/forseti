@@ -1,15 +1,7 @@
 spring:
+  config:
+    import: classpath:common.yml
   application:
     name: judge-worker
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:development}
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        jdbc:
-          time_zone: UTC
-    flyway:
-      enabled: false

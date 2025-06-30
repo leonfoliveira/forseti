@@ -1,25 +1,36 @@
 #!/bin/bash
 
-echo "Loading composition images..."
+set -e
+
+### Load judge images
+
+
+echo "Loading tar images..."
 
 tar_file=$(ls judge-*.tar | head -n 1)
 docker load -i "$tar_file"
 
+
+### Pull compose images
+
+
+echo "Pulling compose images..."
+
+docker compose pull -f stack.yml
+
+
+### Pull language images
+
+
 echo "Pulling language images..."
 
 while IFS='=' read -r variable image_tag; do
-  if [ -z "$variable" ] && [ -z "$image_tag" ]; then
-    continue
-  fi
-
-  echo "Pulling $image_tag..."
   docker pull "$image_tag"
+done < languages.conf
 
-  if [ $? -ne 0 ]; then
-    echo "Failed to pull $image_tag"
-    exit 1
-  fi
 
-done < images.conf
+### Finish
 
 echo "Instalation completed"
+
+exit 0

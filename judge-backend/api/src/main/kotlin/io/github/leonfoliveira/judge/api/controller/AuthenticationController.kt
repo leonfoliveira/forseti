@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.judge.api.controller
 
-import io.github.leonfoliveira.judge.core.domain.model.Authorization
-import io.github.leonfoliveira.judge.core.service.authorization.AuthorizationService
-import io.github.leonfoliveira.judge.core.service.dto.input.authorization.AuthenticateInputDTO
+import io.github.leonfoliveira.judge.common.domain.model.Authorization
+import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
+import io.github.leonfoliveira.judge.common.service.dto.input.authorization.AuthenticateInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional

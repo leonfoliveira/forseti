@@ -2,7 +2,7 @@ package io.github.leonfoliveira.judge.api.dto.response.problem
 
 import io.github.leonfoliveira.judge.api.dto.response.AttachmentResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
-import io.github.leonfoliveira.judge.core.domain.entity.Problem
+import io.github.leonfoliveira.judge.common.domain.entity.Problem
 import java.util.UUID
 
 data class ProblemFullResponseDTO(

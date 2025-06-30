@@ -1,33 +1,10 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/judge
-    username: judge
-    password: judge
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    show-sql: false
-  cloud:
-    aws:
-      endpoint: http://localhost:4566
-      region:
-        static: us-east-1
-      credentials:
-        access-key: judge
-        secret-key: judge
-      stack:
-        auto: false
-      s3:
-        bucket: judge
-      sqs:
-        submission-queue: judge-submission-queue
-        submission-failed-queue: judge-submission-failed-queue
-security:
-  jwt:
-    secret: judge
-    expiration: 60
-    root-expiration: 0
-  root:
-    password: judge
+  config:
+    import: classpath:common-development.yml
+server:
+  port: ${PORT:8081}
 external:
   api:
-    url: http://localhost:8080
+    url: ${API_URL:http://localhost:8080}
+submission:
+  max-concurrent: ${MAX_CONCURRENT_SUBMISSIONS:1}

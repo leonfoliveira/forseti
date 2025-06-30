@@ -1,0 +1,608 @@
+networks:
+  judge-network:
+    driver: overlay
+
+secrets:
+  db_password:
+    external: true
+  grafana_admin_password:
+    external: true
+  jwt_secret:
+    external: true
+  root_password:
+    external: true
+
+services:
+  alloy:
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    deploy:
+      mode: global
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    image: grafana/alloy:v1.9.2
+    networks:
+      judge-network:
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ./volumes/alloy/config.alloy
+        target: /etc/alloy/config.alloy
+
+  api:
+    deploy:    
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1024M
+        reservations:
+          cpus: '1.0'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      ALLOWED_ORIGINS: http://localhost:80
+      AWS_ACCESS_KEY_ID: judge
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_S3_BUCKET: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      AWS_SQS_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      AWS_SQS_SUBMISSION_QUEUE: submission-queue
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_USER: judge
+      JAVA_TOOL_OPTIONS: -Xms1024m -Xmx1024m
+      JWT_EXPIRATION: 6h
+      JWT_ROOT_EXPIRATION: 3h
+      JWT_SECRET_FILE: /run/secrets/jwt_secret
+      PORT: "8080"
+      ROOT_PASSWORD_FILE: /run/secrets/root_password
+      SPRING_PROFILES_ACTIVE: production
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:8080/actuator/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: judge-api:${VERSION:-latest}
+    networks:
+      judge-network:
+    ports:
+      - mode: host
+        target: 8080
+        published: 8080
+        protocol: tcp
+    secrets:
+      - db_password
+      - jwt_secret
+      - root_password
+
+  cadvisor:
+    deploy:
+      mode: global
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:8080/healthz
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    networks:
+      judge-network:
+    volumes:
+      - type: bind
+        source: /
+        target: /rootfs
+        read_only: true
+      - type: bind
+        source: /var/run
+        target: /var/run
+        read_only: true
+      - type: bind
+        source: /sys
+        target: /sys
+        read_only: true
+      - type: bind
+        source: /var/lib/docker
+        target: /var/lib/docker
+        read_only: true
+
+  grafana:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    entrypoint: /entrypoint.sh
+    environment:
+      DB_URL: postgres:5432
+      DB_NAME: judge
+      DB_USER: judge
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_admin_password
+      LOKI_URL: http://loki:3100
+      PROMETHEUS_URL: http://prometheus:9090
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:3000/api/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: grafana/grafana-oss:12.0.2
+    networks:
+      judge-network:
+    ports:
+      - mode: host
+        target: 3000
+        published: 3000
+        protocol: tcp
+    secrets:
+      - db_password
+      - grafana_admin_password
+    volumes:
+      - type: volume
+        source: grafana_data
+        target: /var/lib/grafana
+        volume: {}
+      - type: bind
+        source: ./volumes/grafana/datasources.yml
+        target: /etc/grafana/provisioning/datasources/datasources.yml
+      - type: bind
+        source: ./volumes/grafana/entrypoint.sh
+        target: /entrypoint.sh
+
+  localstack:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      SERVICES: s3,sqs
+    image: gresau/localstack-persist:4.4.0
+    networks:
+      judge-network:
+    volumes:
+      - type: volume
+        source: localstack_data
+        target: /persisted-data
+        volume: {}
+      - type: bind
+        source: ./volumes/localstack/init.sh
+        target: /etc/localstack/init/ready.d/init.sh
+          
+  localstack-exporter:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      AWS_ACCESS_KEY_ID: judge
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_SECRET_ACCESS_KEY: judge
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:7000/metrics
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: aws-exporter:${VERSION:-latest}
+    networks:
+      judge-network:
+
+  loki:
+    command:
+      - -config.file=/etc/loki/local-config.yaml
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:3100/ready
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: grafana/loki:3.4.4
+    networks:
+      judge-network:
+    volumes:
+      - type: volume
+        source: loki_data
+        target: /var/lib/loki
+        volume: {}
+
+  migration:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    entrypoint: sh -c "flyway -url=$${FLYWAY_URL} -user=$${FLYWAY_USER} -password=$$(cat /run/secrets/db_password) -connectRetries=60 migrate"
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/judge
+      FLYWAY_USER: judge
+    image: flyway/flyway:11.9.2-alpine
+    networks:
+      judge-network:
+    secrets:
+      - db_password
+    volumes:
+      - type: bind
+        source: ../../judge-backend/common/src/main/resources/migration
+        target: /flyway/sql
+  
+  node-exporter:
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+      - '--collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+|var/run/docker.sock|run/user)($$|/)'
+    deploy:
+      mode: global
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:9100/metrics
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: prom/node-exporter:v1.9.1
+    networks:
+      judge-network:
+    volumes:
+      - type: bind
+        source: /proc
+        target: /host/proc
+        read_only: true
+      - type: bind
+        source: /sys
+        target: /host/sys
+        read_only: true
+      - type: bind
+        source: /
+        target: /rootfs
+        read_only: true
+  
+  postgres:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      POSTGRES_USER: judge
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_DB: judge
+    healthcheck:
+      test: 
+        - "CMD-SHELL"
+        - "pg_isready -U judge -d judge"
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: postgres:17.5-alpine
+    networks:
+      - judge-network
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
+    secrets:
+      - db_password
+    volumes:
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgresql/data
+        volume: {}
+
+  postgres-exporter:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      DATA_SOURCE_URI: postgres:5432/judge?sslmode=disable
+      DATA_SOURCE_USER: judge
+      DATA_SOURCE_PASS_FILE: /run/secrets/db_password
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:9187/metrics
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: prometheuscommunity/postgres-exporter:v0.17.1
+    networks:
+      - judge-network
+    secrets:
+      - db_password
+
+  prometheus:
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:9090/-/healthy
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: prom/prometheus:v3.4.1
+    networks:
+      judge-network:
+    volumes:
+      - type: bind
+        source: ./volumes/prometheus/config.yml
+        target: /etc/prometheus/prometheus.yml
+      - type: volume
+        source: prometheus_data
+        target: /prometheus
+        volume: {}  
+
+  webapp:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 512M
+        reservations:
+          cpus: '1.0'
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+      NEXT_PUBLIC_LOCALE: en
+      NEXT_PUBLIC_VERSION: ${VERSION:-latest}
+      NODE_ENV: production
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:80/healthcheck
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: judge-webapp:${VERSION:-latest}
+    networks:
+      judge-network:
+    ports:
+      - mode: host
+        target: 80
+        published: 80
+        protocol: tcp
+
+  worker:
+    deploy:
+      mode: replicated
+      replicas: 0
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1024M
+        reservations:
+          cpus: '1.0'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      API_URL: http://api:8080
+      AWS_ACCESS_KEY_ID: judge
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_S3_BUCKET: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      AWS_SQS_SUBMISSION_QUEUE: submission-queue
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_USER: judge
+      JAVA_TOOL_OPTIONS: -Xms1536M -Xmx1536M
+      JWT_EXPIRATION: 6h
+      JWT_ROOT_EXPIRATION: 3h
+      JWT_SECRET_FILE: /run/secrets/jwt_secret
+      MAX_CONCURRENT_SUBMISSIONS: "1"
+      PORT: "8080"
+      ROOT_PASSWORD_FILE: /run/secrets/root_password
+      SPRING_PROFILES_ACTIVE: production
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:8080/actuator/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: judge-worker:${VERSION:-latest}
+    networks:
+      judge-network:
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: /tmp
+        target: /tmp
+    secrets:
+      - db_password
+      - jwt_secret
+      - root_password
+  
+  worker-auto-scaler:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      AWS_REGION: us-east-1
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_ACCESS_KEY_ID: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      QUEUE_NAME: submission-queue
+      SERVICE_NAME: worker
+      MESSAGES_PER_REPLICA: 5
+      MIN_REPLICAS: 1
+      MAX_REPLICAS: 3
+      COOLDOWN: 60
+      INTERVAL: 10
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:7000/metrics
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: auto-scaler:${VERSION:-latest}
+    networks:
+      judge-network:
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+
+volumes:
+  grafana_data:
+  localstack_data:
+  loki_data:
+  postgres_data:
+  prometheus_data:

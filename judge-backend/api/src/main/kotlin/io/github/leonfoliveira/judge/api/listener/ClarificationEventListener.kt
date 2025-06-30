@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.api.listener
 
 import io.github.leonfoliveira.judge.api.emitter.StompClarificationEmitter
-import io.github.leonfoliveira.judge.core.event.ClarificationEvent
+import io.github.leonfoliveira.judge.common.event.ClarificationEvent
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component

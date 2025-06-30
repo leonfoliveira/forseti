@@ -1,6 +1,0 @@
-spring:
-  datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/judge}
-    username: ${DB_USER:judge}
-    password: ${DB_PASSWORD:judge}
-    driver-class-name: org.postgresql.Driver

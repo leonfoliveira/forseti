@@ -26,22 +26,23 @@ jobs:
         run: echo "VERSION=${{ steps.vars.outputs.tag }}" >> $GITHUB_ENV
 
       - name: Set up Docker Compose
-        run: sed -i "s/\${VERSION}/$VERSION/" docker-compose.yml
+        run: sed -i "s/\${VERSION:-latest}/$VERSION/" stack.yml
 
       - name: Build images
-        run: docker compose build
-
-      - name: Pull images
-        run: docker compose pull --ignore-buildable
-
-      - name: Extract image names from compose
-        id: image-list
         run: |
-          images=$(docker compose config | grep 'image:' | awk '{print $2}' | paste -sd ' ')
-          echo "images=$images" >> $GITHUB_OUTPUT
+          docker build -t judge-api:${{ steps.vars.outputs.tag }} -f ../../judge-backend/api.Dockerfile ../../judge-backend
+          docker build -t judge-worker:${{ steps.vars.outputs.tag }} -f ../../judge-backend/worker.Dockerfile ../../judge-worker
+          docker build -t judge-webapp:${{ steps.vars.outputs.tag }} ../../judge-webapp
+          docker build -t auto-scaler:${{ steps.vars.outputs.tag }} ../../util/auto-scaler
+          docker build -t aws-exporter:${{ steps.vars.outputs.tag }} ../../util/aws-exporter
 
       - name: Save all images to a tarball
-        run: docker save -o compose-images.tar ${{ steps.image-list.outputs.images }}
+        run: docker save -o judge-images-${{ steps.vars.outputs.tag }}.tar  \
+          judge-api:${{ steps.vars.outputs.tag }} \
+          judge-worker:${{ steps.vars.outputs.tag }} \
+          judge-webapp:${{ steps.vars.outputs.tag }} \
+          auto-scaler:${{ steps.vars.outputs.tag }} \
+          aws-exporter:${{ steps.vars.outputs.tag }}
 
       - name: Create ZIP file with tag name
         run: zip judge-${{ steps.vars.outputs.tag }}.zip * ../../README.md ../../LICENSE

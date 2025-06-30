@@ -8,19 +8,18 @@ import java.util.TimeZone
 
 @SpringBootApplication(
     scanBasePackages = [
-        "io.github.leonfoliveira.judge.core",
-        "io.github.leonfoliveira.judge.adapter",
+        "io.github.leonfoliveira.judge.common",
         "io.github.leonfoliveira.judge.api",
     ],
 )
 @EntityScan(
     basePackages = [
-        "io.github.leonfoliveira.judge.core.domain.entity",
+        "io.github.leonfoliveira.judge.common.domain.entity",
     ],
 )
 @EnableJpaRepositories(
     basePackages = [
-        "io.github.leonfoliveira.judge.core.repository",
+        "io.github.leonfoliveira.judge.common.repository",
     ],
 )
 class Application

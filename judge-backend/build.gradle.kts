@@ -27,13 +27,17 @@ allprojects {
 
 subprojects {
     dependencies {
-        implementation(rootProject.libs.bundles.spring.core)
+        implementation(rootProject.libs.bundles.spring)
+        implementation(rootProject.libs.bundles.micrometer)
         implementation(rootProject.libs.kotlin.reflect)
         implementation(rootProject.libs.jackson.module.kotlin)
 
         testImplementation(rootProject.libs.bundles.mockk)
         testImplementation(rootProject.libs.spring.boot.starter.test)
         testImplementation(rootProject.libs.bundles.kotest)
+        testImplementation(rootProject.libs.bundles.testcontainers)
+
+        developmentOnly(rootProject.libs.spring.boot.dev.tools)
     }
 
     tasks.test {

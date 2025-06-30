@@ -5,9 +5,9 @@ import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseD
 import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
-import io.github.leonfoliveira.judge.core.domain.entity.Member
-import io.github.leonfoliveira.judge.core.service.dto.input.submission.CreateSubmissionInputDTO
-import io.github.leonfoliveira.judge.core.service.submission.CreateSubmissionService
+import io.github.leonfoliveira.judge.common.domain.entity.Member
+import io.github.leonfoliveira.judge.common.service.dto.input.submission.CreateSubmissionInputDTO
+import io.github.leonfoliveira.judge.common.service.submission.CreateSubmissionService
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional

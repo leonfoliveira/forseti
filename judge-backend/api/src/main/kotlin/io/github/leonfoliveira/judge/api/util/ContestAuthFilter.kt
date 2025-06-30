@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.judge.api.util
 
-import io.github.leonfoliveira.judge.core.domain.exception.ForbiddenException
-import io.github.leonfoliveira.judge.core.service.problem.FindProblemService
-import io.github.leonfoliveira.judge.core.service.submission.FindSubmissionService
+import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
+import io.github.leonfoliveira.judge.common.service.problem.FindProblemService
+import io.github.leonfoliveira.judge.common.service.submission.FindSubmissionService
 import org.springframework.stereotype.Component
 import java.util.UUID
 

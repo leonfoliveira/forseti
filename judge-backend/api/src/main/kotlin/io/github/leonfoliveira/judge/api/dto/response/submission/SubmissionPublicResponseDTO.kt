@@ -4,8 +4,8 @@ import io.github.leonfoliveira.judge.api.dto.response.member.MemberPublicRespons
 import io.github.leonfoliveira.judge.api.dto.response.member.toPublicResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.problem.ProblemPublicResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.problem.toPublicResponseDTO
-import io.github.leonfoliveira.judge.core.domain.entity.Submission
-import io.github.leonfoliveira.judge.core.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.entity.Submission
+import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import java.time.OffsetDateTime
 import java.util.UUID
 

@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.api.listener
 
-import io.github.leonfoliveira.judge.core.event.SubmissionJudgeEvent
-import io.github.leonfoliveira.judge.core.port.SubmissionQueueAdapter
+import io.github.leonfoliveira.judge.common.event.SubmissionJudgeEvent
+import io.github.leonfoliveira.judge.common.port.SubmissionQueueAdapter
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
