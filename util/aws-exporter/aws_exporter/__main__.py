@@ -1,13 +1,14 @@
-from prometheus_client import start_http_server, Gauge
-import boto3
 import logging
 import os
 import threading
 import time
 
+import boto3
+from prometheus_client import Gauge, start_http_server
+
 logging.basicConfig(
     level=logging.INFO,
-    format='ts=%(asctime)s level=%(levelname)s logger=%(name)s msg=%(message)s'
+    format="ts=%(asctime)s level=%(levelname)s logger=%(name)s msg=%(message)s",
 )
 
 

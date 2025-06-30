@@ -2,13 +2,13 @@ install:
 	pip install -r requirements.dev.txt
 
 run:
-	python -m auto_scaler
+	python -m aws_exporter
 
 lint:
-	black auto_scaler --check
-	isort auto_scaler --check-only
-	flake8 auto_scaler
+	black aws_exporter --check
+	isort aws_exporter --check-only
+	flake8 aws_exporter
 
 format:
-	black auto_scaler
-	isort auto_scaler
+	black aws_exporter
+	isort aws_exporter
