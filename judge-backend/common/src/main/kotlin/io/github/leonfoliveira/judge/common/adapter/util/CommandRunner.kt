@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.judge.common.adapter.util
 
+import org.slf4j.LoggerFactory
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import org.slf4j.LoggerFactory
 
 object CommandRunner {
     private val logger = LoggerFactory.getLogger(CommandRunner::class.java)

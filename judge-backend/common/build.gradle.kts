@@ -22,7 +22,6 @@ tasks.bootJar {
     archiveFileName.set("judge-common.jar")
 }
 
-
 buildscript {
     dependencies {
         classpath(libs.snakeyaml)
