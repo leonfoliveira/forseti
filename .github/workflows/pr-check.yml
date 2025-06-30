@@ -64,3 +64,51 @@ jobs:
 
       - name: Build
         run: npm run build
+  
+  check-auto-scaler:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: util/auto-scaler
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.13.5
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13.5
+
+      - name: Install dependencies
+        run: pip install -r requirements.dev.txt
+
+      - name: Lint
+        run: make lint
+
+      # - name: Test
+      #   run: pytest tests/
+
+  check-aws-exporter:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: util/aws-exporter
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.13.5
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13.5
+
+      - name: Install dependencies
+        run: pip install -r requirements.dev.txt
+
+      - name: Lint
+        run: make lint
+
+      # - name: Test
+      #   run: pytest tests/

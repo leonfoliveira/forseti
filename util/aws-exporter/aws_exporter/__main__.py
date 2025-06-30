@@ -62,6 +62,7 @@ s3_client = boto3.client(
 
 def collect_sqs_metrics():
     queues = sqs_client.list_queues()
+    logging.info(f"Found {len(queues.get('QueueUrls', []))} SQS queues")
     for queue_url in queues.get("QueueUrls", []):
         response = sqs_client.get_queue_attributes(
             QueueUrl=queue_url,
@@ -84,6 +85,7 @@ def collect_sqs_metrics():
 
 def collect_s3_metrics():
     buckets = s3_client.list_buckets()
+    logging.info(f"Found {len(buckets.get('Buckets', []))} S3 buckets")
     for bucket in buckets.get("Buckets", []):
         bucket_name = bucket["Name"]
         response = s3_client.list_objects_v2(Bucket=bucket_name)
@@ -109,7 +111,7 @@ def collect_all():
 if __name__ == "__main__":
     start_http_server(port)
 
-    logging.info(f"Starting AWS Exporter")
+    logging.info("Starting AWS Exporter")
     while True:
         threading.Thread(target=collect_all).start()
         time.sleep(interval)

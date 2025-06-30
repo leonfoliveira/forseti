@@ -1,14 +1,15 @@
-from prometheus_client import start_http_server, Gauge
-import boto3
-import docker
 import logging
 import os
 import threading
 import time
 
+import boto3
+import docker
+from prometheus_client import Gauge, start_http_server
+
 logging.basicConfig(
     level=logging.INFO,
-    format='ts=%(asctime)s level=%(levelname)s logger=%(name)s msg=%(message)s'
+    format="ts=%(asctime)s level=%(levelname)s logger=%(name)s msg=%(message)s",
 )
 
 
@@ -28,12 +29,12 @@ interval = int(os.environ.get("INTERVAL", 10))
 port = int(os.environ.get("PORT", 7000))
 
 
-CURRENT_REPLICAS = Gauge("auto_scaler_current_replicas",
-                         "Current number of replicas",
-                         ["service_name"])
-DESIRED_REPLICAS = Gauge("auto_scaler_desired_replicas",
-                         "Desired number of replicas",
-                         ["service_name"])
+CURRENT_REPLICAS = Gauge(
+    "auto_scaler_current_replicas", "Current number of replicas", ["service_name"]
+)
+DESIRED_REPLICAS = Gauge(
+    "auto_scaler_desired_replicas", "Desired number of replicas", ["service_name"]
+)
 
 
 sqs_client = boto3.client(
@@ -45,9 +46,9 @@ sqs_client = boto3.client(
 )
 docker_client = docker.from_env()
 
-container_id = os.getenv('HOSTNAME')
+container_id = os.getenv("HOSTNAME")
 container = docker_client.containers.get(container_id)
-stack_name = container.labels.get('com.docker.stack.namespace')
+stack_name = container.labels.get("com.docker.stack.namespace")
 stack_service_name = f"{stack_name}_{service_name}" if stack_name else service_name
 
 
@@ -60,7 +61,7 @@ def scale():
         response = sqs_client.get_queue_url(QueueName=queue_name)
         response = sqs_client.get_queue_attributes(
             QueueUrl=response["QueueUrl"],
-            AttributeNames=["ApproximateNumberOfMessages"]
+            AttributeNames=["ApproximateNumberOfMessages"],
         )
         messages = int(response["Attributes"]["ApproximateNumberOfMessages"])
         logging.info(f"Current messages in queue: {messages}")
@@ -70,17 +71,29 @@ def scale():
             "service_name": service_name,
         }
 
-        current_replicas = service.attrs['Spec']['Mode']['Replicated']['Replicas']
-        desired_replicas = messages / messages_per_replica if messages_per_replica > 0 else 0
+        current_replicas = service.attrs["Spec"]["Mode"]["Replicated"]["Replicas"]
+        desired_replicas = (
+            messages / messages_per_replica if messages_per_replica > 0 else 0
+        )
         desired_replicas = max(min_replicas, desired_replicas)
         desired_replicas = min(max_replicas, desired_replicas)
 
         CURRENT_REPLICAS.labels(**labels).set(current_replicas)
         DESIRED_REPLICAS.labels(**labels).set(desired_replicas)
 
-        if desired_replicas != current_replicas and (last_scale_time is None or (time.time() - last_scale_time >= cooldown)):
+        is_cooling_down = last_scale_time is not None and (
+            time.time() - last_scale_time < cooldown
+        )
+        logging.info(
+            f"Current replicas: {current_replicas}, "
+            f"Desired replicas: {desired_replicas}, "
+            f"Cooling down: {is_cooling_down}"
+        )
+        if desired_replicas != current_replicas and not is_cooling_down:
             logging.info(
-                f"Scaling service {service_name} from {current_replicas} to {desired_replicas} replicas")
+                f"Scaling service {service_name} from {current_replicas}"
+                f"to {desired_replicas} replicas"
+            )
             service.scale(desired_replicas)
             last_scale_time = time.time()
 
@@ -91,7 +104,7 @@ def scale():
 
 if __name__ == "__main__":
     start_http_server(port)
-    logging.info(f"Starting auto-scaler")
+    logging.info("Starting auto-scaler")
 
     while True:
         threading.Thread(target=scale).start()
