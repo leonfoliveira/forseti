@@ -13,7 +13,7 @@ import io.mockk.every
 import io.mockk.mockk
 
 class TestCasesValidatorTest : FunSpec({
-    val bucketAdapter = mockk<BucketAdapter>()
+    val bucketAdapter = mockk<BucketAdapter>(relaxed = true)
 
     val sut = TestCasesValidator(bucketAdapter)
 
