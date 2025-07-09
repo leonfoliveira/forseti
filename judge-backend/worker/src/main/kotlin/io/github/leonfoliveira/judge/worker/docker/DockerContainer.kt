@@ -54,7 +54,7 @@ class DockerContainer(
     ): String {
         val dockerCommand = mutableListOf("docker", "exec", "-i", name, *command)
         if (timeLimit != null) {
-            dockerCommand.addAll(0, listOf("timeout", "${timeLimit / 1000.0}s"))
+            dockerCommand.addAll(0, listOf("timeout", "-k", "${timeLimit / 1000.0}s"))
         }
 
         return try {
