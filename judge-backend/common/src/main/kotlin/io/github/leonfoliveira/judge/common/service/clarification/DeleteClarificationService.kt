@@ -22,13 +22,6 @@ class DeleteClarificationService(
 
         delete(clarification)
         clarificationRepository.save(clarification)
-        applicationEventPublisher.publishEvent(
-            ClarificationEvent(
-                this,
-                clarification,
-                isDeleted = true,
-            ),
-        )
     }
 
     private fun delete(clarification: Clarification) {
