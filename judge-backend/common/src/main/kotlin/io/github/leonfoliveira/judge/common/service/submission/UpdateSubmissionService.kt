@@ -60,13 +60,13 @@ class UpdateSubmissionService(
     ): Submission {
         logger.info("Updating submission with id: $submissionId with answer: $answer")
 
-        if (answer == Submission.Answer.NO_ANSWER) {
-            throw ForbiddenException("Cannot update submission with NO_ANSWER")
-        }
         val submission =
             submissionRepository.findById(submissionId).orElseThrow {
                 NotFoundException("Could not find submission with id = $submissionId")
             }
+        if (answer == Submission.Answer.NO_ANSWER) {
+            throw ForbiddenException("Cannot update submission with NO_ANSWER")
+        }
         if (!force && submission.status != Submission.Status.JUDGING) {
             logger.info("Submission status is not JUDGING, skipping update")
             return submission
