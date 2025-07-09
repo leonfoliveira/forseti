@@ -33,11 +33,19 @@ class CreateClarificationService(
                 NotFoundException("Could not find contest with id $contestId")
             }
         if (!contest.hasStarted()) {
-            throw NotFoundException("Contest with id $contestId has not started yet")
+            throw ForbiddenException("Contest with id $contestId has not started yet")
         }
         val member =
             contest.members.find { it.id == memberId }
                 ?: throw NotFoundException("Could not find member with id $memberId")
+
+        if (member.type == Member.Type.CONTESTANT && input.parentId != null) {
+            throw ForbiddenException("Contestants cannot create clarifications with a parent")
+        }
+        if (member.type == Member.Type.JURY && input.parentId == null) {
+            throw ForbiddenException("Jury members cannot create clarifications without a parent")
+        }
+
         val problem =
             input.problemId?.let {
                 contest.problems.find { it.id == input.problemId }
@@ -49,13 +57,6 @@ class CreateClarificationService(
                     NotFoundException("Could not find parent announcement with id $it")
                 }
             }
-
-        if (member.type == Member.Type.CONTESTANT && input.parentId != null) {
-            throw ForbiddenException("Contestants cannot create clarifications with a parent")
-        }
-        if (member.type == Member.Type.JURY && input.parentId == null) {
-            throw ForbiddenException("Jury members cannot create clarifications without a parent")
-        }
 
         val clarification =
             Clarification(
