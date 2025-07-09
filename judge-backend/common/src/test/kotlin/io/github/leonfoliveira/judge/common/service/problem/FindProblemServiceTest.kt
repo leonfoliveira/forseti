@@ -12,7 +12,7 @@ import java.util.Optional
 import java.util.UUID
 
 class FindProblemServiceTest : FunSpec({
-    val problemRepository = mockk<ProblemRepository>()
+    val problemRepository = mockk<ProblemRepository>(relaxed = true)
 
     val sut = FindProblemService(problemRepository)
 
