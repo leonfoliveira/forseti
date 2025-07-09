@@ -5,6 +5,7 @@ import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import io.github.leonfoliveira.judge.common.domain.exception.ConflictException
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
+import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.mock.AttachmentMockBuilder
 import io.github.leonfoliveira.judge.common.mock.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.port.HashAdapter
@@ -112,6 +113,25 @@ class CreateContestServiceTest : FunSpec({
             shouldThrow<ConflictException> {
                 sut.create(inputDTO)
             }.message shouldBe "Contest with slug '${inputDTO.slug}' already exists"
+        }
+
+        test("should throw NotFoundException when description attachment is not found") {
+            every { contestRepository.findBySlug(inputDTO.slug) } returns null
+            every { attachmentRepository.findById(inputDTO.problems[0].description.id) } returns Optional.empty()
+
+            shouldThrow<NotFoundException> {
+                sut.create(inputDTO)
+            }.message shouldBe "Could not find description attachment with id: ${inputDTO.problems[0].description.id}"
+        }
+
+        test("should throw NotFoundException when test cases attachment is not found") {
+            every { contestRepository.findBySlug(inputDTO.slug) } returns null
+            every { attachmentRepository.findById(inputDTO.problems[0].description.id) } returns Optional.of(AttachmentMockBuilder.build())
+            every { attachmentRepository.findById(inputDTO.problems[0].testCases.id) } returns Optional.empty()
+
+            shouldThrow<NotFoundException> {
+                sut.create(inputDTO)
+            }.message shouldBe "Could not find testCases attachment with id: ${inputDTO.problems[0].testCases.id}"
         }
 
         test("should create contest successfully") {
