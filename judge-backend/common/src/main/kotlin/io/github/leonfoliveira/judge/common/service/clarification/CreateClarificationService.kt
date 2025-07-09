@@ -8,16 +8,16 @@ import io.github.leonfoliveira.judge.common.event.ClarificationEvent
 import io.github.leonfoliveira.judge.common.repository.ClarificationRepository
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.clarification.CreateClarificationInputDTO
-import io.github.leonfoliveira.judge.common.util.TransactionalEventPublisher
-import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
 import java.util.UUID
+import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.stereotype.Service
 
 @Service
 class CreateClarificationService(
     private val contestRepository: ContestRepository,
     private val clarificationRepository: ClarificationRepository,
-    private val transactionalEventPublisher: TransactionalEventPublisher,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -66,7 +66,7 @@ class CreateClarificationService(
                 parent = parent,
             )
         clarificationRepository.save(clarification)
-        transactionalEventPublisher.publish(ClarificationEvent(this, clarification))
+        applicationEventPublisher.publishEvent(ClarificationEvent(this, clarification))
         logger.info("Clarification created successfully")
         return clarification
     }

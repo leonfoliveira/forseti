@@ -6,16 +6,16 @@ import io.github.leonfoliveira.judge.common.event.AnnouncementEvent
 import io.github.leonfoliveira.judge.common.repository.AnnouncementRepository
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.announcement.CreateAnnouncementInputDTO
-import io.github.leonfoliveira.judge.common.util.TransactionalEventPublisher
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.UUID
+import org.springframework.context.ApplicationEventPublisher
 
 @Service
 class CreateAnnouncementService(
     private val contestRepository: ContestRepository,
     private val announcementRepository: AnnouncementRepository,
-    private val transactionalEventPublisher: TransactionalEventPublisher,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -44,7 +44,7 @@ class CreateAnnouncementService(
                 text = input.text,
             )
         announcementRepository.save(announcement)
-        transactionalEventPublisher.publish(AnnouncementEvent(this, announcement))
+        applicationEventPublisher.publishEvent(AnnouncementEvent(this, announcement))
         logger.info("Announcement created successfully")
         return announcement
     }

@@ -6,15 +6,15 @@ import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.event.SubmissionEvent
 import io.github.leonfoliveira.judge.common.event.SubmissionJudgeEvent
 import io.github.leonfoliveira.judge.common.repository.SubmissionRepository
-import io.github.leonfoliveira.judge.common.util.TransactionalEventPublisher
-import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
 import java.util.UUID
+import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.stereotype.Service
 
 @Service
 class UpdateSubmissionService(
     private val submissionRepository: SubmissionRepository,
-    private val transactionalEventPublisher: TransactionalEventPublisher,
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -28,7 +28,7 @@ class UpdateSubmissionService(
 
         submission.status = Submission.Status.FAILED
         submissionRepository.save(submission)
-        transactionalEventPublisher.publish(SubmissionEvent(this, submission))
+        applicationEventPublisher.publishEvent(SubmissionEvent(this, submission))
         logger.info("Submission failed successfully")
         return submission
     }
@@ -47,8 +47,8 @@ class UpdateSubmissionService(
         submission.status = Submission.Status.JUDGING
         submission.answer = Submission.Answer.NO_ANSWER
         submissionRepository.save(submission)
-        transactionalEventPublisher.publish(SubmissionEvent(this, submission))
-        transactionalEventPublisher.publish(SubmissionJudgeEvent(this, submission))
+        applicationEventPublisher.publishEvent(SubmissionEvent(this, submission))
+        applicationEventPublisher.publishEvent(SubmissionJudgeEvent(this, submission))
         logger.info("Submission updated enqueued and emitted")
         return submission
     }
@@ -75,7 +75,7 @@ class UpdateSubmissionService(
         submission.status = Submission.Status.JUDGED
         submission.answer = answer
         submissionRepository.save(submission)
-        transactionalEventPublisher.publish(SubmissionEvent(this, submission))
+        applicationEventPublisher.publishEvent(SubmissionEvent(this, submission))
         logger.info("Submission status updated successfully")
         return submission
     }
