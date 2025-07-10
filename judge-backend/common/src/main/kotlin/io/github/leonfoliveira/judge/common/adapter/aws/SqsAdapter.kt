@@ -2,47 +2,36 @@ package io.github.leonfoliveira.judge.common.adapter.aws
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.github.leonfoliveira.judge.common.adapter.aws.message.SqsMessage
-import io.github.leonfoliveira.judge.common.adapter.aws.message.SqsSubmissionPayload
-import io.github.leonfoliveira.judge.common.domain.entity.Submission
-import io.github.leonfoliveira.judge.common.port.SubmissionQueueAdapter
+import java.io.Serializable
+import java.util.UUID
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest
 
 @Service
-class SqsQueueAdapter(
+class SqsAdapter(
     private val sqsClient: SqsClient,
-    @Value("\${spring.cloud.aws.sqs.submission-queue}")
-    private val submissionQueue: String,
-) : SubmissionQueueAdapter {
-    companion object {
-        private const val QUEUE_DELAY = 1
-    }
-
+) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     private val objectMapper = jacksonObjectMapper()
 
-    override fun enqueue(submission: Submission) {
-        logger.info("Enqueuing submission with id: ${submission.id}")
+    fun enqueue(queue: String, payload: Serializable) {
+        val id = UUID.randomUUID()
+        logger.info("Enqueuing message with id: $id")
 
-        val message =
-            SqsMessage(
-                payload =
-                    SqsSubmissionPayload(
-                        submissionId = submission.id,
-                    ),
-            )
+        val message = SqsMessage(
+            id = id,
+            payload = payload
+        )
 
         val request =
             SendMessageRequest
                 .builder()
-                .queueUrl(submissionQueue)
+                .queueUrl(queue)
                 .messageBody(objectMapper.writeValueAsString(message))
-                .delaySeconds(QUEUE_DELAY)
                 .messageAttributes(
                     mapOf(
                         "contentType" to
@@ -55,6 +44,6 @@ class SqsQueueAdapter(
                 .build()
         sqsClient.sendMessage(request)
 
-        logger.info("Submission with id: ${submission.id} enqueued successfully")
+        logger.info("Message enqueued successfully")
     }
 }
