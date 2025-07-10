@@ -12,7 +12,7 @@ object MemberMockBuilder {
         createdAt: OffsetDateTime = OffsetDateTime.now(),
         updatedAt: OffsetDateTime = OffsetDateTime.now(),
         deletedAt: OffsetDateTime? = null,
-        contest: Contest = ContestMockBuilder.build(),
+        contest: Contest? = ContestMockBuilder.build(),
         type: Member.Type = Member.Type.CONTESTANT,
         name: String = "Test Member",
         login: String = "test_member",
