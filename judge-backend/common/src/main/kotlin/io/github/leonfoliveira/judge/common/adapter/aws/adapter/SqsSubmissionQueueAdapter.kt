@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class SqsSubmissionQueueAdapter(
-    private val submissionQueueAdapter: SqsAdapter,
+    private val sqsAdapter: SqsAdapter,
     @Value("\${spring.cloud.aws.sqs.submission-queue}")
     private val submissionQueue: String,
 ) : SubmissionQueueAdapter {
@@ -19,7 +19,7 @@ class SqsSubmissionQueueAdapter(
     override fun enqueue(submission: Submission) {
         logger.info("Enqueuing submission with id: ${submission.id}")
 
-        submissionQueueAdapter.enqueue(
+        sqsAdapter.enqueue(
             queue = submissionQueue,
             payload = SqsSubmissionPayload(
                 submissionId = submission.id,
