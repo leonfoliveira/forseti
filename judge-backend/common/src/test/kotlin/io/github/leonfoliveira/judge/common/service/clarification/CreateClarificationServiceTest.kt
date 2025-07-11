@@ -5,8 +5,8 @@ import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.event.ClarificationEvent
-import io.github.leonfoliveira.judge.common.mock.ContestMockBuilder
-import io.github.leonfoliveira.judge.common.mock.MemberMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.repository.ClarificationRepository
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.clarification.CreateClarificationInputDTO

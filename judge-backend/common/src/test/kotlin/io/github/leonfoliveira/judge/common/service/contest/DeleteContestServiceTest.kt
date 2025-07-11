@@ -3,9 +3,9 @@ package io.github.leonfoliveira.judge.common.service.contest
 import io.github.leonfoliveira.judge.common.domain.entity.Contest
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.common.mock.ContestMockBuilder
-import io.github.leonfoliveira.judge.common.mock.MemberMockBuilder
-import io.github.leonfoliveira.judge.common.mock.ProblemMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.ProblemMockBuilder
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.github.leonfoliveira.judge.common.repository.ProblemRepository

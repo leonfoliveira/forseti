@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.common.service.problem
 
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.common.mock.ProblemMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.ProblemMockBuilder
 import io.github.leonfoliveira.judge.common.repository.ProblemRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec

@@ -2,7 +2,7 @@ package io.github.leonfoliveira.judge.common.service.attachment
 
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.common.mock.AttachmentMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.judge.common.port.BucketAdapter
 import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
 import io.kotest.assertions.throwables.shouldThrow

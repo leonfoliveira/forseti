@@ -5,7 +5,7 @@ import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.event.SubmissionEvent
 import io.github.leonfoliveira.judge.common.event.SubmissionJudgeEvent
-import io.github.leonfoliveira.judge.common.mock.SubmissionMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
 import io.github.leonfoliveira.judge.common.repository.SubmissionRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec

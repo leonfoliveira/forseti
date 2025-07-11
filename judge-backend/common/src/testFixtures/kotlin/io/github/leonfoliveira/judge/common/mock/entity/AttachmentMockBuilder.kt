@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.common.mock
+package io.github.leonfoliveira.judge.common.mock.entity
 
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import java.time.OffsetDateTime

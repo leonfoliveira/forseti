@@ -3,7 +3,7 @@ package io.github.leonfoliveira.judge.common.service.clarification
 import io.github.leonfoliveira.judge.common.domain.entity.Clarification
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.event.ClarificationEvent
-import io.github.leonfoliveira.judge.common.mock.ClarificationMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.ClarificationMockBuilder
 import io.github.leonfoliveira.judge.common.repository.ClarificationRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -12,7 +12,6 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import java.util.Optional
 import java.util.UUID

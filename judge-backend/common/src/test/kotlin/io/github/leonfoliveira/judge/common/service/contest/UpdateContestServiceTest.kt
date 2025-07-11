@@ -7,10 +7,10 @@ import io.github.leonfoliveira.judge.common.domain.exception.BusinessException
 import io.github.leonfoliveira.judge.common.domain.exception.ConflictException
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.common.mock.AttachmentMockBuilder
-import io.github.leonfoliveira.judge.common.mock.ContestMockBuilder
-import io.github.leonfoliveira.judge.common.mock.MemberMockBuilder
-import io.github.leonfoliveira.judge.common.mock.ProblemMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.ProblemMockBuilder
 import io.github.leonfoliveira.judge.common.port.HashAdapter
 import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
 import io.github.leonfoliveira.judge.common.repository.ContestRepository

@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.common.adapter.oauth
 
 import io.github.leonfoliveira.judge.common.domain.entity.Member
-import io.github.leonfoliveira.judge.common.mock.MemberMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe

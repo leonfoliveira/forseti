@@ -3,10 +3,10 @@ package io.github.leonfoliveira.judge.common.service.contest
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.common.mock.ContestMockBuilder
-import io.github.leonfoliveira.judge.common.mock.MemberMockBuilder
-import io.github.leonfoliveira.judge.common.mock.ProblemMockBuilder
-import io.github.leonfoliveira.judge.common.mock.SubmissionMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.ProblemMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec

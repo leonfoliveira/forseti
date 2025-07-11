@@ -1,14 +1,13 @@
 package io.github.leonfoliveira.judge.common.util
 
 import io.github.leonfoliveira.judge.common.domain.exception.BusinessException
-import io.github.leonfoliveira.judge.common.mock.AttachmentMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.judge.common.port.BucketAdapter
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
-import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
 

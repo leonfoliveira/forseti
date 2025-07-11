@@ -29,5 +29,5 @@ abstract class SqsConsumer<TPayload : Serializable> {
         }
     }
 
-    abstract fun handlePayload(payload: TPayload)
+    protected abstract fun handlePayload(payload: TPayload)
 }

@@ -7,6 +7,7 @@ kotlin {
 plugins {
     alias(libs.plugins.flyway)
     alias(libs.plugins.kotlin.jpa)
+    `java-test-fixtures`
 }
 
 dependencies {

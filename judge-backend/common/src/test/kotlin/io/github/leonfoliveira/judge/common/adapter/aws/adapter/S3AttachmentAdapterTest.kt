@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.common.adapter.aws.adapter
 
 import io.github.leonfoliveira.judge.common.adapter.aws.S3Adapter
-import io.github.leonfoliveira.judge.common.mock.AttachmentMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every

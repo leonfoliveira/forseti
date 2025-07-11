@@ -4,8 +4,8 @@ import io.github.leonfoliveira.judge.common.domain.entity.Announcement
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.event.AnnouncementEvent
-import io.github.leonfoliveira.judge.common.mock.ContestMockBuilder
-import io.github.leonfoliveira.judge.common.mock.MemberMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.repository.AnnouncementRepository
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.announcement.CreateAnnouncementInputDTO

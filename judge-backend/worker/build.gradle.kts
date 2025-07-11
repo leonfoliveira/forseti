@@ -6,6 +6,8 @@ dependencies {
     implementation(project(":common"))
     implementation(libs.java.diff.utils)
     implementation(libs.opencsv)
+
+    testImplementation(testFixtures(project(":common")))
 }
 
 tasks.bootJar {

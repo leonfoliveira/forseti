@@ -2,9 +2,8 @@ package io.github.leonfoliveira.judge.common.adapter.aws.adapter
 
 import io.github.leonfoliveira.judge.common.adapter.aws.SqsAdapter
 import io.github.leonfoliveira.judge.common.adapter.aws.message.SqsSubmissionPayload
-import io.github.leonfoliveira.judge.common.mock.SubmissionMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import io.mockk.verify
 
