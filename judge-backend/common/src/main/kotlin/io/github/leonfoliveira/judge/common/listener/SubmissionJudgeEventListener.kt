@@ -1,9 +1,8 @@
-package io.github.leonfoliveira.judge.api.listener
+package io.github.leonfoliveira.judge.common.listener
 
 import io.github.leonfoliveira.judge.common.event.SubmissionJudgeEvent
 import io.github.leonfoliveira.judge.common.port.SubmissionQueueAdapter
 import org.slf4j.LoggerFactory
-import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
