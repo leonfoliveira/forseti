@@ -8,7 +8,9 @@ import io.github.leonfoliveira.judge.common.service.submission.FindSubmissionSer
 import io.github.leonfoliveira.judge.worker.feign.ApiClient
 import io.github.leonfoliveira.judge.worker.service.RunSubmissionService
 import io.github.leonfoliveira.judge.worker.util.WorkerMetrics
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.floats.exactly
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
 import io.mockk.Answer
@@ -61,6 +63,24 @@ class SubmissionConsumerTest : FunSpec({
         verify { runSubmissionService.run(submission) }
         verify { apiClient.updateSubmissionAnswer(submissionId, answer) }
         verify { meterRegistry.counter(WorkerMetrics.WORKER_SUCCESSFUL_SUBMISSION) }
+        verify(exactly = 2) { counterMock.increment() }
+    }
+
+    test("should count failures") {
+        val submissionId = UUID.randomUUID()
+        val message = SqsMessage(
+            payload = SqsSubmissionPayload(submissionId),
+        )
+        every { findSubmissionService.findById(submissionId) } throws Exception()
+        val counterMock = mockk<Counter>(relaxed = true)
+        every { meterRegistry.counter(any()) } returns counterMock
+
+        shouldThrow<Exception> {
+            sut.receiveMessage(message)
+        }
+
+        verify { meterRegistry.counter(WorkerMetrics.WORKER_RECEIVED_SUBMISSION) }
+        verify { meterRegistry.counter(WorkerMetrics.WORKER_FAILED_SUBMISSION) }
         verify(exactly = 2) { counterMock.increment() }
     }
 })
