@@ -6,6 +6,7 @@ import io.github.leonfoliveira.judge.common.port.HashAdapter
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -21,6 +22,10 @@ class AuthenticationInitiatorTest : FunSpec({
         hashAdapter = hashAdapter,
         rootPassword = rootPassword
     )
+
+    beforeEach {
+        clearAllMocks()
+    }
 
     test("should create system members") {
         every { hashAdapter.hash(any()) } returns "hashed-password"
