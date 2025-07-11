@@ -15,9 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 
 @Component
-class WebSocketPrivateInterceptor(
-    private val authorizationExtractor: AuthorizationExtractor,
-) : ChannelInterceptor {
+class WebSocketPrivateInterceptor: ChannelInterceptor {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     private val privateConfigurations =
@@ -44,7 +42,7 @@ class WebSocketPrivateInterceptor(
         }
 
         val auth = SecurityContextHolder.getContext().authentication as? JwtAuthentication
-        if (auth == null || !auth.isAuthenticated || auth.principal == null) {
+        if (auth == null || !auth.isAuthenticated) {
             logger.info("Not authenticated")
             throw UnauthorizedException()
         }
