@@ -1,11 +1,13 @@
 package io.github.leonfoliveira.judge.worker.docker.config
 
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.util.GeneratedSkipCoverage
 import io.github.leonfoliveira.judge.worker.docker.DockerSubmissionRunnerConfig
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
+@GeneratedSkipCoverage
 class PythonSubmissionRunnerConfig {
     @Bean
     fun python3d13d3(): DockerSubmissionRunnerConfig {
