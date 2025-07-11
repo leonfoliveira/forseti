@@ -30,7 +30,7 @@ class GlobalExceptionHandler {
         )
 
     @ExceptionHandler(BusinessException::class)
-    fun handleException(
+    fun handleBusinessException(
         ex: BusinessException,
         handlerMethod: HandlerMethod,
     ): ResponseEntity<ErrorResponseDTO> {
@@ -80,8 +80,8 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException::class)
-    fun handleNoResourceFoundException(ex: Exception): ResponseEntity<ErrorResponseDTO> {
-        logger.error("Resource not found, message: ${ex.message}", ex)
+    fun handleNoResourceFoundException(ex: NoResourceFoundException): ResponseEntity<ErrorResponseDTO> {
+        logger.info("Resource not found, message: ${ex.message}", ex)
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
             .body(ErrorResponseDTO("Resource not found"))
