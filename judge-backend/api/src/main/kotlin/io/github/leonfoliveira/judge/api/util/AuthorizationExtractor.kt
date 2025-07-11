@@ -16,9 +16,20 @@ class AuthorizationExtractor(
     fun extractMember(authHeader: String?): AuthorizationMember? {
         logger.info("Started extracting AuthorizationMember from auth header")
 
-        val token = authHeader?.replace("Bearer ", "")
+        if (authHeader == null) {
+            SecurityContextHolder.getContext().authentication = JwtAuthentication()
+            logger.info("Invalid or missing auth header")
+            return null
+        }
 
-        if (authHeader == null || token == null || !authHeader.startsWith("Bearer ")) {
+        if (!authHeader.startsWith("Bearer ")) {
+            SecurityContextHolder.getContext().authentication = JwtAuthentication()
+            logger.warn("Auth header does not start with 'Bearer '")
+            return null
+        }
+
+        val token = authHeader.replace("Bearer ", "")
+        if (token.isBlank()) {
             SecurityContextHolder.getContext().authentication = JwtAuthentication()
             logger.info("No JWT token found in auth header")
             return null

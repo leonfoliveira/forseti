@@ -7,7 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 
 object AuthorizationContextUtil {
     fun getAuthorization(): AuthorizationMember {
-        val authentication = SecurityContextHolder.getContext().authentication as JwtAuthentication
-        return authentication.principal ?: throw UnauthorizedException()
+        val authentication = SecurityContextHolder.getContext().authentication as? JwtAuthentication
+        return authentication?.principal ?: throw UnauthorizedException()
     }
 }
