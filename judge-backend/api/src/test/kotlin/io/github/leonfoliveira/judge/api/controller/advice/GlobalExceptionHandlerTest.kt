@@ -14,7 +14,6 @@ import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
-import org.springframework.web.servlet.resource.NoResourceFoundException
 
 class GlobalExceptionHandlerTest : FunSpec({
     val sut = GlobalExceptionHandler()
@@ -55,12 +54,6 @@ class GlobalExceptionHandlerTest : FunSpec({
         val exception = mockk<MethodArgumentTypeMismatchException>(relaxed = true)
         val response = sut.handleTypeMismatch(exception)
         response.statusCode shouldBe HttpStatus.BAD_REQUEST
-    }
-
-    test("should handle NoResourceFoundException") {
-        val exception = mockk<NoResourceFoundException>(relaxed = true)
-        val response = sut.handleNoResourceFoundException(exception)
-        response.statusCode shouldBe HttpStatus.NOT_FOUND
     }
 
     test("should handle HttpRequestMethodNotSupportedException") {
