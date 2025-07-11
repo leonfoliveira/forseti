@@ -4,6 +4,8 @@ kotlin {
 
 dependencies {
     implementation(project(":common"))
+
+    testImplementation(testFixtures(project(":common")))
 }
 
 tasks.bootJar {
