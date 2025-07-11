@@ -2,7 +2,7 @@ package io.github.leonfoliveira.judge.common.util
 
 import io.github.leonfoliveira.judge.common.domain.exception.BusinessException
 import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
-import io.github.leonfoliveira.judge.common.port.BucketAdapter
+import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -12,9 +12,9 @@ import io.mockk.every
 import io.mockk.mockk
 
 class TestCasesValidatorTest : FunSpec({
-    val bucketAdapter = mockk<BucketAdapter>(relaxed = true)
+    val attachmentBucketAdapter = mockk<AttachmentBucketAdapter>(relaxed = true)
 
-    val sut = TestCasesValidator(bucketAdapter)
+    val sut = TestCasesValidator(attachmentBucketAdapter)
 
     beforeEach {
         clearAllMocks()
@@ -32,7 +32,7 @@ class TestCasesValidatorTest : FunSpec({
         test("should throw BusinessException when test cases file is empty") {
             val testCases = AttachmentMockBuilder.build(contentType = "text/csv")
             val bytes = "".toByteArray()
-            every { bucketAdapter.download(testCases) } returns bytes
+            every { attachmentBucketAdapter.download(testCases) } returns bytes
 
             shouldThrow<BusinessException> {
                 sut.validate(testCases)
@@ -42,7 +42,7 @@ class TestCasesValidatorTest : FunSpec({
         test("should throw BusinessException when test case does not have exactly input and output columns") {
             val testCases = AttachmentMockBuilder.build(contentType = "text/csv")
             val bytes = "input1,output1\ninput2\n".toByteArray()
-            every { bucketAdapter.download(testCases) } returns bytes
+            every { attachmentBucketAdapter.download(testCases) } returns bytes
 
             shouldThrow<BusinessException> {
                 sut.validate(testCases)
@@ -52,7 +52,7 @@ class TestCasesValidatorTest : FunSpec({
         test("should validate test cases successfully when all conditions are met") {
             val testCases = AttachmentMockBuilder.build(contentType = "text/csv")
             val bytes = "input1,output1\ninput2,output2\n".toByteArray()
-            every { bucketAdapter.download(testCases) } returns bytes
+            every { attachmentBucketAdapter.download(testCases) } returns bytes
 
             shouldNotThrow<Exception> {
                 sut.validate(testCases)

@@ -12,7 +12,7 @@ class S3AttachmentAdapterTest : FunSpec({
     val s3Adapter = mockk<S3Adapter>(relaxed = true)
     val bucketName = "test-bucket"
 
-    val sut = S3AttachmentAdapter(s3Adapter, bucketName)
+    val sut = S3AttachmentBucketAdapter(s3Adapter, bucketName)
 
     test("should call S3Adapter to upload an attachment") {
         val attachment = AttachmentMockBuilder.build()

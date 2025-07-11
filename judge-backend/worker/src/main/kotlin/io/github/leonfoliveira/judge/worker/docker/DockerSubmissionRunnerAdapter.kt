@@ -3,7 +3,7 @@ package io.github.leonfoliveira.judge.worker.docker
 import com.opencsv.CSVReader
 import io.github.leonfoliveira.judge.common.domain.entity.Problem
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
-import io.github.leonfoliveira.judge.common.port.BucketAdapter
+import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.io.ByteArrayInputStream
@@ -13,7 +13,7 @@ import java.nio.file.Files
 
 @Service
 class DockerSubmissionRunnerAdapter(
-    private val bucketAdapter: BucketAdapter,
+    private val attachmentBucketAdapter: AttachmentBucketAdapter,
     private val dockerSubmissionRunnerConfigFactory: DockerSubmissionRunnerConfigFactory,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -93,14 +93,14 @@ class DockerSubmissionRunnerAdapter(
         submission: Submission,
         tmpDir: File,
     ): File {
-        val bytes = bucketAdapter.download(submission.code)
+        val bytes = attachmentBucketAdapter.download(submission.code)
         val romFile = File(tmpDir, submission.code.filename)
         romFile.writeBytes(bytes)
         return romFile
     }
 
     private fun loadTestCases(problem: Problem): List<Array<String>> {
-        val bytes = bucketAdapter.download(problem.testCases)
+        val bytes = attachmentBucketAdapter.download(problem.testCases)
         val csvReader = CSVReader(InputStreamReader(ByteArrayInputStream(bytes)))
         return csvReader.use { reader ->
             reader.readAll()

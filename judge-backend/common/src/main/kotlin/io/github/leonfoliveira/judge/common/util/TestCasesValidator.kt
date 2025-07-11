@@ -3,7 +3,7 @@ package io.github.leonfoliveira.judge.common.util
 import com.opencsv.CSVReader
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.exception.BusinessException
-import io.github.leonfoliveira.judge.common.port.BucketAdapter
+import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
@@ -11,7 +11,7 @@ import java.io.InputStreamReader
 
 @Component
 class TestCasesValidator(
-    private val bucketAdapter: BucketAdapter,
+    private val attachmentBucketAdapter: AttachmentBucketAdapter,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -22,7 +22,7 @@ class TestCasesValidator(
             throw BusinessException("Test cases file must be a CSV file")
         }
 
-        val bytes = bucketAdapter.download(testCases)
+        val bytes = attachmentBucketAdapter.download(testCases)
         val csvReader = CSVReader(InputStreamReader(ByteArrayInputStream(bytes)))
         val rows = csvReader.readAll()
 

@@ -2,17 +2,17 @@ package io.github.leonfoliveira.judge.common.adapter.aws.adapter
 
 import io.github.leonfoliveira.judge.common.adapter.aws.S3Adapter
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
-import io.github.leonfoliveira.judge.common.port.BucketAdapter
+import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class S3AttachmentAdapter(
+class S3AttachmentBucketAdapter(
     private val s3Adapter: S3Adapter,
     @Value("\${spring.cloud.aws.s3.bucket}")
     private val bucket: String,
-) : BucketAdapter {
+) : AttachmentBucketAdapter {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun upload(
