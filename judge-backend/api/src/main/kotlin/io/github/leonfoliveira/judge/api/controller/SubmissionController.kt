@@ -34,8 +34,8 @@ class SubmissionController(
     @Transactional(readOnly = true)
     fun findAllFullSubmissionsForMember(): ResponseEntity<List<SubmissionFullResponseDTO>> {
         logger.info("[GET] /v1/submissions/me")
-        val authorization = AuthorizationContextUtil.getAuthorization()
-        val submissions = findSubmissionService.findAllByMember(authorization.id)
+        val member = AuthorizationContextUtil.getMember()
+        val submissions = findSubmissionService.findAllByMember(member.id)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }
 

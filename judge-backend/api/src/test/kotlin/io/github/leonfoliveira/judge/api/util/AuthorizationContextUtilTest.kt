@@ -15,7 +15,7 @@ class AuthorizationContextUtilTest : FunSpec({
         SecurityContextHolder.clearContext()
 
         shouldThrow<UnauthorizedException> {
-            AuthorizationContextUtil.getAuthorization()
+            AuthorizationContextUtil.getMember()
         }
     }
 
@@ -27,7 +27,7 @@ class AuthorizationContextUtilTest : FunSpec({
         )
         SecurityContextHolder.getContext().authentication = JwtAuthentication(expectedAuthorizationMember)
 
-        val result = AuthorizationContextUtil.getAuthorization()
+        val result = AuthorizationContextUtil.getMember()
 
         result shouldBe expectedAuthorizationMember
     }

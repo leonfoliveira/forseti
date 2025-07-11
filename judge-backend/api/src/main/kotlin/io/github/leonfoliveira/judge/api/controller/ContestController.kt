@@ -201,8 +201,8 @@ class ContestController(
     ): ResponseEntity<AnnouncementResponseDTO> {
         logger.info("[POST] /v1/contests/{id}/announcements - id: $id, body: $body")
         contestAuthFilter.check(id)
-        val authorization = AuthorizationContextUtil.getAuthorization()
-        val announcement = createAnnouncementService.create(id, authorization.id, body)
+        val member = AuthorizationContextUtil.getMember()
+        val announcement = createAnnouncementService.create(id, member.id, body)
         return ResponseEntity.ok(announcement.toResponseDTO())
     }
 
@@ -215,8 +215,8 @@ class ContestController(
     ): ResponseEntity<ClarificationResponseDTO> {
         logger.info("[POST] /v1/contests/{id}/clarifications - id: $id, body: $body")
         contestAuthFilter.check(id)
-        val authorization = AuthorizationContextUtil.getAuthorization()
-        val clarification = createClarificationService.create(id, authorization.id, body)
+        val member = AuthorizationContextUtil.getMember()
+        val clarification = createClarificationService.create(id, member.id, body)
         return ResponseEntity.ok(clarification.toResponseDTO())
     }
 }
