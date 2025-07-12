@@ -5,7 +5,7 @@ import io.github.leonfoliveira.judge.common.adapter.util.CommandRunner
 import java.io.File
 
 class DockerContainer(
-    val name: String,
+    private val name: String,
 ) {
     class DockerTimeOutException() : RuntimeException()
 
