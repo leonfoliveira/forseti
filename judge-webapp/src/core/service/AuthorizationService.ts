@@ -2,7 +2,7 @@ import { Authorization } from "@/core/domain/model/Authorization";
 import { StorageRepository } from "@/core/repository/StorageRepository";
 
 export class AuthorizationService {
-  static STORAGE_KEY = "authorization";
+  private static STORAGE_KEY = "authorization";
 
   constructor(private readonly storageRepository: StorageRepository) {}
 
