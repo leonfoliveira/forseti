@@ -5,6 +5,8 @@ import io.github.leonfoliveira.judge.common.adapter.util.CommandRunner
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
+import io.mockk.clearStaticMockk
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.verify
@@ -89,7 +91,7 @@ class DockerContainerTest : FunSpec({
             val container = DockerContainer("test-container")
             val command = arrayOf("echo", "Hello, World!")
             val input = "Input data"
-            val timeLimit = 5000
+            val timeLimit = 2500
 
             container.exec(command, input, timeLimit)
 
@@ -98,7 +100,8 @@ class DockerContainerTest : FunSpec({
                     arrayOf(
                         "timeout",
                         "-k",
-                        "5.0s",
+                        "1s",
+                        "2.5s",
                         "docker",
                         "exec",
                         "-i",

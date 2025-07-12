@@ -17,7 +17,7 @@ object ProblemMockBuilder {
         letter: Char = 'A',
         title: String = "Sample Problem",
         description: Attachment = AttachmentMockBuilder.build(),
-        timeLimit: Int = 1,
+        timeLimit: Int = 1000,
         memoryLimit: Int = 512,
         testCases: Attachment = AttachmentMockBuilder.build(),
         submissions: List<Submission> = emptyList(),
