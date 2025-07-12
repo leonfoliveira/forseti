@@ -5,6 +5,6 @@ data class AuthenticateInputDTO(
     val password: String,
 ) {
     override fun toString(): String {
-        return "AuthenticateInputDTO(login='******', password='******')"
+        return "AuthenticateInputDTO(login='$login', password='******')"
     }
 }
