@@ -2,7 +2,6 @@ package io.github.leonfoliveira.judge.common.adapter.aws
 
 import io.github.leonfoliveira.judge.common.testcontainer.LocalStackTestContainer
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.core.test.TestCase
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest

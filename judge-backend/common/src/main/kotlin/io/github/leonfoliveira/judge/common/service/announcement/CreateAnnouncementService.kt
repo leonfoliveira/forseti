@@ -7,10 +7,10 @@ import io.github.leonfoliveira.judge.common.event.AnnouncementEvent
 import io.github.leonfoliveira.judge.common.repository.AnnouncementRepository
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.announcement.CreateAnnouncementInputDTO
-import java.util.UUID
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class CreateAnnouncementService(

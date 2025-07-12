@@ -23,11 +23,12 @@ class FindSubmissionServiceTest : FunSpec({
     val memberRepository = mockk<MemberRepository>(relaxed = true)
     val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
 
-    val sut = FindSubmissionService(
-        contestRepository = contestRepository,
-        memberRepository = memberRepository,
-        submissionRepository = submissionRepository
-    )
+    val sut =
+        FindSubmissionService(
+            contestRepository = contestRepository,
+            memberRepository = memberRepository,
+            submissionRepository = submissionRepository,
+        )
 
     beforeEach {
         clearAllMocks()

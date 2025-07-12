@@ -5,8 +5,6 @@ import io.github.leonfoliveira.judge.common.adapter.util.CommandRunner
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.clearAllMocks
-import io.mockk.clearStaticMockk
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.verify
@@ -29,21 +27,23 @@ class DockerContainerTest : FunSpec({
             DockerContainer.create(imageName, memoryLimit, name, volume)
 
             verify {
-                CommandRunner.run(arrayOf(
-                    "docker",
-                    "create",
-                    "--rm",
-                    "--cpus=1",
-                    "--memory=${memoryLimit}m",
-                    "--memory-swap=${memoryLimit}m",
-                    "--name",
-                    name,
-                    "-v",
-                    "${volume.absolutePath}:/app",
-                    imageName,
-                    "sleep",
-                    "infinity"
-                ))
+                CommandRunner.run(
+                    arrayOf(
+                        "docker",
+                        "create",
+                        "--rm",
+                        "--cpus=1",
+                        "--memory=${memoryLimit}m",
+                        "--memory-swap=${memoryLimit}m",
+                        "--name",
+                        name,
+                        "-v",
+                        "${volume.absolutePath}:/app",
+                        imageName,
+                        "sleep",
+                        "infinity",
+                    ),
+                )
             }
         }
     }
@@ -80,9 +80,9 @@ class DockerContainerTest : FunSpec({
                         "exec",
                         "-i",
                         "test-container",
-                        *command
+                        *command,
                     ),
-                    null
+                    null,
                 )
             }
         }
@@ -106,9 +106,9 @@ class DockerContainerTest : FunSpec({
                         "exec",
                         "-i",
                         "test-container",
-                        *command
+                        *command,
                     ),
-                    input
+                    input,
                 )
             }
         }
@@ -116,7 +116,7 @@ class DockerContainerTest : FunSpec({
         listOf(
             Pair(124, DockerContainer.DockerTimeOutException::class),
             Pair(137, DockerContainer.DockerOOMKilledException::class),
-            Pair(1, CommandError::class)
+            Pair(1, CommandError::class),
         ).forEach { (exitCode, expectedExceptionClass) ->
             test("should throw ${expectedExceptionClass.simpleName} for exit code $exitCode") {
                 val container = DockerContainer("test-container")

@@ -7,6 +7,6 @@ package io.github.leonfoliveira.judge.common.util
 @Target(
     AnnotationTarget.CLASS,
     AnnotationTarget.FUNCTION,
-    AnnotationTarget.CONSTRUCTOR
+    AnnotationTarget.CONSTRUCTOR,
 )
 annotation class GeneratedSkipCoverage()

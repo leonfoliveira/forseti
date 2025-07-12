@@ -17,11 +17,12 @@ class AuthenticationInitiatorTest : FunSpec({
     val hashAdapter = mockk<HashAdapter>(relaxed = true)
     val rootPassword = "root-password"
 
-    val sut = AuthenticationInitiator(
-        memberRepository = memberRepository,
-        hashAdapter = hashAdapter,
-        rootPassword = rootPassword
-    )
+    val sut =
+        AuthenticationInitiator(
+            memberRepository = memberRepository,
+            hashAdapter = hashAdapter,
+            rootPassword = rootPassword,
+        )
 
     beforeEach {
         clearAllMocks()

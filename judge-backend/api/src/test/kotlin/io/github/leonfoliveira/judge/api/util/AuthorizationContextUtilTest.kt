@@ -7,8 +7,8 @@ import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import java.util.UUID
 import org.springframework.security.core.context.SecurityContextHolder
+import java.util.UUID
 
 class AuthorizationContextUtilTest : FunSpec({
     test("should throw UnauthorizedException when no authentication is present") {
@@ -20,11 +20,12 @@ class AuthorizationContextUtilTest : FunSpec({
     }
 
     test("should return AuthorizationMember when authentication is present") {
-        val expectedAuthorizationMember = AuthorizationMember(
-            id = UUID.randomUUID(),
-            type = Member.Type.ROOT,
-            name = "Test User",
-        )
+        val expectedAuthorizationMember =
+            AuthorizationMember(
+                id = UUID.randomUUID(),
+                type = Member.Type.ROOT,
+                name = "Test User",
+            )
         SecurityContextHolder.getContext().authentication = JwtAuthentication(expectedAuthorizationMember)
 
         val result = AuthorizationContextUtil.getMember()

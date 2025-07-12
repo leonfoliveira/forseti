@@ -32,53 +32,59 @@ class CreateContestServiceTest : FunSpec({
     val hashAdapter = mockk<HashAdapter>(relaxed = true)
     val testCasesValidator = mockk<TestCasesValidator>(relaxed = true)
 
-    val sut = CreateContestService(
-        attachmentRepository = attachmentRepository,
-        contestRepository = contestRepository,
-        hashAdapter = hashAdapter,
-        testCasesValidator = testCasesValidator,
-    )
+    val sut =
+        CreateContestService(
+            attachmentRepository = attachmentRepository,
+            contestRepository = contestRepository,
+            hashAdapter = hashAdapter,
+            testCasesValidator = testCasesValidator,
+        )
 
     beforeEach {
         clearAllMocks()
     }
 
     context("create") {
-        val inputDTO = CreateContestInputDTO(
-            slug = "test-contest",
-            title = "Test Contest",
-            languages = listOf(Language.PYTHON_3_13_3),
-            startAt = OffsetDateTime.now().plusHours(1),
-            endAt = OffsetDateTime.now().plusHours(2),
-            members = listOf(
-                CreateContestInputDTO.MemberDTO(
-                    type = Member.Type.CONTESTANT,
-                    name = "Contestant",
-                    login = "contestant",
-                    password = "password123"
-                )
-            ),
-            problems = listOf(
-                CreateContestInputDTO.ProblemDTO(
-                    letter = 'A',
-                    title = "Problem A",
-                    description = AttachmentInputDTO(
-                        id = UUID.randomUUID(),
+        val inputDTO =
+            CreateContestInputDTO(
+                slug = "test-contest",
+                title = "Test Contest",
+                languages = listOf(Language.PYTHON_3_13_3),
+                startAt = OffsetDateTime.now().plusHours(1),
+                endAt = OffsetDateTime.now().plusHours(2),
+                members =
+                    listOf(
+                        CreateContestInputDTO.MemberDTO(
+                            type = Member.Type.CONTESTANT,
+                            name = "Contestant",
+                            login = "contestant",
+                            password = "password123",
+                        ),
                     ),
-                    timeLimit = 1000,
-                    memoryLimit = 256,
-                    testCases = AttachmentInputDTO(
-                        id = UUID.randomUUID(),
-                    )
-                )
+                problems =
+                    listOf(
+                        CreateContestInputDTO.ProblemDTO(
+                            letter = 'A',
+                            title = "Problem A",
+                            description =
+                                AttachmentInputDTO(
+                                    id = UUID.randomUUID(),
+                                ),
+                            timeLimit = 1000,
+                            memoryLimit = 256,
+                            testCases =
+                                AttachmentInputDTO(
+                                    id = UUID.randomUUID(),
+                                ),
+                        ),
+                    ),
             )
-        )
 
         val validator = Validation.buildDefaultValidatorFactory().validator
 
         listOf(
-            inputDTO.copy(slug="invalid slug"),
-            inputDTO.copy(title=""),
+            inputDTO.copy(slug = "invalid slug"),
+            inputDTO.copy(title = ""),
             inputDTO.copy(languages = emptyList()),
             inputDTO.copy(startAt = OffsetDateTime.now().minusHours(1)),
             inputDTO.copy(endAt = OffsetDateTime.now().minusHours(1)),

@@ -15,18 +15,19 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 import java.util.Optional
 import java.util.UUID
-import org.springframework.context.ApplicationEventPublisher
 
 class UpdateSubmissionServiceTest : FunSpec({
     val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
     val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
-    val sut = UpdateSubmissionService(
-        submissionRepository = submissionRepository,
-        applicationEventPublisher = applicationEventPublisher
-    )
+    val sut =
+        UpdateSubmissionService(
+            submissionRepository = submissionRepository,
+            applicationEventPublisher = applicationEventPublisher,
+        )
 
     beforeEach {
         clearAllMocks()

@@ -4,7 +4,6 @@ import io.github.leonfoliveira.judge.common.adapter.aws.message.SqsMessage
 import io.github.leonfoliveira.judge.common.adapter.aws.message.SqsSubmissionPayload
 import io.github.leonfoliveira.judge.common.service.submission.UpdateSubmissionService
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.mockk
 import io.mockk.verify
@@ -21,9 +20,10 @@ class FailedSubmissionConsumerTest : FunSpec({
 
     test("should call updateSubmissionService.fail with the correct submissionId") {
         val submissionId = UUID.randomUUID()
-        val message = SqsMessage(
-            payload = SqsSubmissionPayload(submissionId),
-        )
+        val message =
+            SqsMessage(
+                payload = SqsSubmissionPayload(submissionId),
+            )
 
         sut.receiveMessage(message)
 

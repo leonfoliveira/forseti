@@ -3,12 +3,11 @@ package io.github.leonfoliveira.judge.api.emitter
 import io.github.leonfoliveira.judge.api.dto.response.clarification.toResponseDTO
 import io.github.leonfoliveira.judge.common.mock.entity.ClarificationMockBuilder
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.OffsetDateTime
 import org.springframework.messaging.simp.SimpMessagingTemplate
+import java.time.OffsetDateTime
 
 class StompClarificationEmitterTest : FunSpec({
     val messagingTemplate = mockk<SimpMessagingTemplate>(relaxed = true)

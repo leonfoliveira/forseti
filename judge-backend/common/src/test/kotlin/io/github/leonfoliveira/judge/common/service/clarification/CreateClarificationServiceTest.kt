@@ -18,21 +18,22 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
-import org.springframework.context.ApplicationEventPublisher
 
 class CreateClarificationServiceTest : FunSpec({
     val contestRepository = mockk<ContestRepository>(relaxed = true)
     val clarificationRepository = mockk<ClarificationRepository>(relaxed = true)
     val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
-    val sut = CreateClarificationService(
-        contestRepository,
-        clarificationRepository,
-        applicationEventPublisher
-    )
+    val sut =
+        CreateClarificationService(
+            contestRepository,
+            clarificationRepository,
+            applicationEventPublisher,
+        )
 
     beforeEach {
         clearAllMocks()
@@ -41,9 +42,10 @@ class CreateClarificationServiceTest : FunSpec({
     context("create") {
         val contestId = UUID.randomUUID()
         val memberId = UUID.randomUUID()
-        val input = CreateClarificationInputDTO(
-            text = "Clarification text",
-        )
+        val input =
+            CreateClarificationInputDTO(
+                text = "Clarification text",
+            )
 
         test("should throw NotFoundException when contest does not exist") {
             every { contestRepository.findById(contestId) } returns Optional.empty()
@@ -94,7 +96,13 @@ class CreateClarificationServiceTest : FunSpec({
 
         test("should throw NotFoundException when problem does not exist in contest") {
             val member = MemberMockBuilder.build(id = memberId)
-            val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1), members = listOf(member), problems = emptyList())
+            val contest =
+                ContestMockBuilder.build(
+                    id = contestId,
+                    startAt = OffsetDateTime.now().minusHours(1),
+                    members = listOf(member),
+                    problems = emptyList(),
+                )
             every { contestRepository.findById(contestId) } returns Optional.of(contest)
 
             val inputWithProblem = input.copy(problemId = UUID.randomUUID())

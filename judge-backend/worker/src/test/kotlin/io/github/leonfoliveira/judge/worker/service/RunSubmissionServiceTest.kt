@@ -15,10 +15,11 @@ class RunSubmissionServiceTest : FunSpec({
     val dockerSubmissionRunnerAdapter = mockk<DockerSubmissionRunnerAdapter>(relaxed = true)
     val apiClient = mockk<ApiClient>(relaxed = true)
 
-    val sut = RunSubmissionService(
-        dockerSubmissionRunnerAdapter = dockerSubmissionRunnerAdapter,
-        apiClient = apiClient
-    )
+    val sut =
+        RunSubmissionService(
+            dockerSubmissionRunnerAdapter = dockerSubmissionRunnerAdapter,
+            apiClient = apiClient,
+        )
 
     beforeEach {
         clearAllMocks()

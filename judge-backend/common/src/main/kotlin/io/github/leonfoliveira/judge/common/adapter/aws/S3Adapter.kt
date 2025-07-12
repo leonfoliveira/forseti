@@ -34,7 +34,10 @@ class S3Adapter(
         logger.info("Successfully uploaded")
     }
 
-    fun download(bucket: String, key: String): ByteArray {
+    fun download(
+        bucket: String,
+        key: String,
+    ): ByteArray {
         logger.info("Downloading attachment with key: $key from S3 bucket: $bucket")
 
         val getObjectRequest =

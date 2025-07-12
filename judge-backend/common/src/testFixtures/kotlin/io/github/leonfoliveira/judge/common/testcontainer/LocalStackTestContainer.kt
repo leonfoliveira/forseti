@@ -8,9 +8,10 @@ class LocalStackTestContainer {
     val submissionQueue = "submission-queue"
     val submissionFailedQueue = "submission-failed-queue"
 
-    val container: LocalStackContainer = LocalStackContainer(
-        DockerImageName.parse("gresau/localstack-persist:4.4.0").asCompatibleSubstituteFor("localstack/localstack")
-    ).withServices(LocalStackContainer.Service.S3, LocalStackContainer.Service.SQS)
+    val container: LocalStackContainer =
+        LocalStackContainer(
+            DockerImageName.parse("gresau/localstack-persist:4.4.0").asCompatibleSubstituteFor("localstack/localstack"),
+        ).withServices(LocalStackContainer.Service.S3, LocalStackContainer.Service.SQS)
 
     fun start(): LocalStackTestContainer {
         container.start()

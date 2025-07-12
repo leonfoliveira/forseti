@@ -3,7 +3,6 @@ package io.github.leonfoliveira.judge.api.emitter
 import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
 import io.github.leonfoliveira.judge.common.mock.entity.AnnouncementMockBuilder
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.mockk
 import io.mockk.verify

@@ -28,12 +28,13 @@ class SubmissionConsumerTest : FunSpec({
     val apiClient = mockk<ApiClient>(relaxed = true)
     val meterRegistry = mockk<MeterRegistry>(relaxed = true)
 
-    val sut = SubmissionConsumer(
-        findSubmissionService,
-        runSubmissionService,
-        apiClient,
-        meterRegistry,
-    )
+    val sut =
+        SubmissionConsumer(
+            findSubmissionService,
+            runSubmissionService,
+            apiClient,
+            meterRegistry,
+        )
 
     beforeEach {
         clearAllMocks()
@@ -41,9 +42,10 @@ class SubmissionConsumerTest : FunSpec({
 
     test("should call run service") {
         val submissionId = UUID.randomUUID()
-        val message = SqsMessage(
-            payload = SqsSubmissionPayload(submissionId),
-        )
+        val message =
+            SqsMessage(
+                payload = SqsSubmissionPayload(submissionId),
+            )
         val submission = SubmissionMockBuilder.build(id = submissionId)
         val answer = Submission.Answer.ACCEPTED
         every { findSubmissionService.findById(submissionId) } returns submission
@@ -68,9 +70,10 @@ class SubmissionConsumerTest : FunSpec({
 
     test("should count failures") {
         val submissionId = UUID.randomUUID()
-        val message = SqsMessage(
-            payload = SqsSubmissionPayload(submissionId),
-        )
+        val message =
+            SqsMessage(
+                payload = SqsSubmissionPayload(submissionId),
+            )
         every { findSubmissionService.findById(submissionId) } throws Exception()
         val counterMock = mockk<Counter>(relaxed = true)
         every { meterRegistry.counter(any()) } returns counterMock

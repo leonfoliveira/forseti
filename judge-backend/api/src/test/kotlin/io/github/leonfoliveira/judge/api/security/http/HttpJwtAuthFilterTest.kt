@@ -2,7 +2,6 @@ package io.github.leonfoliveira.judge.api.security.http
 
 import io.github.leonfoliveira.judge.api.util.AuthorizationExtractor
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk

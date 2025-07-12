@@ -12,18 +12,19 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.web.multipart.MultipartFile
 import java.util.Optional
 import java.util.UUID
-import org.springframework.web.multipart.MultipartFile
 
 class AttachmentServiceTest : FunSpec({
     val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
     val attachmentBucketAdapter = mockk<AttachmentBucketAdapter>(relaxed = true)
 
-    val sut = AttachmentService(
-        attachmentRepository = attachmentRepository,
-        attachmentBucketAdapter = attachmentBucketAdapter,
-    )
+    val sut =
+        AttachmentService(
+            attachmentRepository = attachmentRepository,
+            attachmentBucketAdapter = attachmentBucketAdapter,
+        )
 
     beforeEach {
         clearAllMocks()

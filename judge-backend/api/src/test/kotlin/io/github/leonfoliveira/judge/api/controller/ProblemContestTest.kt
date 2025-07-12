@@ -12,10 +12,8 @@ import io.github.leonfoliveira.judge.common.service.dto.input.submission.CreateS
 import io.github.leonfoliveira.judge.common.service.submission.CreateSubmissionService
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
-import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.verify
-import java.util.UUID
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
@@ -23,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
+import java.util.UUID
 
 @WebMvcTest(controllers = [ProblemContest::class])
 @AutoConfigureMockMvc(addFilters = false)
@@ -32,31 +31,32 @@ class ProblemContestTest(
     private val contestAuthFilter: ContestAuthFilter,
     @MockkBean(relaxed = true)
     private val createSubmissionService: CreateSubmissionService,
-    private val webMvc: MockMvc
+    private val webMvc: MockMvc,
 ) : FunSpec({
-    extensions(SpringExtension)
+        extensions(SpringExtension)
 
-    val objectMapper = jacksonObjectMapper()
+        val objectMapper = jacksonObjectMapper()
 
-    test("createSubmission") {
-        val problemId = UUID.randomUUID()
-        val body = CreateSubmissionInputDTO(
-            language = Language.PYTHON_3_13_3,
-            code = AttachmentInputDTO(id = UUID.randomUUID())
-        )
-        val member = AuthorizationMockBuilder.buildMember()
-        SecurityContextHolder.getContext().authentication = JwtAuthentication(member)
-        val submission = SubmissionMockBuilder.build()
-        every { createSubmissionService.create(member.id, problemId, body) } returns submission
+        test("createSubmission") {
+            val problemId = UUID.randomUUID()
+            val body =
+                CreateSubmissionInputDTO(
+                    language = Language.PYTHON_3_13_3,
+                    code = AttachmentInputDTO(id = UUID.randomUUID()),
+                )
+            val member = AuthorizationMockBuilder.buildMember()
+            SecurityContextHolder.getContext().authentication = JwtAuthentication(member)
+            val submission = SubmissionMockBuilder.build()
+            every { createSubmissionService.create(member.id, problemId, body) } returns submission
 
-        webMvc.post("/v1/problems/{id}/submissions", problemId) {
-            contentType = MediaType.APPLICATION_JSON
-            content = objectMapper.writeValueAsString(body)
-        }.andExpect {
-            status { isOk() }
-            content { submission }
+            webMvc.post("/v1/problems/{id}/submissions", problemId) {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(body)
+            }.andExpect {
+                status { isOk() }
+                content { submission }
+            }
+
+            verify { contestAuthFilter.checkFromProblem(problemId) }
         }
-
-        verify { contestAuthFilter.checkFromProblem(problemId) }
-    }
-})
+    })

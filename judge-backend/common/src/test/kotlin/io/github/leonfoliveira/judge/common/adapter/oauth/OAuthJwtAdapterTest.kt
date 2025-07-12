@@ -14,11 +14,12 @@ class OAuthJwtAdapterTest : FunSpec({
     val expiration = "1h"
     val rootExpiration = "30m"
 
-    val sut = OAuthJwtAdapter(
-        secret = secret,
-        expiration = expiration,
-        rootExpiration = rootExpiration
-    )
+    val sut =
+        OAuthJwtAdapter(
+            secret = secret,
+            expiration = expiration,
+            rootExpiration = rootExpiration,
+        )
 
     val now = OffsetDateTime.now()
 

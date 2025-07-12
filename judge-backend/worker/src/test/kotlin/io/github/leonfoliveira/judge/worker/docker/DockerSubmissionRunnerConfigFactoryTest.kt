@@ -9,16 +9,16 @@ import org.springframework.context.annotation.Configuration
 
 @SpringBootTest(classes = [DockerSubmissionRunnerConfigFactory::class, Configs::class])
 class DockerSubmissionRunnerConfigFactoryTest(
-    val sut: DockerSubmissionRunnerConfigFactory
+    val sut: DockerSubmissionRunnerConfigFactory,
 ) : FunSpec({
-    test("should have configs for all languages") {
-        val languages = Language.entries.toTypedArray()
+        test("should have configs for all languages") {
+            val languages = Language.entries.toTypedArray()
 
-        languages.forEach {
-            sut.get(it) shouldNotBe null
+            languages.forEach {
+                sut.get(it) shouldNotBe null
+            }
         }
-    }
-})
+    })
 
 @Configuration
 @ComponentScan("io.github.leonfoliveira.judge.worker.docker.config")

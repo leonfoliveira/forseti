@@ -38,14 +38,15 @@ class UpdateContestServiceTest : FunSpec({
     val deleteContestService = mockk<DeleteContestService>(relaxed = true)
     val testCasesValidator = mockk<TestCasesValidator>(relaxed = true)
 
-    val sut = UpdateContestService(
-        attachmentRepository,
-        contestRepository,
-        hashAdapter,
-        createContestService,
-        deleteContestService,
-        testCasesValidator
-    )
+    val sut =
+        UpdateContestService(
+            attachmentRepository,
+            contestRepository,
+            hashAdapter,
+            createContestService,
+            deleteContestService,
+            testCasesValidator,
+        )
 
     val now = OffsetDateTime.now()
 
@@ -56,40 +57,43 @@ class UpdateContestServiceTest : FunSpec({
     }
 
     context("update") {
-        val inputDTO = UpdateContestInputDTO(
-            id = UUID.randomUUID(),
-            slug = "test-contest",
-            title = "Test Contest",
-            languages = listOf(Language.PYTHON_3_13_3),
-            startAt = OffsetDateTime.now().plusHours(1),
-            endAt = OffsetDateTime.now().plusHours(2),
-            members = listOf(
-                UpdateContestInputDTO.MemberDTO(
-                    id = UUID.randomUUID(),
-                    type = Member.Type.CONTESTANT,
-                    name = "Test User",
-                    login = "test_user",
-                    password = "password123"
-                )
-            ),
-            problems = listOf(
-                UpdateContestInputDTO.ProblemDTO(
-                    id = UUID.randomUUID(),
-                    letter = 'A',
-                    title = "Test Problem",
-                    description = AttachmentInputDTO(id = UUID.randomUUID()),
-                    timeLimit = 1000,
-                    memoryLimit = 256,
-                    testCases = AttachmentInputDTO(id = UUID.randomUUID()),
-                )
+        val inputDTO =
+            UpdateContestInputDTO(
+                id = UUID.randomUUID(),
+                slug = "test-contest",
+                title = "Test Contest",
+                languages = listOf(Language.PYTHON_3_13_3),
+                startAt = OffsetDateTime.now().plusHours(1),
+                endAt = OffsetDateTime.now().plusHours(2),
+                members =
+                    listOf(
+                        UpdateContestInputDTO.MemberDTO(
+                            id = UUID.randomUUID(),
+                            type = Member.Type.CONTESTANT,
+                            name = "Test User",
+                            login = "test_user",
+                            password = "password123",
+                        ),
+                    ),
+                problems =
+                    listOf(
+                        UpdateContestInputDTO.ProblemDTO(
+                            id = UUID.randomUUID(),
+                            letter = 'A',
+                            title = "Test Problem",
+                            description = AttachmentInputDTO(id = UUID.randomUUID()),
+                            timeLimit = 1000,
+                            memoryLimit = 256,
+                            testCases = AttachmentInputDTO(id = UUID.randomUUID()),
+                        ),
+                    ),
             )
-        )
 
         val validator = Validation.buildDefaultValidatorFactory().validator
 
         listOf(
-            inputDTO.copy(slug="invalid slug"),
-            inputDTO.copy(title=""),
+            inputDTO.copy(slug = "invalid slug"),
+            inputDTO.copy(title = ""),
             inputDTO.copy(languages = emptyList()),
             inputDTO.copy(endAt = OffsetDateTime.now().minusHours(1)),
             inputDTO.copy(startAt = OffsetDateTime.now().plusHours(2), endAt = OffsetDateTime.now().plusHours(1)),
@@ -162,10 +166,11 @@ class UpdateContestServiceTest : FunSpec({
         }
 
         test("should throw NotFoundException when problem description attachment does not exist") {
-            val contest = ContestMockBuilder.build(
-                members = listOf(MemberMockBuilder.build(id = inputDTO.members[0].id!!)),
-                problems = listOf(ProblemMockBuilder.build(id = inputDTO.problems[0].id!!))
-            )
+            val contest =
+                ContestMockBuilder.build(
+                    members = listOf(MemberMockBuilder.build(id = inputDTO.members[0].id!!)),
+                    problems = listOf(ProblemMockBuilder.build(id = inputDTO.problems[0].id!!)),
+                )
             every { contestRepository.findById(inputDTO.id) } returns Optional.of(contest)
             every { contestRepository.findBySlug(inputDTO.slug) } returns null
             every { attachmentRepository.findById(inputDTO.problems[0].description.id) } returns Optional.empty()
@@ -176,10 +181,11 @@ class UpdateContestServiceTest : FunSpec({
         }
 
         test("should throw NotFoundException when problem test cases attachment does not exist") {
-            val contest = ContestMockBuilder.build(
-                members = listOf(MemberMockBuilder.build(id = inputDTO.members[0].id!!)),
-                problems = listOf(ProblemMockBuilder.build(id = inputDTO.problems[0].id!!))
-            )
+            val contest =
+                ContestMockBuilder.build(
+                    members = listOf(MemberMockBuilder.build(id = inputDTO.members[0].id!!)),
+                    problems = listOf(ProblemMockBuilder.build(id = inputDTO.problems[0].id!!)),
+                )
             every { contestRepository.findById(inputDTO.id) } returns Optional.of(contest)
             every { contestRepository.findBySlug(inputDTO.slug) } returns null
             every { attachmentRepository.findById(inputDTO.problems[0].description.id) } returns Optional.of(AttachmentMockBuilder.build())
@@ -197,23 +203,31 @@ class UpdateContestServiceTest : FunSpec({
             val inputMemberToUpdateMinimum = inputDTO.members[0].copy(id = UUID.randomUUID(), password = null)
             val inputProblemToUpdateMinimum = inputDTO.problems[0].copy(id = UUID.randomUUID())
             val inputMemberToUpdateFull = inputDTO.members[0].copy(id = UUID.randomUUID(), password = "newPassword")
-            val inputProblemToUpdateFull = inputDTO.problems[0].copy(id = UUID.randomUUID(),
-                description = AttachmentInputDTO(id = UUID.randomUUID()),
-                testCases = AttachmentInputDTO(id = UUID.randomUUID())
-            )
+            val inputProblemToUpdateFull =
+                inputDTO.problems[0].copy(
+                    id = UUID.randomUUID(),
+                    description = AttachmentInputDTO(id = UUID.randomUUID()),
+                    testCases = AttachmentInputDTO(id = UUID.randomUUID()),
+                )
 
             val memberToUpdateMinimum = MemberMockBuilder.build(id = inputMemberToUpdateMinimum.id!!)
-            val problemToUpdateMinimum = ProblemMockBuilder.build(id = inputProblemToUpdateMinimum.id!!, description = AttachmentMockBuilder.build(id = inputProblemToUpdateMinimum.description.id), testCases = AttachmentMockBuilder.build(id = inputProblemToUpdateMinimum.testCases.id))
+            val problemToUpdateMinimum =
+                ProblemMockBuilder.build(
+                    id = inputProblemToUpdateMinimum.id!!,
+                    description = AttachmentMockBuilder.build(id = inputProblemToUpdateMinimum.description.id),
+                    testCases = AttachmentMockBuilder.build(id = inputProblemToUpdateMinimum.testCases.id),
+                )
             val memberToUpdateFull = MemberMockBuilder.build(id = inputMemberToUpdateFull.id!!)
             val problemToUpdateFull = ProblemMockBuilder.build(id = inputProblemToUpdateFull.id!!)
 
             val memberToDelete = MemberMockBuilder.build()
             val problemToDelete = ProblemMockBuilder.build()
 
-            val contest = ContestMockBuilder.build(
-                members = listOf(memberToUpdateMinimum, memberToUpdateFull, memberToDelete),
-                problems = listOf(problemToUpdateMinimum, problemToUpdateFull, problemToDelete)
-            )
+            val contest =
+                ContestMockBuilder.build(
+                    members = listOf(memberToUpdateMinimum, memberToUpdateFull, memberToDelete),
+                    problems = listOf(problemToUpdateMinimum, problemToUpdateFull, problemToDelete),
+                )
             every { contestRepository.findById(inputDTO.id) } returns Optional.of(contest)
             every { contestRepository.findBySlug(inputDTO.slug) } returns null
             val newMember = MemberMockBuilder.build()
@@ -227,10 +241,12 @@ class UpdateContestServiceTest : FunSpec({
             every { attachmentRepository.findById(inputProblemToUpdateFull.testCases.id) } returns Optional.of(testCasesAttachment)
             every { contestRepository.save(any<Contest>()) } answers { firstArg() }
 
-            sut.update(inputDTO.copy(
-                members = listOf(inputMemberToCreate, inputMemberToUpdateMinimum, inputMemberToUpdateFull),
-                problems = listOf(inputProblemToCreate, inputProblemToUpdateMinimum, inputProblemToUpdateFull)
-            ))
+            sut.update(
+                inputDTO.copy(
+                    members = listOf(inputMemberToCreate, inputMemberToUpdateMinimum, inputMemberToUpdateFull),
+                    problems = listOf(inputProblemToCreate, inputProblemToUpdateMinimum, inputProblemToUpdateFull),
+                ),
+            )
 
             verify { createContestService.createMember(contest, inputMemberToCreate.toCreateDTO()) }
             verify { createContestService.createProblem(contest, inputProblemToCreate.toCreateDTO()) }

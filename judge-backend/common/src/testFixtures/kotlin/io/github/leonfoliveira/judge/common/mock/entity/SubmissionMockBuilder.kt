@@ -19,7 +19,7 @@ object SubmissionMockBuilder {
         language: Language = Language.PYTHON_3_13_3,
         status: Submission.Status = Submission.Status.JUDGING,
         answer: Submission.Answer = Submission.Answer.NO_ANSWER,
-        code: Attachment = AttachmentMockBuilder.build()
+        code: Attachment = AttachmentMockBuilder.build(),
     ) = Submission(
         id = id,
         createdAt = createdAt,
@@ -30,6 +30,6 @@ object SubmissionMockBuilder {
         language = language,
         status = status,
         answer = answer,
-        code = code
+        code = code,
     )
 }

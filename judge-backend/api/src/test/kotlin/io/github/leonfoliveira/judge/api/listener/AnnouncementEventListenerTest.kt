@@ -4,7 +4,6 @@ import io.github.leonfoliveira.judge.api.emitter.StompAnnouncementEmitter
 import io.github.leonfoliveira.judge.common.event.AnnouncementEvent
 import io.github.leonfoliveira.judge.common.mock.entity.AnnouncementMockBuilder
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.mockk
 import io.mockk.verify

@@ -26,11 +26,12 @@ class DeleteContestServiceTest : FunSpec({
     val memberRepository = mockk<MemberRepository>(relaxed = true)
     val problemRepository = mockk<ProblemRepository>(relaxed = true)
 
-    val sut = DeleteContestService(
-        contestRepository = contestRepository,
-        memberRepository = memberRepository,
-        problemRepository = problemRepository
-    )
+    val sut =
+        DeleteContestService(
+            contestRepository = contestRepository,
+            memberRepository = memberRepository,
+            problemRepository = problemRepository,
+        )
 
     beforeEach {
         clearAllMocks()

@@ -13,9 +13,9 @@ import io.mockk.every
 import io.mockk.mockk
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.util.UUID
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.method.HandlerMethod
+import java.util.UUID
 
 class HttpPrivateInterceptorTest : FunSpec({
     val sut = HttpPrivateInterceptor()
@@ -66,11 +66,14 @@ class HttpPrivateInterceptorTest : FunSpec({
         val response = mockk<HttpServletResponse>()
         val handler = mockk<HandlerMethod>(relaxed = true)
         every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT])
-        SecurityContextHolder.getContext().authentication = JwtAuthentication(AuthorizationMember(
-            id = UUID.randomUUID(),
-            type = Member.Type.CONTESTANT,
-            name = "Test User"
-        ))
+        SecurityContextHolder.getContext().authentication =
+            JwtAuthentication(
+                AuthorizationMember(
+                    id = UUID.randomUUID(),
+                    type = Member.Type.CONTESTANT,
+                    name = "Test User",
+                ),
+            )
 
         shouldThrow<ForbiddenException> {
             sut.preHandle(request, response, handler)
@@ -82,11 +85,14 @@ class HttpPrivateInterceptorTest : FunSpec({
         val response = mockk<HttpServletResponse>()
         val handler = mockk<HandlerMethod>(relaxed = true)
         every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT, Member.Type.CONTESTANT])
-        SecurityContextHolder.getContext().authentication = JwtAuthentication(AuthorizationMember(
-            id = UUID.randomUUID(),
-            type = Member.Type.CONTESTANT,
-            name = "Test User"
-        ))
+        SecurityContextHolder.getContext().authentication =
+            JwtAuthentication(
+                AuthorizationMember(
+                    id = UUID.randomUUID(),
+                    type = Member.Type.CONTESTANT,
+                    name = "Test User",
+                ),
+            )
 
         sut.preHandle(request, response, handler) shouldBe true
     }

@@ -13,18 +13,19 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 import java.util.Optional
 import java.util.UUID
-import org.springframework.context.ApplicationEventPublisher
 
 class DeleteClarificationServiceTest : FunSpec({
     val clarificationRepository = mockk<ClarificationRepository>(relaxed = true)
     val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
-    val sut = DeleteClarificationService(
-        clarificationRepository = clarificationRepository,
-        applicationEventPublisher = applicationEventPublisher,
-    )
+    val sut =
+        DeleteClarificationService(
+            clarificationRepository = clarificationRepository,
+            applicationEventPublisher = applicationEventPublisher,
+        )
 
     beforeEach {
         clearAllMocks()

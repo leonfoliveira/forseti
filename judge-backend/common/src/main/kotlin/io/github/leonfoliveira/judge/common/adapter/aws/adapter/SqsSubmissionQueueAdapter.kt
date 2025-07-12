@@ -21,9 +21,10 @@ class SqsSubmissionQueueAdapter(
 
         sqsAdapter.enqueue(
             queue = submissionQueue,
-            payload = SqsSubmissionPayload(
-                submissionId = submission.id,
-            )
+            payload =
+                SqsSubmissionPayload(
+                    submissionId = submission.id,
+                ),
         )
 
         logger.info("Submission enqueued successfully")

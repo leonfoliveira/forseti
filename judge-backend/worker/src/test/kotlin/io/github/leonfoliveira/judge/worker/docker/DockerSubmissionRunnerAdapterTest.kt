@@ -13,15 +13,25 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
-import java.io.ByteArrayInputStream
-import java.io.InputStreamReader
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ActiveProfiles
+import java.io.ByteArrayInputStream
+import java.io.InputStreamReader
 
 @ActiveProfiles("test")
-@SpringBootTest(classes = [DockerSubmissionRunnerAdapter::class, S3AttachmentBucketAdapter::class, S3Adapter::class, AwsConfig::class, DockerSubmissionRunnerConfigFactory::class, AllConfigs::class, S3Adapter::class])
+@SpringBootTest(
+    classes = [
+        DockerSubmissionRunnerAdapter::class,
+        S3AttachmentBucketAdapter::class,
+        S3Adapter::class,
+        AwsConfig::class,
+        DockerSubmissionRunnerConfigFactory::class,
+        AllConfigs::class,
+        S3Adapter::class,
+    ],
+)
 class DockerSubmissionRunnerAdapterTest(
     val sut: DockerSubmissionRunnerAdapter,
     val s3Adapter: S3Adapter,
@@ -38,13 +48,16 @@ class DockerSubmissionRunnerAdapterTest(
         }
 
         val problem = ProblemMockBuilder.build(timeLimit = 1000, memoryLimit = 128)
-        val testCases = """
+        val testCases =
+            """
             1,2
             2,4
-        """.trimIndent()
-        val test = CSVReader(InputStreamReader(ByteArrayInputStream(testCases.toByteArray()))).use {
-            reader -> reader.readAll()
-        }
+            """.trimIndent()
+        val test =
+            CSVReader(InputStreamReader(ByteArrayInputStream(testCases.toByteArray()))).use {
+                    reader ->
+                reader.readAll()
+            }
         println("test cases: ")
         test.forEach {
             println(it.joinToString(", "))

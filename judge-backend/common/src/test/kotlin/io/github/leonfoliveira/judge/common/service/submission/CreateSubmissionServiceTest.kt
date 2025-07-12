@@ -24,10 +24,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
-import org.springframework.context.ApplicationEventPublisher
 
 class CreateSubmissionServiceTest : FunSpec({
     val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
@@ -36,13 +36,14 @@ class CreateSubmissionServiceTest : FunSpec({
     val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
     val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
-    val sut = CreateSubmissionService(
-        attachmentRepository,
-        memberRepository,
-        problemRepository,
-        submissionRepository,
-        applicationEventPublisher
-    )
+    val sut =
+        CreateSubmissionService(
+            attachmentRepository,
+            memberRepository,
+            problemRepository,
+            submissionRepository,
+            applicationEventPublisher,
+        )
 
     beforeEach {
         clearAllMocks()
@@ -51,10 +52,11 @@ class CreateSubmissionServiceTest : FunSpec({
     context("create") {
         val memberId = UUID.randomUUID()
         val problemId = UUID.randomUUID()
-        val inputDTO = CreateSubmissionInputDTO(
-            language = Language.PYTHON_3_13_3,
-            code = AttachmentInputDTO(id = UUID.randomUUID())
-        )
+        val inputDTO =
+            CreateSubmissionInputDTO(
+                language = Language.PYTHON_3_13_3,
+                code = AttachmentInputDTO(id = UUID.randomUUID()),
+            )
 
         test("should throw NotFoundException when member does not exist") {
             every { memberRepository.findById(memberId) } returns Optional.empty()

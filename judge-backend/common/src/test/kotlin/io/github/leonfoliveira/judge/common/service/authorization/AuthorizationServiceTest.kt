@@ -27,12 +27,13 @@ class AuthorizationServiceTest : FunSpec({
     val hashAdapter = mockk<HashAdapter>(relaxed = true)
     val jwtAdapter = mockk<JwtAdapter>(relaxed = true)
 
-    val sut = AuthorizationService(
-        memberRepository = memberRepository,
-        contestRepository = contestRepository,
-        hashAdapter = hashAdapter,
-        jwtAdapter = jwtAdapter
-    )
+    val sut =
+        AuthorizationService(
+            memberRepository = memberRepository,
+            contestRepository = contestRepository,
+            hashAdapter = hashAdapter,
+            jwtAdapter = jwtAdapter,
+        )
 
     beforeEach {
         clearAllMocks()
@@ -124,7 +125,12 @@ class AuthorizationServiceTest : FunSpec({
         }
 
         test("should throw UnauthorizedException when member is not found in contest") {
-            val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().minusHours(1), endAt = OffsetDateTime.now().plusHours(1), members = emptyList())
+            val contest =
+                ContestMockBuilder.build(
+                    startAt = OffsetDateTime.now().minusHours(1),
+                    endAt = OffsetDateTime.now().plusHours(1),
+                    members = emptyList(),
+                )
             every { contestRepository.findById(contestId) } returns Optional.of(contest)
 
             shouldThrow<UnauthorizedException> {
@@ -134,7 +140,12 @@ class AuthorizationServiceTest : FunSpec({
 
         test("should throw UnauthorizedException when password does not match") {
             val member = MemberMockBuilder.build()
-            val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().minusHours(1), endAt = OffsetDateTime.now().plusHours(1), members = listOf(member))
+            val contest =
+                ContestMockBuilder.build(
+                    startAt = OffsetDateTime.now().minusHours(1),
+                    endAt = OffsetDateTime.now().plusHours(1),
+                    members = listOf(member),
+                )
             every { contestRepository.findById(contestId) } returns Optional.of(contest)
             every { hashAdapter.verify(inputDTO.password, member.password) } returns false
 
@@ -145,7 +156,12 @@ class AuthorizationServiceTest : FunSpec({
 
         test("should return Authorization when authentication for contest is successful") {
             val member = MemberMockBuilder.build(login = inputDTO.login)
-            val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().minusHours(1), endAt = OffsetDateTime.now().plusHours(1), members = listOf(member))
+            val contest =
+                ContestMockBuilder.build(
+                    startAt = OffsetDateTime.now().minusHours(1),
+                    endAt = OffsetDateTime.now().plusHours(1),
+                    members = listOf(member),
+                )
             every { contestRepository.findById(contestId) } returns Optional.of(contest)
             every { hashAdapter.verify(inputDTO.password, member.password) } returns true
             val authorization = AuthorizationMockBuilder.build()

@@ -6,7 +6,6 @@ import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
 import io.github.leonfoliveira.judge.common.service.contest.FindContestService
 import io.github.leonfoliveira.judge.common.service.dto.output.ContestLeaderboardOutputDTO
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -17,10 +16,11 @@ class StompSubmissionEmitterTest : FunSpec({
     val messagingTemplate = mockk<SimpMessagingTemplate>(relaxed = true)
     val contestFindContestService = mockk<FindContestService>(relaxed = true)
 
-    val sut = StompSubmissionEmitter(
-        messagingTemplate = messagingTemplate,
-        contestFindContestService = contestFindContestService,
-    )
+    val sut =
+        StompSubmissionEmitter(
+            messagingTemplate = messagingTemplate,
+            contestFindContestService = contestFindContestService,
+        )
 
     beforeEach {
         clearAllMocks()

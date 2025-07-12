@@ -11,11 +11,11 @@ import io.github.leonfoliveira.judge.common.repository.ProblemRepository
 import io.github.leonfoliveira.judge.common.repository.SubmissionRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.submission.CreateSubmissionInputDTO
 import jakarta.validation.Valid
-import java.util.UUID
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
+import java.util.UUID
 
 @Service
 @Validated

@@ -4,10 +4,10 @@ import io.github.leonfoliveira.judge.common.domain.entity.Clarification
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.event.ClarificationEvent
 import io.github.leonfoliveira.judge.common.repository.ClarificationRepository
-import java.time.OffsetDateTime
-import java.util.UUID
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
+import java.util.UUID
 
 @Service
 class DeleteClarificationService(

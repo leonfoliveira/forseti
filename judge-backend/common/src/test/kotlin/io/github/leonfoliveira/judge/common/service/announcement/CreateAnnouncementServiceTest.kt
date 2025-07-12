@@ -17,21 +17,22 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
-import org.springframework.context.ApplicationEventPublisher
 
 class CreateAnnouncementServiceTest : FunSpec({
     val contestRepository = mockk<ContestRepository>(relaxed = true)
     val announcementRepository = mockk<AnnouncementRepository>(relaxed = true)
     val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
-    val sut = CreateAnnouncementService(
-        contestRepository = contestRepository,
-        announcementRepository = announcementRepository,
-        applicationEventPublisher = applicationEventPublisher
-    )
+    val sut =
+        CreateAnnouncementService(
+            contestRepository = contestRepository,
+            announcementRepository = announcementRepository,
+            applicationEventPublisher = applicationEventPublisher,
+        )
 
     beforeEach {
         clearAllMocks()

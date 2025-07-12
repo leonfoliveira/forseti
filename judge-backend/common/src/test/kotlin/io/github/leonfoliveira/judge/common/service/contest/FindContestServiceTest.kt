@@ -91,47 +91,82 @@ class FindContestServiceTest : FunSpec({
             val problem2 = ProblemMockBuilder.build()
 
             val jury = MemberMockBuilder.build(type = Member.Type.JURY)
-            val contestantWithNoSubmission = MemberMockBuilder.build(
-                name = "Z",
-                type = Member.Type.CONTESTANT,
-                submissions = listOf(
-                    SubmissionMockBuilder.build(problem = problem1, status = Submission.Status.FAILED),
-                    SubmissionMockBuilder.build(problem = problem1, status = Submission.Status.JUDGING)
+            val contestantWithNoSubmission =
+                MemberMockBuilder.build(
+                    name = "Z",
+                    type = Member.Type.CONTESTANT,
+                    submissions =
+                        listOf(
+                            SubmissionMockBuilder.build(problem = problem1, status = Submission.Status.FAILED),
+                            SubmissionMockBuilder.build(problem = problem1, status = Submission.Status.JUDGING),
+                        ),
                 )
-            )
-            val contestantWithWrongAnswer = MemberMockBuilder.build(
-                type = Member.Type.CONTESTANT,
-                submissions = listOf(
-                    SubmissionMockBuilder.build(problem = problem1, status = Submission.Status.JUDGED, answer = Submission.Answer.WRONG_ANSWER, createdAt = now.plusSeconds(1))
+            val contestantWithWrongAnswer =
+                MemberMockBuilder.build(
+                    type = Member.Type.CONTESTANT,
+                    submissions =
+                        listOf(
+                            SubmissionMockBuilder.build(
+                                problem = problem1,
+                                status = Submission.Status.JUDGED,
+                                answer = Submission.Answer.WRONG_ANSWER,
+                                createdAt = now.plusSeconds(1),
+                            ),
+                        ),
                 )
-            )
-            val contestantWithAccepted = MemberMockBuilder.build(
-                type = Member.Type.CONTESTANT,
-                submissions = listOf(
-                    SubmissionMockBuilder.build(problem = problem1, status = Submission.Status.JUDGED, answer = Submission.Answer.ACCEPTED, createdAt = now.plusSeconds(1)),
+            val contestantWithAccepted =
+                MemberMockBuilder.build(
+                    type = Member.Type.CONTESTANT,
+                    submissions =
+                        listOf(
+                            SubmissionMockBuilder.build(
+                                problem = problem1,
+                                status = Submission.Status.JUDGED,
+                                answer = Submission.Answer.ACCEPTED,
+                                createdAt = now.plusSeconds(1),
+                            ),
+                        ),
                 )
-            )
-            val contestantWithWrongAnswerAndAccepted = MemberMockBuilder.build(
-                name = "A",
-                type = Member.Type.CONTESTANT,
-                submissions = listOf(
-                    SubmissionMockBuilder.build(problem = problem1, status = Submission.Status.JUDGED, answer = Submission.Answer.WRONG_ANSWER, createdAt = now.plusSeconds(1)),
-                    SubmissionMockBuilder.build(problem = problem1, status = Submission.Status.JUDGED, answer = Submission.Answer.ACCEPTED, createdAt = now.plusSeconds(2)),
-                    SubmissionMockBuilder.build(problem = problem1, status = Submission.Status.JUDGED, answer = Submission.Answer.WRONG_ANSWER, createdAt = now.plusSeconds(3)),
+            val contestantWithWrongAnswerAndAccepted =
+                MemberMockBuilder.build(
+                    name = "A",
+                    type = Member.Type.CONTESTANT,
+                    submissions =
+                        listOf(
+                            SubmissionMockBuilder.build(
+                                problem = problem1,
+                                status = Submission.Status.JUDGED,
+                                answer = Submission.Answer.WRONG_ANSWER,
+                                createdAt = now.plusSeconds(1),
+                            ),
+                            SubmissionMockBuilder.build(
+                                problem = problem1,
+                                status = Submission.Status.JUDGED,
+                                answer = Submission.Answer.ACCEPTED,
+                                createdAt = now.plusSeconds(2),
+                            ),
+                            SubmissionMockBuilder.build(
+                                problem = problem1,
+                                status = Submission.Status.JUDGED,
+                                answer = Submission.Answer.WRONG_ANSWER,
+                                createdAt = now.plusSeconds(3),
+                            ),
+                        ),
                 )
-            )
 
-            val contest = ContestMockBuilder.build(
-                startAt = now,
-                problems = listOf(problem1, problem2),
-                members = listOf(
-                    jury,
-                    contestantWithNoSubmission,
-                    contestantWithWrongAnswer,
-                    contestantWithAccepted,
-                    contestantWithWrongAnswerAndAccepted,
+            val contest =
+                ContestMockBuilder.build(
+                    startAt = now,
+                    problems = listOf(problem1, problem2),
+                    members =
+                        listOf(
+                            jury,
+                            contestantWithNoSubmission,
+                            contestantWithWrongAnswer,
+                            contestantWithAccepted,
+                            contestantWithWrongAnswerAndAccepted,
+                        ),
                 )
-            )
 
             val result = sut.buildContestLeaderboard(contest)
 

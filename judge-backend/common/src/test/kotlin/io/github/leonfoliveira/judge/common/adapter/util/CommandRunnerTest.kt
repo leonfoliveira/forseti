@@ -20,9 +20,10 @@ class CommandRunnerTest : FunSpec({
 
     test("should throw CommandError on non-zero exit code") {
         val command = arrayOf("false")
-        val exception = shouldThrow<CommandError> {
-            CommandRunner.run(command)
-        }
+        val exception =
+            shouldThrow<CommandError> {
+                CommandRunner.run(command)
+            }
         exception.message shouldBe "Command failed with exit code: 1. Error: "
         exception.exitCode shouldBe 1
     }

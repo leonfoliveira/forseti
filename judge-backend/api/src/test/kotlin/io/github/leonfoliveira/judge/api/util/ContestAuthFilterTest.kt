@@ -20,17 +20,19 @@ class ContestAuthFilterTest : FunSpec({
     val findProblemService = mockk<FindProblemService>(relaxed = true)
     val findSubmissionService = mockk<FindSubmissionService>(relaxed = true)
 
-    val sut = ContestAuthFilter(
-        findProblemService = findProblemService,
-        findSubmissionService = findSubmissionService,
-    )
+    val sut =
+        ContestAuthFilter(
+            findProblemService = findProblemService,
+            findSubmissionService = findSubmissionService,
+        )
 
-    val authorizationMember = AuthorizationMember(
-        id = UUID.randomUUID(),
-        contestId = UUID.randomUUID(),
-        type = Member.Type.ROOT,
-        name = "Test User",
-    )
+    val authorizationMember =
+        AuthorizationMember(
+            id = UUID.randomUUID(),
+            contestId = UUID.randomUUID(),
+            type = Member.Type.ROOT,
+            name = "Test User",
+        )
 
     beforeEach {
         clearAllMocks()
@@ -60,7 +62,10 @@ class ContestAuthFilterTest : FunSpec({
             val problemId = UUID.randomUUID()
             val problemContestId = UUID.randomUUID()
             every { AuthorizationContextUtil.getMember() } returns authorizationMember.copy(contestId = null)
-            every { findProblemService.findById(problemId) } returns ProblemMockBuilder.build(contest = ContestMockBuilder.build(id = problemContestId))
+            every { findProblemService.findById(problemId) } returns
+                ProblemMockBuilder.build(
+                    contest = ContestMockBuilder.build(id = problemContestId),
+                )
 
             shouldThrow<ForbiddenException> {
                 sut.checkFromProblem(problemId)
@@ -71,7 +76,10 @@ class ContestAuthFilterTest : FunSpec({
             val problemId = UUID.randomUUID()
             val contestId = UUID.randomUUID()
             every { AuthorizationContextUtil.getMember() } returns authorizationMember.copy(contestId = contestId)
-            every { findProblemService.findById(problemId) } returns ProblemMockBuilder.build(contest = ContestMockBuilder.build(id = contestId))
+            every { findProblemService.findById(problemId) } returns
+                ProblemMockBuilder.build(
+                    contest = ContestMockBuilder.build(id = contestId),
+                )
 
             sut.checkFromProblem(problemId)
         }
@@ -82,7 +90,15 @@ class ContestAuthFilterTest : FunSpec({
             val submissionId = UUID.randomUUID()
             val submissionContestId = UUID.randomUUID()
             every { AuthorizationContextUtil.getMember() } returns authorizationMember.copy(contestId = null)
-            every { findSubmissionService.findById(submissionId) } returns SubmissionMockBuilder.build(problem = ProblemMockBuilder.build(contest = ContestMockBuilder.build(id = submissionContestId)))
+            every {
+                findSubmissionService.findById(submissionId)
+            } returns
+                SubmissionMockBuilder.build(
+                    problem =
+                        ProblemMockBuilder.build(
+                            contest = ContestMockBuilder.build(id = submissionContestId),
+                        ),
+                )
 
             shouldThrow<ForbiddenException> {
                 sut.checkFromSubmission(submissionId)
@@ -93,7 +109,15 @@ class ContestAuthFilterTest : FunSpec({
             val submissionId = UUID.randomUUID()
             val contestId = UUID.randomUUID()
             every { AuthorizationContextUtil.getMember() } returns authorizationMember.copy(contestId = contestId)
-            every { findSubmissionService.findById(submissionId) } returns SubmissionMockBuilder.build(problem = ProblemMockBuilder.build(contest = ContestMockBuilder.build(id = contestId)))
+            every {
+                findSubmissionService.findById(submissionId)
+            } returns
+                SubmissionMockBuilder.build(
+                    problem =
+                        ProblemMockBuilder.build(
+                            contest = ContestMockBuilder.build(id = contestId),
+                        ),
+                )
 
             sut.checkFromSubmission(submissionId)
         }

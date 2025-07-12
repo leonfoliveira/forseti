@@ -8,16 +8,18 @@ import io.kotest.matchers.shouldBe
 class UnitUtilTest : FunSpec({
     context("parseTimeValue") {
         test("should throw BusinessException for invalid format") {
-            val exception = shouldThrow<BusinessException> {
-                UnitUtil.parseTimeValue("invalid")
-            }
+            val exception =
+                shouldThrow<BusinessException> {
+                    UnitUtil.parseTimeValue("invalid")
+                }
             exception.message shouldBe "Invalid unit format: invalid"
         }
 
         test("should throw BusinessException for unknown unit") {
-            val exception = shouldThrow<BusinessException> {
-                UnitUtil.parseTimeValue("10xy")
-            }
+            val exception =
+                shouldThrow<BusinessException> {
+                    UnitUtil.parseTimeValue("10xy")
+                }
             exception.message shouldBe "Unknown unit: xy"
         }
 

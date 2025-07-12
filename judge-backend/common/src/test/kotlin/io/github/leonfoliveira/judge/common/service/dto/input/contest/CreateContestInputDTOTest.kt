@@ -7,12 +7,13 @@ import io.kotest.matchers.shouldBe
 class CreateContestInputDTOTest : FunSpec({
     context("MemberDTO#toString") {
         test("should mask password in toString") {
-            val input = CreateContestInputDTO.MemberDTO(
-                type = Member.Type.ROOT,
-                name = "Test User",
-                login = "testUser",
-                password = "testPassword"
-            )
+            val input =
+                CreateContestInputDTO.MemberDTO(
+                    type = Member.Type.ROOT,
+                    name = "Test User",
+                    login = "testUser",
+                    password = "testPassword",
+                )
             val expected = "MemberDTO(type=ROOT, name='Test User', login='testUser', password='******')"
 
             input.toString() shouldBe expected

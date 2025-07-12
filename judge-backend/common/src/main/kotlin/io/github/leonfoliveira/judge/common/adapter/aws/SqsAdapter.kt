@@ -2,13 +2,13 @@ package io.github.leonfoliveira.judge.common.adapter.aws
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.github.leonfoliveira.judge.common.adapter.aws.message.SqsMessage
-import java.io.Serializable
-import java.util.UUID
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest
+import java.io.Serializable
+import java.util.UUID
 
 @Service
 class SqsAdapter(
@@ -18,14 +18,18 @@ class SqsAdapter(
 
     private val objectMapper = jacksonObjectMapper()
 
-    fun enqueue(queue: String, payload: Serializable) {
+    fun enqueue(
+        queue: String,
+        payload: Serializable,
+    ) {
         val id = UUID.randomUUID()
         logger.info("Enqueuing message with id: $id")
 
-        val message = SqsMessage(
-            id = id,
-            payload = payload
-        )
+        val message =
+            SqsMessage(
+                id = id,
+                payload = payload,
+            )
 
         val request =
             SendMessageRequest

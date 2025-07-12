@@ -5,13 +5,13 @@ import io.github.leonfoliveira.judge.common.service.clarification.DeleteClarific
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.verify
-import java.util.UUID
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
+import java.util.UUID
 
 @WebMvcTest(controllers = [ClarificationController::class])
 @AutoConfigureMockMvc(addFilters = false)
@@ -21,17 +21,17 @@ class ClarificationControllerTest(
     private val deleteClarificationService: DeleteClarificationService,
     private val webMvc: MockMvc,
 ) : FunSpec({
-    extensions(SpringExtension)
+        extensions(SpringExtension)
 
-    test("deleteClarificationById") {
-        val id = UUID.randomUUID()
+        test("deleteClarificationById") {
+            val id = UUID.randomUUID()
 
-        webMvc.delete("/v1/clarifications/{id}", id) {
-            contentType = MediaType.APPLICATION_JSON
-        }.andExpect {
-            status { isNoContent() }
+            webMvc.delete("/v1/clarifications/{id}", id) {
+                contentType = MediaType.APPLICATION_JSON
+            }.andExpect {
+                status { isNoContent() }
+            }
+
+            verify { deleteClarificationService.delete(id) }
         }
-
-        verify { deleteClarificationService.delete(id) }
-    }
-})
+    })

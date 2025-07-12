@@ -6,15 +6,15 @@ import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.event.SubmissionEvent
 import io.github.leonfoliveira.judge.common.event.SubmissionJudgeEvent
 import io.github.leonfoliveira.judge.common.repository.SubmissionRepository
-import java.util.UUID
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class UpdateSubmissionService(
     private val submissionRepository: SubmissionRepository,
-    private val applicationEventPublisher: ApplicationEventPublisher
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 

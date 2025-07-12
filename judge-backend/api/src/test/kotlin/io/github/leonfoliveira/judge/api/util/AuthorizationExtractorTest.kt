@@ -7,8 +7,8 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import java.util.UUID
 import org.springframework.security.core.context.SecurityContextHolder
+import java.util.UUID
 
 class AuthorizationExtractorTest : FunSpec({
     val jwtAdapter = mockk<JwtAdapter>(relaxed = true)
@@ -50,11 +50,12 @@ class AuthorizationExtractorTest : FunSpec({
     }
 
     test("should return AuthorizationMember when token is valid") {
-        val expectedMember = AuthorizationMember(
-            id = UUID.randomUUID(),
-            type = Member.Type.ROOT,
-            name = "Test User",
-        )
+        val expectedMember =
+            AuthorizationMember(
+                id = UUID.randomUUID(),
+                type = Member.Type.ROOT,
+                name = "Test User",
+            )
         every { jwtAdapter.decodeToken("valid-token") } returns expectedMember
 
         val result = sut.extractMember("Bearer valid-token")

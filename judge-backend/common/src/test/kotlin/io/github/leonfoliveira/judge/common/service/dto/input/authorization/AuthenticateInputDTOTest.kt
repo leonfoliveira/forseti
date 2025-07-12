@@ -6,10 +6,11 @@ import io.kotest.matchers.shouldBe
 class AuthenticateInputDTOTest : FunSpec({
     context("toString") {
         test("should mask password in toString") {
-            val input = AuthenticateInputDTO(
-                login = "testUser",
-                password = "testPassword"
-            )
+            val input =
+                AuthenticateInputDTO(
+                    login = "testUser",
+                    password = "testPassword",
+                )
             val expected = "AuthenticateInputDTO(login='testUser', password='******')"
 
             input.toString() shouldBe expected

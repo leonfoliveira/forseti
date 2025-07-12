@@ -12,12 +12,12 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import java.util.UUID
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.support.MessageHeaderAccessor
 import org.springframework.security.core.context.SecurityContextHolder
+import java.util.UUID
 
 class WebSocketPrivateInterceptorTest : FunSpec({
     val sut = WebSocketPrivateInterceptor()
@@ -93,11 +93,14 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         val accessor = mockk<StompHeaderAccessor>(relaxed = true)
         every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
         every { accessor.destination } returns "/topic/contests/1/submissions/full"
-        SecurityContextHolder.getContext().authentication = JwtAuthentication(AuthorizationMember(
-            id = UUID.randomUUID(),
-            type = Member.Type.CONTESTANT,
-            name = "Test User",
-        ))
+        SecurityContextHolder.getContext().authentication =
+            JwtAuthentication(
+                AuthorizationMember(
+                    id = UUID.randomUUID(),
+                    type = Member.Type.CONTESTANT,
+                    name = "Test User",
+                ),
+            )
 
         shouldThrow<ForbiddenException> {
             sut.preSend(message, channel)
@@ -110,11 +113,14 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         val accessor = mockk<StompHeaderAccessor>(relaxed = true)
         every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
         every { accessor.destination } returns "/topic/contests/1/submissions/full"
-        SecurityContextHolder.getContext().authentication = JwtAuthentication(AuthorizationMember(
-            id = UUID.randomUUID(),
-            type = Member.Type.JURY,
-            name = "Test User",
-        ))
+        SecurityContextHolder.getContext().authentication =
+            JwtAuthentication(
+                AuthorizationMember(
+                    id = UUID.randomUUID(),
+                    type = Member.Type.JURY,
+                    name = "Test User",
+                ),
+            )
 
         val result = sut.preSend(message, channel)
 
