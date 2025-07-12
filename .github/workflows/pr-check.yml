@@ -26,8 +26,8 @@ jobs:
       - name: Lint
         run: ./gradlew ktlintCheck
 
-      # - name: Test
-      #   run: ./gradlew test
+      - name: Test
+        run: ./gradlew test
 
       - name: Build Api
         run: ./gradlew :api:build -x check
