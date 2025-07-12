@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ktlint)
     alias(libs.plugins.kover)
     alias(libs.plugins.spring)
+    `java-test-fixtures`
 }
 
 allprojects {
@@ -23,6 +24,7 @@ allprojects {
     apply(plugin = rootProject.libs.plugins.ktlint.get().pluginId)
     apply(plugin = rootProject.libs.plugins.kover.get().pluginId)
     apply(plugin = rootProject.libs.plugins.spring.get().pluginId)
+    apply(plugin = "java-test-fixtures")
 }
 
 subprojects {
@@ -36,6 +38,10 @@ subprojects {
         testImplementation(rootProject.libs.bundles.mockk)
         testImplementation(rootProject.libs.bundles.testcontainers)
         testImplementation(rootProject.libs.spring.boot.starter.test)
+
+        testFixturesImplementation(rootProject.libs.bundles.kotest)
+        testFixturesImplementation(rootProject.libs.bundles.mockk)
+        testFixturesImplementation(rootProject.libs.bundles.testcontainers)
 
         developmentOnly(rootProject.libs.spring.boot.dev.tools)
     }

@@ -19,6 +19,8 @@ import io.github.leonfoliveira.judge.common.mock.entity.AnnouncementMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ClarificationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.ProblemMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
 import io.github.leonfoliveira.judge.common.service.announcement.CreateAnnouncementService
 import io.github.leonfoliveira.judge.common.service.clarification.CreateClarificationService
@@ -211,7 +213,9 @@ class ContestControllerTest(
 
     test("findFullContestById") {
         val contestId = UUID.randomUUID()
-        val contest = ContestMockBuilder.build(id = contestId)
+        val contest = ContestMockBuilder.build(id = contestId, members = listOf(MemberMockBuilder.build()), problems = listOf(
+            ProblemMockBuilder.build()
+        ))
         every { findContestService.findById(contestId) } returns contest
 
         webMvc.get("/v1/contests/{id}/full", contestId) {
