@@ -37,7 +37,7 @@ class HttpPrivateInterceptor : HandlerInterceptor {
         }
 
         val auth = SecurityContextHolder.getContext().authentication as? JwtAuthentication
-        if (auth == null || !auth.isAuthenticated || auth.principal == null) {
+        if (auth == null || !auth.isAuthenticated) {
             logger.info("Not authenticated")
             throw UnauthorizedException()
         }

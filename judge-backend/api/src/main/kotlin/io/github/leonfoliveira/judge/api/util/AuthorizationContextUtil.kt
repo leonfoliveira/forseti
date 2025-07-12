@@ -6,8 +6,8 @@ import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import org.springframework.security.core.context.SecurityContextHolder
 
 object AuthorizationContextUtil {
-    fun getAuthorization(): AuthorizationMember {
-        val authentication = SecurityContextHolder.getContext().authentication as JwtAuthentication
-        return authentication.principal ?: throw UnauthorizedException()
+    fun getMember(): AuthorizationMember {
+        val authentication = SecurityContextHolder.getContext().authentication as? JwtAuthentication
+        return authentication?.principal ?: throw UnauthorizedException()
     }
 }

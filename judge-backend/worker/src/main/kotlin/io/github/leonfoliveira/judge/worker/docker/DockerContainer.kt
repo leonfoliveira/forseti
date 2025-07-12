@@ -5,7 +5,7 @@ import io.github.leonfoliveira.judge.common.adapter.util.CommandRunner
 import java.io.File
 
 class DockerContainer(
-    val name: String,
+    private val name: String,
 ) {
     class DockerTimeOutException() : RuntimeException()
 
@@ -54,7 +54,7 @@ class DockerContainer(
     ): String {
         val dockerCommand = mutableListOf("docker", "exec", "-i", name, *command)
         if (timeLimit != null) {
-            dockerCommand.addAll(0, listOf("timeout", "${timeLimit / 1000.0}s"))
+            dockerCommand.addAll(0, listOf("timeout", "-k", "1s", "${timeLimit / 1000.0}s"))
         }
 
         return try {

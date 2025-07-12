@@ -2,7 +2,7 @@ package io.github.leonfoliveira.judge.common.service.attachment
 
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.common.port.BucketAdapter
+import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
 import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
 import io.github.leonfoliveira.judge.common.service.dto.output.AttachmentDownloadOutputDTO
 import org.slf4j.LoggerFactory
@@ -13,7 +13,7 @@ import java.util.UUID
 @Service
 class AttachmentService(
     private val attachmentRepository: AttachmentRepository,
-    private val bucketAdapter: BucketAdapter,
+    private val attachmentBucketAdapter: AttachmentBucketAdapter,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -27,7 +27,7 @@ class AttachmentService(
             )
         logger.info("Uploading ${file.bytes} bytes to attachment with id: ${attachment.id}")
         attachmentRepository.save(attachment)
-        bucketAdapter.upload(attachment, file.bytes)
+        attachmentBucketAdapter.upload(attachment, file.bytes)
 
         logger.info("Finished uploading attachment")
         return attachment
@@ -39,7 +39,7 @@ class AttachmentService(
             attachmentRepository.findById(id).orElseThrow {
                 NotFoundException("Could not find attachment with id = $id")
             }
-        val bytes = bucketAdapter.download(attachment)
+        val bytes = attachmentBucketAdapter.download(attachment)
 
         logger.info("Finished downloading attachment")
         return AttachmentDownloadOutputDTO(

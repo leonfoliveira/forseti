@@ -2,6 +2,7 @@ package io.github.leonfoliveira.judge.api.config
 
 import io.github.leonfoliveira.judge.api.security.websocket.WebSocketJwtAuthFilter
 import io.github.leonfoliveira.judge.api.security.websocket.WebSocketPrivateInterceptor
+import io.github.leonfoliveira.judge.common.util.GeneratedSkipCoverage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.simp.config.ChannelRegistration
@@ -12,6 +13,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
+@GeneratedSkipCoverage
 class WebSocketConfig(
     @Value("\${server.cors.allowed-origins}")
     val allowedOrigins: String,

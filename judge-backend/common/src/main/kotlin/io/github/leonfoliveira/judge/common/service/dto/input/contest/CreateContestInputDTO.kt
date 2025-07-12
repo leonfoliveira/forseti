@@ -1,5 +1,6 @@
 package io.github.leonfoliveira.judge.common.service.dto.input.contest
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import io.github.leonfoliveira.judge.common.service.dto.input.attachment.AttachmentInputDTO
@@ -28,6 +29,7 @@ data class CreateContestInputDTO(
     @field:Valid
     val problems: List<@Valid ProblemDTO>,
 ) {
+    @get:JsonIgnore
     @get:AssertTrue(message = "endAt must be after start date")
     val isEndAtAfterStartAt: Boolean
         get() = startAt.isBefore(endAt)
@@ -46,10 +48,12 @@ data class CreateContestInputDTO(
         }
     }
 
+    @get:JsonIgnore
     @get:AssertFalse(message = "login must be unique")
     val isLoginDuplicated: Boolean
         get() = members.groupBy { it.login }.any { it.value.size > 1 }
 
+    @get:JsonIgnore
     @get:AssertFalse(message = "slug must be unique")
     val isProblemLetterDuplicated: Boolean
         get() = problems.groupBy { it.letter }.any { it.value.size > 1 }

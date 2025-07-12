@@ -10,9 +10,9 @@ import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.github.leonfoliveira.judge.common.repository.ProblemRepository
 import io.github.leonfoliveira.judge.common.repository.SubmissionRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.submission.CreateSubmissionInputDTO
-import io.github.leonfoliveira.judge.common.util.TransactionalEventPublisher
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.validation.annotation.Validated
 import java.util.UUID
@@ -24,7 +24,7 @@ class CreateSubmissionService(
     private val memberRepository: MemberRepository,
     private val problemRepository: ProblemRepository,
     private val submissionRepository: SubmissionRepository,
-    private val transactionalEventPublisher: TransactionalEventPublisher,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -68,8 +68,8 @@ class CreateSubmissionService(
                 code = code,
             )
         submissionRepository.save(submission)
-        transactionalEventPublisher.publish(SubmissionEvent(this, submission))
-        transactionalEventPublisher.publish(SubmissionJudgeEvent(this, submission))
+        applicationEventPublisher.publishEvent(SubmissionEvent(this, submission))
+        applicationEventPublisher.publishEvent(SubmissionJudgeEvent(this, submission))
         logger.info("Submission created, enqueued and emitted")
         return submission
     }

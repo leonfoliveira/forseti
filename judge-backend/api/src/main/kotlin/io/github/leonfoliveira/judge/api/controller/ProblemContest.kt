@@ -35,10 +35,10 @@ class ProblemContest(
     ): ResponseEntity<SubmissionFullResponseDTO> {
         logger.info("[POST] /v1/problems/{id}/submissions - body: $body")
         contestAuthFilter.checkFromProblem(id)
-        val authentication = AuthorizationContextUtil.getAuthorization()
+        val member = AuthorizationContextUtil.getMember()
         val submission =
             createSubmissionService.create(
-                memberId = authentication.id,
+                memberId = member.id,
                 problemId = id,
                 inputDTO = body,
             )

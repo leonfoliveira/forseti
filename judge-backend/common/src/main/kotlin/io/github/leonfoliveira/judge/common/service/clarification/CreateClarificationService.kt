@@ -8,8 +8,8 @@ import io.github.leonfoliveira.judge.common.event.ClarificationEvent
 import io.github.leonfoliveira.judge.common.repository.ClarificationRepository
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.clarification.CreateClarificationInputDTO
-import io.github.leonfoliveira.judge.common.util.TransactionalEventPublisher
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -17,7 +17,7 @@ import java.util.UUID
 class CreateClarificationService(
     private val contestRepository: ContestRepository,
     private val clarificationRepository: ClarificationRepository,
-    private val transactionalEventPublisher: TransactionalEventPublisher,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -33,11 +33,19 @@ class CreateClarificationService(
                 NotFoundException("Could not find contest with id $contestId")
             }
         if (!contest.hasStarted()) {
-            throw NotFoundException("Contest with id $contestId has not started yet")
+            throw ForbiddenException("Contest with id $contestId has not started yet")
         }
         val member =
             contest.members.find { it.id == memberId }
                 ?: throw NotFoundException("Could not find member with id $memberId")
+
+        if (member.type == Member.Type.CONTESTANT && input.parentId != null) {
+            throw ForbiddenException("Contestants cannot create clarifications with a parent")
+        }
+        if (member.type == Member.Type.JURY && input.parentId == null) {
+            throw ForbiddenException("Jury members cannot create clarifications without a parent")
+        }
+
         val problem =
             input.problemId?.let {
                 contest.problems.find { it.id == input.problemId }
@@ -50,13 +58,6 @@ class CreateClarificationService(
                 }
             }
 
-        if (member.type == Member.Type.CONTESTANT && input.parentId != null) {
-            throw ForbiddenException("Contestants cannot create clarifications with a parent")
-        }
-        if (member.type == Member.Type.JURY && input.parentId == null) {
-            throw ForbiddenException("Jury members cannot create clarifications without a parent")
-        }
-
         val clarification =
             Clarification(
                 contest = contest,
@@ -66,7 +67,7 @@ class CreateClarificationService(
                 parent = parent,
             )
         clarificationRepository.save(clarification)
-        transactionalEventPublisher.publish(ClarificationEvent(this, clarification))
+        applicationEventPublisher.publishEvent(ClarificationEvent(this, clarification))
         logger.info("Clarification created successfully")
         return clarification
     }

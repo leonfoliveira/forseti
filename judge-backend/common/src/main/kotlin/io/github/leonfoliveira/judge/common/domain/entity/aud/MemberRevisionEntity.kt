@@ -38,5 +38,5 @@ class MemberRevisionEntity(
      * The trace ID for tracking the request that caused this revision.
      * This is useful for debugging and tracing the origin of changes.
      */
-    var traceId: String = "",
+    var traceId: String? = null,
 )

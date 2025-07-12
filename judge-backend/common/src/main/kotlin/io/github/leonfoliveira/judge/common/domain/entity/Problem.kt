@@ -48,7 +48,7 @@ class Problem(
     @Audited(withModifiedFlag = true, modifiedColumnName = "description_id_mod")
     var description: Attachment,
     /**
-     * Time limit for solving the problem, in seconds.
+     * Time limit for solving the problem, in milliseconds.
      */
     @Column(name = "time_limit", nullable = false)
     var timeLimit: Int,

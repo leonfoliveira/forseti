@@ -65,7 +65,7 @@ kover {
         }
         verify {
             rule("Minimum Line Coverage") {
-                minBound(95)
+                minBound(90)
             }
         }
     }

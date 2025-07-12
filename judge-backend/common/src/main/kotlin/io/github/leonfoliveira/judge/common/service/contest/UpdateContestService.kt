@@ -47,7 +47,7 @@ class UpdateContestService(
             throw ForbiddenException("Contest has already finished and cannot be updated")
         }
         if (contest.hasStarted()) {
-            if (!inputDTO.startAt.truncatedTo(ChronoUnit.MINUTES).isEqual(contest.startAt.truncatedTo(ChronoUnit.MINUTES))) {
+            if (!inputDTO.startAt.truncatedTo(ChronoUnit.SECONDS).isEqual(contest.startAt.truncatedTo(ChronoUnit.SECONDS))) {
                 throw ForbiddenException("Contest has already started and cannot have its start time updated")
             }
         } else {
@@ -156,7 +156,7 @@ class UpdateContestService(
                 }
             problem.description = description
         }
-        if (problem.testCases.id != problemDTO.testCases) {
+        if (problem.testCases.id != problemDTO.testCases.id) {
             val testCases =
                 attachmentRepository.findById(problemDTO.testCases.id).orElseThrow {
                     NotFoundException("Could not find testCases attachment with id: ${problemDTO.testCases.id}")

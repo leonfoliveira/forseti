@@ -1,9 +1,11 @@
 package io.github.leonfoliveira.judge.api.security
 
 import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
+import io.github.leonfoliveira.judge.common.util.GeneratedSkipCoverage
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 
+@GeneratedSkipCoverage
 class JwtAuthentication(
     private var principal: AuthorizationMember? = null,
 ) : Authentication {

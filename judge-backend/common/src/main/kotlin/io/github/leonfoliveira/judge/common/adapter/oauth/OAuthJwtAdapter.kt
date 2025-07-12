@@ -27,9 +27,9 @@ class OAuthJwtAdapter(
         val expiresAt =
             now.plusMillis(
                 if (member.type == Member.Type.ROOT) {
-                    UnitUtil.parseTimeValue(rootExpiration).toLong()
+                    UnitUtil.parseTimeValue(rootExpiration)
                 } else {
-                    UnitUtil.parseTimeValue(expiration).toLong()
+                    UnitUtil.parseTimeValue(expiration)
                 },
             )
 

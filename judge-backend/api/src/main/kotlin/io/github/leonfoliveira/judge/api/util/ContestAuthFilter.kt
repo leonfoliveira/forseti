@@ -12,24 +12,24 @@ class ContestAuthFilter(
     val findSubmissionService: FindSubmissionService,
 ) {
     fun check(contestId: UUID) {
-        val authorization = AuthorizationContextUtil.getAuthorization()
-        if (authorization.contestId != contestId) {
+        val member = AuthorizationContextUtil.getMember()
+        if (member.contestId != contestId) {
             throw ForbiddenException("You are not authorized to access this contest")
         }
     }
 
     fun checkFromProblem(problemId: UUID) {
-        val authorization = AuthorizationContextUtil.getAuthorization()
+        val member = AuthorizationContextUtil.getMember()
         val problem = findProblemService.findById(problemId)
-        if (authorization.contestId != problem.contest.id) {
+        if (member.contestId != problem.contest.id) {
             throw ForbiddenException("You are not authorized to access this contest")
         }
     }
 
     fun checkFromSubmission(submissionId: UUID) {
-        val authorization = AuthorizationContextUtil.getAuthorization()
+        val member = AuthorizationContextUtil.getMember()
         val submission = findSubmissionService.findById(submissionId)
-        if (authorization.contestId != submission.contest.id) {
+        if (member.contestId != submission.contest.id) {
             throw ForbiddenException("You are not authorized to access this contest")
         }
     }

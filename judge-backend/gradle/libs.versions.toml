@@ -26,6 +26,7 @@ testcontainers = "1.21.0"
 hibernate-envers = { module = "org.hibernate.orm:hibernate-envers", version.ref = "hibernate-envers" }
 hibernate-types = { module = "com.vladmihalcea:hibernate-types-60", version.ref = "hibernate-types" }
 flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+jackson-datatype-jsr310 = { module = 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310', version.ref = "jackson" }
 jackson-module-kotlin = { module = 'com.fasterxml.jackson.module:jackson-module-kotlin', version.ref = "jackson" }
 java-diff-utils = { module = 'io.github.java-diff-utils:java-diff-utils', version.ref = "java-diff-utils" }
 java-jwt = { module = 'com.auth0:java-jwt', version.ref = "java-jwt" }
@@ -57,6 +58,10 @@ testcontainers-localstack = { module = "org.testcontainers:localstack", version.
 testcontainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 
 [bundles]
+jackson = [
+    "jackson-datatype-jsr310",
+    "jackson-module-kotlin"
+]
 kotest = [
     "kotest-assertions-core",
     "kotest-runner-junit5",

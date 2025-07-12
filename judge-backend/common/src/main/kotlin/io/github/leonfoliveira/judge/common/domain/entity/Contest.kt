@@ -65,10 +65,16 @@ class Contest(
     @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var problems: List<Problem> = mutableListOf(),
+    /**
+     * All clarifications for the contest, which contain questions and answers related to the contest problems.
+     */
     @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @Where(clause = "parent_id is null")
     var clarifications: List<Clarification> = mutableListOf(),
+    /**
+     * Announcements related to the contest, which can include important updates or information for participants.
+     */
     @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var announcements: List<Announcement> = mutableListOf(),

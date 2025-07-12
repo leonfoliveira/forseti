@@ -16,7 +16,7 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1/auth")
 class AuthenticationController(
-    val authenticationService: AuthorizationService,
+    val authorizationService: AuthorizationService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -26,7 +26,7 @@ class AuthenticationController(
         @RequestBody body: AuthenticateInputDTO,
     ): ResponseEntity<Authorization> {
         logger.info("[POST] /v1/auth/sign-in - body: $body")
-        val authorization = authenticationService.authenticate(body)
+        val authorization = authorizationService.authenticate(body)
         return ResponseEntity.ok(authorization)
     }
 
@@ -38,7 +38,7 @@ class AuthenticationController(
     ): ResponseEntity<Authorization> {
         logger.info("[POST] /v1/auth/contests/{id}/sign-in - id: $id, body: $body")
         val authorization =
-            authenticationService.authenticateForContest(
+            authorizationService.authenticateForContest(
                 contestId = id,
                 body,
             )
