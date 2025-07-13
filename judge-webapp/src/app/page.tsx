@@ -89,7 +89,7 @@ export default function HomePage() {
             type="button"
             onClick={() => redirectRoot()}
             className="btn-outline btn-primary w-full"
-            data-testid="sign-in"
+            data-testid="root"
           >
             {t("root:label")}
             <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />

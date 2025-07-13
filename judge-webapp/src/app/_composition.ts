@@ -41,7 +41,6 @@ export const attachmentService = new AttachmentService(
 );
 export const authenticationService = new AuthenticationService(
   new AxiosAuthenticationRepository(axiosClient),
-  authorizationService,
 );
 export const clarificationService = new ClarificationService(
   new AxiosClarificationRepository(axiosClient),
