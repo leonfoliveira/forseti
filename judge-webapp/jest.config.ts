@@ -12,6 +12,11 @@ const config: Config = {
       lines: 90,
     },
   },
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "!src/core/repository/**/*",
+    "!src/i18n/**/*",
+  ],
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/test/jest.setup.ts"],
   moduleNameMapper: {
