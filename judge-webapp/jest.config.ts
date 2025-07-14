@@ -21,6 +21,7 @@ const config: Config = {
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/test/jest.setup.tsx"],
   moduleNameMapper: {
+    "^@/test/(.*)$": "<rootDir>/test/$1",
     "^@/(.*)$": "<rootDir>/src/$1",
   },
   transformIgnorePatterns: ["/node_modules/(?!next-intl)/"],
