@@ -6,6 +6,10 @@ import {
   useToast,
 } from "@/app/_component/context/notification-context";
 
+jest.mock("@/app/_component/context/notification-context", () => {
+  return jest.requireActual("@/app/_component/context/notification-context");
+});
+
 jest.mock("@/app/_component/notification/alert-box", () => ({
   AlertBox: jest.fn(({ items }) => (
     <div data-testid="alert-box">

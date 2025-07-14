@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { ServerException } from "@/core/domain/exception/ServerException";
 
 export type LoadableState<TData> = {
   isLoading: boolean;

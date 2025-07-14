@@ -1,8 +1,12 @@
 import "@testing-library/jest-dom";
 
+// Mocking the next-intl module for translations
+
 jest.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }));
+
+// Mocking navigation and routing functionalities
 
 export const redirect = jest.fn();
 export const router = {
@@ -16,6 +20,8 @@ jest.mock("next/navigation", () => ({
     replace: "replace",
   },
 }));
+
+// Mocking the notification context
 
 export const alert = {
   info: jest.fn(),
