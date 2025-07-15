@@ -1,13 +1,12 @@
 import "@testing-library/jest-dom";
-import {
-  NotificationLevel,
-  NotificationType,
-} from "@/app/_component/context/notification-context";
 
 // Mocking the next-intl module for translations
 
 jest.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
+  useFormatter: jest.fn().mockReturnValue({
+    dateTime: jest.fn(),
+  }),
 }));
 
 // Mocking navigation and routing functionalities
