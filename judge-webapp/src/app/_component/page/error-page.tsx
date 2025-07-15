@@ -8,15 +8,15 @@ import { useTranslations } from "next-intl";
 export function ErrorPage() {
   const t = useTranslations("_component.page.error-page");
   return (
-    <div
-      className="h-dvh flex justify-center items-center"
-      data-testid="error-page"
-    >
+    <div className="h-dvh flex justify-center items-center">
       <div className="text-center">
-        <h1 className="text-6xl mb-5 font-mono">{t("error")}</h1>
+        <h1 className="text-6xl mb-5 font-mono" data-testid="error">
+          {t("error")}
+        </h1>
         <Button
           className="btn-soft mt-5"
           onClick={() => window.location.reload()}
+          data-testid="reload"
         >
           {t("reload:label")}
         </Button>

@@ -6,10 +6,7 @@ import React from "react";
  */
 export function LoadingPage() {
   return (
-    <div
-      className="h-dvh flex justify-center items-center"
-      data-testid="loading-page"
-    >
+    <div className="h-dvh flex justify-center items-center">
       <Spinner size="lg" />
     </div>
   );
