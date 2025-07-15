@@ -49,7 +49,7 @@ export function DateTimeInput<TFieldValues extends FieldValues>({
       render={({ field, fieldState }) => (
         <fieldset
           className={cls("fieldset", containerClassName)}
-          data-testid={testId}
+          data-testid={`${testId}:container`}
         >
           <label className="fieldset-legend" data-testid={`${testId}:label`}>
             {label}
