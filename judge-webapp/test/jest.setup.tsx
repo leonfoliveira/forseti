@@ -17,7 +17,10 @@ export const router = {
 };
 jest.mock("next/navigation", () => ({
   redirect,
-  useRouter: () => router,
+  useRouter: jest.fn().mockReturnValue(router),
+  useSearchParams: jest.fn().mockReturnValue({
+    get: jest.fn(),
+  }),
   RedirectType: {
     push: "push",
     replace: "replace",
