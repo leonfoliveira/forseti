@@ -8,7 +8,10 @@ import { useTranslations } from "next-intl";
 export function ErrorPage() {
   const t = useTranslations("_component.page.error-page");
   return (
-    <div className="h-dvh flex justify-center items-center">
+    <div
+      className="h-dvh flex justify-center items-center"
+      data-testid="error-page"
+    >
       <div className="text-center">
         <h1 className="text-6xl mb-5 font-mono" data-testid="error">
           {t("error")}
