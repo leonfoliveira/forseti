@@ -1,4 +1,8 @@
 import "@testing-library/jest-dom";
+import {
+  NotificationLevel,
+  NotificationType,
+} from "@/app/_component/context/notification-context";
 
 // Mocking the next-intl module for translations
 
@@ -31,4 +35,10 @@ export const alert = {
 };
 jest.mock("@/app/_component/context/notification-context", () => ({
   useAlert: () => alert,
+  NotificationLevel: jest.requireActual(
+    "@/app/_component/context/notification-context",
+  ).NotificationLevel,
+  NotificationType: jest.requireActual(
+    "@/app/_component/context/notification-context",
+  ).NotificationType,
 }));

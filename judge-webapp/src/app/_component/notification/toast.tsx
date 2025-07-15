@@ -9,7 +9,7 @@ import {
 
 type Props = {
   toast: NotificationItemType;
-  onClose: (id: string) => void;
+  onClose: () => void;
 };
 
 /**
@@ -20,7 +20,7 @@ export function Toast({ toast, onClose }: Props) {
 
   useEffect(() => {
     closeTimeout.current = setTimeout(() => {
-      onClose(toast.id);
+      onClose();
     }, toast.ttl);
 
     return () => {
@@ -42,13 +42,14 @@ export function Toast({ toast, onClose }: Props) {
       className={cls("alert pointer-events-auto", style[toast.level])}
       style={{ pointerEvents: "auto" }}
       data-testid="toast"
-      onClick={() => onClose(toast.id)}
+      onClick={onClose}
     >
       {toast.text}
       <FontAwesomeIcon
         icon={faClose}
         className="ms-2 cursor-pointer"
-        onClick={() => onClose(toast.id)}
+        onClick={onClose}
+        data-testid="toast-close-icon"
       />
     </div>
   );
