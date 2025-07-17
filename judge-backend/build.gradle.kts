@@ -42,6 +42,7 @@ subprojects {
         testFixturesImplementation(rootProject.libs.bundles.kotest)
         testFixturesImplementation(rootProject.libs.bundles.mockk)
         testFixturesImplementation(rootProject.libs.bundles.testcontainers)
+        testFixturesImplementation(rootProject.libs.spring.boot.starter.test)
 
         developmentOnly(rootProject.libs.spring.boot.dev.tools)
     }
