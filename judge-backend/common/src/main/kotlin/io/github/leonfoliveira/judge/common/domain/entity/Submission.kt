@@ -43,6 +43,7 @@ class Submission(
      */
     @Column("language", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Audited(withModifiedFlag = false)
     val language: Language,
     /**
      * The status of the submission, indicating whether it is being judged, has failed, or has been judged.
@@ -56,9 +57,12 @@ class Submission(
     @Column("answer")
     @Enumerated(EnumType.STRING)
     var answer: Answer = Answer.NO_ANSWER,
+    /**
+     * The code submitted by the member for the problem.
+     */
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "code_id", nullable = false)
-    @Audited(withModifiedFlag = true, modifiedColumnName = "code_id_mod")
+    @Audited(withModifiedFlag = false)
     val code: Attachment,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
     val contest get() = problem.contest
