@@ -42,16 +42,6 @@ export class AxiosClient {
     });
   }
 
-  async patch<TBody>(
-    path: string,
-    config: AxiosRequestConfig = {},
-  ): Promise<AxiosResponse<TBody>> {
-    return this.request(path, {
-      method: "PATCH",
-      ...config,
-    });
-  }
-
   async delete(path: string, config: AxiosRequestConfig = {}): Promise<void> {
     await this.request(path, {
       method: "DELETE",

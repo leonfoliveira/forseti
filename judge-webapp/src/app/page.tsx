@@ -62,7 +62,6 @@ export default function HomePage() {
         onSubmit={form.handleSubmit(joinContest)}
         disabled={joinContestState.isLoading}
         className="p-10 w-full max-w-[400] bg-base-100"
-        data-testid="form"
       >
         <h1 className="text-3xl font-bold">{t("title")}</h1>
         <div className="my-6">
@@ -89,7 +88,7 @@ export default function HomePage() {
             type="button"
             onClick={() => redirectRoot()}
             className="btn-outline btn-primary w-full"
-            data-testid="sign-in"
+            data-testid="root"
           >
             {t("root:label")}
             <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />

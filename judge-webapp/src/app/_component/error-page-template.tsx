@@ -14,11 +14,16 @@ export function ErrorPageTemplate({ code, description }: Props) {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-8xl font-bold font-mono">{code}</h1>
-      <h2 className="text-md mt-5">{description}</h2>
+      <h1 className="text-8xl font-bold font-mono" data-testid="code">
+        {code}
+      </h1>
+      <h2 className="text-md mt-5" data-testid="description">
+        {description}
+      </h2>
       <Button
         onClick={() => router.push(routes.HOME)}
         className="btn-primary mt-10"
+        data-testid="home"
       >
         {t("home:label")}
       </Button>

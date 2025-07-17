@@ -64,10 +64,13 @@ export default function RootSignInPage() {
         onSubmit={form.handleSubmit(signIn)}
         disabled={signInState.isLoading}
         className="p-10 w-full max-w-[400] bg-base-100"
-        data-testid="form"
       >
-        <h1 className="text-3xl font-bold">{t("title")}</h1>
-        <h2 className="text-md mt-2">{t("description")}</h2>
+        <h1 className="text-3xl font-bold" data-testid="title">
+          {t("title")}
+        </h1>
+        <h2 className="text-md mt-2" data-testid="description">
+          {t("description")}
+        </h2>
         <div className="my-6">
           <TextInput
             form={form}

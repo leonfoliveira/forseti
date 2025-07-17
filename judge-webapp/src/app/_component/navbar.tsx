@@ -33,17 +33,13 @@ export function Navbar({
   }
 
   return (
-    <nav className="navbar bg-base-100" data-testid="navbar">
+    <nav className="navbar bg-base-100">
       <div className="grid [grid-template-columns:1fr_auto_1fr] items-center w-full">
-        <div className="text-lg font-semibold ml-2">
+        <div className="text-lg font-semibold ml-2" data-testid="title">
           {contestMetadata ? contestMetadata.title : t("root-title")}
         </div>
         <div className="text-center">
-          <span
-            ref={clockRef}
-            className="font-mono text-sm"
-            data-testid="navbar-clock"
-          />
+          <span ref={clockRef} className="font-mono text-sm" />
         </div>
         <div className="flex items-center w-full justify-end">
           <label className="toggle text-base-content">
@@ -52,7 +48,7 @@ export function Navbar({
               className="theme-controller"
               checked={theme === "dark"}
               onChange={toggleTheme}
-              data-testid="navbar-theme"
+              data-testid="theme"
             />
             <FontAwesomeIcon icon={faSun} size="xs" />
             <FontAwesomeIcon icon={faMoon} size="xs" />
@@ -60,10 +56,13 @@ export function Navbar({
           <ul className="menu menu-horizontal">
             <li>
               <details>
-                <summary className="font-semibold">
+                <summary className="font-semibold" data-testid="member">
                   {authorization?.member.name || t("guest-name")}
                 </summary>
-                <ul className="bg-base-100 rounded-t-none right-0 !mt-0">
+                <ul
+                  className="bg-base-100 rounded-t-none right-0 !mt-0"
+                  data-testid="menu"
+                >
                   {contestMemberType && (
                     <li className="menu-title">
                       {t(`contest-member-type.${contestMemberType}`)}

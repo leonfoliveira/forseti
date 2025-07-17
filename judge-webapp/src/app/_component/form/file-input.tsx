@@ -56,6 +56,7 @@ export function FileInput<TFieldValues extends FieldValues>({
 
   const originalValue: Attachment | undefined =
     originalName && form.watch(originalName);
+  console.log("Original Value:", originalValue?.filename);
 
   return (
     <Controller
@@ -64,7 +65,7 @@ export function FileInput<TFieldValues extends FieldValues>({
       render={({ field, fieldState }) => (
         <fieldset
           className={cls(containerClassName, "fieldset")}
-          data-testid={testId}
+          data-testid={`${testId}:container`}
         >
           <label className="fieldset-legend" data-testid={`${testId}:label`}>
             {label}

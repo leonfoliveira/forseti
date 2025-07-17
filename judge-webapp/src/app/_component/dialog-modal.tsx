@@ -37,7 +37,7 @@ export function DialogModal<TProps>({
             className="btn btn-soft"
             onClick={modal.close}
             disabled={isLoading}
-            data-testid={`${testId}:close`}
+            data-testid={`${testId}:cancel`}
           >
             {t("cancel")}
           </Button>

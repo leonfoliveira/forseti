@@ -83,7 +83,7 @@ export function useContestStatusWatcher<
       if (startTimeout) clearTimeout(startTimeout);
       if (endTimeout) clearTimeout(endTimeout);
     };
-  }, []);
+  }, [contest]);
 
   return status;
 }

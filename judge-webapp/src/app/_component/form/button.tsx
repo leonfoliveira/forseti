@@ -34,6 +34,7 @@ export function Button({
         isLoading && "cursor-wait",
       )}
       data-tip={tooltip}
+      data-testid={`${testId}:container`}
     >
       <button
         type={type || "button"}

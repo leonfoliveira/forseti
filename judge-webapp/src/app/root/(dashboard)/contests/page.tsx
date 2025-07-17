@@ -139,20 +139,20 @@ export default function RootContestsPage() {
             >
               <TableCell data-testid="slug">{contest.slug}</TableCell>
               <TableCell data-testid="title">{contest.title}</TableCell>
-              <TableCell data-testid="startAt">
+              <TableCell data-testid="start-at">
                 <TimestampDisplay
                   timestamp={contest.startAt}
                   options={{ second: undefined }}
                 />
               </TableCell>
-              <TableCell data-testid="endAt">
+              <TableCell data-testid="end-at">
                 <TimestampDisplay
                   timestamp={contest.endAt}
                   options={{ second: undefined }}
                 />
               </TableCell>
-              <TableCell>
-                <ContestStatusBadge contest={contest} data-testid="badge" />
+              <TableCell data-testid="status">
+                <ContestStatusBadge contest={contest} />
               </TableCell>
               <TableCell>
                 <fieldset className="flex gap-x-2">
@@ -164,7 +164,7 @@ export default function RootContestsPage() {
                       contestStatuses[contest.id] !== ContestStatus.NOT_STARTED
                     }
                     className="btn-soft"
-                    data-testid="view"
+                    data-testid="start"
                   >
                     <FontAwesomeIcon icon={faPlay} />
                   </Button>
@@ -176,7 +176,7 @@ export default function RootContestsPage() {
                       contestStatuses[contest.id] !== ContestStatus.IN_PROGRESS
                     }
                     className="btn-soft"
-                    data-testid="view"
+                    data-testid="end"
                   >
                     <FontAwesomeIcon icon={faStop} />
                   </Button>
@@ -207,6 +207,7 @@ export default function RootContestsPage() {
         modal={startModal}
         onConfirm={onStartContest}
         isLoading={startContestState.isLoading}
+        data-testid="start-modal"
       >
         <p>{t("start-modal:message")}</p>
       </DialogModal>
@@ -215,6 +216,7 @@ export default function RootContestsPage() {
         modal={endModal}
         onConfirm={onEndContest}
         isLoading={endContestState.isLoading}
+        data-testid="end-modal"
       >
         <p>{t("end-modal:message")}</p>
       </DialogModal>
