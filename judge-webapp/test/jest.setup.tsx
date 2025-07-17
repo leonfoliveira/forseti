@@ -5,7 +5,9 @@ import "@testing-library/jest-dom";
 jest.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
   useFormatter: jest.fn().mockReturnValue({
-    dateTime: jest.fn(),
+    dateTime: jest.fn().mockImplementation((date: Date) => {
+      return !isNaN(date.getTime()) ? date.toISOString() : undefined;
+    }),
   }),
 }));
 
@@ -17,6 +19,7 @@ export const router = {
 };
 jest.mock("next/navigation", () => ({
   redirect,
+  usePathname: jest.fn().mockReturnValue("/"),
   useRouter: jest.fn().mockReturnValue(router),
   useSearchParams: jest.fn().mockReturnValue({
     get: jest.fn(),
