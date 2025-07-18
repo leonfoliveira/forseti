@@ -13,6 +13,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.floats.exactly
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Tags
 import io.mockk.Answer
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -52,6 +53,7 @@ class SubmissionConsumerTest : FunSpec({
         every { runSubmissionService.run(submission) } returns answer
         val counterMock = mockk<Counter>(relaxed = true)
         every { meterRegistry.counter(any()) } returns counterMock
+        every { meterRegistry.counter(any(), any<Tags>()) } returns counterMock
         every { meterRegistry.timer(WorkerMetrics.WORKER_SUBMISSION_RUN_TIME).record(any<Supplier<Submission.Answer>>()) } returns answer
 
         sut.receiveMessage(message)
@@ -64,7 +66,7 @@ class SubmissionConsumerTest : FunSpec({
         supplierSlot.captured.get()
         verify { runSubmissionService.run(submission) }
         verify { apiClient.updateSubmissionAnswer(submissionId, answer) }
-        verify { meterRegistry.counter(WorkerMetrics.WORKER_SUCCESSFUL_SUBMISSION) }
+        verify { meterRegistry.counter(WorkerMetrics.WORKER_SUCCESSFUL_SUBMISSION, Tags.of("answer", answer.toString())) }
         verify(exactly = 2) { counterMock.increment() }
     }
 

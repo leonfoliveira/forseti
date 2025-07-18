@@ -4,6 +4,10 @@ spring:
     username: judge
     password: judge
     driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    locations: classpath:migration
+    baseline-on-migrate: true
   cloud:
     aws:
       endpoint: http://localhost:4566

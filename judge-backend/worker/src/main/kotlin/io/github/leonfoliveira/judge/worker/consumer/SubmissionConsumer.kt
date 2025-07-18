@@ -9,6 +9,7 @@ import io.github.leonfoliveira.judge.worker.feign.ApiClient
 import io.github.leonfoliveira.judge.worker.service.RunSubmissionService
 import io.github.leonfoliveira.judge.worker.util.WorkerMetrics
 import io.micrometer.core.instrument.MeterRegistry
+import io.micrometer.core.instrument.Tags
 import org.springframework.stereotype.Component
 import java.util.function.Supplier
 
@@ -42,7 +43,7 @@ class SubmissionConsumer(
                 )
 
             apiClient.updateSubmissionAnswer(payload.submissionId, answer!!)
-            meterRegistry.counter(WorkerMetrics.WORKER_SUCCESSFUL_SUBMISSION).increment()
+            meterRegistry.counter(WorkerMetrics.WORKER_SUCCESSFUL_SUBMISSION, Tags.of("answer", answer.toString())).increment()
         } catch (ex: Exception) {
             meterRegistry.counter(WorkerMetrics.WORKER_FAILED_SUBMISSION).increment()
             throw ex

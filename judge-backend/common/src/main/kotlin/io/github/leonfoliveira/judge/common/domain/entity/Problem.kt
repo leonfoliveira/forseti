@@ -43,7 +43,7 @@ class Problem(
     /**
      * Description of the problem, which provides details and requirements for solving it.
      */
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(name = "description_id", nullable = false)
     @Audited(withModifiedFlag = true, modifiedColumnName = "description_id_mod")
     var description: Attachment,
@@ -60,7 +60,7 @@ class Problem(
     /**
      * Input format for the problem, which specifies how the input data is structured.
      */
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(name = "test_cases_id", nullable = false)
     @Audited(withModifiedFlag = true, modifiedColumnName = "test_cases_id_mod")
     var testCases: Attachment,

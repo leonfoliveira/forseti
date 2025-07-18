@@ -1,5 +1,6 @@
 package io.github.leonfoliveira.judge.common.domain.entity
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -9,10 +10,10 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
-import java.time.OffsetDateTime
-import java.util.UUID
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
+import java.time.OffsetDateTime
+import java.util.UUID
 
 @Entity
 @Table(name = "execution")
@@ -52,15 +53,15 @@ class Execution(
     /**
      * The input attachment for the execution.
      */
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
     val input: Attachment,
     /**
      * The output attachment for the execution.
      */
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
-    val output: Attachment
+    val output: Attachment,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt)

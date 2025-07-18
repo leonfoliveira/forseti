@@ -1,68 +1,61 @@
 package io.github.leonfoliveira.judge.worker.docker
 
-import com.opencsv.CSVReader
-import io.github.leonfoliveira.judge.common.adapter.aws.AwsConfig
-import io.github.leonfoliveira.judge.common.adapter.aws.S3Adapter
-import io.github.leonfoliveira.judge.common.adapter.aws.adapter.S3AttachmentBucketAdapter
+import io.github.leonfoliveira.judge.common.domain.entity.Contest
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ProblemMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
+import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
+import io.github.leonfoliveira.judge.common.repository.ContestRepository
+import io.github.leonfoliveira.judge.common.repository.SubmissionRepository
 import io.github.leonfoliveira.judge.common.testcontainer.LocalStackTestContainer
+import io.github.leonfoliveira.judge.common.testcontainer.PostgresTestContainer
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
-import java.io.ByteArrayInputStream
-import java.io.InputStreamReader
 
 @ActiveProfiles("test")
-@SpringBootTest(
-    classes = [
-        DockerSubmissionRunnerAdapter::class,
-        S3AttachmentBucketAdapter::class,
-        S3Adapter::class,
-        AwsConfig::class,
-        DockerSubmissionRunnerConfigFactory::class,
-        AllConfigs::class,
-        S3Adapter::class,
-    ],
-)
+@SpringBootTest
+@Import(PostgresTestContainer::class, LocalStackTestContainer::class)
 class DockerSubmissionRunnerAdapterTest(
     val sut: DockerSubmissionRunnerAdapter,
-    val s3Adapter: S3Adapter,
-) : FunSpec() {
-    companion object {
-        val localstack = LocalStackTestContainer().start()
-    }
-
-    init {
+    val contestRepository: ContestRepository,
+    val attachmentBucketAdapter: AttachmentBucketAdapter,
+    val submissionRepository: SubmissionRepository,
+) : FunSpec({
         extensions(SpringExtension)
 
         beforeEach {
             clearAllMocks()
         }
 
-        val problem = ProblemMockBuilder.build(timeLimit = 1000, memoryLimit = 128)
+        val contest = ContestMockBuilder.build()
+        contest.problems = listOf(ProblemMockBuilder.build(contest = contest, timeLimit = 500, memoryLimit = 128))
+        contest.members = listOf(MemberMockBuilder.build(contest = contest))
+        contestRepository.save(contest)
+
+        fun createSubmission(contest: Contest): Submission {
+            val submission =
+                SubmissionMockBuilder.build(
+                    language = Language.PYTHON_3_13_3,
+                    problem = contest.problems.first(),
+                    member = contest.members.first(),
+                )
+            return submissionRepository.save(submission)
+        }
+
         val testCases =
             """
             1,2
             2,4
             """.trimIndent()
-        val test =
-            CSVReader(InputStreamReader(ByteArrayInputStream(testCases.toByteArray()))).use {
-                    reader ->
-                reader.readAll()
-            }
-        println("test cases: ")
-        test.forEach {
-            println(it.joinToString(", "))
-        }
-        s3Adapter.upload(localstack.bucketName, problem.testCases.id.toString(), testCases.toByteArray())
+        attachmentBucketAdapter.upload(contest.problems.first().testCases, testCases.toByteArray())
 
         context("Python 3.13.3") {
             listOf(
@@ -72,17 +65,11 @@ class DockerSubmissionRunnerAdapterTest(
                 Pair("raise Exception()", Submission.Answer.RUNTIME_ERROR),
                 Pair("print(2 * int(input()))", Submission.Answer.ACCEPTED),
             ).forEach { (code, expectedAnswer) ->
-                val submission = SubmissionMockBuilder.build(language = Language.PYTHON_3_13_3, problem = problem)
-
                 test("should run a submission with Python 3.13.3 and return $expectedAnswer") {
-                    s3Adapter.upload(localstack.bucketName, submission.code.id.toString(), code.toByteArray())
-                    sut.run(submission) shouldBe expectedAnswer
+                    val submission = createSubmission(contest)
+                    attachmentBucketAdapter.upload(submission.code, code.toByteArray())
+                    sut.run(submission).answer shouldBe expectedAnswer
                 }
             }
         }
-    }
-}
-
-@Configuration
-@ComponentScan("io.github.leonfoliveira.judge.worker.docker.config")
-class AllConfigs
+    })

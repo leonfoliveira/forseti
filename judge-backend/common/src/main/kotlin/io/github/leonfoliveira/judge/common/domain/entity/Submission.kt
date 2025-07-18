@@ -1,6 +1,7 @@
 package io.github.leonfoliveira.judge.common.domain.entity
 
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -60,7 +61,7 @@ class Submission(
     /**
      * The code submitted by the member for the problem.
      */
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(name = "code_id", nullable = false)
     @Audited(withModifiedFlag = false)
     val code: Attachment,

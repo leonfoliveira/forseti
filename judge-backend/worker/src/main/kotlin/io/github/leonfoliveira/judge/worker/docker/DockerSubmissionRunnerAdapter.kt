@@ -1,9 +1,13 @@
 package io.github.leonfoliveira.judge.worker.docker
 
 import com.opencsv.CSVReader
+import io.github.leonfoliveira.judge.common.domain.entity.Attachment
+import io.github.leonfoliveira.judge.common.domain.entity.Execution
 import io.github.leonfoliveira.judge.common.domain.entity.Problem
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
+import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
+import io.github.leonfoliveira.judge.common.repository.ExecutionRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.io.ByteArrayInputStream
@@ -13,12 +17,14 @@ import java.nio.file.Files
 
 @Service
 class DockerSubmissionRunnerAdapter(
+    private val attachmentRepository: AttachmentRepository,
+    private val executionRepository: ExecutionRepository,
     private val attachmentBucketAdapter: AttachmentBucketAdapter,
     private val dockerSubmissionRunnerConfigFactory: DockerSubmissionRunnerConfigFactory,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun run(submission: Submission): Submission.Answer {
+    fun run(submission: Submission): Execution {
         val problem = submission.problem
         logger.info("Running submission: ${submission.id} for problem: ${problem.id} with language: ${submission.language}")
 
@@ -48,6 +54,7 @@ class DockerSubmissionRunnerAdapter(
                 container.exec(it(codeFile))
             }
 
+            val outputs = mutableListOf<String>()
             var status = Submission.Answer.ACCEPTED
             logger.info("Running test cases")
             for ((index, testCase) in testCases.withIndex()) {
@@ -62,6 +69,7 @@ class DockerSubmissionRunnerAdapter(
                             input = input,
                             timeLimit = problem.timeLimit,
                         )
+                    outputs.add(output)
                     val isCorrect = evaluate(output, expectedOutput)
                     if (!isCorrect) {
                         logger.info("Test case with index: $index failed")
@@ -70,25 +78,74 @@ class DockerSubmissionRunnerAdapter(
                     }
                 } catch (_: DockerContainer.DockerTimeOutException) {
                     logger.info("Test case with index: $index timed out")
-                    return Submission.Answer.TIME_LIMIT_EXCEEDED
+                    val execution =
+                        Execution(
+                            submission = submission,
+                            answer = Submission.Answer.TIME_LIMIT_EXCEEDED,
+                            totalTestCases = testCases.size,
+                            lastTestCase = index,
+                            input = problem.testCases,
+                            output = uploadOutput(outputs),
+                        )
+                    return executionRepository.save(execution)
                 } catch (_: DockerContainer.DockerOOMKilledException) {
                     logger.info("Test case with index: $index ran out of memory")
-                    return Submission.Answer.MEMORY_LIMIT_EXCEEDED
+                    val execution =
+                        Execution(
+                            submission = submission,
+                            answer = Submission.Answer.MEMORY_LIMIT_EXCEEDED,
+                            totalTestCases = testCases.size,
+                            lastTestCase = index,
+                            input = problem.testCases,
+                            output = uploadOutput(outputs),
+                        )
+                    return executionRepository.save(execution)
                 } catch (ex: Exception) {
                     logger.info("Error while running test case with index: $index", ex)
-                    return Submission.Answer.RUNTIME_ERROR
+                    val execution =
+                        Execution(
+                            submission = submission,
+                            answer = Submission.Answer.RUNTIME_ERROR,
+                            totalTestCases = testCases.size,
+                            lastTestCase = index,
+                            input = problem.testCases,
+                            output = uploadOutput(outputs),
+                        )
+                    return executionRepository.save(execution)
                 }
             }
             logger.info("All test cases passed")
-            return status
+            val execution =
+                Execution(
+                    submission = submission,
+                    answer = status,
+                    totalTestCases = testCases.size,
+                    lastTestCase = testCases.size - 1,
+                    input = problem.testCases,
+                    output = uploadOutput(outputs),
+                )
+            return executionRepository.save(execution)
         } catch (ex: Exception) {
             logger.info("Error while compiling submission", ex)
-            return Submission.Answer.COMPILATION_ERROR
+            val execution =
+                Execution(
+                    submission = submission,
+                    answer = Submission.Answer.COMPILATION_ERROR,
+                    totalTestCases = testCases.size,
+                    lastTestCase = 0,
+                    input = problem.testCases,
+                    output = uploadOutput(emptyList()),
+                )
+            return executionRepository.save(execution)
         } finally {
             container.kill()
         }
     }
 
+    /**
+     * Downloads the code file from the attachment bucket and stores it in a temporary directory.
+     * It needs to be store in ROM memory because the Docker container needs to access it as a volume.
+     */
     private fun storeCodeFile(
         submission: Submission,
         tmpDir: File,
@@ -99,12 +156,31 @@ class DockerSubmissionRunnerAdapter(
         return romFile
     }
 
+    /**
+     * Downloads the test cases from the attachment bucket and parses them as CSV.
+     */
     private fun loadTestCases(problem: Problem): List<Array<String>> {
         val bytes = attachmentBucketAdapter.download(problem.testCases)
         val csvReader = CSVReader(InputStreamReader(ByteArrayInputStream(bytes)))
         return csvReader.use { reader ->
             reader.readAll()
         }
+    }
+
+    /**
+     * Uploads the output of the execution to the attachment bucket as a CSV file.
+     */
+    private fun uploadOutput(output: List<String>): Attachment {
+        val csvContent = output.joinToString("\n")
+        val bytes = csvContent.toByteArray()
+        val attachment =
+            Attachment(
+                filename = "output.csv",
+                contentType = "text/csv",
+            )
+        attachmentRepository.save(attachment)
+        attachmentBucketAdapter.upload(attachment, bytes)
+        return attachment
     }
 
     private fun runCode(
