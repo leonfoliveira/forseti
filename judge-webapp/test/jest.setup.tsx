@@ -7,9 +7,10 @@ jest.mock("next-intl", () => ({
 export const mockRouter = {
   push: jest.fn(),
 };
+export const mockRedirect = jest.fn();
 jest.mock("next/navigation", () => ({
   useRouter: () => mockRouter,
-  redirect: jest.fn(),
+  redirect: mockRedirect,
   RedirectType: jest.requireActual("next/navigation").RedirectType,
 }));
 
