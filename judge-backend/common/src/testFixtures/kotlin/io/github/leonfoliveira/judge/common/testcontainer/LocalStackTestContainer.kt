@@ -7,9 +7,11 @@ import org.testcontainers.utility.DockerImageName
 
 @TestConfiguration(proxyBeanMethods = false)
 class LocalStackTestContainer {
-    val bucketName = "judge-name"
-    val submissionQueue = "submission-queue"
-    val submissionFailedQueue = "submission-failed-queue"
+    companion object {
+        const val BUCKET_NAME = "judge"
+        const val SUBMISSION_QUEUE = "submission-queue"
+        const val SUBMISSION_FAILED_QUEUE = "submission-failed-queue"
+    }
 
     @Bean
     fun localStackContainer(): LocalStackContainer {
@@ -19,9 +21,9 @@ class LocalStackTestContainer {
             ).withServices(LocalStackContainer.Service.S3, LocalStackContainer.Service.SQS)
         container.start()
 
-        container.execInContainer("awslocal", "s3", "mb", "s3://$bucketName")
-        container.execInContainer("awslocal", "sqs", "create-queue", "--queue-name", submissionQueue)
-        container.execInContainer("awslocal", "sqs", "create-queue", "--queue-name", submissionFailedQueue)
+        container.execInContainer("awslocal", "s3", "mb", "s3://${BUCKET_NAME}")
+        container.execInContainer("awslocal", "sqs", "create-queue", "--queue-name", SUBMISSION_QUEUE)
+        container.execInContainer("awslocal", "sqs", "create-queue", "--queue-name", SUBMISSION_FAILED_QUEUE)
 
         System.setProperty(
             "spring.cloud.aws.endpoint",
@@ -30,9 +32,6 @@ class LocalStackTestContainer {
         System.setProperty("spring.cloud.aws.region.static", container.region)
         System.setProperty("spring.cloud.aws.credentials.access-key", container.accessKey)
         System.setProperty("spring.cloud.aws.credentials.secret-key", container.secretKey)
-        System.setProperty("spring.cloud.aws.s3.bucket", bucketName)
-        System.setProperty("spring.cloud.aws.sqs.submission-queue", submissionQueue)
-        System.setProperty("spring.cloud.aws.sqs.submission-failed-queue", submissionFailedQueue)
 
         return container
     }

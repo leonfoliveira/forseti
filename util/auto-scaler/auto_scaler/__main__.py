@@ -18,7 +18,7 @@ aws_endpoint = os.environ.get("AWS_ENDPOINT", "http://localhost:4566")
 aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID", "test")
 aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY", "test")
 queue_name = os.environ.get("QUEUE_NAME", "submission-queue")
-service_name = os.environ.get("SERVICE_NAME", "worker")
+service_name = os.environ.get("SERVICE_NAME", "autojudge")
 
 messages_per_replica = int(os.environ.get("MESSAGES_PER_REPLICA", 1))
 min_replicas = int(os.environ.get("MIN_REPLICAS", 1))

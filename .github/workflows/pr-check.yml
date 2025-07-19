@@ -32,8 +32,8 @@ jobs:
       - name: Build Api
         run: ./gradlew :api:build -x check
       
-      - name: Build Worker
-        run: ./gradlew :worker:build -x check
+      - name: Build Auto Judge
+        run: ./gradlew :autojudge:build -x check
 
   check-webapp:
     runs-on: ubuntu-latest

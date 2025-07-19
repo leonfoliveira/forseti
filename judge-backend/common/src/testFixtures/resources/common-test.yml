@@ -22,6 +22,7 @@ spring:
         bucket: judge
       sqs:
         submission-queue: submission-queue
+        submission-failed-queue: submission-failed-queue
 security:
   jwt:
     secret: judge

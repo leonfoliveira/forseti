@@ -96,6 +96,104 @@ services:
       - jwt_secret
       - root_password
 
+  autojudge:
+    deploy:
+      mode: replicated
+      replicas: 0
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1024M
+        reservations:
+          cpus: '1.0'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      API_URL: http://api:8080
+      AWS_ACCESS_KEY_ID: judge
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_S3_BUCKET: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      AWS_SQS_SUBMISSION_QUEUE: submission-queue
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_USER: judge
+      JAVA_TOOL_OPTIONS: -Xms1536M -Xmx1536M
+      JWT_EXPIRATION: 6h
+      JWT_ROOT_EXPIRATION: 3h
+      JWT_SECRET_FILE: /run/secrets/jwt_secret
+      MAX_CONCURRENT_SUBMISSIONS: "1"
+      PORT: "8080"
+      ROOT_PASSWORD_FILE: /run/secrets/root_password
+      SPRING_PROFILES_ACTIVE: production
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:8080/actuator/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: judge-autojudge:${VERSION:-latest}
+    networks:
+      judge-network:
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: /tmp
+        target: /tmp
+    secrets:
+      - db_password
+      - jwt_secret
+      - root_password
+  
+  autojudge-auto-scaler:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      AWS_REGION: us-east-1
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_ACCESS_KEY_ID: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      QUEUE_NAME: submission-queue
+      SERVICE_NAME: autojudge
+      MESSAGES_PER_REPLICA: 5
+      MIN_REPLICAS: 1
+      MAX_REPLICAS: 3
+      COOLDOWN: 60
+      INTERVAL: 10
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:7000/metrics
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: auto-scaler:${VERSION:-latest}
+    networks:
+      judge-network:
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+
   cadvisor:
     deploy:
       mode: global
@@ -501,104 +599,6 @@ services:
         target: 80
         published: 80
         protocol: tcp
-
-  worker:
-    deploy:
-      mode: replicated
-      replicas: 0
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 1024M
-        reservations:
-          cpus: '1.0'
-          memory: 512M
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-    environment:
-      API_URL: http://api:8080
-      AWS_ACCESS_KEY_ID: judge
-      AWS_ENDPOINT: http://localstack:4566
-      AWS_REGION: us-east-1
-      AWS_S3_BUCKET: judge
-      AWS_SECRET_ACCESS_KEY: judge
-      AWS_SQS_SUBMISSION_QUEUE: submission-queue
-      DB_PASSWORD_FILE: /run/secrets/db_password
-      DB_URL: jdbc:postgresql://postgres:5432/judge
-      DB_USER: judge
-      JAVA_TOOL_OPTIONS: -Xms1536M -Xmx1536M
-      JWT_EXPIRATION: 6h
-      JWT_ROOT_EXPIRATION: 3h
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
-      MAX_CONCURRENT_SUBMISSIONS: "1"
-      PORT: "8080"
-      ROOT_PASSWORD_FILE: /run/secrets/root_password
-      SPRING_PROFILES_ACTIVE: production
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - curl -f http://localhost:8080/actuator/health
-      timeout: 5s
-      interval: 15s
-      retries: 5
-      start_period: 5s
-    image: judge-worker:${VERSION:-latest}
-    networks:
-      judge-network:
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: /tmp
-        target: /tmp
-    secrets:
-      - db_password
-      - jwt_secret
-      - root_password
-  
-  worker-auto-scaler:
-    deploy:
-      mode: replicated
-      replicas: 1
-      resources:
-        limits:
-          cpus: '0.2'
-          memory: 128M
-        reservations:
-          cpus: '0.1'
-          memory: 64M
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-    environment:
-      AWS_REGION: us-east-1
-      AWS_ENDPOINT: http://localstack:4566
-      AWS_ACCESS_KEY_ID: judge
-      AWS_SECRET_ACCESS_KEY: judge
-      QUEUE_NAME: submission-queue
-      SERVICE_NAME: worker
-      MESSAGES_PER_REPLICA: 5
-      MIN_REPLICAS: 1
-      MAX_REPLICAS: 3
-      COOLDOWN: 60
-      INTERVAL: 10
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - curl -f http://localhost:7000/metrics
-      timeout: 5s
-      interval: 15s
-      retries: 5
-      start_period: 5s
-    image: auto-scaler:${VERSION:-latest}
-    networks:
-      judge-network:
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
 
 volumes:
   grafana_data:
