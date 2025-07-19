@@ -79,7 +79,7 @@ export function FileInput<TFieldValues extends FieldValues>({
               field.onChange(componentToForm(e.target.files));
             }}
             className={cls("hidden", className)}
-            data-testid={`${testId}:input`}
+            data-testid={testId}
           />
           <div className="join">
             <button

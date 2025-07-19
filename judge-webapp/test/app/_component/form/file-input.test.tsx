@@ -2,10 +2,6 @@ import { render, screen } from "@testing-library/react";
 import { FileInput } from "@/app/_component/form/file-input";
 import { useForm } from "react-hook-form";
 
-jest.mock("@fortawesome/react-fontawesome", () => ({
-  FontAwesomeIcon: () => <div data-testid="icon"></div>,
-}));
-
 describe("FileInput", () => {
   const TestComponent = () => {
     const form = useForm();
@@ -21,7 +17,7 @@ describe("FileInput", () => {
 
   it("renders a file input with the given label", () => {
     render(<TestComponent />);
-    const input = screen.getByTestId("file-input:input");
+    const input = screen.getByTestId("file-input");
     expect(input).toBeInTheDocument();
     const label = screen.getByTestId("file-input:label");
     expect(label).toBeInTheDocument();
@@ -42,7 +38,7 @@ describe("FileInput", () => {
       );
     };
     render(<TestComponentWithClassName />);
-    const input = screen.getByTestId("file-input:input");
+    const input = screen.getByTestId("file-input");
     expect(input).toHaveClass("my-class");
   });
 

@@ -17,7 +17,7 @@ describe("NumberInput", () => {
 
   it("renders a number input with the given label", () => {
     render(<TestComponent />);
-    const input = screen.getByTestId("number-input:input");
+    const input = screen.getByTestId("number-input");
     expect(input).toBeInTheDocument();
     const label = screen.getByTestId("number-input:label");
     expect(label).toBeInTheDocument();
@@ -38,7 +38,7 @@ describe("NumberInput", () => {
       );
     };
     render(<TestComponentWithClassName />);
-    const input = screen.getByTestId("number-input:input");
+    const input = screen.getByTestId("number-input");
     expect(input).toHaveClass("my-class");
   });
 
@@ -56,7 +56,7 @@ describe("NumberInput", () => {
       );
     };
     render(<TestComponentWithContainerClassName />);
-    const container = screen.getByTestId("number-input");
+    const container = screen.getByTestId("number-input:container");
     expect(container).toHaveClass("my-container-class");
   });
 });

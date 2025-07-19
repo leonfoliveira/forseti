@@ -49,7 +49,7 @@ export function NumberInput<TFieldValues extends FieldValues>({
       render={({ field, fieldState }) => (
         <fieldset
           className={cls("fieldset", containerClassName)}
-          data-testid={testId}
+          data-testid={`${testId}:container`}
         >
           <label className="fieldset-legend" data-testid={`${testId}:label`}>
             {label}
@@ -60,7 +60,7 @@ export function NumberInput<TFieldValues extends FieldValues>({
             value={format(field.value)}
             onChange={(e) => field.onChange(parse(e.target.value))}
             className={cls("input w-full", className)}
-            data-testid={`${testId}:input`}
+            data-testid={testId}
           />
           <p
             className="label text-error text-wrap"

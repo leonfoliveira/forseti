@@ -17,7 +17,7 @@ describe("TextInput", () => {
 
   it("renders a text input with the given label", () => {
     render(<TestComponent />);
-    const input = screen.getByTestId("text-input:input");
+    const input = screen.getByTestId("text-input");
     expect(input).toBeInTheDocument();
     const label = screen.getByTestId("text-input:label");
     expect(label).toBeInTheDocument();
@@ -38,7 +38,7 @@ describe("TextInput", () => {
       );
     };
     render(<TestComponentWithClassName />);
-    const input = screen.getByTestId("text-input:input");
+    const input = screen.getByTestId("text-input");
     expect(input).toHaveClass("my-class");
   });
 
@@ -56,7 +56,7 @@ describe("TextInput", () => {
       );
     };
     render(<TestComponentWithContainerClassName />);
-    const container = screen.getByTestId("text-input");
+    const container = screen.getByTestId("text-input:container");
     expect(container).toHaveClass("my-container-class");
   });
 
@@ -74,7 +74,7 @@ describe("TextInput", () => {
       );
     };
     render(<TestComponentWithPassword />);
-    const input = screen.getByTestId("text-input:input");
+    const input = screen.getByTestId("text-input");
     expect(input).toHaveAttribute("type", "password");
   });
 });

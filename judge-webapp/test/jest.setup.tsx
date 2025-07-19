@@ -12,3 +12,11 @@ jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
   RedirectType: jest.requireActual("next/navigation").RedirectType,
 }));
+
+export const mockAlert = {
+  warning: jest.fn(),
+  error: jest.fn(),
+};
+jest.mock("@/app/_component/context/notification-context", () => ({
+  useAlert: () => mockAlert,
+}));

@@ -17,7 +17,7 @@ describe("DateTimeInput", () => {
 
   it("renders a date time input with the given label", () => {
     render(<TestComponent />);
-    const input = screen.getByTestId("date-input:input");
+    const input = screen.getByTestId("date-input");
     expect(input).toBeInTheDocument();
     const label = screen.getByTestId("date-input:label");
     expect(label).toBeInTheDocument();
@@ -38,7 +38,7 @@ describe("DateTimeInput", () => {
       );
     };
     render(<TestComponentWithClassName />);
-    const input = screen.getByTestId("date-input:input");
+    const input = screen.getByTestId("date-input");
     expect(input).toHaveClass("my-class");
   });
 

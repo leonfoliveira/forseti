@@ -7,6 +7,7 @@ type Props = DetailedHTMLProps<
   children: React.ReactNode;
   disabled?: boolean;
   "data-testid"?: string;
+  containerClassName?: string;
 };
 
 /**
@@ -17,12 +18,17 @@ export function Form({
   children,
   className,
   disabled = false,
+  containerClassName,
   ...props
 }: Props) {
   const testId = props["data-testid"] || "form";
   return (
-    <fieldset disabled={disabled} className={className} data-testid={testId}>
-      <form {...props} data-testid={`${testId}:form`}>
+    <fieldset
+      disabled={disabled}
+      className={containerClassName}
+      data-testid={`${testId}:container`}
+    >
+      <form {...props} className={className} data-testid={testId}>
         {children}
       </form>
     </fieldset>

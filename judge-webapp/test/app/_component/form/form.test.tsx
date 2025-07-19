@@ -1,4 +1,3 @@
-
 import { render, screen } from "@testing-library/react";
 import { Form } from "@/app/_component/form/form";
 
@@ -21,7 +20,7 @@ describe("Form", () => {
         <div data-testid="child">Child</div>
       </Form>,
     );
-    const form = screen.getByTestId("form");
+    const form = screen.getByTestId("form:container");
     expect(form).toBeDisabled();
   });
 
@@ -31,7 +30,7 @@ describe("Form", () => {
         <div data-testid="child">Child</div>
       </Form>,
     );
-    const form = screen.getByTestId("form");
+    const form = screen.getByTestId("form:container");
     expect(form).toHaveClass("my-class");
   });
 });

@@ -60,7 +60,7 @@ export function DateTimeInput<TFieldValues extends FieldValues>({
             value={formToComponent(field.value)}
             onChange={(e) => field.onChange(componentToForm(e.target.value))}
             className={cls("input w-full", className)}
-            data-testid={`${testId}:input`}
+            data-testid={testId}
           />
           <p
             className="label text-error text-wrap"

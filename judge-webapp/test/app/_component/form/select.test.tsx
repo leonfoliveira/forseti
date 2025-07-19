@@ -24,7 +24,7 @@ describe("Select", () => {
 
   it("renders a select with the given options", () => {
     render(<TestComponent />);
-    const select = screen.getByTestId("select:select");
+    const select = screen.getByTestId("select");
     expect(select).toBeInTheDocument();
     const selectOptions = screen.getAllByTestId("select:option");
     expect(selectOptions).toHaveLength(3);
@@ -52,7 +52,7 @@ describe("Select", () => {
       );
     };
     render(<TestComponentWithClassName />);
-    const select = screen.getByTestId("select:select");
+    const select = screen.getByTestId("select");
     expect(select).toHaveClass("my-class");
   });
 
@@ -71,7 +71,7 @@ describe("Select", () => {
       );
     };
     render(<TestComponentWithContainerClassName />);
-    const container = screen.getByTestId("select");
+    const container = screen.getByTestId("select:container");
     expect(container).toHaveClass("my-container-class");
   });
 });
