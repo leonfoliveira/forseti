@@ -4,5 +4,5 @@ plugins {
 rootProject.name = "judge-backend"
 
 include("api")
+include("autojudge")
 include("common")
-include("worker")

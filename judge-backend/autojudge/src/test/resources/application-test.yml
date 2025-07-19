@@ -1,0 +1,10 @@
+spring:
+  config:
+    import: classpath:common-test.yml
+server:
+  port: 8081
+external:
+  api:
+    url: http://localhost:8080
+submission:
+  max-concurrent: 1

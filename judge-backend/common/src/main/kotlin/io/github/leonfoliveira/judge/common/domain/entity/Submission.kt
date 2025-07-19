@@ -1,6 +1,7 @@
 package io.github.leonfoliveira.judge.common.domain.entity
 
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -43,6 +44,7 @@ class Submission(
      */
     @Column("language", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Audited(withModifiedFlag = false)
     val language: Language,
     /**
      * The status of the submission, indicating whether it is being judged, has failed, or has been judged.
@@ -56,9 +58,12 @@ class Submission(
     @Column("answer")
     @Enumerated(EnumType.STRING)
     var answer: Answer = Answer.NO_ANSWER,
-    @OneToOne(fetch = FetchType.EAGER)
+    /**
+     * The code submitted by the member for the problem.
+     */
+    @OneToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(name = "code_id", nullable = false)
-    @Audited(withModifiedFlag = true, modifiedColumnName = "code_id_mod")
+    @Audited(withModifiedFlag = false)
     val code: Attachment,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
     val contest get() = problem.contest

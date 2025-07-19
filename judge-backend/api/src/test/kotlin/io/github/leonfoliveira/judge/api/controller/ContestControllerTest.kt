@@ -110,9 +110,6 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build()
             every { createContestService.create(body) } returns contest
 
-            val str = objectMapper.writeValueAsString(body)
-            println("Request body: $str")
-
             webMvc.post("/v1/contests") {
                 contentType = MediaType.APPLICATION_JSON
                 content = objectMapper.writeValueAsString(body)

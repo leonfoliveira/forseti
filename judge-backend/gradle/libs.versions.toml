@@ -40,9 +40,7 @@ micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-p
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
-spring-cloud-starter-feign = { module = "org.springframework.cloud:spring-cloud-starter-openfeign", version.ref = "feign" }
-spring-cloud-starter-s3 = { module = "io.awspring.cloud:spring-cloud-aws-starter-s3", version.ref = "spring-cloud" }
-spring-cloud-starter-sqs = { module = "io.awspring.cloud:spring-cloud-aws-starter-sqs", version.ref = "spring-cloud" }
+spring-boot-dev-tools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
 spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot" }
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "spring-boot" }
 spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "spring-boot" }
@@ -51,7 +49,10 @@ spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-star
 spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "spring-boot" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot" }
 spring-boot-starter-websocket = { module = "org.springframework.boot:spring-boot-starter-websocket", version.ref = "spring-boot" }
-spring-boot-dev-tools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
+spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers", version.ref = "spring-boot" }
+spring-cloud-starter-feign = { module = "org.springframework.cloud:spring-cloud-starter-openfeign", version.ref = "feign" }
+spring-cloud-starter-s3 = { module = "io.awspring.cloud:spring-cloud-aws-starter-s3", version.ref = "spring-cloud" }
+spring-cloud-starter-sqs = { module = "io.awspring.cloud:spring-cloud-aws-starter-sqs", version.ref = "spring-cloud" }
 springmockk = { module = "com.ninja-squad:springmockk", version.ref = "springmockk" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainers-localstack = { module = "org.testcontainers:localstack", version.ref = "testcontainers" }
@@ -88,6 +89,7 @@ spring = [
     "spring-boot-starter-websocket",
 ]
 testcontainers = [
+    "spring-boot-testcontainers",
     "testcontainers-junit-jupiter",
     "testcontainers-localstack",
     "testcontainers-postgres",
