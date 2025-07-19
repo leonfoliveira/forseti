@@ -22,7 +22,7 @@ class S3AdapterTest(
             val key = "test-file.txt"
             val content = "Hello, S3!".toByteArray()
 
-            sut.upload("judge", key, content)
+            sut.upload(LocalStackTestContainer.BUCKET_NAME, key, content)
             val downloadedContent = sut.download(LocalStackTestContainer.BUCKET_NAME, key)
 
             downloadedContent shouldBe content
