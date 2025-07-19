@@ -56,7 +56,6 @@ export function FileInput<TFieldValues extends FieldValues>({
 
   const originalValue: Attachment | undefined =
     originalName && form.watch(originalName);
-  console.log("Original Value:", originalValue?.filename);
 
   return (
     <Controller

@@ -8,6 +8,10 @@ import {
 } from "@/app/_component/context/notification-context";
 import React from "react";
 
+jest.mock("@/app/_component/context/notification-context", () =>
+  jest.requireActual("@/app/_component/context/notification-context"),
+);
+
 jest.mock("@/app/_component/notification/alert-box", () => ({
   AlertBox: () => <div data-testid="alert-box">Alert Box</div>,
 }));

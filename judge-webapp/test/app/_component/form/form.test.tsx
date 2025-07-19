@@ -24,13 +24,13 @@ describe("Form", () => {
     expect(form).toBeDisabled();
   });
 
-  it("applies the given className to the fieldset", () => {
+  it("applies the given className", () => {
     render(
       <Form className="my-class">
         <div data-testid="child">Child</div>
       </Form>,
     );
-    const form = screen.getByTestId("form:container");
+    const form = screen.getByTestId("form");
     expect(form).toHaveClass("my-class");
   });
 });

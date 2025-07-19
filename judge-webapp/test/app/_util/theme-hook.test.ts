@@ -2,13 +2,6 @@ import { renderHook, act } from "@testing-library/react";
 import { useTheme, Theme } from "@/app/_util/theme-hook";
 import { storageService } from "@/config/composition";
 
-jest.mock("@/config/composition", () => ({
-  storageService: {
-    getKey: jest.fn(),
-    setKey: jest.fn(),
-  },
-}));
-
 describe("useTheme", () => {
   it("initializes with dark theme when no stored theme and prefers dark mode", () => {
     window.matchMedia = jest.fn().mockImplementation((query) => ({

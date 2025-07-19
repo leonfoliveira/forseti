@@ -5,12 +5,6 @@ import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { mockAlert, mockRouter } from "@/test/jest.setup";
 import { routes } from "@/config/routes";
 
-jest.mock("@/config/composition", () => ({
-  contestService: {
-    findContestMetadataBySlug: jest.fn(),
-  },
-}));
-
 describe("HomePage", () => {
   it("should render the page with a form", () => {
     render(<HomePage />);

@@ -5,13 +5,9 @@ import {
 } from "@/app/_component/context/authorization-context";
 import { authorizationService } from "@/config/composition";
 
-jest.mock("@/config/composition", () => ({
-  authorizationService: {
-    getAuthorization: jest.fn(),
-    setAuthorization: jest.fn(),
-    deleteAuthorization: jest.fn(),
-  },
-}));
+jest.mock("@/app/_component/context/authorization-context", () =>
+  jest.requireActual("@/app/_component/context/authorization-context"),
+);
 
 jest.mock("@/app/_component/page/loading-page", () => ({
   LoadingPage: () => <div data-testid="loading">Loading...</div>,
