@@ -10,13 +10,13 @@ import { Form } from "@/app/_component/form/form";
 import { useTranslations } from "next-intl";
 import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form-schema";
 import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form-type";
-import { authenticationService } from "@/composition";
+import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useAuthorization } from "@/app/_component/context/authorization-context";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useAlert } from "@/app/_component/context/notification-context";
-import { routes } from "@/routes";
+import { routes } from "@/config/routes";
 import { useEffect } from "react";
 
 /**

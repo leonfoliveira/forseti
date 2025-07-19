@@ -9,7 +9,7 @@ import { AuthenticationService } from "@/core/service/AuthenticationService";
 import { ContestService } from "@/core/service/ContestService";
 import { SubmissionService } from "@/core/service/SubmissionService";
 import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
-import { config } from "@/config";
+import { env } from "@/config/env";
 import { LocalStorageRepository } from "@/adapter/localstorage/LocalStorageRepository";
 import { StorageService } from "@/core/service/StorageService";
 import { StompLeaderboardListener } from "@/adapter/stomp/StompLeaderboardListener";
@@ -25,9 +25,9 @@ const storageRepository = new LocalStorageRepository();
 
 export const authorizationService = new AuthorizationService(storageRepository);
 
-const axiosClient = new AxiosClient(config.API_URL, authorizationService);
+const axiosClient = new AxiosClient(env.API_URL, authorizationService);
 export const listenerClientFactory = new StompClientFactory(
-  `${config.API_URL}/ws`,
+  `${env.API_URL}/ws`,
   authorizationService,
 );
 

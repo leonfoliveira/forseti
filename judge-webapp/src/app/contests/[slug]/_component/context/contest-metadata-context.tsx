@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useEffect, useMemo } from "react";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
-import { contestService } from "@/composition";
+import { contestService } from "@/config/composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { redirect } from "next/navigation";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { ErrorPage } from "@/app/_component/page/error-page";
-import { routes } from "@/routes";
+import { routes } from "@/config/routes";
 import { useAuthorization } from "@/app/_component/context/authorization-context";
 import { ContestMemberType } from "@/core/domain/enumerate/ContestMemberType";
 import { MemberType } from "@/core/domain/enumerate/MemberType";

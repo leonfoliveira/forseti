@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useTranslations } from "next-intl";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
-import { routes } from "@/routes";
+import { routes } from "@/config/routes";
 
 /**
  * A page displayed when the contest has not started yet.

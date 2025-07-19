@@ -3,7 +3,7 @@ import {
   clarificationListener,
   contestService,
   submissionListener,
-} from "@/composition";
+} from "@/config/composition";
 import { recalculateSubmissions } from "@/app/contests/[slug]/_util/submissions-calculator";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";

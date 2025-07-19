@@ -15,7 +15,7 @@ import { Button } from "@/app/_component/form/button";
 import { useModal } from "@/app/_util/modal-hook";
 import { DialogModal } from "@/app/_component/dialog-modal";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { submissionService } from "@/composition";
+import { submissionService } from "@/config/composition";
 import { useAlert } from "@/app/_component/context/notification-context";
 import { Select } from "@/app/_component/form/select";
 import { useForm } from "react-hook-form";

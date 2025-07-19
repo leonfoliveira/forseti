@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { routes } from "@/routes";
+import { routes } from "@/config/routes";
 
 export default function RootPage() {
   return redirect(routes.ROOT_CONTESTS);

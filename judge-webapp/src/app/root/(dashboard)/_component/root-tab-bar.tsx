@@ -1,6 +1,6 @@
 import React from "react";
 import { cls } from "@/app/_util/cls";
-import { routes } from "@/routes";
+import { routes } from "@/config/routes";
 import { useTranslations } from "next-intl";
 import { redirect, RedirectType, usePathname } from "next/navigation";
 

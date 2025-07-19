@@ -4,7 +4,7 @@ import {
   contestService,
   submissionListener,
   submissionService,
-} from "@/composition";
+} from "@/config/composition";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import {
   useAlert,

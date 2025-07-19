@@ -12,7 +12,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { announcementFormSchema } from "@/app/contests/[slug]/_common/_form/announcement-form-schema";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useAlert } from "@/app/_component/context/notification-context";
-import { contestService } from "@/composition";
+import { contestService } from "@/config/composition";
 import { toInputDTO } from "@/app/contests/[slug]/_common/_form/announcement-form-map";
 import { TimestampDisplay } from "@/app/_component/timestamp-display";
 

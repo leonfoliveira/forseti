@@ -3,7 +3,7 @@
 import React from "react";
 import ContestDashboardLayout from "@/app/contests/[slug]/_component/contest-dashboard-layout";
 import { redirect } from "next/navigation";
-import { routes } from "@/routes";
+import { routes } from "@/config/routes";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 import { ContestMemberType } from "@/core/domain/enumerate/ContestMemberType";
 

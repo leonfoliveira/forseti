@@ -5,13 +5,13 @@ import {
   contestService,
   leaderboardListener,
   listenerClientFactory,
-} from "@/composition";
+} from "@/config/composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { redirect } from "next/navigation";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { ErrorPage } from "@/app/_component/page/error-page";
-import { routes } from "@/routes";
+import { routes } from "@/config/routes";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
