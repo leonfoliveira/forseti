@@ -11,9 +11,9 @@ import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { redirect, RedirectType, useRouter } from "next/navigation";
-import { routes } from "@/app/_routes";
+import { routes } from "@/routes";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { contestService } from "@/app/_composition";
+import { contestService } from "@/composition";
 import { useAlert } from "@/app/_component/context/notification-context";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 

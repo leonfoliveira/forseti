@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { storageService } from "@/app/_composition";
+import { storageService } from "@/composition";
 import { StorageService } from "@/core/service/StorageService";
 
 export enum Theme {

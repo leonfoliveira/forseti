@@ -1,4 +1,4 @@
-import { attachmentService } from "@/app/_composition";
+import { attachmentService } from "@/composition";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@/app/_component/form/button";

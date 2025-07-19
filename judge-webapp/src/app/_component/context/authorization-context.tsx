@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { Authorization } from "@/core/domain/model/Authorization";
-import { authorizationService } from "@/app/_composition";
+import { authorizationService } from "@/composition";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { ErrorPage } from "@/app/_component/page/error-page";

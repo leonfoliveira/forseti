@@ -1,4 +1,8 @@
-import { announcementListener, contestService, submissionListener } from "@/app/_composition";
+import {
+  announcementListener,
+  contestService,
+  submissionListener,
+} from "@/composition";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { recalculateSubmissions } from "@/app/contests/[slug]/_util/submissions-calculator";
 import { ContestContextType } from "@/app/contests/[slug]/_component/context/contest-context";

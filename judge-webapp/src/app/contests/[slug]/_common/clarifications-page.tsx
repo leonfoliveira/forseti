@@ -10,7 +10,7 @@ import { Button } from "@/app/_component/form/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { clarificationService, contestService } from "@/app/_composition";
+import { clarificationService, contestService } from "@/composition";
 import { useAlert } from "@/app/_component/context/notification-context";
 import { Form } from "@/app/_component/form/form";
 import { TextInput } from "@/app/_component/form/text-input";

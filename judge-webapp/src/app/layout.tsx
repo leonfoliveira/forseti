@@ -1,9 +1,9 @@
 import React from "react";
 import "./globals.css";
-import { Html } from "@/app/_html";
+import { Html } from "@/app/_component/html";
 import { getIntlConfig } from "@/i18n/request";
 import { Metadata } from "next";
-import { config } from "@/app/_config";
+import { config } from "@/config";
 
 export const metadata: Metadata = {
   title: "Judge",

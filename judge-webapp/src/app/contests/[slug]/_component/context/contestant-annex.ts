@@ -3,10 +3,13 @@ import {
   clarificationListener,
   contestService,
   submissionListener,
-  submissionService
-} from "@/app/_composition";
+  submissionService,
+} from "@/composition";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
-import { useAlert, useToast } from "@/app/_component/context/notification-context";
+import {
+  useAlert,
+  useToast,
+} from "@/app/_component/context/notification-context";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useTranslations } from "next-intl";
 import { useAuthorization } from "@/app/_component/context/authorization-context";

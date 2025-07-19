@@ -1,6 +1,6 @@
 import { cls } from "@/app/_util/cls";
 import React from "react";
-import { routes } from "@/app/_routes";
+import { routes } from "@/routes";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";

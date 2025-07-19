@@ -2,7 +2,10 @@
 
 import { use, useEffect } from "react";
 import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
-import { fromResponseDTO, toUpdateRequestDTO } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
+import {
+  fromResponseDTO,
+  toUpdateRequestDTO,
+} from "@/app/root/(dashboard)/contests/_form/contest-form-map";
 import { useForm } from "react-hook-form";
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form-type";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -10,10 +13,10 @@ import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest
 import { useTranslations } from "next-intl";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
-import { contestService } from "@/app/_composition";
+import { contestService } from "@/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { redirect } from "next/navigation";
-import { routes } from "@/app/_routes";
+import { routes } from "@/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { useAlert } from "@/app/_component/context/notification-context";
 import { TestCaseUtils } from "@/app/root/(dashboard)/contests/_util/TestCaseUtils";

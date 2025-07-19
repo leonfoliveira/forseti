@@ -9,10 +9,10 @@ import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest
 import { useTranslations } from "next-intl";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
-import { contestService } from "@/app/_composition";
+import { contestService } from "@/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { redirect, useRouter } from "next/navigation";
-import { routes } from "@/app/_routes";
+import { routes } from "@/routes";
 import { useAlert } from "@/app/_component/context/notification-context";
 
 export default function RootNewContestPage() {

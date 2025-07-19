@@ -1,5 +1,5 @@
 import { getRequestConfig } from "next-intl/server";
-import { config } from "@/app/_config";
+import { config } from "@/config";
 
 export async function getIntlConfig() {
   const locale = config.LOCALE;

@@ -5,7 +5,7 @@ import { Table } from "@/app/_component/table/table";
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
-import { problemService, storageService } from "@/app/_composition";
+import { problemService, storageService } from "@/composition";
 import { Select } from "@/app/_component/form/select";
 import { useForm } from "react-hook-form";
 import { FileInput } from "@/app/_component/form/file-input";

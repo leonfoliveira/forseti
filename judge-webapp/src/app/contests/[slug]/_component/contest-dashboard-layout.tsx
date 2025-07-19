@@ -8,7 +8,7 @@ import { ContestTabBar } from "@/app/contests/[slug]/_component/contest-tab-bar"
 import { ContestProvider } from "@/app/contests/[slug]/_component/context/contest-context";
 import { ContestUtil } from "@/core/util/contest-util";
 import { Navbar } from "@/app/_component/navbar";
-import { routes } from "@/app/_routes";
+import { routes } from "@/routes";
 
 /**
  * Basic layout for contest dashboard pages.

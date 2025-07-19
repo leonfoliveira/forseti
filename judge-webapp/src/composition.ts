@@ -9,7 +9,7 @@ import { AuthenticationService } from "@/core/service/AuthenticationService";
 import { ContestService } from "@/core/service/ContestService";
 import { SubmissionService } from "@/core/service/SubmissionService";
 import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
-import { config } from "@/app/_config";
+import { config } from "@/config";
 import { LocalStorageRepository } from "@/adapter/localstorage/LocalStorageRepository";
 import { StorageService } from "@/core/service/StorageService";
 import { StompLeaderboardListener } from "@/adapter/stomp/StompLeaderboardListener";
