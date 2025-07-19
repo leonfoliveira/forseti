@@ -17,7 +17,7 @@ const config: Config = {
     "src/**/*.{ts,tsx}",
     "!src/core/repository/**/*",
     "!src/i18n/**/*",
-    "!src/app/_config.ts",
+    "!src/config.ts",
   ],
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/test/jest.setup.tsx"],
