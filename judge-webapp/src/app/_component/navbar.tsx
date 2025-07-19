@@ -69,7 +69,11 @@ export function Navbar({
                     </li>
                   )}
                   <li>
-                    <a onClick={signOut} className="text-nowrap">
+                    <a
+                      onClick={signOut}
+                      className="text-nowrap"
+                      data-testid="sign"
+                    >
                       {authorization?.member
                         ? t("sign-out:label")
                         : t("sign-in:label")}

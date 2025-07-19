@@ -42,7 +42,6 @@ export function Toast({ toast, onClose }: Props) {
       className={cls("alert pointer-events-auto", style[toast.level])}
       style={{ pointerEvents: "auto" }}
       data-testid="toast"
-      onClick={onClose}
     >
       {toast.text}
       <FontAwesomeIcon
