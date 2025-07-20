@@ -27,6 +27,7 @@ jest.mock("@/config/composition");
 
 // Notification
 export const mockAlert = {
+  success: jest.fn(),
   warning: jest.fn(),
   error: jest.fn(),
 };
