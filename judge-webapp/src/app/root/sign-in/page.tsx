@@ -8,10 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { Form } from "@/app/_component/form/form";
 import { useTranslations } from "next-intl";
-import {
-  rootSignInFormSchema,
-  RootSignInFormType,
-} from "@/app/root/sign-in/_form/root-sign-in-form-schema";
+import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form-schema";
 import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useAuthorization } from "@/app/_component/context/authorization-context";
@@ -20,6 +17,7 @@ import { useLoadableState } from "@/app/_util/loadable-state";
 import { useAlert } from "@/app/_component/context/notification-context";
 import { routes } from "@/config/routes";
 import { useEffect } from "react";
+import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form-type";
 
 /**
  * RootSignInPage component is the sign-in page for root users.
