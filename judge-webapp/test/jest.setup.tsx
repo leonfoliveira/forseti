@@ -1,10 +1,11 @@
 import "@testing-library/jest-dom";
-import { NotificationLevel } from "@/app/_component/context/notification-context";
 
+// next-intl
 jest.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }));
 
+// next/navigation
 export const mockRouter = {
   push: jest.fn(),
 };
@@ -19,8 +20,10 @@ jest.mock("next/navigation", () => ({
   RedirectType: jest.requireActual("next/navigation").RedirectType,
 }));
 
+// Composition
 jest.mock("@/config/composition");
 
+// Notification
 export const mockAlert = {
   warning: jest.fn(),
   error: jest.fn(),
@@ -32,11 +35,14 @@ jest.mock("@/app/_component/context/notification-context", () => ({
   ).NotificationLevel,
 }));
 
-export const mockAuthorization = {
+// Authorization
+export const mockSetAuthorization = jest.fn();
+export const mockClearAuthorization = jest.fn();
+export const mockUseAuthorization = jest.fn().mockReturnValue({
   authorization: undefined,
-  setAuthorization: jest.fn(),
-  clearAuthorization: jest.fn(),
-};
+  setAuthorization: mockSetAuthorization,
+  clearAuthorization: mockClearAuthorization,
+});
 jest.mock("@/app/_component/context/authorization-context", () => ({
-  useAuthorization: () => mockAuthorization,
+  useAuthorization: mockUseAuthorization,
 }));
