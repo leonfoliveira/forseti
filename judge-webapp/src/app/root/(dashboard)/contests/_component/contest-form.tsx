@@ -16,10 +16,9 @@ import { TextInput } from "@/app/_component/form/text-input";
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form-type";
 import { DateTimeInput } from "@/app/_component/form/date-time-input";
 import { NumberInput } from "@/app/_component/form/number-input";
-
 import { Form } from "@/app/_component/form/form";
 import { FileInput } from "@/app/_component/form/file-input";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { DialogModal } from "@/app/_component/dialog-modal";
 import { useModal } from "@/app/_util/modal-hook";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
@@ -28,9 +27,6 @@ import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/C
 import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
 import { LoadableState, useLoadableState } from "@/app/_util/loadable-state";
 import { contestService } from "@/config/composition";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { routes } from "@/config/routes";
-import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { useAlert } from "@/app/_component/context/notification-context";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { useContestStatusWatcher } from "@/app/_util/contest-status-watcher";
@@ -45,8 +41,12 @@ type Props = {
 /**
  * ContestForm component is used to create or edit a contest.
  */
-export function ContestForm(props: Props) {
-  const { contestState, saveState, onSubmit, form } = props;
+export function ContestForm({
+  contestState,
+  saveState,
+  onSubmit,
+  form,
+}: Props) {
   const deleteContestState = useLoadableState();
   const status = useContestStatusWatcher(contestState?.data);
 
@@ -73,8 +73,6 @@ export function ContestForm(props: Props) {
       alert.success(t("delete-success"));
     } catch (error) {
       deleteContestState.fail(error, {
-        [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN()),
-        [ForbiddenException.name]: () => redirect(routes.FORBIDDEN),
         default: () => alert.error(t("delete-error")),
       });
     }
@@ -124,7 +122,6 @@ export function ContestForm(props: Props) {
             {contestState?.data && (
               <Button
                 className="btn-error btn-soft mr-3"
-                isLoading={deleteContestState.isLoading}
                 onClick={deleteModal.open}
                 disabled={status !== ContestStatus.NOT_STARTED}
                 data-testid="delete"
@@ -133,12 +130,7 @@ export function ContestForm(props: Props) {
                 {t("delete:label")}
               </Button>
             )}
-            <Button
-              type="submit"
-              isLoading={saveState.isLoading}
-              className="btn-primary"
-              data-testid="save"
-            >
+            <Button type="submit" className="btn-primary" data-testid="save">
               <FontAwesomeIcon icon={faCheck} />
               {t("save:label")}
             </Button>
@@ -196,11 +188,17 @@ export function ContestForm(props: Props) {
       <div className="grid gap-x-15 gap-y-5 2xl:[grid-template-columns:1fr_auto_1fr]">
         <div className="mt-5">
           <div className="divider">
-            <p className="block text-md font-semibold mb-2">
+            <p
+              className="block text-md font-semibold mb-2"
+              data-testid="members-header"
+            >
               {t("members-header")}
             </p>
           </div>
-          <div className="grid [grid-template-columns:1fr_2fr_1fr_1fr_auto] items-start gap-x-3">
+          <div
+            className="grid [grid-template-columns:1fr_2fr_1fr_1fr_auto] items-start gap-x-3"
+            data-testid="members"
+          >
             {membersFields.fields.map((field, index) => (
               <Fragment key={field.id}>
                 <Select
@@ -263,11 +261,17 @@ export function ContestForm(props: Props) {
         <div className="hidden 2xl:flex divider divider-horizontal mt-10" />
         <div className="mt-5">
           <div className="divider">
-            <p className="block text-md font-semibold mb-2">
+            <p
+              className="block text-md font-semibold mb-2"
+              data-testid="problems-header"
+            >
               {t("problems-header")}
             </p>
           </div>
-          <div className="grid [grid-template-columns:35px_repeat(3,1fr)_auto] items-start gap-x-3">
+          <div
+            className="grid [grid-template-columns:35px_repeat(3,1fr)_auto] items-start gap-x-3"
+            data-testid="problems"
+          >
             {problemsFields.fields.map((field, index) => (
               <Fragment key={field.id}>
                 <TextInput
@@ -349,7 +353,6 @@ export function ContestForm(props: Props) {
         modal={deleteModal}
         onConfirm={() => onDelete()}
         isLoading={deleteContestState.isLoading}
-        data-testid="delete-modal"
       >
         <p className="py-4">{t("confirm-delete-content")}</p>
       </DialogModal>
@@ -358,7 +361,6 @@ export function ContestForm(props: Props) {
         modal={saveModal}
         onConfirm={onSubmit}
         isLoading={saveState.isLoading}
-        data-testid="save-modal"
       >
         <p className="py-4">{t("confirm-save-content")}</p>
       </DialogModal>
