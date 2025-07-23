@@ -11,9 +11,7 @@ import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInp
 import { Attachment } from "@/core/domain/model/Attachment";
 
 export class ContestFormMap {
-  static toCreateContestRequestDTO(
-    data: ContestFormType,
-  ): CreateContestInputDTO {
+  static toCreateRequestDTO(data: ContestFormType): CreateContestInputDTO {
     const update = this.toUpdateRequestDTO(data);
     return update as CreateContestInputDTO;
   }
