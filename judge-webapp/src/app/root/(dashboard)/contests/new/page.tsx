@@ -10,8 +10,7 @@ import { useTranslations } from "next-intl";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
 import { contestService } from "@/config/composition";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { routes } from "@/config/routes";
 import { useAlert } from "@/app/_component/context/notification-context";
 
@@ -39,7 +38,6 @@ export default function RootNewContestPage() {
       router.push(routes.ROOT_CONTESTS_EDIT(contest.id));
     } catch (error) {
       createContestState.fail(error, {
-        [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN()),
         default: () => alert.error(t("create-error")),
       });
     }
