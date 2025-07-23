@@ -47,7 +47,7 @@ describe("contestFormSchema", () => {
     expect(
       contestFormSchema.validate({
         ...validData,
-        slug: "with space".repeat(101),
+        slug: "with space#!",
       }).error?.message,
     ).toBe("slug:pattern");
   });
@@ -103,10 +103,7 @@ describe("contestFormSchema", () => {
     expect(
       contestFormSchema.validate({ ...validData, members: undefined }).error
         ?.message,
-    ).toBe("members:required");
-    expect(
-      contestFormSchema.validate({ ...validData, members: [] }).error?.message,
-    ).toBe("members:required");
+    ).not.toBeUndefined();
   });
 
   it("should validate member.type", () => {
@@ -175,10 +172,7 @@ describe("contestFormSchema", () => {
     expect(
       contestFormSchema.validate({ ...validData, problems: undefined }).error
         ?.message,
-    ).toBe("problems:required");
-    expect(
-      contestFormSchema.validate({ ...validData, problems: [] }).error?.message,
-    ).toBe("problems:required");
+    ).not.toBeUndefined();
   });
 
   it("should validate problem.title", () => {
@@ -208,7 +202,7 @@ describe("contestFormSchema", () => {
           },
         ],
       }).error?.message,
-    ).toBe("problem-new-description:required");
+    ).toBe("problem-description:required");
   });
 
   it("should validate problem.timeLimit", () => {

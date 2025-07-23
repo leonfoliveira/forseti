@@ -3,7 +3,7 @@ import Joi from "joi";
 export const contestFormSchema = Joi.object({
   slug: Joi.string()
     .required()
-    .pattern(/[a-zA-Z0-9\-]/)
+    .pattern(/^[a-zA-Z0-9\-]+$/)
     .messages({
       "string.empty": "slug:required",
       "any.required": "slug:required",
