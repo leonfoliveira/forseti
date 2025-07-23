@@ -7,10 +7,10 @@ export class TestCaseUtils {
   ) {
     const validations = await Promise.all(
       problems
-        .filter((it) => it.newTestCases !== undefined)
+        .filter((it) => !!it.newTestCases)
         .map(async (it) => ({
           letter: it.letter,
-          isValid: await this.validateTestCases(it.newTestCases),
+          isValid: await this.validateTestCases(it.newTestCases!),
         })),
     );
     return validations.filter((it) => !it.isValid).map((it) => it.letter);
@@ -23,12 +23,8 @@ export class TestCaseUtils {
    *  - Must have at least one row
    *  - Each row must have exactly two columns
    */
-  static validateTestCases(testCases: File | undefined): Promise<boolean> {
+  static validateTestCases(testCases: File): Promise<boolean> {
     return new Promise((resolve) => {
-      if (!testCases) {
-        return resolve(true);
-      }
-
       Papa.parse(testCases, {
         complete(results) {
           const data = results.data as string[][];
@@ -52,6 +48,9 @@ export class TestCaseUtils {
           }
 
           resolve(true);
+        },
+        error() {
+          resolve(false);
         },
       });
     });
