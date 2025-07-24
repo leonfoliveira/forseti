@@ -4,7 +4,7 @@ import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
-import { DownloadButton } from "@/app/contests/[slug]/_component/download-button";
+import { DownloadButton } from "@/app/_component/download-button";
 import { Table } from "@/app/_component/table/table";
 import React from "react";
 import { useTranslations } from "next-intl";

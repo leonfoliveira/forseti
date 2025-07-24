@@ -8,19 +8,27 @@ import { useTranslations } from "next-intl";
 
 type Props = {
   attachment: Attachment;
+  "data-testid"?: string;
 };
 
 /**
  * Small button component to download an attachment.
  */
-export function DownloadButton({ attachment }: Props) {
+export function DownloadButton({ attachment, ...props }: Props) {
+  const testId = props["data-testid"] || "download-button";
+
   const t = useTranslations("contests.[slug]._component.download-button");
 
   return (
-    <div className="tooltip" data-tip={t("download:tooltip")}>
+    <div
+      className="tooltip"
+      data-tip={t("download:tooltip")}
+      data-testid={`${testId}-container`}
+    >
       <Button
         onClick={() => attachmentService.download(attachment)}
         className="btn-soft text-xs"
+        data-testid={testId}
       >
         <FontAwesomeIcon icon={faDownload} />
       </Button>

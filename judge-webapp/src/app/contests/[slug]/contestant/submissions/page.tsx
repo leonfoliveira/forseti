@@ -25,7 +25,7 @@ import { toInputDTO } from "@/app/contests/[slug]/contestant/submissions/_form/s
 import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
 import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
 import { useAlert } from "@/app/_component/context/notification-context";
-import { DownloadButton } from "@/app/contests/[slug]/_component/download-button";
+import { DownloadButton } from "@/app/_component/download-button";
 import { TimestampDisplay } from "@/app/_component/timestamp-display";
 
 export default function ContestantSubmissionPage() {
