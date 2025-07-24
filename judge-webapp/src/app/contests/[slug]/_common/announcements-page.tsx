@@ -1,4 +1,4 @@
-import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
+import { useContest } from "@/app/contests/[slug]/context/contest-context";
 import React from "react";
 import { useTranslations } from "next-intl";
 import { TextInput } from "@/app/_component/form/text-input";

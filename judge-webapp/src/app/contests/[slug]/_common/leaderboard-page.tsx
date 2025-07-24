@@ -9,7 +9,7 @@ import { cls } from "@/app/_util/cls";
 import { useTranslations } from "next-intl";
 import { useAuthorization } from "@/app/_context/authorization-context";
 import { ProblemStatusBadge } from "@/app/contests/[slug]/_component/badge/problem-status-badge";
-import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
+import { useContest } from "@/app/contests/[slug]/context/contest-context";
 
 /**
  * A generic leaderboard page component for displaying contest results.

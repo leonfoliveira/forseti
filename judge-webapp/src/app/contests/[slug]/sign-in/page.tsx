@@ -16,7 +16,7 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
 import { useRouter, useSearchParams } from "next/navigation";
 import { routes } from "@/config/routes";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
+import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { useAuthorization } from "@/app/_context/authorization-context";
 import { useAlert } from "@/app/_context/notification-context";
 

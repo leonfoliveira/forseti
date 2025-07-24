@@ -3,7 +3,7 @@ import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { useRouter } from "next/navigation";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useTranslations } from "next-intl";
-import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
+import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { routes } from "@/config/routes";
 
 /**

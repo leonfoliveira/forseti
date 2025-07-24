@@ -4,8 +4,9 @@ import React from "react";
 import ContestDashboardLayout from "@/app/contests/[slug]/_component/contest-dashboard-layout";
 import { redirect } from "next/navigation";
 import { routes } from "@/config/routes";
-import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 import { ContestMemberType } from "@/core/domain/enumerate/ContestMemberType";
+import { JuryContextProvider } from "@/app/contests/[slug]/jury/_context/jury-context";
+import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 
 export default function ContestantLayout({
   children,
@@ -21,5 +22,9 @@ export default function ContestantLayout({
     return redirect(routes.FORBIDDEN);
   }
 
-  return <ContestDashboardLayout>{children}</ContestDashboardLayout>;
+  return (
+    <ContestDashboardLayout>
+      <JuryContextProvider>{children}</JuryContextProvider>
+    </ContestDashboardLayout>
+  );
 }

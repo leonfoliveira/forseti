@@ -1,17 +1,14 @@
 import { act, render, screen } from "@testing-library/react";
 import ContestLayout from "@/app/contests/[slug]/layout";
 
-jest.mock(
-  "@/app/contests/[slug]/_component/context/contest-metadata-context",
-  () => ({
-    ContestMetadataProvider: ({ children, slug }: any) => (
-      <div>
-        <span data-testid="slug">{slug}</span>
-        {children}
-      </div>
-    ),
-  }),
-);
+jest.mock("@/app/contests/[slug]/_context/contest-metadata-context", () => ({
+  ContestMetadataProvider: ({ children, slug }: any) => (
+    <div>
+      <span data-testid="slug">{slug}</span>
+      {children}
+    </div>
+  ),
+}));
 
 describe("ContestLayout", () => {
   it("renders children within ContestMetadataProvider", async () => {

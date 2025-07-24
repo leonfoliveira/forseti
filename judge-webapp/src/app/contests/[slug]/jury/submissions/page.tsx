@@ -23,7 +23,7 @@ import { UpdateSubmissionFormType } from "@/app/contests/[slug]/jury/submissions
 import { joiResolver } from "@hookform/resolvers/joi";
 import { updateSubmissionFormSchema } from "@/app/contests/[slug]/jury/submissions/_form/update-submission-form-schema";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
+import { useContest } from "@/app/contests/[slug]/context/contest-context";
 import { SubmissionStatusBadge } from "@/app/contests/[slug]/_component/badge/submission-status-badge";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { TimestampDisplay } from "@/app/_component/timestamp-display";

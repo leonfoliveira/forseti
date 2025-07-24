@@ -2,12 +2,12 @@ import { render } from "@testing-library/react";
 import ContestPage from "@/app/contests/[slug]/page";
 import { mockRedirect } from "@/test/jest.setup";
 import { routes } from "@/config/routes";
-import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
+import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { useAuthorization } from "@/app/_context/authorization-context";
 
 jest.mock("@/app/_context/authorization-context");
-jest.mock("@/app/contests/[slug]/_component/context/contest-metadata-context");
+jest.mock("@/app/contests/[slug]/_context/contest-metadata-context");
 
 describe("ContestPage", () => {
   it.each([

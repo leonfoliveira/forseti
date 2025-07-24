@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import { ProblemPage } from "@/app/contests/[slug]/_common/problems-page";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
+import { useContest } from "@/app/contests/[slug]/context/contest-context";
 
 export default function ContestantProblemsPage() {
   const { contest } = useContest();
