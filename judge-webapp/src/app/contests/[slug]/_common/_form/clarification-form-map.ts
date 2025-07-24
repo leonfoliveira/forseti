@@ -1,12 +1,14 @@
 import { ClarificationFormType } from "@/app/contests/[slug]/_common/_form/clarification-form-type";
 import { CreateClarificationRequestDTO } from "@/core/repository/dto/request/CreateClarificationRequestDTO";
 
-export function toInputDTO(
-  data: ClarificationFormType,
-): CreateClarificationRequestDTO {
-  return {
-    parentId: !!data.parentId ? data.parentId : undefined,
-    problemId: !!data.problemId ? data.problemId : undefined,
-    text: data.text as string,
-  };
+export class ClarificationFormMap {
+  static toInputDTO(
+    data: ClarificationFormType,
+  ): CreateClarificationRequestDTO {
+    return {
+      parentId: !!data.parentId ? data.parentId : undefined,
+      problemId: !!data.problemId ? data.problemId : undefined,
+      text: data.text as string,
+    };
+  }
 }

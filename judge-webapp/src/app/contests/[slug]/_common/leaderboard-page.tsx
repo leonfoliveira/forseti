@@ -9,14 +9,19 @@ import { cls } from "@/app/_util/cls";
 import { useTranslations } from "next-intl";
 import { useAuthorization } from "@/app/_context/authorization-context";
 import { ProblemStatusBadge } from "@/app/contests/[slug]/_component/badge/problem-status-badge";
-import { useContest } from "@/app/contests/[slug]/context/contest-context";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+
+type Props = {
+  contest: ContestPublicResponseDTO;
+  leaderboard: ContestLeaderboardResponseDTO;
+};
 
 /**
  * A generic leaderboard page component for displaying contest results.
  */
-export function LeaderboardPage() {
+export function LeaderboardPage({ contest, leaderboard }: Props) {
   const { authorization } = useAuthorization();
-  const { contest, leaderboard } = useContest();
 
   const t = useTranslations("contests.[slug]._common.leaderboard-page");
 

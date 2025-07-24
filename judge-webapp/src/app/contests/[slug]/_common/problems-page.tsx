@@ -6,12 +6,13 @@ import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { useTranslations } from "next-intl";
-import { useContest } from "@/app/contests/[slug]/context/contest-context";
 import { DownloadButton } from "@/app/_component/form/download-button";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionAnswerShortBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-short-badge";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 
 type Props = {
+  contest: ContestPublicResponseDTO;
   contestantStatus?: Record<string, Record<SubmissionAnswer, number>>;
 };
 
@@ -19,9 +20,7 @@ type Props = {
  * A generic problem page component for displaying contest problems.
  * If `contestantStatus` is provided, it will show the status of each problem for the contestant.
  */
-export function ProblemPage({ contestantStatus }: Props) {
-  const { contest } = useContest();
-
+export function ProblemPage({ contest, contestantStatus }: Props) {
   const t = useTranslations("contests.[slug]._common.problems-page");
 
   return (

@@ -1,4 +1,3 @@
-import { useContest } from "@/app/contests/[slug]/context/contest-context";
 import React from "react";
 import { useTranslations } from "next-intl";
 import { TextInput } from "@/app/_component/form/text-input";
@@ -15,13 +14,17 @@ import { useAlert } from "@/app/_context/notification-context";
 import { contestService } from "@/config/composition";
 import { toInputDTO } from "@/app/contests/[slug]/_common/_form/announcement-form-map";
 import { TimestampDisplay } from "@/app/_component/timestamp-display";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 
 type Props = {
+  contest: ContestPublicResponseDTO;
   canCreate?: boolean;
 };
 
-export default function AnnouncementsPage({ canCreate = false }: Props) {
-  const { contest } = useContest();
+export default function AnnouncementsPage({
+  contest,
+  canCreate = false,
+}: Props) {
   const createAnnouncementState = useLoadableState();
 
   const alert = useAlert();

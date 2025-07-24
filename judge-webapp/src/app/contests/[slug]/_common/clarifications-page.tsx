@@ -1,4 +1,3 @@
-import { useContest } from "@/app/contests/[slug]/context/contest-context";
 import React from "react";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
@@ -18,17 +17,19 @@ import { toInputDTO } from "@/app/contests/[slug]/_common/_form/clarification-fo
 import { TimestampDisplay } from "@/app/_component/timestamp-display";
 import { DialogModal } from "@/app/_component/dialog-modal";
 import { useModal } from "@/app/_util/modal-hook";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 
 type Props = {
+  contest: ContestPublicResponseDTO;
   canCreate?: boolean;
   canAnswer?: boolean;
 };
 
 export default function ClarificationsPage({
+  contest,
   canCreate = false,
   canAnswer = false,
 }: Props) {
-  const { contest } = useContest();
   const alert = useAlert();
   const createClarificationState = useLoadableState();
   const deleteClarificationState = useLoadableState();
