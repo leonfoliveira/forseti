@@ -17,7 +17,7 @@ import { useContestMetadata } from "@/app/contests/[slug]/_component/context/con
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
-import { useAuthorization } from "@/app/_component/context/authorization-context";
+import { useAuthorization } from "@/app/_context/authorization-context";
 import { useGuestAnnex } from "@/app/contests/[slug]/_component/context/guest-annex";
 import { useContestantAnnex } from "@/app/contests/[slug]/_component/context/contestant-annex";
 import { useJuryAnnex } from "@/app/contests/[slug]/_component/context/jury-annex";

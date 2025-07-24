@@ -9,7 +9,7 @@ import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useTranslations } from "next-intl";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { cls } from "@/app/_util/cls";
-import { useAuthorization } from "@/app/_component/context/authorization-context";
+import { useAuthorization } from "@/app/_context/authorization-context";
 import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
 import { TimestampDisplay } from "@/app/_component/timestamp-display";
 

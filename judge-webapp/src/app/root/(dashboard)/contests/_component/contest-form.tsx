@@ -27,7 +27,7 @@ import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/C
 import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
 import { LoadableState, useLoadableState } from "@/app/_util/loadable-state";
 import { contestService } from "@/config/composition";
-import { useAlert } from "@/app/_component/context/notification-context";
+import { useAlert } from "@/app/_context/notification-context";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { useContestStatusWatcher } from "@/app/_util/contest-status-watcher";
 

@@ -3,7 +3,7 @@ import { Alert } from "@/app/_component/notification/alert";
 import {
   NotificationItemType,
   NotificationLevel,
-} from "@/app/_component/context/notification-context";
+} from "@/app/_context/notification-context";
 
 describe("Alert", () => {
   beforeEach(() => {

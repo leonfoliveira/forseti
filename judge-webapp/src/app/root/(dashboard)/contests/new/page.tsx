@@ -12,7 +12,7 @@ import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/C
 import { contestService } from "@/config/composition";
 import { useRouter } from "next/navigation";
 import { routes } from "@/config/routes";
-import { useAlert } from "@/app/_component/context/notification-context";
+import { useAlert } from "@/app/_context/notification-context";
 
 export default function RootNewContestPage() {
   const createContestState = useLoadableState<ContestFullResponseDTO>();

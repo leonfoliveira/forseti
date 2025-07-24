@@ -15,7 +15,7 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
 import { redirect } from "next/navigation";
 import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { useAlert } from "@/app/_component/context/notification-context";
+import { useAlert } from "@/app/_context/notification-context";
 import { TestCaseUtils } from "@/app/root/(dashboard)/contests/_util/TestCaseUtils";
 
 /**

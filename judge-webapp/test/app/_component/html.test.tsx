@@ -9,11 +9,11 @@ jest.mock("next-intl", () => ({
   NextIntlClientProvider: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock("@/app/_component/context/authorization-context", () => ({
+jest.mock("@/app/_context/authorization-context", () => ({
   AuthorizationProvider: ({ children }: any) => <div>{children}</div>,
 }));
 
-jest.mock("@/app/_component/context/notification-context", () => ({
+jest.mock("@/app/_context/notification-context", () => ({
   NotificationProvider: ({ children }: any) => <div>{children}</div>,
 }));
 

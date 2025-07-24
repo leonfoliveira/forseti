@@ -5,7 +5,7 @@ import { faClose } from "@fortawesome/free-solid-svg-icons";
 import {
   NotificationItemType,
   NotificationLevel,
-} from "@/app/_component/context/notification-context";
+} from "@/app/_context/notification-context";
 
 type Props = {
   toast: NotificationItemType;

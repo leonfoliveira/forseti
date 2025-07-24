@@ -9,7 +9,7 @@ import { ContestContextType } from "@/app/contests/[slug]/_component/context/con
 import { UseLoadableStateReturnType } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
-import { useAlert } from "@/app/_component/context/notification-context";
+import { useAlert } from "@/app/_context/notification-context";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 /**

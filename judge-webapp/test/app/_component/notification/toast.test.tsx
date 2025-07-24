@@ -3,7 +3,7 @@ import { Toast } from "@/app/_component/notification/toast";
 import {
   NotificationItemType,
   NotificationLevel,
-} from "@/app/_component/context/notification-context";
+} from "@/app/_context/notification-context";
 
 describe("Toast", () => {
   beforeEach(() => {

@@ -6,13 +6,10 @@ import {
   submissionService,
 } from "@/config/composition";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
-import {
-  useAlert,
-  useToast,
-} from "@/app/_component/context/notification-context";
+import { useAlert, useToast } from "@/app/_context/notification-context";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useTranslations } from "next-intl";
-import { useAuthorization } from "@/app/_component/context/authorization-context";
+import { useAuthorization } from "@/app/_context/authorization-context";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { UseLoadableStateReturnType } from "@/app/_util/loadable-state";

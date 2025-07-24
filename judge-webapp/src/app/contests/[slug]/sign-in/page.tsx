@@ -17,8 +17,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { routes } from "@/config/routes";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
-import { useAuthorization } from "@/app/_component/context/authorization-context";
-import { useAlert } from "@/app/_component/context/notification-context";
+import { useAuthorization } from "@/app/_context/authorization-context";
+import { useAlert } from "@/app/_context/notification-context";
 
 /**
  * MemberSignInPage component allows members to sign in to a contest.

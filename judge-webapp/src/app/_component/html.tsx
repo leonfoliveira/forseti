@@ -4,8 +4,8 @@ import React from "react";
 import { useTheme } from "@/app/_util/theme-hook";
 import { NextIntlClientProvider } from "next-intl";
 import { Roboto } from "next/font/google";
-import { AuthorizationProvider } from "@/app/_component/context/authorization-context";
-import { NotificationProvider } from "@/app/_component/context/notification-context";
+import { AuthorizationProvider } from "@/app/_context/authorization-context";
+import { NotificationProvider } from "@/app/_context/notification-context";
 
 const roboto = Roboto({
   variable: "--font-roboto",

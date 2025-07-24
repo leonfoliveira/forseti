@@ -3,7 +3,7 @@ import { AlertBox } from "@/app/_component/notification/alert-box";
 import {
   NotificationItemType,
   NotificationLevel,
-} from "@/app/_component/context/notification-context";
+} from "@/app/_context/notification-context";
 
 jest.mock("@/app/_component/notification/alert", () => ({
   Alert: ({

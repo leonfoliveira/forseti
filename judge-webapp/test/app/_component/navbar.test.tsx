@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { Navbar } from "@/app/_component/navbar";
 import { useTheme } from "@/app/_util/theme-hook";
-import { useAuthorization } from "@/app/_component/context/authorization-context";
+import { useAuthorization } from "@/app/_context/authorization-context";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { redirect, RedirectType } from "next/navigation";
 
@@ -9,7 +9,7 @@ jest.mock("@/app/_util/theme-hook", () => ({
   useTheme: jest.fn(),
 }));
 
-jest.mock("@/app/_component/context/authorization-context", () => ({
+jest.mock("@/app/_context/authorization-context", () => ({
   useAuthorization: jest.fn(),
 }));
 

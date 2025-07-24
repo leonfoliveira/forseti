@@ -5,11 +5,11 @@ import {
   useToast,
   NotificationLevel,
   NotificationType,
-} from "@/app/_component/context/notification-context";
+} from "@/app/_context/notification-context";
 import React from "react";
 
-jest.mock("@/app/_component/context/notification-context", () =>
-  jest.requireActual("@/app/_component/context/notification-context"),
+jest.mock("@/app/_context/notification-context", () =>
+  jest.requireActual("@/app/_context/notification-context"),
 );
 
 jest.mock("@/app/_component/notification/alert-box", () => ({

@@ -1,6 +1,6 @@
 import React from "react";
 import { Alert } from "@/app/_component/notification/alert";
-import { NotificationItemType } from "@/app/_component/context/notification-context";
+import { NotificationItemType } from "@/app/_context/notification-context";
 
 type Props = {
   items: NotificationItemType[];

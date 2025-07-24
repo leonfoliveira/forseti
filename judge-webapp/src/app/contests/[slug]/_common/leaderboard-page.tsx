@@ -7,7 +7,7 @@ import { TableSection } from "@/app/_component/table/table-section";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { cls } from "@/app/_util/cls";
 import { useTranslations } from "next-intl";
-import { useAuthorization } from "@/app/_component/context/authorization-context";
+import { useAuthorization } from "@/app/_context/authorization-context";
 import { ProblemStatusBadge } from "@/app/contests/[slug]/_component/badge/problem-status-badge";
 import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
 

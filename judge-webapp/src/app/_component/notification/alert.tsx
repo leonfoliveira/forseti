@@ -10,7 +10,7 @@ import {
 import {
   NotificationItemType,
   NotificationLevel,
-} from "@/app/_component/context/notification-context";
+} from "@/app/_context/notification-context";
 
 type Props = {
   className?: string;

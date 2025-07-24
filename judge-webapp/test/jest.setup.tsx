@@ -31,11 +31,10 @@ export const mockAlert = {
   warning: jest.fn(),
   error: jest.fn(),
 };
-jest.mock("@/app/_component/context/notification-context", () => ({
+jest.mock("@/app/_context/notification-context", () => ({
   useAlert: () => mockAlert,
-  NotificationLevel: jest.requireActual(
-    "@/app/_component/context/notification-context",
-  ).NotificationLevel,
+  NotificationLevel: jest.requireActual("@/app/_context/notification-context")
+    .NotificationLevel,
 }));
 
 // Authorization
@@ -46,6 +45,6 @@ export const mockUseAuthorization = jest.fn().mockReturnValue({
   setAuthorization: mockSetAuthorization,
   clearAuthorization: mockClearAuthorization,
 });
-jest.mock("@/app/_component/context/authorization-context", () => ({
+jest.mock("@/app/_context/authorization-context", () => ({
   useAuthorization: mockUseAuthorization,
 }));

@@ -2,11 +2,11 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import {
   AuthorizationProvider,
   useAuthorization,
-} from "@/app/_component/context/authorization-context";
+} from "@/app/_context/authorization-context";
 import { authorizationService } from "@/config/composition";
 
-jest.mock("@/app/_component/context/authorization-context", () =>
-  jest.requireActual("@/app/_component/context/authorization-context"),
+jest.mock("@/app/_context/authorization-context", () =>
+  jest.requireActual("@/app/_context/authorization-context"),
 );
 
 jest.mock("@/app/_component/page/loading-page", () => ({
