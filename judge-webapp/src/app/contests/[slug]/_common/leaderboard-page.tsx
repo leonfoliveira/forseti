@@ -42,10 +42,10 @@ export function LeaderboardPage({ contest, leaderboard }: Props) {
                 {problem.letter}
               </TableCell>
             ))}
-            <TableCell header align="right">
-              Score
+            <TableCell header align="right" data-testid="header-score">
+              {t("header-score")}
             </TableCell>
-            <TableCell header align="right">
+            <TableCell header align="right" data-testid="header-penalty">
               {t("header-penalty")}
             </TableCell>
           </TableRow>
@@ -83,7 +83,9 @@ export function LeaderboardPage({ contest, leaderboard }: Props) {
                   </div>
                 </TableCell>
               ))}
-              <TableCell align="right">{member.score || ""}</TableCell>
+              <TableCell align="right" data-testid="member-score">
+                {member.score || ""}
+              </TableCell>
               <TableCell align="right" data-testid="member-penalty">
                 {member.penalty || ""}
               </TableCell>
