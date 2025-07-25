@@ -24,7 +24,7 @@ export function ContestTabBar({ tabs }: Props) {
         key={path}
         className={cls("tab", isActive && "tab-active")}
         onClick={() => router.push(path)}
-        data-testid={`link:${path}`}
+        data-testid="tab"
       >
         {label}
       </a>
