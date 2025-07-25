@@ -7,20 +7,27 @@ import { ContestTabBar } from "@/app/contests/[slug]/_component/contest-tab-bar"
 import { ContestUtil } from "@/core/util/contest-util";
 import { Navbar } from "@/app/_component/navbar";
 import { routes } from "@/config/routes";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+
+type Props = {
+  contestMetadata: ContestMetadataResponseDTO;
+  tabs: {
+    label: string;
+    path: string;
+  }[];
+  children: React.ReactNode;
+};
 
 /**
  * Basic layout for contest dashboard pages.
  */
 export default function ContestDashboardLayout({
+  contestMetadata,
+  tabs,
   children,
-}: {
-  children: React.ReactNode;
-}) {
-  const contestMetadata = useContestMetadata();
-
+}: Props) {
   if (ContestUtil.getStatus(contestMetadata) === ContestStatus.NOT_STARTED) {
-    return <WaitPage contest={contestMetadata} />;
+    return <WaitPage contestMetadata={contestMetadata} />;
   }
 
   return (
@@ -29,7 +36,7 @@ export default function ContestDashboardLayout({
         contestMetadata={contestMetadata}
         signInPath={routes.CONTEST_SIGN_IN(contestMetadata.slug, true)}
       />
-      <ContestTabBar />
+      <ContestTabBar tabs={tabs} />
       <div className="p-5 bg-base-100">{children}</div>
     </>
   );

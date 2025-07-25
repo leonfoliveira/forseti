@@ -7,19 +7,19 @@ import { routes } from "@/config/routes";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 
 type Props = {
-  contest: ContestMetadataResponseDTO;
+  contestMetadata: ContestMetadataResponseDTO;
 };
 
 /**
  * A page displayed when the contest has not started yet.
  * Shows the contest title, start time, and supported languages.
  */
-export function WaitPage({ contest }: Props) {
+export function WaitPage({ contestMetadata }: Props) {
   const router = useRouter();
 
   const { formatLanguage } = useContestFormatter();
-  const clockRef = useWaitClock(new Date(contest.startAt), () =>
-    router.push(routes.CONTEST_SIGN_IN(contest.slug)),
+  const clockRef = useWaitClock(new Date(contestMetadata.startAt), () =>
+    router.push(routes.CONTEST_SIGN_IN(contestMetadata.slug)),
   );
   const t = useTranslations("contests.[slug]._common.wait-page");
 
@@ -27,7 +27,7 @@ export function WaitPage({ contest }: Props) {
     <div className="h-dvh flex justify-center items-center">
       <div className="text-center">
         <h1 className="text-5xl mb-5" data-testid="title">
-          {contest.title}
+          {contestMetadata.title}
         </h1>
         <div>
           <p className="font-semibold" data-testid="start-at">
@@ -42,7 +42,7 @@ export function WaitPage({ contest }: Props) {
             {t("languages")}
           </p>
           <ul>
-            {contest.languages.map((it) => (
+            {contestMetadata.languages.map((it) => (
               <li key={it} data-testid="language-item">
                 {formatLanguage(it)}
               </li>

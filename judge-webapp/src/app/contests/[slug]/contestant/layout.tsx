@@ -7,6 +7,7 @@ import { routes } from "@/config/routes";
 import { ContestMemberType } from "@/core/domain/enumerate/ContestMemberType";
 import { useContestMetadata } from "../_context/contest-metadata-context";
 import { ContestantContextProvider } from "@/app/contests/[slug]/contestant/_context/contestant-context";
+import { useTranslations } from "next-intl";
 
 export default function ContestantLayout({
   children,
@@ -14,6 +15,7 @@ export default function ContestantLayout({
   children: React.ReactNode;
 }) {
   const contestMetadata = useContestMetadata();
+  const t = useTranslations("contests.[slug].contestant");
 
   if (!contestMetadata.loggedMemberType) {
     return redirect(routes.CONTEST_SIGN_IN(contestMetadata.slug));
@@ -23,7 +25,35 @@ export default function ContestantLayout({
   }
 
   return (
-    <ContestDashboardLayout>
+    <ContestDashboardLayout
+      contestMetadata={contestMetadata}
+      tabs={[
+        {
+          label: t("leaderboard"),
+          path: routes.CONTEST_CONTESTANT_LEADERBOARD(contestMetadata.slug),
+        },
+        {
+          label: t("problems"),
+          path: routes.CONTEST_CONTESTANT_PROBLEMS(contestMetadata.slug),
+        },
+        {
+          label: t("timeline"),
+          path: routes.CONTEST_CONTESTANT_TIMELINE(contestMetadata.slug),
+        },
+        {
+          label: t("submissions"),
+          path: routes.CONTEST_CONTESTANT_SUBMISSIONS(contestMetadata.slug),
+        },
+        {
+          label: t("clarifications"),
+          path: routes.CONTEST_CONTESTANT_CLARIFICATIONS(contestMetadata.slug),
+        },
+        {
+          label: t("announcements"),
+          path: routes.CONTEST_CONTESTANT_ANNOUNCEMENTS(contestMetadata.slug),
+        },
+      ]}
+    >
       <ContestantContextProvider>{children}</ContestantContextProvider>
     </ContestDashboardLayout>
   );

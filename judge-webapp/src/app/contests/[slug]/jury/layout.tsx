@@ -7,6 +7,7 @@ import { routes } from "@/config/routes";
 import { ContestMemberType } from "@/core/domain/enumerate/ContestMemberType";
 import { JuryContextProvider } from "@/app/contests/[slug]/jury/_context/jury-context";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
+import { useTranslations } from "next-intl";
 
 export default function ContestantLayout({
   children,
@@ -14,6 +15,7 @@ export default function ContestantLayout({
   children: React.ReactNode;
 }) {
   const contestMetadata = useContestMetadata();
+  const t = useTranslations("contests.[slug].jury");
 
   if (!contestMetadata.loggedMemberType) {
     return redirect(routes.CONTEST_SIGN_IN(contestMetadata.slug));
@@ -23,7 +25,31 @@ export default function ContestantLayout({
   }
 
   return (
-    <ContestDashboardLayout>
+    <ContestDashboardLayout
+      contestMetadata={contestMetadata}
+      tabs={[
+        {
+          label: t("leaderboard"),
+          path: routes.CONTEST_JURY_LEADERBOARD(contestMetadata.slug),
+        },
+        {
+          label: t("problems"),
+          path: routes.CONTEST_JURY_PROBLEMS(contestMetadata.slug),
+        },
+        {
+          label: t("submissions"),
+          path: routes.CONTEST_JURY_SUBMISSIONS(contestMetadata.slug),
+        },
+        {
+          label: t("clarifications"),
+          path: routes.CONTEST_JURY_CLARIFICATIONS(contestMetadata.slug),
+        },
+        {
+          label: t("announcements"),
+          path: routes.CONTEST_JURY_ANNOUNCEMENTS(contestMetadata.slug),
+        },
+      ]}
+    >
       <JuryContextProvider>{children}</JuryContextProvider>
     </ContestDashboardLayout>
   );

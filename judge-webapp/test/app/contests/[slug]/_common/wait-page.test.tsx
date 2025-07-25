@@ -25,7 +25,7 @@ describe("WaitPage", () => {
       slug: "test-contest",
     } as unknown as ContestMetadataResponseDTO;
 
-    render(<WaitPage contest={contest} />);
+    render(<WaitPage contestMetadata={contest} />);
 
     expect(screen.getByTestId("title")).toHaveTextContent("Test Contest");
     expect(screen.getByTestId("start-at")).toHaveTextContent("start-at");
