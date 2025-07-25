@@ -15,17 +15,13 @@ export function ProblemStatusBadge({
 }: Props) {
   if (isAccepted) {
     return (
-      <Badge className="badge-success" data-testid="badge:ac">
+      <Badge className="badge-success">
         <TimestampDisplay timestamp={acceptedAt!} />
         {wrongSubmissions > 0 && ` | +${wrongSubmissions}`}
       </Badge>
     );
   } else if (wrongSubmissions > 0) {
-    return (
-      <Badge className="badge-error" data-testid="badge:wa">
-        +{wrongSubmissions}
-      </Badge>
-    );
+    return <Badge className="badge-error">+{wrongSubmissions}</Badge>;
   } else {
     return null;
   }
