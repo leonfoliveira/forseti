@@ -3,15 +3,18 @@ import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { useRouter } from "next/navigation";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useTranslations } from "next-intl";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { routes } from "@/config/routes";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+
+type Props = {
+  contest: ContestMetadataResponseDTO;
+};
 
 /**
  * A page displayed when the contest has not started yet.
  * Shows the contest title, start time, and supported languages.
  */
-export function WaitPage() {
-  const contest = useContestMetadata();
+export function WaitPage({ contest }: Props) {
   const router = useRouter();
 
   const { formatLanguage } = useContestFormatter();
@@ -23,20 +26,26 @@ export function WaitPage() {
   return (
     <div className="h-dvh flex justify-center items-center">
       <div className="text-center">
-        <h1 className="text-5xl mb-5" data-testid="not-started:title">
+        <h1 className="text-5xl mb-5" data-testid="title">
           {contest.title}
         </h1>
         <div>
-          <p className="font-semibold">{t("start-at")}</p>
-          <p className="text-2xl mt-2" data-testid="not-started:start-at">
+          <p className="font-semibold" data-testid="start-at">
+            {t("start-at")}
+          </p>
+          <p className="text-2xl mt-2">
             <span ref={clockRef} />
           </p>
         </div>
         <div className="mt-10">
-          <p className="font-semibold">{t("languages")}</p>
+          <p className="font-semibold" data-testid="languages">
+            {t("languages")}
+          </p>
           <ul>
             {contest.languages.map((it) => (
-              <li key={it}>{formatLanguage(it)}</li>
+              <li key={it} data-testid="language-item">
+                {formatLanguage(it)}
+              </li>
             ))}
           </ul>
         </div>

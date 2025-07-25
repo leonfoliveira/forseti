@@ -20,7 +20,7 @@ export default function ContestDashboardLayout({
   const contestMetadata = useContestMetadata();
 
   if (ContestUtil.getStatus(contestMetadata) === ContestStatus.NOT_STARTED) {
-    return <WaitPage />;
+    return <WaitPage contest={contestMetadata} />;
   }
 
   return (
