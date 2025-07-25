@@ -20,7 +20,7 @@ type Props = {
  * A generic problem page component for displaying contest problems.
  * If `contestantStatus` is provided, it will show the status of each problem for the contestant.
  */
-export function ProblemPage({ contest, contestantStatus }: Props) {
+export function ProblemsPage({ contest, contestantStatus }: Props) {
   const t = useTranslations("contests.[slug]._common.problems-page");
 
   return (
@@ -54,7 +54,7 @@ export function ProblemPage({ contest, contestantStatus }: Props) {
                   </span>
                 )}
               </TableCell>
-              <TableCell align="right">
+              <TableCell align="right" data-testid="download">
                 <DownloadButton attachment={problem.description} />
               </TableCell>
             </TableRow>

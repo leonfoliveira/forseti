@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { ProblemPage } from "@/app/contests/[slug]/_common/problems-page";
+import { ProblemsPage } from "@/app/contests/[slug]/_common/problems-page";
 
 export default function GuestProblemsPage() {
-  return <ProblemPage />;
+  return <ProblemsPage />;
 }

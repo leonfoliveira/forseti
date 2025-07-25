@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { ProblemPage } from "@/app/contests/[slug]/_common/problems-page";
+import { ProblemsPage } from "@/app/contests/[slug]/_common/problems-page";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { useContest } from "@/app/contests/[slug]/context/contest-context";
 
@@ -33,5 +33,5 @@ export default function ContestantProblemsPage() {
     return status;
   }, [contest.problems, submissions]);
 
-  return <ProblemPage contestantStatus={status} />;
+  return <ProblemsPage contestantStatus={status} />;
 }
