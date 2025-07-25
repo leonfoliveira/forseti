@@ -49,7 +49,7 @@ export function ContestantContextProvider({
 }) {
   const state = useLoadableState<ContestantContextType>({ isLoading: true });
 
-  const { authorization } = useAuthorization();
+  const authorization = useAuthorization();
   const contestMetadata = useContestMetadata();
   const alert = useAlert();
   const toast = useToast();

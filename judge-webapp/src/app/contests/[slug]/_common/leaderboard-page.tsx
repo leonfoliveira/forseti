@@ -21,7 +21,7 @@ type Props = {
  * A generic leaderboard page component for displaying contest results.
  */
 export function LeaderboardPage({ contest, leaderboard }: Props) {
-  const { authorization } = useAuthorization();
+  const authorization = useAuthorization();
 
   const t = useTranslations("contests.[slug]._common.leaderboard-page");
 

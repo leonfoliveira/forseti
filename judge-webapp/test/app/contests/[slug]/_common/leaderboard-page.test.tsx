@@ -1,4 +1,4 @@
-import { mockUseAuthorization } from "@/test/jest.setup";
+import { mockUseAuthorizationContext } from "@/test/jest.setup";
 import { render, screen } from "@testing-library/react";
 import { LeaderboardPage } from "@/app/contests/[slug]/_common/leaderboard-page";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
@@ -14,7 +14,7 @@ jest.mock(
 
 describe("LeaderboardPage", () => {
   it("should render the leaderboard with correct data", () => {
-    mockUseAuthorization.mockResolvedValueOnce({
+    mockUseAuthorizationContext.mockResolvedValueOnce({
       authorization: { member: { id: "1" } },
     });
     const contest = {

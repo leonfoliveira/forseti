@@ -17,7 +17,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { routes } from "@/config/routes";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
-import { useAuthorization } from "@/app/_context/authorization-context";
+import { useAuthorizationContext } from "@/app/_context/authorization-context";
 import { useAlert } from "@/app/_context/notification-context";
 
 /**
@@ -26,7 +26,7 @@ import { useAlert } from "@/app/_context/notification-context";
 export default function MemberSignInPage() {
   const signInState = useLoadableState();
   const contest = useContestMetadata();
-  const { setAuthorization, clearAuthorization } = useAuthorization();
+  const { setAuthorization, clearAuthorization } = useAuthorizationContext();
   const alert = useAlert();
 
   const searchParams = useSearchParams();

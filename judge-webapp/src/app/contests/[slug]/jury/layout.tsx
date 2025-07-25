@@ -4,23 +4,25 @@ import React from "react";
 import ContestDashboardLayout from "@/app/contests/[slug]/_component/contest-dashboard-layout";
 import { redirect } from "next/navigation";
 import { routes } from "@/config/routes";
-import { ContestMemberType } from "@/core/domain/enumerate/ContestMemberType";
 import { JuryContextProvider } from "@/app/contests/[slug]/jury/_context/jury-context";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { useTranslations } from "next-intl";
+import { useAuthorization } from "@/app/_context/authorization-context";
+import { MemberType } from "@/core/domain/enumerate/MemberType";
 
 export default function ContestantLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const authorization = useAuthorization();
   const contestMetadata = useContestMetadata();
   const t = useTranslations("contests.[slug].jury");
 
-  if (!contestMetadata.loggedMemberType) {
+  if (!authorization?.member.type) {
     return redirect(routes.CONTEST_SIGN_IN(contestMetadata.slug));
   }
-  if (contestMetadata.loggedMemberType !== ContestMemberType.JURY) {
+  if (authorization.member.type !== MemberType.JURY) {
     return redirect(routes.FORBIDDEN);
   }
 

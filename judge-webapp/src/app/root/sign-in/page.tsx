@@ -11,7 +11,7 @@ import { useTranslations } from "next-intl";
 import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form-schema";
 import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useAuthorization } from "@/app/_context/authorization-context";
+import { useAuthorizationContext } from "@/app/_context/authorization-context";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useAlert } from "@/app/_context/notification-context";
@@ -24,7 +24,7 @@ import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form-t
  */
 export default function RootSignInPage() {
   const signInState = useLoadableState();
-  const { setAuthorization, clearAuthorization } = useAuthorization();
+  const { setAuthorization, clearAuthorization } = useAuthorizationContext();
 
   const router = useRouter();
   const searchParams = useSearchParams();

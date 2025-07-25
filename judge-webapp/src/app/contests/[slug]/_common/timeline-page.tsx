@@ -21,7 +21,7 @@ type Props = {
  * A generic timeline page component for displaying contest submissions.
  */
 export function TimelinePage({ submissions }: Props) {
-  const { authorization } = useAuthorization();
+  const authorization = useAuthorization();
 
   const { formatLanguage } = useContestFormatter();
   const t = useTranslations("contests.[slug]._common.timeline-page");

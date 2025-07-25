@@ -17,7 +17,7 @@ jest.mock("@/app/root/(dashboard)/_component/root-tab-bar", () => ({
 
 describe("RootLayout", () => {
   it("should redirect to sign-in if not authorized", () => {
-    mockUseAuthorization.mockReturnValue({ authorization: undefined });
+    mockUseAuthorization.mockReturnValue(undefined);
 
     render(
       <RootLayout>
@@ -30,7 +30,7 @@ describe("RootLayout", () => {
 
   it("should redirect to forbidden if member type is not ROOT", () => {
     const authorization = { member: { type: MemberType.CONTESTANT } };
-    mockUseAuthorization.mockReturnValue({ authorization });
+    mockUseAuthorization.mockReturnValue(authorization);
 
     render(
       <RootLayout>
@@ -43,7 +43,7 @@ describe("RootLayout", () => {
 
   it("should render children if authorized as ROOT", () => {
     const authorization = { member: { type: MemberType.ROOT } };
-    mockUseAuthorization.mockReturnValue({ authorization });
+    mockUseAuthorization.mockReturnValue(authorization);
 
     render(
       <RootLayout>

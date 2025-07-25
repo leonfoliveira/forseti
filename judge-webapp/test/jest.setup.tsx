@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom";
+import { MemberType } from "@/core/domain/enumerate/MemberType";
 
 // next-intl
 jest.mock("next-intl", () => ({
@@ -38,13 +39,20 @@ jest.mock("@/app/_context/notification-context", () => ({
 }));
 
 // Authorization
+export const mockUseAuthorization = jest.fn().mockReturnValue({
+  member: {
+    name: "Test User",
+    type: MemberType.CONTESTANT,
+  },
+});
 export const mockSetAuthorization = jest.fn();
 export const mockClearAuthorization = jest.fn();
-export const mockUseAuthorization = jest.fn().mockReturnValue({
+export const mockUseAuthorizationContext = jest.fn().mockReturnValue({
   authorization: undefined,
   setAuthorization: mockSetAuthorization,
   clearAuthorization: mockClearAuthorization,
 });
 jest.mock("@/app/_context/authorization-context", () => ({
   useAuthorization: mockUseAuthorization,
+  useAuthorizationContext: mockUseAuthorizationContext,
 }));

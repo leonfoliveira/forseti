@@ -72,4 +72,6 @@ export function AuthorizationProvider({
   );
 }
 
-export const useAuthorization = () => useContext(AuthorizationContext);
+export const useAuthorization = () =>
+  useContext(AuthorizationContext).authorization;
+export const useAuthorizationContext = () => useContext(AuthorizationContext);

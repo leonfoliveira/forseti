@@ -7,21 +7,17 @@ import { useTranslations } from "next-intl";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { redirect, RedirectType } from "next/navigation";
-import { ContestMemberType } from "@/core/domain/enumerate/ContestMemberType";
+import { MemberType } from "@/core/domain/enumerate/MemberType";
 
 type Props = {
   contestMetadata?: ContestMetadataResponseDTO;
-  contestMemberType?: ContestMemberType;
+  memberType?: MemberType;
   signInPath: string;
 };
 
-export function Navbar({
-  contestMetadata,
-  contestMemberType,
-  signInPath,
-}: Props) {
+export function Navbar({ contestMetadata, memberType, signInPath }: Props) {
   const { theme, toggleTheme } = useTheme();
-  const { authorization } = useAuthorization();
+  const authorization = useAuthorization();
   const t = useTranslations("_component.navbar");
 
   const clockRef = useWaitClock(
@@ -63,9 +59,9 @@ export function Navbar({
                   className="bg-base-100 rounded-t-none right-0 !mt-0"
                   data-testid="menu"
                 >
-                  {contestMemberType && (
+                  {memberType && (
                     <li className="menu-title">
-                      {t(`contest-member-type.${contestMemberType}`)}
+                      {t(`member-type.${memberType}`)}
                     </li>
                   )}
                   <li>

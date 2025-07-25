@@ -10,7 +10,7 @@ import { MemberType } from "@/core/domain/enumerate/MemberType";
  * ContestPage component that redirects users based on their member type.
  */
 export default function ContestPage() {
-  const { authorization } = useAuthorization();
+  const authorization = useAuthorization();
   const contest = useContestMetadata();
 
   switch (authorization?.member.type) {

@@ -18,7 +18,7 @@ describe("ContestPage", () => {
     const contest = { slug: "test-slug" };
     (useContestMetadata as jest.Mock).mockReturnValue(contest);
     const authorization = { member: { type: memberType } };
-    (useAuthorization as jest.Mock).mockReturnValue({ authorization });
+    (useAuthorization as jest.Mock).mockReturnValue(authorization);
 
     render(<ContestPage />);
 
@@ -28,9 +28,7 @@ describe("ContestPage", () => {
   it("should redirect to guest page for no authorization", () => {
     const contest = { slug: "test-slug" };
     (useContestMetadata as jest.Mock).mockReturnValue(contest);
-    (useAuthorization as jest.Mock).mockReturnValue({
-      authorization: undefined,
-    });
+    (useAuthorization as jest.Mock).mockReturnValue(undefined);
 
     render(<ContestPage />);
 

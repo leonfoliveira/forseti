@@ -13,7 +13,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { authorization } = useAuthorization();
+  const authorization = useAuthorization();
 
   if (!authorization) {
     return redirect(routes.ROOT_SIGN_IN());

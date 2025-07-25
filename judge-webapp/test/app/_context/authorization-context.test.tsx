@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import {
   AuthorizationProvider,
-  useAuthorization,
+  useAuthorizationContext,
 } from "@/app/_context/authorization-context";
 import { authorizationService } from "@/config/composition";
 
@@ -54,7 +54,7 @@ describe("AuthorizationProvider", () => {
 
   it("sets new authorization and updates context", async () => {
     const TestComponent = () => {
-      const { setAuthorization, authorization } = useAuthorization();
+      const { setAuthorization, authorization } = useAuthorizationContext();
       return (
         <div>
           <button
@@ -94,7 +94,7 @@ describe("AuthorizationProvider", () => {
 
   it("clears authorization and updates context", async () => {
     const TestComponent = () => {
-      const { clearAuthorization, authorization } = useAuthorization();
+      const { clearAuthorization, authorization } = useAuthorizationContext();
       return (
         <div>
           <button

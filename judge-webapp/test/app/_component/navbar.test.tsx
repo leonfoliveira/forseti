@@ -1,16 +1,12 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { Navbar } from "@/app/_component/navbar";
 import { useTheme } from "@/app/_util/theme-hook";
-import { useAuthorization } from "@/app/_context/authorization-context";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { redirect, RedirectType } from "next/navigation";
+import { mockUseAuthorization } from "@/test/jest.setup";
 
 jest.mock("@/app/_util/theme-hook", () => ({
   useTheme: jest.fn(),
-}));
-
-jest.mock("@/app/_context/authorization-context", () => ({
-  useAuthorization: jest.fn(),
 }));
 
 jest.mock("@/app/contests/[slug]/_util/wait-clock-hook", () => ({
@@ -32,9 +28,6 @@ describe("Navbar", () => {
     (useTheme as jest.Mock).mockReturnValue({
       theme: "light",
       toggleTheme: mockToggleTheme,
-    });
-    (useAuthorization as jest.Mock).mockReturnValue({
-      authorization: null,
     });
     (useWaitClock as jest.Mock).mockReturnValue({ current: null });
     (redirect as unknown as jest.Mock).mockImplementation(mockRedirect);
@@ -63,22 +56,17 @@ describe("Navbar", () => {
   });
 
   it("displays guest name when no authorization is present", () => {
+    mockUseAuthorization.mockReturnValueOnce(undefined);
     render(<Navbar signInPath="/sign-in" />);
     expect(screen.getByTestId("member")).toHaveTextContent("guest-name");
   });
 
   it("displays member name when authorization is present", () => {
-    (useAuthorization as jest.Mock).mockReturnValue({
-      authorization: { member: { name: "John Doe" } } as unknown,
-    });
     render(<Navbar signInPath="/sign-in" />);
-    expect(screen.getByTestId("member")).toHaveTextContent("John Doe");
+    expect(screen.getByTestId("member")).toHaveTextContent("Test User");
   });
 
   it("calls redirect on sign out click when authorized", () => {
-    (useAuthorization as jest.Mock).mockReturnValue({
-      authorization: { member: { name: "John Doe" } },
-    });
     render(<Navbar signInPath="/sign-in" />);
     fireEvent.click(screen.getByTestId("member"));
     fireEvent.click(screen.getByTestId("sign"));
