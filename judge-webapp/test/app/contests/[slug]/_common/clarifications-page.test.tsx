@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
-import ClarificationsPage from "@/app/contests/[slug]/_common/clarifications-page";
+import { ClarificationsPage } from "@/app/contests/[slug]/_common/clarifications-page";
 import { clarificationService, contestService } from "@/config/composition";
 import { mockAlert } from "@/test/jest.setup";
 
