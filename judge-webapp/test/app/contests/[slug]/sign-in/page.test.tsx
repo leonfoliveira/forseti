@@ -1,5 +1,4 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
-import RootSignInPage from "@/app/root/sign-in/page";
 import {
   mockAlert,
   mockClearAuthorization,
@@ -7,17 +6,30 @@ import {
   mockSearchParams,
   mockSetAuthorization,
 } from "@/test/jest.setup";
+import MemberSignInPage from "@/app/contests/[slug]/sign-in/page";
 import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { routes } from "@/config/routes";
 
-describe("RootSignInPage", () => {
+jest.mock("@/config/composition");
+jest.mock("@/app/contests/[slug]/_context/contest-metadata-context", () => ({
+  useContestMetadata: jest.fn(() => ({
+    id: "contest-id",
+    slug: "contest-slug",
+    title: "Contest Title",
+  })),
+}));
+
+describe("memberSignInPage", () => {
   it("renders the sign-in form", () => {
-    render(<RootSignInPage />);
+    render(<MemberSignInPage />);
 
     expect(mockClearAuthorization).not.toHaveBeenCalled();
     expect(screen.getByTestId("title")).toHaveTextContent("title");
-    expect(screen.getByTestId("description")).toHaveTextContent("description");
+    expect(screen.getByTestId("description")).toHaveTextContent(
+      "Contest Title",
+    );
+    expect(screen.getByTestId("login")).toBeEnabled();
     expect(screen.getByTestId("password")).toBeEnabled();
     expect(screen.getByTestId("sign-in")).toHaveTextContent("sign-in:label");
   });
@@ -25,18 +37,21 @@ describe("RootSignInPage", () => {
   it("clear authorization on signOut query param", () => {
     mockSearchParams.get.mockReturnValueOnce("true");
 
-    render(<RootSignInPage />);
+    render(<MemberSignInPage />);
 
     expect(mockClearAuthorization).toHaveBeenCalled();
   });
 
   it("should alert warning on unauthorized exception", async () => {
-    (authenticationService.authenticateRoot as jest.Mock).mockRejectedValueOnce(
-      new UnauthorizedException("UnauthorizedException"),
-    );
+    (
+      authenticationService.authenticateMember as jest.Mock
+    ).mockRejectedValueOnce(new UnauthorizedException("unauthorized"));
 
-    render(<RootSignInPage />);
+    render(<MemberSignInPage />);
 
+    fireEvent.change(screen.getByTestId("login"), {
+      target: { value: "wrong-login" },
+    });
     fireEvent.change(screen.getByTestId("password"), {
       target: { value: "wrong-password" },
     });
@@ -46,13 +61,16 @@ describe("RootSignInPage", () => {
     expect(mockAlert.warning).toHaveBeenCalledWith("unauthorized");
   });
 
-  it("should alert error on other exceptions", async () => {
-    (authenticationService.authenticateRoot as jest.Mock).mockRejectedValueOnce(
-      new Error("Some error"),
-    );
+  it("should alert warning on other exception", async () => {
+    (
+      authenticationService.authenticateMember as jest.Mock
+    ).mockRejectedValueOnce(new Error("error"));
 
-    render(<RootSignInPage />);
+    render(<MemberSignInPage />);
 
+    fireEvent.change(screen.getByTestId("login"), {
+      target: { value: "wrong-login" },
+    });
     fireEvent.change(screen.getByTestId("password"), {
       target: { value: "wrong-password" },
     });
@@ -62,14 +80,17 @@ describe("RootSignInPage", () => {
     expect(mockAlert.error).toHaveBeenCalledWith("error");
   });
 
-  it("should redirect to root on successful sign-in", async () => {
+  it("should redirect to contest on successful sign-in", async () => {
     const authorization = { accessToken: "token" } as any;
-    (authenticationService.authenticateRoot as jest.Mock).mockResolvedValueOnce(
-      authorization,
-    );
+    (
+      authenticationService.authenticateMember as jest.Mock
+    ).mockResolvedValueOnce(authorization);
 
-    render(<RootSignInPage />);
+    render(<MemberSignInPage />);
 
+    fireEvent.change(screen.getByTestId("login"), {
+      target: { value: "login" },
+    });
     fireEvent.change(screen.getByTestId("password"), {
       target: { value: "password" },
     });
@@ -77,6 +98,8 @@ describe("RootSignInPage", () => {
       fireEvent.click(screen.getByTestId("sign-in"));
     });
     expect(mockSetAuthorization).toHaveBeenCalledWith(authorization);
-    expect(mockRouter.push).toHaveBeenCalledWith(routes.ROOT);
+    expect(mockRouter.push).toHaveBeenCalledWith(
+      routes.CONTEST("contest-slug"),
+    );
   });
 });

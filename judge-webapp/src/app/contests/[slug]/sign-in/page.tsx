@@ -73,8 +73,10 @@ export default function MemberSignInPage() {
         disabled={signInState.isLoading}
         data-testid="form"
       >
-        <h1 className="text-3xl font-bold">{t("title")}</h1>
-        <h2 className="text-md mt-2" data-testid="contest-title">
+        <h1 className="text-3xl font-bold" data-testid="title">
+          {t("title")}
+        </h1>
+        <h2 className="text-md mt-2" data-testid="description">
           {contest?.title}
         </h2>
         <div className="my-6">
