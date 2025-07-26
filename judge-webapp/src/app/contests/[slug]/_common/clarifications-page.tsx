@@ -25,7 +25,7 @@ type Props = {
   canAnswer?: boolean;
 };
 
-export default function ClarificationsPage({
+export function ClarificationsPage({
   contest,
   canCreate = false,
   canAnswer = false,

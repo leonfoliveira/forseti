@@ -21,10 +21,7 @@ type Props = {
   canCreate?: boolean;
 };
 
-export default function AnnouncementsPage({
-  contest,
-  canCreate = false,
-}: Props) {
+export function AnnouncementsPage({ contest, canCreate = false }: Props) {
   const createAnnouncementState = useLoadableState();
 
   const alert = useAlert();

@@ -3,13 +3,10 @@
 import React, { useMemo } from "react";
 import { ProblemsPage } from "@/app/contests/[slug]/_common/problems-page";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { useContest } from "@/app/contests/[slug]/context/contest-context";
+import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 
 export default function ContestantProblemsPage() {
-  const { contest } = useContest();
-  const {
-    contestant: { submissions },
-  } = useContest();
+  const { contest, submissions } = useContestantContext();
 
   const status = useMemo(() => {
     const answerBlock = Object.values(SubmissionAnswer).reduce(
@@ -33,5 +30,5 @@ export default function ContestantProblemsPage() {
     return status;
   }, [contest.problems, submissions]);
 
-  return <ProblemsPage contestantStatus={status} />;
+  return <ProblemsPage contest={contest} contestantStatus={status} />;
 }

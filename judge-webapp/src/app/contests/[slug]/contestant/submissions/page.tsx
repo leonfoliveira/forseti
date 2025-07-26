@@ -23,16 +23,14 @@ import { SubmissionFormType } from "@/app/contests/[slug]/contestant/submissions
 import { submissionFormSchema } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-schema";
 import { toInputDTO } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map";
 import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
-import { useContest } from "@/app/contests/[slug]/context/contest-context";
 import { useAlert } from "@/app/_context/notification-context";
 import { DownloadButton } from "@/app/_component/form/download-button";
 import { TimestampDisplay } from "@/app/_component/timestamp-display";
+import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 
 export default function ContestantSubmissionPage() {
-  const { contest } = useContest();
-  const {
-    contestant: { memberSubmissions, addSubmission },
-  } = useContest();
+  const { contest, memberSubmissions, addMemberSubmission } =
+    useContestantContext();
   const createSubmissionState = useLoadableState();
 
   const alert = useAlert();
@@ -66,7 +64,7 @@ export default function ContestantSubmissionPage() {
         data.problemId as string,
         toInputDTO(data),
       );
-      addSubmission(submission);
+      addMemberSubmission(submission);
       storageService.setKey(
         StorageService.ACTIVE_LANGUAGE_STORAGE_KEY,
         submission.language,
