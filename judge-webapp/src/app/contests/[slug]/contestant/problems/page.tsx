@@ -8,6 +8,10 @@ import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/
 export default function ContestantProblemsPage() {
   const { contest, submissions } = useContestantContext();
 
+  /**
+   * Builds and object with the amount of every answer for each problem.
+   * ie: { [problemId]: { [SubmissionAnswer]: [amount] } }
+   */
   const status = useMemo(() => {
     const answerBlock = Object.values(SubmissionAnswer).reduce(
       (acc, answer) => {
