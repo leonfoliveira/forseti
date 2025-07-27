@@ -23,22 +23,21 @@ import { UpdateSubmissionFormType } from "@/app/contests/[slug]/jury/submissions
 import { joiResolver } from "@hookform/resolvers/joi";
 import { updateSubmissionFormSchema } from "@/app/contests/[slug]/jury/submissions/_form/update-submission-form-schema";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { useContest } from "@/app/contests/[slug]/context/contest-context";
 import { SubmissionStatusBadge } from "@/app/contests/[slug]/_component/badge/submission-status-badge";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { TimestampDisplay } from "@/app/_component/timestamp-display";
+import { useJuryContext } from "@/app/contests/[slug]/jury/_context/jury-context";
 
 /**
  * Submissions page for the jury in a contest.
  * Displays a list of all submissions with options to rerun or update answers.
  */
 export default function JurySubmissionsPage() {
-  const {
-    jury: { fullSubmissions },
-  } = useContest();
-  const { formatLanguage, formatSubmissionAnswer } = useContestFormatter();
+  const { submissions } = useJuryContext();
   const rerunState = useLoadableState();
   const updateState = useLoadableState();
+
+  const { formatLanguage, formatSubmissionAnswer } = useContestFormatter();
   const rerunModal = useModal<string>();
   const updateModal = useModal<string>();
   const alert = useAlert();
@@ -85,26 +84,31 @@ export default function JurySubmissionsPage() {
       <Table>
         <TableSection head>
           <TableRow>
-            <TableCell header>{t("header-timestamp")}</TableCell>
-            <TableCell header>{t("header-problem")}</TableCell>
-            <TableCell header>{t("header-language")}</TableCell>
-            <TableCell header align="right">
-              {" "}
+            <TableCell header data-testid="header-timestamp">
+              {t("header-timestamp")}
+            </TableCell>
+            <TableCell header data-testid="header-problem">
+              {t("header-problem")}
+            </TableCell>
+            <TableCell header data-testid="header-language">
+              {t("header-language")}
+            </TableCell>
+            <TableCell header align="right" data-testid="header-status">
               {t("header-status")}
             </TableCell>
-            <TableCell header align="right">
+            <TableCell header align="right" data-testid="header-answer">
               {t("header-answer")}
             </TableCell>
             <TableCell />
           </TableRow>
         </TableSection>
         <TableSection>
-          {fullSubmissions?.map((submission) => (
+          {submissions?.map((submission) => (
             <TableRow key={submission.id} data-testid="submission-row">
               <TableCell data-testid="submission-created-at">
                 <TimestampDisplay timestamp={submission.createdAt} />
               </TableCell>
-              <TableCell data-testid="submission-title">
+              <TableCell data-testid="submission-letter">
                 {submission.problem.letter}
               </TableCell>
               <TableCell data-testid="submission-language">
@@ -131,6 +135,7 @@ export default function JurySubmissionsPage() {
                     tooltip={t("rerun-tooltip")}
                     disabled={submission.status === SubmissionStatus.JUDGING}
                     className="text-xs btn-soft"
+                    data-testid="rerun"
                   >
                     <FontAwesomeIcon icon={faRotate} />
                   </Button>
@@ -138,6 +143,7 @@ export default function JurySubmissionsPage() {
                     onClick={() => updateModal.open(submission.id)}
                     tooltip={t("update-tooltip")}
                     className="text-xs btn-soft"
+                    data-testid="update"
                   >
                     <FontAwesomeIcon icon={faEdit} />
                   </Button>
@@ -175,6 +181,7 @@ export default function JurySubmissionsPage() {
               value: answer,
               label: formatSubmissionAnswer(answer),
             }))}
+          data-testid="update-form-answer"
         />
         {t("confirm-update")}
       </DialogModal>

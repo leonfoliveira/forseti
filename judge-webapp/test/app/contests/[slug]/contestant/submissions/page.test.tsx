@@ -49,7 +49,7 @@ describe("ContestantSubmissionPage", () => {
     (storageService.getKey as jest.Mock).mockReturnValueOnce(
       Language.PYTHON_3_13_3,
     );
-    (useContestantContext as jest.Mock).mockReturnValueOnce({
+    (useContestantContext as jest.Mock).mockReturnValue({
       contest: {
         languages: [Language.PYTHON_3_13_3],
         problems: [{ id: "1" }],
@@ -115,7 +115,7 @@ describe("ContestantSubmissionPage", () => {
   });
 
   it("should render empty submission list when no submissions exist", () => {
-    (useContestantContext as jest.Mock).mockReturnValueOnce({
+    (useContestantContext as jest.Mock).mockReturnValue({
       contest: {
         languages: [Language.PYTHON_3_13_3],
         problems: [{ id: "1" }],
