@@ -21,7 +21,7 @@ import { StorageService } from "@/core/service/StorageService";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { SubmissionFormType } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form";
 import { submissionFormSchema } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-schema";
-import { toInputDTO } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map";
+import { SubmissionFormMap } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map";
 import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
 import { useAlert } from "@/app/_context/notification-context";
 import { DownloadButton } from "@/app/_component/form/download-button";
@@ -62,7 +62,7 @@ export default function ContestantSubmissionPage() {
     try {
       const submission = await problemService.createSubmission(
         data.problemId as string,
-        toInputDTO(data),
+        SubmissionFormMap.toInputDTO(data),
       );
       addMemberSubmission(submission);
       storageService.setKey(
@@ -85,7 +85,7 @@ export default function ContestantSubmissionPage() {
         className="flex flex-col"
         onSubmit={submissionForm.handleSubmit(onCreateSubmission)}
         disabled={createSubmissionState.isLoading}
-        data-testid="form:submission"
+        data-testid="form-submission"
       >
         <Select
           form={submissionForm}
@@ -97,7 +97,7 @@ export default function ContestantSubmissionPage() {
             label: `${it.letter}. ${it.title}`,
           }))}
           className="w-full"
-          data-testid="form:problem"
+          data-testid="form-problem"
         />
         <div className="flex w-full gap-5">
           <Select
@@ -110,7 +110,7 @@ export default function ContestantSubmissionPage() {
               label: formatLanguage(it),
             }))}
             containerClassName="flex-1"
-            data-testid="form:language"
+            data-testid="form-language"
           />
           <FileInput
             form={submissionForm}
@@ -118,14 +118,14 @@ export default function ContestantSubmissionPage() {
             s={s}
             label={t("code:label")}
             containerClassName="flex-2"
-            data-testid="form:code"
+            data-testid="form-code"
           />
         </div>
         <div className="flex justify-center mt-8">
           <Button
             type="submit"
             className="btn-primary"
-            data-testid="form:submit"
+            data-testid="form-submit"
             isLoading={createSubmissionState.isLoading}
           >
             {t("submit:label")}
@@ -137,10 +137,16 @@ export default function ContestantSubmissionPage() {
       <Table>
         <TableSection head>
           <TableRow>
-            <TableCell header>{t("header-timestamp")}</TableCell>
-            <TableCell header>{t("header-problem")}</TableCell>
-            <TableCell header>{t("header-language")}</TableCell>
-            <TableCell header align="right">
+            <TableCell header data-testid="header-timestamp">
+              {t("header-timestamp")}
+            </TableCell>
+            <TableCell header data-testid="header-problem">
+              {t("header-problem")}
+            </TableCell>
+            <TableCell header data-testid="header-language">
+              {t("header-language")}
+            </TableCell>
+            <TableCell header align="right" data-testid="header-answer">
               {t("header-answer")}
             </TableCell>
             <TableCell />
@@ -148,24 +154,24 @@ export default function ContestantSubmissionPage() {
         </TableSection>
         <TableSection>
           {memberSubmissions?.map((submission) => (
-            <TableRow key={submission.id} data-testid="submission:row">
-              <TableCell data-testid="submission:created-at">
+            <TableRow key={submission.id} data-testid="submission-row">
+              <TableCell data-testid="submission-created-at">
                 <TimestampDisplay timestamp={submission.createdAt} />
               </TableCell>
-              <TableCell data-testid="submission:title">
+              <TableCell data-testid="submission-title">
                 {submission.problem.letter}
               </TableCell>
-              <TableCell data-testid="submission:language">
+              <TableCell data-testid="submission-language">
                 {formatLanguage(submission.language)}
               </TableCell>
               <TableCell
                 align="right"
                 className="font-semibold"
-                data-testid="submission:status"
+                data-testid="submission-answer"
               >
                 <SubmissionAnswerBadge answer={submission.answer} />
               </TableCell>
-              <TableCell>
+              <TableCell data-testid="submission-actions">
                 <fieldset className="flex justify-end gap-x-2">
                   <DownloadButton attachment={submission.code} />
                 </fieldset>
@@ -177,7 +183,7 @@ export default function ContestantSubmissionPage() {
       {memberSubmissions?.length === 0 ? (
         <div
           className="flex justify-center items-center py-20"
-          data-testid="submissions:empty"
+          data-testid="submissions-empty"
         >
           <p className="text-neutral-content">{t("submissions-empty")}</p>
         </div>
