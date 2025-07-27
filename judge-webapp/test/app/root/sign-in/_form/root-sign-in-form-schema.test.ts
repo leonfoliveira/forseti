@@ -1,10 +1,10 @@
 import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form-schema";
-import { RootSignInForm } from "@/app/root/sign-in/_form/root-sign-in-form";
+import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form";
 
 describe("rootSignInFormSchema", () => {
   const validSchema = {
     password: "validPassword123",
-  } as RootSignInForm;
+  } as RootSignInFormType;
 
   it("should validate password", () => {
     expect(

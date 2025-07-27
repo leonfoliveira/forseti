@@ -4,7 +4,7 @@ import { use, useEffect } from "react";
 import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
 import { ContestFormMap } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
 import { useForm } from "react-hook-form";
-import { ContestFormD } from "@/app/root/(dashboard)/contests/_form/contest-form";
+import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form.type";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
 import { useTranslations } from "next-intl";
@@ -35,7 +35,7 @@ export default function RootEditContestPage({
   const alert = useAlert();
   const t = useTranslations("root.contests.[id]");
 
-  const form = useForm<ContestFormD>({
+  const form = useForm<ContestFormType>({
     resolver: joiResolver(contestFormSchema),
     defaultValues: {
       problems: [],
@@ -60,7 +60,7 @@ export default function RootEditContestPage({
     findContest();
   }, []);
 
-  async function updateContest(data: ContestFormD) {
+  async function updateContest(data: ContestFormType) {
     updateContestState.start();
     try {
       const input = ContestFormMap.toUpdateRequestDTO(data);

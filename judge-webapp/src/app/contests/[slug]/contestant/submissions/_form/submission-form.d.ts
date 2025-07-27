@@ -1,6 +1,6 @@
 import { Language } from "@/core/domain/enumerate/Language";
 
-export type SubmissionForm = Partial<{
+export type SubmissionFormType = Partial<{
   problemId: string;
   language: Language;
   code: File;

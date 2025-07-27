@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
-import { ClarificationForm } from "@/app/contests/[slug]/_common/_form/clarification-form";
+import { ClarificationFormType } from "@/app/contests/[slug]/_common/_form/clarification-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { clarificationFormSchema } from "@/app/contests/[slug]/_common/_form/clarification-form-schema";
 import { Select } from "@/app/_component/form/select";
@@ -39,14 +39,14 @@ export function ClarificationsPage({
 
   const deleteModal = useModal<string>();
   const answerModal = useModal();
-  const form = useForm<ClarificationForm>({
+  const form = useForm<ClarificationFormType>({
     resolver: joiResolver(clarificationFormSchema),
   });
-  const answerForm = useForm<ClarificationForm>({
+  const answerForm = useForm<ClarificationFormType>({
     resolver: joiResolver(clarificationFormSchema),
   });
 
-  async function createClarification(data: ClarificationForm) {
+  async function createClarification(data: ClarificationFormType) {
     createClarificationState.start();
     try {
       await contestService.createClarification(

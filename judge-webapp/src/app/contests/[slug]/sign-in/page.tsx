@@ -9,7 +9,7 @@ import { Button } from "@/app/_component/form/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useTranslations } from "next-intl";
-import { MemberSignInForm } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form";
+import { MemberSignInFormType } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form";
 import { memberSignInFormSchema } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form-schema";
 import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
@@ -36,7 +36,7 @@ export default function MemberSignInPage() {
     "contests.[slug].sign-in._form.member-sign-in-form",
   );
 
-  const form = useForm<MemberSignInForm>({
+  const form = useForm<MemberSignInFormType>({
     resolver: joiResolver(memberSignInFormSchema),
   });
 
@@ -47,7 +47,7 @@ export default function MemberSignInPage() {
     }
   }, [signOut]);
 
-  async function signIn(data: MemberSignInForm) {
+  async function signIn(data: MemberSignInFormType) {
     signInState.start();
     try {
       const authorization = await authenticationService.authenticateMember(

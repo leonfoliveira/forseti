@@ -1,3 +1,3 @@
-export type AnnouncementForm = Partial<{
+export type AnnouncementFormType = Partial<{
   text: string;
 }>;

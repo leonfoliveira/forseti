@@ -1,3 +1,3 @@
-export type RootSignInForm = {
+export type RootSignInFormType = {
   password: string;
 };

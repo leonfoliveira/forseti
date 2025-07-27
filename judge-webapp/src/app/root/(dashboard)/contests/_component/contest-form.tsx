@@ -13,7 +13,7 @@ import { Select } from "@/app/_component/form/select";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import React, { Fragment, useEffect } from "react";
 import { TextInput } from "@/app/_component/form/text-input";
-import { ContestFormD } from "@/app/root/(dashboard)/contests/_form/contest-form";
+import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form.type";
 import { DateTimeInput } from "@/app/_component/form/date-time-input";
 import { NumberInput } from "@/app/_component/form/number-input";
 import { Form } from "@/app/_component/form/form";
@@ -34,8 +34,8 @@ import { useContestStatusWatcher } from "@/app/_util/contest-status-watcher";
 type Props = {
   contestState?: LoadableState<ContestFullResponseDTO>;
   saveState: LoadableState<ContestFullResponseDTO>;
-  onSubmit: (data: ContestFormD) => Promise<void>;
-  form: UseFormReturn<ContestFormD>;
+  onSubmit: (data: ContestFormType) => Promise<void>;
+  form: UseFormReturn<ContestFormType>;
 };
 
 /**
@@ -52,7 +52,7 @@ export function ContestForm({
 
   const router = useRouter();
   const deleteModal = useModal();
-  const saveModal = useModal<ContestFormD>();
+  const saveModal = useModal<ContestFormType>();
   const alert = useAlert();
   const { formatLanguage } = useContestFormatter();
   const t = useTranslations("root.contests._component.contest-form");

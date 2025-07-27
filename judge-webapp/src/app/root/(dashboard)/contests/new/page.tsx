@@ -3,7 +3,7 @@
 import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
 import { useForm } from "react-hook-form";
 import { ContestFormMap } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
-import { ContestFormD } from "@/app/root/(dashboard)/contests/_form/contest-form";
+import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form.type";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
 import { useTranslations } from "next-intl";
@@ -21,7 +21,7 @@ export default function RootNewContestPage() {
   const router = useRouter();
   const t = useTranslations("root.contests.new");
 
-  const form = useForm<ContestFormD>({
+  const form = useForm<ContestFormType>({
     resolver: joiResolver(contestFormSchema),
     defaultValues: {
       problems: [],
@@ -29,7 +29,7 @@ export default function RootNewContestPage() {
     },
   });
 
-  async function createContest(data: ContestFormD) {
+  async function createContest(data: ContestFormType) {
     createContestState.start();
     try {
       const input = ContestFormMap.toCreateRequestDTO(data);

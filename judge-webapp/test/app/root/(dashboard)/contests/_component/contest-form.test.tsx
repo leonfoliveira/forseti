@@ -9,7 +9,7 @@ import {
 } from "@testing-library/react";
 import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
 import { useForm } from "react-hook-form";
-import { ContestFormD } from "@/app/root/(dashboard)/contests/_form/contest-form";
+import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form.type";
 import { useContestStatusWatcher } from "@/app/_util/contest-status-watcher";
 import { mockAlert } from "@/test/jest.setup";
 import { contestService } from "@/config/composition";
@@ -57,7 +57,7 @@ describe("ContestForm", () => {
     (useContestStatusWatcher as jest.Mock).mockReturnValueOnce(
       ContestStatus.IN_PROGRESS,
     );
-    const form = renderHook(() => useForm<ContestFormD>());
+    const form = renderHook(() => useForm<ContestFormType>());
     const props = {
       contestState: {} as any,
       saveState: {} as any,
@@ -74,7 +74,7 @@ describe("ContestForm", () => {
     (contestService.deleteContest as jest.Mock).mockRejectedValueOnce(
       new Error("delete-error"),
     );
-    const form = renderHook(() => useForm<ContestFormD>());
+    const form = renderHook(() => useForm<ContestFormType>());
     const props = {
       contestState: { data: { id: "123" } } as any,
       saveState: {} as any,
@@ -101,7 +101,7 @@ describe("ContestForm", () => {
   });
 
   it("should alert success when delete is successful", async () => {
-    const form = renderHook(() => useForm<ContestFormD>());
+    const form = renderHook(() => useForm<ContestFormType>());
     const props = {
       contestState: { data: { id: "123" } } as any,
       saveState: {} as any,
@@ -124,7 +124,7 @@ describe("ContestForm", () => {
   });
 
   it("should call save on create", async () => {
-    const { result } = renderHook(() => useForm<ContestFormD>());
+    const { result } = renderHook(() => useForm<ContestFormType>());
     const props = {
       contestState: undefined,
       saveState: {} as any,
@@ -210,7 +210,7 @@ describe("ContestForm", () => {
   });
 
   it("should call save on update", async () => {
-    const { result } = renderHook(() => useForm<ContestFormD>());
+    const { result } = renderHook(() => useForm<ContestFormType>());
     const props = {
       contestState: { data: { id: "123" } } as any,
       saveState: {} as any,

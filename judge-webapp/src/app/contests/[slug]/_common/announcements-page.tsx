@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { Form } from "@/app/_component/form/form";
 import { useForm } from "react-hook-form";
-import { AnnouncementForm } from "@/app/contests/[slug]/_common/_form/announcement-form";
+import { AnnouncementFormType } from "@/app/contests/[slug]/_common/_form/announcement-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { announcementFormSchema } from "@/app/contests/[slug]/_common/_form/announcement-form-schema";
 import { useLoadableState } from "@/app/_util/loadable-state";
@@ -26,14 +26,14 @@ export function AnnouncementsPage({ contest, canCreate = false }: Props) {
 
   const alert = useAlert();
 
-  const form = useForm<AnnouncementForm>({
+  const form = useForm<AnnouncementFormType>({
     resolver: joiResolver(announcementFormSchema),
   });
 
   const t = useTranslations("contests.[slug]._common.announcements-page");
   const s = useTranslations("contests.[slug]._common._form.announcement-form");
 
-  async function createAnnouncement(data: AnnouncementForm) {
+  async function createAnnouncement(data: AnnouncementFormType) {
     createAnnouncementState.start();
     try {
       await contestService.createAnnouncement(
