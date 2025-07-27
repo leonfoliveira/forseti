@@ -19,7 +19,7 @@ import { submissionService } from "@/config/composition";
 import { useAlert } from "@/app/_context/notification-context";
 import { Select } from "@/app/_component/form/select";
 import { useForm } from "react-hook-form";
-import { UpdateSubmissionFormType } from "@/app/contests/[slug]/jury/submissions/_form/update-submission-form-type";
+import { UpdateSubmissionForm } from "@/app/contests/[slug]/jury/submissions/_form/update-submission-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { updateSubmissionFormSchema } from "@/app/contests/[slug]/jury/submissions/_form/update-submission-form-schema";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
@@ -48,7 +48,7 @@ export default function JurySubmissionsPage() {
     "contests.[slug].jury.submissions._form.update-submission-form",
   );
 
-  const updateForm = useForm<UpdateSubmissionFormType>({
+  const updateForm = useForm<UpdateSubmissionForm>({
     resolver: joiResolver(updateSubmissionFormSchema),
   });
 
@@ -66,7 +66,7 @@ export default function JurySubmissionsPage() {
     }
   }
 
-  async function update(submissionId: string, data: UpdateSubmissionFormType) {
+  async function update(submissionId: string, data: UpdateSubmissionForm) {
     updateState.start();
     try {
       await submissionService.updateSubmissionAnswer(submissionId, data);

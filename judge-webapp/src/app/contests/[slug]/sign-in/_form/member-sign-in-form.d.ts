@@ -1,4 +1,4 @@
-export type MemberSignInFormType = {
+export type MemberSignInForm = {
   login: string;
   password: string;
 };

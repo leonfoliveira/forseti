@@ -1,7 +1,7 @@
 import { ContestUtil } from "@/core/util/contest-util";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { render, screen } from "@testing-library/react";
-import ContestDashboardLayout from "@/app/contests/[slug]/_component/contest-dashboard-layout";
+import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { routes } from "@/config/routes";
 

@@ -2,7 +2,7 @@ import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { Attachment } from "@/core/domain/model/Attachment";
 
-export type ContestFormType = Partial<{
+export type ContestFormD = Partial<{
   id: string;
   slug: string;
   title: string;

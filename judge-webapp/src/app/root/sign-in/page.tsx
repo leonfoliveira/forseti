@@ -17,7 +17,7 @@ import { useLoadableState } from "@/app/_util/loadable-state";
 import { useAlert } from "@/app/_context/notification-context";
 import { routes } from "@/config/routes";
 import { useEffect } from "react";
-import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form-type";
+import { RootSignInForm } from "@/app/root/sign-in/_form/root-sign-in-form";
 
 /**
  * RootSignInPage component is the sign-in page for root users.
@@ -32,7 +32,7 @@ export default function RootSignInPage() {
   const t = useTranslations("root.sign-in");
   const s = useTranslations("root.sign-in._form.root-sign-in-form");
 
-  const form = useForm<RootSignInFormType>({
+  const form = useForm<RootSignInForm>({
     resolver: joiResolver(rootSignInFormSchema),
   });
 
@@ -43,7 +43,7 @@ export default function RootSignInPage() {
     }
   }, [signOut]);
 
-  async function signIn(data: RootSignInFormType) {
+  async function signIn(data: RootSignInForm) {
     signInState.start();
     try {
       const authorization = await authenticationService.authenticateRoot(data);

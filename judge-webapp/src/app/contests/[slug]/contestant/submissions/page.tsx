@@ -19,7 +19,7 @@ import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useTranslations } from "next-intl";
 import { StorageService } from "@/core/service/StorageService";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { SubmissionFormType } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-type";
+import { SubmissionForm } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form";
 import { submissionFormSchema } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-schema";
 import { toInputDTO } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map";
 import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
@@ -40,7 +40,7 @@ export default function ContestantSubmissionPage() {
     "contests.[slug].contestant.submissions._form.submission-form",
   );
 
-  const submissionForm = useForm<SubmissionFormType>({
+  const submissionForm = useForm<SubmissionForm>({
     resolver: joiResolver(submissionFormSchema),
   });
 
@@ -57,7 +57,7 @@ export default function ContestantSubmissionPage() {
     loadActiveLanguage();
   }, []);
 
-  async function onCreateSubmission(data: SubmissionFormType) {
+  async function onCreateSubmission(data: SubmissionForm) {
     createSubmissionState.start();
     try {
       const submission = await problemService.createSubmission(

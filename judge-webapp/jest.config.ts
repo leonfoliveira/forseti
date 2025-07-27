@@ -15,6 +15,7 @@ const config: Config = {
   // },
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
+    "!src/**/*.d.{",
     "!src/core/domain/**/*",
     "!src/core/listener/**/*",
     "!src/core/repository/**/*",

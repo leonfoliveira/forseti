@@ -3,20 +3,20 @@ import { Language } from "@/core/domain/enumerate/Language";
 import {
   ContestFormMemberType,
   ContestFormProblemType,
-  ContestFormType,
-} from "@/app/root/(dashboard)/contests/_form/contest-form-type";
+  ContestFormD,
+} from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";
 import { Attachment } from "@/core/domain/model/Attachment";
 
 export class ContestFormMap {
-  static toCreateRequestDTO(data: ContestFormType): CreateContestInputDTO {
+  static toCreateRequestDTO(data: ContestFormD): CreateContestInputDTO {
     const update = this.toUpdateRequestDTO(data);
     return update as CreateContestInputDTO;
   }
 
-  static toUpdateRequestDTO(data: ContestFormType): UpdateContestInputDTO {
+  static toUpdateRequestDTO(data: ContestFormD): UpdateContestInputDTO {
     function mapMember(
       member: ContestFormMemberType,
     ): UpdateContestInputDTO["members"][number] {
@@ -57,7 +57,7 @@ export class ContestFormMap {
     };
   }
 
-  static fromResponseDTO(contest: ContestFullResponseDTO): ContestFormType {
+  static fromResponseDTO(contest: ContestFullResponseDTO): ContestFormD {
     function mapMember(member: ContestFullResponseDTO["members"][number]) {
       return {
         _id: member.id,
