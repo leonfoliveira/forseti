@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import ContestDashboardLayout from "@/app/contests/[slug]/_component/contest-dashboard-layout";
+import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
 import { redirect } from "next/navigation";
 import { routes } from "@/config/routes";
-import { useContestMetadata } from "../_context/contest-metadata-context";
+import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { ContestantContextProvider } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 import { useTranslations } from "next-intl";
 import { useAuthorization } from "@/app/_context/authorization-context";

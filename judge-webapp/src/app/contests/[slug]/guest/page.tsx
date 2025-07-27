@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { routes } from "@/config/routes";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 
-export default function ContestantPage() {
+export default function GuestPage() {
   const contest = useContestMetadata();
 
   return redirect(routes.CONTEST_GUEST_LEADERBOARD(contest.slug));

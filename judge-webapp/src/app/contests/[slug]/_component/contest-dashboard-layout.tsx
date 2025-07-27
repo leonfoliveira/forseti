@@ -21,7 +21,7 @@ type Props = {
 /**
  * Basic layout for contest dashboard pages.
  */
-export default function ContestDashboardLayout({
+export function ContestDashboardLayout({
   contestMetadata,
   tabs,
   children,

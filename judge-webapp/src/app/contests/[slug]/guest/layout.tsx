@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import ContestDashboardLayout from "@/app/contests/[slug]/_component/contest-dashboard-layout";
+import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
 import { GuestContextProvider } from "@/app/contests/[slug]/guest/_context/guest-context";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { routes } from "@/config/routes";
 import { useTranslations } from "next-intl";
 
-export default function ContestantLayout({
+export default function GuestLayout({
   children,
 }: {
   children: React.ReactNode;

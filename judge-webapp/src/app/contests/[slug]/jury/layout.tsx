@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import ContestDashboardLayout from "@/app/contests/[slug]/_component/contest-dashboard-layout";
+import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
 import { redirect } from "next/navigation";
 import { routes } from "@/config/routes";
 import { JuryContextProvider } from "@/app/contests/[slug]/jury/_context/jury-context";
@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl";
 import { useAuthorization } from "@/app/_context/authorization-context";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 
-export default function ContestantLayout({
+export default function JuryLayout({
   children,
 }: {
   children: React.ReactNode;
