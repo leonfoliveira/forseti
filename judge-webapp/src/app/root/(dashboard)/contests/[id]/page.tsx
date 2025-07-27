@@ -4,7 +4,7 @@ import { use, useEffect } from "react";
 import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
 import { ContestFormMap } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
 import { useForm } from "react-hook-form";
-import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form.type";
+import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
 import { useTranslations } from "next-intl";

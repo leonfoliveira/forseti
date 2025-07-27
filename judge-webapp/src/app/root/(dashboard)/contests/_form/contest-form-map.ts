@@ -4,7 +4,7 @@ import {
   ContestFormMemberType,
   ContestFormProblemType,
   ContestFormType,
-} from "@/app/root/(dashboard)/contests/_form/contest-form.type";
+} from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";

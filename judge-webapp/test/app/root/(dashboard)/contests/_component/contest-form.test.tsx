@@ -9,7 +9,7 @@ import {
 } from "@testing-library/react";
 import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
 import { useForm } from "react-hook-form";
-import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form.type";
+import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { useContestStatusWatcher } from "@/app/_util/contest-status-watcher";
 import { mockAlert } from "@/test/jest.setup";
 import { contestService } from "@/config/composition";

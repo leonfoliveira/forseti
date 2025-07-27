@@ -1,17 +1,10 @@
+import { merge } from "@/app/contests/[slug]/_util/entity-merger";
+
 describe("merge", () => {
   interface TestEntity {
     id: string;
     name: string;
   }
-
-  const merge = (entities: TestEntity[], entity: TestEntity): TestEntity[] => {
-    const existingIndex = entities.findIndex((e) => e.id === entity.id);
-    if (existingIndex !== -1) {
-      return entities.map((e, index) => (index === existingIndex ? entity : e));
-    } else {
-      return [...entities, entity];
-    }
-  };
 
   it("should add a new entity if it does not exist", () => {
     const entities: TestEntity[] = [{ id: "1", name: "Entity 1" }];

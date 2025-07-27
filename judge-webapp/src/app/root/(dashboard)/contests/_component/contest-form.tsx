@@ -13,7 +13,7 @@ import { Select } from "@/app/_component/form/select";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import React, { Fragment, useEffect } from "react";
 import { TextInput } from "@/app/_component/form/text-input";
-import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form.type";
+import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { DateTimeInput } from "@/app/_component/form/date-time-input";
 import { NumberInput } from "@/app/_component/form/number-input";
 import { Form } from "@/app/_component/form/form";
