@@ -233,7 +233,7 @@ export function ContestantContextProvider({
   }
 
   function receiveClarificationAnswer() {
-    toast.info(t("clarification-toast-text"));
+    toast.info(t("clarification-answer"));
   }
 
   function deleteClarification({ id }: { id: string }) {

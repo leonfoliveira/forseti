@@ -34,23 +34,23 @@ describe("GuestLayout", () => {
       expect.objectContaining({
         tabs: [
           {
-            label: "leaderboard",
+            label: "tab-leaderboard",
             path: routes.CONTEST_GUEST_LEADERBOARD("test-contest"),
           },
           {
-            label: "problems",
+            label: "tab-problems",
             path: routes.CONTEST_GUEST_PROBLEMS("test-contest"),
           },
           {
-            label: "timeline",
+            label: "tab-timeline",
             path: routes.CONTEST_GUEST_TIMELINE("test-contest"),
           },
           {
-            label: "clarifications",
+            label: "tab-clarifications",
             path: routes.CONTEST_GUEST_CLARIFICATIONS("test-contest"),
           },
           {
-            label: "announcements",
+            label: "tab-announcements",
             path: routes.CONTEST_GUEST_ANNOUNCEMENTS("test-contest"),
           },
         ],

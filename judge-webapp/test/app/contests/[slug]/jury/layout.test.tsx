@@ -62,23 +62,23 @@ describe("JuryLayout", () => {
       expect.objectContaining({
         tabs: [
           {
-            label: "leaderboard",
+            label: "tab-leaderboard",
             path: routes.CONTEST_JURY_LEADERBOARD("test-contest"),
           },
           {
-            label: "problems",
+            label: "tab-problems",
             path: routes.CONTEST_JURY_PROBLEMS("test-contest"),
           },
           {
-            label: "submissions",
+            label: "tab-submissions",
             path: routes.CONTEST_JURY_SUBMISSIONS("test-contest"),
           },
           {
-            label: "clarifications",
+            label: "tab-clarifications",
             path: routes.CONTEST_JURY_CLARIFICATIONS("test-contest"),
           },
           {
-            label: "announcements",
+            label: "tab-announcements",
             path: routes.CONTEST_JURY_ANNOUNCEMENTS("test-contest"),
           },
         ],

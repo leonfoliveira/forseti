@@ -65,27 +65,27 @@ describe("ContestantLayout", () => {
       expect.objectContaining({
         tabs: [
           {
-            label: "leaderboard",
+            label: "tab-leaderboard",
             path: routes.CONTEST_CONTESTANT_LEADERBOARD("test-contest"),
           },
           {
-            label: "problems",
+            label: "tab-problems",
             path: routes.CONTEST_CONTESTANT_PROBLEMS("test-contest"),
           },
           {
-            label: "timeline",
+            label: "tab-timeline",
             path: routes.CONTEST_CONTESTANT_TIMELINE("test-contest"),
           },
           {
-            label: "submissions",
+            label: "tab-submissions",
             path: routes.CONTEST_CONTESTANT_SUBMISSIONS("test-contest"),
           },
           {
-            label: "clarifications",
+            label: "tab-clarifications",
             path: routes.CONTEST_CONTESTANT_CLARIFICATIONS("test-contest"),
           },
           {
-            label: "announcements",
+            label: "tab-announcements",
             path: routes.CONTEST_CONTESTANT_ANNOUNCEMENTS("test-contest"),
           },
         ],

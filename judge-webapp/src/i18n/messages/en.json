@@ -119,33 +119,22 @@
         }
       },
       "_component": {
-        "context": {
-          "contestant-annex": {
-            "submission-toast-problem": "Problem {letter}: {answer}",
-            "clarification-toast-text": "Your clarification has received an answer"
-          },
-          "jury-annex": {
-            "submission-failed": "New failed submission",
-            "clarification-toast-text": "New clarification question received"
-          }
-        },
         "contest-navbar": {
           "sign-out:label": "Sign out",
           "sign-in:label": "Sign in"
-        },
-        "contest-tab-bar": {
-          "tab-leaderboard": "Leaderboard",
-          "tab-problems": "Problems",
-          "tab-timeline": "Timeline",
-          "tab-submissions": "Submissions",
-          "tab-clarifications": "Clarifications",
-          "tab-announcements": "Announcements"
         },
         "download-button": {
           "download:tooltip": "Download"
         }
       },
       "contestant": {
+        "_context": {
+          "contestant-context": {
+            "error": "Failed to load contest data",
+            "submission-toast-problem": "Problem {letter}: {answer}",
+            "clarification-answer": "New answer for clarification"
+          }
+        },
         "submissions": {
           "_form": {
             "submission-form": {
@@ -166,9 +155,37 @@
           "header-language": "Language",
           "header-answer": "Answer",
           "submissions-empty": "No submissions yet"
+        },
+        "layout": {
+          "tab-leaderboard": "Leaderboard",
+          "tab-problems": "Problems",
+          "tab-timeline": "Timeline",
+          "tab-submissions": "Submissions",
+          "tab-clarifications": "Clarifications",
+          "tab-announcements": "Announcements"
+        }
+      },
+      "guest": {
+        "_context": {
+          "guest-context": {
+            "error": "Failed to load contest data"
+          }
+        },
+        "layout": {
+          "tab-leaderboard": "Leaderboard",
+          "tab-problems": "Problems",
+          "tab-timeline": "Timeline",
+          "tab-clarifications": "Clarifications",
+          "tab-announcements": "Announcements"
         }
       },
       "jury": {
+        "_context": {
+          "jury-context": {
+            "error": "Failed to load contest data",
+            "submission-failed": "New failed submission"
+          }
+        },
         "submissions": {
           "_form": {
             "update-submission-form": {
@@ -190,6 +207,13 @@
           "confirm-rerun": "Are you sure you want the auto judge to rerun this submission?",
           "update-form:answer:label": "Answer",
           "confirm-update": "Are you sure you want to update this submission?"
+        },
+        "layout": {
+          "tab-leaderboard": "Leaderboard",
+          "tab-problems": "Problems",
+          "tab-submissions": "Submissions",
+          "tab-clarifications": "Clarifications",
+          "tab-announcements": "Announcements"
         }
       },
       "sign-in": {

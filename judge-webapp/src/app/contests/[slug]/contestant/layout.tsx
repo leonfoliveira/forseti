@@ -17,7 +17,7 @@ export default function ContestantLayout({
 }) {
   const authorization = useAuthorization();
   const contestMetadata = useContestMetadata();
-  const t = useTranslations("contests.[slug].contestant");
+  const t = useTranslations("contests.[slug].contestant.layout");
 
   if (!authorization?.member.type) {
     return redirect(routes.CONTEST_SIGN_IN(contestMetadata.slug));
@@ -31,27 +31,27 @@ export default function ContestantLayout({
       contestMetadata={contestMetadata}
       tabs={[
         {
-          label: t("leaderboard"),
+          label: t("tab-leaderboard"),
           path: routes.CONTEST_CONTESTANT_LEADERBOARD(contestMetadata.slug),
         },
         {
-          label: t("problems"),
+          label: t("tab-problems"),
           path: routes.CONTEST_CONTESTANT_PROBLEMS(contestMetadata.slug),
         },
         {
-          label: t("timeline"),
+          label: t("tab-timeline"),
           path: routes.CONTEST_CONTESTANT_TIMELINE(contestMetadata.slug),
         },
         {
-          label: t("submissions"),
+          label: t("tab-submissions"),
           path: routes.CONTEST_CONTESTANT_SUBMISSIONS(contestMetadata.slug),
         },
         {
-          label: t("clarifications"),
+          label: t("tab-clarifications"),
           path: routes.CONTEST_CONTESTANT_CLARIFICATIONS(contestMetadata.slug),
         },
         {
-          label: t("announcements"),
+          label: t("tab-announcements"),
           path: routes.CONTEST_CONTESTANT_ANNOUNCEMENTS(contestMetadata.slug),
         },
       ]}

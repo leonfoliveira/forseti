@@ -17,7 +17,7 @@ export default function JuryLayout({
 }) {
   const authorization = useAuthorization();
   const contestMetadata = useContestMetadata();
-  const t = useTranslations("contests.[slug].jury");
+  const t = useTranslations("contests.[slug].jury.layout");
 
   if (!authorization?.member.type) {
     return redirect(routes.CONTEST_SIGN_IN(contestMetadata.slug));
@@ -31,23 +31,23 @@ export default function JuryLayout({
       contestMetadata={contestMetadata}
       tabs={[
         {
-          label: t("leaderboard"),
+          label: t("tab-leaderboard"),
           path: routes.CONTEST_JURY_LEADERBOARD(contestMetadata.slug),
         },
         {
-          label: t("problems"),
+          label: t("tab-problems"),
           path: routes.CONTEST_JURY_PROBLEMS(contestMetadata.slug),
         },
         {
-          label: t("submissions"),
+          label: t("tab-submissions"),
           path: routes.CONTEST_JURY_SUBMISSIONS(contestMetadata.slug),
         },
         {
-          label: t("clarifications"),
+          label: t("tab-clarifications"),
           path: routes.CONTEST_JURY_CLARIFICATIONS(contestMetadata.slug),
         },
         {
-          label: t("announcements"),
+          label: t("tab-announcements"),
           path: routes.CONTEST_JURY_ANNOUNCEMENTS(contestMetadata.slug),
         },
       ]}

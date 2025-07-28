@@ -13,30 +13,30 @@ export default function GuestLayout({
   children: React.ReactNode;
 }) {
   const contestMetadata = useContestMetadata();
-  const t = useTranslations("contests.[slug].guest");
+  const t = useTranslations("contests.[slug].guest.layout");
 
   return (
     <ContestDashboardLayout
       contestMetadata={contestMetadata}
       tabs={[
         {
-          label: t("leaderboard"),
+          label: t("tab-leaderboard"),
           path: routes.CONTEST_GUEST_LEADERBOARD(contestMetadata.slug),
         },
         {
-          label: t("problems"),
+          label: t("tab-problems"),
           path: routes.CONTEST_GUEST_PROBLEMS(contestMetadata.slug),
         },
         {
-          label: t("timeline"),
+          label: t("tab-timeline"),
           path: routes.CONTEST_GUEST_TIMELINE(contestMetadata.slug),
         },
         {
-          label: t("clarifications"),
+          label: t("tab-clarifications"),
           path: routes.CONTEST_GUEST_CLARIFICATIONS(contestMetadata.slug),
         },
         {
-          label: t("announcements"),
+          label: t("tab-announcements"),
           path: routes.CONTEST_GUEST_ANNOUNCEMENTS(contestMetadata.slug),
         },
       ]}
