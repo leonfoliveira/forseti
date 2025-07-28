@@ -10,11 +10,11 @@ import Joi from "joi";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { redirect, RedirectType, useRouter } from "next/navigation";
-import { routes } from "@/app/_routes";
+import { useRouter } from "next/navigation";
+import { routes } from "@/config/routes";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { contestService } from "@/app/_composition";
-import { useAlert } from "@/app/_component/context/notification-context";
+import { contestService } from "@/config/composition";
+import { useAlert } from "@/app/_context/notification-context";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 
 type FormType = {
@@ -53,7 +53,7 @@ export default function HomePage() {
   }
 
   function redirectRoot() {
-    redirect(routes.ROOT_SIGN_IN(), RedirectType.push);
+    router.push(routes.ROOT_SIGN_IN());
   }
 
   return (
@@ -63,7 +63,9 @@ export default function HomePage() {
         disabled={joinContestState.isLoading}
         className="p-10 w-full max-w-[400] bg-base-100"
       >
-        <h1 className="text-3xl font-bold">{t("title")}</h1>
+        <h1 className="text-3xl font-bold" data-testid="title">
+          {t("title")}
+        </h1>
         <div className="my-6">
           <TextInput
             form={form}

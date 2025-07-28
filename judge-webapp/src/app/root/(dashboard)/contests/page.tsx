@@ -1,16 +1,15 @@
 "use client";
 
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { Spinner } from "@/app/_component/spinner";
 import { Button } from "@/app/_component/form/button";
 import { useTranslations } from "next-intl";
-import { routes } from "@/app/_routes";
-import { contestService } from "@/app/_composition";
+import { routes } from "@/config/routes";
+import { contestService } from "@/config/composition";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useAlert } from "@/app/_component/context/notification-context";
+import { useAlert } from "@/app/_context/notification-context";
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
@@ -52,7 +51,6 @@ export default function RootContestsPage() {
         contestsState.finish(contests);
       } catch (error) {
         contestsState.fail(error, {
-          [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN()),
           default: () => alert.error(t("load-error")),
         });
       }
@@ -74,7 +72,6 @@ export default function RootContestsPage() {
       startModal.close();
     } catch (error) {
       startContestState.fail(error, {
-        [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN()),
         default: () => alert.error(t("start-error")),
       });
     }
@@ -89,7 +86,6 @@ export default function RootContestsPage() {
       endModal.close();
     } catch (error) {
       endContestState.fail(error, {
-        [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN()),
         default: () => alert.error(t("end-error")),
       });
     }
@@ -112,19 +108,19 @@ export default function RootContestsPage() {
       <Table>
         <TableSection head>
           <TableRow>
-            <TableCell header className="w-1/20">
+            <TableCell header className="w-1/20" data-testid="header-slug">
               {t("header-slug")}
             </TableCell>
-            <TableCell header className="w-11/20">
+            <TableCell header className="w-11/20" data-testid="header-title">
               {t("header-title")}
             </TableCell>
-            <TableCell header className="w-3/20">
+            <TableCell header className="w-3/20" data-testid="header-start-at">
               {t("header-start-at")}
             </TableCell>
-            <TableCell header className="w-3/20">
+            <TableCell header className="w-3/20" data-testid="header-end-at">
               {t("header-end-at")}
             </TableCell>
-            <TableCell header className="w-2/20">
+            <TableCell header className="w-2/20" data-testid="header-status">
               {t("header-status")}
             </TableCell>
             <TableCell />
@@ -198,7 +194,7 @@ export default function RootContestsPage() {
         </TableSection>
       </Table>
       {contestsState.isLoading && (
-        <div className="mx-auto py-20">
+        <div className="mx-auto py-20" data-testid="loading">
           <Spinner size="lg" />
         </div>
       )}
@@ -207,7 +203,6 @@ export default function RootContestsPage() {
         modal={startModal}
         onConfirm={onStartContest}
         isLoading={startContestState.isLoading}
-        data-testid="start-modal"
       >
         <p>{t("start-modal:message")}</p>
       </DialogModal>
@@ -216,7 +211,6 @@ export default function RootContestsPage() {
         modal={endModal}
         onConfirm={onEndContest}
         isLoading={endContestState.isLoading}
-        data-testid="end-modal"
       >
         <p>{t("end-modal:message")}</p>
       </DialogModal>

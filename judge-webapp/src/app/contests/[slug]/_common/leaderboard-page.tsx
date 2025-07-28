@@ -7,16 +7,21 @@ import { TableSection } from "@/app/_component/table/table-section";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { cls } from "@/app/_util/cls";
 import { useTranslations } from "next-intl";
-import { useAuthorization } from "@/app/_component/context/authorization-context";
+import { useAuthorization } from "@/app/_context/authorization-context";
 import { ProblemStatusBadge } from "@/app/contests/[slug]/_component/badge/problem-status-badge";
-import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+
+type Props = {
+  contest: ContestPublicResponseDTO;
+  leaderboard: ContestLeaderboardResponseDTO;
+};
 
 /**
  * A generic leaderboard page component for displaying contest results.
  */
-export function LeaderboardPage() {
-  const { authorization } = useAuthorization();
-  const { contest, leaderboard } = useContest();
+export function LeaderboardPage({ contest, leaderboard }: Props) {
+  const authorization = useAuthorization();
 
   const t = useTranslations("contests.[slug]._common.leaderboard-page");
 
@@ -37,10 +42,10 @@ export function LeaderboardPage() {
                 {problem.letter}
               </TableCell>
             ))}
-            <TableCell header align="right">
-              Score
+            <TableCell header align="right" data-testid="header-score">
+              {t("header-score")}
             </TableCell>
-            <TableCell header align="right">
+            <TableCell header align="right" data-testid="header-penalty">
               {t("header-penalty")}
             </TableCell>
           </TableRow>
@@ -78,7 +83,9 @@ export function LeaderboardPage() {
                   </div>
                 </TableCell>
               ))}
-              <TableCell align="right">{member.score || ""}</TableCell>
+              <TableCell align="right" data-testid="member-score">
+                {member.score || ""}
+              </TableCell>
               <TableCell align="right" data-testid="member-penalty">
                 {member.penalty || ""}
               </TableCell>

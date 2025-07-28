@@ -2,26 +2,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import { useTheme } from "@/app/_util/theme-hook";
-import { useAuthorization } from "@/app/_component/context/authorization-context";
+import { useAuthorization } from "@/app/_context/authorization-context";
 import { useTranslations } from "next-intl";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { redirect, RedirectType } from "next/navigation";
-import { ContestMemberType } from "@/core/domain/enumerate/ContestMemberType";
+import { MemberType } from "@/core/domain/enumerate/MemberType";
 
 type Props = {
   contestMetadata?: ContestMetadataResponseDTO;
-  contestMemberType?: ContestMemberType;
+  memberType?: MemberType;
   signInPath: string;
 };
 
-export function Navbar({
-  contestMetadata,
-  contestMemberType,
-  signInPath,
-}: Props) {
+export function Navbar({ contestMetadata, memberType, signInPath }: Props) {
   const { theme, toggleTheme } = useTheme();
-  const { authorization } = useAuthorization();
+  const authorization = useAuthorization();
   const t = useTranslations("_component.navbar");
 
   const clockRef = useWaitClock(
@@ -63,13 +59,17 @@ export function Navbar({
                   className="bg-base-100 rounded-t-none right-0 !mt-0"
                   data-testid="menu"
                 >
-                  {contestMemberType && (
+                  {memberType && (
                     <li className="menu-title">
-                      {t(`contest-member-type.${contestMemberType}`)}
+                      {t(`member-type.${memberType}`)}
                     </li>
                   )}
                   <li>
-                    <a onClick={signOut} className="text-nowrap">
+                    <a
+                      onClick={signOut}
+                      className="text-nowrap"
+                      data-testid="sign"
+                    >
                       {authorization?.member
                         ? t("sign-out:label")
                         : t("sign-in:label")}

@@ -2,20 +2,20 @@
 
 import { use, useEffect } from "react";
 import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
-import { fromResponseDTO, toUpdateRequestDTO } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
+import { ContestFormMap } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
 import { useForm } from "react-hook-form";
-import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form-type";
+import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
 import { useTranslations } from "next-intl";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
-import { contestService } from "@/app/_composition";
+import { contestService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { redirect } from "next/navigation";
-import { routes } from "@/app/_routes";
+import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { useAlert } from "@/app/_component/context/notification-context";
+import { useAlert } from "@/app/_context/notification-context";
 import { TestCaseUtils } from "@/app/root/(dashboard)/contests/_util/TestCaseUtils";
 
 /**
@@ -48,12 +48,10 @@ export default function RootEditContestPage({
       contestState.start();
       try {
         const contest = await contestService.findFullContestById(id);
-        form.reset(fromResponseDTO(contest));
+        form.reset(ContestFormMap.fromResponseDTO(contest));
         contestState.finish(contest);
       } catch (error) {
         contestState.fail(error, {
-          [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN()),
-          [NotFoundException.name]: () => redirect(routes.FORBIDDEN),
           default: () => alert.error(t("load-error")),
         });
       }
@@ -65,7 +63,7 @@ export default function RootEditContestPage({
   async function updateContest(data: ContestFormType) {
     updateContestState.start();
     try {
-      const input = toUpdateRequestDTO(data);
+      const input = ContestFormMap.toUpdateRequestDTO(data);
       const failedValidations = await TestCaseUtils.validateProblemList(
         input.problems,
       );
@@ -78,7 +76,7 @@ export default function RootEditContestPage({
         return;
       }
       const contest = await contestService.updateContest(input);
-      form.reset(fromResponseDTO(contest));
+      form.reset(ContestFormMap.fromResponseDTO(contest));
       updateContestState.finish(contest);
       alert.success(t("update-success"));
     } catch (error) {

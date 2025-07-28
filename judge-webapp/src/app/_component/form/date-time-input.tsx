@@ -7,7 +7,7 @@ import {
   UseFormReturn,
 } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import { toDateInputFormat } from "@/app/_util/date-utils";
+import { DateUtils } from "@/app/_util/date-utils";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -35,7 +35,7 @@ export function DateTimeInput<TFieldValues extends FieldValues>({
   const testId = props["data-testid"] || "date-input";
 
   function formToComponent(value?: Date) {
-    return value ? toDateInputFormat(value) : "";
+    return value ? DateUtils.toDateInputFormat(value) : "";
   }
 
   function componentToForm(value?: string) {
@@ -60,7 +60,7 @@ export function DateTimeInput<TFieldValues extends FieldValues>({
             value={formToComponent(field.value)}
             onChange={(e) => field.onChange(componentToForm(e.target.value))}
             className={cls("input w-full", className)}
-            data-testid={`${testId}:input`}
+            data-testid={testId}
           />
           <p
             className="label text-error text-wrap"

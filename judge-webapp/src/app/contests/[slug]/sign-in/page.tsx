@@ -9,16 +9,16 @@ import { Button } from "@/app/_component/form/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useTranslations } from "next-intl";
-import { MemberSignInFormType } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form-type";
+import { MemberSignInFormType } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form";
 import { memberSignInFormSchema } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form-schema";
-import { authenticationService } from "@/app/_composition";
+import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useRouter, useSearchParams } from "next/navigation";
-import { routes } from "@/app/_routes";
+import { routes } from "@/config/routes";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { useContestMetadata } from "@/app/contests/[slug]/_component/context/contest-metadata-context";
-import { useAuthorization } from "@/app/_component/context/authorization-context";
-import { useAlert } from "@/app/_component/context/notification-context";
+import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
+import { useAuthorizationContext } from "@/app/_context/authorization-context";
+import { useAlert } from "@/app/_context/notification-context";
 
 /**
  * MemberSignInPage component allows members to sign in to a contest.
@@ -26,7 +26,7 @@ import { useAlert } from "@/app/_component/context/notification-context";
 export default function MemberSignInPage() {
   const signInState = useLoadableState();
   const contest = useContestMetadata();
-  const { setAuthorization, clearAuthorization } = useAuthorization();
+  const { setAuthorization, clearAuthorization } = useAuthorizationContext();
   const alert = useAlert();
 
   const searchParams = useSearchParams();
@@ -73,8 +73,10 @@ export default function MemberSignInPage() {
         disabled={signInState.isLoading}
         data-testid="form"
       >
-        <h1 className="text-3xl font-bold">{t("title")}</h1>
-        <h2 className="text-md mt-2" data-testid="contest-title">
+        <h1 className="text-3xl font-bold" data-testid="title">
+          {t("title")}
+        </h1>
+        <h2 className="text-md mt-2" data-testid="description">
           {contest?.title}
         </h2>
         <div className="my-6">

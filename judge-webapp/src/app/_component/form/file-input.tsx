@@ -56,7 +56,6 @@ export function FileInput<TFieldValues extends FieldValues>({
 
   const originalValue: Attachment | undefined =
     originalName && form.watch(originalName);
-  console.log("Original Value:", originalValue?.filename);
 
   return (
     <Controller
@@ -79,7 +78,7 @@ export function FileInput<TFieldValues extends FieldValues>({
               field.onChange(componentToForm(e.target.files));
             }}
             className={cls("hidden", className)}
-            data-testid={`${testId}:input`}
+            data-testid={testId}
           />
           <div className="join">
             <button

@@ -1,0 +1,96 @@
+import { render, screen } from "@testing-library/react";
+import ContestantLayout from "@/app/contests/[slug]/contestant/layout";
+import { mockRedirect, mockUseAuthorization } from "@/test/jest.setup";
+import { routes } from "@/config/routes";
+import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
+
+jest.mock("@/app/contests/[slug]/_context/contest-metadata-context", () => ({
+  useContestMetadata: jest.fn(() => ({
+    slug: "test-contest",
+  })),
+}));
+jest.mock("@/app/contests/[slug]/_component/contest-dashboard-layout", () => ({
+  ContestDashboardLayout: jest.fn(({ children }: any) => <div>{children}</div>),
+}));
+jest.mock(
+  "@/app/contests/[slug]/contestant/_context/contestant-context",
+  () => ({
+    ContestantContextProvider: ({ children }: any) => <div>{children}</div>,
+  }),
+);
+
+describe("ContestantLayout", () => {
+  it("should redirect to sign-in if not authenticated", () => {
+    mockUseAuthorization.mockReturnValueOnce(undefined);
+
+    render(
+      <ContestantLayout>
+        <span data-testid="child" />
+      </ContestantLayout>,
+    );
+
+    expect(mockRedirect).toHaveBeenCalledWith(
+      routes.CONTEST_SIGN_IN("test-contest"),
+    );
+  });
+
+  it("should redirect to forbidden if not a contestant", () => {
+    mockUseAuthorization.mockReturnValueOnce({
+      member: { type: MemberType.JURY },
+    });
+
+    render(
+      <ContestantLayout>
+        <span data-testid="child" />
+      </ContestantLayout>,
+    );
+
+    expect(mockRedirect).toHaveBeenCalledWith(routes.FORBIDDEN);
+  });
+
+  it("should render ContestDashboardLayout with contestant context", () => {
+    mockUseAuthorization.mockReturnValueOnce({
+      member: { type: MemberType.CONTESTANT },
+    });
+
+    render(
+      <ContestantLayout>
+        <span data-testid="child" />
+      </ContestantLayout>,
+    );
+
+    expect(screen.getByTestId("child")).toBeInTheDocument();
+    expect(ContestDashboardLayout).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tabs: [
+          {
+            label: "tab-leaderboard",
+            path: routes.CONTEST_CONTESTANT_LEADERBOARD("test-contest"),
+          },
+          {
+            label: "tab-problems",
+            path: routes.CONTEST_CONTESTANT_PROBLEMS("test-contest"),
+          },
+          {
+            label: "tab-timeline",
+            path: routes.CONTEST_CONTESTANT_TIMELINE("test-contest"),
+          },
+          {
+            label: "tab-submissions",
+            path: routes.CONTEST_CONTESTANT_SUBMISSIONS("test-contest"),
+          },
+          {
+            label: "tab-clarifications",
+            path: routes.CONTEST_CONTESTANT_CLARIFICATIONS("test-contest"),
+          },
+          {
+            label: "tab-announcements",
+            path: routes.CONTEST_CONTESTANT_ANNOUNCEMENTS("test-contest"),
+          },
+        ],
+      }),
+      undefined,
+    );
+  });
+});

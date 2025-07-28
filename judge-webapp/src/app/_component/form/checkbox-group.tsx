@@ -33,7 +33,7 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
   className,
   ...props
 }: Props<TFieldValues>) {
-  const testId = props["data-testid"] || `${props.name}-checkbox-group`;
+  const testId = props["data-testid"] || "checkbox-group";
 
   function formToComponent(
     fieldValue: string[] | undefined,

@@ -2,12 +2,10 @@
 
 import React from "react";
 import { TimelinePage } from "@/app/contests/[slug]/_common/timeline-page";
-import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
+import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 
 export default function ContestantTimelinePage() {
-  const {
-    contestant: { submissions },
-  } = useContest();
+  const { submissions } = useContestantContext();
 
   return <TimelinePage submissions={submissions} />;
 }

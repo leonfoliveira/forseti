@@ -7,17 +7,20 @@ const createJestConfig = nextJest({
 
 const config: Config = {
   coverageProvider: "v8",
-  // TODO: Uncomment and adjust the coverage thresholds as needed
-  // coverageThreshold: {
-  //   global: {
-  //     lines: 90,
-  //   },
-  // },
+  coverageThreshold: {
+    global: {
+      lines: 90,
+    },
+  },
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
+    "!src/**/*.d.{ts,tsx}",
+    "!src/core/domain/**/*",
+    "!src/core/listener/**/*",
     "!src/core/repository/**/*",
+    "!src/core/service/dto/**/*",
     "!src/i18n/**/*",
-    "!src/app/_config.ts",
+    "!src/config/env.ts",
   ],
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/test/jest.setup.tsx"],

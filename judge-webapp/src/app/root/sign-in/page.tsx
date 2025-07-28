@@ -9,22 +9,22 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { Form } from "@/app/_component/form/form";
 import { useTranslations } from "next-intl";
 import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form-schema";
-import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form-type";
-import { authenticationService } from "@/app/_composition";
+import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useAuthorization } from "@/app/_component/context/authorization-context";
+import { useAuthorizationContext } from "@/app/_context/authorization-context";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { useAlert } from "@/app/_component/context/notification-context";
-import { routes } from "@/app/_routes";
+import { useAlert } from "@/app/_context/notification-context";
+import { routes } from "@/config/routes";
 import { useEffect } from "react";
+import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form";
 
 /**
  * RootSignInPage component is the sign-in page for root users.
  */
 export default function RootSignInPage() {
   const signInState = useLoadableState();
-  const { setAuthorization, clearAuthorization } = useAuthorization();
+  const { setAuthorization, clearAuthorization } = useAuthorizationContext();
 
   const router = useRouter();
   const searchParams = useSearchParams();

@@ -1,4 +1,3 @@
-import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
 import React from "react";
 import { useTranslations } from "next-intl";
 import { TextInput } from "@/app/_component/form/text-input";
@@ -7,21 +6,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { Form } from "@/app/_component/form/form";
 import { useForm } from "react-hook-form";
-import { AnnouncementFormType } from "@/app/contests/[slug]/_common/_form/announcement-form-type";
+import { AnnouncementFormType } from "@/app/contests/[slug]/_common/_form/announcement-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { announcementFormSchema } from "@/app/contests/[slug]/_common/_form/announcement-form-schema";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { useAlert } from "@/app/_component/context/notification-context";
-import { contestService } from "@/app/_composition";
-import { toInputDTO } from "@/app/contests/[slug]/_common/_form/announcement-form-map";
+import { useAlert } from "@/app/_context/notification-context";
+import { contestService } from "@/config/composition";
 import { TimestampDisplay } from "@/app/_component/timestamp-display";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { AnnouncementFormMap } from "@/app/contests/[slug]/_common/_form/announcement-form-map";
 
 type Props = {
+  contest: ContestPublicResponseDTO;
   canCreate?: boolean;
 };
 
-export default function AnnouncementsPage({ canCreate = false }: Props) {
-  const { contest } = useContest();
+export function AnnouncementsPage({ contest, canCreate = false }: Props) {
   const createAnnouncementState = useLoadableState();
 
   const alert = useAlert();
@@ -36,7 +36,10 @@ export default function AnnouncementsPage({ canCreate = false }: Props) {
   async function createAnnouncement(data: AnnouncementFormType) {
     createAnnouncementState.start();
     try {
-      await contestService.createAnnouncement(contest.id, toInputDTO(data));
+      await contestService.createAnnouncement(
+        contest.id,
+        AnnouncementFormMap.toInputDTO(data),
+      );
       createAnnouncementState.finish();
       form.reset();
       alert.success(t("create-success"));
@@ -54,7 +57,7 @@ export default function AnnouncementsPage({ canCreate = false }: Props) {
           className="flex flex-col"
           onSubmit={form.handleSubmit(createAnnouncement)}
           disabled={createAnnouncementState.isLoading}
-          data-testid="form:submission"
+          data-testid="create-form"
         >
           <div className="flex gap-x-3">
             <TextInput
@@ -63,14 +66,15 @@ export default function AnnouncementsPage({ canCreate = false }: Props) {
               label={t("text:label")}
               name="text"
               containerClassName="flex-4"
+              data-testid="form-text"
             />
           </div>
           <div className="flex justify-center mt-8">
             <Button
               type="submit"
               className="btn-primary"
-              data-testid="form:submit"
               isLoading={createAnnouncementState.isLoading}
+              data-testid="form-submit"
             >
               {t("create:label")}
               <FontAwesomeIcon icon={faPaperPlane} className="ms-3" />
@@ -79,10 +83,10 @@ export default function AnnouncementsPage({ canCreate = false }: Props) {
           <div className="divider" />
         </Form>
       )}
-      {contest.clarifications.length == 0 && (
+      {contest.announcements.length == 0 && (
         <div
           className="flex justify-center items-center py-20"
-          data-testid="clarifications:empty"
+          data-testid="empty"
         >
           <p className="text-neutral-content">{t("empty")}</p>
         </div>
@@ -92,20 +96,25 @@ export default function AnnouncementsPage({ canCreate = false }: Props) {
           <div
             key={announcement.id}
             className="card bg-base-100 border border-base-300"
-            data-testid={`announcement:${announcement.id}`}
           >
             <div className="card-body p-4 relative">
               <div className="flex justify-between">
-                <p className="text-sm font-semibold">
+                <p
+                  className="text-sm font-semibold"
+                  data-testid="announcement-member"
+                >
                   {announcement.member.name}
                 </p>
                 <div className="flex">
-                  <span className="text-sm text-base-content/50">
+                  <span
+                    className="text-sm text-base-content/50"
+                    data-testid="announcement-timestamp"
+                  >
                     <TimestampDisplay timestamp={announcement.createdAt} />
                   </span>
                 </div>
               </div>
-              <p>{announcement.text}</p>
+              <p data-testid="announcement-text">{announcement.text}</p>
             </div>
           </div>
         ))}

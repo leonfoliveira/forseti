@@ -5,7 +5,7 @@ import { faClose } from "@fortawesome/free-solid-svg-icons";
 import {
   NotificationItemType,
   NotificationLevel,
-} from "@/app/_component/context/notification-context";
+} from "@/app/_context/notification-context";
 
 type Props = {
   toast: NotificationItemType;
@@ -42,7 +42,6 @@ export function Toast({ toast, onClose }: Props) {
       className={cls("alert pointer-events-auto", style[toast.level])}
       style={{ pointerEvents: "auto" }}
       data-testid="toast"
-      onClick={onClose}
     >
       {toast.text}
       <FontAwesomeIcon

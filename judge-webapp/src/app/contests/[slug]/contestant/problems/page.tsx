@@ -1,16 +1,17 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { ProblemPage } from "@/app/contests/[slug]/_common/problems-page";
+import { ProblemsPage } from "@/app/contests/[slug]/_common/problems-page";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { useContest } from "@/app/contests/[slug]/_component/context/contest-context";
+import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 
 export default function ContestantProblemsPage() {
-  const { contest } = useContest();
-  const {
-    contestant: { submissions },
-  } = useContest();
+  const { contest, submissions } = useContestantContext();
 
+  /**
+   * Builds and object with the amount of every answer for each problem.
+   * ie: { [problemId]: { [SubmissionAnswer]: [amount] } }
+   */
   const status = useMemo(() => {
     const answerBlock = Object.values(SubmissionAnswer).reduce(
       (acc, answer) => {
@@ -33,5 +34,5 @@ export default function ContestantProblemsPage() {
     return status;
   }, [contest.problems, submissions]);
 
-  return <ProblemPage contestantStatus={status} />;
+  return <ProblemsPage contest={contest} contestantStatus={status} />;
 }

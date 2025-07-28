@@ -1,9 +1,9 @@
 import React from "react";
 import "./globals.css";
-import { Html } from "@/app/_html";
+import { Html } from "@/app/_component/html";
 import { getIntlConfig } from "@/i18n/request";
 import { Metadata } from "next";
-import { config } from "@/app/_config";
+import { env } from "@/config/env";
 
 export const metadata: Metadata = {
   title: "Judge",
@@ -22,12 +22,12 @@ export default async function Layout({
         <div className="flex-1">{children}</div>
         <footer className="footer footer-center bg-base-100 text-base-content/50 text-xs py-1 border-t border-solid border-base-300">
           <aside>
-            <p data-testid="footer-text">
-              Judge {config.VERSION} | by{" "}
+            <p data-testid="footer">
+              Judge {env.VERSION} | by{" "}
               <a
                 href="https://github.com/leonfoliveira"
                 target="_blank"
-                data-testid="footer-link"
+                data-testid="github-link"
               >
                 @leonfoliveira
               </a>

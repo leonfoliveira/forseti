@@ -1,8 +1,8 @@
 import { getRequestConfig } from "next-intl/server";
-import { config } from "@/app/_config";
+import { env } from "@/config/env";
 
 export async function getIntlConfig() {
-  const locale = config.LOCALE;
+  const locale = env.LOCALE;
 
   return {
     locale,

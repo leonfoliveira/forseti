@@ -54,7 +54,7 @@ export function Select<TFieldValues extends FieldValues>({
       render={({ field, fieldState }) => (
         <fieldset
           className={cls(containerClassName, "fieldset")}
-          data-testid={testId}
+          data-testid={`${testId}:container`}
         >
           <label className="fieldset-legend" data-testid={`${testId}:label`}>
             {label}
@@ -66,7 +66,7 @@ export function Select<TFieldValues extends FieldValues>({
               field.onChange(componentToForm(e.target.value));
             }}
             className={cls("select w-full", className)}
-            data-testid={`${testId}:select`}
+            data-testid={testId}
           >
             <option value="" />
             {options.map((it) => (

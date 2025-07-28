@@ -1,5 +1,5 @@
 import { Button } from "@/app/_component/form/button";
-import { routes } from "@/app/_routes";
+import { routes } from "@/config/routes";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 
