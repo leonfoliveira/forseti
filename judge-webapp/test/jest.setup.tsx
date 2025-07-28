@@ -29,11 +29,19 @@ jest.mock("@/config/composition");
 // Notification
 export const mockAlert = {
   success: jest.fn(),
+  info: jest.fn(),
+  warning: jest.fn(),
+  error: jest.fn(),
+};
+export const mockToast = {
+  success: jest.fn(),
+  info: jest.fn(),
   warning: jest.fn(),
   error: jest.fn(),
 };
 jest.mock("@/app/_context/notification-context", () => ({
   useAlert: () => mockAlert,
+  useToast: () => mockToast,
   NotificationLevel: jest.requireActual("@/app/_context/notification-context")
     .NotificationLevel,
 }));
