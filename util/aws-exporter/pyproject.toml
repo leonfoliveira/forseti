@@ -1,0 +1,11 @@
+[tool.pytest.ini_options]
+addopts = "--cov=aws_exporter --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["aws_exporter"]
+omit = [
+    "aws_exporter/__main__.py",
+]
+
+[tool.coverage.report]
+fail_under = 90
