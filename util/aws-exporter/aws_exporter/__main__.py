@@ -6,8 +6,8 @@ import time
 import boto3
 from prometheus_client import start_http_server
 
-from aws_exporter.S3Collector import S3Collector
-from aws_exporter.SqsCollector import SqsCollector
+from aws_exporter.s3_collector import S3Collector
+from aws_exporter.sqs_collector import SqsCollector
 
 
 logging.basicConfig(
