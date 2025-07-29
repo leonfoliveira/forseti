@@ -86,8 +86,8 @@ jobs:
       - name: Lint
         run: make lint
 
-      # - name: Test
-      #   run: pytest tests/
+      - name: Test
+        run: make test
 
   check-aws-exporter:
     runs-on: ubuntu-latest
@@ -110,5 +110,5 @@ jobs:
       - name: Lint
         run: make lint
 
-      # - name: Test
-      #   run: pytest tests/
+      - name: Test
+        run: make test

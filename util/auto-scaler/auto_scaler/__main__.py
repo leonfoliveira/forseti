@@ -1,11 +1,16 @@
 import logging
 import os
+import signal
 import threading
 import time
 
 import boto3
 import docker
-from prometheus_client import Gauge, start_http_server
+from prometheus_client import start_http_server
+
+from auto_scaler.queue_monitor import QueueMonitor
+from auto_scaler.scaler import Scaler
+from auto_scaler.service_monitor import ServiceMonitor
 
 logging.basicConfig(
     level=logging.INFO,
@@ -29,14 +34,6 @@ interval = int(os.environ.get("INTERVAL", 10))
 port = int(os.environ.get("PORT", 7000))
 
 
-CURRENT_REPLICAS = Gauge(
-    "auto_scaler_current_replicas", "Current number of replicas", ["service_name"]
-)
-DESIRED_REPLICAS = Gauge(
-    "auto_scaler_desired_replicas", "Desired number of replicas", ["service_name"]
-)
-
-
 sqs_client = boto3.client(
     "sqs",
     region_name=aws_region,
@@ -46,66 +43,41 @@ sqs_client = boto3.client(
 )
 docker_client = docker.from_env()
 
-container_id = os.getenv("HOSTNAME")
-container = docker_client.containers.get(container_id)
-stack_name = container.labels.get("com.docker.stack.namespace")
-stack_service_name = f"{stack_name}_{service_name}" if stack_name else service_name
+queue_monitor = QueueMonitor(
+    sqs_client=sqs_client,
+    queue_name=queue_name,
+)
+service_monitor = ServiceMonitor(
+    docker_client=docker_client,
+    service_name=service_name,
+)
+
+scaler = Scaler(
+    queue_monitor=queue_monitor,
+    service_monitor=service_monitor,
+    cooldown=cooldown,
+    messages_per_replica=messages_per_replica,
+    min_replicas=min_replicas,
+    max_replicas=max_replicas,
+)
+
+is_active = True
 
 
-last_scale_time = None
+def sigterm(signum, frame):
+    global is_active
+    logging.info("Received SIGTERM, shutting down gracefully...")
+    is_active = False
 
 
-def scale():
-    global last_scale_time
-    try:
-        response = sqs_client.get_queue_url(QueueName=queue_name)
-        response = sqs_client.get_queue_attributes(
-            QueueUrl=response["QueueUrl"],
-            AttributeNames=["ApproximateNumberOfMessages"],
-        )
-        messages = int(response["Attributes"]["ApproximateNumberOfMessages"])
-        logging.info(f"Current messages in queue: {messages}")
-
-        service = docker_client.services.get(stack_service_name)
-        labels = {
-            "service_name": service_name,
-        }
-
-        current_replicas = service.attrs["Spec"]["Mode"]["Replicated"]["Replicas"]
-        desired_replicas = (
-            messages / messages_per_replica if messages_per_replica > 0 else 0
-        )
-        desired_replicas = max(min_replicas, desired_replicas)
-        desired_replicas = min(max_replicas, desired_replicas)
-
-        CURRENT_REPLICAS.labels(**labels).set(current_replicas)
-        DESIRED_REPLICAS.labels(**labels).set(desired_replicas)
-
-        is_cooling_down = last_scale_time is not None and (
-            time.time() - last_scale_time < cooldown
-        )
-        logging.info(
-            f"Current replicas: {current_replicas}, "
-            f"Desired replicas: {desired_replicas}, "
-            f"Cooling down: {is_cooling_down}"
-        )
-        if desired_replicas != current_replicas and not is_cooling_down:
-            logging.info(
-                f"Scaling service {service_name} from {current_replicas}"
-                f"to {desired_replicas} replicas"
-            )
-            service.scale(desired_replicas)
-            last_scale_time = time.time()
-
-    except Exception as e:
-        logging.error(f"Error scalling: {e}")
-        return
-
+signal.signal(signal.SIGTERM, sigterm)
 
 if __name__ == "__main__":
     start_http_server(port)
     logging.info("Starting auto-scaler")
 
-    while True:
-        threading.Thread(target=scale).start()
+    while is_active:
+        threading.Thread(target=scaler.scale).start()
         time.sleep(interval)
+
+    logging.info("Auto-scaler stopped")
