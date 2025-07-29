@@ -1,5 +1,6 @@
 from docker import DockerClient
 
+
 class ServiceMonitor:
     def __init__(self, docker_client: DockerClient, service_name: str):
         self.docker_client = docker_client

@@ -1,11 +1,11 @@
-import boto3
-import docker
 import logging
 import os
 import signal
 import threading
 import time
 
+import boto3
+import docker
 from prometheus_client import start_http_server
 
 from auto_scaler.queue_monitor import QueueMonitor
@@ -62,10 +62,13 @@ scaler = Scaler(
 )
 
 is_active = True
+
+
 def sigterm(signum, frame):
     global is_active
     logging.info("Received SIGTERM, shutting down gracefully...")
     is_active = False
+
 
 signal.signal(signal.SIGTERM, sigterm)
 

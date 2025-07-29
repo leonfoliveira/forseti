@@ -8,25 +8,31 @@ from auto_scaler.queue_monitor import QueueMonitor
 from auto_scaler.service_monitor import ServiceMonitor
 
 CURRENT_REPLICAS = Gauge(
-    "auto_scaler_current_replicas", "Current number of replicas", [
-        "service_name"]
+    "auto_scaler_current_replicas", "Current number of replicas", ["service_name"]
 )
 DESIRED_REPLICAS = Gauge(
-    "auto_scaler_desired_replicas", "Desired number of replicas", [
-        "service_name"]
+    "auto_scaler_desired_replicas", "Desired number of replicas", ["service_name"]
 )
 SCALING_COUNT = Counter(
-    "auto_scaler_scaling_count", "Number of scaling actions", [
-        "service_name", "direction"]
+    "auto_scaler_scaling_count",
+    "Number of scaling actions",
+    ["service_name", "direction"],
 )
 FAIL_COUNT = Counter(
-    "auto_scaler_fail_count", "Number of failed scaling actions", [
-        "service_name"]
+    "auto_scaler_fail_count", "Number of failed scaling actions", ["service_name"]
 )
 
 
 class Scaler:
-    def __init__(self, queue_monitor: QueueMonitor, service_monitor: ServiceMonitor, cooldown: int, messages_per_replica: int, min_replicas: int, max_replicas: int):
+    def __init__(
+        self,
+        queue_monitor: QueueMonitor,
+        service_monitor: ServiceMonitor,
+        cooldown: int,
+        messages_per_replica: int,
+        min_replicas: int,
+        max_replicas: int,
+    ):
         self.queue_monitor = queue_monitor
         self.service_monitor = service_monitor
         self.cooldown = cooldown
@@ -44,7 +50,9 @@ class Scaler:
             current_replicas = self.service_monitor.get_current_replicas()
 
             desired_replicas = (
-                math.ceil(messages / self.messages_per_replica) if self.messages_per_replica > 0 else 0
+                math.ceil(messages / self.messages_per_replica)
+                if self.messages_per_replica > 0
+                else 0
             )
             desired_replicas = max(self.min_replicas, desired_replicas)
             desired_replicas = min(self.max_replicas, desired_replicas)
@@ -52,9 +60,8 @@ class Scaler:
             CURRENT_REPLICAS.labels(**self.labels).set(current_replicas)
             DESIRED_REPLICAS.labels(**self.labels).set(desired_replicas)
 
-            is_cooling_down = (
-                self.last_scale_time is not None and
-                (time.time() - self.last_scale_time < self.cooldown)
+            is_cooling_down = self.last_scale_time is not None and (
+                time.time() - self.last_scale_time < self.cooldown
             )
             logging.info(
                 f"Current replicas: {current_replicas}, "
@@ -68,13 +75,8 @@ class Scaler:
                     f"to {desired_replicas} replicas"
                 )
                 self.service_monitor.scale(desired_replicas)
-                SCALING_COUNT.labels(
-                    **self.labels,
-                    direction=direction
-                ).inc()
+                SCALING_COUNT.labels(**self.labels, direction=direction).inc()
                 self.last_scale_time = time.time()
         except Exception as e:
             logging.error(f"Error scaling: {e}")
-            FAIL_COUNT.labels(
-                **self.labels
-            ).inc()
+            FAIL_COUNT.labels(**self.labels).inc()

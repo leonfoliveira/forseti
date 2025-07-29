@@ -12,3 +12,7 @@ lint:
 format:
 	black auto_scaler
 	isort auto_scaler
+
+.PHONY: test
+test:
+	python -m pytest
