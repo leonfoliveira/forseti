@@ -1,9 +1,11 @@
 import logging
-import threading
+import math
 import time
 
 from prometheus_client import Counter, Gauge
 
+from auto_scaler.queue_monitor import QueueMonitor
+from auto_scaler.service_monitor import ServiceMonitor
 
 CURRENT_REPLICAS = Gauge(
     "auto_scaler_current_replicas", "Current number of replicas", [
@@ -24,31 +26,25 @@ FAIL_COUNT = Counter(
 
 
 class Scaler:
-    def __init__(self, queue_monitor, service_monitor, interval, cooldown, messages_per_replica, min_replicas, max_replicas):
+    def __init__(self, queue_monitor: QueueMonitor, service_monitor: ServiceMonitor, cooldown: int, messages_per_replica: int, min_replicas: int, max_replicas: int):
         self.queue_monitor = queue_monitor
         self.service_monitor = service_monitor
-        self.interval = interval
         self.cooldown = cooldown
         self.messages_per_replica = messages_per_replica
         self.min_replicas = min_replicas
         self.max_replicas = max_replicas
-        self.last_scale_time = None
+        self.last_scale_time: float | None = None
         self.labels = {
             "service_name": service_monitor.service_name,
         }
 
-    def start(self):
-        while True:
-            threading.Thread(target=self._scale).start()
-            time.sleep(self.interval)
-
-    def _scale(self):
+    def scale(self):
         try:
             messages = self.queue_monitor.get_number_of_messages()
             current_replicas = self.service_monitor.get_current_replicas()
 
             desired_replicas = (
-                messages / self.messages_per_replica if self.messages_per_replica > 0 else 0
+                math.ceil(messages / self.messages_per_replica) if self.messages_per_replica > 0 else 0
             )
             desired_replicas = max(self.min_replicas, desired_replicas)
             desired_replicas = min(self.max_replicas, desired_replicas)

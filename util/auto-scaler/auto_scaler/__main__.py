@@ -1,14 +1,16 @@
+import boto3
+import docker
 import logging
 import os
+import signal
+import threading
+import time
 
 from prometheus_client import start_http_server
 
-from .aws_client import AwsClient
-from .docker_client import DockerClient
-from .queue_monitor import QueueMonitor
-from .scaler import Scaler
-from .service_monitor import ServiceMonitor
-
+from auto_scaler.queue_monitor import QueueMonitor
+from auto_scaler.scaler import Scaler
+from auto_scaler.service_monitor import ServiceMonitor
 
 logging.basicConfig(
     level=logging.INFO,
@@ -32,16 +34,17 @@ interval = int(os.environ.get("INTERVAL", 10))
 port = int(os.environ.get("PORT", 7000))
 
 
-aws_client = AwsClient(
-    aws_region=aws_region,
-    aws_endpoint=aws_endpoint,
+sqs_client = boto3.client(
+    "sqs",
+    region_name=aws_region,
+    endpoint_url=aws_endpoint,
     aws_access_key_id=aws_access_key_id,
     aws_secret_access_key=aws_secret_access_key,
 )
-docker_client = DockerClient()
+docker_client = docker.from_env()
 
 queue_monitor = QueueMonitor(
-    aws_client=aws_client,
+    sqs_client=sqs_client,
     queue_name=queue_name,
 )
 service_monitor = ServiceMonitor(
@@ -52,14 +55,26 @@ service_monitor = ServiceMonitor(
 scaler = Scaler(
     queue_monitor=queue_monitor,
     service_monitor=service_monitor,
-    interval=interval,
     cooldown=cooldown,
     messages_per_replica=messages_per_replica,
     min_replicas=min_replicas,
     max_replicas=max_replicas,
 )
 
+is_active = True
+def sigterm(signum, frame):
+    global is_active
+    logging.info("Received SIGTERM, shutting down gracefully...")
+    is_active = False
+
+signal.signal(signal.SIGTERM, sigterm)
+
 if __name__ == "__main__":
     start_http_server(port)
     logging.info("Starting auto-scaler")
-    scaler.start()
+
+    while is_active:
+        threading.Thread(target=scaler.scale).start()
+        time.sleep(interval)
+
+    logging.info("Auto-scaler stopped")
