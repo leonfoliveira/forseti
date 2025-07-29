@@ -10,7 +10,7 @@ class TestServiceMonitor:
             # Swarm already initialized, do nothing
             pass
 
-    @pytest.fixture(scope="class")
+    @pytest.fixture
     def sut(self, docker_client):
         self._init_or_keep_swarm(docker_client)
         service_name = "test_service_monitor"
