@@ -71,8 +71,8 @@ class Scaler:
             if desired_replicas != current_replicas and not is_cooling_down:
                 direction = "up" if desired_replicas > current_replicas else "down"
                 logging.info(
-                    f"Scaling {direction} service {self.service_monitor.service_name} from {current_replicas} "
-                    f"to {desired_replicas} replicas"
+                    f"Scaling {direction} service {self.service_monitor.service_name}"
+                    f"from {current_replicas} to {desired_replicas} replicas"
                 )
                 self.service_monitor.scale(desired_replicas)
                 SCALING_COUNT.labels(**self.labels, direction=direction).inc()

@@ -1,6 +1,6 @@
 import logging
-from prometheus_client import Gauge
 
+from prometheus_client import Gauge
 
 S3_NUMBER_OF_OBJECTS = Gauge(
     "aws_s3_number_of_objects",

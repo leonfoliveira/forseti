@@ -1,6 +1,6 @@
 import logging
-from prometheus_client import Gauge
 
+from prometheus_client import Gauge
 
 SQS_APPROXIMATE_NUMBER_OF_MESSAGES = Gauge(
     "aws_sqs_approximate_number_of_messages",

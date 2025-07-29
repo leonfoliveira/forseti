@@ -9,7 +9,6 @@ from prometheus_client import start_http_server
 from aws_exporter.s3_collector import S3Collector
 from aws_exporter.sqs_collector import SqsCollector
 
-
 logging.basicConfig(
     level=logging.INFO,
     format="ts=%(asctime)s level=%(levelname)s logger=%(name)s msg=%(message)s",
@@ -41,6 +40,7 @@ sqs_client = boto3.client(
 
 s3_collector = S3Collector(s3_client)
 sqs_collector = SqsCollector(sqs_client)
+
 
 def collect_all():
     try:
