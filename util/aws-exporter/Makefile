@@ -12,3 +12,7 @@ lint:
 format:
 	black aws_exporter
 	isort aws_exporter
+
+.PHONY: test
+test:
+	python -m pytest
