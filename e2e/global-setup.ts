@@ -1,7 +1,6 @@
-import { FullConfig } from "@playwright/test";
 import { execSync } from "child_process";
 
-async function globalSetup(config: FullConfig) {
+async function globalSetup() {
   console.log("Bringing up Docker Compose services...");
   execSync("docker-compose up -d --build", { stdio: "inherit" });
 
