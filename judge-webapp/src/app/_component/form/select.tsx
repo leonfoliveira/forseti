@@ -56,11 +56,12 @@ export function Select<TFieldValues extends FieldValues>({
           className={cls(containerClassName, "fieldset")}
           data-testid={`${testId}:container`}
         >
-          <label className="fieldset-legend" data-testid={`${testId}:label`}>
+          <label className="fieldset-legend" htmlFor={name} data-testid={`${testId}:label`}>
             {label}
           </label>
           <select
             {...props}
+            id={name}
             value={formToComponent(field.value)}
             onChange={(e) => {
               field.onChange(componentToForm(e.target.value));

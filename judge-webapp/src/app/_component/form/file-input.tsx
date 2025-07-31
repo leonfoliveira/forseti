@@ -66,7 +66,7 @@ export function FileInput<TFieldValues extends FieldValues>({
           className={cls(containerClassName, "fieldset")}
           data-testid={`${testId}:container`}
         >
-          <label className="fieldset-legend" data-testid={`${testId}:label`}>
+          <label className="fieldset-legend" htmlFor={name} data-testid={`${testId}:label`}>
             {label}
           </label>
           <input

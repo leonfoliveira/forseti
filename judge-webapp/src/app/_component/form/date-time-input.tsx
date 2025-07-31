@@ -51,11 +51,12 @@ export function DateTimeInput<TFieldValues extends FieldValues>({
           className={cls("fieldset", containerClassName)}
           data-testid={`${testId}:container`}
         >
-          <label className="fieldset-legend" data-testid={`${testId}:label`}>
+          <label className="fieldset-legend" htmlFor={props.name} data-testid={`${testId}:label`}>
             {label}
           </label>
           <input
             {...props}
+            id={props.name}
             type="datetime-local"
             value={formToComponent(field.value)}
             onChange={(e) => field.onChange(componentToForm(e.target.value))}

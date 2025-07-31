@@ -13,10 +13,11 @@ export function Checkbox({ children, className, ...props }: Props) {
 
   return (
     <fieldset data-testid={`${testId}:container`}>
-      <label className="label" data-testid={`${testId}:label`}>
+      <label className="label" htmlFor={props.name} data-testid={`${testId}:label`}>
         <input
           type="checkbox"
           {...props}
+          id={props.name}
           className={cls("toggle", className)}
           data-testid={testId}
         />
