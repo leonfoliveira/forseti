@@ -41,6 +41,7 @@ export function Button({
         {...props}
         disabled={disabled || isLoading}
         className={cls(props.className, "btn")}
+        aria-label={tooltip}
         data-testid={testId}
       >
         {!isLoading && props.children}

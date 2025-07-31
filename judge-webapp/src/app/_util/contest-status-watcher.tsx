@@ -43,7 +43,7 @@ export function useContestStatusWatcherBatch<
     return () => {
       timeOuts.forEach((timeout) => clearTimeout(timeout));
     };
-  }, []);
+  }, [contests]);
 
   return statuses;
 }

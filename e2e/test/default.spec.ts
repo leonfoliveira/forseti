@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto(baseURL);
 });
 
-test("Root creates a contest", async ({ page }) => {
+test("Root creates and starts a contest", async ({ page }) => {
   // Redirect to root sign-in page
   await page.getByRole("button", { name: "Enter as Root" }).click();
   await expect(page).toHaveURL(`${baseURL}/root/sign-in`);
@@ -63,4 +63,11 @@ test("Root creates a contest", async ({ page }) => {
   await page.getByRole("button", { name: "Save" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(page).not.toHaveURL(`${baseURL}/root/contests/new`);
+
+  // Start the contest
+  await page.goto(`${baseURL}/root/contests`);
+  const row = page.locator(`tr:has(td:first-child:text-is("${slug}"))`);
+  await row.getByRole("button", { name: "Start" }).click();
+  await page.getByRole("button", { name: "Confirm" }).click();
+  await expect(row.locator("td").nth(4)).toHaveText("In Progress");
 });
