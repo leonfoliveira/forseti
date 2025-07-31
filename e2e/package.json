@@ -5,6 +5,8 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
     "format": "eslint . --ext .ts --fix",
+    "docker:up": "docker-compose -f ../docker/e2e/docker-compose.yml up -d",
+    "docker:down": "docker-compose -f ../docker/e2e/docker-compose.yml down",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug",

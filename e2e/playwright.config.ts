@@ -70,9 +70,6 @@ export default defineConfig({
     // },
   ],
 
-  globalSetup: require.resolve("./global-setup"),
-  globalTeardown: require.resolve("./global-teardown"),
-
   /* Run your local dev server before starting the tests */
   // webServer: {
   //   command: 'npm run start',

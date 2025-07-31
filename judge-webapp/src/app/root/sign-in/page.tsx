@@ -59,11 +59,11 @@ export default function RootSignInPage() {
   }
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center">
+    <div className="min-h-full flex justify-center items-center">
       <Form
         onSubmit={form.handleSubmit(signIn)}
         disabled={signInState.isLoading}
-        className="p-10 w-full max-w-[400] bg-base-100"
+        containerClassName="p-10 w-full max-w-[400] bg-base-100"
       >
         <h1 className="text-3xl font-bold" data-testid="title">
           {t("title")}
