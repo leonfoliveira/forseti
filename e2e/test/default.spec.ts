@@ -90,6 +90,9 @@ describe("Default Contest E2E Tests", () => {
 
     // Make submissions
     await page.getByText("Submissions").click();
+    await expect(page).toHaveURL(
+      `${baseURL}/contests/${slug}/contestant/submissions`
+    );
     await page.getByLabel("Language").selectOption({ label: "Python 3.13.3" });
     const rowsLength = await page.locator("tr").count();
 
@@ -160,6 +163,9 @@ describe("Default Contest E2E Tests", () => {
 
     // Make clarifications
     await page.getByText("Clarifications").click();
+    await expect(page).toHaveURL(
+      `${baseURL}/contests/${slug}/contestant/clarifications`
+    );
     await page
       .getByLabel("Problem (optional)")
       .selectOption({ label: "A. Two Sum" });
@@ -171,5 +177,44 @@ describe("Default Contest E2E Tests", () => {
     ).toBeVisible();
   });
 
-  test("Jury judges solutions", async ({ page }) => {});
+  test("Jury judges solutions", async ({ page }) => {
+    // Redirect to contestant sign-in page
+    await page.getByLabel("Contest").fill(slug);
+    await page.getByRole("button", { name: "Join Contest" }).click();
+    await expect(page).toHaveURL(`${baseURL}/contests/${slug}/sign-in`);
+
+    // Sign in as jury
+    await page.getByLabel("Login").fill("jury");
+    await page.getByLabel("Password").fill("jury");
+    await page.getByRole("button", { name: "Sign in" }).click();
+    await expect(page).toHaveURL(
+      `${baseURL}/contests/${slug}/jury/leaderboard`
+    );
+
+    // Update submission answer
+    await page.getByText("Submissions").click();
+    await expect(page).toHaveURL(
+      `${baseURL}/contests/${slug}/jury/submissions`
+    );
+    const row = page.locator("tr").last();
+    await row.getByRole("button", { name: "Update" }).click();
+    await page.getByLabel("Answer").selectOption({ label: "Wrong answer" });
+    await page.getByRole("button", { name: "Confirm" }).click();
+    await expect(row.locator("td").nth(4)).toHaveText("Wrong answer");
+
+    // Answer clarification
+    await page.getByText("Clarifications").click();
+    await expect(page).toHaveURL(
+      `${baseURL}/contests/${slug}/jury/clarifications`
+    );
+    await page.getByText("Answer").first().click();
+    await page
+      .getByLabel("Text")
+      .fill("The input format is a list of integers");
+    await page.getByRole("button", { name: "Confirm" }).click();
+    await expect(page.getByText("R: Jury")).toBeVisible();
+    await expect(
+      page.getByText("The input format is a list of integers")
+    ).toBeVisible();
+  });
 });
