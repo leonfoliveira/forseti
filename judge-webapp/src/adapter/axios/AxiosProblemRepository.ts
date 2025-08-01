@@ -11,7 +11,7 @@ export class AxiosProblemRepository implements ProblemRepository {
     request: CreateSubmissionRequestDTO,
   ): Promise<SubmissionFullResponseDTO> {
     const response = await this.axiosClient.post<SubmissionFullResponseDTO>(
-      "/v1/problems/{id}/submissions",
+      `/v1/problems/${id}/submissions`,
       {
         data: request,
       },
