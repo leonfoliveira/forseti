@@ -7,7 +7,6 @@ import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.AuthenticateInputDTO
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.data.headers
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc

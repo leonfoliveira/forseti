@@ -23,6 +23,7 @@ jest.mock("@/app/_util/contest-status-watcher", () => ({
 jest.mock("@/app/_util/contest-formatter-hook", () => ({
   useContestFormatter: jest.fn(() => ({
     formatLanguage: jest.fn(),
+    formatMemberType: jest.fn(),
   })),
 }));
 

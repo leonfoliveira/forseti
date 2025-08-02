@@ -31,6 +31,17 @@ class HttpJwtAuthFilterTest : FunSpec({
         verify { authorizationExtractor.extractMember("token") }
     }
 
+    test("should call AuthorizationExtractor with null when no access token cookie is present") {
+        val request = mockk<HttpServletRequest>(relaxed = true)
+        val response = mockk<HttpServletResponse>(relaxed = true)
+        val filterChain = mockk<FilterChain>(relaxed = true)
+        every { request.cookies } returns null
+
+        sut.doFilterInternal(request, response, filterChain)
+
+        verify { authorizationExtractor.extractMember(null) }
+    }
+
     test("should call AuthorizationExtractor without access token when no cookies are present") {
         val request = mockk<HttpServletRequest>(relaxed = true)
         val response = mockk<HttpServletResponse>(relaxed = true)

@@ -20,7 +20,7 @@ class HttpJwtAuthFilter(
         val logger = LoggerFactory.getLogger(this::class.java)
         logger.info("Started JWT authentication filter")
 
-        val accessToken = request.cookies.find { it.name == "access_token" }?.value
+        val accessToken = request.cookies?.find { it.name == "access_token" }?.value
         authorizationExtractor.extractMember(accessToken)
 
         return filterChain.doFilter(request, response)

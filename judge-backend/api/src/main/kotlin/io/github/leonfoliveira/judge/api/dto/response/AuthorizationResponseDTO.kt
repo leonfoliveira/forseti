@@ -9,8 +9,8 @@ data class AuthorizationResponseDTO(
     val expiresAt: OffsetDateTime,
 )
 
-fun Authorization.toResponseDTO()= AuthorizationResponseDTO(
-    member = this.member,
-    expiresAt = this.expiresAt,
-)
-
+fun Authorization.toResponseDTO() =
+    AuthorizationResponseDTO(
+        member = this.member,
+        expiresAt = this.expiresAt,
+    )
