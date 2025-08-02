@@ -18,7 +18,7 @@ export default async function Layout({
 
   return (
     <Html locale={locale} messages={messages as any}>
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col w-screen h-screen">
         <div className="flex-1">{children}</div>
         <footer className="footer footer-center bg-base-100 text-base-content/50 text-xs py-1 border-t border-solid border-base-300">
           <aside>

@@ -22,7 +22,7 @@ describe("AuthorizationService", () => {
 
       expect(storageRepository.setKey).toHaveBeenCalledWith(
         "authorization",
-        authorization,
+        authorization
       );
     });
   });
@@ -45,7 +45,7 @@ describe("AuthorizationService", () => {
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() - 1);
       const authorization = {
-        expiresAt: expiresAt.toISOString(),
+        expiresAt: expiresAt.getTime() / 1000,
       } as unknown as Authorization;
       storageRepository.getKey.mockReturnValue(authorization);
 

@@ -39,7 +39,7 @@ export function Toast({ toast, onClose }: Props) {
 
   return (
     <div
-      className={cls("alert pointer-events-auto", style[toast.level])}
+      className={cls("alert pointer-events-auto flex justify-between", style[toast.level])}
       style={{ pointerEvents: "auto" }}
       data-testid="toast"
     >

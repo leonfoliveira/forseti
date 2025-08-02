@@ -1,6 +1,7 @@
 package io.github.leonfoliveira.judge.api.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.controller.advice.GlobalExceptionHandler
 import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
@@ -77,6 +78,10 @@ class ContestControllerTest(
     private val objectMapper: ObjectMapper,
 ) : FunSpec({
         extensions(SpringExtension)
+
+        beforeTest {
+            objectMapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        }
 
         test("createContest") {
             val body =

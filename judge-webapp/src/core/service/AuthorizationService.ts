@@ -19,7 +19,7 @@ export class AuthorizationService {
     );
     if (
       authorization &&
-      new Date(authorization.expiresAt).getTime() <= new Date().getTime()
+      authorization.expiresAt * 1000 <= new Date().getTime()
     ) {
       this.deleteAuthorization();
       authorization = undefined;

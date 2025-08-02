@@ -51,11 +51,12 @@ export function NumberInput<TFieldValues extends FieldValues>({
           className={cls("fieldset", containerClassName)}
           data-testid={`${testId}:container`}
         >
-          <label className="fieldset-legend" data-testid={`${testId}:label`}>
+          <label className="fieldset-legend" htmlFor={name} data-testid={`${testId}:label`}>
             {label}
           </label>
           <input
             {...props}
+            id={name}
             type="number"
             value={format(field.value)}
             onChange={(e) => field.onChange(parse(e.target.value))}

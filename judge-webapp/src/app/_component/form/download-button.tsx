@@ -21,13 +21,12 @@ export function DownloadButton({ attachment, ...props }: Props) {
 
   return (
     <div
-      className="tooltip"
-      data-tip={t("download:tooltip")}
       data-testid={`${testId}-container`}
     >
       <Button
         onClick={() => attachmentService.download(attachment)}
         className="btn-soft text-xs"
+        tooltip={t("download:tooltip")}
         data-testid={testId}
       >
         <FontAwesomeIcon icon={faDownload} />

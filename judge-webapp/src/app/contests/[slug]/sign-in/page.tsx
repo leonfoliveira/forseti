@@ -66,10 +66,10 @@ export default function MemberSignInPage() {
   }
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center">
+    <div className="min-h-full flex justify-center items-center">
       <Form
         onSubmit={form.handleSubmit(signIn)}
-        className="p-10 w-full max-w-[400] bg-base-100"
+        containerClassName="p-10 w-full max-w-[400] bg-base-100"
         disabled={signInState.isLoading}
         data-testid="form"
       >
