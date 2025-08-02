@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
-import { AuthorizationService } from "@/core/service/AuthorizationService";
 import { BusinessException } from "@/core/domain/exception/BusinessException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";

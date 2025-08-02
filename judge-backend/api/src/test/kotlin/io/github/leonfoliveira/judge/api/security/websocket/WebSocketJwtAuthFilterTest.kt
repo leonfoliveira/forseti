@@ -34,17 +34,30 @@ class WebSocketJwtAuthFilterTest : FunSpec({
         verify(exactly = 0) { authorizationExtractor.extractMember(any()) }
     }
 
-    test("should extract member from authorization header") {
+    test("should extract member from cookie") {
         val message = mockk<Message<*>>()
         val channel = mockk<MessageChannel>()
         val accessor = mockk<StompHeaderAccessor>(relaxed = true)
-        val authHeader = "Bearer token"
+        val accessToken = "token"
         every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
-        every { accessor.getNativeHeader("Authorization") } returns listOf(authHeader)
+        every { accessor.getNativeHeader("Cookie") } returns listOf("access_token=$accessToken")
 
         val result = sut.preSend(message, channel)
 
         result shouldBe message
-        verify { authorizationExtractor.extractMember(authHeader) }
+        verify { authorizationExtractor.extractMember(accessToken) }
+    }
+
+    test("should handle empty cookie header") {
+        val message = mockk<Message<*>>()
+        val channel = mockk<MessageChannel>()
+        val accessor = mockk<StompHeaderAccessor>(relaxed = true)
+        every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
+        every { accessor.getNativeHeader("Cookie") } returns emptyList()
+
+        val result = sut.preSend(message, channel)
+
+        result shouldBe message
+        verify { authorizationExtractor.extractMember(null) }
     }
 })
