@@ -25,8 +25,8 @@ describe("AxiosProblemRepository", () => {
       const result = await sut.createSubmission(id, request);
 
       expect(axiosClient.post).toHaveBeenCalledWith(
-        `/v1/problems/{id}/submissions`,
-        { data: request },
+        `/v1/problems/${id}/submissions`,
+        { data: request }
       );
       expect(result).toEqual(expectedResponse);
     });

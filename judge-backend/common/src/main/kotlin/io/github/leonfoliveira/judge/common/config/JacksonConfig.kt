@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 
-
 @Configuration
 class JacksonConfig {
     @Bean
@@ -17,7 +16,7 @@ class JacksonConfig {
     fun objectMapper(): ObjectMapper {
         val objectMapper = jacksonObjectMapper()
         objectMapper.registerModule(JavaTimeModule())
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         return objectMapper
     }

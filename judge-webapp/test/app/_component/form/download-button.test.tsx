@@ -15,7 +15,7 @@ describe("DownloadButton", () => {
 
     render(<DownloadButton attachment={attachment} />);
 
-    expect(screen.getByTestId("download-button-container")).toHaveAttribute(
+    expect(screen.getByTestId("download-button:container")).toHaveAttribute(
       "data-tip",
       "download:tooltip",
     );
