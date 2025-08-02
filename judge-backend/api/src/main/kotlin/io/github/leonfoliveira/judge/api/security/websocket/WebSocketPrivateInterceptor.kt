@@ -10,7 +10,6 @@ import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.support.ChannelInterceptor
 import org.springframework.messaging.support.MessageHeaderAccessor
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 
 @Component
@@ -40,7 +39,7 @@ class WebSocketPrivateInterceptor : ChannelInterceptor {
             return message
         }
 
-        val auth = SecurityContextHolder.getContext().authentication as? JwtAuthentication
+        val auth = message.headers.get("simpUser") as? JwtAuthentication
         if (auth == null || !auth.isAuthenticated) {
             logger.info("Not authenticated")
             throw UnauthorizedException()

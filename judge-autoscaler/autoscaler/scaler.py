@@ -8,12 +8,10 @@ from autoscaler.queue_monitor import QueueMonitor
 from autoscaler.service_monitor import ServiceMonitor
 
 CURRENT_REPLICAS = Gauge(
-    "autoscaler_current_replicas", "Current number of replicas", [
-        "service_name"]
+    "autoscaler_current_replicas", "Current number of replicas", ["service_name"]
 )
 DESIRED_REPLICAS = Gauge(
-    "autoscaler_desired_replicas", "Desired number of replicas", [
-        "service_name"]
+    "autoscaler_desired_replicas", "Desired number of replicas", ["service_name"]
 )
 SCALING_COUNT = Counter(
     "autoscaler_scaling_count",
@@ -21,8 +19,7 @@ SCALING_COUNT = Counter(
     ["service_name", "direction"],
 )
 FAIL_COUNT = Counter(
-    "autoscaler_fail_count", "Number of failed scaling actions", [
-        "service_name"]
+    "autoscaler_fail_count", "Number of failed scaling actions", ["service_name"]
 )
 
 
