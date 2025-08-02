@@ -11,7 +11,7 @@ type Props = {
 
 /**
  * Component that renders the tab bar for contest pages.
- * Different tabs are displayed based on the user's authorization level (contestant, jury, or guest).
+ * Different tabs are displayed based on the user's authorization level (contestant, judge, or guest).
  */
 export function ContestTabBar({ tabs }: Props) {
   const pathname = usePathname();

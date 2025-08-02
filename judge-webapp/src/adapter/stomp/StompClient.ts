@@ -41,9 +41,6 @@ export class StompClient implements ListenerClient {
         const data = JSON.parse(message.body) as TData;
         callback(data);
       },
-      {
-        Authorization: this.getAuthorizationHeader() as string,
-      },
     );
     console.debug(`Subscribed to topic: ${topic}`);
   }
@@ -57,13 +54,5 @@ export class StompClient implements ListenerClient {
 
       this.client.deactivate();
     });
-  }
-
-  private getAuthorizationHeader() {
-    const authorization = this.authorizationService.getAuthorization();
-    if (authorization != null) {
-      return `Bearer ${authorization.accessToken}`;
-    }
-    return null;
   }
 }

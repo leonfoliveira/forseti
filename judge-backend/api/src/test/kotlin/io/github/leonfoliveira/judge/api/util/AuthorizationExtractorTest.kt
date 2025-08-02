@@ -19,31 +19,24 @@ class AuthorizationExtractorTest : FunSpec({
         SecurityContextHolder.clearContext()
     }
 
-    test("should return null when auth header is null") {
+    test("should return null when access token is null") {
         val result = sut.extractMember(null)
 
         result shouldBe null
         SecurityContextHolder.getContext().authentication.isAuthenticated shouldBe false
     }
 
-    test("should return null when auth header does not start with 'Bearer '") {
-        val result = sut.extractMember("InvalidHeader")
+    test("should return null when access token is empty") {
+        val result = sut.extractMember("")
 
         result shouldBe null
         SecurityContextHolder.getContext().authentication.isAuthenticated shouldBe false
     }
 
-    test("should return null when auth header is empty") {
-        val result = sut.extractMember("Bearer ")
-
-        result shouldBe null
-        SecurityContextHolder.getContext().authentication.isAuthenticated shouldBe false
-    }
-
-    test("should not authenticate when auth header is valid but token is invalid") {
+    test("should not authenticate when access token is valid but token is invalid") {
         every { jwtAdapter.decodeToken("invalid-token") } throws RuntimeException("Invalid token")
 
-        val result = sut.extractMember("Bearer invalid-token")
+        val result = sut.extractMember("invalid-token")
 
         result shouldBe null
         SecurityContextHolder.getContext().authentication.isAuthenticated shouldBe false
@@ -58,7 +51,7 @@ class AuthorizationExtractorTest : FunSpec({
             )
         every { jwtAdapter.decodeToken("valid-token") } returns expectedMember
 
-        val result = sut.extractMember("Bearer valid-token")
+        val result = sut.extractMember("valid-token")
 
         result shouldBe expectedMember
         SecurityContextHolder.getContext().authentication.isAuthenticated shouldBe true

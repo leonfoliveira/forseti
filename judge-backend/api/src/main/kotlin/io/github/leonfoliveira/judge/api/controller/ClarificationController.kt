@@ -17,7 +17,7 @@ class ClarificationController(
     val deleteClarificationService: DeleteClarificationService,
 ) {
     @DeleteMapping("/{id}")
-    @Private(Member.Type.JURY)
+    @Private(Member.Type.JUDGE)
     @Transactional(readOnly = true)
     fun deleteClarificationById(
         @PathVariable id: UUID,

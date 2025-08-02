@@ -90,7 +90,7 @@ class FindContestServiceTest : FunSpec({
             val problem1 = ProblemMockBuilder.build()
             val problem2 = ProblemMockBuilder.build()
 
-            val jury = MemberMockBuilder.build(type = Member.Type.JURY)
+            val judge = MemberMockBuilder.build(type = Member.Type.JUDGE)
             val contestantWithNoSubmission =
                 MemberMockBuilder.build(
                     name = "Z",
@@ -160,7 +160,7 @@ class FindContestServiceTest : FunSpec({
                     problems = listOf(problem1, problem2),
                     members =
                         listOf(
-                            jury,
+                            judge,
                             contestantWithNoSubmission,
                             contestantWithWrongAnswer,
                             contestantWithAccepted,

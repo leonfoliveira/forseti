@@ -42,21 +42,21 @@ describe("routes", () => {
     expect(routes.CONTEST_CONTESTANT_ANNOUNCEMENTS(slug)).toBe(
       `/contests/${slug}/contestant/announcements`,
     );
-    expect(routes.CONTEST_JURY(slug)).toBe(`/contests/${slug}/jury`);
-    expect(routes.CONTEST_JURY_LEADERBOARD(slug)).toBe(
-      `/contests/${slug}/jury/leaderboard`,
+    expect(routes.CONTEST_JUDGE(slug)).toBe(`/contests/${slug}/judge`);
+    expect(routes.CONTEST_JUDGE_LEADERBOARD(slug)).toBe(
+      `/contests/${slug}/judge/leaderboard`,
     );
-    expect(routes.CONTEST_JURY_PROBLEMS(slug)).toBe(
-      `/contests/${slug}/jury/problems`,
+    expect(routes.CONTEST_JUDGE_PROBLEMS(slug)).toBe(
+      `/contests/${slug}/judge/problems`,
     );
-    expect(routes.CONTEST_JURY_SUBMISSIONS(slug)).toBe(
-      `/contests/${slug}/jury/submissions`,
+    expect(routes.CONTEST_JUDGE_SUBMISSIONS(slug)).toBe(
+      `/contests/${slug}/judge/submissions`,
     );
-    expect(routes.CONTEST_JURY_CLARIFICATIONS(slug)).toBe(
-      `/contests/${slug}/jury/clarifications`,
+    expect(routes.CONTEST_JUDGE_CLARIFICATIONS(slug)).toBe(
+      `/contests/${slug}/judge/clarifications`,
     );
-    expect(routes.CONTEST_JURY_ANNOUNCEMENTS(slug)).toBe(
-      `/contests/${slug}/jury/announcements`,
+    expect(routes.CONTEST_JUDGE_ANNOUNCEMENTS(slug)).toBe(
+      `/contests/${slug}/judge/announcements`,
     );
     expect(routes.CONTEST_GUEST(slug)).toBe(`/contests/${slug}/guest`);
     expect(routes.CONTEST_GUEST_LEADERBOARD(slug)).toBe(

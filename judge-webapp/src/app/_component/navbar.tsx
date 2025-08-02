@@ -8,16 +8,17 @@ import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/conte
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { redirect, RedirectType } from "next/navigation";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 
 type Props = {
   contestMetadata?: ContestMetadataResponseDTO;
-  memberType?: MemberType;
   signInPath: string;
 };
 
-export function Navbar({ contestMetadata, memberType, signInPath }: Props) {
+export function Navbar({ contestMetadata, signInPath }: Props) {
   const { theme, toggleTheme } = useTheme();
   const authorization = useAuthorization();
+  const { formatMemberType } = useContestFormatter()
   const t = useTranslations("_component.navbar");
 
   const clockRef = useWaitClock(
@@ -27,6 +28,8 @@ export function Navbar({ contestMetadata, memberType, signInPath }: Props) {
   function signOut() {
     redirect(signInPath, RedirectType.push);
   }
+
+  const isGuest = !authorization?.member || authorization.member.type === MemberType.ROOT;
 
   return (
     <nav className="navbar bg-base-100">
@@ -59,9 +62,9 @@ export function Navbar({ contestMetadata, memberType, signInPath }: Props) {
                   className="bg-base-100 rounded-t-none right-0 !mt-0"
                   data-testid="menu"
                 >
-                  {memberType && (
+                  {!isGuest && (
                     <li className="menu-title">
-                      {t(`member-type.${memberType}`)}
+                      {formatMemberType(authorization?.member.type)}
                     </li>
                   )}
                   <li>
@@ -70,7 +73,7 @@ export function Navbar({ contestMetadata, memberType, signInPath }: Props) {
                       className="text-nowrap"
                       data-testid="sign"
                     >
-                      {authorization?.member
+                      {!isGuest
                         ? t("sign-out:label")
                         : t("sign-in:label")}
                     </a>

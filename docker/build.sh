@@ -17,7 +17,6 @@ build_image() {
 build_image "judge-api" -f ../judge-backend/api.Dockerfile ../judge-backend
 build_image "judge-autojudge" -f ../judge-backend/autojudge.Dockerfile ../judge-backend
 build_image "judge-webapp" ../judge-webapp
-build_image "auto-scaler" ../util/auto-scaler
-build_image "aws-exporter" ../util/aws-exporter
+build_image "judge-autoscaler" ../judge-autoscaler
 
 exit 0

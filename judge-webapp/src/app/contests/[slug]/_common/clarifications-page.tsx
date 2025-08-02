@@ -200,7 +200,7 @@ export function ClarificationsPage({
                       data-testid="clarification-answer-header"
                     >
                       {t("header-answer", {
-                        jury: clarification.children[0].member.name,
+                        judge: clarification.children[0].member.name,
                       })}
                     </p>
                     <span

@@ -85,7 +85,6 @@ describe("StompClient", () => {
       expect(client.subscribe).toHaveBeenCalledWith(
         topic,
         expect.any(Function),
-        { Authorization: null },
       );
 
       const subscriptionCallback = (client.subscribe as jest.Mock).mock
@@ -108,7 +107,6 @@ describe("StompClient", () => {
       expect(client.subscribe).toHaveBeenCalledWith(
         topic,
         expect.any(Function),
-        { Authorization: `Bearer ${authorization.accessToken}` },
       );
     });
   });

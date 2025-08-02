@@ -16,7 +16,6 @@ import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.support.MessageHeaderAccessor
-import org.springframework.security.core.context.SecurityContextHolder
 import java.util.UUID
 
 class WebSocketPrivateInterceptorTest : FunSpec({
@@ -67,7 +66,7 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         val accessor = mockk<StompHeaderAccessor>(relaxed = true)
         every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
         every { accessor.destination } returns "/topic/contests/1/submissions/full"
-        SecurityContextHolder.getContext().authentication = null
+        every { message.headers.get("simpUser") } returns null
 
         shouldThrow<UnauthorizedException> {
             sut.preSend(message, channel)
@@ -80,7 +79,7 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         val accessor = mockk<StompHeaderAccessor>(relaxed = true)
         every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
         every { accessor.destination } returns "/topic/contests/1/submissions/full"
-        SecurityContextHolder.getContext().authentication = JwtAuthentication()
+        every { message.headers.get("simpUser") } returns JwtAuthentication()
 
         shouldThrow<UnauthorizedException> {
             sut.preSend(message, channel)
@@ -93,7 +92,7 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         val accessor = mockk<StompHeaderAccessor>(relaxed = true)
         every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
         every { accessor.destination } returns "/topic/contests/1/submissions/full"
-        SecurityContextHolder.getContext().authentication =
+        every { message.headers.get("simpUser") } returns
             JwtAuthentication(
                 AuthorizationMember(
                     id = UUID.randomUUID(),
@@ -113,11 +112,11 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         val accessor = mockk<StompHeaderAccessor>(relaxed = true)
         every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
         every { accessor.destination } returns "/topic/contests/1/submissions/full"
-        SecurityContextHolder.getContext().authentication =
+        every { message.headers.get("simpUser") } returns
             JwtAuthentication(
                 AuthorizationMember(
                     id = UUID.randomUUID(),
-                    type = Member.Type.JURY,
+                    type = Member.Type.JUDGE,
                     name = "Test User",
                 ),
             )

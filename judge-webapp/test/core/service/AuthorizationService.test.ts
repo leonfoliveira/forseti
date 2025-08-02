@@ -45,7 +45,7 @@ describe("AuthorizationService", () => {
       const expiresAt = new Date();
       expiresAt.setHours(expiresAt.getHours() - 1);
       const authorization = {
-        expiresAt: expiresAt.getTime() / 1000,
+        expiresAt: expiresAt,
       } as unknown as Authorization;
       storageRepository.getKey.mockReturnValue(authorization);
 

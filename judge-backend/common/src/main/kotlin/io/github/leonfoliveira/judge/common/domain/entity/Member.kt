@@ -74,7 +74,7 @@ class Member(
         /**
          * Represents a worker who judges submissions.
          */
-        AUTO_JURY,
+        AUTOJUDGE,
 
         /**
          * Represents a member who participates in the contest, such as a contestant.
@@ -84,6 +84,6 @@ class Member(
         /**
          * Represents a member who is part of the jury, responsible for judging submissions.
          */
-        JURY,
+        JUDGE,
     }
 }

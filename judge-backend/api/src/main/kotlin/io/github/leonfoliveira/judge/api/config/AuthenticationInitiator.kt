@@ -31,14 +31,14 @@ class AuthenticationInitiator(
                 )
 
         val autoJudge =
-            memberRepository.findByLogin("auto-jury")?.apply {
+            memberRepository.findByLogin("autojudge")?.apply {
                 password = hashAdapter.hash(UUID.randomUUID().toString())
             }
                 ?: Member(
                     id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
-                    type = Member.Type.AUTO_JURY,
-                    name = "auto-jury",
-                    login = "auto-jury",
+                    type = Member.Type.AUTOJUDGE,
+                    name = "autojudge",
+                    login = "autojudge",
                     password = hashAdapter.hash(UUID.randomUUID().toString()),
                 )
 

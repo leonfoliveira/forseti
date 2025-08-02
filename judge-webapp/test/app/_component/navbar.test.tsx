@@ -61,6 +61,14 @@ describe("Navbar", () => {
     expect(screen.getByTestId("member")).toHaveTextContent("guest-name");
   });
 
+  it("displays guest name when logged as root", () => {
+    mockUseAuthorization.mockReturnValueOnce({
+      member: { name: "guest-name", type: "ROOT" },
+    });
+    render(<Navbar signInPath="/sign-in" />);
+    expect(screen.getByTestId("member")).toHaveTextContent("guest-name");
+  });
+
   it("displays member name when authorization is present", () => {
     render(<Navbar signInPath="/sign-in" />);
     expect(screen.getByTestId("member")).toHaveTextContent("Test User");

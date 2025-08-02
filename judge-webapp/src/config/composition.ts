@@ -25,7 +25,7 @@ const storageRepository = new LocalStorageRepository();
 
 export const authorizationService = new AuthorizationService(storageRepository);
 
-const axiosClient = new AxiosClient(env.API_URL, authorizationService);
+const axiosClient = new AxiosClient(env.API_URL);
 export const listenerClientFactory = new StompClientFactory(
   `${env.API_URL}/ws`,
   authorizationService,

@@ -181,7 +181,7 @@ class ContestController(
     }
 
     @GetMapping("/{id}/submissions/full")
-    @Private(Member.Type.JURY)
+    @Private(Member.Type.JUDGE)
     @Transactional(readOnly = true)
     fun findAllContestFullSubmissions(
         @PathVariable id: UUID,
@@ -193,7 +193,7 @@ class ContestController(
     }
 
     @PostMapping("/{id}/announcements")
-    @Private(Member.Type.JURY)
+    @Private(Member.Type.JUDGE)
     @Transactional
     fun createAnnouncement(
         @PathVariable id: UUID,
@@ -207,7 +207,7 @@ class ContestController(
     }
 
     @PostMapping("/{id}/clarifications")
-    @Private(Member.Type.CONTESTANT, Member.Type.JURY)
+    @Private(Member.Type.CONTESTANT, Member.Type.JUDGE)
     @Transactional
     fun createClarification(
         @PathVariable id: UUID,

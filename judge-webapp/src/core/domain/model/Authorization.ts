@@ -2,8 +2,7 @@ import { MemberType } from "@/core/domain/enumerate/MemberType";
 
 export type Authorization = {
   member: AuthorizationMember;
-  accessToken: string;
-  expiresAt: number;
+  expiresAt: string;
 };
 
 export type AuthorizationMember = {

@@ -42,7 +42,7 @@ class CreateClarificationService(
         if (member.type == Member.Type.CONTESTANT && input.parentId != null) {
             throw ForbiddenException("Contestants cannot create clarifications with a parent")
         }
-        if (member.type == Member.Type.JURY && input.parentId == null) {
+        if (member.type == Member.Type.JUDGE && input.parentId == null) {
             throw ForbiddenException("Jury members cannot create clarifications without a parent")
         }
 

@@ -82,22 +82,22 @@ class AuthorizationServiceTest : FunSpec({
         }
     }
 
-    context("authenticateAutoJury") {
-        test("should throw InternalServerException when auto-jury member is not found") {
-            every { memberRepository.findByLogin("auto-jury") } returns null
+    context("authenticateAutoJudge") {
+        test("should throw InternalServerException when autojudge member is not found") {
+            every { memberRepository.findByLogin("autojudge") } returns null
 
             shouldThrow<InternalServerException> {
-                sut.authenticateAutoJury()
-            }.message shouldBe "Could not find auto-jury member"
+                sut.authenticateAutoJudge()
+            }.message shouldBe "Could not find autojudge member"
         }
 
-        test("should return Authorization when auto-jury authentication is successful") {
-            val member = MemberMockBuilder.build(login = "auto-jury")
-            every { memberRepository.findByLogin("auto-jury") } returns member
+        test("should return Authorization when autojudge authentication is successful") {
+            val member = MemberMockBuilder.build(login = "autojudge")
+            every { memberRepository.findByLogin("autojudge") } returns member
             val authorization = AuthorizationMockBuilder.build()
             every { jwtAdapter.generateAuthorization(member) } returns authorization
 
-            val result = sut.authenticateAutoJury()
+            val result = sut.authenticateAutoJudge()
 
             result shouldBe authorization
         }

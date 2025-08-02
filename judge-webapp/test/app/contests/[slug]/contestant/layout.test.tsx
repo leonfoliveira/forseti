@@ -37,7 +37,7 @@ describe("ContestantLayout", () => {
 
   it("should redirect to forbidden if not a contestant", () => {
     mockUseAuthorization.mockReturnValueOnce({
-      member: { type: MemberType.JURY },
+      member: { type: MemberType.JUDGE },
     });
 
     render(

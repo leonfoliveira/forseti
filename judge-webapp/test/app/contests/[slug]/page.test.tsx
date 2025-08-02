@@ -12,7 +12,7 @@ jest.mock("@/app/contests/[slug]/_context/contest-metadata-context");
 describe("ContestPage", () => {
   it.each([
     [MemberType.CONTESTANT, routes.CONTEST_CONTESTANT],
-    [MemberType.JURY, routes.CONTEST_JURY],
+    [MemberType.JUDGE, routes.CONTEST_JUDGE],
     [MemberType.ROOT, routes.CONTEST_GUEST],
   ])("should redirect to correct pages", (memberType, routeFactory) => {
     const contest = { slug: "test-slug" };

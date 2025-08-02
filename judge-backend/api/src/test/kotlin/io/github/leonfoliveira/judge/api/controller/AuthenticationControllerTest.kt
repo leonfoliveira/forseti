@@ -2,6 +2,7 @@ package io.github.leonfoliveira.judge.api.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
+import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.AuthenticateInputDTO
@@ -43,7 +44,14 @@ class AuthenticationControllerTest(
                 content = objectMapper.writeValueAsString(authenticateInputDTO)
             }.andExpect {
                 status { isOk() }
-                content { authorization }
+                cookie {
+                    value("access_token", authorization.accessToken)
+                    path("access_token", "/")
+                    secure("access_token", true)
+                    httpOnly("access_token", true)
+                    sameSite("access_token", "Lax")
+                }
+                content { authorization.toResponseDTO() }
             }
         }
 
@@ -57,7 +65,14 @@ class AuthenticationControllerTest(
                 content = objectMapper.writeValueAsString(authenticateInputDTO)
             }.andExpect {
                 status { isOk() }
-                content { authorization }
+                cookie {
+                    value("access_token", authorization.accessToken)
+                    path("access_token", "/")
+                    secure("access_token", true)
+                    httpOnly("access_token", true)
+                    sameSite("access_token", "Lax")
+                }
+                content { authorization.toResponseDTO() }
             }
         }
     })

@@ -39,14 +39,14 @@ class AuthorizationService(
         return jwtAdapter.generateAuthorization(member)
     }
 
-    fun authenticateAutoJury(): Authorization {
-        logger.info("Authenticating auto-jury")
+    fun authenticateAutoJudge(): Authorization {
+        logger.info("Authenticating autojudge")
 
         val member =
-            memberRepository.findByLogin("auto-jury")
-                ?: throw InternalServerException("Could not find auto-jury member")
+            memberRepository.findByLogin("autojudge")
+                ?: throw InternalServerException("Could not find autojudge member")
 
-        logger.info("Finished authenticating auto-jury member")
+        logger.info("Finished authenticating autojudge member")
         return jwtAdapter.generateAuthorization(member)
     }
 

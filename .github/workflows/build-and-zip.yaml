@@ -33,16 +33,14 @@ jobs:
           docker build -t judge-api:${{ steps.vars.outputs.tag }} -f ../../judge-backend/api.Dockerfile ../../judge-backend
           docker build -t judge-autojudge:${{ steps.vars.outputs.tag }} -f ../../judge-backend/autojudge.Dockerfile ../../judge-backend
           docker build -t judge-webapp:${{ steps.vars.outputs.tag }} ../../judge-webapp
-          docker build -t auto-scaler:${{ steps.vars.outputs.tag }} ../../util/auto-scaler
-          docker build -t aws-exporter:${{ steps.vars.outputs.tag }} ../../util/aws-exporter
+          docker build -t judge-auto-scaler:${{ steps.vars.outputs.tag }} ../../judge-auto-scaler
 
       - name: Save all images to a tarball
         run: docker save -o judge-images-${{ steps.vars.outputs.tag }}.tar  \
           judge-api:${{ steps.vars.outputs.tag }} \
           judge-autojudge:${{ steps.vars.outputs.tag }} \
           judge-webapp:${{ steps.vars.outputs.tag }} \
-          auto-scaler:${{ steps.vars.outputs.tag }} \
-          aws-exporter:${{ steps.vars.outputs.tag }}
+          judge-auto-scaler:${{ steps.vars.outputs.tag }}
 
       - name: Create ZIP file with tag name
         run: zip judge-${{ steps.vars.outputs.tag }}.zip * ../../README.md ../../LICENSE

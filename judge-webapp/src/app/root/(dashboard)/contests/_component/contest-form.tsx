@@ -54,7 +54,7 @@ export function ContestForm({
   const deleteModal = useModal();
   const saveModal = useModal<ContestFormType>();
   const alert = useAlert();
-  const { formatLanguage } = useContestFormatter();
+  const { formatLanguage, formatMemberType } = useContestFormatter();
   const t = useTranslations("root.contests._component.contest-form");
   const s = useTranslations("root.contests._form.contest-form");
 
@@ -210,7 +210,7 @@ export function ContestForm({
                     .filter((it) => it !== MemberType.ROOT)
                     .map((it) => ({
                       value: it,
-                      label: it,
+                      label: formatMemberType(it),
                     }))}
                   data-testid="member-type"
                 />
