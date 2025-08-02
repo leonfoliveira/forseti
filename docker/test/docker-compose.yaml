@@ -65,16 +65,16 @@ services:
       AWS_S3_BUCKET: judge
       AWS_SECRET_ACCESS_KEY: judge
       AWS_SQS_SUBMISSION_QUEUE: submission-queue
-      DB_PASSWORD_FILE: /run/secrets/db_password
+      DB_PASSWORD: judge
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge
       JAVA_TOOL_OPTIONS: -Xms1536M -Xmx1536M
       JWT_EXPIRATION: 6h
       JWT_ROOT_EXPIRATION: 3h
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
+      JWT_SECRET: judge
       MAX_CONCURRENT_SUBMISSIONS: "1"
       PORT: 8081
-      ROOT_PASSWORD_FILE: /run/secrets/root_password
+      ROOT_PASSWORD: judge
       SPRING_PROFILES_ACTIVE: production
     image: judge-autojudge:latest
     networks:
