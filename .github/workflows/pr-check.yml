@@ -65,6 +65,39 @@ jobs:
       - name: Build
         run: npm run build
   
+  check-e2e:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: e2e
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build api
+        run: (cd ../docker && ./build.sh judge-api)
+
+      - name: Build autojudge
+        run: (cd ../docker && ./build.sh judge-autojudge)
+
+      - name: Build webapp
+        run: (cd ../docker && ./build.sh judge-webapp)
+      
+      - name: Start composition
+        run: (cd ../docker/e2e && docker compose up -d)
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+      
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run E2E tests
+        run: npm run test:ci
+  
   check-auto-scaler:
     runs-on: ubuntu-latest
     defaults:

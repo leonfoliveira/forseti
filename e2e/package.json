@@ -8,6 +8,7 @@
     "docker:up": "docker-compose -f ../docker/e2e/docker-compose.yml up -d",
     "docker:down": "docker-compose -f ../docker/e2e/docker-compose.yml down",
     "test": "playwright test",
+    "test:ci": "BASE_URL=http://localhost:80 CI=1 playwright test",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug",
     "test:report": "playwright show-report"
