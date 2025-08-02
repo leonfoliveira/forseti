@@ -47,9 +47,9 @@ class AuthenticationInitiatorTest : FunSpec({
         }
         membersSlot.captured[1].apply {
             id.toString() shouldBe "11111111-1111-1111-1111-111111111111"
-            type shouldBe Member.Type.AUTO_JURY
-            name shouldBe "auto-jury"
-            login shouldBe "auto-jury"
+            type shouldBe Member.Type.AUTOJUDGE
+            name shouldBe "autojudge"
+            login shouldBe "autojudge"
             password shouldBe "hashed-password"
         }
     }
@@ -58,9 +58,9 @@ class AuthenticationInitiatorTest : FunSpec({
         every { hashAdapter.hash(any()) } returns "hashed-password"
         every { hashAdapter.hash(rootPassword) } returns "hashed-root-password"
         val rootMember = MemberMockBuilder.build(type = Member.Type.ROOT)
-        val autoJudgeMember = MemberMockBuilder.build(type = Member.Type.AUTO_JURY)
+        val autoJudgeMember = MemberMockBuilder.build(type = Member.Type.AUTOJUDGE)
         every { memberRepository.findByLogin("root") } returns rootMember
-        every { memberRepository.findByLogin("auto-jury") } returns autoJudgeMember
+        every { memberRepository.findByLogin("autojudge") } returns autoJudgeMember
 
         sut.createOrUpdateSystemMembers()
 

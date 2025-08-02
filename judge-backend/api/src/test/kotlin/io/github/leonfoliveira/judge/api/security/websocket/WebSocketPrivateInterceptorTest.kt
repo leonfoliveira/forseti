@@ -117,7 +117,7 @@ class WebSocketPrivateInterceptorTest : FunSpec({
             JwtAuthentication(
                 AuthorizationMember(
                     id = UUID.randomUUID(),
-                    type = Member.Type.JURY,
+                    type = Member.Type.JUDGE,
                     name = "Test User",
                 ),
             )

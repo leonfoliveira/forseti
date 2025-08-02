@@ -16,8 +16,8 @@ export default function ContestPage() {
   switch (authorization?.member.type) {
     case MemberType.CONTESTANT:
       return redirect(routes.CONTEST_CONTESTANT(contest.slug));
-    case MemberType.JURY:
-      return redirect(routes.CONTEST_JURY(contest.slug));
+    case MemberType.JUDGE:
+      return redirect(routes.CONTEST_JUDGE(contest.slug));
     default:
       return redirect(routes.CONTEST_GUEST(contest.slug));
   }

@@ -11,7 +11,7 @@ class FeignConfig(
     val authorizationService: AuthorizationService,
 ) : RequestInterceptor {
     override fun apply(template: RequestTemplate) {
-        val authorization = authorizationService.authenticateAutoJury()
+        val authorization = authorizationService.authenticateAutoJudge()
         template.header("Authorization", "Bearer ${authorization.accessToken}")
 
         val traceId = MDC.get("traceId")

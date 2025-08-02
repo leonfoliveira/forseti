@@ -1,5 +1,5 @@
 export enum MemberType {
   ROOT = "ROOT",
   CONTESTANT = "CONTESTANT",
-  JURY = "JURY",
+  JUDGE = "JUDGE",
 }

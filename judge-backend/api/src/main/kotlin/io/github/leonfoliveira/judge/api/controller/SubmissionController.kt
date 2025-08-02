@@ -40,7 +40,7 @@ class SubmissionController(
     }
 
     @PutMapping("/{id}/answer/{answer}")
-    @Private(Member.Type.AUTO_JURY)
+    @Private(Member.Type.AUTOJUDGE)
     @Transactional
     fun updateSubmissionAnswer(
         @PathVariable id: UUID,
@@ -52,7 +52,7 @@ class SubmissionController(
     }
 
     @PutMapping("/{id}/answer/{answer}/force")
-    @Private(Member.Type.JURY)
+    @Private(Member.Type.JUDGE)
     @Transactional
     fun updateSubmissionAnswerForce(
         @PathVariable id: UUID,
@@ -65,7 +65,7 @@ class SubmissionController(
     }
 
     @PostMapping("/{id}/rerun")
-    @Private(Member.Type.JURY)
+    @Private(Member.Type.JUDGE)
     @Transactional
     fun rerunSubmission(
         @PathVariable id: UUID,
