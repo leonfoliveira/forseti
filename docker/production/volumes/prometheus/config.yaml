@@ -21,10 +21,6 @@ scrape_configs:
     static_configs:
       - targets: ['grafana:3000']
 
-  - job_name: 'localstack'
-    static_configs:
-      - targets: ['localstack-exporter:7000']
-
   - job_name: 'loki'
     static_configs:
       - targets: ['loki:3100']

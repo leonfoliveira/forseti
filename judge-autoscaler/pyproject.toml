@@ -1,0 +1,11 @@
+[tool.pytest.ini_options]
+addopts = "--cov=autoscaler --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["autoscaler"]
+omit = [
+    "autoscaler/__main__.py",
+]
+
+[tool.coverage.report]
+fail_under = 90

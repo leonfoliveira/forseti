@@ -4,22 +4,25 @@ import time
 
 from prometheus_client import Counter, Gauge
 
-from auto_scaler.queue_monitor import QueueMonitor
-from auto_scaler.service_monitor import ServiceMonitor
+from autoscaler.queue_monitor import QueueMonitor
+from autoscaler.service_monitor import ServiceMonitor
 
 CURRENT_REPLICAS = Gauge(
-    "auto_scaler_current_replicas", "Current number of replicas", ["service_name"]
+    "autoscaler_current_replicas", "Current number of replicas", [
+        "service_name"]
 )
 DESIRED_REPLICAS = Gauge(
-    "auto_scaler_desired_replicas", "Desired number of replicas", ["service_name"]
+    "autoscaler_desired_replicas", "Desired number of replicas", [
+        "service_name"]
 )
 SCALING_COUNT = Counter(
-    "auto_scaler_scaling_count",
+    "autoscaler_scaling_count",
     "Number of scaling actions",
     ["service_name", "direction"],
 )
 FAIL_COUNT = Counter(
-    "auto_scaler_fail_count", "Number of failed scaling actions", ["service_name"]
+    "autoscaler_fail_count", "Number of failed scaling actions", [
+        "service_name"]
 )
 
 

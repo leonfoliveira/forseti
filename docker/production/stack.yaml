@@ -152,7 +152,7 @@ services:
       - jwt_secret
       - root_password
   
-  autojudge-auto-scaler:
+  autojudge-autoscaler:
     deploy:
       mode: replicated
       replicas: 1
@@ -186,7 +186,7 @@ services:
       interval: 15s
       retries: 5
       start_period: 5s
-    image: auto-scaler:${VERSION:-latest}
+    image: judge-autoscaler:${VERSION:-latest}
     networks:
       judge-network:
     volumes:
@@ -317,37 +317,6 @@ services:
       - type: bind
         source: ./volumes/localstack/init.sh
         target: /etc/localstack/init/ready.d/init.sh
-          
-  localstack-exporter:
-    deploy:
-      mode: replicated
-      replicas: 1
-      resources:
-        limits:
-          cpus: '0.2'
-          memory: 128M
-        reservations:
-          cpus: '0.1'
-          memory: 64M
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-    environment:
-      AWS_ACCESS_KEY_ID: judge
-      AWS_ENDPOINT: http://localstack:4566
-      AWS_REGION: us-east-1
-      AWS_SECRET_ACCESS_KEY: judge
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - curl -f http://localhost:7000/metrics
-      timeout: 5s
-      interval: 15s
-      retries: 5
-      start_period: 5s
-    image: aws-exporter:${VERSION:-latest}
-    networks:
-      judge-network:
 
   loki:
     command:

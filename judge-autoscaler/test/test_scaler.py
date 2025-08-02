@@ -2,11 +2,12 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from auto_scaler.queue_monitor import QueueMonitor
-from auto_scaler.scaler import Scaler
-from auto_scaler.service_monitor import ServiceMonitor
+from autoscaler.queue_monitor import QueueMonitor
+from autoscaler.scaler import Scaler
+from autoscaler.service_monitor import ServiceMonitor
 
-BASE_PATH = "auto_scaler.scaler"
+BASE_PATH = "autoscaler.scaler"
+
 
 class TestScaler:
     @pytest.fixture

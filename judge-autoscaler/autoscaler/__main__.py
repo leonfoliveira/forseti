@@ -8,9 +8,9 @@ import boto3
 import docker
 from prometheus_client import start_http_server
 
-from auto_scaler.queue_monitor import QueueMonitor
-from auto_scaler.scaler import Scaler
-from auto_scaler.service_monitor import ServiceMonitor
+from autoscaler.queue_monitor import QueueMonitor
+from autoscaler.scaler import Scaler
+from autoscaler.service_monitor import ServiceMonitor
 
 logging.basicConfig(
     level=logging.INFO,

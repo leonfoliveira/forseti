@@ -1,6 +1,7 @@
 import docker
 import pytest
-from auto_scaler.service_monitor import ServiceMonitor
+from autoscaler.service_monitor import ServiceMonitor
+
 
 class TestServiceMonitor:
     def _init_or_keep_swarm(self, docker_client):
