@@ -23,10 +23,11 @@ class WebSocketJwtAuthFilter(
         val accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) ?: return message
 
         val cookies = accessor.getNativeHeader("Cookie")?.firstOrNull()
-        val accessToken = cookies?.split(";")
-            ?.map { it.trim() }
-            ?.firstOrNull { it.startsWith("access_token=") }
-            ?.substringAfter("access_token=")
+        val accessToken =
+            cookies?.split(";")
+                ?.map { it.trim() }
+                ?.firstOrNull { it.startsWith("access_token=") }
+                ?.substringAfter("access_token=")
         authorizationExtractor.extractMember(accessToken)
         return message
     }
