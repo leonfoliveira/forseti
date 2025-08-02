@@ -4,6 +4,7 @@ import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { Language } from "@/core/domain/enumerate/Language";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { MemberType } from "../../../src/core/domain/enumerate/MemberType";
 
 describe("useContestFormatter", () => {
   it("formats contest status correctly", () => {
@@ -39,5 +40,12 @@ describe("useContestFormatter", () => {
     expect(
       result.current.formatSubmissionAnswerShort(SubmissionAnswer.WRONG_ANSWER),
     ).toBe("submission-answer-short.WRONG_ANSWER");
+  });
+
+  it("formats member type correctly", () => {
+    const { result } = renderHook(() => useContestFormatter());
+    expect(result.current.formatMemberType(MemberType.CONTESTANT)).toBe(
+      "member-type.CONTESTANT",
+    );
   });
 });

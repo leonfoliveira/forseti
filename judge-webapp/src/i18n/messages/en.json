@@ -21,11 +21,6 @@
     "navbar": {
       "root-title": "Root Panel",
       "guest-name": "Guest",
-      "contest-member-type": {
-        "GUEST": "Guest",
-        "CONTESTANT": "Contestant",
-        "JUDGE": "Judge"
-      },
       "sign-out:label": "Sign out",
       "sign-in:label": "Sign in"
     }
@@ -62,6 +57,11 @@
         "RUNTIME_ERROR": "RE",
         "TIME_LIMIT_EXCEEDED": "TLE",
         "MEMORY_LIMIT_EXCEEDED": "MLE"
+      },
+      "member-type": {
+        "ROOT": "Root",
+        "CONTESTANT": "Contestant",
+        "JUDGE": "Judge"
       }
     }
   },
