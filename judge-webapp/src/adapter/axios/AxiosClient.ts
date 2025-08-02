@@ -9,7 +9,6 @@ import { ServerException } from "@/core/domain/exception/ServerException";
 export class AxiosClient {
   constructor(
     private readonly baseUrl: string,
-    private readonly authorizationService: AuthorizationService,
   ) {}
 
   async get<TBody>(
@@ -57,10 +56,7 @@ export class AxiosClient {
       return await axios.request<TBody>({
         ...config,
         url: config.url || `${this.baseUrl}${path}`,
-        headers: {
-          Authorization: this.getAuthorizationHeader(),
-          ...(config.headers || {}),
-        },
+        withCredentials: true,
       });
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -82,13 +78,5 @@ export class AxiosClient {
       }
       throw error;
     }
-  }
-
-  private getAuthorizationHeader() {
-    const authorization = this.authorizationService.getAuthorization();
-    if (authorization != null) {
-      return `Bearer ${authorization.accessToken}`;
-    }
-    return null;
   }
 }

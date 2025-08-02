@@ -1,8 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { mock } from "jest-mock-extended";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
-import { AuthorizationService } from "@/core/service/AuthorizationService";
-import { Authorization } from "@/core/domain/model/Authorization";
 import { BusinessException } from "@/core/domain/exception/BusinessException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
@@ -16,9 +13,8 @@ jest.mock("axios", () => ({
 
 describe("AxiosClient", () => {
   const baseUrl = "https://example.com";
-  const authorizationService = mock<AuthorizationService>();
 
-  const sut = new AxiosClient(baseUrl, authorizationService);
+  const sut = new AxiosClient(baseUrl);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -28,15 +24,13 @@ describe("AxiosClient", () => {
     it("should call axios.request with GET method", async () => {
       const mockResponse = { data: "response data" };
       (axios.request as jest.Mock).mockResolvedValue(mockResponse);
-      const authorization = { accessToken: "mocked-token" } as Authorization;
-      authorizationService.getAuthorization.mockReturnValueOnce(authorization);
 
       const response = await sut.get("/test");
 
       expect(axios.request).toHaveBeenCalledWith({
         url: `${baseUrl}/test`,
         method: "GET",
-        headers: { Authorization: `Bearer ${authorization.accessToken}` },
+        withCredentials: true,
       });
       expect(response).toEqual(mockResponse);
     });
@@ -78,6 +72,7 @@ describe("AxiosClient", () => {
         url: "https://override.com",
         method: "GET",
         headers: { Authorization: "custom" },
+        withCredentials: true,
       });
     });
   });
@@ -93,7 +88,7 @@ describe("AxiosClient", () => {
         url: `${baseUrl}/test`,
         method: "POST",
         data: "value",
-        headers: { Authorization: null },
+        withCredentials: true,
       });
       expect(response).toEqual(mockResponse);
     });
@@ -110,7 +105,7 @@ describe("AxiosClient", () => {
         url: `${baseUrl}/test`,
         method: "PUT",
         data: "value",
-        headers: { Authorization: null },
+        withCredentials: true,
       });
       expect(response).toEqual(mockResponse);
     });
@@ -125,7 +120,7 @@ describe("AxiosClient", () => {
       expect(axios.request).toHaveBeenCalledWith({
         url: `${baseUrl}/test`,
         method: "DELETE",
-        headers: { Authorization: null },
+        withCredentials: true,
       });
     });
   });

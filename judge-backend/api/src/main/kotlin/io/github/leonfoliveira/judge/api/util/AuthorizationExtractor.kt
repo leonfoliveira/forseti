@@ -13,30 +13,23 @@ class AuthorizationExtractor(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun extractMember(authHeader: String?): AuthorizationMember? {
+    fun extractMember(accessToken: String?): AuthorizationMember? {
         logger.info("Started extracting AuthorizationMember from auth header")
 
-        if (authHeader == null) {
+        if (accessToken == null) {
             SecurityContextHolder.getContext().authentication = JwtAuthentication()
             logger.info("Invalid or missing auth header")
             return null
         }
 
-        if (!authHeader.startsWith("Bearer ")) {
-            SecurityContextHolder.getContext().authentication = JwtAuthentication()
-            logger.warn("Auth header does not start with 'Bearer '")
-            return null
-        }
-
-        val token = authHeader.replace("Bearer ", "")
-        if (token.isBlank()) {
+        if (accessToken.isBlank()) {
             SecurityContextHolder.getContext().authentication = JwtAuthentication()
             logger.info("No JWT token found in auth header")
             return null
         }
 
         try {
-            val authorizationMember = jwtAdapter.decodeToken(token)
+            val authorizationMember = jwtAdapter.decodeToken(accessToken)
             logger.info("Finished extracting AuthorizationMember: $authorizationMember")
             SecurityContextHolder.getContext().authentication = JwtAuthentication(authorizationMember)
             return authorizationMember
