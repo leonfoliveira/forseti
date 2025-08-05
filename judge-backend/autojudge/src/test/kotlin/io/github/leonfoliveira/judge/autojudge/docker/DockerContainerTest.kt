@@ -131,5 +131,16 @@ class DockerContainerTest : FunSpec({
                 }
             }
         }
+
+        test("should throw DockerOOMKilledException on java.lang.OutOfMemoryError") {
+            val container = DockerContainer("test-container")
+            val command = arrayOf("echo", "Hello, World!")
+
+            every { CommandRunner.run(any(), any()) } throws CommandError("java.lang.OutOfMemoryError", 1)
+
+            shouldThrow<DockerContainer.DockerOOMKilledException> {
+                container.exec(command, null, 5000)
+            }
+        }
     }
 })
