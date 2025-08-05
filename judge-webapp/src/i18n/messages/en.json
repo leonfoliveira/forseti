@@ -52,7 +52,6 @@
         "MEMORY_LIMIT_EXCEEDED": "Memory limit exceeded"
       },
       "submission-answer-short": {
-        "NO_ANSWER": "",
         "ACCEPTED": "AC",
         "WRONG_ANSWER": "WA",
         "COMPILATION_ERROR": "CE",
@@ -111,7 +110,7 @@
           "header-timestamp": "Timestamp",
           "header-contestant": "Contestant",
           "header-problem": "Problem",
-          "header-language": "Problem",
+          "header-language": "Language",
           "header-answer": "Answer",
           "submissions-empty": "No submission yet"
         },
@@ -302,7 +301,7 @@
           "member-name:required": "Enter a name",
           "member-login:required": "Enter a login",
           "member-password:required": "Enter a password",
-          "problem-title:required": "Enter a problem title",
+          "problem-title:required": "Enter a title",
           "problem-description:required": "Enter a description",
           "problem-description:size": "File size must not exceed 10 MB",
           "problem-time-limit:required": "Enter a time limit",
@@ -311,8 +310,7 @@
           "problem-memory-limit:min": "Must be a positive integer",
           "problem-test-cases:required": "Select a test cases file",
           "problem-test-cases:size": "File size must not exceed 10 MB",
-          "problem-test-cases:content-type": "Must be a CSV file",
-          "problem-test-cases:invalid": "Must have exactly two columns and at least one row."
+          "problem-test-cases:content-type": "Must be a CSV file"
         }
       },
       "new": {
@@ -356,7 +354,7 @@
     "error": "Could not check if contest exists",
     "title": "Judge",
     "slug:label": "Contest",
-    "slug:required": "Enter a contest slug",
+    "slug:required": "Enter a slug",
     "join:label": "Join Contest",
     "root:label": "Enter as Root"
   }
