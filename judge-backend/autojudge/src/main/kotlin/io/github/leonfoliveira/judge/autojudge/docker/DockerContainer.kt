@@ -64,6 +64,7 @@ class DockerContainer(
             )
         } catch (e: CommandError) {
             when (e.exitCode) {
+                1 -> if (e.message?.contains("java.lang.OutOfMemoryError") == true) throw DockerOOMKilledException()
                 124 -> throw DockerTimeOutException()
                 137 -> throw DockerOOMKilledException()
             }

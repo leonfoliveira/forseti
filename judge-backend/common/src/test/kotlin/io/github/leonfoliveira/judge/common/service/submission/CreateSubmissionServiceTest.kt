@@ -54,7 +54,7 @@ class CreateSubmissionServiceTest : FunSpec({
         val problemId = UUID.randomUUID()
         val inputDTO =
             CreateSubmissionInputDTO(
-                language = Language.PYTHON_3_13_3,
+                language = Language.PYTHON_3_13,
                 code = AttachmentInputDTO(id = UUID.randomUUID()),
             )
 
@@ -116,7 +116,7 @@ class CreateSubmissionServiceTest : FunSpec({
         }
 
         test("should throw ForbiddenException when contest is not active") {
-            val contest = ContestMockBuilder.build(languages = listOf(Language.PYTHON_3_13_3), startAt = OffsetDateTime.now().plusHours(1))
+            val contest = ContestMockBuilder.build(languages = listOf(Language.PYTHON_3_13), startAt = OffsetDateTime.now().plusHours(1))
             val member = MemberMockBuilder.build(contest = contest)
             val problem = ProblemMockBuilder.build(contest = contest)
             val attachment = AttachmentMockBuilder.build()
@@ -130,7 +130,7 @@ class CreateSubmissionServiceTest : FunSpec({
         }
 
         test("should create submission and publish events") {
-            val contest = ContestMockBuilder.build(languages = listOf(Language.PYTHON_3_13_3), startAt = OffsetDateTime.now().minusHours(1))
+            val contest = ContestMockBuilder.build(languages = listOf(Language.PYTHON_3_13), startAt = OffsetDateTime.now().minusHours(1))
             val member = MemberMockBuilder.build(contest = contest)
             val problem = ProblemMockBuilder.build(contest = contest)
             val attachment = AttachmentMockBuilder.build()
