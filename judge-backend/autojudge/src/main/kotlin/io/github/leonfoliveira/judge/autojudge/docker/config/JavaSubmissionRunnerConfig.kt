@@ -12,7 +12,7 @@ class JavaSubmissionRunnerConfig {
     @Bean
     fun java21() = DockerSubmissionRunnerConfig(
         language = Language.JAVA_21,
-        image = "eclipse-temurin:21-jdk",
+        image = "eclipse-temurin:21-jdk-alpine",
         createCompileCommand = { codeFile  ->
             arrayOf("javac", "-d", "/app", "/app/${codeFile.name}")
         },
