@@ -7,5 +7,5 @@ data class DockerSubmissionRunnerConfig(
     val language: Language,
     val image: String,
     val createCompileCommand: ((File) -> Array<String>)?,
-    val createRunCommand: (File) -> Array<String>,
+    val createRunCommand: (File, Int) -> Array<String>,
 )

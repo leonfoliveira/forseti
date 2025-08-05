@@ -68,6 +68,7 @@ class DockerSubmissionRunnerAdapter(
                             codeFile = codeFile,
                             input = input,
                             timeLimit = problem.timeLimit,
+                            memoryLimit = problem.memoryLimit,
                         )
                     outputs.add(output)
                     val isCorrect = evaluate(output, expectedOutput)
@@ -189,9 +190,10 @@ class DockerSubmissionRunnerAdapter(
         codeFile: File,
         input: String,
         timeLimit: Int,
+        memoryLimit: Int,
     ): String {
         return container.exec(
-            command = config.createRunCommand(codeFile),
+            command = config.createRunCommand(codeFile, memoryLimit),
             input = input,
             timeLimit = timeLimit,
         )

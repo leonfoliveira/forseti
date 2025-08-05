@@ -1,0 +1,361 @@
+{
+  "_component": {
+    "form": {
+      "file-input": {
+        "empty": "Selecione um arquivo"
+      }
+    },
+    "page": {
+      "error-page": {
+        "error": "Um erro ocorreu",
+        "reload:label": "Recarregar"
+      }
+    },
+    "dialog-modal": {
+      "cancel": "Cancelar",
+      "confirm": "Confirmar"
+    },
+    "error-page": {
+      "home:label": "Início"
+    },
+    "navbar": {
+      "root-title": "Painel Root",
+      "guest-name": "Visitante",
+      "sign-out:label": "Sair",
+      "sign-in:label": "Entrar"
+    }
+  },
+  "_util": {
+    "contest-formatter-hook": {
+      "contest-status": {
+        "NOT_STARTED": "Não Iniciado",
+        "IN_PROGRESS": "Em Progresso",
+        "ENDED": "Encerrado"
+      },
+      "language": {
+        "CPP_17": "C++ 17",
+        "JAVA_21": "Java 21",
+        "PYTHON_3_13": "Python 3.13"
+      },
+      "submission-status": {
+        "JUDGING": "Em Julgamento",
+        "FAILED": "Falhou",
+        "JUDGED": "Julgado"
+      },
+      "submission-answer": {
+        "NO_ANSWER": "Em Julgamento",
+        "ACCEPTED": "Aceito",
+        "WRONG_ANSWER": "Resposta Errada",
+        "COMPILATION_ERROR": "Erro de Compilação",
+        "RUNTIME_ERROR": "Erro de Execução",
+        "TIME_LIMIT_EXCEEDED": "Limite de Tempo Excedido",
+        "MEMORY_LIMIT_EXCEEDED": "Limite de Memória Excedido"
+      },
+      "submission-answer-short": {
+        "ACCEPTED": "AC",
+        "WRONG_ANSWER": "WA",
+        "COMPILATION_ERROR": "CE",
+        "RUNTIME_ERROR": "RE",
+        "TIME_LIMIT_EXCEEDED": "TLE",
+        "MEMORY_LIMIT_EXCEEDED": "MLE"
+      },
+      "member-type": {
+        "ROOT": "Root",
+        "CONTESTANT": "Competidor",
+        "JUDGE": "Juiz"
+      }
+    }
+  },
+  "contests": {
+    "[slug]": {
+      "_common": {
+        "_form": {
+          "clarification-form": {
+            "text:required": "Digite um texto"
+          },
+          "announcement-form": {
+            "text:required": "Digite um texto"
+          }
+        },
+        "announcements-page": {
+          "create-success": "Anúncio criado com sucesso",
+          "create-error": "Falha ao criar anúncio",
+          "text:label": "Texto",
+          "create:label": "Criar",
+          "empty": "Nenhum anúncio ainda"
+        },
+        "clarifications-page": {
+          "create-success": "Clarificação criada com sucesso",
+          "create-error": "Falha ao criar clarificação",
+          "delete-success": "Clarificação deletada com sucesso",
+          "delete-error": "Falha ao deletar clarificação",
+          "problem:label": "Problema (opcional)",
+          "text:label": "Texto",
+          "create:label": "Criar",
+          "empty": "Nenhuma clarificação ainda",
+          "header-problem": "{contestant} | Problema {letter}",
+          "header-general": "{contestant} | Geral",
+          "header-answer": "R: {judge}",
+          "answer:label": "Responder",
+          "confirm-delete": "Tem certeza que deseja deletar esta clarificação?"
+        },
+        "leaderboard-page": {
+          "header-score": "Pontos",
+          "header-penalty": "Penalidade (s)"
+        },
+        "problems-page": {
+          "problem-title": "{letter}. {title}"
+        },
+        "timeline-page": {
+          "header-timestamp": "Timestamp",
+          "header-contestant": "Competidor",
+          "header-problem": "Problema",
+          "header-language": "Linguagem",
+          "header-answer": "Resposta",
+          "submissions-empty": "Nenhuma submissão ainda"
+        },
+        "wait-page": {
+          "start-at": "Inicia em",
+          "languages": "Linguagens"
+        }
+      },
+      "_component": {
+        "contest-navbar": {
+          "sign-out:label": "Sair",
+          "sign-in:label": "Entrar"
+        },
+        "download-button": {
+          "download:tooltip": "Download"
+        }
+      },
+      "contestant": {
+        "_context": {
+          "contestant-context": {
+            "error": "Falha ao carregar dados do concurso",
+            "submission-toast-problem": "Problema {letter}: {answer}",
+            "clarification-answer": "Nova resposta de clarificação"
+          }
+        },
+        "submissions": {
+          "_form": {
+            "submission-form": {
+              "problem:required": "Selecione um problema",
+              "language:required": "Selecione uma linguagem",
+              "code:required": "Selecione um arquivo de código",
+              "code:size": "O tamanho do arquivo não deve exceder 10 MB"
+            }
+          },
+          "create-success": "Submissão criada com sucesso",
+          "create-error": "Falha ao criar submissão",
+          "problem:label": "Problema",
+          "language:label": "Linguagem",
+          "code:label": "Código",
+          "submit:label": "Enviar",
+          "header-timestamp": "Timestamp",
+          "header-problem": "Problema",
+          "header-language": "Linguagem",
+          "header-answer": "Resposta",
+          "submissions-empty": "Nenhuma submissão ainda"
+        },
+        "layout": {
+          "tab-leaderboard": "Classificação",
+          "tab-problems": "Problemas",
+          "tab-timeline": "Linha do Tempo",
+          "tab-submissions": "Submissões",
+          "tab-clarifications": "Clarificações",
+          "tab-announcements": "Anúncios"
+        }
+      },
+      "guest": {
+        "_context": {
+          "guest-context": {
+            "error": "Falha ao carregar dados do concurso"
+          }
+        },
+        "layout": {
+          "tab-leaderboard": "Classificação",
+          "tab-problems": "Problemas",
+          "tab-timeline": "Linha do Tempo",
+          "tab-clarifications": "Clarificações",
+          "tab-announcements": "Anúncios"
+        }
+      },
+      "judge": {
+        "_context": {
+          "judge-context": {
+            "error": "Falha ao carregar dados do concurso",
+            "submission-failed": "Nova submissão falha"
+          }
+        },
+        "submissions": {
+          "_form": {
+            "update-submission-form": {
+              "answer:required": "Selecione uma resposta"
+            }
+          },
+          "rerun-success": "Submissão reenviada com sucesso",
+          "rerun-error": "Falha ao reenviar submissão",
+          "update-success": "Submissão atualizada com sucesso",
+          "update-error": "Falha ao atualizar submissão",
+          "header-timestamp": "Timestamp",
+          "header-contestant": "Competidor",
+          "header-problem": "Problema",
+          "header-language": "Linguagem",
+          "header-status": "Status",
+          "header-answer": "Resposta",
+          "rerun-tooltip": "Reenviar",
+          "update-tooltip": "Atualizar",
+          "confirm-rerun": "Tem certeza que deseja reenviar esta submissão?",
+          "update-form:answer:label": "Resposta",
+          "confirm-update": "Tem certeza que deseja atualizar esta submissão?"
+        },
+        "layout": {
+          "tab-leaderboard": "Classificação",
+          "tab-problems": "Problemas",
+          "tab-submissions": "Submissões",
+          "tab-clarifications": "Clarificações",
+          "tab-announcements": "Anúncios"
+        }
+      },
+      "sign-in": {
+        "_form": {
+          "member-sign-in-form": {
+            "login:required": "Digite um login",
+            "password:required": "Digite uma senha"
+          }
+        },
+        "unauthorized": "Login ou senha incorretos",
+        "error": "Erro ao entrar",
+        "title": "Entrar",
+        "login:label": "Login",
+        "password:label": "Senha",
+        "sign-in:label": "Entrar"
+      }
+    }
+  },
+  "error": {
+    "description": "Algo deu errado"
+  },
+  "forbidden": {
+    "description": "Acesso negado"
+  },
+  "not-found": {
+    "description": "Página não encontrada"
+  },
+  "root": {
+    "_component": {
+      "root-tab-bar": {
+        "tab-contests": "Competições"
+      }
+    },
+    "contests": {
+      "[id]": {
+        "load-error": "Falha ao carregar dados da competição",
+        "update-success": "Competição atualizada com sucesso",
+        "update-error": "Falha ao atualizar competição",
+        "header": "Competição #{id}",
+        "test-cases-validation-error": "O arquivo de casos de teste deve ter exatamente duas colunas e pelo menos uma linha. Problemas inválidos: {letters}"
+      },
+      "_component": {
+        "contest-form": {
+          "in-progress": "Essa competição está em andamento. Tenha cuidado ao fazer alterações.",
+          "create-header": "Nova Competição",
+          "edit-header": "Competição #{id}",
+          "delete-success": "Competição deletada com sucesso",
+          "delete-error": "Falha ao deletar competição",
+          "delete:label": "Excluir",
+          "save:label": "Salvar",
+          "slug:label": "Slug",
+          "title:label": "Título",
+          "languages:label": "Linguagens",
+          "start-at:label": "Começa em",
+          "end-at:label": "Termina em",
+          "members-header": "Membros",
+          "member-type:label": "Tipo",
+          "member-name:label": "Nome",
+          "member-login:label": "Login",
+          "member-password:label": "Senha",
+          "problems-header": "Problemas",
+          "problem-letter:label": "Letra",
+          "problem-title:label": "Título",
+          "problem-description:label": "Descrição",
+          "problem-time-limit:label": "Tempo limite (ms)",
+          "problem-memory-limit:label": "Memória limite (MB)",
+          "problem-test-cases:label": "Casos de teste",
+          "confirm-delete-content": "Tem certeza que deseja deletar esta competição?",
+          "confirm-save-content": "Tem certeza que deseja salvar as alterações nesta competição?"
+        }
+      },
+      "_form": {
+        "contest-form": {
+          "slug:required": "Digite um slug",
+          "slug:pattern": "Só pode conter letras minúsculas, números e hífens",
+          "title:required": "Digite um título",
+          "languages:required": "Selecione pelo menos uma linguagem",
+          "start-at:required": "Selecione um horário de início",
+          "start-at:greater-now": "Deve ser no futuro",
+          "end-at:required": "Selecione um horário de término",
+          "end-at:greater-start-at": "Deve ser após o início",
+          "end-at:greater-now": "Deve ser no futuro",
+          "member-type:required": "Selecione um tipo",
+          "member-name:required": "Digite um nome",
+          "member-login:required": "Digite um login",
+          "member-password:required": "Digite uma senha",
+          "problem-title:required": "Digite um título",
+          "problem-description:required": "Enter a description",
+          "problem-description:size": "O tamanho do arquivo não deve exceder 10 MB",
+          "problem-time-limit:required": "Digite um tempo limite",
+          "problem-time-limit:min": "Deve ser um inteiro positivo",
+          "problem-memory-limit:required": "Digite um limite de memória",
+          "problem-memory-limit:min": "Deve ser um inteiro positivo",
+          "problem-test-cases:required": "Selecione um arquivo de casos de teste",
+          "problem-test-cases:size": "O tamanho do arquivo não deve exceder 10 MB",
+          "problem-test-cases:content-type": "Deve ser um arquivo CSV"
+        }
+      },
+      "new": {
+        "create-success": "Competição criada com sucesso",
+        "create-error": "Falha ao criar competição"
+      },
+      "load-error": "Falha ao carregar competições",
+      "title": "Competições",
+      "new:label": "Nova",
+      "header-slug": "Slug",
+      "header-title": "Título",
+      "header-start-at": "Começa em",
+      "header-end-at": "Termina em",
+      "header-status": "Status",
+      "start-success": "Competição iniciada com sucesso",
+      "start-error": "Falha ao iniciar competição",
+      "end-success": "Competição encerrada com sucesso",
+      "end-error": "Falha ao encerrar competição",
+      "start:tooltip": "Forçar início",
+      "end:tooltip": "Forçar término",
+      "view:tooltip": "Ver",
+      "start-modal:message": "Tem certeza que deseja iniciar esta competição agora?",
+      "end-modal:message": "Tem certeza que deseja encerrar esta competição agora?"
+    },
+    "sign-in": {
+      "_form": {
+        "root-sign-in-form": {
+          "password:required": "Digite uma senha"
+        }
+      },
+      "unauthorized": "Senha incorreta",
+      "error": "Erro ao entrar",
+      "title": "Entrar",
+      "description": "Root",
+      "password:label": "Senha",
+      "sign-in:label": "Entrar"
+    }
+  },
+  "home-page": {
+    "not-found": "Competição não encontrada",
+    "error": "Erro ao verificar se a competição existe",
+    "title": "Judge",
+    "slug:label": "Competição",
+    "slug:required": "Digite um slug",
+    "join:label": "Entrar",
+    "root:label": "Entrar como Root"
+  }
+}

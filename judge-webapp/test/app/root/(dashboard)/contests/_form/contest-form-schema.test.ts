@@ -6,7 +6,7 @@ describe("contestFormSchema", () => {
   const validData = {
     slug: "test-contest",
     title: "Test Contest",
-    languages: [Language.PYTHON_3_13_3],
+    languages: [Language.PYTHON_3_13],
     startAt: new Date(Date.now() + 1000 * 60 * 60), // 1 hour from now
     endAt: new Date(Date.now() + 1000 * 60 * 60 * 2), // 2 hours from now
     members: [

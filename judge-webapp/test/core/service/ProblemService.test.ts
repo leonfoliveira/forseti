@@ -21,7 +21,7 @@ describe("ProblemService", () => {
     it("should create a submission with the given id and input", async () => {
       const id = "problem-id";
       const input: CreateSubmissionInputDTO = {
-        language: Language.PYTHON_3_13_3,
+        language: Language.PYTHON_3_13,
         code: new File(["print('Hello, World!')"], "hello.py"),
       };
       const attachment = { id: "attachment-id" } as unknown as Attachment;

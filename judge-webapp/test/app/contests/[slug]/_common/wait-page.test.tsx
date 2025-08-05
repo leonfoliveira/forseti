@@ -21,7 +21,7 @@ describe("WaitPage", () => {
     const contest = {
       title: "Test Contest",
       startAt: "2023-10-01T00:00:00Z",
-      languages: [Language.PYTHON_3_13_3],
+      languages: [Language.PYTHON_3_13],
       slug: "test-contest",
     } as unknown as ContestMetadataResponseDTO;
 
@@ -32,7 +32,7 @@ describe("WaitPage", () => {
     expect(screen.getByTestId("languages")).toHaveTextContent("languages");
     const languageItems = screen.getAllByTestId("language-item");
     expect(languageItems).toHaveLength(1);
-    expect(languageItems[0]).toHaveTextContent(Language.PYTHON_3_13_3);
+    expect(languageItems[0]).toHaveTextContent(Language.PYTHON_3_13);
 
     expect(useWaitClock).toHaveBeenCalledWith(
       new Date(contest.startAt),

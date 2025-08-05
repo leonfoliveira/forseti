@@ -49,7 +49,7 @@ class CreateContestServiceTest : FunSpec({
             CreateContestInputDTO(
                 slug = "test-contest",
                 title = "Test Contest",
-                languages = listOf(Language.PYTHON_3_13_3),
+                languages = listOf(Language.PYTHON_3_13),
                 startAt = OffsetDateTime.now().plusHours(1),
                 endAt = OffsetDateTime.now().plusHours(2),
                 members =

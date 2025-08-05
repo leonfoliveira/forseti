@@ -1,5 +1,7 @@
 package io.github.leonfoliveira.judge.common.domain.enumerate
 
 enum class Language {
-    PYTHON_3_13_3,
+    CPP_17,
+    JAVA_21,
+    PYTHON_3_13,
 }

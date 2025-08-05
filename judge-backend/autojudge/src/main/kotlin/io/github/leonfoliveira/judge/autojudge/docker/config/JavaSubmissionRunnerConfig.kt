@@ -8,15 +8,17 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @GeneratedSkipCoverage
-class PythonSubmissionRunnerConfig {
+class JavaSubmissionRunnerConfig {
     @Bean
-    fun python3d13() =
+    fun java21() =
         DockerSubmissionRunnerConfig(
-            language = Language.PYTHON_3_13,
-            image = "python:3.13-alpine",
-            createCompileCommand = null,
-            createRunCommand = { codeFile, _ ->
-                arrayOf("python", "/app/${codeFile.name}")
+            language = Language.JAVA_21,
+            image = "eclipse-temurin:21-jdk-alpine",
+            createCompileCommand = { codeFile ->
+                arrayOf("javac", "-d", "/app", "/app/${codeFile.name}")
+            },
+            createRunCommand = { codeFile, memoryLimit ->
+                arrayOf("java", "-Xmx${memoryLimit}m", "-cp", "/app", codeFile.nameWithoutExtension)
             },
         )
 }

@@ -41,7 +41,7 @@ class ProblemContestTest(
             val problemId = UUID.randomUUID()
             val body =
                 CreateSubmissionInputDTO(
-                    language = Language.PYTHON_3_13_3,
+                    language = Language.PYTHON_3_13,
                     code = AttachmentInputDTO(id = UUID.randomUUID()),
                 )
             val member = AuthorizationMockBuilder.buildMember()
