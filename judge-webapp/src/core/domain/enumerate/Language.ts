@@ -1,3 +1,5 @@
 export enum Language {
-  PYTHON_3_13_3 = "PYTHON_3_13_3",
+  CPP_17 = "CPP_17",
+  JAVA_21 = "JAVA_21",
+  PYTHON_3_13 = "PYTHON_3_13",
 }

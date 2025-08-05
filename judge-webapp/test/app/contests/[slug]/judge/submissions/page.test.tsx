@@ -55,7 +55,7 @@ describe("JudgeSubmissionsPage", () => {
           id: "1",
           createdAt: "2025-01-01T00:00:00Z",
           problem: { letter: "A" },
-          language: Language.PYTHON_3_13_3,
+          language: Language.PYTHON_3_13,
           status: SubmissionStatus.JUDGED,
           answer: SubmissionAnswer.ACCEPTED,
         },
@@ -86,7 +86,7 @@ describe("JudgeSubmissionsPage", () => {
     );
     expect(screen.getByTestId("submission-letter")).toHaveTextContent("A");
     expect(screen.getByTestId("submission-language")).toHaveTextContent(
-      Language.PYTHON_3_13_3,
+      Language.PYTHON_3_13,
     );
     expect(screen.getByTestId("submission-status")).toHaveTextContent(
       SubmissionStatus.JUDGED,
@@ -107,7 +107,7 @@ describe("JudgeSubmissionsPage", () => {
           id: "2",
           createdAt: "2025-01-02T00:00:00Z",
           problem: { letter: "B" },
-          language: Language.PYTHON_3_13_3,
+          language: Language.PYTHON_3_13,
           status: SubmissionStatus.JUDGING,
           answer: SubmissionAnswer.ACCEPTED,
         },
@@ -126,7 +126,7 @@ describe("JudgeSubmissionsPage", () => {
           id: "2",
           createdAt: "2025-01-02T00:00:00Z",
           problem: { letter: "B" },
-          language: Language.PYTHON_3_13_3,
+          language: Language.PYTHON_3_13,
           status: SubmissionStatus.JUDGED,
           answer: SubmissionAnswer.ACCEPTED,
         },
@@ -159,7 +159,7 @@ describe("JudgeSubmissionsPage", () => {
           id: "2",
           createdAt: "2025-01-02T00:00:00Z",
           problem: { letter: "B" },
-          language: Language.PYTHON_3_13_3,
+          language: Language.PYTHON_3_13,
           status: SubmissionStatus.JUDGED,
           answer: SubmissionAnswer.ACCEPTED,
         },
@@ -193,7 +193,7 @@ describe("JudgeSubmissionsPage", () => {
           id: "2",
           createdAt: "2025-01-02T00:00:00Z",
           problem: { letter: "B" },
-          language: Language.PYTHON_3_13_3,
+          language: Language.PYTHON_3_13,
           status: SubmissionStatus.JUDGED,
           answer: SubmissionAnswer.ACCEPTED,
         },
@@ -226,7 +226,7 @@ describe("JudgeSubmissionsPage", () => {
           id: "2",
           createdAt: "2025-01-02T00:00:00Z",
           problem: { letter: "B" },
-          language: Language.PYTHON_3_13_3,
+          language: Language.PYTHON_3_13,
           status: SubmissionStatus.JUDGED,
           answer: SubmissionAnswer.ACCEPTED,
         },

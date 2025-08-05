@@ -16,8 +16,8 @@ describe("useContestFormatter", () => {
 
   it("formats language correctly", () => {
     const { result } = renderHook(() => useContestFormatter());
-    expect(result.current.formatLanguage(Language.PYTHON_3_13_3)).toBe(
-      "language.PYTHON_3_13_3",
+    expect(result.current.formatLanguage(Language.PYTHON_3_13)).toBe(
+      "language.PYTHON_3_13",
     );
   });
 
