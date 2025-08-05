@@ -10,12 +10,13 @@ import org.springframework.context.annotation.Configuration
 @GeneratedSkipCoverage
 class PythonSubmissionRunnerConfig {
     @Bean
-    fun python3d13() = DockerSubmissionRunnerConfig(
-        language = Language.PYTHON_3_13,
-        image = "python:3.13-alpine",
-        createCompileCommand = null,
-        createRunCommand = { codeFile, _ ->
-            arrayOf("python", "/app/${codeFile.name}")
-        },
-    )
+    fun python3d13() =
+        DockerSubmissionRunnerConfig(
+            language = Language.PYTHON_3_13,
+            image = "python:3.13-alpine",
+            createCompileCommand = null,
+            createRunCommand = { codeFile, _ ->
+                arrayOf("python", "/app/${codeFile.name}")
+            },
+        )
 }

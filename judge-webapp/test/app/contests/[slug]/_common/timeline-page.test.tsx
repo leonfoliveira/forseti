@@ -30,7 +30,7 @@ describe("TimelinePage", () => {
     const submissions = [
       {
         id: "1",
-        language: Language.PYTHON_3_13_3,
+        language: Language.PYTHON_3_13,
         answer: SubmissionAnswer.ACCEPTED,
         createdAt: "2023-10-01T00:30:00Z",
         member: { id: "1", name: "Test User" },
@@ -38,7 +38,7 @@ describe("TimelinePage", () => {
       },
       {
         id: "2",
-        language: Language.PYTHON_3_13_3,
+        language: Language.PYTHON_3_13,
         answer: SubmissionAnswer.ACCEPTED,
         createdAt: "2023-10-01T00:30:00Z",
         member: { id: "2", name: "Test User" },
@@ -75,7 +75,7 @@ describe("TimelinePage", () => {
       "A",
     );
     expect(screen.getAllByTestId("submission-language")[0]).toHaveTextContent(
-      "PYTHON_3_13_3",
+      "PYTHON_3_13",
     );
     expect(screen.getAllByTestId("submission-answer")[0]).toHaveTextContent(
       "ACCEPTED",

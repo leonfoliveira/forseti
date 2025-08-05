@@ -10,12 +10,13 @@ import org.springframework.context.annotation.Configuration
 @GeneratedSkipCoverage
 class CppSubmissionRunnerConfig {
     @Bean
-    fun cpp17() = DockerSubmissionRunnerConfig(
-        language = Language.CPP_17,
-        image = "gcc:15.1.0",
-        createCompileCommand = { codeFile ->
-            arrayOf("g++", "-o", "/app/a.out", "/app/${codeFile.name}", "-O2", "-std=c++17", "-DONLINE_JUDGE")
-        },
-        createRunCommand = { _, _ -> arrayOf("/app/a.out") },
-    )
+    fun cpp17() =
+        DockerSubmissionRunnerConfig(
+            language = Language.CPP_17,
+            image = "gcc:15.1.0",
+            createCompileCommand = { codeFile ->
+                arrayOf("g++", "-o", "/app/a.out", "/app/${codeFile.name}", "-O2", "-std=c++17", "-DONLINE_JUDGE")
+            },
+            createRunCommand = { _, _ -> arrayOf("/app/a.out") },
+        )
 }

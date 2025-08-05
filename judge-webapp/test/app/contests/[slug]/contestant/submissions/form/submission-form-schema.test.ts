@@ -4,7 +4,7 @@ import { submissionFormSchema } from "@/app/contests/[slug]/contestant/submissio
 describe("submissionFormSchema", () => {
   const validData = {
     problemId: "problem1",
-    language: Language.PYTHON_3_13_3,
+    language: Language.PYTHON_3_13,
     code: new File(["code"], "hello.py", {
       type: "text/x-python",
     }),

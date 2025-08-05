@@ -41,16 +41,22 @@ class DockerSubmissionRunnerAdapterTest(
         contest.members = listOf(MemberMockBuilder.build(contest = contest))
         contestRepository.save(contest)
 
-        fun createSubmission(contest: Contest, language: Language, filename: String, contentType: String): Submission {
+        fun createSubmission(
+            contest: Contest,
+            language: Language,
+            filename: String,
+            contentType: String,
+        ): Submission {
             val submission =
                 SubmissionMockBuilder.build(
                     language = language,
                     problem = contest.problems.first(),
                     member = contest.members.first(),
-                    code = Attachment(
-                        filename = filename,
-                        contentType = contentType,
-                    ),
+                    code =
+                        Attachment(
+                            filename = filename,
+                            contentType = contentType,
+                        ),
                 )
             return submissionRepository.save(submission)
         }

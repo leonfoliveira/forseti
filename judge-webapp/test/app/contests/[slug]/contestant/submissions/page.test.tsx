@@ -35,7 +35,7 @@ jest.mock(
   () => ({
     useContestantContext: jest.fn(() => ({
       contest: {
-        languages: [Language.PYTHON_3_13_3],
+        languages: [Language.PYTHON_3_13],
         problems: [{ id: "1" }],
       },
       memberSubmissions: [],
@@ -47,11 +47,11 @@ jest.mock(
 describe("ContestantSubmissionPage", () => {
   it("should render all components on startup with default language", () => {
     (storageService.getKey as jest.Mock).mockReturnValueOnce(
-      Language.PYTHON_3_13_3,
+      Language.PYTHON_3_13,
     );
     (useContestantContext as jest.Mock).mockReturnValue({
       contest: {
-        languages: [Language.PYTHON_3_13_3],
+        languages: [Language.PYTHON_3_13],
         problems: [{ id: "1" }],
       },
       memberSubmissions: [
@@ -59,7 +59,7 @@ describe("ContestantSubmissionPage", () => {
           id: "2",
           createdAt: "2025-01-01T00:00:00Z",
           problem: { letter: "A" },
-          language: Language.PYTHON_3_13_3,
+          language: Language.PYTHON_3_13,
           answer: SubmissionAnswer.ACCEPTED,
         },
       ],
@@ -73,7 +73,7 @@ describe("ContestantSubmissionPage", () => {
     expect(screen.getByTestId("form-submission")).toBeInTheDocument();
     expect(screen.getByTestId("form-problem")).not.toBeDisabled();
     expect(screen.getByTestId("form-language")).toHaveValue(
-      Language.PYTHON_3_13_3,
+      Language.PYTHON_3_13,
     );
     expect(screen.getByTestId("form-code")).not.toBeDisabled();
     expect(screen.getByTestId("form-submit")).toHaveTextContent("submit:label");
@@ -97,7 +97,7 @@ describe("ContestantSubmissionPage", () => {
     );
     expect(screen.getByTestId("submission-title")).toHaveTextContent("A");
     expect(screen.getByTestId("submission-language")).toHaveTextContent(
-      Language.PYTHON_3_13_3,
+      Language.PYTHON_3_13,
     );
     expect(screen.getByTestId("submission-answer")).toHaveTextContent(
       SubmissionAnswer.ACCEPTED,
@@ -117,7 +117,7 @@ describe("ContestantSubmissionPage", () => {
   it("should render empty submission list when no submissions exist", () => {
     (useContestantContext as jest.Mock).mockReturnValue({
       contest: {
-        languages: [Language.PYTHON_3_13_3],
+        languages: [Language.PYTHON_3_13],
         problems: [{ id: "1" }],
       },
       memberSubmissions: [],
@@ -147,7 +147,7 @@ describe("ContestantSubmissionPage", () => {
       target: { value: "1" },
     });
     fireEvent.change(screen.getByTestId("form-language"), {
-      target: { value: Language.PYTHON_3_13_3 },
+      target: { value: Language.PYTHON_3_13 },
     });
     fireEvent.change(screen.getByTestId("form-code"), {
       target: {
@@ -163,7 +163,7 @@ describe("ContestantSubmissionPage", () => {
   it("should alert success when create succeeds", async () => {
     (problemService.createSubmission as jest.Mock).mockResolvedValueOnce({
       id: "3",
-      language: Language.PYTHON_3_13_3,
+      language: Language.PYTHON_3_13,
     });
 
     act(() => {
@@ -174,7 +174,7 @@ describe("ContestantSubmissionPage", () => {
       target: { value: "1" },
     });
     fireEvent.change(screen.getByTestId("form-language"), {
-      target: { value: Language.PYTHON_3_13_3 },
+      target: { value: Language.PYTHON_3_13 },
     });
     fireEvent.change(screen.getByTestId("form-code"), {
       target: {
@@ -186,7 +186,7 @@ describe("ContestantSubmissionPage", () => {
     });
     expect(storageService.setKey).toHaveBeenCalledWith(
       StorageService.ACTIVE_LANGUAGE_STORAGE_KEY,
-      Language.PYTHON_3_13_3,
+      Language.PYTHON_3_13,
     );
     expect(mockAlert.success).toHaveBeenCalledWith("create-success");
   });
