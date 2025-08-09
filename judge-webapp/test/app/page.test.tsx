@@ -29,7 +29,7 @@ describe("HomePage", () => {
       fireEvent.click(screen.getByTestId("join"));
     });
     expect(contestService.findContestMetadataBySlug).toHaveBeenCalledWith(
-      "non-existent-slug",
+      "non-existent-slug"
     );
     expect(mockAlert.warning).toHaveBeenCalledWith("not-found");
   });
@@ -48,7 +48,7 @@ describe("HomePage", () => {
       fireEvent.click(screen.getByTestId("join"));
     });
     expect(contestService.findContestMetadataBySlug).toHaveBeenCalledWith(
-      "some-slug",
+      "some-slug"
     );
     expect(mockAlert.error).toHaveBeenCalledWith("error");
   });
@@ -63,7 +63,7 @@ describe("HomePage", () => {
       fireEvent.click(screen.getByTestId("join"));
     });
     expect(mockRouter.push).toHaveBeenCalledWith(
-      routes.CONTEST_SIGN_IN("some-slug"),
+      routes.CONTEST_SIGN_IN("some-slug")
     );
   });
 
@@ -73,6 +73,6 @@ describe("HomePage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("root"));
     });
-    expect(mockRouter.push).toHaveBeenCalledWith(routes.ROOT_SIGN_IN());
+    expect(mockRouter.push).toHaveBeenCalledWith(routes.ROOT_SIGN_IN);
   });
 });

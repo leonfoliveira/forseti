@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { Authorization } from "@/core/domain/model/Authorization";
-import { LoadingPage } from "@/app/_component/page/loading-page";
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { ErrorPage } from "@/app/_component/page/error-page";
+import { LoadableState, useLoadableState } from "@/app/_util/loadable-state";
 import { authenticationService } from "@/config/composition";
-import { useRouter } from "next/navigation";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
+import { LoadingPage } from "@/app/_component/page/loading-page";
+import { ErrorPage } from "@/app/_component/page/error-page";
 
 const AuthorizationContext = createContext({
-  authorization: {} as Authorization | undefined,
+  authorizationState: {} as LoadableState<Authorization | undefined>,
   setAuthorization: (() => {}) as (authorization: Authorization) => void,
   clearAuthorization: (() => {}) as unknown as (
     signInPath: string
@@ -22,7 +22,6 @@ export function AuthorizationProvider({
   const authorizationState = useLoadableState<Authorization | undefined>({
     isLoading: true,
   });
-  const router = useRouter();
 
   useEffect(() => {
     async function load() {
@@ -31,29 +30,26 @@ export function AuthorizationProvider({
         const authorization = await authenticationService.getAuthorization();
         authorizationState.finish(authorization);
       } catch (error) {
-        authorizationState.fail(error);
+        if (error instanceof UnauthorizedException) {
+          authorizationState.finish(undefined);
+        } else {
+          authorizationState.fail(error);
+        }
       }
     }
 
     load();
   }, []);
 
-  /**
-   * Stores a new authorization
-   */
   function setAuthorization(authorization: Authorization) {
     authorizationState.finish(authorization);
   }
 
-  /**
-   * Delete the stored authorization
-   */
   async function clearAuthorization(signInPath: string) {
     authorizationState.start();
     try {
       await authenticationService.cleanAuthorization();
-      router.push(signInPath);
-      authorizationState.finish(undefined);
+      window.location.href = signInPath;
     } catch (error) {
       authorizationState.fail(error);
     }
@@ -72,7 +68,7 @@ export function AuthorizationProvider({
   return (
     <AuthorizationContext.Provider
       value={{
-        authorization: authorizationState.data,
+        authorizationState,
         setAuthorization,
         clearAuthorization,
       }}
@@ -83,5 +79,5 @@ export function AuthorizationProvider({
 }
 
 export const useAuthorization = () =>
-  useContext(AuthorizationContext).authorization;
+  useContext(AuthorizationContext).authorizationState.data;
 export const useAuthorizationContext = () => useContext(AuthorizationContext);

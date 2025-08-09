@@ -15,9 +15,10 @@ import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 type Props = {
   contestMetadata?: ContestMetadataResponseDTO;
   signInPath: string;
+  allowRoot?: boolean;
 };
 
-export function Navbar({ contestMetadata, signInPath }: Props) {
+export function Navbar({ contestMetadata, signInPath, allowRoot }: Props) {
   const { theme, toggleTheme } = useTheme();
   const authorization = useAuthorization();
   const { clearAuthorization } = useAuthorizationContext();
@@ -33,7 +34,8 @@ export function Navbar({ contestMetadata, signInPath }: Props) {
   }
 
   const isGuest =
-    !authorization?.member || authorization.member.type === MemberType.ROOT;
+    !authorization?.member ||
+    (!allowRoot && authorization.member.type === MemberType.ROOT);
 
   return (
     <nav className="navbar bg-base-100">
@@ -60,7 +62,7 @@ export function Navbar({ contestMetadata, signInPath }: Props) {
             <li>
               <details>
                 <summary className="font-semibold" data-testid="member">
-                  {authorization?.member.name || t("guest-name")}
+                  {isGuest ? t("guest-name") : authorization?.member.name}
                 </summary>
                 <ul
                   className="bg-base-100 rounded-t-none right-0 !mt-0"
@@ -77,7 +79,7 @@ export function Navbar({ contestMetadata, signInPath }: Props) {
                       className="text-nowrap"
                       data-testid="sign"
                     >
-                      {!isGuest ? t("sign-out:label") : t("sign-in:label")}
+                      {isGuest ? t("sign-in:label") : t("sign-out:label")}
                     </a>
                   </li>
                 </ul>

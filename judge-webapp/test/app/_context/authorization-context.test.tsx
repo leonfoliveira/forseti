@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import {
   AuthorizationProvider,
+  useAuthorization,
   useAuthorizationContext,
 } from "@/app/_context/authorization-context";
 import { authenticationService } from "@/config/composition";
@@ -54,7 +55,8 @@ describe("AuthorizationProvider", () => {
 
   it("sets new authorization and updates context", async () => {
     const TestComponent = () => {
-      const { setAuthorization, authorization } = useAuthorizationContext();
+      const authorization = useAuthorization();
+      const { setAuthorization } = useAuthorizationContext();
       return (
         <div>
           <button
@@ -95,7 +97,7 @@ describe("AuthorizationProvider", () => {
       return (
         <div>
           <button
-            onClick={() => clearAuthorization(routes.ROOT_SIGN_IN())}
+            onClick={() => clearAuthorization(routes.ROOT_SIGN_IN)}
             data-testid="clear-authorization"
           >
             Clear Authorization
@@ -103,10 +105,6 @@ describe("AuthorizationProvider", () => {
         </div>
       );
     };
-
-    (authenticationService.getAuthorization as jest.Mock).mockReturnValue({
-      member: {},
-    });
 
     await act(async () => {
       render(
@@ -121,6 +119,5 @@ describe("AuthorizationProvider", () => {
     });
 
     expect(authenticationService.cleanAuthorization).toHaveBeenCalled();
-    expect(mockRouter.push).toHaveBeenCalledWith(routes.ROOT_SIGN_IN());
   });
 });

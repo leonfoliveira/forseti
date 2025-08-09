@@ -1,7 +1,7 @@
 function build(
   path: string,
   params: Record<string, string | number | boolean> = {},
-  query: Record<string, string | number | boolean | undefined> = {},
+  query: Record<string, string | number | boolean | undefined> = {}
 ): string {
   Object.entries(params).forEach(([key, value]) => {
     path = path.replace(`{${key}}`, String(value));
@@ -61,25 +61,23 @@ export const routes = {
   ROOT_CONTESTS: build(paths.ROOT_CONTESTS),
   ROOT_CONTESTS_NEW: build(paths.ROOT_CONTESTS_NEW),
   ROOT_CONTESTS_EDIT: (id: string) => build(paths.ROOT_CONTESTS_EDIT, { id }),
-  ROOT_SIGN_IN: (signOut?: boolean) =>
-    build(paths.ROOT_SIGN_IN, {}, { signOut }),
-  CONTEST_SIGN_IN: (slug: string, signOut?: boolean) =>
-    build(paths.CONTEST_SIGN_IN, { slug }, { signOut }),
+  ROOT_SIGN_IN: build(paths.ROOT_SIGN_IN),
+  CONTEST_SIGN_IN: (slug: string) => build(paths.CONTEST_SIGN_IN, { slug }),
   CONTEST: withSlug(paths.CONTEST),
   CONTEST_CONTESTANT: withSlug(paths.CONTEST_CONTESTANT),
   CONTEST_CONTESTANT_LEADERBOARD: withSlug(
-    paths.CONTEST_CONTESTANT_LEADERBOARD,
+    paths.CONTEST_CONTESTANT_LEADERBOARD
   ),
   CONTEST_CONTESTANT_PROBLEMS: withSlug(paths.CONTEST_CONTESTANT_PROBLEMS),
   CONTEST_CONTESTANT_SUBMISSIONS: withSlug(
-    paths.CONTEST_CONTESTANT_SUBMISSIONS,
+    paths.CONTEST_CONTESTANT_SUBMISSIONS
   ),
   CONTEST_CONTESTANT_TIMELINE: withSlug(paths.CONTEST_CONTESTANT_TIMELINE),
   CONTEST_CONTESTANT_CLARIFICATIONS: withSlug(
-    paths.CONTEST_CONTESTANT_CLARIFICATIONS,
+    paths.CONTEST_CONTESTANT_CLARIFICATIONS
   ),
   CONTEST_CONTESTANT_ANNOUNCEMENTS: withSlug(
-    paths.CONTEST_CONTESTANT_ANNOUNCEMENTS,
+    paths.CONTEST_CONTESTANT_ANNOUNCEMENTS
   ),
   CONTEST_JUDGE: withSlug(paths.CONTEST_JUDGE),
   CONTEST_JUDGE_LEADERBOARD: withSlug(paths.CONTEST_JUDGE_LEADERBOARD),

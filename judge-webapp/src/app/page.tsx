@@ -53,7 +53,7 @@ export default function HomePage() {
   }
 
   function redirectRoot() {
-    router.push(routes.ROOT_SIGN_IN());
+    router.push(routes.ROOT_SIGN_IN);
   }
 
   return (
