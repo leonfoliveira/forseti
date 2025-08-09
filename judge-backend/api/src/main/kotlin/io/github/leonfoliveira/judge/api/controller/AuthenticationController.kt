@@ -34,7 +34,7 @@ class AuthenticationController(
 
     @GetMapping("/me")
     fun getAuthorization(): ResponseEntity<Authorization> {
-        logger.info("[POST] /v1/auth/me")
+        logger.info("[GET] /v1/auth/me")
         val authorization = AuthorizationContextUtil.get()
         return ResponseEntity.ok(authorization)
     }
