@@ -45,8 +45,8 @@ class WebSocketPrivateInterceptor : ChannelInterceptor {
             throw UnauthorizedException()
         }
 
-        if (allowedMembers.isNotEmpty() && auth.principal?.type !in allowedMembers) {
-            logger.info("User type not allowed: ${auth.principal?.type}")
+        if (allowedMembers.isNotEmpty() && auth.principal?.member?.type !in allowedMembers) {
+            logger.info("User type not allowed: ${auth.principal?.member?.type}")
             throw ForbiddenException()
         }
 

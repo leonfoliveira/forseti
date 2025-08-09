@@ -74,7 +74,7 @@ class AuthorizationServiceTest : FunSpec({
             every { memberRepository.findByLogin(inputDTO.login) } returns member
             every { hashAdapter.verify(inputDTO.password, member.password) } returns true
             val authorization = AuthorizationMockBuilder.build()
-            every { jwtAdapter.generateAuthorization(member) } returns authorization
+            every { jwtAdapter.buildAuthorization(member) } returns authorization
 
             val result = sut.authenticate(inputDTO)
 
@@ -95,7 +95,7 @@ class AuthorizationServiceTest : FunSpec({
             val member = MemberMockBuilder.build(login = "autojudge")
             every { memberRepository.findByLogin("autojudge") } returns member
             val authorization = AuthorizationMockBuilder.build()
-            every { jwtAdapter.generateAuthorization(member) } returns authorization
+            every { jwtAdapter.buildAuthorization(member) } returns authorization
 
             val result = sut.authenticateAutoJudge()
 
@@ -165,11 +165,22 @@ class AuthorizationServiceTest : FunSpec({
             every { contestRepository.findById(contestId) } returns Optional.of(contest)
             every { hashAdapter.verify(inputDTO.password, member.password) } returns true
             val authorization = AuthorizationMockBuilder.build()
-            every { jwtAdapter.generateAuthorization(member) } returns authorization
+            every { jwtAdapter.buildAuthorization(member) } returns authorization
 
             val result = sut.authenticateForContest(contestId, inputDTO)
 
             result shouldBe authorization
+        }
+    }
+
+    context("encodeToken") {
+        test("should encode authorization to token") {
+            val authorization = AuthorizationMockBuilder.build()
+            every { jwtAdapter.encodeToken(authorization) } returns "encodedToken"
+
+            val result = sut.encodeToken(authorization)
+
+            result shouldBe "encodedToken"
         }
     }
 })

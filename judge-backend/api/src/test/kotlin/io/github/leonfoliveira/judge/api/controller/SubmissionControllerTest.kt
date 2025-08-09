@@ -40,7 +40,8 @@ class SubmissionControllerTest(
         val member = AuthorizationMockBuilder.buildMember()
 
         beforeEach {
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(member)
+            val authorization = AuthorizationMockBuilder.build(member=member)
+            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
         }
 
         test("findAllFullSubmissionsForMember") {

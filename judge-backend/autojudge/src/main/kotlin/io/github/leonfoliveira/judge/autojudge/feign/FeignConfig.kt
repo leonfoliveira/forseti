@@ -12,7 +12,8 @@ class FeignConfig(
 ) : RequestInterceptor {
     override fun apply(template: RequestTemplate) {
         val authorization = authorizationService.authenticateAutoJudge()
-        template.header("Cookie", "access_token=${authorization.accessToken}")
+        val accessToken = authorizationService.encodeToken(authorization)
+        template.header("Cookie", "access_token=${accessToken}")
 
         val traceId = MDC.get("traceId")
         if (traceId != null) {

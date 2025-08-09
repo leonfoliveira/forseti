@@ -5,6 +5,7 @@ import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
+import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -94,11 +95,12 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         every { accessor.destination } returns "/topic/contests/1/submissions/full"
         every { message.headers.get("simpUser") } returns
             JwtAuthentication(
-                AuthorizationMember(
+                AuthorizationMockBuilder.build(
+                    member = AuthorizationMember(
                     id = UUID.randomUUID(),
                     type = Member.Type.CONTESTANT,
                     name = "Test User",
-                ),
+                    )),
             )
 
         shouldThrow<ForbiddenException> {
@@ -114,11 +116,12 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         every { accessor.destination } returns "/topic/contests/1/submissions/full"
         every { message.headers.get("simpUser") } returns
             JwtAuthentication(
-                AuthorizationMember(
+                AuthorizationMockBuilder.build(
+                    member = AuthorizationMember(
                     id = UUID.randomUUID(),
                     type = Member.Type.JUDGE,
                     name = "Test User",
-                ),
+                )),
             )
 
         val result = sut.preSend(message, channel)

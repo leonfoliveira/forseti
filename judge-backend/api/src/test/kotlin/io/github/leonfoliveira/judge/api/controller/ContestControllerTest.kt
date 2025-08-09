@@ -16,6 +16,7 @@ import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.config.JacksonConfig
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.mock.entity.AnnouncementMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ClarificationMockBuilder
@@ -347,9 +348,9 @@ class ContestControllerTest(
                     text = "This is a test announcement",
                 )
             val announcement = AnnouncementMockBuilder.build()
-            val member = AuthorizationMockBuilder.buildMember()
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(member)
-            every { createAnnouncementService.create(contestId, member.id, body) } returns announcement
+            val authorization = AuthorizationMockBuilder.build()
+            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
+            every { createAnnouncementService.create(contestId, authorization.member.id, body) } returns announcement
 
             webMvc.post("/v1/contests/{id}/announcements", contestId) {
                 contentType = MediaType.APPLICATION_JSON
@@ -369,9 +370,9 @@ class ContestControllerTest(
                     text = "This is a test clarification",
                 )
             val clarification = ClarificationMockBuilder.build()
-            val member = AuthorizationMockBuilder.buildMember()
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(member)
-            every { createClarificationService.create(contestId, member.id, body) } returns clarification
+            val authorization = AuthorizationMockBuilder.build()
+            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
+            every { createClarificationService.create(contestId, authorization.member.id, body) } returns clarification
 
             webMvc.post("/v1/contests/{id}/clarifications", contestId) {
                 contentType = MediaType.APPLICATION_JSON

@@ -61,7 +61,8 @@ class AuthenticationController(
     }
 
     private fun buildCookie(authorization: Authorization): ResponseCookie {
-        return ResponseCookie.from("access_token", authorization.accessToken)
+        val accessToken = authorizationService.encodeToken(authorization)
+        return ResponseCookie.from("access_token", accessToken)
             .httpOnly(true)
             .secure(true)
             .path("/")
