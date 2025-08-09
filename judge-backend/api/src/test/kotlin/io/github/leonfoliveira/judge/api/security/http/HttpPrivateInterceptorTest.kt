@@ -5,7 +5,6 @@ import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
-import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
@@ -71,12 +70,13 @@ class HttpPrivateInterceptorTest : FunSpec({
         SecurityContextHolder.getContext().authentication =
             JwtAuthentication(
                 AuthorizationMockBuilder.build(
-                    member = AuthorizationMember(
-                        id = UUID.randomUUID(),
-                        type = Member.Type.CONTESTANT,
-                        name = "Test User",
-                    ),
-                )
+                    member =
+                        AuthorizationMember(
+                            id = UUID.randomUUID(),
+                            type = Member.Type.CONTESTANT,
+                            name = "Test User",
+                        ),
+                ),
             )
 
         shouldThrow<ForbiddenException> {
@@ -92,12 +92,13 @@ class HttpPrivateInterceptorTest : FunSpec({
         SecurityContextHolder.getContext().authentication =
             JwtAuthentication(
                 AuthorizationMockBuilder.build(
-                        member = AuthorizationMember(
-                        id = UUID.randomUUID(),
-                        type = Member.Type.CONTESTANT,
-                        name = "Test User",
-                    )
-                )
+                    member =
+                        AuthorizationMember(
+                            id = UUID.randomUUID(),
+                            type = Member.Type.CONTESTANT,
+                            name = "Test User",
+                        ),
+                ),
             )
 
         sut.preHandle(request, response, handler) shouldBe true

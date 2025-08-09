@@ -24,13 +24,14 @@ class OAuthJwtAdapter(
 ) : JwtAdapter {
     override fun buildAuthorization(member: Member): Authorization {
         val issuedAt = OffsetDateTime.now()
-        val expiresAt = issuedAt.plusSeconds(
-            if (member.type == Member.Type.ROOT) {
-                UnitUtil.parseTimeValue(rootExpiration)
-            } else {
-                UnitUtil.parseTimeValue(expiration)
-            } / 1000L,
-        )
+        val expiresAt =
+            issuedAt.plusSeconds(
+                if (member.type == Member.Type.ROOT) {
+                    UnitUtil.parseTimeValue(rootExpiration)
+                } else {
+                    UnitUtil.parseTimeValue(expiration)
+                } / 1000L,
+            )
 
         return Authorization(
             member =
@@ -70,12 +71,13 @@ class OAuthJwtAdapter(
         val decoded = verifier.verify(token)
 
         return Authorization(
-            member = AuthorizationMember(
-                id = UUID.fromString(decoded.getClaim("id").asString()),
-                contestId = decoded.getClaim("contestId").asString()?.let(UUID::fromString),
-                name = decoded.getClaim("name").asString(),
-                type = Member.Type.valueOf(decoded.getClaim("type").asString()),
-            ),
+            member =
+                AuthorizationMember(
+                    id = UUID.fromString(decoded.getClaim("id").asString()),
+                    contestId = decoded.getClaim("contestId").asString()?.let(UUID::fromString),
+                    name = decoded.getClaim("name").asString(),
+                    type = Member.Type.valueOf(decoded.getClaim("type").asString()),
+                ),
             issuedAt = decoded.issuedAt.toInstant().atOffset(ZoneOffset.UTC),
             expiresAt = decoded.expiresAt.toInstant().atOffset(ZoneOffset.UTC),
         )

@@ -44,13 +44,15 @@ class AuthorizationExtractorTest : FunSpec({
     }
 
     test("should return AuthorizationMember when token is valid") {
-        val expectedAuthorization = AuthorizationMockBuilder.build(
-            member = AuthorizationMember(
-                id = UUID.randomUUID(),
-                type = Member.Type.ROOT,
-                name = "Test User",
+        val expectedAuthorization =
+            AuthorizationMockBuilder.build(
+                member =
+                    AuthorizationMember(
+                        id = UUID.randomUUID(),
+                        type = Member.Type.ROOT,
+                        name = "Test User",
+                    ),
             )
-        )
         every { jwtAdapter.decodeToken("valid-token") } returns expectedAuthorization
 
         val result = sut.extract("valid-token")

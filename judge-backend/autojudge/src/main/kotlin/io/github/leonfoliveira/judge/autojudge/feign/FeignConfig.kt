@@ -13,7 +13,7 @@ class FeignConfig(
     override fun apply(template: RequestTemplate) {
         val authorization = authorizationService.authenticateAutoJudge()
         val accessToken = authorizationService.encodeToken(authorization)
-        template.header("Cookie", "access_token=${accessToken}")
+        template.header("Cookie", "access_token=$accessToken")
 
         val traceId = MDC.get("traceId")
         if (traceId != null) {

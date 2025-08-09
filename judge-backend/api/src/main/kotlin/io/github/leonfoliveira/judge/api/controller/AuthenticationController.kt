@@ -4,9 +4,6 @@ import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.AuthenticateInputDTO
-import java.time.Duration
-import java.time.OffsetDateTime
-import java.util.UUID
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
@@ -20,6 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.Duration
+import java.time.OffsetDateTime
+import java.util.UUID
 
 @RestController
 @RequestMapping("/v1/auth")
@@ -43,7 +43,8 @@ class AuthenticationController(
     fun cleanAuthorization(): ResponseEntity<Void> {
         logger.info("[POST] /v1/auth/clean")
         return ResponseEntity.noContent()
-            .header(HttpHeaders.SET_COOKIE,
+            .header(
+                HttpHeaders.SET_COOKIE,
                 ResponseCookie.from("access_token", "")
                     .httpOnly(true)
                     .secure(true)
@@ -51,7 +52,7 @@ class AuthenticationController(
                     .maxAge(0)
                     .sameSite("Lax")
                     .build()
-                    .toString()
+                    .toString(),
             )
             .build()
     }

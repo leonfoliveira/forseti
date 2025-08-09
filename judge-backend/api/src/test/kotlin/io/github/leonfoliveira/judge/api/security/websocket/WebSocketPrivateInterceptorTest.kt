@@ -96,11 +96,13 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         every { message.headers.get("simpUser") } returns
             JwtAuthentication(
                 AuthorizationMockBuilder.build(
-                    member = AuthorizationMember(
-                    id = UUID.randomUUID(),
-                    type = Member.Type.CONTESTANT,
-                    name = "Test User",
-                    )),
+                    member =
+                        AuthorizationMember(
+                            id = UUID.randomUUID(),
+                            type = Member.Type.CONTESTANT,
+                            name = "Test User",
+                        ),
+                ),
             )
 
         shouldThrow<ForbiddenException> {
@@ -117,11 +119,13 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         every { message.headers.get("simpUser") } returns
             JwtAuthentication(
                 AuthorizationMockBuilder.build(
-                    member = AuthorizationMember(
-                    id = UUID.randomUUID(),
-                    type = Member.Type.JUDGE,
-                    name = "Test User",
-                )),
+                    member =
+                        AuthorizationMember(
+                            id = UUID.randomUUID(),
+                            type = Member.Type.JUDGE,
+                            name = "Test User",
+                        ),
+                ),
             )
 
         val result = sut.preSend(message, channel)

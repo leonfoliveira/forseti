@@ -16,7 +16,6 @@ import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.config.JacksonConfig
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
-import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.mock.entity.AnnouncementMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ClarificationMockBuilder

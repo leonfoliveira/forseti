@@ -27,7 +27,8 @@ class AuthorizationContextUtilTest : FunSpec({
                 type = Member.Type.ROOT,
                 name = "Test User",
             )
-        SecurityContextHolder.getContext().authentication = JwtAuthentication(AuthorizationMockBuilder.build(member=expectedAuthorizationMember))
+        SecurityContextHolder.getContext().authentication =
+            JwtAuthentication(AuthorizationMockBuilder.build(member = expectedAuthorizationMember))
 
         val result = AuthorizationContextUtil.getMember()
 

@@ -2,7 +2,6 @@ package io.github.leonfoliveira.judge.api.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
@@ -13,13 +12,13 @@ import io.mockk.every
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.post
-import java.util.UUID
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.post
+import java.util.UUID
 
 @WebMvcTest(controllers = [AuthenticationController::class])
 @AutoConfigureMockMvc(addFilters = false)
