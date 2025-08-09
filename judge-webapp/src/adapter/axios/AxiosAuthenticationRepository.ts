@@ -7,19 +7,28 @@ import { Authorization } from "@/core/domain/model/Authorization";
 export class AxiosAuthenticationRepository implements AuthenticationRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
 
+  async getAuthorization(): Promise<Authorization> {
+    const response = await this.axiosClient.get<Authorization>("/v1/auth/me");
+    return response.data;
+  }
+
+  async cleanAuthorization(): Promise<void> {
+    await this.axiosClient.delete("/v1/auth/me");
+  }
+
   async authenticateMember(
     contestId: string,
-    requestDTO: AuthenticateMemberRequestDTO,
+    requestDTO: AuthenticateMemberRequestDTO
   ): Promise<Authorization> {
     const response = await this.axiosClient.post<Authorization>(
       `/v1/auth/contests/${contestId}/sign-in`,
-      { data: requestDTO },
+      { data: requestDTO }
     );
     return response.data;
   }
 
   async authenticateRoot(
-    requestDTO: AuthenticateRootRequestDTO,
+    requestDTO: AuthenticateRootRequestDTO
   ): Promise<Authorization> {
     const response = await this.axiosClient.post<Authorization>(
       "/v1/auth/sign-in",
@@ -28,7 +37,7 @@ export class AxiosAuthenticationRepository implements AuthenticationRepository {
           login: "root",
           password: requestDTO.password,
         },
-      },
+      }
     );
     return response.data;
   }

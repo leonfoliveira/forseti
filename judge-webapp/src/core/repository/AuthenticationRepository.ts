@@ -3,12 +3,16 @@ import { AuthenticateMemberRequestDTO } from "@/core/repository/dto/request/Auth
 import { Authorization } from "@/core/domain/model/Authorization";
 
 export interface AuthenticationRepository {
+  getAuthorization(): Promise<Authorization>;
+
+  cleanAuthorization(): Promise<void>;
+
   authenticateRoot(
-    requestDTO: AuthenticateRootRequestDTO,
+    requestDTO: AuthenticateRootRequestDTO
   ): Promise<Authorization>;
 
   authenticateMember(
     contestId: string,
-    requestDTO: AuthenticateMemberRequestDTO,
+    requestDTO: AuthenticateMemberRequestDTO
   ): Promise<Authorization>;
 }

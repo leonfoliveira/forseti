@@ -12,6 +12,28 @@ describe("AuthenticationService", () => {
     jest.clearAllMocks();
   });
 
+  describe("getAuthorization", () => {
+    it("should call authenticationRepository.getAuthorization", async () => {
+      const authorization = { member: {} } as unknown as Authorization;
+      authenticationRepository.getAuthorization.mockResolvedValue(
+        authorization
+      );
+
+      const result = await sut.getAuthorization();
+
+      expect(authenticationRepository.getAuthorization).toHaveBeenCalled();
+      expect(result).toEqual(authorization);
+    });
+  });
+
+  describe("cleanAuthorization", () => {
+    it("should call authenticationRepository.cleanAuthorization", async () => {
+      await sut.cleanAuthorization();
+
+      expect(authenticationRepository.cleanAuthorization).toHaveBeenCalled();
+    });
+  });
+
   describe("authenticateRoot", () => {
     it("should call authenticationRepository.authenticateRoot with correct parameters", async () => {
       const requestDTO = { password: "password" };
@@ -19,13 +41,13 @@ describe("AuthenticationService", () => {
         accessToken: "token",
       } as unknown as Authorization;
       authenticationRepository.authenticateRoot.mockResolvedValue(
-        authorization,
+        authorization
       );
 
       const result = await sut.authenticateRoot(requestDTO);
 
       expect(authenticationRepository.authenticateRoot).toHaveBeenCalledWith(
-        requestDTO,
+        requestDTO
       );
       expect(result).toEqual(authorization);
     });
@@ -39,14 +61,14 @@ describe("AuthenticationService", () => {
         accessToken: "token",
       } as unknown as Authorization;
       authenticationRepository.authenticateMember.mockResolvedValue(
-        authorization,
+        authorization
       );
 
       const result = await sut.authenticateMember(contestId, requestDTO);
 
       expect(authenticationRepository.authenticateMember).toHaveBeenCalledWith(
         contestId,
-        requestDTO,
+        requestDTO
       );
       expect(result).toEqual(authorization);
     });

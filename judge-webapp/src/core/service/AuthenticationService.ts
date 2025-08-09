@@ -5,22 +5,30 @@ import { Authorization } from "@/core/domain/model/Authorization";
 
 export class AuthenticationService {
   constructor(
-    private readonly authenticationRepository: AuthenticationRepository,
+    private readonly authenticationRepository: AuthenticationRepository
   ) {}
 
+  async getAuthorization(): Promise<Authorization> {
+    return await this.authenticationRepository.getAuthorization();
+  }
+
+  async cleanAuthorization(): Promise<void> {
+    await this.authenticationRepository.cleanAuthorization();
+  }
+
   async authenticateRoot(
-    requestDTO: AuthenticateRootRequestDTO,
+    requestDTO: AuthenticateRootRequestDTO
   ): Promise<Authorization> {
     return await this.authenticationRepository.authenticateRoot(requestDTO);
   }
 
   async authenticateMember(
     contestId: string,
-    requestDTO: AuthenticateMemberRequestDTO,
+    requestDTO: AuthenticateMemberRequestDTO
   ): Promise<Authorization> {
     return await this.authenticationRepository.authenticateMember(
       contestId,
-      requestDTO,
+      requestDTO
     );
   }
 }
