@@ -3,10 +3,12 @@ import {
   AuthorizationProvider,
   useAuthorizationContext,
 } from "@/app/_context/authorization-context";
-import { authorizationService } from "@/config/composition";
+import { authenticationService } from "@/config/composition";
+import { routes } from "@/config/routes";
+import { mockRouter } from "@/test/jest.setup";
 
 jest.mock("@/app/_context/authorization-context", () =>
-  jest.requireActual("@/app/_context/authorization-context"),
+  jest.requireActual("@/app/_context/authorization-context")
 );
 
 jest.mock("@/app/_component/page/loading-page", () => ({
@@ -19,17 +21,15 @@ jest.mock("@/app/_component/page/error-page", () => ({
 
 describe("AuthorizationProvider", () => {
   it("renders error page when authorization fails to load", async () => {
-    (authorizationService.getAuthorization as jest.Mock).mockImplementation(
-      () => {
-        throw new Error("Failed to load");
-      },
+    (authenticationService.getAuthorization as jest.Mock).mockRejectedValueOnce(
+      new Error("Failed to load authorization")
     );
 
     await act(async () => {
       render(
         <AuthorizationProvider>
           <div>Child Component</div>
-        </AuthorizationProvider>,
+        </AuthorizationProvider>
       );
     });
 
@@ -37,15 +37,15 @@ describe("AuthorizationProvider", () => {
   });
 
   it("renders children when authorization loads successfully", async () => {
-    (authorizationService.getAuthorization as jest.Mock).mockReturnValue({
-      token: "test-token",
+    (authenticationService.getAuthorization as jest.Mock).mockResolvedValue({
+      member: {},
     });
 
     await act(async () => {
       render(
         <AuthorizationProvider>
           <div data-testid="child">Child Component</div>
-        </AuthorizationProvider>,
+        </AuthorizationProvider>
       );
     });
 
@@ -59,26 +59,26 @@ describe("AuthorizationProvider", () => {
         <div>
           <button
             onClick={() =>
-              setAuthorization({ accessToken: "new-token" } as any)
+              setAuthorization({ member: { id: "new-member-id" } } as any)
             }
             data-testid="set-authorization"
           >
             Set Authorization
           </button>
-          <span data-testid="access-token">{authorization?.accessToken}</span>
+          <span data-testid="member">{authorization?.member.id}</span>
         </div>
       );
     };
 
-    (authorizationService.getAuthorization as jest.Mock).mockReturnValue(
-      undefined,
+    (authenticationService.getAuthorization as jest.Mock).mockResolvedValue(
+      undefined
     );
 
     await act(async () => {
       render(
         <AuthorizationProvider>
           <TestComponent />
-        </AuthorizationProvider>,
+        </AuthorizationProvider>
       );
     });
 
@@ -86,39 +86,33 @@ describe("AuthorizationProvider", () => {
       fireEvent.click(screen.getByTestId("set-authorization"));
     });
 
-    expect(screen.getByTestId("access-token")).toBeInTheDocument();
-    expect(authorizationService.setAuthorization).toHaveBeenCalledWith({
-      accessToken: "new-token",
-    });
+    expect(screen.getByTestId("member")).toHaveTextContent("new-member-id");
   });
 
   it("clears authorization and updates context", async () => {
     const TestComponent = () => {
-      const { clearAuthorization, authorization } = useAuthorizationContext();
+      const { clearAuthorization } = useAuthorizationContext();
       return (
         <div>
           <button
-            onClick={clearAuthorization}
+            onClick={() => clearAuthorization(routes.ROOT_SIGN_IN())}
             data-testid="clear-authorization"
           >
             Clear Authorization
           </button>
-          <span data-testid="access-token">
-            {authorization?.accessToken || "No Authorization"}
-          </span>
         </div>
       );
     };
 
-    (authorizationService.getAuthorization as jest.Mock).mockReturnValue({
-      accessToken: "test-token",
+    (authenticationService.getAuthorization as jest.Mock).mockReturnValue({
+      member: {},
     });
 
     await act(async () => {
       render(
         <AuthorizationProvider>
           <TestComponent />
-        </AuthorizationProvider>,
+        </AuthorizationProvider>
       );
     });
 
@@ -126,7 +120,7 @@ describe("AuthorizationProvider", () => {
       fireEvent.click(screen.getByTestId("clear-authorization"));
     });
 
-    expect(screen.getByTestId("access-token")).toBeInTheDocument();
-    expect(authorizationService.deleteAuthorization).toHaveBeenCalled();
+    expect(authenticationService.cleanAuthorization).toHaveBeenCalled();
+    expect(mockRouter.push).toHaveBeenCalledWith(routes.ROOT_SIGN_IN());
   });
 });

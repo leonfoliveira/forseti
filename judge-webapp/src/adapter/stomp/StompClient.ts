@@ -1,13 +1,9 @@
 import { CompatClient } from "@stomp/stompjs";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 import { ServerException } from "@/core/domain/exception/ServerException";
-import { AuthorizationService } from "@/core/service/AuthorizationService";
 
 export class StompClient implements ListenerClient {
-  constructor(
-    private readonly client: CompatClient,
-    private readonly authorizationService: AuthorizationService,
-  ) {}
+  constructor(private readonly client: CompatClient) {}
 
   async connect() {
     return new Promise<void>((resolve, reject) => {
@@ -24,9 +20,7 @@ export class StompClient implements ListenerClient {
       this.client.onStompError = (error) => {
         console.error("STOMP error: ", error);
         reject(
-          new ServerException(
-            error.headers["message"] || "Unknown STOMP error",
-          ),
+          new ServerException(error.headers["message"] || "Unknown STOMP error")
         );
       };
 
@@ -35,13 +29,10 @@ export class StompClient implements ListenerClient {
   }
 
   async subscribe<TData>(topic: string, callback: (data: TData) => void) {
-    this.client.subscribe(
-      topic,
-      (message) => {
-        const data = JSON.parse(message.body) as TData;
-        callback(data);
-      },
-    );
+    this.client.subscribe(topic, (message) => {
+      const data = JSON.parse(message.body) as TData;
+      callback(data);
+    });
     console.debug(`Subscribed to topic: ${topic}`);
   }
 

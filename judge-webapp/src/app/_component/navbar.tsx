@@ -2,11 +2,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import { useTheme } from "@/app/_util/theme-hook";
-import { useAuthorization } from "@/app/_context/authorization-context";
+import {
+  useAuthorization,
+  useAuthorizationContext,
+} from "@/app/_context/authorization-context";
 import { useTranslations } from "next-intl";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
-import { redirect, RedirectType } from "next/navigation";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 
@@ -18,18 +20,20 @@ type Props = {
 export function Navbar({ contestMetadata, signInPath }: Props) {
   const { theme, toggleTheme } = useTheme();
   const authorization = useAuthorization();
-  const { formatMemberType } = useContestFormatter()
+  const { clearAuthorization } = useAuthorizationContext();
+  const { formatMemberType } = useContestFormatter();
   const t = useTranslations("_component.navbar");
 
   const clockRef = useWaitClock(
-    contestMetadata && new Date(contestMetadata.endAt),
+    contestMetadata && new Date(contestMetadata.endAt)
   );
 
   function signOut() {
-    redirect(signInPath, RedirectType.push);
+    clearAuthorization(signInPath);
   }
 
-  const isGuest = !authorization?.member || authorization.member.type === MemberType.ROOT;
+  const isGuest =
+    !authorization?.member || authorization.member.type === MemberType.ROOT;
 
   return (
     <nav className="navbar bg-base-100">
@@ -73,9 +77,7 @@ export function Navbar({ contestMetadata, signInPath }: Props) {
                       className="text-nowrap"
                       data-testid="sign"
                     >
-                      {!isGuest
-                        ? t("sign-out:label")
-                        : t("sign-in:label")}
+                      {!isGuest ? t("sign-out:label") : t("sign-in:label")}
                     </a>
                   </li>
                 </ul>

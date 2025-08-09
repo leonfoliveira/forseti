@@ -2,8 +2,11 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { Navbar } from "@/app/_component/navbar";
 import { useTheme } from "@/app/_util/theme-hook";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
-import { redirect, RedirectType } from "next/navigation";
-import { mockUseAuthorization } from "@/test/jest.setup";
+import { redirect } from "next/navigation";
+import {
+  mockClearAuthorization,
+  mockUseAuthorization,
+} from "@/test/jest.setup";
 
 jest.mock("@/app/_util/theme-hook", () => ({
   useTheme: jest.fn(),
@@ -78,13 +81,6 @@ describe("Navbar", () => {
     render(<Navbar signInPath="/sign-in" />);
     fireEvent.click(screen.getByTestId("member"));
     fireEvent.click(screen.getByTestId("sign"));
-    expect(mockRedirect).toHaveBeenCalledWith("/sign-in", RedirectType.push);
-  });
-
-  it("calls redirect on sign in click when not authorized", () => {
-    render(<Navbar signInPath="/sign-in" />);
-    fireEvent.click(screen.getByTestId("member"));
-    fireEvent.click(screen.getByTestId("sign"));
-    expect(mockRedirect).toHaveBeenCalledWith("/sign-in", RedirectType.push);
+    expect(mockClearAuthorization).toHaveBeenCalledWith("/sign-in");
   });
 });
