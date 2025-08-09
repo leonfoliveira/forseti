@@ -59,7 +59,7 @@ class OAuthJwtAdapter(
                 .withClaim("type", authorization.member.type.toString())
 
         if (authorization.member.contestId != null) {
-            jwt.withClaim("contestId", authorization.member.id.toString())
+            jwt.withClaim("contestId", authorization.member.contestId.toString())
         }
 
         return jwt.sign(algorithm)
