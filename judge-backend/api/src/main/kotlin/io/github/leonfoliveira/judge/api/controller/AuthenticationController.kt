@@ -41,7 +41,7 @@ class AuthenticationController(
 
     @DeleteMapping("/me")
     fun cleanAuthorization(): ResponseEntity<Void> {
-        logger.info("[POST] /v1/auth/clean")
+        logger.info("[DELETE] /v1/auth/me")
         return ResponseEntity.noContent()
             .header(
                 HttpHeaders.SET_COOKIE,
