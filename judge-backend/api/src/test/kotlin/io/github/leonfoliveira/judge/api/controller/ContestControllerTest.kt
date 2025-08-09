@@ -347,9 +347,9 @@ class ContestControllerTest(
                     text = "This is a test announcement",
                 )
             val announcement = AnnouncementMockBuilder.build()
-            val member = AuthorizationMockBuilder.buildMember()
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(member)
-            every { createAnnouncementService.create(contestId, member.id, body) } returns announcement
+            val authorization = AuthorizationMockBuilder.build()
+            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
+            every { createAnnouncementService.create(contestId, authorization.member.id, body) } returns announcement
 
             webMvc.post("/v1/contests/{id}/announcements", contestId) {
                 contentType = MediaType.APPLICATION_JSON
@@ -369,9 +369,9 @@ class ContestControllerTest(
                     text = "This is a test clarification",
                 )
             val clarification = ClarificationMockBuilder.build()
-            val member = AuthorizationMockBuilder.buildMember()
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(member)
-            every { createClarificationService.create(contestId, member.id, body) } returns clarification
+            val authorization = AuthorizationMockBuilder.build()
+            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
+            every { createClarificationService.create(contestId, authorization.member.id, body) } returns clarification
 
             webMvc.post("/v1/contests/{id}/clarifications", contestId) {
                 contentType = MediaType.APPLICATION_JSON

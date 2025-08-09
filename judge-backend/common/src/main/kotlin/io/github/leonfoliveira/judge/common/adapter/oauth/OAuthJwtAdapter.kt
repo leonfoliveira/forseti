@@ -10,6 +10,7 @@ import io.github.leonfoliveira.judge.common.util.UnitUtil
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.UUID
 
 @Service
@@ -21,32 +22,17 @@ class OAuthJwtAdapter(
     @Value("\${security.jwt.root-expiration}")
     private val rootExpiration: String,
 ) : JwtAdapter {
-    override fun generateAuthorization(member: Member): Authorization {
-        val algorithm = Algorithm.HMAC256(secret)
-        val now = OffsetDateTime.now().toInstant()
+    override fun buildAuthorization(member: Member): Authorization {
+        val issuedAt = OffsetDateTime.now()
         val expiresAt =
-            now.plusMillis(
+            issuedAt.plusSeconds(
                 if (member.type == Member.Type.ROOT) {
                     UnitUtil.parseTimeValue(rootExpiration)
                 } else {
                     UnitUtil.parseTimeValue(expiration)
-                },
+                } / 1000L,
             )
 
-        val jwt =
-            JWT
-                .create()
-                .withIssuedAt(now)
-                .withExpiresAt(expiresAt)
-                .withClaim("id", member.id.toString())
-                .withClaim("name", member.name)
-                .withClaim("type", member.type.toString())
-
-        if (member.contest != null) {
-            jwt.withClaim("contestId", member.contest.id.toString())
-        }
-
-        val token = jwt.sign(algorithm)
         return Authorization(
             member =
                 AuthorizationMember(
@@ -55,21 +41,45 @@ class OAuthJwtAdapter(
                     name = member.name,
                     type = member.type,
                 ),
-            accessToken = token,
-            expiresAt = expiresAt.atOffset(OffsetDateTime.now().offset),
+            issuedAt = issuedAt,
+            expiresAt = expiresAt,
         )
     }
 
-    override fun decodeToken(token: String): AuthorizationMember {
+    override fun encodeToken(authorization: Authorization): String {
+        val algorithm = Algorithm.HMAC256(secret)
+
+        val jwt =
+            JWT
+                .create()
+                .withIssuedAt(authorization.issuedAt.toInstant())
+                .withExpiresAt(authorization.expiresAt.toInstant())
+                .withClaim("id", authorization.member.id.toString())
+                .withClaim("name", authorization.member.name)
+                .withClaim("type", authorization.member.type.toString())
+
+        if (authorization.member.contestId != null) {
+            jwt.withClaim("contestId", authorization.member.contestId.toString())
+        }
+
+        return jwt.sign(algorithm)
+    }
+
+    override fun decodeToken(token: String): Authorization {
         val algorithm = Algorithm.HMAC256(secret)
         val verifier = JWT.require(algorithm).build()
         val decoded = verifier.verify(token)
 
-        return AuthorizationMember(
-            id = UUID.fromString(decoded.getClaim("id").asString()),
-            contestId = decoded.getClaim("contestId").asString()?.let(UUID::fromString),
-            name = decoded.getClaim("name").asString(),
-            type = Member.Type.valueOf(decoded.getClaim("type").asString()),
+        return Authorization(
+            member =
+                AuthorizationMember(
+                    id = UUID.fromString(decoded.getClaim("id").asString()),
+                    contestId = decoded.getClaim("contestId").asString()?.let(UUID::fromString),
+                    name = decoded.getClaim("name").asString(),
+                    type = Member.Type.valueOf(decoded.getClaim("type").asString()),
+                ),
+            issuedAt = decoded.issuedAt.toInstant().atOffset(ZoneOffset.UTC),
+            expiresAt = decoded.expiresAt.toInstant().atOffset(ZoneOffset.UTC),
         )
     }
 }

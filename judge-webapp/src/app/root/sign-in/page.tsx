@@ -12,11 +12,10 @@ import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form
 import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useAuthorizationContext } from "@/app/_context/authorization-context";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useAlert } from "@/app/_context/notification-context";
 import { routes } from "@/config/routes";
-import { useEffect } from "react";
 import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form";
 
 /**
@@ -24,10 +23,9 @@ import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form";
  */
 export default function RootSignInPage() {
   const signInState = useLoadableState();
-  const { setAuthorization, clearAuthorization } = useAuthorizationContext();
+  const { setAuthorization } = useAuthorizationContext();
 
   const router = useRouter();
-  const searchParams = useSearchParams();
   const alert = useAlert();
   const t = useTranslations("root.sign-in");
   const s = useTranslations("root.sign-in._form.root-sign-in-form");
@@ -35,13 +33,6 @@ export default function RootSignInPage() {
   const form = useForm<RootSignInFormType>({
     resolver: joiResolver(rootSignInFormSchema),
   });
-
-  const signOut = searchParams.get("signOut");
-  useEffect(() => {
-    if (signOut === "true") {
-      clearAuthorization();
-    }
-  }, [signOut]);
 
   async function signIn(data: RootSignInFormType) {
     signInState.start();

@@ -2,7 +2,6 @@ import {
   announcementListener,
   attachmentService,
   authenticationService,
-  authorizationService,
   clarificationListener,
   contestService,
   leaderboardListener,
@@ -22,7 +21,6 @@ describe("composition", () => {
     expect(submissionListener).toBeDefined();
     expect(attachmentService).toBeDefined();
     expect(authenticationService).toBeDefined();
-    expect(authorizationService).toBeDefined();
     expect(clarificationListener).toBeDefined();
     expect(contestService).toBeDefined();
     expect(problemService).toBeDefined();

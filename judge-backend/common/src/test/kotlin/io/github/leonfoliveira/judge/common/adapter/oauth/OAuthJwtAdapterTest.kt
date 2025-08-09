@@ -31,38 +31,46 @@ class OAuthJwtAdapterTest : FunSpec({
     test("should generate authorization for root member") {
         val member = MemberMockBuilder.build(type = Member.Type.ROOT, contest = null)
 
-        val authorization = sut.generateAuthorization(member)
+        val authorization = sut.buildAuthorization(member)
 
         authorization.member.id shouldBe member.id
         authorization.member.contestId shouldBe null
         authorization.member.name shouldBe member.name
         authorization.member.type shouldBe Member.Type.ROOT
-        authorization.accessToken shouldNotBe null
         authorization.expiresAt shouldBe now.plusMinutes(30)
     }
 
     test("should generate authorization for regular member") {
         val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
 
-        val authorization = sut.generateAuthorization(member)
+        val authorization = sut.buildAuthorization(member)
 
         authorization.member.id shouldBe member.id
         authorization.member.contestId shouldBe member.contest?.id
         authorization.member.name shouldBe member.name
         authorization.member.type shouldBe member.type
-        authorization.accessToken shouldNotBe null
         authorization.expiresAt shouldBe now.plusHours(1)
     }
 
-    test("should decode authorization member from token") {
+    test("should encode authorization to token") {
         val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
-        val authorization = sut.generateAuthorization(member)
+        val authorization = sut.buildAuthorization(member)
 
-        val decodedMember = sut.decodeToken(authorization.accessToken)
+        val accessToken = sut.encodeToken(authorization)
 
-        decodedMember.id shouldBe member.id
-        decodedMember.contestId shouldBe member.contest?.id
-        decodedMember.name shouldBe member.name
-        decodedMember.type shouldBe member.type
+        accessToken shouldNotBe null
+        accessToken.isNotEmpty() shouldBe true
+    }
+
+    test("should decode authorization from token") {
+        val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
+        val authorization = sut.buildAuthorization(member)
+        val accessToken = sut.encodeToken(authorization)
+
+        val decodedAuthorization = sut.decodeToken(accessToken)
+
+        decodedAuthorization.member.id shouldBe member.id
+        decodedAuthorization.member.name shouldBe member.name
+        decodedAuthorization.member.type shouldBe member.type
     }
 })

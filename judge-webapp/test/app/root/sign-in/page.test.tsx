@@ -4,7 +4,6 @@ import {
   mockAlert,
   mockClearAuthorization,
   mockRouter,
-  mockSearchParams,
   mockSetAuthorization,
 } from "@/test/jest.setup";
 import { authenticationService } from "@/config/composition";
@@ -22,17 +21,9 @@ describe("RootSignInPage", () => {
     expect(screen.getByTestId("sign-in")).toHaveTextContent("sign-in:label");
   });
 
-  it("clear authorization on signOut query param", () => {
-    mockSearchParams.get.mockReturnValueOnce("true");
-
-    render(<RootSignInPage />);
-
-    expect(mockClearAuthorization).toHaveBeenCalled();
-  });
-
   it("should alert warning on unauthorized exception", async () => {
     (authenticationService.authenticateRoot as jest.Mock).mockRejectedValueOnce(
-      new UnauthorizedException("UnauthorizedException"),
+      new UnauthorizedException("UnauthorizedException")
     );
 
     render(<RootSignInPage />);
@@ -48,7 +39,7 @@ describe("RootSignInPage", () => {
 
   it("should alert error on other exceptions", async () => {
     (authenticationService.authenticateRoot as jest.Mock).mockRejectedValueOnce(
-      new Error("Some error"),
+      new Error("Some error")
     );
 
     render(<RootSignInPage />);
@@ -65,7 +56,7 @@ describe("RootSignInPage", () => {
   it("should redirect to root on successful sign-in", async () => {
     const authorization = { accessToken: "token" } as any;
     (authenticationService.authenticateRoot as jest.Mock).mockResolvedValueOnce(
-      authorization,
+      authorization
     );
 
     render(<RootSignInPage />);

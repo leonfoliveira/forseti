@@ -43,9 +43,9 @@ class HttpPrivateInterceptor : HandlerInterceptor {
         }
 
         if (privateAnnotation.allowed.isNotEmpty() &&
-            auth.principal?.type !in privateAnnotation.allowed
+            auth.principal?.member?.type !in privateAnnotation.allowed
         ) {
-            logger.info("User type not allowed: ${auth.principal?.type}")
+            logger.info("User type not allowed: ${auth.principal?.member?.type}")
             throw ForbiddenException()
         }
 

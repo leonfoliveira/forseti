@@ -3,7 +3,6 @@ import {
   mockAlert,
   mockClearAuthorization,
   mockRouter,
-  mockSearchParams,
   mockSetAuthorization,
 } from "@/test/jest.setup";
 import MemberSignInPage from "@/app/contests/[slug]/sign-in/page";
@@ -27,19 +26,11 @@ describe("memberSignInPage", () => {
     expect(mockClearAuthorization).not.toHaveBeenCalled();
     expect(screen.getByTestId("title")).toHaveTextContent("title");
     expect(screen.getByTestId("description")).toHaveTextContent(
-      "Contest Title",
+      "Contest Title"
     );
     expect(screen.getByTestId("login")).toBeEnabled();
     expect(screen.getByTestId("password")).toBeEnabled();
     expect(screen.getByTestId("sign-in")).toHaveTextContent("sign-in:label");
-  });
-
-  it("clear authorization on signOut query param", () => {
-    mockSearchParams.get.mockReturnValueOnce("true");
-
-    render(<MemberSignInPage />);
-
-    expect(mockClearAuthorization).toHaveBeenCalled();
   });
 
   it("should alert warning on unauthorized exception", async () => {
@@ -99,7 +90,7 @@ describe("memberSignInPage", () => {
     });
     expect(mockSetAuthorization).toHaveBeenCalledWith(authorization);
     expect(mockRouter.push).toHaveBeenCalledWith(
-      routes.CONTEST("contest-slug"),
+      routes.CONTEST("contest-slug")
     );
   });
 });

@@ -9,6 +9,28 @@ describe("AxiosAuthenticationRepository", () => {
 
   const sut = new AxiosAuthenticationRepository(axiosClient);
 
+  describe("getAuthorization", () => {
+    it("should return an authorization", async () => {
+      const authorization = { member: {} } as unknown as Authorization;
+      axiosClient.get.mockResolvedValueOnce({
+        data: authorization,
+      } as AxiosResponse);
+
+      const result = await sut.getAuthorization();
+
+      expect(axiosClient.get).toHaveBeenCalledWith("/v1/auth/me");
+      expect(result).toEqual(authorization);
+    });
+  });
+
+  describe("cleanAuthorization", () => {
+    it("should call clean authorization endpoint", () => {
+      sut.cleanAuthorization();
+
+      expect(axiosClient.delete).toHaveBeenCalledWith("/v1/auth/me");
+    });
+  });
+
   describe("authenticateMember", () => {
     it("should authenticate a member and return an authorization", async () => {
       const contestId = "contest123";
@@ -24,7 +46,7 @@ describe("AxiosAuthenticationRepository", () => {
 
       expect(axiosClient.post).toHaveBeenCalledWith(
         `/v1/auth/contests/${contestId}/sign-in`,
-        { data: requestDTO },
+        { data: requestDTO }
       );
       expect(result).toEqual(expectedAuthorization);
     });

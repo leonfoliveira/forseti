@@ -2,6 +2,7 @@ package io.github.leonfoliveira.judge.api.util
 
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
+import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.port.JwtAdapter
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -20,14 +21,14 @@ class AuthorizationExtractorTest : FunSpec({
     }
 
     test("should return null when access token is null") {
-        val result = sut.extractMember(null)
+        val result = sut.extract(null)
 
         result shouldBe null
         SecurityContextHolder.getContext().authentication.isAuthenticated shouldBe false
     }
 
     test("should return null when access token is empty") {
-        val result = sut.extractMember("")
+        val result = sut.extract("")
 
         result shouldBe null
         SecurityContextHolder.getContext().authentication.isAuthenticated shouldBe false
@@ -36,25 +37,28 @@ class AuthorizationExtractorTest : FunSpec({
     test("should not authenticate when access token is valid but token is invalid") {
         every { jwtAdapter.decodeToken("invalid-token") } throws RuntimeException("Invalid token")
 
-        val result = sut.extractMember("invalid-token")
+        val result = sut.extract("invalid-token")
 
         result shouldBe null
         SecurityContextHolder.getContext().authentication.isAuthenticated shouldBe false
     }
 
     test("should return AuthorizationMember when token is valid") {
-        val expectedMember =
-            AuthorizationMember(
-                id = UUID.randomUUID(),
-                type = Member.Type.ROOT,
-                name = "Test User",
+        val expectedAuthorization =
+            AuthorizationMockBuilder.build(
+                member =
+                    AuthorizationMember(
+                        id = UUID.randomUUID(),
+                        type = Member.Type.ROOT,
+                        name = "Test User",
+                    ),
             )
-        every { jwtAdapter.decodeToken("valid-token") } returns expectedMember
+        every { jwtAdapter.decodeToken("valid-token") } returns expectedAuthorization
 
-        val result = sut.extractMember("valid-token")
+        val result = sut.extract("valid-token")
 
-        result shouldBe expectedMember
+        result shouldBe expectedAuthorization
         SecurityContextHolder.getContext().authentication.isAuthenticated shouldBe true
-        SecurityContextHolder.getContext().authentication.principal shouldBe expectedMember
+        SecurityContextHolder.getContext().authentication.principal shouldBe expectedAuthorization
     }
 })

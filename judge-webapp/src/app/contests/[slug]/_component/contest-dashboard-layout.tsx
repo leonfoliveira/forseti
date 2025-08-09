@@ -34,7 +34,7 @@ export function ContestDashboardLayout({
     <>
       <Navbar
         contestMetadata={contestMetadata}
-        signInPath={routes.CONTEST_SIGN_IN(contestMetadata.slug, true)}
+        signInPath={routes.CONTEST_SIGN_IN(contestMetadata.slug)}
       />
       <ContestTabBar tabs={tabs} />
       <div className="p-5 bg-base-100">{children}</div>

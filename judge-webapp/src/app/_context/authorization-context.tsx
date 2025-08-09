@@ -1,14 +1,17 @@
 import React, { createContext, useContext, useEffect } from "react";
 import { Authorization } from "@/core/domain/model/Authorization";
-import { authorizationService } from "@/config/composition";
+import { LoadableState, useLoadableState } from "@/app/_util/loadable-state";
+import { authenticationService } from "@/config/composition";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { LoadingPage } from "@/app/_component/page/loading-page";
-import { useLoadableState } from "@/app/_util/loadable-state";
 import { ErrorPage } from "@/app/_component/page/error-page";
 
 const AuthorizationContext = createContext({
-  authorization: {} as Authorization | undefined,
+  authorizationState: {} as LoadableState<Authorization | undefined>,
   setAuthorization: (() => {}) as (authorization: Authorization) => void,
-  clearAuthorization: (() => {}) as () => void,
+  clearAuthorization: (() => {}) as unknown as (
+    signInPath: string
+  ) => Promise<void>,
 });
 
 export function AuthorizationProvider({
@@ -21,32 +24,35 @@ export function AuthorizationProvider({
   });
 
   useEffect(() => {
-    /**
-     * Retrieve stored authorization
-     */
-    authorizationState.start();
-    try {
-      const authorization = authorizationService.getAuthorization();
-      authorizationState.finish(authorization);
-    } catch (error) {
-      authorizationState.fail(error);
+    async function load() {
+      authorizationState.start();
+      try {
+        const authorization = await authenticationService.getAuthorization();
+        authorizationState.finish(authorization);
+      } catch (error) {
+        if (error instanceof UnauthorizedException) {
+          authorizationState.finish(undefined);
+        } else {
+          authorizationState.fail(error);
+        }
+      }
     }
+
+    load();
   }, []);
 
-  /**
-   * Stores a new authorization
-   */
   function setAuthorization(authorization: Authorization) {
-    authorizationService.setAuthorization(authorization);
     authorizationState.finish(authorization);
   }
 
-  /**
-   * Delete the stored authorization
-   */
-  function clearAuthorization() {
-    authorizationService.deleteAuthorization();
-    authorizationState.finish(undefined);
+  async function clearAuthorization(signInPath: string) {
+    authorizationState.start();
+    try {
+      await authenticationService.cleanAuthorization();
+      window.location.href = signInPath;
+    } catch (error) {
+      authorizationState.fail(error);
+    }
   }
 
   /**
@@ -62,7 +68,7 @@ export function AuthorizationProvider({
   return (
     <AuthorizationContext.Provider
       value={{
-        authorization: authorizationState.data,
+        authorizationState,
         setAuthorization,
         clearAuthorization,
       }}
@@ -73,5 +79,5 @@ export function AuthorizationProvider({
 }
 
 export const useAuthorization = () =>
-  useContext(AuthorizationContext).authorization;
+  useContext(AuthorizationContext).authorizationState.data;
 export const useAuthorizationContext = () => useContext(AuthorizationContext);

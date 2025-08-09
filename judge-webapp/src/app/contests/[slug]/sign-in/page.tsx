@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import React, { useEffect } from "react";
+import React from "react";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { Form } from "@/app/_component/form/form";
 import { TextInput } from "@/app/_component/form/text-input";
@@ -13,7 +13,7 @@ import { MemberSignInFormType } from "@/app/contests/[slug]/sign-in/_form/member
 import { memberSignInFormSchema } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form-schema";
 import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { routes } from "@/config/routes";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
@@ -26,33 +26,25 @@ import { useAlert } from "@/app/_context/notification-context";
 export default function MemberSignInPage() {
   const signInState = useLoadableState();
   const contest = useContestMetadata();
-  const { setAuthorization, clearAuthorization } = useAuthorizationContext();
+  const { setAuthorization } = useAuthorizationContext();
   const alert = useAlert();
 
-  const searchParams = useSearchParams();
   const router = useRouter();
   const t = useTranslations("contests.[slug].sign-in");
   const s = useTranslations(
-    "contests.[slug].sign-in._form.member-sign-in-form",
+    "contests.[slug].sign-in._form.member-sign-in-form"
   );
 
   const form = useForm<MemberSignInFormType>({
     resolver: joiResolver(memberSignInFormSchema),
   });
 
-  const signOut = searchParams.get("signOut");
-  useEffect(() => {
-    if (signOut === "true") {
-      clearAuthorization();
-    }
-  }, [signOut]);
-
   async function signIn(data: MemberSignInFormType) {
     signInState.start();
     try {
       const authorization = await authenticationService.authenticateMember(
         contest.id,
-        data,
+        data
       );
       setAuthorization(authorization);
       signInState.finish();

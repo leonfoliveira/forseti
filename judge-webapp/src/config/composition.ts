@@ -1,4 +1,3 @@
-import { AuthorizationService } from "@/core/service/AuthorizationService";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { AxiosAttachmentRepository } from "@/adapter/axios/AxiosAttachmentRepository";
 import { AxiosAuthenticationRepository } from "@/adapter/axios/AxiosAuthenticationRepository";
@@ -23,12 +22,9 @@ import { StompClientFactory } from "@/adapter/stomp/StompClientFactory";
 
 const storageRepository = new LocalStorageRepository();
 
-export const authorizationService = new AuthorizationService(storageRepository);
-
 const axiosClient = new AxiosClient(env.API_URL);
 export const listenerClientFactory = new StompClientFactory(
-  `${env.API_URL}/ws`,
-  authorizationService,
+  `${env.API_URL}/ws`
 );
 
 export const announcementListener = new StompAnnouncementListener();
@@ -37,23 +33,23 @@ export const leaderboardListener = new StompLeaderboardListener();
 export const submissionListener = new StompSubmissionListener();
 
 export const attachmentService = new AttachmentService(
-  new AxiosAttachmentRepository(axiosClient),
+  new AxiosAttachmentRepository(axiosClient)
 );
 export const authenticationService = new AuthenticationService(
-  new AxiosAuthenticationRepository(axiosClient),
+  new AxiosAuthenticationRepository(axiosClient)
 );
 export const clarificationService = new ClarificationService(
-  new AxiosClarificationRepository(axiosClient),
+  new AxiosClarificationRepository(axiosClient)
 );
 export const contestService = new ContestService(
   new AxiosContestRepository(axiosClient),
-  attachmentService,
+  attachmentService
 );
 export const problemService = new ProblemService(
   new AxiosProblemRepository(axiosClient),
-  attachmentService,
+  attachmentService
 );
 export const storageService = new StorageService(storageRepository);
 export const submissionService = new SubmissionService(
-  new AxiosSubmissionRepository(axiosClient),
+  new AxiosSubmissionRepository(axiosClient)
 );

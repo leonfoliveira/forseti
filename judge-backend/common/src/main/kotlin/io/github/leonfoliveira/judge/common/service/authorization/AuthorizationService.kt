@@ -36,7 +36,7 @@ class AuthorizationService(
         }
 
         logger.info("Finished authenticating member")
-        return jwtAdapter.generateAuthorization(member)
+        return jwtAdapter.buildAuthorization(member)
     }
 
     fun authenticateAutoJudge(): Authorization {
@@ -47,7 +47,7 @@ class AuthorizationService(
                 ?: throw InternalServerException("Could not find autojudge member")
 
         logger.info("Finished authenticating autojudge member")
-        return jwtAdapter.generateAuthorization(member)
+        return jwtAdapter.buildAuthorization(member)
     }
 
     fun authenticateForContest(
@@ -71,6 +71,11 @@ class AuthorizationService(
         }
 
         logger.info("Finished authenticating member for contest")
-        return jwtAdapter.generateAuthorization(member)
+        return jwtAdapter.buildAuthorization(member)
+    }
+
+    fun encodeToken(authorization: Authorization): String {
+        logger.info("Encoding token for member with id = ${authorization.member.id}")
+        return jwtAdapter.encodeToken(authorization)
     }
 }

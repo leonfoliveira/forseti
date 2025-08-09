@@ -4,6 +4,7 @@ import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
+import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -26,7 +27,8 @@ class AuthorizationContextUtilTest : FunSpec({
                 type = Member.Type.ROOT,
                 name = "Test User",
             )
-        SecurityContextHolder.getContext().authentication = JwtAuthentication(expectedAuthorizationMember)
+        SecurityContextHolder.getContext().authentication =
+            JwtAuthentication(AuthorizationMockBuilder.build(member = expectedAuthorizationMember))
 
         val result = AuthorizationContextUtil.getMember()
 

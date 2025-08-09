@@ -4,6 +4,6 @@ import java.time.OffsetDateTime
 
 data class Authorization(
     val member: AuthorizationMember,
-    val accessToken: String,
+    val issuedAt: OffsetDateTime,
     val expiresAt: OffsetDateTime,
 )

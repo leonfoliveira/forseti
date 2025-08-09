@@ -28,7 +28,7 @@ class HttpJwtAuthFilterTest : FunSpec({
 
         sut.doFilterInternal(request, response, filterChain)
 
-        verify { authorizationExtractor.extractMember("token") }
+        verify { authorizationExtractor.extract("token") }
     }
 
     test("should call AuthorizationExtractor with null when no access token cookie is present") {
@@ -39,7 +39,7 @@ class HttpJwtAuthFilterTest : FunSpec({
 
         sut.doFilterInternal(request, response, filterChain)
 
-        verify { authorizationExtractor.extractMember(null) }
+        verify { authorizationExtractor.extract(null) }
     }
 
     test("should call AuthorizationExtractor without access token when no cookies are present") {
@@ -50,6 +50,6 @@ class HttpJwtAuthFilterTest : FunSpec({
 
         sut.doFilterInternal(request, response, filterChain)
 
-        verify { authorizationExtractor.extractMember(null) }
+        verify { authorizationExtractor.extract(null) }
     }
 })

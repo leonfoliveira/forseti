@@ -16,7 +16,7 @@ export default function RootLayout({
   const authorization = useAuthorization();
 
   if (!authorization) {
-    return redirect(routes.ROOT_SIGN_IN());
+    return redirect(routes.ROOT_SIGN_IN);
   }
   if (authorization.member.type !== MemberType.ROOT) {
     return redirect(routes.FORBIDDEN);
@@ -24,7 +24,7 @@ export default function RootLayout({
 
   return (
     <div>
-      <Navbar signInPath={routes.ROOT_SIGN_IN(true)} />
+      <Navbar signInPath={routes.ROOT_SIGN_IN} allowRoot />
       <RootTabBar />
       <div className="p-10 bg-base-100">{children}</div>
     </div>

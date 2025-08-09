@@ -44,10 +44,10 @@ class ProblemContestTest(
                     language = Language.PYTHON_3_13,
                     code = AttachmentInputDTO(id = UUID.randomUUID()),
                 )
-            val member = AuthorizationMockBuilder.buildMember()
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(member)
+            val authorization = AuthorizationMockBuilder.build()
+            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
             val submission = SubmissionMockBuilder.build()
-            every { createSubmissionService.create(member.id, problemId, body) } returns submission
+            every { createSubmissionService.create(authorization.member.id, problemId, body) } returns submission
 
             webMvc.post("/v1/problems/{id}/submissions", problemId) {
                 contentType = MediaType.APPLICATION_JSON

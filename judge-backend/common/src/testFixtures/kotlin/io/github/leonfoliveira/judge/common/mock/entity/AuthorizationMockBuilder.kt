@@ -21,11 +21,11 @@ object AuthorizationMockBuilder {
 
     fun build(
         member: AuthorizationMember = buildMember(),
-        accessToken: String = "testAccessToken",
+        issuedAt: OffsetDateTime = OffsetDateTime.now(),
         expiresAt: OffsetDateTime = OffsetDateTime.now().plusHours(1),
     ) = Authorization(
         member = member,
-        accessToken = accessToken,
+        issuedAt = issuedAt,
         expiresAt = expiresAt,
     )
 }

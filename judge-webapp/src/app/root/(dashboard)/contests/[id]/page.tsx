@@ -65,13 +65,13 @@ export default function RootEditContestPage({
     try {
       const input = ContestFormMap.toUpdateRequestDTO(data);
       const failedValidations = await TestCaseUtils.validateProblemList(
-        input.problems,
+        input.problems
       );
       if (failedValidations.length > 0) {
         alert.warning(
           t("test-cases-validation-error", {
             letters: failedValidations.join(", "),
-          }),
+          })
         );
         return;
       }
@@ -81,7 +81,7 @@ export default function RootEditContestPage({
       alert.success(t("update-success"));
     } catch (error) {
       updateContestState.fail(error, {
-        [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN()),
+        [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN),
         [NotFoundException.name]: () => redirect(routes.FORBIDDEN),
         default: () => alert.error(t("update-error")),
       });

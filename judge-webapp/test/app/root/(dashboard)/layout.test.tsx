@@ -22,10 +22,10 @@ describe("RootLayout", () => {
     render(
       <RootLayout>
         <p data-testid="child">Child</p>
-      </RootLayout>,
+      </RootLayout>
     );
 
-    expect(mockRedirect).toHaveBeenCalledWith(routes.ROOT_SIGN_IN());
+    expect(mockRedirect).toHaveBeenCalledWith(routes.ROOT_SIGN_IN);
   });
 
   it("should redirect to forbidden if member type is not ROOT", () => {
@@ -35,7 +35,7 @@ describe("RootLayout", () => {
     render(
       <RootLayout>
         <p data-testid="child">Child</p>
-      </RootLayout>,
+      </RootLayout>
     );
 
     expect(mockRedirect).toHaveBeenCalledWith(routes.FORBIDDEN);
@@ -48,12 +48,12 @@ describe("RootLayout", () => {
     render(
       <RootLayout>
         <p data-testid="child">Child</p>
-      </RootLayout>,
+      </RootLayout>
     );
 
     expect(screen.getByTestId("sign-in")).toHaveAttribute(
       "href",
-      routes.ROOT_SIGN_IN(true),
+      routes.ROOT_SIGN_IN
     );
     expect(screen.getByTestId("root-tab-bar")).toBeInTheDocument();
     expect(screen.getByTestId("child")).toBeInTheDocument();
