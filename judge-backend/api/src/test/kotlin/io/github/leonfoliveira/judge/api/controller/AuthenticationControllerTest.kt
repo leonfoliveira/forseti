@@ -3,6 +3,7 @@ package io.github.leonfoliveira.judge.api.controller
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
+import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.AuthenticateInputDTO
@@ -16,6 +17,9 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 import java.util.UUID
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.web.servlet.delete
+import org.springframework.test.web.servlet.get
 
 @WebMvcTest(controllers = [AuthenticationController::class])
 @AutoConfigureMockMvc(addFilters = false)
@@ -35,6 +39,32 @@ class AuthenticationControllerTest(
                 password = "testPassword",
             )
 
+        test("getAuthorization") {
+            val authorization = AuthorizationMockBuilder.build()
+            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
+
+            webMvc.get("/v1/auth/me")
+                .andExpect {
+                    status { isOk() }
+                    content { authorization }
+                }
+        }
+
+        test("cleanAuthorization") {
+            webMvc.delete("/v1/auth/me")
+                .andExpect {
+                    status { isNoContent() }
+                    cookie {
+                        value("access_token", "")
+                        path("access_token", "/")
+                        maxAge("access_token", 0)
+                        secure("access_token", true)
+                        httpOnly("access_token", true)
+                        sameSite("access_token", "Lax")
+                    }
+                }
+        }
+
         test("authenticate") {
             val authorization = AuthorizationMockBuilder.build()
             val token = "token"
@@ -53,7 +83,7 @@ class AuthenticationControllerTest(
                     httpOnly("access_token", true)
                     sameSite("access_token", "Lax")
                 }
-                content { authorization.toResponseDTO() }
+                content { authorization }
             }
         }
 
@@ -76,7 +106,7 @@ class AuthenticationControllerTest(
                     httpOnly("access_token", true)
                     sameSite("access_token", "Lax")
                 }
-                content { authorization.toResponseDTO() }
+                content { authorization }
             }
         }
     })
