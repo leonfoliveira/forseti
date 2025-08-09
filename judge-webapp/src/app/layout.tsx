@@ -1,40 +1,73 @@
+"use client";
+
 import React from "react";
 import "./globals.css";
-import { Html } from "@/app/_component/html";
-import { getIntlConfig } from "@/i18n/request";
-import { Metadata } from "next";
 import { env } from "@/config/env";
+import { useTheme } from "./_util/theme-hook";
+import { Roboto } from "next/font/google";
+import { NotificationProvider } from "./_context/notification-context";
+import { AuthorizationProvider } from "./_context/authorization-context";
+import { IntlProvider, FormattedMessage, defineMessages } from "react-intl";
+import enUS from "@/i18n/messages/en-US.json";
+import ptBR from "@/i18n/messages/pt-BR.json";
 
-export const metadata: Metadata = {
-  title: "Judge",
-};
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+});
 
-export default async function Layout({
+const layoutMessages = defineMessages({
+  footerText: {
+    id: "layout.footerText",
+    defaultMessage: "Judge {version} | by {author}",
+  },
+});
+
+export default function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { locale, messages } = await getIntlConfig();
+  const { theme } = useTheme();
+
+  const messages =
+    {
+      "en-US": enUS,
+      "pt-BR": ptBR,
+    }[env.LOCALE] || enUS;
 
   return (
-    <Html locale={locale} messages={messages as any}>
-      <div className="flex flex-col w-screen h-screen">
-        <div className="flex-1">{children}</div>
-        <footer className="footer footer-center bg-base-100 text-base-content/50 text-xs py-1 border-t border-solid border-base-300">
-          <aside>
-            <p data-testid="footer">
-              Judge {env.VERSION} | by{" "}
-              <a
-                href="https://github.com/leonfoliveira"
-                target="_blank"
-                data-testid="github-link"
-              >
-                @leonfoliveira
-              </a>
-            </p>
-          </aside>
-        </footer>
-      </div>
-    </Html>
+    <html lang={env.LOCALE} data-theme={theme} className="bg-base-300">
+      <body className={roboto.className}>
+        <IntlProvider messages={messages} locale={env.LOCALE}>
+          <NotificationProvider>
+            <AuthorizationProvider>
+              <div className="flex flex-col w-screen h-screen">
+                <div className="flex-1">{children}</div>
+                <footer className="footer footer-center bg-base-100 text-base-content/50 text-xs py-1 border-t border-solid border-base-300">
+                  <p data-testid="footer">
+                    <FormattedMessage
+                      {...layoutMessages.footerText}
+                      values={{
+                        version: env.VERSION,
+                        author: (
+                          <a
+                            href="https://github.com/leonfoliveira"
+                            target="_blank"
+                            data-testid="github-link"
+                          >
+                            @leonfoliveira
+                          </a>
+                        ),
+                      }}
+                    />
+                  </p>
+                </footer>
+              </div>
+            </AuthorizationProvider>
+          </NotificationProvider>
+        </IntlProvider>
+      </body>
+    </html>
   );
 }

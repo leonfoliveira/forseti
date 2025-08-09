@@ -11,7 +11,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "i18n:check": "i18n-check -l src/i18n/messages -s en"
+    "i18n:extract": "formatjs extract --out-file src/i18n/messages/en-US.json 'src/app/**/*.{ts,tsx}' --ignore '**/*.d.ts' --format simple",
+    "i18n:check": "formatjs extract --out-file /tmp/messages.json 'src/app/**/*.{ts,tsx}' --ignore '**/*.d.ts' --format simple && diff -u src/i18n/messages/en-US.json /tmp/messages.json",
+    "i18n:verify": "formatjs verify --missing-keys --structural-equality --source-locale en-US src/i18n/messages/*.json"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "6.7.2",
@@ -31,6 +33,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "7.56.4",
+    "react-intl": "7.1.11",
     "sockjs-client": "1.6.1",
     "tailwindcss": "4.1.7"
   },
@@ -38,6 +41,7 @@
     "@babel/parser": "7.28.0",
     "@babel/traverse": "7.28.0",
     "@eslint/eslintrc": "3.3.1",
+    "@formatjs/cli": "6.7.2",
     "@lingual/i18n-check": "0.8.4",
     "@testing-library/dom": "10.4.0",
     "@testing-library/jest-dom": "6.6.3",
