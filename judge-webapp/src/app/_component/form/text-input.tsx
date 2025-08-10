@@ -17,6 +17,14 @@ type Props<TFieldValues extends FieldValues> = Omit<
   "data-testid"?: string;
 };
 
+function formToComponent(value?: string) {
+  return value || "";
+}
+
+function componentToForm(value: string) {
+  return value;
+}
+
 /**
  * TextInput component for rendering a text input field
  */
@@ -36,14 +44,6 @@ export function TextInput<TFieldValues extends FieldValues>({
       form.setValue(name, props.value as any);
     }
   }, []);
-
-  function formToComponent(value?: string) {
-    return value || "";
-  }
-
-  function componentToForm(value: string) {
-    return value;
-  }
 
   return (
     <Controller

@@ -23,6 +23,14 @@ type Props<TFieldValues extends FieldValues> = Omit<
   "data-testid"?: string;
 };
 
+function formToComponent(value?: string) {
+  return value || "";
+}
+
+function componentToForm(value: string) {
+  return value;
+}
+
 /**
  * Select component for rendering a select input field with options
  */
@@ -36,14 +44,6 @@ export function Select<TFieldValues extends FieldValues>({
   ...props
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "select";
-
-  function formToComponent(value?: string) {
-    return value || "";
-  }
-
-  function componentToForm(value: string) {
-    return value;
-  }
 
   return (
     <Controller

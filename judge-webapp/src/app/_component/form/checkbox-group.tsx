@@ -20,6 +20,21 @@ type Props<TFieldValues extends FieldValues> = Omit<
   "data-testid"?: string;
 };
 
+function formToComponent(fieldValue: string[] | undefined, itemValue: string) {
+  return (fieldValue || []).includes(itemValue);
+}
+
+function componentToForm(
+  fieldValue: string[] | undefined,
+  itemValue: string,
+  checked: boolean
+) {
+  if (checked) {
+    return [...(fieldValue || []), itemValue];
+  }
+  return (fieldValue || []).filter((it) => it !== itemValue);
+}
+
 /**
  * CheckboxGroup component for rendering a group of checkboxes
  */
@@ -32,24 +47,6 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
   ...props
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "checkbox-group";
-
-  function formToComponent(
-    fieldValue: string[] | undefined,
-    itemValue: string
-  ) {
-    return (fieldValue || []).includes(itemValue);
-  }
-
-  function componentToForm(
-    fieldValue: string[] | undefined,
-    itemValue: string,
-    checked: boolean
-  ) {
-    if (checked) {
-      return [...(fieldValue || []), itemValue];
-    }
-    return (fieldValue || []).filter((it) => it !== itemValue);
-  }
 
   return (
     <Controller

@@ -27,6 +27,21 @@ type Props<TFieldValues extends FieldValues> = Omit<
   "data-testid"?: string;
 };
 
+function componentToForm(value: FileList | null) {
+  return value && value.length > 0 ? value[0] : undefined;
+}
+
+function onDownload(file: File) {
+  const url = URL.createObjectURL(file);
+  const a = document.createElement("a");
+  a.target = "_blank";
+  a.href = url;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 /**
  * FileInput component for rendering a file input field with a download and reset button.
  */
@@ -42,21 +57,6 @@ export function FileInput<TFieldValues extends FieldValues>({
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "file-input";
   const ref = useRef<HTMLInputElement | null>(null);
-
-  function componentToForm(value: FileList | null) {
-    return value && value.length > 0 ? value[0] : undefined;
-  }
-
-  function onDownload(file: File) {
-    const url = URL.createObjectURL(file);
-    const a = document.createElement("a");
-    a.target = "_blank";
-    a.href = url;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
 
   const originalValue: Attachment | undefined =
     originalName && form.watch(originalName);

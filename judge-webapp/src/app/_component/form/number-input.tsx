@@ -19,6 +19,14 @@ type Props<TFieldValues extends FieldValues> = Omit<
   "data-testid"?: string;
 };
 
+function format(value?: number) {
+  return value ? value.toString() : "";
+}
+
+function parse(value: string) {
+  return parseInt(value);
+}
+
 /**
  * NumberInput component for rendering a number input field
  */
@@ -31,14 +39,6 @@ export function NumberInput<TFieldValues extends FieldValues>({
   ...props
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "number-input";
-
-  function format(value?: number) {
-    return value ? value.toString() : "";
-  }
-
-  function parse(value: string) {
-    return parseInt(value);
-  }
 
   return (
     <Controller

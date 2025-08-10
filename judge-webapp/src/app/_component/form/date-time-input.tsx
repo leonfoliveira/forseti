@@ -6,7 +6,6 @@ import {
   FieldValues,
   UseFormReturn,
 } from "react-hook-form";
-import { DateUtils } from "@/app/_util/date-utils";
 import { FormattedMessage } from "react-intl";
 
 type Props<TFieldValues extends FieldValues> = Omit<
@@ -20,6 +19,24 @@ type Props<TFieldValues extends FieldValues> = Omit<
   "data-testid"?: string;
 };
 
+function toInputFormat(date: Date): string {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function formToComponent(value?: Date) {
+  return value ? toInputFormat(value) : "";
+}
+
+function componentToForm(value?: string) {
+  return value ? new Date(value) : undefined;
+}
+
 /**
  * DateTimeInput component for rendering a datetime input field
  */
@@ -31,14 +48,6 @@ export function DateTimeInput<TFieldValues extends FieldValues>({
   ...props
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "date-input";
-
-  function formToComponent(value?: Date) {
-    return value ? DateUtils.toDateInputFormat(value) : "";
-  }
-
-  function componentToForm(value?: string) {
-    return value ? new Date(value) : undefined;
-  }
 
   return (
     <Controller
