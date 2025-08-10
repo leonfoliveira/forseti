@@ -4,7 +4,14 @@ import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@/app/_component/form/button";
 import React from "react";
 import { Attachment } from "@/core/domain/model/Attachment";
-import { useTranslations } from "next-intl";
+import { defineMessages } from "react-intl";
+
+const messages = defineMessages({
+  download: {
+    id: "app._component.download-button.download",
+    defaultMessage: "Download",
+  },
+});
 
 type Props = {
   attachment: Attachment;
@@ -17,20 +24,17 @@ type Props = {
 export function DownloadButton({ attachment, ...props }: Props) {
   const testId = props["data-testid"] || "download-button";
 
-  const t = useTranslations("contests.[slug]._component.download-button");
-
   return (
-    <div
-      data-testid={`${testId}-container`}
-    >
+    <div data-testid={`${testId}-container`}>
       <Button
+        leftIcon={
+          <FontAwesomeIcon icon={faDownload} className="text-sm me-2" />
+        }
         onClick={() => attachmentService.download(attachment)}
         className="btn-soft text-xs"
-        tooltip={t("download:tooltip")}
+        tooltip={messages.download}
         data-testid={testId}
-      >
-        <FontAwesomeIcon icon={faDownload} />
-      </Button>
+      />
     </div>
   );
 }

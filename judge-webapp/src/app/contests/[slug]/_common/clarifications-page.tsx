@@ -1,5 +1,4 @@
 import React from "react";
-import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { ClarificationFormType } from "@/app/contests/[slug]/_common/_form/clarification-form";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -13,11 +12,71 @@ import { clarificationService, contestService } from "@/config/composition";
 import { useAlert } from "@/app/_context/notification-context";
 import { Form } from "@/app/_component/form/form";
 import { TextInput } from "@/app/_component/form/text-input";
-import { TimestampDisplay } from "@/app/_component/timestamp-display";
-import { DialogModal } from "@/app/_component/dialog-modal";
+import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
+import { DialogModal } from "@/app/_component/modal/dialog-modal";
 import { useModal } from "@/app/_util/modal-hook";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { ClarificationFormMap } from "@/app/contests/[slug]/_common/_form/clarification-form-map";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  createSuccess: {
+    id: "app.contests.[slug]._common.clarifications-page.create-success",
+    defaultMessage: "Clarification created successfully",
+  },
+  createError: {
+    id: "app.contests.[slug]._common.clarifications-page.create-error",
+    defaultMessage: "Failed to create clarification",
+  },
+  deleteSuccess: {
+    id: "app.contests.[slug]._common.clarifications-page.delete-success",
+    defaultMessage: "Clarification deleted successfully",
+  },
+  deleteError: {
+    id: "app.contests.[slug]._common.clarifications-page.delete-error",
+    defaultMessage: "Failed to delete clarification",
+  },
+  textLabel: {
+    id: "app.contests.[slug]._common.clarifications-page.text-label",
+    defaultMessage: "Text",
+  },
+  problemLabel: {
+    id: "app.contests.[slug]._common.clarifications-page.problem-label",
+    defaultMessage: "Problem",
+  },
+  problemOption: {
+    id: "app.contests.[slug]._common.clarifications-page.problem-option",
+    defaultMessage: "{letter}: {title}",
+  },
+  submitLabel: {
+    id: "app.contests.[slug]._common.clarifications-page.submit-label",
+    defaultMessage: "Submit",
+  },
+  empty: {
+    id: "app.contests.[slug]._common.clarifications-page.empty",
+    defaultMessage: "No clarifications yet",
+  },
+  headerProblem: {
+    id: "app.contests.[slug]._common.clarifications-page.header-problem",
+    defaultMessage: "{contestant} | Problem {letter}",
+  },
+  headerGeneral: {
+    id: "app.contests.[slug]._common.clarifications-page.header-general",
+    defaultMessage: "{contestant} | General",
+  },
+  answerLabel: {
+    id: "app.contests.[slug]._common.clarifications-page.answer-label",
+    defaultMessage: "Answer",
+  },
+  headerAnswer: {
+    id: "app.contests.[slug]._common.clarifications-page.header-answer",
+    defaultMessage: "RE: {judge}",
+  },
+  deleteConfirmLabel: {
+    id: "app.contests.[slug]._common.clarifications-page.delete-confirm-label",
+    defaultMessage: "Are you sure you want to delete this clarification?",
+  },
+});
 
 type Props = {
   contest: ContestPublicResponseDTO;
@@ -33,9 +92,6 @@ export function ClarificationsPage({
   const alert = useAlert();
   const createClarificationState = useLoadableState();
   const deleteClarificationState = useLoadableState();
-
-  const t = useTranslations("contests.[slug]._common.clarifications-page");
-  const s = useTranslations("contests.[slug]._common._form.clarification-form");
 
   const deleteModal = useModal<string>();
   const answerModal = useModal();
@@ -56,10 +112,10 @@ export function ClarificationsPage({
       createClarificationState.finish();
       answerModal.close();
       form.reset();
-      alert.success(t("create-success"));
+      alert.success(messages.createSuccess);
     } catch (error) {
       createClarificationState.fail(error, {
-        default: () => alert.error(t("create-error")),
+        default: () => alert.error(messages.createError),
       });
     }
   }
@@ -70,10 +126,10 @@ export function ClarificationsPage({
       await clarificationService.deleteById(id);
       deleteClarificationState.finish();
       deleteModal.close();
-      alert.success(t("delete-success"));
+      alert.success(messages.deleteSuccess);
     } catch (error) {
       deleteClarificationState.fail(error, {
-        default: () => alert.error(t("delete-error")),
+        default: () => alert.error(messages.deleteError),
       });
     }
   }
@@ -91,19 +147,20 @@ export function ClarificationsPage({
             <Select
               form={form}
               name="problemId"
-              s={s}
-              label={t("problem:label")}
+              label={messages.problemLabel}
               options={(contest?.problems || []).map((it) => ({
                 value: it.id,
-                label: `${it.letter}. ${it.title}`,
+                label: {
+                  ...messages.problemOption,
+                  values: { letter: it.letter, title: it.title },
+                },
               }))}
               containerClassName="flex-1"
               data-testid="form-problem"
             />
             <TextInput
               form={form}
-              s={s}
-              label={t("text:label")}
+              label={messages.textLabel}
               name="text"
               containerClassName="flex-4"
               data-testid="form-text"
@@ -112,13 +169,12 @@ export function ClarificationsPage({
           <div className="flex justify-center mt-8">
             <Button
               type="submit"
+              label={messages.submitLabel}
+              rightIcon={<FontAwesomeIcon icon={faPaperPlane} />}
               className="btn-primary"
               isLoading={createClarificationState.isLoading}
               data-testid="form-submit"
-            >
-              {t("create:label")}
-              <FontAwesomeIcon icon={faPaperPlane} className="ms-3" />
-            </Button>
+            />
           </div>
           <div className="divider" />
         </Form>
@@ -128,7 +184,9 @@ export function ClarificationsPage({
           className="flex justify-center items-center py-20"
           data-testid="empty"
         >
-          <p className="text-neutral-content">{t("empty")}</p>
+          <p className="text-neutral-content">
+            <FormattedMessage {...messages.empty} />
+          </p>
         </div>
       )}
       <div className="flex flex-col gap-y-8">
@@ -144,30 +202,37 @@ export function ClarificationsPage({
                   className="text-sm font-semibold"
                   data-testid="clarification-problem"
                 >
-                  {clarification.problem?.id
-                    ? t("header-problem", {
+                  {clarification.problem?.id ? (
+                    <FormattedMessage
+                      {...messages.headerProblem}
+                      values={{
                         contestant: clarification.member.name,
                         letter: clarification.problem.letter,
-                      })
-                    : t("header-general", {
+                      }}
+                    />
+                  ) : (
+                    <FormattedMessage
+                      {...messages.headerGeneral}
+                      values={{
                         contestant: clarification.member.name,
-                      })}
+                      }}
+                    />
+                  )}
                 </p>
                 <div className="flex">
                   <span
                     className="text-sm text-base-content/50"
                     data-testid="clarification-timestamp"
                   >
-                    <TimestampDisplay timestamp={clarification.createdAt} />
+                    <FormattedDateTime timestamp={clarification.createdAt} />
                   </span>
                   {canAnswer && (
                     <Button
                       className="btn-soft btn-error ml-3"
+                      leftIcon={<FontAwesomeIcon icon={faTrash} />}
                       onClick={() => deleteModal.open(clarification.id)}
                       data-testid="clarification-delete"
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </Button>
+                    />
                   )}
                 </div>
               </div>
@@ -185,7 +250,7 @@ export function ClarificationsPage({
                     }}
                     data-testid="clarification-answer"
                   >
-                    {t("answer:label")}
+                    <FormattedMessage {...messages.answerLabel} />
                   </button>
                 </div>
               )}
@@ -199,15 +264,18 @@ export function ClarificationsPage({
                       className="text-sm font-semibold"
                       data-testid="clarification-answer-header"
                     >
-                      {t("header-answer", {
-                        judge: clarification.children[0].member.name,
-                      })}
+                      <FormattedMessage
+                        {...messages.headerAnswer}
+                        values={{
+                          contestant: clarification.children[0].member.name,
+                        }}
+                      />
                     </p>
                     <span
                       className="text-sm text-base-content/50"
                       data-testid="clarification-answer-timestamp"
                     >
-                      <TimestampDisplay
+                      <FormattedDateTime
                         timestamp={clarification.children[0].createdAt}
                       />
                     </span>
@@ -227,7 +295,9 @@ export function ClarificationsPage({
         onConfirm={deleteClarification}
         isLoading={deleteClarificationState.isLoading}
       >
-        <p>{t("confirm-delete")}</p>
+        <p>
+          <FormattedMessage {...messages.deleteConfirmLabel} />
+        </p>
       </DialogModal>
 
       <DialogModal
@@ -239,8 +309,7 @@ export function ClarificationsPage({
           <TextInput
             form={answerForm}
             name="text"
-            s={s}
-            label={t("text:label")}
+            label={messages.textLabel}
             data-testid="form-answer-text"
           />
         </Form>

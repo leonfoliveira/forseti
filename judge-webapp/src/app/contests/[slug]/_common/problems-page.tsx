@@ -5,11 +5,18 @@ import { Table } from "@/app/_component/table/table";
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
-import { useTranslations } from "next-intl";
 import { DownloadButton } from "@/app/_component/form/download-button";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { SubmissionAnswerShortBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-short-badge";
+import { SubmissionAnswerShortBadge } from "@/app/_component/badge/submission-answer-short-badge";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  problemTitle: {
+    id: "app.contests.[slug]._common.problems-page.problem-title",
+    defaultMessage: "{letter}. {title}",
+  },
+});
 
 type Props = {
   contest: ContestPublicResponseDTO;
@@ -21,8 +28,6 @@ type Props = {
  * If `contestantStatus` is provided, it will show the status of each problem for the contestant.
  */
 export function ProblemsPage({ contest, contestantStatus }: Props) {
-  const t = useTranslations("contests.[slug]._common.problems-page");
-
   return (
     <div>
       <Table className="table-zebra">
@@ -34,10 +39,13 @@ export function ProblemsPage({ contest, contestantStatus }: Props) {
               data-testid="problem-row"
             >
               <TableCell data-testid="problem-title">
-                {t("problem-title", {
-                  letter: problem.letter,
-                  title: problem.title,
-                })}
+                <FormattedMessage
+                  {...messages.problemTitle}
+                  values={{
+                    letter: problem.letter,
+                    title: problem.title,
+                  }}
+                />
                 {contestantStatus && (
                   <span className="ml-2">
                     {Object.entries(contestantStatus[problem.id] || {}).map(

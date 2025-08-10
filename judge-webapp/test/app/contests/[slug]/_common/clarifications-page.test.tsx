@@ -4,10 +4,7 @@ import { clarificationService, contestService } from "@/config/composition";
 import { mockAlert } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
-jest.mock("@/app/_component/timestamp-display", () => ({
-  TimestampDisplay: ({ timestamp }: any) => timestamp,
-}));
-jest.mock("@/app/_component/dialog-modal", () => ({
+jest.mock("@/app/_component/modal/dialog-modal", () => ({
   DialogModal: ({ children, modal, onConfirm }: any) => (
     <>
       {modal.isOpen && (
@@ -46,7 +43,7 @@ describe("ClarificationsPage", () => {
 
     expect(screen.queryByTestId("empty")).not.toBeInTheDocument();
     expect(screen.getByTestId("clarification-problem")).toHaveTextContent(
-      "header-general",
+      "{contestant} | General",
     );
     expect(screen.getByTestId("clarification-timestamp")).toHaveTextContent(
       clarifications[0].createdAt,
@@ -78,7 +75,7 @@ describe("ClarificationsPage", () => {
     render(<ClarificationsPage contest={{ clarifications } as any} />);
 
     expect(screen.getByTestId("clarification-problem")).toHaveTextContent(
-      "header-problem",
+      "{contestant} | Problem {letter}",
     );
     expect(screen.getByTestId("clarification-timestamp")).toHaveTextContent(
       clarifications[0].createdAt,
@@ -87,7 +84,7 @@ describe("ClarificationsPage", () => {
       clarifications[0].text,
     );
     expect(screen.getByTestId("clarification-answer-header")).toHaveTextContent(
-      "header-answer",
+      "RE: {judge}",
     );
     expect(
       screen.getByTestId("clarification-answer-timestamp"),
@@ -115,12 +112,15 @@ describe("ClarificationsPage", () => {
     fireEvent.change(screen.getByTestId("form-text"), {
       target: { value: "New Clarification" },
     });
-    expect(screen.getByTestId("form-submit")).toHaveTextContent("create:label");
+    expect(screen.getByTestId("form-submit")).toHaveTextContent("Submit");
     await act(async () => {
       fireEvent.click(screen.getByTestId("form-submit"));
     });
 
-    expect(mockAlert.error).toHaveBeenCalledWith("create-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Failed to create clarification",
+      id: "app.contests.[slug]._common.clarifications-page.create-error",
+    });
   });
 
   it("should alert success on create success", async () => {
@@ -143,7 +143,10 @@ describe("ClarificationsPage", () => {
       fireEvent.click(screen.getByTestId("form-submit"));
     });
 
-    expect(mockAlert.success).toHaveBeenCalledWith("create-success");
+    expect(mockAlert.success).toHaveBeenCalledWith({
+      defaultMessage: "Clarification created successfully",
+      id: "app.contests.[slug]._common.clarifications-page.create-success",
+    });
   });
 
   it("should alert error on create answer failure", async () => {
@@ -172,7 +175,7 @@ describe("ClarificationsPage", () => {
     );
 
     expect(screen.getByTestId("clarification-answer")).toHaveTextContent(
-      "answer:label",
+      "Answer",
     );
     act(() => {
       fireEvent.click(screen.getByTestId("clarification-answer"));
@@ -184,7 +187,10 @@ describe("ClarificationsPage", () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));
     });
 
-    expect(mockAlert.error).toHaveBeenCalledWith("create-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Failed to create clarification",
+      id: "app.contests.[slug]._common.clarifications-page.create-error",
+    });
   });
 
   it("should alert success on create answer success", async () => {
@@ -220,7 +226,10 @@ describe("ClarificationsPage", () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));
     });
 
-    expect(mockAlert.success).toHaveBeenCalledWith("create-success");
+    expect(mockAlert.success).toHaveBeenCalledWith({
+      defaultMessage: "Clarification created successfully",
+      id: "app.contests.[slug]._common.clarifications-page.create-success",
+    });
   });
 
   it("should alert error on delete clarification failure", async () => {
@@ -246,13 +255,16 @@ describe("ClarificationsPage", () => {
       fireEvent.click(screen.getByTestId("clarification-delete"));
     });
     expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "confirm-delete",
+      "Are you sure you want to delete this clarification?",
     );
     await act(async () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));
     });
 
-    expect(mockAlert.error).toHaveBeenCalledWith("delete-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Failed to delete clarification",
+      id: "app.contests.[slug]._common.clarifications-page.delete-error",
+    });
   });
 
   it("should alert success on delete clarification success", async () => {
@@ -279,6 +291,9 @@ describe("ClarificationsPage", () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));
     });
 
-    expect(mockAlert.success).toHaveBeenCalledWith("delete-success");
+    expect(mockAlert.success).toHaveBeenCalledWith({
+      defaultMessage: "Clarification deleted successfully",
+      id: "app.contests.[slug]._common.clarifications-page.delete-success",
+    });
   });
 });

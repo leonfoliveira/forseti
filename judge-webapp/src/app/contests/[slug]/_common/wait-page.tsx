@@ -1,10 +1,21 @@
 import React from "react";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { useRouter } from "next/navigation";
-import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
-import { useTranslations } from "next-intl";
 import { routes } from "@/config/routes";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { defineMessages, FormattedMessage } from "react-intl";
+import { globalMessages } from "@/i18n/global";
+
+const messages = defineMessages({
+  startAt: {
+    id: "app.contests.[slug]._common.wait-page.start-at",
+    defaultMessage: "Starts at",
+  },
+  languages: {
+    id: "app.contests.[slug]._common.wait-page.languages",
+    defaultMessage: "Supported languages",
+  },
+});
 
 type Props = {
   contestMetadata: ContestMetadataResponseDTO;
@@ -17,11 +28,9 @@ type Props = {
 export function WaitPage({ contestMetadata }: Props) {
   const router = useRouter();
 
-  const { formatLanguage } = useContestFormatter();
   const clockRef = useWaitClock(new Date(contestMetadata.startAt), () =>
     router.push(routes.CONTEST_SIGN_IN(contestMetadata.slug)),
   );
-  const t = useTranslations("contests.[slug]._common.wait-page");
 
   return (
     <div className="h-dvh flex justify-center items-center">
@@ -31,7 +40,7 @@ export function WaitPage({ contestMetadata }: Props) {
         </h1>
         <div>
           <p className="font-semibold" data-testid="start-at">
-            {t("start-at")}
+            <FormattedMessage {...messages.startAt} />
           </p>
           <p className="text-2xl mt-2">
             <span ref={clockRef} />
@@ -39,12 +48,12 @@ export function WaitPage({ contestMetadata }: Props) {
         </div>
         <div className="mt-10">
           <p className="font-semibold" data-testid="languages">
-            {t("languages")}
+            <FormattedMessage {...messages.languages} />
           </p>
           <ul>
             {contestMetadata.languages.map((it) => (
               <li key={it} data-testid="language-item">
-                {formatLanguage(it)}
+                <FormattedMessage {...globalMessages.language[it]} />
               </li>
             ))}
           </ul>

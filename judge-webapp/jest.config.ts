@@ -28,7 +28,6 @@ const config: Config = {
     "^@/test/(.*)$": "<rootDir>/test/$1",
     "^@/(.*)$": "<rootDir>/src/$1",
   },
-  transformIgnorePatterns: ["/node_modules/(?!next-intl)/"],
   clearMocks: true,
 };
 

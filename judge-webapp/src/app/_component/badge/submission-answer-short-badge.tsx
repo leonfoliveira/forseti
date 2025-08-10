@@ -1,8 +1,16 @@
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { Badge } from "@/app/_component/badge";
+import { Badge } from "@/app/_component/badge/badge";
 import React from "react";
-import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { cls } from "@/app/_util/cls";
+import { defineMessages, FormattedMessage } from "react-intl";
+import { globalMessages } from "@/i18n/global";
+
+const messages = defineMessages({
+  text: {
+    id: "app._component.badge.submission-answer-short-badge.text",
+    defaultMessage: "{answer} x{amount}",
+  },
+});
 
 type Props = {
   className?: string;
@@ -15,9 +23,17 @@ export function SubmissionAnswerShortBadge({
   answer,
   amount,
 }: Props) {
-  const { formatSubmissionAnswerShort } = useContestFormatter();
-
-  const text = `${formatSubmissionAnswerShort(answer)} x${amount}`;
+  const text = (
+    <FormattedMessage
+      {...messages.text}
+      values={{
+        answer: (
+          <FormattedMessage {...globalMessages.submissionAnswerShort[answer]} />
+        ),
+        amount,
+      }}
+    />
+  );
 
   switch (answer) {
     case SubmissionAnswer.ACCEPTED:

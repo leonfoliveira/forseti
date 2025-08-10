@@ -1,15 +1,17 @@
-import { Badge } from "@/app/_component/badge";
+import { Badge } from "@/app/_component/badge/badge";
 import React from "react";
-import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
+import { FormattedMessage } from "react-intl";
+import { globalMessages } from "@/i18n/global";
 
 type Props = {
   status: SubmissionStatus;
 };
 
 export function SubmissionStatusBadge({ status }: Props) {
-  const { formatSubmissionStatus } = useContestFormatter();
-  const text = formatSubmissionStatus(status);
+  const text = (
+    <FormattedMessage {...globalMessages.submissionStatus[status]} />
+  );
 
   switch (status) {
     case SubmissionStatus.JUDGED:

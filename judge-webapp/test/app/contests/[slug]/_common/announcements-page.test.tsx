@@ -4,9 +4,6 @@ import { mockAlert } from "@/test/jest.setup";
 import { contestService } from "@/config/composition";
 
 jest.mock("@/config/composition");
-jest.mock("@/app/_component/timestamp-display", () => ({
-  TimestampDisplay: ({ timestamp }: any) => timestamp,
-}));
 
 describe("AnnouncementsPage", () => {
   it("should render empty when there are no announcements", () => {
@@ -56,7 +53,10 @@ describe("AnnouncementsPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("form-submit"));
     });
-    expect(mockAlert.error).toHaveBeenCalledWith("create-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Failed to create announcement",
+      id: "app.contests.[slug]._common.announcements-page.create-error",
+    });
   });
 
   it("should alert success on create success", async () => {
@@ -73,6 +73,9 @@ describe("AnnouncementsPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("form-submit"));
     });
-    expect(mockAlert.success).toHaveBeenCalledWith("create-success");
+    expect(mockAlert.success).toHaveBeenCalledWith({
+      defaultMessage: "Announcement created successfully",
+      id: "app.contests.[slug]._common.announcements-page.create-success",
+    });
   });
 });

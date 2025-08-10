@@ -8,11 +8,6 @@ import { mockAlert } from "@/test/jest.setup";
 import { StorageService } from "@/core/service/StorageService";
 
 jest.mock("@/config/composition");
-jest.mock("@/app/_util/contest-formatter-hook", () => ({
-  useContestFormatter: jest.fn(() => ({
-    formatLanguage: jest.fn((language) => language),
-  })),
-}));
 jest.mock(
   "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map",
   () => ({
@@ -21,15 +16,6 @@ jest.mock(
     },
   }),
 );
-jest.mock(
-  "@/app/contests/[slug]/_component/badge/submission-answer-badge",
-  () => ({
-    SubmissionAnswerBadge: jest.fn(({ answer }) => answer),
-  }),
-);
-jest.mock("@/app/_component/timestamp-display", () => ({
-  TimestampDisplay: jest.fn(({ timestamp }) => timestamp),
-}));
 jest.mock(
   "@/app/contests/[slug]/contestant/_context/contestant-context",
   () => ({
@@ -76,20 +62,14 @@ describe("ContestantSubmissionPage", () => {
       Language.PYTHON_3_13,
     );
     expect(screen.getByTestId("form-code")).not.toBeDisabled();
-    expect(screen.getByTestId("form-submit")).toHaveTextContent("submit:label");
+    expect(screen.getByTestId("form-submit")).toHaveTextContent("Submit");
 
     expect(screen.getByTestId("header-timestamp")).toHaveTextContent(
-      "header-timestamp",
+      "Timestamp",
     );
-    expect(screen.getByTestId("header-problem")).toHaveTextContent(
-      "header-problem",
-    );
-    expect(screen.getByTestId("header-language")).toHaveTextContent(
-      "header-language",
-    );
-    expect(screen.getByTestId("header-answer")).toHaveTextContent(
-      "header-answer",
-    );
+    expect(screen.getByTestId("header-problem")).toHaveTextContent("Problem");
+    expect(screen.getByTestId("header-language")).toHaveTextContent("Language");
+    expect(screen.getByTestId("header-answer")).toHaveTextContent("Answer");
 
     expect(screen.getAllByTestId("submission-row")).toHaveLength(1);
     expect(screen.getByTestId("submission-created-at")).toHaveTextContent(
@@ -97,10 +77,10 @@ describe("ContestantSubmissionPage", () => {
     );
     expect(screen.getByTestId("submission-title")).toHaveTextContent("A");
     expect(screen.getByTestId("submission-language")).toHaveTextContent(
-      Language.PYTHON_3_13,
+      "Python 3.13",
     );
     expect(screen.getByTestId("submission-answer")).toHaveTextContent(
-      SubmissionAnswer.ACCEPTED,
+      "Accepted",
     );
   });
 
@@ -130,7 +110,7 @@ describe("ContestantSubmissionPage", () => {
 
     expect(screen.queryByTestId("submission-row")).not.toBeInTheDocument();
     expect(screen.getByTestId("submissions-empty")).toHaveTextContent(
-      "submissions-empty",
+      "No submissions yet",
     );
   });
 
@@ -157,7 +137,10 @@ describe("ContestantSubmissionPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("form-submit"));
     });
-    expect(mockAlert.error).toHaveBeenCalledWith("create-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Error creating submission",
+      id: "app.contests.[slug].contestant.submissions.page.create-error",
+    });
   });
 
   it("should alert success when create succeeds", async () => {
@@ -188,6 +171,9 @@ describe("ContestantSubmissionPage", () => {
       StorageService.ACTIVE_LANGUAGE_STORAGE_KEY,
       Language.PYTHON_3_13,
     );
-    expect(mockAlert.success).toHaveBeenCalledWith("create-success");
+    expect(mockAlert.success).toHaveBeenCalledWith({
+      defaultMessage: "Submission created successfully",
+      id: "app.contests.[slug].contestant.submissions.page.create-success",
+    });
   });
 });

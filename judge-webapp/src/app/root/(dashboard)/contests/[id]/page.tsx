@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
-import { useTranslations } from "next-intl";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
 import { contestService } from "@/config/composition";
@@ -17,6 +16,27 @@ import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { useAlert } from "@/app/_context/notification-context";
 import { TestCaseUtils } from "@/app/root/(dashboard)/contests/_util/TestCaseUtils";
+import { defineMessages } from "react-intl";
+
+const messages = defineMessages({
+  loadError: {
+    id: "app.root.(dashboard).contests.[id].page.load-error",
+    defaultMessage: "Error loading contest data",
+  },
+  testCasesValidationError: {
+    id: "app.root.(dashboard).contests.[id].page.test-cases-validation-error",
+    defaultMessage:
+      "Test cases file must have exactly two columns and at least one row. Failed problems: {letters}",
+  },
+  updateSuccess: {
+    id: "app.root.(dashboard).contests.[id].page.update-success",
+    defaultMessage: "Contest updated successfully",
+  },
+  updateError: {
+    id: "app.root.(dashboard).contests.[id].page.update-error",
+    defaultMessage: "Error updating contest data",
+  },
+});
 
 /**
  * RootEditContestPage component is used to edit a contest.
@@ -33,7 +53,6 @@ export default function RootEditContestPage({
   const updateContestState = useLoadableState<ContestFullResponseDTO>();
 
   const alert = useAlert();
-  const t = useTranslations("root.contests.[id]");
 
   const form = useForm<ContestFormType>({
     resolver: joiResolver(contestFormSchema),
@@ -52,7 +71,7 @@ export default function RootEditContestPage({
         contestState.finish(contest);
       } catch (error) {
         contestState.fail(error, {
-          default: () => alert.error(t("load-error")),
+          default: () => alert.error(messages.loadError),
         });
       }
     }
@@ -65,25 +84,24 @@ export default function RootEditContestPage({
     try {
       const input = ContestFormMap.toUpdateRequestDTO(data);
       const failedValidations = await TestCaseUtils.validateProblemList(
-        input.problems
+        input.problems,
       );
       if (failedValidations.length > 0) {
-        alert.warning(
-          t("test-cases-validation-error", {
-            letters: failedValidations.join(", "),
-          })
-        );
+        alert.warning({
+          ...messages.testCasesValidationError,
+          values: { letters: failedValidations.join(", ") },
+        });
         return;
       }
       const contest = await contestService.updateContest(input);
       form.reset(ContestFormMap.fromResponseDTO(contest));
       updateContestState.finish(contest);
-      alert.success(t("update-success"));
+      alert.success(messages.updateSuccess);
     } catch (error) {
       updateContestState.fail(error, {
         [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN),
         [NotFoundException.name]: () => redirect(routes.FORBIDDEN),
-        default: () => alert.error(t("update-error")),
+        default: () => alert.error(messages.updateError),
       });
     }
   }

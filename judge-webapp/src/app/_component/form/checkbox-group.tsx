@@ -3,7 +3,8 @@ import { Controller, UseFormReturn } from "react-hook-form";
 import { FieldPath, FieldValues } from "react-hook-form";
 import { Checkbox } from "@/app/_component/form/checkbox";
 import { cls } from "@/app/_util/cls";
-import { useTranslations } from "next-intl";
+import { FormattedMessage } from "react-intl";
+import { Message } from "@/i18n/message";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -11,22 +12,35 @@ type Props<TFieldValues extends FieldValues> = Omit<
 > & {
   form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
-  s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
-  label: string;
+  label: Message;
   options: {
     value: string;
-    label: string;
+    label: Message;
   }[];
   "data-testid"?: string;
 };
+
+function formToComponent(fieldValue: string[] | undefined, itemValue: string) {
+  return (fieldValue || []).includes(itemValue);
+}
+
+function componentToForm(
+  fieldValue: string[] | undefined,
+  itemValue: string,
+  checked: boolean
+) {
+  if (checked) {
+    return [...(fieldValue || []), itemValue];
+  }
+  return (fieldValue || []).filter((it) => it !== itemValue);
+}
 
 /**
  * CheckboxGroup component for rendering a group of checkboxes
  */
 export function CheckboxGroup<TFieldValues extends FieldValues>({
   form,
-  s,
   label,
   options,
   containerClassName,
@@ -34,24 +48,6 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
   ...props
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "checkbox-group";
-
-  function formToComponent(
-    fieldValue: string[] | undefined,
-    itemValue: string,
-  ) {
-    return (fieldValue || []).includes(itemValue);
-  }
-
-  function componentToForm(
-    fieldValue: string[] | undefined,
-    itemValue: string,
-    checked: boolean,
-  ) {
-    if (checked) {
-      return [...(fieldValue || []), itemValue];
-    }
-    return (fieldValue || []).filter((it) => it !== itemValue);
-  }
 
   return (
     <Controller
@@ -63,12 +59,13 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
           data-testid={testId}
         >
           <label className="fieldset-legend" data-testid={`${testId}:label`}>
-            {label}
+            <FormattedMessage {...label} />
           </label>
           <div className="grid gap-4 grid-cols-[repeat(auto-fill,_minmax(150px,_1fr))]">
             {options.map((item) => (
               <Checkbox
                 {...props}
+                label={item.label}
                 className={className}
                 key={item.value}
                 checked={formToComponent(field.value, item.value)}
@@ -77,21 +74,23 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
                     componentToForm(
                       field.value,
                       item.value,
-                      event.target.checked,
-                    ),
+                      event.target.checked
+                    )
                   );
                 }}
                 data-testid={`${testId}:checkbox`}
-              >
-                {item.label}
-              </Checkbox>
+              />
             ))}
           </div>
           <p
             className="label text-error text-wrap"
             data-testid={`${testId}:error`}
           >
-            {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
+            {!!fieldState.error?.message ? (
+              <FormattedMessage id={fieldState.error.message} />
+            ) : (
+              ""
+            )}
           </p>
         </fieldset>
       )}

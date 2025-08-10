@@ -6,7 +6,8 @@ import {
   FieldValues,
   UseFormReturn,
 } from "react-hook-form";
-import { useTranslations } from "next-intl";
+import { FormattedMessage } from "react-intl";
+import { Message } from "@/i18n/message";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -14,11 +15,18 @@ type Props<TFieldValues extends FieldValues> = Omit<
 > & {
   form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
-  s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
-  label: string;
+  label: Message;
   "data-testid"?: string;
 };
+
+function format(value?: number) {
+  return value ? value.toString() : "";
+}
+
+function parse(value: string) {
+  return parseInt(value);
+}
 
 /**
  * NumberInput component for rendering a number input field
@@ -26,21 +34,12 @@ type Props<TFieldValues extends FieldValues> = Omit<
 export function NumberInput<TFieldValues extends FieldValues>({
   form,
   name,
-  s,
   label,
   containerClassName,
   className,
   ...props
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "number-input";
-
-  function format(value?: number) {
-    return value ? value.toString() : "";
-  }
-
-  function parse(value: string) {
-    return parseInt(value);
-  }
 
   return (
     <Controller
@@ -51,8 +50,12 @@ export function NumberInput<TFieldValues extends FieldValues>({
           className={cls("fieldset", containerClassName)}
           data-testid={`${testId}:container`}
         >
-          <label className="fieldset-legend" htmlFor={name} data-testid={`${testId}:label`}>
-            {label}
+          <label
+            className="fieldset-legend"
+            htmlFor={name}
+            data-testid={`${testId}:label`}
+          >
+            <FormattedMessage {...label} />
           </label>
           <input
             {...props}
@@ -67,7 +70,11 @@ export function NumberInput<TFieldValues extends FieldValues>({
             className="label text-error text-wrap"
             data-testid={`${testId}:error`}
           >
-            {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
+            {!!fieldState.error?.message ? (
+              <FormattedMessage id={fieldState.error.message} />
+            ) : (
+              ""
+            )}
           </p>
         </fieldset>
       )}

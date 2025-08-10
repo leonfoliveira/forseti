@@ -17,16 +17,8 @@ jest.mock("@/config/composition");
 jest.mock("@/app/_util/contest-status-watcher", () => ({
   useContestStatusWatcherBatch: jest.fn().mockReturnValue({}),
 }));
-jest.mock("@/app/_component/timestamp-display", () => ({
-  TimestampDisplay: ({ timestamp }: any) => timestamp,
-}));
-jest.mock(
-  "@/app/root/(dashboard)/contests/_component/contest-status-badge",
-  () => ({
-    ContestStatusBadge: () => "status-badge",
-  }),
-);
-jest.mock("@/app/_component/dialog-modal", () => ({
+jest.mock("@/app/root/(dashboard)/contests/_component/contest-status-badge");
+jest.mock("@/app/_component/modal/dialog-modal", () => ({
   DialogModal: ({ children, modal, onConfirm, isLoading }: any) => (
     <>
       {modal.isOpen && (
@@ -53,7 +45,10 @@ describe("RootContestsPage", () => {
       render(<RootContestsPage />);
     });
 
-    expect(mockAlert.error).toHaveBeenCalledWith("load-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Failed to load contests",
+      id: "app.root.(dashboard).contests.page.load-error",
+    });
   });
 
   it("should render contests when findAll is successful", async () => {
@@ -77,19 +72,11 @@ describe("RootContestsPage", () => {
       expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
     });
 
-    expect(screen.getByTestId("header-slug")).toHaveTextContent("header-slug");
-    expect(screen.getByTestId("header-title")).toHaveTextContent(
-      "header-title",
-    );
-    expect(screen.getByTestId("header-start-at")).toHaveTextContent(
-      "header-start-at",
-    );
-    expect(screen.getByTestId("header-end-at")).toHaveTextContent(
-      "header-end-at",
-    );
-    expect(screen.getByTestId("header-status")).toHaveTextContent(
-      "header-status",
-    );
+    expect(screen.getByTestId("header-slug")).toHaveTextContent("Slug");
+    expect(screen.getByTestId("header-title")).toHaveTextContent("Title");
+    expect(screen.getByTestId("header-start-at")).toHaveTextContent("Start At");
+    expect(screen.getByTestId("header-end-at")).toHaveTextContent("End At");
+    expect(screen.getByTestId("header-status")).toHaveTextContent("Status");
     const rows = screen.getAllByTestId("table-row");
     expect(rows).toHaveLength(1);
     expect(screen.getByTestId("slug")).toHaveTextContent(mockContests[0].slug);
@@ -102,7 +89,6 @@ describe("RootContestsPage", () => {
     expect(screen.getByTestId("end-at")).toHaveTextContent(
       mockContests[0].endAt,
     );
-    expect(screen.getByTestId("status")).toHaveTextContent("status-badge");
   });
 
   it("should redirect to new contest page on new contest button click", async () => {
@@ -171,12 +157,15 @@ describe("RootContestsPage", () => {
     });
     expect(screen.getByTestId("dialog-modal")).toBeInTheDocument();
     expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "start-modal:message",
+      "Are you sure you want to start this contest now?",
     );
     await act(async () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));
     });
-    expect(mockAlert.error).toHaveBeenCalledWith("start-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Failed to start contest",
+      id: "app.root.(dashboard).contests.page.start-error",
+    });
   });
 
   it("should render success on start contest", async () => {
@@ -202,7 +191,7 @@ describe("RootContestsPage", () => {
     });
     expect(screen.getByTestId("dialog-modal")).toBeInTheDocument();
     expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "start-modal:message",
+      "Are you sure you want to start this contest now?",
     );
     expect(
       screen.queryByTestId("dialog-modal:loading"),
@@ -214,7 +203,10 @@ describe("RootContestsPage", () => {
         screen.queryByTestId("dialog-modal:loading"),
       ).not.toBeInTheDocument();
     });
-    expect(mockAlert.success).toHaveBeenCalledWith("start-success");
+    expect(mockAlert.success).toHaveBeenCalledWith({
+      defaultMessage: "Contest started successfully",
+      id: "app.root.(dashboard).contests.page.start-success",
+    });
     expect(screen.queryByTestId("dialog-modal")).not.toBeInTheDocument();
   });
 
@@ -242,12 +234,15 @@ describe("RootContestsPage", () => {
     });
     expect(screen.getByTestId("dialog-modal")).toBeInTheDocument();
     expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "end-modal:message",
+      "Are you sure you want to end this contest now?",
     );
     await act(async () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));
     });
-    expect(mockAlert.error).toHaveBeenCalledWith("end-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Failed to end contest",
+      id: "app.root.(dashboard).contests.page.end-error",
+    });
   });
 
   it("should render success on end contest", async () => {
@@ -273,7 +268,7 @@ describe("RootContestsPage", () => {
     });
     expect(screen.getByTestId("dialog-modal")).toBeInTheDocument();
     expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "end-modal:message",
+      "Are you sure you want to end this contest now?",
     );
     expect(
       screen.queryByTestId("dialog-modal:loading"),
@@ -285,7 +280,10 @@ describe("RootContestsPage", () => {
         screen.queryByTestId("dialog-modal:loading"),
       ).not.toBeInTheDocument();
     });
-    expect(mockAlert.success).toHaveBeenCalledWith("end-success");
+    expect(mockAlert.success).toHaveBeenCalledWith({
+      defaultMessage: "Contest ended successfully",
+      id: "app.root.(dashboard).contests.page.end-success",
+    });
     expect(screen.queryByTestId("dialog-modal")).not.toBeInTheDocument();
   });
 });

@@ -15,8 +15,7 @@ describe("Select", () => {
       <Select
         form={form}
         name="test"
-        s={((key: string) => key) as any}
-        label="Test label"
+        label={{ id: "select", defaultMessage: "Test label" }}
         options={options}
       />
     );

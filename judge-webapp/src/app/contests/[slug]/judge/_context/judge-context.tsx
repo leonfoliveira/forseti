@@ -5,7 +5,6 @@ import React, { createContext, useContext, useEffect } from "react";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { useAlert, useToast } from "@/app/_context/notification-context";
-import { useTranslations } from "next-intl";
 import {
   announcementListener,
   clarificationListener,
@@ -21,6 +20,22 @@ import { merge } from "@/app/contests/[slug]/_util/entity-merger";
 import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { ErrorPage } from "@/app/_component/page/error-page";
+import { defineMessages } from "react-intl";
+
+const messages = defineMessages({
+  loadError: {
+    id: "app.contests.[slug].judge._context.judge-context.load-error",
+    defaultMessage: "Error loading contest data",
+  },
+  submissionFailed: {
+    id: "app.contests.[slug].judge._context.judge-context.submission-failed",
+    defaultMessage: "New failed submission",
+  },
+  announcement: {
+    id: "app.contests.[slug].judge._context.judge-context.announcement",
+    defaultMessage: "New announcement: {text}",
+  },
+});
 
 type JudgeContextType = {
   contest: ContestPublicResponseDTO;
@@ -44,7 +59,6 @@ export function JudgeContextProvider({
   const contestMetadata = useContestMetadata();
   const alert = useAlert();
   const toast = useToast();
-  const t = useTranslations("contests.[slug].judge._context.judge-context");
 
   useEffect(() => {
     const listenerClient = listenerClientFactory.create();
@@ -94,7 +108,7 @@ export function JudgeContextProvider({
         });
       } catch (error) {
         state.fail(error, {
-          default: () => alert.error(t("error")),
+          default: () => alert.error(messages.loadError),
         });
       }
     }
@@ -122,7 +136,7 @@ export function JudgeContextProvider({
     });
 
     if (submission.status === SubmissionStatus.FAILED) {
-      toast.error(t("submission-failed"));
+      toast.error(messages.submissionFailed);
     }
   }
 
@@ -135,7 +149,10 @@ export function JudgeContextProvider({
       return { ...prevState };
     });
 
-    alert.warning(announcement.text);
+    alert.warning({
+      ...messages.announcement,
+      values: { text: announcement.text },
+    });
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
@@ -177,7 +194,9 @@ export function JudgeContextProvider({
   }
 
   return (
-    <JudgeContext.Provider value={state.data!}>{children}</JudgeContext.Provider>
+    <JudgeContext.Provider value={state.data!}>
+      {children}
+    </JudgeContext.Provider>
   );
 }
 

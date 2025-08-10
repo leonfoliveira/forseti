@@ -5,23 +5,6 @@ import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/subm
 import { Language } from "@/core/domain/enumerate/Language";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
-jest.mock("@/app/_util/contest-formatter-hook", () => ({
-  useContestFormatter: () => ({
-    formatLanguage: (lang: string) => lang,
-  }),
-}));
-
-jest.mock("@/app/_component/timestamp-display", () => ({
-  TimestampDisplay: ({ timestamp }: any) => timestamp,
-}));
-
-jest.mock(
-  "@/app/contests/[slug]/_component/badge/submission-answer-badge",
-  () => ({
-    SubmissionAnswerBadge: ({ answer }: any) => answer,
-  }),
-);
-
 describe("TimelinePage", () => {
   it("should render the timeline with correct data", () => {
     mockUseAuthorizationContext.mockResolvedValueOnce({
@@ -49,20 +32,14 @@ describe("TimelinePage", () => {
     render(<TimelinePage submissions={submissions} />);
 
     expect(screen.getByTestId("header-timestamp")).toHaveTextContent(
-      "header-timestamp",
+      "Timestamp",
     );
     expect(screen.getByTestId("header-contestant")).toHaveTextContent(
-      "header-contestant",
+      "Contestant",
     );
-    expect(screen.getByTestId("header-problem")).toHaveTextContent(
-      "header-problem",
-    );
-    expect(screen.getByTestId("header-language")).toHaveTextContent(
-      "header-language",
-    );
-    expect(screen.getByTestId("header-answer")).toHaveTextContent(
-      "header-answer",
-    );
+    expect(screen.getByTestId("header-problem")).toHaveTextContent("Problem");
+    expect(screen.getByTestId("header-language")).toHaveTextContent("Language");
+    expect(screen.getByTestId("header-answer")).toHaveTextContent("Answer");
     const rows = screen.getAllByTestId("submission-row");
     expect(rows).toHaveLength(2);
     expect(screen.getAllByTestId("submission-created-at")[0]).toHaveTextContent(
@@ -75,10 +52,10 @@ describe("TimelinePage", () => {
       "A",
     );
     expect(screen.getAllByTestId("submission-language")[0]).toHaveTextContent(
-      "PYTHON_3_13",
+      "Python 3.13",
     );
     expect(screen.getAllByTestId("submission-answer")[0]).toHaveTextContent(
-      "ACCEPTED",
+      "Accepted",
     );
   });
 

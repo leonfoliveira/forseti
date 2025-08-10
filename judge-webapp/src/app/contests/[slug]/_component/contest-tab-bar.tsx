@@ -1,10 +1,12 @@
 import { cls } from "@/app/_util/cls";
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { Message } from "@/i18n/message";
+import { FormattedMessage } from "react-intl";
 
 type Props = {
   tabs: {
-    label: string;
+    label: Message;
     path: string;
   }[];
 };
@@ -17,7 +19,7 @@ export function ContestTabBar({ tabs }: Props) {
   const pathname = usePathname();
   const router = useRouter();
 
-  function buildNavLink({ label, path }: { label: string; path: string }) {
+  function buildNavLink({ label, path }: { label: Message; path: string }) {
     const isActive = pathname === path;
     return (
       <a
@@ -26,7 +28,7 @@ export function ContestTabBar({ tabs }: Props) {
         onClick={() => router.push(path)}
         data-testid="tab"
       >
-        {label}
+        <FormattedMessage {...label} />
       </a>
     );
   }

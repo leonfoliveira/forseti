@@ -1,7 +1,7 @@
-import { ProblemStatusBadge } from "@/app/contests/[slug]/_component/badge/problem-status-badge";
+import { ProblemStatusBadge } from "@/app/_component/badge/problem-status-badge";
 import { render, screen } from "@testing-library/react";
 
-jest.mock("@/app/_component/badge", () => ({
+jest.mock("@/app/_component/badge/badge", () => ({
   Badge: ({ children, className }: any) => (
     <span className={className} data-testid="badge">
       {children}
@@ -9,8 +9,8 @@ jest.mock("@/app/_component/badge", () => ({
   ),
 }));
 
-jest.mock("@/app/_component/timestamp-display", () => ({
-  TimestampDisplay: ({ timestamp }: any) => timestamp,
+jest.mock("@/app/_component/format/formatted-datetime", () => ({
+  FormattedDateTime: ({ timestamp }: any) => timestamp,
 }));
 
 describe("ProblemStatusBadge", () => {
@@ -31,25 +31,25 @@ describe("ProblemStatusBadge", () => {
       acceptedAt,
       wrongSubmissions,
       expectedClass,
-      expectedContent,
+      expectedContent
     ) => {
       render(
         <ProblemStatusBadge
           isAccepted={isAccepted}
           acceptedAt={acceptedAt}
           wrongSubmissions={wrongSubmissions}
-        />,
+        />
       );
 
       const badge = screen.getByTestId("badge");
       expect(badge).toHaveClass(expectedClass);
       expect(badge).toHaveTextContent(expectedContent);
-    },
+    }
   );
 
   it("should not render when not accepted and no wrong submissions", () => {
     const { container } = render(
-      <ProblemStatusBadge isAccepted={false} wrongSubmissions={0} />,
+      <ProblemStatusBadge isAccepted={false} wrongSubmissions={0} />
     );
     expect(container.firstChild).toBeNull();
   });

@@ -8,11 +8,12 @@ import { ContestUtil } from "@/core/util/contest-util";
 import { Navbar } from "@/app/_component/navbar";
 import { routes } from "@/config/routes";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { Message } from "@/i18n/message";
 
 type Props = {
   contestMetadata: ContestMetadataResponseDTO;
   tabs: {
-    label: string;
+    label: Message;
     path: string;
   }[];
   children: React.ReactNode;

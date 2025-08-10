@@ -6,9 +6,32 @@ import { redirect } from "next/navigation";
 import { routes } from "@/config/routes";
 import { JudgeContextProvider } from "@/app/contests/[slug]/judge/_context/judge-context";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
-import { useTranslations } from "next-intl";
 import { useAuthorization } from "@/app/_context/authorization-context";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { defineMessages } from "react-intl";
+
+const messages = defineMessages({
+  tabLeaderboard: {
+    id: "app.contests.[slug].judge.layout.tab-leaderboard",
+    defaultMessage: "Leaderboard",
+  },
+  tabProblems: {
+    id: "app.contests.[slug].judge.layout.tab-problems",
+    defaultMessage: "Problems",
+  },
+  tabSubmissions: {
+    id: "app.contests.[slug].judge.layout.tab-submissions",
+    defaultMessage: "Submissions",
+  },
+  tabClarifications: {
+    id: "app.contests.[slug].judge.layout.tab-clarifications",
+    defaultMessage: "Clarifications",
+  },
+  tabAnnouncements: {
+    id: "app.contests.[slug].judge.layout.tab-announcements",
+    defaultMessage: "Announcements",
+  },
+});
 
 export default function JudgeLayout({
   children,
@@ -17,7 +40,6 @@ export default function JudgeLayout({
 }) {
   const authorization = useAuthorization();
   const contestMetadata = useContestMetadata();
-  const t = useTranslations("contests.[slug].judge.layout");
 
   if (!authorization?.member.type) {
     return redirect(routes.CONTEST_SIGN_IN(contestMetadata.slug));
@@ -31,23 +53,23 @@ export default function JudgeLayout({
       contestMetadata={contestMetadata}
       tabs={[
         {
-          label: t("tab-leaderboard"),
+          label: messages.tabLeaderboard,
           path: routes.CONTEST_JUDGE_LEADERBOARD(contestMetadata.slug),
         },
         {
-          label: t("tab-problems"),
+          label: messages.tabProblems,
           path: routes.CONTEST_JUDGE_PROBLEMS(contestMetadata.slug),
         },
         {
-          label: t("tab-submissions"),
+          label: messages.tabSubmissions,
           path: routes.CONTEST_JUDGE_SUBMISSIONS(contestMetadata.slug),
         },
         {
-          label: t("tab-clarifications"),
+          label: messages.tabClarifications,
           path: routes.CONTEST_JUDGE_CLARIFICATIONS(contestMetadata.slug),
         },
         {
-          label: t("tab-announcements"),
+          label: messages.tabAnnouncements,
           path: routes.CONTEST_JUDGE_ANNOUNCEMENTS(contestMetadata.slug),
         },
       ]}

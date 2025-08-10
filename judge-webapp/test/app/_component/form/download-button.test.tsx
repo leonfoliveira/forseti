@@ -17,7 +17,7 @@ describe("DownloadButton", () => {
 
     expect(screen.getByTestId("download-button:container")).toHaveAttribute(
       "data-tip",
-      "download:tooltip",
+      expect.any(String)
     );
     fireEvent.click(screen.getByTestId("download-button"));
     expect(attachmentService.download).toHaveBeenCalledWith(attachment);

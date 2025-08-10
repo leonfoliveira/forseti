@@ -15,18 +15,73 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { Language } from "@/core/domain/enumerate/Language";
-import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
-import { useTranslations } from "next-intl";
 import { StorageService } from "@/core/service/StorageService";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { SubmissionFormType } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form";
 import { submissionFormSchema } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-schema";
 import { SubmissionFormMap } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map";
-import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
+import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
 import { useAlert } from "@/app/_context/notification-context";
 import { DownloadButton } from "@/app/_component/form/download-button";
-import { TimestampDisplay } from "@/app/_component/timestamp-display";
+import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
+import { defineMessages, FormattedMessage } from "react-intl";
+import { globalMessages } from "@/i18n/global";
+
+const messages = defineMessages({
+  createSuccess: {
+    id: "app.contests.[slug].contestant.submissions.page.create-success",
+    defaultMessage: "Submission created successfully",
+  },
+  createError: {
+    id: "app.contests.[slug].contestant.submissions.page.create-error",
+    defaultMessage: "Error creating submission",
+  },
+  problemLabel: {
+    id: "app.contests.[slug].contestant.submissions.page.problem-label",
+    defaultMessage: "Problem",
+  },
+  problemOptionLabel: {
+    id: "app.contests.[slug].contestant.submissions.page.problem-option-label",
+    defaultMessage: "{letter}. {title}",
+  },
+  languageLabel: {
+    id: "app.contests.[slug].contestant.submissions.page.language-label",
+    defaultMessage: "Language",
+  },
+  codeLabel: {
+    id: "app.contests.[slug].contestant.submissions.page.code-label",
+    defaultMessage: "Code",
+  },
+  submit: {
+    id: "app.contests.[slug].contestant.submissions.page.submit",
+    defaultMessage: "Submit",
+  },
+  headerTimestamp: {
+    id: "app.contests.[slug].contestant.submissions.page.header-timestamp",
+    defaultMessage: "Timestamp",
+  },
+  headerProblem: {
+    id: "app.contests.[slug].contestant.submissions.page.header-problem",
+    defaultMessage: "Problem",
+  },
+  headerLanguage: {
+    id: "app.contests.[slug].contestant.submissions.page.header-language",
+    defaultMessage: "Language",
+  },
+  headerCode: {
+    id: "app.contests.[slug].contestant.submissions.page.header-code",
+    defaultMessage: "Code",
+  },
+  headerAnswer: {
+    id: "app.contests.[slug].contestant.submissions.page.header-answer",
+    defaultMessage: "Answer",
+  },
+  empty: {
+    id: "app.contests.[slug].contestant.submissions.page.empty",
+    defaultMessage: "No submissions yet",
+  },
+});
 
 export default function ContestantSubmissionPage() {
   const { contest, memberSubmissions, addMemberSubmission } =
@@ -34,11 +89,6 @@ export default function ContestantSubmissionPage() {
   const createSubmissionState = useLoadableState();
 
   const alert = useAlert();
-  const { formatLanguage } = useContestFormatter();
-  const t = useTranslations("contests.[slug].contestant.submissions");
-  const s = useTranslations(
-    "contests.[slug].contestant.submissions._form.submission-form",
-  );
 
   const submissionForm = useForm<SubmissionFormType>({
     resolver: joiResolver(submissionFormSchema),
@@ -70,11 +120,11 @@ export default function ContestantSubmissionPage() {
         submission.language,
       );
       submissionForm.reset({ language: submission.language });
-      alert.success(t("create-success"));
+      alert.success(messages.createSuccess);
       createSubmissionState.finish();
     } catch (error) {
       createSubmissionState.fail(error, {
-        default: () => alert.error(t("create-error")),
+        default: () => alert.error(messages.createError),
       });
     }
   }
@@ -90,11 +140,13 @@ export default function ContestantSubmissionPage() {
         <Select
           form={submissionForm}
           name="problemId"
-          s={s}
-          label={t("problem:label")}
+          label={messages.problemLabel}
           options={(contest?.problems || []).map((it) => ({
             value: it.id.toString(),
-            label: `${it.letter}. ${it.title}`,
+            label: {
+              ...messages.problemOptionLabel,
+              values: { letter: it.letter, title: it.title },
+            },
           }))}
           className="w-full"
           data-testid="form-problem"
@@ -103,11 +155,10 @@ export default function ContestantSubmissionPage() {
           <Select
             form={submissionForm}
             name="language"
-            s={s}
-            label={t("language:label")}
+            label={messages.languageLabel}
             options={(contest?.languages || []).map((it) => ({
               value: it,
-              label: formatLanguage(it),
+              label: globalMessages.language[it],
             }))}
             containerClassName="flex-1"
             data-testid="form-language"
@@ -115,8 +166,7 @@ export default function ContestantSubmissionPage() {
           <FileInput
             form={submissionForm}
             name="code"
-            s={s}
-            label={t("code:label")}
+            label={messages.codeLabel}
             containerClassName="flex-2"
             data-testid="form-code"
           />
@@ -124,13 +174,12 @@ export default function ContestantSubmissionPage() {
         <div className="flex justify-center mt-8">
           <Button
             type="submit"
+            label={messages.submit}
+            rightIcon={<FontAwesomeIcon icon={faPaperPlane} />}
             className="btn-primary"
             data-testid="form-submit"
             isLoading={createSubmissionState.isLoading}
-          >
-            {t("submit:label")}
-            <FontAwesomeIcon icon={faPaperPlane} className="ms-3" />
-          </Button>
+          />
         </div>
       </Form>
       <div className="divider mt-8" />
@@ -138,16 +187,16 @@ export default function ContestantSubmissionPage() {
         <TableSection head>
           <TableRow>
             <TableCell header data-testid="header-timestamp">
-              {t("header-timestamp")}
+              <FormattedMessage {...messages.headerTimestamp} />
             </TableCell>
             <TableCell header data-testid="header-problem">
-              {t("header-problem")}
+              <FormattedMessage {...messages.headerProblem} />
             </TableCell>
             <TableCell header data-testid="header-language">
-              {t("header-language")}
+              <FormattedMessage {...messages.headerLanguage} />
             </TableCell>
             <TableCell header align="right" data-testid="header-answer">
-              {t("header-answer")}
+              <FormattedMessage {...messages.headerAnswer} />
             </TableCell>
             <TableCell />
           </TableRow>
@@ -156,13 +205,15 @@ export default function ContestantSubmissionPage() {
           {memberSubmissions?.map((submission) => (
             <TableRow key={submission.id} data-testid="submission-row">
               <TableCell data-testid="submission-created-at">
-                <TimestampDisplay timestamp={submission.createdAt} />
+                <FormattedDateTime timestamp={submission.createdAt} />
               </TableCell>
               <TableCell data-testid="submission-title">
                 {submission.problem.letter}
               </TableCell>
               <TableCell data-testid="submission-language">
-                {formatLanguage(submission.language)}
+                <FormattedMessage
+                  {...globalMessages.language[submission.language]}
+                />
               </TableCell>
               <TableCell
                 align="right"
@@ -185,7 +236,9 @@ export default function ContestantSubmissionPage() {
           className="flex justify-center items-center py-20"
           data-testid="submissions-empty"
         >
-          <p className="text-neutral-content">{t("submissions-empty")}</p>
+          <p className="text-neutral-content">
+            <FormattedMessage {...messages.empty} />
+          </p>
         </div>
       ) : null}
     </div>

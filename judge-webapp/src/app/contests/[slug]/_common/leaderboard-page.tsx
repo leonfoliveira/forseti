@@ -6,11 +6,22 @@ import { TableRow } from "@/app/_component/table/table-row";
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { cls } from "@/app/_util/cls";
-import { useTranslations } from "next-intl";
 import { useAuthorization } from "@/app/_context/authorization-context";
-import { ProblemStatusBadge } from "@/app/contests/[slug]/_component/badge/problem-status-badge";
+import { ProblemStatusBadge } from "@/app/_component/badge/problem-status-badge";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  headerScore: {
+    id: "app.contests.[slug]._common.leaderboard-page.header-score",
+    defaultMessage: "Score",
+  },
+  headerPenalty: {
+    id: "app.contests.[slug]._common.leaderboard-page.header-penalty",
+    defaultMessage: "Penalty",
+  },
+});
 
 type Props = {
   contest: ContestPublicResponseDTO;
@@ -22,8 +33,6 @@ type Props = {
  */
 export function LeaderboardPage({ contest, leaderboard }: Props) {
   const authorization = useAuthorization();
-
-  const t = useTranslations("contests.[slug]._common.leaderboard-page");
 
   return (
     <div>
@@ -43,10 +52,10 @@ export function LeaderboardPage({ contest, leaderboard }: Props) {
               </TableCell>
             ))}
             <TableCell header align="right" data-testid="header-score">
-              {t("header-score")}
+              <FormattedMessage {...messages.headerScore} />
             </TableCell>
             <TableCell header align="right" data-testid="header-penalty">
-              {t("header-penalty")}
+              <FormattedMessage {...messages.headerPenalty} />
             </TableCell>
           </TableRow>
         </TableSection>

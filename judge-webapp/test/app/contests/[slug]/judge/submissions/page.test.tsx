@@ -8,33 +8,12 @@ import { submissionService } from "@/config/composition";
 import { mockAlert } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
-jest.mock("@/app/_util/contest-formatter-hook", () => ({
-  useContestFormatter: jest.fn(() => ({
-    formatLanguage: jest.fn((language) => language),
-    formatSubmissionAnswer: jest.fn((answer) => answer),
-  })),
-}));
-jest.mock(
-  "@/app/contests/[slug]/_component/badge/submission-answer-badge",
-  () => ({
-    SubmissionAnswerBadge: jest.fn(({ answer }) => answer),
-  }),
-);
-jest.mock(
-  "@/app/contests/[slug]/_component/badge/submission-status-badge",
-  () => ({
-    SubmissionStatusBadge: jest.fn(({ status }) => status),
-  }),
-);
-jest.mock("@/app/_component/timestamp-display", () => ({
-  TimestampDisplay: jest.fn(({ timestamp }) => timestamp),
-}));
 jest.mock("@/app/contests/[slug]/judge/_context/judge-context", () => ({
   useJudgeContext: jest.fn(() => ({
     submissions: [],
   })),
 }));
-jest.mock("@/app/_component/dialog-modal", () => ({
+jest.mock("@/app/_component/modal/dialog-modal", () => ({
   DialogModal: ({ children, modal, onConfirm }: any) => (
     <>
       {modal.isOpen && (
@@ -65,20 +44,12 @@ describe("JudgeSubmissionsPage", () => {
     render(<JudgeSubmissionsPage />);
 
     expect(screen.getByTestId("header-timestamp")).toHaveTextContent(
-      "header-timestamp",
+      "Timestamp",
     );
-    expect(screen.getByTestId("header-problem")).toHaveTextContent(
-      "header-problem",
-    );
-    expect(screen.getByTestId("header-language")).toHaveTextContent(
-      "header-language",
-    );
-    expect(screen.getByTestId("header-status")).toHaveTextContent(
-      "header-status",
-    );
-    expect(screen.getByTestId("header-answer")).toHaveTextContent(
-      "header-answer",
-    );
+    expect(screen.getByTestId("header-problem")).toHaveTextContent("Problem");
+    expect(screen.getByTestId("header-language")).toHaveTextContent("Language");
+    expect(screen.getByTestId("header-status")).toHaveTextContent("Status");
+    expect(screen.getByTestId("header-answer")).toHaveTextContent("Answer");
 
     expect(screen.getAllByTestId("submission-row")).toHaveLength(1);
     expect(screen.getByTestId("submission-created-at")).toHaveTextContent(
@@ -86,13 +57,11 @@ describe("JudgeSubmissionsPage", () => {
     );
     expect(screen.getByTestId("submission-letter")).toHaveTextContent("A");
     expect(screen.getByTestId("submission-language")).toHaveTextContent(
-      Language.PYTHON_3_13,
+      "Python 3.13",
     );
-    expect(screen.getByTestId("submission-status")).toHaveTextContent(
-      SubmissionStatus.JUDGED,
-    );
+    expect(screen.getByTestId("submission-status")).toHaveTextContent("Judged");
     expect(screen.getByTestId("submission-answer")).toHaveTextContent(
-      SubmissionAnswer.ACCEPTED,
+      "Accepted",
     );
 
     expect(screen.getByTestId("rerun")).not.toBeDisabled();
@@ -143,13 +112,16 @@ describe("JudgeSubmissionsPage", () => {
     });
 
     expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "confirm-rerun",
+      "Are you sure you want to rerun this submission?",
     );
     await act(async () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));
     });
 
-    expect(mockAlert.error).toHaveBeenCalledWith("rerun-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Error reenqueuing submission",
+      id: "app.contests.[slug].judge.submissions.page.rerun-error",
+    });
   });
 
   it("should alert success on rerun success", async () => {
@@ -176,13 +148,16 @@ describe("JudgeSubmissionsPage", () => {
     });
 
     expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "confirm-rerun",
+      "Are you sure you want to rerun this submission?",
     );
     await act(async () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));
     });
 
-    expect(mockAlert.success).toHaveBeenCalledWith("rerun-success");
+    expect(mockAlert.success).toHaveBeenCalledWith({
+      defaultMessage: "Submission reenqueued successfully",
+      id: "app.contests.[slug].judge.submissions.page.rerun-success",
+    });
     expect(screen.queryByTestId("dialog-modal")).not.toBeInTheDocument();
   });
 
@@ -216,7 +191,10 @@ describe("JudgeSubmissionsPage", () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));
     });
 
-    expect(mockAlert.error).toHaveBeenCalledWith("update-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Error updating submission",
+      id: "app.contests.[slug].judge.submissions.page.update-error",
+    });
   });
 
   it("should alert success on update success", async () => {
@@ -249,7 +227,10 @@ describe("JudgeSubmissionsPage", () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));
     });
 
-    expect(mockAlert.success).toHaveBeenCalledWith("update-success");
+    expect(mockAlert.success).toHaveBeenCalledWith({
+      defaultMessage: "Submission updated successfully",
+      id: "app.contests.[slug].judge.submissions.page.update-success",
+    });
     expect(screen.queryByTestId("dialog-modal")).not.toBeInTheDocument();
   });
 });

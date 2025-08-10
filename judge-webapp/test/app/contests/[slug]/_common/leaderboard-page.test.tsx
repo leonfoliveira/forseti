@@ -4,14 +4,6 @@ import { LeaderboardPage } from "@/app/contests/[slug]/_common/leaderboard-page"
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 
-jest.mock(
-  "@/app/contests/[slug]/_component/badge/problem-status-badge",
-  () => ({
-    ProblemStatusBadge: ({ isAccepted, acceptedAt, wrongSubmissions }: any) =>
-      `${isAccepted},${acceptedAt},${wrongSubmissions}`,
-  }),
-);
-
 describe("LeaderboardPage", () => {
   it("should render the leaderboard with correct data", () => {
     mockUseAuthorizationContext.mockResolvedValueOnce({
@@ -87,11 +79,9 @@ describe("LeaderboardPage", () => {
     expect(screen.getAllByTestId("problem-title")[1]).toHaveTextContent(
       contest.problems[1].letter,
     );
-    expect(screen.getAllByTestId("header-score")[0]).toHaveTextContent(
-      "header-score",
-    );
+    expect(screen.getAllByTestId("header-score")[0]).toHaveTextContent("Score");
     expect(screen.getAllByTestId("header-penalty")[0]).toHaveTextContent(
-      "header-penalty",
+      "Penalty",
     );
     expect(screen.getAllByTestId("member-row")).toHaveLength(2);
     expect(screen.getAllByTestId("member-name")[0]).toHaveTextContent(
@@ -101,16 +91,14 @@ describe("LeaderboardPage", () => {
       `2. ${leaderboard.classification[1].name}`,
     );
     expect(screen.getAllByTestId("member-problem")[0]).toHaveTextContent(
-      "true,2023-10-01T00:30:00Z,2",
+      "2023-10-01T00:30:00Z | +2",
     );
-    expect(screen.getAllByTestId("member-problem")[1]).toHaveTextContent(
-      "false,undefined,1",
-    );
+    expect(screen.getAllByTestId("member-problem")[1]).toHaveTextContent("+1");
     expect(screen.getAllByTestId("member-problem")[2]).toHaveTextContent(
-      "true,2023-10-01T00:45:00Z,1",
+      "2023-10-01T00:45:00Z | +1",
     );
     expect(screen.getAllByTestId("member-problem")[3]).toHaveTextContent(
-      "true,2023-10-01T00:50:00Z,0",
+      "2023-10-01T00:50:00Z",
     );
     expect(screen.getAllByTestId("member-score")[0]).toHaveTextContent("100");
     expect(screen.getAllByTestId("member-score")[1]).toHaveTextContent("");

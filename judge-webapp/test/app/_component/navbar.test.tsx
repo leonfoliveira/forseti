@@ -42,7 +42,7 @@ describe("Navbar", () => {
 
   it("renders the root title when no contest metadata is provided", () => {
     render(<Navbar signInPath="/sign-in" />);
-    expect(screen.getByTestId("title")).toHaveTextContent("root-title");
+    expect(screen.getByTestId("title")).toHaveTextContent("Judge - Root");
   });
 
   it("renders the contest title when contest metadata is provided", () => {
@@ -61,7 +61,7 @@ describe("Navbar", () => {
   it("displays guest name when no authorization is present", () => {
     mockUseAuthorization.mockReturnValueOnce(undefined);
     render(<Navbar signInPath="/sign-in" />);
-    expect(screen.getByTestId("member")).toHaveTextContent("guest-name");
+    expect(screen.getByTestId("member")).toHaveTextContent("Guest");
   });
 
   it("displays guest name when logged as root", () => {

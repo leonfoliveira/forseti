@@ -6,42 +6,59 @@ import {
   useAuthorization,
   useAuthorizationContext,
 } from "@/app/_context/authorization-context";
-import { useTranslations } from "next-intl";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
-import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
+import { defineMessages, FormattedMessage } from "react-intl";
+import { globalMessages } from "@/i18n/global";
+
+const messages = defineMessages({
+  rootTitle: {
+    id: "app._component.navbar.root-title",
+    defaultMessage: "Judge - Root",
+  },
+  guestName: {
+    id: "app._component.navbar.guest-name",
+    defaultMessage: "Guest",
+  },
+  signIn: {
+    id: "app._component.navbar.sign-in",
+    defaultMessage: "Sign In",
+  },
+  signOut: {
+    id: "app._component.navbar.sign-out",
+    defaultMessage: "Sign Out",
+  },
+});
 
 type Props = {
   contestMetadata?: ContestMetadataResponseDTO;
   signInPath: string;
-  allowRoot?: boolean;
 };
 
-export function Navbar({ contestMetadata, signInPath, allowRoot }: Props) {
+export function Navbar({ contestMetadata, signInPath }: Props) {
   const { theme, toggleTheme } = useTheme();
   const authorization = useAuthorization();
   const { clearAuthorization } = useAuthorizationContext();
-  const { formatMemberType } = useContestFormatter();
-  const t = useTranslations("_component.navbar");
 
   const clockRef = useWaitClock(
-    contestMetadata && new Date(contestMetadata.endAt)
+    contestMetadata && new Date(contestMetadata.endAt),
   );
 
   function signOut() {
     clearAuthorization(signInPath);
   }
 
-  const isGuest =
-    !authorization?.member ||
-    (!allowRoot && authorization.member.type === MemberType.ROOT);
+  const isGuest = !authorization?.member;
 
   return (
     <nav className="navbar bg-base-100">
       <div className="grid [grid-template-columns:1fr_auto_1fr] items-center w-full">
         <div className="text-lg font-semibold ml-2" data-testid="title">
-          {contestMetadata ? contestMetadata.title : t("root-title")}
+          {contestMetadata ? (
+            contestMetadata.title
+          ) : (
+            <FormattedMessage {...messages.rootTitle} />
+          )}
         </div>
         <div className="text-center">
           <span ref={clockRef} className="font-mono text-sm" />
@@ -62,7 +79,11 @@ export function Navbar({ contestMetadata, signInPath, allowRoot }: Props) {
             <li>
               <details>
                 <summary className="font-semibold" data-testid="member">
-                  {isGuest ? t("guest-name") : authorization?.member.name}
+                  {isGuest ? (
+                    <FormattedMessage {...messages.guestName} />
+                  ) : (
+                    authorization?.member.name
+                  )}
                 </summary>
                 <ul
                   className="bg-base-100 rounded-t-none right-0 !mt-0"
@@ -70,7 +91,11 @@ export function Navbar({ contestMetadata, signInPath, allowRoot }: Props) {
                 >
                   {!isGuest && (
                     <li className="menu-title">
-                      {formatMemberType(authorization?.member.type)}
+                      <FormattedMessage
+                        {...globalMessages.memberType[
+                          authorization?.member.type
+                        ]}
+                      />
                     </li>
                   )}
                   <li>
@@ -79,7 +104,11 @@ export function Navbar({ contestMetadata, signInPath, allowRoot }: Props) {
                       className="text-nowrap"
                       data-testid="sign"
                     >
-                      {isGuest ? t("sign-in:label") : t("sign-out:label")}
+                      {isGuest ? (
+                        <FormattedMessage {...messages.signIn} />
+                      ) : (
+                        <FormattedMessage {...messages.signOut} />
+                      )}
                     </a>
                   </li>
                 </ul>

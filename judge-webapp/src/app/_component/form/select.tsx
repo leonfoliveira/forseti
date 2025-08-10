@@ -6,7 +6,8 @@ import {
   FieldValues,
   UseFormReturn,
 } from "react-hook-form";
-import { useTranslations } from "next-intl";
+import { FormattedMessage } from "react-intl";
+import { Message } from "@/i18n/message";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   DetailedHTMLProps<SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>,
@@ -14,15 +15,22 @@ type Props<TFieldValues extends FieldValues> = Omit<
 > & {
   form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
-  s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
-  label?: string;
+  label: Message;
   options: {
     value: string;
-    label: string;
+    label: Message;
   }[];
   "data-testid"?: string;
 };
+
+function formToComponent(value?: string) {
+  return value || "";
+}
+
+function componentToForm(value: string) {
+  return value;
+}
 
 /**
  * Select component for rendering a select input field with options
@@ -31,21 +39,12 @@ export function Select<TFieldValues extends FieldValues>({
   form,
   label,
   name,
-  s,
   containerClassName,
   className,
   options,
   ...props
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "select";
-
-  function formToComponent(value?: string) {
-    return value || "";
-  }
-
-  function componentToForm(value: string) {
-    return value;
-  }
 
   return (
     <Controller
@@ -56,8 +55,12 @@ export function Select<TFieldValues extends FieldValues>({
           className={cls(containerClassName, "fieldset")}
           data-testid={`${testId}:container`}
         >
-          <label className="fieldset-legend" htmlFor={name} data-testid={`${testId}:label`}>
-            {label}
+          <label
+            className="fieldset-legend"
+            htmlFor={name}
+            data-testid={`${testId}:label`}
+          >
+            <FormattedMessage {...label} />
           </label>
           <select
             {...props}
@@ -76,7 +79,7 @@ export function Select<TFieldValues extends FieldValues>({
                 value={it.value}
                 data-testid={`${testId}:option`}
               >
-                {it.label}
+                <FormattedMessage {...it.label} />
               </option>
             ))}
           </select>
@@ -84,7 +87,11 @@ export function Select<TFieldValues extends FieldValues>({
             className="label text-error text-wrap"
             data-testid={`${testId}:error`}
           >
-            {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
+            {!!fieldState.error?.message ? (
+              <FormattedMessage id={fieldState.error.message} />
+            ) : (
+              ""
+            )}
           </p>
         </fieldset>
       )}

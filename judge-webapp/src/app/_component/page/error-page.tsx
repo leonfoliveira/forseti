@@ -1,12 +1,22 @@
 import React from "react";
 import { Button } from "@/app/_component/form/button";
-import { useTranslations } from "next-intl";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  error: {
+    id: "app._component.page.error-page.error",
+    defaultMessage: "An error occurred",
+  },
+  reload: {
+    id: "app._component.page.error-page.reload",
+    defaultMessage: "Reload",
+  },
+});
 
 /**
  * ErrorPage component displays an error message and a button to reload the page.
  */
 export function ErrorPage() {
-  const t = useTranslations("_component.page.error-page");
   return (
     <div
       className="h-dvh flex justify-center items-center"
@@ -14,15 +24,14 @@ export function ErrorPage() {
     >
       <div className="text-center">
         <h1 className="text-6xl mb-5 font-mono" data-testid="error">
-          {t("error")}
+          <FormattedMessage {...messages.error} />
         </h1>
         <Button
+          label={messages.reload}
           className="btn-soft mt-5"
           onClick={() => window.location.reload()}
           data-testid="reload"
-        >
-          {t("reload:label")}
-        </Button>
+        />
       </div>
     </div>
   );

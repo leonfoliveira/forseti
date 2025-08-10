@@ -3,17 +3,15 @@
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
-import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
+import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
 import { DownloadButton } from "@/app/_component/form/download-button";
 import { Table } from "@/app/_component/table/table";
 import React from "react";
-import { useTranslations } from "next-intl";
-import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faRotate } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@/app/_component/form/button";
 import { useModal } from "@/app/_util/modal-hook";
-import { DialogModal } from "@/app/_component/dialog-modal";
+import { DialogModal } from "@/app/_component/modal/dialog-modal";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { submissionService } from "@/config/composition";
 import { useAlert } from "@/app/_context/notification-context";
@@ -23,10 +21,71 @@ import { UpdateSubmissionFormType } from "@/app/contests/[slug]/judge/submission
 import { joiResolver } from "@hookform/resolvers/joi";
 import { updateSubmissionFormSchema } from "@/app/contests/[slug]/judge/submissions/_form/update-submission-form-schema";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { SubmissionStatusBadge } from "@/app/contests/[slug]/_component/badge/submission-status-badge";
+import { SubmissionStatusBadge } from "@/app/_component/badge/submission-status-badge";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { TimestampDisplay } from "@/app/_component/timestamp-display";
+import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
+import { defineMessages, FormattedMessage } from "react-intl";
+import { globalMessages } from "@/i18n/global";
+
+const messages = defineMessages({
+  rerunSuccess: {
+    defaultMessage: "Submission reenqueued successfully",
+    id: "app.contests.[slug].judge.submissions.page.rerun-success",
+  },
+  rerunError: {
+    defaultMessage: "Error reenqueuing submission",
+    id: "app.contests.[slug].judge.submissions.page.rerun-error",
+  },
+  updateSuccess: {
+    defaultMessage: "Submission updated successfully",
+    id: "app.contests.[slug].judge.submissions.page.update-success",
+  },
+  updateError: {
+    defaultMessage: "Error updating submission",
+    id: "app.contests.[slug].judge.submissions.page.update-error",
+  },
+  headerTimestamp: {
+    defaultMessage: "Timestamp",
+    id: "app.contests.[slug].judge.submissions.page.header-timestamp",
+  },
+  headerProblem: {
+    defaultMessage: "Problem",
+    id: "app.contests.[slug].judge.submissions.page.header-problem",
+  },
+  headerLanguage: {
+    defaultMessage: "Language",
+    id: "app.contests.[slug].judge.submissions.page.header-language",
+  },
+  headerStatus: {
+    defaultMessage: "Status",
+    id: "app.contests.[slug].judge.submissions.page.header-status",
+  },
+  headerAnswer: {
+    defaultMessage: "Answer",
+    id: "app.contests.[slug].judge.submissions.page.header-answer",
+  },
+  rerunTooltip: {
+    defaultMessage: "Rerun",
+    id: "app.contests.[slug].judge.submissions.page.rerun-tooltip",
+  },
+  updateTooltip: {
+    defaultMessage: "Update",
+    id: "app.contests.[slug].judge.submissions.page.update-tooltip",
+  },
+  confirmRerun: {
+    defaultMessage: "Are you sure you want to rerun this submission?",
+    id: "app.contests.[slug].judge.submissions.page.confirm-rerun",
+  },
+  answerLabel: {
+    defaultMessage: "Answer",
+    id: "app.contests.[slug].judge.submissions.page.answer-label",
+  },
+  confirmUpdate: {
+    defaultMessage: "Are you sure you want to update this submission?",
+    id: "app.contests.[slug].judge.submissions.page.confirm-update",
+  },
+});
 
 /**
  * Submissions page for judges in a contest.
@@ -37,15 +96,9 @@ export default function JudgeSubmissionsPage() {
   const rerunState = useLoadableState();
   const updateState = useLoadableState();
 
-  const { formatLanguage, formatSubmissionAnswer } = useContestFormatter();
   const rerunModal = useModal<string>();
   const updateModal = useModal<string>();
   const alert = useAlert();
-
-  const t = useTranslations("contests.[slug].judge.submissions");
-  const s = useTranslations(
-    "contests.[slug].judge.submissions._form.update-submission-form",
-  );
 
   const updateForm = useForm<UpdateSubmissionFormType>({
     resolver: joiResolver(updateSubmissionFormSchema),
@@ -56,11 +109,11 @@ export default function JudgeSubmissionsPage() {
     try {
       await submissionService.rerunSubmission(submissionId);
       rerunModal.close();
-      alert.success(t("rerun-success"));
+      alert.success(messages.rerunSuccess);
       rerunState.finish();
     } catch (error) {
       rerunState.fail(error, {
-        default: () => alert.error(t("rerun-error")),
+        default: () => alert.error(messages.rerunError),
       });
     }
   }
@@ -70,11 +123,11 @@ export default function JudgeSubmissionsPage() {
     try {
       await submissionService.updateSubmissionAnswer(submissionId, data);
       updateModal.close();
-      alert.success(t("update-success"));
+      alert.success(messages.updateSuccess);
       updateState.finish();
     } catch (error) {
       updateState.fail(error, {
-        default: () => alert.error(t("update-error")),
+        default: () => alert.error(messages.updateError),
       });
     }
   }
@@ -85,19 +138,19 @@ export default function JudgeSubmissionsPage() {
         <TableSection head>
           <TableRow>
             <TableCell header data-testid="header-timestamp">
-              {t("header-timestamp")}
+              <FormattedMessage {...messages.headerTimestamp} />
             </TableCell>
             <TableCell header data-testid="header-problem">
-              {t("header-problem")}
+              <FormattedMessage {...messages.headerProblem} />
             </TableCell>
             <TableCell header data-testid="header-language">
-              {t("header-language")}
+              <FormattedMessage {...messages.headerLanguage} />
             </TableCell>
             <TableCell header align="right" data-testid="header-status">
-              {t("header-status")}
+              <FormattedMessage {...messages.headerStatus} />
             </TableCell>
             <TableCell header align="right" data-testid="header-answer">
-              {t("header-answer")}
+              <FormattedMessage {...messages.headerAnswer} />
             </TableCell>
             <TableCell />
           </TableRow>
@@ -106,13 +159,15 @@ export default function JudgeSubmissionsPage() {
           {submissions?.map((submission) => (
             <TableRow key={submission.id} data-testid="submission-row">
               <TableCell data-testid="submission-created-at">
-                <TimestampDisplay timestamp={submission.createdAt} />
+                <FormattedDateTime timestamp={submission.createdAt} />
               </TableCell>
               <TableCell data-testid="submission-letter">
                 {submission.problem.letter}
               </TableCell>
               <TableCell data-testid="submission-language">
-                {formatLanguage(submission.language)}
+                <FormattedMessage
+                  {...globalMessages.language[submission.language]}
+                />
               </TableCell>
               <TableCell
                 align="right"
@@ -131,22 +186,20 @@ export default function JudgeSubmissionsPage() {
               <TableCell>
                 <fieldset className="flex justify-end gap-x-2">
                   <Button
+                    leftIcon={<FontAwesomeIcon icon={faRotate} />}
                     onClick={() => rerunModal.open(submission.id)}
-                    tooltip={t("rerun-tooltip")}
+                    tooltip={messages.rerunTooltip}
                     disabled={submission.status === SubmissionStatus.JUDGING}
                     className="text-xs btn-soft"
                     data-testid="rerun"
-                  >
-                    <FontAwesomeIcon icon={faRotate} />
-                  </Button>
+                  />
                   <Button
+                    leftIcon={<FontAwesomeIcon icon={faEdit} />}
                     onClick={() => updateModal.open(submission.id)}
-                    tooltip={t("update-tooltip")}
+                    tooltip={messages.updateTooltip}
                     className="text-xs btn-soft"
                     data-testid="update"
-                  >
-                    <FontAwesomeIcon icon={faEdit} />
-                  </Button>
+                  />
                   <DownloadButton attachment={submission.code} />
                 </fieldset>
               </TableCell>
@@ -160,7 +213,7 @@ export default function JudgeSubmissionsPage() {
         onConfirm={rerun}
         isLoading={rerunState.isLoading}
       >
-        {t("confirm-rerun")}
+        <FormattedMessage {...messages.confirmRerun} />
       </DialogModal>
 
       <DialogModal
@@ -173,17 +226,16 @@ export default function JudgeSubmissionsPage() {
         <Select
           form={updateForm}
           name="answer"
-          label={t("update-form:answer:label")}
-          s={s}
+          label={messages.answerLabel}
           options={Object.values(SubmissionAnswer)
             .filter((a) => a !== SubmissionAnswer.NO_ANSWER)
             .map((answer) => ({
               value: answer,
-              label: formatSubmissionAnswer(answer),
+              label: globalMessages.submissionAnswer[answer],
             }))}
           data-testid="update-form-answer"
         />
-        {t("confirm-update")}
+        <FormattedMessage {...messages.confirmUpdate} />
       </DialogModal>
     </>
   );

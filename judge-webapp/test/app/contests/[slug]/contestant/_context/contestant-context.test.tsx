@@ -20,11 +20,6 @@ jest.mock("@/app/contests/[slug]/_context/contest-metadata-context", () => ({
     id: "test-contest-id",
   })),
 }));
-jest.mock("@/app/_util/contest-formatter-hook", () => ({
-  useContestFormatter: jest.fn(() => ({
-    formatSubmissionAnswer: jest.fn((answer) => answer),
-  })),
-}));
 jest.mock("@/app/_component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading" />,
 }));
@@ -61,7 +56,10 @@ describe("ContestantContextProvider", () => {
 
     expect(screen.getByTestId("loading")).toBeInTheDocument();
     await waitFor(() => {
-      expect(mockAlert.error).toHaveBeenCalledWith("error");
+      expect(mockAlert.error).toHaveBeenCalledWith({
+        defaultMessage: "Error loading contest data",
+        id: "app.contests.[slug].contestant._context.contestant-context.load-error",
+      });
       expect(screen.getByTestId("error")).toBeInTheDocument();
       expect(screen.queryByTestId("child")).not.toBeInTheDocument();
     });
@@ -220,7 +218,12 @@ describe("ContestantContextProvider", () => {
       expect(result.current.memberSubmissions).toContainEqual(
         newMemberSubmission,
       );
-      expect(toast).toHaveBeenCalledWith("submission-toast-problem");
+      expect(toast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          defaultMessage: "Problem {letter}: {answer}",
+          id: "app.contests.[slug].contestant._context.contestant-context.problem-answer",
+        }),
+      );
     },
   );
 
@@ -256,7 +259,11 @@ describe("ContestantContextProvider", () => {
     expect(result.current.contest.announcements).toContainEqual(
       newAnnouncement,
     );
-    expect(mockAlert.warning).toHaveBeenCalledWith(newAnnouncement.text);
+    expect(mockAlert.warning).toHaveBeenCalledWith({
+      defaultMessage: "New announcement: {text}",
+      id: "app.contests.[slug].contestant._context.contestant-context.announcement",
+      values: { text: "Announcement" },
+    });
   });
 
   it("should handle clarification updates", async () => {
@@ -319,7 +326,10 @@ describe("ContestantContextProvider", () => {
     act(() => {
       receiveClarificationAnswer(newClarificationAnswer);
     });
-    expect(mockToast.info).toHaveBeenCalledWith("clarification-answer");
+    expect(mockToast.info).toHaveBeenCalledWith({
+      defaultMessage: "New answer for a clarification",
+      id: "app.contests.[slug].contestant._context.contestant-context.clarification-answer",
+    });
   });
 
   it("should handle clarification deletion", async () => {

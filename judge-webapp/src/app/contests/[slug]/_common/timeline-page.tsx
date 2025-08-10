@@ -5,13 +5,40 @@ import { Table } from "@/app/_component/table/table";
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
-import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
-import { useTranslations } from "next-intl";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { cls } from "@/app/_util/cls";
 import { useAuthorization } from "@/app/_context/authorization-context";
-import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
-import { TimestampDisplay } from "@/app/_component/timestamp-display";
+import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
+import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
+import { defineMessages, FormattedMessage } from "react-intl";
+import { globalMessages } from "@/i18n/global";
+
+const messages = defineMessages({
+  headerTimestamp: {
+    id: "app.contests.[slug]._common.timeline-page.header-timestamp",
+    defaultMessage: "Timestamp",
+  },
+  headerContestant: {
+    id: "app.contests.[slug]._common.timeline-page.header-contestant",
+    defaultMessage: "Contestant",
+  },
+  headerProblem: {
+    id: "app.contests.[slug]._common.timeline-page.header-problem",
+    defaultMessage: "Problem",
+  },
+  headerLanguage: {
+    id: "app.contests.[slug]._common.timeline-page.header-language",
+    defaultMessage: "Language",
+  },
+  headerAnswer: {
+    id: "app.contests.[slug]._common.timeline-page.header-answer",
+    defaultMessage: "Answer",
+  },
+  submissionsEmpty: {
+    id: "app.contests.[slug]._common.timeline-page.submissions-empty",
+    defaultMessage: "No submissions yet",
+  },
+});
 
 type Props = {
   submissions: SubmissionPublicResponseDTO[];
@@ -23,28 +50,25 @@ type Props = {
 export function TimelinePage({ submissions }: Props) {
   const authorization = useAuthorization();
 
-  const { formatLanguage } = useContestFormatter();
-  const t = useTranslations("contests.[slug]._common.timeline-page");
-
   return (
     <div>
       <Table>
         <TableSection head>
           <TableRow>
             <TableCell header data-testid="header-timestamp">
-              {t("header-timestamp")}
+              <FormattedMessage {...messages.headerTimestamp} />
             </TableCell>
             <TableCell header data-testid="header-contestant">
-              {t("header-contestant")}
+              <FormattedMessage {...messages.headerContestant} />
             </TableCell>
             <TableCell header data-testid="header-problem">
-              {t("header-problem")}
+              <FormattedMessage {...messages.headerProblem} />
             </TableCell>
             <TableCell header data-testid="header-language">
-              {t("header-language")}
+              <FormattedMessage {...messages.headerLanguage} />
             </TableCell>
             <TableCell header align="right" data-testid="header-answer">
-              {t("header-answer")}
+              <FormattedMessage {...messages.headerAnswer} />
             </TableCell>
           </TableRow>
         </TableSection>
@@ -60,7 +84,7 @@ export function TimelinePage({ submissions }: Props) {
               data-testid="submission-row"
             >
               <TableCell data-testid="submission-created-at">
-                <TimestampDisplay timestamp={submission.createdAt} />
+                <FormattedDateTime timestamp={submission.createdAt} />
               </TableCell>
               <TableCell data-testid="submission-member">
                 {submission.member.name}
@@ -69,7 +93,9 @@ export function TimelinePage({ submissions }: Props) {
                 {submission.problem.letter}
               </TableCell>
               <TableCell data-testid="submission-language">
-                {formatLanguage(submission.language)}
+                <FormattedMessage
+                  {...globalMessages.language[submission.language]}
+                />
               </TableCell>
               <TableCell
                 align="right"
@@ -87,7 +113,9 @@ export function TimelinePage({ submissions }: Props) {
           className="flex justify-center items-center py-20"
           data-testid="submission-empty"
         >
-          <p className="text-neutral-content">{t("submissions-empty")}</p>
+          <p className="text-neutral-content">
+            <FormattedMessage {...messages.submissionsEmpty} />
+          </p>
         </div>
       )}
     </div>

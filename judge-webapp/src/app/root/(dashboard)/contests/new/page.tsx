@@ -6,20 +6,30 @@ import { ContestFormMap } from "@/app/root/(dashboard)/contests/_form/contest-fo
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
-import { useTranslations } from "next-intl";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
 import { contestService } from "@/config/composition";
 import { useRouter } from "next/navigation";
 import { routes } from "@/config/routes";
 import { useAlert } from "@/app/_context/notification-context";
+import { defineMessages } from "react-intl";
+
+const messages = defineMessages({
+  createSuccess: {
+    id: "app.root.(dashboard).contests.new.page.create-success",
+    defaultMessage: "Contest created successfully",
+  },
+  createError: {
+    id: "app.root.(dashboard).contests.new.page.create-error",
+    defaultMessage: "Error creating contest",
+  },
+});
 
 export default function RootNewContestPage() {
   const createContestState = useLoadableState<ContestFullResponseDTO>();
 
   const alert = useAlert();
   const router = useRouter();
-  const t = useTranslations("root.contests.new");
 
   const form = useForm<ContestFormType>({
     resolver: joiResolver(contestFormSchema),
@@ -34,11 +44,11 @@ export default function RootNewContestPage() {
     try {
       const input = ContestFormMap.toCreateRequestDTO(data);
       const contest = await contestService.createContest(input);
-      alert.success(t("create-success"));
+      alert.success(messages.createSuccess);
       router.push(routes.ROOT_CONTESTS_EDIT(contest.id));
     } catch (error) {
       createContestState.fail(error, {
-        default: () => alert.error(t("create-error")),
+        default: () => alert.error(messages.createError),
       });
     }
   }

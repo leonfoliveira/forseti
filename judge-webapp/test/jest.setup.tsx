@@ -1,9 +1,17 @@
 import "@testing-library/jest-dom";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 
-// next-intl
-jest.mock("next-intl", () => ({
-  useTranslations: () => (key: string) => key,
+// react-intl
+jest.mock("react-intl", () => ({
+  defineMessages: (messages: any) => messages,
+  FormattedMessage: ({ defaultMessage }: any) => defaultMessage,
+  useIntl: () => ({
+    formatMessage: ({ id }: { id: string }) => id,
+  }),
+}));
+
+jest.mock("@/app/_component/format/formatted-datetime", () => ({
+  FormattedDateTime: ({ timestamp }: any) => timestamp,
 }));
 
 // next/navigation

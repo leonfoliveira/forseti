@@ -1,10 +1,20 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { ErrorPageTemplate } from "@/app/_component/error-page-template";
+import { ErrorPageTemplate } from "@/app/_component/page/error-page-template";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  description: {
+    id: "app.forbidden.page.description",
+    defaultMessage: "You do not have permission to access this page.",
+  },
+});
 
 export default function ForbiddenPage() {
-  const t = useTranslations("forbidden");
-
-  return <ErrorPageTemplate code={403} description={t("description")} />;
+  return (
+    <ErrorPageTemplate
+      code={403}
+      description={<FormattedMessage {...messages.description} />}
+    />
+  );
 }

@@ -13,10 +13,10 @@ describe("announcementFormSchema", () => {
     expect(
       announcementFormSchema.validate({ ...validData, text: undefined }).error
         ?.message,
-    ).toBe("text:required");
+    ).toBe("app.contests.[slug]._common._form.announcement-form.text-required");
     expect(
       announcementFormSchema.validate({ ...validData, text: "" }).error
         ?.message,
-    ).toBe("text:required");
+    ).toBe("app.contests.[slug]._common._form.announcement-form.text-required");
   });
 });

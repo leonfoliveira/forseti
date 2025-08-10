@@ -3,16 +3,11 @@ import { DateTimeInput } from "@/app/_component/form/date-time-input";
 import { useForm } from "react-hook-form";
 
 describe("DateTimeInput", () => {
+  const label = { id: "label", defaultMessage: "Test label" };
+
   const TestComponent = () => {
     const form = useForm();
-    return (
-      <DateTimeInput
-        form={form}
-        name="test"
-        s={((key: string) => key) as any}
-        label="Test label"
-      />
-    );
+    return <DateTimeInput form={form} name="test" label={label} />;
   };
 
   it("renders a date time input with the given label", () => {
@@ -31,8 +26,7 @@ describe("DateTimeInput", () => {
         <DateTimeInput
           form={form}
           name="test"
-          s={((key: string) => key) as any}
-          label="Test label"
+          label={label}
           className="my-class"
         />
       );
@@ -49,8 +43,7 @@ describe("DateTimeInput", () => {
         <DateTimeInput
           form={form}
           name="test"
-          s={((key: string) => key) as any}
-          label="Test label"
+          label={label}
           containerClassName="my-container-class"
         />
       );

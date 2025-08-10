@@ -8,7 +8,6 @@ import { TextInput } from "@/app/_component/form/text-input";
 import { Button } from "@/app/_component/form/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { useTranslations } from "next-intl";
 import { MemberSignInFormType } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form";
 import { memberSignInFormSchema } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form-schema";
 import { authenticationService } from "@/config/composition";
@@ -19,6 +18,34 @@ import { useLoadableState } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { useAuthorizationContext } from "@/app/_context/authorization-context";
 import { useAlert } from "@/app/_context/notification-context";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  wrongLoginPassword: {
+    defaultMessage: "Wrong login or password",
+    id: "app.contests.[slug].sign-in.page.wrong-login-password",
+  },
+  signInError: {
+    defaultMessage: "Error signing in",
+    id: "app.contests.[slug].sign-in.page.sign-in-error",
+  },
+  title: {
+    defaultMessage: "Sign In",
+    id: "app.contests.[slug].sign-in.page.title",
+  },
+  login: {
+    defaultMessage: "Login",
+    id: "app.contests.[slug].sign-in.page.login",
+  },
+  password: {
+    defaultMessage: "Password",
+    id: "app.contests.[slug].sign-in.page.password",
+  },
+  signIn: {
+    defaultMessage: "Sign In",
+    id: "app.contests.[slug].sign-in.page.sign-in",
+  },
+});
 
 /**
  * MemberSignInPage component allows members to sign in to a contest.
@@ -30,10 +57,6 @@ export default function MemberSignInPage() {
   const alert = useAlert();
 
   const router = useRouter();
-  const t = useTranslations("contests.[slug].sign-in");
-  const s = useTranslations(
-    "contests.[slug].sign-in._form.member-sign-in-form"
-  );
 
   const form = useForm<MemberSignInFormType>({
     resolver: joiResolver(memberSignInFormSchema),
@@ -44,15 +67,16 @@ export default function MemberSignInPage() {
     try {
       const authorization = await authenticationService.authenticateMember(
         contest.id,
-        data
+        data,
       );
       setAuthorization(authorization);
       signInState.finish();
       router.push(routes.CONTEST(contest.slug));
     } catch (error) {
       signInState.fail(error, {
-        [UnauthorizedException.name]: () => alert.warning(t("unauthorized")),
-        default: () => alert.error(t("error")),
+        [UnauthorizedException.name]: () =>
+          alert.warning(messages.wrongLoginPassword),
+        default: () => alert.error(messages.signInError),
       });
     }
   }
@@ -66,7 +90,7 @@ export default function MemberSignInPage() {
         data-testid="form"
       >
         <h1 className="text-3xl font-bold" data-testid="title">
-          {t("title")}
+          <FormattedMessage {...messages.title} />
         </h1>
         <h2 className="text-md mt-2" data-testid="description">
           {contest?.title}
@@ -75,15 +99,13 @@ export default function MemberSignInPage() {
           <TextInput
             form={form}
             name="login"
-            s={s}
-            label={t("login:label")}
+            label={messages.login}
             data-testid="login"
           />
           <TextInput
             form={form}
             name="password"
-            s={s}
-            label={t("password:label")}
+            label={messages.password}
             password
             data-testid="password"
           />
@@ -91,13 +113,14 @@ export default function MemberSignInPage() {
         <div className="flex flex-col">
           <Button
             type="submit"
+            label={messages.signIn}
+            rightIcon={
+              <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />
+            }
             isLoading={signInState.isLoading}
             className="btn-primary w-full"
             data-testid="sign-in"
-          >
-            {t("sign-in:label")}
-            <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />
-          </Button>
+          />
         </div>
       </Form>
     </div>

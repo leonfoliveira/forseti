@@ -18,7 +18,7 @@ describe("Toast", () => {
   it("renders a toast with the given text and level", () => {
     const toast = {
       id: "1",
-      text: "Test message",
+      text: { id: "text", defaultMessage: "Test message" },
       level: NotificationLevel.INFO,
       ttl: 5000,
     } as NotificationItemType;
@@ -33,7 +33,7 @@ describe("Toast", () => {
     const onCloseMock = jest.fn();
     const toast = {
       id: "1",
-      text: "Test message",
+      text: { id: "text", defaultMessage: "Test message" },
       level: NotificationLevel.INFO,
       ttl: 5000,
     } as NotificationItemType;
@@ -46,7 +46,7 @@ describe("Toast", () => {
     const onCloseMock = jest.fn();
     const toast = {
       id: "1",
-      text: "Test message",
+      text: { id: "text", defaultMessage: "Test message" },
       level: NotificationLevel.INFO,
       ttl: 5000,
     } as NotificationItemType;

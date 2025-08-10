@@ -18,7 +18,7 @@ describe("Alert", () => {
   it("renders an alert with the given text and level", () => {
     const alert = {
       id: "1",
-      text: "Test message",
+      text: { id: "text", defaultMessage: "Test message" },
       level: NotificationLevel.INFO,
       ttl: 5000,
     } as NotificationItemType;
@@ -33,7 +33,7 @@ describe("Alert", () => {
     const onCloseMock = jest.fn();
     const alert = {
       id: "1",
-      text: "Test message",
+      text: { id: "text", defaultMessage: "Test message" },
       level: NotificationLevel.INFO,
       ttl: 5000,
     } as NotificationItemType;
@@ -46,7 +46,7 @@ describe("Alert", () => {
     const onCloseMock = jest.fn();
     const alert = {
       id: "1",
-      text: "Test message",
+      text: { id: "text", defaultMessage: "Test message" },
       level: NotificationLevel.INFO,
       ttl: 5000,
     } as NotificationItemType;
@@ -59,7 +59,7 @@ describe("Alert", () => {
   it("applies custom className", () => {
     const alert = {
       id: "1",
-      text: "Test message",
+      text: { id: "text", defaultMessage: "Test message" },
       level: NotificationLevel.INFO,
       ttl: 5000,
     } as NotificationItemType;

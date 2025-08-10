@@ -6,8 +6,8 @@ import {
   FieldValues,
   UseFormReturn,
 } from "react-hook-form";
-import { useTranslations } from "next-intl";
-import { DateUtils } from "@/app/_util/date-utils";
+import { FormattedMessage } from "react-intl";
+import { Message } from "@/i18n/message";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -15,32 +15,40 @@ type Props<TFieldValues extends FieldValues> = Omit<
 > & {
   form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
-  s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
-  label: string;
+  label: Message;
   "data-testid"?: string;
 };
+
+function toInputFormat(date: Date): string {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function formToComponent(value?: Date) {
+  return value ? toInputFormat(value) : "";
+}
+
+function componentToForm(value?: string) {
+  return value ? new Date(value) : undefined;
+}
 
 /**
  * DateTimeInput component for rendering a datetime input field
  */
 export function DateTimeInput<TFieldValues extends FieldValues>({
   form,
-  s,
   label,
   containerClassName,
   className,
   ...props
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "date-input";
-
-  function formToComponent(value?: Date) {
-    return value ? DateUtils.toDateInputFormat(value) : "";
-  }
-
-  function componentToForm(value?: string) {
-    return value ? new Date(value) : undefined;
-  }
 
   return (
     <Controller
@@ -51,8 +59,12 @@ export function DateTimeInput<TFieldValues extends FieldValues>({
           className={cls("fieldset", containerClassName)}
           data-testid={`${testId}:container`}
         >
-          <label className="fieldset-legend" htmlFor={props.name} data-testid={`${testId}:label`}>
-            {label}
+          <label
+            className="fieldset-legend"
+            htmlFor={props.name}
+            data-testid={`${testId}:label`}
+          >
+            <FormattedMessage {...label} />
           </label>
           <input
             {...props}
@@ -67,7 +79,11 @@ export function DateTimeInput<TFieldValues extends FieldValues>({
             className="label text-error text-wrap"
             data-testid={`${testId}:error`}
           >
-            {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
+            {!!fieldState.error?.message ? (
+              <FormattedMessage id={fieldState.error.message} />
+            ) : (
+              ""
+            )}
           </p>
         </fieldset>
       )}

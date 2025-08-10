@@ -13,13 +13,24 @@ import {
 } from "@/config/composition";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { useAlert } from "@/app/_context/notification-context";
-import { useTranslations } from "next-intl";
 import { merge } from "@/app/contests/[slug]/_util/entity-merger";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { ErrorPage } from "@/app/_component/page/error-page";
+import { defineMessages } from "react-intl";
+
+const messages = defineMessages({
+  loadError: {
+    id: "app.contests.[slug].guest._context.guest-context.load-error",
+    defaultMessage: "Error loading contest data",
+  },
+  announcement: {
+    id: "app.contests.[slug].guest._context.guest-context.announcement",
+    defaultMessage: "New announcement: {text}",
+  },
+});
 
 type GuestContextType = {
   contest: ContestPublicResponseDTO;
@@ -42,7 +53,6 @@ export function GuestContextProvider({
 
   const contestMetadata = useContestMetadata();
   const alert = useAlert();
-  const t = useTranslations("contests.[slug].guest._context.guest-context");
 
   useEffect(() => {
     const listenerClient = listenerClientFactory.create();
@@ -92,7 +102,7 @@ export function GuestContextProvider({
         });
       } catch (error) {
         state.fail(error, {
-          default: () => alert.error(t("error")),
+          default: () => alert.error(messages.loadError),
         });
       }
     }
@@ -127,7 +137,10 @@ export function GuestContextProvider({
       return { ...prevState };
     });
 
-    alert.warning(announcement.text);
+    alert.warning({
+      ...messages.announcement,
+      values: { text: announcement.text },
+    });
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {

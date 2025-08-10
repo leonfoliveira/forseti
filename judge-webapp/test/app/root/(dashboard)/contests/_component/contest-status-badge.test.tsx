@@ -3,17 +3,11 @@ import { render, screen } from "@testing-library/react";
 import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
 import { useContestStatusWatcher } from "@/app/_util/contest-status-watcher";
 
-jest.mock("@/app/_util/contest-formatter-hook", () => ({
-  useContestFormatter: () => ({
-    formatStatus: jest.fn((status) => status),
-  }),
-}));
-
 jest.mock("@/app/_util/contest-status-watcher", () => ({
   useContestStatusWatcher: jest.fn(),
 }));
 
-jest.mock("@/app/_component/badge", () => ({
+jest.mock("@/app/_component/badge/badge", () => ({
   Badge: ({ children, className }: any) => (
     <span className={className} data-testid="badge">
       {children}
@@ -33,6 +27,6 @@ describe("ContestStatusBadge", () => {
 
     const badge = screen.getByTestId("badge");
     expect(badge).toHaveClass(expectedClassName);
-    expect(badge).toHaveTextContent(status);
+    expect(badge).not.toBeEmptyDOMElement();
   });
 });

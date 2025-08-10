@@ -15,15 +15,15 @@ describe("RootSignInPage", () => {
     render(<RootSignInPage />);
 
     expect(mockClearAuthorization).not.toHaveBeenCalled();
-    expect(screen.getByTestId("title")).toHaveTextContent("title");
-    expect(screen.getByTestId("description")).toHaveTextContent("description");
+    expect(screen.getByTestId("title")).toHaveTextContent("Sign In");
+    expect(screen.getByTestId("description")).toHaveTextContent("Root");
     expect(screen.getByTestId("password")).toBeEnabled();
-    expect(screen.getByTestId("sign-in")).toHaveTextContent("sign-in:label");
+    expect(screen.getByTestId("sign-in")).toHaveTextContent("Sign In");
   });
 
   it("should alert warning on unauthorized exception", async () => {
     (authenticationService.authenticateRoot as jest.Mock).mockRejectedValueOnce(
-      new UnauthorizedException("UnauthorizedException")
+      new UnauthorizedException("UnauthorizedException"),
     );
 
     render(<RootSignInPage />);
@@ -34,12 +34,15 @@ describe("RootSignInPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("sign-in"));
     });
-    expect(mockAlert.warning).toHaveBeenCalledWith("unauthorized");
+    expect(mockAlert.warning).toHaveBeenCalledWith({
+      defaultMessage: "Wrong password",
+      id: "app.root.sign-in.page.wrong-password",
+    });
   });
 
   it("should alert error on other exceptions", async () => {
     (authenticationService.authenticateRoot as jest.Mock).mockRejectedValueOnce(
-      new Error("Some error")
+      new Error("Some error"),
     );
 
     render(<RootSignInPage />);
@@ -50,13 +53,16 @@ describe("RootSignInPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("sign-in"));
     });
-    expect(mockAlert.error).toHaveBeenCalledWith("error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "An error occurred while signing in",
+      id: "app.root.sign-in.page.sign-in-error",
+    });
   });
 
   it("should redirect to root on successful sign-in", async () => {
     const authorization = { accessToken: "token" } as any;
     (authenticationService.authenticateRoot as jest.Mock).mockResolvedValueOnce(
-      authorization
+      authorization,
     );
 
     render(<RootSignInPage />);
