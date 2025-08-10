@@ -21,55 +21,59 @@ import { defineMessages, FormattedMessage } from "react-intl";
 
 const messages = defineMessages({
   createSuccess: {
-    id: "contests.[slug]._common.clarifications-page.create-success",
+    id: "app.contests.[slug]._common.clarifications-page.create-success",
     defaultMessage: "Clarification created successfully",
   },
   createError: {
-    id: "contests.[slug]._common.clarifications-page.create-error",
+    id: "app.contests.[slug]._common.clarifications-page.create-error",
     defaultMessage: "Failed to create clarification",
   },
   deleteSuccess: {
-    id: "contests.[slug]._common.clarifications-page.delete-success",
+    id: "app.contests.[slug]._common.clarifications-page.delete-success",
     defaultMessage: "Clarification deleted successfully",
   },
   deleteError: {
-    id: "contests.[slug]._common.clarifications-page.delete-error",
+    id: "app.contests.[slug]._common.clarifications-page.delete-error",
     defaultMessage: "Failed to delete clarification",
   },
   textLabel: {
-    id: "contests.[slug]._common.clarifications-page.text-label",
+    id: "app.contests.[slug]._common.clarifications-page.text-label",
     defaultMessage: "Text",
   },
   problemLabel: {
-    id: "contests.[slug]._common.clarifications-page.problem-label",
+    id: "app.contests.[slug]._common.clarifications-page.problem-label",
     defaultMessage: "Problem",
   },
+  problemOption: {
+    id: "app.contests.[slug]._common.clarifications-page.problem-option",
+    defaultMessage: "{letter}: {title}",
+  },
   submitLabel: {
-    id: "contests.[slug]._common.clarifications-page.submit-label",
+    id: "app.contests.[slug]._common.clarifications-page.submit-label",
     defaultMessage: "Submit",
   },
   empty: {
-    id: "contests.[slug]._common.clarifications-page.empty",
+    id: "app.contests.[slug]._common.clarifications-page.empty",
     defaultMessage: "No clarifications yet",
   },
   headerProblem: {
-    id: "contests.[slug]._common.clarifications-page.header-problem",
+    id: "app.contests.[slug]._common.clarifications-page.header-problem",
     defaultMessage: "{contestant} | Problem {letter}",
   },
   headerGeneral: {
-    id: "contests.[slug]._common.clarifications-page.header-general",
+    id: "app.contests.[slug]._common.clarifications-page.header-general",
     defaultMessage: "{contestant} | General",
   },
   answerLabel: {
-    id: "contests.[slug]._common.clarifications-page.answer-label",
+    id: "app.contests.[slug]._common.clarifications-page.answer-label",
     defaultMessage: "Answer",
   },
   headerAnswer: {
-    id: "contests.[slug]._common.clarifications-page.header-answer",
+    id: "app.contests.[slug]._common.clarifications-page.header-answer",
     defaultMessage: "RE: {judge}",
   },
   deleteConfirmLabel: {
-    id: "contests.[slug]._common.clarifications-page.delete-confirm-label",
+    id: "app.contests.[slug]._common.clarifications-page.delete-confirm-label",
     defaultMessage: "Are you sure you want to delete this clarification?",
   },
 });
@@ -103,7 +107,7 @@ export function ClarificationsPage({
     try {
       await contestService.createClarification(
         contest.id,
-        ClarificationFormMap.toInputDTO(data)
+        ClarificationFormMap.toInputDTO(data),
       );
       createClarificationState.finish();
       answerModal.close();
@@ -146,7 +150,10 @@ export function ClarificationsPage({
               label={messages.problemLabel}
               options={(contest?.problems || []).map((it) => ({
                 value: it.id,
-                label: `${it.letter}. ${it.title}`,
+                label: {
+                  ...messages.problemOption,
+                  values: { letter: it.letter, title: it.title },
+                },
               }))}
               containerClassName="flex-1"
               data-testid="form-problem"
@@ -162,13 +169,12 @@ export function ClarificationsPage({
           <div className="flex justify-center mt-8">
             <Button
               type="submit"
+              label={messages.submitLabel}
+              rightIcon={<FontAwesomeIcon icon={faPaperPlane} />}
               className="btn-primary"
               isLoading={createClarificationState.isLoading}
               data-testid="form-submit"
-            >
-              <FormattedMessage {...messages.submitLabel} />
-              <FontAwesomeIcon icon={faPaperPlane} className="ms-3" />
-            </Button>
+            />
           </div>
           <div className="divider" />
         </Form>
@@ -223,11 +229,10 @@ export function ClarificationsPage({
                   {canAnswer && (
                     <Button
                       className="btn-soft btn-error ml-3"
+                      leftIcon={<FontAwesomeIcon icon={faTrash} />}
                       onClick={() => deleteModal.open(clarification.id)}
                       data-testid="clarification-delete"
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </Button>
+                    />
                   )}
                 </div>
               </div>

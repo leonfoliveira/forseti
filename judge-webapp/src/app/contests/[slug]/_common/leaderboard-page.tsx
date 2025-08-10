@@ -14,11 +14,11 @@ import { defineMessages, FormattedMessage } from "react-intl";
 
 const messages = defineMessages({
   headerScore: {
-    id: "contests.[slug]._common.leaderboard-page.header-score",
+    id: "app.contests.[slug]._common.leaderboard-page.header-score",
     defaultMessage: "Score",
   },
   headerPenalty: {
-    id: "contests.[slug]._common.leaderboard-page.header-penalty",
+    id: "app.contests.[slug]._common.leaderboard-page.header-penalty",
     defaultMessage: "Penalty",
   },
 });
@@ -66,7 +66,7 @@ export function LeaderboardPage({ contest, leaderboard }: Props) {
               className={cls(
                 authorization?.member.id === member.memberId
                   ? "bg-base-200"
-                  : "hover:bg-base-100 transition"
+                  : "hover:bg-base-100 transition",
               )}
               data-testid="member-row"
             >
@@ -79,7 +79,7 @@ export function LeaderboardPage({ contest, leaderboard }: Props) {
                     index % 2 === 0 && "bg-base-200",
                     index % 2 === 0 &&
                       authorization?.member.id === member.memberId &&
-                      "bg-base-300"
+                      "bg-base-300",
                   )}
                   data-testid="member-problem"
                 >

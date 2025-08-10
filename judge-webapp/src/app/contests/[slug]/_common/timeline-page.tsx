@@ -10,32 +10,32 @@ import { cls } from "@/app/_util/cls";
 import { useAuthorization } from "@/app/_context/authorization-context";
 import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
 import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
-import { FormattedLanguage } from "@/app/_component/format/formatted-language";
 import { defineMessages, FormattedMessage } from "react-intl";
+import { globalMessages } from "@/i18n/global";
 
 const messages = defineMessages({
   headerTimestamp: {
-    id: "contests.[slug]._common.timeline-page.header-timestamp",
+    id: "app.contests.[slug]._common.timeline-page.header-timestamp",
     defaultMessage: "Timestamp",
   },
   headerContestant: {
-    id: "contests.[slug]._common.timeline-page.header-contestant",
+    id: "app.contests.[slug]._common.timeline-page.header-contestant",
     defaultMessage: "Contestant",
   },
   headerProblem: {
-    id: "contests.[slug]._common.timeline-page.header-problem",
+    id: "app.contests.[slug]._common.timeline-page.header-problem",
     defaultMessage: "Problem",
   },
   headerLanguage: {
-    id: "contests.[slug]._common.timeline-page.header-language",
+    id: "app.contests.[slug]._common.timeline-page.header-language",
     defaultMessage: "Language",
   },
   headerAnswer: {
-    id: "contests.[slug]._common.timeline-page.header-answer",
+    id: "app.contests.[slug]._common.timeline-page.header-answer",
     defaultMessage: "Answer",
   },
   submissionsEmpty: {
-    id: "contests.[slug]._common.timeline-page.submissions-empty",
+    id: "app.contests.[slug]._common.timeline-page.submissions-empty",
     defaultMessage: "No submissions yet",
   },
 });
@@ -79,7 +79,7 @@ export function TimelinePage({ submissions }: Props) {
               className={cls(
                 "hover:bg-base-100 transition",
                 submission.member.id === authorization?.member.id &&
-                  "bg-base-100"
+                  "bg-base-100",
               )}
               data-testid="submission-row"
             >
@@ -93,7 +93,9 @@ export function TimelinePage({ submissions }: Props) {
                 {submission.problem.letter}
               </TableCell>
               <TableCell data-testid="submission-language">
-                <FormattedLanguage language={submission.language} />
+                <FormattedMessage
+                  {...globalMessages.language[submission.language]}
+                />
               </TableCell>
               <TableCell
                 align="right"

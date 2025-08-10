@@ -1,14 +1,17 @@
 import { Badge } from "@/app/_component/badge/badge";
 import React from "react";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { FormattedSubmissionAnswer } from "@/app/_component/format/formatted-submission-answer";
+import { FormattedMessage } from "react-intl";
+import { globalMessages } from "@/i18n/global";
 
 type Props = {
   answer: SubmissionAnswer;
 };
 
 export function SubmissionAnswerBadge({ answer }: Props) {
-  const text = <FormattedSubmissionAnswer answer={answer} />;
+  const text = (
+    <FormattedMessage {...globalMessages.submissionAnswer[answer]} />
+  );
 
   switch (answer) {
     case SubmissionAnswer.NO_ANSWER:

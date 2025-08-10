@@ -24,13 +24,13 @@ describe("memberSignInPage", () => {
     render(<MemberSignInPage />);
 
     expect(mockClearAuthorization).not.toHaveBeenCalled();
-    expect(screen.getByTestId("title")).toHaveTextContent("title");
+    expect(screen.getByTestId("title")).toHaveTextContent("Sign In");
     expect(screen.getByTestId("description")).toHaveTextContent(
-      "Contest Title"
+      "Contest Title",
     );
     expect(screen.getByTestId("login")).toBeEnabled();
     expect(screen.getByTestId("password")).toBeEnabled();
-    expect(screen.getByTestId("sign-in")).toHaveTextContent("sign-in:label");
+    expect(screen.getByTestId("sign-in")).toHaveTextContent("Sign In");
   });
 
   it("should alert warning on unauthorized exception", async () => {
@@ -49,7 +49,10 @@ describe("memberSignInPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("sign-in"));
     });
-    expect(mockAlert.warning).toHaveBeenCalledWith("unauthorized");
+    expect(mockAlert.warning).toHaveBeenCalledWith({
+      defaultMessage: "Wrong login or password",
+      id: "app.contests.[slug].sign-in.page.wrong-login-password",
+    });
   });
 
   it("should alert warning on other exception", async () => {
@@ -68,7 +71,10 @@ describe("memberSignInPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("sign-in"));
     });
-    expect(mockAlert.error).toHaveBeenCalledWith("error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Error signing in",
+      id: "app.contests.[slug].sign-in.page.sign-in-error",
+    });
   });
 
   it("should redirect to contest on successful sign-in", async () => {
@@ -90,7 +96,7 @@ describe("memberSignInPage", () => {
     });
     expect(mockSetAuthorization).toHaveBeenCalledWith(authorization);
     expect(mockRouter.push).toHaveBeenCalledWith(
-      routes.CONTEST("contest-slug")
+      routes.CONTEST("contest-slug"),
     );
   });
 });

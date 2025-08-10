@@ -1,14 +1,21 @@
 import React from "react";
 import { cls } from "@/app/_util/cls";
 import { routes } from "@/config/routes";
-import { useTranslations } from "next-intl";
 import { redirect, RedirectType, usePathname } from "next/navigation";
+import { defineMessages, FormattedMessage } from "react-intl";
+import { Message } from "@/i18n/message";
+
+const messages = defineMessages({
+  tabContests: {
+    id: "app.root.(dashboard)._component.root-tab-bar.tab-contests",
+    defaultMessage: "Contests",
+  },
+});
 
 export function RootTabBar() {
   const pathname = usePathname();
-  const t = useTranslations("root._component.root-tab-bar");
 
-  function buildNavLink(label: string, path: string) {
+  function buildNavLink(label: Message, path: string) {
     const isActive = pathname.startsWith(path);
     return (
       <a
@@ -17,13 +24,13 @@ export function RootTabBar() {
         onClick={() => redirect(path, RedirectType.push)}
         data-testid={`link:${path}`}
       >
-        {label}
+        <FormattedMessage {...label} />
       </a>
     );
   }
 
   function buildLinks() {
-    return [buildNavLink(t("tab-contests"), routes.ROOT_CONTESTS)];
+    return [buildNavLink(messages.tabContests, routes.ROOT_CONTESTS)];
   }
 
   return (

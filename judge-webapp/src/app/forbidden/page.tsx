@@ -5,7 +5,7 @@ import { defineMessages, FormattedMessage } from "react-intl";
 
 const messages = defineMessages({
   description: {
-    id: "forbidden.description",
+    id: "app.forbidden.page.description",
     defaultMessage: "You do not have permission to access this page.",
   },
 });

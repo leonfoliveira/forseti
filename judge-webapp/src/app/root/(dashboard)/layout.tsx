@@ -24,7 +24,7 @@ export default function RootLayout({
 
   return (
     <div>
-      <Navbar signInPath={routes.ROOT_SIGN_IN} allowRoot />
+      <Navbar signInPath={routes.ROOT_SIGN_IN} />
       <RootTabBar />
       <div className="p-10 bg-base-100">{children}</div>
     </div>

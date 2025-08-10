@@ -5,7 +5,6 @@ import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submis
 import React, { createContext, useContext, useEffect } from "react";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { useAlert, useToast } from "@/app/_context/notification-context";
-import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import {
   announcementListener,
@@ -16,7 +15,6 @@ import {
   submissionListener,
   submissionService,
 } from "@/config/composition";
-import { useTranslations } from "next-intl";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { ErrorPage } from "@/app/_component/page/error-page";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
@@ -25,6 +23,27 @@ import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarifi
 import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { useAuthorization } from "@/app/_context/authorization-context";
+import { defineMessages, FormattedMessage } from "react-intl";
+import { globalMessages } from "@/i18n/global";
+
+const messages = defineMessages({
+  loadError: {
+    id: "app.contests.[slug].contestant._context.contestant-context.load-error",
+    defaultMessage: "Error loading contest data",
+  },
+  problemAnswer: {
+    id: "app.contests.[slug].contestant._context.contestant-context.problem-answer",
+    defaultMessage: "Problem {letter}: {answer}",
+  },
+  announcement: {
+    id: "app.contests.[slug].contestant._context.contestant-context.announcement",
+    defaultMessage: "New announcement: {text}",
+  },
+  clarificationAnswer: {
+    id: "app.contests.[slug].contestant._context.contestant-context.clarification-answer",
+    defaultMessage: "New answer for a clarification",
+  },
+});
 
 type ContestantContextType = {
   contest: ContestPublicResponseDTO;
@@ -53,10 +72,6 @@ export function ContestantContextProvider({
   const contestMetadata = useContestMetadata();
   const alert = useAlert();
   const toast = useToast();
-  const { formatSubmissionAnswer } = useContestFormatter();
-  const t = useTranslations(
-    "contests.[slug].contestant._context.contestant-context"
-  );
 
   useEffect(() => {
     const listenerClient = listenerClientFactory.create();
@@ -76,37 +91,37 @@ export function ContestantContextProvider({
           leaderboardListener.subscribeForLeaderboard(
             listenerClient,
             contestMetadata.id,
-            receiveLeaderboard
+            receiveLeaderboard,
           ),
           submissionListener.subscribeForContest(
             listenerClient,
             contestMetadata.id,
-            receiveSubmission
+            receiveSubmission,
           ),
           submissionListener.subscribeForMember(
             listenerClient,
             authorization!.member.id,
-            receiveMemberSubmission
+            receiveMemberSubmission,
           ),
           announcementListener.subscribeForContest(
             listenerClient,
             contestMetadata.id,
-            receiveAnnouncement
+            receiveAnnouncement,
           ),
           clarificationListener.subscribeForContest(
             listenerClient,
             contestMetadata.id,
-            receiveClarification
+            receiveClarification,
           ),
           clarificationListener.subscribeForMemberChildren(
             listenerClient,
             authorization!.member.id,
-            receiveClarificationAnswer
+            receiveClarificationAnswer,
           ),
           clarificationListener.subscribeForContestDeleted(
             listenerClient,
             contestMetadata.id,
-            deleteClarification
+            deleteClarification,
           ),
         ]);
 
@@ -119,7 +134,7 @@ export function ContestantContextProvider({
         });
       } catch (error) {
         state.fail(error, {
-          default: () => alert.error(t("error")),
+          default: () => alert.error(messages.loadError),
         });
       }
     }
@@ -135,7 +150,7 @@ export function ContestantContextProvider({
     state.finish((prevState) => {
       prevState.memberSubmissions = merge(
         prevState.memberSubmissions,
-        submission
+        submission,
       );
       return {
         ...prevState,
@@ -165,15 +180,22 @@ export function ContestantContextProvider({
     state.finish((prevState) => {
       prevState.memberSubmissions = merge(
         prevState.memberSubmissions,
-        submission as SubmissionFullResponseDTO
+        submission as SubmissionFullResponseDTO,
       );
       return { ...prevState };
     });
 
-    const text = t("submission-toast-problem", {
-      letter: submission.problem.letter,
-      answer: formatSubmissionAnswer(submission.answer),
-    });
+    const text = {
+      ...messages.problemAnswer,
+      values: {
+        letter: submission.problem.letter,
+        answer: (
+          <FormattedMessage
+            {...globalMessages.submissionAnswer[submission.answer]}
+          />
+        ),
+      },
+    };
 
     switch (submission.answer) {
       case SubmissionAnswer.ACCEPTED: {
@@ -201,12 +223,15 @@ export function ContestantContextProvider({
     state.finish((prevState) => {
       prevState.contest.announcements = merge(
         prevState.contest.announcements,
-        announcement
+        announcement,
       );
       return { ...prevState };
     });
 
-    alert.warning(announcement.text);
+    alert.warning({
+      ...messages.announcement,
+      values: { text: announcement.text },
+    });
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
@@ -214,12 +239,12 @@ export function ContestantContextProvider({
       if (!clarification.parentId) {
         prevState.contest.clarifications = merge(
           prevState.contest.clarifications,
-          clarification
+          clarification,
         );
       } else {
         const parent = findClarification(
           prevState.contest.clarifications,
-          clarification.parentId
+          clarification.parentId,
         );
         if (parent) {
           parent.children = merge(parent.children, clarification);
@@ -233,7 +258,7 @@ export function ContestantContextProvider({
   }
 
   function receiveClarificationAnswer() {
-    toast.info(t("clarification-answer"));
+    toast.info(messages.clarificationAnswer);
   }
 
   function deleteClarification({ id }: { id: string }) {

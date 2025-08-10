@@ -3,7 +3,7 @@ import { defineMessages } from "react-intl";
 
 export const messages = defineMessages({
   textRequired: {
-    id: "contests.[slug]._common._form.announcement-form.text-required",
+    id: "app.contests.[slug]._common._form.announcement-form.text-required",
     defaultMessage: "Enter a text",
   },
 });

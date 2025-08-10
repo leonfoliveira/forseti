@@ -21,8 +21,6 @@ import { FileInput } from "@/app/_component/form/file-input";
 import { useRouter } from "next/navigation";
 import { DialogModal } from "@/app/_component/modal/dialog-modal";
 import { useModal } from "@/app/_util/modal-hook";
-import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
-import { useTranslations } from "next-intl";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
 import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
 import { LoadableState, useLoadableState } from "@/app/_util/loadable-state";
@@ -30,6 +28,115 @@ import { contestService } from "@/config/composition";
 import { useAlert } from "@/app/_context/notification-context";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { useContestStatusWatcher } from "@/app/_util/contest-status-watcher";
+import { defineMessages, FormattedMessage } from "react-intl";
+import { globalMessages } from "@/i18n/global";
+
+const messages = defineMessages({
+  inProgress: {
+    id: "app.root.(dashboard).contests._component.contest-form.in-progress",
+    defaultMessage: "This contest is in progress, be careful when editing it.",
+  },
+  deleteSuccess: {
+    id: "app.root.(dashboard).contests._component.contest-form.delete-success",
+    defaultMessage: "The contest has been successfully deleted.",
+  },
+  deleteError: {
+    id: "app.root.(dashboard).contests._component.contest-form.delete-error",
+    defaultMessage: "An error occurred while deleting the contest.",
+  },
+  editHeader: {
+    id: "app.root.(dashboard).contests._component.contest-form.edit-header",
+    defaultMessage: "Contest #{id}",
+  },
+  createHeader: {
+    id: "app.root.(dashboard).contests._component.contest-form.create-header",
+    defaultMessage: "Contest New",
+  },
+  delete: {
+    id: "app.root.(dashboard).contests._component.contest-form.delete-label",
+    defaultMessage: "Delete",
+  },
+  save: {
+    id: "app.root.(dashboard).contests._component.contest-form.save-label",
+    defaultMessage: "Save",
+  },
+  slug: {
+    id: "app.root.(dashboard).contests._component.contest-form.slug",
+    defaultMessage: "Slug",
+  },
+  title: {
+    id: "app.root.(dashboard).contests._component.contest-form.title",
+    defaultMessage: "Title",
+  },
+  languages: {
+    id: "app.root.(dashboard).contests._component.contest-form.languages",
+    defaultMessage: "Languages",
+  },
+  startAt: {
+    id: "app.root.(dashboard).contests._component.contest-form.start-at",
+    defaultMessage: "Start At",
+  },
+  endAt: {
+    id: "app.root.(dashboard).contests._component.contest-form.end-at",
+    defaultMessage: "End At",
+  },
+  members: {
+    id: "app.root.(dashboard).contests._component.contest-form.members",
+    defaultMessage: "Members",
+  },
+  memberType: {
+    id: "app.root.(dashboard).contests._component.contest-form.member-type",
+    defaultMessage: "Type",
+  },
+  memberName: {
+    id: "app.root.(dashboard).contests._component.contest-form.member-name",
+    defaultMessage: "Name",
+  },
+  memberLogin: {
+    id: "app.root.(dashboard).contests._component.contest-form.member-login",
+    defaultMessage: "Login",
+  },
+  memberPassword: {
+    id: "app.root.(dashboard).contests._component.contest-form.member-password",
+    defaultMessage: "Password",
+  },
+  problems: {
+    id: "app.root.(dashboard).contests._component.contest-form.problems",
+    defaultMessage: "Problems",
+  },
+  problemLetter: {
+    id: "app.root.(dashboard).contests._component.contest-form.problem-letter",
+    defaultMessage: "Letter",
+  },
+  problemTitle: {
+    id: "app.root.(dashboard).contests._component.contest-form.problem-title",
+    defaultMessage: "Title",
+  },
+  problemDescription: {
+    id: "app.root.(dashboard).contests._component.contest-form.problem-description",
+    defaultMessage: "Description",
+  },
+  problemTimeLimit: {
+    id: "app.root.(dashboard).contests._component.contest-form.problem-time-limit",
+    defaultMessage: "Time Limit",
+  },
+  problemMemoryLimit: {
+    id: "app.root.(dashboard).contests._component.contest-form.problem-memory-limit",
+    defaultMessage: "Memory Limit",
+  },
+  problemTestCases: {
+    id: "app.root.(dashboard).contests._component.contest-form.problem-test-cases",
+    defaultMessage: "Test Cases",
+  },
+  confirmDelete: {
+    id: "app.root.(dashboard).contests._component.contest-form.confirm-delete",
+    defaultMessage: "Are you sure you want to delete this contest?",
+  },
+  confirmSave: {
+    id: "app.root.(dashboard).contests._component.contest-form.confirm-save",
+    defaultMessage: "Are you sure you want to save this contest?",
+  },
+});
 
 type Props = {
   contestState?: LoadableState<ContestFullResponseDTO>;
@@ -54,13 +161,10 @@ export function ContestForm({
   const deleteModal = useModal();
   const saveModal = useModal<ContestFormType>();
   const alert = useAlert();
-  const { formatLanguage, formatMemberType } = useContestFormatter();
-  const t = useTranslations("root.contests._component.contest-form");
-  const s = useTranslations("root.contests._form.contest-form");
 
   useEffect(() => {
     if (status && status === ContestStatus.IN_PROGRESS) {
-      alert.warning(t("in-progress"));
+      alert.warning(messages.inProgress);
     }
   }, [status]);
 
@@ -70,10 +174,10 @@ export function ContestForm({
       await contestService.deleteContest(contestState!.data!.id);
       deleteContestState.finish();
       deleteModal.close();
-      alert.success(t("delete-success"));
+      alert.success(messages.deleteSuccess);
     } catch (error) {
       deleteContestState.fail(error, {
-        default: () => alert.error(t("delete-error")),
+        default: () => alert.error(messages.deleteError),
       });
     }
   }
@@ -106,9 +210,14 @@ export function ContestForm({
               data-testid="back"
             />
             <h1 className="text-2xl ml-5" data-testid="header">
-              {contestState?.data
-                ? t("edit-header", { id: contestState.data.id })
-                : t("create-header")}
+              {contestState?.data ? (
+                <FormattedMessage
+                  {...messages.editHeader}
+                  values={{ id: contestState.data.id }}
+                />
+              ) : (
+                <FormattedMessage {...messages.createHeader} />
+              )}
             </h1>
             {contestState?.data && (
               <ContestStatusBadge
@@ -122,33 +231,33 @@ export function ContestForm({
             {contestState?.data && (
               <Button
                 className="btn-error btn-soft mr-3"
+                leftIcon={<FontAwesomeIcon icon={faTrash} />}
+                label={messages.delete}
                 onClick={deleteModal.open}
                 disabled={status !== ContestStatus.NOT_STARTED}
                 data-testid="delete"
-              >
-                <FontAwesomeIcon icon={faTrash} />
-                {t("delete:label")}
-              </Button>
+              />
             )}
-            <Button type="submit" className="btn-primary" data-testid="save">
-              <FontAwesomeIcon icon={faCheck} />
-              {t("save:label")}
-            </Button>
+            <Button
+              type="submit"
+              leftIcon={<FontAwesomeIcon icon={faCheck} />}
+              label={messages.save}
+              className="btn-primary"
+              data-testid="save"
+            />
           </div>
         </div>
         <div className="flex gap-x-3">
           <TextInput
             form={form}
             name="slug"
-            s={s}
-            label={t("slug:label")}
+            label={messages.slug}
             data-testid="slug"
           />
           <TextInput
             form={form}
             name="title"
-            s={s}
-            label={t("title:label")}
+            label={messages.title}
             data-testid="title"
             containerClassName="flex-1"
           />
@@ -157,11 +266,10 @@ export function ContestForm({
           form={form}
           options={Object.values(Language).map((it) => ({
             value: it,
-            label: formatLanguage(it),
+            label: globalMessages.language[it],
           }))}
           name="languages"
-          s={s}
-          label={t("languages:label")}
+          label={messages.languages}
           containerClassName="mt-5"
           data-testid="languages"
         />
@@ -169,8 +277,7 @@ export function ContestForm({
           <DateTimeInput
             form={form}
             name="startAt"
-            s={s}
-            label={t("start-at:label")}
+            label={messages.startAt}
             containerClassName="flex-1"
             data-testid="start-at"
             disabled={!!status && status !== ContestStatus.NOT_STARTED}
@@ -178,8 +285,7 @@ export function ContestForm({
           <DateTimeInput
             form={form}
             name="endAt"
-            s={s}
-            label={t("end-at:label")}
+            label={messages.endAt}
             containerClassName="flex-1"
             data-testid="end-at"
           />
@@ -192,7 +298,7 @@ export function ContestForm({
               className="block text-md font-semibold mb-2"
               data-testid="members-header"
             >
-              {t("members-header")}
+              <FormattedMessage {...messages.members} />
             </p>
           </div>
           <div
@@ -204,58 +310,52 @@ export function ContestForm({
                 <Select
                   form={form}
                   name={`members.${index}.type`}
-                  s={s}
-                  label={t("member-type:label")}
+                  label={messages.memberType}
                   options={Object.values(MemberType)
                     .filter((it) => it !== MemberType.ROOT)
                     .map((it) => ({
                       value: it,
-                      label: formatMemberType(it),
+                      label: globalMessages.memberType[it],
                     }))}
                   data-testid="member-type"
                 />
                 <TextInput
                   form={form}
                   name={`members.${index}.name`}
-                  s={s}
-                  label={t("member-name:label")}
+                  label={messages.memberName}
                   data-testid="member-name"
                 />
                 <TextInput
                   form={form}
                   name={`members.${index}.login`}
-                  s={s}
-                  label={t("member-login:label")}
+                  label={messages.memberLogin}
                   data-testid="member-login"
                 />
                 <TextInput
                   form={form}
                   name={`members.${index}.password`}
-                  s={s}
-                  label={t("member-password:label")}
+                  label={messages.memberPassword}
                   placeholder={!!field._id ? "Not changed" : ""}
                   data-testid="member-password"
                 />
                 <Button
+                  leftIcon={<FontAwesomeIcon icon={faTrash} />}
                   onClick={() => membersFields.remove(index)}
                   className="btn-error btn-soft mt-[39]"
                   data-testid="member-delete"
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </Button>
+                />
               </Fragment>
             ))}
           </div>
           <div className="flex justify-center">
             <Button
+              leftIcon={<FontAwesomeIcon icon={faPlus} />}
               onClick={() =>
                 membersFields.append({ type: MemberType.CONTESTANT })
               }
               className="mt-5 px-10"
               data-testid="member-add"
-            >
-              <FontAwesomeIcon icon={faPlus} />
-            </Button>
+            />
           </div>
         </div>
         <div className="hidden 2xl:flex divider divider-horizontal mt-10" />
@@ -265,7 +365,7 @@ export function ContestForm({
               className="block text-md font-semibold mb-2"
               data-testid="problems-header"
             >
-              {t("problems-header")}
+              <FormattedMessage {...messages.problems} />
             </p>
           </div>
           <div
@@ -276,59 +376,52 @@ export function ContestForm({
               <Fragment key={field.id}>
                 <TextInput
                   form={form}
-                  s={s}
                   name={`problems.${index}.letter`}
                   value={String.fromCodePoint(65 + index).toString()}
-                  label={t("problem-letter:label")}
+                  label={messages.problemLetter}
                   data-testid="problem-letter"
                   disabled={true}
                 />
                 <TextInput
                   form={form}
-                  s={s}
                   name={`problems.${index}.title`}
-                  label={t("problem-title:label")}
+                  label={messages.problemTitle}
                   data-testid="problem-title"
                   containerClassName="col-span-2"
                 />
                 <FileInput
                   form={form}
-                  s={s}
                   originalName={`problems.${index}.description`}
                   name={`problems.${index}.newDescription`}
-                  label={t("problem-description:label")}
+                  label={messages.problemDescription}
                   data-testid="problem-description"
                 />
                 <Button
+                  leftIcon={<FontAwesomeIcon icon={faTrash} />}
                   onClick={() => problemsFields.remove(index)}
                   className="btn-error btn-soft mt-[39]"
                   data-testid="problem-delete"
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </Button>
+                />
                 <span />
                 <NumberInput
                   form={form}
-                  s={s}
                   name={`problems.${index}.timeLimit`}
-                  label={t("problem-time-limit:label")}
+                  label={messages.problemTimeLimit}
                   step={500}
                   data-testid="problem-time-limit"
                 />
                 <NumberInput
                   form={form}
-                  s={s}
                   name={`problems.${index}.memoryLimit`}
-                  label={t("problem-memory-limit:label")}
+                  label={messages.problemMemoryLimit}
                   step={512}
                   data-testid="problem-memory-limit"
                 />
                 <FileInput
                   form={form}
-                  s={s}
                   originalName={`problems.${index}.testCases`}
                   name={`problems.${index}.newTestCases`}
-                  label={t("problem-test-cases:label")}
+                  label={messages.problemTestCases}
                   data-testid="problem-test-cases"
                 />
                 <span />
@@ -337,14 +430,13 @@ export function ContestForm({
           </div>
           <div className="flex justify-center">
             <Button
+              leftIcon={<FontAwesomeIcon icon={faPlus} />}
               onClick={() =>
                 problemsFields.append({ timeLimit: 1000, memoryLimit: 2048 })
               }
               className="mt-5 px-10"
               data-testid="problem-add"
-            >
-              <FontAwesomeIcon icon={faPlus} />
-            </Button>
+            />
           </div>
         </div>
       </div>
@@ -354,7 +446,9 @@ export function ContestForm({
         onConfirm={() => onDelete()}
         isLoading={deleteContestState.isLoading}
       >
-        <p className="py-4">{t("confirm-delete-content")}</p>
+        <p className="py-4">
+          <FormattedMessage {...messages.confirmDelete} />
+        </p>
       </DialogModal>
 
       <DialogModal
@@ -362,7 +456,9 @@ export function ContestForm({
         onConfirm={onSubmit}
         isLoading={saveState.isLoading}
       >
-        <p className="py-4">{t("confirm-save-content")}</p>
+        <p className="py-4">
+          <FormattedMessage {...messages.confirmSave} />
+        </p>
       </DialogModal>
     </Form>
   );

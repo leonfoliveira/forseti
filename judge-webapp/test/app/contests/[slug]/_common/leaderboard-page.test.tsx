@@ -74,31 +74,31 @@ describe("LeaderboardPage", () => {
     render(<LeaderboardPage contest={contest} leaderboard={leaderboard} />);
 
     expect(screen.getAllByTestId("problem-title")[0]).toHaveTextContent(
-      contest.problems[0].letter
+      contest.problems[0].letter,
     );
     expect(screen.getAllByTestId("problem-title")[1]).toHaveTextContent(
-      contest.problems[1].letter
+      contest.problems[1].letter,
     );
     expect(screen.getAllByTestId("header-score")[0]).toHaveTextContent("Score");
     expect(screen.getAllByTestId("header-penalty")[0]).toHaveTextContent(
-      "Penalty"
+      "Penalty",
     );
     expect(screen.getAllByTestId("member-row")).toHaveLength(2);
     expect(screen.getAllByTestId("member-name")[0]).toHaveTextContent(
-      `1. ${leaderboard.classification[0].name}`
+      `1. ${leaderboard.classification[0].name}`,
     );
     expect(screen.getAllByTestId("member-name")[1]).toHaveTextContent(
-      `2. ${leaderboard.classification[1].name}`
+      `2. ${leaderboard.classification[1].name}`,
     );
     expect(screen.getAllByTestId("member-problem")[0]).toHaveTextContent(
-      "2023-10-01T00:30:00.000Z | +2"
+      "2023-10-01T00:30:00Z | +2",
     );
     expect(screen.getAllByTestId("member-problem")[1]).toHaveTextContent("+1");
     expect(screen.getAllByTestId("member-problem")[2]).toHaveTextContent(
-      "2023-10-01T00:45:00.000Z | +1"
+      "2023-10-01T00:45:00Z | +1",
     );
     expect(screen.getAllByTestId("member-problem")[3]).toHaveTextContent(
-      "2023-10-01T00:50:00.000Z"
+      "2023-10-01T00:50:00Z",
     );
     expect(screen.getAllByTestId("member-score")[0]).toHaveTextContent("100");
     expect(screen.getAllByTestId("member-score")[1]).toHaveTextContent("");

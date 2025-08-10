@@ -38,7 +38,10 @@ describe("RootEditContestPage", () => {
       render(<RootEditContestPage params={params} />);
     });
 
-    expect(mockAlert.error).toHaveBeenCalledWith("load-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Error loading contest data",
+      id: "app.root.(dashboard).contests.[id].page.load-error",
+    });
   });
 
   it("should render contest form", async () => {
@@ -73,9 +76,14 @@ describe("RootEditContestPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("submit"));
     });
-    expect(mockAlert.warning).toHaveBeenCalledWith(
-      "test-cases-validation-error",
-    );
+    expect(mockAlert.warning).toHaveBeenCalledWith({
+      defaultMessage:
+        "Test cases file must have exactly two columns and at least one row. Failed problems: {letters}",
+      id: "app.root.(dashboard).contests.[id].page.test-cases-validation-error",
+      values: {
+        letters: "A, B",
+      },
+    });
   });
 
   it("should submit form successfully", async () => {
@@ -93,6 +101,9 @@ describe("RootEditContestPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("submit"));
     });
-    expect(mockAlert.success).toHaveBeenCalledWith("update-success");
+    expect(mockAlert.success).toHaveBeenCalledWith({
+      defaultMessage: "Contest updated successfully",
+      id: "app.root.(dashboard).contests.[id].page.update-success",
+    });
   });
 });

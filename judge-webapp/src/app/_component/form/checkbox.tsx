@@ -1,19 +1,26 @@
 import React from "react";
 import { cls } from "@/app/_util/cls";
+import { Message } from "@/i18n/message";
+import { FormattedMessage } from "react-intl";
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   "data-testid"?: string;
+  label: Message;
 };
 
 /**
  * Checkbox component
  */
-export function Checkbox({ children, className, ...props }: Props) {
+export function Checkbox({ className, label, ...props }: Props) {
   const testId = props["data-testid"] || "checkbox";
 
   return (
     <fieldset data-testid={`${testId}:container`}>
-      <label className="label" htmlFor={props.name} data-testid={`${testId}:label`}>
+      <label
+        className="label"
+        htmlFor={props.name}
+        data-testid={`${testId}:label`}
+      >
         <input
           type="checkbox"
           {...props}
@@ -21,7 +28,7 @@ export function Checkbox({ children, className, ...props }: Props) {
           className={cls("toggle", className)}
           data-testid={testId}
         />
-        {children}
+        <FormattedMessage {...label} />
       </label>
     </fieldset>
   );

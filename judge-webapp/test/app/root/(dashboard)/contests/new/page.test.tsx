@@ -33,7 +33,10 @@ describe("RootNewContestPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("submit"));
     });
-    expect(mockAlert.error).toHaveBeenCalledWith("create-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Error creating contest",
+      id: "app.root.(dashboard).contests.new.page.create-error",
+    });
   });
 
   it("should redirect to edit page on successful create", async () => {
@@ -48,7 +51,10 @@ describe("RootNewContestPage", () => {
       fireEvent.click(screen.getByTestId("submit"));
     });
 
-    expect(mockAlert.success).toHaveBeenCalledWith("create-success");
+    expect(mockAlert.success).toHaveBeenCalledWith({
+      defaultMessage: "Contest created successfully",
+      id: "app.root.(dashboard).contests.new.page.create-success",
+    });
     expect(mockRouter.push).toHaveBeenCalledWith(
       routes.ROOT_CONTESTS_EDIT(mockContest.id),
     );

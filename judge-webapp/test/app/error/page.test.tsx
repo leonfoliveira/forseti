@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import ErrorPage from "@/app/error/page";
 
-jest.mock("@/app/_component/error-page-template", () => ({
+jest.mock("@/app/_component/page/error-page-template", () => ({
   ErrorPageTemplate: ({ code, description }: any) => (
     <>
       <p data-testid="code">{code}</p>
@@ -15,6 +15,8 @@ describe("ErrorPage", () => {
     render(<ErrorPage />);
 
     expect(screen.getByTestId("code")).toHaveTextContent("500");
-    expect(screen.getByTestId("description")).toHaveTextContent("description");
+    expect(screen.getByTestId("description")).toHaveTextContent(
+      "An unexpected error occurred. Please try again."
+    );
   });
 });

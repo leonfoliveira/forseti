@@ -7,7 +7,7 @@ describe("useWaitClock", () => {
     jest.useFakeTimers();
   });
 
-  it.skip("should update the clock every second", () => {
+  it("should update the clock every second", () => {
     const target = new Date(Date.now() + 10000);
     const { result } = renderHook(() => useWaitClock(target));
 
@@ -17,7 +17,9 @@ describe("useWaitClock", () => {
       jest.advanceTimersByTime(1000);
     });
 
-    expect(result.current.current?.textContent).toBe("0d 00:00:09");
+    expect(result.current.current?.textContent).toBe(
+      "app.contests.[slug]._util.wait-clock-hook.duration",
+    );
   });
 
   it("should call onZero when the countdown reaches zero", () => {

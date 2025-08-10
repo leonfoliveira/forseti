@@ -19,24 +19,7 @@ jest.mock("@/config/composition");
 jest.mock("@/app/_util/contest-status-watcher", () => ({
   useContestStatusWatcher: jest.fn(() => ContestStatus.NOT_STARTED),
 }));
-
-jest.mock("@/app/_util/contest-formatter-hook", () => ({
-  useContestFormatter: jest.fn(() => ({
-    formatLanguage: jest.fn(),
-    formatMemberType: jest.fn(),
-  })),
-}));
-
-jest.mock(
-  "@/app/root/(dashboard)/contests/_component/contest-status-badge",
-  () => ({
-    ContestStatusBadge: ({ contest }: any) => (
-      <span data-testid="contest-status-badge">{contest.id}</span>
-    ),
-  }),
-);
-
-jest.mock("@/app/_component/dialog-modal", () => ({
+jest.mock("@/app/_component/modal/dialog-modal", () => ({
   DialogModal: ({ children, modal, onConfirm, isLoading }: any) => (
     <>
       {modal.isOpen && (
@@ -68,7 +51,11 @@ describe("ContestForm", () => {
 
     render(<ContestForm {...props} />);
 
-    expect(mockAlert.warning).toHaveBeenCalledWith("in-progress");
+    expect(mockAlert.warning).toHaveBeenCalledWith({
+      defaultMessage:
+        "This contest is in progress, be careful when editing it.",
+      id: "app.root.(dashboard).contests._component.contest-form.in-progress",
+    });
   });
 
   it("should alert error when delete fails", async () => {
@@ -89,7 +76,7 @@ describe("ContestForm", () => {
       fireEvent.click(screen.getByTestId("delete"));
     });
     expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "confirm-delete-content",
+      "Are you sure you want to delete this contest?",
     );
     fireEvent.click(screen.getByTestId("dialog-modal:button"));
     expect(screen.getByTestId("dialog-modal:loading")).toBeInTheDocument();
@@ -98,7 +85,10 @@ describe("ContestForm", () => {
         screen.queryByTestId("dialog-modal:loading"),
       ).not.toBeInTheDocument();
     });
-    expect(mockAlert.error).toHaveBeenCalledWith("delete-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "An error occurred while deleting the contest.",
+      id: "app.root.(dashboard).contests._component.contest-form.delete-error",
+    });
   });
 
   it("should alert success when delete is successful", async () => {
@@ -116,12 +106,15 @@ describe("ContestForm", () => {
       fireEvent.click(screen.getByTestId("delete"));
     });
     expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "confirm-delete-content",
+      "Are you sure you want to delete this contest?",
     );
     await act(async () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));
     });
-    expect(mockAlert.success).toHaveBeenCalledWith("delete-success");
+    expect(mockAlert.success).toHaveBeenCalledWith({
+      defaultMessage: "The contest has been successfully deleted.",
+      id: "app.root.(dashboard).contests._component.contest-form.delete-success",
+    });
   });
 
   it("should call save on create", async () => {
@@ -135,7 +128,7 @@ describe("ContestForm", () => {
 
     render(<ContestForm {...props} />);
 
-    expect(screen.getByTestId("header")).toHaveTextContent("create-header");
+    expect(screen.getByTestId("header")).toHaveTextContent("Contest New");
     expect(screen.queryByTestId("delete")).not.toBeInTheDocument();
 
     fireEvent.change(screen.getByTestId("slug"), {
@@ -152,9 +145,7 @@ describe("ContestForm", () => {
       target: { value: "2025-01-02T00:00" },
     });
 
-    expect(screen.getByTestId("members-header")).toHaveTextContent(
-      "members-header",
-    );
+    expect(screen.getByTestId("members-header")).toHaveTextContent("Members");
     expect(screen.getByTestId("members")).toBeEmptyDOMElement();
     act(() => {
       fireEvent.click(screen.getByTestId("member-add"));
@@ -172,9 +163,7 @@ describe("ContestForm", () => {
       target: { value: "password" },
     });
 
-    expect(screen.getByTestId("problems-header")).toHaveTextContent(
-      "problems-header",
-    );
+    expect(screen.getByTestId("problems-header")).toHaveTextContent("Problems");
     expect(screen.getByTestId("problems")).toBeEmptyDOMElement();
     act(() => {
       fireEvent.click(screen.getByTestId("problem-add"));
@@ -202,7 +191,7 @@ describe("ContestForm", () => {
       fireEvent.click(screen.getByTestId("save"));
     });
     expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "confirm-save-content",
+      "Are you sure you want to save this contest?",
     );
     await act(async () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));
@@ -223,7 +212,7 @@ describe("ContestForm", () => {
 
     render(<ContestForm {...props} />);
 
-    expect(screen.getByTestId("header")).toHaveTextContent("edit-header");
+    expect(screen.getByTestId("header")).toHaveTextContent("Contest #{id}");
     expect(screen.getByTestId("delete")).toBeInTheDocument();
 
     const members = screen.getByTestId("members");
@@ -244,7 +233,7 @@ describe("ContestForm", () => {
       fireEvent.click(screen.getByTestId("save"));
     });
     expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "confirm-save-content",
+      "Are you sure you want to save this contest?",
     );
     await act(async () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));

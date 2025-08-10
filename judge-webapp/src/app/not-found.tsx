@@ -5,7 +5,7 @@ import { defineMessages, FormattedMessage } from "react-intl";
 
 const messages = defineMessages({
   description: {
-    id: "not-found.description",
+    id: "app.not-found.description",
     defaultMessage: "The page you are looking for could not be found.",
   },
 });

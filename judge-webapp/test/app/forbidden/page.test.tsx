@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import ForbiddenPage from "@/app/forbidden/page";
 
-jest.mock("@/app/_component/error-page-template", () => ({
+jest.mock("@/app/_component/page/error-page-template", () => ({
   ErrorPageTemplate: ({ code, description }: any) => (
     <>
       <p data-testid="code">{code}</p>
@@ -15,6 +15,8 @@ describe("ErrorPage", () => {
     render(<ForbiddenPage />);
 
     expect(screen.getByTestId("code")).toHaveTextContent("403");
-    expect(screen.getByTestId("description")).toHaveTextContent("description");
+    expect(screen.getByTestId("description")).toHaveTextContent(
+      "You do not have permission to access this page."
+    );
   });
 });

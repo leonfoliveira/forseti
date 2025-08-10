@@ -2,12 +2,12 @@ import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { Badge } from "@/app/_component/badge/badge";
 import React from "react";
 import { cls } from "@/app/_util/cls";
-import { FormattedSubmissionAnswerShort } from "@/app/_component/format/formatted-submission-answer-short";
 import { defineMessages, FormattedMessage } from "react-intl";
+import { globalMessages } from "@/i18n/global";
 
 const messages = defineMessages({
   text: {
-    id: "_component.badge.submission-answer-short-badge.text",
+    id: "app._component.badge.submission-answer-short-badge.text",
     defaultMessage: "{answer} x{amount}",
   },
 });
@@ -27,7 +27,9 @@ export function SubmissionAnswerShortBadge({
     <FormattedMessage
       {...messages.text}
       values={{
-        answer: <FormattedSubmissionAnswerShort answer={answer} />,
+        answer: (
+          <FormattedMessage {...globalMessages.submissionAnswerShort[answer]} />
+        ),
         amount,
       }}
     />

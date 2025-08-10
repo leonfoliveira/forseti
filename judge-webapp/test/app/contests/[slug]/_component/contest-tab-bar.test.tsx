@@ -7,8 +7,14 @@ describe("ContestTabBar", () => {
     mockUsePathname.mockReturnValueOnce("/contests/contest-slug/overview");
 
     const tabs = [
-      { label: "Overview", path: "/contests/contest-slug/overview" },
-      { label: "Problems", path: "/contests/contest-slug/problems" },
+      {
+        label: { id: "tab-1", defaultMessage: "Overview" },
+        path: "/contests/contest-slug/overview",
+      },
+      {
+        label: { id: "tab-2", defaultMessage: "Problems" },
+        path: "/contests/contest-slug/problems",
+      },
     ];
 
     render(<ContestTabBar tabs={tabs} />);

@@ -5,7 +5,7 @@ import { defineMessages, FormattedMessage } from "react-intl";
 
 const messages = defineMessages({
   description: {
-    id: "error.description",
+    id: "app.error.page.description",
     defaultMessage: "An unexpected error occurred. Please try again.",
   },
 });

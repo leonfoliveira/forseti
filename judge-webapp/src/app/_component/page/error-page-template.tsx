@@ -2,11 +2,11 @@ import { Button } from "@/app/_component/form/button";
 import { routes } from "@/config/routes";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
-import { defineMessages, FormattedMessage } from "react-intl";
+import { defineMessages } from "react-intl";
 
 const messages = defineMessages({
   home: {
-    id: "_component.page.error-page-template.home",
+    id: "app._component.page.error-page-template.home",
     defaultMessage: "Home",
   },
 });
@@ -28,12 +28,11 @@ export function ErrorPageTemplate({ code, description }: Props) {
         {description}
       </h2>
       <Button
+        label={messages.home}
         onClick={() => router.push(routes.HOME)}
         className="btn-primary mt-10"
         data-testid="home"
-      >
-        <FormattedMessage {...messages.home} />
-      </Button>
+      />
     </div>
   );
 }

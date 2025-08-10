@@ -4,11 +4,11 @@ import { defineMessages, FormattedMessage } from "react-intl";
 
 const messages = defineMessages({
   error: {
-    id: "_component.page.error-page.error",
+    id: "app._component.page.error-page.error",
     defaultMessage: "An error occurred",
   },
   reload: {
-    id: "_component.page.error-page.reload",
+    id: "app._component.page.error-page.reload",
     defaultMessage: "Reload",
   },
 });
@@ -27,12 +27,11 @@ export function ErrorPage() {
           <FormattedMessage {...messages.error} />
         </h1>
         <Button
+          label={messages.reload}
           className="btn-soft mt-5"
           onClick={() => window.location.reload()}
           data-testid="reload"
-        >
-          <FormattedMessage {...messages.reload} />
-        </Button>
+        />
       </div>
     </div>
   );

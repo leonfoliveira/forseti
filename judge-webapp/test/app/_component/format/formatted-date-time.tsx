@@ -5,12 +5,6 @@ const mockDateTime = jest.fn((date, options) => {
   return `Formatted: ${date.toISOString()} ${JSON.stringify(options)}`;
 });
 
-jest.mock("next-intl", () => ({
-  useFormatter: () => ({
-    dateTime: mockDateTime,
-  }),
-}));
-
 describe("TimestampDisplay", () => {
   beforeEach(() => {
     mockDateTime.mockClear();

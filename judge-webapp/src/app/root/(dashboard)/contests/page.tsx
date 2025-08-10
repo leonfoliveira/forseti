@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { Spinner } from "@/app/_component/spinner";
 import { Button } from "@/app/_component/form/button";
-import { useTranslations } from "next-intl";
 import { routes } from "@/config/routes";
 import { contestService } from "@/config/composition";
 import { useLoadableState } from "@/app/_util/loadable-state";
@@ -28,20 +27,91 @@ import { DialogModal } from "@/app/_component/modal/dialog-modal";
 import { recalculateContests } from "@/app/root/(dashboard)/contests/_util/contests-calculator";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { useContestStatusWatcherBatch } from "@/app/_util/contest-status-watcher";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  loadError: {
+    id: "app.root.(dashboard).contests.page.load-error",
+    defaultMessage: "Failed to load contests",
+  },
+  startSuccess: {
+    id: "app.root.(dashboard).contests.page.start-success",
+    defaultMessage: "Contest started successfully",
+  },
+  startError: {
+    id: "app.root.(dashboard).contests.page.start-error",
+    defaultMessage: "Failed to start contest",
+  },
+  endSuccess: {
+    id: "app.root.(dashboard).contests.page.end-success",
+    defaultMessage: "Contest ended successfully",
+  },
+  endError: {
+    id: "app.root.(dashboard).contests.page.end-error",
+    defaultMessage: "Failed to end contest",
+  },
+  title: {
+    id: "app.root.(dashboard).contests.page.title",
+    defaultMessage: "Contests",
+  },
+  new: {
+    id: "app.root.(dashboard).contests.page.new",
+    defaultMessage: "New Contest",
+  },
+  headerSlug: {
+    id: "app.root.(dashboard).contests.page.header-slug",
+    defaultMessage: "Slug",
+  },
+  headerTitle: {
+    id: "app.root.(dashboard).contests.page.header-title",
+    defaultMessage: "Title",
+  },
+  headerStartAt: {
+    id: "app.root.(dashboard).contests.page.header-start-at",
+    defaultMessage: "Start At",
+  },
+  headerEndAt: {
+    id: "app.root.(dashboard).contests.page.header-end-at",
+    defaultMessage: "End At",
+  },
+  headerStatus: {
+    id: "app.root.(dashboard).contests.page.header-status",
+    defaultMessage: "Status",
+  },
+  startTooltip: {
+    id: "app.root.(dashboard).contests.page.start-tooltip",
+    defaultMessage: "Force start",
+  },
+  endTooltip: {
+    id: "app.root.(dashboard).contests.page.end-tooltip",
+    defaultMessage: "Force end",
+  },
+  viewTooltip: {
+    id: "app.root.(dashboard).contests.page.view-tooltip",
+    defaultMessage: "View Contest",
+  },
+  startConfirm: {
+    id: "app.root.(dashboard).contests.page.start-confirm",
+    defaultMessage: "Are you sure you want to start this contest now?",
+  },
+  endConfirm: {
+    id: "app.root.(dashboard).contests.page.end-confirm",
+    defaultMessage: "Are you sure you want to end this contest now?",
+  },
+});
 
 export default function RootContestsPage() {
   const contestsState = useLoadableState<ContestMetadataResponseDTO[]>();
   const startContestState = useLoadableState();
   const endContestState = useLoadableState();
   const contestStatuses = useContestStatusWatcherBatch(
-    contestsState.data || []
+    contestsState.data || [],
   );
 
   const router = useRouter();
   const alert = useAlert();
   const startModal = useModal<string>();
   const endModal = useModal<string>();
-  const t = useTranslations("root.contests");
 
   useEffect(() => {
     async function findAllContests() {
@@ -51,7 +121,7 @@ export default function RootContestsPage() {
         contestsState.finish(contests);
       } catch (error) {
         contestsState.fail(error, {
-          default: () => alert.error(t("load-error")),
+          default: () => alert.error(messages.loadError),
         });
       }
     }
@@ -68,11 +138,11 @@ export default function RootContestsPage() {
     try {
       const contest = await contestService.forceStart(contestId);
       contestsState.finish((it) => recalculateContests(it, contest));
-      alert.success(t("start-success"));
+      alert.success(messages.startSuccess);
       startModal.close();
     } catch (error) {
       startContestState.fail(error, {
-        default: () => alert.error(t("start-error")),
+        default: () => alert.error(messages.startError),
       });
     }
   }
@@ -82,11 +152,11 @@ export default function RootContestsPage() {
     try {
       const contest = await contestService.forceEnd(contestId);
       contestsState.finish((it) => recalculateContests(it, contest));
-      alert.success(t("end-success"));
+      alert.success(messages.endSuccess);
       endModal.close();
     } catch (error) {
       endContestState.fail(error, {
-        default: () => alert.error(t("end-error")),
+        default: () => alert.error(messages.endError),
       });
     }
   }
@@ -94,34 +164,35 @@ export default function RootContestsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-10">
-        <p className="text-lg font-bold">{t("title")}</p>
+        <p className="text-lg font-bold">
+          <FormattedMessage {...messages.title} />
+        </p>
         <Button
           type="button"
+          leftIcon={<FontAwesomeIcon icon={faPlus} />}
+          label={messages.new}
           onClick={onNewContest}
           className="btn-primary"
           data-testid="new"
-        >
-          <FontAwesomeIcon icon={faPlus} />
-          {t("new:label")}
-        </Button>
+        />
       </div>
       <Table>
         <TableSection head>
           <TableRow>
             <TableCell header className="w-1/20" data-testid="header-slug">
-              {t("header-slug")}
+              <FormattedMessage {...messages.headerSlug} />
             </TableCell>
             <TableCell header className="w-11/20" data-testid="header-title">
-              {t("header-title")}
+              <FormattedMessage {...messages.headerTitle} />
             </TableCell>
             <TableCell header className="w-3/20" data-testid="header-start-at">
-              {t("header-start-at")}
+              <FormattedMessage {...messages.headerStartAt} />
             </TableCell>
             <TableCell header className="w-3/20" data-testid="header-end-at">
-              {t("header-end-at")}
+              <FormattedMessage {...messages.headerEndAt} />
             </TableCell>
             <TableCell header className="w-2/20" data-testid="header-status">
-              {t("header-status")}
+              <FormattedMessage {...messages.headerStatus} />
             </TableCell>
             <TableCell />
           </TableRow>
@@ -154,39 +225,36 @@ export default function RootContestsPage() {
                 <fieldset className="flex gap-x-2">
                   <Button
                     type="button"
-                    tooltip={t("start:tooltip")}
+                    leftIcon={<FontAwesomeIcon icon={faPlay} />}
+                    tooltip={messages.startTooltip}
                     onClick={() => startModal.open(contest.id)}
                     disabled={
                       contestStatuses[contest.id] !== ContestStatus.NOT_STARTED
                     }
                     className="btn-soft"
                     data-testid="start"
-                  >
-                    <FontAwesomeIcon icon={faPlay} />
-                  </Button>
+                  />
                   <Button
                     type="button"
-                    tooltip={t("end:tooltip")}
+                    leftIcon={<FontAwesomeIcon icon={faStop} />}
+                    tooltip={messages.endTooltip}
                     onClick={() => endModal.open(contest.id)}
                     disabled={
                       contestStatuses[contest.id] !== ContestStatus.IN_PROGRESS
                     }
                     className="btn-soft"
                     data-testid="end"
-                  >
-                    <FontAwesomeIcon icon={faStop} />
-                  </Button>
+                  />
                   <Button
                     type="button"
-                    tooltip={t("view:tooltip")}
+                    leftIcon={<FontAwesomeIcon icon={faChevronRight} />}
+                    tooltip={messages.viewTooltip}
                     className="btn-soft"
                     onClick={() => {
                       router.push(routes.ROOT_CONTESTS_EDIT(contest.id));
                     }}
                     data-testid="view"
-                  >
-                    <FontAwesomeIcon icon={faChevronRight} />
-                  </Button>
+                  />
                 </fieldset>
               </TableCell>
             </TableRow>
@@ -204,7 +272,7 @@ export default function RootContestsPage() {
         onConfirm={onStartContest}
         isLoading={startContestState.isLoading}
       >
-        <p>{t("start-modal:message")}</p>
+        <FormattedMessage {...messages.startConfirm} />
       </DialogModal>
 
       <DialogModal
@@ -212,7 +280,7 @@ export default function RootContestsPage() {
         onConfirm={onEndContest}
         isLoading={endContestState.isLoading}
       >
-        <p>{t("end-modal:message")}</p>
+        <FormattedMessage {...messages.endConfirm} />
       </DialogModal>
     </div>
   );

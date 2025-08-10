@@ -54,7 +54,10 @@ describe("JudgeContextProvider", () => {
 
     expect(screen.getByTestId("loading")).toBeInTheDocument();
     await waitFor(() => {
-      expect(mockAlert.error).toHaveBeenCalledWith("error");
+      expect(mockAlert.error).toHaveBeenCalledWith({
+        defaultMessage: "Error loading contest data",
+        id: "app.contests.[slug].judge._context.judge-context.load-error",
+      });
       expect(screen.getByTestId("error")).toBeInTheDocument();
       expect(screen.queryByTestId("child")).not.toBeInTheDocument();
     });
@@ -199,7 +202,11 @@ describe("JudgeContextProvider", () => {
     expect(result.current.contest.announcements).toContainEqual(
       newAnnouncement,
     );
-    expect(mockAlert.warning).toHaveBeenCalledWith(newAnnouncement.text);
+    expect(mockAlert.warning).toHaveBeenCalledWith({
+      defaultMessage: "New announcement: {text}",
+      id: "app.contests.[slug].judge._context.judge-context.announcement",
+      values: { text: "Announcement" },
+    });
   });
 
   it("should handle clarification updates", async () => {

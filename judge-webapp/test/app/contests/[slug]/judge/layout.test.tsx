@@ -62,23 +62,38 @@ describe("JudgeLayout", () => {
       expect.objectContaining({
         tabs: [
           {
-            label: "tab-leaderboard",
+            label: {
+              id: "app.contests.[slug].judge.layout.tab-leaderboard",
+              defaultMessage: "Leaderboard",
+            },
             path: routes.CONTEST_JUDGE_LEADERBOARD("test-contest"),
           },
           {
-            label: "tab-problems",
+            label: {
+              id: "app.contests.[slug].judge.layout.tab-problems",
+              defaultMessage: "Problems",
+            },
             path: routes.CONTEST_JUDGE_PROBLEMS("test-contest"),
           },
           {
-            label: "tab-submissions",
+            label: {
+              id: "app.contests.[slug].judge.layout.tab-submissions",
+              defaultMessage: "Submissions",
+            },
             path: routes.CONTEST_JUDGE_SUBMISSIONS("test-contest"),
           },
           {
-            label: "tab-clarifications",
+            label: {
+              id: "app.contests.[slug].judge.layout.tab-clarifications",
+              defaultMessage: "Clarifications",
+            },
             path: routes.CONTEST_JUDGE_CLARIFICATIONS("test-contest"),
           },
           {
-            label: "tab-announcements",
+            label: {
+              id: "app.contests.[slug].judge.layout.tab-announcements",
+              defaultMessage: "Announcements",
+            },
             path: routes.CONTEST_JUDGE_ANNOUNCEMENTS("test-contest"),
           },
         ],

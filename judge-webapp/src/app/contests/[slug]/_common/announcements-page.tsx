@@ -18,23 +18,23 @@ import { defineMessages, FormattedMessage } from "react-intl";
 
 const messages = defineMessages({
   createSuccess: {
-    id: "contests.[slug]._common.announcements-page.create-success",
+    id: "app.contests.[slug]._common.announcements-page.create-success",
     defaultMessage: "Announcement created successfully",
   },
   createError: {
-    id: "contests.[slug]._common.announcements-page.create-error",
+    id: "app.contests.[slug]._common.announcements-page.create-error",
     defaultMessage: "Failed to create announcement",
   },
   textLabel: {
-    id: "contests.[slug]._common.announcements-page.text-label",
+    id: "app.contests.[slug]._common.announcements-page.text-label",
     defaultMessage: "Text",
   },
   submitLabel: {
-    id: "contests.[slug]._common.announcements-page.submit-label",
+    id: "app.contests.[slug]._common.announcements-page.submit-label",
     defaultMessage: "Submit",
   },
   empty: {
-    id: "contests.[slug]._common.announcements-page.empty",
+    id: "app.contests.[slug]._common.announcements-page.empty",
     defaultMessage: "No announcements yet",
   },
 });
@@ -58,7 +58,7 @@ export function AnnouncementsPage({ contest, canCreate = false }: Props) {
     try {
       await contestService.createAnnouncement(
         contest.id,
-        AnnouncementFormMap.toInputDTO(data)
+        AnnouncementFormMap.toInputDTO(data),
       );
       createAnnouncementState.finish();
       form.reset();
@@ -91,13 +91,12 @@ export function AnnouncementsPage({ contest, canCreate = false }: Props) {
           <div className="flex justify-center mt-8">
             <Button
               type="submit"
+              label={messages.submitLabel}
+              rightIcon={<FontAwesomeIcon icon={faPaperPlane} />}
               className="btn-primary"
               isLoading={createAnnouncementState.isLoading}
               data-testid="form-submit"
-            >
-              <FormattedMessage {...messages.submitLabel} />
-              <FontAwesomeIcon icon={faPaperPlane} className="ms-3" />
-            </Button>
+            />
           </div>
           <div className="divider" />
         </Form>

@@ -43,13 +43,13 @@ describe("ClarificationsPage", () => {
 
     expect(screen.queryByTestId("empty")).not.toBeInTheDocument();
     expect(screen.getByTestId("clarification-problem")).toHaveTextContent(
-      "{contestant} | General"
+      "{contestant} | General",
     );
     expect(screen.getByTestId("clarification-timestamp")).toHaveTextContent(
-      clarifications[0].createdAt
+      clarifications[0].createdAt,
     );
     expect(screen.getByTestId("clarification-text")).toHaveTextContent(
-      clarifications[0].text
+      clarifications[0].text,
     );
   });
 
@@ -75,35 +75,35 @@ describe("ClarificationsPage", () => {
     render(<ClarificationsPage contest={{ clarifications } as any} />);
 
     expect(screen.getByTestId("clarification-problem")).toHaveTextContent(
-      "{contestant} | Problem {letter}"
+      "{contestant} | Problem {letter}",
     );
     expect(screen.getByTestId("clarification-timestamp")).toHaveTextContent(
-      clarifications[0].createdAt
+      clarifications[0].createdAt,
     );
     expect(screen.getByTestId("clarification-text")).toHaveTextContent(
-      clarifications[0].text
+      clarifications[0].text,
     );
     expect(screen.getByTestId("clarification-answer-header")).toHaveTextContent(
-      "RE: {judge}"
+      "RE: {judge}",
     );
     expect(
-      screen.getByTestId("clarification-answer-timestamp")
+      screen.getByTestId("clarification-answer-timestamp"),
     ).toHaveTextContent(clarifications[0].children[0].createdAt);
     expect(screen.getByTestId("clarification-answer-text")).toHaveTextContent(
-      clarifications[0].children[0].text
+      clarifications[0].children[0].text,
     );
   });
 
   it("should alert error on create failure", async () => {
     (contestService.createClarification as jest.Mock).mockRejectedValueOnce(
-      new Error("Create error")
+      new Error("Create error"),
     );
 
     render(
       <ClarificationsPage
         contest={{ problems: [{ id: "1" }], clarifications: [] } as any}
         canCreate
-      />
+      />,
     );
 
     fireEvent.change(screen.getByTestId("form-problem"), {
@@ -119,7 +119,7 @@ describe("ClarificationsPage", () => {
 
     expect(mockAlert.error).toHaveBeenCalledWith({
       defaultMessage: "Failed to create clarification",
-      id: "contests.[slug]._common.clarifications-page.create-error",
+      id: "app.contests.[slug]._common.clarifications-page.create-error",
     });
   });
 
@@ -130,7 +130,7 @@ describe("ClarificationsPage", () => {
       <ClarificationsPage
         contest={{ problems: [{ id: "1" }], clarifications: [] } as any}
         canCreate
-      />
+      />,
     );
 
     fireEvent.change(screen.getByTestId("form-problem"), {
@@ -145,13 +145,13 @@ describe("ClarificationsPage", () => {
 
     expect(mockAlert.success).toHaveBeenCalledWith({
       defaultMessage: "Clarification created successfully",
-      id: "contests.[slug]._common.clarifications-page.create-success",
+      id: "app.contests.[slug]._common.clarifications-page.create-success",
     });
   });
 
   it("should alert error on create answer failure", async () => {
     (contestService.createClarification as jest.Mock).mockRejectedValueOnce(
-      new Error("Create error")
+      new Error("Create error"),
     );
 
     render(
@@ -171,11 +171,11 @@ describe("ClarificationsPage", () => {
           } as any
         }
         canAnswer
-      />
+      />,
     );
 
     expect(screen.getByTestId("clarification-answer")).toHaveTextContent(
-      "Answer"
+      "Answer",
     );
     act(() => {
       fireEvent.click(screen.getByTestId("clarification-answer"));
@@ -189,7 +189,7 @@ describe("ClarificationsPage", () => {
 
     expect(mockAlert.error).toHaveBeenCalledWith({
       defaultMessage: "Failed to create clarification",
-      id: "contests.[slug]._common.clarifications-page.create-error",
+      id: "app.contests.[slug]._common.clarifications-page.create-error",
     });
   });
 
@@ -213,7 +213,7 @@ describe("ClarificationsPage", () => {
           } as any
         }
         canAnswer
-      />
+      />,
     );
 
     act(() => {
@@ -228,13 +228,13 @@ describe("ClarificationsPage", () => {
 
     expect(mockAlert.success).toHaveBeenCalledWith({
       defaultMessage: "Clarification created successfully",
-      id: "contests.[slug]._common.clarifications-page.create-success",
+      id: "app.contests.[slug]._common.clarifications-page.create-success",
     });
   });
 
   it("should alert error on delete clarification failure", async () => {
     (clarificationService.deleteById as jest.Mock).mockRejectedValueOnce(
-      new Error("Delete error")
+      new Error("Delete error"),
     );
 
     const clarifications = [
@@ -248,14 +248,14 @@ describe("ClarificationsPage", () => {
     ];
 
     render(
-      <ClarificationsPage contest={{ clarifications } as any} canAnswer />
+      <ClarificationsPage contest={{ clarifications } as any} canAnswer />,
     );
 
     act(() => {
       fireEvent.click(screen.getByTestId("clarification-delete"));
     });
     expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "Are you sure you want to delete this clarification?"
+      "Are you sure you want to delete this clarification?",
     );
     await act(async () => {
       fireEvent.click(screen.getByTestId("dialog-modal:button"));
@@ -263,7 +263,7 @@ describe("ClarificationsPage", () => {
 
     expect(mockAlert.error).toHaveBeenCalledWith({
       defaultMessage: "Failed to delete clarification",
-      id: "contests.[slug]._common.clarifications-page.delete-error",
+      id: "app.contests.[slug]._common.clarifications-page.delete-error",
     });
   });
 
@@ -281,7 +281,7 @@ describe("ClarificationsPage", () => {
     ];
 
     render(
-      <ClarificationsPage contest={{ clarifications } as any} canAnswer />
+      <ClarificationsPage contest={{ clarifications } as any} canAnswer />,
     );
 
     act(() => {
@@ -293,7 +293,7 @@ describe("ClarificationsPage", () => {
 
     expect(mockAlert.success).toHaveBeenCalledWith({
       defaultMessage: "Clarification deleted successfully",
-      id: "contests.[slug]._common.clarifications-page.delete-success",
+      id: "app.contests.[slug]._common.clarifications-page.delete-success",
     });
   });
 });

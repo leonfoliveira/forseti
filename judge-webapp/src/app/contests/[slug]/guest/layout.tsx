@@ -5,7 +5,30 @@ import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest
 import { GuestContextProvider } from "@/app/contests/[slug]/guest/_context/guest-context";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { routes } from "@/config/routes";
-import { useTranslations } from "next-intl";
+import { defineMessages } from "react-intl";
+
+const messages = defineMessages({
+  tabLeaderboard: {
+    id: "app.contests.[slug].guest.layout.tab-leaderboard",
+    defaultMessage: "Leaderboard",
+  },
+  tabProblems: {
+    id: "app.contests.[slug].guest.layout.tab-problems",
+    defaultMessage: "Problems",
+  },
+  tabTimeline: {
+    id: "app.contests.[slug].guest.layout.tab-timeline",
+    defaultMessage: "Timeline",
+  },
+  tabClarifications: {
+    id: "app.contests.[slug].guest.layout.tab-clarifications",
+    defaultMessage: "Clarifications",
+  },
+  tabAnnouncements: {
+    id: "app.contests.[slug].guest.layout.tab-announcements",
+    defaultMessage: "Announcements",
+  },
+});
 
 export default function GuestLayout({
   children,
@@ -13,30 +36,29 @@ export default function GuestLayout({
   children: React.ReactNode;
 }) {
   const contestMetadata = useContestMetadata();
-  const t = useTranslations("contests.[slug].guest.layout");
 
   return (
     <ContestDashboardLayout
       contestMetadata={contestMetadata}
       tabs={[
         {
-          label: t("tab-leaderboard"),
+          label: messages.tabLeaderboard,
           path: routes.CONTEST_GUEST_LEADERBOARD(contestMetadata.slug),
         },
         {
-          label: t("tab-problems"),
+          label: messages.tabProblems,
           path: routes.CONTEST_GUEST_PROBLEMS(contestMetadata.slug),
         },
         {
-          label: t("tab-timeline"),
+          label: messages.tabTimeline,
           path: routes.CONTEST_GUEST_TIMELINE(contestMetadata.slug),
         },
         {
-          label: t("tab-clarifications"),
+          label: messages.tabClarifications,
           path: routes.CONTEST_GUEST_CLARIFICATIONS(contestMetadata.slug),
         },
         {
-          label: t("tab-announcements"),
+          label: messages.tabAnnouncements,
           path: routes.CONTEST_GUEST_ANNOUNCEMENTS(contestMetadata.slug),
         },
       ]}

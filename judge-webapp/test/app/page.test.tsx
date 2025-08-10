@@ -9,10 +9,10 @@ describe("HomePage", () => {
   it("should render the page with a form", () => {
     render(<HomePage />);
 
-    expect(screen.getByTestId("title")).toHaveTextContent("title");
+    expect(screen.getByTestId("title")).toHaveTextContent("Judge");
     expect(screen.getByTestId("slug")).toBeInTheDocument();
-    expect(screen.getByTestId("join")).toHaveTextContent("join:label");
-    expect(screen.getByTestId("root")).toHaveTextContent("root:label");
+    expect(screen.getByTestId("join")).toHaveTextContent("Join");
+    expect(screen.getByTestId("root")).toHaveTextContent("Enter as Root");
   });
 
   it("should alert when contest is not found", async () => {
@@ -29,9 +29,12 @@ describe("HomePage", () => {
       fireEvent.click(screen.getByTestId("join"));
     });
     expect(contestService.findContestMetadataBySlug).toHaveBeenCalledWith(
-      "non-existent-slug"
+      "non-existent-slug",
     );
-    expect(mockAlert.warning).toHaveBeenCalledWith("not-found");
+    expect(mockAlert.warning).toHaveBeenCalledWith({
+      defaultMessage: "Not found",
+      id: "app.page.join-not-found",
+    });
   });
 
   it("should alert on failure", async () => {
@@ -48,9 +51,12 @@ describe("HomePage", () => {
       fireEvent.click(screen.getByTestId("join"));
     });
     expect(contestService.findContestMetadataBySlug).toHaveBeenCalledWith(
-      "some-slug"
+      "some-slug",
     );
-    expect(mockAlert.error).toHaveBeenCalledWith("error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Could not check if contest exists",
+      id: "app.page.join-error",
+    });
   });
 
   it("should redirect to contest sign-in on join button click", async () => {
@@ -63,7 +69,7 @@ describe("HomePage", () => {
       fireEvent.click(screen.getByTestId("join"));
     });
     expect(mockRouter.push).toHaveBeenCalledWith(
-      routes.CONTEST_SIGN_IN("some-slug")
+      routes.CONTEST_SIGN_IN("some-slug"),
     );
   });
 

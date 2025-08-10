@@ -32,10 +32,10 @@ describe("TimelinePage", () => {
     render(<TimelinePage submissions={submissions} />);
 
     expect(screen.getByTestId("header-timestamp")).toHaveTextContent(
-      "Timestamp"
+      "Timestamp",
     );
     expect(screen.getByTestId("header-contestant")).toHaveTextContent(
-      "Contestant"
+      "Contestant",
     );
     expect(screen.getByTestId("header-problem")).toHaveTextContent("Problem");
     expect(screen.getByTestId("header-language")).toHaveTextContent("Language");
@@ -43,19 +43,19 @@ describe("TimelinePage", () => {
     const rows = screen.getAllByTestId("submission-row");
     expect(rows).toHaveLength(2);
     expect(screen.getAllByTestId("submission-created-at")[0]).toHaveTextContent(
-      "2023-10-01T00:30:00.000Z"
+      "2023-10-01T00:30:00Z",
     );
     expect(screen.getAllByTestId("submission-member")[0]).toHaveTextContent(
-      "Test User"
+      "Test User",
     );
     expect(screen.getAllByTestId("submission-problem")[0]).toHaveTextContent(
-      "A"
+      "A",
     );
     expect(screen.getAllByTestId("submission-language")[0]).toHaveTextContent(
-      "Python 3.13"
+      "Python 3.13",
     );
     expect(screen.getAllByTestId("submission-answer")[0]).toHaveTextContent(
-      "Accepted"
+      "Accepted",
     );
   });
 

@@ -9,23 +9,23 @@ import {
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { defineMessages, FormattedMessage } from "react-intl";
-import { FormattedMemberType } from "./format/formatted-member-type";
+import { globalMessages } from "@/i18n/global";
 
 const messages = defineMessages({
   rootTitle: {
-    id: "_component.navbar.root-title",
+    id: "app._component.navbar.root-title",
     defaultMessage: "Judge - Root",
   },
   guestName: {
-    id: "_component.navbar.guest-name",
+    id: "app._component.navbar.guest-name",
     defaultMessage: "Guest",
   },
   signIn: {
-    id: "_component.navbar.sign-in",
+    id: "app._component.navbar.sign-in",
     defaultMessage: "Sign In",
   },
   signOut: {
-    id: "_component.navbar.sign-out",
+    id: "app._component.navbar.sign-out",
     defaultMessage: "Sign Out",
   },
 });
@@ -41,7 +41,7 @@ export function Navbar({ contestMetadata, signInPath }: Props) {
   const { clearAuthorization } = useAuthorizationContext();
 
   const clockRef = useWaitClock(
-    contestMetadata && new Date(contestMetadata.endAt)
+    contestMetadata && new Date(contestMetadata.endAt),
   );
 
   function signOut() {
@@ -91,8 +91,10 @@ export function Navbar({ contestMetadata, signInPath }: Props) {
                 >
                   {!isGuest && (
                     <li className="menu-title">
-                      <FormattedMemberType
-                        memberType={authorization?.member.type}
+                      <FormattedMessage
+                        {...globalMessages.memberType[
+                          authorization?.member.type
+                        ]}
                       />
                     </li>
                   )}

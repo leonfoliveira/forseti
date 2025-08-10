@@ -3,16 +3,11 @@ import { NumberInput } from "@/app/_component/form/number-input";
 import { useForm } from "react-hook-form";
 
 describe("NumberInput", () => {
+  const label = { id: "label", defaultMessage: "Test label" };
+
   const TestComponent = () => {
     const form = useForm();
-    return (
-      <NumberInput
-        form={form}
-        name="test"
-        s={((key: string) => key) as any}
-        label="Test label"
-      />
-    );
+    return <NumberInput form={form} name="test" label={label} />;
   };
 
   it("renders a number input with the given label", () => {
@@ -31,8 +26,7 @@ describe("NumberInput", () => {
         <NumberInput
           form={form}
           name="test"
-          s={((key: string) => key) as any}
-          label="Test label"
+          label={label}
           className="my-class"
         />
       );
@@ -49,8 +43,7 @@ describe("NumberInput", () => {
         <NumberInput
           form={form}
           name="test"
-          s={((key: string) => key) as any}
-          label="Test label"
+          label={label}
           containerClassName="my-container-class"
         />
       );

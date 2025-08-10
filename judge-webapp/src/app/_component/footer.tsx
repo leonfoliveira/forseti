@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage } from "react-intl";
 
 const messages = defineMessages({
   text: {
-    id: "_component.footer.text",
+    id: "app._component.footer.text",
     defaultMessage: "Judge {version} | by {author}",
   },
 });

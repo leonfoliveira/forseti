@@ -13,7 +13,7 @@ import { defineMessages, FormattedMessage } from "react-intl";
 
 const messages = defineMessages({
   problemTitle: {
-    id: "contests.[slug]._common.problems-page.problem-title",
+    id: "app.contests.[slug]._common.problems-page.problem-title",
     defaultMessage: "{letter}. {title}",
   },
 });
@@ -57,7 +57,7 @@ export function ProblemsPage({ contest, contestantStatus }: Props) {
                             amount={amount}
                             className="ml-1"
                           />
-                        )
+                        ),
                     )}
                   </span>
                 )}

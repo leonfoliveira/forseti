@@ -1,9 +1,10 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { FieldPath, FieldValues } from "react-hook-form";
 import { Checkbox } from "@/app/_component/form/checkbox";
 import { cls } from "@/app/_util/cls";
 import { FormattedMessage } from "react-intl";
+import { Message } from "@/i18n/message";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -12,10 +13,10 @@ type Props<TFieldValues extends FieldValues> = Omit<
   form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
   containerClassName?: string;
-  label: ReactNode | string;
+  label: Message;
   options: {
     value: string;
-    label: string;
+    label: Message;
   }[];
   "data-testid"?: string;
 };
@@ -58,12 +59,13 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
           data-testid={testId}
         >
           <label className="fieldset-legend" data-testid={`${testId}:label`}>
-            {label}
+            <FormattedMessage {...label} />
           </label>
           <div className="grid gap-4 grid-cols-[repeat(auto-fill,_minmax(150px,_1fr))]">
             {options.map((item) => (
               <Checkbox
                 {...props}
+                label={item.label}
                 className={className}
                 key={item.value}
                 checked={formToComponent(field.value, item.value)}
@@ -77,9 +79,7 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
                   );
                 }}
                 data-testid={`${testId}:checkbox`}
-              >
-                {item.label}
-              </Checkbox>
+              />
             ))}
           </div>
           <p

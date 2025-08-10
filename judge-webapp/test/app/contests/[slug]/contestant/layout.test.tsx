@@ -65,27 +65,45 @@ describe("ContestantLayout", () => {
       expect.objectContaining({
         tabs: [
           {
-            label: "tab-leaderboard",
+            label: {
+              id: "app.contests.[slug].contestant.layout.tab-leaderboard",
+              defaultMessage: "Leaderboard",
+            },
             path: routes.CONTEST_CONTESTANT_LEADERBOARD("test-contest"),
           },
           {
-            label: "tab-problems",
+            label: {
+              id: "app.contests.[slug].contestant.layout.tab-problems",
+              defaultMessage: "Problems",
+            },
             path: routes.CONTEST_CONTESTANT_PROBLEMS("test-contest"),
           },
           {
-            label: "tab-timeline",
+            label: {
+              id: "app.contests.[slug].contestant.layout.tab-timeline",
+              defaultMessage: "Timeline",
+            },
             path: routes.CONTEST_CONTESTANT_TIMELINE("test-contest"),
           },
           {
-            label: "tab-submissions",
+            label: {
+              id: "app.contests.[slug].contestant.layout.tab-submissions",
+              defaultMessage: "Submissions",
+            },
             path: routes.CONTEST_CONTESTANT_SUBMISSIONS("test-contest"),
           },
           {
-            label: "tab-clarifications",
+            label: {
+              id: "app.contests.[slug].contestant.layout.tab-clarifications",
+              defaultMessage: "Clarifications",
+            },
             path: routes.CONTEST_CONTESTANT_CLARIFICATIONS("test-contest"),
           },
           {
-            label: "tab-announcements",
+            label: {
+              id: "app.contests.[slug].contestant.layout.tab-announcements",
+              defaultMessage: "Announcements",
+            },
             path: routes.CONTEST_CONTESTANT_ANNOUNCEMENTS("test-contest"),
           },
         ],

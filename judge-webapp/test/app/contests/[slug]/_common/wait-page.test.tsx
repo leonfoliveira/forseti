@@ -22,18 +22,20 @@ describe("WaitPage", () => {
     render(<WaitPage contestMetadata={contest} />);
 
     expect(screen.getByTestId("title")).toHaveTextContent("Test Contest");
-    expect(screen.getByTestId("start-at")).toHaveTextContent("start-at");
-    expect(screen.getByTestId("languages")).toHaveTextContent("languages");
+    expect(screen.getByTestId("start-at")).toHaveTextContent("Starts at");
+    expect(screen.getByTestId("languages")).toHaveTextContent(
+      "Supported languages",
+    );
     const languageItems = screen.getAllByTestId("language-item");
     expect(languageItems).toHaveLength(1);
     expect(languageItems[0]).toHaveTextContent("Python 3.13");
 
     expect(useWaitClock).toHaveBeenCalledWith(
       new Date(contest.startAt),
-      expect.any(Function)
+      expect.any(Function),
     );
     expect(mockRouter.push).toHaveBeenCalledWith(
-      routes.CONTEST_SIGN_IN(contest.slug)
+      routes.CONTEST_SIGN_IN(contest.slug),
     );
   });
 });

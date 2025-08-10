@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { useAlert } from "../_context/notification-context";
-import { useTranslations } from "next-intl";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { useRouter } from "next/navigation";
 import { useAuthorizationContext } from "../_context/authorization-context";
@@ -19,7 +17,7 @@ export type UseLoadableStateReturnType<TData> = LoadableState<TData> & {
   finish: (dataOrCallback?: TData | ((currentData: TData) => TData)) => void;
   fail: (
     error: unknown,
-    handlers?: Record<string, (error: Error) => void>
+    handlers?: Record<string, (error: Error) => void>,
   ) => void;
 };
 
@@ -27,17 +25,15 @@ export type UseLoadableStateReturnType<TData> = LoadableState<TData> & {
  * Utility hook that wraps react useState with loading and error states.
  */
 export function useLoadableState<TData>(
-  initialState: Partial<LoadableState<TData>> = {}
+  initialState: Partial<LoadableState<TData>> = {},
 ): UseLoadableStateReturnType<TData> {
   const defaultState = {
     isLoading: false,
     data: undefined,
     error: undefined,
   };
-  const alert = useAlert();
   const router = useRouter();
   const { clearAuthorization } = useAuthorizationContext();
-  const t = useTranslations();
 
   const [state, setState] = useState<LoadableState<TData>>({
     ...defaultState,
@@ -53,7 +49,7 @@ export function useLoadableState<TData>(
       setState((currentState) => ({
         isLoading: false,
         data: (dataOrCallback as (currentData: TData) => TData)(
-          currentState.data as TData
+          currentState.data as TData,
         ),
         error: undefined,
       }));
@@ -64,13 +60,12 @@ export function useLoadableState<TData>(
 
   function fail(
     error: unknown,
-    customHandlers: Record<string, (error: Error) => void> = {}
+    customHandlers: Record<string, (error: Error) => void> = {},
   ) {
     const handlers: Record<string, (error: Error) => void> = {
       [UnauthorizedException.name]: () => clearAuthorization(routes.ROOT),
       [ForbiddenException.name]: () => router.push(routes.FORBIDDEN),
       [NotFoundException.name]: () => router.push(routes.ROOT),
-      default: () => alert.error(t("error")),
       ...customHandlers,
     };
 

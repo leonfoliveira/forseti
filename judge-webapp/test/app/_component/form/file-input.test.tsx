@@ -3,16 +3,11 @@ import { FileInput } from "@/app/_component/form/file-input";
 import { useForm } from "react-hook-form";
 
 describe("FileInput", () => {
+  const label = { id: "label", defaultMessage: "Test label" };
+
   const TestComponent = () => {
     const form = useForm();
-    return (
-      <FileInput
-        form={form}
-        name="test"
-        s={((key: string) => key) as any}
-        label="Test label"
-      />
-    );
+    return <FileInput form={form} name="test" label={label} />;
   };
 
   it("renders a file input with the given label", () => {
@@ -28,13 +23,7 @@ describe("FileInput", () => {
     const TestComponentWithClassName = () => {
       const form = useForm();
       return (
-        <FileInput
-          form={form}
-          name="test"
-          s={((key: string) => key) as any}
-          label="Test label"
-          className="my-class"
-        />
+        <FileInput form={form} name="test" label={label} className="my-class" />
       );
     };
     render(<TestComponentWithClassName />);
@@ -49,8 +38,7 @@ describe("FileInput", () => {
         <FileInput
           form={form}
           name="test"
-          s={((key: string) => key) as any}
-          label="Test label"
+          label={label}
           containerClassName="my-container-class"
         />
       );

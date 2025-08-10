@@ -27,23 +27,23 @@ describe("AnnouncementsPage", () => {
 
     expect(screen.queryByTestId("empty")).not.toBeInTheDocument();
     expect(screen.getByTestId("announcement-member")).toHaveTextContent(
-      announcements[0].member.name
+      announcements[0].member.name,
     );
     expect(screen.getByTestId("announcement-timestamp")).toHaveTextContent(
-      announcements[0].createdAt
+      announcements[0].createdAt,
     );
     expect(screen.getByTestId("announcement-text")).toHaveTextContent(
-      announcements[0].text
+      announcements[0].text,
     );
   });
 
   it("should alert error on create failure", async () => {
     (contestService.createAnnouncement as jest.Mock).mockRejectedValueOnce(
-      new Error("Create error")
+      new Error("Create error"),
     );
 
     render(
-      <AnnouncementsPage contest={{ announcements: [] } as any} canCreate />
+      <AnnouncementsPage contest={{ announcements: [] } as any} canCreate />,
     );
 
     expect(screen.getByTestId("create-form")).toBeInTheDocument();
@@ -55,7 +55,7 @@ describe("AnnouncementsPage", () => {
     });
     expect(mockAlert.error).toHaveBeenCalledWith({
       defaultMessage: "Failed to create announcement",
-      id: "contests.[slug]._common.announcements-page.create-error",
+      id: "app.contests.[slug]._common.announcements-page.create-error",
     });
   });
 
@@ -63,7 +63,7 @@ describe("AnnouncementsPage", () => {
     (contestService.createAnnouncement as jest.Mock).mockResolvedValueOnce({});
 
     render(
-      <AnnouncementsPage contest={{ announcements: [] } as any} canCreate />
+      <AnnouncementsPage contest={{ announcements: [] } as any} canCreate />,
     );
 
     expect(screen.getByTestId("create-form")).toBeInTheDocument();
@@ -75,7 +75,7 @@ describe("AnnouncementsPage", () => {
     });
     expect(mockAlert.success).toHaveBeenCalledWith({
       defaultMessage: "Announcement created successfully",
-      id: "contests.[slug]._common.announcements-page.create-success",
+      id: "app.contests.[slug]._common.announcements-page.create-success",
     });
   });
 });

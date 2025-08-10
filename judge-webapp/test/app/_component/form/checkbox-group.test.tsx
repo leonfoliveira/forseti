@@ -10,9 +10,9 @@ jest.mock("@/app/_component/form/checkbox", () => ({
 
 describe("CheckboxGroup", () => {
   const options = [
-    { value: "1", label: "Option 1" },
-    { value: "2", label: "Option 2" },
-    { value: "3", label: "Option 3" },
+    { value: "1", label: { id: "option-1", defaultMessage: "Option 1" } },
+    { value: "2", label: { id: "option-2", defaultMessage: "Option 2" } },
+    { value: "3", label: { id: "option-3", defaultMessage: "Option 3" } },
   ];
 
   const TestComponent = () => {
@@ -21,8 +21,7 @@ describe("CheckboxGroup", () => {
       <CheckboxGroup
         form={form}
         name="test"
-        s={((key: string) => key) as any}
-        label="Test label"
+        label={{ id: "label", defaultMessage: "Test label" }}
         options={options}
       />
     );

@@ -6,10 +6,11 @@ import { Attachment } from "@/core/domain/model/Attachment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose, faDownload } from "@fortawesome/free-solid-svg-icons";
 import { defineMessages, FormattedMessage } from "react-intl";
+import { Message } from "@/i18n/message";
 
 const messages = defineMessages({
   empty: {
-    id: "_component.form.file-input",
+    id: "app._component.form.file-input",
     defaultMessage: "Select a file",
   },
 });
@@ -22,7 +23,7 @@ type Props<TFieldValues extends FieldValues> = Omit<
   originalName?: FieldPath<TFieldValues>;
   name: FieldPath<TFieldValues>;
   containerClassName?: string;
-  label: string;
+  label: Message;
   onDownloadOriginal?: (attachment: Attachment) => void;
   "data-testid"?: string;
 };
@@ -75,7 +76,7 @@ export function FileInput<TFieldValues extends FieldValues>({
             htmlFor={name}
             data-testid={`${testId}:label`}
           >
-            {label}
+            <FormattedMessage {...label} />
           </label>
           <input
             {...props}

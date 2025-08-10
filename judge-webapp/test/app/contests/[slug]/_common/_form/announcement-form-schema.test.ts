@@ -12,10 +12,11 @@ describe("announcementFormSchema", () => {
   it("should validate text", () => {
     expect(
       announcementFormSchema.validate({ ...validData, text: undefined }).error
-        ?.message
-    ).toBe("contests.[slug]._common._form.announcement-form.text-required");
+        ?.message,
+    ).toBe("app.contests.[slug]._common._form.announcement-form.text-required");
     expect(
-      announcementFormSchema.validate({ ...validData, text: "" }).error?.message
-    ).toBe("contests.[slug]._common._form.announcement-form.text-required");
+      announcementFormSchema.validate({ ...validData, text: "" }).error
+        ?.message,
+    ).toBe("app.contests.[slug]._common._form.announcement-form.text-required");
   });
 });

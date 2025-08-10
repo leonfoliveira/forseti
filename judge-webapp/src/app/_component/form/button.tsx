@@ -1,14 +1,23 @@
-import React, { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
+import React, {
+  ButtonHTMLAttributes,
+  DetailedHTMLProps,
+  ReactNode,
+} from "react";
 import { cls } from "@/app/_util/cls";
 import { Spinner } from "@/app/_component/spinner";
+import { Message } from "@/i18n/message";
+import { FormattedMessage, useIntl } from "react-intl";
 
 type Props = DetailedHTMLProps<
   ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
 > & {
   "data-testid"?: string;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
+  label?: Message;
   isLoading?: boolean;
-  tooltip?: string;
+  tooltip?: Message;
   containerClassName?: string;
 };
 
@@ -17,6 +26,9 @@ type Props = DetailedHTMLProps<
  */
 export function Button({
   type,
+  leftIcon,
+  rightIcon,
+  label,
   isLoading,
   tooltip,
   containerClassName,
@@ -24,6 +36,8 @@ export function Button({
   ...props
 }: Props) {
   const testId = props["data-testid"] || "button";
+  const intl = useIntl();
+  const tooltipMessage = intl.formatMessage({ ...tooltip });
 
   return (
     <div
@@ -33,7 +47,7 @@ export function Button({
         !isLoading && disabled && "cursor-not-allowed",
         isLoading && "cursor-wait",
       )}
-      data-tip={tooltip}
+      data-tip={tooltipMessage}
       data-testid={`${testId}:container`}
     >
       <button
@@ -41,11 +55,18 @@ export function Button({
         {...props}
         disabled={disabled || isLoading}
         className={cls(props.className, "btn")}
-        aria-label={tooltip}
+        aria-label={tooltipMessage}
         data-testid={testId}
       >
-        {!isLoading && props.children}
-        {isLoading && <Spinner data-testid={`${testId}:spinner`} />}
+        {!isLoading ? (
+          <>
+            {leftIcon}
+            {label && <FormattedMessage {...label} />}
+            {rightIcon}
+          </>
+        ) : (
+          <Spinner data-testid={`${testId}:spinner`} />
+        )}
       </button>
     </div>
   );

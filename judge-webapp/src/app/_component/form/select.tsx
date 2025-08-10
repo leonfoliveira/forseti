@@ -19,7 +19,7 @@ type Props<TFieldValues extends FieldValues> = Omit<
   label: Message;
   options: {
     value: string;
-    label: string;
+    label: Message;
   }[];
   "data-testid"?: string;
 };
@@ -79,7 +79,7 @@ export function Select<TFieldValues extends FieldValues>({
                 value={it.value}
                 data-testid={`${testId}:option`}
               >
-                {it.label}
+                <FormattedMessage {...it.label} />
               </option>
             ))}
           </select>
