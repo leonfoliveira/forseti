@@ -1,10 +1,20 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { ErrorPageTemplate } from "@/app/_component/page/error-page-template";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  description: {
+    id: "error.description",
+    defaultMessage: "An unexpected error occurred. Please try again.",
+  },
+});
 
 export default function ErrorPage() {
-  const t = useTranslations("error");
-
-  return <ErrorPageTemplate code={500} description={t("description")} />;
+  return (
+    <ErrorPageTemplate
+      code={500}
+      description={<FormattedMessage {...messages.description} />}
+    />
+  );
 }

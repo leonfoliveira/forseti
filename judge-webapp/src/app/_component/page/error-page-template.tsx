@@ -1,6 +1,7 @@
 import { Button } from "@/app/_component/form/button";
 import { routes } from "@/config/routes";
 import { useRouter } from "next/navigation";
+import { ReactNode } from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
 const messages = defineMessages({
@@ -12,7 +13,7 @@ const messages = defineMessages({
 
 type Props = {
   code: number;
-  description: string;
+  description: ReactNode | string;
 };
 
 export function ErrorPageTemplate({ code, description }: Props) {

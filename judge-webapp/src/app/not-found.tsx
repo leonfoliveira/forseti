@@ -1,10 +1,20 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { ErrorPageTemplate } from "@/app/_component/page/error-page-template";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  description: {
+    id: "not-found.description",
+    defaultMessage: "The page you are looking for could not be found.",
+  },
+});
 
 export default function NotFoundPage() {
-  const t = useTranslations("not-found");
-
-  return <ErrorPageTemplate code={404} description={t("description")} />;
+  return (
+    <ErrorPageTemplate
+      code={404}
+      description={<FormattedMessage {...messages.description} />}
+    />
+  );
 }
