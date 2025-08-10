@@ -1,9 +1,9 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { FieldPath, FieldValues } from "react-hook-form";
 import { Checkbox } from "@/app/_component/form/checkbox";
 import { cls } from "@/app/_util/cls";
-import { useTranslations } from "next-intl";
+import { FormattedMessage } from "react-intl";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -11,9 +11,8 @@ type Props<TFieldValues extends FieldValues> = Omit<
 > & {
   form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
-  s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
-  label: string;
+  label: ReactNode | string;
   options: {
     value: string;
     label: string;
@@ -26,7 +25,6 @@ type Props<TFieldValues extends FieldValues> = Omit<
  */
 export function CheckboxGroup<TFieldValues extends FieldValues>({
   form,
-  s,
   label,
   options,
   containerClassName,
@@ -37,7 +35,7 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
 
   function formToComponent(
     fieldValue: string[] | undefined,
-    itemValue: string,
+    itemValue: string
   ) {
     return (fieldValue || []).includes(itemValue);
   }
@@ -45,7 +43,7 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
   function componentToForm(
     fieldValue: string[] | undefined,
     itemValue: string,
-    checked: boolean,
+    checked: boolean
   ) {
     if (checked) {
       return [...(fieldValue || []), itemValue];
@@ -77,8 +75,8 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
                     componentToForm(
                       field.value,
                       item.value,
-                      event.target.checked,
-                    ),
+                      event.target.checked
+                    )
                   );
                 }}
                 data-testid={`${testId}:checkbox`}
@@ -91,7 +89,11 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
             className="label text-error text-wrap"
             data-testid={`${testId}:error`}
           >
-            {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
+            {!!fieldState.error?.message ? (
+              <FormattedMessage id={fieldState.error.message} />
+            ) : (
+              ""
+            )}
           </p>
         </fieldset>
       )}

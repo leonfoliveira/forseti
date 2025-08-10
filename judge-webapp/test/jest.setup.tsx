@@ -10,6 +10,9 @@ jest.mock("next-intl", () => ({
 jest.mock("react-intl", () => ({
   defineMessages: (messages: any) => messages,
   FormattedMessage: ({ defaultMessage }: any) => defaultMessage,
+  useIntl: () => ({
+    formatMessage: ({ id }: { id: string }) => id,
+  }),
 }));
 
 // next/navigation

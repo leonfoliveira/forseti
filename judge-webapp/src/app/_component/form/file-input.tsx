@@ -5,7 +5,14 @@ import { FieldPath, FieldValues } from "react-hook-form";
 import { Attachment } from "@/core/domain/model/Attachment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose, faDownload } from "@fortawesome/free-solid-svg-icons";
-import { useTranslations } from "next-intl";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  empty: {
+    id: "_component.form.file-input",
+    defaultMessage: "Select a file",
+  },
+});
 
 type Props<TFieldValues extends FieldValues> = Omit<
   DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
@@ -14,7 +21,6 @@ type Props<TFieldValues extends FieldValues> = Omit<
   form: UseFormReturn<TFieldValues>;
   originalName?: FieldPath<TFieldValues>;
   name: FieldPath<TFieldValues>;
-  s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
   label: string;
   onDownloadOriginal?: (attachment: Attachment) => void;
@@ -28,7 +34,6 @@ export function FileInput<TFieldValues extends FieldValues>({
   form,
   originalName,
   name,
-  s,
   label,
   onDownloadOriginal,
   containerClassName,
@@ -37,7 +42,6 @@ export function FileInput<TFieldValues extends FieldValues>({
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "file-input";
   const ref = useRef<HTMLInputElement | null>(null);
-  const t = useTranslations("_component.form.file-input");
 
   function componentToForm(value: FileList | null) {
     return value && value.length > 0 ? value[0] : undefined;
@@ -66,7 +70,11 @@ export function FileInput<TFieldValues extends FieldValues>({
           className={cls(containerClassName, "fieldset")}
           data-testid={`${testId}:container`}
         >
-          <label className="fieldset-legend" htmlFor={name} data-testid={`${testId}:label`}>
+          <label
+            className="fieldset-legend"
+            htmlFor={name}
+            data-testid={`${testId}:label`}
+          >
             {label}
           </label>
           <input
@@ -90,7 +98,9 @@ export function FileInput<TFieldValues extends FieldValues>({
               {field.value && field.value.name}
               {!field.value && originalValue && originalValue.filename}
               {!field.value && !originalValue && (
-                <span className="text-gray-400">{t("empty")}</span>
+                <span className="text-gray-400">
+                  <FormattedMessage {...messages.empty} />
+                </span>
               )}
             </button>
             <button
@@ -117,7 +127,11 @@ export function FileInput<TFieldValues extends FieldValues>({
             className="label text-error text-wrap"
             data-testid={`${testId}:error`}
           >
-            {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
+            {!!fieldState.error?.message ? (
+              <FormattedMessage id={fieldState.error.message} />
+            ) : (
+              ""
+            )}
           </p>
         </fieldset>
       )}

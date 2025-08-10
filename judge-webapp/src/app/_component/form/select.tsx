@@ -6,7 +6,7 @@ import {
   FieldValues,
   UseFormReturn,
 } from "react-hook-form";
-import { useTranslations } from "next-intl";
+import { FormattedMessage } from "react-intl";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   DetailedHTMLProps<SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>,
@@ -14,7 +14,6 @@ type Props<TFieldValues extends FieldValues> = Omit<
 > & {
   form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
-  s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
   label?: string;
   options: {
@@ -31,7 +30,6 @@ export function Select<TFieldValues extends FieldValues>({
   form,
   label,
   name,
-  s,
   containerClassName,
   className,
   options,
@@ -56,7 +54,11 @@ export function Select<TFieldValues extends FieldValues>({
           className={cls(containerClassName, "fieldset")}
           data-testid={`${testId}:container`}
         >
-          <label className="fieldset-legend" htmlFor={name} data-testid={`${testId}:label`}>
+          <label
+            className="fieldset-legend"
+            htmlFor={name}
+            data-testid={`${testId}:label`}
+          >
             {label}
           </label>
           <select
@@ -84,7 +86,11 @@ export function Select<TFieldValues extends FieldValues>({
             className="label text-error text-wrap"
             data-testid={`${testId}:error`}
           >
-            {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
+            {!!fieldState.error?.message ? (
+              <FormattedMessage id={fieldState.error.message} />
+            ) : (
+              ""
+            )}
           </p>
         </fieldset>
       )}

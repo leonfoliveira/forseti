@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { cls } from "@/app/_util/cls";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { FieldPath, FieldValues } from "react-hook-form";
-import { useTranslations } from "next-intl";
+import { FormattedMessage } from "react-intl";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -11,7 +11,6 @@ type Props<TFieldValues extends FieldValues> = Omit<
   form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
   value?: string;
-  s: ReturnType<typeof useTranslations>;
   containerClassName?: string;
   label: string;
   password?: boolean;
@@ -24,7 +23,6 @@ type Props<TFieldValues extends FieldValues> = Omit<
 export function TextInput<TFieldValues extends FieldValues>({
   form,
   name,
-  s,
   label,
   containerClassName,
   className,
@@ -56,7 +54,11 @@ export function TextInput<TFieldValues extends FieldValues>({
           className={cls("fieldset", containerClassName)}
           data-testid={`${testId}:container`}
         >
-          <label className="fieldset-legend" htmlFor={name} data-testid={`${testId}:label`}>
+          <label
+            className="fieldset-legend"
+            htmlFor={name}
+            data-testid={`${testId}:label`}
+          >
             {label}
           </label>
           <input
@@ -72,7 +74,11 @@ export function TextInput<TFieldValues extends FieldValues>({
             className="label text-error text-wrap"
             data-testid={`${testId}:error`}
           >
-            {!!fieldState.error?.message ? s(fieldState.error.message) : ""}
+            {!!fieldState.error?.message ? (
+              <FormattedMessage id={fieldState.error.message} />
+            ) : (
+              ""
+            )}
           </p>
         </fieldset>
       )}
