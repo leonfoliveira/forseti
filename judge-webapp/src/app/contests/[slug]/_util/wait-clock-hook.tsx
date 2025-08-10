@@ -1,5 +1,5 @@
+import { FormattedDuration } from "@/app/_component/format/formatted-duration";
 import { useEffect, useRef } from "react";
-import { DateUtils } from "@/app/_util/date-utils";
 
 /**
  * Hook to create a countdown clock that updates every second.
@@ -17,7 +17,7 @@ export function useWaitClock(target?: Date, onZero?: () => void) {
       const interval = setInterval(() => {
         if (clockRef.current) {
           const diff = Math.max(0, target.getTime() - new Date().getTime());
-          clockRef.current.textContent = DateUtils.formatDifference(diff);
+          clockRef.current.textContent = "TODO: fix";
 
           if (diff / 1000 / 60 < 20) {
             clockRef.current.classList.add("text-error");

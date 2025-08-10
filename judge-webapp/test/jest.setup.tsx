@@ -10,6 +10,7 @@ jest.mock("next-intl", () => ({
 jest.mock("react-intl", () => ({
   defineMessages: (messages: any) => messages,
   FormattedMessage: ({ defaultMessage }: any) => defaultMessage,
+  FormattedDate: ({ value }: any) => <span>{value.toISOString()}</span>,
   useIntl: () => ({
     formatMessage: ({ id }: { id: string }) => id,
   }),

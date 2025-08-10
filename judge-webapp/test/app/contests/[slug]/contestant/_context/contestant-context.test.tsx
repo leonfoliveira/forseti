@@ -20,11 +20,6 @@ jest.mock("@/app/contests/[slug]/_context/contest-metadata-context", () => ({
     id: "test-contest-id",
   })),
 }));
-jest.mock("@/app/_util/contest-formatter-hook", () => ({
-  useContestFormatter: jest.fn(() => ({
-    formatSubmissionAnswer: jest.fn((answer) => answer),
-  })),
-}));
 jest.mock("@/app/_component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading" />,
 }));
@@ -47,7 +42,7 @@ describe("ContestantContextProvider", () => {
 
   it("should alert error and render error page on load failure", async () => {
     (contestService.findContestById as jest.Mock).mockRejectedValue(
-      new Error("error"),
+      new Error("error")
     );
 
     renderHook(() => useContestantContext(), {
@@ -74,16 +69,16 @@ describe("ContestantContextProvider", () => {
     const mockMemberSubmissions = [{ id: "member-submission-1" }];
 
     (contestService.findContestById as jest.Mock).mockResolvedValue(
-      mockContest,
+      mockContest
     );
     (contestService.findContestLeaderboardById as jest.Mock).mockResolvedValue(
-      mockLeaderboard,
+      mockLeaderboard
     );
     (contestService.findAllContestSubmissions as jest.Mock).mockResolvedValue(
-      mockSubmissions,
+      mockSubmissions
     );
     (submissionService.findAllFullForMember as jest.Mock).mockResolvedValue(
-      mockMemberSubmissions,
+      mockMemberSubmissions
     );
 
     const { result } = renderHook(() => useContestantContext(), {
@@ -131,11 +126,11 @@ describe("ContestantContextProvider", () => {
     });
 
     expect(
-      leaderboardListener.subscribeForLeaderboard as jest.Mock,
+      leaderboardListener.subscribeForLeaderboard as jest.Mock
     ).toHaveBeenCalledWith(
       listenerClient,
       "test-contest-id",
-      expect.any(Function),
+      expect.any(Function)
     );
     const receiveLeaderboard = (
       leaderboardListener.subscribeForLeaderboard as jest.Mock
@@ -149,7 +144,7 @@ describe("ContestantContextProvider", () => {
 
   it("should handle submission updates", async () => {
     (contestService.findAllContestSubmissions as jest.Mock).mockResolvedValue(
-      [],
+      []
     );
 
     const { result } = renderHook(() => useContestantContext(), {
@@ -163,11 +158,11 @@ describe("ContestantContextProvider", () => {
     });
 
     expect(
-      submissionListener.subscribeForContest as jest.Mock,
+      submissionListener.subscribeForContest as jest.Mock
     ).toHaveBeenCalledWith(
       listenerClient,
       "test-contest-id",
-      expect.any(Function),
+      expect.any(Function)
     );
     const receiveSubmission = (
       submissionListener.subscribeForContest as jest.Mock
@@ -190,7 +185,7 @@ describe("ContestantContextProvider", () => {
     "should handle member submission updates with status %s",
     async (answer, toast) => {
       (submissionService.findAllFullForMember as jest.Mock).mockResolvedValue(
-        [],
+        []
       );
 
       const { result } = renderHook(() => useContestantContext(), {
@@ -204,7 +199,7 @@ describe("ContestantContextProvider", () => {
       });
 
       expect(
-        submissionListener.subscribeForMember as jest.Mock,
+        submissionListener.subscribeForMember as jest.Mock
       ).toHaveBeenCalledWith(listenerClient, "member-id", expect.any(Function));
       const receiveMemberSubmission = (
         submissionListener.subscribeForMember as jest.Mock
@@ -218,10 +213,10 @@ describe("ContestantContextProvider", () => {
         receiveMemberSubmission(newMemberSubmission);
       });
       expect(result.current.memberSubmissions).toContainEqual(
-        newMemberSubmission,
+        newMemberSubmission
       );
       expect(toast).toHaveBeenCalledWith("submission-toast-problem");
-    },
+    }
   );
 
   it("should handle announcement updates", async () => {
@@ -240,11 +235,11 @@ describe("ContestantContextProvider", () => {
     });
 
     expect(
-      announcementListener.subscribeForContest as jest.Mock,
+      announcementListener.subscribeForContest as jest.Mock
     ).toHaveBeenCalledWith(
       listenerClient,
       "test-contest-id",
-      expect.any(Function),
+      expect.any(Function)
     );
     const receiveAnnouncement = (
       announcementListener.subscribeForContest as jest.Mock
@@ -254,7 +249,7 @@ describe("ContestantContextProvider", () => {
       receiveAnnouncement(newAnnouncement);
     });
     expect(result.current.contest.announcements).toContainEqual(
-      newAnnouncement,
+      newAnnouncement
     );
     expect(mockAlert.warning).toHaveBeenCalledWith(newAnnouncement.text);
   });
@@ -275,11 +270,11 @@ describe("ContestantContextProvider", () => {
     });
 
     expect(
-      clarificationListener.subscribeForContest as jest.Mock,
+      clarificationListener.subscribeForContest as jest.Mock
     ).toHaveBeenCalledWith(
       listenerClient,
       "test-contest-id",
-      expect.any(Function),
+      expect.any(Function)
     );
     const receiveClarification = (
       clarificationListener.subscribeForContest as jest.Mock
@@ -292,7 +287,7 @@ describe("ContestantContextProvider", () => {
       receiveClarification(newClarification);
     });
     expect(result.current.contest.clarifications).toContainEqual(
-      newClarification,
+      newClarification
     );
   });
 
@@ -308,7 +303,7 @@ describe("ContestantContextProvider", () => {
     });
 
     expect(
-      clarificationListener.subscribeForMemberChildren,
+      clarificationListener.subscribeForMemberChildren
     ).toHaveBeenCalledWith(listenerClient, "member-id", expect.any(Function));
     const receiveClarificationAnswer = (
       clarificationListener.subscribeForMemberChildren as jest.Mock
@@ -338,11 +333,11 @@ describe("ContestantContextProvider", () => {
     });
 
     expect(
-      clarificationListener.subscribeForContestDeleted,
+      clarificationListener.subscribeForContestDeleted
     ).toHaveBeenCalledWith(
       listenerClient,
       "test-contest-id",
-      expect.any(Function),
+      expect.any(Function)
     );
     const deleteClarification = (
       clarificationListener.subscribeForContestDeleted as jest.Mock
@@ -351,7 +346,7 @@ describe("ContestantContextProvider", () => {
       deleteClarification({ id: "clarification-id" });
     });
     expect(result.current.contest.clarifications).not.toContainEqual(
-      expect.objectContaining({ id: "clarification-id" }),
+      expect.objectContaining({ id: "clarification-id" })
     );
   });
 });

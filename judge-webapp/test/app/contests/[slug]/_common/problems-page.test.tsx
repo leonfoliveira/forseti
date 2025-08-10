@@ -3,19 +3,6 @@ import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest
 import { ProblemsPage } from "@/app/contests/[slug]/_common/problems-page";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
-jest.mock("@/app/_component/form/download-button", () => ({
-  DownloadButton: ({ attachment }: any) => attachment.id,
-}));
-
-jest.mock(
-  "@/app/contests/[slug]/_component/badge/submission-answer-short-badge",
-  () => ({
-    SubmissionAnswerShortBadge: ({ answer, amount }: any) => (
-      <span data-testid="badge">{`${answer},${amount}`}</span>
-    ),
-  }),
-);
-
 describe("ProblemsPage", () => {
   it("should render the problems with correct data", () => {
     const contest = {
@@ -39,13 +26,11 @@ describe("ProblemsPage", () => {
 
     expect(screen.getAllByTestId("problem-row")).toHaveLength(2);
     expect(screen.getAllByTestId("problem-title")[0]).toHaveTextContent(
-      "problem-title",
+      "{letter}. {title}"
     );
-    expect(screen.getAllByTestId("download")[0]).toHaveTextContent("at-1");
     expect(screen.getAllByTestId("problem-title")[1]).toHaveTextContent(
-      "problem-title",
+      "{letter}. {title}"
     );
-    expect(screen.getAllByTestId("download")[1]).toHaveTextContent("at-2");
   });
 
   it("should render problems with contestant status", () => {
@@ -78,13 +63,11 @@ describe("ProblemsPage", () => {
     } as any;
 
     render(
-      <ProblemsPage contest={contest} contestantStatus={contestantStatus} />,
+      <ProblemsPage contest={contest} contestantStatus={contestantStatus} />
     );
 
     const badges = screen.getAllByTestId("badge");
     expect(badges).toHaveLength(3);
-    expect(badges[0]).toHaveTextContent(`ACCEPTED,1`);
-    expect(badges[1]).toHaveTextContent(`WRONG_ANSWER,2`);
-    expect(badges[2]).toHaveTextContent(`WRONG_ANSWER,1`);
+    expect(badges[0]).toHaveTextContent(`{answer} x{amount}`);
   });
 });

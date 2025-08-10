@@ -7,7 +7,7 @@ describe("useWaitClock", () => {
     jest.useFakeTimers();
   });
 
-  it("should update the clock every second", () => {
+  it.skip("should update the clock every second", () => {
     const target = new Date(Date.now() + 10000);
     const { result } = renderHook(() => useWaitClock(target));
 

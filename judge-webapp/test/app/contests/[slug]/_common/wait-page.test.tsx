@@ -6,12 +6,6 @@ import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { mockRouter } from "@/test/jest.setup";
 import { routes } from "@/config/routes";
 
-jest.mock("@/app/_util/contest-formatter-hook", () => ({
-  useContestFormatter: () => ({
-    formatLanguage: (lang: string) => lang,
-  }),
-}));
-
 jest.mock("@/app/contests/[slug]/_util/wait-clock-hook", () => ({
   useWaitClock: jest.fn((_, cb) => cb()),
 }));
@@ -32,14 +26,14 @@ describe("WaitPage", () => {
     expect(screen.getByTestId("languages")).toHaveTextContent("languages");
     const languageItems = screen.getAllByTestId("language-item");
     expect(languageItems).toHaveLength(1);
-    expect(languageItems[0]).toHaveTextContent(Language.PYTHON_3_13);
+    expect(languageItems[0]).toHaveTextContent("Python 3.13");
 
     expect(useWaitClock).toHaveBeenCalledWith(
       new Date(contest.startAt),
-      expect.any(Function),
+      expect.any(Function)
     );
     expect(mockRouter.push).toHaveBeenCalledWith(
-      routes.CONTEST_SIGN_IN(contest.slug),
+      routes.CONTEST_SIGN_IN(contest.slug)
     );
   });
 });

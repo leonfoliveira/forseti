@@ -4,9 +4,6 @@ import { mockAlert } from "@/test/jest.setup";
 import { contestService } from "@/config/composition";
 
 jest.mock("@/config/composition");
-jest.mock("@/app/_component/timestamp-display", () => ({
-  TimestampDisplay: ({ timestamp }: any) => timestamp,
-}));
 
 describe("AnnouncementsPage", () => {
   it("should render empty when there are no announcements", () => {
@@ -30,23 +27,23 @@ describe("AnnouncementsPage", () => {
 
     expect(screen.queryByTestId("empty")).not.toBeInTheDocument();
     expect(screen.getByTestId("announcement-member")).toHaveTextContent(
-      announcements[0].member.name,
+      announcements[0].member.name
     );
     expect(screen.getByTestId("announcement-timestamp")).toHaveTextContent(
-      announcements[0].createdAt,
+      announcements[0].createdAt
     );
     expect(screen.getByTestId("announcement-text")).toHaveTextContent(
-      announcements[0].text,
+      announcements[0].text
     );
   });
 
   it("should alert error on create failure", async () => {
     (contestService.createAnnouncement as jest.Mock).mockRejectedValueOnce(
-      new Error("Create error"),
+      new Error("Create error")
     );
 
     render(
-      <AnnouncementsPage contest={{ announcements: [] } as any} canCreate />,
+      <AnnouncementsPage contest={{ announcements: [] } as any} canCreate />
     );
 
     expect(screen.getByTestId("create-form")).toBeInTheDocument();
@@ -56,14 +53,17 @@ describe("AnnouncementsPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("form-submit"));
     });
-    expect(mockAlert.error).toHaveBeenCalledWith("create-error");
+    expect(mockAlert.error).toHaveBeenCalledWith({
+      defaultMessage: "Failed to create announcement",
+      id: "contests.[slug]._common.announcements-page.create-error",
+    });
   });
 
   it("should alert success on create success", async () => {
     (contestService.createAnnouncement as jest.Mock).mockResolvedValueOnce({});
 
     render(
-      <AnnouncementsPage contest={{ announcements: [] } as any} canCreate />,
+      <AnnouncementsPage contest={{ announcements: [] } as any} canCreate />
     );
 
     expect(screen.getByTestId("create-form")).toBeInTheDocument();
@@ -73,6 +73,9 @@ describe("AnnouncementsPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("form-submit"));
     });
-    expect(mockAlert.success).toHaveBeenCalledWith("create-success");
+    expect(mockAlert.success).toHaveBeenCalledWith({
+      defaultMessage: "Announcement created successfully",
+      id: "contests.[slug]._common.announcements-page.create-success",
+    });
   });
 });

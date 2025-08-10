@@ -7,7 +7,7 @@ import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { DownloadButton } from "@/app/_component/form/download-button";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { SubmissionAnswerShortBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-short-badge";
+import { SubmissionAnswerShortBadge } from "@/app/_component/badge/submission-answer-short-badge";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { defineMessages, FormattedMessage } from "react-intl";
 

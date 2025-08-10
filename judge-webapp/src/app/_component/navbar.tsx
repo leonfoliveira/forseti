@@ -8,8 +8,8 @@ import {
 } from "@/app/_context/authorization-context";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
-import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { defineMessages, FormattedMessage } from "react-intl";
+import { FormattedMemberType } from "./format/formatted-member-type";
 
 const messages = defineMessages({
   rootTitle: {
@@ -39,7 +39,6 @@ export function Navbar({ contestMetadata, signInPath }: Props) {
   const { theme, toggleTheme } = useTheme();
   const authorization = useAuthorization();
   const { clearAuthorization } = useAuthorizationContext();
-  const { formatMemberType } = useContestFormatter();
 
   const clockRef = useWaitClock(
     contestMetadata && new Date(contestMetadata.endAt)
@@ -92,7 +91,9 @@ export function Navbar({ contestMetadata, signInPath }: Props) {
                 >
                   {!isGuest && (
                     <li className="menu-title">
-                      {formatMemberType(authorization?.member.type)}
+                      <FormattedMemberType
+                        memberType={authorization?.member.type}
+                      />
                     </li>
                   )}
                   <li>

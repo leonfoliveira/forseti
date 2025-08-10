@@ -14,11 +14,11 @@ describe("clarificationFormSchema", () => {
   it("should validate text", () => {
     expect(
       clarificationFormSchema.validate({ ...validData, text: undefined }).error
-        ?.message,
-    ).toBe("text:required");
+        ?.message
+    ).toBe("contests.[slug]._common._form.clarification-form.text-required");
     expect(
       clarificationFormSchema.validate({ ...validData, text: "" }).error
-        ?.message,
-    ).toBe("text:required");
+        ?.message
+    ).toBe("contests.[slug]._common._form.clarification-form.text-required");
   });
 });

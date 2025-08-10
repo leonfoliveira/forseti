@@ -9,7 +9,7 @@ import {
 import React from "react";
 
 jest.mock("@/app/_context/notification-context", () =>
-  jest.requireActual("@/app/_context/notification-context"),
+  jest.requireActual("@/app/_context/notification-context")
 );
 
 jest.mock("@/app/_component/notification/alert-box", () => ({
@@ -26,12 +26,13 @@ describe("NotificationProvider", () => {
     );
     const { result } = renderHook(() => useAlert(), { wrapper });
 
+    const message = { id: "text", defaultMessage: "Info message" };
     act(() => {
-      result.current.info("Info message");
+      result.current.info(message);
     });
 
     expect(result.current.items).toHaveLength(1);
-    expect(result.current.items[0].text).toBe("Info message");
+    expect(result.current.items[0].text).toBe(message);
     expect(result.current.items[0].level).toBe(NotificationLevel.INFO);
     expect(result.current.items[0].type).toBe(NotificationType.ALERT);
     expect(screen.getByTestId("alert-box")).toBeInTheDocument();
@@ -44,12 +45,13 @@ describe("NotificationProvider", () => {
     );
     const { result } = renderHook(() => useToast(), { wrapper });
 
+    const message = { id: "text", defaultMessage: "Success message" };
     act(() => {
-      result.current.success("Success message");
+      result.current.success(message);
     });
 
     expect(result.current.items).toHaveLength(1);
-    expect(result.current.items[0].text).toBe("Success message");
+    expect(result.current.items[0].text).toBe(message);
     expect(result.current.items[0].level).toBe(NotificationLevel.SUCCESS);
     expect(result.current.items[0].type).toBe(NotificationType.TOAST);
   });
@@ -61,7 +63,7 @@ describe("NotificationProvider", () => {
     const { result } = renderHook(() => useAlert(), { wrapper });
 
     act(() => {
-      result.current.warning("Warning message");
+      result.current.warning({ id: "text", defaultMessage: "Warning message" });
     });
 
     const notificationId = result.current.items[0].id;
@@ -80,21 +82,23 @@ describe("NotificationProvider", () => {
     const alertHook = renderHook(() => useAlert(), { wrapper });
     const toastHook = renderHook(() => useToast(), { wrapper });
 
+    const alertMessage = { id: "text", defaultMessage: "Error message" };
+    const toastMessage = { id: "text", defaultMessage: "Toast info message" };
     act(() => {
-      alertHook.result.current.error("Error message");
-      toastHook.result.current.info("Toast info message");
+      alertHook.result.current.error(alertMessage);
+      toastHook.result.current.info(toastMessage);
     });
 
     expect(alertHook.result.current.items).toHaveLength(1);
-    expect(alertHook.result.current.items[0].text).toBe("Error message");
+    expect(alertHook.result.current.items[0].text).toBe(alertMessage);
     expect(alertHook.result.current.items[0].level).toBe(
-      NotificationLevel.ERROR,
+      NotificationLevel.ERROR
     );
 
     expect(toastHook.result.current.items).toHaveLength(1);
-    expect(toastHook.result.current.items[0].text).toBe("Toast info message");
+    expect(toastHook.result.current.items[0].text).toBe(toastMessage);
     expect(toastHook.result.current.items[0].level).toBe(
-      NotificationLevel.INFO,
+      NotificationLevel.INFO
     );
   });
 
@@ -105,11 +109,11 @@ describe("NotificationProvider", () => {
     const { result } = renderHook(() => useToast(), { wrapper });
 
     act(() => {
-      result.current.success("Short message");
+      result.current.success({ id: "text", defaultMessage: "Short message" });
     });
 
     expect(result.current.items[0].ttl).toBe(
-      2000 + "Short message".length * 50,
+      2000 + "Short message".length * 50
     );
   });
 });

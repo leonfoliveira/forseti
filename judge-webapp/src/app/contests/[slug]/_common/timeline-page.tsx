@@ -8,7 +8,7 @@ import { TableCell } from "@/app/_component/table/table-cell";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { cls } from "@/app/_util/cls";
 import { useAuthorization } from "@/app/_context/authorization-context";
-import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
+import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
 import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 import { FormattedLanguage } from "@/app/_component/format/formatted-language";
 import { defineMessages, FormattedMessage } from "react-intl";

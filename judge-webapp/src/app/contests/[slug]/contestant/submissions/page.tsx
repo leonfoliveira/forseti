@@ -22,7 +22,7 @@ import { useLoadableState } from "@/app/_util/loadable-state";
 import { SubmissionFormType } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form";
 import { submissionFormSchema } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-schema";
 import { SubmissionFormMap } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map";
-import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
+import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
 import { useAlert } from "@/app/_context/notification-context";
 import { DownloadButton } from "@/app/_component/form/download-button";
 import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";

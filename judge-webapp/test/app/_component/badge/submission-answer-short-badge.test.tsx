@@ -1,19 +1,13 @@
-import { SubmissionAnswerShortBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-short-badge";
+import { SubmissionAnswerShortBadge } from "@/app/_component/badge/submission-answer-short-badge";
 import { render, screen } from "@testing-library/react";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
-jest.mock("@/app/_component/badge", () => ({
+jest.mock("@/app/_component/badge/badge", () => ({
   Badge: ({ children, className }: any) => (
     <span className={className} data-testid="badge">
       {children}
     </span>
   ),
-}));
-
-jest.mock("@/app/_util/contest-formatter-hook", () => ({
-  useContestFormatter: () => ({
-    formatSubmissionAnswerShort: (answer: string) => answer,
-  }),
 }));
 
 describe("SubmissionAnswerShortBadge", () => {
@@ -31,11 +25,11 @@ describe("SubmissionAnswerShortBadge", () => {
         answer={answer}
         amount={amount}
         className="custom-class"
-      />,
+      />
     );
     const badge = screen.getByTestId("badge");
     expect(badge).toHaveClass(expectedClass);
-    expect(badge).toHaveTextContent(`${answer} x${amount}`);
+    expect(badge).toHaveTextContent("{answer} x{amount}");
     expect(badge).toHaveClass("custom-class");
   });
 });

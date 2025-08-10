@@ -55,7 +55,7 @@ export function ContestantContextProvider({
   const toast = useToast();
   const { formatSubmissionAnswer } = useContestFormatter();
   const t = useTranslations(
-    "contests.[slug].contestant._context.contestant-context",
+    "contests.[slug].contestant._context.contestant-context"
   );
 
   useEffect(() => {
@@ -76,37 +76,37 @@ export function ContestantContextProvider({
           leaderboardListener.subscribeForLeaderboard(
             listenerClient,
             contestMetadata.id,
-            receiveLeaderboard,
+            receiveLeaderboard
           ),
           submissionListener.subscribeForContest(
             listenerClient,
             contestMetadata.id,
-            receiveSubmission,
+            receiveSubmission
           ),
           submissionListener.subscribeForMember(
             listenerClient,
             authorization!.member.id,
-            receiveMemberSubmission,
+            receiveMemberSubmission
           ),
           announcementListener.subscribeForContest(
             listenerClient,
             contestMetadata.id,
-            receiveAnnouncement,
+            receiveAnnouncement
           ),
           clarificationListener.subscribeForContest(
             listenerClient,
             contestMetadata.id,
-            receiveClarification,
+            receiveClarification
           ),
           clarificationListener.subscribeForMemberChildren(
             listenerClient,
             authorization!.member.id,
-            receiveClarificationAnswer,
+            receiveClarificationAnswer
           ),
           clarificationListener.subscribeForContestDeleted(
             listenerClient,
             contestMetadata.id,
-            deleteClarification,
+            deleteClarification
           ),
         ]);
 
@@ -135,7 +135,7 @@ export function ContestantContextProvider({
     state.finish((prevState) => {
       prevState.memberSubmissions = merge(
         prevState.memberSubmissions,
-        submission,
+        submission
       );
       return {
         ...prevState,
@@ -165,7 +165,7 @@ export function ContestantContextProvider({
     state.finish((prevState) => {
       prevState.memberSubmissions = merge(
         prevState.memberSubmissions,
-        submission as SubmissionFullResponseDTO,
+        submission as SubmissionFullResponseDTO
       );
       return { ...prevState };
     });
@@ -201,7 +201,7 @@ export function ContestantContextProvider({
     state.finish((prevState) => {
       prevState.contest.announcements = merge(
         prevState.contest.announcements,
-        announcement,
+        announcement
       );
       return { ...prevState };
     });
@@ -214,12 +214,12 @@ export function ContestantContextProvider({
       if (!clarification.parentId) {
         prevState.contest.clarifications = merge(
           prevState.contest.clarifications,
-          clarification,
+          clarification
         );
       } else {
         const parent = findClarification(
           prevState.contest.clarifications,
-          clarification.parentId,
+          clarification.parentId
         );
         if (parent) {
           parent.children = merge(parent.children, clarification);

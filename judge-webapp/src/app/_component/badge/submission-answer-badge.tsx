@@ -1,15 +1,14 @@
 import { Badge } from "@/app/_component/badge/badge";
 import React from "react";
-import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { FormattedSubmissionAnswer } from "@/app/_component/format/formatted-submission-answer";
 
 type Props = {
   answer: SubmissionAnswer;
 };
 
 export function SubmissionAnswerBadge({ answer }: Props) {
-  const { formatSubmissionAnswer } = useContestFormatter();
-  const text = formatSubmissionAnswer(answer);
+  const text = <FormattedSubmissionAnswer answer={answer} />;
 
   switch (answer) {
     case SubmissionAnswer.NO_ANSWER:

@@ -3,7 +3,7 @@
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
-import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
+import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
 import { DownloadButton } from "@/app/_component/form/download-button";
 import { Table } from "@/app/_component/table/table";
 import React from "react";
@@ -23,7 +23,7 @@ import { UpdateSubmissionFormType } from "@/app/contests/[slug]/judge/submission
 import { joiResolver } from "@hookform/resolvers/joi";
 import { updateSubmissionFormSchema } from "@/app/contests/[slug]/judge/submissions/_form/update-submission-form-schema";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { SubmissionStatusBadge } from "@/app/contests/[slug]/_component/badge/submission-status-badge";
+import { SubmissionStatusBadge } from "@/app/_component/badge/submission-status-badge";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
