@@ -3,24 +3,18 @@
 import React from "react";
 import "./globals.css";
 import { env } from "@/config/env";
-import { useTheme } from "./_util/theme-hook";
+import { useTheme } from "@/app/_util/theme-hook";
 import { Roboto } from "next/font/google";
-import { NotificationProvider } from "./_context/notification-context";
-import { AuthorizationProvider } from "./_context/authorization-context";
-import { IntlProvider, FormattedMessage, defineMessages } from "react-intl";
+import { NotificationProvider } from "@/app/_context/notification-context";
+import { AuthorizationProvider } from "@/app/_context/authorization-context";
+import { IntlProvider } from "react-intl";
 import enUS from "@/i18n/messages/en-US.json";
 import ptBR from "@/i18n/messages/pt-BR.json";
+import { Footer } from "./_component/footer";
 
 const roboto = Roboto({
   variable: "--font-roboto",
   subsets: ["latin"],
-});
-
-const layoutMessages = defineMessages({
-  footerText: {
-    id: "layout.footerText",
-    defaultMessage: "Judge {version} | by {author}",
-  },
 });
 
 export default function Layout({
@@ -44,25 +38,7 @@ export default function Layout({
             <AuthorizationProvider>
               <div className="flex flex-col w-screen h-screen">
                 <div className="flex-1">{children}</div>
-                <footer className="footer footer-center bg-base-100 text-base-content/50 text-xs py-1 border-t border-solid border-base-300">
-                  <p data-testid="footer">
-                    <FormattedMessage
-                      {...layoutMessages.footerText}
-                      values={{
-                        version: env.VERSION,
-                        author: (
-                          <a
-                            href="https://github.com/leonfoliveira"
-                            target="_blank"
-                            data-testid="github-link"
-                          >
-                            @leonfoliveira
-                          </a>
-                        ),
-                      }}
-                    />
-                  </p>
-                </footer>
+                <Footer />
               </div>
             </AuthorizationProvider>
           </NotificationProvider>

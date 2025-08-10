@@ -6,6 +6,12 @@ jest.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }));
 
+// react-intl
+jest.mock("react-intl", () => ({
+  defineMessages: (messages: any) => messages,
+  FormattedMessage: ({ defaultMessage }: any) => defaultMessage,
+}));
+
 // next/navigation
 export const mockRouter = {
   push: jest.fn(),
