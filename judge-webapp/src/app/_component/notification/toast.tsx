@@ -6,6 +6,7 @@ import {
   NotificationItemType,
   NotificationLevel,
 } from "@/app/_context/notification-context";
+import { FormattedMessage } from "react-intl";
 
 type Props = {
   toast: NotificationItemType;
@@ -39,11 +40,14 @@ export function Toast({ toast, onClose }: Props) {
 
   return (
     <div
-      className={cls("alert pointer-events-auto flex justify-between", style[toast.level])}
+      className={cls(
+        "alert pointer-events-auto flex justify-between",
+        style[toast.level]
+      )}
       style={{ pointerEvents: "auto" }}
       data-testid="toast"
     >
-      {toast.text}
+      <FormattedMessage {...toast.text} />
       <FontAwesomeIcon
         icon={faClose}
         className="ms-2 cursor-pointer"

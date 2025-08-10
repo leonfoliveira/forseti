@@ -6,11 +6,22 @@ import { TableRow } from "@/app/_component/table/table-row";
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { cls } from "@/app/_util/cls";
-import { useTranslations } from "next-intl";
 import { useAuthorization } from "@/app/_context/authorization-context";
 import { ProblemStatusBadge } from "@/app/contests/[slug]/_component/badge/problem-status-badge";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  headerScore: {
+    id: "contests.[slug]._common.leaderboard-page.header-score",
+    defaultMessage: "Score",
+  },
+  headerPenalty: {
+    id: "contests.[slug]._common.leaderboard-page.header-penalty",
+    defaultMessage: "Penalty",
+  },
+});
 
 type Props = {
   contest: ContestPublicResponseDTO;
@@ -22,8 +33,6 @@ type Props = {
  */
 export function LeaderboardPage({ contest, leaderboard }: Props) {
   const authorization = useAuthorization();
-
-  const t = useTranslations("contests.[slug]._common.leaderboard-page");
 
   return (
     <div>
@@ -43,10 +52,10 @@ export function LeaderboardPage({ contest, leaderboard }: Props) {
               </TableCell>
             ))}
             <TableCell header align="right" data-testid="header-score">
-              {t("header-score")}
+              <FormattedMessage {...messages.headerScore} />
             </TableCell>
             <TableCell header align="right" data-testid="header-penalty">
-              {t("header-penalty")}
+              <FormattedMessage {...messages.headerPenalty} />
             </TableCell>
           </TableRow>
         </TableSection>
@@ -57,7 +66,7 @@ export function LeaderboardPage({ contest, leaderboard }: Props) {
               className={cls(
                 authorization?.member.id === member.memberId
                   ? "bg-base-200"
-                  : "hover:bg-base-100 transition",
+                  : "hover:bg-base-100 transition"
               )}
               data-testid="member-row"
             >
@@ -70,7 +79,7 @@ export function LeaderboardPage({ contest, leaderboard }: Props) {
                     index % 2 === 0 && "bg-base-200",
                     index % 2 === 0 &&
                       authorization?.member.id === member.memberId &&
-                      "bg-base-300",
+                      "bg-base-300"
                   )}
                   data-testid="member-problem"
                 >

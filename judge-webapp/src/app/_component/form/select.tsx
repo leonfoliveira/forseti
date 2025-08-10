@@ -7,6 +7,7 @@ import {
   UseFormReturn,
 } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
+import { Message } from "@/i18n/message";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   DetailedHTMLProps<SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>,
@@ -15,7 +16,7 @@ type Props<TFieldValues extends FieldValues> = Omit<
   form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
   containerClassName?: string;
-  label?: string;
+  label: Message;
   options: {
     value: string;
     label: string;
@@ -59,7 +60,7 @@ export function Select<TFieldValues extends FieldValues>({
             htmlFor={name}
             data-testid={`${testId}:label`}
           >
-            {label}
+            <FormattedMessage {...label} />
           </label>
           <select
             {...props}

@@ -3,6 +3,7 @@ import { cls } from "@/app/_util/cls";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { FieldPath, FieldValues } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
+import { Message } from "@/i18n/message";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -12,7 +13,7 @@ type Props<TFieldValues extends FieldValues> = Omit<
   name: FieldPath<TFieldValues>;
   value?: string;
   containerClassName?: string;
-  label: string;
+  label: Message;
   password?: boolean;
   "data-testid"?: string;
 };
@@ -59,7 +60,7 @@ export function TextInput<TFieldValues extends FieldValues>({
             htmlFor={name}
             data-testid={`${testId}:label`}
           >
-            {label}
+            <FormattedMessage {...label} />
           </label>
           <input
             {...props}

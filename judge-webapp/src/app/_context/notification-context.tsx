@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { AlertBox } from "@/app/_component/notification/alert-box";
 import { ToastBox } from "@/app/_component/notification/toast-box";
+import { Message } from "@/i18n/message";
 
 export enum NotificationLevel {
   INFO = "INFO",
@@ -18,11 +19,11 @@ export type NotificationItemType = {
   id: string;
   type: NotificationType;
   level: NotificationLevel;
-  text: string;
+  text: Message;
   ttl: number;
 };
 
-type ShowType = (text: string, ttl?: number) => void;
+type ShowType = (text: Message, ttl?: number) => void;
 type NotificationGroupType = {
   items: NotificationItemType[];
   info: ShowType;
@@ -45,7 +46,7 @@ export function NotificationProvider({
   children: React.ReactNode;
 }) {
   const [notifications, setNotifications] = useState<NotificationItemType[]>(
-    [],
+    []
   );
 
   /**
@@ -53,15 +54,15 @@ export function NotificationProvider({
    */
   function show(
     type: NotificationType,
-    text: string,
-    level: NotificationLevel = NotificationLevel.INFO,
+    text: Message,
+    level: NotificationLevel = NotificationLevel.INFO
   ) {
     const notification = {
       id: crypto.randomUUID(),
       type,
       text,
       level,
-      ttl: 2000 + text.length * 50,
+      ttl: 2000 + text.defaultMessage.length * 50,
     };
     setNotifications((prev) => [...prev, notification]);
   }

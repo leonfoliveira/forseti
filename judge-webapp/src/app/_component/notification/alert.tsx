@@ -11,6 +11,7 @@ import {
   NotificationItemType,
   NotificationLevel,
 } from "@/app/_context/notification-context";
+import { FormattedMessage } from "react-intl";
 
 type Props = {
   className?: string;
@@ -51,13 +52,13 @@ export function Alert({ className, alert, onClose }: Props) {
       className={cls(
         "alert cursor-pointer pointer-events-auto",
         variant,
-        className,
+        className
       )}
       onClick={onClose}
       data-testid="alert"
     >
       {icon}
-      <span>{alert.text}</span>
+      <FormattedMessage {...alert.text} />
     </div>
   );
 }

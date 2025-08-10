@@ -1,5 +1,4 @@
 import React from "react";
-import { useTranslations } from "next-intl";
 import { TextInput } from "@/app/_component/form/text-input";
 import { Button } from "@/app/_component/form/button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,6 +14,30 @@ import { contestService } from "@/config/composition";
 import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { AnnouncementFormMap } from "@/app/contests/[slug]/_common/_form/announcement-form-map";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  createSuccess: {
+    id: "contests.[slug]._common.announcements-page.create-success",
+    defaultMessage: "Announcement created successfully",
+  },
+  createError: {
+    id: "contests.[slug]._common.announcements-page.create-error",
+    defaultMessage: "Failed to create announcement",
+  },
+  textLabel: {
+    id: "contests.[slug]._common.announcements-page.text-label",
+    defaultMessage: "Text",
+  },
+  submitLabel: {
+    id: "contests.[slug]._common.announcements-page.submit-label",
+    defaultMessage: "Submit",
+  },
+  empty: {
+    id: "contests.[slug]._common.announcements-page.empty",
+    defaultMessage: "No announcements yet",
+  },
+});
 
 type Props = {
   contest: ContestPublicResponseDTO;
@@ -30,9 +53,6 @@ export function AnnouncementsPage({ contest, canCreate = false }: Props) {
     resolver: joiResolver(announcementFormSchema),
   });
 
-  const t = useTranslations("contests.[slug]._common.announcements-page");
-  const s = useTranslations("contests.[slug]._common._form.announcement-form");
-
   async function createAnnouncement(data: AnnouncementFormType) {
     createAnnouncementState.start();
     try {
@@ -42,10 +62,10 @@ export function AnnouncementsPage({ contest, canCreate = false }: Props) {
       );
       createAnnouncementState.finish();
       form.reset();
-      alert.success(t("create-success"));
+      alert.success(messages.createSuccess);
     } catch (error) {
       createAnnouncementState.fail(error, {
-        default: () => alert.error(t("create-error")),
+        default: () => alert.error(messages.createError),
       });
     }
   }
@@ -62,8 +82,7 @@ export function AnnouncementsPage({ contest, canCreate = false }: Props) {
           <div className="flex gap-x-3">
             <TextInput
               form={form}
-              s={s}
-              label={t("text:label")}
+              label={messages.textLabel}
               name="text"
               containerClassName="flex-4"
               data-testid="form-text"
@@ -76,7 +95,7 @@ export function AnnouncementsPage({ contest, canCreate = false }: Props) {
               isLoading={createAnnouncementState.isLoading}
               data-testid="form-submit"
             >
-              {t("create:label")}
+              <FormattedMessage {...messages.submitLabel} />
               <FontAwesomeIcon icon={faPaperPlane} className="ms-3" />
             </Button>
           </div>
@@ -88,7 +107,9 @@ export function AnnouncementsPage({ contest, canCreate = false }: Props) {
           className="flex justify-center items-center py-20"
           data-testid="empty"
         >
-          <p className="text-neutral-content">{t("empty")}</p>
+          <p className="text-neutral-content">
+            <FormattedMessage {...messages.empty} />
+          </p>
         </div>
       )}
       <div className="flex flex-col gap-y-8">
