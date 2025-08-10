@@ -11,6 +11,7 @@ import { IntlProvider } from "react-intl";
 import enUS from "@/i18n/messages/en-US.json";
 import ptBR from "@/i18n/messages/pt-BR.json";
 import { Footer } from "./_component/footer";
+import { StoreProvider } from "@/store/store-provider";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -34,14 +35,16 @@ export default function Layout({
     <html lang={env.LOCALE} data-theme={theme} className="bg-base-300">
       <body className={roboto.className}>
         <IntlProvider messages={messages} locale={env.LOCALE}>
-          <NotificationProvider>
-            <AuthorizationProvider>
-              <div className="flex flex-col w-screen h-screen">
-                <div className="flex-1">{children}</div>
-                <Footer />
-              </div>
-            </AuthorizationProvider>
-          </NotificationProvider>
+          <StoreProvider>
+            <NotificationProvider>
+              <AuthorizationProvider>
+                <div className="flex flex-col w-screen h-screen">
+                  <div className="flex-1">{children}</div>
+                  <Footer />
+                </div>
+              </AuthorizationProvider>
+            </NotificationProvider>
+          </StoreProvider>
         </IntlProvider>
       </body>
     </html>
