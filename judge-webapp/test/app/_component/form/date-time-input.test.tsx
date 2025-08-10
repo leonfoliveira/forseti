@@ -43,7 +43,6 @@ describe("DateTimeInput", () => {
         <DateTimeInput
           form={form}
           name="test"
-          s={((key: string) => key) as any}
           label={label}
           containerClassName="my-container-class"
         />
