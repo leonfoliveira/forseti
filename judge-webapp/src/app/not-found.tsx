@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ErrorPageTemplate } from "@/app/_component/error-page-template";
+import { ErrorPageTemplate } from "@/app/_component/page/error-page-template";
 
 export default function NotFoundPage() {
   const t = useTranslations("not-found");

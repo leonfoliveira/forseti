@@ -1,3 +1,7 @@
 {
-  "layout.footerText": "Judge {version} | by {author}"
+  "_component.download-button.download": "Download",
+  "_component.footer.text": "Judge {version} | by {author}",
+  "_component.form.file-input": "Select a file",
+  "_component.page.error-page.error": "An error occurred",
+  "_component.page.error-page.reload": "Reload"
 }

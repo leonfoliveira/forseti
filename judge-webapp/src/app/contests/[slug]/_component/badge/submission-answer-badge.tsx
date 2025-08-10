@@ -1,4 +1,4 @@
-import { Badge } from "@/app/_component/badge";
+import { Badge } from "@/app/_component/badge/badge";
 import React from "react";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";

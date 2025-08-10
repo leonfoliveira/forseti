@@ -8,7 +8,7 @@ import { defineMessages, useIntl } from "react-intl";
 
 const messages = defineMessages({
   download: {
-    id: "contests.[slug]._component.download-button.download",
+    id: "_component.download-button.download",
     defaultMessage: "Download",
   },
 });

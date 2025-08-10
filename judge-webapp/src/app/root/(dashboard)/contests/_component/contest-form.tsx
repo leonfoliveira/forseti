@@ -19,7 +19,7 @@ import { NumberInput } from "@/app/_component/form/number-input";
 import { Form } from "@/app/_component/form/form";
 import { FileInput } from "@/app/_component/form/file-input";
 import { useRouter } from "next/navigation";
-import { DialogModal } from "@/app/_component/dialog-modal";
+import { DialogModal } from "@/app/_component/modal/dialog-modal";
 import { useModal } from "@/app/_util/modal-hook";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { useTranslations } from "next-intl";

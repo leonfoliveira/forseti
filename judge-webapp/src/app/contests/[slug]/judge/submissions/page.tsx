@@ -13,7 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faRotate } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@/app/_component/form/button";
 import { useModal } from "@/app/_util/modal-hook";
-import { DialogModal } from "@/app/_component/dialog-modal";
+import { DialogModal } from "@/app/_component/modal/dialog-modal";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { submissionService } from "@/config/composition";
 import { useAlert } from "@/app/_context/notification-context";
@@ -25,7 +25,7 @@ import { updateSubmissionFormSchema } from "@/app/contests/[slug]/judge/submissi
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatusBadge } from "@/app/contests/[slug]/_component/badge/submission-status-badge";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { TimestampDisplay } from "@/app/_component/timestamp-display";
+import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
 
 /**
@@ -44,7 +44,7 @@ export default function JudgeSubmissionsPage() {
 
   const t = useTranslations("contests.[slug].judge.submissions");
   const s = useTranslations(
-    "contests.[slug].judge.submissions._form.update-submission-form",
+    "contests.[slug].judge.submissions._form.update-submission-form"
   );
 
   const updateForm = useForm<UpdateSubmissionFormType>({
@@ -106,7 +106,7 @@ export default function JudgeSubmissionsPage() {
           {submissions?.map((submission) => (
             <TableRow key={submission.id} data-testid="submission-row">
               <TableCell data-testid="submission-created-at">
-                <TimestampDisplay timestamp={submission.createdAt} />
+                <FormattedDateTime timestamp={submission.createdAt} />
               </TableCell>
               <TableCell data-testid="submission-letter">
                 {submission.problem.letter}

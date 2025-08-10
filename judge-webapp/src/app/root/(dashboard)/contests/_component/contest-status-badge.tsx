@@ -1,5 +1,5 @@
 import React from "react";
-import { Badge } from "@/app/_component/badge";
+import { Badge } from "@/app/_component/badge/badge";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { useContestFormatter } from "@/app/_util/contest-formatter-hook";
 import { cls } from "@/app/_util/cls";

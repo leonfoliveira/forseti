@@ -1,7 +1,18 @@
 import React from "react";
 import { Button } from "@/app/_component/form/button";
 import { ModalHook } from "@/app/_util/modal-hook";
-import { useTranslations } from "next-intl";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  cancel: {
+    id: "_component.modal.dialog-modal.cancel",
+    defaultMessage: "Cancel",
+  },
+  confirm: {
+    id: "_component.modal.dialog-modal.confirm",
+    defaultMessage: "Confirm",
+  },
+});
 
 type Props<TProps> = {
   children: React.ReactNode;
@@ -22,7 +33,6 @@ export function DialogModal<TProps>({
   ...props
 }: Props<TProps>) {
   const testId = props["data-testid"] || "dialog-modal";
-  const t = useTranslations("_component.dialog-modal");
 
   async function handleConfirm() {
     await onConfirm(modal.props);
@@ -39,7 +49,7 @@ export function DialogModal<TProps>({
             disabled={isLoading}
             data-testid={`${testId}:cancel`}
           >
-            {t("cancel")}
+            <FormattedMessage {...messages.cancel} />
           </Button>
           <Button
             className="btn btn-primary"
@@ -48,7 +58,7 @@ export function DialogModal<TProps>({
             isLoading={isLoading}
             data-testid={`${testId}:confirm`}
           >
-            {t("confirm")}
+            <FormattedMessage {...messages.confirm} />
           </Button>
         </div>
       </div>

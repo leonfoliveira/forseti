@@ -1,7 +1,14 @@
 import { Button } from "@/app/_component/form/button";
 import { routes } from "@/config/routes";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+const messages = defineMessages({
+  home: {
+    id: "_component.page.error-page-template.home",
+    defaultMessage: "Home",
+  },
+});
 
 type Props = {
   code: number;
@@ -10,7 +17,6 @@ type Props = {
 
 export function ErrorPageTemplate({ code, description }: Props) {
   const router = useRouter();
-  const t = useTranslations("_component.error-page");
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -25,7 +31,7 @@ export function ErrorPageTemplate({ code, description }: Props) {
         className="btn-primary mt-10"
         data-testid="home"
       >
-        {t("home:label")}
+        <FormattedMessage {...messages.home} />
       </Button>
     </div>
   );

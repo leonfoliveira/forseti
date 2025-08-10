@@ -25,7 +25,7 @@ import { SubmissionFormMap } from "@/app/contests/[slug]/contestant/submissions/
 import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
 import { useAlert } from "@/app/_context/notification-context";
 import { DownloadButton } from "@/app/_component/form/download-button";
-import { TimestampDisplay } from "@/app/_component/timestamp-display";
+import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 
 export default function ContestantSubmissionPage() {
@@ -37,7 +37,7 @@ export default function ContestantSubmissionPage() {
   const { formatLanguage } = useContestFormatter();
   const t = useTranslations("contests.[slug].contestant.submissions");
   const s = useTranslations(
-    "contests.[slug].contestant.submissions._form.submission-form",
+    "contests.[slug].contestant.submissions._form.submission-form"
   );
 
   const submissionForm = useForm<SubmissionFormType>({
@@ -47,7 +47,7 @@ export default function ContestantSubmissionPage() {
   useEffect(() => {
     function loadActiveLanguage() {
       const activeLanguage = storageService.getKey(
-        StorageService.ACTIVE_LANGUAGE_STORAGE_KEY,
+        StorageService.ACTIVE_LANGUAGE_STORAGE_KEY
       ) as Language | null;
       if (activeLanguage && contest.languages.includes(activeLanguage)) {
         submissionForm.setValue("language", activeLanguage);
@@ -62,12 +62,12 @@ export default function ContestantSubmissionPage() {
     try {
       const submission = await problemService.createSubmission(
         data.problemId as string,
-        SubmissionFormMap.toInputDTO(data),
+        SubmissionFormMap.toInputDTO(data)
       );
       addMemberSubmission(submission);
       storageService.setKey(
         StorageService.ACTIVE_LANGUAGE_STORAGE_KEY,
-        submission.language,
+        submission.language
       );
       submissionForm.reset({ language: submission.language });
       alert.success(t("create-success"));
@@ -156,7 +156,7 @@ export default function ContestantSubmissionPage() {
           {memberSubmissions?.map((submission) => (
             <TableRow key={submission.id} data-testid="submission-row">
               <TableCell data-testid="submission-created-at">
-                <TimestampDisplay timestamp={submission.createdAt} />
+                <FormattedDateTime timestamp={submission.createdAt} />
               </TableCell>
               <TableCell data-testid="submission-title">
                 {submission.problem.letter}

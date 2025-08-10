@@ -1,6 +1,6 @@
-import { Badge } from "@/app/_component/badge";
+import { Badge } from "@/app/_component/badge/badge";
 import React from "react";
-import { TimestampDisplay } from "@/app/_component/timestamp-display";
+import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 
 type Props = {
   isAccepted: boolean;
@@ -16,7 +16,7 @@ export function ProblemStatusBadge({
   if (isAccepted) {
     return (
       <Badge className="badge-success">
-        <TimestampDisplay timestamp={acceptedAt!} />
+        <FormattedDateTime timestamp={acceptedAt!} />
         {wrongSubmissions > 0 && ` | +${wrongSubmissions}`}
       </Badge>
     );

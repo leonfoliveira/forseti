@@ -11,7 +11,7 @@ import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/subm
 import { cls } from "@/app/_util/cls";
 import { useAuthorization } from "@/app/_context/authorization-context";
 import { SubmissionAnswerBadge } from "@/app/contests/[slug]/_component/badge/submission-answer-badge";
-import { TimestampDisplay } from "@/app/_component/timestamp-display";
+import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 
 type Props = {
   submissions: SubmissionPublicResponseDTO[];
@@ -55,12 +55,12 @@ export function TimelinePage({ submissions }: Props) {
               className={cls(
                 "hover:bg-base-100 transition",
                 submission.member.id === authorization?.member.id &&
-                  "bg-base-100",
+                  "bg-base-100"
               )}
               data-testid="submission-row"
             >
               <TableCell data-testid="submission-created-at">
-                <TimestampDisplay timestamp={submission.createdAt} />
+                <FormattedDateTime timestamp={submission.createdAt} />
               </TableCell>
               <TableCell data-testid="submission-member">
                 {submission.member.name}

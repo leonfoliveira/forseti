@@ -12,7 +12,7 @@ import { announcementFormSchema } from "@/app/contests/[slug]/_common/_form/anno
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useAlert } from "@/app/_context/notification-context";
 import { contestService } from "@/config/composition";
-import { TimestampDisplay } from "@/app/_component/timestamp-display";
+import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { AnnouncementFormMap } from "@/app/contests/[slug]/_common/_form/announcement-form-map";
 
@@ -38,7 +38,7 @@ export function AnnouncementsPage({ contest, canCreate = false }: Props) {
     try {
       await contestService.createAnnouncement(
         contest.id,
-        AnnouncementFormMap.toInputDTO(data),
+        AnnouncementFormMap.toInputDTO(data)
       );
       createAnnouncementState.finish();
       form.reset();
@@ -110,7 +110,7 @@ export function AnnouncementsPage({ contest, canCreate = false }: Props) {
                     className="text-sm text-base-content/50"
                     data-testid="announcement-timestamp"
                   >
-                    <TimestampDisplay timestamp={announcement.createdAt} />
+                    <FormattedDateTime timestamp={announcement.createdAt} />
                   </span>
                 </div>
               </div>

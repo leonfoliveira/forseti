@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { DialogModal } from "@/app/_component/dialog-modal";
+import { DialogModal } from "@/app/_component/modal/dialog-modal";
 
 describe("DialogModal", () => {
   const modal = {
@@ -13,7 +13,7 @@ describe("DialogModal", () => {
     render(
       <DialogModal modal={modal} onConfirm={() => {}} isLoading={false}>
         <div>My dialog modal</div>
-      </DialogModal>,
+      </DialogModal>
     );
     const dialogModal = screen.getByTestId("dialog-modal");
     expect(dialogModal).toBeInTheDocument();
@@ -28,7 +28,7 @@ describe("DialogModal", () => {
         isLoading={false}
       >
         <div>My dialog modal</div>
-      </DialogModal>,
+      </DialogModal>
     );
     const dialogModal = screen.queryByTestId("dialog-modal");
     expect(dialogModal).not.toBeInTheDocument();

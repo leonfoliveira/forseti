@@ -22,9 +22,9 @@ import {
   faPlus,
   faStop,
 } from "@fortawesome/free-solid-svg-icons";
-import { TimestampDisplay } from "@/app/_component/timestamp-display";
+import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 import { useModal } from "@/app/_util/modal-hook";
-import { DialogModal } from "@/app/_component/dialog-modal";
+import { DialogModal } from "@/app/_component/modal/dialog-modal";
 import { recalculateContests } from "@/app/root/(dashboard)/contests/_util/contests-calculator";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { useContestStatusWatcherBatch } from "@/app/_util/contest-status-watcher";
@@ -34,7 +34,7 @@ export default function RootContestsPage() {
   const startContestState = useLoadableState();
   const endContestState = useLoadableState();
   const contestStatuses = useContestStatusWatcherBatch(
-    contestsState.data || [],
+    contestsState.data || []
   );
 
   const router = useRouter();
@@ -136,13 +136,13 @@ export default function RootContestsPage() {
               <TableCell data-testid="slug">{contest.slug}</TableCell>
               <TableCell data-testid="title">{contest.title}</TableCell>
               <TableCell data-testid="start-at">
-                <TimestampDisplay
+                <FormattedDateTime
                   timestamp={contest.startAt}
                   options={{ second: undefined }}
                 />
               </TableCell>
               <TableCell data-testid="end-at">
-                <TimestampDisplay
+                <FormattedDateTime
                   timestamp={contest.endAt}
                   options={{ second: undefined }}
                 />

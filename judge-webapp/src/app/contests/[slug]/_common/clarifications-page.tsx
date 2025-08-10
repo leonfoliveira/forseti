@@ -13,8 +13,8 @@ import { clarificationService, contestService } from "@/config/composition";
 import { useAlert } from "@/app/_context/notification-context";
 import { Form } from "@/app/_component/form/form";
 import { TextInput } from "@/app/_component/form/text-input";
-import { TimestampDisplay } from "@/app/_component/timestamp-display";
-import { DialogModal } from "@/app/_component/dialog-modal";
+import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
+import { DialogModal } from "@/app/_component/modal/dialog-modal";
 import { useModal } from "@/app/_util/modal-hook";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { ClarificationFormMap } from "@/app/contests/[slug]/_common/_form/clarification-form-map";
@@ -51,7 +51,7 @@ export function ClarificationsPage({
     try {
       await contestService.createClarification(
         contest.id,
-        ClarificationFormMap.toInputDTO(data),
+        ClarificationFormMap.toInputDTO(data)
       );
       createClarificationState.finish();
       answerModal.close();
@@ -158,7 +158,7 @@ export function ClarificationsPage({
                     className="text-sm text-base-content/50"
                     data-testid="clarification-timestamp"
                   >
-                    <TimestampDisplay timestamp={clarification.createdAt} />
+                    <FormattedDateTime timestamp={clarification.createdAt} />
                   </span>
                   {canAnswer && (
                     <Button
@@ -207,7 +207,7 @@ export function ClarificationsPage({
                       className="text-sm text-base-content/50"
                       data-testid="clarification-answer-timestamp"
                     >
-                      <TimestampDisplay
+                      <FormattedDateTime
                         timestamp={clarification.children[0].createdAt}
                       />
                     </span>

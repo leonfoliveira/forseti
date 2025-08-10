@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { ErrorPageTemplate } from "@/app/_component/error-page-template";
+import { ErrorPageTemplate } from "@/app/_component/page/error-page-template";
 import { mockRouter } from "@/test/jest.setup";
 import { routes } from "@/config/routes";
 
