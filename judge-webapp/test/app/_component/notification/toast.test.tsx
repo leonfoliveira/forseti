@@ -1,9 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Toast } from "@/app/_component/notification/toast";
-import {
-  NotificationItemType,
-  NotificationLevel,
-} from "@/app/_context/notification-context";
+import { ToastLevel, ToastType } from "@/store/slices/toasts-slice";
 
 describe("Toast", () => {
   beforeEach(() => {
@@ -19,9 +16,9 @@ describe("Toast", () => {
     const toast = {
       id: "1",
       text: { id: "text", defaultMessage: "Test message" },
-      level: NotificationLevel.INFO,
+      level: ToastLevel.INFO,
       ttl: 5000,
-    } as NotificationItemType;
+    } as ToastType;
     render(<Toast toast={toast} onClose={() => {}} />);
     const toastElement = screen.getByTestId("toast");
     expect(toastElement).toBeInTheDocument();
@@ -34,9 +31,9 @@ describe("Toast", () => {
     const toast = {
       id: "1",
       text: { id: "text", defaultMessage: "Test message" },
-      level: NotificationLevel.INFO,
+      level: ToastLevel.INFO,
       ttl: 5000,
-    } as NotificationItemType;
+    } as ToastType;
     render(<Toast toast={toast} onClose={onCloseMock} />);
     jest.advanceTimersByTime(5000);
     expect(onCloseMock).toHaveBeenCalledTimes(1);
@@ -47,9 +44,9 @@ describe("Toast", () => {
     const toast = {
       id: "1",
       text: { id: "text", defaultMessage: "Test message" },
-      level: NotificationLevel.INFO,
+      level: ToastLevel.INFO,
       ttl: 5000,
-    } as NotificationItemType;
+    } as ToastType;
     render(<Toast toast={toast} onClose={onCloseMock} />);
     const closeIcon = screen.getByTestId("toast-close-icon");
     fireEvent.click(closeIcon);

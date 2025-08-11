@@ -21,7 +21,7 @@ import { SubmissionFormType } from "@/app/contests/[slug]/contestant/submissions
 import { submissionFormSchema } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-schema";
 import { SubmissionFormMap } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map";
 import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
-import { useAlert } from "@/app/_context/notification-context";
+import { useAlert } from "@/store/slices/alerts-slice";
 import { DownloadButton } from "@/app/_component/form/download-button";
 import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";

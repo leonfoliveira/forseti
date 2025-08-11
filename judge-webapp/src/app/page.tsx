@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { routes } from "@/config/routes";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { contestService } from "@/config/composition";
-import { useAlert } from "@/app/_context/notification-context";
+import { useAlert } from "@/store/slices/alerts-slice";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { defineMessages, FormattedMessage } from "react-intl";
 

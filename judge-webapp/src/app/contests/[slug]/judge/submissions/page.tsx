@@ -14,7 +14,7 @@ import { useModal } from "@/app/_util/modal-hook";
 import { DialogModal } from "@/app/_component/modal/dialog-modal";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { submissionService } from "@/config/composition";
-import { useAlert } from "@/app/_context/notification-context";
+import { useAlert } from "@/store/slices/alerts-slice";
 import { Select } from "@/app/_component/form/select";
 import { useForm } from "react-hook-form";
 import { UpdateSubmissionFormType } from "@/app/contests/[slug]/judge/submissions/_form/update-submission-form";

@@ -7,15 +7,12 @@ import {
   faCircleXmark,
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  NotificationItemType,
-  NotificationLevel,
-} from "@/app/_context/notification-context";
 import { FormattedMessage } from "react-intl";
+import { AlertLevel, AlertType } from "@/store/slices/alerts-slice";
 
 type Props = {
   className?: string;
-  alert: NotificationItemType;
+  alert: AlertType;
   onClose: () => void;
 };
 
@@ -24,19 +21,17 @@ type Props = {
  */
 export function Alert({ className, alert, onClose }: Props) {
   const variant = {
-    [NotificationLevel.INFO]: "alert-info",
-    [NotificationLevel.SUCCESS]: "alert-success",
-    [NotificationLevel.WARNING]: "alert-warning",
-    [NotificationLevel.ERROR]: "alert-error",
+    [AlertLevel.INFO]: "alert-info",
+    [AlertLevel.SUCCESS]: "alert-success",
+    [AlertLevel.WARNING]: "alert-warning",
+    [AlertLevel.ERROR]: "alert-error",
   }[alert.level];
 
   const icon = {
-    [NotificationLevel.INFO]: <FontAwesomeIcon icon={faCircleInfo} />,
-    [NotificationLevel.SUCCESS]: <FontAwesomeIcon icon={faCheck} />,
-    [NotificationLevel.WARNING]: (
-      <FontAwesomeIcon icon={faTriangleExclamation} />
-    ),
-    [NotificationLevel.ERROR]: <FontAwesomeIcon icon={faCircleXmark} />,
+    [AlertLevel.INFO]: <FontAwesomeIcon icon={faCircleInfo} />,
+    [AlertLevel.SUCCESS]: <FontAwesomeIcon icon={faCheck} />,
+    [AlertLevel.WARNING]: <FontAwesomeIcon icon={faTriangleExclamation} />,
+    [AlertLevel.ERROR]: <FontAwesomeIcon icon={faCircleXmark} />,
   }[alert.level];
 
   useEffect(() => {
@@ -52,7 +47,7 @@ export function Alert({ className, alert, onClose }: Props) {
       className={cls(
         "alert cursor-pointer pointer-events-auto",
         variant,
-        className
+        className,
       )}
       onClick={onClose}
       data-testid="alert"

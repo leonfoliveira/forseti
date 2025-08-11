@@ -1,9 +1,14 @@
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
+import { alertsSlice } from "./slices/alerts-slice";
+import { toastsSlice } from "./slices/toasts-slice";
 
 export const makeStore = () => {
   return configureStore({
-    reducer: {},
+    reducer: {
+      alerts: alertsSlice.reducer,
+      toasts: toastsSlice.reducer,
+    },
   });
 };
 

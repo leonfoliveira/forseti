@@ -9,7 +9,7 @@ import { AnnouncementFormType } from "@/app/contests/[slug]/_common/_form/announ
 import { joiResolver } from "@hookform/resolvers/joi";
 import { announcementFormSchema } from "@/app/contests/[slug]/_common/_form/announcement-form-schema";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { useAlert } from "@/app/_context/notification-context";
+import { useAlert } from "@/store/slices/alerts-slice";
 import { contestService } from "@/config/composition";
 import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";

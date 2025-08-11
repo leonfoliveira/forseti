@@ -5,13 +5,16 @@ jest.mock("react-intl", () => ({
   IntlProvider: ({ children }: any) => <>{children}</>,
 }));
 
+jest.mock("@/store/store-provider", () => ({
+  StoreProvider: ({ children }: any) => <>{children}</>,
+}));
+
 jest.mock("@/app/_component/footer", () => ({
   Footer: () => <footer data-testid="footer">Footer</footer>,
 }));
 
-jest.mock("@/app/_context/notification-context", () => ({
-  NotificationProvider: ({ children }: any) => <>{children}</>,
-}));
+jest.mock("@/app/_component/notification/alert-box");
+jest.mock("@/app/_component/notification/toast-box");
 
 jest.mock("@/app/_context/authorization-context", () => ({
   AuthorizationProvider: ({ children }: any) => <>{children}</>,
@@ -28,7 +31,7 @@ describe("Layout", () => {
     render(
       <Layout>
         <p data-testid="child">Child</p>
-      </Layout>
+      </Layout>,
     );
 
     expect(screen.getByTestId("child")).toBeInTheDocument();

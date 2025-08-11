@@ -1,9 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Alert } from "@/app/_component/notification/alert";
-import {
-  NotificationItemType,
-  NotificationLevel,
-} from "@/app/_context/notification-context";
+import { AlertLevel, AlertType } from "@/store/slices/alerts-slice";
 
 describe("Alert", () => {
   beforeEach(() => {
@@ -19,9 +16,9 @@ describe("Alert", () => {
     const alert = {
       id: "1",
       text: { id: "text", defaultMessage: "Test message" },
-      level: NotificationLevel.INFO,
+      level: AlertLevel.INFO,
       ttl: 5000,
-    } as NotificationItemType;
+    } as AlertType;
     render(<Alert alert={alert} onClose={() => {}} />);
     const alertElement = screen.getByTestId("alert");
     expect(alertElement).toBeInTheDocument();
@@ -34,9 +31,9 @@ describe("Alert", () => {
     const alert = {
       id: "1",
       text: { id: "text", defaultMessage: "Test message" },
-      level: NotificationLevel.INFO,
+      level: AlertLevel.INFO,
       ttl: 5000,
-    } as NotificationItemType;
+    } as AlertType;
     render(<Alert alert={alert} onClose={onCloseMock} />);
     jest.advanceTimersByTime(5000);
     expect(onCloseMock).toHaveBeenCalledTimes(1);
@@ -47,9 +44,9 @@ describe("Alert", () => {
     const alert = {
       id: "1",
       text: { id: "text", defaultMessage: "Test message" },
-      level: NotificationLevel.INFO,
+      level: AlertLevel.INFO,
       ttl: 5000,
-    } as NotificationItemType;
+    } as AlertType;
     render(<Alert alert={alert} onClose={onCloseMock} />);
     const alertElement = screen.getByTestId("alert");
     fireEvent.click(alertElement);
@@ -60,9 +57,9 @@ describe("Alert", () => {
     const alert = {
       id: "1",
       text: { id: "text", defaultMessage: "Test message" },
-      level: NotificationLevel.INFO,
+      level: AlertLevel.INFO,
       ttl: 5000,
-    } as NotificationItemType;
+    } as AlertType;
     render(<Alert alert={alert} onClose={() => {}} className="custom-class" />);
     const alertElement = screen.getByTestId("alert");
     expect(alertElement).toHaveClass("custom-class");

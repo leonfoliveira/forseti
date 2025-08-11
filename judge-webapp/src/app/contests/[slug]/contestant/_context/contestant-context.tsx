@@ -4,7 +4,6 @@ import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/subm
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import React, { createContext, useContext, useEffect } from "react";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
-import { useAlert, useToast } from "@/app/_context/notification-context";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import {
   announcementListener,
@@ -25,6 +24,8 @@ import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { useAuthorization } from "@/app/_context/authorization-context";
 import { defineMessages, FormattedMessage } from "react-intl";
 import { globalMessages } from "@/i18n/global";
+import { useAlert } from "@/store/slices/alerts-slice";
+import { useToast } from "@/store/slices/toasts-slice";
 
 const messages = defineMessages({
   loadError: {

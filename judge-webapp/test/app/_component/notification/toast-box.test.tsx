@@ -1,20 +1,22 @@
 import { render, screen } from "@testing-library/react";
 import { ToastBox } from "@/app/_component/notification/toast-box";
 import {
-  NotificationItemType,
-  NotificationLevel,
-} from "@/app/_context/notification-context";
+  ToastLevel,
+  toastsSlice,
+  ToastType,
+} from "@/store/slices/toasts-slice";
+import { mockAppDispatch, mockUseAppSelector } from "@/test/jest.setup";
 
 jest.mock("@/app/_component/notification/toast", () => ({
   Toast: ({
     toast,
     onClose,
   }: {
-    toast: NotificationItemType;
+    toast: ToastType;
     onClose: (id: string) => void;
   }) => (
     <div data-testid="toast" onClick={() => onClose(toast.id)}>
-      {toast.text}
+      {toast.text.defaultMessage}
     </div>
   ),
 }));
@@ -24,18 +26,19 @@ describe("ToastBox", () => {
     const toasts = [
       {
         id: "1",
-        text: "Test message 1",
-        level: NotificationLevel.INFO,
+        text: { id: "toast-1", defaultMessage: "Test message 1" },
+        level: ToastLevel.INFO,
         ttl: 5000,
       },
       {
         id: "2",
-        text: "Test message 2",
-        level: NotificationLevel.SUCCESS,
+        text: { id: "toast-2", defaultMessage: "Test message 2" },
+        level: ToastLevel.SUCCESS,
         ttl: 5000,
       },
-    ] as NotificationItemType[];
-    render(<ToastBox items={toasts} onClose={() => {}} />);
+    ] as ToastType[];
+    mockUseAppSelector.mockReturnValue(toasts);
+    render(<ToastBox />);
     const toastElements = screen.getAllByTestId("toast");
     expect(toastElements).toHaveLength(2);
     expect(toastElements[0]).toHaveTextContent("Test message 1");
@@ -43,18 +46,20 @@ describe("ToastBox", () => {
   });
 
   it("calls onClose when a toast is closed", () => {
-    const onCloseMock = jest.fn();
     const toasts = [
       {
         id: "1",
-        text: "Test message 1",
-        level: NotificationLevel.INFO,
+        text: { id: "toast-1", defaultMessage: "Test message 1" },
+        level: ToastLevel.INFO,
         ttl: 5000,
       },
-    ] as NotificationItemType[];
-    render(<ToastBox items={toasts} onClose={onCloseMock} />);
+    ] as ToastType[];
+    mockUseAppSelector.mockReturnValue(toasts);
+    render(<ToastBox />);
     const toastElement = screen.getByTestId("toast");
     toastElement.click();
-    expect(onCloseMock).toHaveBeenCalledWith("1");
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      toastsSlice.actions.close("1"),
+    );
   });
 });

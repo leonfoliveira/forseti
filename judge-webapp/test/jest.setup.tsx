@@ -31,6 +31,14 @@ jest.mock("next/navigation", () => ({
   RedirectType: jest.requireActual("next/navigation").RedirectType,
 }));
 
+// Redux
+export const mockUseAppSelector = jest.fn();
+export const mockAppDispatch = jest.fn();
+jest.mock("@/store/store", () => ({
+  useAppSelector: mockUseAppSelector,
+  useAppDispatch: () => mockAppDispatch,
+}));
+
 // Composition
 jest.mock("@/config/composition");
 
@@ -41,17 +49,19 @@ export const mockAlert = {
   warning: jest.fn(),
   error: jest.fn(),
 };
+jest.mock("@/store/slices/alerts-slice", () => ({
+  ...jest.requireActual("@/store/slices/alerts-slice"),
+  useAlert: () => mockAlert,
+}));
 export const mockToast = {
   success: jest.fn(),
   info: jest.fn(),
   warning: jest.fn(),
   error: jest.fn(),
 };
-jest.mock("@/app/_context/notification-context", () => ({
-  useAlert: () => mockAlert,
+jest.mock("@/store/slices/toasts-slice", () => ({
+  ...jest.requireActual("@/store/slices/toasts-slice"),
   useToast: () => mockToast,
-  NotificationLevel: jest.requireActual("@/app/_context/notification-context")
-    .NotificationLevel,
 }));
 
 // Authorization

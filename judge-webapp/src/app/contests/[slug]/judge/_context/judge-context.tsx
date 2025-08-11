@@ -4,7 +4,6 @@ import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submis
 import React, { createContext, useContext, useEffect } from "react";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
-import { useAlert, useToast } from "@/app/_context/notification-context";
 import {
   announcementListener,
   clarificationListener,
@@ -21,6 +20,8 @@ import { findClarification } from "@/app/contests/[slug]/_util/clarification-fin
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { ErrorPage } from "@/app/_component/page/error-page";
 import { defineMessages } from "react-intl";
+import { useAlert } from "@/store/slices/alerts-slice";
+import { useToast } from "@/store/slices/toasts-slice";
 
 const messages = defineMessages({
   loadError: {

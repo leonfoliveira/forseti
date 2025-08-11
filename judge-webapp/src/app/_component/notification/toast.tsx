@@ -2,14 +2,11 @@ import { useEffect, useRef } from "react";
 import { cls } from "@/app/_util/cls";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
-import {
-  NotificationItemType,
-  NotificationLevel,
-} from "@/app/_context/notification-context";
 import { FormattedMessage } from "react-intl";
+import { ToastLevel, ToastType } from "@/store/slices/toasts-slice";
 
 type Props = {
-  toast: NotificationItemType;
+  toast: ToastType;
   onClose: () => void;
 };
 
@@ -32,17 +29,17 @@ export function Toast({ toast, onClose }: Props) {
   }, []);
 
   const style = {
-    [NotificationLevel.INFO]: "alert-info",
-    [NotificationLevel.SUCCESS]: "alert-success",
-    [NotificationLevel.WARNING]: "alert-warning",
-    [NotificationLevel.ERROR]: "alert-error",
+    [ToastLevel.INFO]: "alert-info",
+    [ToastLevel.SUCCESS]: "alert-success",
+    [ToastLevel.WARNING]: "alert-warning",
+    [ToastLevel.ERROR]: "alert-error",
   };
 
   return (
     <div
       className={cls(
         "alert pointer-events-auto flex justify-between",
-        style[toast.level]
+        style[toast.level],
       )}
       style={{ pointerEvents: "auto" }}
       data-testid="toast"

@@ -5,13 +5,14 @@ import "./globals.css";
 import { env } from "@/config/env";
 import { useTheme } from "@/app/_util/theme-hook";
 import { Roboto } from "next/font/google";
-import { NotificationProvider } from "@/app/_context/notification-context";
 import { AuthorizationProvider } from "@/app/_context/authorization-context";
 import { IntlProvider } from "react-intl";
 import enUS from "@/i18n/messages/en-US.json";
 import ptBR from "@/i18n/messages/pt-BR.json";
 import { Footer } from "./_component/footer";
 import { StoreProvider } from "@/store/store-provider";
+import { AlertBox } from "@/app/_component/notification/alert-box";
+import { ToastBox } from "@/app/_component/notification/toast-box";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -36,14 +37,14 @@ export default function Layout({
       <body className={roboto.className}>
         <IntlProvider messages={messages} locale={env.LOCALE}>
           <StoreProvider>
-            <NotificationProvider>
-              <AuthorizationProvider>
-                <div className="flex flex-col w-screen h-screen">
-                  <div className="flex-1">{children}</div>
-                  <Footer />
-                </div>
-              </AuthorizationProvider>
-            </NotificationProvider>
+            <AuthorizationProvider>
+              <div className="flex flex-col w-screen h-screen">
+                <div className="flex-1">{children}</div>
+                <Footer />
+              </div>
+            </AuthorizationProvider>
+            <AlertBox />
+            <ToastBox />
           </StoreProvider>
         </IntlProvider>
       </body>

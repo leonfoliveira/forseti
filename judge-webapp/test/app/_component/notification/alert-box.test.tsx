@@ -1,20 +1,22 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { AlertBox } from "@/app/_component/notification/alert-box";
 import {
-  NotificationItemType,
-  NotificationLevel,
-} from "@/app/_context/notification-context";
+  AlertLevel,
+  alertsSlice,
+  AlertType,
+} from "@/store/slices/alerts-slice";
+import { mockAppDispatch, mockUseAppSelector } from "@/test/jest.setup";
 
 jest.mock("@/app/_component/notification/alert", () => ({
   Alert: ({
     alert,
     onClose,
   }: {
-    alert: NotificationItemType;
+    alert: AlertType;
     onClose: (id: string) => void;
   }) => (
     <div data-testid="alert" onClick={() => onClose(alert.id)}>
-      {alert.text}
+      {alert.text.defaultMessage}
     </div>
   ),
 }));
@@ -24,18 +26,19 @@ describe("AlertBox", () => {
     const alerts = [
       {
         id: "1",
-        text: "Test message 1",
-        level: NotificationLevel.INFO,
+        text: { id: "alert-1", defaultMessage: "Test message 1" },
+        level: AlertLevel.INFO,
         ttl: 5000,
       },
       {
         id: "2",
-        text: "Test message 2",
-        level: NotificationLevel.SUCCESS,
+        text: { id: "alert-2", defaultMessage: "Test message 2" },
+        level: AlertLevel.SUCCESS,
         ttl: 5000,
       },
-    ] as NotificationItemType[];
-    render(<AlertBox items={alerts} onClose={() => {}} />);
+    ] as AlertType[];
+    mockUseAppSelector.mockReturnValue(alerts);
+    render(<AlertBox />);
     const alertElements = screen.getAllByTestId("alert");
     expect(alertElements).toHaveLength(2);
     expect(alertElements[0]).toHaveTextContent("Test message 1");
@@ -43,18 +46,20 @@ describe("AlertBox", () => {
   });
 
   it("calls onClose when an alert is closed", () => {
-    const onCloseMock = jest.fn();
     const alerts = [
       {
         id: "1",
-        text: "Test message 1",
-        level: NotificationLevel.INFO,
+        text: { id: "alert-1", defaultMessage: "Test message 1" },
+        level: AlertLevel.INFO,
         ttl: 5000,
       },
-    ] as NotificationItemType[];
-    render(<AlertBox items={alerts} onClose={onCloseMock} />);
+    ] as AlertType[];
+    mockUseAppSelector.mockReturnValue(alerts);
+    render(<AlertBox />);
     const alertElement = screen.getByTestId("alert");
     fireEvent.click(alertElement);
-    expect(onCloseMock).toHaveBeenCalledWith("1");
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      alertsSlice.actions.close("1"),
+    );
   });
 });

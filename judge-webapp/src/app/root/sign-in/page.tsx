@@ -13,7 +13,7 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
 import { useAuthorizationContext } from "@/app/_context/authorization-context";
 import { useRouter } from "next/navigation";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { useAlert } from "@/app/_context/notification-context";
+import { useAlert } from "@/store/slices/alerts-slice";
 import { routes } from "@/config/routes";
 import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form";
 import { defineMessages, FormattedMessage } from "react-intl";

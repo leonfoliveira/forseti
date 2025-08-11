@@ -1,24 +1,23 @@
 import React from "react";
 import { Alert } from "@/app/_component/notification/alert";
-import { NotificationItemType } from "@/app/_context/notification-context";
-
-type Props = {
-  items: NotificationItemType[];
-  onClose: (id: string) => void;
-};
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { alertsSlice } from "@/store/slices/alerts-slice";
 
 /**
  * AlertBox component to display a list of alerts on top of the page.
  */
-export function AlertBox({ items, onClose }: Props) {
+export function AlertBox() {
+  const alerts = useAppSelector((state) => state.alerts);
+  const dispatch = useAppDispatch();
+
   return (
     <div className="fixed top-0 w-full p-2 z-50 pointer-events-none">
       <div className="max-w-xl m-auto flex flex-col gap-1">
-        {items.map((alert) => (
+        {alerts.map((alert) => (
           <Alert
             key={alert.id}
             alert={alert}
-            onClose={() => onClose(alert.id)}
+            onClose={() => dispatch(alertsSlice.actions.close(alert.id))}
           />
         ))}
       </div>

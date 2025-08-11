@@ -17,7 +17,7 @@ import { routes } from "@/config/routes";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { useAuthorizationContext } from "@/app/_context/authorization-context";
-import { useAlert } from "@/app/_context/notification-context";
+import { useAlert } from "@/store/slices/alerts-slice";
 import { defineMessages, FormattedMessage } from "react-intl";
 
 const messages = defineMessages({
