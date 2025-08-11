@@ -1,7 +1,8 @@
-import { Badge } from "@/app/_component/badge/badge";
 import React from "react";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { FormattedMessage } from "react-intl";
+
+import { Badge } from "@/app/_component/badge/badge";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { globalMessages } from "@/i18n/global";
 
 type Props = {

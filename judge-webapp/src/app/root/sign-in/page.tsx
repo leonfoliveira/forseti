@@ -1,22 +1,24 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { joiResolver } from "@hookform/resolvers/joi";
-import { TextInput } from "@/app/_component/form/text-input";
-import { Button } from "@/app/_component/form/button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+import { Button } from "@/app/_component/form/button";
 import { Form } from "@/app/_component/form/form";
+import { TextInput } from "@/app/_component/form/text-input";
+import { useSetAuthorization } from "@/app/_context/authorization-provider";
+import { useLoadableState } from "@/app/_util/loadable-state";
+import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form";
 import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form-schema";
 import { authenticationService } from "@/config/composition";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useSetAuthorization } from "@/app/_context/authorization-provider";
-import { useRouter } from "next/navigation";
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { useAlert } from "@/store/slices/alerts-slice";
 import { routes } from "@/config/routes";
-import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form";
-import { defineMessages, FormattedMessage } from "react-intl";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
+import { useAlert } from "@/store/slices/alerts-slice";
+
 
 const messages = defineMessages({
   wrongPassword: {

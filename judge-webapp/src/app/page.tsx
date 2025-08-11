@@ -1,21 +1,23 @@
 "use client";
 
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { joiResolver } from "@hookform/resolvers/joi";
+import Joi from "joi";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+import { Button } from "@/app/_component/form/button";
 import { Form } from "@/app/_component/form/form";
 import { TextInput } from "@/app/_component/form/text-input";
-import { Button } from "@/app/_component/form/button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import React from "react";
-import Joi from "joi";
-import { useForm } from "react-hook-form";
-import { joiResolver } from "@hookform/resolvers/joi";
-import { useRouter } from "next/navigation";
-import { routes } from "@/config/routes";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { contestService } from "@/config/composition";
-import { useAlert } from "@/store/slices/alerts-slice";
+import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { defineMessages, FormattedMessage } from "react-intl";
+import { useAlert } from "@/store/slices/alerts-slice";
+
 
 const messages = defineMessages({
   joinNotFound: {

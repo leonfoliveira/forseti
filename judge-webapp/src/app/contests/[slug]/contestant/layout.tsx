@@ -1,14 +1,15 @@
 "use client";
 
-import React from "react";
-import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
 import { redirect } from "next/navigation";
-import { routes } from "@/config/routes";
+import React from "react";
+import { defineMessages } from "react-intl";
+
+import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { ContestantContextProvider } from "@/app/contests/[slug]/contestant/_context/contestant-context";
-import { useAuthorization } from "@/store/slices/authorization-slice";
+import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { defineMessages } from "react-intl";
+import { useAuthorization } from "@/store/slices/authorization-slice";
 
 const messages = defineMessages({
   tabLeaderboard: {

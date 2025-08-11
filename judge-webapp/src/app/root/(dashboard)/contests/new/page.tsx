@@ -1,18 +1,20 @@
 "use client";
 
-import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
-import { useForm } from "react-hook-form";
-import { ContestFormMap } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
-import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
-import { contestService } from "@/config/composition";
 import { useRouter } from "next/navigation";
-import { routes } from "@/config/routes";
-import { useAlert } from "@/store/slices/alerts-slice";
+import { useForm } from "react-hook-form";
 import { defineMessages } from "react-intl";
+
+import { useLoadableState } from "@/app/_util/loadable-state";
+import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
+import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
+import { ContestFormMap } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
+import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
+import { contestService } from "@/config/composition";
+import { routes } from "@/config/routes";
+import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
+import { useAlert } from "@/store/slices/alerts-slice";
+
 
 const messages = defineMessages({
   createSuccess: {

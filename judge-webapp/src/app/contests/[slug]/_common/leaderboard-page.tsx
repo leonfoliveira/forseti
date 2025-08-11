@@ -1,16 +1,18 @@
 "use client";
 
 import React from "react";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+import { ProblemStatusBadge } from "@/app/_component/badge/problem-status-badge";
 import { Table } from "@/app/_component/table/table";
+import { TableCell } from "@/app/_component/table/table-cell";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableSection } from "@/app/_component/table/table-section";
-import { TableCell } from "@/app/_component/table/table-cell";
 import { cls } from "@/app/_util/cls";
-import { useAuthorization } from "@/store/slices/authorization-slice";
-import { ProblemStatusBadge } from "@/app/_component/badge/problem-status-badge";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
-import { defineMessages, FormattedMessage } from "react-intl";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { useAuthorization } from "@/store/slices/authorization-slice";
+
 
 const messages = defineMessages({
   headerScore: {

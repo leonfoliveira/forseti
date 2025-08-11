@@ -1,5 +1,6 @@
-import { Badge } from "@/app/_component/badge/badge";
 import React from "react";
+
+import { Badge } from "@/app/_component/badge/badge";
 import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 
 type Props = {

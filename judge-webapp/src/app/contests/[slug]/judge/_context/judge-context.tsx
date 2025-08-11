@@ -1,9 +1,12 @@
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
-import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import React, { createContext, useContext, useEffect } from "react";
+import { defineMessages } from "react-intl";
+
+import { ErrorPage } from "@/app/_component/page/error-page";
+import { LoadingPage } from "@/app/_component/page/loading-page";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
+import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
+import { merge } from "@/app/contests/[slug]/_util/entity-merger";
 import {
   announcementListener,
   clarificationListener,
@@ -13,13 +16,11 @@ import {
   submissionListener,
 } from "@/config/composition";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
-import { merge } from "@/app/contests/[slug]/_util/entity-merger";
-import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
-import { LoadingPage } from "@/app/_component/page/loading-page";
-import { ErrorPage } from "@/app/_component/page/error-page";
-import { defineMessages } from "react-intl";
+import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
+import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { useToast } from "@/store/slices/toasts-slice";
 

@@ -1,33 +1,35 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
-import { Spinner } from "@/app/_component/spinner";
-import { Button } from "@/app/_component/form/button";
-import { routes } from "@/config/routes";
-import { contestService } from "@/config/composition";
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
-import { useAlert } from "@/store/slices/alerts-slice";
-import { TableSection } from "@/app/_component/table/table-section";
-import { TableRow } from "@/app/_component/table/table-row";
-import { TableCell } from "@/app/_component/table/table-cell";
-import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
-import { Table } from "@/app/_component/table/table";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronRight,
   faPlay,
   faPlus,
   faStop,
 } from "@fortawesome/free-solid-svg-icons";
-import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
-import { useModal } from "@/app/_util/modal-hook";
-import { DialogModal } from "@/app/_component/modal/dialog-modal";
-import { recalculateContests } from "@/app/root/(dashboard)/contests/_util/contests-calculator";
-import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
-import { useContestStatusWatcherBatch } from "@/app/_util/contest-status-watcher";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
+
+import { Button } from "@/app/_component/form/button";
+import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
+import { DialogModal } from "@/app/_component/modal/dialog-modal";
+import { Spinner } from "@/app/_component/spinner";
+import { Table } from "@/app/_component/table/table";
+import { TableCell } from "@/app/_component/table/table-cell";
+import { TableRow } from "@/app/_component/table/table-row";
+import { TableSection } from "@/app/_component/table/table-section";
+import { useContestStatusWatcherBatch } from "@/app/_util/contest-status-watcher";
+import { useLoadableState } from "@/app/_util/loadable-state";
+import { useModal } from "@/app/_util/modal-hook";
+import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
+import { recalculateContests } from "@/app/root/(dashboard)/contests/_util/contests-calculator";
+import { contestService } from "@/config/composition";
+import { routes } from "@/config/routes";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { useAlert } from "@/store/slices/alerts-slice";
+
 
 const messages = defineMessages({
   loadError: {

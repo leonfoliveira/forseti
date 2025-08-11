@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useEffect } from "react";
+
+import { ErrorPage } from "@/app/_component/page/error-page";
+import { LoadingPage } from "@/app/_component/page/loading-page";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { LoadingPage } from "@/app/_component/page/loading-page";
-import { ErrorPage } from "@/app/_component/page/error-page";
-import { useAppDispatch } from "@/store/store";
-import { authorizationSlice } from "@/store/slices/authorization-slice";
 import { Authorization } from "@/core/domain/model/Authorization";
+import { authorizationSlice } from "@/store/slices/authorization-slice";
+import { useAppDispatch } from "@/store/store";
 
 const AuthorizationContext = createContext({
   setAuthorization: (() => {}) as unknown as (

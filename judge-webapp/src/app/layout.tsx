@@ -1,18 +1,21 @@
 "use client";
 
-import React from "react";
 import "./globals.css";
-import { env } from "@/config/env";
-import { useTheme } from "@/app/_util/theme-hook";
+
 import { Roboto } from "next/font/google";
-import { AuthorizationProvider } from "@/app/_context/authorization-provider";
+import React from "react";
 import { IntlProvider } from "react-intl";
-import enUS from "@/i18n/messages/en-US.json";
-import ptBR from "@/i18n/messages/pt-BR.json";
-import { Footer } from "./_component/footer";
-import { StoreProvider } from "@/store/store-provider";
+
 import { AlertBox } from "@/app/_component/notification/alert-box";
 import { ToastBox } from "@/app/_component/notification/toast-box";
+import { AuthorizationProvider } from "@/app/_context/authorization-provider";
+import { useTheme } from "@/app/_util/theme-hook";
+import { env } from "@/config/env";
+import enUS from "@/i18n/messages/en-US.json";
+import ptBR from "@/i18n/messages/pt-BR.json";
+import { StoreProvider } from "@/store/store-provider";
+
+import { Footer } from "./_component/footer";
 
 const roboto = Roboto({
   variable: "--font-roboto",

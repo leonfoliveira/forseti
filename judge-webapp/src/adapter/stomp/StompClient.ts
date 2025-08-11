@@ -1,6 +1,7 @@
 import { CompatClient } from "@stomp/stompjs";
-import { ListenerClient } from "@/core/domain/model/ListenerClient";
+
 import { ServerException } from "@/core/domain/exception/ServerException";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 export class StompClient implements ListenerClient {
   constructor(private readonly client: CompatClient) {}

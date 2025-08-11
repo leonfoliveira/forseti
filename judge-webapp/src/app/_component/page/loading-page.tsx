@@ -1,5 +1,6 @@
-import { Spinner } from "@/app/_component/spinner";
 import React from "react";
+
+import { Spinner } from "@/app/_component/spinner";
 
 /**
  * LoadingPage component displays a loading spinner centered on the page.

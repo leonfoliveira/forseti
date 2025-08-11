@@ -1,11 +1,11 @@
-import React, { DetailedHTMLProps, InputHTMLAttributes, useRef } from "react";
-import { cls } from "@/app/_util/cls";
-import { Controller, UseFormReturn } from "react-hook-form";
-import { FieldPath, FieldValues } from "react-hook-form";
-import { Attachment } from "@/core/domain/model/Attachment";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose, faDownload } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { DetailedHTMLProps, InputHTMLAttributes, useRef } from "react";
+import { Controller, UseFormReturn , FieldPath, FieldValues } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
+
+import { cls } from "@/app/_util/cls";
+import { Attachment } from "@/core/domain/model/Attachment";
 import { Message } from "@/i18n/message";
 
 const messages = defineMessages({

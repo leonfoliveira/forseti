@@ -1,11 +1,12 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { useTheme } from "@/app/_util/theme-hook";
-import { useSetAuthorization } from "@/app/_context/authorization-provider";
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
-import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { defineMessages, FormattedMessage } from "react-intl";
+
+import { useSetAuthorization } from "@/app/_context/authorization-provider";
+import { useTheme } from "@/app/_util/theme-hook";
+import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { useAuthorization } from "@/store/slices/authorization-slice";
 

@@ -1,5 +1,7 @@
-import { Authorization } from "@/core/domain/model/Authorization";
 import { createSlice } from "@reduxjs/toolkit";
+
+import { Authorization } from "@/core/domain/model/Authorization";
+
 import { useAppSelector } from "../store";
 
 export const authorizationSlice = createSlice({

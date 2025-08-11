@@ -1,7 +1,8 @@
 import React from "react";
+
 import { Toast } from "@/app/_component/notification/toast";
-import { useAppDispatch, useAppSelector } from "@/store/store";
 import { toastsSlice } from "@/store/slices/toasts-slice";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 
 /**
  * ToastBox component to display a list of toasts at the right bottom of the page.

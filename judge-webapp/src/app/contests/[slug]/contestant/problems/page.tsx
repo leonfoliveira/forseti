@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useMemo } from "react";
+
 import { ProblemsPage } from "@/app/contests/[slug]/_common/problems-page";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
 export default function ContestantProblemsPage() {
   const { contest, submissions } = useContestantContext();

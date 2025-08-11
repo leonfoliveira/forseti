@@ -1,17 +1,18 @@
 "use client";
 
 import React from "react";
-import { Table } from "@/app/_component/table/table";
-import { TableSection } from "@/app/_component/table/table-section";
-import { TableRow } from "@/app/_component/table/table-row";
-import { TableCell } from "@/app/_component/table/table-cell";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
-import { cls } from "@/app/_util/cls";
-import { useAuthorization } from "@/store/slices/authorization-slice";
+import { defineMessages, FormattedMessage } from "react-intl";
+
 import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
 import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
-import { defineMessages, FormattedMessage } from "react-intl";
+import { Table } from "@/app/_component/table/table";
+import { TableCell } from "@/app/_component/table/table-cell";
+import { TableRow } from "@/app/_component/table/table-row";
+import { TableSection } from "@/app/_component/table/table-section";
+import { cls } from "@/app/_util/cls";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { globalMessages } from "@/i18n/global";
+import { useAuthorization } from "@/store/slices/authorization-slice";
 
 const messages = defineMessages({
   headerTimestamp: {

@@ -1,8 +1,9 @@
+import { redirect, RedirectType, usePathname } from "next/navigation";
 import React from "react";
+import { defineMessages, FormattedMessage } from "react-intl";
+
 import { cls } from "@/app/_util/cls";
 import { routes } from "@/config/routes";
-import { redirect, RedirectType, usePathname } from "next/navigation";
-import { defineMessages, FormattedMessage } from "react-intl";
 import { Message } from "@/i18n/message";
 
 const messages = defineMessages({

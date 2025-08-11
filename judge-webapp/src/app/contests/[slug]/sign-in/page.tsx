@@ -1,24 +1,26 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import React from "react";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { joiResolver } from "@hookform/resolvers/joi";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+import { Button } from "@/app/_component/form/button";
 import { Form } from "@/app/_component/form/form";
 import { TextInput } from "@/app/_component/form/text-input";
-import { Button } from "@/app/_component/form/button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { useSetAuthorization } from "@/app/_context/authorization-provider";
+import { useLoadableState } from "@/app/_util/loadable-state";
+import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { MemberSignInFormType } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form";
 import { memberSignInFormSchema } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form-schema";
 import { authenticationService } from "@/config/composition";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useRouter } from "next/navigation";
 import { routes } from "@/config/routes";
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
-import { useSetAuthorization } from "@/app/_context/authorization-provider";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useAlert } from "@/store/slices/alerts-slice";
-import { defineMessages, FormattedMessage } from "react-intl";
+
 
 const messages = defineMessages({
   wrongLoginPassword: {

@@ -1,10 +1,11 @@
-import { attachmentService } from "@/config/composition";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
-import { Button } from "@/app/_component/form/button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import { Attachment } from "@/core/domain/model/Attachment";
 import { defineMessages } from "react-intl";
+
+import { Button } from "@/app/_component/form/button";
+import { attachmentService } from "@/config/composition";
+import { Attachment } from "@/core/domain/model/Attachment";
 
 const messages = defineMessages({
   download: {

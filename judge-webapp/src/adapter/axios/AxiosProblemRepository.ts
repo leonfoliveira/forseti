@@ -1,6 +1,6 @@
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { CreateSubmissionRequestDTO } from "@/core/repository/dto/request/CreateSubmissionRequestDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { ProblemRepository } from "@/core/repository/ProblemRepository";
 
 export class AxiosProblemRepository implements ProblemRepository {

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { use } from "react";
+
 import { ContestMetadataProvider } from "@/app/contests/[slug]/_context/contest-metadata-context";
 
 export default function ContestLayout({

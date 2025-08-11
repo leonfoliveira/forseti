@@ -1,14 +1,14 @@
-import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
-import { Language } from "@/core/domain/enumerate/Language";
 import {
   ContestFormMemberType,
   ContestFormProblemType,
   ContestFormType,
 } from "@/app/root/(dashboard)/contests/_form/contest-form";
+import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
-import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";
 import { Attachment } from "@/core/domain/model/Attachment";
+import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
+import { CreateContestInputDTO } from "@/core/service/dto/input/CreateContestInputDTO";
+import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 
 export class ContestFormMap {
   static toCreateRequestDTO(data: ContestFormType): CreateContestInputDTO {

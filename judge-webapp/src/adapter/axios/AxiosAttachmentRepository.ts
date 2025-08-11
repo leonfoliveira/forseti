@@ -1,6 +1,6 @@
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
-import { AttachmentRepository } from "@/core/repository/AttachmentRepository";
 import { Attachment } from "@/core/domain/model/Attachment";
+import { AttachmentRepository } from "@/core/repository/AttachmentRepository";
 
 export class AxiosAttachmentRepository implements AttachmentRepository {
   constructor(private readonly axiosClient: AxiosClient) {}

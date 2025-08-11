@@ -1,7 +1,8 @@
 import React from "react";
+
 import { Alert } from "@/app/_component/notification/alert";
-import { useAppDispatch, useAppSelector } from "@/store/store";
 import { alertsSlice } from "@/store/slices/alerts-slice";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 
 /**
  * AlertBox component to display a list of alerts on top of the page.

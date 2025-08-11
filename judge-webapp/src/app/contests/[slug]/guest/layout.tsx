@@ -1,11 +1,12 @@
 "use client";
 
 import React from "react";
-import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
-import { GuestContextProvider } from "@/app/contests/[slug]/guest/_context/guest-context";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
-import { routes } from "@/config/routes";
 import { defineMessages } from "react-intl";
+
+import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
+import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
+import { GuestContextProvider } from "@/app/contests/[slug]/guest/_context/guest-context";
+import { routes } from "@/config/routes";
 
 const messages = defineMessages({
   tabLeaderboard: {

@@ -1,5 +1,7 @@
-import { Message } from "@/i18n/message";
 import { createSlice } from "@reduxjs/toolkit";
+
+import { Message } from "@/i18n/message";
+
 import { useAppDispatch } from "../store";
 
 export enum ToastLevel {

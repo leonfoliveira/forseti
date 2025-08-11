@@ -1,8 +1,12 @@
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
-import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import React, { createContext, useContext, useEffect } from "react";
+import { defineMessages } from "react-intl";
+
+import { ErrorPage } from "@/app/_component/page/error-page";
+import { LoadingPage } from "@/app/_component/page/loading-page";
 import { useLoadableState } from "@/app/_util/loadable-state";
+import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
+import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
+import { merge } from "@/app/contests/[slug]/_util/entity-merger";
 import {
   announcementListener,
   clarificationListener,
@@ -11,15 +15,13 @@ import {
   listenerClientFactory,
   submissionListener,
 } from "@/config/composition";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
-import { useAlert } from "@/store/slices/alerts-slice";
-import { merge } from "@/app/contests/[slug]/_util/entity-merger";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
-import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
-import { LoadingPage } from "@/app/_component/page/loading-page";
-import { ErrorPage } from "@/app/_component/page/error-page";
-import { defineMessages } from "react-intl";
+import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { useAlert } from "@/store/slices/alerts-slice";
+
 
 const messages = defineMessages({
   loadError: {

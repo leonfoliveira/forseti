@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+
 import { AnnouncementsPage } from "@/app/contests/[slug]/_common/announcements-page";
 import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
 

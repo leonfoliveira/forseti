@@ -1,5 +1,4 @@
 import React, { DetailedHTMLProps, SelectHTMLAttributes } from "react";
-import { cls } from "@/app/_util/cls";
 import {
   Controller,
   FieldPath,
@@ -7,6 +6,8 @@ import {
   UseFormReturn,
 } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
+
+import { cls } from "@/app/_util/cls";
 import { Message } from "@/i18n/message";
 
 type Props<TFieldValues extends FieldValues> = Omit<

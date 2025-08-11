@@ -1,9 +1,10 @@
+import { defineMessages } from "react-intl";
+
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { defineMessages } from "react-intl";
 
 const contestStatus = defineMessages({
   [ContestStatus.ENDED]: {

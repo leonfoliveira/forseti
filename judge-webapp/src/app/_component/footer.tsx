@@ -1,5 +1,6 @@
-import { env } from "@/config/env";
 import { defineMessages, FormattedMessage } from "react-intl";
+
+import { env } from "@/config/env";
 
 const messages = defineMessages({
   text: {

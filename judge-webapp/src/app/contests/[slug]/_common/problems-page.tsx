@@ -1,15 +1,17 @@
 "use client";
 
 import React from "react";
-import { Table } from "@/app/_component/table/table";
-import { TableSection } from "@/app/_component/table/table-section";
-import { TableRow } from "@/app/_component/table/table-row";
-import { TableCell } from "@/app/_component/table/table-cell";
-import { DownloadButton } from "@/app/_component/form/download-button";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { SubmissionAnswerShortBadge } from "@/app/_component/badge/submission-answer-short-badge";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { defineMessages, FormattedMessage } from "react-intl";
+
+import { SubmissionAnswerShortBadge } from "@/app/_component/badge/submission-answer-short-badge";
+import { DownloadButton } from "@/app/_component/form/download-button";
+import { Table } from "@/app/_component/table/table";
+import { TableCell } from "@/app/_component/table/table-cell";
+import { TableRow } from "@/app/_component/table/table-row";
+import { TableSection } from "@/app/_component/table/table-section";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+
 
 const messages = defineMessages({
   problemTitle: {

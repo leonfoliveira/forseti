@@ -1,9 +1,10 @@
-import React from "react";
-import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { useRouter } from "next/navigation";
+import React from "react";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { routes } from "@/config/routes";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
-import { defineMessages, FormattedMessage } from "react-intl";
 import { globalMessages } from "@/i18n/global";
 
 const messages = defineMessages({

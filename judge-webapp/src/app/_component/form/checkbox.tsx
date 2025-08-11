@@ -1,7 +1,8 @@
 import React from "react";
+import { FormattedMessage } from "react-intl";
+
 import { cls } from "@/app/_util/cls";
 import { Message } from "@/i18n/message";
-import { FormattedMessage } from "react-intl";
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   "data-testid"?: string;

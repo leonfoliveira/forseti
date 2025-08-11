@@ -1,7 +1,8 @@
 "use client";
 
-import { ErrorPageTemplate } from "@/app/_component/page/error-page-template";
 import { defineMessages, FormattedMessage } from "react-intl";
+
+import { ErrorPageTemplate } from "@/app/_component/page/error-page-template";
 
 const messages = defineMessages({
   description: {

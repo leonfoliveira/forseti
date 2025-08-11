@@ -1,9 +1,9 @@
 import React from "react";
-import { Controller, UseFormReturn } from "react-hook-form";
-import { FieldPath, FieldValues } from "react-hook-form";
+import { Controller, UseFormReturn , FieldPath, FieldValues } from "react-hook-form";
+import { FormattedMessage } from "react-intl";
+
 import { Checkbox } from "@/app/_component/form/checkbox";
 import { cls } from "@/app/_util/cls";
-import { FormattedMessage } from "react-intl";
 import { Message } from "@/i18n/message";
 
 type Props<TFieldValues extends FieldValues> = Omit<

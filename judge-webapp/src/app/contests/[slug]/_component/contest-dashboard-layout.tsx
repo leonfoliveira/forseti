@@ -1,13 +1,14 @@
 "use client";
 
 import React from "react";
-import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+
+import { Navbar } from "@/app/_component/navbar";
 import { WaitPage } from "@/app/contests/[slug]/_common/wait-page";
 import { ContestTabBar } from "@/app/contests/[slug]/_component/contest-tab-bar";
-import { ContestUtil } from "@/core/util/contest-util";
-import { Navbar } from "@/app/_component/navbar";
 import { routes } from "@/config/routes";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { ContestUtil } from "@/core/util/contest-util";
 import { Message } from "@/i18n/message";
 
 type Props = {

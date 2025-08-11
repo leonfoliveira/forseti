@@ -1,6 +1,7 @@
 import React from "react";
-import { Button } from "@/app/_component/form/button";
 import { defineMessages, FormattedMessage } from "react-intl";
+
+import { Button } from "@/app/_component/form/button";
 
 const messages = defineMessages({
   error: {

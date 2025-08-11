@@ -1,8 +1,9 @@
-import { useDispatch, useSelector, useStore } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
+import { useDispatch, useSelector, useStore } from "react-redux";
+
 import { alertsSlice } from "./slices/alerts-slice";
-import { toastsSlice } from "./slices/toasts-slice";
 import { authorizationSlice } from "./slices/authorization-slice";
+import { toastsSlice } from "./slices/toasts-slice";
 
 export const makeStore = () => {
   return configureStore({

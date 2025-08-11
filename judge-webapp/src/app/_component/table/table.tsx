@@ -1,4 +1,5 @@
 import React, { DetailedHTMLProps, TableHTMLAttributes } from "react";
+
 import { cls } from "@/app/_util/cls";
 
 type Props = DetailedHTMLProps<

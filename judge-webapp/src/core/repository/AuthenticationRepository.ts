@@ -1,6 +1,6 @@
-import { AuthenticateRootRequestDTO } from "@/core/repository/dto/request/AuthenticateRootRequestDTO";
-import { AuthenticateMemberRequestDTO } from "@/core/repository/dto/request/AuthenticateMemberRequestDTO";
 import { Authorization } from "@/core/domain/model/Authorization";
+import { AuthenticateMemberRequestDTO } from "@/core/repository/dto/request/AuthenticateMemberRequestDTO";
+import { AuthenticateRootRequestDTO } from "@/core/repository/dto/request/AuthenticateRootRequestDTO";
 
 export interface AuthenticationRepository {
   getAuthorization(): Promise<Authorization>;

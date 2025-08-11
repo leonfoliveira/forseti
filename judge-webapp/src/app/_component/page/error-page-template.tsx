@@ -1,8 +1,9 @@
-import { Button } from "@/app/_component/form/button";
-import { routes } from "@/config/routes";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 import { defineMessages } from "react-intl";
+
+import { Button } from "@/app/_component/form/button";
+import { routes } from "@/config/routes";
 
 const messages = defineMessages({
   home: {

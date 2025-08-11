@@ -1,8 +1,9 @@
-import { useEffect, useRef } from "react";
-import { cls } from "@/app/_util/cls";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useRef } from "react";
 import { FormattedMessage } from "react-intl";
+
+import { cls } from "@/app/_util/cls";
 import { ToastLevel, ToastType } from "@/store/slices/toasts-slice";
 
 type Props = {
