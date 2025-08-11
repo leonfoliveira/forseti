@@ -1,6 +1,9 @@
 import "@testing-library/jest-dom";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 
+// window
+global.window ??= Object.create(window);
+
 // react-intl
 jest.mock("react-intl", () => ({
   defineMessages: (messages: any) => messages,

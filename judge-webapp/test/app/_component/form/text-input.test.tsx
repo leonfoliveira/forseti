@@ -3,15 +3,11 @@ import { TextInput } from "@/app/_component/form/text-input";
 import { useForm } from "react-hook-form";
 
 describe("TextInput", () => {
+  const label = { id: "text-input", defaultMessage: "Test label" };
+
   const TestComponent = () => {
     const form = useForm();
-    return (
-      <TextInput
-        form={form}
-        name="test"
-        label={{ id: "text-input", defaultMessage: "Test label" }}
-      />
-    );
+    return <TextInput form={form} name="test" label={label} />;
   };
 
   it("renders a text input with the given label", () => {
@@ -27,13 +23,7 @@ describe("TextInput", () => {
     const TestComponentWithClassName = () => {
       const form = useForm();
       return (
-        <TextInput
-          form={form}
-          name="test"
-          s={((key: string) => key) as any}
-          label="Test label"
-          className="my-class"
-        />
+        <TextInput form={form} name="test" label={label} className="my-class" />
       );
     };
     render(<TestComponentWithClassName />);
@@ -48,8 +38,7 @@ describe("TextInput", () => {
         <TextInput
           form={form}
           name="test"
-          s={((key: string) => key) as any}
-          label="Test label"
+          label={label}
           containerClassName="my-container-class"
         />
       );
@@ -62,15 +51,7 @@ describe("TextInput", () => {
   it("renders a password input when the password prop is true", () => {
     const TestComponentWithPassword = () => {
       const form = useForm();
-      return (
-        <TextInput
-          form={form}
-          name="test"
-          s={((key: string) => key) as any}
-          label="Test label"
-          password
-        />
-      );
+      return <TextInput form={form} name="test" label={label} password />;
     };
     render(<TestComponentWithPassword />);
     const input = screen.getByTestId("text-input");

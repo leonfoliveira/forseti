@@ -4,10 +4,10 @@ import { useAppSelector } from "../store";
 
 export const authorizationSlice = createSlice({
   name: "authorization",
-  initialState: undefined as Authorization | undefined,
+  initialState: null as Authorization | null,
   reducers: {
-    set: (state, action: { payload: Authorization | undefined }) => {
-      state = action.payload;
+    set: (state, action: { payload: Authorization | null }) => {
+      return action.payload;
     },
   },
 });

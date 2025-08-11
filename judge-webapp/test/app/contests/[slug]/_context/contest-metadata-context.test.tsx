@@ -1,5 +1,5 @@
 import { ContestMetadataProvider } from "@/app/contests/[slug]/_context/contest-metadata-context";
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { contestService } from "@/config/composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { mockRedirect } from "@/test/jest.setup";
@@ -14,7 +14,7 @@ jest.mock("@/app/_component/page/error-page", () => ({
 }));
 
 describe("ContestMetadataProvider", () => {
-  it("should render loading state initially", () => {
+  it("should render loading state initially", async () => {
     render(
       <ContestMetadataProvider slug="test-slug">
         <span data-testid="child" />
@@ -24,6 +24,9 @@ describe("ContestMetadataProvider", () => {
     expect(screen.getByTestId("loading")).toBeInTheDocument();
     expect(screen.queryByTestId("error")).not.toBeInTheDocument();
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
+    });
   });
 
   it("should redirect to not found on NotFoundException", async () => {

@@ -10,7 +10,7 @@ import { Authorization } from "@/core/domain/model/Authorization";
 
 const AuthorizationContext = createContext({
   setAuthorization: (() => {}) as unknown as (
-    authorization: Authorization | undefined,
+    authorization: Authorization | null,
   ) => void,
   clearAuthorization: (() => {}) as unknown as (
     signInPath: string,
@@ -34,7 +34,7 @@ export function AuthorizationProvider({
         authorizationState.finish();
       } catch (error) {
         if (error instanceof UnauthorizedException) {
-          dispatch(authorizationSlice.actions.set(undefined));
+          dispatch(authorizationSlice.actions.set(null));
           authorizationState.finish();
         } else {
           authorizationState.fail(error);
@@ -45,7 +45,7 @@ export function AuthorizationProvider({
     load();
   }, []);
 
-  function setAuthorization(authorization: Authorization | undefined) {
+  function setAuthorization(authorization: Authorization | null) {
     dispatch(authorizationSlice.actions.set(authorization));
   }
 
@@ -53,7 +53,7 @@ export function AuthorizationProvider({
     authorizationState.start();
     try {
       await authenticationService.cleanAuthorization();
-      window.location.href = signInPath;
+      window.location.assign(signInPath);
     } catch (error) {
       authorizationState.fail(error);
     }
