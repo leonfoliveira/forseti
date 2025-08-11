@@ -1,7 +1,8 @@
-import { Attachment } from "@/core/domain/model/Attachment";
 import { fireEvent, render, screen } from "@testing-library/react";
+
 import { DownloadButton } from "@/app/_component/form/download-button";
 import { attachmentService } from "@/config/composition";
+import { Attachment } from "@/core/domain/model/Attachment";
 
 jest.mock("@/config/composition");
 

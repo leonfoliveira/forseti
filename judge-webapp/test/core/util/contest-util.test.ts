@@ -1,5 +1,5 @@
-import { ContestUtil } from "@/core/util/contest-util";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+import { ContestUtil } from "@/core/util/contest-util";
 
 describe("ContestUtil", () => {
   describe("getStatus", () => {

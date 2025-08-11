@@ -1,7 +1,8 @@
-import { useGuestContext } from "@/app/contests/[slug]/guest/_context/guest-context";
 import { render } from "@testing-library/react";
-import GuestTimelinePage from "@/app/contests/[slug]/guest/timeline/page";
+
 import { TimelinePage } from "@/app/contests/[slug]/_common/timeline-page";
+import { useGuestContext } from "@/app/contests/[slug]/guest/_context/guest-context";
+import GuestTimelinePage from "@/app/contests/[slug]/guest/timeline/page";
 
 jest.mock("@/app/contests/[slug]/guest/_context/guest-context");
 jest.mock("@/app/contests/[slug]/_common/timeline-page");

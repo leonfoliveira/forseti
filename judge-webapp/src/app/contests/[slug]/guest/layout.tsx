@@ -4,9 +4,9 @@ import React from "react";
 import { defineMessages } from "react-intl";
 
 import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { GuestContextProvider } from "@/app/contests/[slug]/guest/_context/guest-context";
 import { routes } from "@/config/routes";
+import { useContest } from "@/store/slices/contest-slice";
 
 const messages = defineMessages({
   tabLeaderboard: {
@@ -36,7 +36,7 @@ export default function GuestLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const contestMetadata = useContestMetadata();
+  const contestMetadata = useContest();
 
   return (
     <ContestDashboardLayout

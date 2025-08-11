@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
+
 import RootLayout from "@/app/root/(dashboard)/layout";
-import { mockRedirect, mockUseAuthorization } from "@/test/jest.setup";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { mockRedirect, mockUseAuthorization } from "@/test/jest.setup";
 
 jest.mock("@/app/_component/navbar", () => ({
   Navbar: ({ signInPath }: any) => (

@@ -1,7 +1,8 @@
-import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
 import { render } from "@testing-library/react";
-import JudgeAnnouncementsPage from "@/app/contests/[slug]/judge/announcements/page";
+
 import { AnnouncementsPage } from "@/app/contests/[slug]/_common/announcements-page";
+import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
+import JudgeAnnouncementsPage from "@/app/contests/[slug]/judge/announcements/page";
 
 jest.mock("@/app/contests/[slug]/judge/_context/judge-context");
 jest.mock("@/app/contests/[slug]/_common/announcements-page");

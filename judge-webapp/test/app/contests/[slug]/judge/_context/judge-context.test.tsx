@@ -1,3 +1,9 @@
+import { act, renderHook, screen, waitFor } from "@testing-library/react";
+
+import {
+  JudgeContextProvider,
+  useJudgeContext,
+} from "@/app/contests/[slug]/judge/_context/judge-context";
 import {
   announcementListener,
   clarificationListener,
@@ -7,14 +13,9 @@ import {
   submissionListener,
 } from "@/config/composition";
 import { mockAlert, mockUseAuthorization } from "@/test/jest.setup";
-import { act, renderHook, screen, waitFor } from "@testing-library/react";
-import {
-  JudgeContextProvider,
-  useJudgeContext,
-} from "@/app/contests/[slug]/judge/_context/judge-context";
 
-jest.mock("@/app/contests/[slug]/_context/contest-metadata-context", () => ({
-  useContestMetadata: jest.fn(() => ({
+jest.mock("@/store/slices/contest-slice", () => ({
+  useContest: jest.fn(() => ({
     id: "test-contest-id",
   })),
 }));

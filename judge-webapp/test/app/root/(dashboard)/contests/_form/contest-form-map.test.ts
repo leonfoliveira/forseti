@@ -1,6 +1,6 @@
+import { ContestFormMap } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { ContestFormMap } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
 
 describe("ContestFormMap", () => {
   it("should map to CreateContestInputDTO", () => {

@@ -1,5 +1,6 @@
-import { ProblemStatusBadge } from "@/app/_component/badge/problem-status-badge";
 import { render, screen } from "@testing-library/react";
+
+import { ProblemStatusBadge } from "@/app/_component/badge/problem-status-badge";
 
 jest.mock("@/app/_component/badge/badge", () => ({
   Badge: ({ children, className }: any) => (

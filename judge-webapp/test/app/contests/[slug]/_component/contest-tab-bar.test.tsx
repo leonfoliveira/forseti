@@ -1,5 +1,6 @@
-import { ContestTabBar } from "@/app/contests/[slug]/_component/contest-tab-bar";
 import { fireEvent, render, screen } from "@testing-library/react";
+
+import { ContestTabBar } from "@/app/contests/[slug]/_component/contest-tab-bar";
 import { mockRouter, mockUsePathname } from "@/test/jest.setup";
 
 describe("ContestTabBar", () => {

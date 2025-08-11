@@ -1,12 +1,13 @@
 import { render, screen } from "@testing-library/react";
+
+import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
 import ContestantLayout from "@/app/contests/[slug]/contestant/layout";
-import { mockRedirect, mockUseAuthorization } from "@/test/jest.setup";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
+import { mockRedirect, mockUseAuthorization } from "@/test/jest.setup";
 
-jest.mock("@/app/contests/[slug]/_context/contest-metadata-context", () => ({
-  useContestMetadata: jest.fn(() => ({
+jest.mock("@/store/slices/contest-slice", () => ({
+  useContest: jest.fn(() => ({
     slug: "test-contest",
   })),
 }));

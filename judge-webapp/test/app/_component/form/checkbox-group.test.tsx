@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { CheckboxGroup } from "@/app/_component/form/checkbox-group";
 import { useForm } from "react-hook-form";
+
+import { CheckboxGroup } from "@/app/_component/form/checkbox-group";
 
 jest.mock("@/app/_component/form/checkbox", () => ({
   Checkbox: () => (

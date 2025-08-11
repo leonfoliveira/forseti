@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { DateTimeInput } from "@/app/_component/form/date-time-input";
 import { useForm } from "react-hook-form";
+
+import { DateTimeInput } from "@/app/_component/form/date-time-input";
 
 describe("DateTimeInput", () => {
   const label = { id: "label", defaultMessage: "Test label" };

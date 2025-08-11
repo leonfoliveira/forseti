@@ -4,7 +4,6 @@ import { defineMessages } from "react-intl";
 import { ErrorPage } from "@/app/_component/page/error-page";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
 import { merge } from "@/app/contests/[slug]/_util/entity-merger";
 import {
@@ -22,6 +21,7 @@ import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/co
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { useAlert } from "@/store/slices/alerts-slice";
+import { useContest } from "@/store/slices/contest-slice";
 import { useToast } from "@/store/slices/toasts-slice";
 
 const messages = defineMessages({
@@ -58,7 +58,7 @@ export function JudgeContextProvider({
 }) {
   const state = useLoadableState<JudgeContextType>({ isLoading: true });
 
-  const contestMetadata = useContestMetadata();
+  const contestMetadata = useContest();
   const alert = useAlert();
   const toast = useToast();
 

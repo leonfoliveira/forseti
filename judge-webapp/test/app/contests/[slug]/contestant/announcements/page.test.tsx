@@ -1,7 +1,8 @@
-import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 import { render } from "@testing-library/react";
-import ContestantAnnouncementsPage from "@/app/contests/[slug]/contestant/announcements/page";
+
 import { AnnouncementsPage } from "@/app/contests/[slug]/_common/announcements-page";
+import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
+import ContestantAnnouncementsPage from "@/app/contests/[slug]/contestant/announcements/page";
 
 jest.mock("@/app/contests/[slug]/contestant/_context/contestant-context");
 jest.mock("@/app/contests/[slug]/_common/announcements-page");

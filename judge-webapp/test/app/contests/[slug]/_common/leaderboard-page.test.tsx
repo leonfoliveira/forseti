@@ -1,8 +1,9 @@
-import { mockUseSetAuthorization } from "@/test/jest.setup";
 import { render, screen } from "@testing-library/react";
+
 import { LeaderboardPage } from "@/app/contests/[slug]/_common/leaderboard-page";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { mockUseSetAuthorization } from "@/test/jest.setup";
 
 describe("LeaderboardPage", () => {
   it("should render the leaderboard with correct data", () => {

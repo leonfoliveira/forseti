@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+
 import ErrorPage from "@/app/error/page";
 
 jest.mock("@/app/_component/page/error-page-template", () => ({

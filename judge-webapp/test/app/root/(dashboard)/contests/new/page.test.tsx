@@ -1,8 +1,9 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+
 import RootNewContestPage from "@/app/root/(dashboard)/contests/new/page";
 import { contestService } from "@/config/composition";
-import { mockAlert, mockRouter } from "@/test/jest.setup";
 import { routes } from "@/config/routes";
+import { mockAlert, mockRouter } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
 

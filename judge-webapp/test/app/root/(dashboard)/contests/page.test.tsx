@@ -5,13 +5,14 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
+
+import { useContestStatusWatcherBatch } from "@/app/_util/contest-status-watcher";
 import RootContestsPage from "@/app/root/(dashboard)/contests/page";
 import { contestService } from "@/config/composition";
-import { mockAlert, mockRouter } from "@/test/jest.setup";
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { routes } from "@/config/routes";
-import { useContestStatusWatcherBatch } from "@/app/_util/contest-status-watcher";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { mockAlert, mockRouter } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
 jest.mock("@/app/_util/contest-status-watcher", () => ({

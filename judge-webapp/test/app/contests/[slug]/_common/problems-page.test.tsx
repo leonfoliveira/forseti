@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+
 import { ProblemsPage } from "@/app/contests/[slug]/_common/problems-page";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 
 describe("ProblemsPage", () => {
   it("should render the problems with correct data", () => {

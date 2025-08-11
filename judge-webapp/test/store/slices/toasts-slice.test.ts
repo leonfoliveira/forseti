@@ -1,9 +1,9 @@
+import type { Message } from "@/i18n/message";
 import {
   toastsSlice,
   ToastLevel,
   ToastType,
 } from "@/store/slices/toasts-slice";
-import type { Message } from "@/i18n/message";
 
 describe("toastsSlice", () => {
   const makeMessage = (defaultMessage: string): Message => ({

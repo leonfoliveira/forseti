@@ -1,6 +1,7 @@
 
-import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
 import { mock } from "jest-mock-extended";
+
+import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 describe("StompSubmissionListener", () => {

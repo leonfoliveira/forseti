@@ -1,9 +1,12 @@
-import { ContestMetadataProvider } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { act, render, screen, waitFor } from "@testing-library/react";
+
+import { ContestProvider } from "@/app/contests/[slug]/_context/contest-provider";
 import { contestService } from "@/config/composition";
-import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { mockRedirect } from "@/test/jest.setup";
 import { routes } from "@/config/routes";
+import { NotFoundException } from "@/core/domain/exception/NotFoundException";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { contestSlice } from "@/store/slices/contest-slice";
+import { mockAppDispatch, mockRouter } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
 jest.mock("@/app/_component/page/loading-page", () => ({
@@ -13,12 +16,12 @@ jest.mock("@/app/_component/page/error-page", () => ({
   ErrorPage: () => <span data-testid="error" />,
 }));
 
-describe("ContestMetadataProvider", () => {
+describe("ContestProvider", () => {
   it("should render loading state initially", async () => {
     render(
-      <ContestMetadataProvider slug="test-slug">
+      <ContestProvider slug="test-slug">
         <span data-testid="child" />
-      </ContestMetadataProvider>,
+      </ContestProvider>,
     );
 
     expect(screen.getByTestId("loading")).toBeInTheDocument();
@@ -36,13 +39,13 @@ describe("ContestMetadataProvider", () => {
 
     await act(async () => {
       render(
-        <ContestMetadataProvider slug="test-slug">
+        <ContestProvider slug="test-slug">
           <span data-testid="child" />
-        </ContestMetadataProvider>,
+        </ContestProvider>,
       );
     });
 
-    expect(mockRedirect).toHaveBeenCalledWith(routes.NOT_FOUND);
+    expect(mockRouter.push).toHaveBeenCalledWith(routes.NOT_FOUND);
   });
 
   it("should render error state on failure", async () => {
@@ -52,9 +55,9 @@ describe("ContestMetadataProvider", () => {
 
     await act(async () => {
       render(
-        <ContestMetadataProvider slug="test-slug">
+        <ContestProvider slug="test-slug">
           <span data-testid="child" />
-        </ContestMetadataProvider>,
+        </ContestProvider>,
       );
     });
 
@@ -64,19 +67,25 @@ describe("ContestMetadataProvider", () => {
   });
 
   it("should render contest metadata on success", async () => {
-    const mockMetadata = { id: "1", name: "Test Contest" };
+    const mockMetadata = {
+      id: "1",
+      name: "Test Contest",
+    } as unknown as ContestMetadataResponseDTO;
     (contestService.findContestMetadataBySlug as jest.Mock).mockResolvedValue(
       mockMetadata,
     );
 
     await act(async () => {
       render(
-        <ContestMetadataProvider slug="test-slug">
+        <ContestProvider slug="test-slug">
           <span data-testid="child" />
-        </ContestMetadataProvider>,
+        </ContestProvider>,
       );
     });
 
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      contestSlice.actions.set(mockMetadata),
+    );
     expect(screen.getByTestId("child")).toBeInTheDocument();
     expect(screen.queryByTestId("loading")).not.toBeInTheDocument();
     expect(screen.queryByTestId("error")).not.toBeInTheDocument();

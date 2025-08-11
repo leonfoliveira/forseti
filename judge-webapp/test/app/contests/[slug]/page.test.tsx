@@ -1,13 +1,14 @@
 import { render } from "@testing-library/react";
+
 import ContestPage from "@/app/contests/[slug]/page";
-import { mockRedirect } from "@/test/jest.setup";
 import { routes } from "@/config/routes";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { useAuthorization } from "@/store/slices/authorization-slice";
+import { useContest } from "@/store/slices/contest-slice";
+import { mockRedirect } from "@/test/jest.setup";
 
 jest.mock("@/app/_context/authorization-provider");
-jest.mock("@/app/contests/[slug]/_context/contest-metadata-context");
+jest.mock("@/store/slices/contest-slice");
 
 describe("ContestPage", () => {
   it.each([
@@ -16,7 +17,7 @@ describe("ContestPage", () => {
     [MemberType.ROOT, routes.CONTEST_GUEST],
   ])("should redirect to correct pages", (memberType, routeFactory) => {
     const contest = { slug: "test-slug" };
-    (useContestMetadata as jest.Mock).mockReturnValue(contest);
+    (useContest as jest.Mock).mockReturnValue(contest);
     const authorization = { member: { type: memberType } };
     (useAuthorization as jest.Mock).mockReturnValue(authorization);
 
@@ -27,7 +28,7 @@ describe("ContestPage", () => {
 
   it("should redirect to guest page for no authorization", () => {
     const contest = { slug: "test-slug" };
-    (useContestMetadata as jest.Mock).mockReturnValue(contest);
+    (useContest as jest.Mock).mockReturnValue(contest);
     (useAuthorization as jest.Mock).mockReturnValue(undefined);
 
     render(<ContestPage />);

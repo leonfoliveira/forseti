@@ -1,5 +1,6 @@
-import { SubmissionAnswerShortBadge } from "@/app/_component/badge/submission-answer-short-badge";
 import { render, screen } from "@testing-library/react";
+
+import { SubmissionAnswerShortBadge } from "@/app/_component/badge/submission-answer-short-badge";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
 jest.mock("@/app/_component/badge/badge", () => ({

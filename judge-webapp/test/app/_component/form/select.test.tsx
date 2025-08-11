@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { Select } from "@/app/_component/form/select";
 import { useForm } from "react-hook-form";
+
+import { Select } from "@/app/_component/form/select";
 
 describe("Select", () => {
   const options = [

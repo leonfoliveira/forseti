@@ -3,6 +3,7 @@ import { useDispatch, useSelector, useStore } from "react-redux";
 
 import { alertsSlice } from "./slices/alerts-slice";
 import { authorizationSlice } from "./slices/authorization-slice";
+import { contestSlice } from "./slices/contest-slice";
 import { toastsSlice } from "./slices/toasts-slice";
 
 export const makeStore = () => {
@@ -11,6 +12,7 @@ export const makeStore = () => {
       alerts: alertsSlice.reducer,
       toasts: toastsSlice.reducer,
       authorization: authorizationSlice.reducer,
+      contest: contestSlice.reducer,
     },
   });
 };

@@ -13,14 +13,13 @@ import { Form } from "@/app/_component/form/form";
 import { TextInput } from "@/app/_component/form/text-input";
 import { useSetAuthorization } from "@/app/_context/authorization-provider";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { MemberSignInFormType } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form";
 import { memberSignInFormSchema } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form-schema";
 import { authenticationService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useAlert } from "@/store/slices/alerts-slice";
-
+import { useContest } from "@/store/slices/contest-slice";
 
 const messages = defineMessages({
   wrongLoginPassword: {
@@ -54,7 +53,7 @@ const messages = defineMessages({
  */
 export default function MemberSignInPage() {
   const signInState = useLoadableState();
-  const contest = useContestMetadata();
+  const contest = useContest();
   const { setAuthorization } = useSetAuthorization();
   const alert = useAlert();
 

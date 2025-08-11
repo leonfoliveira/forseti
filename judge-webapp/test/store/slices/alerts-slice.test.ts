@@ -1,9 +1,9 @@
+import type { Message } from "@/i18n/message";
 import {
   alertsSlice,
   AlertLevel,
   AlertType,
 } from "@/store/slices/alerts-slice";
-import type { Message } from "@/i18n/message";
 
 describe("alertsSlice", () => {
   const makeMessage = (defaultMessage: string): Message => ({

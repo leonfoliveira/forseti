@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+
 import { DialogModal } from "@/app/_component/modal/dialog-modal";
 
 describe("DialogModal", () => {

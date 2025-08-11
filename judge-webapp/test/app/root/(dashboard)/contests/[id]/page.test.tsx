@@ -1,8 +1,9 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+
 import RootEditContestPage from "@/app/root/(dashboard)/contests/[id]/page";
+import { TestCaseUtils } from "@/app/root/(dashboard)/contests/_util/TestCaseUtils";
 import { contestService } from "@/config/composition";
 import { mockAlert } from "@/test/jest.setup";
-import { TestCaseUtils } from "@/app/root/(dashboard)/contests/_util/TestCaseUtils";
 
 jest.mock("@/config/composition");
 jest.mock("@/app/root/(dashboard)/contests/_component/contest-form", () => ({

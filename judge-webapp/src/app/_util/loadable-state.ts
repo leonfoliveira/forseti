@@ -66,7 +66,7 @@ export function useLoadableState<TData>(
     const handlers: Record<string, (error: Error) => void> = {
       [UnauthorizedException.name]: () => clearAuthorization(routes.ROOT),
       [ForbiddenException.name]: () => router.push(routes.FORBIDDEN),
-      [NotFoundException.name]: () => router.push(routes.ROOT),
+      [NotFoundException.name]: () => router.push(routes.NOT_FOUND),
       ...customHandlers,
     };
 

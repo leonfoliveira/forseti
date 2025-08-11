@@ -1,7 +1,8 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+
 import { AnnouncementsPage } from "@/app/contests/[slug]/_common/announcements-page";
-import { mockAlert } from "@/test/jest.setup";
 import { contestService } from "@/config/composition";
+import { mockAlert } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
 

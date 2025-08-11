@@ -1,9 +1,9 @@
 import { act, renderHook, screen, waitFor } from "@testing-library/react";
+
 import {
   ContestantContextProvider,
   useContestantContext,
 } from "@/app/contests/[slug]/contestant/_context/contestant-context";
-import { mockAlert, mockToast, mockUseAuthorization } from "@/test/jest.setup";
 import {
   announcementListener,
   clarificationListener,
@@ -14,9 +14,10 @@ import {
   submissionService,
 } from "@/config/composition";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { mockAlert, mockToast, mockUseAuthorization } from "@/test/jest.setup";
 
-jest.mock("@/app/contests/[slug]/_context/contest-metadata-context", () => ({
-  useContestMetadata: jest.fn(() => ({
+jest.mock("@/store/slices/contest-slice", () => ({
+  useContest: jest.fn(() => ({
     id: "test-contest-id",
   })),
 }));

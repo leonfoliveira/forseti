@@ -1,6 +1,7 @@
 
-import { StompLeaderboardListener } from "@/adapter/stomp/StompLeaderboardListener";
 import { mock } from "jest-mock-extended";
+
+import { StompLeaderboardListener } from "@/adapter/stomp/StompLeaderboardListener";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 describe("StompLeaderboardListener", () => {

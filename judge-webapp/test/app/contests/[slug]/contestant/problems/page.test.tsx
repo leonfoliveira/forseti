@@ -1,7 +1,8 @@
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { render } from "@testing-library/react";
-import ContestantProblemsPage from "@/app/contests/[slug]/contestant/problems/page";
+
 import { ProblemsPage } from "@/app/contests/[slug]/_common/problems-page";
+import ContestantProblemsPage from "@/app/contests/[slug]/contestant/problems/page";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
 jest.mock(
   "@/app/contests/[slug]/contestant/_context/contestant-context",

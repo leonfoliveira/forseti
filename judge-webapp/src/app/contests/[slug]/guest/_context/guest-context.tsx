@@ -4,7 +4,6 @@ import { defineMessages } from "react-intl";
 import { ErrorPage } from "@/app/_component/page/error-page";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
 import { merge } from "@/app/contests/[slug]/_util/entity-merger";
 import {
@@ -21,7 +20,7 @@ import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/co
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { useAlert } from "@/store/slices/alerts-slice";
-
+import { useContest } from "@/store/slices/contest-slice";
 
 const messages = defineMessages({
   loadError: {
@@ -53,7 +52,7 @@ export function GuestContextProvider({
 }) {
   const state = useLoadableState<GuestContextType>({ isLoading: true });
 
-  const contestMetadata = useContestMetadata();
+  const contestMetadata = useContest();
   const alert = useAlert();
 
   useEffect(() => {

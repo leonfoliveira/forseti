@@ -1,10 +1,11 @@
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { render, screen } from "@testing-library/react";
+
 import { WaitPage } from "@/app/contests/[slug]/_common/wait-page";
-import { Language } from "@/core/domain/enumerate/Language";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
-import { mockRouter } from "@/test/jest.setup";
 import { routes } from "@/config/routes";
+import { Language } from "@/core/domain/enumerate/Language";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { mockRouter } from "@/test/jest.setup";
 
 jest.mock("@/app/contests/[slug]/_util/wait-clock-hook", () => ({
   useWaitClock: jest.fn((_, cb) => cb()),

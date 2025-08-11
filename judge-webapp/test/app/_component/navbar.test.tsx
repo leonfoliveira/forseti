@@ -1,8 +1,9 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { redirect } from "next/navigation";
+
 import { Navbar } from "@/app/_component/navbar";
 import { useTheme } from "@/app/_util/theme-hook";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
-import { redirect } from "next/navigation";
 import {
   mockClearAuthorization,
   mockUseAuthorization,

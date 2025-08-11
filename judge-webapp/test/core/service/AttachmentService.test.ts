@@ -1,7 +1,8 @@
 import { mock } from "jest-mock-extended";
+
+import { Attachment } from "@/core/domain/model/Attachment";
 import { AttachmentRepository } from "@/core/repository/AttachmentRepository";
 import { AttachmentService } from "@/core/service/AttachmentService";
-import { Attachment } from "@/core/domain/model/Attachment";
 
 describe("AttachmentService", () => {
   const attachmentRepository = mock<AttachmentRepository>();

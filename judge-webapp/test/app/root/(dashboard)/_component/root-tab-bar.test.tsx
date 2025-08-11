@@ -1,7 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { RedirectType } from "next/navigation";
+
 import { RootTabBar } from "@/app/root/(dashboard)/_component/root-tab-bar";
 import { mockRedirect, mockUsePathname } from "@/test/jest.setup";
-import { RedirectType } from "next/navigation";
 
 describe("RootTabBar", () => {
   it("renders with all links", () => {

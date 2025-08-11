@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+
 import ForbiddenPage from "@/app/forbidden/page";
 
 jest.mock("@/app/_component/page/error-page-template", () => ({

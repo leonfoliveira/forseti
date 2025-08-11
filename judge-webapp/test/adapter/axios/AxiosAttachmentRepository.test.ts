@@ -1,8 +1,9 @@
-import { mock } from "jest-mock-extended";
-import { AxiosClient } from "@/adapter/axios/AxiosClient";
-import { AxiosAttachmentRepository } from "@/adapter/axios/AxiosAttachmentRepository";
-import { Attachment } from "@/core/domain/model/Attachment";
 import { AxiosResponse } from "axios";
+import { mock } from "jest-mock-extended";
+
+import { AxiosAttachmentRepository } from "@/adapter/axios/AxiosAttachmentRepository";
+import { AxiosClient } from "@/adapter/axios/AxiosClient";
+import { Attachment } from "@/core/domain/model/Attachment";
 
 describe("AxiosAttachmentRepository", () => {
   const axiosClient = mock<AxiosClient>();

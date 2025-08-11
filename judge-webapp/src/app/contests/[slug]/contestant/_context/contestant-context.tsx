@@ -4,7 +4,6 @@ import { defineMessages, FormattedMessage } from "react-intl";
 import { ErrorPage } from "@/app/_component/page/error-page";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
 import { merge } from "@/app/contests/[slug]/_util/entity-merger";
 import {
@@ -26,6 +25,7 @@ import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/subm
 import { globalMessages } from "@/i18n/global";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { useAuthorization } from "@/store/slices/authorization-slice";
+import { useContest } from "@/store/slices/contest-slice";
 import { useToast } from "@/store/slices/toasts-slice";
 
 const messages = defineMessages({
@@ -71,7 +71,7 @@ export function ContestantContextProvider({
   const state = useLoadableState<ContestantContextType>({ isLoading: true });
 
   const authorization = useAuthorization();
-  const contestMetadata = useContestMetadata();
+  const contestMetadata = useContest();
   const alert = useAlert();
   const toast = useToast();
 

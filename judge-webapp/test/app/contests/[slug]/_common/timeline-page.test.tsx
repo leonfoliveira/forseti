@@ -1,9 +1,10 @@
-import { TimelinePage } from "@/app/contests/[slug]/_common/timeline-page";
 import { render, screen } from "@testing-library/react";
-import { mockUseSetAuthorization } from "@/test/jest.setup";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+
+import { TimelinePage } from "@/app/contests/[slug]/_common/timeline-page";
 import { Language } from "@/core/domain/enumerate/Language";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { mockUseSetAuthorization } from "@/test/jest.setup";
 
 describe("TimelinePage", () => {
   it("should render the timeline with correct data", () => {

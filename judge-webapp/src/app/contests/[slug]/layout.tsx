@@ -2,7 +2,7 @@
 
 import React, { use } from "react";
 
-import { ContestMetadataProvider } from "@/app/contests/[slug]/_context/contest-metadata-context";
+import { ContestMetadataProvider } from "@/store/slices/contest-slice";
 
 export default function ContestLayout({
   params,

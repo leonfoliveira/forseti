@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { TextInput } from "@/app/_component/form/text-input";
 import { useForm } from "react-hook-form";
+
+import { TextInput } from "@/app/_component/form/text-input";
 
 describe("TextInput", () => {
   const label = { id: "text-input", defaultMessage: "Test label" };

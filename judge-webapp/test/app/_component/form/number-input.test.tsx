@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { NumberInput } from "@/app/_component/form/number-input";
 import { useForm } from "react-hook-form";
+
+import { NumberInput } from "@/app/_component/form/number-input";
 
 describe("NumberInput", () => {
   const label = { id: "label", defaultMessage: "Test label" };

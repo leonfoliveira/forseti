@@ -1,5 +1,6 @@
-import { Footer } from "@/app/_component/footer";
 import { render, screen } from "@testing-library/react";
+
+import { Footer } from "@/app/_component/footer";
 
 describe("Footer", () => {
   it("should render the footer", () => {

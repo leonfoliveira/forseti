@@ -1,5 +1,6 @@
-import Layout from "@/app/layout";
 import { render, screen } from "@testing-library/react";
+
+import Layout from "@/app/layout";
 
 jest.mock("react-intl", () => ({
   IntlProvider: ({ children }: any) => <>{children}</>,

@@ -1,9 +1,10 @@
 import { CompatClient } from "@stomp/stompjs";
 import { mock } from "jest-mock-extended";
-import { AuthorizationService } from "@/core/service/AuthorizationService";
+
 import { StompClient } from "@/adapter/stomp/StompClient";
 import { ServerException } from "@/core/domain/exception/ServerException";
 import { Authorization } from "@/core/domain/model/Authorization";
+import { AuthorizationService } from "@/core/service/AuthorizationService";
 
 describe("StompClient", () => {
   const client = mock<CompatClient>();

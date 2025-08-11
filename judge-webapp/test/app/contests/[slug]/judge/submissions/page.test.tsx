@@ -1,10 +1,11 @@
-import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
 import { act, fireEvent, render, screen } from "@testing-library/react";
+
+import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
 import JudgeSubmissionsPage from "@/app/contests/[slug]/judge/submissions/page";
-import { Language } from "@/core/domain/enumerate/Language";
-import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { submissionService } from "@/config/composition";
+import { Language } from "@/core/domain/enumerate/Language";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { mockAlert } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");

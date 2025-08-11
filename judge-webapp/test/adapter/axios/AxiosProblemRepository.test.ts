@@ -1,9 +1,10 @@
+import { AxiosResponse } from "axios";
 import { mock } from "jest-mock-extended";
+
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { AxiosProblemRepository } from "@/adapter/axios/AxiosProblemRepository";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
-import { AxiosResponse } from "axios";
 import { CreateSubmissionRequestDTO } from "@/core/repository/dto/request/CreateSubmissionRequestDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 
 describe("AxiosProblemRepository", () => {
   const axiosClient = mock<AxiosClient>();

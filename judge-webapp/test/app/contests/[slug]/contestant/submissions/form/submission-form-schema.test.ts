@@ -1,5 +1,5 @@
-import { Language } from "@/core/domain/enumerate/Language";
 import { submissionFormSchema } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-schema";
+import { Language } from "@/core/domain/enumerate/Language";
 
 describe("submissionFormSchema", () => {
   const validData = {

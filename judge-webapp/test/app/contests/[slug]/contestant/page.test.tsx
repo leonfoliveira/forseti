@@ -1,10 +1,11 @@
 import { render } from "@testing-library/react";
-import ContestantPage from "@/app/contests/[slug]/contestant/page";
-import { mockRedirect } from "@/test/jest.setup";
-import { routes } from "@/config/routes";
 
-jest.mock("@/app/contests/[slug]/_context/contest-metadata-context", () => ({
-  useContestMetadata: jest.fn(() => ({
+import ContestantPage from "@/app/contests/[slug]/contestant/page";
+import { routes } from "@/config/routes";
+import { mockRedirect } from "@/test/jest.setup";
+
+jest.mock("@/store/slices/contest-slice", () => ({
+  useContest: jest.fn(() => ({
     slug: "test-contest",
   })),
 }));

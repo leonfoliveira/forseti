@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+
 import NotFoundPage from "@/app/not-found";
 
 jest.mock("@/app/_component/page/error-page-template", () => ({

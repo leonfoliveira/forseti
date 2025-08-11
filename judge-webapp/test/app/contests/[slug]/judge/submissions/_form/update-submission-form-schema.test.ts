@@ -1,5 +1,5 @@
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { updateSubmissionFormSchema } from "@/app/contests/[slug]/judge/submissions/_form/update-submission-form-schema";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
 describe("updateSubmissionFormSchema", () => {
   const validData = {

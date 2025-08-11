@@ -1,6 +1,7 @@
 import { renderHook } from "@testing-library/react";
-import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { act } from "react";
+
+import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 
 describe("useWaitClock", () => {
   beforeEach(() => {

@@ -1,7 +1,8 @@
-import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
 import { render } from "@testing-library/react";
-import JudgeLeaderboardPage from "@/app/contests/[slug]/judge/leaderboard/page";
+
 import { LeaderboardPage } from "@/app/contests/[slug]/_common/leaderboard-page";
+import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
+import JudgeLeaderboardPage from "@/app/contests/[slug]/judge/leaderboard/page";
 
 jest.mock("@/app/contests/[slug]/judge/_context/judge-context");
 jest.mock("@/app/contests/[slug]/_common/leaderboard-page");

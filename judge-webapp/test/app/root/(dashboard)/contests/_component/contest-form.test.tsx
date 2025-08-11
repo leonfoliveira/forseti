@@ -1,4 +1,3 @@
-import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import {
   act,
   fireEvent,
@@ -7,13 +6,15 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
 import { useForm } from "react-hook-form";
-import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
+
 import { useContestStatusWatcher } from "@/app/_util/contest-status-watcher";
-import { mockAlert } from "@/test/jest.setup";
+import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
+import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { contestService } from "@/config/composition";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { mockAlert } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
 jest.mock("@/app/_util/contest-status-watcher", () => ({

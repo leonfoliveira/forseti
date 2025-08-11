@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { FileInput } from "@/app/_component/form/file-input";
 import { useForm } from "react-hook-form";
+
+import { FileInput } from "@/app/_component/form/file-input";
 
 describe("FileInput", () => {
   const label = { id: "label", defaultMessage: "Test label" };

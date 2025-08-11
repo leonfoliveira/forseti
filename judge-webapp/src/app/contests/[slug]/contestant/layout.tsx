@@ -5,11 +5,11 @@ import React from "react";
 import { defineMessages } from "react-intl";
 
 import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
 import { ContestantContextProvider } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { useAuthorization } from "@/store/slices/authorization-slice";
+import { useContest } from "@/store/slices/contest-slice";
 
 const messages = defineMessages({
   tabLeaderboard: {
@@ -44,7 +44,7 @@ export default function ContestantLayout({
   children: React.ReactNode;
 }) {
   const authorization = useAuthorization();
-  const contestMetadata = useContestMetadata();
+  const contestMetadata = useContest();
 
   if (!authorization?.member.type) {
     return redirect(routes.CONTEST_SIGN_IN(contestMetadata.slug));
