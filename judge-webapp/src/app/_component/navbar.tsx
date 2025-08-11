@@ -2,14 +2,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import { useTheme } from "@/app/_util/theme-hook";
-import {
-  useAuthorization,
-  useAuthorizationContext,
-} from "@/app/_context/authorization-context";
+import { useSetAuthorization } from "@/app/_context/authorization-provider";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { defineMessages, FormattedMessage } from "react-intl";
 import { globalMessages } from "@/i18n/global";
+import { useAuthorization } from "@/store/slices/authorization-slice";
 
 const messages = defineMessages({
   rootTitle: {
@@ -38,7 +36,7 @@ type Props = {
 export function Navbar({ contestMetadata, signInPath }: Props) {
   const { theme, toggleTheme } = useTheme();
   const authorization = useAuthorization();
-  const { clearAuthorization } = useAuthorizationContext();
+  const { clearAuthorization } = useSetAuthorization();
 
   const clockRef = useWaitClock(
     contestMetadata && new Date(contestMetadata.endAt),

@@ -16,7 +16,7 @@ jest.mock("@/app/_component/footer", () => ({
 jest.mock("@/app/_component/notification/alert-box");
 jest.mock("@/app/_component/notification/toast-box");
 
-jest.mock("@/app/_context/authorization-context", () => ({
+jest.mock("@/app/_context/authorization-provider", () => ({
   AuthorizationProvider: ({ children }: any) => <>{children}</>,
 }));
 

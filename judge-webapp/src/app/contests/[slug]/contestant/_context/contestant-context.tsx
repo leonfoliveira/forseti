@@ -21,7 +21,7 @@ import { merge } from "@/app/contests/[slug]/_util/entity-merger";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { useAuthorization } from "@/app/_context/authorization-context";
+import { useAuthorization } from "@/store/slices/authorization-slice";
 import { defineMessages, FormattedMessage } from "react-intl";
 import { globalMessages } from "@/i18n/global";
 import { useAlert } from "@/store/slices/alerts-slice";

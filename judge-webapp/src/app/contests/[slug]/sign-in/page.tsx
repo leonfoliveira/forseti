@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { routes } from "@/config/routes";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
-import { useAuthorizationContext } from "@/app/_context/authorization-context";
+import { useSetAuthorization } from "@/app/_context/authorization-provider";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { defineMessages, FormattedMessage } from "react-intl";
 
@@ -53,7 +53,7 @@ const messages = defineMessages({
 export default function MemberSignInPage() {
   const signInState = useLoadableState();
   const contest = useContestMetadata();
-  const { setAuthorization } = useAuthorizationContext();
+  const { setAuthorization } = useSetAuthorization();
   const alert = useAlert();
 
   const router = useRouter();

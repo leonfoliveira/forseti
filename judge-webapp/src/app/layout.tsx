@@ -5,7 +5,7 @@ import "./globals.css";
 import { env } from "@/config/env";
 import { useTheme } from "@/app/_util/theme-hook";
 import { Roboto } from "next/font/google";
-import { AuthorizationProvider } from "@/app/_context/authorization-context";
+import { AuthorizationProvider } from "@/app/_context/authorization-provider";
 import { IntlProvider } from "react-intl";
 import enUS from "@/i18n/messages/en-US.json";
 import ptBR from "@/i18n/messages/pt-BR.json";

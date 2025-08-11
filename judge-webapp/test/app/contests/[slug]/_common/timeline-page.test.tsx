@@ -1,13 +1,13 @@
 import { TimelinePage } from "@/app/contests/[slug]/_common/timeline-page";
 import { render, screen } from "@testing-library/react";
-import { mockUseAuthorizationContext } from "@/test/jest.setup";
+import { mockUseSetAuthorization } from "@/test/jest.setup";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { Language } from "@/core/domain/enumerate/Language";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
 describe("TimelinePage", () => {
   it("should render the timeline with correct data", () => {
-    mockUseAuthorizationContext.mockResolvedValueOnce({
+    mockUseSetAuthorization.mockResolvedValueOnce({
       authorization: { member: { id: "1" } },
     });
     const submissions = [
@@ -60,7 +60,7 @@ describe("TimelinePage", () => {
   });
 
   it("should handle empty submissions", () => {
-    mockUseAuthorizationContext.mockResolvedValueOnce({
+    mockUseSetAuthorization.mockResolvedValueOnce({
       authorization: { member: { id: "1" } },
     });
 

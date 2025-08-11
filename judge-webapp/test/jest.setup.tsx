@@ -71,14 +71,16 @@ export const mockUseAuthorization = jest.fn().mockReturnValue({
     type: MemberType.CONTESTANT,
   },
 });
+jest.mock("@/store/slices/authorization-slice", () => ({
+  ...jest.requireActual("@/store/slices/authorization-slice"),
+  useAuthorization: mockUseAuthorization,
+}));
 export const mockSetAuthorization = jest.fn();
 export const mockClearAuthorization = jest.fn();
-export const mockUseAuthorizationContext = jest.fn().mockReturnValue({
-  authorization: undefined,
+export const mockUseSetAuthorization = jest.fn().mockReturnValue({
   setAuthorization: mockSetAuthorization,
   clearAuthorization: mockClearAuthorization,
 });
-jest.mock("@/app/_context/authorization-context", () => ({
-  useAuthorization: mockUseAuthorization,
-  useAuthorizationContext: mockUseAuthorizationContext,
+jest.mock("@/app/_context/authorization-provider", () => ({
+  useSetAuthorization: mockUseSetAuthorization,
 }));

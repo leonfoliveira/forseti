@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { useRouter } from "next/navigation";
-import { useAuthorizationContext } from "../_context/authorization-context";
+import { useSetAuthorization } from "../_context/authorization-provider";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
@@ -33,7 +33,7 @@ export function useLoadableState<TData>(
     error: undefined,
   };
   const router = useRouter();
-  const { clearAuthorization } = useAuthorizationContext();
+  const { clearAuthorization } = useSetAuthorization();
 
   const [state, setState] = useState<LoadableState<TData>>({
     ...defaultState,

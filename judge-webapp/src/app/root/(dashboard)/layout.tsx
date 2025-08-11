@@ -2,7 +2,7 @@
 
 import React from "react";
 import { redirect } from "next/navigation";
-import { useAuthorization } from "@/app/_context/authorization-context";
+import { useAuthorization } from "@/store/slices/authorization-slice";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { Navbar } from "@/app/_component/navbar";

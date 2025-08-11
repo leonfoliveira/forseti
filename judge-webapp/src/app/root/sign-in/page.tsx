@@ -10,7 +10,7 @@ import { Form } from "@/app/_component/form/form";
 import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form-schema";
 import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useAuthorizationContext } from "@/app/_context/authorization-context";
+import { useSetAuthorization } from "@/app/_context/authorization-provider";
 import { useRouter } from "next/navigation";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useAlert } from "@/store/slices/alerts-slice";
@@ -50,7 +50,7 @@ const messages = defineMessages({
  */
 export default function RootSignInPage() {
   const signInState = useLoadableState();
-  const { setAuthorization } = useAuthorizationContext();
+  const { setAuthorization } = useSetAuthorization();
 
   const router = useRouter();
   const alert = useAlert();

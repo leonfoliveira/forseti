@@ -7,7 +7,7 @@ import { TableRow } from "@/app/_component/table/table-row";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { cls } from "@/app/_util/cls";
-import { useAuthorization } from "@/app/_context/authorization-context";
+import { useAuthorization } from "@/store/slices/authorization-slice";
 import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
 import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
 import { defineMessages, FormattedMessage } from "react-intl";

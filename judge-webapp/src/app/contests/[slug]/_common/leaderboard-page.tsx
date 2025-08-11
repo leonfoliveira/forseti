@@ -6,7 +6,7 @@ import { TableRow } from "@/app/_component/table/table-row";
 import { TableSection } from "@/app/_component/table/table-section";
 import { TableCell } from "@/app/_component/table/table-cell";
 import { cls } from "@/app/_util/cls";
-import { useAuthorization } from "@/app/_context/authorization-context";
+import { useAuthorization } from "@/store/slices/authorization-slice";
 import { ProblemStatusBadge } from "@/app/_component/badge/problem-status-badge";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";

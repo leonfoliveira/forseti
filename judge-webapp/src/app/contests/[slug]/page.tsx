@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { routes } from "@/config/routes";
 import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
-import { useAuthorization } from "@/app/_context/authorization-context";
+import { useAuthorization } from "@/store/slices/authorization-slice";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 
 /**

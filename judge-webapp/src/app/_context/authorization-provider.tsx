@@ -1,16 +1,19 @@
 import React, { createContext, useContext, useEffect } from "react";
-import { Authorization } from "@/core/domain/model/Authorization";
-import { LoadableState, useLoadableState } from "@/app/_util/loadable-state";
+import { useLoadableState } from "@/app/_util/loadable-state";
 import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { ErrorPage } from "@/app/_component/page/error-page";
+import { useAppDispatch } from "@/store/store";
+import { authorizationSlice } from "@/store/slices/authorization-slice";
+import { Authorization } from "@/core/domain/model/Authorization";
 
 const AuthorizationContext = createContext({
-  authorizationState: {} as LoadableState<Authorization | undefined>,
-  setAuthorization: (() => {}) as (authorization: Authorization) => void,
+  setAuthorization: (() => {}) as unknown as (
+    authorization: Authorization | undefined,
+  ) => void,
   clearAuthorization: (() => {}) as unknown as (
-    signInPath: string
+    signInPath: string,
   ) => Promise<void>,
 });
 
@@ -19,19 +22,20 @@ export function AuthorizationProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const authorizationState = useLoadableState<Authorization | undefined>({
-    isLoading: true,
-  });
+  const authorizationState = useLoadableState();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     async function load() {
       authorizationState.start();
       try {
         const authorization = await authenticationService.getAuthorization();
-        authorizationState.finish(authorization);
+        dispatch(authorizationSlice.actions.set(authorization));
+        authorizationState.finish();
       } catch (error) {
         if (error instanceof UnauthorizedException) {
-          authorizationState.finish(undefined);
+          dispatch(authorizationSlice.actions.set(undefined));
+          authorizationState.finish();
         } else {
           authorizationState.fail(error);
         }
@@ -41,8 +45,8 @@ export function AuthorizationProvider({
     load();
   }, []);
 
-  function setAuthorization(authorization: Authorization) {
-    authorizationState.finish(authorization);
+  function setAuthorization(authorization: Authorization | undefined) {
+    dispatch(authorizationSlice.actions.set(authorization));
   }
 
   async function clearAuthorization(signInPath: string) {
@@ -66,18 +70,17 @@ export function AuthorizationProvider({
   }
 
   return (
-    <AuthorizationContext.Provider
+    <AuthorizationContext
       value={{
-        authorizationState,
         setAuthorization,
         clearAuthorization,
       }}
     >
       {children}
-    </AuthorizationContext.Provider>
+    </AuthorizationContext>
   );
 }
 
-export const useAuthorization = () =>
-  useContext(AuthorizationContext).authorizationState.data;
-export const useAuthorizationContext = () => useContext(AuthorizationContext);
+export function useSetAuthorization() {
+  return useContext(AuthorizationContext);
+}
