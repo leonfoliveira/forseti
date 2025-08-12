@@ -4,13 +4,11 @@ import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest
 import GuestLayout from "@/app/contests/[slug]/guest/layout";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { mockUseAuthorization } from "@/test/jest.setup";
+import {
+  mockUseAuthorization,
+  mockUseContestMetadata,
+} from "@/test/jest.setup";
 
-jest.mock("@/store/slices/contest-slice", () => ({
-  useContest: jest.fn(() => ({
-    slug: "test-contest",
-  })),
-}));
 jest.mock("@/app/contests/[slug]/_component/contest-dashboard-layout", () => ({
   ContestDashboardLayout: jest.fn(({ children }: any) => <div>{children}</div>),
 }));
@@ -22,6 +20,9 @@ describe("GuestLayout", () => {
   it("should render ContestDashboardLayout with contestant context", () => {
     mockUseAuthorization.mockReturnValueOnce({
       member: { type: MemberType.CONTESTANT },
+    });
+    mockUseContestMetadata.mockReturnValue({
+      slug: "test-contest",
     });
 
     render(

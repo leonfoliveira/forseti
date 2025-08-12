@@ -3,10 +3,22 @@
 import React from "react";
 
 import { ClarificationsPage } from "@/app/contests/[slug]/_common/clarifications-page";
-import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
+import { useJudgeDashboard } from "@/store/slices/judge-dashboard-slice";
 
 export default function JudgeClarificationsPage() {
-  const { contest } = useJudgeContext();
+  const { id } = useContestMetadata();
+  const problems = useJudgeDashboard((state) => state.contest.problems);
+  const clarifications = useJudgeDashboard(
+    (state) => state.contest.clarifications,
+  );
 
-  return <ClarificationsPage contest={contest} canAnswer />;
+  return (
+    <ClarificationsPage
+      contestId={id}
+      problems={problems}
+      clarifications={clarifications}
+      canAnswer
+    />
+  );
 }

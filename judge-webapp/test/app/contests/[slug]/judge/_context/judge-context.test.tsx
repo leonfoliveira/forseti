@@ -1,9 +1,12 @@
-import { act, renderHook, screen, waitFor } from "@testing-library/react";
-
 import {
-  JudgeContextProvider,
-  useJudgeContext,
-} from "@/app/contests/[slug]/judge/_context/judge-context";
+  act,
+  render,
+  renderHook,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+
+import { JudgeContextProvider } from "@/app/contests/[slug]/judge/_context/judge-context";
 import {
   announcementListener,
   clarificationListener,
@@ -12,13 +15,21 @@ import {
   listenerClientFactory,
   submissionListener,
 } from "@/config/composition";
-import { mockAlert, mockUseAuthorization } from "@/test/jest.setup";
+import {
+  mockAlert,
+  mockAppDispatch,
+  mockUseAuthorization,
+  mockUseContestMetadata,
+} from "@/test/jest.setup";
+import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { judgeDashboardSlice } from "@/store/slices/judge-dashboard-slice";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 
-jest.mock("@/store/slices/contest-slice", () => ({
-  useContest: jest.fn(() => ({
-    id: "test-contest-id",
-  })),
-}));
 jest.mock("@/app/_component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading" />,
 }));
@@ -37,6 +48,9 @@ describe("JudgeContextProvider", () => {
     mockUseAuthorization.mockReturnValue({
       member: { id: "member-id" },
     });
+    mockUseContestMetadata.mockReturnValue({
+      id: "test-contest-id",
+    });
   });
 
   it("should alert error and render error page on load failure", async () => {
@@ -44,14 +58,11 @@ describe("JudgeContextProvider", () => {
       new Error("error"),
     );
 
-    renderHook(() => useJudgeContext(), {
-      wrapper: ({ children }) => (
-        <JudgeContextProvider>
-          <span data-testid="child" />
-          {children}
-        </JudgeContextProvider>
-      ),
-    });
+    render(
+      <JudgeContextProvider>
+        <span data-testid="child" />
+      </JudgeContextProvider>,
+    );
 
     expect(screen.getByTestId("loading")).toBeInTheDocument();
     await waitFor(() => {
@@ -65,9 +76,16 @@ describe("JudgeContextProvider", () => {
   });
 
   it("should load contest data and render children", async () => {
-    const mockContest = { id: "test-contest-id", name: "Test Contest" };
-    const mockLeaderboard = { id: "test-leaderboard-id" };
-    const mockSubmissions = [{ id: "submission-1" }];
+    const mockContest = {
+      id: "test-contest-id",
+      name: "Test Contest",
+    } as unknown as ContestPublicResponseDTO;
+    const mockLeaderboard = {
+      id: "test-leaderboard-id",
+    } as unknown as ContestLeaderboardResponseDTO;
+    const mockSubmissions = [
+      { id: "submission-1" },
+    ] as unknown as SubmissionFullResponseDTO[];
 
     (contestService.findContestById as jest.Mock).mockResolvedValue(
       mockContest,
@@ -79,29 +97,30 @@ describe("JudgeContextProvider", () => {
       contestService.findAllContestFullSubmissions as jest.Mock
     ).mockResolvedValue(mockSubmissions);
 
-    const { result } = renderHook(() => useJudgeContext(), {
-      wrapper: ({ children }) => (
-        <JudgeContextProvider>
-          <span data-testid="child" />
-          {children}
-        </JudgeContextProvider>
-      ),
-    });
+    render(
+      <JudgeContextProvider>
+        <span data-testid="child" />
+      </JudgeContextProvider>,
+    );
 
     await waitFor(() => {
-      expect(result.current.contest).toEqual(mockContest);
-      expect(result.current.leaderboard).toEqual(mockLeaderboard);
-      expect(result.current.submissions).toEqual(mockSubmissions);
+      expect(mockAppDispatch).toHaveBeenCalledWith(
+        judgeDashboardSlice.actions.set({
+          contest: mockContest,
+          leaderboard: mockLeaderboard,
+          submissions: mockSubmissions,
+        }),
+      );
       expect(screen.getByTestId("child")).toBeInTheDocument();
     });
   });
 
   it("should connect and disconnect to listener", async () => {
-    const { unmount } = renderHook(() => useJudgeContext(), {
-      wrapper: ({ children }) => (
-        <JudgeContextProvider>{children}</JudgeContextProvider>
-      ),
-    });
+    const { unmount } = render(
+      <JudgeContextProvider>
+        <span data-testid="child" />
+      </JudgeContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -112,11 +131,11 @@ describe("JudgeContextProvider", () => {
   });
 
   it("should handle leaderboard updates", async () => {
-    const { result } = renderHook(() => useJudgeContext(), {
-      wrapper: ({ children }) => (
-        <JudgeContextProvider>{children}</JudgeContextProvider>
-      ),
-    });
+    render(
+      <JudgeContextProvider>
+        <span data-testid="child" />
+      </JudgeContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -132,11 +151,15 @@ describe("JudgeContextProvider", () => {
     const receiveLeaderboard = (
       leaderboardListener.subscribeForLeaderboard as jest.Mock
     ).mock.calls[0][2];
-    const newLeaderboard = { id: "new-leaderboard-id" };
+    const newLeaderboard = {
+      id: "new-leaderboard-id",
+    } as unknown as ContestLeaderboardResponseDTO;
     act(() => {
       receiveLeaderboard(newLeaderboard);
     });
-    expect(result.current.leaderboard).toEqual(newLeaderboard);
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      judgeDashboardSlice.actions.setLeaderboard(newLeaderboard),
+    );
   });
 
   it("should handle submission updates", async () => {
@@ -144,11 +167,11 @@ describe("JudgeContextProvider", () => {
       contestService.findAllContestFullSubmissions as jest.Mock
     ).mockResolvedValue([]);
 
-    const { result } = renderHook(() => useJudgeContext(), {
-      wrapper: ({ children }) => (
-        <JudgeContextProvider>{children}</JudgeContextProvider>
-      ),
-    });
+    render(
+      <JudgeContextProvider>
+        <span data-testid="child" />
+      </JudgeContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -164,11 +187,15 @@ describe("JudgeContextProvider", () => {
     const receiveSubmission = (
       submissionListener.subscribeForContestFull as jest.Mock
     ).mock.calls[0][2];
-    const newSubmission = { id: "new-submission-id" };
+    const newSubmission = {
+      id: "new-submission-id",
+    } as unknown as SubmissionFullResponseDTO;
     act(() => {
       receiveSubmission(newSubmission);
     });
-    expect(result.current.submissions).toContainEqual(newSubmission);
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      judgeDashboardSlice.actions.mergeSubmission(newSubmission),
+    );
   });
 
   it("should handle announcement updates", async () => {
@@ -176,11 +203,11 @@ describe("JudgeContextProvider", () => {
       announcements: [],
     });
 
-    const { result } = renderHook(() => useJudgeContext(), {
-      wrapper: ({ children }) => (
-        <JudgeContextProvider>{children}</JudgeContextProvider>
-      ),
-    });
+    render(
+      <JudgeContextProvider>
+        <span data-testid="child" />
+      </JudgeContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -196,12 +223,15 @@ describe("JudgeContextProvider", () => {
     const receiveAnnouncement = (
       announcementListener.subscribeForContest as jest.Mock
     ).mock.calls[0][2];
-    const newAnnouncement = { id: "new-announcement-id", text: "Announcement" };
+    const newAnnouncement = {
+      id: "new-announcement-id",
+      text: "Announcement",
+    } as unknown as AnnouncementResponseDTO;
     act(() => {
       receiveAnnouncement(newAnnouncement);
     });
-    expect(result.current.contest.announcements).toContainEqual(
-      newAnnouncement,
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      judgeDashboardSlice.actions.mergeAnnouncement(newAnnouncement),
     );
     expect(mockAlert.warning).toHaveBeenCalledWith({
       defaultMessage: "New announcement: {text}",
@@ -215,11 +245,11 @@ describe("JudgeContextProvider", () => {
       clarifications: [],
     });
 
-    const { result } = renderHook(() => useJudgeContext(), {
-      wrapper: ({ children }) => (
-        <JudgeContextProvider>{children}</JudgeContextProvider>
-      ),
-    });
+    render(
+      <JudgeContextProvider>
+        <span data-testid="child" />
+      </JudgeContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -238,12 +268,12 @@ describe("JudgeContextProvider", () => {
     const newClarification = {
       id: "new-clarification-id",
       text: "Clarification",
-    };
+    } as unknown as ClarificationResponseDTO;
     act(() => {
       receiveClarification(newClarification);
     });
-    expect(result.current.contest.clarifications).toContainEqual(
-      newClarification,
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      judgeDashboardSlice.actions.mergeClarification(newClarification),
     );
   });
 
@@ -252,11 +282,11 @@ describe("JudgeContextProvider", () => {
       clarifications: [{ id: "clarification-id" }],
     });
 
-    const { result } = renderHook(() => useJudgeContext(), {
-      wrapper: ({ children }) => (
-        <JudgeContextProvider>{children}</JudgeContextProvider>
-      ),
-    });
+    render(
+      <JudgeContextProvider>
+        <span data-testid="child" />
+      </JudgeContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -275,8 +305,8 @@ describe("JudgeContextProvider", () => {
     act(() => {
       deleteClarification({ id: "clarification-id" });
     });
-    expect(result.current.contest.clarifications).not.toContainEqual(
-      expect.objectContaining({ id: "clarification-id" }),
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      judgeDashboardSlice.actions.deleteClarification("clarification-id"),
     );
   });
 });

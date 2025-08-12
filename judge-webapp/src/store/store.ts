@@ -3,7 +3,10 @@ import { useDispatch, useSelector, useStore } from "react-redux";
 
 import { alertsSlice } from "./slices/alerts-slice";
 import { authorizationSlice } from "./slices/authorization-slice";
-import { contestSlice } from "./slices/contest-slice";
+import { contestMetadataSlice } from "./slices/contest-metadata-slice";
+import { contestantDashboardSlice } from "./slices/contestant-dashboard-slice";
+import { guestDashboardSlice } from "./slices/guest-dashboard-slice";
+import { judgeDashboardSlice } from "./slices/judge-dashboard-slice";
 import { toastsSlice } from "./slices/toasts-slice";
 
 export const makeStore = () => {
@@ -12,7 +15,10 @@ export const makeStore = () => {
       alerts: alertsSlice.reducer,
       toasts: toastsSlice.reducer,
       authorization: authorizationSlice.reducer,
-      contest: contestSlice.reducer,
+      contestMetadata: contestMetadataSlice.reducer,
+      contestantDashboard: contestantDashboardSlice.reducer,
+      guestDashboard: guestDashboardSlice.reducer,
+      judgeDashboard: judgeDashboardSlice.reducer,
     },
   });
 };

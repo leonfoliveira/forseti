@@ -3,10 +3,10 @@
 import React from "react";
 
 import { TimelinePage } from "@/app/contests/[slug]/_common/timeline-page";
-import { useGuestContext } from "@/app/contests/[slug]/guest/_context/guest-context";
+import { useGuestDashboard } from "@/store/slices/guest-dashboard-slice";
 
 export default function GuestTimelinePage() {
-  const { submissions } = useGuestContext();
+  const submissions = useGuestDashboard((state) => state.submissions);
 
   return <TimelinePage submissions={submissions} />;
 }

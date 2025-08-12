@@ -1,11 +1,9 @@
-import React, { createContext, useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
 import { ErrorPage } from "@/app/_component/page/error-page";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
-import { merge } from "@/app/contests/[slug]/_util/entity-merger";
 import {
   announcementListener,
   clarificationListener,
@@ -19,14 +17,15 @@ import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { useAuthorization } from "@/store/slices/authorization-slice";
-import { useContest } from "@/store/slices/contest-slice";
+import { useContest } from "@/store/slices/contest-metadata-slice";
+import { contestantDashboardSlice } from "@/store/slices/contestant-dashboard-slice";
 import { useToast } from "@/store/slices/toasts-slice";
+import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
   loadError: {
@@ -47,31 +46,15 @@ const messages = defineMessages({
   },
 });
 
-type ContestantContextType = {
-  contest: ContestPublicResponseDTO;
-  leaderboard: ContestLeaderboardResponseDTO;
-  submissions: SubmissionPublicResponseDTO[];
-  memberSubmissions: SubmissionFullResponseDTO[];
-  addMemberSubmission: (submission: SubmissionFullResponseDTO) => void;
-};
-
-const ContestantContext = createContext<ContestantContextType>({
-  contest: {} as ContestPublicResponseDTO,
-  leaderboard: {} as ContestLeaderboardResponseDTO,
-  submissions: [],
-  memberSubmissions: [],
-  addMemberSubmission: () => {},
-});
-
 export function ContestantContextProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const state = useLoadableState<ContestantContextType>({ isLoading: true });
-
   const authorization = useAuthorization();
   const contestMetadata = useContest();
+  const state = useLoadableState();
+  const dispatch = useAppDispatch();
   const alert = useAlert();
   const toast = useToast();
 
@@ -127,13 +110,15 @@ export function ContestantContextProvider({
           ),
         ]);
 
-        state.finish({
-          contest: data[0],
-          leaderboard: data[1],
-          submissions: data[2],
-          memberSubmissions: data[3],
-          addMemberSubmission,
-        });
+        dispatch(
+          contestantDashboardSlice.actions.set({
+            contest: data[0],
+            leaderboard: data[1],
+            submissions: data[2],
+            memberSubmissions: data[3],
+          }),
+        );
+        state.finish();
       } catch (error) {
         state.fail(error, {
           default: () => alert.error(messages.loadError),
@@ -148,30 +133,12 @@ export function ContestantContextProvider({
     };
   }, []);
 
-  function addMemberSubmission(submission: SubmissionFullResponseDTO) {
-    state.finish((prevState) => {
-      prevState.memberSubmissions = merge(
-        prevState.memberSubmissions,
-        submission,
-      );
-      return {
-        ...prevState,
-      };
-    });
-  }
-
   function receiveLeaderboard(leaderboard: ContestLeaderboardResponseDTO) {
-    state.finish((prevState) => {
-      prevState.leaderboard = leaderboard;
-      return { ...prevState };
-    });
+    dispatch(contestantDashboardSlice.actions.setLeaderboard(leaderboard));
   }
 
   function receiveSubmission(submission: SubmissionPublicResponseDTO) {
-    state.finish((prevState) => {
-      prevState.submissions = merge(prevState.submissions, submission);
-      return { ...prevState };
-    });
+    dispatch(contestantDashboardSlice.actions.mergeSubmission(submission));
   }
 
   function receiveMemberSubmission(submission: SubmissionPublicResponseDTO) {
@@ -179,13 +146,11 @@ export function ContestantContextProvider({
       return;
     }
 
-    state.finish((prevState) => {
-      prevState.memberSubmissions = merge(
-        prevState.memberSubmissions,
+    dispatch(
+      contestantDashboardSlice.actions.mergeMemberSubmission(
         submission as SubmissionFullResponseDTO,
-      );
-      return { ...prevState };
-    });
+      ),
+    );
 
     const text = {
       ...messages.problemAnswer,
@@ -222,14 +187,7 @@ export function ContestantContextProvider({
   }
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
-    state.finish((prevState) => {
-      prevState.contest.announcements = merge(
-        prevState.contest.announcements,
-        announcement,
-      );
-      return { ...prevState };
-    });
-
+    dispatch(contestantDashboardSlice.actions.mergeAnnouncement(announcement));
     alert.warning({
       ...messages.announcement,
       values: { text: announcement.text },
@@ -237,26 +195,9 @@ export function ContestantContextProvider({
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
-    state.finish((prevState) => {
-      if (!clarification.parentId) {
-        prevState.contest.clarifications = merge(
-          prevState.contest.clarifications,
-          clarification,
-        );
-      } else {
-        const parent = findClarification(
-          prevState.contest.clarifications,
-          clarification.parentId,
-        );
-        if (parent) {
-          parent.children = merge(parent.children, clarification);
-        }
-      }
-
-      return {
-        ...prevState,
-      };
-    });
+    dispatch(
+      contestantDashboardSlice.actions.mergeClarification(clarification),
+    );
   }
 
   function receiveClarificationAnswer() {
@@ -264,11 +205,7 @@ export function ContestantContextProvider({
   }
 
   function deleteClarification({ id }: { id: string }) {
-    state.finish((prevState) => {
-      prevState.contest.clarifications =
-        prevState.contest.clarifications.filter((c) => c.id !== id);
-      return { ...prevState };
-    });
+    dispatch(contestantDashboardSlice.actions.deleteClarification(id));
   }
 
   if (state.isLoading) {
@@ -278,13 +215,5 @@ export function ContestantContextProvider({
     return <ErrorPage />;
   }
 
-  return (
-    <ContestantContext.Provider value={state.data!}>
-      {children}
-    </ContestantContext.Provider>
-  );
-}
-
-export function useContestantContext() {
-  return useContext(ContestantContext);
+  return children;
 }

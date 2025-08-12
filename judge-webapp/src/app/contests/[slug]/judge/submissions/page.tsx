@@ -20,7 +20,6 @@ import { TableRow } from "@/app/_component/table/table-row";
 import { TableSection } from "@/app/_component/table/table-section";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useModal } from "@/app/_util/modal-hook";
-import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
 import { UpdateSubmissionFormType } from "@/app/contests/[slug]/judge/submissions/_form/update-submission-form";
 import { updateSubmissionFormSchema } from "@/app/contests/[slug]/judge/submissions/_form/update-submission-form-schema";
 import { submissionService } from "@/config/composition";
@@ -28,8 +27,7 @@ import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { globalMessages } from "@/i18n/global";
 import { useAlert } from "@/store/slices/alerts-slice";
-
-
+import { useJudgeDashboard } from "@/store/slices/judge-dashboard-slice";
 
 const messages = defineMessages({
   rerunSuccess: {
@@ -95,7 +93,7 @@ const messages = defineMessages({
  * Displays a list of all submissions with options to rerun or update answers.
  */
 export default function JudgeSubmissionsPage() {
-  const { submissions } = useJudgeContext();
+  const submissions = useJudgeDashboard((state) => state.submissions);
   const rerunState = useLoadableState();
   const updateState = useLoadableState();
 

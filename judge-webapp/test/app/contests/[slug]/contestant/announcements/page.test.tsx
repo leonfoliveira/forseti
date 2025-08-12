@@ -1,23 +1,34 @@
 import { render } from "@testing-library/react";
 
 import { AnnouncementsPage } from "@/app/contests/[slug]/_common/announcements-page";
-import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 import ContestantAnnouncementsPage from "@/app/contests/[slug]/contestant/announcements/page";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import {
+  mockUseContestantDashboard,
+  mockUseContestMetadata,
+} from "@/test/jest.setup";
 
-jest.mock("@/app/contests/[slug]/contestant/_context/contestant-context");
+jest.mock("@/store/slices/contest-metadata-slice");
 jest.mock("@/app/contests/[slug]/_common/announcements-page");
 
 describe("ContestantAnnouncementsPage", () => {
   it("renders the announcements page with contest data", () => {
     const contest = {
       id: "contest-id",
-    };
-    jest.mocked(useContestantContext).mockReturnValueOnce({ contest } as any);
+    } as ContestMetadataResponseDTO;
+    mockUseContestMetadata.mockReturnValueOnce(contest);
+    const announcements = [
+      {
+        id: "announcement-id",
+      },
+    ] as AnnouncementResponseDTO[];
+    mockUseContestantDashboard.mockReturnValueOnce(announcements);
 
     render(<ContestantAnnouncementsPage />);
 
     expect(AnnouncementsPage as jest.Mock).toHaveBeenCalledWith(
-      { contest },
+      { contestId: contest.id, announcements },
       undefined,
     );
   });

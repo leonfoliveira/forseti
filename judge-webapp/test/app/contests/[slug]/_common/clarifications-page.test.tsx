@@ -2,6 +2,8 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 
 import { ClarificationsPage } from "@/app/contests/[slug]/_common/clarifications-page";
 import { clarificationService, contestService } from "@/config/composition";
+import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
 import { mockAlert } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
@@ -23,7 +25,9 @@ jest.mock("@/app/_component/modal/dialog-modal", () => ({
 
 describe("ClarificationsPage", () => {
   it("should render empty when there are no clarifications", () => {
-    render(<ClarificationsPage contest={{ clarifications: [] } as any} />);
+    render(
+      <ClarificationsPage contestId="1" problems={[]} clarifications={[]} />,
+    );
 
     expect(screen.queryByTestId("create-form")).not.toBeInTheDocument();
     expect(screen.getByTestId("empty")).toBeInTheDocument();
@@ -38,9 +42,15 @@ describe("ClarificationsPage", () => {
         text: "Clarification 1",
         children: [],
       },
-    ];
+    ] as unknown as ClarificationResponseDTO[];
 
-    render(<ClarificationsPage contest={{ clarifications } as any} />);
+    render(
+      <ClarificationsPage
+        contestId="1"
+        problems={[]}
+        clarifications={clarifications}
+      />,
+    );
 
     expect(screen.queryByTestId("empty")).not.toBeInTheDocument();
     expect(screen.getByTestId("clarification-problem")).toHaveTextContent(
@@ -71,9 +81,15 @@ describe("ClarificationsPage", () => {
           },
         ],
       },
-    ];
+    ] as unknown as ClarificationResponseDTO[];
 
-    render(<ClarificationsPage contest={{ clarifications } as any} />);
+    render(
+      <ClarificationsPage
+        contestId="1"
+        problems={[]}
+        clarifications={clarifications}
+      />,
+    );
 
     expect(screen.getByTestId("clarification-problem")).toHaveTextContent(
       "{contestant} | Problem {letter}",
@@ -102,7 +118,9 @@ describe("ClarificationsPage", () => {
 
     render(
       <ClarificationsPage
-        contest={{ problems: [{ id: "1" }], clarifications: [] } as any}
+        contestId="1"
+        problems={[{ id: "1" } as ProblemPublicResponseDTO]}
+        clarifications={[]}
         canCreate
       />,
     );
@@ -129,7 +147,9 @@ describe("ClarificationsPage", () => {
 
     render(
       <ClarificationsPage
-        contest={{ problems: [{ id: "1" }], clarifications: [] } as any}
+        contestId="1"
+        problems={[{ id: "1" } as ProblemPublicResponseDTO]}
+        clarifications={[]}
         canCreate
       />,
     );
@@ -157,19 +177,18 @@ describe("ClarificationsPage", () => {
 
     render(
       <ClarificationsPage
-        contest={
-          {
-            problems: [{ id: "1" }],
-            clarifications: [
-              {
-                id: "1",
-                member: { name: "Member" },
-                createdAt: new Date().toISOString(),
-                text: "Clarification 1",
-                children: [],
-              },
-            ],
-          } as any
+        contestId="1"
+        problems={[{ id: "1" } as ProblemPublicResponseDTO]}
+        clarifications={
+          [
+            {
+              id: "1",
+              member: { name: "Member" },
+              createdAt: new Date().toISOString(),
+              text: "Clarification 1",
+              children: [],
+            },
+          ] as unknown as ClarificationResponseDTO[]
         }
         canAnswer
       />,
@@ -199,19 +218,18 @@ describe("ClarificationsPage", () => {
 
     render(
       <ClarificationsPage
-        contest={
-          {
-            problems: [{ id: "1" }],
-            clarifications: [
-              {
-                id: "1",
-                member: { name: "Member" },
-                createdAt: new Date().toISOString(),
-                text: "Clarification 1",
-                children: [],
-              },
-            ],
-          } as any
+        contestId="1"
+        problems={[{ id: "1" } as ProblemPublicResponseDTO]}
+        clarifications={
+          [
+            {
+              id: "1",
+              member: { name: "Member" },
+              createdAt: new Date().toISOString(),
+              text: "Clarification 1",
+              children: [],
+            },
+          ] as unknown as ClarificationResponseDTO[]
         }
         canAnswer
       />,
@@ -246,10 +264,15 @@ describe("ClarificationsPage", () => {
         text: "Clarification 1",
         children: [],
       },
-    ];
+    ] as unknown as ClarificationResponseDTO[];
 
     render(
-      <ClarificationsPage contest={{ clarifications } as any} canAnswer />,
+      <ClarificationsPage
+        contestId="1"
+        problems={[]}
+        clarifications={clarifications}
+        canAnswer
+      />,
     );
 
     act(() => {
@@ -279,10 +302,15 @@ describe("ClarificationsPage", () => {
         text: "Clarification 1",
         children: [],
       },
-    ];
+    ] as unknown as ClarificationResponseDTO[];
 
     render(
-      <ClarificationsPage contest={{ clarifications } as any} canAnswer />,
+      <ClarificationsPage
+        contestId="1"
+        problems={[]}
+        clarifications={clarifications}
+        canAnswer
+      />,
     );
 
     act(() => {

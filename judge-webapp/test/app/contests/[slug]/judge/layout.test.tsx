@@ -4,13 +4,12 @@ import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest
 import JudgeLayout from "@/app/contests/[slug]/judge/layout";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { mockRedirect, mockUseAuthorization } from "@/test/jest.setup";
+import {
+  mockRedirect,
+  mockUseAuthorization,
+  mockUseContestMetadata,
+} from "@/test/jest.setup";
 
-jest.mock("@/store/slices/contest-slice", () => ({
-  useContest: jest.fn(() => ({
-    slug: "test-contest",
-  })),
-}));
 jest.mock("@/app/contests/[slug]/_component/contest-dashboard-layout", () => ({
   ContestDashboardLayout: jest.fn(({ children }: any) => <div>{children}</div>),
 }));
@@ -19,6 +18,12 @@ jest.mock("@/app/contests/[slug]/judge/_context/judge-context", () => ({
 }));
 
 describe("JudgeLayout", () => {
+  beforeEach(() => {
+    mockUseContestMetadata.mockReturnValue({
+      slug: "test-contest",
+    });
+  });
+
   it("should redirect to sign-in if not authenticated", () => {
     mockUseAuthorization.mockReturnValueOnce(undefined);
 

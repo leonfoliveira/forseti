@@ -17,9 +17,9 @@ import { ClarificationFormType } from "@/app/contests/[slug]/_common/_form/clari
 import { ClarificationFormMap } from "@/app/contests/[slug]/_common/_form/clarification-form-map";
 import { clarificationFormSchema } from "@/app/contests/[slug]/_common/_form/clarification-form-schema";
 import { clarificationService, contestService } from "@/config/composition";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
 import { useAlert } from "@/store/slices/alerts-slice";
-
 
 const messages = defineMessages({
   createSuccess: {
@@ -81,13 +81,17 @@ const messages = defineMessages({
 });
 
 type Props = {
-  contest: ContestPublicResponseDTO;
+  contestId: string;
+  problems: ProblemPublicResponseDTO[];
+  clarifications: ClarificationResponseDTO[];
   canCreate?: boolean;
   canAnswer?: boolean;
 };
 
 export function ClarificationsPage({
-  contest,
+  contestId,
+  problems,
+  clarifications,
   canCreate = false,
   canAnswer = false,
 }: Props) {
@@ -108,7 +112,7 @@ export function ClarificationsPage({
     createClarificationState.start();
     try {
       await contestService.createClarification(
-        contest.id,
+        contestId,
         ClarificationFormMap.toInputDTO(data),
       );
       createClarificationState.finish();
@@ -150,7 +154,7 @@ export function ClarificationsPage({
               form={form}
               name="problemId"
               label={messages.problemLabel}
-              options={(contest?.problems || []).map((it) => ({
+              options={problems.map((it) => ({
                 value: it.id,
                 label: {
                   ...messages.problemOption,
@@ -181,7 +185,7 @@ export function ClarificationsPage({
           <div className="divider" />
         </Form>
       )}
-      {contest.clarifications.length == 0 && (
+      {clarifications.length == 0 && (
         <div
           className="flex justify-center items-center py-20"
           data-testid="empty"
@@ -192,7 +196,7 @@ export function ClarificationsPage({
         </div>
       )}
       <div className="flex flex-col gap-y-8">
-        {contest.clarifications.toReversed().map((clarification) => (
+        {clarifications.toReversed().map((clarification) => (
           <div
             key={clarification.id}
             className="card bg-base-100 border border-base-300"

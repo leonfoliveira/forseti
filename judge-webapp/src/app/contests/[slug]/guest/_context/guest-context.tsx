@@ -1,11 +1,9 @@
-import React, { createContext, useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { defineMessages } from "react-intl";
 
 import { ErrorPage } from "@/app/_component/page/error-page";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
-import { merge } from "@/app/contests/[slug]/_util/entity-merger";
 import {
   announcementListener,
   clarificationListener,
@@ -17,10 +15,11 @@ import {
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { useAlert } from "@/store/slices/alerts-slice";
-import { useContest } from "@/store/slices/contest-slice";
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
+import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
+import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
   loadError: {
@@ -33,26 +32,15 @@ const messages = defineMessages({
   },
 });
 
-type GuestContextType = {
-  contest: ContestPublicResponseDTO;
-  leaderboard: ContestLeaderboardResponseDTO;
-  submissions: SubmissionPublicResponseDTO[];
-};
-
-const GuestContext = createContext<GuestContextType>({
-  contest: {} as ContestPublicResponseDTO,
-  leaderboard: {} as ContestLeaderboardResponseDTO,
-  submissions: [],
-});
-
 export function GuestContextProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const state = useLoadableState<GuestContextType>({ isLoading: true });
+  const state = useLoadableState({ isLoading: true });
 
-  const contestMetadata = useContest();
+  const contestMetadata = useContestMetadata();
+  const dispatch = useAppDispatch();
   const alert = useAlert();
 
   useEffect(() => {
@@ -96,11 +84,14 @@ export function GuestContextProvider({
           ),
         ]);
 
-        state.finish({
-          contest: data[0],
-          leaderboard: data[1],
-          submissions: data[2],
-        });
+        dispatch(
+          guestDashboardSlice.actions.set({
+            contest: data[0],
+            leaderboard: data[1],
+            submissions: data[2],
+          }),
+        );
+        state.finish();
       } catch (error) {
         state.fail(error, {
           default: () => alert.error(messages.loadError),
@@ -116,28 +107,15 @@ export function GuestContextProvider({
   }, []);
 
   function receiveLeaderboard(leaderboard: ContestLeaderboardResponseDTO) {
-    state.finish((prevState) => {
-      prevState.leaderboard = leaderboard;
-      return { ...prevState };
-    });
+    dispatch(guestDashboardSlice.actions.setLeaderboard(leaderboard));
   }
 
   function receiveSubmission(submission: SubmissionPublicResponseDTO) {
-    state.finish((prevState) => {
-      prevState.submissions = merge(prevState.submissions, submission);
-      return { ...prevState };
-    });
+    dispatch(guestDashboardSlice.actions.mergeSubmission(submission));
   }
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
-    state.finish((prevState) => {
-      prevState.contest.announcements = merge(
-        prevState.contest.announcements,
-        announcement,
-      );
-      return { ...prevState };
-    });
-
+    dispatch(guestDashboardSlice.actions.mergeAnnouncement(announcement));
     alert.warning({
       ...messages.announcement,
       values: { text: announcement.text },
@@ -145,34 +123,11 @@ export function GuestContextProvider({
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
-    state.finish((prevState) => {
-      if (!clarification.parentId) {
-        prevState.contest.clarifications = merge(
-          prevState.contest.clarifications,
-          clarification,
-        );
-      } else {
-        const parent = findClarification(
-          prevState.contest.clarifications,
-          clarification.parentId,
-        );
-        if (parent) {
-          parent.children = merge(parent.children, clarification);
-        }
-      }
-
-      return {
-        ...prevState,
-      };
-    });
+    dispatch(guestDashboardSlice.actions.mergeClarification(clarification));
   }
 
   function deleteClarification({ id }: { id: string }) {
-    state.finish((prevState) => {
-      prevState.contest.clarifications =
-        prevState.contest.clarifications.filter((c) => c.id !== id);
-      return { ...prevState };
-    });
+    dispatch(guestDashboardSlice.actions.deleteClarification(id));
   }
 
   if (state.isLoading) {
@@ -182,13 +137,5 @@ export function GuestContextProvider({
     return <ErrorPage />;
   }
 
-  return (
-    <GuestContext.Provider value={state.data!}>
-      {children}
-    </GuestContext.Provider>
-  );
-}
-
-export function useGuestContext() {
-  return useContext(GuestContext);
+  return children;
 }

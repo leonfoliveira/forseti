@@ -74,7 +74,7 @@ export function TimelinePage({ submissions }: Props) {
           </TableRow>
         </TableSection>
         <TableSection>
-          {submissions?.map((submission) => (
+          {submissions.map((submission) => (
             <TableRow
               key={submission.id}
               className={cls(

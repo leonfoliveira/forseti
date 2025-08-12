@@ -5,14 +5,14 @@ import { redirect } from "next/navigation";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { useAuthorization } from "@/store/slices/authorization-slice";
-import { useContest } from "@/store/slices/contest-slice";
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 
 /**
  * ContestPage component that redirects users based on their member type.
  */
 export default function ContestPage() {
   const authorization = useAuthorization();
-  const contest = useContest();
+  const contest = useContestMetadata();
 
   switch (authorization?.member.type) {
     case MemberType.CONTESTANT:

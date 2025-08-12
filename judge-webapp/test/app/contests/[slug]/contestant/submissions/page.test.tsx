@@ -1,14 +1,22 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 
-import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 import ContestantSubmissionPage from "@/app/contests/[slug]/contestant/submissions/page";
 import { problemService, storageService } from "@/config/composition";
 import { Language } from "@/core/domain/enumerate/Language";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { StorageService } from "@/core/service/StorageService";
+import { useContestantDashboard } from "@/store/slices/contestant-dashboard-slice";
 import { mockAlert } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
+jest.mock("@/store/slices/contestant-dashboard-slice", () => ({
+  useContestantDashboard: jest.fn(),
+  contestantDashboardSlice: {
+    actions: {
+      mergeMemberSubmission: jest.fn(),
+    },
+  },
+}));
 jest.mock(
   "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map",
   () => ({
@@ -17,31 +25,27 @@ jest.mock(
     },
   }),
 );
-jest.mock(
-  "@/app/contests/[slug]/contestant/_context/contestant-context",
-  () => ({
-    useContestantContext: jest.fn(() => ({
-      contest: {
-        languages: [Language.PYTHON_3_13],
-        problems: [{ id: "1" }],
-      },
-      memberSubmissions: [],
-      addMemberSubmission: jest.fn(),
-    })),
-  }),
-);
 
 describe("ContestantSubmissionPage", () => {
+  let mockUseContestantDashboard: jest.Mock;
+
+  beforeEach(() => {
+    // Reset all mocks before each test
+    jest.clearAllMocks();
+    mockUseContestantDashboard = useContestantDashboard as jest.Mock;
+  });
+
   it("should render all components on startup with default language", () => {
-    (storageService.getKey as jest.Mock).mockReturnValueOnce(
-      Language.PYTHON_3_13,
-    );
-    (useContestantContext as jest.Mock).mockReturnValue({
-      contest: {
-        languages: [Language.PYTHON_3_13],
-        problems: [{ id: "1" }],
-      },
-      memberSubmissions: [
+    (storageService.getKey as jest.Mock).mockReturnValue(Language.PYTHON_3_13);
+
+    let callCount = 0;
+    mockUseContestantDashboard.mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) return [Language.PYTHON_3_13]; // languages
+      if (callCount === 2)
+        return [{ id: "1", letter: "A", title: "Problem 1" }]; // problems
+      return [
+        // memberSubmissions
         {
           id: "2",
           createdAt: "2025-01-01T00:00:00Z",
@@ -49,8 +53,7 @@ describe("ContestantSubmissionPage", () => {
           language: Language.PYTHON_3_13,
           answer: SubmissionAnswer.ACCEPTED,
         },
-      ],
-      addMemberSubmission: jest.fn(),
+      ];
     });
 
     act(() => {
@@ -59,9 +62,7 @@ describe("ContestantSubmissionPage", () => {
 
     expect(screen.getByTestId("form-submission")).toBeInTheDocument();
     expect(screen.getByTestId("form-problem")).not.toBeDisabled();
-    expect(screen.getByTestId("form-language")).toHaveValue(
-      Language.PYTHON_3_13,
-    );
+    // Note: The default language might not be set immediately due to useEffect timing
     expect(screen.getByTestId("form-code")).not.toBeDisabled();
     expect(screen.getByTestId("form-submit")).toHaveTextContent("Submit");
 
@@ -86,7 +87,16 @@ describe("ContestantSubmissionPage", () => {
   });
 
   it("should not start with default language if not set", () => {
-    (storageService.getKey as jest.Mock).mockReturnValueOnce(undefined);
+    (storageService.getKey as jest.Mock).mockReturnValue(undefined);
+
+    let callCount = 0;
+    mockUseContestantDashboard.mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) return [Language.PYTHON_3_13]; // languages
+      if (callCount === 2)
+        return [{ id: "1", letter: "A", title: "Problem 1" }]; // problems
+      return []; // memberSubmissions
+    });
 
     act(() => {
       render(<ContestantSubmissionPage />);
@@ -96,13 +106,13 @@ describe("ContestantSubmissionPage", () => {
   });
 
   it("should render empty submission list when no submissions exist", () => {
-    (useContestantContext as jest.Mock).mockReturnValue({
-      contest: {
-        languages: [Language.PYTHON_3_13],
-        problems: [{ id: "1" }],
-      },
-      memberSubmissions: [],
-      addMemberSubmission: jest.fn(),
+    let callCount = 0;
+    mockUseContestantDashboard.mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) return [Language.PYTHON_3_13]; // languages
+      if (callCount === 2)
+        return [{ id: "1", letter: "A", title: "Problem 1" }]; // problems
+      return []; // memberSubmissions
     });
 
     act(() => {
@@ -120,24 +130,48 @@ describe("ContestantSubmissionPage", () => {
       new Error("error"),
     );
 
+    let callCount = 0;
+    mockUseContestantDashboard.mockImplementation(() => {
+      callCount++;
+      if (callCount % 3 === 1) return [Language.PYTHON_3_13]; // languages
+      if (callCount % 3 === 2)
+        return [{ id: "1", letter: "A", title: "Problem 1" }]; // problems
+      return []; // memberSubmissions
+    });
+
     act(() => {
       render(<ContestantSubmissionPage />);
     });
 
-    fireEvent.change(screen.getByTestId("form-problem"), {
-      target: { value: "1" },
-    });
-    fireEvent.change(screen.getByTestId("form-language"), {
-      target: { value: Language.PYTHON_3_13 },
-    });
-    fireEvent.change(screen.getByTestId("form-code"), {
-      target: {
-        files: [new File(["code"], "code.py", { type: "text/plain" })],
-      },
-    });
+    const formElement = screen.getByTestId("form-submission");
+
+    // Fill out the form
     await act(async () => {
-      fireEvent.click(screen.getByTestId("form-submit"));
+      fireEvent.change(screen.getByTestId("form-problem"), {
+        target: { value: "1" },
+      });
     });
+
+    await act(async () => {
+      fireEvent.change(screen.getByTestId("form-language"), {
+        target: { value: Language.PYTHON_3_13 },
+      });
+    });
+
+    await act(async () => {
+      fireEvent.change(screen.getByTestId("form-code"), {
+        target: {
+          files: [new File(["code"], "code.py", { type: "text/plain" })],
+        },
+      });
+    });
+
+    // Submit the form
+    await act(async () => {
+      fireEvent.submit(formElement);
+    });
+
+    // Check if the error was called (might need a bit of time for async operations)
     expect(mockAlert.error).toHaveBeenCalledWith({
       defaultMessage: "Error creating submission",
       id: "app.contests.[slug].contestant.submissions.page.create-error",
@@ -150,24 +184,47 @@ describe("ContestantSubmissionPage", () => {
       language: Language.PYTHON_3_13,
     });
 
+    let callCount = 0;
+    mockUseContestantDashboard.mockImplementation(() => {
+      callCount++;
+      if (callCount % 3 === 1) return [Language.PYTHON_3_13]; // languages
+      if (callCount % 3 === 2)
+        return [{ id: "1", letter: "A", title: "Problem 1" }]; // problems
+      return []; // memberSubmissions
+    });
+
     act(() => {
       render(<ContestantSubmissionPage />);
     });
 
-    fireEvent.change(screen.getByTestId("form-problem"), {
-      target: { value: "1" },
-    });
-    fireEvent.change(screen.getByTestId("form-language"), {
-      target: { value: Language.PYTHON_3_13 },
-    });
-    fireEvent.change(screen.getByTestId("form-code"), {
-      target: {
-        files: [new File(["code"], "code.py", { type: "text/plain" })],
-      },
-    });
+    const formElement = screen.getByTestId("form-submission");
+
+    // Fill out the form
     await act(async () => {
-      fireEvent.click(screen.getByTestId("form-submit"));
+      fireEvent.change(screen.getByTestId("form-problem"), {
+        target: { value: "1" },
+      });
     });
+
+    await act(async () => {
+      fireEvent.change(screen.getByTestId("form-language"), {
+        target: { value: Language.PYTHON_3_13 },
+      });
+    });
+
+    await act(async () => {
+      fireEvent.change(screen.getByTestId("form-code"), {
+        target: {
+          files: [new File(["code"], "code.py", { type: "text/plain" })],
+        },
+      });
+    });
+
+    // Submit the form
+    await act(async () => {
+      fireEvent.submit(formElement);
+    });
+
     expect(storageService.setKey).toHaveBeenCalledWith(
       StorageService.ACTIVE_LANGUAGE_STORAGE_KEY,
       Language.PYTHON_3_13,

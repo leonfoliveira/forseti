@@ -1,11 +1,11 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 
-import { ContestProvider } from "@/app/contests/[slug]/_context/contest-provider";
+import { ContestMetadataProvider } from "@/app/contests/[slug]/_context/contest-metadata-provider";
 import { contestService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
-import { contestSlice } from "@/store/slices/contest-slice";
+import { contestMetadataSlice } from "@/store/slices/contest-metadata-slice";
 import { mockAppDispatch, mockRouter } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
@@ -19,9 +19,9 @@ jest.mock("@/app/_component/page/error-page", () => ({
 describe("ContestProvider", () => {
   it("should render loading state initially", async () => {
     render(
-      <ContestProvider slug="test-slug">
+      <ContestMetadataProvider slug="test-slug">
         <span data-testid="child" />
-      </ContestProvider>,
+      </ContestMetadataProvider>,
     );
 
     expect(screen.getByTestId("loading")).toBeInTheDocument();
@@ -39,9 +39,9 @@ describe("ContestProvider", () => {
 
     await act(async () => {
       render(
-        <ContestProvider slug="test-slug">
+        <ContestMetadataProvider slug="test-slug">
           <span data-testid="child" />
-        </ContestProvider>,
+        </ContestMetadataProvider>,
       );
     });
 
@@ -55,9 +55,9 @@ describe("ContestProvider", () => {
 
     await act(async () => {
       render(
-        <ContestProvider slug="test-slug">
+        <ContestMetadataProvider slug="test-slug">
           <span data-testid="child" />
-        </ContestProvider>,
+        </ContestMetadataProvider>,
       );
     });
 
@@ -77,14 +77,14 @@ describe("ContestProvider", () => {
 
     await act(async () => {
       render(
-        <ContestProvider slug="test-slug">
+        <ContestMetadataProvider slug="test-slug">
           <span data-testid="child" />
-        </ContestProvider>,
+        </ContestMetadataProvider>,
       );
     });
 
     expect(mockAppDispatch).toHaveBeenCalledWith(
-      contestSlice.actions.set(mockMetadata),
+      contestMetadataSlice.actions.set(mockMetadata),
     );
     expect(screen.getByTestId("child")).toBeInTheDocument();
     expect(screen.queryByTestId("loading")).not.toBeInTheDocument();

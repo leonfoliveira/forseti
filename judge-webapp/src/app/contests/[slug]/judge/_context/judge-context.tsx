@@ -1,11 +1,9 @@
-import React, { createContext, useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { defineMessages } from "react-intl";
 
 import { ErrorPage } from "@/app/_component/page/error-page";
 import { LoadingPage } from "@/app/_component/page/loading-page";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
-import { merge } from "@/app/contests/[slug]/_util/entity-merger";
 import {
   announcementListener,
   clarificationListener,
@@ -18,11 +16,12 @@ import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { useAlert } from "@/store/slices/alerts-slice";
-import { useContest } from "@/store/slices/contest-slice";
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
+import { judgeDashboardSlice } from "@/store/slices/judge-dashboard-slice";
 import { useToast } from "@/store/slices/toasts-slice";
+import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
   loadError: {
@@ -39,26 +38,15 @@ const messages = defineMessages({
   },
 });
 
-type JudgeContextType = {
-  contest: ContestPublicResponseDTO;
-  leaderboard: ContestLeaderboardResponseDTO;
-  submissions: SubmissionFullResponseDTO[];
-};
-
-const JudgeContext = createContext<JudgeContextType>({
-  contest: {} as ContestPublicResponseDTO,
-  leaderboard: {} as ContestLeaderboardResponseDTO,
-  submissions: [] as SubmissionFullResponseDTO[],
-});
-
 export function JudgeContextProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const state = useLoadableState<JudgeContextType>({ isLoading: true });
+  const state = useLoadableState({ isLoading: true });
 
-  const contestMetadata = useContest();
+  const contestMetadata = useContestMetadata();
+  const dispatch = useAppDispatch();
   const alert = useAlert();
   const toast = useToast();
 
@@ -103,11 +91,14 @@ export function JudgeContextProvider({
           ),
         ]);
 
-        state.finish({
-          contest: data[0],
-          leaderboard: data[1],
-          submissions: data[2],
-        });
+        dispatch(
+          judgeDashboardSlice.actions.set({
+            contest: data[0],
+            leaderboard: data[1],
+            submissions: data[2],
+          }),
+        );
+        state.finish();
       } catch (error) {
         state.fail(error, {
           default: () => alert.error(messages.loadError),
@@ -123,19 +114,11 @@ export function JudgeContextProvider({
   }, []);
 
   function receiveLeaderboard(leaderboard: ContestLeaderboardResponseDTO) {
-    state.finish((prevState) => {
-      prevState.leaderboard = leaderboard;
-      return { ...prevState };
-    });
+    dispatch(judgeDashboardSlice.actions.setLeaderboard(leaderboard));
   }
 
   function receiveSubmission(submission: SubmissionFullResponseDTO) {
-    state.finish((prevState) => {
-      return {
-        ...prevState,
-        submissions: merge(prevState.submissions, submission),
-      };
-    });
+    dispatch(judgeDashboardSlice.actions.mergeSubmission(submission));
 
     if (submission.status === SubmissionStatus.FAILED) {
       toast.error(messages.submissionFailed);
@@ -143,13 +126,7 @@ export function JudgeContextProvider({
   }
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
-    state.finish((prevState) => {
-      prevState.contest.announcements = merge(
-        prevState.contest.announcements,
-        announcement,
-      );
-      return { ...prevState };
-    });
+    dispatch(judgeDashboardSlice.actions.mergeAnnouncement(announcement));
 
     alert.warning({
       ...messages.announcement,
@@ -158,34 +135,11 @@ export function JudgeContextProvider({
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
-    state.finish((prevState) => {
-      if (!clarification.parentId) {
-        prevState.contest.clarifications = merge(
-          prevState.contest.clarifications,
-          clarification,
-        );
-      } else {
-        const parent = findClarification(
-          prevState.contest.clarifications,
-          clarification.parentId,
-        );
-        if (parent) {
-          parent.children = merge(parent.children, clarification);
-        }
-      }
-
-      return {
-        ...prevState,
-      };
-    });
+    dispatch(judgeDashboardSlice.actions.mergeClarification(clarification));
   }
 
   function deleteClarification({ id }: { id: string }) {
-    state.finish((prevState) => {
-      prevState.contest.clarifications =
-        prevState.contest.clarifications.filter((c) => c.id !== id);
-      return { ...prevState };
-    });
+    dispatch(judgeDashboardSlice.actions.deleteClarification(id));
   }
 
   if (state.isLoading) {
@@ -195,13 +149,5 @@ export function JudgeContextProvider({
     return <ErrorPage />;
   }
 
-  return (
-    <JudgeContext.Provider value={state.data!}>
-      {children}
-    </JudgeContext.Provider>
-  );
-}
-
-export function useJudgeContext() {
-  return useContext(JudgeContext);
+  return children;
 }

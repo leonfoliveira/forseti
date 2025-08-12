@@ -3,10 +3,11 @@
 import React from "react";
 
 import { LeaderboardPage } from "@/app/contests/[slug]/_common/leaderboard-page";
-import { useGuestContext } from "@/app/contests/[slug]/guest/_context/guest-context";
+import { useGuestDashboard } from "@/store/slices/guest-dashboard-slice";
 
 export default function GuestLeaderboardPage() {
-  const { contest, leaderboard } = useGuestContext();
+  const problems = useGuestDashboard((state) => state.contest.problems);
+  const leaderboard = useGuestDashboard((state) => state.leaderboard);
 
-  return <LeaderboardPage contest={contest} leaderboard={leaderboard} />;
+  return <LeaderboardPage problems={problems} leaderboard={leaderboard} />;
 }

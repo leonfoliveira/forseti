@@ -2,13 +2,14 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 
 import { AnnouncementsPage } from "@/app/contests/[slug]/_common/announcements-page";
 import { contestService } from "@/config/composition";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { mockAlert } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
 
 describe("AnnouncementsPage", () => {
   it("should render empty when there are no announcements", () => {
-    render(<AnnouncementsPage contest={{ announcements: [] } as any} />);
+    render(<AnnouncementsPage contestId="1" announcements={[]} />);
 
     expect(screen.queryByTestId("create-form")).not.toBeInTheDocument();
     expect(screen.getByTestId("empty")).toBeInTheDocument();
@@ -22,9 +23,9 @@ describe("AnnouncementsPage", () => {
         text: "Announcement 1",
         createdAt: new Date().toISOString(),
       },
-    ];
+    ] as AnnouncementResponseDTO[];
 
-    render(<AnnouncementsPage contest={{ announcements } as any} />);
+    render(<AnnouncementsPage contestId="1" announcements={announcements} />);
 
     expect(screen.queryByTestId("empty")).not.toBeInTheDocument();
     expect(screen.getByTestId("announcement-member")).toHaveTextContent(
@@ -43,9 +44,7 @@ describe("AnnouncementsPage", () => {
       new Error("Create error"),
     );
 
-    render(
-      <AnnouncementsPage contest={{ announcements: [] } as any} canCreate />,
-    );
+    render(<AnnouncementsPage contestId="1" announcements={[]} canCreate />);
 
     expect(screen.getByTestId("create-form")).toBeInTheDocument();
     fireEvent.change(screen.getByTestId("form-text"), {
@@ -63,9 +62,7 @@ describe("AnnouncementsPage", () => {
   it("should alert success on create success", async () => {
     (contestService.createAnnouncement as jest.Mock).mockResolvedValueOnce({});
 
-    render(
-      <AnnouncementsPage contest={{ announcements: [] } as any} canCreate />,
-    );
+    render(<AnnouncementsPage contestId="1" announcements={[]} canCreate />);
 
     expect(screen.getByTestId("create-form")).toBeInTheDocument();
     fireEvent.change(screen.getByTestId("form-text"), {

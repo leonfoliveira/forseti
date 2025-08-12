@@ -4,9 +4,9 @@ import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/conte
 
 import { useAppSelector } from "../store";
 
-export const contestSlice = createSlice({
-  name: "contest",
-  initialState: null as ContestMetadataResponseDTO | null,
+export const contestMetadataSlice = createSlice({
+  name: "contestMetadata",
+  initialState: null as unknown as ContestMetadataResponseDTO,
   reducers: {
     set: (state, action: { payload: ContestMetadataResponseDTO }) => {
       return action.payload;
@@ -14,6 +14,6 @@ export const contestSlice = createSlice({
   },
 });
 
-export function useContest() {
-  return useAppSelector((state) => state.contest);
+export function useContestMetadata() {
+  return useAppSelector((state) => state.contestMetadata);
 }

@@ -10,9 +10,8 @@ import { TableRow } from "@/app/_component/table/table-row";
 import { TableSection } from "@/app/_component/table/table-section";
 import { cls } from "@/app/_util/cls";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
 import { useAuthorization } from "@/store/slices/authorization-slice";
-
 
 const messages = defineMessages({
   headerScore: {
@@ -26,14 +25,14 @@ const messages = defineMessages({
 });
 
 type Props = {
-  contest: ContestPublicResponseDTO;
+  problems: ProblemPublicResponseDTO[];
   leaderboard: ContestLeaderboardResponseDTO;
 };
 
 /**
  * A generic leaderboard page component for displaying contest results.
  */
-export function LeaderboardPage({ contest, leaderboard }: Props) {
+export function LeaderboardPage({ problems, leaderboard }: Props) {
   const authorization = useAuthorization();
 
   return (
@@ -42,7 +41,7 @@ export function LeaderboardPage({ contest, leaderboard }: Props) {
         <TableSection head>
           <TableRow>
             <TableCell header></TableCell>
-            {contest.problems.map((problem, index) => (
+            {problems.map((problem, index) => (
               <TableCell
                 key={problem.id}
                 header

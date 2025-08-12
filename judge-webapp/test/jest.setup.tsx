@@ -89,3 +89,31 @@ export const mockUseSetAuthorization = jest.fn().mockReturnValue({
 jest.mock("@/app/_context/authorization-provider", () => ({
   useSetAuthorization: mockUseSetAuthorization,
 }));
+
+// Contest metadata
+export const mockUseContestMetadata = jest.fn();
+jest.mock("@/store/slices/contest-metadata-slice", () => ({
+  ...jest.requireActual("@/store/slices/contest-metadata-slice"),
+  useContestMetadata: mockUseContestMetadata,
+}));
+
+// Contestant dashboard
+export const mockUseContestantDashboard = jest.fn();
+jest.mock("@/store/slices/contestant-dashboard-slice", () => ({
+  ...jest.requireActual("@/store/slices/contestant-dashboard-slice"),
+  useContestantDashboard: mockUseContestantDashboard,
+}));
+
+// Guest dashboard
+export const mockUseGuestDashboard = jest.fn();
+jest.mock("@/store/slices/guest-dashboard-slice", () => ({
+  ...jest.requireActual("@/store/slices/guest-dashboard-slice"),
+  useGuestDashboard: mockUseGuestDashboard,
+}));
+
+// Judge dashboard
+export const mockUseJudgeDashboard = jest.fn();
+jest.mock("@/store/slices/judge-dashboard-slice", () => ({
+  ...jest.requireActual("@/store/slices/judge-dashboard-slice"),
+  useJudgeDashboard: mockUseJudgeDashboard,
+}));

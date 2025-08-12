@@ -1,9 +1,12 @@
-import { act, renderHook, screen, waitFor } from "@testing-library/react";
-
 import {
-  ContestantContextProvider,
-  useContestantContext,
-} from "@/app/contests/[slug]/contestant/_context/contestant-context";
+  act,
+  render,
+  renderHook,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+
+import { ContestantContextProvider } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 import {
   announcementListener,
   clarificationListener,
@@ -14,9 +17,20 @@ import {
   submissionService,
 } from "@/config/composition";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { mockAlert, mockToast, mockUseAuthorization } from "@/test/jest.setup";
+import {
+  mockAlert,
+  mockAppDispatch,
+  mockToast,
+  mockUseAuthorization,
+} from "@/test/jest.setup";
+import { contestantDashboardSlice } from "@/store/slices/contestant-dashboard-slice";
+import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 
-jest.mock("@/store/slices/contest-slice", () => ({
+jest.mock("@/store/slices/contest-metadata-slice", () => ({
   useContest: jest.fn(() => ({
     id: "test-contest-id",
   })),
@@ -46,14 +60,11 @@ describe("ContestantContextProvider", () => {
       new Error("error"),
     );
 
-    renderHook(() => useContestantContext(), {
-      wrapper: ({ children }) => (
-        <ContestantContextProvider>
-          <span data-testid="child" />
-          {children}
-        </ContestantContextProvider>
-      ),
-    });
+    render(
+      <ContestantContextProvider>
+        <span data-testid="child" />
+      </ContestantContextProvider>,
+    );
 
     expect(screen.getByTestId("loading")).toBeInTheDocument();
     await waitFor(() => {
@@ -66,7 +77,7 @@ describe("ContestantContextProvider", () => {
     });
   });
 
-  it("should load contest data and render children", async () => {
+  it("should render children", async () => {
     const mockContest = { id: "test-contest-id", name: "Test Contest" };
     const mockLeaderboard = { id: "test-leaderboard-id" };
     const mockSubmissions = [{ id: "submission-1" }];
@@ -85,30 +96,23 @@ describe("ContestantContextProvider", () => {
       mockMemberSubmissions,
     );
 
-    const { result } = renderHook(() => useContestantContext(), {
-      wrapper: ({ children }) => (
-        <ContestantContextProvider>
-          <span data-testid="child" />
-          {children}
-        </ContestantContextProvider>
-      ),
-    });
+    render(
+      <ContestantContextProvider>
+        <span data-testid="child" />
+      </ContestantContextProvider>,
+    );
 
     await waitFor(() => {
-      expect(result.current.contest).toEqual(mockContest);
-      expect(result.current.leaderboard).toEqual(mockLeaderboard);
-      expect(result.current.submissions).toEqual(mockSubmissions);
-      expect(result.current.memberSubmissions).toEqual(mockMemberSubmissions);
       expect(screen.getByTestId("child")).toBeInTheDocument();
     });
   });
 
   it("should connect and disconnect to listener", async () => {
-    const { unmount } = renderHook(() => useContestantContext(), {
-      wrapper: ({ children }) => (
-        <ContestantContextProvider>{children}</ContestantContextProvider>
-      ),
-    });
+    const { unmount } = render(
+      <ContestantContextProvider>
+        <span data-testid="child" />
+      </ContestantContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -119,11 +123,11 @@ describe("ContestantContextProvider", () => {
   });
 
   it("should handle leaderboard updates", async () => {
-    const { result } = renderHook(() => useContestantContext(), {
-      wrapper: ({ children }) => (
-        <ContestantContextProvider>{children}</ContestantContextProvider>
-      ),
-    });
+    render(
+      <ContestantContextProvider>
+        <span data-testid="child" />
+      </ContestantContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -139,11 +143,15 @@ describe("ContestantContextProvider", () => {
     const receiveLeaderboard = (
       leaderboardListener.subscribeForLeaderboard as jest.Mock
     ).mock.calls[0][2];
-    const newLeaderboard = { id: "new-leaderboard-id" };
+    const newLeaderboard = {
+      id: "new-leaderboard-id",
+    } as unknown as ContestLeaderboardResponseDTO;
     act(() => {
       receiveLeaderboard(newLeaderboard);
     });
-    expect(result.current.leaderboard).toEqual(newLeaderboard);
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      contestantDashboardSlice.actions.setLeaderboard(newLeaderboard),
+    );
   });
 
   it("should handle submission updates", async () => {
@@ -151,11 +159,11 @@ describe("ContestantContextProvider", () => {
       [],
     );
 
-    const { result } = renderHook(() => useContestantContext(), {
-      wrapper: ({ children }) => (
-        <ContestantContextProvider>{children}</ContestantContextProvider>
-      ),
-    });
+    render(
+      <ContestantContextProvider>
+        <span data-testid="child" />
+      </ContestantContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -171,11 +179,15 @@ describe("ContestantContextProvider", () => {
     const receiveSubmission = (
       submissionListener.subscribeForContest as jest.Mock
     ).mock.calls[0][2];
-    const newSubmission = { id: "new-submission-id" };
+    const newSubmission = {
+      id: "new-submission-id",
+    } as unknown as SubmissionPublicResponseDTO;
     act(() => {
       receiveSubmission(newSubmission);
     });
-    expect(result.current.submissions).toContainEqual(newSubmission);
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      contestantDashboardSlice.actions.mergeSubmission(newSubmission),
+    );
   });
 
   it.each([
@@ -192,11 +204,11 @@ describe("ContestantContextProvider", () => {
         [],
       );
 
-      const { result } = renderHook(() => useContestantContext(), {
-        wrapper: ({ children }) => (
-          <ContestantContextProvider>{children}</ContestantContextProvider>
-        ),
-      });
+      render(
+        <ContestantContextProvider>
+          <span data-testid="child" />
+        </ContestantContextProvider>,
+      );
 
       await waitFor(() => {
         expect(listenerClient.connect).toHaveBeenCalled();
@@ -212,12 +224,14 @@ describe("ContestantContextProvider", () => {
         id: "new-member-submission-id",
         answer,
         problem: {},
-      };
+      } as unknown as SubmissionFullResponseDTO;
       act(() => {
         receiveMemberSubmission(newMemberSubmission);
       });
-      expect(result.current.memberSubmissions).toContainEqual(
-        newMemberSubmission,
+      expect(mockAppDispatch).toHaveBeenCalledWith(
+        contestantDashboardSlice.actions.mergeMemberSubmission(
+          newMemberSubmission,
+        ),
       );
       expect(toast).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -233,11 +247,11 @@ describe("ContestantContextProvider", () => {
       announcements: [],
     });
 
-    const { result } = renderHook(() => useContestantContext(), {
-      wrapper: ({ children }) => (
-        <ContestantContextProvider>{children}</ContestantContextProvider>
-      ),
-    });
+    render(
+      <ContestantContextProvider>
+        <span data-testid="child" />
+      </ContestantContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -253,12 +267,15 @@ describe("ContestantContextProvider", () => {
     const receiveAnnouncement = (
       announcementListener.subscribeForContest as jest.Mock
     ).mock.calls[0][2];
-    const newAnnouncement = { id: "new-announcement-id", text: "Announcement" };
+    const newAnnouncement = {
+      id: "new-announcement-id",
+      text: "Announcement",
+    } as unknown as AnnouncementResponseDTO;
     act(() => {
       receiveAnnouncement(newAnnouncement);
     });
-    expect(result.current.contest.announcements).toContainEqual(
-      newAnnouncement,
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      contestantDashboardSlice.actions.mergeAnnouncement(newAnnouncement),
     );
     expect(mockAlert.warning).toHaveBeenCalledWith({
       defaultMessage: "New announcement: {text}",
@@ -272,11 +289,11 @@ describe("ContestantContextProvider", () => {
       clarifications: [],
     });
 
-    const { result } = renderHook(() => useContestantContext(), {
-      wrapper: ({ children }) => (
-        <ContestantContextProvider>{children}</ContestantContextProvider>
-      ),
-    });
+    render(
+      <ContestantContextProvider>
+        <span data-testid="child" />
+      </ContestantContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -295,21 +312,21 @@ describe("ContestantContextProvider", () => {
     const newClarification = {
       id: "new-clarification-id",
       text: "Clarification",
-    };
+    } as unknown as ClarificationResponseDTO;
     act(() => {
       receiveClarification(newClarification);
     });
-    expect(result.current.contest.clarifications).toContainEqual(
-      newClarification,
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      contestantDashboardSlice.actions.mergeClarification(newClarification),
     );
   });
 
   it("should handle clarification answer updates", async () => {
-    renderHook(() => useContestantContext(), {
-      wrapper: ({ children }) => (
-        <ContestantContextProvider>{children}</ContestantContextProvider>
-      ),
-    });
+    render(
+      <ContestantContextProvider>
+        <span data-testid="child" />
+      </ContestantContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -338,11 +355,11 @@ describe("ContestantContextProvider", () => {
       clarifications: [{ id: "clarification-id" }],
     });
 
-    const { result } = renderHook(() => useContestantContext(), {
-      wrapper: ({ children }) => (
-        <ContestantContextProvider>{children}</ContestantContextProvider>
-      ),
-    });
+    render(
+      <ContestantContextProvider>
+        <span data-testid="child" />
+      </ContestantContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -361,8 +378,8 @@ describe("ContestantContextProvider", () => {
     act(() => {
       deleteClarification({ id: "clarification-id" });
     });
-    expect(result.current.contest.clarifications).not.toContainEqual(
-      expect.objectContaining({ id: "clarification-id" }),
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      contestantDashboardSlice.actions.deleteClarification("clarification-id"),
     );
   });
 });

@@ -1,8 +1,8 @@
 import { Language } from "@/core/domain/enumerate/Language";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
-import { contestSlice } from "@/store/slices/contest-slice";
+import { contestMetadataSlice } from "@/store/slices/contest-metadata-slice";
 
-describe("contestSlice", () => {
+describe("contestMetadataSlice", () => {
   const makeContestMetadata = (
     overrides: Partial<ContestMetadataResponseDTO> = {},
   ): ContestMetadataResponseDTO => ({
@@ -18,9 +18,9 @@ describe("contestSlice", () => {
   it("should set contest metadata when payload is provided", () => {
     const initialState = null;
     const contestMetadata = makeContestMetadata();
-    const state = contestSlice.reducer(
+    const state = contestMetadataSlice.reducer(
       initialState,
-      contestSlice.actions.set(contestMetadata),
+      contestMetadataSlice.actions.set(contestMetadata),
     );
     expect(state).toEqual(contestMetadata);
     expect(state?.title).toBe("Test Contest");
@@ -40,9 +40,9 @@ describe("contestSlice", () => {
       id: "new-123",
     });
 
-    const state = contestSlice.reducer(
+    const state = contestMetadataSlice.reducer(
       oldContest,
-      contestSlice.actions.set(newContest),
+      contestMetadataSlice.actions.set(newContest),
     );
     expect(state?.title).toBe("New Contest");
     expect(state?.slug).toBe("new-contest");
@@ -55,9 +55,9 @@ describe("contestSlice", () => {
       languages: [Language.PYTHON_3_13],
       title: "Python Contest",
     });
-    const state = contestSlice.reducer(
+    const state = contestMetadataSlice.reducer(
       initialState,
-      contestSlice.actions.set(contestWithPython),
+      contestMetadataSlice.actions.set(contestWithPython),
     );
     expect(state?.languages).toEqual([Language.PYTHON_3_13]);
     expect(state?.title).toBe("Python Contest");
@@ -69,9 +69,9 @@ describe("contestSlice", () => {
       languages: [Language.CPP_17, Language.JAVA_21, Language.PYTHON_3_13],
       title: "Multi-Language Contest",
     });
-    const state = contestSlice.reducer(
+    const state = contestMetadataSlice.reducer(
       initialState,
-      contestSlice.actions.set(multiLanguageContest),
+      contestMetadataSlice.actions.set(multiLanguageContest),
     );
     expect(state?.languages).toEqual([
       Language.CPP_17,
@@ -88,9 +88,9 @@ describe("contestSlice", () => {
       endAt: "2025-01-01T18:00:00Z",
       title: "Future Contest",
     });
-    const state = contestSlice.reducer(
+    const state = contestMetadataSlice.reducer(
       initialState,
-      contestSlice.actions.set(futureContest),
+      contestMetadataSlice.actions.set(futureContest),
     );
     expect(state?.startAt).toBe("2025-01-01T09:00:00Z");
     expect(state?.endAt).toBe("2025-01-01T18:00:00Z");
@@ -100,9 +100,9 @@ describe("contestSlice", () => {
   it("should maintain contest metadata structure", () => {
     const initialState = null;
     const contestMetadata = makeContestMetadata();
-    const state = contestSlice.reducer(
+    const state = contestMetadataSlice.reducer(
       initialState,
-      contestSlice.actions.set(contestMetadata),
+      contestMetadataSlice.actions.set(contestMetadata),
     );
 
     // Verify all required fields are present

@@ -2,7 +2,7 @@ import { act, render, screen } from "@testing-library/react";
 
 import ContestLayout from "@/app/contests/[slug]/layout";
 
-jest.mock("@/store/slices/contest-slice", () => ({
+jest.mock("@/store/slices/contest-metadata-slice", () => ({
   ContestMetadataProvider: ({ children, slug }: any) => (
     <div>
       <span data-testid="slug">{slug}</span>

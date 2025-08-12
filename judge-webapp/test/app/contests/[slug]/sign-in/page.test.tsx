@@ -12,7 +12,7 @@ import {
 } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
-jest.mock("@/store/slices/contest-slice", () => ({
+jest.mock("@/store/slices/contest-metadata-slice", () => ({
   useContest: jest.fn(() => ({
     id: "contest-id",
     slug: "contest-slug",

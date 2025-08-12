@@ -4,13 +4,13 @@ import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest
 import ContestantLayout from "@/app/contests/[slug]/contestant/layout";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { mockRedirect, mockUseAuthorization } from "@/test/jest.setup";
+import {
+  mockRedirect,
+  mockUseAuthorization,
+  mockUseContestMetadata,
+} from "@/test/jest.setup";
 
-jest.mock("@/store/slices/contest-slice", () => ({
-  useContest: jest.fn(() => ({
-    slug: "test-contest",
-  })),
-}));
+jest.mock("@/store/slices/contest-metadata-slice");
 jest.mock("@/app/contests/[slug]/_component/contest-dashboard-layout", () => ({
   ContestDashboardLayout: jest.fn(({ children }: any) => <div>{children}</div>),
 }));
@@ -22,6 +22,12 @@ jest.mock(
 );
 
 describe("ContestantLayout", () => {
+  beforeEach(() => {
+    mockUseContestMetadata.mockReturnValue({
+      slug: "test-contest",
+    } as any);
+  });
+
   it("should redirect to sign-in if not authenticated", () => {
     mockUseAuthorization.mockReturnValueOnce(undefined);
 
@@ -64,6 +70,7 @@ describe("ContestantLayout", () => {
     expect(screen.getByTestId("child")).toBeInTheDocument();
     expect(ContestDashboardLayout).toHaveBeenCalledWith(
       expect.objectContaining({
+        contestMetadata: { slug: "test-contest" },
         tabs: [
           {
             label: {

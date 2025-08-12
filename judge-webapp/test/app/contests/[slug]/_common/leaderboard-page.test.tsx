@@ -72,7 +72,9 @@ describe("LeaderboardPage", () => {
       ],
     } as ContestLeaderboardResponseDTO;
 
-    render(<LeaderboardPage contest={contest} leaderboard={leaderboard} />);
+    render(
+      <LeaderboardPage problems={contest.problems} leaderboard={leaderboard} />,
+    );
 
     expect(screen.getAllByTestId("problem-title")[0]).toHaveTextContent(
       contest.problems[0].letter,

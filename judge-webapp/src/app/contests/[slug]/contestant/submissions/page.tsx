@@ -19,7 +19,6 @@ import { TableCell } from "@/app/_component/table/table-cell";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableSection } from "@/app/_component/table/table-section";
 import { useLoadableState } from "@/app/_util/loadable-state";
-import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 import { SubmissionFormType } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form";
 import { SubmissionFormMap } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map";
 import { submissionFormSchema } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-schema";
@@ -28,7 +27,11 @@ import { Language } from "@/core/domain/enumerate/Language";
 import { StorageService } from "@/core/service/StorageService";
 import { globalMessages } from "@/i18n/global";
 import { useAlert } from "@/store/slices/alerts-slice";
-
+import {
+  useContestantDashboard,
+  contestantDashboardSlice,
+} from "@/store/slices/contestant-dashboard-slice";
+import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
   createSuccess: {
@@ -86,8 +89,12 @@ const messages = defineMessages({
 });
 
 export default function ContestantSubmissionPage() {
-  const { contest, memberSubmissions, addMemberSubmission } =
-    useContestantContext();
+  const languages = useContestantDashboard((state) => state.contest.languages);
+  const problems = useContestantDashboard((state) => state.contest.problems);
+  const memberSubmissions = useContestantDashboard(
+    (state) => state.memberSubmissions,
+  );
+  const dispatch = useAppDispatch();
   const createSubmissionState = useLoadableState();
 
   const alert = useAlert();
@@ -101,7 +108,7 @@ export default function ContestantSubmissionPage() {
       const activeLanguage = storageService.getKey(
         StorageService.ACTIVE_LANGUAGE_STORAGE_KEY,
       ) as Language | null;
-      if (activeLanguage && contest.languages.includes(activeLanguage)) {
+      if (activeLanguage && languages.includes(activeLanguage)) {
         submissionForm.setValue("language", activeLanguage);
       }
     }
@@ -116,7 +123,9 @@ export default function ContestantSubmissionPage() {
         data.problemId as string,
         SubmissionFormMap.toInputDTO(data),
       );
-      addMemberSubmission(submission);
+      dispatch(
+        contestantDashboardSlice.actions.mergeMemberSubmission(submission),
+      );
       storageService.setKey(
         StorageService.ACTIVE_LANGUAGE_STORAGE_KEY,
         submission.language,
@@ -143,7 +152,7 @@ export default function ContestantSubmissionPage() {
           form={submissionForm}
           name="problemId"
           label={messages.problemLabel}
-          options={(contest?.problems || []).map((it) => ({
+          options={problems.map((it) => ({
             value: it.id.toString(),
             label: {
               ...messages.problemOptionLabel,
@@ -158,7 +167,7 @@ export default function ContestantSubmissionPage() {
             form={submissionForm}
             name="language"
             label={messages.languageLabel}
-            options={(contest?.languages || []).map((it) => ({
+            options={languages.map((it) => ({
               value: it,
               label: globalMessages.language[it],
             }))}

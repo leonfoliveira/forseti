@@ -3,10 +3,10 @@
 import React from "react";
 
 import { TimelinePage } from "@/app/contests/[slug]/_common/timeline-page";
-import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
+import { useContestantDashboard } from "@/store/slices/contestant-dashboard-slice";
 
 export default function ContestantTimelinePage() {
-  const { submissions } = useContestantContext();
+  const submissions = useContestantDashboard((state) => state.submissions);
 
   return <TimelinePage submissions={submissions} />;
 }

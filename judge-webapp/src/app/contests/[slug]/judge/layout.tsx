@@ -9,7 +9,7 @@ import { JudgeContextProvider } from "@/app/contests/[slug]/judge/_context/judge
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { useAuthorization } from "@/store/slices/authorization-slice";
-import { useContest } from "@/store/slices/contest-slice";
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 
 const messages = defineMessages({
   tabLeaderboard: {
@@ -40,7 +40,7 @@ export default function JudgeLayout({
   children: React.ReactNode;
 }) {
   const authorization = useAuthorization();
-  const contestMetadata = useContest();
+  const contestMetadata = useContestMetadata();
 
   if (!authorization?.member.type) {
     return redirect(routes.CONTEST_SIGN_IN(contestMetadata.slug));

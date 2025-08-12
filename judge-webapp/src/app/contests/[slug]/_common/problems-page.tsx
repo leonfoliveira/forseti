@@ -10,8 +10,7 @@ import { TableCell } from "@/app/_component/table/table-cell";
 import { TableRow } from "@/app/_component/table/table-row";
 import { TableSection } from "@/app/_component/table/table-section";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
-
+import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
 
 const messages = defineMessages({
   problemTitle: {
@@ -21,7 +20,7 @@ const messages = defineMessages({
 });
 
 type Props = {
-  contest: ContestPublicResponseDTO;
+  problems: ProblemPublicResponseDTO[];
   contestantStatus?: Record<string, Record<SubmissionAnswer, number>>;
 };
 
@@ -29,12 +28,12 @@ type Props = {
  * A generic problem page component for displaying contest problems.
  * If `contestantStatus` is provided, it will show the status of each problem for the contestant.
  */
-export function ProblemsPage({ contest, contestantStatus }: Props) {
+export function ProblemsPage({ problems, contestantStatus }: Props) {
   return (
     <div>
       <Table className="table-zebra">
         <TableSection>
-          {contest.problems.map((problem) => (
+          {problems.map((problem) => (
             <TableRow
               key={problem.id}
               className="hover:bg-base-100 transition"

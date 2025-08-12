@@ -19,7 +19,7 @@ import { authenticationService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useAlert } from "@/store/slices/alerts-slice";
-import { useContest } from "@/store/slices/contest-slice";
+import { useContest } from "@/store/slices/contest-metadata-slice";
 
 const messages = defineMessages({
   wrongLoginPassword: {

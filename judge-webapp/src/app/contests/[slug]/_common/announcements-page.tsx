@@ -14,9 +14,9 @@ import { AnnouncementFormType } from "@/app/contests/[slug]/_common/_form/announ
 import { AnnouncementFormMap } from "@/app/contests/[slug]/_common/_form/announcement-form-map";
 import { announcementFormSchema } from "@/app/contests/[slug]/_common/_form/announcement-form-schema";
 import { contestService } from "@/config/composition";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { useAlert } from "@/store/slices/alerts-slice";
-
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 
 const messages = defineMessages({
   createSuccess: {
@@ -42,11 +42,16 @@ const messages = defineMessages({
 });
 
 type Props = {
-  contest: ContestPublicResponseDTO;
+  contestId: string;
+  announcements: AnnouncementResponseDTO[];
   canCreate?: boolean;
 };
 
-export function AnnouncementsPage({ contest, canCreate = false }: Props) {
+export function AnnouncementsPage({
+  contestId,
+  announcements,
+  canCreate = false,
+}: Props) {
   const createAnnouncementState = useLoadableState();
 
   const alert = useAlert();
@@ -59,7 +64,7 @@ export function AnnouncementsPage({ contest, canCreate = false }: Props) {
     createAnnouncementState.start();
     try {
       await contestService.createAnnouncement(
-        contest.id,
+        contestId,
         AnnouncementFormMap.toInputDTO(data),
       );
       createAnnouncementState.finish();
@@ -103,7 +108,7 @@ export function AnnouncementsPage({ contest, canCreate = false }: Props) {
           <div className="divider" />
         </Form>
       )}
-      {contest.announcements.length == 0 && (
+      {announcements.length == 0 && (
         <div
           className="flex justify-center items-center py-20"
           data-testid="empty"
@@ -114,7 +119,7 @@ export function AnnouncementsPage({ contest, canCreate = false }: Props) {
         </div>
       )}
       <div className="flex flex-col gap-y-8">
-        {contest.announcements.toReversed().map((announcement) => (
+        {announcements.toReversed().map((announcement) => (
           <div
             key={announcement.id}
             className="card bg-base-100 border border-base-300"

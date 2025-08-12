@@ -1,9 +1,12 @@
-import { act, renderHook, screen, waitFor } from "@testing-library/react";
-
 import {
-  GuestContextProvider,
-  useGuestContext,
-} from "@/app/contests/[slug]/guest/_context/guest-context";
+  act,
+  render,
+  renderHook,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+
+import { GuestContextProvider } from "@/app/contests/[slug]/guest/_context/guest-context";
 import {
   announcementListener,
   clarificationListener,
@@ -12,13 +15,19 @@ import {
   listenerClientFactory,
   submissionListener,
 } from "@/config/composition";
-import { mockAlert, mockUseAuthorization } from "@/test/jest.setup";
+import {
+  mockAlert,
+  mockAppDispatch,
+  mockUseAuthorization,
+  mockUseContestMetadata,
+} from "@/test/jest.setup";
+import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 
-jest.mock("@/store/slices/contest-slice", () => ({
-  useContest: jest.fn(() => ({
-    id: "test-contest-id",
-  })),
-}));
 jest.mock("@/app/_component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading" />,
 }));
@@ -37,6 +46,9 @@ describe("GuestContextProvider", () => {
     mockUseAuthorization.mockReturnValue({
       member: { id: "member-id" },
     });
+    mockUseContestMetadata.mockReturnValue({
+      id: "test-contest-id",
+    });
   });
 
   it("should alert error and render error page on load failure", async () => {
@@ -44,14 +56,11 @@ describe("GuestContextProvider", () => {
       new Error("error"),
     );
 
-    renderHook(() => useGuestContext(), {
-      wrapper: ({ children }) => (
-        <GuestContextProvider>
-          <span data-testid="child" />
-          {children}
-        </GuestContextProvider>
-      ),
-    });
+    render(
+      <GuestContextProvider>
+        <span data-testid="child" />
+      </GuestContextProvider>,
+    );
 
     expect(screen.getByTestId("loading")).toBeInTheDocument();
     await waitFor(() => {
@@ -65,9 +74,16 @@ describe("GuestContextProvider", () => {
   });
 
   it("should load contest data and render children", async () => {
-    const mockContest = { id: "test-contest-id", name: "Test Contest" };
-    const mockLeaderboard = { id: "test-leaderboard-id" };
-    const mockSubmissions = [{ id: "submission-1" }];
+    const mockContest = {
+      id: "test-contest-id",
+      name: "Test Contest",
+    } as unknown as ContestPublicResponseDTO;
+    const mockLeaderboard = {
+      id: "test-leaderboard-id",
+    } as unknown as ContestLeaderboardResponseDTO;
+    const mockSubmissions = [
+      { id: "submission-1" },
+    ] as unknown as SubmissionPublicResponseDTO[];
 
     (contestService.findContestById as jest.Mock).mockResolvedValue(
       mockContest,
@@ -79,29 +95,30 @@ describe("GuestContextProvider", () => {
       mockSubmissions,
     );
 
-    const { result } = renderHook(() => useGuestContext(), {
-      wrapper: ({ children }) => (
-        <GuestContextProvider>
-          <span data-testid="child" />
-          {children}
-        </GuestContextProvider>
-      ),
-    });
+    render(
+      <GuestContextProvider>
+        <span data-testid="child" />
+      </GuestContextProvider>,
+    );
 
     await waitFor(() => {
-      expect(result.current.contest).toEqual(mockContest);
-      expect(result.current.leaderboard).toEqual(mockLeaderboard);
-      expect(result.current.submissions).toEqual(mockSubmissions);
+      expect(mockAppDispatch).toHaveBeenCalledWith(
+        guestDashboardSlice.actions.set({
+          contest: mockContest,
+          leaderboard: mockLeaderboard,
+          submissions: mockSubmissions,
+        }),
+      );
       expect(screen.getByTestId("child")).toBeInTheDocument();
     });
   });
 
   it("should connect and disconnect to listener", async () => {
-    const { unmount } = renderHook(() => useGuestContext(), {
-      wrapper: ({ children }) => (
-        <GuestContextProvider>{children}</GuestContextProvider>
-      ),
-    });
+    const { unmount } = render(
+      <GuestContextProvider>
+        <span data-testid="child" />
+      </GuestContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -112,11 +129,11 @@ describe("GuestContextProvider", () => {
   });
 
   it("should handle leaderboard updates", async () => {
-    const { result } = renderHook(() => useGuestContext(), {
-      wrapper: ({ children }) => (
-        <GuestContextProvider>{children}</GuestContextProvider>
-      ),
-    });
+    render(
+      <GuestContextProvider>
+        <span data-testid="child" />
+      </GuestContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -132,11 +149,15 @@ describe("GuestContextProvider", () => {
     const receiveLeaderboard = (
       leaderboardListener.subscribeForLeaderboard as jest.Mock
     ).mock.calls[0][2];
-    const newLeaderboard = { id: "new-leaderboard-id" };
+    const newLeaderboard = {
+      id: "new-leaderboard-id",
+    } as unknown as ContestLeaderboardResponseDTO;
     act(() => {
       receiveLeaderboard(newLeaderboard);
     });
-    expect(result.current.leaderboard).toEqual(newLeaderboard);
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      guestDashboardSlice.actions.setLeaderboard(newLeaderboard),
+    );
   });
 
   it("should handle submission updates", async () => {
@@ -144,11 +165,11 @@ describe("GuestContextProvider", () => {
       [],
     );
 
-    const { result } = renderHook(() => useGuestContext(), {
-      wrapper: ({ children }) => (
-        <GuestContextProvider>{children}</GuestContextProvider>
-      ),
-    });
+    render(
+      <GuestContextProvider>
+        <span data-testid="child" />
+      </GuestContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -164,11 +185,15 @@ describe("GuestContextProvider", () => {
     const receiveSubmission = (
       submissionListener.subscribeForContest as jest.Mock
     ).mock.calls[0][2];
-    const newSubmission = { id: "new-submission-id" };
+    const newSubmission = {
+      id: "new-submission-id",
+    } as unknown as SubmissionPublicResponseDTO;
     act(() => {
       receiveSubmission(newSubmission);
     });
-    expect(result.current.submissions).toContainEqual(newSubmission);
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      guestDashboardSlice.actions.mergeSubmission(newSubmission),
+    );
   });
 
   it("should handle announcement updates", async () => {
@@ -176,11 +201,11 @@ describe("GuestContextProvider", () => {
       announcements: [],
     });
 
-    const { result } = renderHook(() => useGuestContext(), {
-      wrapper: ({ children }) => (
-        <GuestContextProvider>{children}</GuestContextProvider>
-      ),
-    });
+    render(
+      <GuestContextProvider>
+        <span data-testid="child" />
+      </GuestContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -196,12 +221,15 @@ describe("GuestContextProvider", () => {
     const receiveAnnouncement = (
       announcementListener.subscribeForContest as jest.Mock
     ).mock.calls[0][2];
-    const newAnnouncement = { id: "new-announcement-id", text: "Announcement" };
+    const newAnnouncement = {
+      id: "new-announcement-id",
+      text: "Announcement",
+    } as unknown as AnnouncementResponseDTO;
     act(() => {
       receiveAnnouncement(newAnnouncement);
     });
-    expect(result.current.contest.announcements).toContainEqual(
-      newAnnouncement,
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      guestDashboardSlice.actions.mergeAnnouncement(newAnnouncement),
     );
     expect(mockAlert.warning).toHaveBeenCalledWith({
       defaultMessage: "New announcement: {text}",
@@ -215,11 +243,11 @@ describe("GuestContextProvider", () => {
       clarifications: [],
     });
 
-    const { result } = renderHook(() => useGuestContext(), {
-      wrapper: ({ children }) => (
-        <GuestContextProvider>{children}</GuestContextProvider>
-      ),
-    });
+    render(
+      <GuestContextProvider>
+        <span data-testid="child" />
+      </GuestContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -238,12 +266,12 @@ describe("GuestContextProvider", () => {
     const newClarification = {
       id: "new-clarification-id",
       text: "Clarification",
-    };
+    } as unknown as ClarificationResponseDTO;
     act(() => {
       receiveClarification(newClarification);
     });
-    expect(result.current.contest.clarifications).toContainEqual(
-      newClarification,
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      guestDashboardSlice.actions.mergeClarification(newClarification),
     );
   });
 
@@ -252,11 +280,11 @@ describe("GuestContextProvider", () => {
       clarifications: [{ id: "clarification-id" }],
     });
 
-    const { result } = renderHook(() => useGuestContext(), {
-      wrapper: ({ children }) => (
-        <GuestContextProvider>{children}</GuestContextProvider>
-      ),
-    });
+    render(
+      <GuestContextProvider>
+        <span data-testid="child" />
+      </GuestContextProvider>,
+    );
 
     await waitFor(() => {
       expect(listenerClient.connect).toHaveBeenCalled();
@@ -275,8 +303,9 @@ describe("GuestContextProvider", () => {
     act(() => {
       deleteClarification({ id: "clarification-id" });
     });
-    expect(result.current.contest.clarifications).not.toContainEqual(
-      expect.objectContaining({ id: "clarification-id" }),
+
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      guestDashboardSlice.actions.deleteClarification("clarification-id"),
     );
   });
 });
