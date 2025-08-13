@@ -1,11 +1,11 @@
 import React from "react";
 import { FormattedMessage } from "react-intl";
 
-import { Badge } from "@/app/_component/badge/badge";
 import { cls } from "@/app/_util/cls";
 import { useContestStatusWatcher } from "@/app/_util/contest-status-watcher";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { globalMessages } from "@/i18n/global";
+import { Badge } from "@/lib/component/badge/badge";
 
 type Props<TContest> = {
   contest: TContest;

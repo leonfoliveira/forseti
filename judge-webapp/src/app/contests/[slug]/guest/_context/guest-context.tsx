@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
 import { defineMessages } from "react-intl";
 
-import { ErrorPage } from "@/app/_component/page/error-page";
-import { LoadingPage } from "@/app/_component/page/loading-page";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import {
   announcementListener,
@@ -16,6 +14,8 @@ import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announce
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { ErrorPage } from "@/lib/component/page/error-page";
+import { LoadingPage } from "@/lib/component/page/loading-page";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";

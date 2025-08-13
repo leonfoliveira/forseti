@@ -1,10 +1,4 @@
-import {
-  act,
-  render,
-  renderHook,
-  screen,
-  waitFor,
-} from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 
 import { ContestantContextProvider } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 import {
@@ -17,28 +11,28 @@ import {
   submissionService,
 } from "@/config/composition";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
+import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { contestantDashboardSlice } from "@/store/slices/contestant-dashboard-slice";
 import {
   mockAlert,
   mockAppDispatch,
   mockToast,
   mockUseAuthorization,
 } from "@/test/jest.setup";
-import { contestantDashboardSlice } from "@/store/slices/contestant-dashboard-slice";
-import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
-import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
-import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 
 jest.mock("@/store/slices/contest-metadata-slice", () => ({
   useContest: jest.fn(() => ({
     id: "test-contest-id",
   })),
 }));
-jest.mock("@/app/_component/page/loading-page", () => ({
+jest.mock("@/lib/component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading" />,
 }));
-jest.mock("@/app/_component/page/error-page", () => ({
+jest.mock("@/lib/component/page/error-page", () => ({
   ErrorPage: () => <span data-testid="error" />,
 }));
 

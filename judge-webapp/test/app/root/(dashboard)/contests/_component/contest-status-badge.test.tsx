@@ -8,7 +8,7 @@ jest.mock("@/app/_util/contest-status-watcher", () => ({
   useContestStatusWatcher: jest.fn(),
 }));
 
-jest.mock("@/app/_component/badge/badge", () => ({
+jest.mock("@/lib/component/badge/badge", () => ({
   Badge: ({ children, className }: any) => (
     <span className={className} data-testid="badge">
       {children}

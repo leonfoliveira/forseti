@@ -15,7 +15,7 @@ jest.mock("react-intl", () => ({
   }),
 }));
 
-jest.mock("@/app/_component/format/formatted-datetime", () => ({
+jest.mock("@/lib/component/format/formatted-datetime", () => ({
   FormattedDateTime: ({ timestamp }: any) => timestamp,
 }));
 

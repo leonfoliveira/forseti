@@ -10,12 +10,12 @@ jest.mock("@/store/store-provider", () => ({
   StoreProvider: ({ children }: any) => <>{children}</>,
 }));
 
-jest.mock("@/app/_component/footer", () => ({
+jest.mock("@/lib/component/footer", () => ({
   Footer: () => <footer data-testid="footer">Footer</footer>,
 }));
 
-jest.mock("@/app/_component/notification/alert-box");
-jest.mock("@/app/_component/notification/toast-box");
+jest.mock("@/lib/component/notification/alert-box");
+jest.mock("@/lib/component/notification/toast-box");
 
 jest.mock("@/app/_context/authorization-provider", () => ({
   AuthorizationProvider: ({ children }: any) => <>{children}</>,

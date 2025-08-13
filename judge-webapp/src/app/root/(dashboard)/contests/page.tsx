@@ -11,14 +11,6 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { Button } from "@/app/_component/form/button";
-import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
-import { DialogModal } from "@/app/_component/modal/dialog-modal";
-import { Spinner } from "@/app/_component/spinner";
-import { Table } from "@/app/_component/table/table";
-import { TableCell } from "@/app/_component/table/table-cell";
-import { TableRow } from "@/app/_component/table/table-row";
-import { TableSection } from "@/app/_component/table/table-section";
 import { useContestStatusWatcherBatch } from "@/app/_util/contest-status-watcher";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { useModal } from "@/app/_util/modal-hook";
@@ -28,8 +20,15 @@ import { contestService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { Button } from "@/lib/component/form/button";
+import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
+import { DialogModal } from "@/lib/component/modal/dialog-modal";
+import { Spinner } from "@/lib/component/spinner";
+import { Table } from "@/lib/component/table/table";
+import { TableCell } from "@/lib/component/table/table-cell";
+import { TableRow } from "@/lib/component/table/table-row";
+import { TableSection } from "@/lib/component/table/table-section";
 import { useAlert } from "@/store/slices/alerts-slice";
-
 
 const messages = defineMessages({
   loadError: {

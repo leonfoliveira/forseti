@@ -8,7 +8,7 @@ import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { mockAlert, mockUseJudgeDashboard } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
-jest.mock("@/app/_component/modal/dialog-modal", () => ({
+jest.mock("@/lib/component/modal/dialog-modal", () => ({
   DialogModal: ({ children, modal, onConfirm }: any) => (
     <>
       {modal.isOpen && (

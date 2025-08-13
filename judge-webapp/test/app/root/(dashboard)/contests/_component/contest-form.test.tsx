@@ -20,7 +20,7 @@ jest.mock("@/config/composition");
 jest.mock("@/app/_util/contest-status-watcher", () => ({
   useContestStatusWatcher: jest.fn(() => ContestStatus.NOT_STARTED),
 }));
-jest.mock("@/app/_component/modal/dialog-modal", () => ({
+jest.mock("@/lib/component/modal/dialog-modal", () => ({
   DialogModal: ({ children, modal, onConfirm, isLoading }: any) => (
     <>
       {modal.isOpen && (

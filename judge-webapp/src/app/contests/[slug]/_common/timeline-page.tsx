@@ -3,15 +3,15 @@
 import React from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
-import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
-import { Table } from "@/app/_component/table/table";
-import { TableCell } from "@/app/_component/table/table-cell";
-import { TableRow } from "@/app/_component/table/table-row";
-import { TableSection } from "@/app/_component/table/table-section";
 import { cls } from "@/app/_util/cls";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { globalMessages } from "@/i18n/global";
+import { SubmissionAnswerBadge } from "@/lib/component/badge/submission-answer-badge";
+import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
+import { Table } from "@/lib/component/table/table";
+import { TableCell } from "@/lib/component/table/table-cell";
+import { TableRow } from "@/lib/component/table/table-row";
+import { TableSection } from "@/lib/component/table/table-section";
 import { useAuthorization } from "@/store/slices/authorization-slice";
 
 const messages = defineMessages({

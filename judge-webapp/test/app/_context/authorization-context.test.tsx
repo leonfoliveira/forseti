@@ -16,11 +16,11 @@ jest.mock("@/app/_context/authorization-provider", () =>
   jest.requireActual("@/app/_context/authorization-provider"),
 );
 
-jest.mock("@/app/_component/page/loading-page", () => ({
+jest.mock("@/lib/component/page/loading-page", () => ({
   LoadingPage: () => <div data-testid="loading">Loading...</div>,
 }));
 
-jest.mock("@/app/_component/page/error-page", () => ({
+jest.mock("@/lib/component/page/error-page", () => ({
   ErrorPage: () => <div data-testid="error">Error occurred</div>,
 }));
 

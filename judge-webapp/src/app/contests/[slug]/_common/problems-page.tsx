@@ -3,14 +3,14 @@
 import React from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { SubmissionAnswerShortBadge } from "@/app/_component/badge/submission-answer-short-badge";
-import { DownloadButton } from "@/app/_component/form/download-button";
-import { Table } from "@/app/_component/table/table";
-import { TableCell } from "@/app/_component/table/table-cell";
-import { TableRow } from "@/app/_component/table/table-row";
-import { TableSection } from "@/app/_component/table/table-section";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
+import { SubmissionAnswerShortBadge } from "@/lib/component/badge/submission-answer-short-badge";
+import { DownloadButton } from "@/lib/component/form/download-button";
+import { Table } from "@/lib/component/table/table";
+import { TableCell } from "@/lib/component/table/table-cell";
+import { TableRow } from "@/lib/component/table/table-row";
+import { TableSection } from "@/lib/component/table/table-section";
 
 const messages = defineMessages({
   problemTitle: {

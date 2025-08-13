@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 
-import { ErrorPage } from "@/app/_component/page/error-page";
-import { LoadingPage } from "@/app/_component/page/loading-page";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { contestService } from "@/config/composition";
+import { ErrorPage } from "@/lib/component/page/error-page";
+import { LoadingPage } from "@/lib/component/page/loading-page";
 import { contestMetadataSlice } from "@/store/slices/contest-metadata-slice";
 import { useAppDispatch } from "@/store/store";
 

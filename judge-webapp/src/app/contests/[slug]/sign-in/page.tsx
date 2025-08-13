@@ -8,9 +8,6 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { Button } from "@/app/_component/form/button";
-import { Form } from "@/app/_component/form/form";
-import { TextInput } from "@/app/_component/form/text-input";
 import { useSetAuthorization } from "@/app/_context/authorization-provider";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { MemberSignInFormType } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form";
@@ -18,6 +15,9 @@ import { memberSignInFormSchema } from "@/app/contests/[slug]/sign-in/_form/memb
 import { authenticationService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
+import { Button } from "@/lib/component/form/button";
+import { Form } from "@/lib/component/form/form";
+import { TextInput } from "@/lib/component/form/text-input";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { useContest } from "@/store/slices/contest-metadata-slice";
 

@@ -3,10 +3,10 @@
 import { redirect } from "next/navigation";
 import React from "react";
 
-import { Navbar } from "@/app/_component/navbar";
 import { RootTabBar } from "@/app/root/(dashboard)/_component/root-tab-bar";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { Navbar } from "@/lib/component/navbar";
 import { useAuthorization } from "@/store/slices/authorization-slice";
 
 export default function RootLayout({

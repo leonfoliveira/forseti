@@ -5,7 +5,7 @@ import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { mockRedirect, mockUseAuthorization } from "@/test/jest.setup";
 
-jest.mock("@/app/_component/navbar", () => ({
+jest.mock("@/lib/component/navbar", () => ({
   Navbar: ({ signInPath }: any) => (
     <a href={signInPath} data-testid="sign-in">
       SignIn
@@ -23,7 +23,7 @@ describe("RootLayout", () => {
     render(
       <RootLayout>
         <p data-testid="child">Child</p>
-      </RootLayout>
+      </RootLayout>,
     );
 
     expect(mockRedirect).toHaveBeenCalledWith(routes.ROOT_SIGN_IN);
@@ -36,7 +36,7 @@ describe("RootLayout", () => {
     render(
       <RootLayout>
         <p data-testid="child">Child</p>
-      </RootLayout>
+      </RootLayout>,
     );
 
     expect(mockRedirect).toHaveBeenCalledWith(routes.FORBIDDEN);
@@ -49,12 +49,12 @@ describe("RootLayout", () => {
     render(
       <RootLayout>
         <p data-testid="child">Child</p>
-      </RootLayout>
+      </RootLayout>,
     );
 
     expect(screen.getByTestId("sign-in")).toHaveAttribute(
       "href",
-      routes.ROOT_SIGN_IN
+      routes.ROOT_SIGN_IN,
     );
     expect(screen.getByTestId("root-tab-bar")).toBeInTheDocument();
     expect(screen.getByTestId("child")).toBeInTheDocument();

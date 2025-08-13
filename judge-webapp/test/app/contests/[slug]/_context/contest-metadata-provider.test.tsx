@@ -9,10 +9,10 @@ import { contestMetadataSlice } from "@/store/slices/contest-metadata-slice";
 import { mockAppDispatch, mockRouter } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
-jest.mock("@/app/_component/page/loading-page", () => ({
+jest.mock("@/lib/component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading" />,
 }));
-jest.mock("@/app/_component/page/error-page", () => ({
+jest.mock("@/lib/component/page/error-page", () => ({
   ErrorPage: () => <span data-testid="error" />,
 }));
 

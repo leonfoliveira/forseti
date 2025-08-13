@@ -7,17 +7,6 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
-import { Button } from "@/app/_component/form/button";
-import { DownloadButton } from "@/app/_component/form/download-button";
-import { FileInput } from "@/app/_component/form/file-input";
-import { Form } from "@/app/_component/form/form";
-import { Select } from "@/app/_component/form/select";
-import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
-import { Table } from "@/app/_component/table/table";
-import { TableCell } from "@/app/_component/table/table-cell";
-import { TableRow } from "@/app/_component/table/table-row";
-import { TableSection } from "@/app/_component/table/table-section";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { SubmissionFormType } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form";
 import { SubmissionFormMap } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map";
@@ -26,6 +15,17 @@ import { problemService, storageService } from "@/config/composition";
 import { Language } from "@/core/domain/enumerate/Language";
 import { StorageService } from "@/core/service/StorageService";
 import { globalMessages } from "@/i18n/global";
+import { SubmissionAnswerBadge } from "@/lib/component/badge/submission-answer-badge";
+import { Button } from "@/lib/component/form/button";
+import { DownloadButton } from "@/lib/component/form/download-button";
+import { FileInput } from "@/lib/component/form/file-input";
+import { Form } from "@/lib/component/form/form";
+import { Select } from "@/lib/component/form/select";
+import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
+import { Table } from "@/lib/component/table/table";
+import { TableCell } from "@/lib/component/table/table-cell";
+import { TableRow } from "@/lib/component/table/table-row";
+import { TableSection } from "@/lib/component/table/table-section";
 import { useAlert } from "@/store/slices/alerts-slice";
 import {
   useContestantDashboard,

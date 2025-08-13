@@ -2,7 +2,7 @@
 
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { ErrorPageTemplate } from "@/app/_component/page/error-page-template";
+import { ErrorPageTemplate } from "@/lib/component/page/error-page-template";
 
 const messages = defineMessages({
   description: {

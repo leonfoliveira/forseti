@@ -10,15 +10,6 @@ import React, { Fragment, useEffect } from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { Button } from "@/app/_component/form/button";
-import { CheckboxGroup } from "@/app/_component/form/checkbox-group";
-import { DateTimeInput } from "@/app/_component/form/date-time-input";
-import { FileInput } from "@/app/_component/form/file-input";
-import { Form } from "@/app/_component/form/form";
-import { NumberInput } from "@/app/_component/form/number-input";
-import { Select } from "@/app/_component/form/select";
-import { TextInput } from "@/app/_component/form/text-input";
-import { DialogModal } from "@/app/_component/modal/dialog-modal";
 import { useContestStatusWatcher } from "@/app/_util/contest-status-watcher";
 import { LoadableState, useLoadableState } from "@/app/_util/loadable-state";
 import { useModal } from "@/app/_util/modal-hook";
@@ -30,8 +21,16 @@ import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
 import { globalMessages } from "@/i18n/global";
+import { Button } from "@/lib/component/form/button";
+import { CheckboxGroup } from "@/lib/component/form/checkbox-group";
+import { DateTimeInput } from "@/lib/component/form/date-time-input";
+import { FileInput } from "@/lib/component/form/file-input";
+import { Form } from "@/lib/component/form/form";
+import { NumberInput } from "@/lib/component/form/number-input";
+import { Select } from "@/lib/component/form/select";
+import { TextInput } from "@/lib/component/form/text-input";
+import { DialogModal } from "@/lib/component/modal/dialog-modal";
 import { useAlert } from "@/store/slices/alerts-slice";
-
 
 const messages = defineMessages({
   inProgress: {

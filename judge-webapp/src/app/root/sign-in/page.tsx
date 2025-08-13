@@ -7,9 +7,6 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { Button } from "@/app/_component/form/button";
-import { Form } from "@/app/_component/form/form";
-import { TextInput } from "@/app/_component/form/text-input";
 import { useSetAuthorization } from "@/app/_context/authorization-provider";
 import { useLoadableState } from "@/app/_util/loadable-state";
 import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form";
@@ -17,8 +14,10 @@ import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form
 import { authenticationService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
+import { Button } from "@/lib/component/form/button";
+import { Form } from "@/lib/component/form/form";
+import { TextInput } from "@/lib/component/form/text-input";
 import { useAlert } from "@/store/slices/alerts-slice";
-
 
 const messages = defineMessages({
   wrongPassword: {

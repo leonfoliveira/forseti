@@ -2,7 +2,6 @@
 
 import React from "react";
 
-import { Navbar } from "@/app/_component/navbar";
 import { WaitPage } from "@/app/contests/[slug]/_common/wait-page";
 import { ContestTabBar } from "@/app/contests/[slug]/_component/contest-tab-bar";
 import { routes } from "@/config/routes";
@@ -10,6 +9,7 @@ import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { ContestUtil } from "@/core/util/contest-util";
 import { Message } from "@/i18n/message";
+import { Navbar } from "@/lib/component/navbar";
 
 type Props = {
   contestMetadata: ContestMetadataResponseDTO;

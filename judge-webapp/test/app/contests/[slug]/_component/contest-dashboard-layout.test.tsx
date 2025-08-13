@@ -12,7 +12,7 @@ jest.mock("@/app/contests/[slug]/_common/wait-page", () => ({
     <div data-testid="wait-page">{contestMetadata.id}</div>
   ),
 }));
-jest.mock("@/app/_component/navbar", () => ({
+jest.mock("@/lib/component/navbar", () => ({
   Navbar: ({ contestMetadata, signInPath }: any) => (
     <div>
       <span data-testid="contest-id">{contestMetadata.id}</span>
