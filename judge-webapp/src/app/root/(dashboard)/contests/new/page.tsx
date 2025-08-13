@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { defineMessages } from "react-intl";
 
-import { useLoadableState } from "@/app/_util/loadable-state";
 import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { ContestFormMap } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
@@ -13,8 +12,8 @@ import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest
 import { contestService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
+import { useLoadableState } from "@/lib/util/loadable-state";
 import { useAlert } from "@/store/slices/alerts-slice";
-
 
 const messages = defineMessages({
   createSuccess: {

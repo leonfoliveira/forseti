@@ -5,9 +5,9 @@ import React, {
 } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 
-import { cls } from "@/app/_util/cls";
 import { Message } from "@/i18n/message";
 import { Spinner } from "@/lib/component/spinner";
+import { cls } from "@/lib/util/cls";
 
 type Props = DetailedHTMLProps<
   ButtonHTMLAttributes<HTMLButtonElement>,

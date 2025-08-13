@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 
-import { useTheme, Theme } from "@/app/_util/theme-hook";
 import { storageService } from "@/config/composition";
+import { useTheme, Theme } from "@/lib/util/theme-hook";
 
 describe("useTheme", () => {
   it("initializes with dark theme when no stored theme and prefers dark mode", () => {

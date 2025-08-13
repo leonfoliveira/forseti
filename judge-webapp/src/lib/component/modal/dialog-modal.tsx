@@ -1,8 +1,8 @@
 import React from "react";
 import { defineMessages } from "react-intl";
 
-import { ModalHook } from "@/app/_util/modal-hook";
 import { Button } from "@/lib/component/form/button";
+import { ModalHook } from "@/lib/util/modal-hook";
 
 const messages = defineMessages({
   cancel: {

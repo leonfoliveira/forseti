@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 
-import { useLoadableState } from "@/app/_util/loadable-state";
 import { ServerException } from "@/core/domain/exception/ServerException";
+import { useLoadableState } from "@/lib/util/loadable-state";
 
 describe("useLoadableState", () => {
   it("initializes with default state", () => {

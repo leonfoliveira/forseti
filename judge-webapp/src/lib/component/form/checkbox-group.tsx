@@ -7,9 +7,9 @@ import {
 } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 
-import { cls } from "@/app/_util/cls";
 import { Message } from "@/i18n/message";
 import { Checkbox } from "@/lib/component/form/checkbox";
+import { cls } from "@/lib/util/cls";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,

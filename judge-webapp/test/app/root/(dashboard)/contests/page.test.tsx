@@ -6,16 +6,16 @@ import {
   waitFor,
 } from "@testing-library/react";
 
-import { useContestStatusWatcherBatch } from "@/app/_util/contest-status-watcher";
 import RootContestsPage from "@/app/root/(dashboard)/contests/page";
 import { contestService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { useContestStatusWatcherBatch } from "@/lib/util/contest-status-watcher";
 import { mockAlert, mockRouter } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
-jest.mock("@/app/_util/contest-status-watcher", () => ({
+jest.mock("@/lib/util/contest-status-watcher", () => ({
   useContestStatusWatcherBatch: jest.fn().mockReturnValue({}),
 }));
 jest.mock("@/app/root/(dashboard)/contests/_component/contest-status-badge");

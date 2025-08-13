@@ -10,9 +10,6 @@ import React, { Fragment, useEffect } from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { useContestStatusWatcher } from "@/app/_util/contest-status-watcher";
-import { LoadableState, useLoadableState } from "@/app/_util/loadable-state";
-import { useModal } from "@/app/_util/modal-hook";
 import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { contestService } from "@/config/composition";
@@ -30,6 +27,9 @@ import { NumberInput } from "@/lib/component/form/number-input";
 import { Select } from "@/lib/component/form/select";
 import { TextInput } from "@/lib/component/form/text-input";
 import { DialogModal } from "@/lib/component/modal/dialog-modal";
+import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
+import { LoadableState, useLoadableState } from "@/lib/util/loadable-state";
+import { useModal } from "@/lib/util/modal-hook";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({

@@ -1,12 +1,17 @@
 import { faClose, faDownload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { DetailedHTMLProps, InputHTMLAttributes, useRef } from "react";
-import { Controller, UseFormReturn , FieldPath, FieldValues } from "react-hook-form";
+import {
+  Controller,
+  UseFormReturn,
+  FieldPath,
+  FieldValues,
+} from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { cls } from "@/app/_util/cls";
 import { Attachment } from "@/core/domain/model/Attachment";
 import { Message } from "@/i18n/message";
+import { cls } from "@/lib/util/cls";
 
 const messages = defineMessages({
   empty: {

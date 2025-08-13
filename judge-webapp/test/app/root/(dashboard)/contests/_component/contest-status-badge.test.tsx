@@ -1,10 +1,10 @@
 import { render, screen } from "@testing-library/react";
 
-import { useContestStatusWatcher } from "@/app/_util/contest-status-watcher";
 import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
 
-jest.mock("@/app/_util/contest-status-watcher", () => ({
+jest.mock("@/lib/util/contest-status-watcher", () => ({
   useContestStatusWatcher: jest.fn(),
 }));
 

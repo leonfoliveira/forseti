@@ -5,8 +5,6 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { useModal } from "@/app/_util/modal-hook";
 import { ClarificationFormType } from "@/app/contests/[slug]/_common/_form/clarification-form";
 import { ClarificationFormMap } from "@/app/contests/[slug]/_common/_form/clarification-form-map";
 import { clarificationFormSchema } from "@/app/contests/[slug]/_common/_form/clarification-form-schema";
@@ -19,6 +17,8 @@ import { Select } from "@/lib/component/form/select";
 import { TextInput } from "@/lib/component/form/text-input";
 import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
 import { DialogModal } from "@/lib/component/modal/dialog-modal";
+import { useLoadableState } from "@/lib/util/loadable-state";
+import { useModal } from "@/lib/util/modal-hook";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({

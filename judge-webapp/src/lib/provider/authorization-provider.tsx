@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useEffect } from "react";
 
-import { useLoadableState } from "@/app/_util/loadable-state";
 import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { Authorization } from "@/core/domain/model/Authorization";
 import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";
+import { useLoadableState } from "@/lib/util/loadable-state";
 import { authorizationSlice } from "@/store/slices/authorization-slice";
 import { useAppDispatch } from "@/store/store";
 

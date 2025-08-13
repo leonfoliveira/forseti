@@ -1,4 +1,4 @@
-import { cls } from "@/app/_util/cls";
+import { cls } from "@/lib/util/cls";
 
 describe("cls utility function", () => {
   it("joins valid class names with a space", () => {

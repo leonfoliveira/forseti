@@ -7,7 +7,6 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { useLoadableState } from "@/app/_util/loadable-state";
 import { SubmissionFormType } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form";
 import { SubmissionFormMap } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map";
 import { submissionFormSchema } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-schema";
@@ -26,6 +25,7 @@ import { Table } from "@/lib/component/table/table";
 import { TableCell } from "@/lib/component/table/table-cell";
 import { TableRow } from "@/lib/component/table/table-row";
 import { TableSection } from "@/lib/component/table/table-section";
+import { useLoadableState } from "@/lib/util/loadable-state";
 import { useAlert } from "@/store/slices/alerts-slice";
 import {
   useContestantDashboard,

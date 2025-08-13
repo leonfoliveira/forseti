@@ -1,10 +1,10 @@
 import React from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { cls } from "@/app/_util/cls";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { globalMessages } from "@/i18n/global";
 import { Badge } from "@/lib/component/badge/badge";
+import { cls } from "@/lib/util/cls";
 
 const messages = defineMessages({
   text: {

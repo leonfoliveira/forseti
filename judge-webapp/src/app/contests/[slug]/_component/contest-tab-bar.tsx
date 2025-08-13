@@ -2,9 +2,8 @@ import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { FormattedMessage } from "react-intl";
 
-import { cls } from "@/app/_util/cls";
 import { Message } from "@/i18n/message";
-
+import { cls } from "@/lib/util/cls";
 
 type Props = {
   tabs: {

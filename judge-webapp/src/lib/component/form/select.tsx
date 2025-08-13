@@ -7,8 +7,8 @@ import {
 } from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 
-import { cls } from "@/app/_util/cls";
 import { Message } from "@/i18n/message";
+import { cls } from "@/lib/util/cls";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   DetailedHTMLProps<SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>,

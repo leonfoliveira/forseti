@@ -2,9 +2,9 @@ import { redirect, RedirectType, usePathname } from "next/navigation";
 import React from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { cls } from "@/app/_util/cls";
 import { routes } from "@/config/routes";
 import { Message } from "@/i18n/message";
+import { cls } from "@/lib/util/cls";
 
 const messages = defineMessages({
   tabContests: {

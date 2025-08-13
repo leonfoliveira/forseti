@@ -3,7 +3,6 @@
 import React from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { cls } from "@/app/_util/cls";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
 import { ProblemStatusBadge } from "@/lib/component/badge/problem-status-badge";
@@ -11,6 +10,7 @@ import { Table } from "@/lib/component/table/table";
 import { TableCell } from "@/lib/component/table/table-cell";
 import { TableRow } from "@/lib/component/table/table-row";
 import { TableSection } from "@/lib/component/table/table-section";
+import { cls } from "@/lib/util/cls";
 import { useAuthorization } from "@/store/slices/authorization-slice";
 
 const messages = defineMessages({

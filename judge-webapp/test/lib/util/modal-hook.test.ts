@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react";
 
-import { useModal } from "@/app/_util/modal-hook";
+import { useModal } from "@/lib/util/modal-hook";
 
 describe("useModal", () => {
   it("initializes with closed state and undefined props", () => {

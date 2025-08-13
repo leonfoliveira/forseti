@@ -1,9 +1,14 @@
 import React, { useEffect } from "react";
-import { Controller, UseFormReturn , FieldPath, FieldValues } from "react-hook-form";
+import {
+  Controller,
+  UseFormReturn,
+  FieldPath,
+  FieldValues,
+} from "react-hook-form";
 import { FormattedMessage } from "react-intl";
 
-import { cls } from "@/app/_util/cls";
 import { Message } from "@/i18n/message";
+import { cls } from "@/lib/util/cls";
 
 type Props<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,

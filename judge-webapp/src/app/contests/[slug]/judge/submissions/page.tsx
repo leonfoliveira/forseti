@@ -7,8 +7,6 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { useModal } from "@/app/_util/modal-hook";
 import { UpdateSubmissionFormType } from "@/app/contests/[slug]/judge/submissions/_form/update-submission-form";
 import { updateSubmissionFormSchema } from "@/app/contests/[slug]/judge/submissions/_form/update-submission-form-schema";
 import { submissionService } from "@/config/composition";
@@ -26,6 +24,8 @@ import { Table } from "@/lib/component/table/table";
 import { TableCell } from "@/lib/component/table/table-cell";
 import { TableRow } from "@/lib/component/table/table-row";
 import { TableSection } from "@/lib/component/table/table-section";
+import { useLoadableState } from "@/lib/util/loadable-state";
+import { useModal } from "@/lib/util/modal-hook";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { useJudgeDashboard } from "@/store/slices/judge-dashboard-slice";
 

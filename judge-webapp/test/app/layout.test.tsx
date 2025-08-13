@@ -21,7 +21,7 @@ jest.mock("@/lib/provider/authorization-provider", () => ({
   AuthorizationProvider: ({ children }: any) => <>{children}</>,
 }));
 
-jest.mock("@/app/_util/theme-hook", () => ({
+jest.mock("@/lib/util/theme-hook", () => ({
   useTheme: () => ({
     theme: "light",
   }),

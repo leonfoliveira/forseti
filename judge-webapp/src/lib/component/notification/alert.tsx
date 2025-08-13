@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect } from "react";
 import { FormattedMessage } from "react-intl";
 
-import { cls } from "@/app/_util/cls";
+import { cls } from "@/lib/util/cls";
 import { AlertLevel, AlertType } from "@/store/slices/alerts-slice";
 
 type Props = {

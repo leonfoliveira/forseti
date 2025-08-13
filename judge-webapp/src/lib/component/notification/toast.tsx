@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useRef } from "react";
 import { FormattedMessage } from "react-intl";
 
-import { cls } from "@/app/_util/cls";
+import { cls } from "@/lib/util/cls";
 import { ToastLevel, ToastType } from "@/store/slices/toasts-slice";
 
 type Props = {

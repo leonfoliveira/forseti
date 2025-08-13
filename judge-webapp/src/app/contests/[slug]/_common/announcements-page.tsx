@@ -5,7 +5,6 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { useLoadableState } from "@/app/_util/loadable-state";
 import { AnnouncementFormType } from "@/app/contests/[slug]/_common/_form/announcement-form";
 import { AnnouncementFormMap } from "@/app/contests/[slug]/_common/_form/announcement-form-map";
 import { announcementFormSchema } from "@/app/contests/[slug]/_common/_form/announcement-form-schema";
@@ -15,6 +14,7 @@ import { Button } from "@/lib/component/form/button";
 import { Form } from "@/lib/component/form/form";
 import { TextInput } from "@/lib/component/form/text-input";
 import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
+import { useLoadableState } from "@/lib/util/loadable-state";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({

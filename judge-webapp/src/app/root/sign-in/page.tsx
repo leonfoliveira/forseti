@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { useLoadableState } from "@/app/_util/loadable-state";
 import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form";
 import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form-schema";
 import { authenticationService } from "@/config/composition";
@@ -17,6 +16,7 @@ import { Button } from "@/lib/component/form/button";
 import { Form } from "@/lib/component/form/form";
 import { TextInput } from "@/lib/component/form/text-input";
 import { useSetAuthorization } from "@/lib/provider/authorization-provider";
+import { useLoadableState } from "@/lib/util/loadable-state";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({

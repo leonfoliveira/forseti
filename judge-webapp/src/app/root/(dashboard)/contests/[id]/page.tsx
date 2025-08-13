@@ -6,7 +6,6 @@ import { use, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { defineMessages } from "react-intl";
 
-import { useLoadableState } from "@/app/_util/loadable-state";
 import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { ContestFormMap } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
@@ -17,8 +16,8 @@ import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
+import { useLoadableState } from "@/lib/util/loadable-state";
 import { useAlert } from "@/store/slices/alerts-slice";
-
 
 const messages = defineMessages({
   loadError: {

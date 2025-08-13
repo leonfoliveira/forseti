@@ -1,6 +1,6 @@
 import React from "react";
 
-import { cls } from "@/app/_util/cls";
+import { cls } from "@/lib/util/cls";
 
 type Props = {
   children: React.ReactNode;

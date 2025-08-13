@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { useLoadableState } from "@/app/_util/loadable-state";
 import {
   announcementListener,
   clarificationListener,
@@ -20,6 +19,7 @@ import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/subm
 import { globalMessages } from "@/i18n/global";
 import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";
+import { useLoadableState } from "@/lib/util/loadable-state";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { useAuthorization } from "@/store/slices/authorization-slice";
 import { useContestMetadata } from "@/store/slices/contest-metadata-slice";

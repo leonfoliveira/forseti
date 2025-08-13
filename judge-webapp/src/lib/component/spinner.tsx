@@ -1,4 +1,4 @@
-import { cls } from "@/app/_util/cls";
+import { cls } from "@/lib/util/cls";
 
 type SpinnerSize = "md" | "lg";
 

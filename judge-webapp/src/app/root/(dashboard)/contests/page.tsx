@@ -11,9 +11,6 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { useContestStatusWatcherBatch } from "@/app/_util/contest-status-watcher";
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { useModal } from "@/app/_util/modal-hook";
 import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
 import { recalculateContests } from "@/app/root/(dashboard)/contests/_util/contests-calculator";
 import { contestService } from "@/config/composition";
@@ -28,6 +25,9 @@ import { Table } from "@/lib/component/table/table";
 import { TableCell } from "@/lib/component/table/table-cell";
 import { TableRow } from "@/lib/component/table/table-row";
 import { TableSection } from "@/lib/component/table/table-section";
+import { useContestStatusWatcherBatch } from "@/lib/util/contest-status-watcher";
+import { useLoadableState } from "@/lib/util/loadable-state";
+import { useModal } from "@/lib/util/modal-hook";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
