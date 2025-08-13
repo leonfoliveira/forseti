@@ -1,10 +1,10 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 
-import { ContestMetadataProvider } from "@/app/contests/[slug]/_context/contest-metadata-provider";
 import { contestService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { ContestMetadataProvider } from "@/lib/provider/contest-metadata-provider";
 import { contestMetadataSlice } from "@/store/slices/contest-metadata-slice";
 import { mockAppDispatch, mockRouter } from "@/test/jest.setup";
 
@@ -16,7 +16,7 @@ jest.mock("@/lib/component/page/error-page", () => ({
   ErrorPage: () => <span data-testid="error" />,
 }));
 
-describe("ContestProvider", () => {
+describe("ContestMetadataProvider", () => {
   it("should render loading state initially", async () => {
     render(
       <ContestMetadataProvider slug="test-slug">

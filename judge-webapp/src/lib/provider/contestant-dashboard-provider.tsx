@@ -22,37 +22,37 @@ import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { useAuthorization } from "@/store/slices/authorization-slice";
-import { useContest } from "@/store/slices/contest-metadata-slice";
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 import { contestantDashboardSlice } from "@/store/slices/contestant-dashboard-slice";
 import { useToast } from "@/store/slices/toasts-slice";
 import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
   loadError: {
-    id: "app.contests.[slug].contestant._context.contestant-context.load-error",
+    id: "lib.provider.contestant-dashboard-provider.load-error",
     defaultMessage: "Error loading contest data",
   },
   problemAnswer: {
-    id: "app.contests.[slug].contestant._context.contestant-context.problem-answer",
+    id: "lib.provider.contestant-dashboard-provider.problem-answer",
     defaultMessage: "Problem {letter}: {answer}",
   },
   announcement: {
-    id: "app.contests.[slug].contestant._context.contestant-context.announcement",
+    id: "lib.provider.contestant-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
   clarificationAnswer: {
-    id: "app.contests.[slug].contestant._context.contestant-context.clarification-answer",
+    id: "lib.provider.contestant-dashboard-provider.clarification-answer",
     defaultMessage: "New answer for a clarification",
   },
 });
 
-export function ContestantContextProvider({
+export function ContestantDashboardProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const authorization = useAuthorization();
-  const contestMetadata = useContest();
+  const contestMetadata = useContestMetadata();
   const state = useLoadableState();
   const dispatch = useAppDispatch();
   const alert = useAlert();

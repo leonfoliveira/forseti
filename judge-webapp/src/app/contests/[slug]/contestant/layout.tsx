@@ -5,9 +5,9 @@ import React from "react";
 import { defineMessages } from "react-intl";
 
 import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
-import { ContestantContextProvider } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { ContestantDashboardProvider } from "@/lib/provider/contestant-dashboard-provider";
 import { useAuthorization } from "@/store/slices/authorization-slice";
 import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 
@@ -83,7 +83,7 @@ export default function ContestantLayout({
         },
       ]}
     >
-      <ContestantContextProvider>{children}</ContestantContextProvider>
+      <ContestantDashboardProvider>{children}</ContestantDashboardProvider>
     </ContestDashboardLayout>
   );
 }

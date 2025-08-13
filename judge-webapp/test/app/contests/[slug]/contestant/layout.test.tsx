@@ -4,30 +4,13 @@ import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest
 import ContestantLayout from "@/app/contests/[slug]/contestant/layout";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import {
-  mockRedirect,
-  mockUseAuthorization,
-  mockUseContestMetadata,
-} from "@/test/jest.setup";
+import { mockRedirect, mockUseAuthorization } from "@/test/jest.setup";
 
-jest.mock("@/store/slices/contest-metadata-slice");
 jest.mock("@/app/contests/[slug]/_component/contest-dashboard-layout", () => ({
   ContestDashboardLayout: jest.fn(({ children }: any) => <div>{children}</div>),
 }));
-jest.mock(
-  "@/app/contests/[slug]/contestant/_context/contestant-context",
-  () => ({
-    ContestantContextProvider: ({ children }: any) => <div>{children}</div>,
-  }),
-);
 
 describe("ContestantLayout", () => {
-  beforeEach(() => {
-    mockUseContestMetadata.mockReturnValue({
-      slug: "test-contest",
-    } as any);
-  });
-
   it("should redirect to sign-in if not authenticated", () => {
     mockUseAuthorization.mockReturnValueOnce(undefined);
 
@@ -38,7 +21,7 @@ describe("ContestantLayout", () => {
     );
 
     expect(mockRedirect).toHaveBeenCalledWith(
-      routes.CONTEST_SIGN_IN("test-contest"),
+      routes.CONTEST_SIGN_IN("contest"),
     );
   });
 
@@ -70,49 +53,49 @@ describe("ContestantLayout", () => {
     expect(screen.getByTestId("child")).toBeInTheDocument();
     expect(ContestDashboardLayout).toHaveBeenCalledWith(
       expect.objectContaining({
-        contestMetadata: { slug: "test-contest" },
+        contestMetadata: { id: "contest", slug: "contest" },
         tabs: [
           {
             label: {
               id: "app.contests.[slug].contestant.layout.tab-leaderboard",
               defaultMessage: "Leaderboard",
             },
-            path: routes.CONTEST_CONTESTANT_LEADERBOARD("test-contest"),
+            path: routes.CONTEST_CONTESTANT_LEADERBOARD("contest"),
           },
           {
             label: {
               id: "app.contests.[slug].contestant.layout.tab-problems",
               defaultMessage: "Problems",
             },
-            path: routes.CONTEST_CONTESTANT_PROBLEMS("test-contest"),
+            path: routes.CONTEST_CONTESTANT_PROBLEMS("contest"),
           },
           {
             label: {
               id: "app.contests.[slug].contestant.layout.tab-timeline",
               defaultMessage: "Timeline",
             },
-            path: routes.CONTEST_CONTESTANT_TIMELINE("test-contest"),
+            path: routes.CONTEST_CONTESTANT_TIMELINE("contest"),
           },
           {
             label: {
               id: "app.contests.[slug].contestant.layout.tab-submissions",
               defaultMessage: "Submissions",
             },
-            path: routes.CONTEST_CONTESTANT_SUBMISSIONS("test-contest"),
+            path: routes.CONTEST_CONTESTANT_SUBMISSIONS("contest"),
           },
           {
             label: {
               id: "app.contests.[slug].contestant.layout.tab-clarifications",
               defaultMessage: "Clarifications",
             },
-            path: routes.CONTEST_CONTESTANT_CLARIFICATIONS("test-contest"),
+            path: routes.CONTEST_CONTESTANT_CLARIFICATIONS("contest"),
           },
           {
             label: {
               id: "app.contests.[slug].contestant.layout.tab-announcements",
               defaultMessage: "Announcements",
             },
-            path: routes.CONTEST_CONTESTANT_ANNOUNCEMENTS("test-contest"),
+            path: routes.CONTEST_CONTESTANT_ANNOUNCEMENTS("contest"),
           },
         ],
       }),

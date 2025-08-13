@@ -13,9 +13,6 @@ import {
 jest.mock("@/app/contests/[slug]/_component/contest-dashboard-layout", () => ({
   ContestDashboardLayout: jest.fn(({ children }: any) => <div>{children}</div>),
 }));
-jest.mock("@/app/contests/[slug]/judge/_context/judge-context", () => ({
-  JudgeContextProvider: ({ children }: any) => <div>{children}</div>,
-}));
 
 describe("JudgeLayout", () => {
   beforeEach(() => {

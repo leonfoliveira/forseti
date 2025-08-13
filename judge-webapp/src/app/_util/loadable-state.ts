@@ -1,11 +1,11 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { useSetAuthorization } from "@/app/_context/authorization-provider";
 import { routes } from "@/config/routes";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
+import { useSetAuthorization } from "@/lib/provider/authorization-provider";
 
 export type LoadableState<TData> = {
   isLoading: boolean;

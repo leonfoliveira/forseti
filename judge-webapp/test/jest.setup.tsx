@@ -86,18 +86,24 @@ export const mockUseSetAuthorization = jest.fn().mockReturnValue({
   setAuthorization: mockSetAuthorization,
   clearAuthorization: mockClearAuthorization,
 });
-jest.mock("@/app/_context/authorization-provider", () => ({
+jest.mock("@/lib/provider/authorization-provider", () => ({
   useSetAuthorization: mockUseSetAuthorization,
 }));
 
 // Contest metadata
-export const mockUseContestMetadata = jest.fn();
+export const mockUseContestMetadata = jest.fn().mockReturnValue({
+  id: "contest",
+  slug: "contest",
+});
 jest.mock("@/store/slices/contest-metadata-slice", () => ({
   ...jest.requireActual("@/store/slices/contest-metadata-slice"),
   useContestMetadata: mockUseContestMetadata,
 }));
 
 // Contestant dashboard
+jest.mock("@/lib/provider/contestant-dashboard-provider", () => ({
+  ContestantDashboardProvider: ({ children }: any) => <div>{children}</div>,
+}));
 export const mockUseContestantDashboard = jest.fn();
 jest.mock("@/store/slices/contestant-dashboard-slice", () => ({
   ...jest.requireActual("@/store/slices/contestant-dashboard-slice"),
@@ -105,6 +111,9 @@ jest.mock("@/store/slices/contestant-dashboard-slice", () => ({
 }));
 
 // Guest dashboard
+jest.mock("@/lib/provider/guest-dashboard-provider", () => ({
+  GuestContextProvider: ({ children }: any) => <div>{children}</div>,
+}));
 export const mockUseGuestDashboard = jest.fn();
 jest.mock("@/store/slices/guest-dashboard-slice", () => ({
   ...jest.requireActual("@/store/slices/guest-dashboard-slice"),
@@ -112,6 +121,9 @@ jest.mock("@/store/slices/guest-dashboard-slice", () => ({
 }));
 
 // Judge dashboard
+jest.mock("@/lib/provider/judge-dashboard-provider", () => ({
+  JudgeContextProvider: ({ children }: any) => <div>{children}</div>,
+}));
 export const mockUseJudgeDashboard = jest.fn();
 jest.mock("@/store/slices/judge-dashboard-slice", () => ({
   ...jest.requireActual("@/store/slices/judge-dashboard-slice"),

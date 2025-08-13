@@ -1,6 +1,5 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 
-import { GuestContextProvider } from "@/app/contests/[slug]/guest/_context/guest-context";
 import {
   announcementListener,
   clarificationListener,
@@ -14,6 +13,7 @@ import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarifi
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { GuestContextProvider } from "@/lib/provider/guest-dashboard-provider";
 import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
 import {
   mockAlert,
@@ -22,6 +22,9 @@ import {
   mockUseContestMetadata,
 } from "@/test/jest.setup";
 
+jest.mock("@/lib/provider/guest-dashboard-provider", () =>
+  jest.requireActual("@/lib/provider/guest-dashboard-provider"),
+);
 jest.mock("@/lib/component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading" />,
 }));
@@ -29,7 +32,7 @@ jest.mock("@/lib/component/page/error-page", () => ({
   ErrorPage: () => <span data-testid="error" />,
 }));
 
-describe("GuestContextProvider", () => {
+describe("GuestDashboardProvider", () => {
   const listenerClient = {
     connect: jest.fn(),
     disconnect: jest.fn(),
@@ -60,7 +63,7 @@ describe("GuestContextProvider", () => {
     await waitFor(() => {
       expect(mockAlert.error).toHaveBeenCalledWith({
         defaultMessage: "Error loading contest data",
-        id: "app.contests.[slug].guest._context.guest-context.load-error",
+        id: "lib.provider.guest-dashboard-provider.load-error",
       });
       expect(screen.getByTestId("error")).toBeInTheDocument();
       expect(screen.queryByTestId("child")).not.toBeInTheDocument();
@@ -227,7 +230,7 @@ describe("GuestContextProvider", () => {
     );
     expect(mockAlert.warning).toHaveBeenCalledWith({
       defaultMessage: "New announcement: {text}",
-      id: "app.contests.[slug].guest._context.guest-context.announcement",
+      id: "lib.provider.guest-dashboard-provider.announcement",
       values: { text: "Announcement" },
     });
   });

@@ -23,11 +23,11 @@ import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
   loadError: {
-    id: "app.contests.[slug].guest._context.guest-context.load-error",
+    id: "lib.provider.guest-dashboard-provider.load-error",
     defaultMessage: "Error loading contest data",
   },
   announcement: {
-    id: "app.contests.[slug].guest._context.guest-context.announcement",
+    id: "lib.provider.guest-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
 });

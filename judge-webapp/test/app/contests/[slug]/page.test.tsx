@@ -7,7 +7,6 @@ import { useAuthorization } from "@/store/slices/authorization-slice";
 import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 import { mockRedirect } from "@/test/jest.setup";
 
-jest.mock("@/app/_context/authorization-provider");
 jest.mock("@/store/slices/contest-metadata-slice");
 
 describe("ContestPage", () => {

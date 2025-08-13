@@ -12,9 +12,6 @@ import {
 jest.mock("@/app/contests/[slug]/_component/contest-dashboard-layout", () => ({
   ContestDashboardLayout: jest.fn(({ children }: any) => <div>{children}</div>),
 }));
-jest.mock("@/app/contests/[slug]/guest/_context/guest-context", () => ({
-  GuestContextProvider: ({ children }: any) => <div>{children}</div>,
-}));
 
 describe("GuestLayout", () => {
   it("should render ContestDashboardLayout with contestant context", () => {

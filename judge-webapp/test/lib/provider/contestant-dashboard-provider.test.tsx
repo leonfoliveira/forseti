@@ -1,6 +1,5 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 
-import { ContestantContextProvider } from "@/app/contests/[slug]/contestant/_context/contestant-context";
 import {
   announcementListener,
   clarificationListener,
@@ -16,6 +15,7 @@ import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarifi
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { ContestantDashboardProvider } from "@/lib/provider/contestant-dashboard-provider";
 import { contestantDashboardSlice } from "@/store/slices/contestant-dashboard-slice";
 import {
   mockAlert,
@@ -24,11 +24,9 @@ import {
   mockUseAuthorization,
 } from "@/test/jest.setup";
 
-jest.mock("@/store/slices/contest-metadata-slice", () => ({
-  useContest: jest.fn(() => ({
-    id: "test-contest-id",
-  })),
-}));
+jest.mock("@/lib/provider/contestant-dashboard-provider", () =>
+  jest.requireActual("@/lib/provider/contestant-dashboard-provider"),
+);
 jest.mock("@/lib/component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading" />,
 }));
@@ -36,7 +34,7 @@ jest.mock("@/lib/component/page/error-page", () => ({
   ErrorPage: () => <span data-testid="error" />,
 }));
 
-describe("ContestantContextProvider", () => {
+describe("ContestantDashboardProvider", () => {
   const listenerClient = {
     connect: jest.fn(),
     disconnect: jest.fn(),
@@ -55,16 +53,16 @@ describe("ContestantContextProvider", () => {
     );
 
     render(
-      <ContestantContextProvider>
+      <ContestantDashboardProvider>
         <span data-testid="child" />
-      </ContestantContextProvider>,
+      </ContestantDashboardProvider>,
     );
 
     expect(screen.getByTestId("loading")).toBeInTheDocument();
     await waitFor(() => {
       expect(mockAlert.error).toHaveBeenCalledWith({
         defaultMessage: "Error loading contest data",
-        id: "app.contests.[slug].contestant._context.contestant-context.load-error",
+        id: "lib.provider.contestant-dashboard-provider.load-error",
       });
       expect(screen.getByTestId("error")).toBeInTheDocument();
       expect(screen.queryByTestId("child")).not.toBeInTheDocument();
@@ -91,9 +89,9 @@ describe("ContestantContextProvider", () => {
     );
 
     render(
-      <ContestantContextProvider>
+      <ContestantDashboardProvider>
         <span data-testid="child" />
-      </ContestantContextProvider>,
+      </ContestantDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -103,9 +101,9 @@ describe("ContestantContextProvider", () => {
 
   it("should connect and disconnect to listener", async () => {
     const { unmount } = render(
-      <ContestantContextProvider>
+      <ContestantDashboardProvider>
         <span data-testid="child" />
-      </ContestantContextProvider>,
+      </ContestantDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -118,9 +116,9 @@ describe("ContestantContextProvider", () => {
 
   it("should handle leaderboard updates", async () => {
     render(
-      <ContestantContextProvider>
+      <ContestantDashboardProvider>
         <span data-testid="child" />
-      </ContestantContextProvider>,
+      </ContestantDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -129,11 +127,7 @@ describe("ContestantContextProvider", () => {
 
     expect(
       leaderboardListener.subscribeForLeaderboard as jest.Mock,
-    ).toHaveBeenCalledWith(
-      listenerClient,
-      "test-contest-id",
-      expect.any(Function),
-    );
+    ).toHaveBeenCalledWith(listenerClient, "contest", expect.any(Function));
     const receiveLeaderboard = (
       leaderboardListener.subscribeForLeaderboard as jest.Mock
     ).mock.calls[0][2];
@@ -154,9 +148,9 @@ describe("ContestantContextProvider", () => {
     );
 
     render(
-      <ContestantContextProvider>
+      <ContestantDashboardProvider>
         <span data-testid="child" />
-      </ContestantContextProvider>,
+      </ContestantDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -165,11 +159,7 @@ describe("ContestantContextProvider", () => {
 
     expect(
       submissionListener.subscribeForContest as jest.Mock,
-    ).toHaveBeenCalledWith(
-      listenerClient,
-      "test-contest-id",
-      expect.any(Function),
-    );
+    ).toHaveBeenCalledWith(listenerClient, "contest", expect.any(Function));
     const receiveSubmission = (
       submissionListener.subscribeForContest as jest.Mock
     ).mock.calls[0][2];
@@ -199,9 +189,9 @@ describe("ContestantContextProvider", () => {
       );
 
       render(
-        <ContestantContextProvider>
+        <ContestantDashboardProvider>
           <span data-testid="child" />
-        </ContestantContextProvider>,
+        </ContestantDashboardProvider>,
       );
 
       await waitFor(() => {
@@ -230,7 +220,7 @@ describe("ContestantContextProvider", () => {
       expect(toast).toHaveBeenCalledWith(
         expect.objectContaining({
           defaultMessage: "Problem {letter}: {answer}",
-          id: "app.contests.[slug].contestant._context.contestant-context.problem-answer",
+          id: "lib.provider.contestant-dashboard-provider.problem-answer",
         }),
       );
     },
@@ -242,9 +232,9 @@ describe("ContestantContextProvider", () => {
     });
 
     render(
-      <ContestantContextProvider>
+      <ContestantDashboardProvider>
         <span data-testid="child" />
-      </ContestantContextProvider>,
+      </ContestantDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -253,11 +243,7 @@ describe("ContestantContextProvider", () => {
 
     expect(
       announcementListener.subscribeForContest as jest.Mock,
-    ).toHaveBeenCalledWith(
-      listenerClient,
-      "test-contest-id",
-      expect.any(Function),
-    );
+    ).toHaveBeenCalledWith(listenerClient, "contest", expect.any(Function));
     const receiveAnnouncement = (
       announcementListener.subscribeForContest as jest.Mock
     ).mock.calls[0][2];
@@ -273,7 +259,7 @@ describe("ContestantContextProvider", () => {
     );
     expect(mockAlert.warning).toHaveBeenCalledWith({
       defaultMessage: "New announcement: {text}",
-      id: "app.contests.[slug].contestant._context.contestant-context.announcement",
+      id: "lib.provider.contestant-dashboard-provider.announcement",
       values: { text: "Announcement" },
     });
   });
@@ -284,9 +270,9 @@ describe("ContestantContextProvider", () => {
     });
 
     render(
-      <ContestantContextProvider>
+      <ContestantDashboardProvider>
         <span data-testid="child" />
-      </ContestantContextProvider>,
+      </ContestantDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -295,11 +281,7 @@ describe("ContestantContextProvider", () => {
 
     expect(
       clarificationListener.subscribeForContest as jest.Mock,
-    ).toHaveBeenCalledWith(
-      listenerClient,
-      "test-contest-id",
-      expect.any(Function),
-    );
+    ).toHaveBeenCalledWith(listenerClient, "contest", expect.any(Function));
     const receiveClarification = (
       clarificationListener.subscribeForContest as jest.Mock
     ).mock.calls[0][2];
@@ -317,9 +299,9 @@ describe("ContestantContextProvider", () => {
 
   it("should handle clarification answer updates", async () => {
     render(
-      <ContestantContextProvider>
+      <ContestantDashboardProvider>
         <span data-testid="child" />
-      </ContestantContextProvider>,
+      </ContestantDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -340,7 +322,7 @@ describe("ContestantContextProvider", () => {
     });
     expect(mockToast.info).toHaveBeenCalledWith({
       defaultMessage: "New answer for a clarification",
-      id: "app.contests.[slug].contestant._context.contestant-context.clarification-answer",
+      id: "lib.provider.contestant-dashboard-provider.clarification-answer",
     });
   });
 
@@ -350,9 +332,9 @@ describe("ContestantContextProvider", () => {
     });
 
     render(
-      <ContestantContextProvider>
+      <ContestantDashboardProvider>
         <span data-testid="child" />
-      </ContestantContextProvider>,
+      </ContestantDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -361,11 +343,7 @@ describe("ContestantContextProvider", () => {
 
     expect(
       clarificationListener.subscribeForContestDeleted,
-    ).toHaveBeenCalledWith(
-      listenerClient,
-      "test-contest-id",
-      expect.any(Function),
-    );
+    ).toHaveBeenCalledWith(listenerClient, "contest", expect.any(Function));
     const deleteClarification = (
       clarificationListener.subscribeForContestDeleted as jest.Mock
     ).mock.calls[0][2];

@@ -1,19 +1,19 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 
+import { authenticationService } from "@/config/composition";
+import { routes } from "@/config/routes";
 import {
   AuthorizationProvider,
   useSetAuthorization,
-} from "@/app/_context/authorization-provider";
-import { authenticationService } from "@/config/composition";
-import { routes } from "@/config/routes";
+} from "@/lib/provider/authorization-provider";
 import {
   authorizationSlice,
   useAuthorization,
 } from "@/store/slices/authorization-slice";
 import { mockAppDispatch } from "@/test/jest.setup";
 
-jest.mock("@/app/_context/authorization-provider", () =>
-  jest.requireActual("@/app/_context/authorization-provider"),
+jest.mock("@/lib/provider/authorization-provider", () =>
+  jest.requireActual("@/lib/provider/authorization-provider"),
 );
 
 jest.mock("@/lib/component/page/loading-page", () => ({

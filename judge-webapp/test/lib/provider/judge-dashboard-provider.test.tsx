@@ -1,6 +1,5 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 
-import { JudgeContextProvider } from "@/app/contests/[slug]/judge/_context/judge-context";
 import {
   announcementListener,
   clarificationListener,
@@ -14,6 +13,7 @@ import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarifi
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
+import { JudgeContextProvider } from "@/lib/provider/judge-dashboard-provider";
 import { judgeDashboardSlice } from "@/store/slices/judge-dashboard-slice";
 import {
   mockAlert,
@@ -22,6 +22,9 @@ import {
   mockUseContestMetadata,
 } from "@/test/jest.setup";
 
+jest.mock("@/lib/provider/judge-dashboard-provider", () =>
+  jest.requireActual("@/lib/provider/judge-dashboard-provider"),
+);
 jest.mock("@/lib/component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading" />,
 }));
@@ -29,7 +32,7 @@ jest.mock("@/lib/component/page/error-page", () => ({
   ErrorPage: () => <span data-testid="error" />,
 }));
 
-describe("JudgeContextProvider", () => {
+describe("JudgeDashboardProvider", () => {
   const listenerClient = {
     connect: jest.fn(),
     disconnect: jest.fn(),
@@ -60,7 +63,7 @@ describe("JudgeContextProvider", () => {
     await waitFor(() => {
       expect(mockAlert.error).toHaveBeenCalledWith({
         defaultMessage: "Error loading contest data",
-        id: "app.contests.[slug].judge._context.judge-context.load-error",
+        id: "lib.provider..judge-dashboard-provider.load-error",
       });
       expect(screen.getByTestId("error")).toBeInTheDocument();
       expect(screen.queryByTestId("child")).not.toBeInTheDocument();
@@ -227,7 +230,7 @@ describe("JudgeContextProvider", () => {
     );
     expect(mockAlert.warning).toHaveBeenCalledWith({
       defaultMessage: "New announcement: {text}",
-      id: "app.contests.[slug].judge._context.judge-context.announcement",
+      id: "lib.provider..judge-dashboard-provider.announcement",
       values: { text: "Announcement" },
     });
   });
