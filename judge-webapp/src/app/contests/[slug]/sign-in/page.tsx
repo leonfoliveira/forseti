@@ -19,7 +19,7 @@ import { TextInput } from "@/lib/component/form/text-input";
 import { useSetAuthorization } from "@/lib/provider/authorization-provider";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useAlert } from "@/store/slices/alerts-slice";
-import { useContest } from "@/store/slices/contest-metadata-slice";
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 
 const messages = defineMessages({
   wrongLoginPassword: {
@@ -53,7 +53,7 @@ const messages = defineMessages({
  */
 export default function MemberSignInPage() {
   const signInState = useLoadableState();
-  const contest = useContest();
+  const contestMetadata = useContestMetadata();
   const { setAuthorization } = useSetAuthorization();
   const alert = useAlert();
 
@@ -67,12 +67,12 @@ export default function MemberSignInPage() {
     signInState.start();
     try {
       const authorization = await authenticationService.authenticateMember(
-        contest.id,
+        contestMetadata.id,
         data,
       );
       setAuthorization(authorization);
       signInState.finish();
-      router.push(routes.CONTEST(contest.slug));
+      router.push(routes.CONTEST(contestMetadata.slug));
     } catch (error) {
       signInState.fail(error, {
         [UnauthorizedException.name]: () =>
@@ -94,7 +94,7 @@ export default function MemberSignInPage() {
           <FormattedMessage {...messages.title} />
         </h1>
         <h2 className="text-md mt-2" data-testid="description">
-          {contest?.title}
+          {contestMetadata?.title}
         </h2>
         <div className="my-6">
           <TextInput

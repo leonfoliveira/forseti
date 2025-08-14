@@ -2,6 +2,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 
 import { FlatCompat } from "@eslint/eslintrc";
+import formatjs from "eslint-plugin-formatjs";
 import importPlugin from "eslint-plugin-import";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -13,14 +14,19 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript", "prettier"),
+  formatjs.configs.recommended,
   {
     plugins: {
       import: importPlugin,
+      formatjs,
     },
     rules: {
       "react-hooks/exhaustive-deps": "off",
       "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-require-imports": "off",
+      "@typescript-eslint/no-require-imports": "off",      
+      "formatjs/no-literal-string-in-jsx": "off",
+      "formatjs/enforce-description": "off",
+      "formatjs/enforce-id": "error",
       "import/order": [
         "error",
         {
@@ -46,7 +52,7 @@ const eslintConfig = [
           "newlines-between": "always",
         },
       ]
-    },
+    }
   },
 ];
 

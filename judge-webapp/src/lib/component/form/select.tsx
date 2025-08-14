@@ -1,3 +1,4 @@
+/* eslint-disable formatjs/enforce-default-message */
 import React, { DetailedHTMLProps, SelectHTMLAttributes } from "react";
 import {
   Controller,

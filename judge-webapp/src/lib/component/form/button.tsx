@@ -1,3 +1,4 @@
+/* eslint-disable formatjs/enforce-default-message */
 import React, {
   ButtonHTMLAttributes,
   DetailedHTMLProps,
@@ -38,7 +39,15 @@ export function Button({
 }: Props) {
   const testId = props["data-testid"] || "button";
   const intl = useIntl();
-  const tooltipMessage = intl.formatMessage({ ...tooltip });
+  const tooltipMessage = tooltip
+    ? intl.formatMessage(
+        {
+          id: tooltip.id,
+          defaultMessage: tooltip.defaultMessage,
+        },
+        tooltip.values,
+      )
+    : undefined;
 
   return (
     <div

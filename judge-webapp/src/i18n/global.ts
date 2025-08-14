@@ -54,6 +54,7 @@ const memberType = defineMessages({
 const submissionAnswerShort = defineMessages({
   [SubmissionAnswer.NO_ANSWER]: {
     id: "_component.format.formatted-submission-answer-short.no_answer",
+    // eslint-disable-next-line formatjs/enforce-default-message
     defaultMessage: "",
   },
   [SubmissionAnswer.ACCEPTED]: {

@@ -1,3 +1,4 @@
+/* eslint-disable formatjs/enforce-default-message */
 import { faClose, faDownload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { DetailedHTMLProps, InputHTMLAttributes, useRef } from "react";
