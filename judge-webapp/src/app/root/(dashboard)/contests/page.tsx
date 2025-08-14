@@ -11,12 +11,11 @@ import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
-import { recalculateContests } from "@/app/root/(dashboard)/contests/_util/contests-calculator";
 import { contestService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { ContestStatusBadge } from "@/lib/component/badge/contest-status-badge";
 import { Button } from "@/lib/component/form/button";
 import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
 import { DialogModal } from "@/lib/component/modal/dialog-modal";
@@ -26,6 +25,7 @@ import { TableCell } from "@/lib/component/table/table-cell";
 import { TableRow } from "@/lib/component/table/table-row";
 import { TableSection } from "@/lib/component/table/table-section";
 import { useContestStatusWatcherBatch } from "@/lib/util/contest-status-watcher";
+import { merge } from "@/lib/util/entity-merger";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useModal } from "@/lib/util/modal-hook";
 import { useAlert } from "@/store/slices/alerts-slice";
@@ -101,6 +101,15 @@ const messages = defineMessages({
   },
 });
 
+function mergeContest(
+  contests: ContestMetadataResponseDTO[],
+  newContest: ContestMetadataResponseDTO,
+) {
+  return merge(contests, newContest).sort(
+    (a, b) => new Date(b.startAt).getTime() - new Date(a.startAt).getTime(),
+  );
+}
+
 export default function RootContestsPage() {
   const contestsState = useLoadableState<ContestMetadataResponseDTO[]>();
   const startContestState = useLoadableState();
@@ -138,7 +147,7 @@ export default function RootContestsPage() {
     startContestState.start();
     try {
       const contest = await contestService.forceStart(contestId);
-      contestsState.finish((it) => recalculateContests(it, contest));
+      contestsState.finish((it) => mergeContest(it, contest));
       alert.success(messages.startSuccess);
       startModal.close();
     } catch (error) {
@@ -152,7 +161,7 @@ export default function RootContestsPage() {
     endContestState.start();
     try {
       const contest = await contestService.forceEnd(contestId);
-      contestsState.finish((it) => recalculateContests(it, contest));
+      contestsState.finish((it) => mergeContest(it, contest));
       alert.success(messages.endSuccess);
       endModal.close();
     } catch (error) {

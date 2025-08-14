@@ -18,7 +18,7 @@ jest.mock("@/config/composition");
 jest.mock("@/lib/util/contest-status-watcher", () => ({
   useContestStatusWatcherBatch: jest.fn().mockReturnValue({}),
 }));
-jest.mock("@/app/root/(dashboard)/contests/_component/contest-status-badge");
+jest.mock("@/lib/component/badge/contest-status-badge");
 jest.mock("@/lib/component/modal/dialog-modal", () => ({
   DialogModal: ({ children, modal, onConfirm, isLoading }: any) => (
     <>

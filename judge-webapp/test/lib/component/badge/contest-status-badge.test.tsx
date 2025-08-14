@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 
-import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+import { ContestStatusBadge } from "@/lib/component/badge/contest-status-badge";
 import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
 
 jest.mock("@/lib/util/contest-status-watcher", () => ({

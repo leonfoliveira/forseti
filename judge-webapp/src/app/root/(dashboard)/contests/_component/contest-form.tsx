@@ -10,7 +10,6 @@ import React, { Fragment, useEffect } from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { contestService } from "@/config/composition";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
@@ -18,6 +17,7 @@ import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
 import { globalMessages } from "@/i18n/global";
+import { ContestStatusBadge } from "@/lib/component/badge/contest-status-badge";
 import { Button } from "@/lib/component/form/button";
 import { CheckboxGroup } from "@/lib/component/form/checkbox-group";
 import { DateTimeInput } from "@/lib/component/form/date-time-input";

@@ -1,12 +1,12 @@
-import { TestCaseUtils } from "@/app/root/(dashboard)/contests/_util/TestCaseUtils";
+import { TestCaseValidator } from "@/lib/util/test-case-validator";
 
-describe("TestCaseUtils", () => {
+describe("TestCaseValidator", () => {
   it("should validate problems without new test cases", async () => {
     const problems = [
       { letter: "A", newTestCases: undefined },
       { letter: "B", newTestCases: undefined },
     ] as any;
-    const result = await TestCaseUtils.validateProblemList(problems);
+    const result = await TestCaseValidator.validateProblemList(problems);
     expect(result).toEqual([]);
   });
 
@@ -20,7 +20,7 @@ describe("TestCaseUtils", () => {
       },
       { letter: "B", newTestCases: undefined },
     ] as any;
-    const result = await TestCaseUtils.validateProblemList(problems);
+    const result = await TestCaseValidator.validateProblemList(problems);
     expect(result).toEqual(["A"]);
   });
 
@@ -34,7 +34,7 @@ describe("TestCaseUtils", () => {
       },
       { letter: "B", newTestCases: undefined },
     ] as any;
-    const result = await TestCaseUtils.validateProblemList(problems);
+    const result = await TestCaseValidator.validateProblemList(problems);
     expect(result).toEqual(["A"]);
   });
 
@@ -48,7 +48,7 @@ describe("TestCaseUtils", () => {
       },
       { letter: "B", newTestCases: undefined },
     ] as any;
-    const result = await TestCaseUtils.validateProblemList(problems);
+    const result = await TestCaseValidator.validateProblemList(problems);
     expect(result).toEqual([]);
   });
 });

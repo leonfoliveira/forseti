@@ -1,8 +1,8 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 
 import RootEditContestPage from "@/app/root/(dashboard)/contests/[id]/page";
-import { TestCaseUtils } from "@/app/root/(dashboard)/contests/_util/TestCaseUtils";
 import { contestService } from "@/config/composition";
+import { TestCaseValidator } from "@/lib/util/test-case-validator";
 import { mockAlert } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
@@ -22,8 +22,8 @@ jest.mock("@/app/root/(dashboard)/contests/_form/contest-form-map", () => ({
   },
 }));
 
-jest.mock("@/app/root/(dashboard)/contests/_util/TestCaseUtils", () => ({
-  TestCaseUtils: {
+jest.mock("@/lib/util/test-case-validator", () => ({
+  TestCaseValidator: {
     validateProblemList: jest.fn().mockResolvedValue([]),
   },
 }));
@@ -64,7 +64,7 @@ describe("RootEditContestPage", () => {
     (contestService.findFullContestById as jest.Mock).mockResolvedValueOnce(
       contest,
     );
-    (TestCaseUtils.validateProblemList as jest.Mock).mockResolvedValueOnce([
+    (TestCaseValidator.validateProblemList as jest.Mock).mockResolvedValueOnce([
       "A",
       "B",
     ]);

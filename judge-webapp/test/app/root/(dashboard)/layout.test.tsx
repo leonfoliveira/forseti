@@ -12,9 +12,6 @@ jest.mock("@/lib/component/navbar", () => ({
     </a>
   ),
 }));
-jest.mock("@/app/root/(dashboard)/_component/root-tab-bar", () => ({
-  RootTabBar: () => <div data-testid="root-tab-bar">RootTabBar</div>,
-}));
 
 describe("RootLayout", () => {
   it("should redirect to sign-in if not authorized", () => {
@@ -56,7 +53,7 @@ describe("RootLayout", () => {
       "href",
       routes.ROOT_SIGN_IN,
     );
-    expect(screen.getByTestId("root-tab-bar")).toBeInTheDocument();
+    expect(screen.getByTestId("link:/root/contests")).toBeInTheDocument();
     expect(screen.getByTestId("child")).toBeInTheDocument();
   });
 });

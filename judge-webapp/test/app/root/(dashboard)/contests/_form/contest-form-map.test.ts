@@ -7,7 +7,7 @@ describe("ContestFormMap", () => {
     const data = {
       slug: "contest-slug",
       title: "Test Contest",
-      languages: [Language.PYTHON_3_13_3],
+      languages: [Language.PYTHON_3_13],
       startAt: new Date("2025-01-01T00:00:00Z"),
       endAt: new Date("2025-01-02T00:00:00Z"),
       members: [
@@ -68,7 +68,7 @@ describe("ContestFormMap", () => {
       id: "contest1",
       slug: "contest-slug",
       title: "Test Contest",
-      languages: [Language.PYTHON_3_13_3],
+      languages: [Language.PYTHON_3_13],
       startAt: new Date("2025-01-01T00:00:00Z"),
       endAt: new Date("2025-01-02T00:00:00Z"),
       members: [
@@ -146,7 +146,7 @@ describe("ContestFormMap", () => {
       id: "contest1",
       slug: "contest-slug",
       title: "Test Contest",
-      languages: [Language.PYTHON_3_13_3],
+      languages: [Language.PYTHON_3_13],
       startAt: new Date("2025-01-01T00:00:00Z"),
       endAt: new Date("2025-01-02T00:00:00Z"),
       members: [
@@ -217,7 +217,7 @@ describe("ContestFormMap", () => {
       id: "contest1",
       slug: "contest-slug",
       title: "Test Contest",
-      languages: [Language.PYTHON_3_13_3],
+      languages: [Language.PYTHON_3_13],
       startAt: "2025-01-01T00:00:00Z",
       endAt: "2025-01-02T00:00:00Z",
       announcements: [],

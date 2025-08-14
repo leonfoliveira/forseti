@@ -1,5 +1,5 @@
-import { findClarification } from "@/lib/util/clarification-finder";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
+import { findClarification } from "@/lib/util/clarification-finder";
 
 describe("findClarification", () => {
   const mockData = [

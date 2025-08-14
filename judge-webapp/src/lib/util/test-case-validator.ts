@@ -2,7 +2,7 @@ import Papa from "papaparse";
 
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 
-export class TestCaseUtils {
+export class TestCaseValidator {
   static async validateProblemList(
     problems: UpdateContestInputDTO["problems"],
   ) {

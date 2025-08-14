@@ -4,7 +4,7 @@ import { Language } from "@/core/domain/enumerate/Language";
 describe("SubmissionFormMap", () => {
   it("should map SubmissionForm to CreateSubmissionInputDTO", () => {
     const submission = {
-      language: Language.PYTHON_3_13_3,
+      language: Language.PYTHON_3_13,
       code: new File(["code"], "solution.py", { type: "text/x-python" }),
     };
 
