@@ -12,14 +12,18 @@ import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Size
 import java.time.OffsetDateTime
 import java.util.UUID
 
 data class UpdateContestInputDTO(
     val id: UUID,
+    @field:NotBlank
+    @field:Size(max = 32)
     @field:Pattern(regexp = "^[a-zA-Z0-9-]+$", message = "Slug can only contain letter, numbers, and hyphens")
     val slug: String,
     @field:NotBlank
+    @field:Size(max = 255)
     val title: String,
     @field:NotEmpty
     val languages: List<Language>,
@@ -40,9 +44,12 @@ data class UpdateContestInputDTO(
         val id: UUID? = null,
         val type: Member.Type,
         @field:NotBlank
+        @field:Size(max = 32)
         val name: String,
         @field:NotBlank
+        @field:Size(max = 32)
         val login: String,
+        @field:Size(max = 32)
         val password: String? = null,
     ) {
         @get:JsonIgnore
@@ -78,7 +85,8 @@ data class UpdateContestInputDTO(
     data class ProblemDTO(
         val id: UUID? = null,
         val letter: Char,
-        @field:NotEmpty
+        @field:NotBlank
+        @field:Size(max = 255)
         val title: String,
         val description: AttachmentInputDTO,
         @field:Min(1)
