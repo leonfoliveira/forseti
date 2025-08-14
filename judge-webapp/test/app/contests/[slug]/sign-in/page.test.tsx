@@ -13,7 +13,7 @@ import {
 
 jest.mock("@/config/composition");
 jest.mock("@/store/slices/contest-metadata-slice", () => ({
-  useContest: jest.fn(() => ({
+  useContestMetadata: jest.fn(() => ({
     id: "contest-id",
     slug: "contest-slug",
     title: "Contest Title",
