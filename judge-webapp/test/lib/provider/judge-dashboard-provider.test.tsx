@@ -230,7 +230,7 @@ describe("JudgeDashboardProvider", () => {
     );
     expect(mockAlert.warning).toHaveBeenCalledWith({
       defaultMessage: "New announcement: {text}",
-      id: "lib.provider..judge-dashboard-provider.announcement",
+      id: "lib.provider.judge-dashboard-provider.announcement",
       values: { text: "Announcement" },
     });
   });
