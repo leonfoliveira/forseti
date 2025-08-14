@@ -1,9 +1,15 @@
+import { renderHook } from "@testing-library/react";
+
 import type { Message } from "@/i18n/message";
 import {
   alertsSlice,
   AlertLevel,
   AlertType,
+  useAlert,
 } from "@/store/slices/alerts-slice";
+import { mockAppDispatch } from "@/test/jest.setup";
+
+jest.unmock("@/store/slices/alerts-slice");
 
 describe("alertsSlice", () => {
   const makeMessage = (defaultMessage: string): Message => ({
@@ -87,5 +93,34 @@ describe("alertsSlice", () => {
     );
     expect(stateAfterClose).toHaveLength(1);
     expect(stateAfterClose[0].text).toEqual(message);
+  });
+});
+
+describe("useAlert", () => {
+  const message = {
+    id: "message",
+    defaultMessage: "Message",
+  };
+
+  it("should call dispatch with correct action", () => {
+    const { result } = renderHook(() => useAlert());
+
+    result.current.info(message);
+    result.current.success(message);
+    result.current.warning(message);
+    result.current.error(message);
+
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      alertsSlice.actions.info(message),
+    );
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      alertsSlice.actions.success(message),
+    );
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      alertsSlice.actions.warning(message),
+    );
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      alertsSlice.actions.error(message),
+    );
   });
 });

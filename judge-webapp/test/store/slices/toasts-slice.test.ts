@@ -1,9 +1,15 @@
+import { renderHook } from "@testing-library/react";
+
 import type { Message } from "@/i18n/message";
 import {
   toastsSlice,
   ToastLevel,
   ToastType,
+  useToast,
 } from "@/store/slices/toasts-slice";
+import { mockAppDispatch } from "@/test/jest.setup";
+
+jest.unmock("@/store/slices/toasts-slice");
 
 describe("toastsSlice", () => {
   const makeMessage = (defaultMessage: string): Message => ({
@@ -87,5 +93,34 @@ describe("toastsSlice", () => {
     );
     expect(stateAfterClose).toHaveLength(1);
     expect(stateAfterClose[0].text).toEqual(message);
+  });
+});
+
+describe("useToast", () => {
+  const message = {
+    id: "message",
+    defaultMessage: "Message",
+  };
+
+  it("should call dispatch with correct action", () => {
+    const { result } = renderHook(() => useToast());
+
+    result.current.info(message);
+    result.current.success(message);
+    result.current.warning(message);
+    result.current.error(message);
+
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      toastsSlice.actions.info(message),
+    );
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      toastsSlice.actions.success(message),
+    );
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      toastsSlice.actions.warning(message),
+    );
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      toastsSlice.actions.error(message),
+    );
   });
 });
