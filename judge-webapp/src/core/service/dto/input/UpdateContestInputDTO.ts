@@ -1,5 +1,5 @@
-import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
 import { Attachment } from "@/core/domain/model/Attachment";
+import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
 
 export type UpdateContestInputDTO = Omit<
   UpdateContestRequestDTO,

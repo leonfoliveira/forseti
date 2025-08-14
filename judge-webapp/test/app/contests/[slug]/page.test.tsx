@@ -1,13 +1,13 @@
 import { render } from "@testing-library/react";
-import ContestPage from "@/app/contests/[slug]/page";
-import { mockRedirect } from "@/test/jest.setup";
-import { routes } from "@/config/routes";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
-import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { useAuthorization } from "@/app/_context/authorization-context";
 
-jest.mock("@/app/_context/authorization-context");
-jest.mock("@/app/contests/[slug]/_context/contest-metadata-context");
+import ContestPage from "@/app/contests/[slug]/page";
+import { routes } from "@/config/routes";
+import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { useAuthorization } from "@/store/slices/authorization-slice";
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
+import { mockRedirect } from "@/test/jest.setup";
+
+jest.mock("@/store/slices/contest-metadata-slice");
 
 describe("ContestPage", () => {
   it.each([

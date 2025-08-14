@@ -1,10 +1,11 @@
 import axios, { AxiosError } from "axios";
+
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { BusinessException } from "@/core/domain/exception/BusinessException";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { ServerException } from "@/core/domain/exception/ServerException";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 
 jest.mock("axios", () => ({
   request: jest.fn(),

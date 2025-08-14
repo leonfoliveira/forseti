@@ -1,11 +1,18 @@
 "use client";
 
 import React from "react";
+
 import { AnnouncementsPage } from "@/app/contests/[slug]/_common/announcements-page";
-import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
+import { useJudgeDashboard } from "@/store/slices/judge-dashboard-slice";
 
 export default function JudgeAnnouncementsPage() {
-  const { contest } = useJudgeContext();
+  const { id } = useContestMetadata();
+  const announcements = useJudgeDashboard(
+    (state) => state.contest.announcements,
+  );
 
-  return <AnnouncementsPage contest={contest} canCreate />;
+  return (
+    <AnnouncementsPage contestId={id} announcements={announcements} canCreate />
+  );
 }

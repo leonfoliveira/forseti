@@ -1,32 +1,37 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { Table } from "@/app/_component/table/table";
-import { TableSection } from "@/app/_component/table/table-section";
-import { TableRow } from "@/app/_component/table/table-row";
-import { TableCell } from "@/app/_component/table/table-cell";
-import { problemService, storageService } from "@/config/composition";
-import { Select } from "@/app/_component/form/select";
-import { useForm } from "react-hook-form";
-import { FileInput } from "@/app/_component/form/file-input";
-import { Button } from "@/app/_component/form/button";
-import { Form } from "@/app/_component/form/form";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { joiResolver } from "@hookform/resolvers/joi";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+import { SubmissionFormType } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form";
+import { SubmissionFormMap } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map";
+import { submissionFormSchema } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-schema";
+import { problemService, storageService } from "@/config/composition";
 import { Language } from "@/core/domain/enumerate/Language";
 import { StorageService } from "@/core/service/StorageService";
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { SubmissionFormType } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form";
-import { submissionFormSchema } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-schema";
-import { SubmissionFormMap } from "@/app/contests/[slug]/contestant/submissions/_form/submission-form-map";
-import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
-import { useAlert } from "@/app/_context/notification-context";
-import { DownloadButton } from "@/app/_component/form/download-button";
-import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
-import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
-import { defineMessages, FormattedMessage } from "react-intl";
 import { globalMessages } from "@/i18n/global";
+import { SubmissionAnswerBadge } from "@/lib/component/badge/submission-answer-badge";
+import { Button } from "@/lib/component/form/button";
+import { DownloadButton } from "@/lib/component/form/download-button";
+import { FileInput } from "@/lib/component/form/file-input";
+import { Form } from "@/lib/component/form/form";
+import { Select } from "@/lib/component/form/select";
+import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
+import { Table } from "@/lib/component/table/table";
+import { TableCell } from "@/lib/component/table/table-cell";
+import { TableRow } from "@/lib/component/table/table-row";
+import { TableSection } from "@/lib/component/table/table-section";
+import { useLoadableState } from "@/lib/util/loadable-state";
+import { useAlert } from "@/store/slices/alerts-slice";
+import {
+  useContestantDashboard,
+  contestantDashboardSlice,
+} from "@/store/slices/contestant-dashboard-slice";
+import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
   createSuccess: {
@@ -84,8 +89,12 @@ const messages = defineMessages({
 });
 
 export default function ContestantSubmissionPage() {
-  const { contest, memberSubmissions, addMemberSubmission } =
-    useContestantContext();
+  const languages = useContestantDashboard((state) => state.contest.languages);
+  const problems = useContestantDashboard((state) => state.contest.problems);
+  const memberSubmissions = useContestantDashboard(
+    (state) => state.memberSubmissions,
+  );
+  const dispatch = useAppDispatch();
   const createSubmissionState = useLoadableState();
 
   const alert = useAlert();
@@ -99,7 +108,7 @@ export default function ContestantSubmissionPage() {
       const activeLanguage = storageService.getKey(
         StorageService.ACTIVE_LANGUAGE_STORAGE_KEY,
       ) as Language | null;
-      if (activeLanguage && contest.languages.includes(activeLanguage)) {
+      if (activeLanguage && languages.includes(activeLanguage)) {
         submissionForm.setValue("language", activeLanguage);
       }
     }
@@ -114,7 +123,9 @@ export default function ContestantSubmissionPage() {
         data.problemId as string,
         SubmissionFormMap.toInputDTO(data),
       );
-      addMemberSubmission(submission);
+      dispatch(
+        contestantDashboardSlice.actions.mergeMemberSubmission(submission),
+      );
       storageService.setKey(
         StorageService.ACTIVE_LANGUAGE_STORAGE_KEY,
         submission.language,
@@ -141,7 +152,7 @@ export default function ContestantSubmissionPage() {
           form={submissionForm}
           name="problemId"
           label={messages.problemLabel}
-          options={(contest?.problems || []).map((it) => ({
+          options={problems.map((it) => ({
             value: it.id.toString(),
             label: {
               ...messages.problemOptionLabel,
@@ -156,7 +167,7 @@ export default function ContestantSubmissionPage() {
             form={submissionForm}
             name="language"
             label={messages.languageLabel}
-            options={(contest?.languages || []).map((it) => ({
+            options={languages.map((it) => ({
               value: it,
               label: globalMessages.language[it],
             }))}

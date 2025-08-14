@@ -1,7 +1,7 @@
-import { AuthenticationRepository } from "@/core/repository/AuthenticationRepository";
-import { AuthenticateRootRequestDTO } from "@/core/repository/dto/request/AuthenticateRootRequestDTO";
-import { AuthenticateMemberRequestDTO } from "@/core/repository/dto/request/AuthenticateMemberRequestDTO";
 import { Authorization } from "@/core/domain/model/Authorization";
+import { AuthenticationRepository } from "@/core/repository/AuthenticationRepository";
+import { AuthenticateMemberRequestDTO } from "@/core/repository/dto/request/AuthenticateMemberRequestDTO";
+import { AuthenticateRootRequestDTO } from "@/core/repository/dto/request/AuthenticateRootRequestDTO";
 
 export class AuthenticationService {
   constructor(

@@ -1,22 +1,23 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { joiResolver } from "@hookform/resolvers/joi";
-import { TextInput } from "@/app/_component/form/text-input";
-import { Button } from "@/app/_component/form/button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { Form } from "@/app/_component/form/form";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { defineMessages, FormattedMessage } from "react-intl";
+
+import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form";
 import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form-schema";
 import { authenticationService } from "@/config/composition";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useAuthorizationContext } from "@/app/_context/authorization-context";
-import { useRouter } from "next/navigation";
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { useAlert } from "@/app/_context/notification-context";
 import { routes } from "@/config/routes";
-import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form";
-import { defineMessages, FormattedMessage } from "react-intl";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
+import { Button } from "@/lib/component/form/button";
+import { Form } from "@/lib/component/form/form";
+import { TextInput } from "@/lib/component/form/text-input";
+import { useSetAuthorization } from "@/lib/provider/authorization-provider";
+import { useLoadableState } from "@/lib/util/loadable-state";
+import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
   wrongPassword: {
@@ -50,7 +51,7 @@ const messages = defineMessages({
  */
 export default function RootSignInPage() {
   const signInState = useLoadableState();
-  const { setAuthorization } = useAuthorizationContext();
+  const { setAuthorization } = useSetAuthorization();
 
   const router = useRouter();
   const alert = useAlert();

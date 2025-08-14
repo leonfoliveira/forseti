@@ -1,11 +1,16 @@
 "use client";
 
 import React from "react";
+
 import { AnnouncementsPage } from "@/app/contests/[slug]/_common/announcements-page";
-import { useGuestContext } from "@/app/contests/[slug]/guest/_context/guest-context";
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
+import { useGuestDashboard } from "@/store/slices/guest-dashboard-slice";
 
 export default function GuestAnnouncementsPage() {
-  const { contest } = useGuestContext();
+  const { id } = useContestMetadata();
+  const announcements = useGuestDashboard(
+    (state) => state.contest.announcements,
+  );
 
-  return <AnnouncementsPage contest={contest} />;
+  return <AnnouncementsPage contestId={id} announcements={announcements} />;
 }

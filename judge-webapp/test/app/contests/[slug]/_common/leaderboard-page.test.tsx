@@ -1,12 +1,13 @@
-import { mockUseAuthorizationContext } from "@/test/jest.setup";
 import { render, screen } from "@testing-library/react";
+
 import { LeaderboardPage } from "@/app/contests/[slug]/_common/leaderboard-page";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+import { mockUseSetAuthorization } from "@/test/jest.setup";
 
 describe("LeaderboardPage", () => {
   it("should render the leaderboard with correct data", () => {
-    mockUseAuthorizationContext.mockResolvedValueOnce({
+    mockUseSetAuthorization.mockResolvedValueOnce({
       authorization: { member: { id: "1" } },
     });
     const contest = {
@@ -71,7 +72,9 @@ describe("LeaderboardPage", () => {
       ],
     } as ContestLeaderboardResponseDTO;
 
-    render(<LeaderboardPage contest={contest} leaderboard={leaderboard} />);
+    render(
+      <LeaderboardPage problems={contest.problems} leaderboard={leaderboard} />,
+    );
 
     expect(screen.getAllByTestId("problem-title")[0]).toHaveTextContent(
       contest.problems[0].letter,

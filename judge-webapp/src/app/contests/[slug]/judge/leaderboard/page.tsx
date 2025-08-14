@@ -1,11 +1,13 @@
 "use client";
 
 import React from "react";
+
 import { LeaderboardPage } from "@/app/contests/[slug]/_common/leaderboard-page";
-import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
+import { useJudgeDashboard } from "@/store/slices/judge-dashboard-slice";
 
 export default function JudgeLeaderboardPage() {
-  const { contest, leaderboard } = useJudgeContext();
+  const problems = useJudgeDashboard((state) => state.contest.problems);
+  const leaderboard = useJudgeDashboard((state) => state.leaderboard);
 
-  return <LeaderboardPage contest={contest} leaderboard={leaderboard} />;
+  return <LeaderboardPage problems={problems} leaderboard={leaderboard} />;
 }

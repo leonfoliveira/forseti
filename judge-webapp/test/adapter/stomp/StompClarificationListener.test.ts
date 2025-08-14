@@ -1,6 +1,7 @@
 
-import { StompClarificationListener } from "@/adapter/stomp/StompClarificationListener";
 import { mock } from "jest-mock-extended";
+
+import { StompClarificationListener } from "@/adapter/stomp/StompClarificationListener";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 
 describe("StompClarificationListener", () => {

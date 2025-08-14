@@ -1,9 +1,10 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+
 import HomePage from "@/app/page";
 import { contestService } from "@/config/composition";
+import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { mockAlert, mockRouter } from "@/test/jest.setup";
-import { routes } from "@/config/routes";
 
 describe("HomePage", () => {
   it("should render the page with a form", () => {

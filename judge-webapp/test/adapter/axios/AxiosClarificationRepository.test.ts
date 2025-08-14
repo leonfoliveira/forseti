@@ -1,7 +1,8 @@
 
 import { mock } from "jest-mock-extended";
-import { AxiosClient } from "@/adapter/axios/AxiosClient";
+
 import { AxiosClarificationRepository } from "@/adapter/axios/AxiosClarificationRepository";
+import { AxiosClient } from "@/adapter/axios/AxiosClient";
 
 describe("AxiosClarificationRepository", () => {
   const axiosClient = mock<AxiosClient>();

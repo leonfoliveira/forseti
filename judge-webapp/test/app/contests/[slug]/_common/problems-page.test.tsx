@@ -1,7 +1,8 @@
 import { render, screen } from "@testing-library/react";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
+
 import { ProblemsPage } from "@/app/contests/[slug]/_common/problems-page";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 
 describe("ProblemsPage", () => {
   it("should render the problems with correct data", () => {
@@ -22,14 +23,14 @@ describe("ProblemsPage", () => {
       ],
     } as unknown as ContestPublicResponseDTO;
 
-    render(<ProblemsPage contest={contest} />);
+    render(<ProblemsPage problems={contest.problems} />);
 
     expect(screen.getAllByTestId("problem-row")).toHaveLength(2);
     expect(screen.getAllByTestId("problem-title")[0]).toHaveTextContent(
-      "{letter}. {title}"
+      "{letter}. {title}",
     );
     expect(screen.getAllByTestId("problem-title")[1]).toHaveTextContent(
-      "{letter}. {title}"
+      "{letter}. {title}",
     );
   });
 
@@ -63,7 +64,10 @@ describe("ProblemsPage", () => {
     } as any;
 
     render(
-      <ProblemsPage contest={contest} contestantStatus={contestantStatus} />
+      <ProblemsPage
+        problems={contest.problems}
+        contestantStatus={contestantStatus}
+      />,
     );
 
     const badges = screen.getAllByTestId("badge");

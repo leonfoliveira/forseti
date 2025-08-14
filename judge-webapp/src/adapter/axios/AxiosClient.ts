@@ -1,9 +1,10 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+
 import { BusinessException } from "@/core/domain/exception/BusinessException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { ServerException } from "@/core/domain/exception/ServerException";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 
 export class AxiosClient {
   constructor(

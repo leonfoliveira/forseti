@@ -5,20 +5,21 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
+
 import RootContestsPage from "@/app/root/(dashboard)/contests/page";
 import { contestService } from "@/config/composition";
-import { mockAlert, mockRouter } from "@/test/jest.setup";
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { routes } from "@/config/routes";
-import { useContestStatusWatcherBatch } from "@/app/_util/contest-status-watcher";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { useContestStatusWatcherBatch } from "@/lib/util/contest-status-watcher";
+import { mockAlert, mockRouter } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
-jest.mock("@/app/_util/contest-status-watcher", () => ({
+jest.mock("@/lib/util/contest-status-watcher", () => ({
   useContestStatusWatcherBatch: jest.fn().mockReturnValue({}),
 }));
-jest.mock("@/app/root/(dashboard)/contests/_component/contest-status-badge");
-jest.mock("@/app/_component/modal/dialog-modal", () => ({
+jest.mock("@/lib/component/badge/contest-status-badge");
+jest.mock("@/lib/component/modal/dialog-modal", () => ({
   DialogModal: ({ children, modal, onConfirm, isLoading }: any) => (
     <>
       {modal.isOpen && (

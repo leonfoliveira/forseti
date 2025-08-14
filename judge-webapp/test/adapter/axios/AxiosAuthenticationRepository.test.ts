@@ -1,8 +1,9 @@
-import { mock } from "jest-mock-extended";
-import { AxiosClient } from "@/adapter/axios/AxiosClient";
-import { AxiosAuthenticationRepository } from "@/adapter/axios/AxiosAuthenticationRepository";
-import { Authorization } from "@/core/domain/model/Authorization";
 import { AxiosResponse } from "axios";
+import { mock } from "jest-mock-extended";
+
+import { AxiosAuthenticationRepository } from "@/adapter/axios/AxiosAuthenticationRepository";
+import { AxiosClient } from "@/adapter/axios/AxiosClient";
+import { Authorization } from "@/core/domain/model/Authorization";
 
 describe("AxiosAuthenticationRepository", () => {
   const axiosClient = mock<AxiosClient>();

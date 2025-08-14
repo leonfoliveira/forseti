@@ -1,32 +1,33 @@
 "use client";
 
-import { TableSection } from "@/app/_component/table/table-section";
-import { TableRow } from "@/app/_component/table/table-row";
-import { TableCell } from "@/app/_component/table/table-cell";
-import { SubmissionAnswerBadge } from "@/app/_component/badge/submission-answer-badge";
-import { DownloadButton } from "@/app/_component/form/download-button";
-import { Table } from "@/app/_component/table/table";
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faRotate } from "@fortawesome/free-solid-svg-icons";
-import { Button } from "@/app/_component/form/button";
-import { useModal } from "@/app/_util/modal-hook";
-import { DialogModal } from "@/app/_component/modal/dialog-modal";
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { submissionService } from "@/config/composition";
-import { useAlert } from "@/app/_context/notification-context";
-import { Select } from "@/app/_component/form/select";
-import { useForm } from "react-hook-form";
-import { UpdateSubmissionFormType } from "@/app/contests/[slug]/judge/submissions/_form/update-submission-form";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { updateSubmissionFormSchema } from "@/app/contests/[slug]/judge/submissions/_form/update-submission-form-schema";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { SubmissionStatusBadge } from "@/app/_component/badge/submission-status-badge";
-import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
-import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
+import React from "react";
+import { useForm } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
+
+import { UpdateSubmissionFormType } from "@/app/contests/[slug]/judge/submissions/_form/update-submission-form";
+import { updateSubmissionFormSchema } from "@/app/contests/[slug]/judge/submissions/_form/update-submission-form-schema";
+import { submissionService } from "@/config/composition";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { globalMessages } from "@/i18n/global";
+import { SubmissionAnswerBadge } from "@/lib/component/badge/submission-answer-badge";
+import { SubmissionStatusBadge } from "@/lib/component/badge/submission-status-badge";
+import { Button } from "@/lib/component/form/button";
+import { DownloadButton } from "@/lib/component/form/download-button";
+import { Select } from "@/lib/component/form/select";
+import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
+import { DialogModal } from "@/lib/component/modal/dialog-modal";
+import { Table } from "@/lib/component/table/table";
+import { TableCell } from "@/lib/component/table/table-cell";
+import { TableRow } from "@/lib/component/table/table-row";
+import { TableSection } from "@/lib/component/table/table-section";
+import { useLoadableState } from "@/lib/util/loadable-state";
+import { useModal } from "@/lib/util/modal-hook";
+import { useAlert } from "@/store/slices/alerts-slice";
+import { useJudgeDashboard } from "@/store/slices/judge-dashboard-slice";
 
 const messages = defineMessages({
   rerunSuccess: {
@@ -92,7 +93,7 @@ const messages = defineMessages({
  * Displays a list of all submissions with options to rerun or update answers.
  */
 export default function JudgeSubmissionsPage() {
-  const { submissions } = useJudgeContext();
+  const submissions = useJudgeDashboard((state) => state.submissions);
   const rerunState = useLoadableState();
   const updateState = useLoadableState();
 

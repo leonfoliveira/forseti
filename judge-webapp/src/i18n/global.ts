@@ -1,9 +1,10 @@
+import { defineMessages } from "react-intl";
+
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { defineMessages } from "react-intl";
 
 const contestStatus = defineMessages({
   [ContestStatus.ENDED]: {
@@ -53,6 +54,7 @@ const memberType = defineMessages({
 const submissionAnswerShort = defineMessages({
   [SubmissionAnswer.NO_ANSWER]: {
     id: "_component.format.formatted-submission-answer-short.no_answer",
+    // eslint-disable-next-line formatjs/enforce-default-message
     defaultMessage: "",
   },
   [SubmissionAnswer.ACCEPTED]: {

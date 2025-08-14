@@ -1,0 +1,141 @@
+import React, { useEffect } from "react";
+import { defineMessages } from "react-intl";
+
+import {
+  announcementListener,
+  clarificationListener,
+  contestService,
+  leaderboardListener,
+  listenerClientFactory,
+  submissionListener,
+} from "@/config/composition";
+import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
+import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { ErrorPage } from "@/lib/component/page/error-page";
+import { LoadingPage } from "@/lib/component/page/loading-page";
+import { useLoadableState } from "@/lib/util/loadable-state";
+import { useAlert } from "@/store/slices/alerts-slice";
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
+import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
+import { useAppDispatch } from "@/store/store";
+
+const messages = defineMessages({
+  loadError: {
+    id: "lib.provider.guest-dashboard-provider.load-error",
+    defaultMessage: "Error loading contest data",
+  },
+  announcement: {
+    id: "lib.provider.guest-dashboard-provider.announcement",
+    defaultMessage: "New announcement: {text}",
+  },
+});
+
+export function GuestContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const state = useLoadableState({ isLoading: true });
+
+  const contestMetadata = useContestMetadata();
+  const dispatch = useAppDispatch();
+  const alert = useAlert();
+
+  useEffect(() => {
+    const listenerClient = listenerClientFactory.create();
+
+    async function fetch() {
+      state.start();
+      try {
+        const data = await Promise.all([
+          contestService.findContestById(contestMetadata.id),
+          contestService.findContestLeaderboardById(contestMetadata.id),
+          contestService.findAllContestSubmissions(contestMetadata.id),
+        ]);
+
+        await listenerClient.connect();
+        await Promise.all([
+          leaderboardListener.subscribeForLeaderboard(
+            listenerClient,
+            contestMetadata.id,
+            receiveLeaderboard,
+          ),
+          submissionListener.subscribeForContest(
+            listenerClient,
+            contestMetadata.id,
+            receiveSubmission,
+          ),
+          announcementListener.subscribeForContest(
+            listenerClient,
+            contestMetadata.id,
+            receiveAnnouncement,
+          ),
+          clarificationListener.subscribeForContest(
+            listenerClient,
+            contestMetadata.id,
+            receiveClarification,
+          ),
+          clarificationListener.subscribeForContestDeleted(
+            listenerClient,
+            contestMetadata.id,
+            deleteClarification,
+          ),
+        ]);
+
+        dispatch(
+          guestDashboardSlice.actions.set({
+            contest: data[0],
+            leaderboard: data[1],
+            submissions: data[2],
+          }),
+        );
+        state.finish();
+      } catch (error) {
+        state.fail(error, {
+          default: () => alert.error(messages.loadError),
+        });
+      }
+    }
+
+    fetch();
+
+    return () => {
+      listenerClient.disconnect();
+    };
+  }, []);
+
+  function receiveLeaderboard(leaderboard: ContestLeaderboardResponseDTO) {
+    dispatch(guestDashboardSlice.actions.setLeaderboard(leaderboard));
+  }
+
+  function receiveSubmission(submission: SubmissionPublicResponseDTO) {
+    dispatch(guestDashboardSlice.actions.mergeSubmission(submission));
+  }
+
+  function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
+    dispatch(guestDashboardSlice.actions.mergeAnnouncement(announcement));
+    alert.warning({
+      ...messages.announcement,
+      values: { text: announcement.text },
+    });
+  }
+
+  function receiveClarification(clarification: ClarificationResponseDTO) {
+    dispatch(guestDashboardSlice.actions.mergeClarification(clarification));
+  }
+
+  function deleteClarification({ id }: { id: string }) {
+    dispatch(guestDashboardSlice.actions.deleteClarification(id));
+  }
+
+  if (state.isLoading) {
+    return <LoadingPage />;
+  }
+  if (state.error) {
+    return <ErrorPage />;
+  }
+
+  return children;
+}

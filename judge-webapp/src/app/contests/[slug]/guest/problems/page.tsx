@@ -1,11 +1,12 @@
 "use client";
 
 import React from "react";
+
 import { ProblemsPage } from "@/app/contests/[slug]/_common/problems-page";
-import { useGuestContext } from "@/app/contests/[slug]/guest/_context/guest-context";
+import { useGuestDashboard } from "@/store/slices/guest-dashboard-slice";
 
 export default function GuestProblemsPage() {
-  const { contest } = useGuestContext();
+  const problems = useGuestDashboard((state) => state.contest.problems);
 
-  return <ProblemsPage contest={contest} />;
+  return <ProblemsPage problems={problems} />;
 }

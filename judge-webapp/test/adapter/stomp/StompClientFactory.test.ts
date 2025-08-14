@@ -1,7 +1,8 @@
 import { mock } from "jest-mock-extended";
-import { AuthorizationService } from "@/core/service/AuthorizationService";
-import { StompClientFactory } from "@/adapter/stomp/StompClientFactory";
+
 import { StompClient } from "@/adapter/stomp/StompClient";
+import { StompClientFactory } from "@/adapter/stomp/StompClientFactory";
+import { AuthorizationService } from "@/core/service/AuthorizationService";
 
 describe("StompClientFactory", () => {
   const wsUrl = "https://example.com/websocket";

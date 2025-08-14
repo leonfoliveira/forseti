@@ -1,5 +1,5 @@
-import { AttachmentRepository } from "@/core/repository/AttachmentRepository";
 import { Attachment } from "@/core/domain/model/Attachment";
+import { AttachmentRepository } from "@/core/repository/AttachmentRepository";
 
 export class AttachmentService {
   constructor(private attachmentRepository: AttachmentRepository) {}

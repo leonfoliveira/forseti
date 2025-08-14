@@ -1,7 +1,8 @@
 import { mock } from "jest-mock-extended";
+
+import { Authorization } from "@/core/domain/model/Authorization";
 import { AuthenticationRepository } from "@/core/repository/AuthenticationRepository";
 import { AuthenticationService } from "@/core/service/AuthenticationService";
-import { Authorization } from "@/core/domain/model/Authorization";
 
 describe("AuthenticationService", () => {
   const authenticationRepository = mock<AuthenticationRepository>();

@@ -1,4 +1,3 @@
-import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import {
   act,
   fireEvent,
@@ -7,19 +6,21 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
 import { useForm } from "react-hook-form";
+
+import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
-import { useContestStatusWatcher } from "@/app/_util/contest-status-watcher";
-import { mockAlert } from "@/test/jest.setup";
 import { contestService } from "@/config/composition";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
+import { mockAlert } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
-jest.mock("@/app/_util/contest-status-watcher", () => ({
+jest.mock("@/lib/util/contest-status-watcher", () => ({
   useContestStatusWatcher: jest.fn(() => ContestStatus.NOT_STARTED),
 }));
-jest.mock("@/app/_component/modal/dialog-modal", () => ({
+jest.mock("@/lib/component/modal/dialog-modal", () => ({
   DialogModal: ({ children, modal, onConfirm, isLoading }: any) => (
     <>
       {modal.isOpen && (

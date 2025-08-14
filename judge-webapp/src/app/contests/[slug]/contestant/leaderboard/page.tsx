@@ -1,11 +1,13 @@
 "use client";
 
 import React from "react";
+
 import { LeaderboardPage } from "@/app/contests/[slug]/_common/leaderboard-page";
-import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
+import { useContestantDashboard } from "@/store/slices/contestant-dashboard-slice";
 
 export default function ContestantLeaderboardPage() {
-  const { contest, leaderboard } = useContestantContext();
+  const problems = useContestantDashboard((state) => state.contest.problems);
+  const leaderboard = useContestantDashboard((state) => state.leaderboard);
 
-  return <LeaderboardPage contest={contest} leaderboard={leaderboard} />;
+  return <LeaderboardPage problems={problems} leaderboard={leaderboard} />;
 }

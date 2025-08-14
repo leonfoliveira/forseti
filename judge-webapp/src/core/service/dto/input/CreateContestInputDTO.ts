@@ -1,5 +1,5 @@
-import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
 import { Attachment } from "@/core/domain/model/Attachment";
+import { CreateContestRequestDTO } from "@/core/repository/dto/request/CreateContestRequestDTO";
 
 export type CreateContestInputDTO = Omit<
   CreateContestRequestDTO,

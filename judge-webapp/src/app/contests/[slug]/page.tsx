@@ -1,10 +1,11 @@
 "use client";
 
 import { redirect } from "next/navigation";
+
 import { routes } from "@/config/routes";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
-import { useAuthorization } from "@/app/_context/authorization-context";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { useAuthorization } from "@/store/slices/authorization-slice";
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 
 /**
  * ContestPage component that redirects users based on their member type.

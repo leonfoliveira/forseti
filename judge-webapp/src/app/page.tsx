@@ -1,21 +1,22 @@
 "use client";
 
-import { Form } from "@/app/_component/form/form";
-import { TextInput } from "@/app/_component/form/text-input";
-import { Button } from "@/app/_component/form/button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import React from "react";
-import Joi from "joi";
-import { useForm } from "react-hook-form";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { joiResolver } from "@hookform/resolvers/joi";
+import Joi from "joi";
 import { useRouter } from "next/navigation";
-import { routes } from "@/config/routes";
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { contestService } from "@/config/composition";
-import { useAlert } from "@/app/_context/notification-context";
-import { NotFoundException } from "@/core/domain/exception/NotFoundException";
+import React from "react";
+import { useForm } from "react-hook-form";
 import { defineMessages, FormattedMessage } from "react-intl";
+
+import { contestService } from "@/config/composition";
+import { routes } from "@/config/routes";
+import { NotFoundException } from "@/core/domain/exception/NotFoundException";
+import { Button } from "@/lib/component/form/button";
+import { Form } from "@/lib/component/form/form";
+import { TextInput } from "@/lib/component/form/text-input";
+import { useLoadableState } from "@/lib/util/loadable-state";
+import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
   joinNotFound: {

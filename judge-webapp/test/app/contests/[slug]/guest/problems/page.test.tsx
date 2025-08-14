@@ -1,22 +1,28 @@
-import { useGuestContext } from "@/app/contests/[slug]/guest/_context/guest-context";
 import { render } from "@testing-library/react";
-import GuestProblemsPage from "@/app/contests/[slug]/guest/problems/page";
-import { ProblemsPage } from "@/app/contests/[slug]/_common/problems-page";
 
-jest.mock("@/app/contests/[slug]/guest/_context/guest-context");
+import { ProblemsPage } from "@/app/contests/[slug]/_common/problems-page";
+import GuestProblemsPage from "@/app/contests/[slug]/guest/problems/page";
+import { mockUseGuestDashboard } from "@/test/jest.setup";
+
 jest.mock("@/app/contests/[slug]/_common/problems-page");
 
 describe("GuestProblemsPage", () => {
   it("renders the announcements page with contest data", () => {
-    const contest = {
-      id: "contest-id",
-    };
-    jest.mocked(useGuestContext).mockReturnValueOnce({ contest } as any);
+    const problems = [{ id: "problem-1" }];
+
+    mockUseGuestDashboard.mockImplementation((selector: any) => {
+      const state = {
+        contest: { problems },
+        leaderboard: null,
+        submissions: [],
+      };
+      return selector ? selector(state) : state;
+    });
 
     render(<GuestProblemsPage />);
 
     expect(ProblemsPage as jest.Mock).toHaveBeenCalledWith(
-      { contest },
+      { problems },
       undefined,
     );
   });

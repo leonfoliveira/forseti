@@ -1,8 +1,8 @@
-import { AuthenticationRepository } from "@/core/repository/AuthenticationRepository";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
+import { Authorization } from "@/core/domain/model/Authorization";
+import { AuthenticationRepository } from "@/core/repository/AuthenticationRepository";
 import { AuthenticateMemberRequestDTO } from "@/core/repository/dto/request/AuthenticateMemberRequestDTO";
 import { AuthenticateRootRequestDTO } from "@/core/repository/dto/request/AuthenticateRootRequestDTO";
-import { Authorization } from "@/core/domain/model/Authorization";
 
 export class AxiosAuthenticationRepository implements AuthenticationRepository {
   constructor(private readonly axiosClient: AxiosClient) {}

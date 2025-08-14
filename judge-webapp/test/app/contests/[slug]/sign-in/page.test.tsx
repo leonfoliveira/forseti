@@ -1,17 +1,18 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+
+import MemberSignInPage from "@/app/contests/[slug]/sign-in/page";
+import { authenticationService } from "@/config/composition";
+import { routes } from "@/config/routes";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import {
   mockAlert,
   mockClearAuthorization,
   mockRouter,
   mockSetAuthorization,
 } from "@/test/jest.setup";
-import MemberSignInPage from "@/app/contests/[slug]/sign-in/page";
-import { authenticationService } from "@/config/composition";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { routes } from "@/config/routes";
 
 jest.mock("@/config/composition");
-jest.mock("@/app/contests/[slug]/_context/contest-metadata-context", () => ({
+jest.mock("@/store/slices/contest-metadata-slice", () => ({
   useContestMetadata: jest.fn(() => ({
     id: "contest-id",
     slug: "contest-slug",

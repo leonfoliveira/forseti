@@ -1,13 +1,14 @@
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { render, screen } from "@testing-library/react";
-import { WaitPage } from "@/app/contests/[slug]/_common/wait-page";
-import { Language } from "@/core/domain/enumerate/Language";
-import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
-import { mockRouter } from "@/test/jest.setup";
-import { routes } from "@/config/routes";
 
-jest.mock("@/app/contests/[slug]/_util/wait-clock-hook", () => ({
-  useWaitClock: jest.fn((_, cb) => cb()),
+import { WaitPage } from "@/app/contests/[slug]/_common/wait-page";
+import { routes } from "@/config/routes";
+import { Language } from "@/core/domain/enumerate/Language";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { CountdownClock } from "@/lib/component/countdown-clock";
+import { mockRouter } from "@/test/jest.setup";
+
+jest.mock("@/lib/component/countdown-clock", () => ({
+  CountdownClock: jest.fn(),
 }));
 
 describe("WaitPage", () => {
@@ -30,10 +31,14 @@ describe("WaitPage", () => {
     expect(languageItems).toHaveLength(1);
     expect(languageItems[0]).toHaveTextContent("Python 3.13");
 
-    expect(useWaitClock).toHaveBeenCalledWith(
-      new Date(contest.startAt),
-      expect.any(Function),
+    expect(CountdownClock).toHaveBeenCalledWith(
+      {
+        to: new Date(contest.startAt),
+        onZero: expect.any(Function),
+      },
+      undefined,
     );
+    (CountdownClock as jest.Mock).mock.calls[0][0].onZero();
     expect(mockRouter.push).toHaveBeenCalledWith(
       routes.CONTEST_SIGN_IN(contest.slug),
     );

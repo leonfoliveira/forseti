@@ -1,23 +1,27 @@
-import Layout from "@/app/layout";
 import { render, screen } from "@testing-library/react";
+
+import Layout from "@/app/layout";
 
 jest.mock("react-intl", () => ({
   IntlProvider: ({ children }: any) => <>{children}</>,
 }));
 
-jest.mock("@/app/_component/footer", () => ({
+jest.mock("@/store/store-provider", () => ({
+  StoreProvider: ({ children }: any) => <>{children}</>,
+}));
+
+jest.mock("@/lib/component/footer", () => ({
   Footer: () => <footer data-testid="footer">Footer</footer>,
 }));
 
-jest.mock("@/app/_context/notification-context", () => ({
-  NotificationProvider: ({ children }: any) => <>{children}</>,
-}));
+jest.mock("@/lib/component/notification/alert-box");
+jest.mock("@/lib/component/notification/toast-box");
 
-jest.mock("@/app/_context/authorization-context", () => ({
+jest.mock("@/lib/provider/authorization-provider", () => ({
   AuthorizationProvider: ({ children }: any) => <>{children}</>,
 }));
 
-jest.mock("@/app/_util/theme-hook", () => ({
+jest.mock("@/lib/util/theme-hook", () => ({
   useTheme: () => ({
     theme: "light",
   }),
@@ -28,7 +32,7 @@ describe("Layout", () => {
     render(
       <Layout>
         <p data-testid="child">Child</p>
-      </Layout>
+      </Layout>,
     );
 
     expect(screen.getByTestId("child")).toBeInTheDocument();

@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useMemo } from "react";
+
 import { ProblemsPage } from "@/app/contests/[slug]/_common/problems-page";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { useContestantContext } from "@/app/contests/[slug]/contestant/_context/contestant-context";
+import { useContestantDashboard } from "@/store/slices/contestant-dashboard-slice";
 
 export default function ContestantProblemsPage() {
-  const { contest, submissions } = useContestantContext();
+  const problems = useContestantDashboard((state) => state.contest.problems);
+  const submissions = useContestantDashboard((state) => state.submissions);
 
   /**
    * Builds and object with the amount of every answer for each problem.
@@ -23,7 +25,7 @@ export default function ContestantProblemsPage() {
     const status: Record<
       string,
       Record<SubmissionAnswer, number>
-    > = contest.problems.reduce((acc, problem) => {
+    > = problems.reduce((acc, problem) => {
       return { ...acc, [problem.id]: { ...answerBlock } };
     }, {});
 
@@ -32,7 +34,7 @@ export default function ContestantProblemsPage() {
     });
 
     return status;
-  }, [contest.problems, submissions]);
+  }, [problems, submissions]);
 
-  return <ProblemsPage contest={contest} contestantStatus={status} />;
+  return <ProblemsPage problems={problems} contestantStatus={status} />;
 }

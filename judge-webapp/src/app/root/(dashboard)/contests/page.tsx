@@ -1,33 +1,34 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
-import { Spinner } from "@/app/_component/spinner";
-import { Button } from "@/app/_component/form/button";
-import { routes } from "@/config/routes";
-import { contestService } from "@/config/composition";
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
-import { useAlert } from "@/app/_context/notification-context";
-import { TableSection } from "@/app/_component/table/table-section";
-import { TableRow } from "@/app/_component/table/table-row";
-import { TableCell } from "@/app/_component/table/table-cell";
-import { ContestStatusBadge } from "@/app/root/(dashboard)/contests/_component/contest-status-badge";
-import { Table } from "@/app/_component/table/table";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronRight,
   faPlay,
   faPlus,
   faStop,
 } from "@fortawesome/free-solid-svg-icons";
-import { FormattedDateTime } from "@/app/_component/format/formatted-datetime";
-import { useModal } from "@/app/_util/modal-hook";
-import { DialogModal } from "@/app/_component/modal/dialog-modal";
-import { recalculateContests } from "@/app/root/(dashboard)/contests/_util/contests-calculator";
-import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
-import { useContestStatusWatcherBatch } from "@/app/_util/contest-status-watcher";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
+
+import { contestService } from "@/config/composition";
+import { routes } from "@/config/routes";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { ContestStatusBadge } from "@/lib/component/badge/contest-status-badge";
+import { Button } from "@/lib/component/form/button";
+import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
+import { DialogModal } from "@/lib/component/modal/dialog-modal";
+import { Spinner } from "@/lib/component/spinner";
+import { Table } from "@/lib/component/table/table";
+import { TableCell } from "@/lib/component/table/table-cell";
+import { TableRow } from "@/lib/component/table/table-row";
+import { TableSection } from "@/lib/component/table/table-section";
+import { useContestStatusWatcherBatch } from "@/lib/util/contest-status-watcher";
+import { merge } from "@/lib/util/entity-merger";
+import { useLoadableState } from "@/lib/util/loadable-state";
+import { useModal } from "@/lib/util/modal-hook";
+import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
   loadError: {
@@ -100,6 +101,15 @@ const messages = defineMessages({
   },
 });
 
+function mergeContest(
+  contests: ContestMetadataResponseDTO[],
+  newContest: ContestMetadataResponseDTO,
+) {
+  return merge(contests, newContest).sort(
+    (a, b) => new Date(b.startAt).getTime() - new Date(a.startAt).getTime(),
+  );
+}
+
 export default function RootContestsPage() {
   const contestsState = useLoadableState<ContestMetadataResponseDTO[]>();
   const startContestState = useLoadableState();
@@ -137,7 +147,7 @@ export default function RootContestsPage() {
     startContestState.start();
     try {
       const contest = await contestService.forceStart(contestId);
-      contestsState.finish((it) => recalculateContests(it, contest));
+      contestsState.finish((it) => mergeContest(it, contest));
       alert.success(messages.startSuccess);
       startModal.close();
     } catch (error) {
@@ -151,7 +161,7 @@ export default function RootContestsPage() {
     endContestState.start();
     try {
       const contest = await contestService.forceEnd(contestId);
-      contestsState.finish((it) => recalculateContests(it, contest));
+      contestsState.finish((it) => mergeContest(it, contest));
       alert.success(messages.endSuccess);
       endModal.close();
     } catch (error) {

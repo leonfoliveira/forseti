@@ -1,19 +1,14 @@
-import { useJudgeContext } from "@/app/contests/[slug]/judge/_context/judge-context";
 import { act, fireEvent, render, screen } from "@testing-library/react";
+
 import JudgeSubmissionsPage from "@/app/contests/[slug]/judge/submissions/page";
-import { Language } from "@/core/domain/enumerate/Language";
-import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { submissionService } from "@/config/composition";
-import { mockAlert } from "@/test/jest.setup";
+import { Language } from "@/core/domain/enumerate/Language";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
+import { mockAlert, mockUseJudgeDashboard } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
-jest.mock("@/app/contests/[slug]/judge/_context/judge-context", () => ({
-  useJudgeContext: jest.fn(() => ({
-    submissions: [],
-  })),
-}));
-jest.mock("@/app/_component/modal/dialog-modal", () => ({
+jest.mock("@/lib/component/modal/dialog-modal", () => ({
   DialogModal: ({ children, modal, onConfirm }: any) => (
     <>
       {modal.isOpen && (
@@ -28,17 +23,20 @@ jest.mock("@/app/_component/modal/dialog-modal", () => ({
 
 describe("JudgeSubmissionsPage", () => {
   it("should render all components on startup", () => {
-    (useJudgeContext as jest.Mock).mockReturnValue({
-      submissions: [
-        {
-          id: "1",
-          createdAt: "2025-01-01T00:00:00Z",
-          problem: { letter: "A" },
-          language: Language.PYTHON_3_13,
-          status: SubmissionStatus.JUDGED,
-          answer: SubmissionAnswer.ACCEPTED,
-        },
-      ],
+    const submissions = [
+      {
+        id: "1",
+        createdAt: "2025-01-01T00:00:00Z",
+        problem: { letter: "A" },
+        language: Language.PYTHON_3_13,
+        status: SubmissionStatus.JUDGED,
+        answer: SubmissionAnswer.ACCEPTED,
+      },
+    ];
+
+    mockUseJudgeDashboard.mockImplementation((selector: any) => {
+      const state = { contest: null, leaderboard: null, submissions };
+      return selector ? selector(state) : state;
     });
 
     render(<JudgeSubmissionsPage />);
@@ -70,17 +68,20 @@ describe("JudgeSubmissionsPage", () => {
   });
 
   it("should disable rerun when submission is judging", () => {
-    (useJudgeContext as jest.Mock).mockReturnValue({
-      submissions: [
-        {
-          id: "2",
-          createdAt: "2025-01-02T00:00:00Z",
-          problem: { letter: "B" },
-          language: Language.PYTHON_3_13,
-          status: SubmissionStatus.JUDGING,
-          answer: SubmissionAnswer.ACCEPTED,
-        },
-      ],
+    const submissions = [
+      {
+        id: "2",
+        createdAt: "2025-01-02T00:00:00Z",
+        problem: { letter: "B" },
+        language: Language.PYTHON_3_13,
+        status: SubmissionStatus.JUDGING,
+        answer: SubmissionAnswer.ACCEPTED,
+      },
+    ];
+
+    mockUseJudgeDashboard.mockImplementation((selector: any) => {
+      const state = { contest: null, leaderboard: null, submissions };
+      return selector ? selector(state) : state;
     });
 
     render(<JudgeSubmissionsPage />);
@@ -89,17 +90,20 @@ describe("JudgeSubmissionsPage", () => {
   });
 
   it("should alert error on rerun failure", async () => {
-    (useJudgeContext as jest.Mock).mockReturnValue({
-      submissions: [
-        {
-          id: "2",
-          createdAt: "2025-01-02T00:00:00Z",
-          problem: { letter: "B" },
-          language: Language.PYTHON_3_13,
-          status: SubmissionStatus.JUDGED,
-          answer: SubmissionAnswer.ACCEPTED,
-        },
-      ],
+    const submissions = [
+      {
+        id: "2",
+        createdAt: "2025-01-02T00:00:00Z",
+        problem: { letter: "B" },
+        language: Language.PYTHON_3_13,
+        status: SubmissionStatus.JUDGED,
+        answer: SubmissionAnswer.ACCEPTED,
+      },
+    ];
+
+    mockUseJudgeDashboard.mockImplementation((selector: any) => {
+      const state = { contest: null, leaderboard: null, submissions };
+      return selector ? selector(state) : state;
     });
     (submissionService.rerunSubmission as jest.Mock).mockRejectedValueOnce(
       new Error("error"),
@@ -125,17 +129,20 @@ describe("JudgeSubmissionsPage", () => {
   });
 
   it("should alert success on rerun success", async () => {
-    (useJudgeContext as jest.Mock).mockReturnValue({
-      submissions: [
-        {
-          id: "2",
-          createdAt: "2025-01-02T00:00:00Z",
-          problem: { letter: "B" },
-          language: Language.PYTHON_3_13,
-          status: SubmissionStatus.JUDGED,
-          answer: SubmissionAnswer.ACCEPTED,
-        },
-      ],
+    const submissions = [
+      {
+        id: "2",
+        createdAt: "2025-01-02T00:00:00Z",
+        problem: { letter: "B" },
+        language: Language.PYTHON_3_13,
+        status: SubmissionStatus.JUDGED,
+        answer: SubmissionAnswer.ACCEPTED,
+      },
+    ];
+
+    mockUseJudgeDashboard.mockImplementation((selector: any) => {
+      const state = { contest: null, leaderboard: null, submissions };
+      return selector ? selector(state) : state;
     });
     (submissionService.rerunSubmission as jest.Mock).mockResolvedValueOnce(
       undefined,
@@ -162,17 +169,20 @@ describe("JudgeSubmissionsPage", () => {
   });
 
   it("should alert error on update failure", async () => {
-    (useJudgeContext as jest.Mock).mockReturnValue({
-      submissions: [
-        {
-          id: "2",
-          createdAt: "2025-01-02T00:00:00Z",
-          problem: { letter: "B" },
-          language: Language.PYTHON_3_13,
-          status: SubmissionStatus.JUDGED,
-          answer: SubmissionAnswer.ACCEPTED,
-        },
-      ],
+    const submissions = [
+      {
+        id: "2",
+        createdAt: "2025-01-02T00:00:00Z",
+        problem: { letter: "B" },
+        language: Language.PYTHON_3_13,
+        status: SubmissionStatus.JUDGED,
+        answer: SubmissionAnswer.ACCEPTED,
+      },
+    ];
+
+    mockUseJudgeDashboard.mockImplementation((selector: any) => {
+      const state = { contest: null, leaderboard: null, submissions };
+      return selector ? selector(state) : state;
     });
     (
       submissionService.updateSubmissionAnswer as jest.Mock
@@ -198,17 +208,20 @@ describe("JudgeSubmissionsPage", () => {
   });
 
   it("should alert success on update success", async () => {
-    (useJudgeContext as jest.Mock).mockReturnValue({
-      submissions: [
-        {
-          id: "2",
-          createdAt: "2025-01-02T00:00:00Z",
-          problem: { letter: "B" },
-          language: Language.PYTHON_3_13,
-          status: SubmissionStatus.JUDGED,
-          answer: SubmissionAnswer.ACCEPTED,
-        },
-      ],
+    const submissions = [
+      {
+        id: "2",
+        createdAt: "2025-01-02T00:00:00Z",
+        problem: { letter: "B" },
+        language: Language.PYTHON_3_13,
+        status: SubmissionStatus.JUDGED,
+        answer: SubmissionAnswer.ACCEPTED,
+      },
+    ];
+
+    mockUseJudgeDashboard.mockImplementation((selector: any) => {
+      const state = { contest: null, leaderboard: null, submissions };
+      return selector ? selector(state) : state;
     });
     (
       submissionService.updateSubmissionAnswer as jest.Mock

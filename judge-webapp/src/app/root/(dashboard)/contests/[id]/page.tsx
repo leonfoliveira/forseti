@@ -1,22 +1,23 @@
 "use client";
 
-import { use, useEffect } from "react";
-import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
-import { ContestFormMap } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
-import { useForm } from "react-hook-form";
-import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { joiResolver } from "@hookform/resolvers/joi";
-import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
-import { contestService } from "@/config/composition";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { redirect } from "next/navigation";
+import { use, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { defineMessages } from "react-intl";
+
+import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
+import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
+import { ContestFormMap } from "@/app/root/(dashboard)/contests/_form/contest-form-map";
+import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
+import { contestService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { useAlert } from "@/app/_context/notification-context";
-import { TestCaseUtils } from "@/app/root/(dashboard)/contests/_util/TestCaseUtils";
-import { defineMessages } from "react-intl";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
+import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
+import { useLoadableState } from "@/lib/util/loadable-state";
+import { TestCaseValidator } from "@/lib/util/test-case-validator";
+import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
   loadError: {
@@ -83,7 +84,7 @@ export default function RootEditContestPage({
     updateContestState.start();
     try {
       const input = ContestFormMap.toUpdateRequestDTO(data);
-      const failedValidations = await TestCaseUtils.validateProblemList(
+      const failedValidations = await TestCaseValidator.validateProblemList(
         input.problems,
       );
       if (failedValidations.length > 0) {

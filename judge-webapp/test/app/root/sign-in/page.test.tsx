@@ -1,14 +1,15 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
+
 import RootSignInPage from "@/app/root/sign-in/page";
+import { authenticationService } from "@/config/composition";
+import { routes } from "@/config/routes";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import {
   mockAlert,
   mockClearAuthorization,
   mockRouter,
   mockSetAuthorization,
 } from "@/test/jest.setup";
-import { authenticationService } from "@/config/composition";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { routes } from "@/config/routes";
 
 describe("RootSignInPage", () => {
   it("renders the sign-in form", () => {

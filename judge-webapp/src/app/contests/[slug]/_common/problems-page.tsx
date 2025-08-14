@@ -1,15 +1,16 @@
 "use client";
 
 import React from "react";
-import { Table } from "@/app/_component/table/table";
-import { TableSection } from "@/app/_component/table/table-section";
-import { TableRow } from "@/app/_component/table/table-row";
-import { TableCell } from "@/app/_component/table/table-cell";
-import { DownloadButton } from "@/app/_component/form/download-button";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { SubmissionAnswerShortBadge } from "@/app/_component/badge/submission-answer-short-badge";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { defineMessages, FormattedMessage } from "react-intl";
+
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
+import { SubmissionAnswerShortBadge } from "@/lib/component/badge/submission-answer-short-badge";
+import { DownloadButton } from "@/lib/component/form/download-button";
+import { Table } from "@/lib/component/table/table";
+import { TableCell } from "@/lib/component/table/table-cell";
+import { TableRow } from "@/lib/component/table/table-row";
+import { TableSection } from "@/lib/component/table/table-section";
 
 const messages = defineMessages({
   problemTitle: {
@@ -19,7 +20,7 @@ const messages = defineMessages({
 });
 
 type Props = {
-  contest: ContestPublicResponseDTO;
+  problems: ProblemPublicResponseDTO[];
   contestantStatus?: Record<string, Record<SubmissionAnswer, number>>;
 };
 
@@ -27,12 +28,12 @@ type Props = {
  * A generic problem page component for displaying contest problems.
  * If `contestantStatus` is provided, it will show the status of each problem for the contestant.
  */
-export function ProblemsPage({ contest, contestantStatus }: Props) {
+export function ProblemsPage({ problems, contestantStatus }: Props) {
   return (
     <div>
       <Table className="table-zebra">
         <TableSection>
-          {contest.problems.map((problem) => (
+          {problems.map((problem) => (
             <TableRow
               key={problem.id}
               className="hover:bg-base-100 transition"

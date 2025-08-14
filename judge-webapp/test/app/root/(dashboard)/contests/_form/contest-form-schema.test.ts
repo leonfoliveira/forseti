@@ -1,6 +1,6 @@
+import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest-form-schema";
 
 describe("contestFormSchema", () => {
   const validData = {

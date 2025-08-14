@@ -1,16 +1,17 @@
 "use client";
 
 import React from "react";
-import { Table } from "@/app/_component/table/table";
-import { TableRow } from "@/app/_component/table/table-row";
-import { TableSection } from "@/app/_component/table/table-section";
-import { TableCell } from "@/app/_component/table/table-cell";
-import { cls } from "@/app/_util/cls";
-import { useAuthorization } from "@/app/_context/authorization-context";
-import { ProblemStatusBadge } from "@/app/_component/badge/problem-status-badge";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
-import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 import { defineMessages, FormattedMessage } from "react-intl";
+
+import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
+import { ProblemStatusBadge } from "@/lib/component/badge/problem-status-badge";
+import { Table } from "@/lib/component/table/table";
+import { TableCell } from "@/lib/component/table/table-cell";
+import { TableRow } from "@/lib/component/table/table-row";
+import { TableSection } from "@/lib/component/table/table-section";
+import { cls } from "@/lib/util/cls";
+import { useAuthorization } from "@/store/slices/authorization-slice";
 
 const messages = defineMessages({
   headerScore: {
@@ -24,14 +25,14 @@ const messages = defineMessages({
 });
 
 type Props = {
-  contest: ContestPublicResponseDTO;
+  problems: ProblemPublicResponseDTO[];
   leaderboard: ContestLeaderboardResponseDTO;
 };
 
 /**
  * A generic leaderboard page component for displaying contest results.
  */
-export function LeaderboardPage({ contest, leaderboard }: Props) {
+export function LeaderboardPage({ problems, leaderboard }: Props) {
   const authorization = useAuthorization();
 
   return (
@@ -40,7 +41,7 @@ export function LeaderboardPage({ contest, leaderboard }: Props) {
         <TableSection head>
           <TableRow>
             <TableCell header></TableCell>
-            {contest.problems.map((problem, index) => (
+            {problems.map((problem, index) => (
               <TableCell
                 key={problem.id}
                 header

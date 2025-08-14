@@ -1,5 +1,5 @@
-import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form-schema";
 import { RootSignInFormType } from "@/app/root/sign-in/_form/root-sign-in-form";
+import { rootSignInFormSchema } from "@/app/root/sign-in/_form/root-sign-in-form-schema";
 
 describe("rootSignInFormSchema", () => {
   const validSchema = {

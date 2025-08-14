@@ -1,16 +1,17 @@
 import { render } from "@testing-library/react";
-import ContestantPage from "@/app/contests/[slug]/contestant/page";
-import { mockRedirect } from "@/test/jest.setup";
-import { routes } from "@/config/routes";
 
-jest.mock("@/app/contests/[slug]/_context/contest-metadata-context", () => ({
-  useContestMetadata: jest.fn(() => ({
-    slug: "test-contest",
-  })),
-}));
+import ContestantPage from "@/app/contests/[slug]/contestant/page";
+import { routes } from "@/config/routes";
+import { mockRedirect, mockUseContestMetadata } from "@/test/jest.setup";
+
+jest.mock("@/store/slices/contest-metadata-slice");
 
 describe("ContestantPage", () => {
   it("should redirect to contestant leaderboard", () => {
+    mockUseContestMetadata.mockReturnValue({
+      slug: "test-contest",
+    } as any);
+
     render(<ContestantPage />);
 
     expect(mockRedirect).toHaveBeenCalledWith(

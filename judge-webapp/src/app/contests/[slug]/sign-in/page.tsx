@@ -1,24 +1,25 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import React from "react";
-import { joiResolver } from "@hookform/resolvers/joi";
-import { Form } from "@/app/_component/form/form";
-import { TextInput } from "@/app/_component/form/text-input";
-import { Button } from "@/app/_component/form/button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { defineMessages, FormattedMessage } from "react-intl";
+
 import { MemberSignInFormType } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form";
 import { memberSignInFormSchema } from "@/app/contests/[slug]/sign-in/_form/member-sign-in-form-schema";
 import { authenticationService } from "@/config/composition";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useRouter } from "next/navigation";
 import { routes } from "@/config/routes";
-import { useLoadableState } from "@/app/_util/loadable-state";
-import { useContestMetadata } from "@/app/contests/[slug]/_context/contest-metadata-context";
-import { useAuthorizationContext } from "@/app/_context/authorization-context";
-import { useAlert } from "@/app/_context/notification-context";
-import { defineMessages, FormattedMessage } from "react-intl";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
+import { Button } from "@/lib/component/form/button";
+import { Form } from "@/lib/component/form/form";
+import { TextInput } from "@/lib/component/form/text-input";
+import { useSetAuthorization } from "@/lib/provider/authorization-provider";
+import { useLoadableState } from "@/lib/util/loadable-state";
+import { useAlert } from "@/store/slices/alerts-slice";
+import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 
 const messages = defineMessages({
   wrongLoginPassword: {
@@ -52,8 +53,8 @@ const messages = defineMessages({
  */
 export default function MemberSignInPage() {
   const signInState = useLoadableState();
-  const contest = useContestMetadata();
-  const { setAuthorization } = useAuthorizationContext();
+  const contestMetadata = useContestMetadata();
+  const { setAuthorization } = useSetAuthorization();
   const alert = useAlert();
 
   const router = useRouter();
@@ -66,12 +67,12 @@ export default function MemberSignInPage() {
     signInState.start();
     try {
       const authorization = await authenticationService.authenticateMember(
-        contest.id,
+        contestMetadata.id,
         data,
       );
       setAuthorization(authorization);
       signInState.finish();
-      router.push(routes.CONTEST(contest.slug));
+      router.push(routes.CONTEST(contestMetadata.slug));
     } catch (error) {
       signInState.fail(error, {
         [UnauthorizedException.name]: () =>
@@ -93,7 +94,7 @@ export default function MemberSignInPage() {
           <FormattedMessage {...messages.title} />
         </h1>
         <h2 className="text-md mt-2" data-testid="description">
-          {contest?.title}
+          {contestMetadata?.title}
         </h2>
         <div className="my-6">
           <TextInput

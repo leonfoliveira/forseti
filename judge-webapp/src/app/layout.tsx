@@ -1,16 +1,20 @@
 "use client";
 
-import React from "react";
 import "./globals.css";
-import { env } from "@/config/env";
-import { useTheme } from "@/app/_util/theme-hook";
+
 import { Roboto } from "next/font/google";
-import { NotificationProvider } from "@/app/_context/notification-context";
-import { AuthorizationProvider } from "@/app/_context/authorization-context";
+import React from "react";
 import { IntlProvider } from "react-intl";
+
+import { env } from "@/config/env";
 import enUS from "@/i18n/messages/en-US.json";
 import ptBR from "@/i18n/messages/pt-BR.json";
-import { Footer } from "./_component/footer";
+import { Footer } from "@/lib/component/footer";
+import { AlertBox } from "@/lib/component/notification/alert-box";
+import { ToastBox } from "@/lib/component/notification/toast-box";
+import { AuthorizationProvider } from "@/lib/provider/authorization-provider";
+import { useTheme } from "@/lib/util/theme-hook";
+import { StoreProvider } from "@/store/store-provider";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -34,14 +38,16 @@ export default function Layout({
     <html lang={env.LOCALE} data-theme={theme} className="bg-base-300">
       <body className={roboto.className}>
         <IntlProvider messages={messages} locale={env.LOCALE}>
-          <NotificationProvider>
+          <StoreProvider>
             <AuthorizationProvider>
               <div className="flex flex-col w-screen h-screen">
                 <div className="flex-1">{children}</div>
                 <Footer />
               </div>
             </AuthorizationProvider>
-          </NotificationProvider>
+            <AlertBox />
+            <ToastBox />
+          </StoreProvider>
         </IntlProvider>
       </body>
     </html>
