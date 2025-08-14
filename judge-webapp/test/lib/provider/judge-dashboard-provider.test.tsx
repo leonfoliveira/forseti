@@ -63,7 +63,7 @@ describe("JudgeDashboardProvider", () => {
     await waitFor(() => {
       expect(mockAlert.error).toHaveBeenCalledWith({
         defaultMessage: "Error loading contest data",
-        id: "lib.provider..judge-dashboard-provider.load-error",
+        id: "lib.provider.judge-dashboard-provider.load-error",
       });
       expect(screen.getByTestId("error")).toBeInTheDocument();
       expect(screen.queryByTestId("child")).not.toBeInTheDocument();
