@@ -25,15 +25,15 @@ import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
   loadError: {
-    id: "lib.provider..judge-dashboard-provider.load-error",
+    id: "lib.provider.judge-dashboard-provider.load-error",
     defaultMessage: "Error loading contest data",
   },
   submissionFailed: {
-    id: "lib.provider..judge-dashboard-provider.submission-failed",
+    id: "lib.provider.judge-dashboard-provider.submission-failed",
     defaultMessage: "New failed submission",
   },
   announcement: {
-    id: "lib.provider..judge-dashboard-provider.announcement",
+    id: "lib.provider.judge-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
 });
