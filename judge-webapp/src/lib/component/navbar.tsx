@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
-import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { globalMessages } from "@/i18n/global";
+import { CountdownClock } from "@/lib/component/countdown-clock";
 import { useSetAuthorization } from "@/lib/provider/authorization-provider";
 import { useTheme } from "@/lib/util/theme-hook";
 import { useAuthorization } from "@/store/slices/authorization-slice";
@@ -39,10 +39,6 @@ export function Navbar({ contestMetadata, signInPath }: Props) {
   const authorization = useAuthorization();
   const { clearAuthorization } = useSetAuthorization();
 
-  const clockRef = useWaitClock(
-    contestMetadata && new Date(contestMetadata.endAt),
-  );
-
   function signOut() {
     clearAuthorization(signInPath);
   }
@@ -60,7 +56,12 @@ export function Navbar({ contestMetadata, signInPath }: Props) {
           )}
         </div>
         <div className="text-center">
-          <span ref={clockRef} className="font-mono text-sm" />
+          {contestMetadata && (
+            <CountdownClock
+              className="font-mono text-sm"
+              to={new Date(contestMetadata.startAt)}
+            />
+          )}
         </div>
         <div className="flex items-center w-full justify-end">
           <label className="toggle text-base-content">

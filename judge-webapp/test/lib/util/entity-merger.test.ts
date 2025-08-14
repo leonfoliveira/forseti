@@ -1,4 +1,4 @@
-import { merge } from "@/app/contests/[slug]/_util/entity-merger";
+import { merge } from "@/lib/util/entity-merger";
 
 describe("merge", () => {
   interface TestEntity {

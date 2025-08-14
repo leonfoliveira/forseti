@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
+import { ContestDashboardLayout } from "@/app/contests/[slug]/_common/contest-dashboard-layout";
 import GuestLayout from "@/app/contests/[slug]/guest/layout";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
@@ -9,7 +9,7 @@ import {
   mockUseContestMetadata,
 } from "@/test/jest.setup";
 
-jest.mock("@/app/contests/[slug]/_component/contest-dashboard-layout", () => ({
+jest.mock("@/app/contests/[slug]/_common/contest-dashboard-layout", () => ({
   ContestDashboardLayout: jest.fn(({ children }: any) => <div>{children}</div>),
 }));
 

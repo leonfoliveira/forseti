@@ -1,10 +1,11 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 
-import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
+import { ContestDashboardLayout } from "@/app/contests/[slug]/_common/contest-dashboard-layout";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { ContestUtil } from "@/core/util/contest-util";
+import { mockRouter, mockUsePathname } from "@/test/jest.setup";
 
 jest.mock("@/core/util/contest-util");
 jest.mock("@/app/contests/[slug]/_common/wait-page", () => ({
@@ -18,14 +19,6 @@ jest.mock("@/lib/component/navbar", () => ({
       <span data-testid="contest-id">{contestMetadata.id}</span>
       <a href={signInPath} data-testid="sign-in"></a>
     </div>
-  ),
-}));
-jest.mock("@/app/contests/[slug]/_component/contest-tab-bar", () => ({
-  ContestTabBar: ({ tabs }: any) => (
-    <>
-      <span data-testid="tab-label">{tabs[0].label}</span>
-      <span data-testid="tab-path">{tabs[0].path}</span>
-    </>
   ),
 }));
 
@@ -55,7 +48,10 @@ describe("ContestDashboardLayout", () => {
       slug: "contest-slug",
     } as unknown as ContestMetadataResponseDTO;
     const tabs = [
-      { label: "Overview", path: "/contests/contest-slug/overview" },
+      {
+        label: { id: "overview", defaultMessage: "Overview" },
+        path: "/contests/contest-slug/overview",
+      },
     ];
 
     render(
@@ -67,12 +63,49 @@ describe("ContestDashboardLayout", () => {
     expect(screen.getByTestId("contest-id")).toHaveTextContent("contest-123");
     expect(screen.getByTestId("sign-in")).toHaveAttribute(
       "href",
-      routes.CONTEST_SIGN_IN(contestMetadata.slug, true),
-    );
-    expect(screen.getByTestId("tab-label")).toHaveTextContent("Overview");
-    expect(screen.getByTestId("tab-path")).toHaveTextContent(
-      "/contests/contest-slug/overview",
+      routes.CONTEST_SIGN_IN(contestMetadata.slug),
     );
     expect(screen.getByTestId("child")).toBeInTheDocument();
+  });
+
+  it("should render tabs with correct labels and paths", () => {
+    mockUsePathname.mockReturnValueOnce("/contests/contest-slug/overview");
+
+    const contestMetadata = {
+      id: "contest-123",
+      slug: "contest-slug",
+    } as unknown as ContestMetadataResponseDTO;
+    const tabs = [
+      {
+        label: { id: "tab-1", defaultMessage: "Overview" },
+        path: "/contests/contest-slug/overview",
+      },
+      {
+        label: { id: "tab-2", defaultMessage: "Problems" },
+        path: "/contests/contest-slug/problems",
+      },
+    ];
+
+    render(
+      <ContestDashboardLayout contestMetadata={contestMetadata} tabs={tabs}>
+        <span data-testid="child" />
+      </ContestDashboardLayout>,
+    );
+
+    const tabElements = screen.getAllByTestId("tab");
+
+    expect(tabElements[0]).toHaveClass("tab-active");
+    expect(tabElements[0]).toHaveTextContent("Overview");
+    fireEvent.click(tabElements[0]);
+    expect(mockRouter.push).toHaveBeenCalledWith(
+      "/contests/contest-slug/overview",
+    );
+
+    expect(tabElements[1]).not.toHaveClass("tab-active");
+    expect(tabElements[1]).toHaveTextContent("Problems");
+    fireEvent.click(tabElements[1]);
+    expect(mockRouter.push).toHaveBeenCalledWith(
+      "/contests/contest-slug/problems",
+    );
   });
 });

@@ -7,9 +7,11 @@ if (typeof window !== "undefined") {
 }
 
 // react-intl
+export const mockFormattedDate = jest.fn();
 jest.mock("react-intl", () => ({
   defineMessages: (messages: any) => messages,
-  FormattedMessage: ({ defaultMessage }: any) => defaultMessage,
+  FormattedMessage: jest.fn(({ defaultMessage }: any) => defaultMessage),
+  FormattedDate: mockFormattedDate,
   useIntl: () => ({
     formatMessage: ({ id }: { id: string }) => id,
   }),

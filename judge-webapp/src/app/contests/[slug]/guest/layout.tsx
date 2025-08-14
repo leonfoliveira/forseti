@@ -3,7 +3,7 @@
 import React from "react";
 import { defineMessages } from "react-intl";
 
-import { ContestDashboardLayout } from "@/app/contests/[slug]/_component/contest-dashboard-layout";
+import { ContestDashboardLayout } from "@/app/contests/[slug]/_common/contest-dashboard-layout";
 import { routes } from "@/config/routes";
 import { GuestContextProvider } from "@/lib/provider/guest-dashboard-provider";
 import { useContestMetadata } from "@/store/slices/contest-metadata-slice";

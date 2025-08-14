@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
-import { merge } from "@/app/contests/[slug]/_util/entity-merger";
+import { findClarification } from "@/lib/util/clarification-finder";
+import { merge } from "@/lib/util/entity-merger";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";

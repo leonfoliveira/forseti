@@ -1,4 +1,4 @@
-import { findClarification } from "@/app/contests/[slug]/_util/clarification-finder";
+import { findClarification } from "@/lib/util/clarification-finder";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 
 describe("findClarification", () => {

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { redirect } from "next/navigation";
 
-import { useWaitClock } from "@/app/contests/[slug]/_util/wait-clock-hook";
+import { CountdownClock } from "@/lib/component/countdown-clock";
 import { Navbar } from "@/lib/component/navbar";
 import { useTheme } from "@/lib/util/theme-hook";
 import {
@@ -13,8 +13,8 @@ jest.mock("@/lib/util/theme-hook", () => ({
   useTheme: jest.fn(),
 }));
 
-jest.mock("@/app/contests/[slug]/_util/wait-clock-hook", () => ({
-  useWaitClock: jest.fn(),
+jest.mock("@/lib/component/countdown-clock", () => ({
+  CountdownClock: jest.fn(),
 }));
 
 jest.mock("next/navigation", () => ({
@@ -33,7 +33,6 @@ describe("Navbar", () => {
       theme: "light",
       toggleTheme: mockToggleTheme,
     });
-    (useWaitClock as jest.Mock).mockReturnValue({ current: null });
     (redirect as unknown as jest.Mock).mockImplementation(mockRedirect);
   });
 
@@ -50,6 +49,21 @@ describe("Navbar", () => {
     const contestMetadata = { title: "My Contest" } as any;
     render(<Navbar contestMetadata={contestMetadata} signInPath="/sign-in" />);
     expect(screen.getByTestId("title")).toHaveTextContent("My Contest");
+  });
+
+  it("renders countdown clock when contest is ongoing", () => {
+    const contestMetadata = {
+      title: "My Contest",
+      startAt: new Date(Date.now() + 10000),
+    } as any;
+    render(<Navbar contestMetadata={contestMetadata} signInPath="/sign-in" />);
+    expect(CountdownClock).toHaveBeenCalledWith(
+      {
+        className: expect.any(String),
+        to: new Date(contestMetadata.startAt),
+      },
+      undefined,
+    );
   });
 
   it("toggles theme when the theme switch is clicked", () => {
