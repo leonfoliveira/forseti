@@ -23,7 +23,7 @@ export function AuthorizationProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const authorizationState = useLoadableState();
+  const authorizationState = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
 
   useEffect(() => {

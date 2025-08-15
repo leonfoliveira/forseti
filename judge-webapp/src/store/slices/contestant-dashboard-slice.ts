@@ -20,12 +20,7 @@ type StateType = {
 
 export const contestantDashboardSlice = createSlice({
   name: "contestantDashboard",
-  initialState: {
-    contest: null,
-    leaderboard: null,
-    submissions: null,
-    memberSubmissions: null,
-  } as unknown as StateType,
+  initialState: null as unknown as StateType,
   reducers: {
     set(state, action: { payload: StateType }) {
       state = action.payload;
