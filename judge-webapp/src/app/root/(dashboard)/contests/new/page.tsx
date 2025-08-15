@@ -13,9 +13,14 @@ import { contestService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
 import { useLoadableState } from "@/lib/util/loadable-state";
+import { TestCaseValidator } from "@/lib/util/test-case-validator";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
+  invalidTestCase: {
+    id: "app.root.(dashboard).contests.new.page.invalid-test-case",
+    defaultMessage: "Must have exactly two columns and at least one row",
+  },
   createSuccess: {
     id: "app.root.(dashboard).contests.new.page.create-success",
     defaultMessage: "Contest created successfully",
@@ -44,6 +49,19 @@ export default function RootNewContestPage() {
     createContestState.start();
     try {
       const input = ContestFormMap.toCreateRequestDTO(data);
+
+      const validations = await TestCaseValidator.validateProblemList(
+        input.problems,
+      );
+      validations.forEach((it, idx) => {
+        if (!it.isValid) {
+          form.setError(`problems.${idx}.testCases`, {
+            message: messages.invalidTestCase.id,
+          });
+        }
+      });
+      if (!!validations.find((it) => !it.isValid)) return;
+
       const contest = await contestService.createContest(input);
       alert.success(messages.createSuccess);
       router.push(routes.ROOT_CONTESTS_EDIT(contest.id));

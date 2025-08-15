@@ -24,10 +24,9 @@ const messages = defineMessages({
     id: "app.root.(dashboard).contests.[id].page.load-error",
     defaultMessage: "Error loading contest data",
   },
-  testCasesValidationError: {
-    id: "app.root.(dashboard).contests.[id].page.test-cases-validation-error",
-    defaultMessage:
-      "Test cases file must have exactly two columns and at least one row. Failed problems: {letters}",
+  invalidTestCase: {
+    id: "app.root.(dashboard).contests.[id].page.invalid-test-case",
+    defaultMessage: "Must have exactly two columns and at least one row",
   },
   updateSuccess: {
     id: "app.root.(dashboard).contests.[id].page.update-success",
@@ -84,16 +83,19 @@ export default function RootEditContestPage({
     updateContestState.start();
     try {
       const input = ContestFormMap.toUpdateRequestDTO(data);
-      const failedValidations = await TestCaseValidator.validateProblemList(
+
+      const validations = await TestCaseValidator.validateProblemList(
         input.problems,
       );
-      if (failedValidations.length > 0) {
-        alert.warning({
-          ...messages.testCasesValidationError,
-          values: { letters: failedValidations.join(", ") },
-        });
-        return;
-      }
+      validations.forEach((it, idx) => {
+        if (!it.isValid) {
+          form.setError(`problems.${idx}.testCases`, {
+            message: messages.invalidTestCase.id,
+          });
+        }
+      });
+      if (!!validations.find((it) => !it.isValid)) return;
+
       const contest = await contestService.updateContest(input);
       form.reset(ContestFormMap.fromResponseDTO(contest));
       updateContestState.finish(contest);
