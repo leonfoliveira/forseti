@@ -40,63 +40,81 @@ describe("contestFormSchema", () => {
     expect(
       contestFormSchema.validate({ ...validData, slug: undefined }).error
         ?.message,
-    ).toBe("slug:required");
+    ).toBe("app.root.(dashboard)._form.contest-form-schema.slug-required");
     expect(
       contestFormSchema.validate({ ...validData, slug: "" }).error?.message,
-    ).toBe("slug:required");
+    ).toBe("app.root.(dashboard)._form.contest-form-schema.slug-required");
     expect(
       contestFormSchema.validate({
         ...validData,
         slug: "with space#!",
       }).error?.message,
-    ).toBe("slug:pattern");
+    ).toBe("app.root.(dashboard)._form.contest-form-schema.slug-pattern");
   });
 
   it("should validate title", () => {
     expect(
       contestFormSchema.validate({ ...validData, title: undefined }).error
         ?.message,
-    ).toBe("title:required");
+    ).toBe("app.root.(dashboard)._form.contest-form-schema.title-required");
     expect(
       contestFormSchema.validate({ ...validData, title: "" }).error?.message,
-    ).toBe("title:required");
+    ).toBe("app.root.(dashboard)._form.contest-form-schema.title-required");
   });
 
   it("should validate languages", () => {
     expect(
       contestFormSchema.validate({ ...validData, languages: undefined }).error
         ?.message,
-    ).toBe("languages:required");
+    ).toBe("app.root.(dashboard)._form.contest-form-schema.languages-required");
     expect(
       contestFormSchema.validate({ ...validData, languages: [] }).error
         ?.message,
-    ).toBe("languages:required");
+    ).toBe("app.root.(dashboard)._form.contest-form-schema.languages-required");
   });
 
   it("should validate startAt", () => {
     expect(
       contestFormSchema.validate({ ...validData, startAt: undefined }).error
         ?.message,
-    ).toBe("start-at:required");
+    ).toBe("app.root.(dashboard)._form.contest-form-schema.start-at-required");
     expect(
       contestFormSchema.validate({
         ...validData,
         startAt: new Date(Date.now() - 1000 * 60 * 60),
       }).error?.message,
-    ).toBe("start-at:greater-now");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.start-at-greater-now",
+    );
+    expect(
+      contestFormSchema.validate({
+        ...validData,
+        originalStartAt: new Date(Date.now() + 1000 * 60 * 60),
+        startAt: undefined,
+      }).error?.message,
+    ).toBe("app.root.(dashboard)._form.contest-form-schema.start-at-required");
+    expect(
+      contestFormSchema.validate({
+        ...validData,
+        originalStartAt: new Date(Date.now() + 1000 * 60 * 60),
+        startAt: new Date(Date.now() - 1000 * 60 * 60),
+      }).error?.message,
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.start-at-greater-now",
+    );
   });
 
   it("should validate endAt", () => {
     expect(
       contestFormSchema.validate({ ...validData, endAt: undefined }).error
         ?.message,
-    ).toBe("end-at:required");
+    ).toBe("app.root.(dashboard)._form.contest-form-schema.end-at-required");
     expect(
       contestFormSchema.validate({
         ...validData,
         endAt: new Date(Date.now() - 1000 * 60 * 60),
       }).error?.message,
-    ).toBe("end-at:greater-now");
+    ).toBe("app.root.(dashboard)._form.contest-form-schema.end-at-greater-now");
   });
 
   it("should validate members", () => {
@@ -112,13 +130,17 @@ describe("contestFormSchema", () => {
         ...validData,
         members: [{ type: undefined }],
       }).error?.message,
-    ).toBe("member-type:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.member-type-required",
+    );
     expect(
       contestFormSchema.validate({
         ...validData,
         members: [{ type: "" }],
       }).error?.message,
-    ).toBe("member-type:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.member-type-required",
+    );
   });
 
   it("should validate member.name", () => {
@@ -127,13 +149,17 @@ describe("contestFormSchema", () => {
         ...validData,
         members: [{ ...validData.members[0], name: undefined }],
       }).error?.message,
-    ).toBe("member-name:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.member-name-required",
+    );
     expect(
       contestFormSchema.validate({
         ...validData,
         members: [{ ...validData.members[0], name: "" }],
       }).error?.message,
-    ).toBe("member-name:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.member-name-required",
+    );
   });
 
   it("should validate member.login", () => {
@@ -142,13 +168,17 @@ describe("contestFormSchema", () => {
         ...validData,
         members: [{ ...validData.members[0], login: undefined }],
       }).error?.message,
-    ).toBe("member-login:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.member-login-required",
+    );
     expect(
       contestFormSchema.validate({
         ...validData,
         members: [{ ...validData.members[0], login: "" }],
       }).error?.message,
-    ).toBe("member-login:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.member-login-required",
+    );
   });
 
   it("should validate member.password", () => {
@@ -159,13 +189,17 @@ describe("contestFormSchema", () => {
           { ...validData.members[0], _id: undefined, password: undefined },
         ],
       }).error?.message,
-    ).toBe("member-password:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.member-password-required",
+    );
     expect(
       contestFormSchema.validate({
         ...validData,
         members: [{ ...validData.members[0], _id: undefined, password: "" }],
       }).error?.message,
-    ).toBe("member-password:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.member-password-required",
+    );
   });
 
   it("should validate problems", () => {
@@ -181,13 +215,17 @@ describe("contestFormSchema", () => {
         ...validData,
         problems: [{ ...validData.problems[0], title: undefined }],
       }).error?.message,
-    ).toBe("problem-title:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.problem-title-required",
+    );
     expect(
       contestFormSchema.validate({
         ...validData,
         problems: [{ ...validData.problems[0], title: "" }],
       }).error?.message,
-    ).toBe("problem-title:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.problem-title-required",
+    );
   });
 
   it("should validate problem.newDescription", () => {
@@ -202,7 +240,9 @@ describe("contestFormSchema", () => {
           },
         ],
       }).error?.message,
-    ).toBe("problem-description:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.problem-description-required",
+    );
   });
 
   it("should validate problem.timeLimit", () => {
@@ -211,13 +251,17 @@ describe("contestFormSchema", () => {
         ...validData,
         problems: [{ ...validData.problems[0], timeLimit: undefined }],
       }).error?.message,
-    ).toBe("problem-time-limit:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.problem-time-limit-required",
+    );
     expect(
       contestFormSchema.validate({
         ...validData,
         problems: [{ ...validData.problems[0], timeLimit: 0 }],
       }).error?.message,
-    ).toBe("problem-time-limit:min");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.problem-time-limit-min",
+    );
   });
 
   it("should validate problem.memoryLimit", () => {
@@ -226,13 +270,17 @@ describe("contestFormSchema", () => {
         ...validData,
         problems: [{ ...validData.problems[0], memoryLimit: undefined }],
       }).error?.message,
-    ).toBe("problem-memory-limit:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.problem-memory-limit-required",
+    );
     expect(
       contestFormSchema.validate({
         ...validData,
         problems: [{ ...validData.problems[0], memoryLimit: 0 }],
       }).error?.message,
-    ).toBe("problem-memory-limit:min");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.problem-memory-limit-min",
+    );
   });
 
   it("should validate problem.newTestCases", () => {
@@ -243,7 +291,9 @@ describe("contestFormSchema", () => {
           { ...validData.problems[0], _id: undefined, newTestCases: undefined },
         ],
       }).error?.message,
-    ).toBe("problem-test-cases:required");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.problem-test-cases-required",
+    );
     expect(
       contestFormSchema.validate({
         ...validData,
@@ -257,6 +307,8 @@ describe("contestFormSchema", () => {
           },
         ],
       }).error?.message,
-    ).toBe("problem-test-cases:content-type");
+    ).toBe(
+      "app.root.(dashboard)._form.contest-form-schema.problem-test-cases-content-type",
+    );
   });
 });

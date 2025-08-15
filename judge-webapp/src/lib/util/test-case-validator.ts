@@ -5,16 +5,16 @@ import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInp
 export class TestCaseValidator {
   static async validateProblemList(
     problems: UpdateContestInputDTO["problems"],
-  ) {
-    const validations = await Promise.all(
-      problems
-        .filter((it) => !!it.newTestCases)
-        .map(async (it) => ({
-          letter: it.letter,
-          isValid: await this.validateTestCases(it.newTestCases!),
-        })),
+  ): Promise<
+    { problem: UpdateContestInputDTO["problems"][number]; isValid: boolean }[]
+  > {
+    return await Promise.all(
+      problems.map(async (it) => ({
+        problem: it,
+        isValid:
+          !it.newTestCases || (await this.validateTestCases(it.newTestCases!)),
+      })),
     );
-    return validations.filter((it) => !it.isValid).map((it) => it.letter);
   }
 
   /**
@@ -24,7 +24,7 @@ export class TestCaseValidator {
    *  - Must have at least one row
    *  - Each row must have exactly two columns
    */
-  static validateTestCases(testCases: File): Promise<boolean> {
+  private static validateTestCases(testCases: File): Promise<boolean> {
     return new Promise((resolve) => {
       Papa.parse(testCases, {
         complete(results) {

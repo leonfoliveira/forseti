@@ -113,13 +113,9 @@ describe("TestCaseValidator", () => {
     const problems = [
       {
         letter: "A",
-        newTestCases: new File(
-          ["input1,output1,extra\ninput2,output2"],
-          "test.csv",
-          {
-            type: "text/csv",
-          },
-        ),
+        newTestCases: new File(["input1,output1,extra\ninput2,output2"], "test.csv", {
+          type: "text/csv",
+        }),
       },
     ] as any;
     const result = await TestCaseValidator.validateProblemList(problems);

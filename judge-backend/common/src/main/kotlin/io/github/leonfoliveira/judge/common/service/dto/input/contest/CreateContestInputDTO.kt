@@ -12,12 +12,16 @@ import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Size
 import java.time.OffsetDateTime
 
 data class CreateContestInputDTO(
+    @field:NotBlank
+    @field:Size(max = 32)
     @field:Pattern(regexp = "^[a-zA-Z0-9-]+$", message = "Slug can only contain letter, numbers, and hyphens")
     val slug: String,
     @field:NotBlank
+    @field:Size(max = 255)
     val title: String,
     @field:NotEmpty
     val languages: List<Language>,
@@ -37,10 +41,13 @@ data class CreateContestInputDTO(
     data class MemberDTO(
         val type: Member.Type,
         @field:NotBlank
+        @field:Size(max = 64)
         val name: String,
         @field:NotBlank
+        @field:Size(max = 32)
         val login: String,
         @field:NotBlank
+        @field:Size(max = 32)
         val password: String,
     ) {
         override fun toString(): String {
@@ -60,7 +67,8 @@ data class CreateContestInputDTO(
 
     data class ProblemDTO(
         val letter: Char,
-        @field:NotEmpty
+        @field:NotBlank
+        @field:Size(max = 255)
         val title: String,
         val description: AttachmentInputDTO,
         @field:Min(1)

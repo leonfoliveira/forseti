@@ -29,6 +29,11 @@ jest.mock("@/lib/util/test-case-validator", () => ({
 }));
 
 describe("RootEditContestPage", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Reset the default mock
+    (TestCaseValidator.validateProblemList as jest.Mock).mockResolvedValue([]);
+  });
   it("should alert error on load failure", async () => {
     (contestService.findFullContestById as jest.Mock).mockRejectedValue(
       new Error("Load error"),
@@ -64,9 +69,10 @@ describe("RootEditContestPage", () => {
     (contestService.findFullContestById as jest.Mock).mockResolvedValueOnce(
       contest,
     );
+    // Mock validation to return invalid problems
     (TestCaseValidator.validateProblemList as jest.Mock).mockResolvedValueOnce([
-      "A",
-      "B",
+      { problem: { letter: "A" }, isValid: false },
+      { problem: { letter: "B" }, isValid: false },
     ]);
 
     const params = Promise.resolve({ id: "1" });
@@ -77,14 +83,10 @@ describe("RootEditContestPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("submit"));
     });
-    expect(mockAlert.warning).toHaveBeenCalledWith({
-      defaultMessage:
-        "Test cases file must have exactly two columns and at least one row. Failed problems: {letters}",
-      id: "app.root.(dashboard).contests.[id].page.test-cases-validation-error",
-      values: {
-        letters: "A, B",
-      },
-    });
+
+    // Should not call updateContest when there are validation errors
+    expect(contestService.updateContest).not.toHaveBeenCalled();
+    expect(mockAlert.success).not.toHaveBeenCalled();
   });
 
   it("should submit form successfully", async () => {

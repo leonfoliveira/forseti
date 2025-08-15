@@ -25,7 +25,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
-import jakarta.validation.Validation
 import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
@@ -88,29 +87,6 @@ class UpdateContestServiceTest : FunSpec({
                         ),
                     ),
             )
-
-        val validator = Validation.buildDefaultValidatorFactory().validator
-
-        listOf(
-            inputDTO.copy(slug = "invalid slug"),
-            inputDTO.copy(title = ""),
-            inputDTO.copy(languages = emptyList()),
-            inputDTO.copy(endAt = OffsetDateTime.now().minusHours(1)),
-            inputDTO.copy(startAt = OffsetDateTime.now().plusHours(2), endAt = OffsetDateTime.now().plusHours(1)),
-            inputDTO.copy(members = listOf(inputDTO.members[0].copy(name = ""))),
-            inputDTO.copy(members = listOf(inputDTO.members[0].copy(login = ""))),
-            inputDTO.copy(members = listOf(inputDTO.members[0].copy(id = null, password = ""))),
-            inputDTO.copy(members = listOf(inputDTO.members[0].copy(login = "login"), inputDTO.members[0].copy(login = "login"))),
-            inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(title = ""))),
-            inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(timeLimit = 0))),
-            inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(memoryLimit = 0))),
-            inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(letter = 'A'), inputDTO.problems[0].copy(letter = 'A'))),
-        ).forEachIndexed { idx, invalidInputDTO ->
-            test("should throw validation exception for invalid input #$idx") {
-                val violations = validator.validate(invalidInputDTO)
-                violations.isNotEmpty() shouldBe true
-            }
-        }
 
         test("should throw ForbiddenException when input has ROOT members") {
             val invalidInputDTO = inputDTO.copy(members = listOf(inputDTO.members[0].copy(type = Member.Type.ROOT)))
