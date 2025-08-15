@@ -6,9 +6,10 @@ import jakarta.validation.Validation
 
 class CreateClarificationInputDTOTest : FunSpec({
     context("validation") {
-        val inputDTO = CreateClarificationInputDTO(
-            text = "This is a test clarification.",
-        )
+        val inputDTO =
+            CreateClarificationInputDTO(
+                text = "This is a test clarification.",
+            )
 
         val validator = Validation.buildDefaultValidatorFactory().validator
 

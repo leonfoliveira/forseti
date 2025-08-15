@@ -6,9 +6,10 @@ import jakarta.validation.Validation
 
 class CreateAnnouncementInputDTOTest : FunSpec({
     context("validation") {
-        val inputDTO = CreateAnnouncementInputDTO(
-            text = "This is a test announcement.",
-        )
+        val inputDTO =
+            CreateAnnouncementInputDTO(
+                text = "This is a test announcement.",
+            )
 
         val validator = Validation.buildDefaultValidatorFactory().validator
 

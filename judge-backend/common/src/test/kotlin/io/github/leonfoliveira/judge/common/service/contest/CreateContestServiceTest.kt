@@ -21,7 +21,6 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import jakarta.validation.Validation
 import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
