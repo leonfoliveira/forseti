@@ -15,17 +15,25 @@ describe("contestMetadataSlice", () => {
     ...overrides,
   });
 
-  it("should set contest metadata when payload is provided", () => {
-    const initialState = null;
+  const initialState = {
+    isLoading: true as const,
+    error: null,
+    data: null,
+  };
+
+  it("should set loading to false and store data on success", () => {
     const contestMetadata = makeContestMetadata();
     const state = contestMetadataSlice.reducer(
       initialState,
-      contestMetadataSlice.actions.set(contestMetadata),
+      contestMetadataSlice.actions.success(contestMetadata),
     );
-    expect(state).toEqual(contestMetadata);
-    expect(state?.title).toBe("Test Contest");
-    expect(state?.slug).toBe("test-contest");
-    expect(state?.languages).toEqual([Language.CPP_17, Language.JAVA_21]);
+
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe(null);
+    expect(state.data).toEqual(contestMetadata);
+    expect(state.data?.title).toBe("Test Contest");
+    expect(state.data?.slug).toBe("test-contest");
+    expect(state.data?.languages).toEqual([Language.CPP_17, Language.JAVA_21]);
   });
 
   it("should replace existing contest metadata with new one", () => {
@@ -34,6 +42,12 @@ describe("contestMetadataSlice", () => {
       slug: "old-contest",
       id: "old-123",
     });
+    const stateWithOldData = {
+      isLoading: false as const,
+      error: null,
+      data: oldContest,
+    };
+
     const newContest = makeContestMetadata({
       title: "New Contest",
       slug: "new-contest",
@@ -41,48 +55,54 @@ describe("contestMetadataSlice", () => {
     });
 
     const state = contestMetadataSlice.reducer(
-      oldContest,
-      contestMetadataSlice.actions.set(newContest),
+      stateWithOldData,
+      contestMetadataSlice.actions.success(newContest),
     );
-    expect(state?.title).toBe("New Contest");
-    expect(state?.slug).toBe("new-contest");
-    expect(state?.id).toBe("new-123");
+
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe(null);
+    expect(state.data?.title).toBe("New Contest");
+    expect(state.data?.slug).toBe("new-contest");
+    expect(state.data?.id).toBe("new-123");
   });
 
   it("should handle setting contest with different languages", () => {
-    const initialState = null;
     const contestWithPython = makeContestMetadata({
       languages: [Language.PYTHON_3_13],
       title: "Python Contest",
     });
     const state = contestMetadataSlice.reducer(
       initialState,
-      contestMetadataSlice.actions.set(contestWithPython),
+      contestMetadataSlice.actions.success(contestWithPython),
     );
-    expect(state?.languages).toEqual([Language.PYTHON_3_13]);
-    expect(state?.title).toBe("Python Contest");
+
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe(null);
+    expect(state.data?.languages).toEqual([Language.PYTHON_3_13]);
+    expect(state.data?.title).toBe("Python Contest");
   });
 
   it("should handle setting contest with multiple languages", () => {
-    const initialState = null;
     const multiLanguageContest = makeContestMetadata({
       languages: [Language.CPP_17, Language.JAVA_21, Language.PYTHON_3_13],
       title: "Multi-Language Contest",
     });
     const state = contestMetadataSlice.reducer(
       initialState,
-      contestMetadataSlice.actions.set(multiLanguageContest),
+      contestMetadataSlice.actions.success(multiLanguageContest),
     );
-    expect(state?.languages).toEqual([
+
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe(null);
+    expect(state.data?.languages).toEqual([
       Language.CPP_17,
       Language.JAVA_21,
       Language.PYTHON_3_13,
     ]);
-    expect(state?.title).toBe("Multi-Language Contest");
+    expect(state.data?.title).toBe("Multi-Language Contest");
   });
 
   it("should handle setting contest with different time periods", () => {
-    const initialState = null;
     const futureContest = makeContestMetadata({
       startAt: "2025-01-01T09:00:00Z",
       endAt: "2025-01-01T18:00:00Z",
@@ -90,35 +110,58 @@ describe("contestMetadataSlice", () => {
     });
     const state = contestMetadataSlice.reducer(
       initialState,
-      contestMetadataSlice.actions.set(futureContest),
+      contestMetadataSlice.actions.success(futureContest),
     );
-    expect(state?.startAt).toBe("2025-01-01T09:00:00Z");
-    expect(state?.endAt).toBe("2025-01-01T18:00:00Z");
-    expect(state?.title).toBe("Future Contest");
+
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe(null);
+    expect(state.data?.startAt).toBe("2025-01-01T09:00:00Z");
+    expect(state.data?.endAt).toBe("2025-01-01T18:00:00Z");
+    expect(state.data?.title).toBe("Future Contest");
   });
 
   it("should maintain contest metadata structure", () => {
-    const initialState = null;
     const contestMetadata = makeContestMetadata();
     const state = contestMetadataSlice.reducer(
       initialState,
-      contestMetadataSlice.actions.set(contestMetadata),
+      contestMetadataSlice.actions.success(contestMetadata),
     );
 
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe(null);
+
     // Verify all required fields are present
-    expect(state).toHaveProperty("id");
-    expect(state).toHaveProperty("slug");
-    expect(state).toHaveProperty("title");
-    expect(state).toHaveProperty("languages");
-    expect(state).toHaveProperty("startAt");
-    expect(state).toHaveProperty("endAt");
+    expect(state.data).toHaveProperty("id");
+    expect(state.data).toHaveProperty("slug");
+    expect(state.data).toHaveProperty("title");
+    expect(state.data).toHaveProperty("languages");
+    expect(state.data).toHaveProperty("startAt");
+    expect(state.data).toHaveProperty("endAt");
 
     // Verify types
-    expect(typeof state?.id).toBe("string");
-    expect(typeof state?.slug).toBe("string");
-    expect(typeof state?.title).toBe("string");
-    expect(Array.isArray(state?.languages)).toBe(true);
-    expect(typeof state?.startAt).toBe("string");
-    expect(typeof state?.endAt).toBe("string");
+    expect(typeof state.data?.id).toBe("string");
+    expect(typeof state.data?.slug).toBe("string");
+    expect(typeof state.data?.title).toBe("string");
+    expect(Array.isArray(state.data?.languages)).toBe(true);
+    expect(typeof state.data?.startAt).toBe("string");
+    expect(typeof state.data?.endAt).toBe("string");
+  });
+
+  it("should set error and clear data on fail", () => {
+    const stateWithData = {
+      isLoading: false as const,
+      error: null,
+      data: makeContestMetadata(),
+    };
+
+    const error = new Error("Failed to load contest metadata");
+    const state = contestMetadataSlice.reducer(
+      stateWithData,
+      contestMetadataSlice.actions.fail(error),
+    );
+
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe(error);
+    expect(state.data).toBe(null);
   });
 });

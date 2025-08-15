@@ -4,13 +4,9 @@ import { TimelinePage } from "@/app/contests/[slug]/_common/timeline-page";
 import { Language } from "@/core/domain/enumerate/Language";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
-import { mockUseSetAuthorization } from "@/test/jest.setup";
 
 describe("TimelinePage", () => {
   it("should render the timeline with correct data", () => {
-    mockUseSetAuthorization.mockResolvedValueOnce({
-      authorization: { member: { id: "1" } },
-    });
     const submissions = [
       {
         id: "1",
@@ -61,10 +57,6 @@ describe("TimelinePage", () => {
   });
 
   it("should handle empty submissions", () => {
-    mockUseSetAuthorization.mockResolvedValueOnce({
-      authorization: { member: { id: "1" } },
-    });
-
     render(<TimelinePage submissions={[]} />);
 
     expect(screen.getByTestId("submission-empty")).toBeInTheDocument();

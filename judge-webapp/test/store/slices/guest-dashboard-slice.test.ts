@@ -108,18 +108,30 @@ describe("guestDashboardSlice", () => {
   };
 
   const initialState = {
-    contest: mockContest,
-    leaderboard: mockLeaderboard,
-    submissions: [mockSubmission],
+    isLoading: true as const,
+    error: null,
+    data: null,
   };
 
-  it("should set the initial state correctly", () => {
+  const stateWithData = {
+    isLoading: false as const,
+    error: null,
+    data: {
+      contest: mockContest,
+      leaderboard: mockLeaderboard,
+      submissions: [mockSubmission],
+    },
+  };
+
+  it("should have the correct initial state", () => {
     const state = guestDashboardSlice.reducer(undefined, { type: "@@INIT" });
-    expect(state).toBeNull();
+    expect(state.isLoading).toBe(true);
+    expect(state.error).toBe(null);
+    expect(state.data).toBe(null);
   });
 
-  it("should set the complete state", () => {
-    const newState = {
+  it("should set loading to false and store data on success", () => {
+    const dashboardData = {
       contest: mockContest,
       leaderboard: mockLeaderboard,
       submissions: [mockSubmission],
@@ -127,10 +139,25 @@ describe("guestDashboardSlice", () => {
 
     const state = guestDashboardSlice.reducer(
       initialState,
-      guestDashboardSlice.actions.set(newState),
+      guestDashboardSlice.actions.success(dashboardData),
     );
 
-    expect(state).toEqual(newState);
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe(null);
+    expect(state.data).toEqual(dashboardData);
+  });
+
+  it("should set error and clear data on fail", () => {
+    const error = new Error("Failed to load dashboard");
+
+    const state = guestDashboardSlice.reducer(
+      stateWithData,
+      guestDashboardSlice.actions.fail(error),
+    );
+
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe(error);
+    expect(state.data).toBe(null);
   });
 
   it("should set the leaderboard", () => {
@@ -148,13 +175,13 @@ describe("guestDashboardSlice", () => {
     };
 
     const state = guestDashboardSlice.reducer(
-      initialState,
+      stateWithData,
       guestDashboardSlice.actions.setLeaderboard(newLeaderboard),
     );
 
-    expect(state.leaderboard).toEqual(newLeaderboard);
-    expect(state.contest).toEqual(mockContest);
-    expect(state.submissions).toEqual([mockSubmission]);
+    expect(state.data!.leaderboard).toEqual(newLeaderboard);
+    expect(state.data!.contest).toEqual(mockContest);
+    expect(state.data!.submissions).toEqual([mockSubmission]);
   });
 
   it("should merge a new submission", () => {
@@ -169,13 +196,13 @@ describe("guestDashboardSlice", () => {
     };
 
     const state = guestDashboardSlice.reducer(
-      initialState,
+      stateWithData,
       guestDashboardSlice.actions.mergeSubmission(newSubmission),
     );
 
-    expect(state.submissions).toHaveLength(2);
-    expect(state.submissions).toContainEqual(mockSubmission);
-    expect(state.submissions).toContainEqual(newSubmission);
+    expect(state.data!.submissions).toHaveLength(2);
+    expect(state.data!.submissions).toContainEqual(mockSubmission);
+    expect(state.data!.submissions).toContainEqual(newSubmission);
   });
 
   it("should update an existing submission when merging", () => {
@@ -186,20 +213,23 @@ describe("guestDashboardSlice", () => {
     };
 
     const state = guestDashboardSlice.reducer(
-      initialState,
+      stateWithData,
       guestDashboardSlice.actions.mergeSubmission(updatedSubmission),
     );
 
-    expect(state.submissions).toHaveLength(1);
-    expect(state.submissions[0]).toEqual(updatedSubmission);
+    expect(state.data!.submissions).toHaveLength(1);
+    expect(state.data!.submissions[0]).toEqual(updatedSubmission);
   });
 
   it("should merge a new announcement", () => {
-    const stateWithContest = {
-      ...initialState,
-      contest: {
-        ...mockContest,
-        announcements: [mockAnnouncement],
+    const stateWithAnnouncement = {
+      ...stateWithData,
+      data: {
+        ...stateWithData.data,
+        contest: {
+          ...mockContest,
+          announcements: [mockAnnouncement],
+        },
       },
     };
 
@@ -211,104 +241,121 @@ describe("guestDashboardSlice", () => {
     };
 
     const state = guestDashboardSlice.reducer(
-      stateWithContest,
+      stateWithAnnouncement,
       guestDashboardSlice.actions.mergeAnnouncement(newAnnouncement),
     );
 
-    expect(state.contest.announcements).toHaveLength(2);
-    expect(state.contest.announcements).toContainEqual(mockAnnouncement);
-    expect(state.contest.announcements).toContainEqual(newAnnouncement);
+    expect(state.data!.contest.announcements).toHaveLength(2);
+    expect(state.data!.contest.announcements).toContainEqual(mockAnnouncement);
+    expect(state.data!.contest.announcements).toContainEqual(newAnnouncement);
   });
 
   it("should merge a new root clarification", () => {
-    const stateWithContest = {
-      ...initialState,
-      contest: {
-        ...mockContest,
-        clarifications: [],
+    const stateWithEmptyClarifications = {
+      ...stateWithData,
+      data: {
+        ...stateWithData.data,
+        contest: {
+          ...mockContest,
+          clarifications: [],
+        },
       },
     };
 
     const state = guestDashboardSlice.reducer(
-      stateWithContest,
+      stateWithEmptyClarifications,
       guestDashboardSlice.actions.mergeClarification(mockClarification),
     );
 
-    expect(state.contest.clarifications).toHaveLength(1);
-    expect(state.contest.clarifications[0]).toEqual(mockClarification);
+    expect(state.data!.contest.clarifications).toHaveLength(1);
+    expect(state.data!.contest.clarifications[0]).toEqual(mockClarification);
   });
 
   it("should merge a child clarification to the correct parent", () => {
-    const stateWithContest = {
-      ...initialState,
-      contest: {
-        ...mockContest,
-        clarifications: [mockClarification],
+    const stateWithClarification = {
+      ...stateWithData,
+      data: {
+        ...stateWithData.data,
+        contest: {
+          ...mockContest,
+          clarifications: [mockClarification],
+        },
       },
     };
 
     const state = guestDashboardSlice.reducer(
-      stateWithContest,
+      stateWithClarification,
       guestDashboardSlice.actions.mergeClarification(mockChildClarification),
     );
 
-    expect(state.contest.clarifications).toHaveLength(2);
-    expect(state.contest.clarifications[0].children).toHaveLength(1);
-    expect(state.contest.clarifications[0].children[0]).toEqual(
+    expect(state.data!.contest.clarifications).toHaveLength(2);
+    expect(state.data!.contest.clarifications[0].children).toHaveLength(1);
+    expect(state.data!.contest.clarifications[0].children[0]).toEqual(
       mockChildClarification,
     );
   });
 
   it("should handle child clarification when parent doesn't exist", () => {
-    const stateWithContest = {
-      ...initialState,
-      contest: {
-        ...mockContest,
-        clarifications: [],
+    const stateWithEmptyClarifications = {
+      ...stateWithData,
+      data: {
+        ...stateWithData.data,
+        contest: {
+          ...mockContest,
+          clarifications: [],
+        },
       },
     };
 
     const state = guestDashboardSlice.reducer(
-      stateWithContest,
+      stateWithEmptyClarifications,
       guestDashboardSlice.actions.mergeClarification(mockChildClarification),
     );
 
-    expect(state.contest.clarifications).toHaveLength(1);
-    expect(state.contest.clarifications[0]).toEqual(mockChildClarification);
+    expect(state.data!.contest.clarifications).toHaveLength(1);
+    expect(state.data!.contest.clarifications[0]).toEqual(
+      mockChildClarification,
+    );
   });
 
   it("should delete a clarification by id", () => {
-    const stateWithContest = {
-      ...initialState,
-      contest: {
-        ...mockContest,
-        clarifications: [mockClarification],
+    const stateWithClarification = {
+      ...stateWithData,
+      data: {
+        ...stateWithData.data,
+        contest: {
+          ...mockContest,
+          clarifications: [mockClarification],
+        },
       },
     };
 
     const state = guestDashboardSlice.reducer(
-      stateWithContest,
+      stateWithClarification,
       guestDashboardSlice.actions.deleteClarification("clarification-1"),
     );
 
-    expect(state.contest.clarifications).toHaveLength(0);
+    expect(state.data!.contest.clarifications).toHaveLength(0);
   });
 
   it("should not delete clarification if id doesn't match", () => {
-    const stateWithContest = {
-      ...initialState,
-      contest: {
-        ...mockContest,
-        clarifications: [mockClarification],
+    const stateWithClarification = {
+      ...stateWithData,
+      data: {
+        ...stateWithData.data,
+        contest: {
+          ...mockContest,
+          clarifications: [mockClarification],
+        },
       },
     };
 
     const state = guestDashboardSlice.reducer(
-      stateWithContest,
+      stateWithClarification,
       guestDashboardSlice.actions.deleteClarification("non-existent-id"),
     );
 
-    expect(state.contest.clarifications).toHaveLength(1);
-    expect(state.contest.clarifications[0]).toEqual(mockClarification);
+    expect(state.data!.contest.clarifications).toHaveLength(1);
+    expect(state.data!.contest.clarifications[0]).toEqual(mockClarification);
   });
 });

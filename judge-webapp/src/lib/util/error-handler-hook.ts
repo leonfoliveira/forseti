@@ -1,5 +1,4 @@
 import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
 
 import { authenticationService } from "@/config/composition";
 import { routes } from "@/config/routes";
@@ -7,10 +6,11 @@ import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { authorizationSlice } from "@/store/slices/authorization-slice";
+import { useAppDispatch } from "@/store/store";
 
 export function useErrorHandler() {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   async function clearAuthorization() {
     dispatch(authorizationSlice.actions.reset());

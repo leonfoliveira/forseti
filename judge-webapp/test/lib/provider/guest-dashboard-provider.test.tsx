@@ -18,6 +18,7 @@ import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
 import {
   mockAlert,
   mockAppDispatch,
+  mockUseAppSelector,
   mockUseAuthorization,
   mockUseContestMetadata,
 } from "@/test/jest.setup";
@@ -46,9 +47,35 @@ describe("GuestDashboardProvider", () => {
     mockUseContestMetadata.mockReturnValue({
       id: "test-contest-id",
     });
+    mockUseAppSelector.mockReturnValue({
+      isLoading: false,
+      error: null,
+    });
   });
 
-  it("should alert error and render error page on load failure", async () => {
+  it("should render loading page while loading", async () => {
+    mockUseAppSelector.mockReturnValueOnce({
+      isLoading: true,
+      error: null,
+    });
+
+    render(
+      <GuestDashboardProvider>
+        <span data-testid="child" />
+      </GuestDashboardProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("loading")).toBeInTheDocument();
+      expect(screen.queryByTestId("child")).not.toBeInTheDocument();
+    });
+  });
+
+  it("should render error page on load failure", async () => {
+    mockUseAppSelector.mockReturnValueOnce({
+      isLoading: false,
+      error: new Error("error"),
+    });
     (contestService.findContestById as jest.Mock).mockRejectedValue(
       new Error("error"),
     );
@@ -59,12 +86,7 @@ describe("GuestDashboardProvider", () => {
       </GuestDashboardProvider>,
     );
 
-    expect(screen.getByTestId("loading")).toBeInTheDocument();
     await waitFor(() => {
-      expect(mockAlert.error).toHaveBeenCalledWith({
-        defaultMessage: "Error loading contest data",
-        id: "lib.provider.guest-dashboard-provider.load-error",
-      });
       expect(screen.getByTestId("error")).toBeInTheDocument();
       expect(screen.queryByTestId("child")).not.toBeInTheDocument();
     });
@@ -100,7 +122,7 @@ describe("GuestDashboardProvider", () => {
 
     await waitFor(() => {
       expect(mockAppDispatch).toHaveBeenCalledWith(
-        guestDashboardSlice.actions.set({
+        guestDashboardSlice.actions.success({
           contest: mockContest,
           leaderboard: mockLeaderboard,
           submissions: mockSubmissions,

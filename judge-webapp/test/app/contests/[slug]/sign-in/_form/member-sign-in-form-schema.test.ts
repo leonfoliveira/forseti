@@ -14,21 +14,29 @@ describe("memberSignInFormSchema", () => {
     expect(
       memberSignInFormSchema.validate({ ...validData, login: undefined }).error
         ?.message,
-    ).toBe("login:required");
+    ).toBe(
+      "app.contests.[slug].sign-in._form.member-sign-in-form-schema.login-required",
+    );
     expect(
       memberSignInFormSchema.validate({ ...validData, login: "" }).error
         ?.message,
-    ).toBe("login:required");
+    ).toBe(
+      "app.contests.[slug].sign-in._form.member-sign-in-form-schema.login-required",
+    );
   });
 
   it("should invalidate password", () => {
     expect(
       memberSignInFormSchema.validate({ ...validData, password: undefined })
         .error?.message,
-    ).toBe("password:required");
+    ).toBe(
+      "app.contests.[slug].sign-in._form.member-sign-in-form-schema.password-required",
+    );
     expect(
       memberSignInFormSchema.validate({ ...validData, password: "" }).error
         ?.message,
-    ).toBe("password:required");
+    ).toBe(
+      "app.contests.[slug].sign-in._form.member-sign-in-form-schema.password-required",
+    );
   });
 });

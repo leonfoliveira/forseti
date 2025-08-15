@@ -5,11 +5,10 @@ import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announce
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
-import { contestantDashboardSlice } from "@/store/slices/contestant-dashboard-slice";
+import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
 
-describe("contestantDashboardSlice", () => {
+describe("guestDashboardSlice", () => {
   const mockContest: ContestPublicResponseDTO = {
     id: "contest-1",
     slug: "test-contest",
@@ -62,38 +61,6 @@ describe("contestantDashboardSlice", () => {
     createdAt: "2023-01-01T11:00:00Z",
   };
 
-  const mockMemberSubmission: SubmissionFullResponseDTO = {
-    id: "submission-2",
-    problem: {
-      id: "problem-1",
-      letter: "A",
-      title: "Problem A",
-      timeLimit: 1000,
-      memoryLimit: 256,
-      description: {
-        id: "desc-1",
-        filename: "description.pdf",
-        contentType: "application/pdf",
-      },
-      testCases: {
-        id: "test-1",
-        filename: "testcases.zip",
-        contentType: "application/zip",
-      },
-    },
-    member: {
-      id: "member-1",
-      name: "Test Member",
-      type: "CONTESTANT" as any,
-      login: "testmember",
-    },
-    language: Language.PYTHON_3_13,
-    status: SubmissionStatus.JUDGED,
-    answer: SubmissionAnswer.WRONG_ANSWER,
-    code: { id: "code-1", filename: "solution.py", contentType: "text/plain" },
-    createdAt: "2023-01-01T11:30:00Z",
-  };
-
   const mockAnnouncement: AnnouncementResponseDTO = {
     id: "announcement-1",
     createdAt: "2023-01-01T12:00:00Z",
@@ -140,60 +107,63 @@ describe("contestantDashboardSlice", () => {
     children: [],
   };
 
-  const initialState = {
-    isLoading: true as const,
-    error: null,
-    data: null,
+  const initialData = {
+    contest: mockContest,
+    leaderboard: mockLeaderboard,
+    submissions: [mockSubmission],
   };
 
   const stateWithData = {
-    isLoading: false as const,
+    isLoading: false,
     error: null,
-    data: {
-      contest: mockContest,
-      leaderboard: mockLeaderboard,
-      submissions: [mockSubmission],
-      memberSubmissions: [mockMemberSubmission],
-    },
-  };
+    data: initialData,
+  } as const;
 
-  it("should have the correct initial state", () => {
-    const state = contestantDashboardSlice.reducer(undefined, {
-      type: "@@INIT",
-    });
+  it("should set the initial state correctly", () => {
+    const state = guestDashboardSlice.reducer(undefined, { type: "@@INIT" });
     expect(state.isLoading).toBe(true);
-    expect(state.error).toBe(null);
-    expect(state.data).toBe(null);
+    expect(state.error).toBeNull();
+    expect(state.data).toBeNull();
   });
 
-  it("should set loading to false and store data on success", () => {
-    const dashboardData = {
+  it("should set the complete state", () => {
+    const initialState = {
+      isLoading: true,
+      error: null,
+      data: null,
+    } as const;
+    const newState = {
       contest: mockContest,
       leaderboard: mockLeaderboard,
       submissions: [mockSubmission],
-      memberSubmissions: [mockMemberSubmission],
     };
 
-    const state = contestantDashboardSlice.reducer(
+    const state = guestDashboardSlice.reducer(
       initialState,
-      contestantDashboardSlice.actions.success(dashboardData),
+      guestDashboardSlice.actions.success(newState),
     );
 
     expect(state.isLoading).toBe(false);
-    expect(state.error).toBe(null);
-    expect(state.data).toEqual(dashboardData);
+    expect(state.error).toBeNull();
+    expect(state.data).toEqual(newState);
   });
 
-  it("should set error and clear data on fail", () => {
-    const error = new Error("Failed to load dashboard");
-    const state = contestantDashboardSlice.reducer(
-      stateWithData,
-      contestantDashboardSlice.actions.fail(error),
+  it("should handle fail action", () => {
+    const initialState = {
+      isLoading: true,
+      error: null,
+      data: null,
+    } as const;
+    const error = new Error("Test error");
+
+    const state = guestDashboardSlice.reducer(
+      initialState,
+      guestDashboardSlice.actions.fail(error),
     );
 
     expect(state.isLoading).toBe(false);
     expect(state.error).toBe(error);
-    expect(state.data).toBe(null);
+    expect(state.data).toBeNull();
   });
 
   it("should set the leaderboard", () => {
@@ -210,31 +180,43 @@ describe("contestantDashboardSlice", () => {
       ],
     };
 
-    const state = contestantDashboardSlice.reducer(
+    const state = guestDashboardSlice.reducer(
       stateWithData,
-      contestantDashboardSlice.actions.setLeaderboard(newLeaderboard),
+      guestDashboardSlice.actions.setLeaderboard(newLeaderboard),
     );
 
     expect(state.data!.leaderboard).toEqual(newLeaderboard);
     expect(state.data!.contest).toEqual(mockContest);
     expect(state.data!.submissions).toEqual([mockSubmission]);
-    expect(state.data!.memberSubmissions).toEqual([mockMemberSubmission]);
   });
 
   it("should merge a new submission", () => {
     const newSubmission: SubmissionPublicResponseDTO = {
-      id: "submission-3",
-      problem: mockSubmission.problem,
-      member: mockSubmission.member,
+      id: "submission-2",
+      problem: {
+        id: "problem-1",
+        letter: "A",
+        title: "Problem A",
+        description: {
+          id: "desc-1",
+          filename: "description.pdf",
+          contentType: "application/pdf",
+        },
+      },
+      member: {
+        id: "member-2",
+        name: "Another Member",
+        type: "CONTESTANT" as any,
+      },
       language: Language.PYTHON_3_13,
       status: SubmissionStatus.JUDGING,
       answer: SubmissionAnswer.NO_ANSWER,
-      createdAt: "2023-01-01T11:15:00Z",
+      createdAt: "2023-01-01T11:30:00Z",
     };
 
-    const state = contestantDashboardSlice.reducer(
+    const state = guestDashboardSlice.reducer(
       stateWithData,
-      contestantDashboardSlice.actions.mergeSubmission(newSubmission),
+      guestDashboardSlice.actions.mergeSubmission(newSubmission),
     );
 
     expect(state.data!.submissions).toHaveLength(2);
@@ -249,56 +231,29 @@ describe("contestantDashboardSlice", () => {
       answer: SubmissionAnswer.WRONG_ANSWER,
     };
 
-    const state = contestantDashboardSlice.reducer(
+    const state = guestDashboardSlice.reducer(
       stateWithData,
-      contestantDashboardSlice.actions.mergeSubmission(updatedSubmission),
+      guestDashboardSlice.actions.mergeSubmission(updatedSubmission),
     );
 
     expect(state.data!.submissions).toHaveLength(1);
     expect(state.data!.submissions[0]).toEqual(updatedSubmission);
   });
 
-  it("should merge a new member submission", () => {
-    const newMemberSubmission: SubmissionFullResponseDTO = {
-      ...mockMemberSubmission,
-      id: "submission-4",
-      answer: SubmissionAnswer.ACCEPTED,
-    };
-
-    const state = contestantDashboardSlice.reducer(
-      stateWithData,
-      contestantDashboardSlice.actions.mergeMemberSubmission(
-        newMemberSubmission,
-      ),
-    );
-
-    expect(state.data!.memberSubmissions).toHaveLength(2);
-    expect(state.data!.memberSubmissions).toContainEqual(mockMemberSubmission);
-    expect(state.data!.memberSubmissions).toContainEqual(newMemberSubmission);
-  });
-
-  it("should update an existing member submission when merging", () => {
-    const updatedMemberSubmission: SubmissionFullResponseDTO = {
-      ...mockMemberSubmission,
-      answer: SubmissionAnswer.ACCEPTED,
-    };
-
-    const state = contestantDashboardSlice.reducer(
-      stateWithData,
-      contestantDashboardSlice.actions.mergeMemberSubmission(
-        updatedMemberSubmission,
-      ),
-    );
-
-    expect(state.data!.memberSubmissions).toHaveLength(1);
-    expect(state.data!.memberSubmissions[0]).toEqual(updatedMemberSubmission);
-  });
-
   it("should merge a new announcement", () => {
-    const stateWithAnnouncement = {
-      ...stateWithData,
+    const stateWithContest: {
+      isLoading: false;
+      error: null;
       data: {
-        ...stateWithData.data,
+        contest: ContestPublicResponseDTO;
+        leaderboard: ContestLeaderboardResponseDTO;
+        submissions: SubmissionPublicResponseDTO[];
+      };
+    } = {
+      isLoading: false,
+      error: null,
+      data: {
+        ...initialData,
         contest: {
           ...mockContest,
           announcements: [mockAnnouncement],
@@ -309,13 +264,17 @@ describe("contestantDashboardSlice", () => {
     const newAnnouncement: AnnouncementResponseDTO = {
       id: "announcement-2",
       createdAt: "2023-01-01T13:00:00Z",
-      member: mockAnnouncement.member,
+      member: {
+        id: "judge-1",
+        name: "Judge",
+        type: "JUDGE" as any,
+      },
       text: "Another announcement",
     };
 
-    const state = contestantDashboardSlice.reducer(
-      stateWithAnnouncement,
-      contestantDashboardSlice.actions.mergeAnnouncement(newAnnouncement),
+    const state = guestDashboardSlice.reducer(
+      stateWithContest,
+      guestDashboardSlice.actions.mergeAnnouncement(newAnnouncement),
     );
 
     expect(state.data!.contest.announcements).toHaveLength(2);
@@ -324,20 +283,21 @@ describe("contestantDashboardSlice", () => {
   });
 
   it("should merge a new root clarification", () => {
-    const stateWithEmptyClarifications = {
-      ...stateWithData,
+    const stateWithContest = {
+      isLoading: false,
+      error: null,
       data: {
-        ...stateWithData.data,
+        ...initialData,
         contest: {
           ...mockContest,
           clarifications: [],
         },
       },
-    };
+    } as const;
 
-    const state = contestantDashboardSlice.reducer(
-      stateWithEmptyClarifications,
-      contestantDashboardSlice.actions.mergeClarification(mockClarification),
+    const state = guestDashboardSlice.reducer(
+      stateWithContest,
+      guestDashboardSlice.actions.mergeClarification(mockClarification),
     );
 
     expect(state.data!.contest.clarifications).toHaveLength(1);
@@ -345,22 +305,21 @@ describe("contestantDashboardSlice", () => {
   });
 
   it("should merge a child clarification to the correct parent", () => {
-    const stateWithClarification = {
-      ...stateWithData,
+    const stateWithContest = {
+      isLoading: false,
+      error: null,
       data: {
-        ...stateWithData.data,
+        ...initialData,
         contest: {
           ...mockContest,
           clarifications: [mockClarification],
         },
       },
-    };
+    } as const;
 
-    const state = contestantDashboardSlice.reducer(
-      stateWithClarification,
-      contestantDashboardSlice.actions.mergeClarification(
-        mockChildClarification,
-      ),
+    const state = guestDashboardSlice.reducer(
+      stateWithContest,
+      guestDashboardSlice.actions.mergeClarification(mockChildClarification),
     );
 
     expect(state.data!.contest.clarifications).toHaveLength(2);
@@ -371,65 +330,63 @@ describe("contestantDashboardSlice", () => {
   });
 
   it("should handle child clarification when parent doesn't exist", () => {
-    const stateWithEmptyClarifications = {
-      ...stateWithData,
+    const stateWithContest = {
+      isLoading: false,
+      error: null,
       data: {
-        ...stateWithData.data,
+        ...initialData,
         contest: {
           ...mockContest,
           clarifications: [],
         },
       },
-    };
+    } as const;
 
-    const state = contestantDashboardSlice.reducer(
-      stateWithEmptyClarifications,
-      contestantDashboardSlice.actions.mergeClarification(
-        mockChildClarification,
-      ),
+    const state = guestDashboardSlice.reducer(
+      stateWithContest,
+      guestDashboardSlice.actions.mergeClarification(mockChildClarification),
     );
 
     expect(state.data!.contest.clarifications).toHaveLength(1);
-    expect(state.data!.contest.clarifications[0]).toEqual(
-      mockChildClarification,
-    );
   });
 
   it("should delete a clarification by id", () => {
-    const stateWithClarification = {
-      ...stateWithData,
+    const stateWithContest = {
+      isLoading: false,
+      error: null,
       data: {
-        ...stateWithData.data,
+        ...initialData,
         contest: {
           ...mockContest,
           clarifications: [mockClarification],
         },
       },
-    };
+    } as const;
 
-    const state = contestantDashboardSlice.reducer(
-      stateWithClarification,
-      contestantDashboardSlice.actions.deleteClarification("clarification-1"),
+    const state = guestDashboardSlice.reducer(
+      stateWithContest,
+      guestDashboardSlice.actions.deleteClarification("clarification-1"),
     );
 
     expect(state.data!.contest.clarifications).toHaveLength(0);
   });
 
   it("should not delete clarification if id doesn't match", () => {
-    const stateWithClarification = {
-      ...stateWithData,
+    const stateWithContest = {
+      isLoading: false,
+      error: null,
       data: {
-        ...stateWithData.data,
+        ...initialData,
         contest: {
           ...mockContest,
           clarifications: [mockClarification],
         },
       },
-    };
+    } as const;
 
-    const state = contestantDashboardSlice.reducer(
-      stateWithClarification,
-      contestantDashboardSlice.actions.deleteClarification("non-existent-id"),
+    const state = guestDashboardSlice.reducer(
+      stateWithContest,
+      guestDashboardSlice.actions.deleteClarification("non-existent-id"),
     );
 
     expect(state.data!.contest.clarifications).toHaveLength(1);

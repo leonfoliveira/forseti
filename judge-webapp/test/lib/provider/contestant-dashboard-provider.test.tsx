@@ -13,6 +13,7 @@ import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { ContestantDashboardProvider } from "@/lib/provider/contestant-dashboard-provider";
@@ -21,6 +22,7 @@ import {
   mockAlert,
   mockAppDispatch,
   mockToast,
+  mockUseAppSelector,
   mockUseAuthorization,
 } from "@/test/jest.setup";
 
@@ -45,9 +47,35 @@ describe("ContestantDashboardProvider", () => {
     mockUseAuthorization.mockReturnValue({
       member: { id: "member-id" },
     });
+    mockUseAppSelector.mockReturnValue({
+      isLoading: false,
+      error: null,
+    });
   });
 
-  it("should alert error and render error page on load failure", async () => {
+  it("should render loading page while loading", async () => {
+    mockUseAppSelector.mockReturnValueOnce({
+      isLoading: true,
+      error: null,
+    });
+
+    render(
+      <ContestantDashboardProvider>
+        <span data-testid="child" />
+      </ContestantDashboardProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("loading")).toBeInTheDocument();
+      expect(screen.queryByTestId("child")).not.toBeInTheDocument();
+    });
+  });
+
+  it("should render error page on load failure", async () => {
+    mockUseAppSelector.mockReturnValueOnce({
+      isLoading: false,
+      error: new Error("error"),
+    });
     (contestService.findContestById as jest.Mock).mockRejectedValue(
       new Error("error"),
     );
@@ -58,22 +86,26 @@ describe("ContestantDashboardProvider", () => {
       </ContestantDashboardProvider>,
     );
 
-    expect(screen.getByTestId("loading")).toBeInTheDocument();
     await waitFor(() => {
-      expect(mockAlert.error).toHaveBeenCalledWith({
-        defaultMessage: "Error loading contest data",
-        id: "lib.provider.contestant-dashboard-provider.load-error",
-      });
       expect(screen.getByTestId("error")).toBeInTheDocument();
       expect(screen.queryByTestId("child")).not.toBeInTheDocument();
     });
   });
 
   it("should render children", async () => {
-    const mockContest = { id: "test-contest-id", name: "Test Contest" };
-    const mockLeaderboard = { id: "test-leaderboard-id" };
-    const mockSubmissions = [{ id: "submission-1" }];
-    const mockMemberSubmissions = [{ id: "member-submission-1" }];
+    const mockContest = {
+      id: "test-contest-id",
+      title: "Test Contest",
+    } as unknown as ContestPublicResponseDTO;
+    const mockLeaderboard = {
+      id: "test-leaderboard-id",
+    } as unknown as ContestLeaderboardResponseDTO;
+    const mockSubmissions = [
+      { id: "submission-1" },
+    ] as SubmissionPublicResponseDTO[];
+    const mockMemberSubmissions = [
+      { id: "member-submission-1" },
+    ] as SubmissionFullResponseDTO[];
 
     (contestService.findContestById as jest.Mock).mockResolvedValue(
       mockContest,
@@ -95,6 +127,14 @@ describe("ContestantDashboardProvider", () => {
     );
 
     await waitFor(() => {
+      expect(mockAppDispatch).toHaveBeenCalledWith(
+        contestantDashboardSlice.actions.success({
+          contest: mockContest,
+          leaderboard: mockLeaderboard,
+          submissions: mockSubmissions,
+          memberSubmissions: mockMemberSubmissions,
+        }),
+      );
       expect(screen.getByTestId("child")).toBeInTheDocument();
     });
   });
