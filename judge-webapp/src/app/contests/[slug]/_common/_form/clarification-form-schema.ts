@@ -18,5 +18,6 @@ export const clarificationFormSchema = Joi.object({
   text: Joi.string().required().max(255).messages({
     "any.required": messages.textRequired.id,
     "string.empty": messages.textRequired.id,
+    "string.max": messages.textLong.id,
   }),
 });
