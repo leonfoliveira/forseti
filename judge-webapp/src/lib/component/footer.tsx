@@ -12,7 +12,7 @@ const messages = defineMessages({
 export function Footer() {
   return (
     <footer className="footer footer-center bg-base-100 text-base-content/50 text-xs py-1 border-t border-solid border-base-300">
-      <p data-testid="footer">
+      <p className="inline" data-testid="footer">
         <FormattedMessage
           {...messages.text}
           values={{

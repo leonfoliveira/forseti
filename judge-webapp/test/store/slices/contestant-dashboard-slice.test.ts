@@ -151,10 +151,7 @@ describe("contestantDashboardSlice", () => {
     const state = contestantDashboardSlice.reducer(undefined, {
       type: "@@INIT",
     });
-    expect(state.contest).toBeNull();
-    expect(state.leaderboard).toBeNull();
-    expect(state.submissions).toBeNull();
-    expect(state.memberSubmissions).toBeNull();
+    expect(state).toBeNull();
   });
 
   it("should set the complete state", () => {

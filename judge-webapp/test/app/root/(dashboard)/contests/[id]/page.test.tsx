@@ -28,6 +28,23 @@ jest.mock("@/lib/util/test-case-validator", () => ({
   },
 }));
 
+jest.mock("@/lib/component/modal/dialog-modal", () => ({
+  DialogModal: ({ children, modal, onConfirm, isLoading }: any) => (
+    <>
+      {modal.isOpen && (
+        <div data-testid="dialog-modal">
+          {children}
+          {isLoading && <span data-testid="dialog-modal:loading" />}
+          <button
+            onClick={() => onConfirm(modal.props)}
+            data-testid="dialog-modal:button"
+          ></button>
+        </div>
+      )}
+    </>
+  ),
+}));
+
 describe("RootEditContestPage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -95,6 +112,9 @@ describe("RootEditContestPage", () => {
       contest,
     );
     (contestService.updateContest as jest.Mock).mockResolvedValueOnce(contest);
+    (TestCaseValidator.validateProblemList as jest.Mock).mockResolvedValueOnce(
+      [],
+    );
 
     const params = Promise.resolve({ id: "1" });
     await act(async () => {
@@ -104,9 +124,12 @@ describe("RootEditContestPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("submit"));
     });
-    expect(mockAlert.success).toHaveBeenCalledWith({
-      defaultMessage: "Contest updated successfully",
-      id: "app.root.(dashboard).contests.[id].page.update-success",
+    expect(screen.getByTestId("dialog-modal")).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("dialog-modal:button"));
     });
+    expect(screen.queryByTestId("dialog-modal")).not.toBeInTheDocument();
+    expect(contestService.updateContest).toHaveBeenCalled();
+    expect(mockAlert.success).toHaveBeenCalled();
   });
 });

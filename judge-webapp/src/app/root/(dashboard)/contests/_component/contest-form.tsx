@@ -119,30 +119,26 @@ const messages = defineMessages({
   },
   problemTimeLimit: {
     id: "app.root.(dashboard).contests._component.contest-form.problem-time-limit",
-    defaultMessage: "Time Limit",
+    defaultMessage: "Time Limit (ms)",
   },
   problemMemoryLimit: {
     id: "app.root.(dashboard).contests._component.contest-form.problem-memory-limit",
-    defaultMessage: "Memory Limit",
+    defaultMessage: "Memory Limit (MB)",
   },
   problemTestCases: {
     id: "app.root.(dashboard).contests._component.contest-form.problem-test-cases",
-    defaultMessage: "Test Cases",
+    defaultMessage: "Test Cases (csv)",
   },
   confirmDelete: {
     id: "app.root.(dashboard).contests._component.contest-form.confirm-delete",
     defaultMessage: "Are you sure you want to delete this contest?",
-  },
-  confirmSave: {
-    id: "app.root.(dashboard).contests._component.contest-form.confirm-save",
-    defaultMessage: "Are you sure you want to save this contest?",
   },
 });
 
 type Props = {
   contestState?: LoadableState<ContestFullResponseDTO>;
   saveState: LoadableState<ContestFullResponseDTO>;
-  onSubmit: (data: ContestFormType) => Promise<void>;
+  onSubmit: (data: ContestFormType) => void;
   form: UseFormReturn<ContestFormType>;
 };
 
@@ -160,7 +156,6 @@ export function ContestForm({
 
   const router = useRouter();
   const deleteModal = useModal();
-  const saveModal = useModal<ContestFormType>();
   const alert = useAlert();
 
   useEffect(() => {
@@ -194,7 +189,7 @@ export function ContestForm({
 
   return (
     <Form
-      onSubmit={form.handleSubmit(saveModal.open)}
+      onSubmit={form.handleSubmit(onSubmit)}
       disabled={
         contestState?.isLoading ||
         saveState.isLoading ||
@@ -449,16 +444,6 @@ export function ContestForm({
       >
         <p className="py-4">
           <FormattedMessage {...messages.confirmDelete} />
-        </p>
-      </DialogModal>
-
-      <DialogModal
-        modal={saveModal}
-        onConfirm={onSubmit}
-        isLoading={saveState.isLoading}
-      >
-        <p className="py-4">
-          <FormattedMessage {...messages.confirmSave} />
         </p>
       </DialogModal>
     </Form>

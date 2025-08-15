@@ -115,9 +115,7 @@ describe("guestDashboardSlice", () => {
 
   it("should set the initial state correctly", () => {
     const state = guestDashboardSlice.reducer(undefined, { type: "@@INIT" });
-    expect(state.contest).toBeNull();
-    expect(state.leaderboard).toBeNull();
-    expect(state.submissions).toBeNull();
+    expect(state).toBeNull();
   });
 
   it("should set the complete state", () => {

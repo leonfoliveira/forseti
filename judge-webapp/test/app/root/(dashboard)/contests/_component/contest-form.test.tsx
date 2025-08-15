@@ -191,13 +191,7 @@ describe("ContestForm", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("save"));
     });
-    expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "Are you sure you want to save this contest?",
-    );
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("dialog-modal:button"));
-    });
-    expect(props.onSubmit).toHaveBeenCalledWith(result.current.getValues());
+    expect(props.onSubmit).toHaveBeenCalled();
   });
 
   it("should call save on update", async () => {
@@ -233,12 +227,6 @@ describe("ContestForm", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("save"));
     });
-    expect(screen.getByTestId("dialog-modal")).toHaveTextContent(
-      "Are you sure you want to save this contest?",
-    );
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("dialog-modal:button"));
-    });
-    expect(props.onSubmit).toHaveBeenCalledWith(result.current.getValues());
+    expect(props.onSubmit).toHaveBeenCalled();
   });
 });

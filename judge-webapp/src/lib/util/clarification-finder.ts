@@ -2,12 +2,8 @@ import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarifi
 
 export function findClarification(
   data: ClarificationResponseDTO[],
-  id: string | undefined,
+  id: string,
 ): ClarificationResponseDTO | undefined {
-  if (!id) {
-    return undefined;
-  }
-
   for (const clarification of data) {
     if (clarification.id === id) {
       return clarification;

@@ -117,6 +117,7 @@ export function FileInput<TFieldValues extends FieldValues>({
                 if (field.value) onDownload(field.value);
                 else if (originalValue) onDownloadOriginal?.(originalValue);
               }}
+              disabled={!originalValue && !field.value}
               data-testid={`${testId}:download`}
             >
               <FontAwesomeIcon icon={faDownload} />
@@ -124,7 +125,11 @@ export function FileInput<TFieldValues extends FieldValues>({
             <button
               type="button"
               className="btn btn-soft px-3"
-              onClick={() => field.onChange(undefined)}
+              onClick={() => {
+                ref.current!.value = "";
+                field.onChange(undefined);
+              }}
+              disabled={!originalValue && !field.value}
               data-testid={`${testId}:reset`}
             >
               <FontAwesomeIcon icon={faClose} />
