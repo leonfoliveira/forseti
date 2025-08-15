@@ -1,6 +1,9 @@
 "use client";
 
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useRouter } from "next/navigation";
@@ -16,10 +19,11 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
 import { Button } from "@/lib/component/form/button";
 import { Form } from "@/lib/component/form/form";
 import { TextInput } from "@/lib/component/form/text-input";
-import { useSetAuthorization } from "@/lib/provider/authorization-provider";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useAlert } from "@/store/slices/alerts-slice";
+import { authorizationSlice } from "@/store/slices/authorization-slice";
 import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
+import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
   wrongLoginPassword: {
@@ -54,7 +58,7 @@ const messages = defineMessages({
 export default function MemberSignInPage() {
   const signInState = useLoadableState();
   const contestMetadata = useContestMetadata();
-  const { setAuthorization } = useSetAuthorization();
+  const dispatch = useAppDispatch();
   const alert = useAlert();
 
   const router = useRouter();
@@ -70,7 +74,7 @@ export default function MemberSignInPage() {
         contestMetadata.id,
         data,
       );
-      setAuthorization(authorization);
+      dispatch(authorizationSlice.actions.success(authorization));
       signInState.finish();
       router.push(routes.CONTEST(contestMetadata.slug));
     } catch (error) {
@@ -90,9 +94,17 @@ export default function MemberSignInPage() {
         disabled={signInState.isLoading}
         data-testid="form"
       >
-        <h1 className="text-3xl font-bold" data-testid="title">
-          <FormattedMessage {...messages.title} />
-        </h1>
+        <div className="flex">
+          <FontAwesomeIcon
+            icon={faChevronLeft}
+            onClick={() => router.push(routes.HOME)}
+            className="cursor-pointer text-2xl mt-1 mr-5"
+            data-testid="back"
+          />
+          <h1 className="text-3xl font-bold" data-testid="title">
+            <FormattedMessage {...messages.title} />
+          </h1>
+        </div>
         <h2 className="text-md mt-2" data-testid="description">
           {contestMetadata?.title}
         </h2>

@@ -43,6 +43,10 @@ const messages = defineMessages({
     id: "app.page.enter-root",
     defaultMessage: "Enter as Root",
   },
+  slugRequired: {
+    id: "app.page.slug-required",
+    defaultMessage: "Required",
+  },
 });
 
 type FormType = {
@@ -51,8 +55,8 @@ type FormType = {
 
 const formSchema = Joi.object({
   slug: Joi.string().required().messages({
-    "string.empty": "slug:required",
-    "any.required": "slug:required",
+    "string.empty": messages.slugRequired.id,
+    "any.required": messages.slugRequired.id,
   }),
 });
 

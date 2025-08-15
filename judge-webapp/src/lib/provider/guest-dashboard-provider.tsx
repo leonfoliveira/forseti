@@ -15,11 +15,11 @@ import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/co
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";
-import { useLoadableState } from "@/lib/util/loadable-state";
+import { useErrorHandler } from "@/lib/util/error-handler-hook";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
-import { useAppDispatch } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 
 const messages = defineMessages({
   loadError: {
@@ -32,22 +32,21 @@ const messages = defineMessages({
   },
 });
 
-export function GuestContextProvider({
+export function GuestDashboardProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const state = useLoadableState({ isLoading: true });
-
   const contestMetadata = useContestMetadata();
+  const { isLoading, error } = useAppSelector((state) => state.guestDashboard);
   const dispatch = useAppDispatch();
+  const errorHandler = useErrorHandler();
   const alert = useAlert();
 
   useEffect(() => {
     const listenerClient = listenerClientFactory.create();
 
     async function fetch() {
-      state.start();
       try {
         const data = await Promise.all([
           contestService.findContestById(contestMetadata.id),
@@ -85,16 +84,16 @@ export function GuestContextProvider({
         ]);
 
         dispatch(
-          guestDashboardSlice.actions.set({
+          guestDashboardSlice.actions.success({
             contest: data[0],
             leaderboard: data[1],
             submissions: data[2],
           }),
         );
-        state.finish();
       } catch (error) {
-        state.fail(error, {
-          default: () => alert.error(messages.loadError),
+        errorHandler.handle(error as Error, {
+          default: () =>
+            dispatch(guestDashboardSlice.actions.fail(error as Error)),
         });
       }
     }
@@ -130,10 +129,10 @@ export function GuestContextProvider({
     dispatch(guestDashboardSlice.actions.deleteClarification(id));
   }
 
-  if (state.isLoading) {
+  if (isLoading) {
     return <LoadingPage />;
   }
-  if (state.error) {
+  if (error) {
     return <ErrorPage />;
   }
 

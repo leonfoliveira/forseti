@@ -5,7 +5,7 @@ import { defineMessages } from "react-intl";
 
 import { ContestDashboardLayout } from "@/app/contests/[slug]/_common/contest-dashboard-layout";
 import { routes } from "@/config/routes";
-import { GuestContextProvider } from "@/lib/provider/guest-dashboard-provider";
+import { GuestDashboardProvider } from "@/lib/provider/guest-dashboard-provider";
 import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 
 const messages = defineMessages({
@@ -64,7 +64,7 @@ export default function GuestLayout({
         },
       ]}
     >
-      <GuestContextProvider>{children}</GuestContextProvider>
+      <GuestDashboardProvider>{children}</GuestDashboardProvider>
     </ContestDashboardLayout>
   );
 }

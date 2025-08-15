@@ -13,7 +13,7 @@ import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarifi
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
-import { GuestContextProvider } from "@/lib/provider/guest-dashboard-provider";
+import { GuestDashboardProvider } from "@/lib/provider/guest-dashboard-provider";
 import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
 import {
   mockAlert,
@@ -54,9 +54,9 @@ describe("GuestDashboardProvider", () => {
     );
 
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     expect(screen.getByTestId("loading")).toBeInTheDocument();
@@ -93,9 +93,9 @@ describe("GuestDashboardProvider", () => {
     );
 
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -112,9 +112,9 @@ describe("GuestDashboardProvider", () => {
 
   it("should connect and disconnect to listener", async () => {
     const { unmount } = render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -127,9 +127,9 @@ describe("GuestDashboardProvider", () => {
 
   it("should handle leaderboard updates", async () => {
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -163,9 +163,9 @@ describe("GuestDashboardProvider", () => {
     );
 
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -199,9 +199,9 @@ describe("GuestDashboardProvider", () => {
     });
 
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -241,9 +241,9 @@ describe("GuestDashboardProvider", () => {
     });
 
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -278,9 +278,9 @@ describe("GuestDashboardProvider", () => {
     });
 
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {

@@ -7,7 +7,7 @@ import { defineMessages } from "react-intl";
 import { ContestDashboardLayout } from "@/app/contests/[slug]/_common/contest-dashboard-layout";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { JudgeContextProvider } from "@/lib/provider/judge-dashboard-provider";
+import { JudgeDashboardProvider } from "@/lib/provider/judge-dashboard-provider";
 import { useAuthorization } from "@/store/slices/authorization-slice";
 import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 
@@ -75,7 +75,7 @@ export default function JudgeLayout({
         },
       ]}
     >
-      <JudgeContextProvider>{children}</JudgeContextProvider>
+      <JudgeDashboardProvider>{children}</JudgeDashboardProvider>
     </ContestDashboardLayout>
   );
 }

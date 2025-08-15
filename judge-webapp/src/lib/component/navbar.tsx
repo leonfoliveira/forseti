@@ -1,14 +1,19 @@
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
+import { authenticationService } from "@/config/composition";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { CountdownClock } from "@/lib/component/countdown-clock";
-import { useSetAuthorization } from "@/lib/provider/authorization-provider";
 import { useTheme } from "@/lib/util/theme-hook";
-import { useAuthorization } from "@/store/slices/authorization-slice";
+import {
+  authorizationSlice,
+  useAuthorization,
+} from "@/store/slices/authorization-slice";
+import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
   rootTitle: {
@@ -37,10 +42,18 @@ type Props = {
 export function Navbar({ contestMetadata, signInPath }: Props) {
   const { theme, toggleTheme } = useTheme();
   const authorization = useAuthorization();
-  const { clearAuthorization } = useSetAuthorization();
+  const dispatch = useAppDispatch();
+  const router = useRouter();
 
-  function signOut() {
-    clearAuthorization(signInPath);
+  async function signOut() {
+    dispatch(authorizationSlice.actions.reset());
+    try {
+      await authenticationService.cleanAuthorization();
+    } catch {
+    } finally {
+      dispatch(authorizationSlice.actions.success(null));
+      router.push(signInPath);
+    }
   }
 
   const isGuest = !authorization?.member;
@@ -59,7 +72,7 @@ export function Navbar({ contestMetadata, signInPath }: Props) {
           {contestMetadata && (
             <CountdownClock
               className="font-mono text-sm"
-              to={new Date(contestMetadata.startAt)}
+              to={new Date(contestMetadata.endAt)}
             />
           )}
         </div>

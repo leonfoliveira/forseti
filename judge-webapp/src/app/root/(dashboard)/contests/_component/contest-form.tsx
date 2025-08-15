@@ -12,6 +12,7 @@ import { defineMessages, FormattedMessage } from "react-intl";
 
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { contestService } from "@/config/composition";
+import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
@@ -201,7 +202,7 @@ export function ContestForm({
           <div className="flex items-center">
             <FontAwesomeIcon
               icon={faChevronLeft}
-              onClick={() => router.push("/root/contests")}
+              onClick={() => router.push(routes.ROOT_CONTESTS)}
               className="cursor-pointer text-2xl"
               data-testid="back"
             />

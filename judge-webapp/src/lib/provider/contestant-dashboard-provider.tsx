@@ -19,13 +19,13 @@ import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/subm
 import { globalMessages } from "@/i18n/global";
 import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";
-import { useLoadableState } from "@/lib/util/loadable-state";
+import { useErrorHandler } from "@/lib/util/error-handler-hook";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { useAuthorization } from "@/store/slices/authorization-slice";
 import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 import { contestantDashboardSlice } from "@/store/slices/contestant-dashboard-slice";
 import { useToast } from "@/store/slices/toasts-slice";
-import { useAppDispatch } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 
 const messages = defineMessages({
   loadError: {
@@ -53,8 +53,11 @@ export function ContestantDashboardProvider({
 }) {
   const authorization = useAuthorization();
   const contestMetadata = useContestMetadata();
-  const state = useLoadableState();
+  const { isLoading, error } = useAppSelector(
+    (state) => state.contestantDashboard,
+  );
   const dispatch = useAppDispatch();
+  const errorHandler = useErrorHandler();
   const alert = useAlert();
   const toast = useToast();
 
@@ -62,7 +65,6 @@ export function ContestantDashboardProvider({
     const listenerClient = listenerClientFactory.create();
 
     async function fetch() {
-      state.start();
       try {
         const data = await Promise.all([
           contestService.findContestById(contestMetadata.id),
@@ -111,17 +113,17 @@ export function ContestantDashboardProvider({
         ]);
 
         dispatch(
-          contestantDashboardSlice.actions.set({
+          contestantDashboardSlice.actions.success({
             contest: data[0],
             leaderboard: data[1],
             submissions: data[2],
             memberSubmissions: data[3],
           }),
         );
-        state.finish();
       } catch (error) {
-        state.fail(error, {
-          default: () => alert.error(messages.loadError),
+        errorHandler.handle(error as Error, {
+          default: () =>
+            dispatch(contestantDashboardSlice.actions.fail(error as Error)),
         });
       }
     }
@@ -208,10 +210,10 @@ export function ContestantDashboardProvider({
     dispatch(contestantDashboardSlice.actions.deleteClarification(id));
   }
 
-  if (state.isLoading) {
+  if (isLoading) {
     return <LoadingPage />;
   }
-  if (state.error) {
+  if (error) {
     return <ErrorPage />;
   }
 

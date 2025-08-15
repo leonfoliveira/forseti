@@ -13,7 +13,7 @@ import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarifi
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
-import { JudgeContextProvider } from "@/lib/provider/judge-dashboard-provider";
+import { JudgeDashboardProvider } from "@/lib/provider/judge-dashboard-provider";
 import { judgeDashboardSlice } from "@/store/slices/judge-dashboard-slice";
 import {
   mockAlert,
@@ -54,9 +54,9 @@ describe("JudgeDashboardProvider", () => {
     );
 
     render(
-      <JudgeContextProvider>
+      <JudgeDashboardProvider>
         <span data-testid="child" />
-      </JudgeContextProvider>,
+      </JudgeDashboardProvider>,
     );
 
     expect(screen.getByTestId("loading")).toBeInTheDocument();
@@ -93,9 +93,9 @@ describe("JudgeDashboardProvider", () => {
     ).mockResolvedValue(mockSubmissions);
 
     render(
-      <JudgeContextProvider>
+      <JudgeDashboardProvider>
         <span data-testid="child" />
-      </JudgeContextProvider>,
+      </JudgeDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -112,9 +112,9 @@ describe("JudgeDashboardProvider", () => {
 
   it("should connect and disconnect to listener", async () => {
     const { unmount } = render(
-      <JudgeContextProvider>
+      <JudgeDashboardProvider>
         <span data-testid="child" />
-      </JudgeContextProvider>,
+      </JudgeDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -127,9 +127,9 @@ describe("JudgeDashboardProvider", () => {
 
   it("should handle leaderboard updates", async () => {
     render(
-      <JudgeContextProvider>
+      <JudgeDashboardProvider>
         <span data-testid="child" />
-      </JudgeContextProvider>,
+      </JudgeDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -163,9 +163,9 @@ describe("JudgeDashboardProvider", () => {
     ).mockResolvedValue([]);
 
     render(
-      <JudgeContextProvider>
+      <JudgeDashboardProvider>
         <span data-testid="child" />
-      </JudgeContextProvider>,
+      </JudgeDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -199,9 +199,9 @@ describe("JudgeDashboardProvider", () => {
     });
 
     render(
-      <JudgeContextProvider>
+      <JudgeDashboardProvider>
         <span data-testid="child" />
-      </JudgeContextProvider>,
+      </JudgeDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -241,9 +241,9 @@ describe("JudgeDashboardProvider", () => {
     });
 
     render(
-      <JudgeContextProvider>
+      <JudgeDashboardProvider>
         <span data-testid="child" />
-      </JudgeContextProvider>,
+      </JudgeDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -278,9 +278,9 @@ describe("JudgeDashboardProvider", () => {
     });
 
     render(
-      <JudgeContextProvider>
+      <JudgeDashboardProvider>
         <span data-testid="child" />
-      </JudgeContextProvider>,
+      </JudgeDashboardProvider>,
     );
 
     await waitFor(() => {

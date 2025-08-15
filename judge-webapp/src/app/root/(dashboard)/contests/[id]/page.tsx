@@ -117,7 +117,7 @@ export default function RootEditContestPage({
     });
     if (validations.find((it) => !it.isValid)) return;
 
-    saveModal.open();
+    saveModal.open(data);
   }
 
   return (

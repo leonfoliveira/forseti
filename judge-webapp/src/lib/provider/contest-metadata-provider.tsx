@@ -3,9 +3,8 @@ import React, { useEffect } from "react";
 import { contestService } from "@/config/composition";
 import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";
-import { useLoadableState } from "@/lib/util/loadable-state";
 import { contestMetadataSlice } from "@/store/slices/contest-metadata-slice";
-import { useAppDispatch } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 
 export function ContestMetadataProvider({
   slug,
@@ -14,7 +13,7 @@ export function ContestMetadataProvider({
   slug: string;
   children: React.ReactNode;
 }) {
-  const metadataState = useLoadableState({ isLoading: true });
+  const { isLoading, error } = useAppSelector((state) => state.contestMetadata);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -23,13 +22,11 @@ export function ContestMetadataProvider({
      * These are the only information that can be fetched before the contest starts
      */
     async function findContestMetadata() {
-      metadataState.start();
       try {
         const contest = await contestService.findContestMetadataBySlug(slug);
-        dispatch(contestMetadataSlice.actions.set(contest));
-        metadataState.finish();
+        dispatch(contestMetadataSlice.actions.success(contest));
       } catch (error) {
-        metadataState.fail(error);
+        dispatch(contestMetadataSlice.actions.fail(error as Error));
       }
     }
 
@@ -39,10 +36,10 @@ export function ContestMetadataProvider({
   /**
    * Ensure contest metadata is loaded before rendering the children components.
    */
-  if (metadataState.isLoading) {
+  if (isLoading) {
     return <LoadingPage />;
   }
-  if (metadataState.error) {
+  if (error) {
     return <ErrorPage />;
   }
 
