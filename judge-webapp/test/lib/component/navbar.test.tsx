@@ -7,11 +7,7 @@ import { CountdownClock } from "@/lib/component/countdown-clock";
 import { Navbar } from "@/lib/component/navbar";
 import { useTheme } from "@/lib/util/theme-hook";
 import { authorizationSlice } from "@/store/slices/authorization-slice";
-import {
-  mockAppDispatch,
-  mockRouter,
-  mockUseAuthorization,
-} from "@/test/jest.setup";
+import { mockAppDispatch, mockUseAuthorization } from "@/test/jest.setup";
 
 jest.mock("@/lib/util/theme-hook", () => ({
   useTheme: jest.fn(),
@@ -99,9 +95,5 @@ describe("Navbar", () => {
       authorizationSlice.actions.reset(),
     );
     expect(authenticationService.cleanAuthorization).toHaveBeenCalled();
-    expect(mockAppDispatch).toHaveBeenCalledWith(
-      authorizationSlice.actions.success(null),
-    );
-    expect(mockRouter.push).toHaveBeenCalledWith("/sign-in");
   });
 });

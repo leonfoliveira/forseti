@@ -16,10 +16,10 @@ export function useErrorHandler() {
     dispatch(authorizationSlice.actions.reset());
     try {
       await authenticationService.cleanAuthorization();
-    } catch {
+    } catch (error) {
+      console.error(error);
     } finally {
-      dispatch(authorizationSlice.actions.success(null));
-      router.push(routes.ROOT);
+      window.location.href = routes.HOME;
     }
   }
 

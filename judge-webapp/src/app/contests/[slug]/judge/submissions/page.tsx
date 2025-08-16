@@ -19,6 +19,7 @@ import { Button } from "@/lib/component/form/button";
 import { DownloadButton } from "@/lib/component/form/download-button";
 import { Select } from "@/lib/component/form/select";
 import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
+import { Metadata } from "@/lib/component/metadata";
 import { DialogModal } from "@/lib/component/modal/dialog-modal";
 import { Table } from "@/lib/component/table/table";
 import { TableCell } from "@/lib/component/table/table-cell";
@@ -30,6 +31,14 @@ import { useAlert } from "@/store/slices/alerts-slice";
 import { useJudgeDashboard } from "@/store/slices/judge-dashboard-slice";
 
 const messages = defineMessages({
+  pageTitle: {
+    defaultMessage: "Judge - Submissions",
+    id: "app.contests.[slug].judge.submissions.page.title",
+  },
+  pageDescription: {
+    id: "app.contests.[slug].judge.submissions.page.description",
+    defaultMessage: "Review and manage contest submissions as a judge.",
+  },
   rerunSuccess: {
     defaultMessage: "Submission reenqueued successfully",
     id: "app.contests.[slug].judge.submissions.page.rerun-success",
@@ -135,6 +144,10 @@ export default function JudgeSubmissionsPage() {
 
   return (
     <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
       <Table>
         <TableSection head>
           <TableRow>

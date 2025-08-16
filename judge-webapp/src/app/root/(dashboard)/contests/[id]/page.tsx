@@ -15,6 +15,7 @@ import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
+import { Metadata } from "@/lib/component/metadata";
 import { DialogModal } from "@/lib/component/modal/dialog-modal";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useModal } from "@/lib/util/modal-hook";
@@ -22,6 +23,14 @@ import { TestCaseValidator } from "@/lib/util/test-case-validator";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.root.(dashboard).contests.[id].page.page-title",
+    defaultMessage: "Judge - Edit Contest",
+  },
+  pageDescription: {
+    id: "app.root.(dashboard).contests.[id].page.page-description",
+    defaultMessage: "Edit contest details and problems.",
+  },
   loadError: {
     id: "app.root.(dashboard).contests.[id].page.load-error",
     defaultMessage: "Error loading contest data",
@@ -122,6 +131,10 @@ export default function RootEditContestPage({
 
   return (
     <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
       <ContestForm
         contestState={contestState}
         saveState={updateContestState}

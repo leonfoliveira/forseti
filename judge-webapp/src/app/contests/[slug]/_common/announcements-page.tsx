@@ -14,10 +14,19 @@ import { Button } from "@/lib/component/form/button";
 import { Form } from "@/lib/component/form/form";
 import { TextInput } from "@/lib/component/form/text-input";
 import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
+import { Metadata } from "@/lib/component/metadata";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.contests.[slug]._common.announcements-page.page-title",
+    defaultMessage: "Judge - Announcements",
+  },
+  pageDescription: {
+    id: "app.contests.[slug]._common.announcements-page.page-description",
+    defaultMessage: "View and create contest announcements.",
+  },
   createSuccess: {
     id: "app.contests.[slug]._common.announcements-page.create-success",
     defaultMessage: "Announcement created successfully",
@@ -78,6 +87,10 @@ export function AnnouncementsPage({
 
   return (
     <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
       {canCreate && (
         <Form
           className="flex flex-col"

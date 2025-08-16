@@ -18,12 +18,21 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
 import { Button } from "@/lib/component/form/button";
 import { Form } from "@/lib/component/form/form";
 import { TextInput } from "@/lib/component/form/text-input";
+import { Metadata } from "@/lib/component/metadata";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { authorizationSlice } from "@/store/slices/authorization-slice";
 import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.root.sign-in.page.page-title",
+    defaultMessage: "Judge - Root Sign In",
+  },
+  pageDescription: {
+    id: "app.root.sign-in.page.page-description",
+    defaultMessage: "Sign in as root to manage contests and users.",
+  },
   wrongPassword: {
     id: "app.root.sign-in.page.wrong-password",
     defaultMessage: "Wrong password",
@@ -81,48 +90,57 @@ export default function RootSignInPage() {
   }
 
   return (
-    <div className="min-h-full flex justify-center items-center">
-      <Form
-        onSubmit={form.handleSubmit(signIn)}
-        disabled={signInState.isLoading}
-        containerClassName="p-10 w-full max-w-[400] bg-base-100"
-      >
-        <div className="flex">
-          <FontAwesomeIcon
-            icon={faChevronLeft}
-            onClick={() => router.push(routes.HOME)}
-            className="cursor-pointer text-2xl mt-1 mr-5"
-            data-testid="back"
-          />
-          <h1 className="text-3xl font-bold" data-testid="title">
-            <FormattedMessage {...messages.title} />
-          </h1>
-        </div>
-        <h2 className="text-md mt-2" data-testid="description">
-          <FormattedMessage {...messages.description} />
-        </h2>
-        <div className="my-6">
-          <TextInput
-            form={form}
-            name="password"
-            label={messages.password}
-            password
-            data-testid="password"
-          />
-        </div>
-        <div className="flex flex-col">
-          <Button
-            type="submit"
-            label={messages.signIn}
-            rightIcon={
-              <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />
-            }
-            className="btn-primary w-full"
-            isLoading={signInState.isLoading}
-            data-testid="sign-in"
-          />
-        </div>
-      </Form>
-    </div>
+    <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
+      <div className="min-h-full flex justify-center items-center">
+        <Form
+          onSubmit={form.handleSubmit(signIn)}
+          disabled={signInState.isLoading}
+          containerClassName="p-10 w-full max-w-[400] bg-base-100"
+        >
+          <div className="flex">
+            <FontAwesomeIcon
+              icon={faChevronLeft}
+              onClick={() => router.push(routes.HOME)}
+              className="cursor-pointer text-2xl mt-1 mr-5"
+              data-testid="back"
+            />
+            <h1 className="text-3xl font-bold" data-testid="title">
+              <FormattedMessage {...messages.title} />
+            </h1>
+          </div>
+          <h2 className="text-md mt-2" data-testid="description">
+            <FormattedMessage {...messages.description} />
+          </h2>
+          <div className="my-6">
+            <TextInput
+              form={form}
+              name="password"
+              label={messages.password}
+              password
+              data-testid="password"
+            />
+          </div>
+          <div className="flex flex-col">
+            <Button
+              type="submit"
+              label={messages.signIn}
+              rightIcon={
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  className="text-sm ms-2"
+                />
+              }
+              className="btn-primary w-full"
+              isLoading={signInState.isLoading}
+              data-testid="sign-in"
+            />
+          </div>
+        </Form>
+      </div>
+    </>
   );
 }

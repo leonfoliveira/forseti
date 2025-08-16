@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { defineMessages, FormattedMessage, useIntl } from "react-intl";
+import { defineMessages, useIntl } from "react-intl";
 
 import {
   announcementListener,

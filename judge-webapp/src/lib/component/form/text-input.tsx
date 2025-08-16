@@ -11,7 +11,7 @@ import { FormattedMessage } from "react-intl";
 import { Message } from "@/i18n/message";
 import { cls } from "@/lib/util/cls";
 
-type Props<TFieldValues extends FieldValues> = Omit<
+type InputProps<TFieldValues extends FieldValues> = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "type" | "value" | "onChange" | "form"
 > & {
@@ -22,7 +22,25 @@ type Props<TFieldValues extends FieldValues> = Omit<
   label: Message;
   password?: boolean;
   "data-testid"?: string;
+  multiline?: false;
 };
+type TextAreaProps<TFieldValues extends FieldValues> = Omit<
+  React.InputHTMLAttributes<HTMLTextAreaElement>,
+  "type" | "value" | "onChange" | "form"
+> & {
+  form: UseFormReturn<TFieldValues>;
+  name: FieldPath<TFieldValues>;
+  value?: string;
+  containerClassName?: string;
+  label: Message;
+  password?: boolean;
+  "data-testid"?: string;
+  multiline: true;
+};
+
+type Props<TFieldValues extends FieldValues> =
+  | InputProps<TFieldValues>
+  | TextAreaProps<TFieldValues>;
 
 function formToComponent(value?: string) {
   return value || "";
@@ -42,6 +60,7 @@ export function TextInput<TFieldValues extends FieldValues>({
   containerClassName,
   className,
   password = false,
+  multiline = false,
   ...props
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "text-input";
@@ -68,15 +87,26 @@ export function TextInput<TFieldValues extends FieldValues>({
           >
             <FormattedMessage {...label} />
           </label>
-          <input
-            {...props}
-            id={name}
-            type={password ? "password" : "text"}
-            value={formToComponent(field.value)}
-            onChange={(e) => field.onChange(componentToForm(e.target.value))}
-            className={cls("input w-full", className)}
-            data-testid={testId}
-          />
+          {multiline ? (
+            <textarea
+              {...(props as React.InputHTMLAttributes<HTMLTextAreaElement>)}
+              id={name}
+              value={formToComponent(field.value)}
+              onChange={(e) => field.onChange(componentToForm(e.target.value))}
+              className={cls("input w-full", className)}
+              data-testid={testId}
+            />
+          ) : (
+            <input
+              {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
+              id={name}
+              type={password ? "password" : "text"}
+              value={formToComponent(field.value)}
+              onChange={(e) => field.onChange(componentToForm(e.target.value))}
+              className={cls("input w-full", className)}
+              data-testid={testId}
+            />
+          )}
           <p
             className="label text-error text-wrap"
             data-testid={`${testId}:error`}

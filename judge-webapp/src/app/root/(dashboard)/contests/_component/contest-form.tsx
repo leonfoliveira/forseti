@@ -130,6 +130,14 @@ const messages = defineMessages({
     id: "app.root.(dashboard).contests._component.contest-form.problem-test-cases",
     defaultMessage: "Test Cases (csv)",
   },
+  addTooltip: {
+    id: "app.root.(dashboard).contests._component.contest-form.add-tooltip",
+    defaultMessage: "Add",
+  },
+  removeTooltip: {
+    id: "app.root.(dashboard).contests._component.contest-form.remove-tooltip",
+    defaultMessage: "Remove",
+  },
   confirmDelete: {
     id: "app.root.(dashboard).contests._component.contest-form.confirm-delete",
     defaultMessage: "Are you sure you want to delete this contest?",
@@ -336,9 +344,11 @@ export function ContestForm({
                   data-testid="member-password"
                 />
                 <Button
+                  tooltip={messages.removeTooltip}
                   leftIcon={<FontAwesomeIcon icon={faTrash} />}
                   onClick={() => membersFields.remove(index)}
-                  className="btn-error btn-soft mt-[39]"
+                  containerClassName="mt-[39]"
+                  className="btn-error btn-soft"
                   data-testid="member-delete"
                 />
               </Fragment>
@@ -346,11 +356,13 @@ export function ContestForm({
           </div>
           <div className="flex justify-center">
             <Button
+              tooltip={messages.addTooltip}
               leftIcon={<FontAwesomeIcon icon={faPlus} />}
               onClick={() =>
                 membersFields.append({ type: MemberType.CONTESTANT })
               }
-              className="mt-5 px-10"
+              containerClassName="mt-5"
+              className="px-10"
               data-testid="member-add"
             />
           </div>
@@ -395,8 +407,10 @@ export function ContestForm({
                 />
                 <Button
                   leftIcon={<FontAwesomeIcon icon={faTrash} />}
+                  tooltip={messages.removeTooltip}
                   onClick={() => problemsFields.remove(index)}
-                  className="btn-error btn-soft mt-[39]"
+                  containerClassName="mt-[39]"
+                  className="btn-error btn-soft"
                   data-testid="problem-delete"
                 />
                 <span />
@@ -428,10 +442,12 @@ export function ContestForm({
           <div className="flex justify-center">
             <Button
               leftIcon={<FontAwesomeIcon icon={faPlus} />}
+              tooltip={messages.addTooltip}
               onClick={() =>
                 problemsFields.append({ timeLimit: 1000, memoryLimit: 2048 })
               }
-              className="mt-5 px-10"
+              containerClassName="mt-5"
+              className="px-10"
               data-testid="problem-add"
             />
           </div>

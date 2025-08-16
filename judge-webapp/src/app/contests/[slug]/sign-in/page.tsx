@@ -19,6 +19,7 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
 import { Button } from "@/lib/component/form/button";
 import { Form } from "@/lib/component/form/form";
 import { TextInput } from "@/lib/component/form/text-input";
+import { Metadata } from "@/lib/component/metadata";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { authorizationSlice } from "@/store/slices/authorization-slice";
@@ -26,29 +27,41 @@ import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.contests.[slug].sign-in.page-title",
+    defaultMessage: "Judge - Contest Sign In",
+  },
+  pageDescription: {
+    id: "app.contests.[slug].sign-in.page-description",
+    defaultMessage: "Sign in to participate in the contest.",
+  },
   wrongLoginPassword: {
-    defaultMessage: "Wrong login or password",
     id: "app.contests.[slug].sign-in.page.wrong-login-password",
+    defaultMessage: "Wrong login or password",
   },
   signInError: {
-    defaultMessage: "Error signing in",
     id: "app.contests.[slug].sign-in.page.sign-in-error",
+    defaultMessage: "Error signing in",
   },
   title: {
-    defaultMessage: "Sign In",
     id: "app.contests.[slug].sign-in.page.title",
+    defaultMessage: "Sign In",
   },
   login: {
-    defaultMessage: "Login",
     id: "app.contests.[slug].sign-in.page.login",
+    defaultMessage: "Login",
   },
   password: {
-    defaultMessage: "Password",
     id: "app.contests.[slug].sign-in.page.password",
+    defaultMessage: "Password",
   },
   signIn: {
-    defaultMessage: "Sign In",
     id: "app.contests.[slug].sign-in.page.sign-in",
+    defaultMessage: "Sign In",
+  },
+  enterGuest: {
+    id: "app.contests.[slug].sign-in.page.enter-guest",
+    defaultMessage: "Enter as Guest",
   },
 });
 
@@ -87,55 +100,80 @@ export default function MemberSignInPage() {
   }
 
   return (
-    <div className="min-h-full flex justify-center items-center">
-      <Form
-        onSubmit={form.handleSubmit(signIn)}
-        containerClassName="p-10 w-full max-w-[400] bg-base-100"
-        disabled={signInState.isLoading}
-        data-testid="form"
-      >
-        <div className="flex">
-          <FontAwesomeIcon
-            icon={faChevronLeft}
-            onClick={() => router.push(routes.HOME)}
-            className="cursor-pointer text-2xl mt-1 mr-5"
-            data-testid="back"
-          />
-          <h1 className="text-3xl font-bold" data-testid="title">
-            <FormattedMessage {...messages.title} />
-          </h1>
-        </div>
-        <h2 className="text-md mt-2" data-testid="description">
-          {contestMetadata?.title}
-        </h2>
-        <div className="my-6">
-          <TextInput
-            form={form}
-            name="login"
-            label={messages.login}
-            data-testid="login"
-          />
-          <TextInput
-            form={form}
-            name="password"
-            label={messages.password}
-            password
-            data-testid="password"
-          />
-        </div>
-        <div className="flex flex-col">
-          <Button
-            type="submit"
-            label={messages.signIn}
-            rightIcon={
-              <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />
-            }
-            isLoading={signInState.isLoading}
-            className="btn-primary w-full"
-            data-testid="sign-in"
-          />
-        </div>
-      </Form>
-    </div>
+    <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
+      <div className="min-h-full flex justify-center items-center">
+        <Form
+          onSubmit={form.handleSubmit(signIn)}
+          containerClassName="p-10 w-full max-w-[400] bg-base-100"
+          disabled={signInState.isLoading}
+          data-testid="form"
+        >
+          <div className="flex">
+            <FontAwesomeIcon
+              icon={faChevronLeft}
+              onClick={() => router.push(routes.HOME)}
+              className="cursor-pointer text-2xl mt-1 mr-5"
+              data-testid="back"
+            />
+            <h1 className="text-3xl font-bold" data-testid="title">
+              <FormattedMessage {...messages.title} />
+            </h1>
+          </div>
+          <h2 className="text-md mt-2" data-testid="description">
+            {contestMetadata?.title}
+          </h2>
+          <div className="my-6">
+            <TextInput
+              form={form}
+              name="login"
+              label={messages.login}
+              data-testid="login"
+            />
+            <TextInput
+              form={form}
+              name="password"
+              label={messages.password}
+              password
+              data-testid="password"
+            />
+          </div>
+          <div className="flex flex-col">
+            <Button
+              type="submit"
+              label={messages.signIn}
+              rightIcon={
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  className="text-sm ms-2"
+                />
+              }
+              isLoading={signInState.isLoading}
+              className="btn-primary w-full"
+              data-testid="sign-in"
+            />
+            <div className="divider" />
+            <Button
+              type="button"
+              label={messages.enterGuest}
+              rightIcon={
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  className="text-sm ms-2"
+                />
+              }
+              onClick={() =>
+                router.push(routes.CONTEST_GUEST(contestMetadata.slug))
+              }
+              className="btn-outline btn-primary w-full"
+              data-testid="root"
+            />
+          </div>
+        </Form>
+      </div>
+    </>
   );
 }

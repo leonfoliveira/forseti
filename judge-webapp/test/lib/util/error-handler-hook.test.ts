@@ -47,13 +47,10 @@ describe("useErrorHandler", () => {
       // Should call authentication service to clean authorization
       expect(authenticationService.cleanAuthorization).toHaveBeenCalled();
 
-      // Should dispatch success action with null
+      // Should dispatch reset action with null
       expect(mockAppDispatch).toHaveBeenCalledWith(
-        authorizationSlice.actions.success(null),
+        authorizationSlice.actions.reset(),
       );
-
-      // Should navigate to root
-      expect(mockRouter.push).toHaveBeenCalledWith(routes.ROOT);
     });
 
     it("should handle UnauthorizedException even when cleanAuthorization throws", async () => {
@@ -76,11 +73,8 @@ describe("useErrorHandler", () => {
 
       // Should still dispatch success action with null in finally block
       expect(mockAppDispatch).toHaveBeenCalledWith(
-        authorizationSlice.actions.success(null),
+        authorizationSlice.actions.reset(),
       );
-
-      // Should still navigate to root
-      expect(mockRouter.push).toHaveBeenCalledWith(routes.ROOT);
     });
 
     it("should handle ForbiddenException by navigating to forbidden page", () => {
@@ -221,15 +215,10 @@ describe("useErrorHandler", () => {
       });
 
       // Verify the sequence of calls
-      const dispatchCalls = mockAppDispatch.mock.calls;
-      expect(dispatchCalls).toHaveLength(2);
-      expect(dispatchCalls[0][0]).toEqual(authorizationSlice.actions.reset());
-      expect(dispatchCalls[1][0]).toEqual(
-        authorizationSlice.actions.success(null),
+      expect(mockAppDispatch).toHaveBeenCalledWith(
+        authorizationSlice.actions.reset(),
       );
-
       expect(authenticationService.cleanAuthorization).toHaveBeenCalled();
-      expect(mockRouter.push).toHaveBeenCalledWith(routes.ROOT);
     });
   });
 });

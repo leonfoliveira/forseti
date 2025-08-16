@@ -1,14 +1,18 @@
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useRouter } from "next/navigation";
 import React from "react";
 import { defineMessages, FormattedMessage } from "react-intl";
 
+import { authenticationService } from "@/config/composition";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { CountdownClock } from "@/lib/component/countdown-clock";
 import { useTheme } from "@/lib/util/theme-hook";
-import { useAuthorization } from "@/store/slices/authorization-slice";
+import {
+  authorizationSlice,
+  useAuthorization,
+} from "@/store/slices/authorization-slice";
+import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
   rootTitle: {
@@ -37,10 +41,17 @@ type Props = {
 export function Navbar({ contestMetadata, signInPath }: Props) {
   const { theme, toggleTheme } = useTheme();
   const authorization = useAuthorization();
-  const router = useRouter();
+  const dispatch = useAppDispatch();
 
-  function signOut() {
-    router.push(signInPath);
+  async function signOut() {
+    dispatch(authorizationSlice.actions.reset());
+    try {
+      await authenticationService.cleanAuthorization();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      window.location.href = signInPath;
+    }
   }
 
   const isGuest = !authorization?.member;
@@ -64,8 +75,10 @@ export function Navbar({ contestMetadata, signInPath }: Props) {
           )}
         </div>
         <div className="flex items-center w-full justify-end">
-          <label className="toggle text-base-content">
+          <label className="toggle text-base-content" htmlFor="theme">
             <input
+              id="theme"
+              aria-label="theme"
               type="checkbox"
               className="theme-controller"
               checked={theme === "dark"}

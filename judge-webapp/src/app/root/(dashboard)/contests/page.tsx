@@ -18,6 +18,7 @@ import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/conte
 import { ContestStatusBadge } from "@/lib/component/badge/contest-status-badge";
 import { Button } from "@/lib/component/form/button";
 import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
+import { Metadata } from "@/lib/component/metadata";
 import { DialogModal } from "@/lib/component/modal/dialog-modal";
 import { Spinner } from "@/lib/component/spinner";
 import { Table } from "@/lib/component/table/table";
@@ -31,6 +32,14 @@ import { useModal } from "@/lib/util/modal-hook";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.root.(dashboard).contests.page.page-title",
+    defaultMessage: "Judge - Contests",
+  },
+  pageDescription: {
+    id: "app.root.(dashboard).contests.page.page-description",
+    defaultMessage: "List and manage all contests in the system.",
+  },
   loadError: {
     id: "app.root.(dashboard).contests.page.load-error",
     defaultMessage: "Failed to load contests",
@@ -172,7 +181,11 @@ export default function RootContestsPage() {
   }
 
   return (
-    <div>
+    <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
       <div className="flex items-center justify-between mb-10">
         <p className="text-lg font-bold">
           <FormattedMessage {...messages.title} />
@@ -292,6 +305,6 @@ export default function RootContestsPage() {
       >
         <FormattedMessage {...messages.endConfirm} />
       </DialogModal>
-    </div>
+    </>
   );
 }

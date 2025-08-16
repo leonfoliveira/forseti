@@ -23,10 +23,10 @@ services:
       mode: global
       resources:
         limits:
-          cpus: '0.2'
+          cpus: "0.2"
           memory: 128M
         reservations:
-          cpus: '0.1'
+          cpus: "0.1"
           memory: 64M
       restart_policy:
         condition: on-failure
@@ -43,15 +43,15 @@ services:
         target: /etc/alloy/config.alloy
 
   api:
-    deploy:    
+    deploy:
       mode: replicated
       replicas: 1
       resources:
         limits:
-          cpus: '2.0'
+          cpus: "2.0"
           memory: 1024M
         reservations:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 512M
       restart_policy:
         condition: on-failure
@@ -102,10 +102,10 @@ services:
       replicas: 0
       resources:
         limits:
-          cpus: '2.0'
+          cpus: "2.0"
           memory: 1024M
         reservations:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 512M
       restart_policy:
         condition: on-failure
@@ -151,17 +151,17 @@ services:
       - db_password
       - jwt_secret
       - root_password
-  
+
   autojudge-autoscaler:
     deploy:
       mode: replicated
       replicas: 1
       resources:
         limits:
-          cpus: '0.2'
+          cpus: "0.2"
           memory: 128M
         reservations:
-          cpus: '0.1'
+          cpus: "0.1"
           memory: 64M
       restart_policy:
         condition: on-failure
@@ -199,10 +199,10 @@ services:
       mode: global
       resources:
         limits:
-          cpus: '0.2'
+          cpus: "0.2"
           memory: 128M
         reservations:
-          cpus: '0.1'
+          cpus: "0.1"
           memory: 64M
       restart_policy:
         condition: on-failure
@@ -242,10 +242,10 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 128M
       restart_policy:
         condition: on-failure
@@ -296,10 +296,10 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 512M
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
       restart_policy:
         condition: on-failure
@@ -326,10 +326,10 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 128M
       restart_policy:
         condition: on-failure
@@ -357,10 +357,10 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
       restart_policy:
         condition: on-failure
@@ -378,21 +378,21 @@ services:
       - type: bind
         source: ../../judge-backend/common/src/main/resources/migration
         target: /flyway/sql
-  
+
   node-exporter:
     command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--path.rootfs=/rootfs'
-      - '--collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+|var/run/docker.sock|run/user)($$|/)'
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/rootfs"
+      - "--collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+|var/run/docker.sock|run/user)($$|/)"
     deploy:
       mode: global
       resources:
         limits:
-          cpus: '0.2'
+          cpus: "0.2"
           memory: 128M
         reservations:
-          cpus: '0.1'
+          cpus: "0.1"
           memory: 64M
       restart_policy:
         condition: on-failure
@@ -421,17 +421,17 @@ services:
         source: /
         target: /rootfs
         read_only: true
-  
+
   postgres:
     deploy:
       mode: replicated
       replicas: 1
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 512M
         reservations:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
       restart_policy:
         condition: on-failure
@@ -441,7 +441,7 @@ services:
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
       POSTGRES_DB: judge
     healthcheck:
-      test: 
+      test:
         - "CMD-SHELL"
         - "pg_isready -U judge -d judge"
       timeout: 5s
@@ -470,10 +470,10 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '0.2'
+          cpus: "0.2"
           memory: 128M
         reservations:
-          cpus: '0.1'
+          cpus: "0.1"
           memory: 64M
       restart_policy:
         condition: on-failure
@@ -505,10 +505,10 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '0.5'
+          cpus: "0.5"
           memory: 256M
         reservations:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 128M
       restart_policy:
         condition: on-failure
@@ -531,7 +531,7 @@ services:
       - type: volume
         source: prometheus_data
         target: /prometheus
-        volume: {}  
+        volume: {}
 
   webapp:
     deploy:
@@ -539,17 +539,17 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: '2.0'
+          cpus: "2.0"
           memory: 512M
         reservations:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 256M
       restart_policy:
         condition: on-failure
         delay: 5s
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8080
-      NEXT_PUBLIC_LOCALE: en
+      NEXT_PUBLIC_LOCALE: pt-BR
       NEXT_PUBLIC_VERSION: ${VERSION:-latest}
       NODE_ENV: production
     healthcheck:

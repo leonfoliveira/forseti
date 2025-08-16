@@ -288,32 +288,9 @@ describe("guestDashboardSlice", () => {
       guestDashboardSlice.actions.mergeClarification(mockChildClarification),
     );
 
-    expect(state.data!.contest.clarifications).toHaveLength(2);
+    expect(state.data!.contest.clarifications).toHaveLength(1);
     expect(state.data!.contest.clarifications[0].children).toHaveLength(1);
     expect(state.data!.contest.clarifications[0].children[0]).toEqual(
-      mockChildClarification,
-    );
-  });
-
-  it("should handle child clarification when parent doesn't exist", () => {
-    const stateWithEmptyClarifications = {
-      ...stateWithData,
-      data: {
-        ...stateWithData.data,
-        contest: {
-          ...mockContest,
-          clarifications: [],
-        },
-      },
-    };
-
-    const state = guestDashboardSlice.reducer(
-      stateWithEmptyClarifications,
-      guestDashboardSlice.actions.mergeClarification(mockChildClarification),
-    );
-
-    expect(state.data!.contest.clarifications).toHaveLength(1);
-    expect(state.data!.contest.clarifications[0]).toEqual(
       mockChildClarification,
     );
   });

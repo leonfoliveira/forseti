@@ -1,0 +1,71 @@
+/* eslint-disable formatjs/enforce-default-message */
+import React, {
+  ButtonHTMLAttributes,
+  DetailedHTMLProps,
+  ReactNode,
+} from "react";
+import { useIntl } from "react-intl";
+
+import { Message } from "@/i18n/message";
+import { Spinner } from "@/lib/component/spinner";
+import { cls } from "@/lib/util/cls";
+
+type Props = DetailedHTMLProps<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+> & {
+  "data-testid"?: string;
+  icon: ReactNode;
+  isLoading?: boolean;
+  tooltip?: Message;
+  containerClassName?: string;
+};
+
+/**
+ * Button component that renders a button with optional loading state.
+ */
+export function Button({
+  type,
+  icon,
+  isLoading,
+  tooltip,
+  containerClassName,
+  disabled,
+  ...props
+}: Props) {
+  const testId = props["data-testid"] || "button";
+  const intl = useIntl();
+  const tooltipMessage = tooltip
+    ? intl.formatMessage(
+        {
+          id: tooltip.id,
+          defaultMessage: tooltip.defaultMessage,
+        },
+        tooltip.values,
+      )
+    : undefined;
+
+  return (
+    <div
+      className={cls(
+        containerClassName,
+        tooltip && "tooltip",
+        !isLoading && disabled && "cursor-not-allowed",
+        isLoading && "cursor-wait",
+      )}
+      data-tip={tooltipMessage}
+      data-testid={`${testId}:container`}
+    >
+      <button
+        type={type || "button"}
+        {...props}
+        disabled={disabled || isLoading}
+        className={cls(props.className, "btn")}
+        aria-label={tooltipMessage}
+        data-testid={testId}
+      >
+        {!isLoading ? icon : <Spinner data-testid={`${testId}:spinner`} />}
+      </button>
+    </div>
+  );
+}

@@ -12,6 +12,7 @@ import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest
 import { contestService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
+import { Metadata } from "@/lib/component/metadata";
 import { DialogModal } from "@/lib/component/modal/dialog-modal";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useModal } from "@/lib/util/modal-hook";
@@ -19,6 +20,14 @@ import { TestCaseValidator } from "@/lib/util/test-case-validator";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.root.(dashboard).contests.new.page.page-title",
+    defaultMessage: "Judge - New Contest",
+  },
+  pageDescription: {
+    id: "app.root.(dashboard).contests.new.page.page-description",
+    defaultMessage: "Create a new contest and configure its details.",
+  },
   invalidTestCase: {
     id: "app.root.(dashboard).contests.new.page.invalid-test-case",
     defaultMessage: "Must have exactly two columns and at least one row",
@@ -84,6 +93,10 @@ export default function RootNewContestPage() {
 
   return (
     <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
       <ContestForm
         saveState={createContestState}
         onSubmit={onSubmit}

@@ -15,10 +15,20 @@ import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { Button } from "@/lib/component/form/button";
 import { Form } from "@/lib/component/form/form";
 import { TextInput } from "@/lib/component/form/text-input";
+import { Metadata } from "@/lib/component/metadata";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.page.page-title",
+    defaultMessage: "Judge",
+  },
+  pageDescription: {
+    id: "app.page.page-description",
+    defaultMessage:
+      "Judge web application homepage. Join a contest or enter as root.",
+  },
   joinNotFound: {
     id: "app.page.join-not-found",
     defaultMessage: "Not found",
@@ -88,47 +98,59 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-full flex justify-center items-center">
-      <Form
-        onSubmit={form.handleSubmit(joinContest)}
-        disabled={joinContestState.isLoading}
-        containerClassName="p-10 w-full max-w-[400] bg-base-100"
-      >
-        <h1 className="text-3xl font-bold" data-testid="title">
-          <FormattedMessage {...messages.title} />
-        </h1>
-        <div className="my-6">
-          <TextInput
-            form={form}
-            name="slug"
-            label={messages.slug}
-            data-testid="slug"
-          />
-        </div>
-        <div className="flex flex-col">
-          <Button
-            type="submit"
-            label={messages.join}
-            rightIcon={
-              <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />
-            }
-            isLoading={joinContestState.isLoading}
-            className="btn-primary w-full"
-            data-testid="join"
-          />
-          <div className="divider" />
-          <Button
-            type="button"
-            label={messages.enterRoot}
-            rightIcon={
-              <FontAwesomeIcon icon={faChevronRight} className="text-sm ms-2" />
-            }
-            onClick={() => redirectRoot()}
-            className="btn-outline btn-primary w-full"
-            data-testid="root"
-          />
-        </div>
-      </Form>
-    </div>
+    <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
+      <div className="min-h-full flex justify-center items-center">
+        <Form
+          onSubmit={form.handleSubmit(joinContest)}
+          disabled={joinContestState.isLoading}
+          containerClassName="p-10 w-full max-w-[400] bg-base-100"
+        >
+          <h1 className="text-3xl font-bold" data-testid="title">
+            <FormattedMessage {...messages.title} />
+          </h1>
+          <div className="my-6">
+            <TextInput
+              form={form}
+              name="slug"
+              label={messages.slug}
+              data-testid="slug"
+            />
+          </div>
+          <div className="flex flex-col">
+            <Button
+              type="submit"
+              label={messages.join}
+              rightIcon={
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  className="text-sm ms-2"
+                />
+              }
+              isLoading={joinContestState.isLoading}
+              className="btn-primary w-full"
+              data-testid="join"
+            />
+            <div className="divider" />
+            <Button
+              type="button"
+              label={messages.enterRoot}
+              rightIcon={
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  className="text-sm ms-2"
+                />
+              }
+              onClick={() => redirectRoot()}
+              className="btn-outline btn-primary w-full"
+              data-testid="root"
+            />
+          </div>
+        </Form>
+      </div>
+    </>
   );
 }
