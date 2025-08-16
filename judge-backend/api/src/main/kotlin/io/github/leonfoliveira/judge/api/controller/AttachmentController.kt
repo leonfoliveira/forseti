@@ -1,11 +1,17 @@
 package io.github.leonfoliveira.judge.api.controller
 
 import io.github.leonfoliveira.judge.api.dto.response.AttachmentResponseDTO
+import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.github.leonfoliveira.judge.api.util.ApiMetrics
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
 import io.micrometer.core.annotation.Timed
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.slf4j.LoggerFactory
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
@@ -30,6 +36,28 @@ class AttachmentController(
 
     @Timed(ApiMetrics.API_ATTACHMENT_UPLOAD_TIME)
     @PostMapping
+    @Operation(
+        summary = "Upload an attachment",
+        description = "Uploads a file as an attachment and returns its metadata containing its ID to later reference.",
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Attachment uploaded successfully",
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid request format",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ],
+    )
     @Private
     @Transactional
     fun uploadAttachment(
@@ -42,6 +70,23 @@ class AttachmentController(
 
     @Timed(ApiMetrics.API_ATTACHMENT_DOWNLOAD_TIME)
     @GetMapping("/{id}")
+    @Operation(
+        summary = "Downloads an attachment",
+        description = "Downloads an attachment by its ID. The ID is returned when the attachment is uploaded.",
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                description = "Attachment downloaded successfully",
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Attachment not found",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ],
+    )
     @Transactional(readOnly = true)
     fun downloadAttachment(
         @PathVariable("id") id: UUID,

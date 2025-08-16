@@ -23,10 +23,10 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 import java.util.UUID
 
-@WebMvcTest(controllers = [ProblemContest::class])
+@WebMvcTest(controllers = [ProblemController::class])
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = [ProblemContest::class])
-class ProblemContestTest(
+@ContextConfiguration(classes = [ProblemController::class])
+class ProblemControllerTest(
     @MockkBean(relaxed = true)
     private val contestAuthFilter: ContestAuthFilter,
     @MockkBean(relaxed = true)

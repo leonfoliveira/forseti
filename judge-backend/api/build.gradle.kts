@@ -4,6 +4,7 @@ kotlin {
 
 dependencies {
     implementation(project(":common"))
+    implementation(rootProject.libs.springdoc.openapi.ui)
 
     testImplementation(testFixtures(project(":common")))
 }

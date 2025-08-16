@@ -2,6 +2,7 @@ package io.github.leonfoliveira.judge.api.controller.advice
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.common.domain.exception.BusinessException
+import io.github.leonfoliveira.judge.common.domain.exception.ConflictException
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
@@ -28,6 +29,7 @@ class GlobalExceptionHandler {
             NotFoundException::class to HttpStatus.NOT_FOUND,
             UnauthorizedException::class to HttpStatus.UNAUTHORIZED,
             ForbiddenException::class to HttpStatus.FORBIDDEN,
+            ConflictException::class to HttpStatus.CONFLICT,
         )
 
     @ExceptionHandler(BusinessException::class)

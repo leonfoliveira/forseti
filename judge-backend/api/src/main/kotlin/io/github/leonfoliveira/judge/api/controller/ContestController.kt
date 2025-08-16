@@ -1,5 +1,6 @@
 package io.github.leonfoliveira.judge.api.controller
 
+import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.announcement.AnnouncementResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.clarification.ClarificationResponseDTO
@@ -31,6 +32,11 @@ import io.github.leonfoliveira.judge.common.service.dto.input.contest.CreateCont
 import io.github.leonfoliveira.judge.common.service.dto.input.contest.UpdateContestInputDTO
 import io.github.leonfoliveira.judge.common.service.dto.output.ContestLeaderboardOutputDTO
 import io.github.leonfoliveira.judge.common.service.submission.FindSubmissionService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
@@ -61,6 +67,32 @@ class ContestController(
     @PostMapping
     @Private(Member.Type.ROOT)
     @Transactional
+    @Operation(summary = "Create a contest")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Contest created successfully"),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid request format",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Forbidden",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "409",
+                description = "Conflict",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun createContest(
         @RequestBody body: CreateContestInputDTO,
     ): ResponseEntity<ContestFullResponseDTO> {
@@ -72,6 +104,37 @@ class ContestController(
     @PutMapping
     @Private(Member.Type.ROOT)
     @Transactional
+    @Operation(summary = "Update a contest")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Contest updated successfully"),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid request format",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Forbidden",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Contest not found",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "409",
+                description = "Conflict",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun updateContest(
         @RequestBody body: UpdateContestInputDTO,
     ): ResponseEntity<ContestFullResponseDTO> {
@@ -83,6 +146,22 @@ class ContestController(
     @GetMapping("/metadata")
     @Private(Member.Type.ROOT)
     @Transactional(readOnly = true)
+    @Operation(summary = "Find all contest metadata")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Contest metadata found successfully"),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Forbidden",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun findAllContestMetadata(): ResponseEntity<List<ContestMetadataResponseDTO>> {
         logger.info("[GET] /v1/contests/metadata")
         val contests = findContestService.findAll()
@@ -91,6 +170,17 @@ class ContestController(
 
     @GetMapping("/slug/{slug}/metadata")
     @Transactional(readOnly = true)
+    @Operation(summary = "Find contest metadata by slug")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Contest metadata found successfully"),
+            ApiResponse(
+                responseCode = "404",
+                description = "Contest not found",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun findContestMetadataBySlug(
         @PathVariable slug: String,
     ): ResponseEntity<ContestMetadataResponseDTO> {
@@ -101,6 +191,22 @@ class ContestController(
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
+    @Operation(summary = "Find contest by id")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Contest found successfully"),
+            ApiResponse(
+                responseCode = "403",
+                description = "Forbidden",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Contest not found",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun findContestById(
         @PathVariable id: UUID,
     ): ResponseEntity<ContestPublicOutputDTO> {
@@ -115,6 +221,27 @@ class ContestController(
     @GetMapping("/{id}/full")
     @Private(Member.Type.ROOT)
     @Transactional(readOnly = true)
+    @Operation(summary = "Find full contest by id")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Contest found successfully"),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Forbidden",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Contest not found",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun findFullContestById(
         @PathVariable id: UUID,
     ): ResponseEntity<ContestFullResponseDTO> {
@@ -125,6 +252,22 @@ class ContestController(
 
     @GetMapping("/{id}/leaderboard")
     @Transactional(readOnly = true)
+    @Operation(summary = "Find contest leaderboard by id")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Contest leaderboard found successfully"),
+            ApiResponse(
+                responseCode = "403",
+                description = "Forbidden",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Contest not found",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun findContestLeaderboardById(
         @PathVariable id: UUID,
     ): ResponseEntity<ContestLeaderboardOutputDTO> {
@@ -140,6 +283,27 @@ class ContestController(
     @PutMapping("/{id}/start")
     @Private(Member.Type.ROOT)
     @Transactional
+    @Operation(summary = "Force start a contest")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Contest started successfully"),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Forbidden",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Contest not found",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun forceStartContest(
         @PathVariable id: UUID,
     ): ResponseEntity<ContestMetadataResponseDTO> {
@@ -151,6 +315,27 @@ class ContestController(
     @PutMapping("/{id}/end")
     @Private(Member.Type.ROOT)
     @Transactional
+    @Operation(summary = "Force end a contest")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Contest ended successfully"),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Forbidden",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Contest not found",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun forceEndContest(
         @PathVariable id: UUID,
     ): ResponseEntity<ContestMetadataResponseDTO> {
@@ -162,6 +347,27 @@ class ContestController(
     @DeleteMapping("/{id}")
     @Private(Member.Type.ROOT)
     @Transactional
+    @Operation(summary = "Delete a contest")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "204", description = "Contest deleted successfully"),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Forbidden",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Contest not found",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun deleteContest(
         @PathVariable id: UUID,
     ): ResponseEntity<Void> {
@@ -172,6 +378,22 @@ class ContestController(
 
     @GetMapping("/{id}/submissions")
     @Transactional(readOnly = true)
+    @Operation(summary = "Find all contest submissions")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Submissions found successfully"),
+            ApiResponse(
+                responseCode = "403",
+                description = "Forbidden",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Contest not found",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun findAllContestSubmissions(
         @PathVariable id: UUID,
     ): ResponseEntity<List<SubmissionPublicResponseDTO>> {
@@ -183,6 +405,27 @@ class ContestController(
     @GetMapping("/{id}/submissions/full")
     @Private(Member.Type.JUDGE)
     @Transactional(readOnly = true)
+    @Operation(summary = "Find all contest full submissions")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Submissions found successfully"),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Forbidden",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Contest not found",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun findAllContestFullSubmissions(
         @PathVariable id: UUID,
     ): ResponseEntity<List<SubmissionFullResponseDTO>> {
@@ -195,6 +438,32 @@ class ContestController(
     @PostMapping("/{id}/announcements")
     @Private(Member.Type.JUDGE)
     @Transactional
+    @Operation(summary = "Create an announcement")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Announcement created successfully"),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid request format",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Forbidden",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Contest not found",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun createAnnouncement(
         @PathVariable id: UUID,
         @RequestBody body: CreateAnnouncementInputDTO,
@@ -209,6 +478,32 @@ class ContestController(
     @PostMapping("/{id}/clarifications")
     @Private(Member.Type.CONTESTANT, Member.Type.JUDGE)
     @Transactional
+    @Operation(summary = "Create a clarification")
+    @ApiResponses(
+        value = [
+            ApiResponse(responseCode = "200", description = "Clarification created successfully"),
+            ApiResponse(
+                responseCode = "400",
+                description = "Invalid request format",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "401",
+                description = "Unauthorized",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "Forbidden",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Contest not found",
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+            ),
+        ]
+    )
     fun createClarification(
         @PathVariable id: UUID,
         @RequestBody body: CreateClarificationInputDTO,

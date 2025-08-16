@@ -19,6 +19,7 @@ postgresql = "42.7.5"
 snakeyaml = "2.4"
 spring-boot = "3.4.5"
 spring-cloud = "3.3.0"
+springdoc-openapi = "2.8.9"
 springmockk = "4.0.2"
 testcontainers = "1.21.0"
 
@@ -53,6 +54,7 @@ spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-te
 spring-cloud-starter-feign = { module = "org.springframework.cloud:spring-cloud-starter-openfeign", version.ref = "feign" }
 spring-cloud-starter-s3 = { module = "io.awspring.cloud:spring-cloud-aws-starter-s3", version.ref = "spring-cloud" }
 spring-cloud-starter-sqs = { module = "io.awspring.cloud:spring-cloud-aws-starter-sqs", version.ref = "spring-cloud" }
+springdoc-openapi-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
 springmockk = { module = "com.ninja-squad:springmockk", version.ref = "springmockk" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainers-localstack = { module = "org.testcontainers:localstack", version.ref = "testcontainers" }
