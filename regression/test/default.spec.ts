@@ -1,5 +1,7 @@
-import { expect, test } from "@playwright/test";
 import path from "node:path";
+
+import { expect, test } from "@playwright/test";
+
 import { DateUtil } from "./util/date-utils";
 
 const slug = Math.random().toString(36).substring(2, 15);
@@ -29,7 +31,7 @@ test("Default contest behaviour", async ({ page }) => {
   await page
     .getByLabel("End at")
     .fill(
-      DateUtil.toDateInputFormat(new Date(Date.now() + 1000 * 60 * 60 * 2))
+      DateUtil.toDateInputFormat(new Date(Date.now() + 1000 * 60 * 60 * 2)),
     );
 
   await page.getByTestId("member-add").click();
@@ -91,7 +93,7 @@ test("Default contest behaviour", async ({ page }) => {
     .setInputFiles([path.join(__dirname, "./files/code_wrong_answer.py")]);
   await page.getByRole("button", { name: "Submit" }).click();
   await expect(
-    page.locator("tr").nth(rowsLength).locator("td").nth(3)
+    page.locator("tr").nth(rowsLength).locator("td").nth(3),
   ).toHaveText("Wrong Answer");
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
@@ -106,7 +108,7 @@ test("Default contest behaviour", async ({ page }) => {
       .locator("tr")
       .nth(rowsLength + 1)
       .locator("td")
-      .nth(3)
+      .nth(3),
   ).toHaveText("Time Limit Exceeded");
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
@@ -119,7 +121,7 @@ test("Default contest behaviour", async ({ page }) => {
       .locator("tr")
       .nth(rowsLength + 2)
       .locator("td")
-      .nth(3)
+      .nth(3),
   ).toHaveText("Runtime Error");
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
@@ -134,7 +136,7 @@ test("Default contest behaviour", async ({ page }) => {
       .locator("tr")
       .nth(rowsLength + 3)
       .locator("td")
-      .nth(3)
+      .nth(3),
   ).toHaveText("Memory Limit Exceeded");
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
@@ -147,7 +149,7 @@ test("Default contest behaviour", async ({ page }) => {
       .locator("tr")
       .nth(rowsLength + 4)
       .locator("td")
-      .nth(3)
+      .nth(3),
   ).toHaveText("Accepted");
 
   // Make clarifications
@@ -160,7 +162,7 @@ test("Default contest behaviour", async ({ page }) => {
   await page.getByRole("button", { name: "Submit" }).click();
   await expect(page.getByText("Contestant | Problem A")).toBeVisible();
   await expect(
-    page.getByText("Could you clarify the input format?").first()
+    page.getByText("Could you clarify the input format?").first(),
   ).toBeVisible();
 
   // Redirect to contestant sign-in page
@@ -192,6 +194,6 @@ test("Default contest behaviour", async ({ page }) => {
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(page.getByText("RE: Judge")).toBeVisible();
   await expect(
-    page.getByText("The input format is a list of integers")
+    page.getByText("The input format is a list of integers"),
   ).toBeVisible();
 });
