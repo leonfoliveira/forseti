@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { defineMessages, FormattedMessage } from "react-intl";
+import { defineMessages, FormattedMessage, useIntl } from "react-intl";
 
 import {
   announcementListener,
@@ -60,6 +60,7 @@ export function ContestantDashboardProvider({
   const errorHandler = useErrorHandler();
   const alert = useAlert();
   const toast = useToast();
+  const intl = useIntl();
 
   useEffect(() => {
     const listenerClient = listenerClientFactory.create();
@@ -158,10 +159,8 @@ export function ContestantDashboardProvider({
       ...messages.problemAnswer,
       values: {
         letter: submission.problem.letter,
-        answer: (
-          <FormattedMessage
-            {...globalMessages.submissionAnswer[submission.answer]}
-          />
+        answer: intl.formatMessage(
+          globalMessages.submissionAnswer[submission.answer],
         ),
       },
     };

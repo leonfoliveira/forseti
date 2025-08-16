@@ -36,6 +36,10 @@ const messages = defineMessages({
     id: "lib.provider.judge-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
+  newClarification: {
+    id: "lib.provider.judge-dashboard-provider.new-clarification",
+    defaultMessage: "New clarification",
+  },
 });
 
 export function JudgeDashboardProvider({
@@ -135,6 +139,9 @@ export function JudgeDashboardProvider({
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
     dispatch(judgeDashboardSlice.actions.mergeClarification(clarification));
+    if (!clarification.parentId) {
+      toast.info(messages.newClarification);
+    }
   }
 
   function deleteClarification({ id }: { id: string }) {

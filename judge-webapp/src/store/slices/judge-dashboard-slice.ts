@@ -73,11 +73,6 @@ export const judgeDashboardSlice = createSlice({
           parent.children = merge(parent.children, action.payload);
         }
       }
-
-      state.data!.contest.clarifications = merge(
-        state.data!.contest.clarifications,
-        action.payload,
-      );
     },
     deleteClarification(state, action: { payload: string }) {
       state.data!.contest.clarifications =

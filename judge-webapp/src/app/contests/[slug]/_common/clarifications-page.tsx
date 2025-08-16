@@ -44,11 +44,11 @@ const messages = defineMessages({
   },
   problemLabel: {
     id: "app.contests.[slug]._common.clarifications-page.problem-label",
-    defaultMessage: "Problem",
+    defaultMessage: "Problem (optional)",
   },
   problemOption: {
     id: "app.contests.[slug]._common.clarifications-page.problem-option",
-    defaultMessage: "{letter}: {title}",
+    defaultMessage: "{letter}. {title}",
   },
   submitLabel: {
     id: "app.contests.[slug]._common.clarifications-page.submit-label",
@@ -273,7 +273,7 @@ export function ClarificationsPage({
                       <FormattedMessage
                         {...messages.headerAnswer}
                         values={{
-                          contestant: clarification.children[0].member.name,
+                          judge: clarification.children[0].member.name,
                         }}
                       />
                     </p>

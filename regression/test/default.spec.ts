@@ -22,7 +22,7 @@ test("Default contest behaviour", async ({ page }) => {
   // Fill in form
   await page.getByLabel("Slug").fill(slug);
   await page.getByLabel("Title").fill("Test Contest");
-  await page.getByLabel("Python 3.13.3").click();
+  await page.getByLabel("Python 3.13").click();
   await page
     .getByLabel("Start at")
     .fill(DateUtil.toDateInputFormat(new Date(Date.now() + 1000 * 60 * 60)));
@@ -65,12 +65,12 @@ test("Default contest behaviour", async ({ page }) => {
   const row = page.locator(`tr:has(td:first-child:text-is("${slug}"))`);
   await row.getByRole("button", { name: "Start" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(row.locator("td").nth(4)).toHaveText("In Progress");
+  await expect(row.locator("td").nth(4)).toHaveText("In progress");
 
   // Redirect to contestant sign-in page
   await page.goto("/");
-  await page.getByLabel("Contest").fill(slug);
-  await page.getByRole("button", { name: "Join Contest" }).click();
+  await page.getByLabel("Slug").fill(slug);
+  await page.getByRole("button", { name: "Join" }).click();
   await expect(page).toHaveURL(`/contests/${slug}/sign-in`);
 
   // Sign in as contestant
@@ -82,7 +82,7 @@ test("Default contest behaviour", async ({ page }) => {
   // Make submissions
   await page.getByText("Submissions").click();
   await expect(page).toHaveURL(`/contests/${slug}/contestant/submissions`);
-  await page.getByLabel("Language").selectOption({ label: "Python 3.13.3" });
+  await page.getByLabel("Language").selectOption({ label: "Python 3.13" });
   const rowsLength = await page.locator("tr").count();
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
@@ -92,7 +92,7 @@ test("Default contest behaviour", async ({ page }) => {
   await page.getByRole("button", { name: "Submit" }).click();
   await expect(
     page.locator("tr").nth(rowsLength).locator("td").nth(3)
-  ).toHaveText("Wrong answer");
+  ).toHaveText("Wrong Answer");
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
   await page
@@ -107,7 +107,7 @@ test("Default contest behaviour", async ({ page }) => {
       .nth(rowsLength + 1)
       .locator("td")
       .nth(3)
-  ).toHaveText("Time limit exceeded");
+  ).toHaveText("Time Limit Exceeded");
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
   await page
@@ -120,7 +120,7 @@ test("Default contest behaviour", async ({ page }) => {
       .nth(rowsLength + 2)
       .locator("td")
       .nth(3)
-  ).toHaveText("Runtime error");
+  ).toHaveText("Runtime Error");
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
   await page
@@ -135,7 +135,7 @@ test("Default contest behaviour", async ({ page }) => {
       .nth(rowsLength + 3)
       .locator("td")
       .nth(3)
-  ).toHaveText("Memory limit exceeded");
+  ).toHaveText("Memory Limit Exceeded");
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
   await page
@@ -157,7 +157,7 @@ test("Default contest behaviour", async ({ page }) => {
     .getByLabel("Problem (optional)")
     .selectOption({ label: "A. Two Sum" });
   await page.getByLabel("Text").fill("Could you clarify the input format?");
-  await page.getByRole("button", { name: "Create" }).click();
+  await page.getByRole("button", { name: "Submit" }).click();
   await expect(page.getByText("Contestant | Problem A")).toBeVisible();
   await expect(
     page.getByText("Could you clarify the input format?").first()
@@ -165,8 +165,8 @@ test("Default contest behaviour", async ({ page }) => {
 
   // Redirect to contestant sign-in page
   await page.goto("/");
-  await page.getByLabel("Contest").fill(slug);
-  await page.getByRole("button", { name: "Join Contest" }).click();
+  await page.getByLabel("Slug").fill(slug);
+  await page.getByRole("button", { name: "Join" }).click();
   await expect(page).toHaveURL(`/contests/${slug}/sign-in`);
 
   // Sign in as Judge
@@ -180,9 +180,9 @@ test("Default contest behaviour", async ({ page }) => {
   await expect(page).toHaveURL(`/contests/${slug}/judge/submissions`);
   const submissionsRow = page.locator("tr").last();
   await submissionsRow.getByRole("button", { name: "Update" }).click();
-  await page.getByLabel("Answer").selectOption({ label: "Wrong answer" });
+  await page.getByLabel("Answer").selectOption({ label: "Wrong Answer" });
   await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(submissionsRow.locator("td").nth(4)).toHaveText("Wrong answer");
+  await expect(submissionsRow.locator("td").nth(4)).toHaveText("Wrong Answer");
 
   // Answer clarification
   await page.getByText("Clarifications").click();
@@ -190,7 +190,7 @@ test("Default contest behaviour", async ({ page }) => {
   await page.getByText("Answer").first().click();
   await page.getByLabel("Text").fill("The input format is a list of integers");
   await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(page.getByText("R: Judge")).toBeVisible();
+  await expect(page.getByText("RE: Judge")).toBeVisible();
   await expect(
     page.getByText("The input format is a list of integers")
   ).toBeVisible();

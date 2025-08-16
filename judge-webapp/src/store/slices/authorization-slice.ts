@@ -27,11 +27,6 @@ export const authorizationSlice = createSlice({
       state.error = action.payload;
       state.data = null;
     },
-    reset: (state) => {
-      state.isLoading = true;
-      state.error = null;
-      state.data = null;
-    },
   },
 });
 
