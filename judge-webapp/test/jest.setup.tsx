@@ -82,15 +82,7 @@ jest.mock("@/store/slices/authorization-slice", () => ({
   ...jest.requireActual("@/store/slices/authorization-slice"),
   useAuthorization: mockUseAuthorization,
 }));
-export const mockSetAuthorization = jest.fn();
-export const mockClearAuthorization = jest.fn();
-export const mockUseSetAuthorization = jest.fn().mockReturnValue({
-  setAuthorization: mockSetAuthorization,
-  clearAuthorization: mockClearAuthorization,
-});
-jest.mock("@/lib/provider/authorization-provider", () => ({
-  useSetAuthorization: mockUseSetAuthorization,
-}));
+jest.mock("@/lib/provider/authorization-provider");
 
 // Contest metadata
 export const mockUseContestMetadata = jest.fn().mockReturnValue({

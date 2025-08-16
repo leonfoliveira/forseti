@@ -1,13 +1,13 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { redirect } from "next/navigation";
+import { act } from "react";
 
+import { authenticationService } from "@/config/composition";
 import { CountdownClock } from "@/lib/component/countdown-clock";
 import { Navbar } from "@/lib/component/navbar";
 import { useTheme } from "@/lib/util/theme-hook";
-import {
-  mockClearAuthorization,
-  mockUseAuthorization,
-} from "@/test/jest.setup";
+import { authorizationSlice } from "@/store/slices/authorization-slice";
+import { mockAppDispatch, mockUseAuthorization } from "@/test/jest.setup";
 
 jest.mock("@/lib/util/theme-hook", () => ({
   useTheme: jest.fn(),
@@ -15,13 +15,6 @@ jest.mock("@/lib/util/theme-hook", () => ({
 
 jest.mock("@/lib/component/countdown-clock", () => ({
   CountdownClock: jest.fn(),
-}));
-
-jest.mock("next/navigation", () => ({
-  redirect: jest.fn(),
-  RedirectType: {
-    push: "push",
-  },
 }));
 
 describe("Navbar", () => {
@@ -54,13 +47,13 @@ describe("Navbar", () => {
   it("renders countdown clock when contest is ongoing", () => {
     const contestMetadata = {
       title: "My Contest",
-      startAt: new Date(Date.now() + 10000),
+      endAt: new Date(Date.now() + 10000).toISOString(),
     } as any;
     render(<Navbar contestMetadata={contestMetadata} signInPath="/sign-in" />);
     expect(CountdownClock).toHaveBeenCalledWith(
       {
         className: expect.any(String),
-        to: new Date(contestMetadata.startAt),
+        to: new Date(contestMetadata.endAt),
       },
       undefined,
     );
@@ -92,10 +85,15 @@ describe("Navbar", () => {
     expect(screen.getByTestId("member")).toHaveTextContent("Test User");
   });
 
-  it("calls redirect on sign out click when authorized", () => {
+  it("calls redirect on sign out click when authorized", async () => {
     render(<Navbar signInPath="/sign-in" />);
     fireEvent.click(screen.getByTestId("member"));
-    fireEvent.click(screen.getByTestId("sign"));
-    expect(mockClearAuthorization).toHaveBeenCalledWith("/sign-in");
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("sign"));
+    });
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      authorizationSlice.actions.reset(),
+    );
+    expect(authenticationService.cleanAuthorization).toHaveBeenCalled();
   });
 });

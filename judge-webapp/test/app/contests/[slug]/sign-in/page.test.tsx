@@ -4,12 +4,8 @@ import MemberSignInPage from "@/app/contests/[slug]/sign-in/page";
 import { authenticationService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import {
-  mockAlert,
-  mockClearAuthorization,
-  mockRouter,
-  mockSetAuthorization,
-} from "@/test/jest.setup";
+import { authorizationSlice } from "@/store/slices/authorization-slice";
+import { mockAlert, mockAppDispatch, mockRouter } from "@/test/jest.setup";
 
 jest.mock("@/config/composition");
 jest.mock("@/store/slices/contest-metadata-slice", () => ({
@@ -24,7 +20,6 @@ describe("memberSignInPage", () => {
   it("renders the sign-in form", () => {
     render(<MemberSignInPage />);
 
-    expect(mockClearAuthorization).not.toHaveBeenCalled();
     expect(screen.getByTestId("title")).toHaveTextContent("Sign In");
     expect(screen.getByTestId("description")).toHaveTextContent(
       "Contest Title",
@@ -95,7 +90,9 @@ describe("memberSignInPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("sign-in"));
     });
-    expect(mockSetAuthorization).toHaveBeenCalledWith(authorization);
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      authorizationSlice.actions.success(authorization),
+    );
     expect(mockRouter.push).toHaveBeenCalledWith(
       routes.CONTEST("contest-slug"),
     );

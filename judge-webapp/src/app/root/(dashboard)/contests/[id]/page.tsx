@@ -4,7 +4,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { redirect } from "next/navigation";
 import { use, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { defineMessages } from "react-intl";
+import { defineMessages, FormattedMessage } from "react-intl";
 
 import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
@@ -15,11 +15,22 @@ import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
+import { Metadata } from "@/lib/component/metadata";
+import { DialogModal } from "@/lib/component/modal/dialog-modal";
 import { useLoadableState } from "@/lib/util/loadable-state";
+import { useModal } from "@/lib/util/modal-hook";
 import { TestCaseValidator } from "@/lib/util/test-case-validator";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.root.(dashboard).contests.[id].page.page-title",
+    defaultMessage: "Judge - Edit Contest",
+  },
+  pageDescription: {
+    id: "app.root.(dashboard).contests.[id].page.page-description",
+    defaultMessage: "Edit contest details and problems.",
+  },
   loadError: {
     id: "app.root.(dashboard).contests.[id].page.load-error",
     defaultMessage: "Error loading contest data",
@@ -35,6 +46,10 @@ const messages = defineMessages({
   updateError: {
     id: "app.root.(dashboard).contests.[id].page.update-error",
     defaultMessage: "Error updating contest data",
+  },
+  confirmUpdate: {
+    id: "app.root.(dashboard).contests._component.contest-form.confirm-update",
+    defaultMessage: "Are you sure you want to update this contest?",
   },
 });
 
@@ -53,6 +68,7 @@ export default function RootEditContestPage({
   const updateContestState = useLoadableState<ContestFullResponseDTO>();
 
   const alert = useAlert();
+  const saveModal = useModal<ContestFormType>();
 
   const form = useForm<ContestFormType>({
     resolver: joiResolver(contestFormSchema),
@@ -83,23 +99,11 @@ export default function RootEditContestPage({
     updateContestState.start();
     try {
       const input = ContestFormMap.toUpdateRequestDTO(data);
-
-      const validations = await TestCaseValidator.validateProblemList(
-        input.problems,
-      );
-      validations.forEach((it, idx) => {
-        if (!it.isValid) {
-          form.setError(`problems.${idx}.testCases`, {
-            message: messages.invalidTestCase.id,
-          });
-        }
-      });
-      if (!!validations.find((it) => !it.isValid)) return;
-
       const contest = await contestService.updateContest(input);
       form.reset(ContestFormMap.fromResponseDTO(contest));
-      updateContestState.finish(contest);
+      saveModal.close();
       alert.success(messages.updateSuccess);
+      updateContestState.finish(contest);
     } catch (error) {
       updateContestState.fail(error, {
         [UnauthorizedException.name]: () => redirect(routes.ROOT_SIGN_IN),
@@ -109,12 +113,43 @@ export default function RootEditContestPage({
     }
   }
 
+  async function onSubmit(data: ContestFormType) {
+    const validations = await TestCaseValidator.validateProblemList(
+      data.problems || [],
+    );
+    validations.forEach((it, idx) => {
+      if (!it.isValid) {
+        form.setError(`problems.${idx}.newTestCases`, {
+          message: messages.invalidTestCase.id,
+        });
+      }
+    });
+    if (validations.find((it) => !it.isValid)) return;
+
+    saveModal.open(data);
+  }
+
   return (
-    <ContestForm
-      contestState={contestState}
-      saveState={updateContestState}
-      onSubmit={updateContest}
-      form={form}
-    />
+    <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
+      <ContestForm
+        contestState={contestState}
+        saveState={updateContestState}
+        onSubmit={onSubmit}
+        form={form}
+      />
+      <DialogModal
+        modal={saveModal}
+        onConfirm={updateContest}
+        isLoading={updateContestState.isLoading}
+      >
+        <p className="py-4">
+          <FormattedMessage {...messages.confirmUpdate} />
+        </p>
+      </DialogModal>
+    </>
   );
 }

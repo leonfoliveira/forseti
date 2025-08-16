@@ -55,7 +55,10 @@ export default function RootLayout({
   return (
     <div>
       <Navbar signInPath={routes.ROOT_SIGN_IN} />
-      {buildLinks()}
+      <nav className="tabs tabs-lift w-full bg-base-100">
+        {buildLinks()}
+        <span className="grow border-b border-base-300" />
+      </nav>
       <div className="p-10 bg-base-100">{children}</div>
     </div>
   );

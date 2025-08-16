@@ -3,7 +3,7 @@
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { defineMessages } from "react-intl";
+import { defineMessages, FormattedMessage } from "react-intl";
 
 import { ContestForm } from "@/app/root/(dashboard)/contests/_component/contest-form";
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
@@ -12,11 +12,22 @@ import { contestFormSchema } from "@/app/root/(dashboard)/contests/_form/contest
 import { contestService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
+import { Metadata } from "@/lib/component/metadata";
+import { DialogModal } from "@/lib/component/modal/dialog-modal";
 import { useLoadableState } from "@/lib/util/loadable-state";
+import { useModal } from "@/lib/util/modal-hook";
 import { TestCaseValidator } from "@/lib/util/test-case-validator";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.root.(dashboard).contests.new.page.page-title",
+    defaultMessage: "Judge - New Contest",
+  },
+  pageDescription: {
+    id: "app.root.(dashboard).contests.new.page.page-description",
+    defaultMessage: "Create a new contest and configure its details.",
+  },
   invalidTestCase: {
     id: "app.root.(dashboard).contests.new.page.invalid-test-case",
     defaultMessage: "Must have exactly two columns and at least one row",
@@ -29,6 +40,10 @@ const messages = defineMessages({
     id: "app.root.(dashboard).contests.new.page.create-error",
     defaultMessage: "Error creating contest",
   },
+  confirmCreate: {
+    id: "app.root.(dashboard).contests.new.page.confirm-create",
+    defaultMessage: "Are you sure you want to create this contest?",
+  },
 });
 
 export default function RootNewContestPage() {
@@ -36,6 +51,7 @@ export default function RootNewContestPage() {
 
   const alert = useAlert();
   const router = useRouter();
+  const saveModal = useModal<ContestFormType>();
 
   const form = useForm<ContestFormType>({
     resolver: joiResolver(contestFormSchema),
@@ -49,19 +65,6 @@ export default function RootNewContestPage() {
     createContestState.start();
     try {
       const input = ContestFormMap.toCreateRequestDTO(data);
-
-      const validations = await TestCaseValidator.validateProblemList(
-        input.problems,
-      );
-      validations.forEach((it, idx) => {
-        if (!it.isValid) {
-          form.setError(`problems.${idx}.testCases`, {
-            message: messages.invalidTestCase.id,
-          });
-        }
-      });
-      if (!!validations.find((it) => !it.isValid)) return;
-
       const contest = await contestService.createContest(input);
       alert.success(messages.createSuccess);
       router.push(routes.ROOT_CONTESTS_EDIT(contest.id));
@@ -72,11 +75,42 @@ export default function RootNewContestPage() {
     }
   }
 
+  async function onSubmit(data: ContestFormType) {
+    const validations = await TestCaseValidator.validateProblemList(
+      data.problems || [],
+    );
+    validations.forEach((it, idx) => {
+      if (!it.isValid) {
+        form.setError(`problems.${idx}.newTestCases`, {
+          message: messages.invalidTestCase.id,
+        });
+      }
+    });
+    if (validations.find((it) => !it.isValid)) return;
+
+    saveModal.open(data);
+  }
+
   return (
-    <ContestForm
-      saveState={createContestState}
-      onSubmit={createContest}
-      form={form}
-    />
+    <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
+      <ContestForm
+        saveState={createContestState}
+        onSubmit={onSubmit}
+        form={form}
+      />
+      <DialogModal
+        modal={saveModal}
+        onConfirm={createContest}
+        isLoading={createContestState.isLoading}
+      >
+        <p className="py-4">
+          <FormattedMessage {...messages.confirmCreate} />
+        </p>
+      </DialogModal>
+    </>
   );
 }

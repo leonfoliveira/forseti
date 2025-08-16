@@ -12,12 +12,12 @@ describe("rootSignInFormSchema", () => {
         ...validSchema,
         password: undefined,
       }).error?.message,
-    ).toBe("password:required");
+    ).toBe("app.root.sign-in._form.root-sign-in-form-schema.password-required");
     expect(
       rootSignInFormSchema.validate({
         ...validSchema,
         password: "",
       }).error?.message,
-    ).toBe("password:required");
+    ).toBe("app.root.sign-in._form.root-sign-in-form-schema.password-required");
   });
 });

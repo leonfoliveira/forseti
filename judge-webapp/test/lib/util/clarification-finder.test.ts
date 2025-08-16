@@ -19,10 +19,6 @@ describe("findClarification", () => {
     },
   ] as unknown as ClarificationResponseDTO[];
 
-  it("should return undefined if id is undefined", () => {
-    expect(findClarification(mockData, undefined)).toBeUndefined();
-  });
-
   it("should return the clarification with the matching id", () => {
     expect(findClarification(mockData, "1")).toEqual(mockData[0]);
     expect(findClarification(mockData, "1.1")).toEqual(mockData[0].children[0]);

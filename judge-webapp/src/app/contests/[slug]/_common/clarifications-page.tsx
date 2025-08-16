@@ -16,12 +16,21 @@ import { Form } from "@/lib/component/form/form";
 import { Select } from "@/lib/component/form/select";
 import { TextInput } from "@/lib/component/form/text-input";
 import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
+import { Metadata } from "@/lib/component/metadata";
 import { DialogModal } from "@/lib/component/modal/dialog-modal";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useModal } from "@/lib/util/modal-hook";
 import { useAlert } from "@/store/slices/alerts-slice";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.contests.[slug]._common.clarifications-page.page-title",
+    defaultMessage: "Judge - Clarifications",
+  },
+  pageDescription: {
+    id: "app.contests.[slug]._common.clarifications-page.page-description",
+    defaultMessage: "View and request clarifications for contest problems.",
+  },
   createSuccess: {
     id: "app.contests.[slug]._common.clarifications-page.create-success",
     defaultMessage: "Clarification created successfully",
@@ -44,11 +53,11 @@ const messages = defineMessages({
   },
   problemLabel: {
     id: "app.contests.[slug]._common.clarifications-page.problem-label",
-    defaultMessage: "Problem",
+    defaultMessage: "Problem (optional)",
   },
   problemOption: {
     id: "app.contests.[slug]._common.clarifications-page.problem-option",
-    defaultMessage: "{letter}: {title}",
+    defaultMessage: "{letter}. {title}",
   },
   submitLabel: {
     id: "app.contests.[slug]._common.clarifications-page.submit-label",
@@ -77,6 +86,10 @@ const messages = defineMessages({
   deleteConfirmLabel: {
     id: "app.contests.[slug]._common.clarifications-page.delete-confirm-label",
     defaultMessage: "Are you sure you want to delete this clarification?",
+  },
+  deleteTooltip: {
+    id: "app.contests.[slug]._common.clarifications-page.delete-tooltip",
+    defaultMessage: "Delete",
   },
 });
 
@@ -142,6 +155,10 @@ export function ClarificationsPage({
 
   return (
     <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
       {canCreate && (
         <Form
           className="flex flex-col"
@@ -237,6 +254,7 @@ export function ClarificationsPage({
                       className="btn-soft btn-error ml-3"
                       leftIcon={<FontAwesomeIcon icon={faTrash} />}
                       onClick={() => deleteModal.open(clarification.id)}
+                      tooltip={messages.deleteTooltip}
                       data-testid="clarification-delete"
                     />
                   )}
@@ -246,7 +264,7 @@ export function ClarificationsPage({
               {canAnswer && clarification.children.length == 0 && (
                 <div className="flex justify-center absolute bottom-0 w-full translate-y-1/2">
                   <button
-                    className="btn badge badge-soft badge-primary"
+                    className="btn badge badge-primary"
                     onClick={() => {
                       answerForm.reset({
                         text: "",
@@ -273,7 +291,7 @@ export function ClarificationsPage({
                       <FormattedMessage
                         {...messages.headerAnswer}
                         values={{
-                          contestant: clarification.children[0].member.name,
+                          judge: clarification.children[0].member.name,
                         }}
                       />
                     </p>
@@ -313,6 +331,7 @@ export function ClarificationsPage({
       >
         <Form onSubmit={() => answerForm.handleSubmit(createClarification)()}>
           <TextInput
+            multiline
             form={answerForm}
             name="text"
             label={messages.textLabel}

@@ -1,11 +1,6 @@
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { routes } from "@/config/routes";
-import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
-import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useSetAuthorization } from "@/lib/provider/authorization-provider";
+import { useErrorHandler } from "./error-handler-hook";
 
 export type LoadableState<TData> = {
   isLoading: boolean;
@@ -33,8 +28,7 @@ export function useLoadableState<TData>(
     data: undefined,
     error: undefined,
   };
-  const router = useRouter();
-  const { clearAuthorization } = useSetAuthorization();
+  const errorHandler = useErrorHandler();
 
   const [state, setState] = useState<LoadableState<TData>>({
     ...defaultState,
@@ -63,19 +57,9 @@ export function useLoadableState<TData>(
     error: unknown,
     customHandlers: Record<string, (error: Error) => void> = {},
   ) {
-    const handlers: Record<string, (error: Error) => void> = {
-      [UnauthorizedException.name]: () => clearAuthorization(routes.ROOT),
-      [ForbiddenException.name]: () => router.push(routes.FORBIDDEN),
-      [NotFoundException.name]: () => router.push(routes.NOT_FOUND),
-      ...customHandlers,
-    };
-
     const _error = error instanceof Error ? error : new Error(String(error));
+    errorHandler.handle(_error, customHandlers);
     setState({ isLoading: false, data: undefined, error: _error });
-    const handler = handlers[_error.name] || handlers["default"];
-    if (handler !== undefined) {
-      return handler(_error);
-    }
   }
 
   return {

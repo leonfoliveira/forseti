@@ -1,12 +1,15 @@
 import Papa from "papaparse";
 
-import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
+import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 
 export class TestCaseValidator {
   static async validateProblemList(
-    problems: UpdateContestInputDTO["problems"],
+    problems: NonNullable<ContestFormType["problems"]>,
   ): Promise<
-    { problem: UpdateContestInputDTO["problems"][number]; isValid: boolean }[]
+    {
+      problem: NonNullable<ContestFormType["problems"]>[number];
+      isValid: boolean;
+    }[]
   > {
     return await Promise.all(
       problems.map(async (it) => ({

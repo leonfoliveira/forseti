@@ -21,6 +21,7 @@ import { FileInput } from "@/lib/component/form/file-input";
 import { Form } from "@/lib/component/form/form";
 import { Select } from "@/lib/component/form/select";
 import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
+import { Metadata } from "@/lib/component/metadata";
 import { Table } from "@/lib/component/table/table";
 import { TableCell } from "@/lib/component/table/table-cell";
 import { TableRow } from "@/lib/component/table/table-row";
@@ -34,6 +35,14 @@ import {
 import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.contests.[slug].contestant.submissions.page.title",
+    defaultMessage: "Judge - Submissions",
+  },
+  pageDescription: {
+    id: "app.contests.[slug].contestant.submissions.page.description",
+    defaultMessage: "View and submit solutions for contest problems.",
+  },
   createSuccess: {
     id: "app.contests.[slug].contestant.submissions.page.create-success",
     defaultMessage: "Submission created successfully",
@@ -141,7 +150,11 @@ export default function ContestantSubmissionPage() {
   }
 
   return (
-    <div>
+    <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
       <Form
         className="flex flex-col"
         onSubmit={submissionForm.handleSubmit(onCreateSubmission)}
@@ -252,6 +265,6 @@ export default function ContestantSubmissionPage() {
           </p>
         </div>
       ) : null}
-    </div>
+    </>
   );
 }

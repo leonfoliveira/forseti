@@ -12,6 +12,7 @@ import { defineMessages, FormattedMessage } from "react-intl";
 
 import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
 import { contestService } from "@/config/composition";
+import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
@@ -119,30 +120,34 @@ const messages = defineMessages({
   },
   problemTimeLimit: {
     id: "app.root.(dashboard).contests._component.contest-form.problem-time-limit",
-    defaultMessage: "Time Limit",
+    defaultMessage: "Time Limit (ms)",
   },
   problemMemoryLimit: {
     id: "app.root.(dashboard).contests._component.contest-form.problem-memory-limit",
-    defaultMessage: "Memory Limit",
+    defaultMessage: "Memory Limit (MB)",
   },
   problemTestCases: {
     id: "app.root.(dashboard).contests._component.contest-form.problem-test-cases",
-    defaultMessage: "Test Cases",
+    defaultMessage: "Test Cases (csv)",
+  },
+  addTooltip: {
+    id: "app.root.(dashboard).contests._component.contest-form.add-tooltip",
+    defaultMessage: "Add",
+  },
+  removeTooltip: {
+    id: "app.root.(dashboard).contests._component.contest-form.remove-tooltip",
+    defaultMessage: "Remove",
   },
   confirmDelete: {
     id: "app.root.(dashboard).contests._component.contest-form.confirm-delete",
     defaultMessage: "Are you sure you want to delete this contest?",
-  },
-  confirmSave: {
-    id: "app.root.(dashboard).contests._component.contest-form.confirm-save",
-    defaultMessage: "Are you sure you want to save this contest?",
   },
 });
 
 type Props = {
   contestState?: LoadableState<ContestFullResponseDTO>;
   saveState: LoadableState<ContestFullResponseDTO>;
-  onSubmit: (data: ContestFormType) => Promise<void>;
+  onSubmit: (data: ContestFormType) => void;
   form: UseFormReturn<ContestFormType>;
 };
 
@@ -160,7 +165,6 @@ export function ContestForm({
 
   const router = useRouter();
   const deleteModal = useModal();
-  const saveModal = useModal<ContestFormType>();
   const alert = useAlert();
 
   useEffect(() => {
@@ -194,7 +198,7 @@ export function ContestForm({
 
   return (
     <Form
-      onSubmit={form.handleSubmit(saveModal.open)}
+      onSubmit={form.handleSubmit(onSubmit)}
       disabled={
         contestState?.isLoading ||
         saveState.isLoading ||
@@ -206,7 +210,7 @@ export function ContestForm({
           <div className="flex items-center">
             <FontAwesomeIcon
               icon={faChevronLeft}
-              onClick={() => router.push("/root/contests")}
+              onClick={() => router.push(routes.ROOT_CONTESTS)}
               className="cursor-pointer text-2xl"
               data-testid="back"
             />
@@ -340,9 +344,11 @@ export function ContestForm({
                   data-testid="member-password"
                 />
                 <Button
+                  tooltip={messages.removeTooltip}
                   leftIcon={<FontAwesomeIcon icon={faTrash} />}
                   onClick={() => membersFields.remove(index)}
-                  className="btn-error btn-soft mt-[39]"
+                  containerClassName="mt-[39]"
+                  className="btn-error btn-soft"
                   data-testid="member-delete"
                 />
               </Fragment>
@@ -350,11 +356,13 @@ export function ContestForm({
           </div>
           <div className="flex justify-center">
             <Button
+              tooltip={messages.addTooltip}
               leftIcon={<FontAwesomeIcon icon={faPlus} />}
               onClick={() =>
                 membersFields.append({ type: MemberType.CONTESTANT })
               }
-              className="mt-5 px-10"
+              containerClassName="mt-5"
+              className="px-10"
               data-testid="member-add"
             />
           </div>
@@ -399,8 +407,10 @@ export function ContestForm({
                 />
                 <Button
                   leftIcon={<FontAwesomeIcon icon={faTrash} />}
+                  tooltip={messages.removeTooltip}
                   onClick={() => problemsFields.remove(index)}
-                  className="btn-error btn-soft mt-[39]"
+                  containerClassName="mt-[39]"
+                  className="btn-error btn-soft"
                   data-testid="problem-delete"
                 />
                 <span />
@@ -432,10 +442,12 @@ export function ContestForm({
           <div className="flex justify-center">
             <Button
               leftIcon={<FontAwesomeIcon icon={faPlus} />}
+              tooltip={messages.addTooltip}
               onClick={() =>
                 problemsFields.append({ timeLimit: 1000, memoryLimit: 2048 })
               }
-              className="mt-5 px-10"
+              containerClassName="mt-5"
+              className="px-10"
               data-testid="problem-add"
             />
           </div>
@@ -449,16 +461,6 @@ export function ContestForm({
       >
         <p className="py-4">
           <FormattedMessage {...messages.confirmDelete} />
-        </p>
-      </DialogModal>
-
-      <DialogModal
-        modal={saveModal}
-        onConfirm={onSubmit}
-        isLoading={saveState.isLoading}
-      >
-        <p className="py-4">
-          <FormattedMessage {...messages.confirmSave} />
         </p>
       </DialogModal>
     </Form>

@@ -1,5 +1,7 @@
-import { expect, test } from "@playwright/test";
 import path from "node:path";
+
+import { expect, test } from "@playwright/test";
+
 import { DateUtil } from "./util/date-utils";
 
 const slug = Math.random().toString(36).substring(2, 15);
@@ -22,14 +24,14 @@ test("Default contest behaviour", async ({ page }) => {
   // Fill in form
   await page.getByLabel("Slug").fill(slug);
   await page.getByLabel("Title").fill("Test Contest");
-  await page.getByLabel("Python 3.13.3").click();
+  await page.getByLabel("Python 3.13").click();
   await page
     .getByLabel("Start at")
     .fill(DateUtil.toDateInputFormat(new Date(Date.now() + 1000 * 60 * 60)));
   await page
     .getByLabel("End at")
     .fill(
-      DateUtil.toDateInputFormat(new Date(Date.now() + 1000 * 60 * 60 * 2))
+      DateUtil.toDateInputFormat(new Date(Date.now() + 1000 * 60 * 60 * 2)),
     );
 
   await page.getByTestId("member-add").click();
@@ -65,12 +67,15 @@ test("Default contest behaviour", async ({ page }) => {
   const row = page.locator(`tr:has(td:first-child:text-is("${slug}"))`);
   await row.getByRole("button", { name: "Start" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(row.locator("td").nth(4)).toHaveText("In Progress");
+  await expect(row.locator("td").nth(4)).toHaveText("In progress");
+  await page.getByTestId("member").click();
+  await page.getByText("Sign Out").click();
+  await expect(page).toHaveURL("/root/sign-in");
 
   // Redirect to contestant sign-in page
   await page.goto("/");
-  await page.getByLabel("Contest").fill(slug);
-  await page.getByRole("button", { name: "Join Contest" }).click();
+  await page.getByLabel("Slug").fill(slug);
+  await page.getByRole("button", { name: "Join" }).click();
   await expect(page).toHaveURL(`/contests/${slug}/sign-in`);
 
   // Sign in as contestant
@@ -82,7 +87,7 @@ test("Default contest behaviour", async ({ page }) => {
   // Make submissions
   await page.getByText("Submissions").click();
   await expect(page).toHaveURL(`/contests/${slug}/contestant/submissions`);
-  await page.getByLabel("Language").selectOption({ label: "Python 3.13.3" });
+  await page.getByLabel("Language").selectOption({ label: "Python 3.13" });
   const rowsLength = await page.locator("tr").count();
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
@@ -91,8 +96,8 @@ test("Default contest behaviour", async ({ page }) => {
     .setInputFiles([path.join(__dirname, "./files/code_wrong_answer.py")]);
   await page.getByRole("button", { name: "Submit" }).click();
   await expect(
-    page.locator("tr").nth(rowsLength).locator("td").nth(3)
-  ).toHaveText("Wrong answer");
+    page.locator("tr").nth(rowsLength).locator("td").nth(3),
+  ).toHaveText("Wrong Answer");
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
   await page
@@ -106,8 +111,8 @@ test("Default contest behaviour", async ({ page }) => {
       .locator("tr")
       .nth(rowsLength + 1)
       .locator("td")
-      .nth(3)
-  ).toHaveText("Time limit exceeded");
+      .nth(3),
+  ).toHaveText("Time Limit Exceeded");
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
   await page
@@ -119,8 +124,8 @@ test("Default contest behaviour", async ({ page }) => {
       .locator("tr")
       .nth(rowsLength + 2)
       .locator("td")
-      .nth(3)
-  ).toHaveText("Runtime error");
+      .nth(3),
+  ).toHaveText("Runtime Error");
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
   await page
@@ -134,8 +139,8 @@ test("Default contest behaviour", async ({ page }) => {
       .locator("tr")
       .nth(rowsLength + 3)
       .locator("td")
-      .nth(3)
-  ).toHaveText("Memory limit exceeded");
+      .nth(3),
+  ).toHaveText("Memory Limit Exceeded");
 
   await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
   await page
@@ -147,7 +152,7 @@ test("Default contest behaviour", async ({ page }) => {
       .locator("tr")
       .nth(rowsLength + 4)
       .locator("td")
-      .nth(3)
+      .nth(3),
   ).toHaveText("Accepted");
 
   // Make clarifications
@@ -157,16 +162,16 @@ test("Default contest behaviour", async ({ page }) => {
     .getByLabel("Problem (optional)")
     .selectOption({ label: "A. Two Sum" });
   await page.getByLabel("Text").fill("Could you clarify the input format?");
-  await page.getByRole("button", { name: "Create" }).click();
+  await page.getByRole("button", { name: "Submit" }).click();
   await expect(page.getByText("Contestant | Problem A")).toBeVisible();
   await expect(
-    page.getByText("Could you clarify the input format?").first()
+    page.getByText("Could you clarify the input format?").first(),
   ).toBeVisible();
 
   // Redirect to contestant sign-in page
   await page.goto("/");
-  await page.getByLabel("Contest").fill(slug);
-  await page.getByRole("button", { name: "Join Contest" }).click();
+  await page.getByLabel("Slug").fill(slug);
+  await page.getByRole("button", { name: "Join" }).click();
   await expect(page).toHaveURL(`/contests/${slug}/sign-in`);
 
   // Sign in as Judge
@@ -180,9 +185,9 @@ test("Default contest behaviour", async ({ page }) => {
   await expect(page).toHaveURL(`/contests/${slug}/judge/submissions`);
   const submissionsRow = page.locator("tr").last();
   await submissionsRow.getByRole("button", { name: "Update" }).click();
-  await page.getByLabel("Answer").selectOption({ label: "Wrong answer" });
+  await page.getByLabel("Answer").selectOption({ label: "Wrong Answer" });
   await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(submissionsRow.locator("td").nth(4)).toHaveText("Wrong answer");
+  await expect(submissionsRow.locator("td").nth(4)).toHaveText("Wrong Answer");
 
   // Answer clarification
   await page.getByText("Clarifications").click();
@@ -190,8 +195,8 @@ test("Default contest behaviour", async ({ page }) => {
   await page.getByText("Answer").first().click();
   await page.getByLabel("Text").fill("The input format is a list of integers");
   await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(page.getByText("R: Judge")).toBeVisible();
+  await expect(page.getByText("RE: Judge")).toBeVisible();
   await expect(
-    page.getByText("The input format is a list of integers")
+    page.getByText("The input format is a list of integers"),
   ).toBeVisible();
 });

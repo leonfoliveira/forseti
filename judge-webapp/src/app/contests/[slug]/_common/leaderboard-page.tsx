@@ -6,6 +6,7 @@ import { defineMessages, FormattedMessage } from "react-intl";
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
 import { ProblemStatusBadge } from "@/lib/component/badge/problem-status-badge";
+import { Metadata } from "@/lib/component/metadata";
 import { Table } from "@/lib/component/table/table";
 import { TableCell } from "@/lib/component/table/table-cell";
 import { TableRow } from "@/lib/component/table/table-row";
@@ -14,6 +15,14 @@ import { cls } from "@/lib/util/cls";
 import { useAuthorization } from "@/store/slices/authorization-slice";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.contests.[slug]._common.leaderboard-page.page-title",
+    defaultMessage: "Judge - Leaderboard",
+  },
+  pageDescription: {
+    id: "app.contests.[slug]._common.leaderboard-page.page-description",
+    defaultMessage: "View contest leaderboard and rankings.",
+  },
   headerScore: {
     id: "app.contests.[slug]._common.leaderboard-page.header-score",
     defaultMessage: "Score",
@@ -36,7 +45,11 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
   const authorization = useAuthorization();
 
   return (
-    <div>
+    <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
       <Table className="table">
         <TableSection head>
           <TableRow>
@@ -103,6 +116,6 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
           ))}
         </TableSection>
       </Table>
-    </div>
+    </>
   );
 }

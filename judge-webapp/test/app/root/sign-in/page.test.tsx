@@ -4,18 +4,13 @@ import RootSignInPage from "@/app/root/sign-in/page";
 import { authenticationService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import {
-  mockAlert,
-  mockClearAuthorization,
-  mockRouter,
-  mockSetAuthorization,
-} from "@/test/jest.setup";
+import { authorizationSlice } from "@/store/slices/authorization-slice";
+import { mockAlert, mockAppDispatch, mockRouter } from "@/test/jest.setup";
 
 describe("RootSignInPage", () => {
   it("renders the sign-in form", () => {
     render(<RootSignInPage />);
 
-    expect(mockClearAuthorization).not.toHaveBeenCalled();
     expect(screen.getByTestId("title")).toHaveTextContent("Sign In");
     expect(screen.getByTestId("description")).toHaveTextContent("Root");
     expect(screen.getByTestId("password")).toBeEnabled();
@@ -74,7 +69,9 @@ describe("RootSignInPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("sign-in"));
     });
-    expect(mockSetAuthorization).toHaveBeenCalledWith(authorization);
+    expect(mockAppDispatch).toHaveBeenCalledWith(
+      authorizationSlice.actions.success(authorization),
+    );
     expect(mockRouter.push).toHaveBeenCalledWith(routes.ROOT);
   });
 });

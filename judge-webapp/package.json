@@ -11,8 +11,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "i18n:extract": "formatjs extract --out-file src/i18n/messages/en-US.json 'src/app/**/*.{ts,tsx}' --ignore '**/*.d.ts' --format simple",
-    "i18n:check": "formatjs extract --out-file /tmp/messages.json 'src/app/**/*.{ts,tsx}' --ignore '**/*.d.ts' --format simple && diff -u src/i18n/messages/en-US.json /tmp/messages.json",
+    "i18n:extract": "formatjs extract --out-file src/i18n/messages/en-US.json 'src/**/*.{ts,tsx}' --ignore '**/*.d.ts' --format simple",
+    "i18n:check": "formatjs extract --out-file /tmp/messages.json 'src/**/*.{ts,tsx}' --ignore '**/*.d.ts' --format simple && diff -u src/i18n/messages/en-US.json /tmp/messages.json",
     "i18n:verify": "formatjs verify --missing-keys --structural-equality --source-locale en-US src/i18n/messages/*.json"
   },
   "dependencies": {

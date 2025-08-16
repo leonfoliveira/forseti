@@ -64,13 +64,14 @@ export function CheckboxGroup<TFieldValues extends FieldValues>({
           className={cls(containerClassName, "fieldset")}
           data-testid={testId}
         >
-          <label className="fieldset-legend" data-testid={`${testId}:label`}>
+          <p className="fieldset-legend" data-testid={`${testId}:label`}>
             <FormattedMessage {...label} />
-          </label>
+          </p>
           <div className="grid gap-4 grid-cols-[repeat(auto-fill,_minmax(150px,_1fr))]">
-            {options.map((item) => (
+            {options.map((item, idx) => (
               <Checkbox
                 {...props}
+                name={`${field.name}.${idx}`}
                 label={item.label}
                 className={className}
                 key={item.value}

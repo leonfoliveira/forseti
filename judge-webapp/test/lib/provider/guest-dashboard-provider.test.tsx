@@ -13,11 +13,12 @@ import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarifi
 import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
 import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
-import { GuestContextProvider } from "@/lib/provider/guest-dashboard-provider";
+import { GuestDashboardProvider } from "@/lib/provider/guest-dashboard-provider";
 import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
 import {
   mockAlert,
   mockAppDispatch,
+  mockUseAppSelector,
   mockUseAuthorization,
   mockUseContestMetadata,
 } from "@/test/jest.setup";
@@ -46,25 +47,46 @@ describe("GuestDashboardProvider", () => {
     mockUseContestMetadata.mockReturnValue({
       id: "test-contest-id",
     });
+    mockUseAppSelector.mockReturnValue({
+      isLoading: false,
+      error: null,
+    });
   });
 
-  it("should alert error and render error page on load failure", async () => {
+  it("should render loading page while loading", async () => {
+    mockUseAppSelector.mockReturnValueOnce({
+      isLoading: true,
+      error: null,
+    });
+
+    render(
+      <GuestDashboardProvider>
+        <span data-testid="child" />
+      </GuestDashboardProvider>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("loading")).toBeInTheDocument();
+      expect(screen.queryByTestId("child")).not.toBeInTheDocument();
+    });
+  });
+
+  it("should render error page on load failure", async () => {
+    mockUseAppSelector.mockReturnValueOnce({
+      isLoading: false,
+      error: new Error("error"),
+    });
     (contestService.findContestById as jest.Mock).mockRejectedValue(
       new Error("error"),
     );
 
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
-    expect(screen.getByTestId("loading")).toBeInTheDocument();
     await waitFor(() => {
-      expect(mockAlert.error).toHaveBeenCalledWith({
-        defaultMessage: "Error loading contest data",
-        id: "lib.provider.guest-dashboard-provider.load-error",
-      });
       expect(screen.getByTestId("error")).toBeInTheDocument();
       expect(screen.queryByTestId("child")).not.toBeInTheDocument();
     });
@@ -93,14 +115,14 @@ describe("GuestDashboardProvider", () => {
     );
 
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {
       expect(mockAppDispatch).toHaveBeenCalledWith(
-        guestDashboardSlice.actions.set({
+        guestDashboardSlice.actions.success({
           contest: mockContest,
           leaderboard: mockLeaderboard,
           submissions: mockSubmissions,
@@ -112,9 +134,9 @@ describe("GuestDashboardProvider", () => {
 
   it("should connect and disconnect to listener", async () => {
     const { unmount } = render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -127,9 +149,9 @@ describe("GuestDashboardProvider", () => {
 
   it("should handle leaderboard updates", async () => {
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -163,9 +185,9 @@ describe("GuestDashboardProvider", () => {
     );
 
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -199,9 +221,9 @@ describe("GuestDashboardProvider", () => {
     });
 
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -241,9 +263,9 @@ describe("GuestDashboardProvider", () => {
     });
 
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {
@@ -278,9 +300,9 @@ describe("GuestDashboardProvider", () => {
     });
 
     render(
-      <GuestContextProvider>
+      <GuestDashboardProvider>
         <span data-testid="child" />
-      </GuestContextProvider>,
+      </GuestDashboardProvider>,
     );
 
     await waitFor(() => {

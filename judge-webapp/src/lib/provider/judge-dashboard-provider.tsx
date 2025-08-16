@@ -16,12 +16,12 @@ import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/co
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";
-import { useLoadableState } from "@/lib/util/loadable-state";
+import { useErrorHandler } from "@/lib/util/error-handler-hook";
 import { useAlert } from "@/store/slices/alerts-slice";
 import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
 import { judgeDashboardSlice } from "@/store/slices/judge-dashboard-slice";
 import { useToast } from "@/store/slices/toasts-slice";
-import { useAppDispatch } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 
 const messages = defineMessages({
   loadError: {
@@ -36,17 +36,21 @@ const messages = defineMessages({
     id: "lib.provider.judge-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
+  newClarification: {
+    id: "lib.provider.judge-dashboard-provider.new-clarification",
+    defaultMessage: "New clarification",
+  },
 });
 
-export function JudgeContextProvider({
+export function JudgeDashboardProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const state = useLoadableState({ isLoading: true });
-
   const contestMetadata = useContestMetadata();
+  const { isLoading, error } = useAppSelector((state) => state.judgeDashboard);
   const dispatch = useAppDispatch();
+  const errorHandler = useErrorHandler();
   const alert = useAlert();
   const toast = useToast();
 
@@ -54,7 +58,6 @@ export function JudgeContextProvider({
     const listenerClient = listenerClientFactory.create();
 
     async function fetch() {
-      state.start();
       try {
         const data = await Promise.all([
           contestService.findContestById(contestMetadata.id),
@@ -92,16 +95,16 @@ export function JudgeContextProvider({
         ]);
 
         dispatch(
-          judgeDashboardSlice.actions.set({
+          judgeDashboardSlice.actions.success({
             contest: data[0],
             leaderboard: data[1],
             submissions: data[2],
           }),
         );
-        state.finish();
       } catch (error) {
-        state.fail(error, {
-          default: () => alert.error(messages.loadError),
+        errorHandler.handle(error as Error, {
+          default: () =>
+            dispatch(judgeDashboardSlice.actions.fail(error as Error)),
         });
       }
     }
@@ -136,16 +139,19 @@ export function JudgeContextProvider({
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
     dispatch(judgeDashboardSlice.actions.mergeClarification(clarification));
+    if (!clarification.parentId) {
+      toast.info(messages.newClarification);
+    }
   }
 
   function deleteClarification({ id }: { id: string }) {
     dispatch(judgeDashboardSlice.actions.deleteClarification(id));
   }
 
-  if (state.isLoading) {
+  if (isLoading) {
     return <LoadingPage />;
   }
-  if (state.error) {
+  if (error) {
     return <ErrorPage />;
   }
 

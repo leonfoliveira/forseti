@@ -7,6 +7,7 @@ import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/subm
 import { globalMessages } from "@/i18n/global";
 import { SubmissionAnswerBadge } from "@/lib/component/badge/submission-answer-badge";
 import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
+import { Metadata } from "@/lib/component/metadata";
 import { Table } from "@/lib/component/table/table";
 import { TableCell } from "@/lib/component/table/table-cell";
 import { TableRow } from "@/lib/component/table/table-row";
@@ -15,6 +16,14 @@ import { cls } from "@/lib/util/cls";
 import { useAuthorization } from "@/store/slices/authorization-slice";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.contests.[slug]._common.timeline-page.page-title",
+    defaultMessage: "Judge - Timeline",
+  },
+  pageDescription: {
+    id: "app.contests.[slug]._common.timeline-page.page-description",
+    defaultMessage: "View all submissions made during the contest.",
+  },
   headerTimestamp: {
     id: "app.contests.[slug]._common.timeline-page.header-timestamp",
     defaultMessage: "Timestamp",
@@ -52,7 +61,11 @@ export function TimelinePage({ submissions }: Props) {
   const authorization = useAuthorization();
 
   return (
-    <div>
+    <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
       <Table>
         <TableSection head>
           <TableRow>
@@ -119,6 +132,6 @@ export function TimelinePage({ submissions }: Props) {
           </p>
         </div>
       )}
-    </div>
+    </>
   );
 }

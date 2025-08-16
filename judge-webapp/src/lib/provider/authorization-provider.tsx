@@ -1,44 +1,32 @@
-import React, { createContext, useContext, useEffect } from "react";
+"use client";
+
+import React, { useEffect } from "react";
 
 import { authenticationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { Authorization } from "@/core/domain/model/Authorization";
 import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";
-import { useLoadableState } from "@/lib/util/loadable-state";
 import { authorizationSlice } from "@/store/slices/authorization-slice";
-import { useAppDispatch } from "@/store/store";
-
-const AuthorizationContext = createContext({
-  setAuthorization: (() => {}) as unknown as (
-    authorization: Authorization | null,
-  ) => void,
-  clearAuthorization: (() => {}) as unknown as (
-    signInPath: string,
-  ) => Promise<void>,
-});
+import { useAppDispatch, useAppSelector } from "@/store/store";
 
 export function AuthorizationProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const authorizationState = useLoadableState();
+  const { isLoading, error } = useAppSelector((state) => state.authorization);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     async function load() {
-      authorizationState.start();
       try {
         const authorization = await authenticationService.getAuthorization();
-        dispatch(authorizationSlice.actions.set(authorization));
-        authorizationState.finish();
+        dispatch(authorizationSlice.actions.success(authorization));
       } catch (error) {
         if (error instanceof UnauthorizedException) {
-          dispatch(authorizationSlice.actions.set(null));
-          authorizationState.finish();
+          dispatch(authorizationSlice.actions.success(null));
         } else {
-          authorizationState.fail(error);
+          dispatch(authorizationSlice.actions.fail(error as Error));
         }
       }
     }
@@ -46,42 +34,15 @@ export function AuthorizationProvider({
     load();
   }, []);
 
-  function setAuthorization(authorization: Authorization | null) {
-    dispatch(authorizationSlice.actions.set(authorization));
-  }
-
-  async function clearAuthorization(signInPath: string) {
-    authorizationState.start();
-    try {
-      await authenticationService.cleanAuthorization();
-      window.location.assign(signInPath);
-    } catch (error) {
-      authorizationState.fail(error);
-    }
-  }
-
   /**
-   * Ensures that the authorization state is loaded before rendering children.
+   * Ensures that the authorization is loaded before rendering children components.
    */
-  if (authorizationState.isLoading) {
+  if (isLoading) {
     return <LoadingPage />;
   }
-  if (authorizationState.error) {
+  if (error) {
     return <ErrorPage />;
   }
 
-  return (
-    <AuthorizationContext
-      value={{
-        setAuthorization,
-        clearAuthorization,
-      }}
-    >
-      {children}
-    </AuthorizationContext>
-  );
-}
-
-export function useSetAuthorization() {
-  return useContext(AuthorizationContext);
+  return children;
 }

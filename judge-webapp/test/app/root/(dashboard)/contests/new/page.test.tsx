@@ -25,6 +25,23 @@ jest.mock("@/app/root/(dashboard)/contests/_form/contest-form-map", () => ({
   },
 }));
 
+jest.mock("@/lib/component/modal/dialog-modal", () => ({
+  DialogModal: ({ children, modal, onConfirm, isLoading }: any) => (
+    <>
+      {modal.isOpen && (
+        <div data-testid="dialog-modal">
+          {children}
+          {isLoading && <span data-testid="dialog-modal:loading" />}
+          <button
+            onClick={() => onConfirm(modal.props)}
+            data-testid="dialog-modal:button"
+          ></button>
+        </div>
+      )}
+    </>
+  ),
+}));
+
 describe("RootNewContestPage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -42,6 +59,9 @@ describe("RootNewContestPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("submit"));
     });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("dialog-modal:button"));
+    });
     expect(mockAlert.error).toHaveBeenCalledWith({
       defaultMessage: "Error creating contest",
       id: "app.root.(dashboard).contests.new.page.create-error",
@@ -58,6 +78,9 @@ describe("RootNewContestPage", () => {
 
     await act(async () => {
       fireEvent.click(screen.getByTestId("submit"));
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("dialog-modal:button"));
     });
 
     expect(mockAlert.success).toHaveBeenCalledWith({

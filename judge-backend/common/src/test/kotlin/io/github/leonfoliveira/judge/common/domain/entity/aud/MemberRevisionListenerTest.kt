@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.common.domain.entity.aud
 
-import io.github.leonfoliveira.judge.common.domain.entity.Member
-import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
+import io.github.leonfoliveira.judge.common.domain.model.Authorization
+import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import org.slf4j.MDC
@@ -12,16 +12,16 @@ import java.util.UUID
 class MemberRevisionListenerTest : FunSpec({
     val sut = MemberRevisionListener()
 
-    class MockAuthorization(val member: AuthorizationMember) : Authentication {
+    class MockAuthorization(val authorization: Authorization) : Authentication {
         override fun getAuthorities() = emptyList<org.springframework.security.core.GrantedAuthority>()
 
         override fun getCredentials() = null
 
         override fun getDetails() = null
 
-        override fun getPrincipal() = member
+        override fun getPrincipal() = authorization
 
-        override fun getName() = member.name
+        override fun getName() = authorization.member.name
 
         override fun isAuthenticated() = true
 
@@ -43,10 +43,8 @@ class MemberRevisionListenerTest : FunSpec({
         val memberId = UUID.randomUUID()
         SecurityContextHolder.getContext().authentication =
             MockAuthorization(
-                AuthorizationMember(
-                    id = memberId,
-                    name = "Test User",
-                    type = Member.Type.CONTESTANT,
+                AuthorizationMockBuilder.build(
+                    member = AuthorizationMockBuilder.buildMember(id = memberId),
                 ),
             )
         val traceId = "test-trace-id"

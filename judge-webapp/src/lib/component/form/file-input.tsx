@@ -8,7 +8,7 @@ import {
   FieldPath,
   FieldValues,
 } from "react-hook-form";
-import { defineMessages, FormattedMessage } from "react-intl";
+import { defineMessages, FormattedMessage, useIntl } from "react-intl";
 
 import { Attachment } from "@/core/domain/model/Attachment";
 import { Message } from "@/i18n/message";
@@ -18,6 +18,14 @@ const messages = defineMessages({
   empty: {
     id: "app._component.form.file-input",
     defaultMessage: "Select a file",
+  },
+  downloadTooltop: {
+    id: "app._component.form.file-input.download-tooltip",
+    defaultMessage: "Download",
+  },
+  resetTooltip: {
+    id: "app._component.form.file-input.reset-tooltip",
+    defaultMessage: "Reset",
   },
 });
 
@@ -64,9 +72,13 @@ export function FileInput<TFieldValues extends FieldValues>({
 }: Props<TFieldValues>) {
   const testId = props["data-testid"] || "file-input";
   const ref = useRef<HTMLInputElement | null>(null);
+  const intl = useIntl();
 
   const originalValue: Attachment | undefined =
     originalName && form.watch(originalName);
+
+  const downloadTooltip = intl.formatMessage(messages.downloadTooltop);
+  const resetTooltip = intl.formatMessage(messages.resetTooltip);
 
   return (
     <Controller
@@ -110,25 +122,36 @@ export function FileInput<TFieldValues extends FieldValues>({
                 </span>
               )}
             </button>
-            <button
-              type="button"
-              className="btn btn-soft px-3"
-              onClick={() => {
-                if (field.value) onDownload(field.value);
-                else if (originalValue) onDownloadOriginal?.(originalValue);
-              }}
-              data-testid={`${testId}:download`}
-            >
-              <FontAwesomeIcon icon={faDownload} />
-            </button>
-            <button
-              type="button"
-              className="btn btn-soft px-3"
-              onClick={() => field.onChange(undefined)}
-              data-testid={`${testId}:reset`}
-            >
-              <FontAwesomeIcon icon={faClose} />
-            </button>
+            <div className="tooltip" data-tip={downloadTooltip}>
+              <button
+                type="button"
+                className="btn btn-soft px-3"
+                onClick={() => {
+                  if (field.value) onDownload(field.value);
+                  else if (originalValue) onDownloadOriginal?.(originalValue);
+                }}
+                disabled={!originalValue && !field.value}
+                aria-label={downloadTooltip}
+                data-testid={`${testId}:download`}
+              >
+                <FontAwesomeIcon icon={faDownload} />
+              </button>
+            </div>
+            <div className="tooltip" data-tip={resetTooltip}>
+              <button
+                type="button"
+                className="btn btn-soft px-3"
+                onClick={() => {
+                  ref.current!.value = "";
+                  field.onChange(undefined);
+                }}
+                disabled={!originalValue && !field.value}
+                aria-label={resetTooltip}
+                data-testid={`${testId}:reset`}
+              >
+                <FontAwesomeIcon icon={faClose} />
+              </button>
+            </div>
           </div>
           <p
             className="label text-error text-wrap"

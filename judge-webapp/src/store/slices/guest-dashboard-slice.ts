@@ -10,66 +10,81 @@ import { merge } from "@/lib/util/entity-merger";
 
 import { useAppSelector } from "../store";
 
-type StateType = {
+type DataType = {
   contest: ContestPublicResponseDTO;
   leaderboard: ContestLeaderboardResponseDTO;
   submissions: SubmissionPublicResponseDTO[];
 };
+type StateType =
+  | {
+      isLoading: true;
+      error: null;
+      data: null;
+    }
+  | { isLoading: false; error: Error; data: null }
+  | {
+      isLoading: false;
+      error: null;
+      data: DataType;
+    };
 
 export const guestDashboardSlice = createSlice({
   name: "guestDashboard",
   initialState: {
-    contest: null,
-    leaderboard: null,
-    submissions: null,
-  } as unknown as StateType,
+    isLoading: true,
+    error: null,
+    data: null,
+  } as StateType,
   reducers: {
-    set(state, action: { payload: StateType }) {
-      state = action.payload;
+    success(state, action: { payload: DataType }) {
+      state.isLoading = false;
+      state.error = null;
+      state.data = action.payload;
+    },
+    fail(state, action: { payload: Error }) {
+      state.isLoading = false;
+      state.error = action.payload;
+      state.data = null;
     },
     setLeaderboard(state, action: { payload: ContestLeaderboardResponseDTO }) {
-      state.leaderboard = action.payload;
+      state.data!.leaderboard = action.payload;
     },
     mergeSubmission(state, action: { payload: SubmissionPublicResponseDTO }) {
-      state.submissions = merge(state.submissions, action.payload);
+      state.data!.submissions = merge(state.data!.submissions, action.payload);
     },
     mergeAnnouncement(state, action: { payload: AnnouncementResponseDTO }) {
-      state.contest.announcements = merge(
-        state.contest.announcements,
+      state.data!.contest.announcements = merge(
+        state.data!.contest.announcements,
         action.payload,
       );
     },
     mergeClarification(state, action: { payload: ClarificationResponseDTO }) {
       if (!action.payload.parentId) {
-        state.contest.clarifications = merge(
-          state.contest.clarifications,
+        state.data!.contest.clarifications = merge(
+          state.data!.contest.clarifications,
           action.payload,
         );
       } else {
         const parent = findClarification(
-          state.contest.clarifications,
+          state.data!.contest.clarifications,
           action.payload.parentId,
         );
         if (parent) {
           parent.children = merge(parent.children, action.payload);
         }
       }
-
-      state.contest.clarifications = merge(
-        state.contest.clarifications,
-        action.payload,
-      );
     },
     deleteClarification(state, action: { payload: string }) {
-      state.contest.clarifications = state.contest.clarifications.filter(
-        (clarification) => clarification.id !== action.payload,
-      );
+      state.data!.contest.clarifications =
+        state.data!.contest.clarifications.filter(
+          (clarification) => clarification.id !== action.payload,
+        );
     },
   },
 });
 
 export function useGuestDashboard<T>(
-  selector: (state: StateType) => T = (state) => state as T,
+  selector: (state: DataType) => T = (state) => state as T,
 ) {
-  return useAppSelector((state) => selector(state.guestDashboard));
+  return useAppSelector((state) => selector(state.guestDashboard.data!));
 }

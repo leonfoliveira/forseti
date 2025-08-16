@@ -13,6 +13,9 @@ import {
 jest.mock("@/app/contests/[slug]/_common/contest-dashboard-layout", () => ({
   ContestDashboardLayout: jest.fn(({ children }: any) => <div>{children}</div>),
 }));
+jest.mock("@/lib/provider/judge-dashboard-provider", () => ({
+  JudgeDashboardProvider: jest.fn(({ children }: any) => <div>{children}</div>),
+}));
 
 describe("JudgeLayout", () => {
   beforeEach(() => {
@@ -50,7 +53,7 @@ describe("JudgeLayout", () => {
   });
 
   it("should render ContestDashboardLayout with contestant context", () => {
-    mockUseAuthorization.mockReturnValueOnce({
+    mockUseAuthorization.mockReturnValue({
       member: { type: MemberType.JUDGE },
     });
 

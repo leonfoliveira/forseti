@@ -12,6 +12,9 @@ import {
 jest.mock("@/app/contests/[slug]/_common/contest-dashboard-layout", () => ({
   ContestDashboardLayout: jest.fn(({ children }: any) => <div>{children}</div>),
 }));
+jest.mock("@/lib/provider/guest-dashboard-provider", () => ({
+  GuestDashboardProvider: jest.fn(({ children }: any) => <div>{children}</div>),
+}));
 
 describe("GuestLayout", () => {
   it("should render ContestDashboardLayout with contestant context", () => {

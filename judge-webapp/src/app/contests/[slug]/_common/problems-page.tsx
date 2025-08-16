@@ -7,12 +7,21 @@ import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
 import { SubmissionAnswerShortBadge } from "@/lib/component/badge/submission-answer-short-badge";
 import { DownloadButton } from "@/lib/component/form/download-button";
+import { Metadata } from "@/lib/component/metadata";
 import { Table } from "@/lib/component/table/table";
 import { TableCell } from "@/lib/component/table/table-cell";
 import { TableRow } from "@/lib/component/table/table-row";
 import { TableSection } from "@/lib/component/table/table-section";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.contests.[slug]._common.problems-page.page-title",
+    defaultMessage: "Judge - Problems",
+  },
+  pageDescription: {
+    id: "app.contests.[slug]._common.problems-page.page-description",
+    defaultMessage: "View all problems for the contest.",
+  },
   problemTitle: {
     id: "app.contests.[slug]._common.problems-page.problem-title",
     defaultMessage: "{letter}. {title}",
@@ -30,7 +39,11 @@ type Props = {
  */
 export function ProblemsPage({ problems, contestantStatus }: Props) {
   return (
-    <div>
+    <>
+      <Metadata
+        title={messages.pageTitle}
+        description={messages.pageDescription}
+      />
       <Table className="table-zebra">
         <TableSection>
           {problems.map((problem) => (
@@ -70,6 +83,6 @@ export function ProblemsPage({ problems, contestantStatus }: Props) {
           ))}
         </TableSection>
       </Table>
-    </div>
+    </>
   );
 }
