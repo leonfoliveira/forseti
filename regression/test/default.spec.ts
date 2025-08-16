@@ -68,7 +68,7 @@ test("Default contest behaviour", async ({ page }) => {
   await row.getByRole("button", { name: "Start" }).click();
   await page.getByRole("button", { name: "Confirm" }).click();
   await expect(row.locator("td").nth(4)).toHaveText("In progress");
-  await page.getByText("Root").click();
+  await page.getByTestId("member").click();
   await page.getByText("Sign Out").click();
   await expect(page).toHaveURL("/root/sign-in");
 

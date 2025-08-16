@@ -1,7 +1,6 @@
 package io.github.leonfoliveira.judge.common.domain.entity.aud
 
 import io.github.leonfoliveira.judge.common.domain.model.Authorization
-import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import org.hibernate.envers.RevisionListener
 import org.slf4j.MDC
 import org.springframework.security.core.context.SecurityContextHolder
