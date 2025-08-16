@@ -49,12 +49,12 @@ class AttachmentController(
             ApiResponse(
                 responseCode = "400",
                 description = "Invalid request format",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
         ],
     )
@@ -83,7 +83,7 @@ class AttachmentController(
             ApiResponse(
                 responseCode = "404",
                 description = "Attachment not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
         ],
     )

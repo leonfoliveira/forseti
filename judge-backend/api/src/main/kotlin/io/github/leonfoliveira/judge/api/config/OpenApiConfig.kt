@@ -16,7 +16,7 @@ class OpenApiConfig {
                 Info()
                     .title("Judge API")
                     .version("1.0.0")
-                    .description("API for the Judge application")
+                    .description("API for the Judge application"),
             )
             .components(
                 Components()
@@ -25,8 +25,8 @@ class OpenApiConfig {
                         SecurityScheme()
                             .type(SecurityScheme.Type.APIKEY)
                             .`in`(SecurityScheme.In.COOKIE)
-                            .name("access_token")
-                    )
+                            .name("access_token"),
+                    ),
             )
     }
 }

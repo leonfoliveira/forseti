@@ -74,24 +74,24 @@ class ContestController(
             ApiResponse(
                 responseCode = "400",
                 description = "Invalid request format",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "409",
                 description = "Conflict",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun createContest(
         @RequestBody body: CreateContestInputDTO,
@@ -111,29 +111,29 @@ class ContestController(
             ApiResponse(
                 responseCode = "400",
                 description = "Invalid request format",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "409",
                 description = "Conflict",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun updateContest(
         @RequestBody body: UpdateContestInputDTO,
@@ -153,14 +153,14 @@ class ContestController(
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun findAllContestMetadata(): ResponseEntity<List<ContestMetadataResponseDTO>> {
         logger.info("[GET] /v1/contests/metadata")
@@ -177,9 +177,9 @@ class ContestController(
             ApiResponse(
                 responseCode = "404",
                 description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun findContestMetadataBySlug(
         @PathVariable slug: String,
@@ -198,14 +198,14 @@ class ContestController(
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun findContestById(
         @PathVariable id: UUID,
@@ -228,19 +228,19 @@ class ContestController(
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun findFullContestById(
         @PathVariable id: UUID,
@@ -259,14 +259,14 @@ class ContestController(
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun findContestLeaderboardById(
         @PathVariable id: UUID,
@@ -290,19 +290,19 @@ class ContestController(
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun forceStartContest(
         @PathVariable id: UUID,
@@ -322,19 +322,19 @@ class ContestController(
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun forceEndContest(
         @PathVariable id: UUID,
@@ -354,19 +354,19 @@ class ContestController(
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun deleteContest(
         @PathVariable id: UUID,
@@ -385,14 +385,14 @@ class ContestController(
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun findAllContestSubmissions(
         @PathVariable id: UUID,
@@ -412,19 +412,19 @@ class ContestController(
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun findAllContestFullSubmissions(
         @PathVariable id: UUID,
@@ -445,24 +445,24 @@ class ContestController(
             ApiResponse(
                 responseCode = "400",
                 description = "Invalid request format",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun createAnnouncement(
         @PathVariable id: UUID,
@@ -485,24 +485,24 @@ class ContestController(
             ApiResponse(
                 responseCode = "400",
                 description = "Invalid request format",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun createClarification(
         @PathVariable id: UUID,

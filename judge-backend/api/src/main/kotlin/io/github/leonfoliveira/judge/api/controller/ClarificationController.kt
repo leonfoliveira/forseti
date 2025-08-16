@@ -36,17 +36,17 @@ class ClarificationController(
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Clarification not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
         ],
     )

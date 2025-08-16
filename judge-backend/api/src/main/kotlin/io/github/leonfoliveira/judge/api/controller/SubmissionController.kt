@@ -45,19 +45,19 @@ class SubmissionController(
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Member not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun findAllFullSubmissionsForMember(): ResponseEntity<List<SubmissionFullResponseDTO>> {
         logger.info("[GET] /v1/submissions/me")
@@ -76,19 +76,19 @@ class SubmissionController(
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Submission not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun updateSubmissionAnswer(
         @PathVariable id: UUID,
@@ -109,19 +109,19 @@ class SubmissionController(
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Submission not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun updateSubmissionAnswerForce(
         @PathVariable id: UUID,
@@ -143,19 +143,19 @@ class SubmissionController(
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Submission not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))]
+                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
-        ]
+        ],
     )
     fun rerunSubmission(
         @PathVariable id: UUID,
