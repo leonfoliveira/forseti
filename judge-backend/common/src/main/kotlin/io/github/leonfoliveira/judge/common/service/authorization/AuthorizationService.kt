@@ -7,7 +7,6 @@ import io.github.leonfoliveira.judge.common.port.HashAdapter
 import io.github.leonfoliveira.judge.common.port.JwtAdapter
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.AuthenticateInputDTO
-import java.util.UUID
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
