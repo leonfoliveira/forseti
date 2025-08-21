@@ -84,14 +84,19 @@ class CreateClarificationServiceTest : FunSpec({
             }.message shouldBe "Contestants cannot create clarifications with a parent"
         }
 
-        test("should throw ForbiddenException when judge tries to create clarification without parent") {
-            val member = MemberMockBuilder.build(id = memberId, type = Member.Type.JUDGE)
-            val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1), members = listOf(member))
-            every { contestRepository.findById(contestId) } returns Optional.of(contest)
+        listOf(
+            Member.Type.JUDGE,
+            Member.Type.ADMIN,
+        ).forEach { type ->
+            test("should throw ForbiddenException when $type tries to create clarification without parent") {
+                val member = MemberMockBuilder.build(id = memberId, type = type)
+                val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1), members = listOf(member))
+                every { contestRepository.findById(contestId) } returns Optional.of(contest)
 
-            shouldThrow<ForbiddenException> {
-                sut.create(contestId, memberId, input)
-            }.message shouldBe "Jury members cannot create clarifications without a parent"
+                shouldThrow<ForbiddenException> {
+                    sut.create(contestId, memberId, input)
+                }.message shouldBe "$type members cannot create clarifications without a parent"
+            }
         }
 
         test("should throw NotFoundException when problem does not exist in contest") {

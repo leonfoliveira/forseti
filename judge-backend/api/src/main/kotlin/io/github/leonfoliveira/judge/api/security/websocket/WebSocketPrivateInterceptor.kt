@@ -22,7 +22,7 @@ class WebSocketPrivateInterceptor : ChannelInterceptor {
         mapOf(
             Regex("/topic/contests/[a-fA-F0-9-+]/submissions/full") to { destination: String ->
                 val member = AuthorizationContextUtil.getMember()
-                setOf(Member.Type.JUDGE, Member.Type.ADMIN).contains(member.type)
+                setOf(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN).contains(member.type)
             },
             Regex("/topic/members/[a-fA-F0-9-+]/submissions/full") to { destination: String ->
                 val member = AuthorizationContextUtil.getMember()

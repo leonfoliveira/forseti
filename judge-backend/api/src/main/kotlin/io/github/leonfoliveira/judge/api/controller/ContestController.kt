@@ -102,7 +102,7 @@ class ContestController(
     }
 
     @PutMapping
-    @Private(Member.Type.ROOT)
+    @Private(Member.Type.ROOT, Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Update a contest")
     @ApiResponses(
@@ -219,7 +219,7 @@ class ContestController(
     }
 
     @GetMapping("/{id}/full")
-    @Private(Member.Type.ROOT)
+    @Private(Member.Type.ROOT, Member.Type.ADMIN)
     @Transactional(readOnly = true)
     @Operation(summary = "Find full contest by id")
     @ApiResponses(
@@ -281,7 +281,7 @@ class ContestController(
     }
 
     @PutMapping("/{id}/start")
-    @Private(Member.Type.ROOT)
+    @Private(Member.Type.ROOT, Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Force start a contest")
     @ApiResponses(
@@ -313,7 +313,7 @@ class ContestController(
     }
 
     @PutMapping("/{id}/end")
-    @Private(Member.Type.ROOT)
+    @Private(Member.Type.ROOT, Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Force end a contest")
     @ApiResponses(
@@ -403,7 +403,7 @@ class ContestController(
     }
 
     @GetMapping("/{id}/submissions/full")
-    @Private(Member.Type.JUDGE)
+    @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Transactional(readOnly = true)
     @Operation(summary = "Find all contest full submissions")
     @ApiResponses(
@@ -436,7 +436,7 @@ class ContestController(
     }
 
     @PostMapping("/{id}/announcements")
-    @Private(Member.Type.JUDGE)
+    @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Create an announcement")
     @ApiResponses(
@@ -476,7 +476,7 @@ class ContestController(
     }
 
     @PostMapping("/{id}/clarifications")
-    @Private(Member.Type.CONTESTANT, Member.Type.JUDGE)
+    @Private(Member.Type.CONTESTANT, Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Create a clarification")
     @ApiResponses(

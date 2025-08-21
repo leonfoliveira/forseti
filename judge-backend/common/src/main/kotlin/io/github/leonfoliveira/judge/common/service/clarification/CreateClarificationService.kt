@@ -42,8 +42,8 @@ class CreateClarificationService(
         if (member.type == Member.Type.CONTESTANT && input.parentId != null) {
             throw ForbiddenException("Contestants cannot create clarifications with a parent")
         }
-        if (member.type == Member.Type.JUDGE && input.parentId == null) {
-            throw ForbiddenException("Jury members cannot create clarifications without a parent")
+        if (setOf(Member.Type.JUDGE, Member.Type.ADMIN).contains(member.type) && input.parentId == null) {
+            throw ForbiddenException("${member.type} members cannot create clarifications without a parent")
         }
 
         val problem =

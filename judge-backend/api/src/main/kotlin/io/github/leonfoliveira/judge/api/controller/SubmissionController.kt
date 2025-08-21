@@ -100,7 +100,7 @@ class SubmissionController(
     }
 
     @PutMapping("/{id}/answer/{answer}/force")
-    @Private(Member.Type.JUDGE)
+    @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Force update a submission answer")
     @ApiResponses(
@@ -134,7 +134,7 @@ class SubmissionController(
     }
 
     @PostMapping("/{id}/rerun")
-    @Private(Member.Type.JUDGE)
+    @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Rerun a submission")
     @ApiResponses(

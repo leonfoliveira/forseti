@@ -50,7 +50,7 @@ class ClarificationController(
             ),
         ],
     )
-    @Private(Member.Type.JUDGE)
+    @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Transactional(readOnly = true)
     fun deleteClarificationById(
         @PathVariable id: UUID,
