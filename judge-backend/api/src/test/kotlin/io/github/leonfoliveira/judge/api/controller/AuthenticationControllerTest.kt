@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
-import java.util.UUID
 
 @WebMvcTest(controllers = [AuthenticationController::class])
 @AutoConfigureMockMvc(addFilters = false)

@@ -32,8 +32,8 @@ class StompSubmissionEmitter(
             submission.toFullResponseDTO(),
         )
         messagingTemplate.convertAndSend(
-            "/topic/members/${submission.member.id}/submissions",
-            submission.toPublicResponseDTO(),
+            "/topic/members/${submission.member.id}/submissions/full",
+            submission.toFullResponseDTO(),
         )
 
         val leaderboard = contestFindContestService.buildContestLeaderboard(contest)

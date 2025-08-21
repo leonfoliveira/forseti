@@ -1,14 +1,11 @@
 package io.github.leonfoliveira.judge.common.service.authorization
 
 import io.github.leonfoliveira.judge.common.domain.exception.InternalServerException
-import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
-import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.port.HashAdapter
 import io.github.leonfoliveira.judge.common.port.JwtAdapter
-import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.AuthenticateInputDTO
 import io.kotest.assertions.throwables.shouldThrow
@@ -17,8 +14,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
-import java.time.OffsetDateTime
-import java.util.Optional
 import java.util.UUID
 
 class AuthorizationServiceTest : FunSpec({
@@ -71,7 +66,7 @@ class AuthorizationServiceTest : FunSpec({
 
         test("should throw UnauthorizedException when password does not match") {
             val member = MemberMockBuilder.build()
-            every { memberRepository.findByLoginAndContestId(inputDTO.login,null) } returns member
+            every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns member
             every { hashAdapter.verify(inputDTO.password, member.password) } returns false
 
             shouldThrow<UnauthorizedException> {

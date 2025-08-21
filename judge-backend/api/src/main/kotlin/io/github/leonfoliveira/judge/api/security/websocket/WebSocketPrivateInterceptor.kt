@@ -1,6 +1,7 @@
 package io.github.leonfoliveira.judge.api.security.websocket
 
 import io.github.leonfoliveira.judge.api.security.JwtAuthentication
+import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
@@ -11,14 +12,23 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.support.ChannelInterceptor
 import org.springframework.messaging.support.MessageHeaderAccessor
 import org.springframework.stereotype.Component
+import java.util.UUID
 
 @Component
 class WebSocketPrivateInterceptor : ChannelInterceptor {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    private val privateConfigurations =
+    private val privateFilters: Map<Regex, (String) -> Boolean> =
         mapOf(
-            Regex("/topic/contests/[0-9+]/submissions/full") to setOf(Member.Type.JUDGE),
+            Regex("/topic/contests/[a-fA-F0-9-+]/submissions/full") to { destination: String ->
+                val member = AuthorizationContextUtil.getMember()
+                setOf(Member.Type.JUDGE, Member.Type.ADMIN).contains(member.type)
+            },
+            Regex("/topic/members/[a-fA-F0-9-+]/submissions/full") to { destination: String ->
+                val member = AuthorizationContextUtil.getMember()
+                val destinationMemberId = UUID.fromString(destination.split("/")[2])
+                destinationMemberId == member.id
+            },
         )
 
     override fun preSend(
@@ -29,12 +39,12 @@ class WebSocketPrivateInterceptor : ChannelInterceptor {
         val accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) ?: return message
         val destination = accessor.destination ?: return message
 
-        val allowedMembers =
-            privateConfigurations.entries.find {
+        val privateFilter =
+            privateFilters.entries.find {
                 it.key.matches(destination)
             }?.value
 
-        if (allowedMembers == null) {
+        if (privateFilter == null) {
             logger.info("No private configuration found for destination: $destination")
             return message
         }
@@ -45,8 +55,8 @@ class WebSocketPrivateInterceptor : ChannelInterceptor {
             throw UnauthorizedException()
         }
 
-        if (allowedMembers.isNotEmpty() && auth.principal?.member?.type !in allowedMembers) {
-            logger.info("User type not allowed: ${auth.principal?.member?.type}")
+        if (!privateFilter(destination)) {
+            logger.info("User is not allow to access destination")
             throw ForbiddenException()
         }
 

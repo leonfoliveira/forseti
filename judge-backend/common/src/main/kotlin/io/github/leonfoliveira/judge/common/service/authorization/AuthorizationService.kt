@@ -7,7 +7,6 @@ import io.github.leonfoliveira.judge.common.port.HashAdapter
 import io.github.leonfoliveira.judge.common.port.JwtAdapter
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.AuthenticateInputDTO
-import java.util.UUID
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -33,11 +32,12 @@ class AuthorizationService(
     fun authenticate(inputDTO: AuthenticateInputDTO): Authorization {
         logger.info("Authenticating member for contest with id = ${inputDTO.contestId}")
 
-        val member = if (inputDTO.contestId == null) {
-            memberRepository.findByLoginAndContestId(inputDTO.login, null)
-        } else {
-            memberRepository.findByLoginAndContestId(inputDTO.login, inputDTO.contestId)
-        } ?: throw UnauthorizedException("Invalid login or password")
+        val member =
+            if (inputDTO.contestId == null) {
+                memberRepository.findByLoginAndContestId(inputDTO.login, null)
+            } else {
+                memberRepository.findByLoginAndContestId(inputDTO.login, inputDTO.contestId)
+            } ?: throw UnauthorizedException("Invalid login or password")
 
         if (!hashAdapter.verify(inputDTO.password, member.password)) {
             throw UnauthorizedException("Invalid login or password")

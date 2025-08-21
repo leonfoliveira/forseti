@@ -6,5 +6,8 @@ import java.util.UUID
 interface MemberRepository : BaseRepository<Member> {
     fun findByLogin(login: String): Member?
 
-    fun findByLoginAndContestId(login: String, contestId: UUID?): Member?
+    fun findByLoginAndContestId(
+        login: String,
+        contestId: UUID?,
+    ): Member?
 }

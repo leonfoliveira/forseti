@@ -17,6 +17,7 @@ import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.support.MessageHeaderAccessor
+import org.springframework.security.core.context.SecurityContextHolder
 import java.util.UUID
 
 class WebSocketPrivateInterceptorTest : FunSpec({
@@ -93,7 +94,7 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         val accessor = mockk<StompHeaderAccessor>(relaxed = true)
         every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
         every { accessor.destination } returns "/topic/contests/1/submissions/full"
-        every { message.headers.get("simpUser") } returns
+        val authentication =
             JwtAuthentication(
                 AuthorizationMockBuilder.build(
                     member =
@@ -104,6 +105,8 @@ class WebSocketPrivateInterceptorTest : FunSpec({
                         ),
                 ),
             )
+        every { message.headers.get("simpUser") } returns authentication
+        SecurityContextHolder.getContext().authentication = authentication
 
         shouldThrow<ForbiddenException> {
             sut.preSend(message, channel)
@@ -116,7 +119,7 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         val accessor = mockk<StompHeaderAccessor>(relaxed = true)
         every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
         every { accessor.destination } returns "/topic/contests/1/submissions/full"
-        every { message.headers.get("simpUser") } returns
+        val authentication =
             JwtAuthentication(
                 AuthorizationMockBuilder.build(
                     member =
@@ -127,6 +130,8 @@ class WebSocketPrivateInterceptorTest : FunSpec({
                         ),
                 ),
             )
+        every { message.headers.get("simpUser") } returns authentication
+        SecurityContextHolder.getContext().authentication = authentication
 
         val result = sut.preSend(message, channel)
 
