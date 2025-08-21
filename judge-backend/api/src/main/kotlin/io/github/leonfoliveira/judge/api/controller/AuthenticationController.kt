@@ -121,45 +121,6 @@ class AuthenticationController(
             .body(authorization)
     }
 
-    @PostMapping("/contests/{id}/sign-in")
-    @Operation(
-        summary = "Authenticate for a contest",
-        description = "Authenticates a user for a contest and returns an authorization.",
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "Authenticated successfully",
-            ),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    @Transactional(readOnly = true)
-    fun authenticateForContest(
-        @PathVariable id: UUID,
-        @RequestBody body: AuthenticateInputDTO,
-    ): ResponseEntity<Authorization> {
-        logger.info("[POST] /v1/auth/contests/{id}/sign-in - id: $id, body: $body")
-        val authorization =
-            authorizationService.authenticateForContest(
-                contestId = id,
-                body,
-            )
-        return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, buildCookie(authorization).toString())
-            .body(authorization)
-    }
-
     private fun buildCookie(authorization: Authorization): ResponseCookie {
         val accessToken = authorizationService.encodeToken(authorization)
         return ResponseCookie.from("access_token", accessToken)

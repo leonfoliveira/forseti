@@ -8,6 +8,7 @@ class AuthenticateInputDTOTest : FunSpec({
         test("should mask password in toString") {
             val input =
                 AuthenticateInputDTO(
+                    contestId = null,
                     login = "testUser",
                     password = "testPassword",
                 )

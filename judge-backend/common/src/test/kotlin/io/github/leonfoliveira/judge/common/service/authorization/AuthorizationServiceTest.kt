@@ -23,63 +23,18 @@ import java.util.UUID
 
 class AuthorizationServiceTest : FunSpec({
     val memberRepository = mockk<MemberRepository>(relaxed = true)
-    val contestRepository = mockk<ContestRepository>(relaxed = true)
     val hashAdapter = mockk<HashAdapter>(relaxed = true)
     val jwtAdapter = mockk<JwtAdapter>(relaxed = true)
 
     val sut =
         AuthorizationService(
             memberRepository = memberRepository,
-            contestRepository = contestRepository,
             hashAdapter = hashAdapter,
             jwtAdapter = jwtAdapter,
         )
 
     beforeEach {
         clearAllMocks()
-    }
-
-    context("authenticate") {
-        val inputDTO = AuthenticateInputDTO("testLogin", "testPassword")
-
-        test("should throw UnauthorizedException when member is not found") {
-            every { memberRepository.findByLogin(inputDTO.login) } returns null
-
-            shouldThrow<UnauthorizedException> {
-                sut.authenticate(inputDTO)
-            }.message shouldBe "Invalid login or password"
-        }
-
-        test("should throw UnauthorizedException when member is system") {
-            val member = MemberMockBuilder.build(isSystem = true)
-            every { memberRepository.findByLogin(inputDTO.login) } returns member
-
-            shouldThrow<UnauthorizedException> {
-                sut.authenticate(inputDTO)
-            }.message shouldBe "Invalid login or password"
-        }
-
-        test("should throw UnauthorizedException when password does not match") {
-            val member = MemberMockBuilder.build()
-            every { memberRepository.findByLogin(inputDTO.login) } returns member
-            every { hashAdapter.verify(inputDTO.password, member.password) } returns false
-
-            shouldThrow<UnauthorizedException> {
-                sut.authenticate(inputDTO)
-            }.message shouldBe "Invalid login or password"
-        }
-
-        test("should return Authorization when authentication is successful") {
-            val member = MemberMockBuilder.build()
-            every { memberRepository.findByLogin(inputDTO.login) } returns member
-            every { hashAdapter.verify(inputDTO.password, member.password) } returns true
-            val authorization = AuthorizationMockBuilder.build()
-            every { jwtAdapter.buildAuthorization(member) } returns authorization
-
-            val result = sut.authenticate(inputDTO)
-
-            result shouldBe authorization
-        }
     }
 
     context("authenticateAutoJudge") {
@@ -103,71 +58,70 @@ class AuthorizationServiceTest : FunSpec({
         }
     }
 
-    context("authenticateForContest") {
-        val contestId = UUID.randomUUID()
-        val inputDTO = AuthenticateInputDTO("testLogin", "testPassword")
+    context("authenticate without contestId") {
+        val inputDTO = AuthenticateInputDTO(null, "testLogin", "testPassword")
 
-        test("should throw NotFoundException when contest is not found") {
-            every { contestRepository.findById(contestId) } returns Optional.empty()
-
-            shouldThrow<NotFoundException> {
-                sut.authenticateForContest(contestId, inputDTO)
-            }.message shouldBe "Could not find contest with id = $contestId"
-        }
-
-        test("should throw UnauthorizedException when contest is not active") {
-            val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1), endAt = OffsetDateTime.now().plusHours(2))
-            every { contestRepository.findById(contestId) } returns Optional.of(contest)
+        test("should throw UnauthorizedException when member is not found") {
+            every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns null
 
             shouldThrow<UnauthorizedException> {
-                sut.authenticateForContest(contestId, inputDTO)
-            }.message shouldBe "Contest is not active"
-        }
-
-        test("should throw UnauthorizedException when member is not found in contest") {
-            val contest =
-                ContestMockBuilder.build(
-                    startAt = OffsetDateTime.now().minusHours(1),
-                    endAt = OffsetDateTime.now().plusHours(1),
-                    members = emptyList(),
-                )
-            every { contestRepository.findById(contestId) } returns Optional.of(contest)
-
-            shouldThrow<UnauthorizedException> {
-                sut.authenticateForContest(contestId, inputDTO)
+                sut.authenticate(inputDTO)
             }.message shouldBe "Invalid login or password"
         }
 
         test("should throw UnauthorizedException when password does not match") {
             val member = MemberMockBuilder.build()
-            val contest =
-                ContestMockBuilder.build(
-                    startAt = OffsetDateTime.now().minusHours(1),
-                    endAt = OffsetDateTime.now().plusHours(1),
-                    members = listOf(member),
-                )
-            every { contestRepository.findById(contestId) } returns Optional.of(contest)
+            every { memberRepository.findByLoginAndContestId(inputDTO.login,null) } returns member
             every { hashAdapter.verify(inputDTO.password, member.password) } returns false
 
             shouldThrow<UnauthorizedException> {
-                sut.authenticateForContest(contestId, inputDTO)
+                sut.authenticate(inputDTO)
             }.message shouldBe "Invalid login or password"
         }
 
-        test("should return Authorization when authentication for contest is successful") {
-            val member = MemberMockBuilder.build(login = inputDTO.login)
-            val contest =
-                ContestMockBuilder.build(
-                    startAt = OffsetDateTime.now().minusHours(1),
-                    endAt = OffsetDateTime.now().plusHours(1),
-                    members = listOf(member),
-                )
-            every { contestRepository.findById(contestId) } returns Optional.of(contest)
+        test("should return Authorization when authentication is successful") {
+            val member = MemberMockBuilder.build()
+            every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns member
             every { hashAdapter.verify(inputDTO.password, member.password) } returns true
             val authorization = AuthorizationMockBuilder.build()
             every { jwtAdapter.buildAuthorization(member) } returns authorization
 
-            val result = sut.authenticateForContest(contestId, inputDTO)
+            val result = sut.authenticate(inputDTO)
+
+            result shouldBe authorization
+        }
+    }
+
+    context("authenticate with contestId") {
+        val contestId = UUID.randomUUID()
+        val inputDTO = AuthenticateInputDTO(contestId, "testLogin", "testPassword")
+
+        test("should throw UnauthorizedException when member is not found") {
+            every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns null
+
+            shouldThrow<UnauthorizedException> {
+                sut.authenticate(inputDTO)
+            }.message shouldBe "Invalid login or password"
+        }
+
+        test("should throw UnauthorizedException when password does not match") {
+            val member = MemberMockBuilder.build()
+            every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns member
+            every { hashAdapter.verify(inputDTO.password, member.password) } returns false
+
+            shouldThrow<UnauthorizedException> {
+                sut.authenticate(inputDTO)
+            }.message shouldBe "Invalid login or password"
+        }
+
+        test("should return Authorization when authentication is successful") {
+            val member = MemberMockBuilder.build(login = inputDTO.login)
+            every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns member
+            every { hashAdapter.verify(inputDTO.password, member.password) } returns true
+            val authorization = AuthorizationMockBuilder.build()
+            every { jwtAdapter.buildAuthorization(member) } returns authorization
+
+            val result = sut.authenticate(inputDTO)
 
             result shouldBe authorization
         }

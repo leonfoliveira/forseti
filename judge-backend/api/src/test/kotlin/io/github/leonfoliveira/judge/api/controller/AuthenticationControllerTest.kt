@@ -34,6 +34,7 @@ class AuthenticationControllerTest(
 
         val authenticateInputDTO =
             AuthenticateInputDTO(
+                contestId = null,
                 login = "testUser",
                 password = "testPassword",
             )
@@ -71,29 +72,6 @@ class AuthenticationControllerTest(
             every { authorizationService.encodeToken(authorization) } returns token
 
             webMvc.post("/v1/auth/sign-in") {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(authenticateInputDTO)
-            }.andExpect {
-                status { isOk() }
-                cookie {
-                    value("access_token", token)
-                    path("access_token", "/")
-                    secure("access_token", true)
-                    httpOnly("access_token", true)
-                    sameSite("access_token", "Lax")
-                }
-                content { authorization }
-            }
-        }
-
-        test("authenticateForContext") {
-            val contestId = UUID.randomUUID()
-            val authorization = AuthorizationMockBuilder.build()
-            val token = "token"
-            every { authorizationService.authenticateForContest(contestId, authenticateInputDTO) } returns authorization
-            every { authorizationService.encodeToken(authorization) } returns token
-
-            webMvc.post("/v1/auth/contests/{id}/sign-in", contestId) {
                 contentType = MediaType.APPLICATION_JSON
                 content = objectMapper.writeValueAsString(authenticateInputDTO)
             }.andExpect {

@@ -17,7 +17,6 @@ object MemberMockBuilder {
         name: String = "Test Member",
         login: String = "test_member",
         password: String = "password",
-        isSystem: Boolean = false,
         submissions: List<Submission> = emptyList(),
     ) = Member(
         id = id,
@@ -29,7 +28,6 @@ object MemberMockBuilder {
         name = name,
         login = login,
         password = password,
-        isSystem = isSystem,
         submissions = submissions,
     )
 }
