@@ -1,14 +1,14 @@
 package io.github.leonfoliveira.judge.api.controller
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
-import io.github.leonfoliveira.judge.api.dto.response.submission.SubmissionFullResponseDTO
-import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
+import io.github.leonfoliveira.judge.api.dto.response.announcement.AnnouncementResponseDTO
+import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
 import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.common.domain.entity.Member
-import io.github.leonfoliveira.judge.common.service.dto.input.submission.CreateSubmissionInputDTO
-import io.github.leonfoliveira.judge.common.service.submission.CreateSubmissionService
+import io.github.leonfoliveira.judge.common.service.announcement.CreateAnnouncementService
+import io.github.leonfoliveira.judge.common.service.dto.input.announcement.CreateAnnouncementInputDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -25,20 +25,20 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/v1/problems")
-class ProblemController(
+@RequestMapping("/v1/contests")
+class AnnouncementController(
     private val contestAuthFilter: ContestAuthFilter,
-    private val createSubmissionService: CreateSubmissionService,
+    private val createAnnouncementService: CreateAnnouncementService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping("/{id}/submissions")
-    @Private(Member.Type.CONTESTANT)
+    @PostMapping("/{contestId}/announcements")
+    @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Transactional
-    @Operation(summary = "Create a submission")
+    @Operation(summary = "Create an announcement")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Submission created successfully"),
+            ApiResponse(responseCode = "200", description = "Announcement created successfully"),
             ApiResponse(
                 responseCode = "400",
                 description = "Invalid request format",
@@ -56,24 +56,20 @@ class ProblemController(
             ),
             ApiResponse(
                 responseCode = "404",
-                description = "Problem not found",
+                description = "Contest not found",
                 content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
             ),
         ],
     )
-    fun createSubmission(
-        @PathVariable id: UUID,
-        @RequestBody body: CreateSubmissionInputDTO,
-    ): ResponseEntity<SubmissionFullResponseDTO> {
-        logger.info("[POST] /v1/problems/{id}/submissions - body: $body")
-        contestAuthFilter.checkFromProblem(id)
-        val member = AuthorizationContextUtil.getMember()
-        val submission =
-            createSubmissionService.create(
-                memberId = member.id,
-                problemId = id,
-                inputDTO = body,
-            )
-        return ResponseEntity.ok(submission.toFullResponseDTO())
+    fun createAnnouncement(
+        @PathVariable contestId: UUID,
+        @RequestBody body: CreateAnnouncementInputDTO,
+    ): ResponseEntity<AnnouncementResponseDTO> {
+        logger.info("[POST] /v1/contests/$contestId/announcements $body")
+        contestAuthFilter.checkIfStarted(contestId)
+        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+        val member = AuthorizationContextUtil.getMember()!!
+        val announcement = createAnnouncementService.create(contestId, member.id, body)
+        return ResponseEntity.ok(announcement.toResponseDTO())
     }
 }

@@ -4,33 +4,29 @@ import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
-import io.github.leonfoliveira.judge.common.mock.entity.ProblemMockBuilder
-import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
-import io.github.leonfoliveira.judge.common.service.problem.FindProblemService
-import io.github.leonfoliveira.judge.common.service.submission.FindSubmissionService
+import io.github.leonfoliveira.judge.common.service.contest.FindContestService
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
+import java.time.OffsetDateTime
 import java.util.UUID
 
 class ContestAuthFilterTest : FunSpec({
-    val findProblemService = mockk<FindProblemService>(relaxed = true)
-    val findSubmissionService = mockk<FindSubmissionService>(relaxed = true)
+    val findContestService = mockk<FindContestService>(relaxed = true)
 
     val sut =
         ContestAuthFilter(
-            findProblemService = findProblemService,
-            findSubmissionService = findSubmissionService,
+            findContestService = findContestService,
         )
 
     val authorizationMember =
         AuthorizationMember(
             id = UUID.randomUUID(),
             contestId = UUID.randomUUID(),
-            type = Member.Type.ROOT,
+            type = Member.Type.CONTESTANT,
             name = "Test User",
         )
 
@@ -39,13 +35,13 @@ class ContestAuthFilterTest : FunSpec({
         mockkObject(AuthorizationContextUtil)
     }
 
-    context("check") {
+    context("checkIfMemberBelongsToContest") {
         test("should throw ForbiddenException when contestId does not match") {
             val contestId = UUID.randomUUID()
-            every { AuthorizationContextUtil.getMember() } returns authorizationMember.copy(contestId = null)
+            every { AuthorizationContextUtil.getMember() } returns authorizationMember.copy(contestId = UUID.randomUUID())
 
             shouldThrow<ForbiddenException> {
-                sut.check(contestId)
+                sut.checkIfMemberBelongsToContest(contestId)
             }
         }
 
@@ -53,73 +49,61 @@ class ContestAuthFilterTest : FunSpec({
             val contestId = UUID.randomUUID()
             every { AuthorizationContextUtil.getMember() } returns authorizationMember.copy(contestId = contestId)
 
-            sut.check(contestId)
+            sut.checkIfMemberBelongsToContest(contestId)
+        }
+
+        test("should not throw ForbiddenException when member is ROOT") {
+            val contestId = UUID.randomUUID()
+            every { AuthorizationContextUtil.getMember() } returns
+                authorizationMember.copy(contestId = UUID.randomUUID(), type = Member.Type.ROOT)
+
+            sut.checkIfMemberBelongsToContest(contestId)
         }
     }
 
-    context("checkFromProblem") {
-        test("should throw ForbiddenException when problem's contestId does not match") {
-            val problemId = UUID.randomUUID()
-            val problemContestId = UUID.randomUUID()
-            every { AuthorizationContextUtil.getMember() } returns authorizationMember.copy(contestId = null)
-            every { findProblemService.findById(problemId) } returns
-                ProblemMockBuilder.build(
-                    contest = ContestMockBuilder.build(id = problemContestId),
-                )
+    context("checkIfStarted") {
+        test("should throw ForbiddenException when contest has not started and member is CONTESTANT") {
+            val contestId = UUID.randomUUID()
+            every { AuthorizationContextUtil.getMember() } returns authorizationMember.copy(contestId = UUID.randomUUID())
+            every {
+                findContestService.findById(contestId)
+            } returns ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().plusHours(1))
 
             shouldThrow<ForbiddenException> {
-                sut.checkFromProblem(problemId)
+                sut.checkIfStarted(contestId)
             }
         }
 
-        test("should not throw ForbiddenException when problem's contestId matches") {
-            val problemId = UUID.randomUUID()
+        test("should not throw ForbiddenException when contest has started and member is CONTESTANT") {
             val contestId = UUID.randomUUID()
-            every { AuthorizationContextUtil.getMember() } returns authorizationMember.copy(contestId = contestId)
-            every { findProblemService.findById(problemId) } returns
-                ProblemMockBuilder.build(
-                    contest = ContestMockBuilder.build(id = contestId),
-                )
-
-            sut.checkFromProblem(problemId)
-        }
-    }
-
-    context("checkFromSubmission") {
-        test("should throw ForbiddenException when submission's contestId does not match") {
-            val submissionId = UUID.randomUUID()
-            val submissionContestId = UUID.randomUUID()
-            every { AuthorizationContextUtil.getMember() } returns authorizationMember.copy(contestId = null)
+            every { AuthorizationContextUtil.getMember() } returns authorizationMember.copy(contestId = UUID.randomUUID())
             every {
-                findSubmissionService.findById(submissionId)
-            } returns
-                SubmissionMockBuilder.build(
-                    problem =
-                        ProblemMockBuilder.build(
-                            contest = ContestMockBuilder.build(id = submissionContestId),
-                        ),
-                )
+                findContestService.findById(contestId)
+            } returns ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1))
 
-            shouldThrow<ForbiddenException> {
-                sut.checkFromSubmission(submissionId)
-            }
+            sut.checkIfStarted(contestId)
         }
 
-        test("should not throw ForbiddenException when submission's contestId matches") {
-            val submissionId = UUID.randomUUID()
+        test("should not throw ForbiddenException when member is ADMIN") {
             val contestId = UUID.randomUUID()
-            every { AuthorizationContextUtil.getMember() } returns authorizationMember.copy(contestId = contestId)
+            every { AuthorizationContextUtil.getMember() } returns
+                authorizationMember.copy(contestId = UUID.randomUUID(), type = Member.Type.ADMIN)
             every {
-                findSubmissionService.findById(submissionId)
-            } returns
-                SubmissionMockBuilder.build(
-                    problem =
-                        ProblemMockBuilder.build(
-                            contest = ContestMockBuilder.build(id = contestId),
-                        ),
-                )
+                findContestService.findById(contestId)
+            } returns ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().plusHours(1))
 
-            sut.checkFromSubmission(submissionId)
+            sut.checkIfStarted(contestId)
+        }
+
+        test("should not throw ForbiddenException when member is ROOT") {
+            val contestId = UUID.randomUUID()
+            every { AuthorizationContextUtil.getMember() } returns
+                authorizationMember.copy(contestId = UUID.randomUUID(), type = Member.Type.ROOT)
+            every {
+                findContestService.findById(contestId)
+            } returns ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().plusHours(1))
+
+            sut.checkIfStarted(contestId)
         }
     }
 })

@@ -54,6 +54,7 @@ class CreateSubmissionServiceTest : FunSpec({
         val problemId = UUID.randomUUID()
         val inputDTO =
             CreateSubmissionInputDTO(
+                problemId = problemId,
                 language = Language.PYTHON_3_13,
                 code = AttachmentInputDTO(id = UUID.randomUUID()),
             )
@@ -62,7 +63,7 @@ class CreateSubmissionServiceTest : FunSpec({
             every { memberRepository.findById(memberId) } returns Optional.empty()
 
             shouldThrow<NotFoundException> {
-                sut.create(memberId, problemId, inputDTO)
+                sut.create(memberId, inputDTO)
             }.message shouldBe "Could not find member with id = $memberId"
         }
 
@@ -72,7 +73,7 @@ class CreateSubmissionServiceTest : FunSpec({
             every { problemRepository.findById(problemId) } returns Optional.empty()
 
             shouldThrow<NotFoundException> {
-                sut.create(memberId, problemId, inputDTO)
+                sut.create(memberId, inputDTO)
             }.message shouldBe "Could not find problem with id = $problemId"
         }
 
@@ -84,7 +85,7 @@ class CreateSubmissionServiceTest : FunSpec({
             every { attachmentRepository.findById(inputDTO.code.id) } returns Optional.empty()
 
             shouldThrow<NotFoundException> {
-                sut.create(memberId, problemId, inputDTO)
+                sut.create(memberId, inputDTO)
             }.message shouldBe "Could not find code attachment with id = ${inputDTO.code.id}"
         }
 
@@ -97,7 +98,7 @@ class CreateSubmissionServiceTest : FunSpec({
             every { attachmentRepository.findById(inputDTO.code.id) } returns Optional.of(attachment)
 
             shouldThrow<ForbiddenException> {
-                sut.create(memberId, problemId, inputDTO)
+                sut.create(memberId, inputDTO)
             }.message shouldBe "Member does not belong to the contest of the problem"
         }
 
@@ -111,7 +112,7 @@ class CreateSubmissionServiceTest : FunSpec({
             every { attachmentRepository.findById(inputDTO.code.id) } returns Optional.of(attachment)
 
             shouldThrow<ForbiddenException> {
-                sut.create(memberId, problemId, inputDTO)
+                sut.create(memberId, inputDTO)
             }.message shouldBe "Language ${inputDTO.language} is not allowed for this contest"
         }
 
@@ -125,7 +126,7 @@ class CreateSubmissionServiceTest : FunSpec({
             every { attachmentRepository.findById(inputDTO.code.id) } returns Optional.of(attachment)
 
             shouldThrow<ForbiddenException> {
-                sut.create(memberId, problemId, inputDTO)
+                sut.create(memberId, inputDTO)
             }.message shouldBe "Contest is not active"
         }
 
@@ -139,7 +140,7 @@ class CreateSubmissionServiceTest : FunSpec({
             every { attachmentRepository.findById(inputDTO.code.id) } returns Optional.of(attachment)
             every { submissionRepository.save(any<Submission>()) } answers { firstArg() }
 
-            val submission = sut.create(memberId, problemId, inputDTO)
+            val submission = sut.create(memberId, inputDTO)
 
             submission.member shouldBe member
             submission.problem shouldBe problem

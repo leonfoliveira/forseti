@@ -15,7 +15,6 @@ import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
@@ -46,21 +45,6 @@ class AuthenticationControllerTest(
                 .andExpect {
                     status { isOk() }
                     content { authorization }
-                }
-        }
-
-        test("cleanAuthorization") {
-            webMvc.delete("/v1/auth/me")
-                .andExpect {
-                    status { isNoContent() }
-                    cookie {
-                        value("access_token", "")
-                        path("access_token", "/")
-                        maxAge("access_token", 0)
-                        secure("access_token", true)
-                        httpOnly("access_token", true)
-                        sameSite("access_token", "Lax")
-                    }
                 }
         }
 

@@ -90,7 +90,12 @@ class CreateClarificationServiceTest : FunSpec({
         ).forEach { type ->
             test("should throw ForbiddenException when $type tries to create clarification without parent") {
                 val member = MemberMockBuilder.build(id = memberId, type = type)
-                val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1), members = listOf(member))
+                val contest =
+                    ContestMockBuilder.build(
+                        id = contestId,
+                        startAt = OffsetDateTime.now().minusHours(1),
+                        members = listOf(member),
+                    )
                 every { contestRepository.findById(contestId) } returns Optional.of(contest)
 
                 shouldThrow<ForbiddenException> {

@@ -11,12 +11,10 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -29,10 +27,6 @@ import java.time.OffsetDateTime
 @RequestMapping("/v1/auth")
 class AuthenticationController(
     val authorizationService: AuthorizationService,
-    @Value("\${security.jwt.expiration}")
-    private val expiration: String,
-    @Value("\${security.jwt.root-expiration}")
-    private val rootExpiration: String,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -60,36 +54,6 @@ class AuthenticationController(
         return ResponseEntity.ok(authorization)
     }
 
-    @DeleteMapping("/me")
-    @Operation(
-        summary = "Clean authorization",
-        description = "Cleans the authorization of the current user.",
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "204",
-                description = "Authorization cleaned successfully",
-            ),
-        ],
-    )
-    fun cleanAuthorization(): ResponseEntity<Void> {
-        logger.info("[DELETE] /v1/auth/me")
-        return ResponseEntity.noContent()
-            .header(
-                HttpHeaders.SET_COOKIE,
-                ResponseCookie.from("access_token", "")
-                    .httpOnly(true)
-                    .secure(true)
-                    .path("/")
-                    .maxAge(0)
-                    .sameSite("Lax")
-                    .build()
-                    .toString(),
-            )
-            .build()
-    }
-
     @PostMapping("/sign-in")
     @Operation(
         summary = "Authenticate",
@@ -112,7 +76,7 @@ class AuthenticationController(
     fun authenticate(
         @RequestBody body: AuthenticateInputDTO,
     ): ResponseEntity<Authorization> {
-        logger.info("[POST] /v1/auth/sign-in - body: $body")
+        logger.info("[POST] /v1/auth/sign-in $body")
         val authorization = authorizationService.authenticate(body)
         return ResponseEntity.ok()
             .header(HttpHeaders.SET_COOKIE, buildCookie(authorization).toString())

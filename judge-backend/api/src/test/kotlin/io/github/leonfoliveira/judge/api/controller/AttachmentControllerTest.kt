@@ -28,12 +28,14 @@ class AttachmentControllerTest(
 ) : FunSpec({
         extensions(SpringExtension)
 
+        val basePath = "/v1/attachments"
+
         test("uploadAttachment") {
             val file = mockk<MultipartFile>(relaxed = true)
             val attachment = AttachmentMockBuilder.build()
             every { attachmentService.upload(file) } returns attachment
 
-            webMvc.multipart("/v1/attachments") {
+            webMvc.multipart(basePath) {
                 file("file", file.bytes)
             }.andExpect {
                 status { isOk() }
@@ -50,7 +52,7 @@ class AttachmentControllerTest(
                     bytes = bytes,
                 )
 
-            webMvc.get("/v1/attachments/${attachment.id}") {
+            webMvc.get("$basePath/{attachmentId}", attachment.id) {
                 accept = MediaType.APPLICATION_OCTET_STREAM
             }.andExpect {
                 status { isOk() }

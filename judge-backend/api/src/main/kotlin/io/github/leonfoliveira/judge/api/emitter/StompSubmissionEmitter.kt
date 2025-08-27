@@ -3,7 +3,7 @@ package io.github.leonfoliveira.judge.api.emitter
 import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
-import io.github.leonfoliveira.judge.common.service.contest.FindContestService
+import io.github.leonfoliveira.judge.common.service.leaderboard.FindLeaderboardService
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 @Component
 class StompSubmissionEmitter(
     private val messagingTemplate: SimpMessagingTemplate,
-    private val contestFindContestService: FindContestService,
+    private val leaderboardService: FindLeaderboardService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -36,7 +36,7 @@ class StompSubmissionEmitter(
             submission.toFullResponseDTO(),
         )
 
-        val leaderboard = contestFindContestService.buildContestLeaderboard(contest)
+        val leaderboard = leaderboardService.findByContestId(contest.id)
         messagingTemplate.convertAndSend(
             "/topic/contests/${submission.contest.id}/leaderboard",
             leaderboard,

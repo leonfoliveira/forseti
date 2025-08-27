@@ -1,15 +1,14 @@
 package io.github.leonfoliveira.judge.api.controller
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
+import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
 import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.mock.entity.AnnouncementMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
-import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
-import io.github.leonfoliveira.judge.common.service.dto.input.attachment.AttachmentInputDTO
-import io.github.leonfoliveira.judge.common.service.dto.input.submission.CreateSubmissionInputDTO
-import io.github.leonfoliveira.judge.common.service.submission.CreateSubmissionService
+import io.github.leonfoliveira.judge.common.service.announcement.CreateAnnouncementService
+import io.github.leonfoliveira.judge.common.service.dto.input.announcement.CreateAnnouncementInputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
@@ -23,40 +22,40 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 import java.util.UUID
 
-@WebMvcTest(controllers = [ProblemController::class])
+@WebMvcTest(controllers = [AnnouncementController::class])
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = [ProblemController::class])
-class ProblemControllerTest(
+@ContextConfiguration(classes = [AnnouncementController::class])
+class AnnouncementControllerTest(
+    @MockkBean(relaxed = true)
+    private val createAnnouncementService: CreateAnnouncementService,
     @MockkBean(relaxed = true)
     private val contestAuthFilter: ContestAuthFilter,
-    @MockkBean(relaxed = true)
-    private val createSubmissionService: CreateSubmissionService,
     private val webMvc: MockMvc,
+    private val objectMapper: ObjectMapper,
 ) : FunSpec({
         extensions(SpringExtension)
 
-        val objectMapper = jacksonObjectMapper()
+        val basePath = "/v1/contests/{contestId}/announcements"
 
-        test("createSubmission") {
-            val problemId = UUID.randomUUID()
+        test("createAnnouncement") {
+            val contestId = UUID.randomUUID()
             val body =
-                CreateSubmissionInputDTO(
-                    language = Language.PYTHON_3_13,
-                    code = AttachmentInputDTO(id = UUID.randomUUID()),
+                CreateAnnouncementInputDTO(
+                    text = "This is a test announcement",
                 )
+            val announcement = AnnouncementMockBuilder.build()
             val authorization = AuthorizationMockBuilder.build()
             SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
-            val submission = SubmissionMockBuilder.build()
-            every { createSubmissionService.create(authorization.member.id, problemId, body) } returns submission
+            every { createAnnouncementService.create(contestId, authorization.member.id, body) } returns announcement
 
-            webMvc.post("/v1/problems/{id}/submissions", problemId) {
+            webMvc.post(basePath, contestId) {
                 contentType = MediaType.APPLICATION_JSON
                 content = objectMapper.writeValueAsString(body)
             }.andExpect {
                 status { isOk() }
-                content { submission }
+                content { announcement.toResponseDTO() }
             }
 
-            verify { contestAuthFilter.checkFromProblem(problemId) }
+            verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
         }
     })

@@ -1,11 +1,20 @@
 package io.github.leonfoliveira.judge.api.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
+import io.github.leonfoliveira.judge.api.controller.advice.GlobalExceptionHandler
+import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
+import io.github.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
 import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
+import io.github.leonfoliveira.judge.common.config.JacksonConfig
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
+import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
+import io.github.leonfoliveira.judge.common.service.dto.input.attachment.AttachmentInputDTO
+import io.github.leonfoliveira.judge.common.service.dto.input.submission.CreateSubmissionInputDTO
+import io.github.leonfoliveira.judge.common.service.submission.CreateSubmissionService
 import io.github.leonfoliveira.judge.common.service.submission.FindSubmissionService
 import io.github.leonfoliveira.judge.common.service.submission.UpdateSubmissionService
 import io.kotest.core.spec.style.FunSpec
@@ -25,14 +34,17 @@ import java.util.UUID
 
 @WebMvcTest(controllers = [SubmissionController::class])
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = [SubmissionController::class])
+@ContextConfiguration(classes = [SubmissionController::class, JacksonConfig::class, GlobalExceptionHandler::class])
 class SubmissionControllerTest(
     @MockkBean(relaxed = true)
     private val contestAuthFilter: ContestAuthFilter,
     @MockkBean(relaxed = true)
+    private val createSubmissionService: CreateSubmissionService,
+    @MockkBean(relaxed = true)
     private val findSubmissionService: FindSubmissionService,
     @MockkBean(relaxed = true)
     private val updateSubmissionService: UpdateSubmissionService,
+    private val objectMapper: ObjectMapper,
     private val webMvc: MockMvc,
 ) : FunSpec({
         extensions(SpringExtension)
@@ -44,11 +56,73 @@ class SubmissionControllerTest(
             SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
         }
 
+        val basePath = "/v1/contests/{contestId}/submissions"
+
+        test("createSubmission") {
+            val contestId = UUID.randomUUID()
+            val body =
+                CreateSubmissionInputDTO(
+                    problemId = UUID.randomUUID(),
+                    language = Language.PYTHON_3_13,
+                    code = AttachmentInputDTO(id = UUID.randomUUID()),
+                )
+            val submission = SubmissionMockBuilder.build()
+            every { createSubmissionService.create(member.id, body) } returns submission
+
+            webMvc.post(basePath, contestId) {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(body)
+            }.andExpect {
+                status { isOk() }
+                content { submission.toFullResponseDTO() }
+            }
+
+            verify { contestAuthFilter.checkIfStarted(contestId) }
+            verify { createSubmissionService.create(member.id, body) }
+        }
+
+        test("findAllContestSubmissions") {
+            val contestId = UUID.randomUUID()
+            val submissions =
+                listOf(
+                    SubmissionMockBuilder.build(),
+                    SubmissionMockBuilder.build(),
+                )
+            every { findSubmissionService.findAllByContest(contestId) } returns submissions
+
+            webMvc.get(basePath, contestId) {
+                accept = MediaType.APPLICATION_JSON
+            }.andExpect {
+                status { isOk() }
+                content { submissions.map { it.toPublicResponseDTO() } }
+            }
+        }
+
+        test("findAllContestFullSubmissions") {
+            val contestId = UUID.randomUUID()
+            val submissions =
+                listOf(
+                    SubmissionMockBuilder.build(),
+                    SubmissionMockBuilder.build(),
+                )
+            every { findSubmissionService.findAllByContest(contestId) } returns submissions
+
+            webMvc.get("$basePath/full", contestId) {
+                accept = MediaType.APPLICATION_JSON
+            }.andExpect {
+                status { isOk() }
+                content { submissions.map { it.toFullResponseDTO() } }
+            }
+
+            verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+        }
+
         test("findAllFullSubmissionsForMember") {
             val submissions = listOf(SubmissionMockBuilder.build(), SubmissionMockBuilder.build())
             every { findSubmissionService.findAllByMember(member.id) } returns submissions
+            val contestId = UUID.randomUUID()
 
-            webMvc.get("/v1/submissions/full/me") {
+            webMvc.get("$basePath/full/me", contestId) {
                 accept = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isOk() }
@@ -57,10 +131,11 @@ class SubmissionControllerTest(
         }
 
         test("updateSubmissionAnswer") {
+            val contestId = UUID.randomUUID()
             val submissionId = UUID.randomUUID()
             val answer = Submission.Answer.ACCEPTED
 
-            webMvc.put("/v1/submissions/{id}/answer/{answer}", submissionId, answer) {
+            webMvc.put("$basePath/{id}/answer/{answer}", contestId, submissionId, answer) {
                 contentType = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isNoContent() }
@@ -70,29 +145,31 @@ class SubmissionControllerTest(
         }
 
         test("updateSubmissionAnswerForce") {
+            val contestId = UUID.randomUUID()
             val submissionId = UUID.randomUUID()
             val answer = Submission.Answer.ACCEPTED
 
-            webMvc.put("/v1/submissions/{id}/answer/{answer}/force", submissionId, answer) {
+            webMvc.put("$basePath/{id}/answer/{answer}/force", contestId, submissionId, answer) {
                 contentType = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isNoContent() }
             }
 
-            verify { contestAuthFilter.checkFromSubmission(submissionId) }
+            verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
             verify { updateSubmissionService.updateAnswer(submissionId, answer, force = true) }
         }
 
         test("rerunSubmission") {
+            val contestId = UUID.randomUUID()
             val submissionId = UUID.randomUUID()
 
-            webMvc.post("/v1/submissions/{id}/rerun", submissionId) {
+            webMvc.post("$basePath/{id}/rerun", contestId, submissionId) {
                 contentType = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isNoContent() }
             }
 
-            verify { contestAuthFilter.checkFromSubmission(submissionId) }
+            verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
             verify { updateSubmissionService.rerun(submissionId) }
         }
     })
