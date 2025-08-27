@@ -3,6 +3,8 @@ package io.github.leonfoliveira.judge.api.controller
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
+import io.github.leonfoliveira.judge.api.util.KeyType
+import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.AuthenticateInputDTO
@@ -59,6 +61,12 @@ class AuthenticationController(
     }
 
     @PostMapping("/sign-in")
+    @RateLimit(
+        requestsPerMinute = 5,  // Apenas 5 tentativas de login por minuto
+        requestsPerHour = 20,   // 20 tentativas por hora
+        burstCapacity = 2,      // Máximo 2 tentativas em sequência rápida
+        keyType = KeyType.IP_ADDRESS
+    )
     @Operation(
         summary = "Authenticate",
         description = "Authenticates a user and returns an authorization.",

@@ -1,4 +1,6 @@
 [versions]
+bucket4j = "8.10.1"
+caffeine = "3.1.8"
 feign = "4.3.0"
 flyway = "9.22.3"
 hibernate-envers = "6.6.13.Final"
@@ -24,6 +26,8 @@ springmockk = "4.0.2"
 testcontainers = "1.21.0"
 
 [libraries]
+bucket4j-core = { module = "com.bucket4j:bucket4j-core", version.ref = "bucket4j" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 hibernate-envers = { module = "org.hibernate.orm:hibernate-envers", version.ref = "hibernate-envers" }
 hibernate-types = { module = "com.vladmihalcea:hibernate-types-60", version.ref = "hibernate-types" }
 flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
@@ -61,6 +65,10 @@ testcontainers-localstack = { module = "org.testcontainers:localstack", version.
 testcontainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 
 [bundles]
+bucket4j = [
+    "bucket4j-core",
+    "caffeine"
+]
 jackson = [
     "jackson-datatype-jsr310",
     "jackson-module-kotlin"
@@ -89,6 +97,7 @@ spring = [
     "spring-boot-starter-validation",
     "spring-boot-starter-web",
     "spring-boot-starter-websocket",
+    "caffeine"
 ]
 testcontainers = [
     "spring-boot-testcontainers",

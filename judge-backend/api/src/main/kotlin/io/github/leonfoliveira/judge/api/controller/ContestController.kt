@@ -8,7 +8,9 @@ import io.github.leonfoliveira.judge.api.dto.response.contest.toFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.toMetadataDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.toPublicOutputDTO
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
+import io.github.leonfoliveira.judge.api.util.KeyType
 import io.github.leonfoliveira.judge.api.util.Private
+import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.service.contest.CreateContestService
 import io.github.leonfoliveira.judge.common.service.contest.DeleteContestService
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
+import kotlin.collections.contains
 
 @RestController
 @RequestMapping("/v1/contests")
@@ -47,6 +50,12 @@ class ContestController(
 
     @PostMapping
     @Private(Member.Type.ROOT)
+    @RateLimit(
+        requestsPerMinute = 2,   // Apenas 2 criações de contest por minuto
+        requestsPerHour = 10,    // Máximo 10 por hora
+        burstCapacity = 1,       // Sem burst para operações administrativas
+        keyType = KeyType.USER_ID
+    )
     @Transactional
     @Operation(summary = "Create a contest")
     @ApiResponses(
@@ -127,6 +136,12 @@ class ContestController(
 
     @GetMapping("/metadata")
     @Private(Member.Type.ROOT)
+    @RateLimit(
+        requestsPerMinute = 20,  // Consultas administrativas mais permissivas
+        requestsPerHour = 100,   
+        burstCapacity = 5,       
+        keyType = KeyType.USER_ID
+    )
     @Transactional(readOnly = true)
     @Operation(summary = "Find all contest metadata")
     @ApiResponses(

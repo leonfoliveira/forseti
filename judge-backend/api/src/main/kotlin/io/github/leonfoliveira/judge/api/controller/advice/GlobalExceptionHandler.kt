@@ -5,6 +5,7 @@ import io.github.leonfoliveira.judge.common.domain.exception.BusinessException
 import io.github.leonfoliveira.judge.common.domain.exception.ConflictException
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
+import io.github.leonfoliveira.judge.common.domain.exception.TooManyRequestsException
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import jakarta.validation.ConstraintViolationException
@@ -30,6 +31,7 @@ class GlobalExceptionHandler {
             UnauthorizedException::class to HttpStatus.UNAUTHORIZED,
             ForbiddenException::class to HttpStatus.FORBIDDEN,
             ConflictException::class to HttpStatus.CONFLICT,
+            TooManyRequestsException::class to HttpStatus.TOO_MANY_REQUESTS,
         )
 
     @ExceptionHandler(BusinessException::class)
@@ -42,6 +44,21 @@ class GlobalExceptionHandler {
         return ResponseEntity
             .status(status)
             .body(ErrorResponseDTO(ex.message!!))
+    }
+
+    @ExceptionHandler(TooManyRequestsException::class)
+    fun handleTooManyRequestsException(ex: TooManyRequestsException): ResponseEntity<ErrorResponseDTO> {
+        logger.warn("Rate limit exceeded: ${ex.message}")
+        val response = ResponseEntity
+            .status(HttpStatus.TOO_MANY_REQUESTS)
+            .body(ErrorResponseDTO(ex.message))
+        
+        // Add Retry-After header if available
+        ex.retryAfterSeconds?.let { 
+            response.headers.add("Retry-After", it.toString())
+        }
+        
+        return response
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
