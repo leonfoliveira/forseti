@@ -51,7 +51,7 @@ class StompClarificationEmitterTest : FunSpec({
 
         verify {
             messagingTemplate.convertAndSend(
-                "/topic/members/${clarification.parent!!.member.id}/clarifications/children",
+                "/topic/contests/${clarification.contest.id}/clarifications/children/members/${clarification.parent!!.member.id}",
                 clarification.toResponseDTO(),
             )
         }

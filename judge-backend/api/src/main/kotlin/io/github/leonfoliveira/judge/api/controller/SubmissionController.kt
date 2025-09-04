@@ -147,7 +147,7 @@ class SubmissionController(
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }
 
-    @GetMapping("/full/me")
+    @GetMapping("/full/members/me")
     @Private(Member.Type.CONTESTANT)
     @Transactional(readOnly = true)
     @Operation(summary = "Find all full submissions for a member")
@@ -174,7 +174,7 @@ class SubmissionController(
     fun findAllFullSubmissionsForMember(
         @PathVariable contestId: UUID,
     ): ResponseEntity<List<SubmissionFullResponseDTO>> {
-        logger.info("[GET] /v1/contests/$contestId/submissions/full/me")
+        logger.info("[GET] /v1/contests/$contestId/submissions/full/members/me")
         val member = AuthorizationContextUtil.getMember()!!
         val submissions = findSubmissionService.findAllByMember(member.id)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })

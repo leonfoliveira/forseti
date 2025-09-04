@@ -2,6 +2,7 @@ package io.github.leonfoliveira.judge.api.controller
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
+import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.AuthenticateInputDTO
@@ -51,6 +52,9 @@ class AuthenticationController(
     fun getAuthorization(): ResponseEntity<Authorization> {
         logger.info("[GET] /v1/auth/me")
         val authorization = AuthorizationContextUtil.get()
+        if (authorization == null) {
+            throw UnauthorizedException()
+        }
         return ResponseEntity.ok(authorization)
     }
 

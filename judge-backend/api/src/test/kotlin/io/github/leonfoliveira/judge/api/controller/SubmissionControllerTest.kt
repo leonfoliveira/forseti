@@ -122,7 +122,7 @@ class SubmissionControllerTest(
             every { findSubmissionService.findAllByMember(member.id) } returns submissions
             val contestId = UUID.randomUUID()
 
-            webMvc.get("$basePath/full/me", contestId) {
+            webMvc.get("$basePath/full/members/me", contestId) {
                 accept = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isOk() }

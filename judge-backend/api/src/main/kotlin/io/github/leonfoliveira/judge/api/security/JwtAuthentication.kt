@@ -1,11 +1,11 @@
 package io.github.leonfoliveira.judge.api.security
 
 import io.github.leonfoliveira.judge.common.domain.model.Authorization
-import io.github.leonfoliveira.judge.common.util.GeneratedSkipCoverage
+import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 
-@GeneratedSkipCoverage
+@SkipCoverage
 class JwtAuthentication(
     private var principal: Authorization? = null,
 ) : Authentication {

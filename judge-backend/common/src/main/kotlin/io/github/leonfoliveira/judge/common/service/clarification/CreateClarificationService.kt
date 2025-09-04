@@ -7,6 +7,7 @@ import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.event.ClarificationEvent
 import io.github.leonfoliveira.judge.common.repository.ClarificationRepository
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
+import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.clarification.CreateClarificationInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
@@ -16,6 +17,7 @@ import java.util.UUID
 @Service
 class CreateClarificationService(
     private val contestRepository: ContestRepository,
+    private val memberRepository: MemberRepository,
     private val clarificationRepository: ClarificationRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) {
@@ -32,12 +34,10 @@ class CreateClarificationService(
             contestRepository.findById(contestId).orElseThrow {
                 NotFoundException("Could not find contest with id $contestId")
             }
-        if (!contest.hasStarted()) {
-            throw ForbiddenException("Contest with id $contestId has not started yet")
-        }
         val member =
-            contest.members.find { it.id == memberId }
-                ?: throw NotFoundException("Could not find member with id $memberId")
+            memberRepository.findById(memberId).orElseThrow {
+                NotFoundException("Could not find member with id $memberId")
+            }
 
         if (member.type == Member.Type.CONTESTANT && input.parentId != null) {
             throw ForbiddenException("Contestants cannot create clarifications with a parent")

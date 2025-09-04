@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.judge.common.adapter.aws
 
-import io.github.leonfoliveira.judge.common.util.GeneratedSkipCoverage
+import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -12,7 +12,7 @@ import software.amazon.awssdk.services.sqs.SqsClient
 import java.net.URI
 
 @Configuration
-@GeneratedSkipCoverage
+@SkipCoverage
 class AwsConfig(
     @Value("\${spring.cloud.aws.endpoint}")
     private val endpoint: URI,

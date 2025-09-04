@@ -1,12 +1,12 @@
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 import { LeaderboardListener } from "@/core/listener/LeaderboardListener";
-import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { LeaderboardResponseDTO } from "@/core/repository/dto/response/leaderboard/LeaderboardResponseDTO";
 
 export class StompLeaderboardListener implements LeaderboardListener {
   async subscribeForLeaderboard(
     client: ListenerClient,
     contestId: string,
-    cb: (submission: ContestLeaderboardResponseDTO) => void,
+    cb: (submission: LeaderboardResponseDTO) => void,
   ): Promise<void> {
     await client.subscribe(`/topic/contests/${contestId}/leaderboard`, cb);
   }

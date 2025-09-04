@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.judge.api.config
 
-import io.github.leonfoliveira.judge.api.security.http.HttpJwtAuthFilter
+import io.github.leonfoliveira.judge.api.security.http.HttpAuthExtractionFilter
 import io.github.leonfoliveira.judge.api.security.http.HttpPrivateInterceptor
-import io.github.leonfoliveira.judge.common.util.GeneratedSkipCoverage
+import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,11 +18,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @EnableWebSecurity
-@GeneratedSkipCoverage
+@SkipCoverage
 class HttpConfig(
     @Value("\${server.cors.allowed-origins}")
     val allowedOrigins: String,
-    private val httpJwtAuthFilter: HttpJwtAuthFilter,
+    private val httpAuthExtractionFilter: HttpAuthExtractionFilter,
     private val httpPrivateInterceptor: HttpPrivateInterceptor,
 ) : WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
@@ -39,7 +39,7 @@ class HttpConfig(
             .authorizeHttpRequests { it.anyRequest().permitAll() }
             .csrf { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .addFilterAfter(httpJwtAuthFilter, BasicAuthenticationFilter::class.java)
+            .addFilterAfter(httpAuthExtractionFilter, BasicAuthenticationFilter::class.java)
             .build()
     }
 

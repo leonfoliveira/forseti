@@ -22,7 +22,10 @@ kover {
                     "io.github.leonfoliveira.judge.autojudge.Application",
                     "io.github.leonfoliveira.judge.autojudge.ApplicationKt",
                 )
-                annotatedBy("org.springframework.context.annotation.Configuration")
+                annotatedBy(
+                    "org.springframework.context.annotation.Configuration",
+                    "io.github.leonfoliveira.judge.common.util.SkipCoverage",
+                )
             }
         }
         verify {

@@ -33,7 +33,7 @@ class AnnouncementController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping("/{contestId}/announcements")
-    @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
+    @Private(Member.Type.JUDGE, Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Create an announcement")
     @ApiResponses(

@@ -1,25 +1,6 @@
 import Papa from "papaparse";
 
-import { ContestFormType } from "@/app/root/(dashboard)/contests/_form/contest-form";
-
 export class TestCaseValidator {
-  static async validateProblemList(
-    problems: NonNullable<ContestFormType["problems"]>,
-  ): Promise<
-    {
-      problem: NonNullable<ContestFormType["problems"]>[number];
-      isValid: boolean;
-    }[]
-  > {
-    return await Promise.all(
-      problems.map(async (it) => ({
-        problem: it,
-        isValid:
-          !it.newTestCases || (await this.validateTestCases(it.newTestCases!)),
-      })),
-    );
-  }
-
   /**
    * Utility function to validate test cases file.
    * Rules:
@@ -27,7 +8,7 @@ export class TestCaseValidator {
    *  - Must have at least one row
    *  - Each row must have exactly two columns
    */
-  private static validateTestCases(testCases: File): Promise<boolean> {
+  static validate(testCases: File): Promise<boolean> {
     return new Promise((resolve) => {
       Papa.parse(testCases, {
         complete(results) {

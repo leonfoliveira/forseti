@@ -1,43 +1,26 @@
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { Authorization } from "@/core/domain/model/Authorization";
 import { AuthenticationRepository } from "@/core/repository/AuthenticationRepository";
-import { AuthenticateMemberRequestDTO } from "@/core/repository/dto/request/AuthenticateMemberRequestDTO";
-import { AuthenticateRootRequestDTO } from "@/core/repository/dto/request/AuthenticateRootRequestDTO";
+import { AuthenticateRequestDTO } from "@/core/repository/dto/request/AuthenticateRequestDTO";
 
 export class AxiosAuthenticationRepository implements AuthenticationRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
 
-  async getAuthorization(): Promise<Authorization> {
-    const response = await this.axiosClient.get<Authorization>("/v1/auth/me");
+  async getAuthorization(accessToken: string): Promise<Authorization> {
+    const response = await this.axiosClient.get<Authorization>("/v1/auth/me", {
+      headers: {
+        Cookie: `access_token=${accessToken}`,
+      },
+    });
     return response.data;
   }
 
-  async cleanAuthorization(): Promise<void> {
-    await this.axiosClient.delete("/v1/auth/me");
-  }
-
-  async authenticateMember(
-    contestId: string,
-    requestDTO: AuthenticateMemberRequestDTO
+  async authenticate(
+    requestDTO: AuthenticateRequestDTO,
   ): Promise<Authorization> {
     const response = await this.axiosClient.post<Authorization>(
-      `/v1/auth/contests/${contestId}/sign-in`,
-      { data: requestDTO }
-    );
-    return response.data;
-  }
-
-  async authenticateRoot(
-    requestDTO: AuthenticateRootRequestDTO
-  ): Promise<Authorization> {
-    const response = await this.axiosClient.post<Authorization>(
-      "/v1/auth/sign-in",
-      {
-        data: {
-          login: "root",
-          password: requestDTO.password,
-        },
-      }
+      `/v1/auth/sign-in`,
+      { data: requestDTO },
     );
     return response.data;
   }

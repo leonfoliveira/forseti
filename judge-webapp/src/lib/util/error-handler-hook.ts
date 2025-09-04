@@ -1,26 +1,14 @@
-import { useRouter } from "next/navigation";
-
-import { authenticationService } from "@/config/composition";
 import { routes } from "@/config/routes";
-import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
-import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { authorizationSlice } from "@/store/slices/authorization-slice";
-import { useAppDispatch } from "@/store/store";
+import { signOut } from "@/lib/action/auth-action";
+import { useAppSelector } from "@/store/store";
 
 export function useErrorHandler() {
-  const router = useRouter();
-  const dispatch = useAppDispatch();
+  const contestMetadata = useAppSelector((state) => state.contestMetadata);
 
-  async function clearAuthorization() {
-    dispatch(authorizationSlice.actions.reset());
-    try {
-      await authenticationService.cleanAuthorization();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      window.location.href = routes.HOME;
-    }
+  async function handleSignOut() {
+    await signOut();
+    window.location.href = routes.CONTEST_SIGN_IN(contestMetadata.slug);
   }
 
   function handle(
@@ -30,16 +18,14 @@ export function useErrorHandler() {
     console.error(error);
 
     const handlers: Record<string, (error: Error) => void> = {
-      [UnauthorizedException.name]: () => clearAuthorization(),
-      [ForbiddenException.name]: () => router.push(routes.FORBIDDEN),
-      [NotFoundException.name]: () => router.push(routes.NOT_FOUND),
+      [UnauthorizedException.name]: handleSignOut,
       ...customHandlers,
     };
 
     const _error = error instanceof Error ? error : new Error(String(error));
     const handler = handlers[_error.name] || handlers["default"];
     if (handler !== undefined) {
-      return handler(_error);
+      handler(_error);
     }
   }
 

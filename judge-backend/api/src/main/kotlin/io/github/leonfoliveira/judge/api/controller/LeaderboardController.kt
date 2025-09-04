@@ -2,7 +2,7 @@ package io.github.leonfoliveira.judge.api.controller
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
-import io.github.leonfoliveira.judge.common.service.dto.output.ContestLeaderboardOutputDTO
+import io.github.leonfoliveira.judge.common.service.dto.output.LeaderboardOutputDTO
 import io.github.leonfoliveira.judge.common.service.leaderboard.FindLeaderboardService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -46,7 +46,7 @@ class LeaderboardController(
     )
     fun findContestLeaderboardById(
         @PathVariable contestId: UUID,
-    ): ResponseEntity<ContestLeaderboardOutputDTO> {
+    ): ResponseEntity<LeaderboardOutputDTO> {
         logger.info("[GET] /v1/contests/$contestId/leaderboard")
         contestAuthFilter.checkIfStarted(contestId)
         val leaderboard = findLeaderboardService.findByContestId(contestId)

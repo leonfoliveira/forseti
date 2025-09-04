@@ -6,7 +6,7 @@ import io.github.leonfoliveira.judge.common.domain.exception.ConflictException
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
-import io.github.leonfoliveira.judge.common.util.GeneratedSkipCoverage
+import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import jakarta.validation.ConstraintViolationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -83,7 +83,7 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException::class)
-    @GeneratedSkipCoverage
+    @SkipCoverage
     fun handleNoResourceFoundException(ex: NoResourceFoundException): ResponseEntity<ErrorResponseDTO> {
         logger.info("Resource not found, message: ${ex.message}", ex)
         return ResponseEntity

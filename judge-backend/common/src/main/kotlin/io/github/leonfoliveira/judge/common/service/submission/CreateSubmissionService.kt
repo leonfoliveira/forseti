@@ -48,9 +48,6 @@ class CreateSubmissionService(
             }
         val contest = problem.contest
 
-        if (problem.contest != member.contest) {
-            throw ForbiddenException("Member does not belong to the contest of the problem")
-        }
         if (contest.languages.none { it == inputDTO.language }) {
             throw ForbiddenException("Language ${inputDTO.language} is not allowed for this contest")
         }

@@ -6,7 +6,7 @@ import io.github.leonfoliveira.judge.common.domain.entity.Problem
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
-import io.github.leonfoliveira.judge.common.service.dto.output.ContestLeaderboardOutputDTO
+import io.github.leonfoliveira.judge.common.service.dto.output.LeaderboardOutputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Duration
@@ -23,7 +23,7 @@ class FindLeaderboardService(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun findByContestId(contestId: UUID): ContestLeaderboardOutputDTO {
+    fun findByContestId(contestId: UUID): LeaderboardOutputDTO {
         logger.info("Building outputDTO for contest with id: $contestId")
         val contest =
             contestRepository.findById(contestId).orElseThrow {
@@ -54,11 +54,11 @@ class FindLeaderboardService(
                     return@sortedWith a.name.compareTo(b.name)
                 }
 
-        return ContestLeaderboardOutputDTO(
+        return LeaderboardOutputDTO(
             contestId = contest.id,
             slug = contest.slug,
             startAt = contest.startAt,
-            classification = classification,
+            members = classification,
             issuedAt = OffsetDateTime.now(),
         )
     }
@@ -66,7 +66,7 @@ class FindLeaderboardService(
     private fun buildMemberDTO(
         contest: Contest,
         member: Member,
-    ): ContestLeaderboardOutputDTO.MemberDTO {
+    ): LeaderboardOutputDTO.MemberDTO {
         val submissionProblemHash = member.submissions.groupBy { it.problem.id }
         val problemDTOs =
             contest.problems.map { problem ->
@@ -81,8 +81,8 @@ class FindLeaderboardService(
         val score = problemDTOs.filter { it.isAccepted }.size
         val penalty = problemDTOs.sumOf { it.penalty }
 
-        return ContestLeaderboardOutputDTO.MemberDTO(
-            memberId = member.id,
+        return LeaderboardOutputDTO.MemberDTO(
+            id = member.id,
             name = member.name,
             score = score,
             penalty = penalty,
@@ -94,7 +94,7 @@ class FindLeaderboardService(
         contest: Contest,
         problem: Problem,
         submissions: List<Submission>,
-    ): ContestLeaderboardOutputDTO.ProblemDTO {
+    ): LeaderboardOutputDTO.ProblemDTO {
         val firstAcceptedSubmission =
             submissions
                 .firstOrNull { it.answer == Submission.Answer.ACCEPTED }
@@ -117,8 +117,8 @@ class FindLeaderboardService(
                 0
             }
 
-        return ContestLeaderboardOutputDTO.ProblemDTO(
-            problemId = problem.id,
+        return LeaderboardOutputDTO.ProblemDTO(
+            id = problem.id,
             letter = problem.letter,
             isAccepted = isAccepted,
             acceptedAt = if (isAccepted) firstAcceptedSubmission.createdAt else null,

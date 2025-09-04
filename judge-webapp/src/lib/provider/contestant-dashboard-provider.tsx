@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import { defineMessages, useIntl } from "react-intl";
 
 import {
   announcementListener,
   clarificationListener,
   contestService,
   leaderboardListener,
+  leaderboardService,
   listenerClientFactory,
   submissionListener,
   submissionService,
@@ -13,18 +13,17 @@ import {
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
-import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { LeaderboardResponseDTO } from "@/core/repository/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { globalMessages } from "@/i18n/global";
+import { defineMessages } from "@/i18n/message";
 import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";
 import { useErrorHandler } from "@/lib/util/error-handler-hook";
-import { useAlert } from "@/store/slices/alerts-slice";
-import { useAuthorization } from "@/store/slices/authorization-slice";
-import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
+import { useIntl } from "@/lib/util/intl-hook";
+import { useToast } from "@/lib/util/toast-hook";
 import { contestantDashboardSlice } from "@/store/slices/contestant-dashboard-slice";
-import { useToast } from "@/store/slices/toasts-slice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
 const messages = defineMessages({
@@ -51,14 +50,13 @@ export function ContestantDashboardProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const authorization = useAuthorization();
-  const contestMetadata = useContestMetadata();
+  const authorization = useAppSelector((state) => state.authorization);
+  const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const { isLoading, error } = useAppSelector(
     (state) => state.contestantDashboard,
   );
   const dispatch = useAppDispatch();
   const errorHandler = useErrorHandler();
-  const alert = useAlert();
   const toast = useToast();
   const intl = useIntl();
 
@@ -69,9 +67,9 @@ export function ContestantDashboardProvider({
       try {
         const data = await Promise.all([
           contestService.findContestById(contestMetadata.id),
-          contestService.findContestLeaderboardById(contestMetadata.id),
-          contestService.findAllContestSubmissions(contestMetadata.id),
-          submissionService.findAllFullForMember(),
+          leaderboardService.findContestLeaderboard(contestMetadata.id),
+          submissionService.findAllContestSubmissions(contestMetadata.id),
+          submissionService.findAllFullForMember(contestMetadata.id),
         ]);
 
         await listenerClient.connect();
@@ -86,8 +84,9 @@ export function ContestantDashboardProvider({
             contestMetadata.id,
             receiveSubmission,
           ),
-          submissionListener.subscribeForMember(
+          submissionListener.subscribeForMemberFull(
             listenerClient,
+            contestMetadata.id,
             authorization!.member.id,
             receiveMemberSubmission,
           ),
@@ -103,6 +102,7 @@ export function ContestantDashboardProvider({
           ),
           clarificationListener.subscribeForMemberChildren(
             listenerClient,
+            contestMetadata.id,
             authorization!.member.id,
             receiveClarificationAnswer,
           ),
@@ -136,7 +136,7 @@ export function ContestantDashboardProvider({
     };
   }, []);
 
-  function receiveLeaderboard(leaderboard: ContestLeaderboardResponseDTO) {
+  function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
     dispatch(contestantDashboardSlice.actions.setLeaderboard(leaderboard));
   }
 
@@ -189,7 +189,7 @@ export function ContestantDashboardProvider({
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
     dispatch(contestantDashboardSlice.actions.mergeAnnouncement(announcement));
-    alert.warning({
+    toast.warning({
       ...messages.announcement,
       values: { text: announcement.text },
     });

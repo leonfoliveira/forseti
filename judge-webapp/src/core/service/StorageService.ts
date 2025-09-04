@@ -16,5 +16,4 @@ export class StorageService {
   }
 
   static THEME_STORAGE_KEY = "theme";
-  static ACTIVE_LANGUAGE_STORAGE_KEY = "active-language";
 }

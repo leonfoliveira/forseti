@@ -1,15 +1,14 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 
 import { BusinessException } from "@/core/domain/exception/BusinessException";
+import { ConflictException } from "@/core/domain/exception/ConflictException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { ServerException } from "@/core/domain/exception/ServerException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 
 export class AxiosClient {
-  constructor(
-    private readonly baseUrl: string,
-  ) {}
+  constructor(private readonly baseUrl: string) {}
 
   async get<TBody>(
     path: string,
@@ -72,6 +71,8 @@ export class AxiosClient {
             throw new ForbiddenException(message);
           case 404:
             throw new NotFoundException(message);
+          case 409:
+            throw new ConflictException(message);
           default:
             throw new ServerException(message);
         }

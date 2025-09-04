@@ -62,6 +62,10 @@ class CreateContestService(
     ): Member {
         logger.info("Creating member with login: ${memberDTO.login}")
 
+        if (memberDTO.login == Member.ROOT_LOGIN) {
+            throw ForbiddenException("Member login cannot be '${Member.ROOT_LOGIN}'")
+        }
+
         val hashedPassword = hashAdapter.hash(memberDTO.password)
         val member =
             Member(

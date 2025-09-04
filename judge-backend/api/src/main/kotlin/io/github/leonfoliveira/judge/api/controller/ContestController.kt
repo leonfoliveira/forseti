@@ -83,7 +83,7 @@ class ContestController(
     }
 
     @PutMapping
-    @Private(Member.Type.ROOT, Member.Type.ADMIN)
+    @Private(Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Update a contest")
     @ApiResponses(
@@ -199,7 +199,7 @@ class ContestController(
     }
 
     @GetMapping("/{contestId}/full")
-    @Private(Member.Type.ROOT, Member.Type.ADMIN)
+    @Private(Member.Type.ADMIN)
     @Transactional(readOnly = true)
     @Operation(summary = "Find full contest by id")
     @ApiResponses(
@@ -232,7 +232,7 @@ class ContestController(
     }
 
     @PutMapping("/{contestId}/start")
-    @Private(Member.Type.ROOT, Member.Type.ADMIN)
+    @Private(Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Force start a contest")
     @ApiResponses(
@@ -265,7 +265,7 @@ class ContestController(
     }
 
     @PutMapping("/{contestId}/end")
-    @Private(Member.Type.ROOT, Member.Type.ADMIN)
+    @Private(Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Force end a contest")
     @ApiResponses(

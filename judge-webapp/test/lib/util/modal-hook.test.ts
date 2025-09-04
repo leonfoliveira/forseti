@@ -1,43 +1,126 @@
-import { renderHook, act } from "@testing-library/react";
+import { act } from "@testing-library/react";
 
 import { useModal } from "@/lib/util/modal-hook";
+import { renderHookWithProviders } from "@/test/render-with-providers";
+
+type TestModalProps = {
+  title: string;
+  message: string;
+};
 
 describe("useModal", () => {
-  it("initializes with closed state and undefined props", () => {
-    const { result } = renderHook(() => useModal());
+  it("should initialize with closed state", async () => {
+    const { result } = await renderHookWithProviders(() =>
+      useModal<TestModalProps>(),
+    );
+
     expect(result.current.isOpen).toBe(false);
     expect(result.current.props).toBeUndefined();
   });
 
-  it("opens the modal with provided props", () => {
-    const { result } = renderHook(() => useModal<{ message: string }>());
-    const props = { message: "Hello" };
-    act(() => result.current.open(props));
+  it("should open modal with props", async () => {
+    const { result } = await renderHookWithProviders(() =>
+      useModal<TestModalProps>(),
+    );
+    const testProps: TestModalProps = {
+      title: "Test Title",
+      message: "Test Message",
+    };
+
+    act(() => {
+      result.current.open(testProps);
+    });
+
     expect(result.current.isOpen).toBe(true);
-    expect(result.current.props).toEqual(props);
+    expect(result.current.props).toEqual(testProps);
   });
 
-  it("opens the modal with undefined props when no props are provided", () => {
-    const { result } = renderHook(() => useModal());
-    act(() => result.current.open());
+  it("should open modal without props", async () => {
+    const { result } = await renderHookWithProviders(() =>
+      useModal<TestModalProps>(),
+    );
+
+    act(() => {
+      result.current.open();
+    });
+
     expect(result.current.isOpen).toBe(true);
     expect(result.current.props).toBeUndefined();
   });
 
-  it("closes the modal and resets props to undefined", () => {
-    const { result } = renderHook(() => useModal<{ message: string }>());
-    act(() => result.current.open({ message: "Hello" }));
-    act(() => result.current.close());
+  it("should close modal", async () => {
+    const { result } = await renderHookWithProviders(() =>
+      useModal<TestModalProps>(),
+    );
+    const testProps: TestModalProps = {
+      title: "Test Title",
+      message: "Test Message",
+    };
+
+    // Open first
+    act(() => {
+      result.current.open(testProps);
+    });
+
+    expect(result.current.isOpen).toBe(true);
+
+    // Then close
+    act(() => {
+      result.current.close();
+    });
+
     expect(result.current.isOpen).toBe(false);
     expect(result.current.props).toBeUndefined();
   });
 
-  it("handles multiple open and close calls correctly", () => {
-    const { result } = renderHook(() => useModal<{ message: string }>());
-    act(() => result.current.open({ message: "First" }));
-    act(() => result.current.close());
-    act(() => result.current.open({ message: "Second" }));
+  it("should handle multiple open/close cycles", async () => {
+    const { result } = await renderHookWithProviders(() =>
+      useModal<TestModalProps>(),
+    );
+    const firstProps: TestModalProps = {
+      title: "First Title",
+      message: "First Message",
+    };
+    const secondProps: TestModalProps = {
+      title: "Second Title",
+      message: "Second Message",
+    };
+
+    // First cycle
+    act(() => {
+      result.current.open(firstProps);
+    });
     expect(result.current.isOpen).toBe(true);
-    expect(result.current.props).toEqual({ message: "Second" });
+    expect(result.current.props).toEqual(firstProps);
+
+    act(() => {
+      result.current.close();
+    });
+    expect(result.current.isOpen).toBe(false);
+
+    // Second cycle
+    act(() => {
+      result.current.open(secondProps);
+    });
+    expect(result.current.isOpen).toBe(true);
+    expect(result.current.props).toEqual(secondProps);
+
+    act(() => {
+      result.current.close();
+    });
+    expect(result.current.isOpen).toBe(false);
+  });
+
+  it("should work with optional props type", async () => {
+    const { result } = await renderHookWithProviders(() =>
+      useModal<TestModalProps | undefined>(),
+    );
+
+    act(() => {
+      result.current.open(undefined);
+    });
+
+    expect(result.current.isOpen).toBe(true);
+    expect(result.current.props).toBeUndefined();
   });
 });

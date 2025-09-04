@@ -1,17 +1,22 @@
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { CreateSubmissionRequestDTO } from "@/core/repository/dto/request/CreateSubmissionRequestDTO";
-import { UpdateSubmissionAnswerRequestDTO } from "@/core/repository/dto/request/UpdateSubmissionAnswerRequestDTO";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
 
 export class AxiosSubmissionRepository implements SubmissionRepository {
+  private basePath = (contestId: string) =>
+    `/v1/contests/${contestId}/submissions`;
+
   constructor(private readonly axiosClient: AxiosClient) {}
 
   async createSubmission(
+    contestId: string,
     request: CreateSubmissionRequestDTO,
   ): Promise<SubmissionFullResponseDTO> {
     const response = await this.axiosClient.post<SubmissionFullResponseDTO>(
-      "/v1/submissions",
+      this.basePath(contestId),
       {
         data: request,
       },
@@ -19,23 +24,49 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     return response.data;
   }
 
-  async findAllFullForMember(): Promise<SubmissionFullResponseDTO[]> {
+  async findAllContestSubmissions(
+    contestId: string,
+  ): Promise<SubmissionPublicResponseDTO[]> {
     const response = await this.axiosClient.get<SubmissionFullResponseDTO[]>(
-      "/v1/submissions/full/me",
+      this.basePath(contestId),
+    );
+    return response.data;
+  }
+
+  async findAllContestFullSubmissions(
+    contestId: string,
+  ): Promise<SubmissionFullResponseDTO[]> {
+    const response = await this.axiosClient.get<SubmissionFullResponseDTO[]>(
+      `${this.basePath(contestId)}/full`,
+    );
+    return response.data;
+  }
+
+  async findAllFullForMember(
+    contestId: string,
+  ): Promise<SubmissionFullResponseDTO[]> {
+    const response = await this.axiosClient.get<SubmissionFullResponseDTO[]>(
+      `${this.basePath(contestId)}/full/members/me`,
     );
     return response.data;
   }
 
   async updateSubmissionAnswer(
-    id: string,
-    data: UpdateSubmissionAnswerRequestDTO,
+    contestId: string,
+    submissionId: string,
+    answer: SubmissionAnswer,
   ): Promise<void> {
     await this.axiosClient.put<void>(
-      `/v1/submissions/${id}/answer/${data.answer}/force`,
+      `${this.basePath(contestId)}/${submissionId}/answer/${answer}/force`,
     );
   }
 
-  async rerunSubmission(id: string): Promise<void> {
-    await this.axiosClient.post<void>(`/v1/submissions/${id}/rerun`);
+  async rerunSubmission(
+    contestId: string,
+    submissionId: string,
+  ): Promise<void> {
+    await this.axiosClient.post<void>(
+      `${this.basePath(contestId)}/${submissionId}/rerun`,
+    );
   }
 }

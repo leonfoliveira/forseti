@@ -4,7 +4,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.controller.advice.GlobalExceptionHandler
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.config.JacksonConfig
-import io.github.leonfoliveira.judge.common.service.dto.output.ContestLeaderboardOutputDTO
+import io.github.leonfoliveira.judge.common.service.dto.output.LeaderboardOutputDTO
 import io.github.leonfoliveira.judge.common.service.leaderboard.FindLeaderboardService
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -34,11 +34,11 @@ class LeaderboardControllerTest(
         test("findContestLeaderboardById") {
             val contestId = UUID.randomUUID()
             val leaderboard =
-                ContestLeaderboardOutputDTO(
+                LeaderboardOutputDTO(
                     contestId = contestId,
                     slug = "test-contest",
                     startAt = java.time.OffsetDateTime.now(),
-                    classification = emptyList(),
+                    members = emptyList(),
                     issuedAt = java.time.OffsetDateTime.now(),
                 )
             every { findLeaderboardService.findByContestId(contestId) } returns leaderboard

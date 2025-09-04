@@ -1,126 +1,141 @@
 import { TestCaseValidator } from "@/lib/util/test-case-validator";
 
+// Mock Papa.parse
+jest.mock("papaparse", () => ({
+  parse: jest.fn(),
+}));
+
 describe("TestCaseValidator", () => {
-  it("should validate problems without new test cases", async () => {
-    const problems = [
-      { letter: "A", newTestCases: undefined },
-      { letter: "B", newTestCases: undefined },
-    ] as any;
-    const result = await TestCaseValidator.validateProblemList(problems);
-    expect(result).toHaveLength(2);
-    expect(result[0].problem.letter).toBe("A");
-    expect(result[0].isValid).toBe(true);
-    expect(result[1].problem.letter).toBe("B");
-    expect(result[1].isValid).toBe(true);
+  const mockFile = new File(["test content"], "test.csv", { type: "text/csv" });
+  let mockParse: jest.MockedFunction<any>;
+
+  beforeEach(() => {
+    mockParse = require("papaparse").parse;
+    jest.clearAllMocks();
   });
 
-  it("should invalidate problem with empty testcases", async () => {
-    const problems = [
-      {
-        letter: "A",
-        newTestCases: new File([""], "test.csv", {
-          type: "text/csv",
-        }),
-      },
-      { letter: "B", newTestCases: undefined },
-    ] as any;
-    const result = await TestCaseValidator.validateProblemList(problems);
-    expect(result).toHaveLength(2);
-    expect(result[0].problem.letter).toBe("A");
-    expect(result[0].isValid).toBe(false);
-    expect(result[1].problem.letter).toBe("B");
-    expect(result[1].isValid).toBe(true);
+  it("should return true for valid CSV with two columns", async () => {
+    mockParse.mockImplementation((file: File, options: any) => {
+      options.complete({
+        data: [
+          ["input1", "output1"],
+          ["input2", "output2"],
+          ["input3", "output3"],
+        ],
+        errors: [],
+      });
+    });
+
+    const result = await TestCaseValidator.validate(mockFile);
+    expect(result).toBe(true);
+    expect(mockParse).toHaveBeenCalledWith(mockFile, expect.any(Object));
   });
 
-  it("should invalidate problem test cases without exactly two columns", async () => {
-    const problems = [
-      {
-        letter: "A",
-        newTestCases: new File(["input1,output1\ninput2"], "test.csv", {
-          type: "text/csv",
-        }),
-      },
-      { letter: "B", newTestCases: undefined },
-    ] as any;
-    const result = await TestCaseValidator.validateProblemList(problems);
-    expect(result).toHaveLength(2);
-    expect(result[0].problem.letter).toBe("A");
-    expect(result[0].isValid).toBe(false);
-    expect(result[1].problem.letter).toBe("B");
-    expect(result[1].isValid).toBe(true);
+  it("should return false for CSV with parsing errors", async () => {
+    mockParse.mockImplementation((file: File, options: any) => {
+      options.complete({
+        data: [["input1", "output1"]],
+        errors: [{ message: "Parse error" }],
+      });
+    });
+
+    const result = await TestCaseValidator.validate(mockFile);
+    expect(result).toBe(false);
   });
 
-  it("should validate problem with valid test cases", async () => {
-    const problems = [
-      {
-        letter: "A",
-        newTestCases: new File(["input1,output1\ninput2,output2"], "test.csv", {
-          type: "text/csv",
-        }),
-      },
-      { letter: "B", newTestCases: undefined },
-    ] as any;
-    const result = await TestCaseValidator.validateProblemList(problems);
-    expect(result).toHaveLength(2);
-    expect(result[0].problem.letter).toBe("A");
-    expect(result[0].isValid).toBe(true);
-    expect(result[1].problem.letter).toBe("B");
-    expect(result[1].isValid).toBe(true);
+  it("should return false for empty CSV", async () => {
+    mockParse.mockImplementation((file: File, options: any) => {
+      options.complete({
+        data: [],
+        errors: [],
+      });
+    });
+
+    const result = await TestCaseValidator.validate(mockFile);
+    expect(result).toBe(false);
   });
 
-  it("should handle multiple problems with mixed validation results", async () => {
-    const problems = [
-      {
-        letter: "A",
-        newTestCases: new File(["input1,output1\ninput2,output2"], "test.csv", {
-          type: "text/csv",
-        }),
-      },
-      {
-        letter: "B",
-        newTestCases: new File(["input1"], "test.csv", {
-          type: "text/csv",
-        }),
-      },
-      { letter: "C", newTestCases: undefined },
-    ] as any;
-    const result = await TestCaseValidator.validateProblemList(problems);
-    expect(result).toHaveLength(3);
+  it("should return false for CSV with wrong number of columns", async () => {
+    mockParse.mockImplementation((file: File, options: any) => {
+      options.complete({
+        data: [
+          ["input1", "output1"],
+          ["input2"], // Missing column
+          ["input3", "output3"],
+        ],
+        errors: [],
+      });
+    });
 
-    const resultA = result.find((r) => r.problem.letter === "A");
-    const resultB = result.find((r) => r.problem.letter === "B");
-    const resultC = result.find((r) => r.problem.letter === "C");
-
-    expect(resultA?.isValid).toBe(true);
-    expect(resultB?.isValid).toBe(false);
-    expect(resultC?.isValid).toBe(true);
+    const result = await TestCaseValidator.validate(mockFile);
+    expect(result).toBe(false);
   });
 
-  it("should validate problems with null or undefined newTestCases", async () => {
-    const problems = [
-      { letter: "A", newTestCases: null },
-      { letter: "B", newTestCases: undefined },
-    ] as any;
-    const result = await TestCaseValidator.validateProblemList(problems);
-    expect(result).toHaveLength(2);
-    expect(result[0].problem.letter).toBe("A");
-    expect(result[0].isValid).toBe(true);
-    expect(result[1].problem.letter).toBe("B");
-    expect(result[1].isValid).toBe(true);
+  it("should return false for CSV with too many columns", async () => {
+    mockParse.mockImplementation((file: File, options: any) => {
+      options.complete({
+        data: [
+          ["input1", "output1"],
+          ["input2", "output2", "extra"], // Extra column
+          ["input3", "output3"],
+        ],
+        errors: [],
+      });
+    });
+
+    const result = await TestCaseValidator.validate(mockFile);
+    expect(result).toBe(false);
   });
 
-  it("should invalidate problem with malformed CSV", async () => {
-    const problems = [
-      {
-        letter: "A",
-        newTestCases: new File(["input1,output1,extra\ninput2,output2"], "test.csv", {
-          type: "text/csv",
-        }),
-      },
-    ] as any;
-    const result = await TestCaseValidator.validateProblemList(problems);
-    expect(result).toHaveLength(1);
-    expect(result[0].problem.letter).toBe("A");
-    expect(result[0].isValid).toBe(false);
+  it("should return false for single row with wrong columns", async () => {
+    mockParse.mockImplementation((file: File, options: any) => {
+      options.complete({
+        data: [["single-value"]],
+        errors: [],
+      });
+    });
+
+    const result = await TestCaseValidator.validate(mockFile);
+    expect(result).toBe(false);
+  });
+
+  it("should return false when parse throws error", async () => {
+    mockParse.mockImplementation((file: File, options: any) => {
+      options.error();
+    });
+
+    const result = await TestCaseValidator.validate(mockFile);
+    expect(result).toBe(false);
+  });
+
+  it("should handle mixed valid and invalid rows", async () => {
+    mockParse.mockImplementation((file: File, options: any) => {
+      options.complete({
+        data: [
+          ["input1", "output1"], // Valid
+          ["input2", "output2", "extra"], // Invalid - too many columns
+        ],
+        errors: [],
+      });
+    });
+
+    const result = await TestCaseValidator.validate(mockFile);
+    expect(result).toBe(false);
+  });
+
+  it("should validate all rows even if first ones are valid", async () => {
+    mockParse.mockImplementation((file: File, options: any) => {
+      options.complete({
+        data: [
+          ["input1", "output1"], // Valid
+          ["input2", "output2"], // Valid
+          ["input3"], // Invalid - missing column
+        ],
+        errors: [],
+      });
+    });
+
+    const result = await TestCaseValidator.validate(mockFile);
+    expect(result).toBe(false);
   });
 });

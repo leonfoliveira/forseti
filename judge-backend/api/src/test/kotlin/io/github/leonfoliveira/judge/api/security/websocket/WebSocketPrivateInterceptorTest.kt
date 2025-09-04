@@ -3,7 +3,6 @@ package io.github.leonfoliveira.judge.api.security.websocket
 import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
-import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
@@ -21,7 +20,9 @@ import org.springframework.security.core.context.SecurityContextHolder
 import java.util.UUID
 
 class WebSocketPrivateInterceptorTest : FunSpec({
-    val sut = WebSocketPrivateInterceptor()
+    val webSocketTopicConfigs = mockk<WebSocketTopicConfigs>(relaxed = true)
+
+    val sut = WebSocketPrivateInterceptor(webSocketTopicConfigs)
 
     beforeEach {
         clearAllMocks()
@@ -50,6 +51,31 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         result shouldBe message
     }
 
+    test("should return message without modification if user is ROOT") {
+        val message = mockk<Message<*>>()
+        val channel = mockk<MessageChannel>()
+        val accessor = mockk<StompHeaderAccessor>(relaxed = true)
+        every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
+        every { accessor.destination } returns "/topic/contests/1/submissions/full"
+        val authentication =
+            JwtAuthentication(
+                AuthorizationMockBuilder.build(
+                    member =
+                        AuthorizationMember(
+                            id = UUID.randomUUID(),
+                            type = Member.Type.ROOT,
+                            name = "Test User",
+                        ),
+                ),
+            )
+        every { message.headers.get("simpUser") } returns authentication
+        SecurityContextHolder.getContext().authentication = authentication
+
+        val result = sut.preSend(message, channel)
+
+        result shouldBe message
+    }
+
     test("should return message without modification if no private configuration found for destination") {
         val message = mockk<Message<*>>()
         val channel = mockk<MessageChannel>()
@@ -60,32 +86,6 @@ class WebSocketPrivateInterceptorTest : FunSpec({
         val result = sut.preSend(message, channel)
 
         result shouldBe message
-    }
-
-    test("should throw UnauthorizedException if authentication is null") {
-        val message = mockk<Message<*>>()
-        val channel = mockk<MessageChannel>()
-        val accessor = mockk<StompHeaderAccessor>(relaxed = true)
-        every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
-        every { accessor.destination } returns "/topic/contests/1/submissions/full"
-        every { message.headers.get("simpUser") } returns null
-
-        shouldThrow<UnauthorizedException> {
-            sut.preSend(message, channel)
-        }
-    }
-
-    test("should throw UnauthorizedException if user is not authenticated") {
-        val message = mockk<Message<*>>()
-        val channel = mockk<MessageChannel>()
-        val accessor = mockk<StompHeaderAccessor>(relaxed = true)
-        every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
-        every { accessor.destination } returns "/topic/contests/1/submissions/full"
-        every { message.headers.get("simpUser") } returns JwtAuthentication()
-
-        shouldThrow<UnauthorizedException> {
-            sut.preSend(message, channel)
-        }
     }
 
     test("should throw ForbiddenException if user type is not allowed") {
@@ -107,6 +107,12 @@ class WebSocketPrivateInterceptorTest : FunSpec({
             )
         every { message.headers.get("simpUser") } returns authentication
         SecurityContextHolder.getContext().authentication = authentication
+        every { webSocketTopicConfigs.privateFilters } returns
+            mapOf(
+                Regex("/topic/contests/[a-fA-F0-9-]+/submissions/full") to { destination: String ->
+                    false
+                },
+            )
 
         shouldThrow<ForbiddenException> {
             sut.preSend(message, channel)

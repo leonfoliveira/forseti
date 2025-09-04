@@ -1,10 +1,9 @@
-import { defineMessages } from "react-intl";
-
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
+import { defineMessages } from "@/i18n/message";
 
 const contestStatus = defineMessages({
   [ContestStatus.ENDED]: {
@@ -13,11 +12,11 @@ const contestStatus = defineMessages({
   },
   [ContestStatus.IN_PROGRESS]: {
     id: "i18n.global.formatted-contest.in-progress",
-    defaultMessage: "In progress",
+    defaultMessage: "In Progress",
   },
   [ContestStatus.NOT_STARTED]: {
     id: "i18n.global.formatted-contest.not-started",
-    defaultMessage: "Not started",
+    defaultMessage: "Not Started",
   },
 });
 
@@ -41,6 +40,10 @@ const memberType = defineMessages({
     id: "i18n.global.formatted-member-type.root",
     defaultMessage: "Root",
   },
+  [MemberType.ADMIN]: {
+    id: "i18n.global.formatted-member-type.admin",
+    defaultMessage: "Admin",
+  },
   [MemberType.CONTESTANT]: {
     id: "i18n.global.formatted-member-type.contestant",
     defaultMessage: "Contestant",
@@ -48,38 +51,6 @@ const memberType = defineMessages({
   [MemberType.JUDGE]: {
     id: "i18n.global.formatted-member-type.judge",
     defaultMessage: "Judge",
-  },
-});
-
-const submissionAnswerShort = defineMessages({
-  [SubmissionAnswer.NO_ANSWER]: {
-    id: "i18n.global.formatted-submission-answer-short.no_answer",
-    // eslint-disable-next-line formatjs/enforce-default-message
-    defaultMessage: "",
-  },
-  [SubmissionAnswer.ACCEPTED]: {
-    id: "i18n.global.formatted-submission-answer-short.accepted",
-    defaultMessage: "AC",
-  },
-  [SubmissionAnswer.WRONG_ANSWER]: {
-    id: "i18n.global.formatted-submission-answer-short.wrong_answer",
-    defaultMessage: "WA",
-  },
-  [SubmissionAnswer.COMPILATION_ERROR]: {
-    id: "i18n.global.formatted-submission-answer-short.compilation_error",
-    defaultMessage: "CE",
-  },
-  [SubmissionAnswer.RUNTIME_ERROR]: {
-    id: "i18n.global.formatted-submission-answer-short.runtime_error",
-    defaultMessage: "RE",
-  },
-  [SubmissionAnswer.TIME_LIMIT_EXCEEDED]: {
-    id: "i18n.global.formatted-submission-answer-short.time_limit_exceeded",
-    defaultMessage: "TLE",
-  },
-  [SubmissionAnswer.MEMORY_LIMIT_EXCEEDED]: {
-    id: "i18n.global.formatted-submission-answer-short.memory_limit_exceeded",
-    defaultMessage: "MLE",
   },
 });
 
@@ -133,7 +104,6 @@ export const globalMessages = {
   contestStatus,
   language,
   memberType,
-  submissionAnswerShort,
   submissionAnswer,
   submissionStatus,
 };

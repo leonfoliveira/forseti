@@ -33,11 +33,9 @@ class AuthorizationService(
         logger.info("Authenticating member for contest with id = ${inputDTO.contestId}")
 
         val member =
-            if (inputDTO.contestId == null) {
-                memberRepository.findByLoginAndContestId(inputDTO.login, null)
-            } else {
-                memberRepository.findByLoginAndContestId(inputDTO.login, inputDTO.contestId)
-            } ?: throw UnauthorizedException("Invalid login or password")
+            memberRepository.findByLoginAndContestId(inputDTO.login, inputDTO.contestId)
+                ?: memberRepository.findByLoginAndContestId(inputDTO.login, null)
+                ?: throw UnauthorizedException("Invalid login or password")
 
         if (!hashAdapter.verify(inputDTO.password, member.password)) {
             throw UnauthorizedException("Invalid login or password")

@@ -1,10 +1,10 @@
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
-import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { LeaderboardResponseDTO } from "@/core/repository/dto/response/leaderboard/LeaderboardResponseDTO";
 
 export interface LeaderboardListener {
   subscribeForLeaderboard: (
     client: ListenerClient,
     contestId: string,
-    cb: (leaderboard: ContestLeaderboardResponseDTO) => void,
+    cb: (leaderboard: LeaderboardResponseDTO) => void,
   ) => Promise<void>;
 }

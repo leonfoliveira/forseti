@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { BusinessException } from "@/core/domain/exception/BusinessException";
+import { ConflictException } from "@/core/domain/exception/ConflictException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { ServerException } from "@/core/domain/exception/ServerException";
@@ -41,6 +42,7 @@ describe("AxiosClient", () => {
       [401, UnauthorizedException],
       [403, ForbiddenException],
       [404, NotFoundException],
+      [409, ConflictException],
       [500, ServerException],
     ])(
       "should throw the correct exception for status %d",

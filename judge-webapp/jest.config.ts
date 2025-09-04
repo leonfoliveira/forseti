@@ -15,12 +15,14 @@ const config: Config = {
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
     "!src/**/*.d.{ts,tsx}",
+    "!src/config/env.ts",
     "!src/core/domain/**/*",
     "!src/core/listener/**/*",
     "!src/core/repository/**/*",
     "!src/core/service/dto/**/*",
     "!src/i18n/**/*",
-    "!src/config/env.ts",
+    "!src/lib/component/icon/**/*",
+    "!src/lib/heroui.ts",
   ],
   testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/test/jest.setup.tsx"],
@@ -29,6 +31,12 @@ const config: Config = {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
   clearMocks: true,
+  roots: ["<rootDir>/test"],
+  silent: true,
 };
 
-export default createJestConfig(config);
+// eslint-disable-next-line import/no-anonymous-default-export
+export default async () => ({
+  ...(await createJestConfig(config)()),
+  transformIgnorePatterns: ["node_modules/(?!next-intl)/"],
+});

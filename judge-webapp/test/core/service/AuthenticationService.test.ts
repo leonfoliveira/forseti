@@ -1,29 +1,42 @@
 import { mock } from "jest-mock-extended";
 
-import { Authorization } from "@/core/domain/model/Authorization";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { AuthenticationRepository } from "@/core/repository/AuthenticationRepository";
 import { AuthenticationService } from "@/core/service/AuthenticationService";
+import { signOut } from "@/lib/action/auth-action";
+import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
+import { MockAuthenticateRequestDTO } from "@/test/mock/request/MockAuthenticateRequestDTO";
+
+jest.mock("@/lib/action/auth-action");
 
 describe("AuthenticationService", () => {
   const authenticationRepository = mock<AuthenticationRepository>();
 
   const sut = new AuthenticationService(authenticationRepository);
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe("getAuthorization", () => {
     it("should call authenticationRepository.getAuthorization", async () => {
-      const authorization = { member: {} } as unknown as Authorization;
+      const authorization = MockAuthorization();
       authenticationRepository.getAuthorization.mockResolvedValue(
-        authorization
+        authorization,
       );
 
-      const result = await sut.getAuthorization();
+      const result = await sut.getAuthorization("access-token");
 
-      expect(authenticationRepository.getAuthorization).toHaveBeenCalled();
+      expect(authenticationRepository.getAuthorization).toHaveBeenCalledWith(
+        "access-token",
+      );
       expect(result).toEqual(authorization);
+    });
+
+    it("should return null if UnauthorizedException is thrown", async () => {
+      authenticationRepository.getAuthorization.mockRejectedValue(
+        new UnauthorizedException("Unauthorized"),
+      );
+
+      const result = await sut.getAuthorization("invalid-token");
+
+      expect(result).toBeNull();
     });
   });
 
@@ -31,45 +44,20 @@ describe("AuthenticationService", () => {
     it("should call authenticationRepository.cleanAuthorization", async () => {
       await sut.cleanAuthorization();
 
-      expect(authenticationRepository.cleanAuthorization).toHaveBeenCalled();
+      expect(signOut).toHaveBeenCalled();
     });
   });
 
-  describe("authenticateRoot", () => {
-    it("should call authenticationRepository.authenticateRoot with correct parameters", async () => {
-      const requestDTO = { password: "password" };
-      const authorization = {
-        accessToken: "token",
-      } as unknown as Authorization;
-      authenticationRepository.authenticateRoot.mockResolvedValue(
-        authorization
-      );
+  describe("authenticate", () => {
+    it("should call authenticationRepository.authenticate with correct parameters", async () => {
+      const requestDTO = MockAuthenticateRequestDTO();
+      const authorization = MockAuthorization();
+      authenticationRepository.authenticate.mockResolvedValue(authorization);
 
-      const result = await sut.authenticateRoot(requestDTO);
+      const result = await sut.authenticate(requestDTO);
 
-      expect(authenticationRepository.authenticateRoot).toHaveBeenCalledWith(
-        requestDTO
-      );
-      expect(result).toEqual(authorization);
-    });
-  });
-
-  describe("authenticateMember", () => {
-    it("should call authenticationRepository.authenticateMember with correct parameters", async () => {
-      const contestId = "contest123";
-      const requestDTO = { login: "member", password: "password" };
-      const authorization = {
-        accessToken: "token",
-      } as unknown as Authorization;
-      authenticationRepository.authenticateMember.mockResolvedValue(
-        authorization
-      );
-
-      const result = await sut.authenticateMember(contestId, requestDTO);
-
-      expect(authenticationRepository.authenticateMember).toHaveBeenCalledWith(
-        contestId,
-        requestDTO
+      expect(authenticationRepository.authenticate).toHaveBeenCalledWith(
+        requestDTO,
       );
       expect(result).toEqual(authorization);
     });

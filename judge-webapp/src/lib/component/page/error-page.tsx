@@ -1,39 +1,39 @@
+import { ArrowPathRoundedSquareIcon } from "@heroicons/react/24/solid";
+import { Button } from "@heroui/react";
 import React from "react";
-import { defineMessages, FormattedMessage } from "react-intl";
 
-import { Button } from "@/lib/component/form/button";
+import { defineMessages } from "@/i18n/message";
+import { FormattedMessage } from "@/lib/component/format/formatted-message";
 
 const messages = defineMessages({
-  error: {
-    id: "app._component.page.error-page.error",
-    defaultMessage: "An error occurred",
+  description: {
+    id: "lib.component.page.error-page.description",
+    defaultMessage: "An unexpected error has occurred.",
   },
   reload: {
-    id: "app._component.page.error-page.reload",
-    defaultMessage: "Reload",
+    id: "lib.component.page.error-page.reload",
+    defaultMessage: "Reload the page",
   },
 });
 
-/**
- * ErrorPage component displays an error message and a button to reload the page.
- */
 export function ErrorPage() {
   return (
-    <div
-      className="h-dvh flex justify-center items-center"
-      data-testid="error-page"
-    >
-      <div className="text-center">
-        <h1 className="text-6xl mb-5 font-mono" data-testid="error">
-          <FormattedMessage {...messages.error} />
-        </h1>
-        <Button
-          label={messages.reload}
-          className="btn-soft mt-5"
-          onClick={() => window.location.reload()}
-          data-testid="reload"
-        />
-      </div>
+    <div className="h-dvh flex flex-col justify-center items-center">
+      <h1 className="text-8xl font-bold font-mono" data-testid="code">
+        500
+      </h1>
+      <h2 className="text-md mt-5" data-testid="description">
+        <FormattedMessage {...messages.description} />
+      </h2>
+      <Button
+        color="primary"
+        className="mt-10"
+        onPress={() => window.location.reload()}
+        data-testid="reload"
+      >
+        <ArrowPathRoundedSquareIcon width={20} />
+        <FormattedMessage {...messages.reload} />
+      </Button>
     </div>
   );
 }

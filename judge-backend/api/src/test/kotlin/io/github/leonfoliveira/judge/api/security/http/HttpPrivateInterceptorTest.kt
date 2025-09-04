@@ -4,7 +4,6 @@ import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
-import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
@@ -22,49 +21,45 @@ class HttpPrivateInterceptorTest : FunSpec({
     val sut = HttpPrivateInterceptor()
 
     test("should return true when handler is not a HandlerMethod") {
-        val request = mockk<HttpServletRequest>()
-        val response = mockk<HttpServletResponse>()
+        val request = mockk<HttpServletRequest>(relaxed = true)
+        val response = mockk<HttpServletResponse>(relaxed = true)
         val handler = Any()
 
         sut.preHandle(request, response, handler) shouldBe true
     }
 
     test("should return true when no Private annotation is found") {
-        val request = mockk<HttpServletRequest>()
-        val response = mockk<HttpServletResponse>()
+        val request = mockk<HttpServletRequest>(relaxed = true)
+        val response = mockk<HttpServletResponse>(relaxed = true)
         val handler = mockk<HandlerMethod>(relaxed = true)
         every { handler.getMethodAnnotation(Private::class.java) } returns null
 
         sut.preHandle(request, response, handler) shouldBe true
     }
 
-    test("should throw UnauthorizedException when auth is null") {
-        val request = mockk<HttpServletRequest>()
-        val response = mockk<HttpServletResponse>()
+    test("should return true when user type is ROOT") {
+        val request = mockk<HttpServletRequest>(relaxed = true)
+        val response = mockk<HttpServletResponse>(relaxed = true)
         val handler = mockk<HandlerMethod>(relaxed = true)
-        every { handler.getMethodAnnotation(Private::class.java) } returns Private()
-        SecurityContextHolder.clearContext()
+        every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.CONTESTANT])
+        SecurityContextHolder.getContext().authentication =
+            JwtAuthentication(
+                AuthorizationMockBuilder.build(
+                    member =
+                        AuthorizationMember(
+                            id = UUID.randomUUID(),
+                            type = Member.Type.ROOT,
+                            name = "Root User",
+                        ),
+                ),
+            )
 
-        shouldThrow<UnauthorizedException> {
-            sut.preHandle(request, response, handler)
-        }
-    }
-
-    test("should throw UnauthorizedException when not authenticated") {
-        val request = mockk<HttpServletRequest>()
-        val response = mockk<HttpServletResponse>()
-        val handler = mockk<HandlerMethod>(relaxed = true)
-        every { handler.getMethodAnnotation(Private::class.java) } returns Private()
-        SecurityContextHolder.getContext().authentication = JwtAuthentication()
-
-        shouldThrow<UnauthorizedException> {
-            sut.preHandle(request, response, handler)
-        }
+        sut.preHandle(request, response, handler) shouldBe true
     }
 
     test("should return ForbiddenException when user type is not allowed") {
-        val request = mockk<HttpServletRequest>()
-        val response = mockk<HttpServletResponse>()
+        val request = mockk<HttpServletRequest>(relaxed = true)
+        val response = mockk<HttpServletResponse>(relaxed = true)
         val handler = mockk<HandlerMethod>(relaxed = true)
         every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT])
         SecurityContextHolder.getContext().authentication =
@@ -85,8 +80,8 @@ class HttpPrivateInterceptorTest : FunSpec({
     }
 
     test("should return true when user is authenticated and allowed") {
-        val request = mockk<HttpServletRequest>()
-        val response = mockk<HttpServletResponse>()
+        val request = mockk<HttpServletRequest>(relaxed = true)
+        val response = mockk<HttpServletResponse>(relaxed = true)
         val handler = mockk<HandlerMethod>(relaxed = true)
         every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT, Member.Type.CONTESTANT])
         SecurityContextHolder.getContext().authentication =

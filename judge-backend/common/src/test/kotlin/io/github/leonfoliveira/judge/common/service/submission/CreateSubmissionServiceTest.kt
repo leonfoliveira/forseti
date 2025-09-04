@@ -89,19 +89,6 @@ class CreateSubmissionServiceTest : FunSpec({
             }.message shouldBe "Could not find code attachment with id = ${inputDTO.code.id}"
         }
 
-        test("should throw ForbiddenException when member does not belong to the contest of the problem") {
-            val member = MemberMockBuilder.build(contest = ContestMockBuilder.build())
-            val problem = ProblemMockBuilder.build(contest = ContestMockBuilder.build())
-            val attachment = AttachmentMockBuilder.build()
-            every { memberRepository.findById(memberId) } returns Optional.of(member)
-            every { problemRepository.findById(problemId) } returns Optional.of(problem)
-            every { attachmentRepository.findById(inputDTO.code.id) } returns Optional.of(attachment)
-
-            shouldThrow<ForbiddenException> {
-                sut.create(memberId, inputDTO)
-            }.message shouldBe "Member does not belong to the contest of the problem"
-        }
-
         test("should throw ForbiddenException when language is not allowed for the contest") {
             val contest = ContestMockBuilder.build(languages = listOf())
             val member = MemberMockBuilder.build(contest = contest)

@@ -13,11 +13,12 @@ export class StompClarificationListener implements ClarificationListener {
 
   async subscribeForMemberChildren(
     client: ListenerClient,
+    contestId: string,
     memberId: string,
     cb: (clarification: ClarificationResponseDTO) => void,
   ): Promise<void> {
     await client.subscribe(
-      `/topic/members/${memberId}/clarifications/children`,
+      `/topic/contests/${contestId}/clarifications/children/members/${memberId}`,
       cb,
     );
   }
