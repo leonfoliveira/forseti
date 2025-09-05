@@ -83,7 +83,7 @@ services:
       interval: 15s
       retries: 5
       start_period: 5s
-    image: judge-api:${VERSION:-latest}
+    image: leonfoliveira/judge-api:${VERSION:-latest}
     networks:
       judge-network:
     ports:
@@ -137,7 +137,7 @@ services:
       interval: 15s
       retries: 5
       start_period: 5s
-    image: judge-autojudge:${VERSION:-latest}
+    image: leonfoliveira/judge-autojudge:${VERSION:-latest}
     networks:
       judge-network:
     volumes:
@@ -186,7 +186,7 @@ services:
       interval: 15s
       retries: 5
       start_period: 5s
-    image: judge-autoscaler:${VERSION:-latest}
+    image: leonfoliveira/judge-autoscaler:${VERSION:-latest}
     networks:
       judge-network:
     volumes:
@@ -560,7 +560,7 @@ services:
       interval: 15s
       retries: 5
       start_period: 5s
-    image: judge-webapp:${VERSION:-latest}
+    image: leonfoliveira/judge-webapp:${VERSION:-latest}
     networks:
       judge-network:
     ports:

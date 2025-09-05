@@ -9,6 +9,7 @@ import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.repository.ClarificationRepository
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
+import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.clarification.CreateClarificationInputDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -25,12 +26,14 @@ import java.util.UUID
 
 class CreateClarificationServiceTest : FunSpec({
     val contestRepository = mockk<ContestRepository>(relaxed = true)
+    val memberRepository = mockk<MemberRepository>(relaxed = true)
     val clarificationRepository = mockk<ClarificationRepository>(relaxed = true)
     val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
     val sut =
         CreateClarificationService(
             contestRepository,
+            memberRepository,
             clarificationRepository,
             applicationEventPublisher,
         )
@@ -55,18 +58,10 @@ class CreateClarificationServiceTest : FunSpec({
             }.message shouldBe "Could not find contest with id $contestId"
         }
 
-        test("should throw ForbiddenException when contest has not started") {
-            val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().plusHours(1))
-            every { contestRepository.findById(contestId) } returns Optional.of(contest)
-
-            shouldThrow<ForbiddenException> {
-                sut.create(contestId, memberId, input)
-            }.message shouldBe "Contest with id $contestId has not started yet"
-        }
-
         test("should throw NotFoundException when member does not exist in contest") {
-            val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1), members = emptyList())
+            val contest = ContestMockBuilder.build(id = contestId)
             every { contestRepository.findById(contestId) } returns Optional.of(contest)
+            every { memberRepository.findById(memberId) } returns Optional.empty()
 
             shouldThrow<NotFoundException> {
                 sut.create(contestId, memberId, input)
@@ -75,8 +70,9 @@ class CreateClarificationServiceTest : FunSpec({
 
         test("should throw ForbiddenException when contestant tries to create clarification with parent") {
             val member = MemberMockBuilder.build(id = memberId, type = Member.Type.CONTESTANT)
-            val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1), members = listOf(member))
+            val contest = ContestMockBuilder.build(id = contestId)
             every { contestRepository.findById(contestId) } returns Optional.of(contest)
+            every { memberRepository.findById(memberId) } returns Optional.of(member)
 
             val inputWithParent = input.copy(parentId = UUID.randomUUID())
             shouldThrow<ForbiddenException> {
@@ -84,14 +80,25 @@ class CreateClarificationServiceTest : FunSpec({
             }.message shouldBe "Contestants cannot create clarifications with a parent"
         }
 
-        test("should throw ForbiddenException when judge tries to create clarification without parent") {
-            val member = MemberMockBuilder.build(id = memberId, type = Member.Type.JUDGE)
-            val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1), members = listOf(member))
-            every { contestRepository.findById(contestId) } returns Optional.of(contest)
+        listOf(
+            Member.Type.JUDGE,
+            Member.Type.ADMIN,
+        ).forEach { type ->
+            test("should throw ForbiddenException when $type tries to create clarification without parent") {
+                val member = MemberMockBuilder.build(id = memberId, type = type)
+                val contest =
+                    ContestMockBuilder.build(
+                        id = contestId,
+                        startAt = OffsetDateTime.now().minusHours(1),
+                        members = listOf(member),
+                    )
+                every { contestRepository.findById(contestId) } returns Optional.of(contest)
+                every { memberRepository.findById(memberId) } returns Optional.of(member)
 
-            shouldThrow<ForbiddenException> {
-                sut.create(contestId, memberId, input)
-            }.message shouldBe "Jury members cannot create clarifications without a parent"
+                shouldThrow<ForbiddenException> {
+                    sut.create(contestId, memberId, input)
+                }.message shouldBe "$type members cannot create clarifications without a parent"
+            }
         }
 
         test("should throw NotFoundException when problem does not exist in contest") {
@@ -104,6 +111,7 @@ class CreateClarificationServiceTest : FunSpec({
                     problems = emptyList(),
                 )
             every { contestRepository.findById(contestId) } returns Optional.of(contest)
+            every { memberRepository.findById(memberId) } returns Optional.of(member)
 
             val inputWithProblem = input.copy(problemId = UUID.randomUUID())
             shouldThrow<NotFoundException> {
@@ -115,6 +123,7 @@ class CreateClarificationServiceTest : FunSpec({
             val member = MemberMockBuilder.build(id = memberId, type = Member.Type.JUDGE)
             val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1), members = listOf(member))
             every { contestRepository.findById(contestId) } returns Optional.of(contest)
+            every { memberRepository.findById(memberId) } returns Optional.of(member)
 
             val inputWithParent = input.copy(parentId = UUID.randomUUID())
             every { clarificationRepository.findById(inputWithParent.parentId!!) } returns Optional.empty()
@@ -128,6 +137,7 @@ class CreateClarificationServiceTest : FunSpec({
             val member = MemberMockBuilder.build(id = memberId, type = Member.Type.CONTESTANT)
             val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1), members = listOf(member))
             every { contestRepository.findById(contestId) } returns Optional.of(contest)
+            every { memberRepository.findById(memberId) } returns Optional.of(member)
             every { clarificationRepository.save(any<Clarification>()) } answers { firstArg() }
 
             val clarification = sut.create(contestId, memberId, input)

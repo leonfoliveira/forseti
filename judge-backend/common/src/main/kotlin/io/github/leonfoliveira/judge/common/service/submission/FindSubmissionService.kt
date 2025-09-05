@@ -1,7 +1,6 @@
 package io.github.leonfoliveira.judge.common.service.submission
 
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
-import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
@@ -37,11 +36,8 @@ class FindSubmissionService(
             contestRepository.findById(contestId).orElseThrow {
                 NotFoundException("Could not find contest with id = $contestId")
             }
-        if (!contest.hasStarted()) {
-            throw ForbiddenException("Contest has not started yet")
-        }
         val submissions =
-            contest.members.map {
+            contest.problems.map {
                 it.submissions
             }.flatten()
 

@@ -2,25 +2,25 @@ package io.github.leonfoliveira.judge.api.util
 
 import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.common.domain.entity.Member
-import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import org.springframework.security.core.context.SecurityContextHolder
 import java.util.UUID
 
 class AuthorizationContextUtilTest : FunSpec({
-    test("should throw UnauthorizedException when no authentication is present") {
-        SecurityContextHolder.clearContext()
+    test("should return Authorization") {
+        val expectedAuthorization = AuthorizationMockBuilder.build()
+        SecurityContextHolder.getContext().authentication =
+            JwtAuthentication(expectedAuthorization)
 
-        shouldThrow<UnauthorizedException> {
-            AuthorizationContextUtil.getMember()
-        }
+        val result = AuthorizationContextUtil.get()
+
+        result shouldBe expectedAuthorization
     }
 
-    test("should return AuthorizationMember when authentication is present") {
+    test("should return AuthorizationMember") {
         val expectedAuthorizationMember =
             AuthorizationMember(
                 id = UUID.randomUUID(),

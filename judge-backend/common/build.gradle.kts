@@ -60,7 +60,11 @@ kover {
     reports {
         filters {
             excludes {
-                annotatedBy("org.springframework.context.annotation.Configuration")
+                packages("io.github.leonfoliveira.judge.common.mock")
+                annotatedBy(
+                    "org.springframework.context.annotation.Configuration",
+                    "io.github.leonfoliveira.judge.common.util.SkipCoverage",
+                )
             }
         }
         verify {

@@ -1,4 +1,5 @@
-import { defineMessages, FormattedMessage } from "react-intl";
+import { defineMessages } from "@/i18n/message";
+import { FormattedMessage } from "@/lib/component/format/formatted-message";
 
 const messages = defineMessages({
   duration: {
@@ -29,7 +30,7 @@ export function FormattedDuration({ ms }: Props) {
     <FormattedMessage
       {...(days > 0 ? messages.durationWithDays : messages.duration)}
       values={{
-        days: pad(days),
+        days: days,
         hours: pad(hours),
         minutes: pad(minutes),
         seconds: pad(seconds),

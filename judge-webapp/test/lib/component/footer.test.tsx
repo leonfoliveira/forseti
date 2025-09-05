@@ -1,11 +1,18 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/dom";
 
+import { env } from "@/config/env";
 import { Footer } from "@/lib/component/footer";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("Footer", () => {
-  it("should render the footer", () => {
-    render(<Footer />);
+  it("should render the footer with the correct content", async () => {
+    await renderWithProviders(<Footer />);
 
-    expect(screen.getByTestId("footer")).toBeInTheDocument();
+    const anchor = screen.getByRole("link");
+    expect(anchor).toHaveAttribute(
+      "href",
+      "https://github.com/leonfoliveira/judge",
+    );
+    expect(anchor).toHaveTextContent(`Judge ${env.VERSION}`);
   });
 });

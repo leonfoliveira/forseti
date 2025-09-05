@@ -23,7 +23,7 @@ const eslintConfig = [
     rules: {
       "react-hooks/exhaustive-deps": "off",
       "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-require-imports": "off",      
+      "@typescript-eslint/no-require-imports": "off",
       "formatjs/no-literal-string-in-jsx": "off",
       "formatjs/enforce-description": "off",
       "formatjs/enforce-id": "error",
@@ -51,8 +51,14 @@ const eslintConfig = [
           },
           "newlines-between": "always",
         },
-      ]
-    }
+      ],
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: ["./**", "../**"],
+        },
+      ],
+    },
   },
 ];
 

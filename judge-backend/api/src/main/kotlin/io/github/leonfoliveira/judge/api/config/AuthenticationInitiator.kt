@@ -19,26 +19,26 @@ class AuthenticationInitiator(
     @EventListener(ApplicationReadyEvent::class)
     fun createOrUpdateSystemMembers() {
         val root =
-            memberRepository.findByLogin("root")?.apply {
+            memberRepository.findByLogin(Member.ROOT_LOGIN)?.apply {
                 password = hashAdapter.hash(rootPassword)
             }
                 ?: Member(
-                    id = UUID.fromString("00000000-0000-0000-0000-000000000000"),
+                    id = UUID.fromString(Member.ROOT_ID),
                     type = Member.Type.ROOT,
-                    name = "root",
-                    login = "root",
+                    name = Member.ROOT_NAME,
+                    login = Member.ROOT_LOGIN,
                     password = hashAdapter.hash(rootPassword),
                 )
 
         val autoJudge =
-            memberRepository.findByLogin("autojudge")?.apply {
+            memberRepository.findByLogin(Member.AUTOJUDGE_LOGIN)?.apply {
                 password = hashAdapter.hash(UUID.randomUUID().toString())
             }
                 ?: Member(
-                    id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
+                    id = UUID.fromString(Member.AUTOJUDGE_ID),
                     type = Member.Type.AUTOJUDGE,
-                    name = "autojudge",
-                    login = "autojudge",
+                    name = Member.AUTOJUDGE_NAME,
+                    login = Member.AUTOJUDGE_LOGIN,
                     password = hashAdapter.hash(UUID.randomUUID().toString()),
                 )
 

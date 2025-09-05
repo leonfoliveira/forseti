@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse
 class HttpJwtAuthFilterTest : FunSpec({
     val authorizationExtractor = mockk<AuthorizationExtractor>(relaxed = true)
 
-    val sut = HttpJwtAuthFilter(authorizationExtractor)
+    val sut = HttpAuthExtractionFilter(authorizationExtractor)
 
     beforeEach {
         clearAllMocks()

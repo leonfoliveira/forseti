@@ -34,7 +34,7 @@ class StompClarificationEmitter(
 
         if (clarification.parent != null) {
             messagingTemplate.convertAndSend(
-                "/topic/members/${clarification.parent!!.member.id}/clarifications/children",
+                "/topic/contests/${contest.id}/clarifications/children/members/${clarification.parent!!.member.id}",
                 clarification.toResponseDTO(),
             )
         }

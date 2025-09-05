@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { useErrorHandler } from "./error-handler-hook";
+import { useErrorHandler } from "@/lib/util/error-handler-hook";
 
 export type LoadableState<TData> = {
   isLoading: boolean;

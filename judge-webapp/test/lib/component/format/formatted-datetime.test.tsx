@@ -1,49 +1,32 @@
-import { render } from "@testing-library/react";
+import { screen } from "@testing-library/dom";
 
 import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
-import { mockFormattedDate } from "@/test/jest.setup";
-
-jest.unmock("@/lib/component/format/formatted-datetime");
+import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("FormattedDateTime", () => {
-  it("renders FormattedDate with correct value and default options", () => {
-    const timestamp = "2023-10-27T10:00:00Z";
-    render(<FormattedDateTime timestamp={timestamp} />);
-
-    // Check that FormattedDate was called
-    expect(mockFormattedDate).toHaveBeenCalledWith(
-      {
-        value: new Date(timestamp),
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      },
-      undefined,
+  it("should format date correctly", async () => {
+    await renderWithProviders(
+      <FormattedDateTime timestamp="2025-01-01T00:00:00Z" />,
     );
+
+    expect(screen.getByText("01/01/2025, 12:00:00 AM")).toBeInTheDocument();
   });
 
-  it("renders FormattedDate with custom options overriding defaults", () => {
-    const timestamp = "2023-10-27T10:00:00Z";
-    const customOptions = {
-      year: "numeric",
-      month: "long",
-    } as Intl.DateTimeFormatOptions;
-    render(<FormattedDateTime timestamp={timestamp} options={customOptions} />);
-
-    expect(mockFormattedDate).toHaveBeenCalledWith(
-      {
-        value: new Date(timestamp),
-        year: "numeric",
-        month: "long",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      },
-      undefined,
+  it("should format date with option override", async () => {
+    await renderWithProviders(
+      <FormattedDateTime
+        timestamp="2025-01-01T00:00:00Z"
+        options={{
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: undefined,
+          minute: undefined,
+          second: undefined,
+        }}
+      />,
     );
+
+    expect(screen.getByText("January 1, 2025")).toBeInTheDocument();
   });
 });

@@ -1,0 +1,11 @@
+[tool.pytest.ini_options]
+addopts = "--cov=cli --cov-report=term-missing --cov-report=html"
+
+[tool.coverage.run]
+source = ["cli"]
+
+[tool.coverage.report]
+fail_under = 0
+show_missing = true
+skip_covered = false
+skip_empty = false

@@ -1,26 +1,26 @@
 import React, { useEffect } from "react";
-import { defineMessages } from "react-intl";
 
 import {
   announcementListener,
   clarificationListener,
   contestService,
   leaderboardListener,
+  leaderboardService,
   listenerClientFactory,
   submissionListener,
+  submissionService,
 } from "@/config/composition";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
-import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { LeaderboardResponseDTO } from "@/core/repository/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
+import { defineMessages } from "@/i18n/message";
 import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";
 import { useErrorHandler } from "@/lib/util/error-handler-hook";
-import { useAlert } from "@/store/slices/alerts-slice";
-import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
+import { useToast } from "@/lib/util/toast-hook";
 import { judgeDashboardSlice } from "@/store/slices/judge-dashboard-slice";
-import { useToast } from "@/store/slices/toasts-slice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
 const messages = defineMessages({
@@ -47,11 +47,11 @@ export function JudgeDashboardProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const contestMetadata = useContestMetadata();
+  const authorization = useAppSelector((state) => state.authorization);
+  const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const { isLoading, error } = useAppSelector((state) => state.judgeDashboard);
   const dispatch = useAppDispatch();
   const errorHandler = useErrorHandler();
-  const alert = useAlert();
   const toast = useToast();
 
   useEffect(() => {
@@ -61,8 +61,8 @@ export function JudgeDashboardProvider({
       try {
         const data = await Promise.all([
           contestService.findContestById(contestMetadata.id),
-          contestService.findContestLeaderboardById(contestMetadata.id),
-          contestService.findAllContestFullSubmissions(contestMetadata.id),
+          leaderboardService.findContestLeaderboard(contestMetadata.id),
+          submissionService.findAllContestFullSubmissions(contestMetadata.id),
         ]);
 
         await listenerClient.connect();
@@ -116,7 +116,7 @@ export function JudgeDashboardProvider({
     };
   }, []);
 
-  function receiveLeaderboard(leaderboard: ContestLeaderboardResponseDTO) {
+  function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
     dispatch(judgeDashboardSlice.actions.setLeaderboard(leaderboard));
   }
 
@@ -131,10 +131,12 @@ export function JudgeDashboardProvider({
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
     dispatch(judgeDashboardSlice.actions.mergeAnnouncement(announcement));
 
-    alert.warning({
-      ...messages.announcement,
-      values: { text: announcement.text },
-    });
+    if (announcement.member.id !== authorization?.member.id) {
+      toast.warning({
+        ...messages.announcement,
+        values: { text: announcement.text },
+      });
+    }
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {

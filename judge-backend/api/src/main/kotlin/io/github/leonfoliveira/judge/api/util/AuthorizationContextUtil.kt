@@ -1,19 +1,18 @@
 package io.github.leonfoliveira.judge.api.util
 
 import io.github.leonfoliveira.judge.api.security.JwtAuthentication
-import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import org.springframework.security.core.context.SecurityContextHolder
 
 object AuthorizationContextUtil {
-    fun get(): Authorization {
+    fun get(): Authorization? {
         val authentication = SecurityContextHolder.getContext().authentication as? JwtAuthentication
-        return authentication?.principal ?: throw UnauthorizedException()
+        return authentication?.principal
     }
 
-    fun getMember(): AuthorizationMember {
+    fun getMember(): AuthorizationMember? {
         val authentication = SecurityContextHolder.getContext().authentication as? JwtAuthentication
-        return authentication?.principal?.member ?: throw UnauthorizedException()
+        return authentication?.principal?.member
     }
 }

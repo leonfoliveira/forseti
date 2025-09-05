@@ -10,6 +10,7 @@ export interface ClarificationListener {
 
   subscribeForMemberChildren: (
     client: ListenerClient,
+    contestId: string,
     memberId: string,
     cb: (clarification: ClarificationResponseDTO) => void,
   ) => Promise<void>;

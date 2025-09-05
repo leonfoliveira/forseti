@@ -1,23 +1,24 @@
 import React, { useEffect } from "react";
-import { defineMessages } from "react-intl";
 
 import {
   announcementListener,
   clarificationListener,
   contestService,
   leaderboardListener,
+  leaderboardService,
   listenerClientFactory,
   submissionListener,
+  submissionService,
 } from "@/config/composition";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
-import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
+import { LeaderboardResponseDTO } from "@/core/repository/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { defineMessages } from "@/i18n/message";
 import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";
 import { useErrorHandler } from "@/lib/util/error-handler-hook";
-import { useAlert } from "@/store/slices/alerts-slice";
-import { useContestMetadata } from "@/store/slices/contest-metadata-slice";
+import { useToast } from "@/lib/util/toast-hook";
 import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
@@ -37,11 +38,11 @@ export function GuestDashboardProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const contestMetadata = useContestMetadata();
+  const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const { isLoading, error } = useAppSelector((state) => state.guestDashboard);
   const dispatch = useAppDispatch();
   const errorHandler = useErrorHandler();
-  const alert = useAlert();
+  const toast = useToast();
 
   useEffect(() => {
     const listenerClient = listenerClientFactory.create();
@@ -50,8 +51,8 @@ export function GuestDashboardProvider({
       try {
         const data = await Promise.all([
           contestService.findContestById(contestMetadata.id),
-          contestService.findContestLeaderboardById(contestMetadata.id),
-          contestService.findAllContestSubmissions(contestMetadata.id),
+          leaderboardService.findContestLeaderboard(contestMetadata.id),
+          submissionService.findAllContestSubmissions(contestMetadata.id),
         ]);
 
         await listenerClient.connect();
@@ -105,7 +106,7 @@ export function GuestDashboardProvider({
     };
   }, []);
 
-  function receiveLeaderboard(leaderboard: ContestLeaderboardResponseDTO) {
+  function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
     dispatch(guestDashboardSlice.actions.setLeaderboard(leaderboard));
   }
 
@@ -115,7 +116,7 @@ export function GuestDashboardProvider({
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
     dispatch(guestDashboardSlice.actions.mergeAnnouncement(announcement));
-    alert.warning({
+    toast.warning({
       ...messages.announcement,
       values: { text: announcement.text },
     });

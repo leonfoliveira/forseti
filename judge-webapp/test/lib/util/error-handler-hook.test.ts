@@ -1,224 +1,115 @@
-import { renderHook, act } from "@testing-library/react";
-
-import { authenticationService } from "@/config/composition";
-import { routes } from "@/config/routes";
-import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
-import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
+import { signOut } from "@/lib/action/auth-action";
 import { useErrorHandler } from "@/lib/util/error-handler-hook";
-import { authorizationSlice } from "@/store/slices/authorization-slice";
-import { mockAppDispatch, mockRouter } from "@/test/jest.setup";
+import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { renderHookWithProviders } from "@/test/render-with-providers";
 
-// Mock console.error
-const mockConsoleError = jest.spyOn(console, "error").mockImplementation();
+// Mock the auth action
+jest.mock("@/lib/action/auth-action", () => ({
+  signOut: jest.fn().mockResolvedValue(undefined),
+}));
+
+const mockSignOut = signOut as jest.MockedFunction<typeof signOut>;
 
 describe("useErrorHandler", () => {
+  const mockSlug = "test-contest";
+  const preloadedState = {
+    contestMetadata: MockContestMetadataResponseDTO({ slug: mockSlug }),
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
-    mockConsoleError.mockClear();
-    (authenticationService.cleanAuthorization as jest.Mock) = jest.fn();
+    console.error = jest.fn();
   });
 
-  describe("handle function", () => {
-    it("should log the error to console", () => {
-      const { result } = renderHook(() => useErrorHandler());
-      const error = new Error("Test error");
+  it("should handle UnauthorizedException by signing out and redirecting", async () => {
+    const { result } = await renderHookWithProviders(
+      () => useErrorHandler(),
+      preloadedState,
+    );
 
-      act(() => {
-        result.current.handle(error);
-      });
+    const error = new UnauthorizedException("Unauthorized");
 
-      expect(mockConsoleError).toHaveBeenCalledWith(error);
-    });
+    await result.current.handle(error);
 
-    it("should handle UnauthorizedException by clearing authorization", async () => {
-      const { result } = renderHook(() => useErrorHandler());
-      const error = new UnauthorizedException("Unauthorized");
-
-      await act(async () => {
-        result.current.handle(error);
-      });
-
-      // Should dispatch reset action
-      expect(mockAppDispatch).toHaveBeenCalledWith(
-        authorizationSlice.actions.reset(),
-      );
-
-      // Should call authentication service to clean authorization
-      expect(authenticationService.cleanAuthorization).toHaveBeenCalled();
-
-      // Should dispatch reset action with null
-      expect(mockAppDispatch).toHaveBeenCalledWith(
-        authorizationSlice.actions.reset(),
-      );
-    });
-
-    it("should handle UnauthorizedException even when cleanAuthorization throws", async () => {
-      const { result } = renderHook(() => useErrorHandler());
-      const error = new UnauthorizedException("Unauthorized");
-
-      // Mock cleanAuthorization to throw an error
-      (authenticationService.cleanAuthorization as jest.Mock).mockRejectedValue(
-        new Error("Clean failed"),
-      );
-
-      await act(async () => {
-        result.current.handle(error);
-      });
-
-      // Should still dispatch reset action
-      expect(mockAppDispatch).toHaveBeenCalledWith(
-        authorizationSlice.actions.reset(),
-      );
-
-      // Should still dispatch success action with null in finally block
-      expect(mockAppDispatch).toHaveBeenCalledWith(
-        authorizationSlice.actions.reset(),
-      );
-    });
-
-    it("should handle ForbiddenException by navigating to forbidden page", () => {
-      const { result } = renderHook(() => useErrorHandler());
-      const error = new ForbiddenException("Forbidden");
-
-      act(() => {
-        result.current.handle(error);
-      });
-
-      expect(mockRouter.push).toHaveBeenCalledWith(routes.FORBIDDEN);
-    });
-
-    it("should handle NotFoundException by navigating to not found page", () => {
-      const { result } = renderHook(() => useErrorHandler());
-      const error = new NotFoundException("Not found");
-
-      act(() => {
-        result.current.handle(error);
-      });
-
-      expect(mockRouter.push).toHaveBeenCalledWith(routes.NOT_FOUND);
-    });
-
-    it("should use custom handlers when provided", () => {
-      const { result } = renderHook(() => useErrorHandler());
-      const error = new Error("Custom error");
-      const customHandler = jest.fn();
-      const customHandlers = {
-        Error: customHandler,
-      };
-
-      act(() => {
-        result.current.handle(error, customHandlers);
-      });
-
-      expect(customHandler).toHaveBeenCalledWith(error);
-    });
-
-    it("should override default handlers with custom handlers", () => {
-      const { result } = renderHook(() => useErrorHandler());
-      const error = new ForbiddenException("Forbidden");
-      const customHandler = jest.fn();
-      const customHandlers = {
-        [ForbiddenException.name]: customHandler,
-      };
-
-      act(() => {
-        result.current.handle(error, customHandlers);
-      });
-
-      expect(customHandler).toHaveBeenCalledWith(error);
-      expect(mockRouter.push).not.toHaveBeenCalled();
-    });
-
-    it("should handle non-Error objects by converting them to Error", () => {
-      const { result } = renderHook(() => useErrorHandler());
-      const errorMessage = "String error";
-      const customHandler = jest.fn();
-      const customHandlers = {
-        Error: customHandler,
-      };
-
-      act(() => {
-        result.current.handle(errorMessage as any, customHandlers);
-      });
-
-      expect(customHandler).toHaveBeenCalledWith(new Error("String error"));
-    });
-
-    it("should use default handler when provided and no specific handler matches", () => {
-      const { result } = renderHook(() => useErrorHandler());
-      const error = new Error("Unknown error");
-      const defaultHandler = jest.fn();
-      const customHandlers = {
-        default: defaultHandler,
-      };
-
-      act(() => {
-        result.current.handle(error, customHandlers);
-      });
-
-      expect(defaultHandler).toHaveBeenCalledWith(error);
-    });
-
-    it("should do nothing when no handler matches and no default handler is provided", () => {
-      const { result } = renderHook(() => useErrorHandler());
-      const error = new Error("Unknown error");
-
-      act(() => {
-        result.current.handle(error);
-      });
-
-      // Should only log the error, no other actions
-      expect(mockAppDispatch).not.toHaveBeenCalled();
-      expect(mockRouter.push).not.toHaveBeenCalled();
-    });
-
-    it("should handle class names correctly for different exception types", () => {
-      const { result } = renderHook(() => useErrorHandler());
-
-      // Test UnauthorizedException
-      const unauthorizedError = new UnauthorizedException("Unauthorized");
-      expect(unauthorizedError.name).toBe("UnauthorizedException");
-
-      // Test ForbiddenException
-      const forbiddenError = new ForbiddenException("Forbidden");
-      expect(forbiddenError.name).toBe("ForbiddenException");
-
-      // Test NotFoundException
-      const notFoundError = new NotFoundException("Not found");
-      expect(notFoundError.name).toBe("NotFoundException");
-
-      // Verify handlers are called correctly
-      act(() => {
-        result.current.handle(forbiddenError);
-      });
-      expect(mockRouter.push).toHaveBeenCalledWith(routes.FORBIDDEN);
-
-      jest.clearAllMocks();
-
-      act(() => {
-        result.current.handle(notFoundError);
-      });
-      expect(mockRouter.push).toHaveBeenCalledWith(routes.NOT_FOUND);
-    });
+    expect(console.error).toHaveBeenCalledWith(error);
+    expect(mockSignOut).toHaveBeenCalled();
   });
 
-  describe("clearAuthorization function", () => {
-    it("should execute the clearAuthorization flow correctly", async () => {
-      const { result } = renderHook(() => useErrorHandler());
+  it("should handle generic Error by logging it", async () => {
+    const { result } = await renderHookWithProviders(
+      () => useErrorHandler(),
+      preloadedState,
+    );
 
-      // Access the clearAuthorization function indirectly through UnauthorizedException handling
-      const error = new UnauthorizedException("Test");
+    const error = new Error("Generic error");
 
-      await act(async () => {
-        result.current.handle(error);
-      });
+    result.current.handle(error);
 
-      // Verify the sequence of calls
-      expect(mockAppDispatch).toHaveBeenCalledWith(
-        authorizationSlice.actions.reset(),
-      );
-      expect(authenticationService.cleanAuthorization).toHaveBeenCalled();
-    });
+    expect(console.error).toHaveBeenCalledWith(error);
+  });
+
+  it("should use custom handler when provided", async () => {
+    const { result } = await renderHookWithProviders(
+      () => useErrorHandler(),
+      preloadedState,
+    );
+
+    const customHandler = jest.fn();
+    const error = new Error("Custom error");
+    error.name = "CustomError";
+
+    result.current.handle(error, { CustomError: customHandler });
+
+    expect(console.error).toHaveBeenCalledWith(error);
+    expect(customHandler).toHaveBeenCalledWith(error);
+  });
+
+  it("should use default handler when provided", async () => {
+    const { result } = await renderHookWithProviders(
+      () => useErrorHandler(),
+      preloadedState,
+    );
+
+    const defaultHandler = jest.fn();
+    const error = new Error("Unknown error");
+
+    result.current.handle(error, { default: defaultHandler });
+
+    expect(console.error).toHaveBeenCalledWith(error);
+    expect(defaultHandler).toHaveBeenCalledWith(error);
+  });
+
+  it("should convert non-Error objects to Error", async () => {
+    const { result } = await renderHookWithProviders(
+      () => useErrorHandler(),
+      preloadedState,
+    );
+
+    const customHandler = jest.fn();
+    const errorString = "String error";
+
+    result.current.handle(errorString as any, { Error: customHandler });
+
+    expect(console.error).toHaveBeenCalled();
+    expect(customHandler).toHaveBeenCalledWith(expect.any(Error));
+    expect(customHandler).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "String error" }),
+    );
+  });
+
+  it("should do nothing when no handler matches and no default is provided", async () => {
+    const { result } = await renderHookWithProviders(
+      () => useErrorHandler(),
+      preloadedState,
+    );
+
+    const error = new Error("Unhandled error");
+    error.name = "UnhandledError";
+
+    result.current.handle(error);
+
+    expect(console.error).toHaveBeenCalledWith(error);
+    // Should not throw or cause any side effects
   });
 });

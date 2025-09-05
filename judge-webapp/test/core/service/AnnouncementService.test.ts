@@ -1,0 +1,28 @@
+import { randomUUID } from "crypto";
+
+import { mock } from "jest-mock-extended";
+
+import { AnnouncementRepository } from "@/core/repository/AnnouncementRepository";
+import { AnnouncementService } from "@/core/service/AnnouncementService";
+import { MockCreateAnnouncementRequestDTO } from "@/test/mock/request/MockCreateAnnouncementRequestDTO";
+import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
+
+describe("AnnouncementService", () => {
+  const announcementRepository = mock<AnnouncementRepository>();
+
+  const sut = new AnnouncementService(announcementRepository);
+
+  const contestId = randomUUID();
+
+  describe("createAnnouncement", () => {
+    it("should call announcementRepository.create with the correct parameters", async () => {
+      const inputDTO = MockCreateAnnouncementRequestDTO();
+      const expectedResult = MockAnnouncementResponseDTO();
+      announcementRepository.createAnnouncement.mockResolvedValue(
+        expectedResult,
+      );
+      const result = await sut.createAnnouncement(contestId, inputDTO);
+      expect(result).toEqual(expectedResult);
+    });
+  });
+});

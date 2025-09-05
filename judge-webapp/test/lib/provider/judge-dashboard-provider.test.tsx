@@ -1,329 +1,291 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { randomUUID } from "crypto";
+
+import { screen } from "@testing-library/dom";
+import { mock } from "jest-mock-extended";
+import { act } from "react";
 
 import {
   announcementListener,
   clarificationListener,
   contestService,
   leaderboardListener,
+  leaderboardService,
   listenerClientFactory,
   submissionListener,
+  submissionService,
 } from "@/config/composition";
-import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
-import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
-import { ContestLeaderboardResponseDTO } from "@/core/repository/dto/response/contest/ContestLeaderboardResponseDTO";
-import { ContestPublicResponseDTO } from "@/core/repository/dto/response/contest/ContestPublicResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
 import { JudgeDashboardProvider } from "@/lib/provider/judge-dashboard-provider";
-import { judgeDashboardSlice } from "@/store/slices/judge-dashboard-slice";
-import {
-  mockAlert,
-  mockAppDispatch,
-  mockUseAppSelector,
-  mockUseAuthorization,
-  mockUseContestMetadata,
-} from "@/test/jest.setup";
+import { useToast } from "@/lib/util/toast-hook";
+import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
+import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
+import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
+import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestPublicResponseDTO } from "@/test/mock/response/contest/MockContestPublicResponseDTO";
+import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
+import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
+import { renderWithProviders } from "@/test/render-with-providers";
 
-jest.mock("@/lib/provider/judge-dashboard-provider", () =>
-  jest.requireActual("@/lib/provider/judge-dashboard-provider"),
-);
 jest.mock("@/lib/component/page/loading-page", () => ({
-  LoadingPage: () => <span data-testid="loading" />,
+  LoadingPage: () => <span data-testid="loading-page" />,
 }));
 jest.mock("@/lib/component/page/error-page", () => ({
-  ErrorPage: () => <span data-testid="error" />,
+  ErrorPage: () => <span data-testid="error-page" />,
 }));
 
 describe("JudgeDashboardProvider", () => {
-  const listenerClient = {
-    connect: jest.fn(),
-    disconnect: jest.fn(),
-  };
+  const authorization = MockAuthorization();
+  const contestMetadata = MockContestMetadataResponseDTO();
+  const contest = MockContestPublicResponseDTO();
+  const leaderboard = MockLeaderboardResponseDTO();
+  const submissions = [
+    MockSubmissionFullResponseDTO(),
+    MockSubmissionFullResponseDTO(),
+  ];
+  const listenerClient = mock<ListenerClient>();
 
   beforeEach(() => {
+    (contestService.findContestById as jest.Mock).mockResolvedValue(contest);
+    (leaderboardService.findContestLeaderboard as jest.Mock).mockResolvedValue(
+      leaderboard,
+    );
+    (
+      submissionService.findAllContestFullSubmissions as jest.Mock
+    ).mockResolvedValue(submissions);
     (listenerClientFactory.create as jest.Mock).mockReturnValue(listenerClient);
-    mockUseAuthorization.mockReturnValue({
-      member: { id: "member-id" },
-    });
-    mockUseContestMetadata.mockReturnValue({
-      id: "test-contest-id",
-    });
-    mockUseAppSelector.mockReturnValue({
-      isLoading: false,
-      error: null,
-    });
   });
 
-  it("should render loading page while loading", async () => {
-    mockUseAppSelector.mockReturnValueOnce({
-      isLoading: true,
-      error: null,
-    });
-
-    render(
+  it("should load data on startup and render children", async () => {
+    const { store } = await renderWithProviders(
       <JudgeDashboardProvider>
-        <span data-testid="child" />
+        <div data-testid="child" />
       </JudgeDashboardProvider>,
+      { authorization, contestMetadata },
     );
 
-    await waitFor(() => {
-      expect(screen.getByTestId("loading")).toBeInTheDocument();
-      expect(screen.queryByTestId("child")).not.toBeInTheDocument();
-    });
-  });
-
-  it("should render error page on load failure", async () => {
-    mockUseAppSelector.mockReturnValueOnce({
-      isLoading: false,
-      error: new Error("error"),
-    });
-    (contestService.findContestById as jest.Mock).mockRejectedValue(
-      new Error("error"),
+    expect(contestService.findContestById).toHaveBeenCalledWith(
+      contestMetadata.id,
     );
-
-    render(
-      <JudgeDashboardProvider>
-        <span data-testid="child" />
-      </JudgeDashboardProvider>,
+    expect(leaderboardService.findContestLeaderboard).toHaveBeenCalledWith(
+      contestMetadata.id,
     );
-
-    await waitFor(() => {
-      expect(screen.getByTestId("error")).toBeInTheDocument();
-      expect(screen.queryByTestId("child")).not.toBeInTheDocument();
-    });
-  });
-
-  it("should load contest data and render children", async () => {
-    const mockContest = {
-      id: "test-contest-id",
-      name: "Test Contest",
-    } as unknown as ContestPublicResponseDTO;
-    const mockLeaderboard = {
-      id: "test-leaderboard-id",
-    } as unknown as ContestLeaderboardResponseDTO;
-    const mockSubmissions = [
-      { id: "submission-1" },
-    ] as unknown as SubmissionFullResponseDTO[];
-
-    (contestService.findContestById as jest.Mock).mockResolvedValue(
-      mockContest,
-    );
-    (contestService.findContestLeaderboardById as jest.Mock).mockResolvedValue(
-      mockLeaderboard,
-    );
-    (
-      contestService.findAllContestFullSubmissions as jest.Mock
-    ).mockResolvedValue(mockSubmissions);
-
-    render(
-      <JudgeDashboardProvider>
-        <span data-testid="child" />
-      </JudgeDashboardProvider>,
-    );
-
-    await waitFor(() => {
-      expect(mockAppDispatch).toHaveBeenCalledWith(
-        judgeDashboardSlice.actions.success({
-          contest: mockContest,
-          leaderboard: mockLeaderboard,
-          submissions: mockSubmissions,
-        }),
-      );
-      expect(screen.getByTestId("child")).toBeInTheDocument();
-    });
-  });
-
-  it("should connect and disconnect to listener", async () => {
-    const { unmount } = render(
-      <JudgeDashboardProvider>
-        <span data-testid="child" />
-      </JudgeDashboardProvider>,
-    );
-
-    await waitFor(() => {
-      expect(listenerClient.connect).toHaveBeenCalled();
-    });
-
-    unmount();
-    expect(listenerClient.disconnect).toHaveBeenCalled();
-  });
-
-  it("should handle leaderboard updates", async () => {
-    render(
-      <JudgeDashboardProvider>
-        <span data-testid="child" />
-      </JudgeDashboardProvider>,
-    );
-
-    await waitFor(() => {
-      expect(listenerClient.connect).toHaveBeenCalled();
-    });
-
     expect(
-      leaderboardListener.subscribeForLeaderboard as jest.Mock,
-    ).toHaveBeenCalledWith(
+      submissionService.findAllContestFullSubmissions,
+    ).toHaveBeenCalledWith(contestMetadata.id);
+
+    expect(leaderboardListener.subscribeForLeaderboard).toHaveBeenCalledWith(
       listenerClient,
-      "test-contest-id",
+      contestMetadata.id,
       expect.any(Function),
     );
-    const receiveLeaderboard = (
-      leaderboardListener.subscribeForLeaderboard as jest.Mock
-    ).mock.calls[0][2];
-    const newLeaderboard = {
-      id: "new-leaderboard-id",
-    } as unknown as ContestLeaderboardResponseDTO;
-    act(() => {
-      receiveLeaderboard(newLeaderboard);
-    });
-    expect(mockAppDispatch).toHaveBeenCalledWith(
-      judgeDashboardSlice.actions.setLeaderboard(newLeaderboard),
-    );
-  });
-
-  it("should handle submission updates", async () => {
-    (
-      contestService.findAllContestFullSubmissions as jest.Mock
-    ).mockResolvedValue([]);
-
-    render(
-      <JudgeDashboardProvider>
-        <span data-testid="child" />
-      </JudgeDashboardProvider>,
-    );
-
-    await waitFor(() => {
-      expect(listenerClient.connect).toHaveBeenCalled();
-    });
-
-    expect(
-      submissionListener.subscribeForContestFull as jest.Mock,
-    ).toHaveBeenCalledWith(
+    expect(submissionListener.subscribeForContestFull).toHaveBeenCalledWith(
       listenerClient,
-      "test-contest-id",
+      contestMetadata.id,
       expect.any(Function),
     );
-    const receiveSubmission = (
-      submissionListener.subscribeForContestFull as jest.Mock
-    ).mock.calls[0][2];
-    const newSubmission = {
-      id: "new-submission-id",
-    } as unknown as SubmissionFullResponseDTO;
-    act(() => {
-      receiveSubmission(newSubmission);
-    });
-    expect(mockAppDispatch).toHaveBeenCalledWith(
-      judgeDashboardSlice.actions.mergeSubmission(newSubmission),
-    );
-  });
-
-  it("should handle announcement updates", async () => {
-    (contestService.findContestById as jest.Mock).mockResolvedValue({
-      announcements: [],
-    });
-
-    render(
-      <JudgeDashboardProvider>
-        <span data-testid="child" />
-      </JudgeDashboardProvider>,
-    );
-
-    await waitFor(() => {
-      expect(listenerClient.connect).toHaveBeenCalled();
-    });
-
-    expect(
-      announcementListener.subscribeForContest as jest.Mock,
-    ).toHaveBeenCalledWith(
+    expect(announcementListener.subscribeForContest).toHaveBeenCalledWith(
       listenerClient,
-      "test-contest-id",
+      contestMetadata.id,
       expect.any(Function),
     );
-    const receiveAnnouncement = (
-      announcementListener.subscribeForContest as jest.Mock
-    ).mock.calls[0][2];
-    const newAnnouncement = {
-      id: "new-announcement-id",
-      text: "Announcement",
-    } as unknown as AnnouncementResponseDTO;
-    act(() => {
-      receiveAnnouncement(newAnnouncement);
-    });
-    expect(mockAppDispatch).toHaveBeenCalledWith(
-      judgeDashboardSlice.actions.mergeAnnouncement(newAnnouncement),
-    );
-    expect(mockAlert.warning).toHaveBeenCalledWith({
-      defaultMessage: "New announcement: {text}",
-      id: "lib.provider.judge-dashboard-provider.announcement",
-      values: { text: "Announcement" },
-    });
-  });
-
-  it("should handle clarification updates", async () => {
-    (contestService.findContestById as jest.Mock).mockResolvedValue({
-      clarifications: [],
-    });
-
-    render(
-      <JudgeDashboardProvider>
-        <span data-testid="child" />
-      </JudgeDashboardProvider>,
-    );
-
-    await waitFor(() => {
-      expect(listenerClient.connect).toHaveBeenCalled();
-    });
-
-    expect(
-      clarificationListener.subscribeForContest as jest.Mock,
-    ).toHaveBeenCalledWith(
+    expect(clarificationListener.subscribeForContest).toHaveBeenCalledWith(
       listenerClient,
-      "test-contest-id",
+      contestMetadata.id,
       expect.any(Function),
     );
-    const receiveClarification = (
-      clarificationListener.subscribeForContest as jest.Mock
-    ).mock.calls[0][2];
-    const newClarification = {
-      id: "new-clarification-id",
-      text: "Clarification",
-    } as unknown as ClarificationResponseDTO;
-    act(() => {
-      receiveClarification(newClarification);
-    });
-    expect(mockAppDispatch).toHaveBeenCalledWith(
-      judgeDashboardSlice.actions.mergeClarification(newClarification),
-    );
-  });
-
-  it("should handle clarification deletion", async () => {
-    (contestService.findContestById as jest.Mock).mockResolvedValue({
-      clarifications: [{ id: "clarification-id" }],
-    });
-
-    render(
-      <JudgeDashboardProvider>
-        <span data-testid="child" />
-      </JudgeDashboardProvider>,
-    );
-
-    await waitFor(() => {
-      expect(listenerClient.connect).toHaveBeenCalled();
-    });
-
     expect(
       clarificationListener.subscribeForContestDeleted,
     ).toHaveBeenCalledWith(
       listenerClient,
-      "test-contest-id",
+      contestMetadata.id,
       expect.any(Function),
     );
-    const deleteClarification = (
-      clarificationListener.subscribeForContestDeleted as jest.Mock
-    ).mock.calls[0][2];
-    act(() => {
-      deleteClarification({ id: "clarification-id" });
+
+    const state = store.getState().judgeDashboard;
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBeNull();
+    expect(state.data).toEqual({
+      contest,
+      leaderboard,
+      submissions,
     });
-    expect(mockAppDispatch).toHaveBeenCalledWith(
-      judgeDashboardSlice.actions.deleteClarification("clarification-id"),
+
+    expect(screen.queryByTestId("error-page")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("child")).toBeInTheDocument();
+  });
+
+  it("should handle error state", async () => {
+    const error = new Error("Test error");
+    (contestService.findContestById as jest.Mock).mockRejectedValue(error);
+    const { store } = await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { authorization, contestMetadata },
     );
+
+    const state = store.getState().judgeDashboard;
+    expect(state.isLoading).toBe(false);
+    expect(state.error).toBe(error.name);
+    expect(state.data).toBeNull();
+
+    expect(screen.queryByTestId("error-page")).toBeInTheDocument();
+    expect(screen.queryByTestId("child")).not.toBeInTheDocument();
+  });
+
+  it("should handle leaderboard updates", async () => {
+    const otherLeaderboard = MockLeaderboardResponseDTO();
+    const { store } = await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { authorization, contestMetadata },
+    );
+
+    act(() => {
+      (
+        leaderboardListener.subscribeForLeaderboard as jest.Mock
+      ).mock.calls[0][2](otherLeaderboard);
+    });
+    expect(store.getState().judgeDashboard.data?.leaderboard).toBe(
+      otherLeaderboard,
+    );
+  });
+
+  it("should handle submissions updates", async () => {
+    const otherSubmission = MockSubmissionFullResponseDTO();
+    const { store } = await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { authorization, contestMetadata },
+    );
+
+    act(() => {
+      (
+        submissionListener.subscribeForContestFull as jest.Mock
+      ).mock.calls[0][2](otherSubmission);
+    });
+    expect(store.getState().judgeDashboard.data?.submissions).toContain(
+      otherSubmission,
+    );
+  });
+
+  it("should show a toast for failed submissions", async () => {
+    const otherSubmission = MockSubmissionFullResponseDTO({
+      status: SubmissionStatus.FAILED,
+    });
+    await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { authorization, contestMetadata },
+    );
+
+    act(() => {
+      (
+        submissionListener.subscribeForContestFull as jest.Mock
+      ).mock.calls[0][2](otherSubmission);
+    });
+    expect(useToast().error).toHaveBeenCalled();
+  });
+
+  it("should handle announcements update", async () => {
+    const otherAnnouncement = MockAnnouncementResponseDTO({
+      member: authorization.member,
+    });
+    const { store } = await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { authorization, contestMetadata },
+    );
+
+    act(() => {
+      (announcementListener.subscribeForContest as jest.Mock).mock.calls[0][2](
+        otherAnnouncement,
+      );
+    });
+    expect(
+      store.getState().judgeDashboard.data?.contest.announcements,
+    ).toContain(otherAnnouncement);
+  });
+
+  it("should show a toast for announcements not owned by member", async () => {
+    const otherAnnouncement = MockAnnouncementResponseDTO({
+      member: { ...MockAnnouncementResponseDTO().member, id: randomUUID() },
+    });
+    await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { authorization, contestMetadata },
+    );
+
+    act(() => {
+      (announcementListener.subscribeForContest as jest.Mock).mock.calls[0][2](
+        otherAnnouncement,
+      );
+    });
+    expect(useToast().warning).toHaveBeenCalled();
+  });
+
+  it("should handle clarifications updates", async () => {
+    const otherClarification = MockClarificationResponseDTO({
+      parentId: contest.clarifications[0].id,
+    });
+    const { store } = await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { authorization, contestMetadata },
+    );
+
+    act(() => {
+      (clarificationListener.subscribeForContest as jest.Mock).mock.calls[0][2](
+        otherClarification,
+      );
+    });
+    expect(
+      store.getState().judgeDashboard.data?.contest.clarifications[0].children,
+    ).toContain(otherClarification);
+  });
+
+  it("should show toast for clarifications without parent", async () => {
+    const otherClarification = MockClarificationResponseDTO({
+      parentId: undefined,
+    });
+    await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { authorization, contestMetadata },
+    );
+
+    act(() => {
+      (clarificationListener.subscribeForContest as jest.Mock).mock.calls[0][2](
+        otherClarification,
+      );
+    });
+    expect(useToast().info).toHaveBeenCalled();
+  });
+
+  it("should handle deleted clarifications", async () => {
+    const { store } = await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { authorization, contestMetadata },
+    );
+
+    act(() => {
+      (
+        clarificationListener.subscribeForContestDeleted as jest.Mock
+      ).mock.calls[0][2]({ id: contest.clarifications[0].id });
+    });
+    expect(
+      store.getState().judgeDashboard.data?.contest.clarifications,
+    ).toHaveLength(0);
   });
 });

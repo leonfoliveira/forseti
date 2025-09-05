@@ -3,14 +3,11 @@ import { mock } from "jest-mock-extended";
 
 import { StompClient } from "@/adapter/stomp/StompClient";
 import { ServerException } from "@/core/domain/exception/ServerException";
-import { Authorization } from "@/core/domain/model/Authorization";
-import { AuthorizationService } from "@/core/service/AuthorizationService";
 
 describe("StompClient", () => {
   const client = mock<CompatClient>();
-  const authorizationService = mock<AuthorizationService>();
 
-  const sut = new StompClient(client, authorizationService);
+  const sut = new StompClient(client);
 
   describe("connect", () => {
     it("should connect to the STOMP server", async () => {
@@ -93,22 +90,6 @@ describe("StompClient", () => {
       subscriptionCallback(message);
 
       expect(callback).toHaveBeenCalledWith({ key: "value" });
-    });
-
-    it("should include authorization header if available", () => {
-      const topic = "/topic/test";
-      const callback = jest.fn();
-      const authorization = {
-        accessToken: "token",
-      } as unknown as Authorization;
-      authorizationService.getAuthorization.mockReturnValue(authorization);
-
-      sut.subscribe(topic, callback);
-
-      expect(client.subscribe).toHaveBeenCalledWith(
-        topic,
-        expect.any(Function),
-      );
     });
   });
 

@@ -9,6 +9,7 @@ jobs:
     defaults:
       run:
         working-directory: judge-autoscaler
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

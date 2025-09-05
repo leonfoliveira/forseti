@@ -1,22 +1,61 @@
-import { UpdateSubmissionAnswerRequestDTO } from "@/core/repository/dto/request/UpdateSubmissionAnswerRequestDTO";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
+import { AttachmentService } from "@/core/service/AttachmentService";
+import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmissionInputDTO";
 
 export class SubmissionService {
-  constructor(private readonly submissionRepository: SubmissionRepository) {}
+  constructor(
+    private readonly submissionRepository: SubmissionRepository,
+    private readonly attachmentService: AttachmentService,
+  ) {}
 
-  async findAllFullForMember(): Promise<SubmissionFullResponseDTO[]> {
-    return await this.submissionRepository.findAllFullForMember();
+  async createSubmission(
+    contestId: string,
+    inputDTO: CreateSubmissionInputDTO,
+  ) {
+    const attachment = await this.attachmentService.upload(inputDTO.code);
+    return await this.submissionRepository.createSubmission(contestId, {
+      ...inputDTO,
+      code: attachment,
+    });
+  }
+
+  async findAllContestSubmissions(contestId: string) {
+    return await this.submissionRepository.findAllContestSubmissions(contestId);
+  }
+
+  async findAllContestFullSubmissions(contestId: string) {
+    return await this.submissionRepository.findAllContestFullSubmissions(
+      contestId,
+    );
+  }
+
+  async findAllFullForMember(
+    contestId: string,
+  ): Promise<SubmissionFullResponseDTO[]> {
+    return await this.submissionRepository.findAllFullForMember(contestId);
   }
 
   async updateSubmissionAnswer(
-    id: string,
-    data: UpdateSubmissionAnswerRequestDTO,
+    contestId: string,
+    submissionId: string,
+    answer: SubmissionAnswer,
   ): Promise<void> {
-    return await this.submissionRepository.updateSubmissionAnswer(id, data);
+    return await this.submissionRepository.updateSubmissionAnswer(
+      contestId,
+      submissionId,
+      answer,
+    );
   }
 
-  async rerunSubmission(id: string): Promise<void> {
-    return await this.submissionRepository.rerunSubmission(id);
+  async rerunSubmission(
+    contestId: string,
+    submissionId: string,
+  ): Promise<void> {
+    return await this.submissionRepository.rerunSubmission(
+      contestId,
+      submissionId,
+    );
   }
 }

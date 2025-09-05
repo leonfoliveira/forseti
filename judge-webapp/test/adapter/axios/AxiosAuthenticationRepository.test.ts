@@ -4,6 +4,8 @@ import { mock } from "jest-mock-extended";
 import { AxiosAuthenticationRepository } from "@/adapter/axios/AxiosAuthenticationRepository";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { Authorization } from "@/core/domain/model/Authorization";
+import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
+import { MockAuthenticateRequestDTO } from "@/test/mock/request/MockAuthenticateRequestDTO";
 
 describe("AxiosAuthenticationRepository", () => {
   const axiosClient = mock<AxiosClient>();
@@ -12,30 +14,23 @@ describe("AxiosAuthenticationRepository", () => {
 
   describe("getAuthorization", () => {
     it("should return an authorization", async () => {
-      const authorization = { member: {} } as unknown as Authorization;
+      const authorization = MockAuthorization();
       axiosClient.get.mockResolvedValueOnce({
         data: authorization,
       } as AxiosResponse);
 
-      const result = await sut.getAuthorization();
+      const result = await sut.getAuthorization("access-token");
 
-      expect(axiosClient.get).toHaveBeenCalledWith("/v1/auth/me");
+      expect(axiosClient.get).toHaveBeenCalledWith("/v1/auth/me", {
+        headers: { Cookie: "access_token=access-token" },
+      });
       expect(result).toEqual(authorization);
     });
   });
 
-  describe("cleanAuthorization", () => {
-    it("should call clean authorization endpoint", () => {
-      sut.cleanAuthorization();
-
-      expect(axiosClient.delete).toHaveBeenCalledWith("/v1/auth/me");
-    });
-  });
-
-  describe("authenticateMember", () => {
+  describe("authenticate", () => {
     it("should authenticate a member and return an authorization", async () => {
-      const contestId = "contest123";
-      const requestDTO = { login: "member", password: "password" };
+      const requestDTO = MockAuthenticateRequestDTO();
       const expectedAuthorization = {
         token: "authToken",
       } as unknown as Authorization;
@@ -43,33 +38,10 @@ describe("AxiosAuthenticationRepository", () => {
         data: expectedAuthorization,
       } as AxiosResponse);
 
-      const result = await sut.authenticateMember(contestId, requestDTO);
+      const result = await sut.authenticate(requestDTO);
 
-      expect(axiosClient.post).toHaveBeenCalledWith(
-        `/v1/auth/contests/${contestId}/sign-in`,
-        { data: requestDTO }
-      );
-      expect(result).toEqual(expectedAuthorization);
-    });
-  });
-
-  describe("authenticateRoot", () => {
-    it("should authenticate root and return an authorization", async () => {
-      const requestDTO = { password: "rootPassword" };
-      const expectedAuthorization = {
-        token: "rootAuthToken",
-      } as unknown as Authorization;
-      axiosClient.post.mockResolvedValueOnce({
-        data: expectedAuthorization,
-      } as AxiosResponse);
-
-      const result = await sut.authenticateRoot(requestDTO);
-
-      expect(axiosClient.post).toHaveBeenCalledWith("/v1/auth/sign-in", {
-        data: {
-          login: "root",
-          password: requestDTO.password,
-        },
+      expect(axiosClient.post).toHaveBeenCalledWith(`/v1/auth/sign-in`, {
+        data: requestDTO,
       });
       expect(result).toEqual(expectedAuthorization);
     });

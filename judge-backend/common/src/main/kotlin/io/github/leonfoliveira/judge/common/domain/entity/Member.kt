@@ -53,12 +53,6 @@ class Member(
     @Column(nullable = false)
     var password: String,
     /**
-     * Indicates whether this member is a system member, which may have special privileges or roles.
-     * Users cannot sign in as system members.
-     */
-    @Column(nullable = false)
-    var isSystem: Boolean = false,
-    /**
      * The submissions made by this member in the contest.
      */
     @Audited(withModifiedFlag = false)
@@ -67,7 +61,7 @@ class Member(
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
     enum class Type {
         /**
-         * Represents a member with administrative privileges, such as contest organizers.
+         * Represents a member who can create contests and has administrative privileges within all contests.
          */
         ROOT,
 
@@ -85,5 +79,20 @@ class Member(
          * Represents a member who is part of the jury, responsible for judging submissions.
          */
         JUDGE,
+
+        /**
+         * Represents a member with administrative privileges within the contest, such as contest managers.
+         */
+        ADMIN,
+    }
+
+    companion object {
+        const val ROOT_ID = "00000000-0000-0000-0000-000000000000"
+        const val ROOT_NAME = "Root"
+        const val ROOT_LOGIN = "root"
+
+        const val AUTOJUDGE_ID = "11111111-1111-1111-1111-111111111111"
+        const val AUTOJUDGE_NAME = "Autojudge"
+        const val AUTOJUDGE_LOGIN = "autojudge"
     }
 }

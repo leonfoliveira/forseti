@@ -4,47 +4,30 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.controller.advice.GlobalExceptionHandler
-import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
-import io.github.leonfoliveira.judge.api.dto.response.clarification.toResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.toFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.toMetadataDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.toPublicOutputDTO
-import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
-import io.github.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
-import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.config.JacksonConfig
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
-import io.github.leonfoliveira.judge.common.mock.entity.AnnouncementMockBuilder
-import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
-import io.github.leonfoliveira.judge.common.mock.entity.ClarificationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ProblemMockBuilder
-import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
-import io.github.leonfoliveira.judge.common.service.announcement.CreateAnnouncementService
-import io.github.leonfoliveira.judge.common.service.clarification.CreateClarificationService
 import io.github.leonfoliveira.judge.common.service.contest.CreateContestService
 import io.github.leonfoliveira.judge.common.service.contest.DeleteContestService
 import io.github.leonfoliveira.judge.common.service.contest.FindContestService
 import io.github.leonfoliveira.judge.common.service.contest.UpdateContestService
-import io.github.leonfoliveira.judge.common.service.dto.input.announcement.CreateAnnouncementInputDTO
 import io.github.leonfoliveira.judge.common.service.dto.input.attachment.AttachmentInputDTO
-import io.github.leonfoliveira.judge.common.service.dto.input.clarification.CreateClarificationInputDTO
 import io.github.leonfoliveira.judge.common.service.dto.input.contest.CreateContestInputDTO
 import io.github.leonfoliveira.judge.common.service.dto.input.contest.UpdateContestInputDTO
-import io.github.leonfoliveira.judge.common.service.dto.output.ContestLeaderboardOutputDTO
-import io.github.leonfoliveira.judge.common.service.submission.FindSubmissionService
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
-import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
@@ -68,12 +51,6 @@ class ContestControllerTest(
     private val findContestService: FindContestService,
     @MockkBean(relaxed = true)
     private val deleteContestService: DeleteContestService,
-    @MockkBean(relaxed = true)
-    private val findSubmissionService: FindSubmissionService,
-    @MockkBean(relaxed = true)
-    private val createAnnouncementService: CreateAnnouncementService,
-    @MockkBean(relaxed = true)
-    private val createClarificationService: CreateClarificationService,
     private val webMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) : FunSpec({
@@ -82,6 +59,8 @@ class ContestControllerTest(
         beforeTest {
             objectMapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         }
+
+        val basePath = "/v1/contests"
 
         test("createContest") {
             val body =
@@ -115,7 +94,7 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build()
             every { createContestService.create(body) } returns contest
 
-            webMvc.post("/v1/contests") {
+            webMvc.post(basePath) {
                 contentType = MediaType.APPLICATION_JSON
                 content = objectMapper.writeValueAsString(body)
             }.andExpect {
@@ -160,7 +139,7 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build()
             every { updateContestService.update(body) } returns contest
 
-            webMvc.put("/v1/contests", contestId) {
+            webMvc.put(basePath, contestId) {
                 contentType = MediaType.APPLICATION_JSON
                 content = objectMapper.writeValueAsString(body)
             }.andExpect {
@@ -173,7 +152,7 @@ class ContestControllerTest(
             val contests = listOf(ContestMockBuilder.build(), ContestMockBuilder.build())
             every { findContestService.findAll() } returns contests
 
-            webMvc.get("/v1/contests/metadata") {
+            webMvc.get("$basePath/metadata") {
                 accept = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isOk() }
@@ -186,23 +165,11 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build(slug = slug)
             every { findContestService.findBySlug(slug) } returns contest
 
-            webMvc.get("/v1/contests/slug/{slug}/metadata", slug) {
+            webMvc.get("$basePath/slug/{slug}/metadata", slug) {
                 accept = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isOk() }
                 content { contest.toMetadataDTO() }
-            }
-        }
-
-        test("findContestById - notStarted") {
-            val contestId = UUID.randomUUID()
-            val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().plusHours(1))
-            every { findContestService.findById(contestId) } returns contest
-
-            webMvc.get("/v1/contests/{id}", contestId) {
-                accept = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isForbidden() }
             }
         }
 
@@ -211,7 +178,7 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1))
             every { findContestService.findById(contestId) } returns contest
 
-            webMvc.get("/v1/contests/{id}", contestId) {
+            webMvc.get("$basePath/{contestId}", contestId) {
                 accept = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isOk() }
@@ -232,37 +199,11 @@ class ContestControllerTest(
                 )
             every { findContestService.findById(contestId) } returns contest
 
-            webMvc.get("/v1/contests/{id}/full", contestId) {
+            webMvc.get("$basePath/{contestId}/full", contestId) {
                 accept = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isOk() }
                 content { contest.toFullResponseDTO() }
-            }
-        }
-
-        test("findContestLeaderboardById - notStarted") {
-            val contestId = UUID.randomUUID()
-            val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().plusHours(1))
-            every { findContestService.findById(contestId) } returns contest
-
-            webMvc.get("/v1/contests/{id}/leaderboard", contestId) {
-                accept = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isForbidden() }
-            }
-        }
-
-        test("findContestLeaderboardById") {
-            val contestId = UUID.randomUUID()
-            val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1))
-            every { findContestService.findById(contestId) } returns contest
-            val leaderboard = mockk<ContestLeaderboardOutputDTO>(relaxed = true)
-            every { findContestService.buildContestLeaderboard(contest) } returns leaderboard
-
-            webMvc.get("/v1/contests/{id}/leaderboard", contestId) {
-                accept = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isOk() }
             }
         }
 
@@ -271,7 +212,7 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build(id = contestId)
             every { updateContestService.forceStart(contestId) } returns contest
 
-            webMvc.put("/v1/contests/{id}/start", contestId) {
+            webMvc.put("$basePath/{contestId}/start", contestId) {
                 contentType = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isOk() }
@@ -284,7 +225,7 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build(id = contestId)
             every { updateContestService.forceEnd(contestId) } returns contest
 
-            webMvc.put("/v1/contests/{id}/end", contestId) {
+            webMvc.put("$basePath/{contestId}/end", contestId) {
                 contentType = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isOk() }
@@ -295,92 +236,12 @@ class ContestControllerTest(
         test("deleteContest") {
             val contestId = UUID.randomUUID()
 
-            webMvc.delete("/v1/contests/{id}", contestId) {
+            webMvc.delete("$basePath/{contestId}", contestId) {
                 contentType = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isNoContent() }
             }
 
             verify { deleteContestService.delete(contestId) }
-        }
-
-        test("findAllContestSubmissions") {
-            val contestId = UUID.randomUUID()
-            val submissions =
-                listOf(
-                    SubmissionMockBuilder.build(),
-                    SubmissionMockBuilder.build(),
-                )
-            every { findSubmissionService.findAllByContest(contestId) } returns submissions
-
-            webMvc.get("/v1/contests/{id}/submissions", contestId) {
-                accept = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isOk() }
-                content { submissions.map { it.toPublicResponseDTO() } }
-            }
-        }
-
-        test("findAllContestFullSubmissions") {
-            val contestId = UUID.randomUUID()
-            val submissions =
-                listOf(
-                    SubmissionMockBuilder.build(),
-                    SubmissionMockBuilder.build(),
-                )
-            every { findSubmissionService.findAllByContest(contestId) } returns submissions
-
-            webMvc.get("/v1/contests/{id}/submissions/full", contestId) {
-                accept = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isOk() }
-                content { submissions.map { it.toFullResponseDTO() } }
-            }
-
-            verify { contestAuthFilter.check(contestId) }
-        }
-
-        test("createAnnouncement") {
-            val contestId = UUID.randomUUID()
-            val body =
-                CreateAnnouncementInputDTO(
-                    text = "This is a test announcement",
-                )
-            val announcement = AnnouncementMockBuilder.build()
-            val authorization = AuthorizationMockBuilder.build()
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
-            every { createAnnouncementService.create(contestId, authorization.member.id, body) } returns announcement
-
-            webMvc.post("/v1/contests/{id}/announcements", contestId) {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(body)
-            }.andExpect {
-                status { isOk() }
-                content { announcement.toResponseDTO() }
-            }
-
-            verify { contestAuthFilter.check(contestId) }
-        }
-
-        test("createClarification") {
-            val contestId = UUID.randomUUID()
-            val body =
-                CreateClarificationInputDTO(
-                    text = "This is a test clarification",
-                )
-            val clarification = ClarificationMockBuilder.build()
-            val authorization = AuthorizationMockBuilder.build()
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
-            every { createClarificationService.create(contestId, authorization.member.id, body) } returns clarification
-
-            webMvc.post("/v1/contests/{id}/clarifications", contestId) {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(body)
-            }.andExpect {
-                status { isOk() }
-                content { clarification.toResponseDTO() }
-            }
-
-            verify { contestAuthFilter.check(contestId) }
         }
     })

@@ -34,10 +34,13 @@ export function useTheme() {
    * Store the new theme
    */
   function toggleTheme() {
+    const htmlElement = document.documentElement;
+    htmlElement.classList.remove(theme);
+
     const newTheme = theme === Theme.DARK ? Theme.LIGHT : Theme.DARK;
     setTheme(newTheme);
     storageService.setKey(StorageService.THEME_STORAGE_KEY, newTheme);
-    document.documentElement.setAttribute("data-theme", newTheme);
+    htmlElement.classList.add(newTheme);
   }
 
   return {

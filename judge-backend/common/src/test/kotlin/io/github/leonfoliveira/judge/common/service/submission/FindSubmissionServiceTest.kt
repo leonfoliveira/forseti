@@ -1,9 +1,9 @@
 package io.github.leonfoliveira.judge.common.service.submission
 
-import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.ProblemMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
@@ -66,19 +66,10 @@ class FindSubmissionServiceTest : FunSpec({
             }.message shouldBe "Could not find contest with id = $contestId"
         }
 
-        test("should throw ForbiddenException when contest has not started") {
-            val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
-            every { contestRepository.findById(contestId) } returns Optional.of(contest)
-
-            shouldThrow<ForbiddenException> {
-                sut.findAllByContest(contestId)
-            }.message shouldBe "Contest has not started yet"
-        }
-
-        test("should return submissions when contest has started") {
+        test("should return submissions") {
             val submission = SubmissionMockBuilder.build()
-            val member = MemberMockBuilder.build(submissions = listOf(submission))
-            val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().minusHours(1), members = listOf(member))
+            val problem = ProblemMockBuilder.build(submissions = listOf(submission))
+            val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().minusHours(1), problems = listOf(problem))
             every { contestRepository.findById(contestId) } returns Optional.of(contest)
 
             val result = sut.findAllByContest(contestId)

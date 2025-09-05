@@ -1,34 +1,32 @@
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { Authorization } from "@/core/domain/model/Authorization";
 import { AuthenticationRepository } from "@/core/repository/AuthenticationRepository";
-import { AuthenticateMemberRequestDTO } from "@/core/repository/dto/request/AuthenticateMemberRequestDTO";
-import { AuthenticateRootRequestDTO } from "@/core/repository/dto/request/AuthenticateRootRequestDTO";
+import { AuthenticateRequestDTO } from "@/core/repository/dto/request/AuthenticateRequestDTO";
+import { signOut } from "@/lib/action/auth-action";
 
 export class AuthenticationService {
   constructor(
-    private readonly authenticationRepository: AuthenticationRepository
+    private readonly authenticationRepository: AuthenticationRepository,
   ) {}
 
-  async getAuthorization(): Promise<Authorization> {
-    return await this.authenticationRepository.getAuthorization();
+  async getAuthorization(accessToken: string): Promise<Authorization | null> {
+    try {
+      return await this.authenticationRepository.getAuthorization(accessToken);
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        return null;
+      }
+      throw error;
+    }
   }
 
   async cleanAuthorization(): Promise<void> {
-    await this.authenticationRepository.cleanAuthorization();
+    await signOut();
   }
 
-  async authenticateRoot(
-    requestDTO: AuthenticateRootRequestDTO
+  async authenticate(
+    requestDTO: AuthenticateRequestDTO,
   ): Promise<Authorization> {
-    return await this.authenticationRepository.authenticateRoot(requestDTO);
-  }
-
-  async authenticateMember(
-    contestId: string,
-    requestDTO: AuthenticateMemberRequestDTO
-  ): Promise<Authorization> {
-    return await this.authenticationRepository.authenticateMember(
-      contestId,
-      requestDTO
-    );
+    return await this.authenticationRepository.authenticate(requestDTO);
   }
 }

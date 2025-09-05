@@ -63,13 +63,13 @@ class AttachmentController(
     fun uploadAttachment(
         @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<AttachmentResponseDTO> {
-        logger.info("[POST] /v1/attachments - filename: ${file.originalFilename}, size: ${file.size}")
+        logger.info("[POST] /v1/attachments { filename: ${file.originalFilename}, size: ${file.size} }")
         val attachment = attachmentService.upload(file)
         return ResponseEntity.ok(attachment.toResponseDTO())
     }
 
     @Timed(ApiMetrics.API_ATTACHMENT_DOWNLOAD_TIME)
-    @GetMapping("/{id}")
+    @GetMapping("/{attachmentId}")
     @Operation(
         summary = "Downloads an attachment",
         description = "Downloads an attachment by its ID. The ID is returned when the attachment is uploaded.",
@@ -89,10 +89,10 @@ class AttachmentController(
     )
     @Transactional(readOnly = true)
     fun downloadAttachment(
-        @PathVariable("id") id: UUID,
+        @PathVariable attachmentId: UUID,
     ): ResponseEntity<ByteArray> {
-        logger.info("[GET] /v1/attachments/{id} - id: $id")
-        val download = attachmentService.download(id)
+        logger.info("[GET] /v1/attachments/$attachmentId")
+        val download = attachmentService.download(attachmentId)
         val headers =
             HttpHeaders().apply {
                 contentDisposition =

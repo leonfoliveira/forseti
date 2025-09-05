@@ -1,0 +1,23 @@
+import { randomUUID } from "crypto";
+
+import { Language } from "@/core/domain/enumerate/Language";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
+import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { MockMemberPublicResponseDTO } from "@/test/mock/response/member/MockMemberPublicResponseDTO";
+import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
+
+export function MockSubmissionPublicResponseDTO(
+  partial: Partial<SubmissionPublicResponseDTO> = {},
+): SubmissionPublicResponseDTO {
+  return {
+    id: randomUUID(),
+    problem: MockProblemPublicResponseDTO(),
+    member: MockMemberPublicResponseDTO(),
+    language: Language.CPP_17,
+    status: SubmissionStatus.JUDGED,
+    answer: SubmissionAnswer.ACCEPTED,
+    createdAt: "2025-01-01T10:00:00Z",
+    ...partial,
+  };
+}

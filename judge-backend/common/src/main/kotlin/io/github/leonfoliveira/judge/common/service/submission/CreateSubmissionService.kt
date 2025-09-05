@@ -30,18 +30,17 @@ class CreateSubmissionService(
 
     fun create(
         memberId: UUID,
-        problemId: UUID,
         @Valid inputDTO: CreateSubmissionInputDTO,
     ): Submission {
-        logger.info("Creating submission for member with id: $memberId and problem with id: $problemId")
+        logger.info("Creating submission for member with id: $memberId and problem with id: ${inputDTO.problemId}")
 
         val member =
             memberRepository.findById(memberId).orElseThrow {
                 NotFoundException("Could not find member with id = $memberId")
             }
         val problem =
-            problemRepository.findById(problemId).orElseThrow {
-                NotFoundException("Could not find problem with id = $problemId")
+            problemRepository.findById(inputDTO.problemId).orElseThrow {
+                NotFoundException("Could not find problem with id = ${inputDTO.problemId}")
             }
         val code =
             attachmentRepository.findById(inputDTO.code.id).orElseThrow {
@@ -49,9 +48,6 @@ class CreateSubmissionService(
             }
         val contest = problem.contest
 
-        if (problem.contest != member.contest) {
-            throw ForbiddenException("Member does not belong to the contest of the problem")
-        }
         if (contest.languages.none { it == inputDTO.language }) {
             throw ForbiddenException("Language ${inputDTO.language} is not allowed for this contest")
         }

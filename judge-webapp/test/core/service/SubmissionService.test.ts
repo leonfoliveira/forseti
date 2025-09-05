@@ -1,29 +1,85 @@
+import { randomUUID } from "crypto";
+
 import { mock } from "jest-mock-extended";
 
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { UpdateSubmissionAnswerRequestDTO } from "@/core/repository/dto/request/UpdateSubmissionAnswerRequestDTO";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
+import { AttachmentService } from "@/core/service/AttachmentService";
 import { SubmissionService } from "@/core/service/SubmissionService";
+import { MockCreateSubmissionInputDTO } from "@/test/mock/input/MockCreateSubmissionInputDTO";
+import { MockAttachment } from "@/test/mock/model/MockAttachment";
+import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
+import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
 
 describe("SubmissionService", () => {
   const submissionRepository = mock<SubmissionRepository>();
+  const attachmentService = mock<AttachmentService>();
 
-  const sut = new SubmissionService(submissionRepository);
+  const sut = new SubmissionService(submissionRepository, attachmentService);
 
-  beforeEach(() => {
-    jest.clearAllMocks();
+  const contestId = randomUUID();
+
+  describe("createSubmission", () => {
+    it("should create a new submission", async () => {
+      const inputDTO = MockCreateSubmissionInputDTO();
+      const attachment = MockAttachment();
+      attachmentService.upload.mockResolvedValue(attachment);
+      const submission = MockSubmissionFullResponseDTO();
+      submissionRepository.createSubmission.mockResolvedValue(submission);
+
+      const result = await sut.createSubmission(contestId, inputDTO);
+
+      expect(result).toEqual(submission);
+      expect(submissionRepository.createSubmission).toHaveBeenCalledWith(
+        contestId,
+        {
+          ...inputDTO,
+          code: attachment,
+        },
+      );
+    });
+  });
+
+  describe("findAllContestSubmissions", () => {
+    it("should return all submissions for the contest", async () => {
+      const submissions = [
+        MockSubmissionPublicResponseDTO(),
+        MockSubmissionPublicResponseDTO(),
+      ];
+      submissionRepository.findAllContestSubmissions.mockResolvedValue(
+        submissions,
+      );
+
+      const result = await sut.findAllContestSubmissions(contestId);
+
+      expect(result).toEqual(submissions);
+    });
+  });
+
+  describe("findAllContestFullSubmissions", () => {
+    it("should return all full submissions for the contest", async () => {
+      const submissions = [
+        MockSubmissionFullResponseDTO(),
+        MockSubmissionFullResponseDTO(),
+      ];
+      submissionRepository.findAllContestFullSubmissions.mockResolvedValue(
+        submissions,
+      );
+
+      const result = await sut.findAllContestFullSubmissions(contestId);
+      expect(result).toEqual(submissions);
+    });
   });
 
   describe("findAllFullForMember", () => {
     it("should return all full submissions for member", async () => {
       const submissions = [
-        { id: "submission1" },
-        { id: "submission2" },
-      ] as unknown as SubmissionFullResponseDTO[];
+        MockSubmissionFullResponseDTO(),
+        MockSubmissionFullResponseDTO(),
+      ];
       submissionRepository.findAllFullForMember.mockResolvedValue(submissions);
 
-      const result = await sut.findAllFullForMember();
+      const result = await sut.findAllFullForMember(contestId);
 
       expect(result).toEqual(submissions);
     });
@@ -31,25 +87,29 @@ describe("SubmissionService", () => {
 
   describe("updateSubmissionAnswer", () => {
     it("should update submission answer", async () => {
-      const id = "submission-id";
-      const data = {
-        answer: SubmissionAnswer.ACCEPTED,
-      } as UpdateSubmissionAnswerRequestDTO;
-      await sut.updateSubmissionAnswer(id, data);
+      const submissionId = randomUUID();
+      const answer = SubmissionAnswer.ACCEPTED;
+
+      await sut.updateSubmissionAnswer(contestId, submissionId, answer);
 
       expect(submissionRepository.updateSubmissionAnswer).toHaveBeenCalledWith(
-        id,
-        data,
+        contestId,
+        submissionId,
+        answer,
       );
     });
   });
 
   describe("rerunSubmission", () => {
     it("should rerun submission", async () => {
-      const id = "submission-id";
-      await sut.rerunSubmission(id);
+      const submissionId = randomUUID();
 
-      expect(submissionRepository.rerunSubmission).toHaveBeenCalledWith(id);
+      await sut.rerunSubmission(contestId, submissionId);
+
+      expect(submissionRepository.rerunSubmission).toHaveBeenCalledWith(
+        contestId,
+        submissionId,
+      );
     });
   });
 });

@@ -41,14 +41,14 @@ class AuthenticationInitiatorTest : FunSpec({
         membersSlot.captured[0].apply {
             id.toString() shouldBe "00000000-0000-0000-0000-000000000000"
             type shouldBe Member.Type.ROOT
-            name shouldBe "root"
+            name shouldBe "Root"
             login shouldBe "root"
             password shouldBe "hashed-root-password"
         }
         membersSlot.captured[1].apply {
             id.toString() shouldBe "11111111-1111-1111-1111-111111111111"
             type shouldBe Member.Type.AUTOJUDGE
-            name shouldBe "autojudge"
+            name shouldBe "Autojudge"
             login shouldBe "autojudge"
             password shouldBe "hashed-password"
         }

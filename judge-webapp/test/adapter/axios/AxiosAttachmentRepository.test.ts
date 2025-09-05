@@ -3,7 +3,7 @@ import { mock } from "jest-mock-extended";
 
 import { AxiosAttachmentRepository } from "@/adapter/axios/AxiosAttachmentRepository";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
-import { Attachment } from "@/core/domain/model/Attachment";
+import { MockAttachment } from "@/test/mock/model/MockAttachment";
 
 describe("AxiosAttachmentRepository", () => {
   const axiosClient = mock<AxiosClient>();
@@ -13,7 +13,7 @@ describe("AxiosAttachmentRepository", () => {
   describe("upload", () => {
     it("should upload a file and return an attachment", async () => {
       const file = new File(["content"], "test.txt", { type: "text/plain" });
-      const expectedAttachment = { id: "123" } as unknown as Attachment;
+      const expectedAttachment = MockAttachment();
       axiosClient.post.mockResolvedValue({
         data: expectedAttachment,
       } as AxiosResponse);
@@ -30,7 +30,7 @@ describe("AxiosAttachmentRepository", () => {
 
   describe("download", () => {
     it("should download an attachment and return a file", async () => {
-      const attachment = { id: "123" } as unknown as Attachment;
+      const attachment = MockAttachment();
       const blob = new Blob(["content"], { type: "text/plain" });
       const contentDisposition = 'attachment; filename="download.txt"';
       const contentType = "text/plain";
@@ -55,7 +55,7 @@ describe("AxiosAttachmentRepository", () => {
     });
 
     it("should handle missing filename in content-disposition", async () => {
-      const attachment = { id: "123" } as unknown as Attachment;
+      const attachment = MockAttachment();
       const blob = new Blob(["content"], { type: "text/plain" });
 
       axiosClient.get.mockResolvedValue({

@@ -1,11 +1,12 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/dom";
 
 import { LoadingPage } from "@/lib/component/page/loading-page";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("LoadingPage", () => {
-  it("renders a loading spinner", () => {
-    render(<LoadingPage />);
-    const spinner = screen.getByTestId("spinner");
-    expect(spinner).toBeInTheDocument();
+  it("should render content correctly", async () => {
+    await renderWithProviders(<LoadingPage />);
+
+    expect(screen.getByTestId("spinner")).toBeInTheDocument();
   });
 });

@@ -1,37 +1,21 @@
 package io.github.leonfoliveira.judge.api.controller
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
-import io.github.leonfoliveira.judge.api.dto.response.announcement.AnnouncementResponseDTO
-import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
-import io.github.leonfoliveira.judge.api.dto.response.clarification.ClarificationResponseDTO
-import io.github.leonfoliveira.judge.api.dto.response.clarification.toResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.ContestFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.ContestMetadataResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.ContestPublicOutputDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.toFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.toMetadataDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.toPublicOutputDTO
-import io.github.leonfoliveira.judge.api.dto.response.submission.SubmissionFullResponseDTO
-import io.github.leonfoliveira.judge.api.dto.response.submission.SubmissionPublicResponseDTO
-import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
-import io.github.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
-import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.common.domain.entity.Member
-import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
-import io.github.leonfoliveira.judge.common.service.announcement.CreateAnnouncementService
-import io.github.leonfoliveira.judge.common.service.clarification.CreateClarificationService
 import io.github.leonfoliveira.judge.common.service.contest.CreateContestService
 import io.github.leonfoliveira.judge.common.service.contest.DeleteContestService
 import io.github.leonfoliveira.judge.common.service.contest.FindContestService
 import io.github.leonfoliveira.judge.common.service.contest.UpdateContestService
-import io.github.leonfoliveira.judge.common.service.dto.input.announcement.CreateAnnouncementInputDTO
-import io.github.leonfoliveira.judge.common.service.dto.input.clarification.CreateClarificationInputDTO
 import io.github.leonfoliveira.judge.common.service.dto.input.contest.CreateContestInputDTO
 import io.github.leonfoliveira.judge.common.service.dto.input.contest.UpdateContestInputDTO
-import io.github.leonfoliveira.judge.common.service.dto.output.ContestLeaderboardOutputDTO
-import io.github.leonfoliveira.judge.common.service.submission.FindSubmissionService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -58,9 +42,6 @@ class ContestController(
     private val updateContestService: UpdateContestService,
     private val findContestService: FindContestService,
     private val deleteContestService: DeleteContestService,
-    private val findSubmissionService: FindSubmissionService,
-    private val createAnnouncementService: CreateAnnouncementService,
-    private val createClarificationService: CreateClarificationService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -96,13 +77,13 @@ class ContestController(
     fun createContest(
         @RequestBody body: CreateContestInputDTO,
     ): ResponseEntity<ContestFullResponseDTO> {
-        logger.info("[POST] /v1/contests - body: $body")
+        logger.info("[POST] /v1/contests $body")
         val contest = createContestService.create(body)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 
     @PutMapping
-    @Private(Member.Type.ROOT)
+    @Private(Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Update a contest")
     @ApiResponses(
@@ -138,7 +119,8 @@ class ContestController(
     fun updateContest(
         @RequestBody body: UpdateContestInputDTO,
     ): ResponseEntity<ContestFullResponseDTO> {
-        logger.info("[PUT] /v1/contests - body: $body")
+        logger.info("[PUT] /v1/contests - $body")
+        contestAuthFilter.checkIfMemberBelongsToContest(body.id)
         val contest = updateContestService.update(body)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
@@ -168,7 +150,7 @@ class ContestController(
         return ResponseEntity.ok(contests.map { it.toMetadataDTO() })
     }
 
-    @GetMapping("/slug/{slug}/metadata")
+    @GetMapping("/slug/{contestSlug}/metadata")
     @Transactional(readOnly = true)
     @Operation(summary = "Find contest metadata by slug")
     @ApiResponses(
@@ -182,14 +164,14 @@ class ContestController(
         ],
     )
     fun findContestMetadataBySlug(
-        @PathVariable slug: String,
+        @PathVariable contestSlug: String,
     ): ResponseEntity<ContestMetadataResponseDTO> {
-        logger.info("[GET] /v1/contests/slug/{slug}/metadata - slug: $slug")
-        val contest = findContestService.findBySlug(slug)
+        logger.info("[GET] /v1/contests/slug/$contestSlug/metadata")
+        val contest = findContestService.findBySlug(contestSlug)
         return ResponseEntity.ok(contest.toMetadataDTO())
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{contestId}")
     @Transactional(readOnly = true)
     @Operation(summary = "Find contest by id")
     @ApiResponses(
@@ -208,18 +190,16 @@ class ContestController(
         ],
     )
     fun findContestById(
-        @PathVariable id: UUID,
+        @PathVariable contestId: UUID,
     ): ResponseEntity<ContestPublicOutputDTO> {
-        logger.info("[GET] /v1/contests/{id} - id: $id")
-        val contest = findContestService.findById(id)
-        if (!contest.hasStarted()) {
-            throw ForbiddenException("Contest with id: $id has not started yet.")
-        }
+        logger.info("[GET] /v1/contests/$contestId")
+        contestAuthFilter.checkIfStarted(contestId)
+        val contest = findContestService.findById(contestId)
         return ResponseEntity.ok(contest.toPublicOutputDTO())
     }
 
-    @GetMapping("/{id}/full")
-    @Private(Member.Type.ROOT)
+    @GetMapping("/{contestId}/full")
+    @Private(Member.Type.ADMIN)
     @Transactional(readOnly = true)
     @Operation(summary = "Find full contest by id")
     @ApiResponses(
@@ -243,45 +223,16 @@ class ContestController(
         ],
     )
     fun findFullContestById(
-        @PathVariable id: UUID,
+        @PathVariable contestId: UUID,
     ): ResponseEntity<ContestFullResponseDTO> {
-        logger.info("[GET] /v1/contests/{id}/full - id: $id")
-        val contest = findContestService.findById(id)
+        logger.info("[GET] /v1/contests/$contestId/full")
+        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+        val contest = findContestService.findById(contestId)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 
-    @GetMapping("/{id}/leaderboard")
-    @Transactional(readOnly = true)
-    @Operation(summary = "Find contest leaderboard by id")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Contest leaderboard found successfully"),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    fun findContestLeaderboardById(
-        @PathVariable id: UUID,
-    ): ResponseEntity<ContestLeaderboardOutputDTO> {
-        logger.info("[GET] /v1/contests/{id}/leaderboard - id: $id")
-        val contest = findContestService.findById(id)
-        if (!contest.hasStarted()) {
-            throw ForbiddenException("Contest with id: $id has not started yet.")
-        }
-        val leaderboard = findContestService.buildContestLeaderboard(contest)
-        return ResponseEntity.ok(leaderboard)
-    }
-
-    @PutMapping("/{id}/start")
-    @Private(Member.Type.ROOT)
+    @PutMapping("/{contestId}/start")
+    @Private(Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Force start a contest")
     @ApiResponses(
@@ -305,15 +256,16 @@ class ContestController(
         ],
     )
     fun forceStartContest(
-        @PathVariable id: UUID,
+        @PathVariable contestId: UUID,
     ): ResponseEntity<ContestMetadataResponseDTO> {
-        logger.info("[PUT] /v1/contests/{id}/start - id: $id")
-        val contest = updateContestService.forceStart(id)
+        logger.info("[PUT] /v1/contests/$contestId/start")
+        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+        val contest = updateContestService.forceStart(contestId)
         return ResponseEntity.ok().body(contest.toMetadataDTO())
     }
 
-    @PutMapping("/{id}/end")
-    @Private(Member.Type.ROOT)
+    @PutMapping("/{contestId}/end")
+    @Private(Member.Type.ADMIN)
     @Transactional
     @Operation(summary = "Force end a contest")
     @ApiResponses(
@@ -337,14 +289,15 @@ class ContestController(
         ],
     )
     fun forceEndContest(
-        @PathVariable id: UUID,
+        @PathVariable contestId: UUID,
     ): ResponseEntity<ContestMetadataResponseDTO> {
-        logger.info("[PUT] /v1/contests/{id}/end - id: $id")
-        val contest = updateContestService.forceEnd(id)
+        logger.info("[PUT] /v1/contests/$contestId/end")
+        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+        val contest = updateContestService.forceEnd(contestId)
         return ResponseEntity.ok().body(contest.toMetadataDTO())
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{contestId}")
     @Private(Member.Type.ROOT)
     @Transactional
     @Operation(summary = "Delete a contest")
@@ -369,149 +322,10 @@ class ContestController(
         ],
     )
     fun deleteContest(
-        @PathVariable id: UUID,
+        @PathVariable contestId: UUID,
     ): ResponseEntity<Void> {
-        logger.info("[DELETE] /v1/contests/{id} - id: $id")
-        deleteContestService.delete(id)
+        logger.info("[DELETE] /v1/contests/$contestId")
+        deleteContestService.delete(contestId)
         return ResponseEntity.noContent().build()
-    }
-
-    @GetMapping("/{id}/submissions")
-    @Transactional(readOnly = true)
-    @Operation(summary = "Find all contest submissions")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Submissions found successfully"),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    fun findAllContestSubmissions(
-        @PathVariable id: UUID,
-    ): ResponseEntity<List<SubmissionPublicResponseDTO>> {
-        logger.info("[GET] /v1/contests/{id}/submissions - id: $id")
-        val submissions = findSubmissionService.findAllByContest(id)
-        return ResponseEntity.ok(submissions.map { it.toPublicResponseDTO() })
-    }
-
-    @GetMapping("/{id}/submissions/full")
-    @Private(Member.Type.JUDGE)
-    @Transactional(readOnly = true)
-    @Operation(summary = "Find all contest full submissions")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Submissions found successfully"),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    fun findAllContestFullSubmissions(
-        @PathVariable id: UUID,
-    ): ResponseEntity<List<SubmissionFullResponseDTO>> {
-        logger.info("[GET] /v1/contests/{id}/submissions/full - id: $id")
-        contestAuthFilter.check(id)
-        val submissions = findSubmissionService.findAllByContest(id)
-        return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
-    }
-
-    @PostMapping("/{id}/announcements")
-    @Private(Member.Type.JUDGE)
-    @Transactional
-    @Operation(summary = "Create an announcement")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Announcement created successfully"),
-            ApiResponse(
-                responseCode = "400",
-                description = "Invalid request format",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    fun createAnnouncement(
-        @PathVariable id: UUID,
-        @RequestBody body: CreateAnnouncementInputDTO,
-    ): ResponseEntity<AnnouncementResponseDTO> {
-        logger.info("[POST] /v1/contests/{id}/announcements - id: $id, body: $body")
-        contestAuthFilter.check(id)
-        val member = AuthorizationContextUtil.getMember()
-        val announcement = createAnnouncementService.create(id, member.id, body)
-        return ResponseEntity.ok(announcement.toResponseDTO())
-    }
-
-    @PostMapping("/{id}/clarifications")
-    @Private(Member.Type.CONTESTANT, Member.Type.JUDGE)
-    @Transactional
-    @Operation(summary = "Create a clarification")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Clarification created successfully"),
-            ApiResponse(
-                responseCode = "400",
-                description = "Invalid request format",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    fun createClarification(
-        @PathVariable id: UUID,
-        @RequestBody body: CreateClarificationInputDTO,
-    ): ResponseEntity<ClarificationResponseDTO> {
-        logger.info("[POST] /v1/contests/{id}/clarifications - id: $id, body: $body")
-        contestAuthFilter.check(id)
-        val member = AuthorizationContextUtil.getMember()
-        val clarification = createClarificationService.create(id, member.id, body)
-        return ResponseEntity.ok(clarification.toResponseDTO())
     }
 }
