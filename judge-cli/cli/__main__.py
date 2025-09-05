@@ -14,7 +14,11 @@ except ImportError:
 
 @click.group()
 @click.version_option(
-    version=f"{__version__} ({__git_commit__[:8] if __git_commit__ != 'unknown' else 'unknown'}, built {__build_date__})",
+    version=(
+        f"{__version__} "
+        f"({__git_commit__[:8] if __git_commit__ != 'unknown' else 'unknown'}, "
+        f"built {__build_date__})"
+    ),
     prog_name="judge",
 )
 def judge():

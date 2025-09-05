@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: judge-
+        working-directory: judge-webapp
 
     steps:
       - name: Checkout code
