@@ -57,7 +57,7 @@ services:
         condition: on-failure
         delay: 5s
     environment:
-      ALLOWED_ORIGINS: http://localhost:80
+      ALLOWED_ORIGINS: http://localhost:3000
       AWS_ACCESS_KEY_ID: judge
       AWS_ENDPOINT: http://localstack:4566
       AWS_REGION: us-east-1
@@ -549,13 +549,13 @@ services:
         delay: 5s
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8080
-      NEXT_PUBLIC_LOCALE: pt-BR
+      NEXT_PUBLIC_LOCALE: en-US
       NEXT_PUBLIC_VERSION: ${VERSION:-latest}
       NODE_ENV: production
     healthcheck:
       test:
         - CMD-SHELL
-        - curl -f http://localhost:80/healthcheck
+        - curl -f http://localhost:3000/healthcheck
       timeout: 5s
       interval: 15s
       retries: 5
