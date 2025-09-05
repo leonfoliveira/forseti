@@ -8,7 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: judge-webapp
+        working-directory: judge-
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

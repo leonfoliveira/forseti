@@ -1,14 +1,14 @@
-name: Check Autoscaler
+name: Check CLI
 
 on:
   pull_request:
 
 jobs:
-  check-autoscaler:
+  check-cli:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: judge-autoscaler
+        working-directory: judge-cli
 
     steps:
       - name: Checkout code
@@ -23,7 +23,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('judge-autoscaler/requirements.dev.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('judge-cli/requirements.dev.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
@@ -35,3 +35,6 @@ jobs:
 
       - name: Test
         run: make test
+
+      - name: Build
+        run: make build

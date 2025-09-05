@@ -3,7 +3,7 @@ install:
 
 .PHONY: build
 build:
-	pyinstaller --onefile -n judge-cli -p . cli/__main__.py
+	pyinstaller --onefile -n judge -p . cli/__main__.py
 
 lint:
 	black cli --check
