@@ -26,25 +26,25 @@ jobs:
         run: echo "VERSION=${{ steps.vars.outputs.tag }}" >> $GITHUB_ENV
 
       - name: Set up Docker Compose
-        run: sed -i "s/\${VERSION:-latest}/$VERSION/" stack.yml
+        run: sed -i "s/\${VERSION:-latest}/$VERSION/" stack.yaml
 
       - name: Build images
         run: |
           docker build -t judge-api:${{ steps.vars.outputs.tag }} -f ../../judge-backend/api.Dockerfile ../../judge-backend
           docker build -t judge-autojudge:${{ steps.vars.outputs.tag }} -f ../../judge-backend/autojudge.Dockerfile ../../judge-backend
           docker build -t judge-webapp:${{ steps.vars.outputs.tag }} ../../judge-webapp
-          docker build -t judge-auto-scaler:${{ steps.vars.outputs.tag }} ../../judge-auto-scaler
+          docker build -t judge-autoscaler:${{ steps.vars.outputs.tag }} ../../judge-autoscaler
 
       - name: Tag images
         run: |
           docker tag judge-api:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-api:${{ steps.vars.outputs.tag }}
           docker tag judge-autojudge:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autojudge:${{ steps.vars.outputs.tag }}
           docker tag judge-webapp:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-webapp:${{ steps.vars.outputs.tag }}
-          docker tag judge-auto-scaler:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-auto-scaler:${{ steps.vars.outputs.tag }}
+          docker tag judge-autoscaler:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autoscaler:${{ steps.vars.outputs.tag }}
           docker tag judge-api:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-api:latest
           docker tag judge-autojudge:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autojudge:latest
           docker tag judge-webapp:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-webapp:latest
-          docker tag judge-auto-scaler:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-auto-scaler:latest
+          docker tag judge-autoscaler:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autoscaler:latest
 
       - name: Push images to Docker Hub
         env:
@@ -52,17 +52,17 @@ jobs:
           DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
         run: |
           echo $DOCKER_HUB_ACCESS_TOKEN | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-          docker push judge-api:${{ steps.vars.outputs.tag }}
-          docker push judge-autojudge:${{ steps.vars.outputs.tag }}
-          docker push judge-webapp:${{ steps.vars.outputs.tag }}
-          docker push judge-auto-scaler:${{ steps.vars.outputs.tag }}
-          docker push judge-api:latest
-          docker push judge-autojudge:latest
-          docker push judge-webapp:latest
-          docker push judge-auto-scaler:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-api:${{ steps.vars.outputs.tag }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autojudge:${{ steps.vars.outputs.tag }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-webapp:${{ steps.vars.outputs.tag }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autoscaler:${{ steps.vars.outputs.tag }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-api:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autojudge:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-webapp:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autoscaler:latest
 
       - name: Build cli
-        run: cd ../../judge-cli && make build
+        run: cd ../../judge-cli && make build VERSION=${{ steps.vars.outputs.tag }}
 
       - name: Create ZIP file with tag name
         run: zip judge-${{ steps.vars.outputs.tag }}.zip * ../../README.md ../../LICENSE ../../judge-cli/dist/judge

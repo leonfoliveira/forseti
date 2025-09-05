@@ -6,3 +6,6 @@ venv/
 build/
 dist/
 *.spec
+
+# Generated version file
+cli/_version.py
