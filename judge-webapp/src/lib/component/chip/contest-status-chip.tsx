@@ -23,13 +23,13 @@ export function ContestStatusChip({ status, ...props }: Props) {
       );
     case ContestStatus.ENDED:
       return (
-        <Chip data-testid="chip-ended" {...props} color="warning">
+        <Chip data-testid="chip-ended" {...props} color="danger">
           {text}
         </Chip>
       );
     case ContestStatus.NOT_STARTED:
       return (
-        <Chip data-testid="chip-not-started" {...props} color="default">
+        <Chip data-testid="chip-not-started" {...props} color="warning">
           {text}
         </Chip>
       );
