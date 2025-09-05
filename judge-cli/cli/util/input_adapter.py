@@ -14,7 +14,9 @@ class InputAdapter:
             raise KeyboardInterrupt()
         return value
 
-    def checkbox(self, prompt: str, choices: list[questionary.Choice], **kwargs) -> list[str]:
+    def checkbox(
+        self, prompt: str, choices: list[questionary.Choice], **kwargs
+    ) -> list[str]:
         value = questionary.checkbox(prompt, choices=choices, **kwargs).ask()
         if value is None:
             raise KeyboardInterrupt()

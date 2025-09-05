@@ -16,4 +16,4 @@ format:
 
 .PHONY: test
 test:
-	python -m pytest
+	python3 -m pytest

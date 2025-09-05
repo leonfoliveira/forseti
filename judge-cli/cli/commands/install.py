@@ -1,10 +1,11 @@
-import click
-import questionary
 import os
 import secrets
 import socket
 import subprocess
 import sys
+
+import click
+import questionary
 
 from cli.util.command_adapter import CommandAdapter
 from cli.util.input_adapter import InputAdapter
@@ -39,7 +40,7 @@ def _setup_secrets(command_adapter: CommandAdapter, input_adapter: InputAdapter)
     command_adapter.run(
         ["docker", "secret", "rm", "db_password"],
         throws=False,
-        stderr=subprocess.DEVNULL
+        stderr=subprocess.DEVNULL,
     )
     command_adapter.run(
         ["docker", "secret", "create", "db_password", "-"],
@@ -48,7 +49,7 @@ def _setup_secrets(command_adapter: CommandAdapter, input_adapter: InputAdapter)
     command_adapter.run(
         ["docker", "secret", "rm", "grafana_admin_password"],
         throws=False,
-        stderr=subprocess.DEVNULL
+        stderr=subprocess.DEVNULL,
     )
     command_adapter.run(
         ["docker", "secret", "create", "grafana_admin_password", "-"],
@@ -57,7 +58,7 @@ def _setup_secrets(command_adapter: CommandAdapter, input_adapter: InputAdapter)
     command_adapter.run(
         ["docker", "secret", "rm", "jwt_secret"],
         throws=False,
-        stderr=subprocess.DEVNULL
+        stderr=subprocess.DEVNULL,
     )
     command_adapter.run(
         ["docker", "secret", "create", "jwt_secret", "-"],
@@ -66,7 +67,7 @@ def _setup_secrets(command_adapter: CommandAdapter, input_adapter: InputAdapter)
     command_adapter.run(
         ["docker", "secret", "rm", "root_password"],
         throws=False,
-        stderr=subprocess.DEVNULL
+        stderr=subprocess.DEVNULL,
     )
     command_adapter.run(
         ["docker", "secret", "create", "root_password", "-"],
@@ -79,10 +80,12 @@ def _pull_language_images(command_adapter: CommandAdapter, input_adapter: InputA
         "Select the languages you want to install in the autojudge:",
         choices=[
             questionary.Choice("C++ 17", checked=True, value="gcc:15.1.0"),
-            questionary.Choice("Java 21", checked=True,
-                               value="eclipse-temurin:21-jdk-alpine"),
-            questionary.Choice("Python 3.13", checked=True,
-                               value="python:3.13.3-alpine"),
+            questionary.Choice(
+                "Java 21", checked=True, value="eclipse-temurin:21-jdk-alpine"
+            ),
+            questionary.Choice(
+                "Python 3.13", checked=True, value="python:3.13.3-alpine"
+            ),
         ],
     )
 
@@ -105,10 +108,10 @@ def _setup_swarm(command_adapter: CommandAdapter):
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        s.connect(('8.8.8.8', 80))
+        s.connect(("8.8.8.8", 80))
         ip = s.getsockname()[0]
     except Exception:
-        ip = '127.0.0.1'
+        ip = "127.0.0.1"
     finally:
         s.close()
 

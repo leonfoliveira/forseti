@@ -2,7 +2,7 @@ install:
 	pip install -r requirements.dev.txt
 
 run:
-	python -m autoscaler
+	python3 -m autoscaler
 
 lint:
 	black autoscaler --check
@@ -15,4 +15,4 @@ format:
 
 .PHONY: test
 test:
-	python -m pytest
+	python3 -m pytest
