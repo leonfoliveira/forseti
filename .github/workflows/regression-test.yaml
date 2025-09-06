@@ -103,6 +103,11 @@ jobs:
           cd regression
           npm ci
 
+      - name: Install Playwright browsers
+        run: |
+          cd regression
+          npx playwright install --with-deps
+
       - name: Build test environment
         run: |
           # Use Docker Buildx with caching for better performance
