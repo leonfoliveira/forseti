@@ -114,19 +114,20 @@ jobs:
           fi
 
           if [ "${{ steps.changes.outputs.cli }}" == "true" ]; then
+            echo "Building CLI due to detected changes"
             (cd judge-cli && make build) &
           else
-            echo "Skipping CLI build - no changes detected"
-            # Still need to copy existing binary if it exists
-            mkdir -p judge-cli/dist
-            if [ ! -f judge-cli/dist/judge ]; then
-              echo "Warning: No CLI binary found, building anyway"
-              (cd judge-cli && make build) &
-            fi
+            echo "No CLI changes detected, but ensuring binary exists"
           fi
 
           # Wait for all background jobs to complete
           wait
+
+          # Always ensure CLI binary exists (build if needed)
+          if [ ! -f judge-cli/dist/judge ]; then
+            echo "CLI binary not found, building now..."
+            (cd judge-cli && make build)
+          fi
 
           # Move cache to avoid growing cache size
           if [ -d "/tmp/.buildx-cache-new" ]; then
@@ -134,6 +135,8 @@ jobs:
             mv /tmp/.buildx-cache-new /tmp/.buildx-cache
           fi
 
+          # Copy CLI binary to test directory
+          mkdir -p docker/test
           cp judge-cli/dist/judge docker/test/judge
 
       - name: Run regression tests
