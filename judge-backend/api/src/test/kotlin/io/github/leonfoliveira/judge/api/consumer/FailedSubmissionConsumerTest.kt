@@ -20,9 +20,10 @@ class FailedSubmissionConsumerTest : FunSpec({
 
     test("should call updateSubmissionService.fail with the correct submissionId") {
         val submissionId = UUID.randomUUID()
+        val contestId = UUID.randomUUID()
         val message =
             SqsMessage(
-                payload = SqsSubmissionPayload(submissionId),
+                payload = SqsSubmissionPayload(contestId, submissionId),
             )
 
         sut.receiveMessage(message)
