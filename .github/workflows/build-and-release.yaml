@@ -30,10 +30,10 @@ jobs:
 
       - name: Build images
         run: |
-          docker build -t judge-api:${{ steps.vars.outputs.tag }} -f ../../judge-backend/api.Dockerfile ../../judge-backend
-          docker build -t judge-autojudge:${{ steps.vars.outputs.tag }} -f ../../judge-backend/autojudge.Dockerfile ../../judge-backend
-          docker build -t judge-webapp:${{ steps.vars.outputs.tag }} ../../judge-webapp
-          docker build -t judge-autoscaler:${{ steps.vars.outputs.tag }} ../../judge-autoscaler
+          docker buildx build --cache-from=type=gha --cache-to=type=gha,mode=max -t judge-api:${{ steps.vars.outputs.tag }} -f ../../judge-backend/api.Dockerfile ../../judge-backend --load
+          docker buildx build --cache-from=type=gha --cache-to=type=gha,mode=max -t judge-autojudge:${{ steps.vars.outputs.tag }} -f ../../judge-backend/autojudge.Dockerfile ../../judge-backend --load
+          docker buildx build --cache-from=type=gha --cache-to=type=gha,mode=max -t judge-webapp:${{ steps.vars.outputs.tag }} ../../judge-webapp --load
+          docker buildx build --cache-from=type=gha --cache-to=type=gha,mode=max -t judge-autoscaler:${{ steps.vars.outputs.tag }} ../../judge-autoscaler --load
 
       - name: Tag images
         run: |
@@ -60,6 +60,13 @@ jobs:
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autojudge:latest
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-webapp:latest
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autoscaler:latest
+
+      - name: Set up Python for CLI build
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13.5
+          cache: "pip"
+          cache-dependency-path: judge-cli/requirements.txt
 
       - name: Build cli
         run: cd ../../judge-cli && make build VERSION=${{ steps.vars.outputs.tag }}
