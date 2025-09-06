@@ -124,9 +124,6 @@ jobs:
           fi
           
           cp judge-cli/dist/judge docker/test/judge
-        run: |
-          cd regression
-          npm ci
 
       - name: Run regression tests
         run: |
