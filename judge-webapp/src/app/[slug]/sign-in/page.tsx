@@ -1,14 +1,5 @@
 "use client";
 
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-  Input,
-} from "@heroui/react";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -24,6 +15,15 @@ import { Form } from "@/lib/component/form/form";
 import { FormField } from "@/lib/component/form/form-field";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
 import { Metadata } from "@/lib/component/metadata";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+  Input,
+} from "@/lib/heroui-wrapper";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useToast } from "@/lib/util/toast-hook";
 import { authorizationSlice } from "@/store/slices/authorization-slice";

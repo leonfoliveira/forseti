@@ -1,14 +1,4 @@
 import { PaperClipIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
-import {
-  Alert,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Chip,
-  Input,
-  NumberInput,
-} from "@heroui/react";
 import React from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 
@@ -18,6 +8,16 @@ import { defineMessages } from "@/i18n/message";
 import { FileInput } from "@/lib/component/form/file-input";
 import { FormField } from "@/lib/component/form/form-field";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
+import {
+  Alert,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Chip,
+  Input,
+  NumberInput,
+} from "@/lib/heroui-wrapper";
 
 const messages = defineMessages({
   problemsSectionTitle: {

@@ -4,7 +4,6 @@ import {
   ArrowDownTrayIcon,
   ChevronDoubleUpIcon,
 } from "@heroicons/react/24/solid";
-import { Button } from "@heroui/react";
 import React from "react";
 
 import { attachmentService } from "@/config/composition";
@@ -22,6 +21,7 @@ import {
   GridTableHeader,
   GridTableRow,
 } from "@/lib/component/table/grid-table";
+import { Button } from "@/lib/heroui-wrapper";
 import { cls } from "@/lib/util/cls";
 
 const messages = defineMessages({

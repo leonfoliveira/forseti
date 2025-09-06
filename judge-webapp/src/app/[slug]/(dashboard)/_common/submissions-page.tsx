@@ -6,16 +6,6 @@ import {
   ChevronDoubleDownIcon,
   PaperAirplaneIcon,
 } from "@heroicons/react/24/solid";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-  Select,
-  SelectItem,
-  Tooltip,
-} from "@heroui/react";
 import { joiResolver } from "@hookform/resolvers/joi";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -52,6 +42,16 @@ import {
   GridTableHeader,
   GridTableRow,
 } from "@/lib/component/table/grid-table";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Select,
+  SelectItem,
+  Tooltip,
+} from "@/lib/heroui-wrapper";
 import { cls } from "@/lib/util/cls";
 import { useIntl } from "@/lib/util/intl-hook";
 import { useLoadableState } from "@/lib/util/loadable-state";

@@ -54,15 +54,20 @@ jobs:
           cache: "npm"
           cache-dependency-path: regression/package.json
 
+      - name: Build test environment
+        run: |
+          docker build -t judge-api:latest -f judge-backend/api.Dockerfile judge-backend &
+          docker build -t judge-autojudge:latest -f judge-backend/autojudge.Dockerfile judge-backend &
+          docker build -t judge-webapp:latest judge-webapp &
+          docker build -t judge-autoscaler:latest judge-autoscaler &
+          (cd judge-cli && make build) &
+          wait
+          cp judge-cli/dist/judge docker/test/judge
+
       - name: Install regression test dependencies
         run: |
           cd regression
           npm ci
-
-      - name: Build test environment
-        run: |
-          chmod +x docker/test/build.sh
-          ./docker/test/build.sh
 
       - name: Run regression tests
         run: |

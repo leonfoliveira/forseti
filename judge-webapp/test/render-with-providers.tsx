@@ -1,10 +1,10 @@
-import { HeroUIProvider } from "@heroui/react";
 import { act, render, renderHook } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import React from "react";
 import { Provider } from "react-redux";
 
 import messages from "@/i18n/messages/en-US.json";
+import { HeroUIProvider } from "@/lib/heroui-wrapper";
 import { AppStore, makeStore, RootState } from "@/store/store";
 
 interface WrapperProps {

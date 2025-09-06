@@ -1,6 +1,5 @@
 /* eslint-disable formatjs/enforce-default-message */
 
-import { SelectProps } from "@heroui/react";
 import React from "react";
 import {
   Controller,
@@ -9,6 +8,7 @@ import {
   UseFormReturn,
 } from "react-hook-form";
 
+import { SelectProps } from "@/lib/heroui-wrapper";
 import { useIntl } from "@/lib/util/intl-hook";
 
 type HeroUIFormProps = {

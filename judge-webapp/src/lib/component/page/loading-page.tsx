@@ -1,7 +1,7 @@
-import { CircularProgress } from "@heroui/react";
 import React from "react";
 
 import { defineMessages } from "@/i18n/message";
+import { CircularProgress } from "@/lib/heroui-wrapper";
 import { useIntl } from "@/lib/util/intl-hook";
 
 const messages = defineMessages({

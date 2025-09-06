@@ -1,17 +1,5 @@
 "use client";
 
-import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-  Tab,
-  Tabs,
-} from "@heroui/react";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -31,6 +19,18 @@ import { defineMessages } from "@/i18n/message";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
 import { Metadata } from "@/lib/component/metadata";
 import { ConfirmationModal } from "@/lib/component/modal/confirmation-modal";
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+  Tab,
+  Tabs,
+} from "@/lib/heroui-wrapper";
 import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useModal } from "@/lib/util/modal-hook";

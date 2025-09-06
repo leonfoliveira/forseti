@@ -1,11 +1,10 @@
-import { addToast } from "@heroui/react";
-
 import { Message } from "@/i18n/message";
+import { addToast } from "@/lib/heroui-wrapper";
 import { useToast } from "@/lib/util/toast-hook";
 import { renderHookWithProviders } from "@/test/render-with-providers";
 
-jest.mock("@heroui/react", () => ({
-  ...jest.requireActual("@heroui/react"),
+jest.mock("@/lib/heroui-wrapper", () => ({
+  ...jest.requireActual("@/lib/heroui-wrapper"),
   addToast: jest.fn(),
 }));
 jest.unmock("@/lib/util/toast-hook");

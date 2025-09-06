@@ -1,11 +1,3 @@
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-  Input,
-} from "@heroui/react";
 import { joiResolver } from "@hookform/resolvers/joi";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -20,6 +12,14 @@ import { FormField } from "@/lib/component/form/form-field";
 import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
 import { Metadata } from "@/lib/component/metadata";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Input,
+} from "@/lib/heroui-wrapper";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useToast } from "@/lib/util/toast-hook";
 

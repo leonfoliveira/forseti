@@ -1,9 +1,9 @@
-import { Chip, ChipProps } from "@heroui/react";
 import React from "react";
 
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { globalMessages } from "@/i18n/global";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
+import { Chip, ChipProps } from "@/lib/heroui-wrapper";
 
 type Props = ChipProps & {
   status: SubmissionStatus;

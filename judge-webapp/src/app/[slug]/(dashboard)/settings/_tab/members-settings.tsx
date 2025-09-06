@@ -1,5 +1,4 @@
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
-import { Button, Chip, Input, Select, SelectItem } from "@heroui/react";
 import React from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 
@@ -10,6 +9,7 @@ import { defineMessages } from "@/i18n/message";
 import { FormField } from "@/lib/component/form/form-field";
 import { Label } from "@/lib/component/form/label";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
+import { Button, Chip, Input, Select, SelectItem } from "@/lib/heroui-wrapper";
 import { useIntl } from "@/lib/util/intl-hook";
 
 const messages = defineMessages({
