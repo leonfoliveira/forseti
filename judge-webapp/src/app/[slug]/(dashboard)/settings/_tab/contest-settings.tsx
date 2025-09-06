@@ -1,10 +1,3 @@
-import { Input } from "@heroui/react";
-import { Checkbox } from "@heroui/react";
-import { CheckboxGroup } from "@heroui/react";
-import { DatePicker } from "@heroui/react";
-import { Divider } from "@heroui/react";
-import { Button } from "@heroui/react";
-import { Alert } from "@heroui/react";
 import { UseFormReturn } from "react-hook-form";
 
 import { SettingsForm } from "@/app/[slug]/(dashboard)/settings/_form/settings-form";
@@ -17,6 +10,13 @@ import { defineMessages } from "@/i18n/message";
 import { FormField } from "@/lib/component/form/form-field";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
 import { ConfirmationModal } from "@/lib/component/modal/confirmation-modal";
+import { Alert } from "@/lib/heroui-wrapper";
+import { Button } from "@/lib/heroui-wrapper";
+import { Divider } from "@/lib/heroui-wrapper";
+import { DatePicker } from "@/lib/heroui-wrapper";
+import { CheckboxGroup } from "@/lib/heroui-wrapper";
+import { Checkbox } from "@/lib/heroui-wrapper";
+import { Input } from "@/lib/heroui-wrapper";
 import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useModal } from "@/lib/util/modal-hook";
@@ -190,7 +190,7 @@ export function ContestSettings({ contest, form }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-8 p-6">
+    <div className="flex flex-col gap-8 p-6" data-testid="contest-settings">
       {/* Basic Information Section */}
       <div className="space-y-6">
         <h3 className="text-lg font-semibold text-foreground/90 border-b border-divider pb-2">

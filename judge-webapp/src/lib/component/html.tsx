@@ -1,8 +1,8 @@
 "use client";
 
-import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import { Roboto } from "next/font/google";
 
+import { HeroUIProvider, ToastProvider } from "@/lib/heroui-wrapper";
 import { cls } from "@/lib/util/cls";
 import { useTheme } from "@/lib/util/theme-hook";
 

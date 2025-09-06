@@ -100,14 +100,14 @@ describe("SettingsFormMapper", () => {
             type: MemberType.CONTESTANT,
             name: "John Doe",
             login: "johndoe",
-            password: "",
+            password: undefined,
           },
           {
             _id: "member-2",
             type: MemberType.ADMIN,
             name: "Jane Admin",
             login: "janeadmin",
-            password: "",
+            password: undefined,
           },
         ],
       });
@@ -139,7 +139,7 @@ describe("SettingsFormMapper", () => {
       );
 
       result.members.forEach((member) => {
-        expect(member.password).toBe("");
+        expect(member.password).toBeUndefined();
       });
     });
 

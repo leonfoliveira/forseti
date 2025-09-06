@@ -22,6 +22,7 @@ const config: Config = {
     "!src/core/service/dto/**/*",
     "!src/i18n/**/*",
     "!src/lib/component/icon/**/*",
+    "!src/lib/heroui-wrapper.tsx",
     "!src/lib/heroui.ts",
   ],
   testEnvironment: "jsdom",

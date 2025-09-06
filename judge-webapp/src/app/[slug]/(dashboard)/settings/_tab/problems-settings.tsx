@@ -1,14 +1,4 @@
 import { PaperClipIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
-import {
-  Alert,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Chip,
-  Input,
-  NumberInput,
-} from "@heroui/react";
 import React from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 
@@ -18,6 +8,16 @@ import { defineMessages } from "@/i18n/message";
 import { FileInput } from "@/lib/component/form/file-input";
 import { FormField } from "@/lib/component/form/form-field";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
+import {
+  Alert,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Chip,
+  Input,
+  NumberInput,
+} from "@/lib/heroui-wrapper";
 
 const messages = defineMessages({
   problemsSectionTitle: {
@@ -111,7 +111,7 @@ export function ProblemsSettings({ form }: Props) {
   });
 
   return (
-    <div className="flex flex-col gap-8 p-6">
+    <div className="flex flex-col gap-8 p-6" data-testid="problems-settings">
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div>
@@ -191,6 +191,7 @@ export function ProblemsSettings({ form }: Props) {
                             />
                           }
                           accept=".pdf,.txt,.md"
+                          data-testid="description-input"
                         />
                       </FormField>
                       {problem.description && (
@@ -241,6 +242,7 @@ export function ProblemsSettings({ form }: Props) {
                             />
                           }
                           accept=".csv"
+                          data-testid="test-cases-input"
                         />
                       </FormField>
                       {problem.testCases && (

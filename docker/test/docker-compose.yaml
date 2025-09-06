@@ -1,0 +1,167 @@
+name: judge-test
+services:
+  postgres:
+    container_name: test-judge-postgres
+    environment:
+      POSTGRES_USER: judge
+      POSTGRES_PASSWORD: judge
+      POSTGRES_DB: judge
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "pg_isready -U judge -d judge"
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: postgres:17.5-alpine
+    networks:
+      - test-judge-network
+    volumes:
+      - test-postgres_data:/var/lib/postgresql/data
+
+  localstack:
+    container_name: test-judge-localstack
+    environment:
+      SERVICES: s3,sqs
+    image: gresau/localstack-persist:4.4.0
+    networks:
+      - test-judge-network
+    volumes:
+      - test-localstack_data:/persisted-data
+      - ./localstack-bootstrap:/etc/localstack/init/ready.d
+
+  migration:
+    container_name: test-judge-migration
+    entrypoint: sh -c "flyway -url=$${FLYWAY_URL} -user=$${FLYWAY_USER} -password=$${FLYWAY_PASSWORD} -connectRetries=60 migrate"
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/judge
+      FLYWAY_USER: judge
+      FLYWAY_PASSWORD: judge
+    depends_on:
+      postgres:
+        condition: service_healthy
+    image: flyway/flyway:11.9.2-alpine
+    networks:
+      - test-judge-network
+    volumes:
+      - ../../judge-backend/common/src/main/resources/migration:/flyway/sql
+
+  api:
+    container_name: test-judge-api
+    environment:
+      ALLOWED_ORIGINS: http://localhost:3000
+      AWS_ACCESS_KEY_ID: judge
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_S3_BUCKET: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      AWS_SQS_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      AWS_SQS_SUBMISSION_QUEUE: submission-queue
+      DB_PASSWORD: judge
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_USER: judge
+      JAVA_TOOL_OPTIONS: -Xms1024m -Xmx1024m
+      JWT_EXPIRATION: 6h
+      JWT_ROOT_EXPIRATION: 3h
+      JWT_SECRET: judge
+      PORT: 8080
+      ROOT_PASSWORD: judge
+      SPRING_PROFILES_ACTIVE: production
+    depends_on:
+      localstack:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:8080/actuator/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: leonfoliveira/judge-api:latest
+    networks:
+      - test-judge-network
+    ports:
+      - 8080:8080
+
+  autojudge:
+    container_name: test-judge-autojudge
+    environment:
+      API_URL: http://api:8080
+      AWS_ACCESS_KEY_ID: judge
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_S3_BUCKET: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      AWS_SQS_SUBMISSION_QUEUE: submission-queue
+      DB_PASSWORD: judge
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_USER: judge
+      JAVA_TOOL_OPTIONS: -Xms1024m -Xmx1024m
+      JWT_EXPIRATION: 6h
+      JWT_ROOT_EXPIRATION: 3h
+      JWT_SECRET: judge
+      MAX_CONCURRENT_SUBMISSIONS: "1"
+      PORT: 8080
+      ROOT_PASSWORD: judge
+      SPRING_PROFILES_ACTIVE: production
+    depends_on:
+      api:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:8080/actuator/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: leonfoliveira/judge-autojudge:latest
+    networks:
+      - test-judge-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp
+
+  webapp:
+    container_name: test-judge-webapp
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+      NEXT_PUBLIC_LOCALE: pt-BR
+      NEXT_PUBLIC_VERSION: latest
+      NODE_ENV: production
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:3000/healthcheck
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: leonfoliveira/judge-webapp:latest
+    networks:
+      - test-judge-network
+    ports:
+      - "3000:3000"
+
+networks:
+  test-judge-network:
+    driver: bridge
+
+volumes:
+  test-postgres_data:
+  test-localstack_data:

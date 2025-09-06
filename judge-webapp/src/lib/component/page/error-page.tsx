@@ -1,9 +1,9 @@
 import { ArrowPathRoundedSquareIcon } from "@heroicons/react/24/solid";
-import { Button } from "@heroui/react";
 import React from "react";
 
 import { defineMessages } from "@/i18n/message";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
+import { Button } from "@/lib/heroui-wrapper";
 
 const messages = defineMessages({
   description: {

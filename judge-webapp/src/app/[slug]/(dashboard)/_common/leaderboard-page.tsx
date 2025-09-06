@@ -1,7 +1,6 @@
 "use client";
 
 import { ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
-import { Chip } from "@heroui/react";
 import React from "react";
 
 import { LeaderboardResponseDTO } from "@/core/repository/dto/response/leaderboard/LeaderboardResponseDTO";
@@ -19,6 +18,7 @@ import {
   GridTableHeader,
   GridTableRow,
 } from "@/lib/component/table/grid-table";
+import { Chip } from "@/lib/heroui-wrapper";
 import { cls } from "@/lib/util/cls";
 import { useAppSelector } from "@/store/store";
 
@@ -80,7 +80,10 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
       />
       <GridTable
         style={{
-          gridTemplateColumns: `auto 1fr repeat(${problems.length}, 1fr) auto auto`,
+          gridTemplateColumns:
+            problems.length > 0
+              ? `auto 1fr repeat(${problems.length}, 1fr) auto auto`
+              : "auto 1fr auto auto",
         }}
       >
         <GridTableHeader>

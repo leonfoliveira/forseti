@@ -1,17 +1,5 @@
 "use client";
 
-import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-  Tab,
-  Tabs,
-} from "@heroui/react";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -31,6 +19,18 @@ import { defineMessages } from "@/i18n/message";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
 import { Metadata } from "@/lib/component/metadata";
 import { ConfirmationModal } from "@/lib/component/modal/confirmation-modal";
+import {
+  Alert,
+  Badge,
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+  Tab,
+  Tabs,
+} from "@/lib/heroui-wrapper";
 import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useModal } from "@/lib/util/modal-hook";
@@ -85,14 +85,6 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard).settings.admin-settings-page.save-modal-alert-body",
     defaultMessage:
       "This action will modify contest data while the contest is in progress. This could affect participants and their submissions. Please proceed with caution.",
-  },
-  saveModalCancel: {
-    id: "app.[slug].(dashboard).settings.admin-settings-page.save-modal-cancel",
-    defaultMessage: "No, cancel",
-  },
-  saveModalConfirm: {
-    id: "app.[slug].(dashboard).settings.admin-settings-page.save-modal-confirm",
-    defaultMessage: "Yes, save changes",
   },
   saveSuccess: {
     id: "app.[slug].(dashboard).settings.admin-settings-page.save-success",
@@ -209,6 +201,7 @@ export function AdminSettingsPage() {
               color="primary"
               defaultSelectedKey={selectedTab}
               onSelectionChange={(key) => setSelectedTab(key as TabKey)}
+              data-testid="settings-nav"
             >
               <Tab
                 key={TabKey.CONTEST}

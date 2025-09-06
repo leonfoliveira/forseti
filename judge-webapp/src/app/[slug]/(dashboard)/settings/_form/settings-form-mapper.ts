@@ -29,7 +29,7 @@ export class SettingsFormMapper {
       type: member.type,
       name: member.name,
       login: member.login,
-      password: "",
+      password: undefined,
     }));
 
     return {
@@ -57,7 +57,10 @@ export class SettingsFormMapper {
         type: member.type,
         name: member.name,
         login: member.login,
-        password: member.password,
+        password:
+          member.password && member.password.length > 0
+            ? member.password
+            : undefined,
       })),
       problems: form.problems.map((problem, idx) => ({
         id: problem._id,

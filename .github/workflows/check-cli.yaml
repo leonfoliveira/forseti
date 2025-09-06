@@ -2,6 +2,9 @@ name: Check CLI
 
 on:
   pull_request:
+    paths:
+      - "judge-cli/**"
+      - ".github/workflows/check-cli.yaml"
 
 jobs:
   check-cli:
@@ -12,29 +15,24 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Python 3.13.5
-        uses: actions/setup-python@v4
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.13.5
-
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('judge-cli/requirements.dev.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          python-version: "3.13"
+          cache: "pip"
+          cache-dependency-path: judge-cli/requirements.dev.txt
 
       - name: Install dependencies
         run: pip install -r requirements.dev.txt
 
-      - name: Lint
-        run: make lint
+      - name: Run checks and build in parallel
+        run: |
+          # Run lint, test, and build in parallel
+          make lint &
+          make test &
+          make build &
 
-      - name: Test
-        run: make test
-
-      - name: Build
-        run: make build
+          # Wait for all tasks to complete
+          wait

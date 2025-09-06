@@ -24,7 +24,7 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
-  timeout: 30_000, // Set a global timeout of 30 seconds
+  timeout: 120_000, // Set a global timeout of 120 seconds
   expect: {
     timeout: 30_000, // Set a timeout of 30 seconds for expect conditions
   },
@@ -34,23 +34,38 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
+
+    /* Slow down actions by this many milliseconds */
+    actionTimeout: 10_000, // 10 seconds timeout for actions
+    navigationTimeout: 30_000, // 30 seconds for navigation
+
+    launchOptions: {
+      /* Add delay between actions (useful for debugging) */
+      slowMo: 500,
+    },
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+      },
     },
 
     {
       name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
+      use: {
+        ...devices["Desktop Firefox"],
+      },
     },
 
     {
       name: "webkit",
-      use: { ...devices["Desktop Safari"] },
+      use: {
+        ...devices["Desktop Safari"],
+      },
     },
 
     /* Test against mobile viewports. */
@@ -75,9 +90,10 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  webServer: {
+    command: "docker compose -f ../docker/test/docker-compose.yaml up -d",
+    url: "http://localhost:3000",
+    reuseExistingServer: !process.env.CI,
+    timeout: 60 * 1000, // 1 minute timeout for startup
+  },
 });

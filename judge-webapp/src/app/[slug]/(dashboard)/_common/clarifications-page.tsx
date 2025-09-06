@@ -1,15 +1,4 @@
 import { TrashIcon } from "@heroicons/react/24/solid";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-  Input,
-  Select,
-  SelectItem,
-} from "@heroui/react";
 import { joiResolver } from "@hookform/resolvers/joi";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -26,6 +15,17 @@ import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
 import { Metadata } from "@/lib/component/metadata";
 import { ConfirmationModal } from "@/lib/component/modal/confirmation-modal";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Divider,
+  Input,
+  Select,
+  SelectItem,
+} from "@/lib/heroui-wrapper";
 import { useIntl } from "@/lib/util/intl-hook";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useModal } from "@/lib/util/modal-hook";
@@ -343,7 +343,7 @@ export function ClarificationsPage({
                         </p>
                       </div>
                       <p className="mt-3" data-testid="answer-text">
-                        {clarification.text}
+                        {clarification.children[0].text}
                       </p>
                     </div>
                   </CardFooter>

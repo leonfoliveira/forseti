@@ -23,6 +23,7 @@ class SqsSubmissionQueueAdapter(
             queue = submissionQueue,
             payload =
                 SqsSubmissionPayload(
+                    contestId = submission.contest.id,
                     submissionId = submission.id,
                 ),
         )

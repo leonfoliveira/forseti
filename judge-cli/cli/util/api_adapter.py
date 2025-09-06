@@ -61,7 +61,7 @@ class ApiAdapter:
             **kwargs,
             cookies={self.ACCESS_TOKEN_COOKIE: access_token},
         )
-        if response.status_code != 200:
+        if response.status_code != 204:
             raise click.ClickException(response.text)
 
     def _authenticate(self):

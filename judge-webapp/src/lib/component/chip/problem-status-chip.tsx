@@ -1,7 +1,7 @@
-import { Chip, ChipProps } from "@heroui/react";
 import React from "react";
 
 import { FormattedDuration } from "@/lib/component/format/formatted-duration";
+import { Chip, ChipProps } from "@/lib/heroui-wrapper";
 import { useAppSelector } from "@/store/store";
 
 type Props = ChipProps & {

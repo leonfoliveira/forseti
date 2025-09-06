@@ -1,17 +1,6 @@
 "use client";
 
 import { ChevronDownIcon, MoonIcon, SunIcon } from "@heroicons/react/24/solid";
-import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  Switch,
-} from "@heroui/react";
 import { useRouter, usePathname } from "next/navigation";
 
 import { routes } from "@/config/routes";
@@ -22,6 +11,17 @@ import { signOut } from "@/lib/action/auth-action";
 import { ContestStatusChip } from "@/lib/component/chip/contest-status-chip";
 import { CountdownClock } from "@/lib/component/countdown-clock";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  Switch,
+} from "@/lib/heroui-wrapper";
 import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
 import { Theme, useTheme } from "@/lib/util/theme-hook";
 import { useAppSelector } from "@/store/store";
@@ -53,7 +53,11 @@ export function Header() {
   const isAuthorized = !!authorization?.member;
 
   return (
-    <Navbar maxWidth="full" className="bg-content1 border-b border-divider">
+    <Navbar
+      maxWidth="full"
+      className="bg-content1 border-b border-divider"
+      data-testid="header"
+    >
       <NavbarBrand className="min-w-0 flex-shrink">
         <p
           className="text-lg font-semibold truncate max-w-full mr-3"

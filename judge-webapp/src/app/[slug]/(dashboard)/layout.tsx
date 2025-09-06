@@ -1,12 +1,12 @@
 "use client";
 
-import { Tab, Tabs } from "@heroui/react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { defineMessages } from "@/i18n/message";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
+import { Tab, Tabs } from "@/lib/heroui-wrapper";
 import { DashboardProvider } from "@/lib/provider/dashboard-provider";
 import { useAppSelector } from "@/store/store";
 
@@ -91,6 +91,7 @@ export default function DashboardLayout({
         color="primary"
         className="bg-content1"
         selectedKey={pathname}
+        data-testid="dashboard-nav"
       >
         {tabs.map((item) => (
           <Tab

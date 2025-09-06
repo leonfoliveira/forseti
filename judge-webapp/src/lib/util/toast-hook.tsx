@@ -1,7 +1,7 @@
-import { addToast, ToastProps } from "@heroui/react";
 
 import { Message } from "@/i18n/message";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
+import { addToast, ToastProps } from "@/lib/heroui-wrapper";
 
 export function useToast() {
   function show(message: Message, color: ToastProps["color"]) {

@@ -1,202 +1,114 @@
-import path from "node:path";
+import { test } from "@playwright/test";
 
-import { expect, test } from "@playwright/test";
-
-import { DateUtil } from "./util/date-utils";
-
-const slug = Math.random().toString(36).substring(2, 15);
+import { ContestantActor } from "@/test/actor/contestant-actor";
+import { JudgeActor } from "@/test/actor/judge-actor";
+import { RootActor } from "@/test/actor/root-actor";
+import { Member, MemberType } from "@/test/entity/member";
+import { Problem } from "@/test/entity/problem";
+import {
+  Submission,
+  SubmissionAnswer,
+  SubmissionLanguage,
+} from "@/test/entity/submission";
 
 test("Default contest behaviour", async ({ page }) => {
-  // Redirect to root sign-in page
   await page.goto("/");
-  await page.getByRole("button", { name: "Enter as Root" }).click();
-  await expect(page).toHaveURL("/root/sign-in");
 
-  // Sign in as root
-  await page.getByLabel("Password").fill("judge");
-  await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(page).toHaveURL("/root/contests");
+  const slug = Math.random().toString(36).substring(2, 15);
+  const problem = new Problem(
+    "A",
+    "Two Sum",
+    "description.pdf",
+    "test_cases.csv",
+    1000,
+    512,
+  );
+  const rootMember = new Member(MemberType.ROOT, "Root", "root", "judge");
+  const judgeMember = new Member(MemberType.JUDGE, "Judge", "judge", "judge");
+  const contestantMember = new Member(
+    MemberType.CONTESTANT,
+    "Contestant",
+    "contestant",
+    "contestant",
+  );
 
-  // Redirect to new contest page
-  await page.getByRole("button", { name: "New" }).click();
-  await expect(page).toHaveURL("/root/contests/new");
+  const rootActor = new RootActor(page, slug, rootMember);
+  const contestantActor = new ContestantActor(page, slug, contestantMember);
+  const judgeActor = new JudgeActor(page, slug, judgeMember);
 
-  // Fill in form
-  await page.getByLabel("Slug").fill(slug);
-  await page.getByLabel("Title").fill("Test Contest");
-  await page.getByLabel("Python 3.13").click();
-  await page
-    .getByLabel("Start at")
-    .fill(DateUtil.toDateInputFormat(new Date(Date.now() + 1000 * 60 * 60)));
-  await page
-    .getByLabel("End at")
-    .fill(
-      DateUtil.toDateInputFormat(new Date(Date.now() + 1000 * 60 * 60 * 2)),
-    );
+  const tleSubmission = new Submission(
+    problem,
+    SubmissionLanguage.PYTHON_3_13,
+    "code_time_limit_exceeded.py",
+    SubmissionAnswer.TIME_LIMIT_EXCEEDED,
+  );
+  const reSubmission = new Submission(
+    problem,
+    SubmissionLanguage.PYTHON_3_13,
+    "code_runtime_error.py",
+    SubmissionAnswer.RUNTIME_ERROR,
+  );
+  const meSubmission = new Submission(
+    problem,
+    SubmissionLanguage.PYTHON_3_13,
+    "code_memory_limit_exceeded.py",
+    SubmissionAnswer.MEMORY_LIMIT_EXCEEDED,
+  );
+  const waSubmission = new Submission(
+    problem,
+    SubmissionLanguage.PYTHON_3_13,
+    "code_wrong_answer.py",
+    SubmissionAnswer.WRONG_ANSWER,
+  );
+  const acSubmission = new Submission(
+    problem,
+    SubmissionLanguage.PYTHON_3_13,
+    "code_accepted.py",
+    SubmissionAnswer.ACCEPTED,
+  );
 
-  await page.getByTestId("member-add").click();
-  await page.getByLabel("Type").first().selectOption({ label: "Contestant" });
-  await page.getByLabel("Name").first().fill("Contestant");
-  await page.getByLabel("Login").first().fill("contestant");
-  await page.getByLabel("Password").first().fill("contestant");
+  await rootActor.createContest();
+  await rootActor.signIn();
+  await rootActor.navigate("Settings");
+  await rootActor.addProblem(problem);
+  await rootActor.addMember(contestantMember);
+  await rootActor.addMember(judgeMember);
+  await rootActor.forceStart();
 
-  await page.getByTestId("member-add").click();
-  await page.getByLabel("Type").last().selectOption({ label: "Judge" });
-  await page.getByLabel("Name").last().fill("Judge");
-  await page.getByLabel("Login").last().fill("judge");
-  await page.getByLabel("Password").last().fill("judge");
+  await contestantActor.signIn();
+  await contestantActor.navigate("Leaderboard");
+  await contestantActor.checkoutLeaderboard(0);
+  await contestantActor.navigate("Problems");
+  await contestantActor.checkProblems([problem]);
+  await contestantActor.navigate("Submissions");
+  await contestantActor.createSubmission(tleSubmission);
+  await contestantActor.createSubmission(reSubmission);
+  await contestantActor.createSubmission(meSubmission);
+  await contestantActor.createSubmission(waSubmission);
+  await contestantActor.createSubmission(acSubmission);
+  await contestantActor.navigate("Leaderboard");
+  await contestantActor.checkoutLeaderboard(1);
+  await contestantActor.navigate("Clarifications");
+  await contestantActor.createClarification(
+    problem,
+    "What is the input format?",
+  );
 
-  await page.getByTestId("problem-add").click();
-  await page.getByLabel("Title").last().fill("Two Sum");
-  await page
-    .getByLabel("Description")
-    .setInputFiles([path.join(__dirname, "./files/description.pdf")]);
-  await page.getByLabel("Time limit (ms)").fill("1000");
-  await page.getByLabel("Memory limit (MB)").fill("512");
-  await page
-    .getByLabel("Test cases")
-    .setInputFiles([path.join(__dirname, "./files/test_cases.csv")]);
-
-  // Save the contest
-  await page.getByRole("button", { name: "Save" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(page).not.toHaveURL("/root/contests/new");
-
-  // Start the contest
-  await page.goto("/root/contests");
-  const row = page.locator(`tr:has(td:first-child:text-is("${slug}"))`);
-  await row.getByRole("button", { name: "Start" }).click();
-  await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(row.locator("td").nth(4)).toHaveText("In progress");
-  await page.getByTestId("member").click();
-  await page.getByText("Sign Out").click();
-  await expect(page).toHaveURL("/root/sign-in");
-
-  // Redirect to contestant sign-in page
-  await page.goto("/");
-  await page.getByLabel("Slug").fill(slug);
-  await page.getByRole("button", { name: "Join" }).click();
-  await expect(page).toHaveURL(`/contests/${slug}/sign-in`);
-
-  // Sign in as contestant
-  await page.getByLabel("Login").fill("contestant");
-  await page.getByLabel("Password").fill("contestant");
-  await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(page).toHaveURL(`/contests/${slug}/contestant/leaderboard`);
-
-  // Make submissions
-  await page.getByText("Submissions").click();
-  await expect(page).toHaveURL(`/contests/${slug}/contestant/submissions`);
-  await page.getByLabel("Language").selectOption({ label: "Python 3.13" });
-  const rowsLength = await page.locator("tr").count();
-
-  await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
-  await page
-    .getByLabel("Code")
-    .setInputFiles([path.join(__dirname, "./files/code_wrong_answer.py")]);
-  await page.getByRole("button", { name: "Submit" }).click();
-  await expect(
-    page.locator("tr").nth(rowsLength).locator("td").nth(3),
-  ).toHaveText("Wrong Answer");
-
-  await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
-  await page
-    .getByLabel("Code")
-    .setInputFiles([
-      path.join(__dirname, "./files/code_time_limit_exceeded.py"),
-    ]);
-  await page.getByRole("button", { name: "Submit" }).click();
-  await expect(
-    page
-      .locator("tr")
-      .nth(rowsLength + 1)
-      .locator("td")
-      .nth(3),
-  ).toHaveText("Time Limit Exceeded");
-
-  await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
-  await page
-    .getByLabel("Code")
-    .setInputFiles([path.join(__dirname, "./files/code_runtime_error.py")]);
-  await page.getByRole("button", { name: "Submit" }).click();
-  await expect(
-    page
-      .locator("tr")
-      .nth(rowsLength + 2)
-      .locator("td")
-      .nth(3),
-  ).toHaveText("Runtime Error");
-
-  await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
-  await page
-    .getByLabel("Code")
-    .setInputFiles([
-      path.join(__dirname, "./files/code_memory_limit_exceeded.py"),
-    ]);
-  await page.getByRole("button", { name: "Submit" }).click();
-  await expect(
-    page
-      .locator("tr")
-      .nth(rowsLength + 3)
-      .locator("td")
-      .nth(3),
-  ).toHaveText("Memory Limit Exceeded");
-
-  await page.getByLabel("Problem").selectOption({ label: "A. Two Sum" });
-  await page
-    .getByLabel("Code")
-    .setInputFiles([path.join(__dirname, "./files/code_accepted.py")]);
-  await page.getByRole("button", { name: "Submit" }).click();
-  await expect(
-    page
-      .locator("tr")
-      .nth(rowsLength + 4)
-      .locator("td")
-      .nth(3),
-  ).toHaveText("Accepted");
-
-  // Make clarifications
-  await page.getByText("Clarifications").click();
-  await expect(page).toHaveURL(`/contests/${slug}/contestant/clarifications`);
-  await page
-    .getByLabel("Problem (optional)")
-    .selectOption({ label: "A. Two Sum" });
-  await page.getByLabel("Text").fill("Could you clarify the input format?");
-  await page.getByRole("button", { name: "Submit" }).click();
-  await expect(page.getByText("Contestant | Problem A")).toBeVisible();
-  await expect(
-    page.getByText("Could you clarify the input format?").first(),
-  ).toBeVisible();
-
-  // Redirect to contestant sign-in page
-  await page.goto("/");
-  await page.getByLabel("Slug").fill(slug);
-  await page.getByRole("button", { name: "Join" }).click();
-  await expect(page).toHaveURL(`/contests/${slug}/sign-in`);
-
-  // Sign in as Judge
-  await page.getByLabel("Login").fill("judge");
-  await page.getByLabel("Password").fill("judge");
-  await page.getByRole("button", { name: "Sign in" }).click();
-  await expect(page).toHaveURL(`/contests/${slug}/judge/leaderboard`);
-
-  // Update submission answer
-  await page.getByText("Submissions").click();
-  await expect(page).toHaveURL(`/contests/${slug}/judge/submissions`);
-  const submissionsRow = page.locator("tr").last();
-  await submissionsRow.getByRole("button", { name: "Update" }).click();
-  await page.getByLabel("Answer").selectOption({ label: "Wrong Answer" });
-  await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(submissionsRow.locator("td").nth(4)).toHaveText("Wrong Answer");
-
-  // Answer clarification
-  await page.getByText("Clarifications").click();
-  await expect(page).toHaveURL(`/contests/${slug}/judge/clarifications`);
-  await page.getByText("Answer").first().click();
-  await page.getByLabel("Text").fill("The input format is a list of integers");
-  await page.getByRole("button", { name: "Confirm" }).click();
-  await expect(page.getByText("RE: Judge")).toBeVisible();
-  await expect(
-    page.getByText("The input format is a list of integers"),
-  ).toBeVisible();
+  await judgeActor.signIn();
+  await judgeActor.navigate("Submissions");
+  await judgeActor.checkoutSubmissions([
+    acSubmission,
+    waSubmission,
+    meSubmission,
+    reSubmission,
+    tleSubmission,
+  ]);
+  await judgeActor.judgeSubmission(0, SubmissionAnswer.WRONG_ANSWER);
+  await judgeActor.navigate("Clarifications");
+  await judgeActor.answerClarification(
+    0,
+    "The input format is a list of integers",
+  );
+  await judgeActor.navigate("Announcements");
+  await judgeActor.createAnnouncement("The contest will end in 1 hour");
 });

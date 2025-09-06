@@ -4,7 +4,6 @@ import {
   ArrowDownTrayIcon,
   ChevronDoubleUpIcon,
 } from "@heroicons/react/24/solid";
-import { Button } from "@heroui/react";
 import React from "react";
 
 import { attachmentService } from "@/config/composition";
@@ -22,6 +21,7 @@ import {
   GridTableHeader,
   GridTableRow,
 } from "@/lib/component/table/grid-table";
+import { Button } from "@/lib/heroui-wrapper";
 import { cls } from "@/lib/util/cls";
 
 const messages = defineMessages({
@@ -91,6 +91,7 @@ export function ProblemsPage({
             <GridTableRow
               key={problem.id}
               className={cls(index % 2 == 1 && "bg-content2/50")}
+              data-testid="problem"
             >
               <GridTableCell data-testid="problem-letter">
                 {problem.letter}

@@ -1,9 +1,9 @@
-import { Input, Select, SelectItem } from "@heroui/react";
 import { fireEvent, renderHook, screen } from "@testing-library/react";
 import { useForm } from "react-hook-form";
 
 import { FileInput } from "@/lib/component/form/file-input";
 import { FormField } from "@/lib/component/form/form-field";
+import { Input, Select, SelectItem } from "@/lib/heroui-wrapper";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("FormField", () => {

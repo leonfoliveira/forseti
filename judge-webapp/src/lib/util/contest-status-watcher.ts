@@ -11,6 +11,8 @@ export function useContestStatusWatcher() {
   );
 
   useEffect(() => {
+    setStatus(ContestUtil.getStatus(contestMetadata));
+
     const now = Date.now();
     const start = new Date(contestMetadata.startAt).getTime();
     const end = new Date(contestMetadata.endAt).getTime();

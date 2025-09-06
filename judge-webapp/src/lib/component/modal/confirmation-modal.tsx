@@ -1,3 +1,7 @@
+import { ReactNode } from "react";
+
+import { defineMessages } from "@/i18n/message";
+import { FormattedMessage } from "@/lib/component/format/formatted-message";
 import {
   Button,
   Modal,
@@ -6,11 +10,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalProps,
-} from "@heroui/react";
-import { ReactNode } from "react";
-
-import { defineMessages } from "@/i18n/message";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
+} from "@/lib/heroui-wrapper";
 
 const messages = defineMessages({
   cancelLabel: {
