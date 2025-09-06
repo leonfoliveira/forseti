@@ -111,7 +111,7 @@ export function ProblemsSettings({ form }: Props) {
   });
 
   return (
-    <div className="flex flex-col gap-8 p-6">
+    <div className="flex flex-col gap-8 p-6" data-testid="problems-settings">
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div>
@@ -191,6 +191,7 @@ export function ProblemsSettings({ form }: Props) {
                             />
                           }
                           accept=".pdf,.txt,.md"
+                          data-testid="description-input"
                         />
                       </FormField>
                       {problem.description && (
@@ -241,6 +242,7 @@ export function ProblemsSettings({ form }: Props) {
                             />
                           }
                           accept=".csv"
+                          data-testid="test-cases-input"
                         />
                       </FormField>
                       {problem.testCases && (

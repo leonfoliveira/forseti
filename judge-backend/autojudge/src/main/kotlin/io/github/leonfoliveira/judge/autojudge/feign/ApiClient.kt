@@ -8,9 +8,10 @@ import java.util.UUID
 
 @FeignClient(name = "apiClient", url = "\${external.api.url}", configuration = [FeignConfig::class])
 interface ApiClient {
-    @PutMapping("/v1/submissions/{id}/answer/{answer}")
+    @PutMapping("/v1/contests/{contestId}/submissions/{submissionId}/answer/{answer}")
     fun updateSubmissionAnswer(
-        @PathVariable id: UUID,
+        @PathVariable contestId: UUID,
+        @PathVariable submissionId: UUID,
         @PathVariable answer: Submission.Answer,
     )
 }

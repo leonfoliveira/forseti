@@ -53,7 +53,11 @@ export function Header() {
   const isAuthorized = !!authorization?.member;
 
   return (
-    <Navbar maxWidth="full" className="bg-content1 border-b border-divider">
+    <Navbar
+      maxWidth="full"
+      className="bg-content1 border-b border-divider"
+      data-testid="header"
+    >
       <NavbarBrand className="min-w-0 flex-shrink">
         <p
           className="text-lg font-semibold truncate max-w-full mr-3"

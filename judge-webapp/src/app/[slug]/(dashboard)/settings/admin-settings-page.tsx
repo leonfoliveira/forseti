@@ -86,14 +86,6 @@ const messages = defineMessages({
     defaultMessage:
       "This action will modify contest data while the contest is in progress. This could affect participants and their submissions. Please proceed with caution.",
   },
-  saveModalCancel: {
-    id: "app.[slug].(dashboard).settings.admin-settings-page.save-modal-cancel",
-    defaultMessage: "No, cancel",
-  },
-  saveModalConfirm: {
-    id: "app.[slug].(dashboard).settings.admin-settings-page.save-modal-confirm",
-    defaultMessage: "Yes, save changes",
-  },
   saveSuccess: {
     id: "app.[slug].(dashboard).settings.admin-settings-page.save-success",
     defaultMessage: "Changes saved successfully",
@@ -209,6 +201,7 @@ export function AdminSettingsPage() {
               color="primary"
               defaultSelectedKey={selectedTab}
               onSelectionChange={(key) => setSelectedTab(key as TabKey)}
+              data-testid="settings-nav"
             >
               <Tab
                 key={TabKey.CONTEST}

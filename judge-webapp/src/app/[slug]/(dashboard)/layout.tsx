@@ -91,6 +91,7 @@ export default function DashboardLayout({
         color="primary"
         className="bg-content1"
         selectedKey={pathname}
+        data-testid="dashboard-nav"
       >
         {tabs.map((item) => (
           <Tab

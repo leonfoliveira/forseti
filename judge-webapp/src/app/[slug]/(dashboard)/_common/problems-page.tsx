@@ -91,6 +91,7 @@ export function ProblemsPage({
             <GridTableRow
               key={problem.id}
               className={cls(index % 2 == 1 && "bg-content2/50")}
+              data-testid="problem"
             >
               <GridTableCell data-testid="problem-letter">
                 {problem.letter}

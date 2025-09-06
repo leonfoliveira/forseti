@@ -42,7 +42,7 @@ class SubmissionConsumer(
                     },
                 )
 
-            apiClient.updateSubmissionAnswer(payload.submissionId, answer!!)
+            apiClient.updateSubmissionAnswer(payload.contestId, payload.submissionId, answer!!)
             meterRegistry.counter(AutoJudgeMetrics.AUTO_JUDGE_SUCCESSFUL_SUBMISSION, Tags.of("answer", answer.toString())).increment()
         } catch (ex: Exception) {
             meterRegistry.counter(AutoJudgeMetrics.AUTO_JUDGE_FAILED_SUBMISSION).increment()

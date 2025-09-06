@@ -190,7 +190,7 @@ export function ContestSettings({ contest, form }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-8 p-6">
+    <div className="flex flex-col gap-8 p-6" data-testid="contest-settings">
       {/* Basic Information Section */}
       <div className="space-y-6">
         <h3 className="text-lg font-semibold text-foreground/90 border-b border-divider pb-2">

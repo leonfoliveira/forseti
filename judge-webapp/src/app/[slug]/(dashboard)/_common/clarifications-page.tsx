@@ -343,7 +343,7 @@ export function ClarificationsPage({
                         </p>
                       </div>
                       <p className="mt-3" data-testid="answer-text">
-                        {clarification.text}
+                        {clarification.children[0].text}
                       </p>
                     </div>
                   </CardFooter>

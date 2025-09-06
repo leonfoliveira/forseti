@@ -73,7 +73,7 @@ export function MembersSettings({ form }: Props) {
   });
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex flex-col gap-6 p-6" data-testid="members-settings">
       {/* Header Section */}
       <div className="space-y-2">
         <h3 className="text-lg font-semibold text-foreground">

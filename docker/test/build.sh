@@ -5,4 +5,7 @@ docker build -t judge-autojudge:latest -f ../../judge-backend/autojudge.Dockerfi
 docker build -t judge-webapp:latest ../../judge-webapp
 docker build -t judge-autoscaler:latest ../../judge-autoscaler
 
+(cd ../../judge-cli && make build)
+cp ../../judge-cli/dist/judge ./judge
+
 exit 0

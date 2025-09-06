@@ -50,6 +50,7 @@ def ls(url: Optional[str]):
                 _get_contest_status(contest),
             ]
         )
+    table.sort(key=lambda x: x[3], reverse=True)
     click.echo(tabulate(table, headers=headers, tablefmt="grid"))
 
 

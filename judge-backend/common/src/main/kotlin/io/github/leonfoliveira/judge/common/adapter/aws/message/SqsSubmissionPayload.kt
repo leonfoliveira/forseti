@@ -4,5 +4,6 @@ import java.io.Serializable
 import java.util.UUID
 
 data class SqsSubmissionPayload(
+    val contestId: UUID,
     val submissionId: UUID,
 ) : Serializable

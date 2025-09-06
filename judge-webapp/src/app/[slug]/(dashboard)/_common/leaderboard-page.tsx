@@ -80,7 +80,10 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
       />
       <GridTable
         style={{
-          gridTemplateColumns: `auto 1fr repeat(${problems.length}, 1fr) auto auto`,
+          gridTemplateColumns:
+            problems.length > 0
+              ? `auto 1fr repeat(${problems.length}, 1fr) auto auto`
+              : "auto 1fr auto auto",
         }}
       >
         <GridTableHeader>

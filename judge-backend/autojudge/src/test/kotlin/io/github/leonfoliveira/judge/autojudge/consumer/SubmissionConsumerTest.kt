@@ -40,10 +40,11 @@ class SubmissionConsumerTest : FunSpec({
     }
 
     test("should call run service") {
+        val contestId = UUID.randomUUID()
         val submissionId = UUID.randomUUID()
         val message =
             SqsMessage(
-                payload = SqsSubmissionPayload(submissionId),
+                payload = SqsSubmissionPayload(contestId, submissionId),
             )
         val submission = SubmissionMockBuilder.build(id = submissionId)
         val answer = Submission.Answer.ACCEPTED
@@ -66,16 +67,17 @@ class SubmissionConsumerTest : FunSpec({
         }
         supplierSlot.captured.get()
         verify { runSubmissionService.run(submission) }
-        verify { apiClient.updateSubmissionAnswer(submissionId, answer) }
+        verify { apiClient.updateSubmissionAnswer(contestId, submissionId, answer) }
         verify { meterRegistry.counter(AutoJudgeMetrics.AUTO_JUDGE_SUCCESSFUL_SUBMISSION, Tags.of("answer", answer.toString())) }
         verify(exactly = 2) { counterMock.increment() }
     }
 
     test("should count failures") {
+        val contestId = UUID.randomUUID()
         val submissionId = UUID.randomUUID()
         val message =
             SqsMessage(
-                payload = SqsSubmissionPayload(submissionId),
+                payload = SqsSubmissionPayload(contestId, submissionId),
             )
         every { findSubmissionService.findById(submissionId) } throws Exception()
         val counterMock = mockk<Counter>(relaxed = true)
