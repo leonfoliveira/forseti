@@ -10,21 +10,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check if comment author has write access
+      - name: React to comment with thumbs up
         uses: actions/github-script@v7
         with:
           script: |
-            const { data: collaborator } = await github.rest.repos.getCollaboratorPermissionLevel({
+            await github.rest.reactions.createForIssueComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              username: context.payload.comment.user.login
+              comment_id: context.payload.comment.id,
+              content: '+1'
             });
-
-            const hasWriteAccess = ['admin', 'write'].includes(collaborator.permission);
-
-            if (!hasWriteAccess) {
-              core.setFailed('Only collaborators with write access can trigger regression tests');
-            }
 
       - name: Get PR details
         id: pr
@@ -89,19 +84,19 @@ jobs:
           else
             echo "Skipping backend builds - no changes detected"
           fi
-          
+
           if [ "${{ steps.changes.outputs.webapp }}" == "true" ]; then
             docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-webapp:latest judge-webapp &
           else
             echo "Skipping webapp build - no changes detected"
           fi
-          
+
           if [ "${{ steps.changes.outputs.autoscaler }}" == "true" ]; then
             docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-autoscaler:latest judge-autoscaler &
           else
             echo "Skipping autoscaler build - no changes detected"
           fi
-          
+
           if [ "${{ steps.changes.outputs.cli }}" == "true" ]; then
             (cd judge-cli && make build) &
           else
@@ -113,16 +108,16 @@ jobs:
               (cd judge-cli && make build) &
             fi
           fi
-          
+
           # Wait for all background jobs to complete
           wait
-          
+
           # Move cache to avoid growing cache size
           if [ -d "/tmp/.buildx-cache-new" ]; then
             rm -rf /tmp/.buildx-cache
             mv /tmp/.buildx-cache-new /tmp/.buildx-cache
           fi
-          
+
           cp judge-cli/dist/judge docker/test/judge
 
       - name: Run regression tests
