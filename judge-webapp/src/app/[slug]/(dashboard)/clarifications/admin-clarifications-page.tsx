@@ -8,10 +8,10 @@ import { useAppSelector } from "@/store/store";
 export function AdminClarificationsPage() {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
   const problems = useAppSelector(
-    (state) => state.adminDashboard.data!.contest.problems,
+    (state) => state.adminDashboard.contest.problems,
   );
   const clarifications = useAppSelector(
-    (state) => state.adminDashboard.data!.contest.clarifications,
+    (state) => state.adminDashboard.contest.clarifications,
   );
 
   return (

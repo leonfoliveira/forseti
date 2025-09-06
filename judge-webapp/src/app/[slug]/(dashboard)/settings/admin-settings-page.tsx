@@ -109,7 +109,7 @@ enum TabKey {
 export function AdminSettingsPage() {
   const saveState = useLoadableState();
   const validationState = useLoadableState();
-  const contest = useAppSelector((state) => state.adminDashboard.data!.contest);
+  const contest = useAppSelector((state) => state.adminDashboard.contest);
 
   const toast = useToast();
   const dispatch = useAppDispatch();

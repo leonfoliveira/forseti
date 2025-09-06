@@ -94,7 +94,7 @@ describe("ContestSettings", () => {
     });
     expect(contestService.forceStart).toHaveBeenCalledWith(contest.id);
     expect(store.getState().contestMetadata).toBe(newContestMetadata);
-    expect(store.getState().adminDashboard.data?.contest).toMatchObject(
+    expect(store.getState().adminDashboard.contest).toMatchObject(
       newContestMetadata,
     );
     expect(useToast().success).toHaveBeenCalled();
@@ -153,7 +153,7 @@ describe("ContestSettings", () => {
     });
     expect(contestService.forceEnd).toHaveBeenCalledWith(contest.id);
     expect(store.getState().contestMetadata).toBe(newContestMetadata);
-    expect(store.getState().adminDashboard.data?.contest).toMatchObject(
+    expect(store.getState().adminDashboard.contest).toMatchObject(
       newContestMetadata,
     );
     expect(useToast().success).toHaveBeenCalled();

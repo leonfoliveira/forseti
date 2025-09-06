@@ -8,7 +8,7 @@ import { useAppSelector } from "@/store/store";
 export function GuestAnnouncementsPage() {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
   const announcements = useAppSelector(
-    (state) => state.guestDashboard.data!.contest.announcements,
+    (state) => state.guestDashboard.contest.announcements,
   );
 
   return (

@@ -25,7 +25,7 @@ describe("AdminSettingsPage", () => {
         startAt: new Date(Date.now() + 60 * 1000).toISOString(),
         endAt: new Date(Date.now() + 2 * 60 * 1000).toISOString(),
       }),
-      adminDashboard: { data: { contest: MockContestFullResponseDTO() } },
+      adminDashboard: { contest: MockContestFullResponseDTO() },
     } as any);
 
     expect(document.title).toBe("Judge - Settings");
@@ -50,7 +50,7 @@ describe("AdminSettingsPage", () => {
   it("should render settings tab content when tab is clicked", async () => {
     await renderWithProviders(<AdminSettingsPage />, {
       contestMetadata: MockContestMetadataResponseDTO(),
-      adminDashboard: { data: { contest: MockContestFullResponseDTO() } },
+      adminDashboard: { contest: MockContestFullResponseDTO() },
     } as any);
 
     const tabs = screen.getAllByTestId("tab");
@@ -70,7 +70,7 @@ describe("AdminSettingsPage", () => {
         startAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
         endAt: new Date(Date.now() - 60 * 1000).toISOString(),
       }),
-      adminDashboard: { data: { contest: MockContestFullResponseDTO() } },
+      adminDashboard: { contest: MockContestFullResponseDTO() },
     } as any);
 
     expect(screen.getByTestId("save")).toBeDisabled();
@@ -82,7 +82,7 @@ describe("AdminSettingsPage", () => {
         startAt: new Date(Date.now() - 60 * 1000).toISOString(),
         endAt: new Date(Date.now() + 60 * 1000).toISOString(),
       }),
-      adminDashboard: { data: { contest: MockContestFullResponseDTO() } },
+      adminDashboard: { contest: MockContestFullResponseDTO() },
     } as any);
 
     await act(async () => {
@@ -99,7 +99,7 @@ describe("AdminSettingsPage", () => {
         startAt: new Date(Date.now() - 60 * 1000).toISOString(),
         endAt: new Date(Date.now() + 60 * 1000).toISOString(),
       }),
-      adminDashboard: { data: { contest: MockContestFullResponseDTO() } },
+      adminDashboard: { contest: MockContestFullResponseDTO() },
     } as any);
 
     await act(async () => {
@@ -112,7 +112,7 @@ describe("AdminSettingsPage", () => {
     });
     expect(saveConfirmationModal).toBeInTheDocument();
     expect(contestService.updateContest).toHaveBeenCalled();
-    expect(store.getState().adminDashboard.data?.contest).toBe(newContest);
+    expect(store.getState().adminDashboard.contest).toBe(newContest);
     expect(useToast().success).toHaveBeenCalled();
   });
 
@@ -123,7 +123,7 @@ describe("AdminSettingsPage", () => {
         startAt: new Date(Date.now() - 60 * 1000).toISOString(),
         endAt: new Date(Date.now() + 60 * 1000).toISOString(),
       }),
-      adminDashboard: { data: { contest: MockContestFullResponseDTO() } },
+      adminDashboard: { contest: MockContestFullResponseDTO() },
     } as any);
 
     await act(async () => {

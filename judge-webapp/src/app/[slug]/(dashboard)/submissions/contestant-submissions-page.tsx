@@ -5,13 +5,13 @@ import { useAppSelector } from "@/store/store";
 
 export function ContestantSubmissionsPage() {
   const submissions = useAppSelector(
-    (state) => state.contestantDashboard.data!.submissions,
+    (state) => state.contestantDashboard.submissions,
   );
   const problems = useAppSelector(
-    (state) => state.contestantDashboard.data!.contest.problems,
+    (state) => state.contestantDashboard.contest.problems,
   );
   const languages = useAppSelector(
-    (state) => state.contestantDashboard.data!.contest.languages,
+    (state) => state.contestantDashboard.contest.languages,
   );
 
   return (

@@ -5,7 +5,7 @@ import { useAppSelector } from "@/store/store";
 
 export function JudgeSubmissionsPage() {
   const submissions = useAppSelector(
-    (state) => state.judgeDashboard.data!.submissions,
+    (state) => state.judgeDashboard.submissions,
   );
 
   return <SubmissionsPage submissions={submissions} canEdit />;

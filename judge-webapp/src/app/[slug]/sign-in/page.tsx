@@ -1,7 +1,6 @@
 "use client";
 
 import { joiResolver } from "@hookform/resolvers/joi";
-import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 
@@ -11,6 +10,7 @@ import { authenticationService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { defineMessages } from "@/i18n/message";
+import { signOut } from "@/lib/action/auth-action";
 import { Form } from "@/lib/component/form/form";
 import { FormField } from "@/lib/component/form/form-field";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
@@ -26,8 +26,7 @@ import {
 } from "@/lib/heroui-wrapper";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useToast } from "@/lib/util/toast-hook";
-import { authorizationSlice } from "@/store/slices/authorization-slice";
-import { useAppDispatch, useAppSelector } from "@/store/store";
+import { useAppSelector } from "@/store/store";
 
 const messages = defineMessages({
   wrongLoginPassword: {
@@ -82,9 +81,7 @@ const messages = defineMessages({
 export default function SignInPage() {
   const signInState = useLoadableState();
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
-  const dispatch = useAppDispatch();
   const toast = useToast();
-  const router = useRouter();
 
   const form = useForm<SignInFormType>({
     resolver: joiResolver(signInFormSchema),
@@ -93,13 +90,11 @@ export default function SignInPage() {
   async function signIn(data: SignInFormType) {
     signInState.start();
     try {
-      const authorization = await authenticationService.authenticate({
+      await authenticationService.authenticate({
         contestId: contestMetadata.id,
         ...data,
       });
-      dispatch(authorizationSlice.actions.set(authorization));
-      signInState.finish();
-      router.push(routes.CONTEST(contestMetadata.slug));
+      window.location.href = routes.CONTEST(contestMetadata.slug);
     } catch (error) {
       signInState.fail(error, {
         [UnauthorizedException.name]: () => {
@@ -115,6 +110,11 @@ export default function SignInPage() {
         default: () => toast.error(messages.signInError),
       });
     }
+  }
+
+  async function enterAsGuest() {
+    await signOut();
+    window.location.href = routes.CONTEST(contestMetadata.slug);
   }
 
   return (
@@ -177,9 +177,7 @@ export default function SignInPage() {
                 variant="bordered"
                 size="lg"
                 fullWidth
-                onPress={() =>
-                  router.push(routes.CONTEST(contestMetadata.slug))
-                }
+                onPress={enterAsGuest}
                 data-testid="enter-guest"
               >
                 <FormattedMessage {...messages.enterGuestLabel} />

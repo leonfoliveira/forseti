@@ -60,7 +60,10 @@ export class AxiosClient {
     } catch (error) {
       if (error instanceof AxiosError) {
         const status = error.response?.status;
-        const message = error.response?.data?.message;
+        const message =
+          (error.response?.data && typeof error.response.data === "string"
+            ? error.response.data
+            : error.response?.data?.message) || error.message;
 
         switch (status) {
           case 400:

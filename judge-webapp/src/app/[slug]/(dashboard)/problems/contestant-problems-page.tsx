@@ -8,10 +8,10 @@ import { useAppSelector } from "@/store/store";
 export function ContestantProblemsPage() {
   const authorization = useAppSelector((state) => state.authorization);
   const problems = useAppSelector(
-    (state) => state.contestantDashboard.data!.contest.problems,
+    (state) => state.contestantDashboard.contest.problems,
   );
   const classification = useAppSelector(
-    (state) => state.contestantDashboard.data!.leaderboard.members,
+    (state) => state.contestantDashboard.leaderboard.members,
   );
   const contestantClassification = classification.find(
     (it) => it.id === authorization!.member.id,

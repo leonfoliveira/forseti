@@ -548,6 +548,7 @@ services:
         condition: on-failure
         delay: 5s
     environment:
+      INTERNAL_API_URL: http://api:8080
       NEXT_PUBLIC_API_URL: http://localhost:8080
       NEXT_PUBLIC_LOCALE: en-US
       NEXT_PUBLIC_VERSION: ${VERSION:-latest}
@@ -555,7 +556,7 @@ services:
     healthcheck:
       test:
         - CMD-SHELL
-        - curl -f http://localhost:3000/healthcheck
+        - curl -f http://localhost:3000
       timeout: 5s
       interval: 15s
       retries: 5

@@ -5,10 +5,10 @@ import { useAppSelector } from "@/store/store";
 
 export function AdminLeaderboardPage() {
   const problems = useAppSelector(
-    (state) => state.adminDashboard.data!.contest.problems,
+    (state) => state.adminDashboard.contest.problems,
   );
   const leaderboard = useAppSelector(
-    (state) => state.adminDashboard.data!.leaderboard,
+    (state) => state.adminDashboard.leaderboard,
   );
 
   return <LeaderboardPage problems={problems} leaderboard={leaderboard} />;

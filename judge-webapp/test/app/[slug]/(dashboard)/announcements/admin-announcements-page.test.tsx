@@ -18,7 +18,7 @@ describe("AdminAnnouncementsPage", () => {
     await renderWithProviders(<AdminAnnouncementsPage />, {
       contestMetadata,
       adminDashboard: {
-        data: { contest: { announcements } },
+        contest: { announcements },
       },
     } as any);
 

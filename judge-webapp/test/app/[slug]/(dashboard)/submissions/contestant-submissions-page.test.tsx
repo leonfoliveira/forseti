@@ -25,10 +25,8 @@ describe("ContestantSubmissionsPage", () => {
     await renderWithProviders(<ContestantSubmissionsPage />, {
       contestMetadata,
       contestantDashboard: {
-        data: {
-          contest: { problems, languages },
-          submissions,
-        },
+        contest: { problems, languages },
+        submissions,
       },
     } as any);
 
