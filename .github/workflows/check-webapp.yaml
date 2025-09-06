@@ -2,6 +2,9 @@ name: Check Webapp
 
 on:
   pull_request:
+    paths:
+      - "judge-webapp/**"
+      - ".github/workflows/check-webapp.yaml"
 
 jobs:
   check-webapp:
@@ -12,10 +15,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: "npm"
@@ -24,14 +27,15 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Lint
-        run: npm run lint
+      - name: Run checks in parallel
+        run: |
+          # Run lint, i18n checks, and tests in parallel
+          npm run lint &
+          npm run i18n:check && npm run i18n:verify &
+          npm run test:coverage &
 
-      - name: I18n
-        run: npm run i18n:check && npm run i18n:verify
-
-      - name: Test
-        run: npm run test:coverage
+          # Wait for all checks to complete
+          wait
 
       - name: Build
         run: npm run build

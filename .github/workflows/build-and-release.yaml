@@ -16,7 +16,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up Docker layer caching
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-release-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-release-
 
       - name: Get tag name
         id: vars
@@ -30,10 +38,20 @@ jobs:
 
       - name: Build images
         run: |
-          docker buildx build --cache-from=type=gha --cache-to=type=gha,mode=max -t judge-api:${{ steps.vars.outputs.tag }} -f ../../judge-backend/api.Dockerfile ../../judge-backend --load
-          docker buildx build --cache-from=type=gha --cache-to=type=gha,mode=max -t judge-autojudge:${{ steps.vars.outputs.tag }} -f ../../judge-backend/autojudge.Dockerfile ../../judge-backend --load
-          docker buildx build --cache-from=type=gha --cache-to=type=gha,mode=max -t judge-webapp:${{ steps.vars.outputs.tag }} ../../judge-webapp --load
-          docker buildx build --cache-from=type=gha --cache-to=type=gha,mode=max -t judge-autoscaler:${{ steps.vars.outputs.tag }} ../../judge-autoscaler --load
+          # Build all images in parallel with enhanced caching
+          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-api:${{ steps.vars.outputs.tag }} -f ../../judge-backend/api.Dockerfile ../../judge-backend --load &
+          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-autojudge:${{ steps.vars.outputs.tag }} -f ../../judge-backend/autojudge.Dockerfile ../../judge-backend --load &
+          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-webapp:${{ steps.vars.outputs.tag }} ../../judge-webapp --load &
+          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-autoscaler:${{ steps.vars.outputs.tag }} ../../judge-autoscaler --load &
+
+          # Wait for all builds to complete
+          wait
+
+          # Update cache
+          if [ -d "/tmp/.buildx-cache-new" ]; then
+            rm -rf /tmp/.buildx-cache
+            mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          fi
 
       - name: Tag images
         run: |
@@ -62,9 +80,9 @@ jobs:
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autoscaler:latest
 
       - name: Set up Python for CLI build
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.13.5
+          python-version: "3.13"
           cache: "pip"
           cache-dependency-path: judge-cli/requirements.txt
 

@@ -47,6 +47,27 @@ jobs:
           repository: ${{ steps.pr.outputs.repo }}
           ref: ${{ steps.pr.outputs.sha }}
 
+      - name: Detect changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            backend: 'judge-backend/**'
+            webapp: 'judge-webapp/**'
+            cli: 'judge-cli/**'
+            autoscaler: 'judge-autoscaler/**'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up Docker layer caching
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -54,17 +75,55 @@ jobs:
           cache: "npm"
           cache-dependency-path: regression/package.json
 
+      - name: Install regression test dependencies
+        run: |
+          cd regression
+          npm ci
+
       - name: Build test environment
         run: |
-          docker build -t judge-api:latest -f judge-backend/api.Dockerfile judge-backend &
-          docker build -t judge-autojudge:latest -f judge-backend/autojudge.Dockerfile judge-backend &
-          docker build -t judge-webapp:latest judge-webapp &
-          docker build -t judge-autoscaler:latest judge-autoscaler &
-          (cd judge-cli && make build) &
+          # Use Docker Buildx with caching for better performance
+          if [ "${{ steps.changes.outputs.backend }}" == "true" ]; then
+            docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-api:latest -f judge-backend/api.Dockerfile judge-backend &
+            docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-autojudge:latest -f judge-backend/autojudge.Dockerfile judge-backend &
+          else
+            echo "Skipping backend builds - no changes detected"
+          fi
+          
+          if [ "${{ steps.changes.outputs.webapp }}" == "true" ]; then
+            docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-webapp:latest judge-webapp &
+          else
+            echo "Skipping webapp build - no changes detected"
+          fi
+          
+          if [ "${{ steps.changes.outputs.autoscaler }}" == "true" ]; then
+            docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-autoscaler:latest judge-autoscaler &
+          else
+            echo "Skipping autoscaler build - no changes detected"
+          fi
+          
+          if [ "${{ steps.changes.outputs.cli }}" == "true" ]; then
+            (cd judge-cli && make build) &
+          else
+            echo "Skipping CLI build - no changes detected"
+            # Still need to copy existing binary if it exists
+            mkdir -p judge-cli/dist
+            if [ ! -f judge-cli/dist/judge ]; then
+              echo "Warning: No CLI binary found, building anyway"
+              (cd judge-cli && make build) &
+            fi
+          fi
+          
+          # Wait for all background jobs to complete
           wait
+          
+          # Move cache to avoid growing cache size
+          if [ -d "/tmp/.buildx-cache-new" ]; then
+            rm -rf /tmp/.buildx-cache
+            mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          fi
+          
           cp judge-cli/dist/judge docker/test/judge
-
-      - name: Install regression test dependencies
         run: |
           cd regression
           npm ci
