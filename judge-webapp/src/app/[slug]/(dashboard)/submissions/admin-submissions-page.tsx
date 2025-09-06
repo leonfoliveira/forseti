@@ -5,13 +5,13 @@ import { useAppSelector } from "@/store/store";
 
 export function AdminSubmissionsPage() {
   const submissions = useAppSelector(
-    (state) => state.adminDashboard.data!.submissions,
+    (state) => state.adminDashboard.submissions,
   );
   const problems = useAppSelector(
-    (state) => state.adminDashboard.data!.contest.problems,
+    (state) => state.adminDashboard.contest.problems,
   );
   const languages = useAppSelector(
-    (state) => state.adminDashboard.data!.contest.languages,
+    (state) => state.adminDashboard.contest.languages,
   );
 
   return (

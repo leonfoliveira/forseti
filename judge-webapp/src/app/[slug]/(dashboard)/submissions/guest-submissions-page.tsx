@@ -5,7 +5,7 @@ import { useAppSelector } from "@/store/store";
 
 export function GuestSubmissionsPage() {
   const submissions = useAppSelector(
-    (state) => state.guestDashboard.data!.submissions,
+    (state) => state.guestDashboard.submissions,
   );
 
   return <SubmissionsPage submissions={submissions} />;

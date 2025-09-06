@@ -25,10 +25,8 @@ describe("AdminSubmissionsPage", () => {
     await renderWithProviders(<AdminSubmissionsPage />, {
       contestMetadata,
       adminDashboard: {
-        data: {
-          contest: { problems, languages },
-          submissions,
-        },
+        contest: { problems, languages },
+        submissions,
       },
     } as any);
 

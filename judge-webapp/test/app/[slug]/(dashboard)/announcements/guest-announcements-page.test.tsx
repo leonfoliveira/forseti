@@ -18,7 +18,7 @@ describe("GuestAnnouncementsPage", () => {
     await renderWithProviders(<GuestAnnouncementsPage />, {
       contestMetadata,
       guestDashboard: {
-        data: { contest: { announcements } },
+        contest: { announcements },
       },
     } as any);
 

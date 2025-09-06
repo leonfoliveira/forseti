@@ -9,12 +9,12 @@ type Props = React.HtmlHTMLAttributes<HTMLSpanElement> & {
 };
 
 export function CountdownClock({ to, onZero, ...props }: Props) {
-  const [ms, setMs] = useState<number>(
-    Math.max(0, to.getTime() - new Date().getTime()),
-  );
+  const [ms, setMs] = useState<number | undefined>();
   const interval = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    setMs(Math.max(0, to.getTime() - new Date().getTime()));
+
     interval.current = setInterval(() => {
       const diff = to.getTime() - new Date().getTime();
       if (diff === 0) {
@@ -29,7 +29,7 @@ export function CountdownClock({ to, onZero, ...props }: Props) {
     };
   }, [to]);
 
-  return (
+  return ms !== undefined ? (
     <span
       data-testid="clock"
       {...props}
@@ -37,5 +37,7 @@ export function CountdownClock({ to, onZero, ...props }: Props) {
     >
       <FormattedDuration ms={ms} />
     </span>
+  ) : (
+    <span />
   );
 }

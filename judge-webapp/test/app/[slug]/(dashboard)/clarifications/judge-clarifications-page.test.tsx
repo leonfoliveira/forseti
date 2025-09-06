@@ -23,7 +23,7 @@ describe("JudgeClarificationsPage", () => {
     await renderWithProviders(<JudgeClarificationsPage />, {
       contestMetadata,
       judgeDashboard: {
-        data: { contest: { problems, clarifications } },
+        contest: { problems, clarifications },
       },
     } as any);
 

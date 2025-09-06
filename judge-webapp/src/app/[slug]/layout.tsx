@@ -41,6 +41,7 @@ export default async function ContestLayout({
     if (error instanceof NotFoundException) {
       return notFound();
     }
+    console.error("Error while fetching contest data: ", error);
     throw error;
   }
 }

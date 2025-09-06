@@ -17,16 +17,12 @@ import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/subm
 import { defineMessages } from "@/i18n/message";
 import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";
-import { useErrorHandler } from "@/lib/util/error-handler-hook";
+import { useLoadableState } from "@/lib/util/loadable-state";
 import { useToast } from "@/lib/util/toast-hook";
 import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
 const messages = defineMessages({
-  loadError: {
-    id: "lib.provider.guest-dashboard-provider.load-error",
-    defaultMessage: "Error loading contest data",
-  },
   announcement: {
     id: "lib.provider.guest-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
@@ -38,13 +34,14 @@ export function GuestDashboardProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const authorization = useAppSelector((state) => state.authorization);
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
-  const { isLoading, error } = useAppSelector((state) => state.guestDashboard);
+  const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
-  const errorHandler = useErrorHandler();
   const toast = useToast();
 
   useEffect(() => {
+    state.start();
     const listenerClient = listenerClientFactory.create();
 
     async function fetch() {
@@ -85,17 +82,15 @@ export function GuestDashboardProvider({
         ]);
 
         dispatch(
-          guestDashboardSlice.actions.success({
+          guestDashboardSlice.actions.set({
             contest: data[0],
             leaderboard: data[1],
             submissions: data[2],
           }),
         );
+        state.finish();
       } catch (error) {
-        errorHandler.handle(error as Error, {
-          default: () =>
-            dispatch(guestDashboardSlice.actions.fail(error as Error)),
-        });
+        state.fail(error as Error);
       }
     }
 
@@ -104,7 +99,7 @@ export function GuestDashboardProvider({
     return () => {
       listenerClient.disconnect();
     };
-  }, []);
+  }, [authorization, contestMetadata.id]);
 
   function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
     dispatch(guestDashboardSlice.actions.setLeaderboard(leaderboard));
@@ -130,10 +125,10 @@ export function GuestDashboardProvider({
     dispatch(guestDashboardSlice.actions.deleteClarification(id));
   }
 
-  if (isLoading) {
+  if (state.isLoading) {
     return <LoadingPage />;
   }
-  if (error) {
+  if (state.error) {
     return <ErrorPage />;
   }
 

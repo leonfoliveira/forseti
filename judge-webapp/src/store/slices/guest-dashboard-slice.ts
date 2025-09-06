@@ -8,66 +8,40 @@ import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/subm
 import { findClarification } from "@/store/util/clarification-finder";
 import { mergeEntity } from "@/store/util/entity-util";
 
-type DataType = {
+type StateType = {
   contest: ContestPublicResponseDTO;
   leaderboard: LeaderboardResponseDTO;
   submissions: SubmissionPublicResponseDTO[];
 };
-type StateType =
-  | {
-      isLoading: true;
-      error: null;
-      data: null;
-    }
-  | { isLoading: false; error: string; data: null }
-  | {
-      isLoading: false;
-      error: null;
-      data: DataType;
-    };
 
 export const guestDashboardSlice = createSlice({
   name: "guestDashboard",
-  initialState: {
-    isLoading: true,
-    error: null,
-    data: null,
-  } as StateType,
+  initialState: null as unknown as StateType,
   reducers: {
-    success(state, action: { payload: DataType }) {
-      state.isLoading = false;
-      state.error = null;
-      state.data = action.payload;
-    },
-    fail(state, action: { payload: Error }) {
-      state.isLoading = false;
-      state.error = action.payload.name;
-      state.data = null;
+    set(state, action: { payload: StateType }) {
+      return action.payload;
     },
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
-      state.data!.leaderboard = action.payload;
+      state.leaderboard = action.payload;
     },
     mergeSubmission(state, action: { payload: SubmissionPublicResponseDTO }) {
-      state.data!.submissions = mergeEntity(
-        state.data!.submissions,
-        action.payload,
-      );
+      state.submissions = mergeEntity(state.submissions, action.payload);
     },
     mergeAnnouncement(state, action: { payload: AnnouncementResponseDTO }) {
-      state.data!.contest.announcements = mergeEntity(
-        state.data!.contest.announcements,
+      state.contest.announcements = mergeEntity(
+        state.contest.announcements,
         action.payload,
       );
     },
     mergeClarification(state, action: { payload: ClarificationResponseDTO }) {
       if (!action.payload.parentId) {
-        state.data!.contest.clarifications = mergeEntity(
-          state.data!.contest.clarifications,
+        state.contest.clarifications = mergeEntity(
+          state.contest.clarifications,
           action.payload,
         );
       } else {
         const parent = findClarification(
-          state.data!.contest.clarifications,
+          state.contest.clarifications,
           action.payload.parentId,
         );
         if (parent) {
@@ -76,10 +50,9 @@ export const guestDashboardSlice = createSlice({
       }
     },
     deleteClarification(state, action: { payload: string }) {
-      state.data!.contest.clarifications =
-        state.data!.contest.clarifications.filter(
-          (clarification) => clarification.id !== action.payload,
-        );
+      state.contest.clarifications = state.contest.clarifications.filter(
+        (clarification) => clarification.id !== action.payload,
+      );
     },
   },
 });

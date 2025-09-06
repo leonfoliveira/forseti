@@ -18,16 +18,12 @@ import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submis
 import { defineMessages } from "@/i18n/message";
 import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";
-import { useErrorHandler } from "@/lib/util/error-handler-hook";
+import { useLoadableState } from "@/lib/util/loadable-state";
 import { useToast } from "@/lib/util/toast-hook";
 import { adminDashboardSlice } from "@/store/slices/admin-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
 const messages = defineMessages({
-  loadError: {
-    id: "lib.provider.admin-dashboard-provider.load-error",
-    defaultMessage: "Error loading contest data",
-  },
   submissionFailed: {
     id: "lib.provider.admin-dashboard-provider.submission-failed",
     defaultMessage: "New failed submission",
@@ -49,12 +45,12 @@ export function AdminDashboardProvider({
 }) {
   const authorization = useAppSelector((state) => state.authorization);
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
-  const { isLoading, error } = useAppSelector((state) => state.adminDashboard);
+  const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
-  const errorHandler = useErrorHandler();
   const toast = useToast();
 
   useEffect(() => {
+    state.start();
     const listenerClient = listenerClientFactory.create();
 
     async function fetch() {
@@ -95,17 +91,15 @@ export function AdminDashboardProvider({
         ]);
 
         dispatch(
-          adminDashboardSlice.actions.success({
+          adminDashboardSlice.actions.set({
             contest: data[0],
             leaderboard: data[1],
             submissions: data[2],
           }),
         );
+        state.finish();
       } catch (error) {
-        errorHandler.handle(error as Error, {
-          default: () =>
-            dispatch(adminDashboardSlice.actions.fail(error as Error)),
-        });
+        state.fail(error as Error);
       }
     }
 
@@ -114,7 +108,7 @@ export function AdminDashboardProvider({
     return () => {
       listenerClient.disconnect();
     };
-  }, []);
+  }, [authorization, contestMetadata.id]);
 
   function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
     dispatch(adminDashboardSlice.actions.setLeaderboard(leaderboard));
@@ -150,10 +144,10 @@ export function AdminDashboardProvider({
     dispatch(adminDashboardSlice.actions.deleteClarification(id));
   }
 
-  if (isLoading) {
+  if (state.isLoading) {
     return <LoadingPage />;
   }
-  if (error) {
+  if (state.error) {
     return <ErrorPage />;
   }
 

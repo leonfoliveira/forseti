@@ -8,10 +8,10 @@ import { useAppSelector } from "@/store/store";
 export function GuestClarificationsPage() {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
   const problems = useAppSelector(
-    (state) => state.guestDashboard.data!.contest.problems,
+    (state) => state.guestDashboard.contest.problems,
   );
   const clarifications = useAppSelector(
-    (state) => state.guestDashboard.data!.contest.clarifications,
+    (state) => state.guestDashboard.contest.clarifications,
   );
 
   return (

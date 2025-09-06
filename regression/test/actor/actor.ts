@@ -22,6 +22,7 @@ export class Actor {
     await this.page.getByRole("button", { name: "Sign in" }).click();
 
     await expect(this.page).toHaveURL(`/${this.slug}/leaderboard`);
+    await this.page.reload();
   }
 
   async signOut() {

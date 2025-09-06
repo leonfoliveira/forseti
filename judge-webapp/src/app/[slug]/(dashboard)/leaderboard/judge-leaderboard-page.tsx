@@ -5,10 +5,10 @@ import { useAppSelector } from "@/store/store";
 
 export function JudgeLeaderboardPage() {
   const problems = useAppSelector(
-    (state) => state.judgeDashboard.data!.contest.problems,
+    (state) => state.judgeDashboard.contest.problems,
   );
   const leaderboard = useAppSelector(
-    (state) => state.judgeDashboard.data!.leaderboard,
+    (state) => state.judgeDashboard.leaderboard,
   );
 
   return <LeaderboardPage problems={problems} leaderboard={leaderboard} />;

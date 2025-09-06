@@ -21,7 +21,8 @@ describe("ContestantProblemsPage", () => {
       contestMetadata,
       authorization: { member: { id: leaderboard.members[0].id } },
       contestantDashboard: {
-        data: { contest: { problems }, leaderboard },
+        contest: { problems },
+        leaderboard,
       },
     } as any);
 

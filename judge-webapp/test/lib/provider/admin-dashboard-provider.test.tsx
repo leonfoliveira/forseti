@@ -105,9 +105,7 @@ describe("AdminDashboardProvider", () => {
     );
 
     const state = store.getState().adminDashboard;
-    expect(state.isLoading).toBe(false);
-    expect(state.error).toBeNull();
-    expect(state.data).toEqual({
+    expect(state).toEqual({
       contest,
       leaderboard,
       submissions,
@@ -128,9 +126,7 @@ describe("AdminDashboardProvider", () => {
     );
 
     const state = store.getState().adminDashboard;
-    expect(state.isLoading).toBe(false);
-    expect(state.error).toBe(error.name);
-    expect(state.data).toBeNull();
+    expect(state).toBeNull();
 
     expect(screen.queryByTestId("error-page")).toBeInTheDocument();
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
@@ -150,9 +146,7 @@ describe("AdminDashboardProvider", () => {
         leaderboardListener.subscribeForLeaderboard as jest.Mock
       ).mock.calls[0][2](otherLeaderboard);
     });
-    expect(store.getState().adminDashboard.data?.leaderboard).toBe(
-      otherLeaderboard,
-    );
+    expect(store.getState().adminDashboard.leaderboard).toBe(otherLeaderboard);
   });
 
   it("should handle submissions updates", async () => {
@@ -169,7 +163,7 @@ describe("AdminDashboardProvider", () => {
         submissionListener.subscribeForContestFull as jest.Mock
       ).mock.calls[0][2](otherSubmission);
     });
-    expect(store.getState().adminDashboard.data?.submissions).toContain(
+    expect(store.getState().adminDashboard.submissions).toContain(
       otherSubmission,
     );
   });
@@ -209,9 +203,9 @@ describe("AdminDashboardProvider", () => {
         otherAnnouncement,
       );
     });
-    expect(
-      store.getState().adminDashboard.data?.contest.announcements,
-    ).toContain(otherAnnouncement);
+    expect(store.getState().adminDashboard.contest.announcements).toContain(
+      otherAnnouncement,
+    );
   });
 
   it("should show a toast for announcements not owned by member", async () => {
@@ -250,7 +244,7 @@ describe("AdminDashboardProvider", () => {
       );
     });
     expect(
-      store.getState().adminDashboard.data?.contest.clarifications[0].children,
+      store.getState().adminDashboard.contest.clarifications[0].children,
     ).toContain(otherClarification);
   });
 
@@ -286,8 +280,8 @@ describe("AdminDashboardProvider", () => {
         clarificationListener.subscribeForContestDeleted as jest.Mock
       ).mock.calls[0][2]({ id: contest.clarifications[0].id });
     });
-    expect(
-      store.getState().adminDashboard.data?.contest.clarifications,
-    ).toHaveLength(0);
+    expect(store.getState().adminDashboard.contest.clarifications).toHaveLength(
+      0,
+    );
   });
 });

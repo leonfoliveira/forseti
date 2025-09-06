@@ -7,7 +7,7 @@ import { useAppSelector } from "@/store/store";
 
 export function GuestProblemsPage() {
   const problems = useAppSelector(
-    (state) => state.guestDashboard.data!.contest.problems,
+    (state) => state.guestDashboard.contest.problems,
   );
 
   return <ProblemsPage problems={problems} />;

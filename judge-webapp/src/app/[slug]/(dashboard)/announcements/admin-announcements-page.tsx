@@ -8,7 +8,7 @@ import { useAppSelector } from "@/store/store";
 export function AdminAnnouncementsPage() {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
   const announcements = useAppSelector(
-    (state) => state.adminDashboard.data!.contest.announcements,
+    (state) => state.adminDashboard.contest.announcements,
   );
 
   return (

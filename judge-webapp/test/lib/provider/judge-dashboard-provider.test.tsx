@@ -103,9 +103,7 @@ describe("JudgeDashboardProvider", () => {
     );
 
     const state = store.getState().judgeDashboard;
-    expect(state.isLoading).toBe(false);
-    expect(state.error).toBeNull();
-    expect(state.data).toEqual({
+    expect(state).toEqual({
       contest,
       leaderboard,
       submissions,
@@ -126,9 +124,7 @@ describe("JudgeDashboardProvider", () => {
     );
 
     const state = store.getState().judgeDashboard;
-    expect(state.isLoading).toBe(false);
-    expect(state.error).toBe(error.name);
-    expect(state.data).toBeNull();
+    expect(state).toBeNull();
 
     expect(screen.queryByTestId("error-page")).toBeInTheDocument();
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
@@ -148,9 +144,7 @@ describe("JudgeDashboardProvider", () => {
         leaderboardListener.subscribeForLeaderboard as jest.Mock
       ).mock.calls[0][2](otherLeaderboard);
     });
-    expect(store.getState().judgeDashboard.data?.leaderboard).toBe(
-      otherLeaderboard,
-    );
+    expect(store.getState().judgeDashboard.leaderboard).toBe(otherLeaderboard);
   });
 
   it("should handle submissions updates", async () => {
@@ -167,7 +161,7 @@ describe("JudgeDashboardProvider", () => {
         submissionListener.subscribeForContestFull as jest.Mock
       ).mock.calls[0][2](otherSubmission);
     });
-    expect(store.getState().judgeDashboard.data?.submissions).toContain(
+    expect(store.getState().judgeDashboard.submissions).toContain(
       otherSubmission,
     );
   });
@@ -207,9 +201,9 @@ describe("JudgeDashboardProvider", () => {
         otherAnnouncement,
       );
     });
-    expect(
-      store.getState().judgeDashboard.data?.contest.announcements,
-    ).toContain(otherAnnouncement);
+    expect(store.getState().judgeDashboard.contest.announcements).toContain(
+      otherAnnouncement,
+    );
   });
 
   it("should show a toast for announcements not owned by member", async () => {
@@ -248,7 +242,7 @@ describe("JudgeDashboardProvider", () => {
       );
     });
     expect(
-      store.getState().judgeDashboard.data?.contest.clarifications[0].children,
+      store.getState().judgeDashboard.contest.clarifications[0].children,
     ).toContain(otherClarification);
   });
 
@@ -284,8 +278,8 @@ describe("JudgeDashboardProvider", () => {
         clarificationListener.subscribeForContestDeleted as jest.Mock
       ).mock.calls[0][2]({ id: contest.clarifications[0].id });
     });
-    expect(
-      store.getState().judgeDashboard.data?.contest.clarifications,
-    ).toHaveLength(0);
+    expect(store.getState().judgeDashboard.contest.clarifications).toHaveLength(
+      0,
+    );
   });
 });

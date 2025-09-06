@@ -98,9 +98,7 @@ describe("GuestDashboardProvider", () => {
     );
 
     const state = store.getState().guestDashboard;
-    expect(state.isLoading).toBe(false);
-    expect(state.error).toBeNull();
-    expect(state.data).toEqual({
+    expect(state).toEqual({
       contest,
       leaderboard,
       submissions,
@@ -121,9 +119,7 @@ describe("GuestDashboardProvider", () => {
     );
 
     const state = store.getState().guestDashboard;
-    expect(state.isLoading).toBe(false);
-    expect(state.error).toBe(error.name);
-    expect(state.data).toBeNull();
+    expect(state).toBeNull();
 
     expect(screen.queryByTestId("error-page")).toBeInTheDocument();
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
@@ -143,9 +139,7 @@ describe("GuestDashboardProvider", () => {
         leaderboardListener.subscribeForLeaderboard as jest.Mock
       ).mock.calls[0][2](otherLeaderboard);
     });
-    expect(store.getState().guestDashboard.data?.leaderboard).toBe(
-      otherLeaderboard,
-    );
+    expect(store.getState().guestDashboard.leaderboard).toBe(otherLeaderboard);
   });
 
   it("should handle submissions updates", async () => {
@@ -162,7 +156,7 @@ describe("GuestDashboardProvider", () => {
         otherSubmission,
       );
     });
-    expect(store.getState().guestDashboard.data?.submissions).toContain(
+    expect(store.getState().guestDashboard.submissions).toContain(
       otherSubmission,
     );
   });
@@ -181,9 +175,9 @@ describe("GuestDashboardProvider", () => {
         otherAnnouncement,
       );
     });
-    expect(
-      store.getState().guestDashboard.data?.contest.announcements,
-    ).toContain(otherAnnouncement);
+    expect(store.getState().guestDashboard.contest.announcements).toContain(
+      otherAnnouncement,
+    );
     expect(useToast().warning).toHaveBeenCalled();
   });
 
@@ -204,7 +198,7 @@ describe("GuestDashboardProvider", () => {
       );
     });
     expect(
-      store.getState().guestDashboard.data?.contest.clarifications[0].children,
+      store.getState().guestDashboard.contest.clarifications[0].children,
     ).toContain(otherClarification);
   });
 
@@ -221,8 +215,8 @@ describe("GuestDashboardProvider", () => {
         clarificationListener.subscribeForContestDeleted as jest.Mock
       ).mock.calls[0][2]({ id: contest.clarifications[0].id });
     });
-    expect(
-      store.getState().guestDashboard.data?.contest.clarifications,
-    ).toHaveLength(0);
+    expect(store.getState().guestDashboard.contest.clarifications).toHaveLength(
+      0,
+    );
   });
 });

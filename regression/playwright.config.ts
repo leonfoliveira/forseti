@@ -23,6 +23,10 @@ export default defineConfig({
   workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",
+  /* Global setup to start Docker containers and wait for webapp health */
+  globalSetup: require.resolve("./setup.ts"),
+  /* Global teardown to stop Docker containers */
+  globalTeardown: require.resolve("./teardown.ts"),
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   timeout: 120_000, // Set a global timeout of 120 seconds
   expect: {
@@ -88,12 +92,4 @@ export default defineConfig({
     //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     // },
   ],
-
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: "docker compose -f ../docker/test/docker-compose.yaml up -d",
-    url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-    timeout: 60 * 1000, // 1 minute timeout for startup
-  },
 });

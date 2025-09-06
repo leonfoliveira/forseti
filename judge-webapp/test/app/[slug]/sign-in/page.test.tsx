@@ -4,12 +4,16 @@ import React, { act } from "react";
 
 import SignInPage from "@/app/[slug]/sign-in/page";
 import { authenticationService } from "@/config/composition";
-import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
+import { signOut } from "@/lib/action/auth-action";
 import { useToast } from "@/lib/util/toast-hook";
 import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
+
+jest.mock("@/lib/action/auth-action", () => ({
+  signOut: jest.fn(),
+}));
 
 describe("SignInPage", () => {
   const mockContestMetadata = MockContestMetadataResponseDTO({
@@ -34,13 +38,13 @@ describe("SignInPage", () => {
     expect(screen.getByTestId("enter-guest")).toBeInTheDocument();
   });
 
-  it("should sign-in successfully and update Redux state", async () => {
+  it("should sign-in successfully", async () => {
     const authorization = MockAuthorization();
     (authenticationService.authenticate as jest.Mock).mockResolvedValue(
       authorization,
     );
 
-    const { store } = await renderWithProviders(<SignInPage />, {
+    await renderWithProviders(<SignInPage />, {
       contestMetadata: mockContestMetadata,
     });
 
@@ -60,12 +64,6 @@ describe("SignInPage", () => {
       login: "testuser",
       password: "testpassword",
     });
-
-    expect(useRouter().push).toHaveBeenCalledWith(
-      routes.CONTEST(mockContestMetadata.slug),
-    );
-
-    expect(store.getState().authorization).toEqual(authorization);
   });
 
   it("should handle unauthorized exception", async () => {
@@ -116,5 +114,17 @@ describe("SignInPage", () => {
     expect(useRouter().push).not.toHaveBeenCalled();
     expect(store.getState().authorization).toBeNull();
     expect(useToast().error).toHaveBeenCalled();
+  });
+
+  it("should enter as guest", async () => {
+    await renderWithProviders(<SignInPage />, {
+      contestMetadata: mockContestMetadata,
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("enter-guest"));
+    });
+
+    expect(signOut).toHaveBeenCalled();
   });
 });

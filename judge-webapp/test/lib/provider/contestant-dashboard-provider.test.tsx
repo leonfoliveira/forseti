@@ -126,9 +126,7 @@ describe("ContestantDashboardProvider", () => {
     );
 
     const state = store.getState().contestantDashboard;
-    expect(state.isLoading).toBe(false);
-    expect(state.error).toBeNull();
-    expect(state.data).toEqual({
+    expect(state).toEqual({
       contest,
       leaderboard,
       submissions,
@@ -150,9 +148,7 @@ describe("ContestantDashboardProvider", () => {
     );
 
     const state = store.getState().contestantDashboard;
-    expect(state.isLoading).toBe(false);
-    expect(state.error).toBe(error.name);
-    expect(state.data).toBeNull();
+    expect(state).toBeNull();
 
     expect(screen.queryByTestId("error-page")).toBeInTheDocument();
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
@@ -172,7 +168,7 @@ describe("ContestantDashboardProvider", () => {
         leaderboardListener.subscribeForLeaderboard as jest.Mock
       ).mock.calls[0][2](otherLeaderboard);
     });
-    expect(store.getState().contestantDashboard.data?.leaderboard).toBe(
+    expect(store.getState().contestantDashboard.leaderboard).toBe(
       otherLeaderboard,
     );
   });
@@ -191,7 +187,7 @@ describe("ContestantDashboardProvider", () => {
         otherSubmission,
       );
     });
-    expect(store.getState().contestantDashboard.data?.submissions).toContain(
+    expect(store.getState().contestantDashboard.submissions).toContain(
       otherSubmission,
     );
   });
@@ -212,9 +208,9 @@ describe("ContestantDashboardProvider", () => {
         otherSubmission,
       );
     });
-    expect(
-      store.getState().contestantDashboard.data?.memberSubmissions,
-    ).toContain(otherSubmission);
+    expect(store.getState().contestantDashboard.memberSubmissions).toContain(
+      otherSubmission,
+    );
     expect(useToast().success).toHaveBeenCalled();
   });
 
@@ -292,7 +288,7 @@ describe("ContestantDashboardProvider", () => {
       );
     });
     expect(
-      store.getState().contestantDashboard.data?.memberSubmissions,
+      store.getState().contestantDashboard.memberSubmissions,
     ).not.toContain(otherSubmission);
   });
 
@@ -311,7 +307,7 @@ describe("ContestantDashboardProvider", () => {
       );
     });
     expect(
-      store.getState().contestantDashboard.data?.contest.announcements,
+      store.getState().contestantDashboard.contest.announcements,
     ).toContain(otherAnnouncement);
     expect(useToast().warning).toHaveBeenCalled();
   });
@@ -333,8 +329,7 @@ describe("ContestantDashboardProvider", () => {
       );
     });
     expect(
-      store.getState().contestantDashboard.data?.contest.clarifications[0]
-        .children,
+      store.getState().contestantDashboard.contest.clarifications[0].children,
     ).toContain(otherClarification);
   });
 
@@ -368,7 +363,7 @@ describe("ContestantDashboardProvider", () => {
       ).mock.calls[0][2]({ id: contest.clarifications[0].id });
     });
     expect(
-      store.getState().contestantDashboard.data?.contest.clarifications,
+      store.getState().contestantDashboard.contest.clarifications,
     ).toHaveLength(0);
   });
 });

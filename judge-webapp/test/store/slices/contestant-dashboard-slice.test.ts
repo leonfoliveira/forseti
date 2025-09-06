@@ -11,61 +11,12 @@ import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/M
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
 
 describe("contestantDashboardSlice", () => {
-  const initialState = {
-    isLoading: true,
-    error: null,
-    data: null as any,
-  };
-
   const stateWithData = {
-    isLoading: false,
-    error: null,
-    data: {
-      contest: MockContestPublicResponseDTO(),
-      leaderboard: MockLeaderboardResponseDTO(),
-      submissions: [MockSubmissionPublicResponseDTO()],
-      memberSubmissions: [MockSubmissionFullResponseDTO()],
-    } as any,
-  };
-
-  it("should have the correct initial state", () => {
-    const state = contestantDashboardSlice.reducer(undefined, {
-      type: "@@INIT",
-    });
-    expect(state.isLoading).toBe(true);
-    expect(state.error).toBe(null);
-    expect(state.data).toBe(null);
-  });
-
-  it("should set loading to false and store data on success", () => {
-    const dashboardData = {
-      contest: MockContestPublicResponseDTO(),
-      leaderboard: MockLeaderboardResponseDTO(),
-      submissions: [MockSubmissionPublicResponseDTO()],
-      memberSubmissions: [MockSubmissionFullResponseDTO()],
-    };
-
-    const state = contestantDashboardSlice.reducer(
-      initialState,
-      contestantDashboardSlice.actions.success(dashboardData),
-    );
-
-    expect(state.isLoading).toBe(false);
-    expect(state.error).toBe(null);
-    expect(state.data).toEqual(dashboardData);
-  });
-
-  it("should set error and clear data on fail", () => {
-    const error = new Error("Failed to load dashboard");
-    const state = contestantDashboardSlice.reducer(
-      initialState,
-      contestantDashboardSlice.actions.fail(error),
-    );
-
-    expect(state.isLoading).toBe(false);
-    expect(state.error).toBe(error.name);
-    expect(state.data).toBe(null);
-  });
+    contest: MockContestPublicResponseDTO(),
+    leaderboard: MockLeaderboardResponseDTO(),
+    submissions: [MockSubmissionPublicResponseDTO()],
+    memberSubmissions: [MockSubmissionFullResponseDTO()],
+  } as any;
 
   it("should set the leaderboard", () => {
     const newLeaderboard = MockLeaderboardResponseDTO();
@@ -75,7 +26,7 @@ describe("contestantDashboardSlice", () => {
       contestantDashboardSlice.actions.setLeaderboard(newLeaderboard),
     );
 
-    expect(state.data!.leaderboard).toEqual(newLeaderboard);
+    expect(state.leaderboard).toEqual(newLeaderboard);
   });
 
   it("should merge a new submission", () => {
@@ -86,13 +37,13 @@ describe("contestantDashboardSlice", () => {
       contestantDashboardSlice.actions.mergeSubmission(newSubmission),
     );
 
-    expect(state.data!.submissions).toHaveLength(2);
-    expect(state.data!.submissions).toContainEqual(newSubmission);
+    expect(state.submissions).toHaveLength(2);
+    expect(state.submissions).toContainEqual(newSubmission);
   });
 
   it("should update an existing submission when merging", () => {
     const updatedSubmission: SubmissionPublicResponseDTO = {
-      ...stateWithData.data!.submissions[0],
+      ...stateWithData.submissions[0],
       status: SubmissionStatus.JUDGED,
       answer: SubmissionAnswer.WRONG_ANSWER,
     };
@@ -102,8 +53,8 @@ describe("contestantDashboardSlice", () => {
       contestantDashboardSlice.actions.mergeSubmission(updatedSubmission),
     );
 
-    expect(state.data!.submissions).toHaveLength(1);
-    expect(state.data!.submissions[0]).toEqual(updatedSubmission);
+    expect(state.submissions).toHaveLength(1);
+    expect(state.submissions[0]).toEqual(updatedSubmission);
   });
 
   it("should merge a new member submission", () => {
@@ -116,13 +67,13 @@ describe("contestantDashboardSlice", () => {
       ),
     );
 
-    expect(state.data!.memberSubmissions).toHaveLength(2);
-    expect(state.data!.memberSubmissions).toContainEqual(newMemberSubmission);
+    expect(state.memberSubmissions).toHaveLength(2);
+    expect(state.memberSubmissions).toContainEqual(newMemberSubmission);
   });
 
   it("should update an existing member submission when merging", () => {
     const updatedMemberSubmission: SubmissionFullResponseDTO = {
-      ...stateWithData.data!.memberSubmissions[0],
+      ...stateWithData.memberSubmissions[0],
       answer: SubmissionAnswer.ACCEPTED,
     };
 
@@ -133,8 +84,8 @@ describe("contestantDashboardSlice", () => {
       ),
     );
 
-    expect(state.data!.memberSubmissions).toHaveLength(1);
-    expect(state.data!.memberSubmissions[0]).toEqual(updatedMemberSubmission);
+    expect(state.memberSubmissions).toHaveLength(1);
+    expect(state.memberSubmissions[0]).toEqual(updatedMemberSubmission);
   });
 
   it("should merge a new announcement", () => {
@@ -145,8 +96,8 @@ describe("contestantDashboardSlice", () => {
       contestantDashboardSlice.actions.mergeAnnouncement(newAnnouncement),
     );
 
-    expect(state.data!.contest.announcements).toHaveLength(2);
-    expect(state.data!.contest.announcements).toContainEqual(newAnnouncement);
+    expect(state.contest.announcements).toHaveLength(2);
+    expect(state.contest.announcements).toContainEqual(newAnnouncement);
   });
 
   it("should merge a new root clarification", () => {
@@ -159,15 +110,13 @@ describe("contestantDashboardSlice", () => {
       contestantDashboardSlice.actions.mergeClarification(mockClarification),
     );
 
-    expect(state.data!.contest.clarifications).toHaveLength(2);
-    expect(state.data!.contest.clarifications).toContainEqual(
-      mockClarification,
-    );
+    expect(state.contest.clarifications).toHaveLength(2);
+    expect(state.contest.clarifications).toContainEqual(mockClarification);
   });
 
   it("should merge a child clarification to the correct parent", () => {
     const mockClarification = MockClarificationResponseDTO({
-      parentId: stateWithData.data!.contest.clarifications[0]?.id,
+      parentId: stateWithData.contest.clarifications[0]?.id,
     });
 
     const state = contestantDashboardSlice.reducer(
@@ -175,9 +124,9 @@ describe("contestantDashboardSlice", () => {
       contestantDashboardSlice.actions.mergeClarification(mockClarification),
     );
 
-    expect(state.data!.contest.clarifications).toHaveLength(1);
-    expect(state.data!.contest.clarifications[0].children).toHaveLength(1);
-    expect(state.data!.contest.clarifications[0].children[0]).toEqual(
+    expect(state.contest.clarifications).toHaveLength(1);
+    expect(state.contest.clarifications[0].children).toHaveLength(1);
+    expect(state.contest.clarifications[0].children[0]).toEqual(
       mockClarification,
     );
   });
@@ -186,10 +135,10 @@ describe("contestantDashboardSlice", () => {
     const state = contestantDashboardSlice.reducer(
       stateWithData,
       contestantDashboardSlice.actions.deleteClarification(
-        stateWithData.data!.contest.clarifications[0].id,
+        stateWithData.contest.clarifications[0].id,
       ),
     );
 
-    expect(state.data!.contest.clarifications).toHaveLength(0);
+    expect(state.contest.clarifications).toHaveLength(0);
   });
 });
