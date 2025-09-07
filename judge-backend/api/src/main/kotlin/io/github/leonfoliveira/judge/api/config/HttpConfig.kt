@@ -2,9 +2,8 @@ package io.github.leonfoliveira.judge.api.config
 
 import io.github.leonfoliveira.judge.api.security.http.HttpAuthExtractionFilter
 import io.github.leonfoliveira.judge.api.security.http.HttpPrivateInterceptor
+import io.github.leonfoliveira.judge.api.security.http.HttpRateLimitInterceptor
 import io.github.leonfoliveira.judge.common.util.SkipCoverage
-import io.github.leonfoliveira.judge.api.security.http.RateLimitInterceptor
-import io.github.leonfoliveira.judge.common.util.GeneratedSkipCoverage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,7 +25,7 @@ class HttpConfig(
     val allowedOrigins: String,
     private val httpAuthExtractionFilter: HttpAuthExtractionFilter,
     private val httpPrivateInterceptor: HttpPrivateInterceptor,
-    private val rateLimitInterceptor: RateLimitInterceptor,
+    private val httpRateLimitInterceptor: HttpRateLimitInterceptor,
 ) : WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
@@ -47,8 +46,7 @@ class HttpConfig(
     }
 
     override fun addInterceptors(registry: InterceptorRegistry) {
-        // Rate limiting should be applied first
-        registry.addInterceptor(rateLimitInterceptor).order(0)
+        registry.addInterceptor(httpRateLimitInterceptor).order(0)
         registry.addInterceptor(httpPrivateInterceptor).order(1)
     }
 }

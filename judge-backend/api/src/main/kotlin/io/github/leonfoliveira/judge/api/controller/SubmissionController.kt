@@ -7,7 +7,6 @@ import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseD
 import io.github.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
 import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
-import io.github.leonfoliveira.judge.api.util.KeyType
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.entity.Member
@@ -152,10 +151,9 @@ class SubmissionController(
     @GetMapping("/full/members/me")
     @Private(Member.Type.CONTESTANT)
     @RateLimit(
-        requestsPerMinute = 30,  // Permite consultas frequentes mas limitadas
-        requestsPerHour = 200,   // Limite generoso para uso normal
-        burstCapacity = 5,       // Permite algumas consultas rápidas
-        keyType = KeyType.USER_ID
+        requestsPerMinute = 30, // Permite consultas frequentes mas limitadas
+        requestsPerHour = 200, // Limite generoso para uso normal
+        burstCapacity = 5, // Permite algumas consultas rápidas
     )
     @Transactional(readOnly = true)
     @Operation(summary = "Find all full submissions for a member")

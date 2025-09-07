@@ -46,21 +46,6 @@ class GlobalExceptionHandler {
             .body(ErrorResponseDTO(ex.message!!))
     }
 
-    @ExceptionHandler(TooManyRequestsException::class)
-    fun handleTooManyRequestsException(ex: TooManyRequestsException): ResponseEntity<ErrorResponseDTO> {
-        logger.warn("Rate limit exceeded: ${ex.message}")
-        val response = ResponseEntity
-            .status(HttpStatus.TOO_MANY_REQUESTS)
-            .body(ErrorResponseDTO(ex.message))
-        
-        // Add Retry-After header if available
-        ex.retryAfterSeconds?.let { 
-            response.headers.add("Retry-After", it.toString())
-        }
-        
-        return response
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationExceptions(ex: MethodArgumentNotValidException): ResponseEntity<Map<String, String>> {
         logger.info("Validation error occurred")
