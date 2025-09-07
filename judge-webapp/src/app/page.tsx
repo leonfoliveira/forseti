@@ -25,7 +25,7 @@ export default function HomePage() {
         description={messages.pageDescription}
       />
       <div className="h-screen flex justify-center items-center">
-        <Image src="/favicon.ico" alt="Logo of judge" width={75} height={75} />
+        <Image src="/logo.ico" alt="Logo of judge" width={75} height={75} />
       </div>
     </>
   );
