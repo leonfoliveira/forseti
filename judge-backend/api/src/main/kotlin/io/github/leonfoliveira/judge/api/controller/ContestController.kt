@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
-import kotlin.collections.contains
 
 @RestController
 @RequestMapping("/v1/contests")
@@ -49,11 +48,6 @@ class ContestController(
 
     @PostMapping
     @Private(Member.Type.ROOT)
-    @RateLimit(
-        requestsPerMinute = 2, // Apenas 2 criações de contest por minuto
-        requestsPerHour = 10, // Máximo 10 por hora
-        burstCapacity = 1, // Sem burst para operações administrativas
-    )
     @Transactional
     @Operation(summary = "Create a contest")
     @ApiResponses(
@@ -91,6 +85,7 @@ class ContestController(
 
     @PutMapping
     @Private(Member.Type.ADMIN)
+    @RateLimit
     @Transactional
     @Operation(summary = "Update a contest")
     @ApiResponses(
@@ -134,11 +129,6 @@ class ContestController(
 
     @GetMapping("/metadata")
     @Private(Member.Type.ROOT)
-    @RateLimit(
-        requestsPerMinute = 20, // Consultas administrativas mais permissivas
-        requestsPerHour = 100,
-        burstCapacity = 5,
-    )
     @Transactional(readOnly = true)
     @Operation(summary = "Find all contest metadata")
     @ApiResponses(
@@ -163,6 +153,7 @@ class ContestController(
     }
 
     @GetMapping("/slug/{contestSlug}/metadata")
+    @RateLimit
     @Transactional(readOnly = true)
     @Operation(summary = "Find contest metadata by slug")
     @ApiResponses(
@@ -184,6 +175,7 @@ class ContestController(
     }
 
     @GetMapping("/{contestId}")
+    @RateLimit
     @Transactional(readOnly = true)
     @Operation(summary = "Find contest by id")
     @ApiResponses(
@@ -212,6 +204,7 @@ class ContestController(
 
     @GetMapping("/{contestId}/full")
     @Private(Member.Type.ADMIN)
+    @RateLimit
     @Transactional(readOnly = true)
     @Operation(summary = "Find full contest by id")
     @ApiResponses(
@@ -245,6 +238,7 @@ class ContestController(
 
     @PutMapping("/{contestId}/start")
     @Private(Member.Type.ADMIN)
+    @RateLimit
     @Transactional
     @Operation(summary = "Force start a contest")
     @ApiResponses(
@@ -278,6 +272,7 @@ class ContestController(
 
     @PutMapping("/{contestId}/end")
     @Private(Member.Type.ADMIN)
+    @RateLimit
     @Transactional
     @Operation(summary = "Force end a contest")
     @ApiResponses(

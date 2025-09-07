@@ -33,6 +33,7 @@ class AuthenticationController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/me")
+    @RateLimit
     @Operation(
         summary = "Get current authorization",
         description = "Returns the authorization of the current user.",
@@ -60,11 +61,7 @@ class AuthenticationController(
     }
 
     @PostMapping("/sign-in")
-    @RateLimit(
-        requestsPerMinute = 5,
-        requestsPerHour = 20,
-        burstCapacity = 2,
-    )
+    @RateLimit
     @Operation(
         summary = "Authenticate",
         description = "Authenticates a user and returns an authorization.",

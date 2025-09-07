@@ -6,6 +6,7 @@ import io.github.leonfoliveira.judge.api.dto.response.clarification.toResponseDT
 import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
+import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.service.clarification.CreateClarificationService
 import io.github.leonfoliveira.judge.common.service.clarification.DeleteClarificationService
@@ -37,6 +38,7 @@ class ClarificationController(
 
     @PostMapping
     @Private(Member.Type.CONTESTANT, Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
+    @RateLimit
     @Transactional
     @Operation(summary = "Create a clarification")
     @ApiResponses(
@@ -105,6 +107,7 @@ class ClarificationController(
         ],
     )
     @Private(Member.Type.JUDGE, Member.Type.ADMIN)
+    @RateLimit
     @Transactional(readOnly = true)
     fun deleteClarificationById(
         @PathVariable contestId: UUID,

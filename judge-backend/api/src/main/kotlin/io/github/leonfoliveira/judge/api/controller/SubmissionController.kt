@@ -44,6 +44,7 @@ class SubmissionController(
 
     @PostMapping
     @Private(Member.Type.CONTESTANT)
+    @RateLimit
     @Transactional
     @Operation(summary = "Create a submission")
     @ApiResponses(
@@ -88,6 +89,7 @@ class SubmissionController(
     }
 
     @GetMapping
+    @RateLimit
     @Transactional(readOnly = true)
     @Operation(summary = "Find all contest submissions")
     @ApiResponses(
@@ -116,6 +118,7 @@ class SubmissionController(
 
     @GetMapping("/full")
     @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
+    @RateLimit
     @Transactional(readOnly = true)
     @Operation(summary = "Find all contest full submissions")
     @ApiResponses(
@@ -150,11 +153,7 @@ class SubmissionController(
 
     @GetMapping("/full/members/me")
     @Private(Member.Type.CONTESTANT)
-    @RateLimit(
-        requestsPerMinute = 30, // Permite consultas frequentes mas limitadas
-        requestsPerHour = 200, // Limite generoso para uso normal
-        burstCapacity = 5, // Permite algumas consultas rápidas
-    )
+    @RateLimit
     @Transactional(readOnly = true)
     @Operation(summary = "Find all full submissions for a member")
     @ApiResponses(
@@ -222,6 +221,7 @@ class SubmissionController(
 
     @PutMapping("/{id}/answer/{answer}/force")
     @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
+    @RateLimit
     @Transactional
     @Operation(summary = "Force update a submission answer")
     @ApiResponses(
@@ -257,6 +257,7 @@ class SubmissionController(
 
     @PostMapping("/{id}/rerun")
     @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
+    @RateLimit
     @Transactional
     @Operation(summary = "Rerun a submission")
     @ApiResponses(

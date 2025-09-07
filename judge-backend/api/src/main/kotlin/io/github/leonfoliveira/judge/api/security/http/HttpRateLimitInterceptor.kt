@@ -49,9 +49,9 @@ class HttpRateLimitInterceptor(
         val isAllowed =
             rateLimitService.tryConsume(
                 key = key,
-                requestsPerMinute = rateLimitAnnotation.requestsPerMinute,
-                requestsPerHour = rateLimitAnnotation.requestsPerHour,
-                burstCapacity = rateLimitAnnotation.burstCapacity,
+                requestsPerMinute = rateLimitAnnotation.perMinute,
+                requestsPerHour = rateLimitAnnotation.perHour,
+                burstCapacity = rateLimitAnnotation.burst,
             )
 
         if (!isAllowed) {
@@ -87,13 +87,13 @@ class HttpRateLimitInterceptor(
         val availableTokens =
             rateLimitService.getAvailableTokens(
                 key = key,
-                requestsPerMinute = rateLimitAnnotation.requestsPerMinute,
-                requestsPerHour = rateLimitAnnotation.requestsPerHour,
-                burstCapacity = rateLimitAnnotation.burstCapacity,
+                requestsPerMinute = rateLimitAnnotation.perMinute,
+                requestsPerHour = rateLimitAnnotation.perHour,
+                burstCapacity = rateLimitAnnotation.burst,
             )
 
-        response.setHeader("X-RateLimit-Limit-Minute", rateLimitAnnotation.requestsPerMinute.toString())
-        response.setHeader("X-RateLimit-Limit-Hour", rateLimitAnnotation.requestsPerHour.toString())
+        response.setHeader("X-RateLimit-Limit-Minute", rateLimitAnnotation.perMinute.toString())
+        response.setHeader("X-RateLimit-Limit-Hour", rateLimitAnnotation.perHour.toString())
         response.setHeader("X-RateLimit-Remaining", availableTokens.toString())
         response.setHeader("X-RateLimit-Reset", "60")
         response.setHeader("Retry-After", "60")

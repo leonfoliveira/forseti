@@ -6,6 +6,7 @@ import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
 import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
+import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.service.announcement.CreateAnnouncementService
 import io.github.leonfoliveira.judge.common.service.dto.input.announcement.CreateAnnouncementInputDTO
@@ -34,6 +35,7 @@ class AnnouncementController(
 
     @PostMapping("/{contestId}/announcements")
     @Private(Member.Type.JUDGE, Member.Type.ADMIN)
+    @RateLimit
     @Transactional
     @Operation(summary = "Create an announcement")
     @ApiResponses(

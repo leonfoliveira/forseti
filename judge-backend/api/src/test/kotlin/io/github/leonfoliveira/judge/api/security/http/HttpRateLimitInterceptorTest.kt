@@ -72,9 +72,9 @@ class HttpRateLimitInterceptorTest :
             val handler = mockk<HandlerMethod>(relaxed = true)
             val rateLimitAnnotation =
                 RateLimit(
-                    requestsPerMinute = 10,
-                    requestsPerHour = 100,
-                    burstCapacity = 5,
+                    perMinute = 10,
+                    perHour = 100,
+                    burst = 5,
                 )
             every { handler.getMethodAnnotation(RateLimit::class.java) } returns rateLimitAnnotation
             val ip = "192.0.0.1"
@@ -111,9 +111,9 @@ class HttpRateLimitInterceptorTest :
             val handler = mockk<HandlerMethod>(relaxed = true)
             val rateLimitAnnotation =
                 RateLimit(
-                    requestsPerMinute = 10,
-                    requestsPerHour = 100,
-                    burstCapacity = 5,
+                    perMinute = 10,
+                    perHour = 100,
+                    burst = 5,
                 )
             every { handler.getMethodAnnotation(RateLimit::class.java) } returns rateLimitAnnotation
             val ip = "192.0.0.1"
@@ -140,9 +140,9 @@ class HttpRateLimitInterceptorTest :
             val handler = mockk<HandlerMethod>(relaxed = true)
             val rateLimitAnnotation =
                 RateLimit(
-                    requestsPerMinute = 10,
-                    requestsPerHour = 100,
-                    burstCapacity = 5,
+                    perMinute = 10,
+                    perHour = 100,
+                    burst = 5,
                 )
             every { handler.getMethodAnnotation(RateLimit::class.java) } returns rateLimitAnnotation
             every { request.getHeader("X-Forwarded-For") } returns null
