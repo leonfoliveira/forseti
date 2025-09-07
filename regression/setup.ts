@@ -1,8 +1,15 @@
 import { execSync } from "child_process";
 
 async function globalSetup() {
-  console.log("Running setup: starting Docker containers...");
   try {
+    console.log("Setup: pulling languages Docker images...");
+    execSync("docker pull python:3.13.3-alpine", {
+      stdio: "inherit",
+      cwd: __dirname,
+    });
+    console.log("Setup: Languages Docker images pulled successfully");
+
+    console.log("Setup: starting Docker containers...");
     execSync(
       "docker compose -f ../docker/test/docker-compose.yaml up -d --wait --no-recreate",
       {
@@ -10,9 +17,9 @@ async function globalSetup() {
         cwd: __dirname,
       },
     );
-    console.log("Docker containers started successfully");
+    console.log("Setup: Docker containers started successfully");
   } catch (error) {
-    console.error("Error starting Docker containers:", error);
+    console.error("Setup: Error starting Docker containers:", error);
   }
 }
 
