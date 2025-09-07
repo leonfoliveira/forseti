@@ -4,6 +4,7 @@ from typing import Union
 import click
 import jwt
 import keyring
+import keyring.errors
 import requests
 
 from .input_adapter import InputAdapter
@@ -65,8 +66,9 @@ class ApiAdapter:
             raise click.ClickException(response.text)
 
     def _authenticate(self):
-        if token := keyring.get_password(self.SERVICE_NAME, self.TOKEN_KEY):
-            claims = jwt.decode(token, options={"verify_signature": False})
+        if token := self._get_cached_token():
+            claims = jwt.decode(
+                token, options={"verify_signature": False})
             expiration = claims.get("exp")
             if expiration and expiration > int(time.time()):
                 return token
@@ -79,5 +81,20 @@ class ApiAdapter:
         if response.status_code != 200:
             raise click.ClickException(response.text)
         access_token = response.cookies.get(self.ACCESS_TOKEN_COOKIE)
-        keyring.set_password(self.SERVICE_NAME, self.TOKEN_KEY, access_token)
+
+        self._set_cached_token(access_token)
+
         return access_token
+
+    def _get_cached_token(self) -> str:
+        try:
+            return keyring.get_password(self.SERVICE_NAME, self.TOKEN_KEY)
+        except keyring.errors.NoKeyringError:
+            return None
+
+    def _set_cached_token(self, access_token: str) -> None:
+        try:
+            keyring.set_password(
+                self.SERVICE_NAME, self.TOKEN_KEY, access_token)
+        except keyring.errors.NoKeyringError:
+            pass

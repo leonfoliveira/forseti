@@ -171,7 +171,7 @@ class TestApiAdapter:
     def test_delete_successful(self, sut, keyring, requests):
         access_token = self._setup_valid_token(keyring)
         response = requests.Response()
-        response.status_code = 200
+        response.status_code = 204
         requests.delete.return_value = response
 
         sut.delete("/test-path")
