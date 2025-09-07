@@ -67,7 +67,7 @@ class ContestControllerTest(
                 CreateContestInputDTO(
                     slug = "test-contest",
                     title = "Test Contest",
-                    languages = listOf(Language.PYTHON_3_13),
+                    languages = listOf(Language.PYTHON_3_12),
                     startAt = OffsetDateTime.now().plusHours(1),
                     endAt = OffsetDateTime.now().plusHours(2),
                     members =
@@ -94,13 +94,14 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build()
             every { createContestService.create(body) } returns contest
 
-            webMvc.post(basePath) {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(body)
-            }.andExpect {
-                status { isOk() }
-                content { contest.toFullResponseDTO() }
-            }
+            webMvc
+                .post(basePath) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(body)
+                }.andExpect {
+                    status { isOk() }
+                    content { contest.toFullResponseDTO() }
+                }
         }
 
         test("updateContest") {
@@ -110,7 +111,7 @@ class ContestControllerTest(
                     id = UUID.randomUUID(),
                     slug = "updated-contest",
                     title = "Updated Contest",
-                    languages = listOf(Language.PYTHON_3_13),
+                    languages = listOf(Language.PYTHON_3_12),
                     startAt = OffsetDateTime.now().plusHours(1),
                     endAt = OffsetDateTime.now().plusHours(2),
                     members =
@@ -139,25 +140,27 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build()
             every { updateContestService.update(body) } returns contest
 
-            webMvc.put(basePath, contestId) {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(body)
-            }.andExpect {
-                status { isOk() }
-                content { contest.toFullResponseDTO() }
-            }
+            webMvc
+                .put(basePath, contestId) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(body)
+                }.andExpect {
+                    status { isOk() }
+                    content { contest.toFullResponseDTO() }
+                }
         }
 
         test("findAllContestMetadata") {
             val contests = listOf(ContestMockBuilder.build(), ContestMockBuilder.build())
             every { findContestService.findAll() } returns contests
 
-            webMvc.get("$basePath/metadata") {
-                accept = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isOk() }
-                content { contests.map { it.toMetadataDTO() } }
-            }
+            webMvc
+                .get("$basePath/metadata") {
+                    accept = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isOk() }
+                    content { contests.map { it.toMetadataDTO() } }
+                }
         }
 
         test("findContestMetadataBySlug") {
@@ -165,12 +168,13 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build(slug = slug)
             every { findContestService.findBySlug(slug) } returns contest
 
-            webMvc.get("$basePath/slug/{slug}/metadata", slug) {
-                accept = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isOk() }
-                content { contest.toMetadataDTO() }
-            }
+            webMvc
+                .get("$basePath/slug/{slug}/metadata", slug) {
+                    accept = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isOk() }
+                    content { contest.toMetadataDTO() }
+                }
         }
 
         test("findContestById") {
@@ -178,12 +182,13 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1))
             every { findContestService.findById(contestId) } returns contest
 
-            webMvc.get("$basePath/{contestId}", contestId) {
-                accept = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isOk() }
-                content { contest.toPublicOutputDTO() }
-            }
+            webMvc
+                .get("$basePath/{contestId}", contestId) {
+                    accept = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isOk() }
+                    content { contest.toPublicOutputDTO() }
+                }
         }
 
         test("findFullContestById") {
@@ -199,12 +204,13 @@ class ContestControllerTest(
                 )
             every { findContestService.findById(contestId) } returns contest
 
-            webMvc.get("$basePath/{contestId}/full", contestId) {
-                accept = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isOk() }
-                content { contest.toFullResponseDTO() }
-            }
+            webMvc
+                .get("$basePath/{contestId}/full", contestId) {
+                    accept = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isOk() }
+                    content { contest.toFullResponseDTO() }
+                }
         }
 
         test("forceStartContest") {
@@ -212,12 +218,13 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build(id = contestId)
             every { updateContestService.forceStart(contestId) } returns contest
 
-            webMvc.put("$basePath/{contestId}/start", contestId) {
-                contentType = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isOk() }
-                content { contest.toMetadataDTO() }
-            }
+            webMvc
+                .put("$basePath/{contestId}/start", contestId) {
+                    contentType = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isOk() }
+                    content { contest.toMetadataDTO() }
+                }
         }
 
         test("forceEndContest") {
@@ -225,22 +232,24 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build(id = contestId)
             every { updateContestService.forceEnd(contestId) } returns contest
 
-            webMvc.put("$basePath/{contestId}/end", contestId) {
-                contentType = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isOk() }
-                content { contest.toMetadataDTO() }
-            }
+            webMvc
+                .put("$basePath/{contestId}/end", contestId) {
+                    contentType = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isOk() }
+                    content { contest.toMetadataDTO() }
+                }
         }
 
         test("deleteContest") {
             val contestId = UUID.randomUUID()
 
-            webMvc.delete("$basePath/{contestId}", contestId) {
-                contentType = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isNoContent() }
-            }
+            webMvc
+                .delete("$basePath/{contestId}", contestId) {
+                    contentType = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isNoContent() }
+                }
 
             verify { deleteContestService.delete(contestId) }
         }

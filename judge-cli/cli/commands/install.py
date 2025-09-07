@@ -9,6 +9,7 @@ import questionary
 
 from cli.util.command_adapter import CommandAdapter
 from cli.util.input_adapter import InputAdapter
+from cli.util.version import __version__
 
 
 @click.command()
@@ -22,7 +23,7 @@ def install(stack):
         sys.exit(1)
 
     _setup_secrets(command_adapter, input_adapter)
-    _pull_language_images(command_adapter, input_adapter)
+    _build_sandboxes(command_adapter, input_adapter)
     _pull_stack_images(command_adapter, stack)
     _setup_swarm(command_adapter)
 
@@ -75,31 +76,41 @@ def _setup_secrets(command_adapter: CommandAdapter, input_adapter: InputAdapter)
     )
 
 
-def _pull_language_images(command_adapter: CommandAdapter, input_adapter: InputAdapter):
-    language_images = input_adapter.checkbox(
-        "Select the languages you want to install in the autojudge:",
+def _build_sandboxes(command_adapter: CommandAdapter, input_adapter: InputAdapter):
+    sandboxes = input_adapter.checkbox(
+        "Select the sandboxes you want to install in the autojudge:",
         choices=[
-            questionary.Choice("C++ 17", checked=True, value="gcc:15.1.0"),
-            questionary.Choice(
-                "Java 21", checked=True, value="eclipse-temurin:21-jdk-alpine"
-            ),
-            questionary.Choice(
-                "Python 3.13", checked=True, value="python:3.13.3-alpine"
-            ),
+            questionary.Choice("C++ 17", checked=True, value="cpp17"),
+            questionary.Choice("Java 21", checked=True, value="java21"),
+            questionary.Choice("Python 3.12", checked=True, value="python3_12"),
         ],
     )
 
-    click.echo("Pulling language images...")
-    for image in language_images:
+    click.echo("Building sandboxes...")
+
+    cli_path = command_adapter.get_cli_path()
+    for sandbox in sandboxes:
+        sandbox_path = os.path.join(cli_path, "sandboxes", f"{sandbox}.Dockerfile")
         command_adapter.run(
-            ["docker", "pull", image],
+            [
+                "docker",
+                "build",
+                "-t",
+                f"judge-sb-{sandbox}:{__version__}",
+                "-f",
+                sandbox_path,
+                ".",
+            ],
         )
 
 
 def _pull_stack_images(command_adapter: CommandAdapter, stack: str):
     click.echo("Pulling stack images...")
+
+    cli_path = command_adapter.get_cli_path()
+    stack_path = os.path.join(cli_path, stack)
     command_adapter.run(
-        ["docker", "compose", "-f", stack, "pull"],
+        ["docker", "compose", "-f", stack_path, "pull"],
     )
 
 

@@ -197,6 +197,34 @@ class TestApiAdapter:
             cookies={sut.ACCESS_TOKEN_COOKIE: access_token},
         )
 
+    def test_get_cached_token_with_keyring_error(self, sut, keyring):
+        keyring.errors.NoKeyringError = Exception
+        keyring.get_password.side_effect = keyring.errors.NoKeyringError
+
+        result = sut._get_cached_token()
+
+        assert result is None
+
+    def test_set_cached_token_with_keyring_error(self, sut, keyring):
+        keyring.errors.NoKeyringError = Exception
+        keyring.set_password.side_effect = keyring.errors.NoKeyringError
+
+        # Should not raise an exception
+        sut._set_cached_token("test_token")
+
+        keyring.set_password.assert_called_once_with(
+            sut.SERVICE_NAME, sut.TOKEN_KEY, "test_token"
+        )
+
+    def test_api_adapter_with_custom_url(self):
+        custom_url = "https://api.example.com"
+        adapter = ApiAdapter(api_url=custom_url)
+        assert adapter.api_url == custom_url
+
+    def test_api_adapter_with_default_url(self):
+        adapter = ApiAdapter()
+        assert adapter.api_url == "http://localhost:8080"
+
     def _setup_valid_token(self, keyring):
         access_token = jwt.encode(
             {"exp": time.time() + 3600}, "secret", algorithm="HS256")

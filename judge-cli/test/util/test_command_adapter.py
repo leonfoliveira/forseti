@@ -48,3 +48,35 @@ class TestCommandAdapter:
         subprocess.run.assert_called_once_with(
             ["false"], text=True)
         assert result == ["line1", "line2"]
+
+    def test_run_with_no_stdout(self, sut, subprocess):
+        process = subprocess.run.return_value
+        process.returncode = 0
+        process.stdout = None
+
+        result = sut.run(["echo", "hello"], throws=True)
+
+        subprocess.run.assert_called_once_with(
+            ["echo", "hello"], text=True)
+        assert result is None
+
+    def test_get_cli_path_frozen(self, sut):
+        with patch(f"{BASE_PATH}.sys") as mock_sys:
+            mock_sys.executable = "/usr/bin/judge"
+            mock_sys.frozen = True
+            with patch(f"{BASE_PATH}.getattr", return_value=True):
+                with patch(f"{BASE_PATH}.os.path.dirname", return_value="/usr/bin") as mock_dirname:
+                    result = sut.get_cli_path()
+                    mock_dirname.assert_called_with("/usr/bin/judge")
+                    assert result == "/usr/bin"
+
+    def test_get_cli_path_not_frozen(self, sut):
+        with patch(f"{BASE_PATH}.sys") as mock_sys:
+            mock_sys.executable = "/usr/bin/python"
+            with patch(f"{BASE_PATH}.getattr", return_value=False):
+                with patch(f"{BASE_PATH}.os.path.dirname") as mock_dirname:
+                    with patch(f"{BASE_PATH}.os.path.abspath", return_value="/path/to/test_command_adapter.py") as mock_abspath:
+                        mock_dirname.side_effect = ["/path/to", "/path", "/"]
+                        result = sut.get_cli_path()
+                        mock_abspath.assert_called_once()
+                        assert result == "/"

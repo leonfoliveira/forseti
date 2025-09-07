@@ -112,7 +112,7 @@ class DockerSubmissionRunnerAdapterTest(
             }
         }
 
-        context("Python 3.13") {
+        context("Python 3.12") {
             listOf(
                 Pair("accepted.py", Submission.Answer.ACCEPTED),
                 Pair("memory_limit_exceeded.py", Submission.Answer.MEMORY_LIMIT_EXCEEDED),
@@ -120,9 +120,9 @@ class DockerSubmissionRunnerAdapterTest(
                 Pair("time_limit_exceeded.py", Submission.Answer.TIME_LIMIT_EXCEEDED),
                 Pair("wrong_answer.py", Submission.Answer.WRONG_ANSWER),
             ).forEach { (filename, expectedAnswer) ->
-                test("should run a submission with Python 3.13 and return $expectedAnswer") {
-                    val submission = createSubmission(contest, Language.PYTHON_3_13, filename, "text/plain")
-                    val code = importCode("/code/python3_13/$filename")
+                test("should run a submission with Python 3.12 and return $expectedAnswer") {
+                    val submission = createSubmission(contest, Language.PYTHON_3_12, filename, "text/plain")
+                    val code = importCode("/code/python3_12/$filename")
                     attachmentBucketAdapter.upload(submission.code, code.toByteArray())
                     sut.run(submission).answer shouldBe expectedAnswer
                 }

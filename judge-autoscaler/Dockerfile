@@ -1,4 +1,4 @@
-FROM python:3.13.5-alpine as builder
+FROM python:3.12.11-alpine as builder
 WORKDIR /app
 RUN apk add --no-cache curl
 COPY ./autoscaler autoscaler

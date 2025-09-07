@@ -58,16 +58,6 @@ jobs:
           repository: ${{ steps.pr.outputs.repo }}
           ref: ${{ steps.pr.outputs.sha }}
 
-      - name: Detect changes
-        uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            backend: 'judge-backend/**'
-            webapp: 'judge-webapp/**'
-            cli: 'judge-cli/**'
-            autoscaler: 'judge-autoscaler/**'
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -79,17 +69,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: "npm"
-          cache-dependency-path: regression/package.json
-
       - name: Set up Python for CLI
         uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: "3.12"
           cache: "pip"
           cache-dependency-path: judge-cli/requirements.dev.txt
 
@@ -97,6 +80,48 @@ jobs:
         run: |
           cd judge-cli
           pip install -r requirements.dev.txt
+
+      - name: Build test environment
+        run: |
+          docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-api:latest -f judge-backend/api.Dockerfile judge-backend &
+          docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-autojudge:latest -f judge-backend/autojudge.Dockerfile judge-backend &
+          docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-webapp:latest judge-webapp &
+          docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-sandbox,mode=max -t judge-sb-python3_12:latest -f judge-backend/autojudge/src/main/resources/sandboxes/python3_12.Dockerfile . &
+          (cd judge-cli && make build) &
+
+          wait
+
+          # Consolidate all cache layers
+          mkdir -p /tmp/.buildx-cache-consolidated
+
+          # Copy existing cache if it exists
+          if [ -d "/tmp/.buildx-cache" ]; then
+            cp -r /tmp/.buildx-cache/* /tmp/.buildx-cache-consolidated/ 2>/dev/null || true
+          fi
+
+          # Merge new cache layers
+          for cache_dir in /tmp/.buildx-cache-new; do
+            if [ -d "$cache_dir" ]; then
+              cp -r "$cache_dir"/* /tmp/.buildx-cache-consolidated/ 2>/dev/null || true
+              rm -rf "$cache_dir"
+            fi
+          done
+
+          # Replace old cache with consolidated one
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-consolidated /tmp/.buildx-cache
+
+      - name: Copy CLI binary to test directory
+        run: |
+          mkdir -p docker/test
+          cp judge-cli/dist/judge docker/test/judge
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: regression/package.json
 
       - name: Install regression test dependencies
         run: |
@@ -107,45 +132,6 @@ jobs:
         run: |
           cd regression
           npx playwright install --with-deps
-
-      - name: Build test environment
-        run: |
-          # Use Docker Buildx with caching for better performance
-          if [ "${{ steps.changes.outputs.backend }}" == "true" ]; then
-            docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-api:latest -f judge-backend/api.Dockerfile judge-backend &
-            docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-autojudge:latest -f judge-backend/autojudge.Dockerfile judge-backend &
-          else
-            echo "Skipping backend builds - no changes detected"
-          fi
-
-          if [ "${{ steps.changes.outputs.webapp }}" == "true" ]; then
-            docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-webapp:latest judge-webapp &
-          else
-            echo "Skipping webapp build - no changes detected"
-          fi
-
-          if [ "${{ steps.changes.outputs.autoscaler }}" == "true" ]; then
-            docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-autoscaler:latest judge-autoscaler &
-          else
-            echo "Skipping autoscaler build - no changes detected"
-          fi
-
-          # Always build CLI
-          echo "Building CLI"
-          (cd judge-cli && make build) &
-
-          # Wait for all background jobs to complete
-          wait
-
-          # Move cache to avoid growing cache size
-          if [ -d "/tmp/.buildx-cache-new" ]; then
-            rm -rf /tmp/.buildx-cache
-            mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-          fi
-
-          # Copy CLI binary to test directory
-          mkdir -p docker/test
-          cp judge-cli/dist/judge docker/test/judge
 
       - name: Run regression tests
         run: |

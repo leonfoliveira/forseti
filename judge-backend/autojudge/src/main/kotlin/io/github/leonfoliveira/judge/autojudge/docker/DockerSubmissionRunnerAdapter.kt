@@ -31,7 +31,7 @@ class DockerSubmissionRunnerAdapter(
         val tmpDir = Files.createTempDirectory("judge_${submission.id}").toFile()
         logger.info("Temporary directory created: ${tmpDir.absolutePath}")
         logger.info("Storing submission code file")
-        val codeFile = storeCodeFile(submission, tmpDir)
+        val codeFile = loadCode(submission, tmpDir)
         logger.info("Code file stored at: ${codeFile.absolutePath}")
         logger.info("Loading test cases")
         val testCases = loadTestCases(problem)
@@ -43,10 +43,12 @@ class DockerSubmissionRunnerAdapter(
                 imageName = config.image,
                 memoryLimit = problem.memoryLimit,
                 name = "judge_${submission.id}",
-                volume = tmpDir,
             )
         logger.info("Starting Docker container")
         container.start()
+
+        logger.info("Copying code file to container")
+        container.copy(codeFile, "/app/${codeFile.name}")
 
         try {
             config.createCompileCommand?.let {
@@ -147,7 +149,7 @@ class DockerSubmissionRunnerAdapter(
      * Downloads the code file from the attachment bucket and stores it in a temporary directory.
      * It needs to be store in ROM memory because the Docker container needs to access it as a volume.
      */
-    private fun storeCodeFile(
+    private fun loadCode(
         submission: Submission,
         tmpDir: File,
     ): File {
@@ -191,18 +193,15 @@ class DockerSubmissionRunnerAdapter(
         input: String,
         timeLimit: Int,
         memoryLimit: Int,
-    ): String {
-        return container.exec(
+    ): String =
+        container.exec(
             command = config.createRunCommand(codeFile, memoryLimit),
             input = input,
             timeLimit = timeLimit,
         )
-    }
 
     private fun evaluate(
         output: String,
         expectedOutput: String,
-    ): Boolean {
-        return output.replace("\n", "") == expectedOutput.replace("\n", "")
-    }
+    ): Boolean = output.replace("\n", "") == expectedOutput.replace("\n", "")
 }
