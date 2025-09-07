@@ -30,9 +30,12 @@ base = fileKeys["en-US"];
 isValid = true;
 for (const file in fileKeys) {
   if (fileKeys[file].size !== base.size) {
-    console.log(`Missing keys for ${file}:`);
-    console.table([...base].filter((key) => !fileKeys[file].has(key)));
-    isValid = false;
+    missingKeys = [...base].filter((key) => !fileKeys[file].has(key));
+    if (missingKeys.length > 0) {
+      console.log(`Missing keys for ${file}:`);
+      console.table(missingKeys);
+      isValid = false;
+    }
   }
 }
 

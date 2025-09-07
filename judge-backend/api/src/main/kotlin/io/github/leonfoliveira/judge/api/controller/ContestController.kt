@@ -9,6 +9,7 @@ import io.github.leonfoliveira.judge.api.dto.response.contest.toMetadataDTO
 import io.github.leonfoliveira.judge.api.dto.response.contest.toPublicOutputDTO
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
+import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.service.contest.CreateContestService
 import io.github.leonfoliveira.judge.common.service.contest.DeleteContestService
@@ -84,6 +85,7 @@ class ContestController(
 
     @PutMapping
     @Private(Member.Type.ADMIN)
+    @RateLimit
     @Transactional
     @Operation(summary = "Update a contest")
     @ApiResponses(
@@ -151,6 +153,7 @@ class ContestController(
     }
 
     @GetMapping("/slug/{contestSlug}/metadata")
+    @RateLimit
     @Transactional(readOnly = true)
     @Operation(summary = "Find contest metadata by slug")
     @ApiResponses(
@@ -172,6 +175,7 @@ class ContestController(
     }
 
     @GetMapping("/{contestId}")
+    @RateLimit
     @Transactional(readOnly = true)
     @Operation(summary = "Find contest by id")
     @ApiResponses(
@@ -200,6 +204,7 @@ class ContestController(
 
     @GetMapping("/{contestId}/full")
     @Private(Member.Type.ADMIN)
+    @RateLimit
     @Transactional(readOnly = true)
     @Operation(summary = "Find full contest by id")
     @ApiResponses(
@@ -233,6 +238,7 @@ class ContestController(
 
     @PutMapping("/{contestId}/start")
     @Private(Member.Type.ADMIN)
+    @RateLimit
     @Transactional
     @Operation(summary = "Force start a contest")
     @ApiResponses(
@@ -266,6 +272,7 @@ class ContestController(
 
     @PutMapping("/{contestId}/end")
     @Private(Member.Type.ADMIN)
+    @RateLimit
     @Transactional
     @Operation(summary = "Force end a contest")
     @ApiResponses(

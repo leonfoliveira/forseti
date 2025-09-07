@@ -2,6 +2,7 @@ package io.github.leonfoliveira.judge.api.controller
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
+import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.service.dto.output.LeaderboardOutputDTO
 import io.github.leonfoliveira.judge.common.service.leaderboard.FindLeaderboardService
 import io.swagger.v3.oas.annotations.Operation
@@ -27,6 +28,7 @@ class LeaderboardController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping
+    @RateLimit
     @Transactional(readOnly = true)
     @Operation(summary = "Find contest leaderboard by id")
     @ApiResponses(

@@ -5,6 +5,7 @@ kotlin {
 dependencies {
     implementation(project(":common"))
     implementation(rootProject.libs.springdoc.openapi.ui)
+    implementation(rootProject.libs.caffeine)
 
     testImplementation(testFixtures(project(":common")))
 }

@@ -2,23 +2,19 @@
   "lib": {
     "provider": {
       "judge-dashboard-provider": {
-        "load-error": "Error loading contest data",
         "submission-failed": "New failed submission",
         "announcement": "New announcement: {text}",
         "new-clarification": "New clarification"
       },
       "guest-dashboard-provider": {
-        "load-error": "Error loading contest data",
         "announcement": "New announcement: {text}"
       },
       "contestant-dashboard-provider": {
-        "load-error": "Error loading contest data",
         "problem-answer": "Problem {letter}: {answer}",
         "announcement": "New announcement: {text}",
         "clarification-answer": "New answer for a clarification"
       },
       "admin-dashboard-provider": {
-        "load-error": "Error loading contest data",
         "submission-failed": "New failed submission",
         "announcement": "New announcement: {text}",
         "new-clarification": "New clarification"
@@ -65,7 +61,7 @@
       "formatted-language": {
         "cpp_17": "C++ 17",
         "java_21": "Java 21",
-        "python_3_13": "Python 3.13"
+        "python_3_12": "Python 3.12"
       },
       "formatted-member-type": {
         "root": "Root",
@@ -145,8 +141,6 @@
             "save-modal-body": "Are you sure you want to save these changes?",
             "save-modal-alert-title": "Attention",
             "save-modal-alert-body": "This action will modify contest data while the contest is in progress. This could affect participants and their submissions. Please proceed with caution.",
-            "save-modal-cancel": "No, cancel",
-            "save-modal-confirm": "Yes, save changes",
             "save-success": "Changes saved successfully",
             "save-error": "Failed to save changes",
             "save-slug-in-use": "This slug is already in use"

@@ -5,6 +5,7 @@ import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.github.leonfoliveira.judge.api.util.ApiMetrics
 import io.github.leonfoliveira.judge.api.util.Private
+import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
@@ -59,6 +60,7 @@ class AttachmentController(
         ],
     )
     @Private
+    @RateLimit
     @Transactional
     fun uploadAttachment(
         @RequestParam("file") file: MultipartFile,
@@ -70,6 +72,7 @@ class AttachmentController(
 
     @Timed(ApiMetrics.API_ATTACHMENT_DOWNLOAD_TIME)
     @GetMapping("/{attachmentId}")
+    @RateLimit
     @Operation(
         summary = "Downloads an attachment",
         description = "Downloads an attachment by its ID. The ID is returned when the attachment is uploaded.",

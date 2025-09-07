@@ -63,19 +63,20 @@ class SubmissionControllerTest(
             val body =
                 CreateSubmissionInputDTO(
                     problemId = UUID.randomUUID(),
-                    language = Language.PYTHON_3_13,
+                    language = Language.PYTHON_3_12,
                     code = AttachmentInputDTO(id = UUID.randomUUID()),
                 )
             val submission = SubmissionMockBuilder.build()
             every { createSubmissionService.create(member.id, body) } returns submission
 
-            webMvc.post(basePath, contestId) {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(body)
-            }.andExpect {
-                status { isOk() }
-                content { submission.toFullResponseDTO() }
-            }
+            webMvc
+                .post(basePath, contestId) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(body)
+                }.andExpect {
+                    status { isOk() }
+                    content { submission.toFullResponseDTO() }
+                }
 
             verify { contestAuthFilter.checkIfStarted(contestId) }
             verify { createSubmissionService.create(member.id, body) }
@@ -90,12 +91,13 @@ class SubmissionControllerTest(
                 )
             every { findSubmissionService.findAllByContest(contestId) } returns submissions
 
-            webMvc.get(basePath, contestId) {
-                accept = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isOk() }
-                content { submissions.map { it.toPublicResponseDTO() } }
-            }
+            webMvc
+                .get(basePath, contestId) {
+                    accept = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isOk() }
+                    content { submissions.map { it.toPublicResponseDTO() } }
+                }
         }
 
         test("findAllContestFullSubmissions") {
@@ -107,12 +109,13 @@ class SubmissionControllerTest(
                 )
             every { findSubmissionService.findAllByContest(contestId) } returns submissions
 
-            webMvc.get("$basePath/full", contestId) {
-                accept = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isOk() }
-                content { submissions.map { it.toFullResponseDTO() } }
-            }
+            webMvc
+                .get("$basePath/full", contestId) {
+                    accept = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isOk() }
+                    content { submissions.map { it.toFullResponseDTO() } }
+                }
 
             verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
         }
@@ -122,12 +125,13 @@ class SubmissionControllerTest(
             every { findSubmissionService.findAllByMember(member.id) } returns submissions
             val contestId = UUID.randomUUID()
 
-            webMvc.get("$basePath/full/members/me", contestId) {
-                accept = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isOk() }
-                content { submissions }
-            }
+            webMvc
+                .get("$basePath/full/members/me", contestId) {
+                    accept = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isOk() }
+                    content { submissions }
+                }
         }
 
         test("updateSubmissionAnswer") {
@@ -135,11 +139,12 @@ class SubmissionControllerTest(
             val submissionId = UUID.randomUUID()
             val answer = Submission.Answer.ACCEPTED
 
-            webMvc.put("$basePath/{id}/answer/{answer}", contestId, submissionId, answer) {
-                contentType = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isNoContent() }
-            }
+            webMvc
+                .put("$basePath/{id}/answer/{answer}", contestId, submissionId, answer) {
+                    contentType = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isNoContent() }
+                }
 
             verify { updateSubmissionService.updateAnswer(submissionId, answer) }
         }
@@ -149,11 +154,12 @@ class SubmissionControllerTest(
             val submissionId = UUID.randomUUID()
             val answer = Submission.Answer.ACCEPTED
 
-            webMvc.put("$basePath/{id}/answer/{answer}/force", contestId, submissionId, answer) {
-                contentType = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isNoContent() }
-            }
+            webMvc
+                .put("$basePath/{id}/answer/{answer}/force", contestId, submissionId, answer) {
+                    contentType = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isNoContent() }
+                }
 
             verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
             verify { updateSubmissionService.updateAnswer(submissionId, answer, force = true) }
@@ -163,11 +169,12 @@ class SubmissionControllerTest(
             val contestId = UUID.randomUUID()
             val submissionId = UUID.randomUUID()
 
-            webMvc.post("$basePath/{id}/rerun", contestId, submissionId) {
-                contentType = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isNoContent() }
-            }
+            webMvc
+                .post("$basePath/{id}/rerun", contestId, submissionId) {
+                    contentType = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isNoContent() }
+                }
 
             verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
             verify { updateSubmissionService.rerun(submissionId) }

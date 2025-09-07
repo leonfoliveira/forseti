@@ -28,7 +28,7 @@ class HttpPrivateInterceptorTest : FunSpec({
         sut.preHandle(request, response, handler) shouldBe true
     }
 
-    test("should return true when no Private annotation is found") {
+    test("should return true when no Private annotation is found in method") {
         val request = mockk<HttpServletRequest>(relaxed = true)
         val response = mockk<HttpServletResponse>(relaxed = true)
         val handler = mockk<HandlerMethod>(relaxed = true)

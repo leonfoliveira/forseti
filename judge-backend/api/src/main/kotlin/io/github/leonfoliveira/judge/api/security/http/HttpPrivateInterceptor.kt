@@ -38,7 +38,7 @@ class HttpPrivateInterceptor : HandlerInterceptor {
                 ?: handler.beanType.getAnnotation(Private::class.java)
 
         if (privateAnnotation == null) {
-            logger.info("No Private annotation found on handler method or bean type")
+            logger.info("No @Private annotation found, skipping access check")
             return true
         }
 

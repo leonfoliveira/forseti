@@ -54,7 +54,7 @@ class TestInstallCommand:
         input_adapter.checkbox.return_value = [
             "gcc:15.1.0",
             "eclipse-temurin:21-jdk-alpine",
-            "python:3.13.3-alpine",
+            "python:3.12.3-alpine",
         ]
         os.path.exists.return_value = True
 
@@ -131,7 +131,7 @@ class TestInstallCommand:
             "grafana_admin_password",
             "",  # Empty JWT secret should trigger random generation
         ]
-        input_adapter.checkbox.return_value = ["python:3.13.3-alpine"]
+        input_adapter.checkbox.return_value = ["python:3.12.3-alpine"]
         os.path.exists.return_value = True
 
         mock_socket = MagicMock()

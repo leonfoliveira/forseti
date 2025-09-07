@@ -2,6 +2,7 @@ package io.github.leonfoliveira.judge.api.controller
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
+import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
@@ -32,6 +33,7 @@ class AuthenticationController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/me")
+    @RateLimit
     @Operation(
         summary = "Get current authorization",
         description = "Returns the authorization of the current user.",
@@ -59,6 +61,7 @@ class AuthenticationController(
     }
 
     @PostMapping("/sign-in")
+    @RateLimit
     @Operation(
         summary = "Authenticate",
         description = "Authenticates a user and returns an authorization.",
@@ -82,14 +85,16 @@ class AuthenticationController(
     ): ResponseEntity<Authorization> {
         logger.info("[POST] /v1/auth/sign-in $body")
         val authorization = authorizationService.authenticate(body)
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .header(HttpHeaders.SET_COOKIE, buildCookie(authorization).toString())
             .body(authorization)
     }
 
     private fun buildCookie(authorization: Authorization): ResponseCookie {
         val accessToken = authorizationService.encodeToken(authorization)
-        return ResponseCookie.from("access_token", accessToken)
+        return ResponseCookie
+            .from("access_token", accessToken)
             .httpOnly(true)
             .secure(true)
             .path("/")

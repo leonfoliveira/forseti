@@ -129,6 +129,7 @@ services:
       PORT: 8080
       ROOT_PASSWORD_FILE: /run/secrets/root_password
       SPRING_PROFILES_ACTIVE: production
+      VERSION: ${VERSION:-latest}
     healthcheck:
       test:
         - CMD-SHELL
@@ -376,7 +377,7 @@ services:
       - db_password
     volumes:
       - type: bind
-        source: ../../judge-backend/common/src/main/resources/migration
+        source: ./volumes/migrations
         target: /flyway/sql
 
   node-exporter:

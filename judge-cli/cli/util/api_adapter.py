@@ -67,8 +67,7 @@ class ApiAdapter:
 
     def _authenticate(self):
         if token := self._get_cached_token():
-            claims = jwt.decode(
-                token, options={"verify_signature": False})
+            claims = jwt.decode(token, options={"verify_signature": False})
             expiration = claims.get("exp")
             if expiration and expiration > int(time.time()):
                 return token
@@ -94,7 +93,6 @@ class ApiAdapter:
 
     def _set_cached_token(self, access_token: str) -> None:
         try:
-            keyring.set_password(
-                self.SERVICE_NAME, self.TOKEN_KEY, access_token)
+            keyring.set_password(self.SERVICE_NAME, self.TOKEN_KEY, access_token)
         except keyring.errors.NoKeyringError:
             pass

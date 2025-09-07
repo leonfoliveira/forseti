@@ -25,3 +25,15 @@ security:
     root-expiration: ${JWT_ROOT_EXPIRATION}
   root:
     password: ${ROOT_PASSWORD}
+  rate-limit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    cache-size: ${RATE_LIMIT_CACHE_SIZE:100000}
+    cache-ttl-hours: ${RATE_LIMIT_CACHE_TTL_HOURS:1}
+    default:
+      requests-per-minute: ${RATE_LIMIT_DEFAULT_RPM:60}
+      requests-per-hour: ${RATE_LIMIT_DEFAULT_RPH:1000}
+      burst-capacity: ${RATE_LIMIT_DEFAULT_BURST:10}
+    authentication:
+      requests-per-minute: ${RATE_LIMIT_AUTH_RPM:5}
+      requests-per-hour: ${RATE_LIMIT_AUTH_RPH:20}
+      burst-capacity: ${RATE_LIMIT_AUTH_BURST:2}
