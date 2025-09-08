@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import patch
 from click.testing import CliRunner
 
+from cli.util.command_adapter import CommandAdapter
 from cli.commands.swarm import swarm
 
 BASE_PATH = "cli.commands.swarm"
@@ -154,6 +155,23 @@ class TestSwarmCommand:
 
         assert result.exit_code == 1
         assert "Could not get swarm join tokens" in result.output
+
+    def test_info_not_swarm_manager(self, runner, command_adapter, input_adapter, socket):
+        command_adapter.run.side_effect = CommandAdapter.Error(
+            1, "This node is not a swarm manager")
+
+        result = runner.invoke(swarm, ["info"])
+
+        assert result.exit_code == 1
+        assert "This node is not a swarm manager" in result.output
+
+    def test_info_other_error(self, runner, command_adapter, input_adapter, socket):
+        command_adapter.run.side_effect = CommandAdapter.Error(
+            1, "Some other error")
+
+        result = runner.invoke(swarm, ["info"])
+
+        assert result.exit_code == 1
 
     def test_join(self, runner, command_adapter, input_adapter, socket):
         token = "SWMTKN-1-test-token"

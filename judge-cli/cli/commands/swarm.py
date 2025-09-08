@@ -41,14 +41,19 @@ def init(ctx):
 @swarm.command()
 def info():
     command_adapter = CommandAdapter()
-    worker_result = command_adapter.run(
-        ["docker", "swarm", "join-token", "worker"],
-        stdout=subprocess.PIPE,
-    )
-    manager_result = command_adapter.run(
-        ["docker", "swarm", "join-token", "manager"],
-        stdout=subprocess.PIPE,
-    )
+    try:
+        worker_result = command_adapter.run(
+            ["docker", "swarm", "join-token", "worker"],
+            stdout=subprocess.PIPE,
+        )
+        manager_result = command_adapter.run(
+            ["docker", "swarm", "join-token", "manager"],
+            stdout=subprocess.PIPE,
+        )
+    except CommandAdapter.Error as e:
+        if "This node is not a swarm manager" in str(e):
+            raise click.ClickException("This node is not a swarm manager")
+        raise e
 
     worker_match = re.search(
         r"docker swarm join --token (\S+)", worker_result[2])
