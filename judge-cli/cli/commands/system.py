@@ -30,7 +30,7 @@ def stop():
             ["docker", "stack", "rm", __stack_name__],
         )
     except CommandAdapter.Error as e:
-        if "this node is not a swarm manager" in str(e):
+        if "This node is not a swarm manager" in str(e):
             raise click.ClickException("This node is not a swarm manager")
         raise e
 
@@ -43,6 +43,6 @@ def status():
             ["docker", "stack", "ps", __stack_name__],
         )
     except CommandAdapter.Error as e:
-        if "this node is not a swarm manager" in str(e):
+        if "This node is not a swarm manager" in str(e):
             raise click.ClickException("This node is not a swarm manager")
         raise e

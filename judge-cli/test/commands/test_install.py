@@ -13,6 +13,8 @@ class TestInstallCommand:
     @pytest.fixture(autouse=True)
     def command_adapter(self):
         with patch(f"{BASE_PATH}.CommandAdapter") as mock:
+            from cli.util.command_adapter import CommandAdapter
+            mock.Error = CommandAdapter.Error
             yield mock.return_value
 
     @pytest.fixture(autouse=True)
@@ -66,6 +68,17 @@ class TestInstallCommand:
 
         # Verify command adapter was called for Docker operations
         assert command_adapter.run.call_count > 0
+
+    def test_install_no_docker(self, runner, command_adapter, input_adapter, os, subprocess):
+        # Simulate Docker not being installed by raising an error
+        from cli.util.command_adapter import CommandAdapter
+        command_adapter.run.side_effect = CommandAdapter.Error(
+            1, "docker: command not found")
+
+        result = runner.invoke(install)
+
+        assert result.exit_code == 1
+        assert "Docker is not installed or not found in PATH." in result.output
 
     def test_install_with_empty_jwt_secret(self, runner, command_adapter, input_adapter, os, subprocess):
         """Test automatic JWT secret generation when user provides empty input."""

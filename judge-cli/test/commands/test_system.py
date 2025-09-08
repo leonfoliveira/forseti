@@ -50,7 +50,7 @@ class TestSystemCommand:
 
     def test_stop_swarm_manager_error(self, runner, command_adapter):
         command_adapter.run.side_effect = CommandAdapter.Error(
-            1, "this node is not a swarm manager")
+            1, "This node is not a swarm manager")
         result = runner.invoke(system, ["stop"])
         assert result.exit_code == 1
         assert "This node is not a swarm manager" in result.output
@@ -70,7 +70,7 @@ class TestSystemCommand:
 
     def test_status_swarm_manager_error(self, runner, command_adapter):
         command_adapter.run.side_effect = CommandAdapter.Error(
-            1, "this node is not a swarm manager")
+            1, "This node is not a swarm manager")
         result = runner.invoke(system, ["status"])
         assert result.exit_code == 1
         assert "This node is not a swarm manager" in result.output

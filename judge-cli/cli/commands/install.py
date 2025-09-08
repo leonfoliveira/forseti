@@ -15,6 +15,12 @@ def install():
     command_adapter = CommandAdapter()
     input_adapter = InputAdapter()
 
+    try:
+        command_adapter.run(["docker", "--version"])
+    except CommandAdapter.Error:
+        raise click.ClickException(
+            "Docker is not installed or not found in PATH.")
+
     _setup_secrets(command_adapter, input_adapter)
     _build_sandboxes(command_adapter, input_adapter)
     _pull_stack_images(command_adapter)
