@@ -26,11 +26,6 @@ class TestInstallCommand:
             yield mock
 
     @pytest.fixture(autouse=True)
-    def socket(self):
-        with patch(f"{BASE_PATH}.socket") as mock:
-            yield mock
-
-    @pytest.fixture(autouse=True)
     def subprocess(self):
         with patch(f"{BASE_PATH}.subprocess") as mock:
             # Mock the subprocess.run call in _setup_swarm
@@ -42,7 +37,7 @@ class TestInstallCommand:
     def runner(self):
         return CliRunner()
 
-    def test_install(self, runner, command_adapter, input_adapter, os, socket, subprocess):
+    def test_install(self, runner, command_adapter, input_adapter, os, subprocess):
         """Test successful installation with custom stack file."""
         # Setup mocks - correct password order based on the actual implementation
         input_adapter.password.side_effect = [
@@ -58,11 +53,6 @@ class TestInstallCommand:
         ]
         os.path.exists.return_value = True
 
-        # Setup socket mock properly
-        mock_socket = MagicMock()
-        mock_socket.getsockname.return_value = ("192.168.1.1", 12345)
-        socket.socket.return_value = mock_socket
-
         # Fix the command invocation
         result = runner.invoke(install)
 
@@ -77,13 +67,7 @@ class TestInstallCommand:
         # Verify command adapter was called for Docker operations
         assert command_adapter.run.call_count > 0
 
-        # Verify socket operations
-        socket.socket.assert_called_once()
-        mock_socket.connect.assert_called_once_with(("8.8.8.8", 80))
-        mock_socket.getsockname.assert_called_once()
-        mock_socket.close.assert_called_once()
-
-    def test_install_with_empty_jwt_secret(self, runner, command_adapter, input_adapter, os, socket, subprocess):
+    def test_install_with_empty_jwt_secret(self, runner, command_adapter, input_adapter, os, subprocess):
         """Test automatic JWT secret generation when user provides empty input."""
         # Test JWT secret generation when empty password is provided
         input_adapter.password.side_effect = [
@@ -95,10 +79,6 @@ class TestInstallCommand:
         input_adapter.checkbox.return_value = ["python:3.12.3-alpine"]
         os.path.exists.return_value = True
 
-        mock_socket = MagicMock()
-        mock_socket.getsockname.return_value = ("192.168.1.1", 12345)
-        socket.socket.return_value = mock_socket
-
         result = runner.invoke(install)
 
         assert result.exit_code == 0
@@ -109,48 +89,3 @@ class TestInstallCommand:
         jwt_secret_calls = [call for call in docker_secret_calls
                             if "jwt_secret" in call[0][0]]
         assert len(jwt_secret_calls) > 0
-
-    def test_install_with_existing_swarm(self, runner, command_adapter, input_adapter, os, socket, subprocess):
-        """Test installation when Docker swarm is already initialized and active."""
-        # Test when Docker swarm is already active
-        input_adapter.password.side_effect = [
-            "db_password",
-            "root_password",
-            "grafana_admin_password",
-            "jwt_secret",
-        ]
-        input_adapter.checkbox.return_value = ["gcc:15.1.0"]
-        os.path.exists.return_value = True
-
-        mock_socket = MagicMock()
-        mock_socket.getsockname.return_value = ("192.168.1.1", 12345)
-        socket.socket.return_value = mock_socket
-
-        # Mock swarm already active
-        subprocess.run.return_value.stdout.strip.return_value = "active"
-
-        result = runner.invoke(install)
-
-        assert result.exit_code == 0
-        assert "Using existing swarm." in result.output
-
-    def test_install_socket_exception_fallback(self, runner, command_adapter, input_adapter, os, socket, subprocess):
-        """Test fallback to localhost when network discovery fails."""
-        # Test fallback to 127.0.0.1 when socket connection fails
-        input_adapter.password.side_effect = [
-            "db_password",
-            "root_password",
-            "grafana_admin_password",
-            "jwt_secret",
-        ]
-        input_adapter.checkbox.return_value = ["gcc:15.1.0"]
-        os.path.exists.return_value = True
-
-        mock_socket = MagicMock()
-        mock_socket.connect.side_effect = Exception("Connection failed")
-        socket.socket.return_value = mock_socket
-
-        result = runner.invoke(install)
-
-        assert result.exit_code == 0
-        mock_socket.close.assert_called_once()

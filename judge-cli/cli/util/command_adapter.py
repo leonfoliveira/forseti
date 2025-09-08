@@ -4,6 +4,12 @@ import sys
 
 
 class CommandAdapter:
+    class Error(Exception):
+        def __init__(self, exit_code: int, message: str):
+            super().__init__(message)
+            self.message = message
+            self.exit_code = exit_code
+
     def get_cli_path(self) -> str:
         cli_path = (
             os.path.dirname(sys.executable)
@@ -14,9 +20,10 @@ class CommandAdapter:
         )
         return cli_path
 
-    def run(self, command: list[str], throws=True, **kwargs) -> list[str]:
-        result = subprocess.run(command, text=True, **kwargs)
-        if throws and result.returncode != 0:
-            raise Exception(result.stderr)
+    def run(self, command: list[str], **kwargs) -> list[str]:
+        result = subprocess.run(
+            command, text=True, stderr=subprocess.PIPE, **kwargs)
+        if result.returncode != 0:
+            raise CommandAdapter.Error(result.returncode, result.stderr)
         if result.stdout is not None:
             return result.stdout.splitlines()

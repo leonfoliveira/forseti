@@ -1,8 +1,6 @@
 import os
 import secrets
-import socket
 import subprocess
-from typing import Optional
 
 import click
 import questionary
@@ -20,7 +18,6 @@ def install():
     _setup_secrets(command_adapter, input_adapter)
     _build_sandboxes(command_adapter, input_adapter)
     _pull_stack_images(command_adapter)
-    _setup_swarm(command_adapter)
 
     click.echo("Judge system installed successfully.")
 
@@ -108,29 +105,4 @@ def _pull_stack_images(command_adapter: CommandAdapter):
     stack = os.path.join(cli_path, __stack_file__)
     command_adapter.run(
         ["docker", "compose", "-f", stack, "pull"],
-    )
-
-
-def _setup_swarm(command_adapter: CommandAdapter):
-    click.echo("Setting up docker swarm...")
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-    except Exception:
-        ip = "127.0.0.1"
-    finally:
-        s.close()
-
-    swarm_state = subprocess.run(
-        ["docker", "info", "--format", "{{.Swarm.LocalNodeState}}"],
-        text=True,
-        stdout=subprocess.PIPE,
-    )
-    if swarm_state.stdout.strip() == "active":
-        click.echo("Using existing swarm.")
-        return
-    command_adapter.run(
-        ["docker", "swarm", "init", "--advertise-addr", ip],
     )

@@ -20,10 +20,10 @@ class TestCommandAdapter:
         process = subprocess.run.return_value
         process.returncode = 0
         process.stdout = "line1\nline2\n"
-        result = sut.run(["echo", "hello"], throws=True)
+        result = sut.run(["echo", "hello"])
 
         subprocess.run.assert_called_once_with(
-            ["echo", "hello"], text=True)
+            ["echo", "hello"], text=True, stderr=subprocess.PIPE)
         assert result == ["line1", "line2"]
 
     def test_run_unsuccessful_throws(self, sut, subprocess):
@@ -31,33 +31,23 @@ class TestCommandAdapter:
         process.returncode = 1
         process.stderr = "error message"
 
-        with pytest.raises(Exception) as excinfo:
-            sut.run(["false"], throws=True)
+        with pytest.raises(CommandAdapter.Error) as excinfo:
+            sut.run(["false"])
 
         subprocess.run.assert_called_once_with(
-            ["false"], text=True)
-        assert str(excinfo.value) == "error message"
-
-    def test_run_unsuccessful_no_throws(self, sut, subprocess):
-        process = subprocess.run.return_value
-        process.returncode = 1
-        process.stdout = "line1\nline2\n"
-
-        result = sut.run(["false"], throws=False)
-
-        subprocess.run.assert_called_once_with(
-            ["false"], text=True)
-        assert result == ["line1", "line2"]
+            ["false"], text=True, stderr=subprocess.PIPE)
+        assert excinfo.value.exit_code == 1
+        assert excinfo.value.message == "error message"
 
     def test_run_with_no_stdout(self, sut, subprocess):
         process = subprocess.run.return_value
         process.returncode = 0
         process.stdout = None
 
-        result = sut.run(["echo", "hello"], throws=True)
+        result = sut.run(["echo", "hello"])
 
         subprocess.run.assert_called_once_with(
-            ["echo", "hello"], text=True)
+            ["echo", "hello"], text=True, stderr=subprocess.PIPE)
         assert result is None
 
     def test_get_cli_path_frozen(self, sut):

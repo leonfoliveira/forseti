@@ -26,6 +26,7 @@ class TestMainCLI:
         # Verify all main commands are listed
         assert "contest" in result.output
         assert "install" in result.output
+        assert "swarm" in result.output
         assert "system" in result.output
 
     def test_contest_command_accessible(self, runner):
@@ -41,6 +42,13 @@ class TestMainCLI:
 
         assert result.exit_code == 0
         assert "Usage: judge install [OPTIONS]" in result.output
+
+    def test_swarm_command_accessible(self, runner):
+        """Test that the swarm command is accessible via the main CLI."""
+        result = runner.invoke(judge, ["swarm", "--help"])
+
+        assert result.exit_code == 0
+        assert "Usage: judge swarm [OPTIONS] COMMAND [ARGS]..." in result.output
 
     def test_system_command_accessible(self, runner):
         """Test that the system command is accessible via the main CLI."""
@@ -100,6 +108,7 @@ class TestMainCLI:
         assert hasattr(judge, 'commands')
         assert 'contest' in judge.commands
         assert 'install' in judge.commands
+        assert 'swarm' in judge.commands
         assert 'system' in judge.commands
 
     def test_version_or_info_not_breaking(self, runner):
@@ -122,16 +131,17 @@ class TestMainCLI:
         assert hasattr(main_module, 'judge')
         assert hasattr(main_module, 'contest')
         assert hasattr(main_module, 'install')
+        assert hasattr(main_module, 'swarm')
         assert hasattr(main_module, 'system')
 
         # Test that the judge function has the right commands
         judge_func = main_module.judge
         assert hasattr(judge_func, 'commands')
-        assert len(judge_func.commands) == 3
+        assert len(judge_func.commands) == 4
 
         # Verify command names
         command_names = set(judge_func.commands.keys())
-        expected_commands = {'contest', 'install', 'system'}
+        expected_commands = {'contest', 'install', 'swarm', 'system'}
         assert command_names == expected_commands
 
     def test_command_registration_order(self):
@@ -142,7 +152,7 @@ class TestMainCLI:
         commands_list = list(main_module.judge.commands.keys())
 
         # While order isn't strictly required, this test ensures consistency
-        expected_commands = ['contest', 'install', 'system']
+        expected_commands = ['contest', 'install', 'swarm', 'system']
         assert commands_list == expected_commands
 
     def test_cli_integration_smoke_test(self, runner):
