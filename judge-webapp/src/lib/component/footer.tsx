@@ -1,4 +1,4 @@
-import { env } from "@/config/env";
+import { config } from "@/config/config";
 import { defineMessages } from "@/i18n/message";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
 
@@ -16,7 +16,7 @@ export function Footer() {
         <FormattedMessage
           {...messages.text}
           values={{
-            version: env.VERSION,
+            version: config.version,
           }}
         />
       </a>

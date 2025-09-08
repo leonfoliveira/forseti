@@ -68,7 +68,7 @@ describe("HomePage", () => {
 
     const logoImage = screen.getByTestId("logo-image");
     expect(logoImage).toBeInTheDocument();
-    expect(logoImage).toHaveAttribute("src", "/favicon.ico");
+    expect(logoImage).toHaveAttribute("src", "/logo.ico");
     expect(logoImage).toHaveAttribute("alt", "Logo of judge");
     expect(logoImage).toHaveAttribute("width", "75");
     expect(logoImage).toHaveAttribute("height", "75");

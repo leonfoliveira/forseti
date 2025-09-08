@@ -19,11 +19,9 @@ describe("AxiosAuthenticationRepository", () => {
         data: authorization,
       } as AxiosResponse);
 
-      const result = await sut.getAuthorization("access-token");
+      const result = await sut.getAuthorization();
 
-      expect(axiosClient.get).toHaveBeenCalledWith("/v1/auth/me", {
-        headers: { Cookie: "access_token=access-token" },
-      });
+      expect(axiosClient.get).toHaveBeenCalledWith("/v1/auth/me");
       expect(result).toEqual(authorization);
     });
   });

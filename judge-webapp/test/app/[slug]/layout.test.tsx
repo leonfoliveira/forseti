@@ -5,10 +5,6 @@ import ContestLayout from "@/app/[slug]/layout";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 
 // Mock the dependencies
-jest.mock("next/headers", () => ({
-  cookies: jest.fn(),
-}));
-
 jest.mock("next/navigation", () => ({
   notFound: jest.fn(),
 }));
@@ -47,7 +43,6 @@ jest.mock("@/store/store-provider", () => ({
   ),
 }));
 
-const mockCookies = require("next/headers").cookies;
 const mockNotFound = require("next/navigation").notFound;
 
 const {
@@ -63,18 +58,12 @@ describe("ContestLayout", () => {
   const mockAuthorization = { id: "auth-1", userId: "user-1" };
   const mockContestMetadata = { id: "contest-1", slug: "test-contest" };
   const mockParams = Promise.resolve({ slug: "test-contest" });
-  const mockCookieStore = {
-    get: jest.fn(),
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCookies.mockResolvedValue(mockCookieStore);
     authenticationService.getAuthorization.mockResolvedValue(mockAuthorization);
     contestService.findContestMetadataBySlug.mockResolvedValue(
       mockContestMetadata,
     );
-    mockCookieStore.get.mockReturnValue({ value: "mock-token" });
   });
 
   it("should render layout with header, content, and footer when data loads successfully", async () => {
@@ -110,16 +99,13 @@ describe("ContestLayout", () => {
     });
   });
 
-  it("should call authenticationService with access token from cookies", async () => {
+  it("should call authenticationService", async () => {
     await ContestLayout({
       params: mockParams,
       children: <TestChildren />,
     });
 
-    expect(mockCookieStore.get).toHaveBeenCalledWith("access_token");
-    expect(authenticationService.getAuthorization).toHaveBeenCalledWith(
-      "mock-token",
-    );
+    expect(authenticationService.getAuthorization).toHaveBeenCalled();
   });
 
   it("should call contestService with slug from params", async () => {
@@ -131,17 +117,6 @@ describe("ContestLayout", () => {
     expect(contestService.findContestMetadataBySlug).toHaveBeenCalledWith(
       "test-contest",
     );
-  });
-
-  it("should handle missing access token", async () => {
-    mockCookieStore.get.mockReturnValue(undefined);
-
-    await ContestLayout({
-      params: mockParams,
-      children: <TestChildren />,
-    });
-
-    expect(authenticationService.getAuthorization).toHaveBeenCalledWith("");
   });
 
   it("should have correct layout structure with CSS classes", async () => {

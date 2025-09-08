@@ -6,12 +6,8 @@ import { AuthenticateRequestDTO } from "@/core/repository/dto/request/Authentica
 export class AxiosAuthenticationRepository implements AuthenticationRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
 
-  async getAuthorization(accessToken: string): Promise<Authorization> {
-    const response = await this.axiosClient.get<Authorization>("/v1/auth/me", {
-      headers: {
-        Cookie: `access_token=${accessToken}`,
-      },
-    });
+  async getAuthorization(): Promise<Authorization> {
+    const response = await this.axiosClient.get<Authorization>("/v1/auth/me");
     return response.data;
   }
 

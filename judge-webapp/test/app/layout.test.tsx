@@ -4,9 +4,9 @@ import React from "react";
 import Layout from "@/app/layout";
 
 // Mock the dependencies
-jest.mock("@/config/env", () => ({
-  env: {
-    LOCALE: "en-US",
+jest.mock("@/config/config", () => ({
+  config: {
+    locale: "en-US",
   },
 }));
 
