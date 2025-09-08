@@ -21,8 +21,7 @@ class CommandAdapter:
         return cli_path
 
     def run(self, command: list[str], **kwargs) -> list[str]:
-        result = subprocess.run(
-            command, text=True, stderr=subprocess.PIPE, **kwargs)
+        result = subprocess.run(command, text=True, stderr=subprocess.PIPE, **kwargs)
         if result.returncode != 0:
             raise CommandAdapter.Error(result.returncode, result.stderr)
         if result.stdout is not None:

@@ -1,7 +1,7 @@
 import click
 
-from cli.util.command_adapter import CommandAdapter
 from cli.config import __stack_file__, __stack_name__
+from cli.util.command_adapter import CommandAdapter
 
 
 @click.group()

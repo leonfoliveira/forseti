@@ -8,6 +8,7 @@ import keyring.errors
 import requests
 
 from cli.config import __api_url__
+
 from .input_adapter import InputAdapter
 
 
@@ -94,6 +95,7 @@ class ApiAdapter:
     def _set_cached_token(self, access_token: str) -> None:
         try:
             keyring.set_password(
-                self.SERVICE_NAME, self.TOKEN_KEYRING_KEY, access_token)
+                self.SERVICE_NAME, self.TOKEN_KEYRING_KEY, access_token
+            )
         except keyring.errors.NoKeyringError:
             pass
