@@ -75,6 +75,13 @@ class TestSystemCommand:
         assert result.exit_code == 1
         assert "This node is not a swarm manager" in result.output
 
+    def test_status_nothing_found_in_stack(self, runner, command_adapter):
+        command_adapter.run.side_effect = CommandAdapter.Error(
+            1, "nothing found in stack")
+        result = runner.invoke(system, ["status"])
+        assert result.exit_code == 1
+        assert "System is not running" in result.output
+
     def test_status_other_error(self, runner, command_adapter):
         command_adapter.run.side_effect = CommandAdapter.Error(
             1, "Some other error")

@@ -45,4 +45,6 @@ def status():
     except CommandAdapter.Error as e:
         if "This node is not a swarm manager" in str(e):
             raise click.ClickException("This node is not a swarm manager")
+        if "nothing found in stack" in str(e):
+            raise click.ClickException("System is not running")
         raise e
