@@ -1,1 +1,3 @@
-test/judge
+*/judge
+production/volumes/migrations
+production/sandboxes
