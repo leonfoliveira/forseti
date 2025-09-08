@@ -102,8 +102,14 @@ jobs:
           mkdir -p sandboxes
           cp -r ../../judge-backend/autojudge/src/main/resources/sandboxes/* sandboxes/
 
+      - name: Copy additional files to production directory
+        run: |
+          cp ../../README.md .
+          cp ../../LICENSE .
+          cp ../../judge-cli/dist/judge .
+
       - name: Create ZIP file with tag name
-        run: zip judge-${{ steps.vars.outputs.tag }}.zip * ../../README.md ../../LICENSE ../../judge-cli/dist/judge
+        run: zip -r judge-${{ steps.vars.outputs.tag }}.zip *
 
       - name: Upload ZIP to release
         uses: softprops/action-gh-release@v1
