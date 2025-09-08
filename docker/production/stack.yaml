@@ -288,6 +288,12 @@ services:
         source: ./volumes/grafana/datasources.yml
         target: /etc/grafana/provisioning/datasources/datasources.yml
       - type: bind
+        source: ./volumes/grafana/dashboards.yml
+        target: /etc/grafana/provisioning/dashboards/dashboards.yml
+      - type: bind
+        source: ./volumes/grafana/dashboards
+        target: /etc/grafana/provisioning/dashboards
+      - type: bind
         source: ./volumes/grafana/entrypoint.sh
         target: /entrypoint.sh
 

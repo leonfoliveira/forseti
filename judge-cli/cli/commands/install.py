@@ -2,29 +2,24 @@ import os
 import secrets
 import socket
 import subprocess
-import sys
+from typing import Optional
 
 import click
 import questionary
 
 from cli.util.command_adapter import CommandAdapter
 from cli.util.input_adapter import InputAdapter
-from cli.util.version import __version__
+from cli.config import __version__, __stack_file__
 
 
 @click.command()
-@click.option("--stack", help="The stack file", default="stack.yaml", required=False)
-def install(stack):
+def install():
     command_adapter = CommandAdapter()
     input_adapter = InputAdapter()
 
-    if not os.path.exists(stack):
-        click.echo(f"Stack file '{stack}' does not exist.", err=True)
-        sys.exit(1)
-
     _setup_secrets(command_adapter, input_adapter)
     _build_sandboxes(command_adapter, input_adapter)
-    _pull_stack_images(command_adapter, stack)
+    _pull_stack_images(command_adapter)
     _setup_swarm(command_adapter)
 
     click.echo("Judge system installed successfully.")
@@ -82,7 +77,8 @@ def _build_sandboxes(command_adapter: CommandAdapter, input_adapter: InputAdapte
         choices=[
             questionary.Choice("C++ 17", checked=True, value="cpp17"),
             questionary.Choice("Java 21", checked=True, value="java21"),
-            questionary.Choice("Python 3.12", checked=True, value="python3_12"),
+            questionary.Choice("Python 3.12", checked=True,
+                               value="python3_12"),
         ],
     )
 
@@ -90,7 +86,8 @@ def _build_sandboxes(command_adapter: CommandAdapter, input_adapter: InputAdapte
 
     cli_path = command_adapter.get_cli_path()
     for sandbox in sandboxes:
-        sandbox_path = os.path.join(cli_path, "sandboxes", f"{sandbox}.Dockerfile")
+        sandbox_path = os.path.join(
+            cli_path, "sandboxes", f"{sandbox}.Dockerfile")
         command_adapter.run(
             [
                 "docker",
@@ -104,13 +101,13 @@ def _build_sandboxes(command_adapter: CommandAdapter, input_adapter: InputAdapte
         )
 
 
-def _pull_stack_images(command_adapter: CommandAdapter, stack: str):
+def _pull_stack_images(command_adapter: CommandAdapter):
     click.echo("Pulling stack images...")
 
     cli_path = command_adapter.get_cli_path()
-    stack_path = os.path.join(cli_path, stack)
+    stack = os.path.join(cli_path, __stack_file__)
     command_adapter.run(
-        ["docker", "compose", "-f", stack_path, "pull"],
+        ["docker", "compose", "-f", stack, "pull"],
     )
 
 
@@ -126,12 +123,12 @@ def _setup_swarm(command_adapter: CommandAdapter):
     finally:
         s.close()
 
-    result = subprocess.run(
+    swarm_state = subprocess.run(
         ["docker", "info", "--format", "{{.Swarm.LocalNodeState}}"],
         text=True,
         stdout=subprocess.PIPE,
     )
-    if result.stdout.strip() == "active":
+    if swarm_state.stdout.strip() == "active":
         click.echo("Using existing swarm.")
         return
     command_adapter.run(

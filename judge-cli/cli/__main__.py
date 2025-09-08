@@ -3,7 +3,7 @@ import click
 from cli.commands.contest import contest
 from cli.commands.install import install
 from cli.commands.system import system
-from cli.util.version import __build_date__, __git_commit__, __version__
+from cli.config import __build_date__, __git_commit__, __version__
 
 
 @click.group()

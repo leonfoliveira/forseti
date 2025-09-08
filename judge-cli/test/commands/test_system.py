@@ -18,16 +18,6 @@ class TestSystemCommand:
         return CliRunner()
 
     def test_start(self, runner, command_adapter):
-        result = runner.invoke(
-            system, ["start", "--stack", "custom_stack.yaml",
-                     "--stack-name", "test_stack"]
-        )
-        assert result.exit_code == 0
-        command_adapter.run.assert_called_once_with(
-            ["docker", "stack", "deploy", "-c", "custom_stack.yaml", "test_stack"]
-        )
-
-    def test_start_default_values(self, runner, command_adapter):
         result = runner.invoke(system, ["start"])
         assert result.exit_code == 0
         command_adapter.run.assert_called_once_with(
@@ -35,14 +25,6 @@ class TestSystemCommand:
         )
 
     def test_stop(self, runner, command_adapter):
-        result = runner.invoke(
-            system, ["stop", "--stack-name", "test_stack"])
-        assert result.exit_code == 0
-        command_adapter.run.assert_called_once_with(
-            ["docker", "stack", "rm", "test_stack"]
-        )
-
-    def test_stop_default_stack_name(self, runner, command_adapter):
         result = runner.invoke(system, ["stop"])
         assert result.exit_code == 0
         command_adapter.run.assert_called_once_with(
@@ -50,14 +32,6 @@ class TestSystemCommand:
         )
 
     def test_status(self, runner, command_adapter):
-        result = runner.invoke(
-            system, ["status", "--stack-name", "test_stack"])
-        assert result.exit_code == 0
-        command_adapter.run.assert_called_once_with(
-            ["docker", "stack", "ps", "test_stack"]
-        )
-
-    def test_status_default_stack_name(self, runner, command_adapter):
         result = runner.invoke(system, ["status"])
         assert result.exit_code == 0
         command_adapter.run.assert_called_once_with(

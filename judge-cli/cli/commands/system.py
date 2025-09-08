@@ -1,6 +1,7 @@
 import click
 
 from cli.util.command_adapter import CommandAdapter
+from cli.config import __stack_file__, __stack_name__
 
 
 @click.group()
@@ -9,34 +10,24 @@ def system():
 
 
 @system.command()
-@click.option("--stack", help="The stack file", default="stack.yaml", required=False)
-@click.option(
-    "--stack-name", help="The docker stack name", default="judge", required=False
-)
-def start(stack, stack_name):
+def start():
     command_adapter = CommandAdapter()
     command_adapter.run(
-        ["docker", "stack", "deploy", "-c", stack, stack_name],
+        ["docker", "stack", "deploy", "-c", __stack_file__, __stack_name__],
     )
 
 
 @system.command()
-@click.option(
-    "--stack-name", help="The docker stack name", default="judge", required=False
-)
-def stop(stack_name):
+def stop():
     command_adapter = CommandAdapter()
     command_adapter.run(
-        ["docker", "stack", "rm", stack_name],
+        ["docker", "stack", "rm", __stack_name__],
     )
 
 
 @system.command()
-@click.option(
-    "--stack-name", help="The docker stack name", default="judge", required=False
-)
-def status(stack_name):
+def status():
     command_adapter = CommandAdapter()
     command_adapter.run(
-        ["docker", "stack", "ps", stack_name],
+        ["docker", "stack", "ps", __stack_name__],
     )

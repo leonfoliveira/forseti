@@ -82,7 +82,7 @@ class TestApiAdapter:
 
         requests.get.assert_called_with(
             f"{sut.api_url}/test-path",
-            cookies={sut.ACCESS_TOKEN_COOKIE: access_token},
+            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
         )
         assert result == {"key": "value"}
 
@@ -99,7 +99,7 @@ class TestApiAdapter:
 
         requests.get.assert_called_with(
             f"{sut.api_url}/test-path",
-            cookies={sut.ACCESS_TOKEN_COOKIE: access_token},
+            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
         )
 
     def test_post_successful(self, sut, keyring, requests):
@@ -114,7 +114,7 @@ class TestApiAdapter:
         requests.post.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
-            cookies={sut.ACCESS_TOKEN_COOKIE: access_token},
+            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
         )
         assert result == {"key": "value"}
 
@@ -132,7 +132,7 @@ class TestApiAdapter:
         requests.post.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
-            cookies={sut.ACCESS_TOKEN_COOKIE: access_token},
+            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
         )
 
     def test_put_successful(self, sut, keyring, requests):
@@ -147,7 +147,7 @@ class TestApiAdapter:
         requests.put.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
-            cookies={sut.ACCESS_TOKEN_COOKIE: access_token},
+            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
         )
         assert result == {"key": "value"}
 
@@ -165,7 +165,7 @@ class TestApiAdapter:
         requests.put.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
-            cookies={sut.ACCESS_TOKEN_COOKIE: access_token},
+            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
         )
 
     def test_delete_successful(self, sut, keyring, requests):
@@ -178,7 +178,7 @@ class TestApiAdapter:
 
         requests.delete.assert_called_with(
             f"{sut.api_url}/test-path",
-            cookies={sut.ACCESS_TOKEN_COOKIE: access_token},
+            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
         )
 
     def test_delete_failed(self, sut, keyring, requests):
@@ -194,7 +194,7 @@ class TestApiAdapter:
 
         requests.delete.assert_called_with(
             f"{sut.api_url}/test-path",
-            cookies={sut.ACCESS_TOKEN_COOKIE: access_token},
+            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
         )
 
     def test_get_cached_token_with_keyring_error(self, sut, keyring):
@@ -213,7 +213,7 @@ class TestApiAdapter:
         sut._set_cached_token("test_token")
 
         keyring.set_password.assert_called_once_with(
-            sut.SERVICE_NAME, sut.TOKEN_KEY, "test_token"
+            sut.SERVICE_NAME, sut.TOKEN_KEYRING_KEY, "test_token"
         )
 
     def test_api_adapter_with_custom_url(self):

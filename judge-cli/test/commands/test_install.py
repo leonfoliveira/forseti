@@ -63,10 +63,8 @@ class TestInstallCommand:
         mock_socket.getsockname.return_value = ("192.168.1.1", 12345)
         socket.socket.return_value = mock_socket
 
-        # Fix the command invocation - remove invalid --stack-name argument
-        result = runner.invoke(
-            install, ["--stack", "custom_stack.yaml"]
-        )
+        # Fix the command invocation
+        result = runner.invoke(install)
 
         # Verify the command succeeded
         assert result.exit_code == 0
@@ -75,7 +73,6 @@ class TestInstallCommand:
         # Verify that the required methods were called
         assert input_adapter.password.call_count == 4
         assert input_adapter.checkbox.call_count == 1
-        os.path.exists.assert_called_once_with("custom_stack.yaml")
 
         # Verify command adapter was called for Docker operations
         assert command_adapter.run.call_count > 0
@@ -85,42 +82,6 @@ class TestInstallCommand:
         mock_socket.connect.assert_called_once_with(("8.8.8.8", 80))
         mock_socket.getsockname.assert_called_once()
         mock_socket.close.assert_called_once()
-
-    def test_install_with_default_stack(self, runner, command_adapter, input_adapter, os, socket, subprocess):
-        """Test installation using the default stack.yaml file."""
-        # Test using default stack.yaml file
-        input_adapter.password.side_effect = [
-            "db_password",
-            "root_password",
-            "grafana_admin_password",
-            "jwt_secret",
-        ]
-        input_adapter.checkbox.return_value = ["gcc:15.1.0"]
-        os.path.exists.return_value = True
-
-        mock_socket = MagicMock()
-        mock_socket.getsockname.return_value = ("127.0.0.1", 12345)
-        socket.socket.return_value = mock_socket
-
-        result = runner.invoke(install)
-
-        assert result.exit_code == 0
-        os.path.exists.assert_called_once_with("stack.yaml")
-
-    def test_install_stack_file_not_exists(self, runner, command_adapter, input_adapter, os, socket, subprocess):
-        """Test error handling when the specified stack file doesn't exist."""
-        # Test error when stack file doesn't exist
-        os.path.exists.return_value = False
-
-        result = runner.invoke(install, ["--stack", "nonexistent.yaml"])
-
-        assert result.exit_code == 1
-        assert "Stack file 'nonexistent.yaml' does not exist." in result.output
-
-        # Verify that setup methods are not called when stack file doesn't exist
-        input_adapter.password.assert_not_called()
-        input_adapter.checkbox.assert_not_called()
-        command_adapter.run.assert_not_called()
 
     def test_install_with_empty_jwt_secret(self, runner, command_adapter, input_adapter, os, socket, subprocess):
         """Test automatic JWT secret generation when user provides empty input."""
@@ -138,7 +99,7 @@ class TestInstallCommand:
         mock_socket.getsockname.return_value = ("192.168.1.1", 12345)
         socket.socket.return_value = mock_socket
 
-        result = runner.invoke(install, ["--stack", "test_stack.yaml"])
+        result = runner.invoke(install)
 
         assert result.exit_code == 0
         # Verify a random JWT secret was generated and used
