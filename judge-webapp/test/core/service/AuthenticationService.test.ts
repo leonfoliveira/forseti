@@ -21,11 +21,9 @@ describe("AuthenticationService", () => {
         authorization,
       );
 
-      const result = await sut.getAuthorization("access-token");
+      const result = await sut.getAuthorization();
 
-      expect(authenticationRepository.getAuthorization).toHaveBeenCalledWith(
-        "access-token",
-      );
+      expect(authenticationRepository.getAuthorization).toHaveBeenCalled();
       expect(result).toEqual(authorization);
     });
 
@@ -34,7 +32,7 @@ describe("AuthenticationService", () => {
         new UnauthorizedException("Unauthorized"),
       );
 
-      const result = await sut.getAuthorization("invalid-token");
+      const result = await sut.getAuthorization();
 
       expect(result).toBeNull();
     });

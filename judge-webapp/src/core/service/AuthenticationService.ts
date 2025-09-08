@@ -9,9 +9,9 @@ export class AuthenticationService {
     private readonly authenticationRepository: AuthenticationRepository,
   ) {}
 
-  async getAuthorization(accessToken: string): Promise<Authorization | null> {
+  async getAuthorization(): Promise<Authorization | null> {
     try {
-      return await this.authenticationRepository.getAuthorization(accessToken);
+      return await this.authenticationRepository.getAuthorization();
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         return null;

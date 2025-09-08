@@ -4,7 +4,7 @@ import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import React from "react";
 
-import { env } from "@/config/env";
+import { config } from "@/config/config";
 import { Html } from "@/lib/component/html";
 
 export default async function Layout({
@@ -13,7 +13,7 @@ export default async function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <NextIntlClientProvider locale={env.LOCALE}>
+    <NextIntlClientProvider locale={config.locale}>
       <Html>{children}</Html>
     </NextIntlClientProvider>
   );

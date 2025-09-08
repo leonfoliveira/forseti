@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import React from "react";
 
@@ -18,13 +17,10 @@ export default async function ContestLayout({
   children: React.ReactNode;
 }) {
   const { slug } = await params;
-  const cookieStore = await cookies();
 
   try {
     const [authorization, contestMetadata] = await Promise.all([
-      authenticationService.getAuthorization(
-        cookieStore.get("access_token")?.value || "",
-      ),
+      authenticationService.getAuthorization(),
       contestService.findContestMetadataBySlug(slug),
     ]);
 
