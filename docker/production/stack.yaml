@@ -295,7 +295,7 @@ services:
         source: ./volumes/grafana/datasources.yaml
         target: /etc/grafana/provisioning/datasources/datasources.yml
       - type: bind
-        source: ./volumes/grafana/dashboards.yml
+        source: ./volumes/grafana/dashboards.yaml
         target: /etc/grafana/provisioning/dashboards/dashboards.yml
       - type: bind
         source: ./volumes/grafana/dashboards
