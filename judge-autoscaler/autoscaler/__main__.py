@@ -6,8 +6,8 @@ import time
 
 import boto3
 import docker
-from prometheus_client import start_http_server
 
+from autoscaler.api import start_flask_app
 from autoscaler.queue_monitor import QueueMonitor
 from autoscaler.scaler import Scaler
 from autoscaler.service_monitor import ServiceMonitor
@@ -73,8 +73,12 @@ def sigterm(signum, frame):
 signal.signal(signal.SIGTERM, sigterm)
 
 if __name__ == "__main__":
-    start_http_server(port)
     logging.info("Starting auto-scaler")
+
+    server_thread = threading.Thread(
+        target=start_flask_app, args=[queue_monitor, service_monitor, port], daemon=True
+    )
+    server_thread.start()
 
     while is_active:
         threading.Thread(target=scaler.scale).start()

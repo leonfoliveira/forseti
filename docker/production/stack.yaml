@@ -182,7 +182,7 @@ services:
     healthcheck:
       test:
         - CMD-SHELL
-        - curl -f http://localhost:7000/metrics
+        - curl -f http://localhost:7000/health
       timeout: 5s
       interval: 15s
       retries: 5

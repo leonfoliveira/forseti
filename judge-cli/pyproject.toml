@@ -6,7 +6,7 @@ source = ["cli"]
 omit = ["cli/config.py"]
 
 [tool.coverage.report]
-fail_under = 0
+fail_under = 90
 show_missing = true
 skip_covered = false
 skip_empty = false

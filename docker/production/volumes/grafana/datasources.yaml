@@ -7,14 +7,14 @@ datasources:
     url: ${LOKI_URL}
     version: 1
     editable: true
-  
+
   - name: Prometheus
     type: prometheus
     access: proxy
     url: ${PROMETHEUS_URL}
     version: 1
     editable: true
-  
+
   - name: Postgres
     type: postgres
     access: proxy
