@@ -9,9 +9,9 @@ scrape_configs:
     static_configs:
       - targets: ["autojudge:8080"]
 
-  - job_name: "autojudge-auto-scaler"
+  - job_name: "autojudge-autoscaler"
     static_configs:
-      - targets: ["autojudge-auto-scaler:7000"]
+      - targets: ["autojudge-autoscaler:7000"]
 
   - job_name: "cadvisor"
     static_configs:
