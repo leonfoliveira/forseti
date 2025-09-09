@@ -55,6 +55,13 @@ class TestSystemCommand:
         assert result.exit_code == 1
         assert "This node is not a swarm manager" in result.output
 
+    def test_stop_not_found_in_stack(self, runner, command_adapter):
+        command_adapter.run.side_effect = CommandAdapter.Error(
+            1, "Error response from daemon: network k68v2trt6xqddwqzpv3n77nor not foundFailed to remove some resources from stack: judge")
+        result = runner.invoke(system, ["stop"])
+        assert result.exit_code == 1
+        assert "System is not running" in result.output
+
     def test_stop_other_error(self, runner, command_adapter):
         command_adapter.run.side_effect = CommandAdapter.Error(
             1, "Some other error")
