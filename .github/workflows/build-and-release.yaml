@@ -55,29 +55,28 @@ jobs:
 
       - name: Tag images
         run: |
-          docker tag judge-api:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-api:${{ steps.vars.outputs.tag }}
-          docker tag judge-autojudge:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autojudge:${{ steps.vars.outputs.tag }}
-          docker tag judge-webapp:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-webapp:${{ steps.vars.outputs.tag }}
-          docker tag judge-autoscaler:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autoscaler:${{ steps.vars.outputs.tag }}
-          docker tag judge-api:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-api:latest
-          docker tag judge-autojudge:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autojudge:latest
-          docker tag judge-webapp:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-webapp:latest
-          docker tag judge-autoscaler:${{ steps.vars.outputs.tag }} ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autoscaler:latest
+          docker tag judge-api:${{ steps.vars.outputs.tag }} leonfoliveira/judge-api:${{ steps.vars.outputs.tag }}
+          docker tag judge-autojudge:${{ steps.vars.outputs.tag }} leonfoliveira/judge-autojudge:${{ steps.vars.outputs.tag }}
+          docker tag judge-webapp:${{ steps.vars.outputs.tag }} leonfoliveira/judge-webapp:${{ steps.vars.outputs.tag }}
+          docker tag judge-autoscaler:${{ steps.vars.outputs.tag }} leonfoliveira/judge-autoscaler:${{ steps.vars.outputs.tag }}
+          docker tag judge-api:${{ steps.vars.outputs.tag }} leonfoliveira/judge-api:latest
+          docker tag judge-autojudge:${{ steps.vars.outputs.tag }} leonfoliveira/judge-autojudge:latest
+          docker tag judge-webapp:${{ steps.vars.outputs.tag }} leonfoliveira/judge-webapp:latest
+          docker tag judge-autoscaler:${{ steps.vars.outputs.tag }} leonfoliveira/judge-autoscaler:latest
 
       - name: Push images to Docker Hub
         env:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
         run: |
-          echo $DOCKER_HUB_ACCESS_TOKEN | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-api:${{ steps.vars.outputs.tag }}
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autojudge:${{ steps.vars.outputs.tag }}
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-webapp:${{ steps.vars.outputs.tag }}
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autoscaler:${{ steps.vars.outputs.tag }}
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-api:latest
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autojudge:latest
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-webapp:latest
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/judge-autoscaler:latest
+          echo $DOCKER_HUB_ACCESS_TOKEN | docker login -u leonfoliveira --password-stdin
+          docker push leonfoliveira/judge-api:${{ steps.vars.outputs.tag }}
+          docker push leonfoliveira/judge-autojudge:${{ steps.vars.outputs.tag }}
+          docker push leonfoliveira/judge-webapp:${{ steps.vars.outputs.tag }}
+          docker push leonfoliveira/judge-autoscaler:${{ steps.vars.outputs.tag }}
+          docker push leonfoliveira/judge-api:latest
+          docker push leonfoliveira/judge-autojudge:latest
+          docker push leonfoliveira/judge-webapp:latest
+          docker push leonfoliveira/judge-autoscaler:latest
 
       - name: Set up Python for CLI build
         uses: actions/setup-python@v5

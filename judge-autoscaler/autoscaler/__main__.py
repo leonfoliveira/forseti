@@ -23,7 +23,7 @@ aws_endpoint = os.environ.get("AWS_ENDPOINT", "http://localhost:4566")
 aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID", "test")
 aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY", "test")
 queue_name = os.environ.get("QUEUE_NAME", "submission-queue")
-service_name = os.environ.get("SERVICE_NAME", "autojudge")
+service_name = os.environ.get("SERVICE_NAME", "judge_autojudge")
 
 messages_per_replica = int(os.environ.get("MESSAGES_PER_REPLICA", 1))
 min_replicas = int(os.environ.get("MIN_REPLICAS", 1))
@@ -76,7 +76,8 @@ if __name__ == "__main__":
     logging.info("Starting auto-scaler")
 
     server_thread = threading.Thread(
-        target=start_flask_app, args=[queue_monitor, service_monitor, port], daemon=True
+        target=start_flask_app, args=[
+            queue_monitor, service_monitor, port], daemon=True
     )
     server_thread.start()
 

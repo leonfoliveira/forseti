@@ -33,16 +33,6 @@ if ! command -v nc >/dev/null 2>&1; then
     apk add --no-cache netcat-openbsd 2>/dev/null || true
 fi
 
-# Wait for PostgreSQL to be ready
-if [ -n "$DB_URL" ]; then
-    # Extract host and port from JDBC URL
-    # Format: jdbc:postgresql://host:port/database
-    DB_HOST=$(echo "$DB_URL" | sed 's|jdbc:postgresql://||' | cut -d':' -f1)
-    DB_PORT=$(echo "$DB_URL" | sed 's|jdbc:postgresql://||' | cut -d':' -f2 | cut -d'/' -f1)
-    
-    wait_for_service "$DB_HOST" "$DB_PORT" "PostgreSQL" 60
-fi
-
 # Wait for LocalStack to be ready (if AWS services are configured)
 if [ -n "$AWS_ENDPOINT" ]; then
     # Extract host and port from AWS endpoint
@@ -53,18 +43,5 @@ if [ -n "$AWS_ENDPOINT" ]; then
     wait_for_service "$AWS_HOST" "$AWS_PORT" "LocalStack" 30
 fi
 
-# Load secrets into environment variables
-if [ -n "$DB_PASSWORD_FILE" ]; then
-  export DB_PASSWORD=$(cat "$DB_PASSWORD_FILE")
-fi
-
-if [ -n "$JWT_SECRET_FILE" ]; then
-  export JWT_SECRET=$(cat "$JWT_SECRET_FILE")
-fi
-
-if [ -n "$ROOT_PASSWORD_FILE" ]; then
-  export ROOT_PASSWORD=$(cat "$ROOT_PASSWORD_FILE")
-fi
-
-echo "Starting application..."
-exec java -jar app.jar
+echo "Starting autoscaler application..."
+exec python -m autoscaler

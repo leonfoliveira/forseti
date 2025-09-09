@@ -48,3 +48,21 @@ def status():
         if "nothing found in stack" in str(e):
             raise click.ClickException("System is not running")
         raise e
+
+
+@system.command()
+@click.argument("service", required=True)
+@click.argument("replicas", required=True)
+def scale(service: str, replicas: str):
+    command_adapter = CommandAdapter()
+    try:
+        command_adapter.run(
+            ["docker", "service", "update", "--replicas",
+                replicas, f"{__stack_name__}_{service}"],
+        )
+    except CommandAdapter.Error as e:
+        if "not found" in str(e):
+            raise click.ClickException(f"Service {service} not found")
+        if "This node is not a swarm manager" in str(e):
+            raise click.ClickException("This node is not a swarm manager")
+        raise e

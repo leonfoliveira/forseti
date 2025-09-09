@@ -11,5 +11,7 @@ RUN apk add --no-cache curl
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
-EXPOSE 80
-CMD ["npm", "run", "start"]
+COPY entrypoint.sh entrypoint.sh
+EXPOSE 3000
+RUN chmod +x ./entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]

@@ -87,3 +87,25 @@ class TestSystemCommand:
             1, "Some other error")
         result = runner.invoke(system, ["status"])
         assert result.exit_code == 1
+
+    def test_scale(self, runner, command_adapter):
+        result = runner.invoke(system, ["scale", "web", "3"])
+        assert result.exit_code == 0
+        command_adapter.run.assert_called_once_with(
+            ["docker", "service", "update", "--replicas",
+                "3", "judge_web"]
+        )
+
+    def test_scale_swarm_manager_error(self, runner, command_adapter):
+        command_adapter.run.side_effect = CommandAdapter.Error(
+            1, "This node is not a swarm manager")
+        result = runner.invoke(system, ["scale", "web", "3"])
+        assert result.exit_code == 1
+        assert "This node is not a swarm manager" in result.output
+
+    def test_scale_not_found_in_stack(self, runner, command_adapter):
+        command_adapter.run.side_effect = CommandAdapter.Error(
+            1, "service web not found")
+        result = runner.invoke(system, ["scale", "web", "3"])
+        assert result.exit_code == 1
+        assert "Service web not found" in result.output
