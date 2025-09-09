@@ -292,13 +292,10 @@ services:
         target: /var/lib/grafana
         volume: {}
       - type: bind
-        source: ./volumes/grafana/datasources.yaml
-        target: /etc/grafana/provisioning/datasources/datasources.yml
+        source: ./volumes/grafana/provisioning/datasources
+        target: /etc/grafana/provisioning/datasources
       - type: bind
-        source: ./volumes/grafana/dashboards.yaml
-        target: /etc/grafana/provisioning/dashboards/dashboards.yml
-      - type: bind
-        source: ./volumes/grafana/dashboards
+        source: ./volumes/grafana/provisioning/dashboards
         target: /etc/grafana/provisioning/dashboards
 
   localstack:
