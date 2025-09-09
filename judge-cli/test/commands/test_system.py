@@ -17,15 +17,32 @@ class TestSystemCommand:
             mock.Error = CommandAdapter.Error
             yield mock.return_value
 
+    @pytest.fixture(autouse=True)
+    def network_adapter(self):
+        with patch(f"{BASE_PATH}.NetworkAdapter") as mock:
+            mock.return_value.get_ip_address.return_value = "localhost"
+            yield mock.return_value
+
     @pytest.fixture
     def runner(self):
         return CliRunner()
 
-    def test_start(self, runner, command_adapter):
+    def test_start(self, runner, command_adapter, network_adapter):
+        network_adapter.get_ip_address.return_value = "localhost"
         result = runner.invoke(system, ["start"])
         assert result.exit_code == 0
         command_adapter.run.assert_called_once_with(
-            ["docker", "stack", "deploy", "-c", "stack.yaml", "judge"]
+            ["docker", "stack", "deploy", "-c", "stack.yaml", "judge"],
+            env={"DNS": "http://localhost"},
+        )
+
+    def test_start_with_dns(self, runner, command_adapter):
+        result = runner.invoke(
+            system, ["start", "--dns", "http://example.com"])
+        assert result.exit_code == 0
+        command_adapter.run.assert_called_once_with(
+            ["docker", "stack", "deploy", "-c", "stack.yaml", "judge"],
+            env={"DNS": "http://example.com"},
         )
 
     def test_start_swarm_manager_error(self, runner, command_adapter):
@@ -116,3 +133,9 @@ class TestSystemCommand:
         result = runner.invoke(system, ["scale", "web", "3"])
         assert result.exit_code == 1
         assert "Service web not found" in result.output
+
+    def test_scale_other_error(self, runner, command_adapter):
+        command_adapter.run.side_effect = CommandAdapter.Error(
+            1, "Some other error")
+        result = runner.invoke(system, ["scale", "web", "3"])
+        assert result.exit_code == 1

@@ -7,6 +7,7 @@ import click
 
 from cli.util.command_adapter import CommandAdapter
 from cli.util.input_adapter import InputAdapter
+from cli.util.network_adapter import NetworkAdapter
 
 
 @click.group()
@@ -19,18 +20,10 @@ def swarm():
 def init(ctx):
     command_adapter = CommandAdapter()
     input_adapter = InputAdapter()
-
-    # Get the local IP address
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-    except Exception:
-        ip = "127.0.0.1"
-    finally:
-        s.close()
+    network_adapter = NetworkAdapter()
 
     # Initialize the swarm
+    ip = network_adapter.get_ip_address()
     try:
         command_adapter.run(
             ["docker", "swarm", "init", "--advertise-addr", ip],
@@ -89,7 +82,8 @@ def info():
         raise e
 
     # Extract tokens and manager IP
-    worker_match = re.search(r"docker swarm join --token (\S+)", worker_result[2])
+    worker_match = re.search(
+        r"docker swarm join --token (\S+)", worker_result[2])
     manager_match = re.search(
         r"docker swarm join --token (\S+) ([^\:]+):2377", manager_result[2]
     )
@@ -117,7 +111,8 @@ def join():
 
     try:
         command_adapter.run(
-            ["docker", "swarm", "join", "--token", token, f"{manager_ip}:2377"],
+            ["docker", "swarm", "join", "--token",
+                token, f"{manager_ip}:2377"],
         )
     except CommandAdapter.Error as e:
         if "This node is already part of a swarm" in str(e):

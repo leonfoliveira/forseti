@@ -2,6 +2,7 @@ import click
 
 from cli.config import __stack_file__, __stack_name__
 from cli.util.command_adapter import CommandAdapter
+from cli.util.network_adapter import NetworkAdapter
 
 
 @click.group()
@@ -10,11 +11,16 @@ def system():
 
 
 @system.command()
-def start():
+@click.option("--dns", required=False, help="DNS name for the system")
+def start(dns: str):
     command_adapter = CommandAdapter()
+    network_adapter = NetworkAdapter()
     try:
+        if dns is None:
+            dns = f"http://{network_adapter.get_ip_address()}"
         command_adapter.run(
             ["docker", "stack", "deploy", "-c", __stack_file__, __stack_name__],
+            env={"DNS": dns},
         )
     except CommandAdapter.Error as e:
         if "this node is not a swarm manager" in str(e):
