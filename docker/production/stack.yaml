@@ -60,7 +60,7 @@ services:
         order: start-first
         delay: 30s
     environment:
-      ALLOWED_ORIGINS: ${DNS}
+      ALLOWED_ORIGINS: ${URL}
       AWS_ACCESS_KEY_ID: judge
       AWS_ENDPOINT: http://localstack:4566
       AWS_REGION: us-east-1
@@ -561,7 +561,7 @@ services:
         delay: 30s
     environment:
       INTERNAL_API_URL: http://api:8080
-      NEXT_PUBLIC_API_URL: ${DNS}
+      NEXT_PUBLIC_API_URL: ${URL}
       NEXT_PUBLIC_LOCALE: en-US
       NEXT_PUBLIC_VERSION: ${VERSION:-latest}
       NODE_ENV: production

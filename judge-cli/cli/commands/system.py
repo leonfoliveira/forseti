@@ -11,21 +11,25 @@ def system():
 
 
 @system.command()
-@click.option("--dns", required=False, help="DNS name for the system")
-def start(dns: str):
+@click.option("--url", required=False, help="URL for the system")
+def start(url: str):
     command_adapter = CommandAdapter()
     network_adapter = NetworkAdapter()
     try:
-        if dns is None:
-            dns = f"http://{network_adapter.get_ip_address()}"
+        if url is None:
+            url = f"http://{network_adapter.get_ip_address()}"
         command_adapter.run(
             ["docker", "stack", "deploy", "-c", __stack_file__, __stack_name__],
-            env={"DNS": dns},
+            env={"URL": url},
         )
     except CommandAdapter.Error as e:
         if "this node is not a swarm manager" in str(e):
             raise click.ClickException("This node is not a swarm manager")
         raise e
+    click.echo(f"System started at:")
+    click.echo(f"Webapp: {url}")
+    click.echo(f"API: {url}:8080")
+    click.echo(f"Grafana: {url}:3000")
 
 
 @system.command()

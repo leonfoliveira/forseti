@@ -33,16 +33,16 @@ class TestSystemCommand:
         assert result.exit_code == 0
         command_adapter.run.assert_called_once_with(
             ["docker", "stack", "deploy", "-c", "stack.yaml", "judge"],
-            env={"DNS": "http://localhost"},
+            env={"URL": "http://localhost"},
         )
 
-    def test_start_with_dns(self, runner, command_adapter):
+    def test_start_with_url(self, runner, command_adapter):
         result = runner.invoke(
-            system, ["start", "--dns", "http://example.com"])
+            system, ["start", "--url", "http://example.com"])
         assert result.exit_code == 0
         command_adapter.run.assert_called_once_with(
             ["docker", "stack", "deploy", "-c", "stack.yaml", "judge"],
-            env={"DNS": "http://example.com"},
+            env={"URL": "http://example.com"},
         )
 
     def test_start_swarm_manager_error(self, runner, command_adapter):
