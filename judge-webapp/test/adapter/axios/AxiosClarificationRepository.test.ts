@@ -1,7 +1,7 @@
-import { randomUUID } from "crypto";
 
 import { AxiosResponse } from "axios";
 import { mock } from "jest-mock-extended";
+import { v4 as uuidv4 } from "uuid";
 
 import { AxiosClarificationRepository } from "@/adapter/axios/AxiosClarificationRepository";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
@@ -13,7 +13,7 @@ describe("AxiosClarificationRepository", () => {
 
   const sut = new AxiosClarificationRepository(axiosClient);
 
-  const contestId = randomUUID();
+  const contestId = uuidv4();
 
   describe("createClarification", () => {
     it("should create a clarification", async () => {
@@ -37,7 +37,7 @@ describe("AxiosClarificationRepository", () => {
 
   describe("deleteById", () => {
     it("should delete a clarification by id", async () => {
-      const clarificationId = randomUUID();
+      const clarificationId = uuidv4();
 
       await sut.deleteById(contestId, clarificationId);
 

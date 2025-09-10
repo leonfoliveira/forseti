@@ -1,6 +1,6 @@
-import { randomUUID } from "crypto";
-
 import { mock } from "jest-mock-extended";
+import { v4 as uuidv4 } from "uuid";
+
 
 import { LeaderboardRepository } from "@/core/repository/LeaderboardRepository";
 import { LeaderboardService } from "@/core/service/LeaderboardService";
@@ -11,7 +11,7 @@ describe("LeaderboardService", () => {
 
   const sut = new LeaderboardService(LeaderboardRepository);
 
-  const contestId = randomUUID();
+  const contestId = uuidv4();
 
   describe("createAnnouncement", () => {
     it("should call LeaderboardRepository.create with the correct parameters", async () => {

@@ -39,7 +39,8 @@
     "react-hook-form": "7.56.4",
     "react-redux": "9.2.0",
     "sockjs-client": "1.6.1",
-    "tailwindcss": "4.1.7"
+    "tailwindcss": "4.1.7",
+    "uuid": "13.0.0"
   },
   "devDependencies": {
     "@babel/parser": "7.28.0",
@@ -56,6 +57,7 @@
     "@types/react": "19.1.4",
     "@types/react-dom": "19.1.5",
     "@types/sockjs-client": "1.5.4",
+    "@types/uuid": "10.0.0",
     "eslint": "9.27.0",
     "eslint-config-next": "15.3.2",
     "eslint-config-prettier": "10.1.5",

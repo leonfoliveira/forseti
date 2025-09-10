@@ -1,6 +1,6 @@
-import { randomUUID } from "crypto";
-
 import { mock } from "jest-mock-extended";
+import { v4 as uuidv4 } from "uuid";
+
 
 import { AnnouncementRepository } from "@/core/repository/AnnouncementRepository";
 import { AnnouncementService } from "@/core/service/AnnouncementService";
@@ -12,7 +12,7 @@ describe("AnnouncementService", () => {
 
   const sut = new AnnouncementService(announcementRepository);
 
-  const contestId = randomUUID();
+  const contestId = uuidv4();
 
   describe("createAnnouncement", () => {
     it("should call announcementRepository.create with the correct parameters", async () => {

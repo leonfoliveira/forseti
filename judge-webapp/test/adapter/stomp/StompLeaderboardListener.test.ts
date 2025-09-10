@@ -1,6 +1,6 @@
-import { randomUUID } from "crypto";
-
 import { mock } from "jest-mock-extended";
+import { v4 as uuidv4 } from "uuid";
+
 
 import { StompLeaderboardListener } from "@/adapter/stomp/StompLeaderboardListener";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
@@ -8,7 +8,7 @@ import { ListenerClient } from "@/core/domain/model/ListenerClient";
 describe("StompLeaderboardListener", () => {
   const sut = new StompLeaderboardListener();
 
-  const contestId = randomUUID();
+  const contestId = uuidv4();
 
   describe("subscribeForLeaderboard", () => {
     it("should subscribe to the contest leaderboard", async () => {

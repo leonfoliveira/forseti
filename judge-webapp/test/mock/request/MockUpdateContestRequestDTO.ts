@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
@@ -9,7 +9,7 @@ export function MockUpdateContestRequestDTO(
   partial: Partial<UpdateContestRequestDTO> = {},
 ): UpdateContestRequestDTO {
   return {
-    id: randomUUID(),
+    id: uuidv4(),
     slug: "test-contest",
     title: "Test Contest",
     languages: [Language.CPP_17, Language.JAVA_21],
@@ -17,7 +17,7 @@ export function MockUpdateContestRequestDTO(
     endAt: "2025-01-01T15:00:00Z",
     members: [
       {
-        id: randomUUID(),
+        id: uuidv4(),
         type: MemberType.CONTESTANT,
         name: "Test User",
         login: "testuser",
@@ -26,7 +26,7 @@ export function MockUpdateContestRequestDTO(
     ],
     problems: [
       {
-        id: randomUUID(),
+        id: uuidv4(),
         letter: "A",
         title: "Test Problem",
         description: MockAttachment({

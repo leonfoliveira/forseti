@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { Authorization } from "@/core/domain/model/Authorization";
@@ -8,8 +8,8 @@ export function MockAuthorization(
 ): Authorization {
   return {
     member: {
-      id: randomUUID(),
-      contestId: randomUUID(),
+      id: uuidv4(),
+      contestId: uuidv4(),
       name: "test-name",
       type: MemberType.CONTESTANT,
     },

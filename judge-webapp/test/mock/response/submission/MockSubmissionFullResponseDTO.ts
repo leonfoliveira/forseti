@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 import { Language } from "@/core/domain/enumerate/Language";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
@@ -12,7 +12,7 @@ export function MockSubmissionFullResponseDTO(
   partial: Partial<SubmissionFullResponseDTO> = {},
 ): SubmissionFullResponseDTO {
   return {
-    id: randomUUID(),
+    id: uuidv4(),
     problem: MockProblemFullResponseDTO(),
     member: MockMemberFullResponseDTO(),
     language: Language.CPP_17,

@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 import { CreateClarificationRequestDTO } from "@/core/repository/dto/request/CreateClarificationRequestDTO";
 
@@ -6,8 +6,8 @@ export function MockCreateClarificationRequestDTO(
   partial: Partial<CreateClarificationRequestDTO> = {},
 ): CreateClarificationRequestDTO {
   return {
-    problemId: randomUUID(),
-    parentId: randomUUID(),
+    problemId: uuidv4(),
+    parentId: uuidv4(),
     text: "Test clarification text",
     ...partial,
   };

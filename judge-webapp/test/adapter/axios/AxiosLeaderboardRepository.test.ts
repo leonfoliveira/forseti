@@ -1,7 +1,7 @@
-import { randomUUID } from "crypto";
 
 import { AxiosResponse } from "axios";
 import { mock } from "jest-mock-extended";
+import { v4 as uuidv4 } from "uuid";
 
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { AxiosLeaderboardRepository } from "@/adapter/axios/AxiosLeaderboardRepository";
@@ -12,7 +12,7 @@ describe("AxiosLeaderboardRepository", () => {
 
   const sut = new AxiosLeaderboardRepository(axiosClient);
 
-  const contestId = randomUUID();
+  const contestId = uuidv4();
 
   describe("findContestLeaderboard", () => {
     it("should find the contest leaderboard", async () => {

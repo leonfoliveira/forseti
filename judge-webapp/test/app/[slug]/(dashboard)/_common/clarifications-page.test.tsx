@@ -1,7 +1,7 @@
-import { randomUUID } from "crypto";
 
 import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import { act } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications-page";
 import { clarificationService } from "@/config/composition";
@@ -11,7 +11,7 @@ import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockP
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("ClarificationsPage", () => {
-  const contestId = randomUUID();
+  const contestId = uuidv4();
   const problems = [
     MockProblemPublicResponseDTO(),
     MockProblemPublicResponseDTO(),

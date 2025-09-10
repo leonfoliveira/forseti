@@ -85,9 +85,11 @@ def status(stack_name: str):
     command_adapter = CommandAdapter()
 
     try:
-        command_adapter.run(
+        output = command_adapter.run(
             ["docker", "stack", "ps", stack_name],
         )
+        for line in output:
+            click.echo(line)
     except click.ClickException as e:
         if "This node is not a swarm manager" in e.message:
             raise click.ClickException("This node is not a swarm manager")

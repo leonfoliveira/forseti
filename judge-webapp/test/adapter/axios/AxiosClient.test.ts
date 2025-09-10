@@ -1,5 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { cookies, headers } from "next/headers";
+import { v4 as uuidv4 } from "uuid";
 
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { config } from "@/config/config";
@@ -31,6 +32,7 @@ describe("AxiosClient", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    config.isServer = false;
   });
 
   describe("get", () => {
@@ -109,7 +111,7 @@ describe("AxiosClient", () => {
       const clientHeaders = {
         "x-forwarded-for": "192.0.0.1",
         "user-agent": "Mozilla/5.0",
-        "x-request-id": crypto.randomUUID(),
+        "x-request-id": uuidv4(),
         other: "value",
       };
       const mockHeaders = {

@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 import { ProblemFullResponseDTO } from "@/core/repository/dto/response/problem/ProblemFullResponseDTO";
 import { MockAttachment } from "@/test/mock/model/MockAttachment";
@@ -7,7 +7,7 @@ export function MockProblemFullResponseDTO(
   partial: Partial<ProblemFullResponseDTO> = {},
 ): ProblemFullResponseDTO {
   return {
-    id: randomUUID(),
+    id: uuidv4(),
     letter: "A",
     title: "Test Problem",
     description: MockAttachment({

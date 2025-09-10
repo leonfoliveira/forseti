@@ -1,7 +1,6 @@
-import { randomUUID } from "crypto";
-
 import { AxiosResponse } from "axios";
 import { mock } from "jest-mock-extended";
+import { v4 as uuidv4 } from "uuid";
 
 import { AxiosAnnouncementRepository } from "@/adapter/axios/AxiosAnnouncementRepository";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
@@ -13,7 +12,7 @@ describe("AxiosAnnouncementRepository", () => {
 
   const sut = new AxiosAnnouncementRepository(axiosClient);
 
-  const contestId = randomUUID();
+  const contestId = uuidv4();
 
   describe("createAnnouncement", () => {
     it("should create an announcement", async () => {

@@ -1,6 +1,6 @@
-import { randomUUID } from "crypto";
-
 import { mock } from "jest-mock-extended";
+import { v4 as uuidv4 } from "uuid";
+
 
 import { StompClarificationListener } from "@/adapter/stomp/StompClarificationListener";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
@@ -8,7 +8,7 @@ import { ListenerClient } from "@/core/domain/model/ListenerClient";
 describe("StompClarificationListener", () => {
   const sut = new StompClarificationListener();
 
-  const contestId = randomUUID();
+  const contestId = uuidv4();
 
   describe("subscribeForContest", () => {
     it("should subscribe to contest clarifications", async () => {
@@ -27,7 +27,7 @@ describe("StompClarificationListener", () => {
   describe("subscribeForMemberChildren", () => {
     it("should subscribe to member children clarifications", async () => {
       const client = mock<ListenerClient>();
-      const memberId = randomUUID();
+      const memberId = uuidv4();
       const callback = jest.fn();
 
       await sut.subscribeForMemberChildren(

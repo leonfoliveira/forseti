@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 import { config } from "@/config/config";
 import { BusinessException } from "@/core/domain/exception/BusinessException";
@@ -66,7 +67,7 @@ export class AxiosClient {
     try {
       requestConfig.headers = {
         ...requestConfig.headers,
-        "x-request-id": crypto.randomUUID(),
+        "x-request-id": uuidv4(),
       };
 
       if (config.isServer) {

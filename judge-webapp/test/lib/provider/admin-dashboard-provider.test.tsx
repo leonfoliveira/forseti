@@ -1,8 +1,8 @@
-import { randomUUID } from "crypto";
 
 import { screen } from "@testing-library/dom";
 import { mock } from "jest-mock-extended";
 import { act } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import {
   announcementListener,
@@ -210,7 +210,7 @@ describe("AdminDashboardProvider", () => {
 
   it("should show a toast for announcements not owned by member", async () => {
     const otherAnnouncement = MockAnnouncementResponseDTO({
-      member: { ...MockAnnouncementResponseDTO().member, id: randomUUID() },
+      member: { ...MockAnnouncementResponseDTO().member, id: uuidv4() },
     });
     await renderWithProviders(
       <AdminDashboardProvider>

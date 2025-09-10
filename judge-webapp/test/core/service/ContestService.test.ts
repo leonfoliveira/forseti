@@ -1,6 +1,6 @@
-import { randomUUID } from "crypto";
-
 import { mock } from "jest-mock-extended";
+import { v4 as uuidv4 } from "uuid";
+
 
 import { ContestRepository } from "@/core/repository/ContestRepository";
 import { AttachmentService } from "@/core/service/AttachmentService";
@@ -17,7 +17,7 @@ describe("ClarificationService", () => {
 
   const sut = new ContestService(contestRepository, attachmentService);
 
-  const contestId = randomUUID();
+  const contestId = uuidv4();
 
   describe("updateContest", () => {
     it("should update a contest without upload files", async () => {
