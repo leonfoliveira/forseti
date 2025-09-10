@@ -222,8 +222,10 @@ class TestApiAdapter:
         assert adapter.api_url == custom_url
 
     def test_api_adapter_with_default_url(self):
-        adapter = ApiAdapter()
-        assert adapter.api_url == "http://localhost:8080"
+        with patch("cli.util.api_adapter.NetworkAdapter") as mock_network_adapter:
+            mock_network_adapter.return_value.get_ip_address.return_value = "localhost"
+            adapter = ApiAdapter()
+            assert adapter.api_url == "http://localhost:8080"
 
     def _setup_valid_token(self, keyring):
         access_token = jwt.encode(

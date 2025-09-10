@@ -7,9 +7,8 @@ import keyring
 import keyring.errors
 import requests
 
-from cli.config import __api_url__
-
 from .input_adapter import InputAdapter
+from .network_adapter import NetworkAdapter
 
 
 class ApiAdapter:
@@ -18,7 +17,8 @@ class ApiAdapter:
     ACCESS_TOKEN_COOKIE_NAME = "access_token"
 
     def __init__(self, api_url: str = None):
-        self.api_url = api_url or __api_url__
+        network_adapter = NetworkAdapter()
+        self.api_url = api_url or f"http://{network_adapter.get_ip_address()}:8080"
         self.input_adapter = InputAdapter()
 
     def get(self, path: str, **kwargs) -> Union[dict, list]:

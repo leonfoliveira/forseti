@@ -23,38 +23,56 @@ class TestSystemCommand:
             mock.return_value.get_ip_address.return_value = "localhost"
             yield mock.return_value
 
+    @pytest.fixture(autouse=True)
+    def spinner(self):
+        with patch(f"{BASE_PATH}.Spinner") as mock:
+            yield mock.return_value
+
+    @pytest.fixture(autouse=True)
+    def os(self):
+        with patch(f"{BASE_PATH}.os") as mock:
+            yield mock
+
     @pytest.fixture
     def runner(self):
         return CliRunner()
 
-    def test_start(self, runner, command_adapter, network_adapter):
+    def test_start(self, runner, command_adapter, network_adapter, os):
         network_adapter.get_ip_address.return_value = "localhost"
+        command_adapter.get_cli_path.return_value = "/cli/path"
+        os.path.join.side_effect = lambda *args: "/".join(args)
+
         result = runner.invoke(system, ["start"])
         assert result.exit_code == 0
         command_adapter.run.assert_called_once_with(
-            ["docker", "stack", "deploy", "-c", "stack.yaml", "judge"],
-            env={"URL": "http://localhost"},
+            ["docker", "stack", "deploy", "-c", "/cli/path/stack.yaml", "judge"],
+            env={"API_URL": "http://localhost:8080",
+                 "WEBAPP_URL": "http://localhost"},
         )
 
-    def test_start_with_url(self, runner, command_adapter):
+    def test_start_with_url(self, runner, command_adapter, os):
+        command_adapter.get_cli_path.return_value = "/cli/path"
+        os.path.join.side_effect = lambda *args: "/".join(args)
+
         result = runner.invoke(
-            system, ["start", "--url", "http://example.com"])
+            system, ["start", "--api-public-url", "http://api.example.com", "--webapp-public-url", "http://example.com"])
         assert result.exit_code == 0
         command_adapter.run.assert_called_once_with(
-            ["docker", "stack", "deploy", "-c", "stack.yaml", "judge"],
-            env={"URL": "http://example.com"},
+            ["docker", "stack", "deploy", "-c", "/cli/path/stack.yaml", "judge"],
+            env={"API_URL": "http://api.example.com",
+                 "WEBAPP_URL": "http://example.com"},
         )
 
-    def test_start_swarm_manager_error(self, runner, command_adapter):
-        command_adapter.run.side_effect = CommandAdapter.Error(
-            1, "this node is not a swarm manager")
+    def test_start_swarm_manager_error(self, runner, command_adapter, spinner):
+        command_adapter.run.side_effect = click.ClickException(
+            "this node is not a swarm manager")
         result = runner.invoke(system, ["start"])
         assert result.exit_code == 1
         assert "This node is not a swarm manager" in result.output
 
-    def test_start_other_error(self, runner, command_adapter):
-        command_adapter.run.side_effect = CommandAdapter.Error(
-            1, "Some other error")
+    def test_start_other_error(self, runner, command_adapter, spinner):
+        command_adapter.run.side_effect = click.ClickException(
+            "Some other error")
         result = runner.invoke(system, ["start"])
         assert result.exit_code == 1
 
@@ -65,23 +83,23 @@ class TestSystemCommand:
             ["docker", "stack", "rm", "judge"]
         )
 
-    def test_stop_swarm_manager_error(self, runner, command_adapter):
-        command_adapter.run.side_effect = CommandAdapter.Error(
-            1, "This node is not a swarm manager")
+    def test_stop_swarm_manager_error(self, runner, command_adapter, spinner):
+        command_adapter.run.side_effect = click.ClickException(
+            "This node is not a swarm manager")
         result = runner.invoke(system, ["stop"])
         assert result.exit_code == 1
         assert "This node is not a swarm manager" in result.output
 
-    def test_stop_not_found_in_stack(self, runner, command_adapter):
-        command_adapter.run.side_effect = CommandAdapter.Error(
-            1, "Error response from daemon: network k68v2trt6xqddwqzpv3n77nor not foundFailed to remove some resources from stack: judge")
+    def test_stop_not_found_in_stack(self, runner, command_adapter, spinner):
+        command_adapter.run.side_effect = click.ClickException(
+            "Error response from daemon: network k68v2trt6xqddwqzpv3n77nor not found")
         result = runner.invoke(system, ["stop"])
         assert result.exit_code == 1
         assert "System is not running" in result.output
 
-    def test_stop_other_error(self, runner, command_adapter):
-        command_adapter.run.side_effect = CommandAdapter.Error(
-            1, "Some other error")
+    def test_stop_other_error(self, runner, command_adapter, spinner):
+        command_adapter.run.side_effect = click.ClickException(
+            "Some other error")
         result = runner.invoke(system, ["stop"])
         assert result.exit_code == 1
 
@@ -93,22 +111,22 @@ class TestSystemCommand:
         )
 
     def test_status_swarm_manager_error(self, runner, command_adapter):
-        command_adapter.run.side_effect = CommandAdapter.Error(
-            1, "This node is not a swarm manager")
+        command_adapter.run.side_effect = click.ClickException(
+            "This node is not a swarm manager")
         result = runner.invoke(system, ["status"])
         assert result.exit_code == 1
         assert "This node is not a swarm manager" in result.output
 
     def test_status_nothing_found_in_stack(self, runner, command_adapter):
-        command_adapter.run.side_effect = CommandAdapter.Error(
-            1, "nothing found in stack")
+        command_adapter.run.side_effect = click.ClickException(
+            "nothing found in stack")
         result = runner.invoke(system, ["status"])
         assert result.exit_code == 1
         assert "System is not running" in result.output
 
     def test_status_other_error(self, runner, command_adapter):
-        command_adapter.run.side_effect = CommandAdapter.Error(
-            1, "Some other error")
+        command_adapter.run.side_effect = click.ClickException(
+            "Some other error")
         result = runner.invoke(system, ["status"])
         assert result.exit_code == 1
 
@@ -120,22 +138,27 @@ class TestSystemCommand:
                 "3", "judge_web"]
         )
 
-    def test_scale_swarm_manager_error(self, runner, command_adapter):
-        command_adapter.run.side_effect = CommandAdapter.Error(
-            1, "This node is not a swarm manager")
+    def test_scale_swarm_manager_error(self, runner, command_adapter, spinner):
+        command_adapter.run.side_effect = click.ClickException(
+            "This node is not a swarm manager")
         result = runner.invoke(system, ["scale", "web", "3"])
         assert result.exit_code == 1
         assert "This node is not a swarm manager" in result.output
 
-    def test_scale_not_found_in_stack(self, runner, command_adapter):
-        command_adapter.run.side_effect = CommandAdapter.Error(
-            1, "service web not found")
+    def test_scale_not_found_in_stack(self, runner, command_adapter, spinner):
+        command_adapter.run.side_effect = click.ClickException(
+            "service web not found")
         result = runner.invoke(system, ["scale", "web", "3"])
         assert result.exit_code == 1
         assert "Service web not found" in result.output
 
-    def test_scale_other_error(self, runner, command_adapter):
-        command_adapter.run.side_effect = CommandAdapter.Error(
-            1, "Some other error")
+    def test_scale_other_error(self, runner, command_adapter, spinner):
+        command_adapter.run.side_effect = click.ClickException(
+            "Some other error")
         result = runner.invoke(system, ["scale", "web", "3"])
         assert result.exit_code == 1
+
+    def test_scale_api_service_not_supported(self, runner, command_adapter, spinner):
+        result = runner.invoke(system, ["scale", "api", "3"])
+        assert result.exit_code == 1
+        assert "Scaling the API service is currently not supported." in result.output

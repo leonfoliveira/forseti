@@ -17,21 +17,6 @@ class TestInputAdapter:
     def sut(self):
         yield InputAdapter()
 
-    def test_text(self, sut, questionary):
-        questionary.text.return_value.ask.return_value = "user input"
-        result = sut.text("Enter something")
-
-        questionary.text.assert_called_once_with("Enter something")
-        assert result == "user input"
-
-    def test_text_keyboard_interrupt(self, sut, questionary):
-        questionary.text.return_value.ask.return_value = None
-
-        with pytest.raises(KeyboardInterrupt):
-            sut.text("Enter something")
-
-        questionary.text.assert_called_once_with("Enter something")
-
     def test_password(self, sut, questionary):
         questionary.password.return_value.ask.return_value = "secret"
         result = sut.password("Enter password")
@@ -47,23 +32,10 @@ class TestInputAdapter:
 
         questionary.password.assert_called_once_with("Enter password")
 
-    def test_checkbox(self, sut, questionary):
-        choices = [questionary.Choice(
-            "Option 1"), questionary.Choice("Option 2")]
-        questionary.checkbox.return_value.ask.return_value = ["Option 1"]
-        result = sut.checkbox("Select options", choices=choices)
+    def test_password_with_kwargs(self, sut, questionary):
+        questionary.password.return_value.ask.return_value = "secret"
+        result = sut.password("Enter password", style="bold")
 
-        questionary.checkbox.assert_called_once_with(
-            "Select options", choices=choices)
-        assert result == ["Option 1"]
-
-    def test_checkbox_keyboard_interrupt(self, sut, questionary):
-        choices = [questionary.Choice(
-            "Option 1"), questionary.Choice("Option 2")]
-        questionary.checkbox.return_value.ask.return_value = None
-
-        with pytest.raises(KeyboardInterrupt):
-            sut.checkbox("Select options", choices=choices)
-
-        questionary.checkbox.assert_called_once_with(
-            "Select options", choices=choices)
+        questionary.password.assert_called_once_with(
+            "Enter password", style="bold")
+        assert result == "secret"

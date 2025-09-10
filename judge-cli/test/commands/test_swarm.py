@@ -237,10 +237,8 @@ class TestSwarmCommand:
         token = "SWMTKN-1-test-token"
         manager_ip = "192.168.1.100"
 
-        # Mock input adapter
-        input_adapter.text.side_effect = [token, manager_ip]
-
-        result = runner.invoke(swarm, ["join"])
+        result = runner.invoke(
+            swarm, ["join", "--token", token, "--manager-ip", manager_ip])
 
         assert result.exit_code == 0
         command_adapter.run.assert_called_once_with([
@@ -251,18 +249,17 @@ class TestSwarmCommand:
         token = "SWMTKN-1-test-token"
         manager_ip = "192.168.1.100"
 
-        # Mock input adapter
-        input_adapter.text.side_effect = [token, manager_ip]
-
         # Mock CommandAdapter.Error for already in swarm scenario
         from cli.util.command_adapter import CommandAdapter
         command_adapter.run.side_effect = CommandAdapter.Error(
             1, "This node is already part of a swarm"
         )
 
-        result = runner.invoke(swarm, ["join"])
+        result = runner.invoke(
+            swarm, ["join", "--token", token, "--manager-ip", manager_ip])
 
         assert result.exit_code == 1
+        assert "This node is already part of a swarm" in result.output
         assert "This node is already part of a swarm" in result.output
 
     def test_leave(self, runner, command_adapter):
@@ -289,16 +286,14 @@ class TestSwarmCommand:
         token = "SWMTKN-1-test-token"
         manager_ip = "192.168.1.100"
 
-        # Mock input adapter
-        input_adapter.text.side_effect = [token, manager_ip]
-
         # Mock CommandAdapter.Error for a different error (not "already part of a swarm")
         from cli.util.command_adapter import CommandAdapter
         command_adapter.run.side_effect = CommandAdapter.Error(
             1, "Invalid join token"
         )
 
-        result = runner.invoke(swarm, ["join"])
+        result = runner.invoke(
+            swarm, ["join", "--token", token, "--manager-ip", manager_ip])
 
         assert result.exit_code == 1
         # The original CommandAdapter.Error should be re-raised

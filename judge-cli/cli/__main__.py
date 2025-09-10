@@ -27,4 +27,4 @@ judge.add_command(swarm)
 judge.add_command(system)
 
 if __name__ == "__main__":
-    judge()
+    judge()  # pragma: no cover

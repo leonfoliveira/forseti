@@ -1,3 +1,4 @@
+import click
 import os
 import subprocess
 import sys
@@ -22,8 +23,8 @@ class CommandAdapter:
 
     def run(self, command: list[str], **kwargs) -> list[str]:
         result = subprocess.run(
-            command, text=True, stderr=subprocess.PIPE, **kwargs)
+            command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
+
         if result.returncode != 0:
-            raise CommandAdapter.Error(result.returncode, result.stderr)
-        if result.stdout is not None:
-            return result.stdout.splitlines()
+            raise click.ClickException(result.stderr)
+        return result.stdout.splitlines()

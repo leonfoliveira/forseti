@@ -13,10 +13,13 @@ def contest():
     pass
 
 
+API_URL_HELP = "The API URL (default: http://<node-ip>:8080)"
+
+
 @contest.command(help="Create a new contest with the given slug.")
 @click.argument("slug", required=True)
-@click.option("--url", help="The API URL", required=False)
-def create(slug: str, url: Optional[str]):
+@click.option("--api-url", help=API_URL_HELP)
+def create(slug: str, api_url: Optional[str]):
     if not re.match(r"^[a-zA-Z0-9-]+$", slug):
         raise click.BadParameter("Slug must be alphanumeric with dashes only.")
 
@@ -29,14 +32,14 @@ def create(slug: str, url: Optional[str]):
         "problems": [],
         "members": [],
     }
-    contest = ApiAdapter(api_url=url).post("/v1/contests", json=payload)
+    contest = ApiAdapter(api_url=api_url).post("/v1/contests", json=payload)
     click.echo(contest.get("id"))
 
 
 @contest.command(help="List all contests.")
-@click.option("--url", help="The API URL", required=False)
-def ls(url: Optional[str]):
-    contests = ApiAdapter(api_url=url).get("/v1/contests/metadata")
+@click.option("--api-url", help="The API URL (default: http://<node-ip>:8080)")
+def ls(api_url: Optional[str]):
+    contests = ApiAdapter(api_url=api_url).get("/v1/contests/metadata")
     headers = ["ID", "Slug", "Title", "Start At", "End At", "Status"]
     table = []
     for contest in contests:
@@ -56,23 +59,23 @@ def ls(url: Optional[str]):
 
 @contest.command(help="Delete a contest by ID.")
 @click.argument("contest_id", required=True)
-@click.option("--url", help="The API URL", required=False)
-def delete(contest_id: str, url: Optional[str]):
-    ApiAdapter(api_url=url).delete(f"/v1/contests/{contest_id}")
+@click.option("--api-url", help=API_URL_HELP)
+def delete(contest_id: str, api_url: Optional[str]):
+    ApiAdapter(api_url=api_url).delete(f"/v1/contests/{contest_id}")
 
 
 @contest.command(help="Force start a contest by ID.")
 @click.argument("contest_id", required=True)
-@click.option("--url", help="The API URL", required=False)
-def start(contest_id: str, url: Optional[str]):
-    ApiAdapter(api_url=url).put(f"/v1/contests/{contest_id}/start")
+@click.option("--api-url", help=API_URL_HELP)
+def start(contest_id: str, api_url: Optional[str]):
+    ApiAdapter(api_url=api_url).put(f"/v1/contests/{contest_id}/start")
 
 
 @contest.command(help="Force end a contest by ID.")
 @click.argument("contest_id", required=True)
-@click.option("--url", help="The API URL", required=False)
-def end(contest_id: str, url: Optional[str]):
-    ApiAdapter(api_url=url).put(f"/v1/contests/{contest_id}/end")
+@click.option("--api-url", help=API_URL_HELP)
+def end(contest_id: str, api_url: Optional[str]):
+    ApiAdapter(api_url=api_url).put(f"/v1/contests/{contest_id}/end")
 
 
 def _get_contest_status(contest):

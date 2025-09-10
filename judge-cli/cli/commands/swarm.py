@@ -1,7 +1,5 @@
 import re
 import secrets
-import socket
-import subprocess
 
 import click
 
@@ -15,19 +13,20 @@ def swarm():
     pass
 
 
-@swarm.command()
+@swarm.command(help="Initialize a new Docker Swarm.")
+@click.option("--ip", help="Advertise address (default: <node-ip>)")
 @click.pass_context
-def init(ctx):
+def init(ctx, ip: str):
     command_adapter = CommandAdapter()
     input_adapter = InputAdapter()
     network_adapter = NetworkAdapter()
 
     # Initialize the swarm
-    ip = network_adapter.get_ip_address()
+    if ip is None:
+        ip = network_adapter.get_ip_address()
     try:
         command_adapter.run(
             ["docker", "swarm", "init", "--advertise-addr", ip],
-            stdout=subprocess.PIPE,
         )
     except CommandAdapter.Error as e:
         if "This node is already part of a swarm" in str(e):
@@ -63,18 +62,16 @@ def init(ctx):
     ctx.invoke(info)
 
 
-@swarm.command()
+@swarm.command(help="Show Docker Swarm join tokens and manager-ip.")
 def info():
     command_adapter = CommandAdapter()
     try:
         # Get the join tokens
         worker_result = command_adapter.run(
             ["docker", "swarm", "join-token", "worker"],
-            stdout=subprocess.PIPE,
         )
         manager_result = command_adapter.run(
             ["docker", "swarm", "join-token", "manager"],
-            stdout=subprocess.PIPE,
         )
     except CommandAdapter.Error as e:
         if "This node is not a swarm manager" in str(e):
@@ -100,14 +97,11 @@ def info():
     click.echo(f"Manager IP: {manager_ip}")
 
 
-@swarm.command()
-def join():
+@swarm.command(help="Join an existing Docker Swarm.")
+@click.option("--token", help="Swarm join token", required=True)
+@click.option("--manager-ip", help="Manager IP address", required=True)
+def join(token: str, manager_ip: str):
     command_adapter = CommandAdapter()
-    input_adapter = InputAdapter()
-
-    # Get token and manager IP from user
-    token = input_adapter.text("Token: ")
-    manager_ip = input_adapter.text("Manager IP: ")
 
     try:
         command_adapter.run(
@@ -120,7 +114,7 @@ def join():
         raise e
 
 
-@swarm.command()
+@swarm.command(help="Leave the current Docker Swarm.")
 def leave():
     command_adapter = CommandAdapter()
 
