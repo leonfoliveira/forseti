@@ -17,6 +17,7 @@ import { DatePicker } from "@/lib/heroui-wrapper";
 import { CheckboxGroup } from "@/lib/heroui-wrapper";
 import { Checkbox } from "@/lib/heroui-wrapper";
 import { Input } from "@/lib/heroui-wrapper";
+import { cls } from "@/lib/util/cls";
 import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useModal } from "@/lib/util/modal-hook";
@@ -24,7 +25,6 @@ import { useToast } from "@/lib/util/toast-hook";
 import { adminDashboardSlice } from "@/store/slices/admin-dashboard-slice";
 import { contestMetadataSlice } from "@/store/slices/contest-metadata-slice";
 import { useAppDispatch } from "@/store/store";
-import { cls } from "@/lib/util/cls";
 
 const messages = defineMessages({
   basicInformationSection: {

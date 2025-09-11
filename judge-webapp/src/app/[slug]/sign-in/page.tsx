@@ -144,14 +144,22 @@ export default function SignInPage() {
             </CardHeader>
             <Divider className="my-2" />
             <CardBody className="gap-4 py-6 px-6">
-              <FormField form={form} name="login">
+              <FormField
+                form={form}
+                name="login"
+                onChange={() => form.clearErrors()}
+              >
                 <Input
                   label={<FormattedMessage {...messages.loginLabel} />}
                   size="lg"
                   data-testid="login"
                 />
               </FormField>
-              <FormField form={form} name="password">
+              <FormField
+                form={form}
+                name="password"
+                onChange={() => form.clearErrors()}
+              >
                 <Input
                   label={<FormattedMessage {...messages.passwordLabel} />}
                   type="password"

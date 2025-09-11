@@ -3,7 +3,6 @@ import { cookies, headers } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
-import { serverConfig } from "@/config/config";
 import { BusinessException } from "@/core/domain/exception/BusinessException";
 import { ConflictException } from "@/core/domain/exception/ConflictException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
