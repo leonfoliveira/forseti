@@ -1,31 +1,169 @@
-name: judge-development
+name: judge-dev
 services:
   postgres:
     container_name: dev-judge-postgres
-    image: postgres:17.5-alpine
     environment:
       POSTGRES_USER: judge
       POSTGRES_PASSWORD: judge
       POSTGRES_DB: judge
-    ports:
-      - "5432:5432"
-    volumes:
-      - dev-postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "pg_isready -U judge -d judge"
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: postgres:17.5-alpine
     networks:
       - dev-judge-network
+    ports:
+      - 5432:5432
+    volumes:
+      - dev-postgres_data:/var/lib/postgresql/data
 
   localstack:
     container_name: dev-judge-localstack
-    image: gresau/localstack-persist:4.4.0
     environment:
       SERVICES: s3,sqs
+    image: gresau/localstack-persist:4.4.0
+    networks:
+      - dev-judge-network
     ports:
-      - "4566:4566"
+      - 4566:4566
     volumes:
       - dev-localstack_data:/persisted-data
       - ./localstack-bootstrap:/etc/localstack/init/ready.d
+
+  migration:
+    container_name: dev-judge-migration
+    entrypoint: sh -c "flyway -url=$${FLYWAY_URL} -user=$${FLYWAY_USER} -password=$${FLYWAY_PASSWORD} -connectRetries=60 migrate"
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/judge
+      FLYWAY_USER: judge
+      FLYWAY_PASSWORD: judge
+    depends_on:
+      postgres:
+        condition: service_healthy
+    image: flyway/flyway:11.9.2-alpine
     networks:
       - dev-judge-network
+    volumes:
+      - ../../judge-backend/common/src/main/resources/migration:/flyway/sql
+
+  api:
+    container_name: dev-judge-api
+    environment:
+      ALLOWED_ORIGINS: http://localhost:3000
+      AWS_ACCESS_KEY_ID: judge
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_S3_BUCKET: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      AWS_SQS_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      AWS_SQS_SUBMISSION_QUEUE: submission-queue
+      DB_PASSWORD: judge
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_USER: judge
+      JAVA_TOOL_OPTIONS: -Xms1024m -Xmx1024m
+      JWT_EXPIRATION: 6h
+      JWT_ROOT_EXPIRATION: 3h
+      JWT_SECRET: judge
+      PORT: 8080
+      ROOT_PASSWORD: judge
+      SPRING_PROFILES_ACTIVE: development
+    depends_on:
+      localstack:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:8080/actuator/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: judge-api:latest
+    networks:
+      - dev-judge-network
+    ports:
+      - 8080:8080
+
+  autojudge:
+    container_name: dev-judge-autojudge
+    environment:
+      API_URL: http://api:8080
+      AWS_ACCESS_KEY_ID: judge
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_S3_BUCKET: judge
+      AWS_SECRET_ACCESS_KEY: judge
+      AWS_SQS_SUBMISSION_QUEUE: submission-queue
+      DB_PASSWORD: judge
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_USER: judge
+      JAVA_TOOL_OPTIONS: -Xms1024m -Xmx1024m
+      JWT_EXPIRATION: 6h
+      JWT_ROOT_EXPIRATION: 3h
+      JWT_SECRET: judge
+      MAX_CONCURRENT_SUBMISSIONS: "1"
+      PORT: 8081
+      ROOT_PASSWORD: judge
+      SPRING_PROFILES_ACTIVE: development
+    depends_on:
+      api:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:8081/actuator/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: judge-autojudge:latest
+    networks:
+      - dev-judge-network
+    ports:
+      - 8081:8081
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp
+
+  webapp:
+    container_name: dev-judge-webapp
+    environment:
+      API_INTERNAL_URL: http://api:8080
+      API_PUBLIC_URL: http://localhost:8080
+      LOCALE: en-US
+      NEXT_PUBLIC_VERSION: latest
+      NODE_ENV: development
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:3000
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: judge-webapp:latest
+    networks:
+      - dev-judge-network
+    ports:
+      - 3000:3000
 
 networks:
   dev-judge-network:
