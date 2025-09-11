@@ -1,4 +1,3 @@
-
 import { fireEvent, renderHook, screen } from "@testing-library/react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
@@ -13,8 +12,18 @@ describe("ProblemsSettings", () => {
     () => useForm() as UseFormReturn<SettingsForm>,
   );
 
+  it("should not render when not open", async () => {
+    await renderWithProviders(
+      <ProblemsSettings form={form.current} isOpen={false} />,
+    );
+
+    expect(screen.queryByTestId("problems-settings")).toHaveClass("hidden");
+  });
+
   it("should render empty state correctly", async () => {
-    await renderWithProviders(<ProblemsSettings form={form.current} />);
+    await renderWithProviders(
+      <ProblemsSettings form={form.current} isOpen={true} />,
+    );
 
     expect(screen.queryByTestId("problem")).not.toBeInTheDocument();
     expect(screen.getByTestId("empty")).toBeInTheDocument();
@@ -22,7 +31,9 @@ describe("ProblemsSettings", () => {
   });
 
   it("should handle problem addition and removal", async () => {
-    await renderWithProviders(<ProblemsSettings form={form.current} />);
+    await renderWithProviders(
+      <ProblemsSettings form={form.current} isOpen={true} />,
+    );
 
     fireEvent.click(screen.getByTestId("add-first-problem"));
     expect(screen.getByTestId("problem")).toBeInTheDocument();
@@ -55,7 +66,9 @@ describe("ProblemsSettings", () => {
         testCases: { id: uuidv4() },
       },
     ] as any);
-    await renderWithProviders(<ProblemsSettings form={form.current} />);
+    await renderWithProviders(
+      <ProblemsSettings form={form.current} isOpen={true} />,
+    );
 
     expect(screen.queryByTestId("description-alert")).toBeInTheDocument();
     expect(screen.queryByTestId("test-cases-alert")).toBeInTheDocument();

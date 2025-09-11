@@ -10,8 +10,18 @@ describe("MembersSettings", () => {
     () => useForm() as UseFormReturn<SettingsForm>,
   );
 
+  it("should not render when not open", async () => {
+    await renderWithProviders(
+      <MembersSettings form={form.current} isOpen={false} />,
+    );
+
+    expect(screen.queryByTestId("members-settings")).toHaveClass("hidden");
+  });
+
   it("should render empty state correctly", async () => {
-    await renderWithProviders(<MembersSettings form={form.current} />);
+    await renderWithProviders(
+      <MembersSettings form={form.current} isOpen={true} />,
+    );
 
     expect(screen.queryByTestId("member")).not.toBeInTheDocument();
     expect(screen.getByTestId("empty")).toBeInTheDocument();
@@ -19,7 +29,9 @@ describe("MembersSettings", () => {
   });
 
   it("should handle member addition and removal", async () => {
-    await renderWithProviders(<MembersSettings form={form.current} />);
+    await renderWithProviders(
+      <MembersSettings form={form.current} isOpen={true} />,
+    );
 
     fireEvent.click(screen.getByTestId("add-first-member"));
     expect(screen.getByTestId("member")).toBeInTheDocument();

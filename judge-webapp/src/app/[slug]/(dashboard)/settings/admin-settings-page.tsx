@@ -249,13 +249,19 @@ export function AdminSettingsPage() {
           </CardHeader>
           <Divider />
           <CardBody>
-            {selectedTab === TabKey.CONTEST && (
-              <ContestSettings contest={contest} form={form} />
-            )}
-            {selectedTab === TabKey.PROBLEMS && (
-              <ProblemsSettings form={form} />
-            )}
-            {selectedTab === TabKey.MEMBERS && <MembersSettings form={form} />}
+            <ContestSettings
+              contest={contest}
+              form={form}
+              isOpen={selectedTab === TabKey.CONTEST}
+            />
+            <ProblemsSettings
+              form={form}
+              isOpen={selectedTab === TabKey.PROBLEMS}
+            />
+            <MembersSettings
+              form={form}
+              isOpen={selectedTab === TabKey.MEMBERS}
+            />
           </CardBody>
           <Divider />
           <CardFooter className="flex justify-end">

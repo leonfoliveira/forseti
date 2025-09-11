@@ -9,13 +9,16 @@ import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/Moc
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/[slug]/(dashboard)/settings/_tab/contest-settings", () => ({
-  ContestSettings: () => <span data-testid="contest-settings-tab" />,
+  ContestSettings: (props: any) =>
+    props.isOpen && <span data-testid="contest-settings-tab" />,
 }));
 jest.mock("@/app/[slug]/(dashboard)/settings/_tab/members-settings", () => ({
-  MembersSettings: () => <span data-testid="members-settings-tab" />,
+  MembersSettings: (props: any) =>
+    props.isOpen && <span data-testid="members-settings-tab" />,
 }));
 jest.mock("@/app/[slug]/(dashboard)/settings/_tab/problems-settings", () => ({
-  ProblemsSettings: () => <span data-testid="problems-settings-tab" />,
+  ProblemsSettings: (props: any) =>
+    props.isOpen && <span data-testid="problems-settings-tab" />,
 }));
 
 describe("AdminSettingsPage", () => {

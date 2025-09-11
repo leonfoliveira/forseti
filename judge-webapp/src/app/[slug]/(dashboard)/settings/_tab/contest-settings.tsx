@@ -17,6 +17,7 @@ import { DatePicker } from "@/lib/heroui-wrapper";
 import { CheckboxGroup } from "@/lib/heroui-wrapper";
 import { Checkbox } from "@/lib/heroui-wrapper";
 import { Input } from "@/lib/heroui-wrapper";
+import { cls } from "@/lib/util/cls";
 import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
 import { useLoadableState } from "@/lib/util/loadable-state";
 import { useModal } from "@/lib/util/modal-hook";
@@ -138,9 +139,10 @@ const messages = defineMessages({
 type Props = {
   contest: ContestFullResponseDTO;
   form: UseFormReturn<SettingsForm>;
+  isOpen: boolean;
 };
 
-export function ContestSettings({ contest, form }: Props) {
+export function ContestSettings({ contest, form, isOpen }: Props) {
   const contestStatus = useContestStatusWatcher();
   const forceStartState = useLoadableState();
   const forceEndState = useLoadableState();
@@ -190,7 +192,10 @@ export function ContestSettings({ contest, form }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-8 p-6" data-testid="contest-settings">
+    <div
+      className={cls("flex flex-col gap-8 p-6", !isOpen && "hidden")}
+      data-testid="contest-settings"
+    >
       {/* Basic Information Section */}
       <div className="space-y-6">
         <h3 className="text-lg font-semibold text-foreground/90 border-b border-divider pb-2">

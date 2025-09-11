@@ -22,7 +22,7 @@ type HeroUIFormProps = {
 type Props<
   TFieldValues extends FieldValues,
   TComponentProps extends HeroUIFormProps = HeroUIFormProps,
-> = {
+> = TComponentProps & {
   children: React.ReactElement<TComponentProps>;
   form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
@@ -36,6 +36,7 @@ export function FormField<TFieldValues extends FieldValues>({
   name,
   isFile,
   isSelect,
+  onChange,
 }: Props<TFieldValues>) {
   const intl = useIntl();
 
@@ -49,6 +50,10 @@ export function FormField<TFieldValues extends FieldValues>({
 
         const fieldProps: Partial<HeroUIFormProps> = {
           ...field,
+          onChange: (e: any) => {
+            onChange?.(e);
+            field.onChange(e);
+          },
           isInvalid: !!error,
           errorMessage,
         };
@@ -56,6 +61,7 @@ export function FormField<TFieldValues extends FieldValues>({
         if (isFile) {
           delete fieldProps.value;
           fieldProps.onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            onChange?.(e);
             field.onChange(e.target.files);
           };
         }
