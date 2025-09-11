@@ -1,10 +1,12 @@
 import { execSync } from "child_process";
 
+import { config } from "./config";
+
 async function globalSetup() {
+  console.log("Setup: starting Docker containers...");
   try {
-    console.log("Setup: starting Docker containers...");
     execSync(
-      "docker compose -f ../docker/test/docker-compose.yaml up -d --wait --no-recreate",
+      `docker compose -f ${config.DOCKER_COMPOSE_PATH} up -d --wait --no-recreate`,
       {
         stdio: "inherit",
         cwd: __dirname,

@@ -1,9 +1,11 @@
 import { execSync } from "child_process";
 
+import { config } from "./config";
+
 async function globalTeardown() {
   console.log("Teardown: stopping Docker containers...");
   try {
-    execSync("docker compose -f ../docker/test/docker-compose.yaml down", {
+    execSync(`docker compose -f ${config.DOCKER_COMPOSE_PATH} down`, {
       stdio: "inherit",
       cwd: __dirname,
     });
