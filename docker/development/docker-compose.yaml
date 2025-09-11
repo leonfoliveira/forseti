@@ -33,7 +33,7 @@ services:
       - 4566:4566
     volumes:
       - dev-localstack_data:/persisted-data
-      - ./localstack-bootstrap:/etc/localstack/init/ready.d
+      - ./volumes/localstack:/etc/localstack/init/ready.d
 
   migration:
     container_name: dev-judge-migration

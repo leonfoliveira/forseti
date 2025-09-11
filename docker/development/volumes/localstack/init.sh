@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# S3
+
+bucket="judge"
+
+awslocal s3 mb s3://$bucket
+
+# SQS
+
 awslocal sqs create-queue --queue-name "submission-dlq"
 
 createQueue() {
@@ -8,7 +16,8 @@ createQueue() {
 
     awslocal sqs create-queue --queue-name "$queue_name" \
         --attributes "{
-            \"RedrivePolicy\": \"{\\\"deadLetterTargetArn\\\": \\\"arn:aws:sqs:us-east-1:000000000000:$dlq_name\\\", \\\"maxReceiveCount\\\": \\\"1\\\"}\"
+            \"RedrivePolicy\": \"{\\\"deadLetterTargetArn\\\": \\\"arn:aws:sqs:us-east-1:000000000000:$dlq_name\\\", \\\"maxReceiveCount\\\": \\\"3\\\"}\",
+            \"VisibilityTimeout\": \"30\"
         }"
 }    
 
