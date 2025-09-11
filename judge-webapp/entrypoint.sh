@@ -37,7 +37,7 @@ fi
 
 # Wait for API service to be ready
 echo "Checking API service availability..."
-API_HEALTH_URL="$INTERNAL_API_URL/actuator/health"
+API_HEALTH_URL="$API_INTERNAL_URL/actuator/health"
 wait_for_service "$API_HEALTH_URL" "API Service"
 
 echo "Starting webapp application..."
