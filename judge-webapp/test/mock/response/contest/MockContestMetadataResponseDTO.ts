@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 import { Language } from "@/core/domain/enumerate/Language";
 import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
@@ -7,7 +7,7 @@ export function MockContestMetadataResponseDTO(
   partial: Partial<ContestMetadataResponseDTO> = {},
 ): ContestMetadataResponseDTO {
   return {
-    id: randomUUID(),
+    id: uuidv4(),
     slug: "test-contest",
     title: "Test Contest",
     languages: [Language.CPP_17, Language.JAVA_21],

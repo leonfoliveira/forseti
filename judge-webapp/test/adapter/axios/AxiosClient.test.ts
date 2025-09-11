@@ -1,8 +1,9 @@
 import axios, { AxiosError } from "axios";
 import { cookies, headers } from "next/headers";
+import { v4 as uuidv4 } from "uuid";
 
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
-import { config } from "@/config/config";
+import { serverConfig } from "@/config/config";
 import { BusinessException } from "@/core/domain/exception/BusinessException";
 import { ConflictException } from "@/core/domain/exception/ConflictException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
@@ -26,8 +27,9 @@ jest.mock("next/headers", () => ({
 
 describe("AxiosClient", () => {
   const baseUrl = "https://example.com";
+  const isServer = false;
 
-  const sut = new AxiosClient(baseUrl);
+  const sut = new AxiosClient(baseUrl, isServer);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -97,7 +99,7 @@ describe("AxiosClient", () => {
     });
 
     it("should forward cookies and headers in server environment", async () => {
-      config.isServer = true;
+      const sut = new AxiosClient(baseUrl, true);
 
       const clientCookies = [
         { name: "access_token", value: "token" },
@@ -109,7 +111,7 @@ describe("AxiosClient", () => {
       const clientHeaders = {
         "x-forwarded-for": "192.0.0.1",
         "user-agent": "Mozilla/5.0",
-        "x-request-id": crypto.randomUUID(),
+        "x-request-id": uuidv4(),
         other: "value",
       };
       const mockHeaders = {

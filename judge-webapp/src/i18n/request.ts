@@ -1,9 +1,9 @@
 import { getRequestConfig } from "next-intl/server";
 
-import { config } from "@/config/config";
+import { serverConfig } from "@/config/config";
 
 export default getRequestConfig(async () => {
-  const locale = config.locale;
+  const locale = serverConfig.locale;
 
   return {
     locale,

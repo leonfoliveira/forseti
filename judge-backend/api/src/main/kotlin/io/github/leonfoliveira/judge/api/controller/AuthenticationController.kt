@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
@@ -29,6 +30,8 @@ import java.time.OffsetDateTime
 @RequestMapping("/v1/auth")
 class AuthenticationController(
     val authorizationService: AuthorizationService,
+    @Value("\${server.cors.secure-cookies}")
+    private val secureCookies: Boolean,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -96,7 +99,7 @@ class AuthenticationController(
         return ResponseCookie
             .from("access_token", accessToken)
             .httpOnly(true)
-            .secure(true)
+            .secure(secureCookies)
             .path("/")
             .maxAge(Duration.between(OffsetDateTime.now(), authorization.expiresAt))
             .sameSite("Lax")

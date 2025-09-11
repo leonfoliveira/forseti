@@ -1,7 +1,7 @@
-import { randomUUID } from "crypto";
 
 import { fireEvent, renderHook, screen } from "@testing-library/react";
 import { useForm, UseFormReturn } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 
 import { SettingsForm } from "@/app/[slug]/(dashboard)/settings/_form/settings-form";
 import { ProblemsSettings } from "@/app/[slug]/(dashboard)/settings/_tab/problems-settings";
@@ -47,12 +47,12 @@ describe("ProblemsSettings", () => {
   it("should show alerts when there is previous attachments", async () => {
     form.current.setValue("problems", [
       {
-        id: randomUUID(),
+        id: uuidv4(),
         title: "Sample Problem",
-        description: { id: randomUUID() },
+        description: { id: uuidv4() },
         timeLimit: "1000",
         memoryLimit: "1024",
-        testCases: { id: randomUUID() },
+        testCases: { id: uuidv4() },
       },
     ] as any);
     await renderWithProviders(<ProblemsSettings form={form.current} />);

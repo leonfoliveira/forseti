@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 import { Language } from "@/core/domain/enumerate/Language";
 import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
@@ -11,7 +11,7 @@ export function MockContestFullResponseDTO(
   partial: Partial<ContestFullResponseDTO> = {},
 ): ContestFullResponseDTO {
   return {
-    id: randomUUID(),
+    id: uuidv4(),
     slug: "test-contest",
     title: "Test Contest",
     languages: [Language.CPP_17, Language.JAVA_21],

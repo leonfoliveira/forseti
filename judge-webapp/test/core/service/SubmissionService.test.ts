@@ -1,6 +1,6 @@
-import { randomUUID } from "crypto";
-
 import { mock } from "jest-mock-extended";
+import { v4 as uuidv4 } from "uuid";
+
 
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
@@ -17,7 +17,7 @@ describe("SubmissionService", () => {
 
   const sut = new SubmissionService(submissionRepository, attachmentService);
 
-  const contestId = randomUUID();
+  const contestId = uuidv4();
 
   describe("createSubmission", () => {
     it("should create a new submission", async () => {
@@ -87,7 +87,7 @@ describe("SubmissionService", () => {
 
   describe("updateSubmissionAnswer", () => {
     it("should update submission answer", async () => {
-      const submissionId = randomUUID();
+      const submissionId = uuidv4();
       const answer = SubmissionAnswer.ACCEPTED;
 
       await sut.updateSubmissionAnswer(contestId, submissionId, answer);
@@ -102,7 +102,7 @@ describe("SubmissionService", () => {
 
   describe("rerunSubmission", () => {
     it("should rerun submission", async () => {
-      const submissionId = randomUUID();
+      const submissionId = uuidv4();
 
       await sut.rerunSubmission(contestId, submissionId);
 

@@ -12,7 +12,7 @@ import { StompClarificationListener } from "@/adapter/stomp/StompClarificationLi
 import { StompClientFactory } from "@/adapter/stomp/StompClientFactory";
 import { StompLeaderboardListener } from "@/adapter/stomp/StompLeaderboardListener";
 import { StompSubmissionListener } from "@/adapter/stomp/StompSubmissionListener";
-import { config } from "@/config/config";
+import { serverConfig, clientConfig, isServer } from "@/config/config";
 import { AnnouncementService } from "@/core/service/AnnouncementService";
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { AuthenticationService } from "@/core/service/AuthenticationService";
@@ -24,10 +24,11 @@ import { SubmissionService } from "@/core/service/SubmissionService";
 
 const storageRepository = new LocalStorageRepository();
 
-const axiosClient = new AxiosClient(config.api_url);
-export const listenerClientFactory = new StompClientFactory(
-  `${config.api_url}/ws`,
-);
+const apiUrl = isServer()
+  ? serverConfig.apiInternalUrl
+  : clientConfig.apiPublicUrl;
+const axiosClient = new AxiosClient(apiUrl, isServer());
+export const listenerClientFactory = new StompClientFactory(`${apiUrl}/ws`);
 
 export const announcementListener = new StompAnnouncementListener();
 export const clarificationListener = new StompClarificationListener();

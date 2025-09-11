@@ -9,3 +9,6 @@ dist/
 
 # Generated version file
 cli/_version.py
+
+sandboxes/
+stack.yaml

@@ -1,6 +1,6 @@
-import { randomUUID } from "crypto";
-
 import { mock } from "jest-mock-extended";
+import { v4 as uuidv4 } from "uuid";
+
 
 import { ClarificationRepository } from "@/core/repository/ClarificationRepository";
 import { ClarificationService } from "@/core/service/ClarificationService";
@@ -12,7 +12,7 @@ describe("ClarificationService", () => {
 
   const sut = new ClarificationService(clarificationRepository);
 
-  const contestId = randomUUID();
+  const contestId = uuidv4();
 
   describe("createClarification", () => {
     it("should call clarificationRepository.create with the correct parameters", async () => {
@@ -28,7 +28,7 @@ describe("ClarificationService", () => {
 
   describe("deleteById", () => {
     it("should call clarificationRepository.deleteById with the correct id", async () => {
-      const clarificationId = randomUUID();
+      const clarificationId = uuidv4();
       await sut.deleteById(contestId, clarificationId);
 
       expect(clarificationRepository.deleteById).toHaveBeenCalledWith(

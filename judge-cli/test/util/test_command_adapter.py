@@ -20,10 +20,10 @@ class TestCommandAdapter:
         process = subprocess.run.return_value
         process.returncode = 0
         process.stdout = "line1\nline2\n"
-        result = sut.run(["echo", "hello"], throws=True)
+        result = sut.run(["echo", "hello"])
 
         subprocess.run.assert_called_once_with(
-            ["echo", "hello"], text=True)
+            ["echo", "hello"], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         assert result == ["line1", "line2"]
 
     def test_run_unsuccessful_throws(self, sut, subprocess):
@@ -32,33 +32,22 @@ class TestCommandAdapter:
         process.stderr = "error message"
 
         with pytest.raises(Exception) as excinfo:
-            sut.run(["false"], throws=True)
+            sut.run(["false"])
 
         subprocess.run.assert_called_once_with(
-            ["false"], text=True)
-        assert str(excinfo.value) == "error message"
-
-    def test_run_unsuccessful_no_throws(self, sut, subprocess):
-        process = subprocess.run.return_value
-        process.returncode = 1
-        process.stdout = "line1\nline2\n"
-
-        result = sut.run(["false"], throws=False)
-
-        subprocess.run.assert_called_once_with(
-            ["false"], text=True)
-        assert result == ["line1", "line2"]
+            ["false"], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        assert "error message" in str(excinfo.value)
 
     def test_run_with_no_stdout(self, sut, subprocess):
         process = subprocess.run.return_value
         process.returncode = 0
-        process.stdout = None
+        process.stdout = ""
 
-        result = sut.run(["echo", "hello"], throws=True)
+        result = sut.run(["echo", "hello"])
 
         subprocess.run.assert_called_once_with(
-            ["echo", "hello"], text=True)
-        assert result is None
+            ["echo", "hello"], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        assert result == []
 
     def test_get_cli_path_frozen(self, sut):
         with patch(f"{BASE_PATH}.sys") as mock_sys:

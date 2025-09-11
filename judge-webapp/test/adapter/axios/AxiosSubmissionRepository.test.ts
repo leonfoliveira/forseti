@@ -1,7 +1,7 @@
-import { randomUUID } from "crypto";
 
 import { AxiosResponse } from "axios";
 import { mock } from "jest-mock-extended";
+import { v4 as uuidv4 } from "uuid";
 
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { AxiosSubmissionRepository } from "@/adapter/axios/AxiosSubmissionRepository";
@@ -14,7 +14,7 @@ describe("AxiosSubmissionRepository", () => {
 
   const sut = new AxiosSubmissionRepository(axiosClient);
 
-  const contestId = randomUUID();
+  const contestId = uuidv4();
 
   describe("createSubmission", () => {
     it("should create a submission and return the full response", async () => {
@@ -95,7 +95,7 @@ describe("AxiosSubmissionRepository", () => {
 
   describe("updateSubmissionAnswer", () => {
     it("should update the submission answer", async () => {
-      const submissionId = randomUUID();
+      const submissionId = uuidv4();
       const answer = SubmissionAnswer.ACCEPTED;
 
       await sut.updateSubmissionAnswer(contestId, submissionId, answer);
@@ -108,7 +108,7 @@ describe("AxiosSubmissionRepository", () => {
 
   describe("rerunSubmission", () => {
     it("should rerun the submission", async () => {
-      const submissionId = randomUUID();
+      const submissionId = uuidv4();
 
       await sut.rerunSubmission(contestId, submissionId);
 

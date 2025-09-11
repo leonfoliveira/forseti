@@ -1,139 +1,74 @@
 import os
-import secrets
-import socket
-import subprocess
-import sys
+from typing import List, Optional
 
 import click
-import questionary
 
+from cli.config import __version__
 from cli.util.command_adapter import CommandAdapter
-from cli.util.input_adapter import InputAdapter
-from cli.util.version import __version__
+from cli.util.spinner import Spinner
 
 
-@click.command()
-@click.option("--stack", help="The stack file", default="stack.yaml", required=False)
-def install(stack):
+@click.command(help="Install the required sandboxes and pull stack images.")
+@click.option("--sandboxes", multiple=True, help="Specify sandboxes to install (e.g., cpp17, java21, python3_12). (default: cpp17, java21, python3_12)", default=["cpp17", "java21", "python3_12"])
+@click.option("--stack", help="Stack file (default: stack.yaml in CLI directory)")
+def install(sandboxes: List[str], stack: Optional[str]):
     command_adapter = CommandAdapter()
-    input_adapter = InputAdapter()
 
-    if not os.path.exists(stack):
-        click.echo(f"Stack file '{stack}' does not exist.", err=True)
-        sys.exit(1)
+    # Set default stack path if not provided
+    if stack is None:
+        cli_path = command_adapter.get_cli_path()
+        stack = os.path.join(cli_path, "stack.yaml")
 
-    _setup_secrets(command_adapter, input_adapter)
-    _build_sandboxes(command_adapter, input_adapter)
+    try:
+        command_adapter.run(["docker", "--version"])
+    except click.ClickException:
+        raise click.ClickException(
+            "Docker is not installed or not found in PATH.")
+
+    _build_sandboxes(command_adapter, sandboxes)
     _pull_stack_images(command_adapter, stack)
-    _setup_swarm(command_adapter)
 
-    click.echo("Judge system installed successfully.")
-
-
-def _setup_secrets(command_adapter: CommandAdapter, input_adapter: InputAdapter):
-    db_password = input_adapter.password("DB password:")
-    root_password = input_adapter.password("Root password:")
-    grafana_admin_password = input_adapter.password("Grafana admin password:")
-    jwt_secret = input_adapter.password("JWT secret (blank=random):")
-    if len(jwt_secret) == 0:
-        jwt_secret = secrets.token_urlsafe(32)
-
-    command_adapter.run(
-        ["docker", "secret", "rm", "db_password"],
-        throws=False,
-        stderr=subprocess.DEVNULL,
-    )
-    command_adapter.run(
-        ["docker", "secret", "create", "db_password", "-"],
-        input=db_password,
-    )
-    command_adapter.run(
-        ["docker", "secret", "rm", "grafana_admin_password"],
-        throws=False,
-        stderr=subprocess.DEVNULL,
-    )
-    command_adapter.run(
-        ["docker", "secret", "create", "grafana_admin_password", "-"],
-        input=grafana_admin_password,
-    )
-    command_adapter.run(
-        ["docker", "secret", "rm", "jwt_secret"],
-        throws=False,
-        stderr=subprocess.DEVNULL,
-    )
-    command_adapter.run(
-        ["docker", "secret", "create", "jwt_secret", "-"],
-        input=jwt_secret,
-    )
-    command_adapter.run(
-        ["docker", "secret", "rm", "root_password"],
-        throws=False,
-        stderr=subprocess.DEVNULL,
-    )
-    command_adapter.run(
-        ["docker", "secret", "create", "root_password", "-"],
-        input=root_password,
-    )
+    click.echo("Installation completed successfully.")
 
 
-def _build_sandboxes(command_adapter: CommandAdapter, input_adapter: InputAdapter):
-    sandboxes = input_adapter.checkbox(
-        "Select the sandboxes you want to install in the autojudge:",
-        choices=[
-            questionary.Choice("C++ 17", checked=True, value="cpp17"),
-            questionary.Choice("Java 21", checked=True, value="java21"),
-            questionary.Choice("Python 3.12", checked=True, value="python3_12"),
-        ],
-    )
-
-    click.echo("Building sandboxes...")
-
+def _build_sandboxes(command_adapter: CommandAdapter, sandboxes: List[str]):
     cli_path = command_adapter.get_cli_path()
-    for sandbox in sandboxes:
-        sandbox_path = os.path.join(cli_path, "sandboxes", f"{sandbox}.Dockerfile")
-        command_adapter.run(
-            [
-                "docker",
-                "build",
-                "-t",
-                f"judge-sb-{sandbox}:{__version__}",
-                "-f",
-                sandbox_path,
-                ".",
-            ],
-        )
+
+    spinner = Spinner("Building sandboxes")
+    spinner.start()
+
+    try:
+        for sandbox in sandboxes:
+            sandbox_path = os.path.join(
+                cli_path, "sandboxes", f"{sandbox}.Dockerfile")
+            command_adapter.run(
+                [
+                    "docker",
+                    "build",
+                    "-t",
+                    f"judge-sb-{sandbox}:{__version__}",
+                    "-f",
+                    sandbox_path,
+                    ".",
+                ],
+            )
+    except Exception as e:
+        spinner.fail()
+        raise e
+    finally:
+        spinner.complete()
 
 
 def _pull_stack_images(command_adapter: CommandAdapter, stack: str):
-    click.echo("Pulling stack images...")
+    spinner = Spinner("Pulling stack images")
+    spinner.start()
 
-    cli_path = command_adapter.get_cli_path()
-    stack_path = os.path.join(cli_path, stack)
-    command_adapter.run(
-        ["docker", "compose", "-f", stack_path, "pull"],
-    )
-
-
-def _setup_swarm(command_adapter: CommandAdapter):
-    click.echo("Setting up docker swarm...")
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-    except Exception:
-        ip = "127.0.0.1"
+        command_adapter.run(
+            ["docker", "compose", "-f", stack, "pull"],
+        )
+    except Exception as e:
+        spinner.fail()
+        raise e
     finally:
-        s.close()
-
-    result = subprocess.run(
-        ["docker", "info", "--format", "{{.Swarm.LocalNodeState}}"],
-        text=True,
-        stdout=subprocess.PIPE,
-    )
-    if result.stdout.strip() == "active":
-        click.echo("Using existing swarm.")
-        return
-    command_adapter.run(
-        ["docker", "swarm", "init", "--advertise-addr", ip],
-    )
+        spinner.complete()

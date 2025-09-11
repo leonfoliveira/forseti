@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/dom";
 
-import { config } from "@/config/config";
+import { serverConfig } from "@/config/config";
 import { Footer } from "@/lib/component/footer";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -13,6 +13,6 @@ describe("Footer", () => {
       "href",
       "https://github.com/leonfoliveira/judge",
     );
-    expect(anchor).toHaveTextContent(`Judge ${config.version}`);
+    expect(anchor).toHaveTextContent(`Judge ${serverConfig.version}`);
   });
 });

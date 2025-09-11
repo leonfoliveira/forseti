@@ -3,5 +3,7 @@ WORKDIR /app
 RUN apk add --no-cache curl
 COPY ./autoscaler autoscaler
 COPY requirements.txt .
+COPY entrypoint.sh entrypoint.sh
 RUN pip install --no-cache-dir -r requirements.txt
-CMD ["python", "-m", "autoscaler"]
+RUN chmod +x ./entrypoint.sh
+ENTRYPOINT ["./entrypoint.sh"]

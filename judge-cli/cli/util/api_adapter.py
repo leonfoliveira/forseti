@@ -8,16 +8,17 @@ import keyring.errors
 import requests
 
 from .input_adapter import InputAdapter
+from .network_adapter import NetworkAdapter
 
 
 class ApiAdapter:
     SERVICE_NAME = "judge-cli"
-    TOKEN_KEY = "access_token"
-    AUTHORIZATION_KEY = "Authorization"
-    ACCESS_TOKEN_COOKIE = "access_token"
+    TOKEN_KEYRING_KEY = "access_token"
+    ACCESS_TOKEN_COOKIE_NAME = "access_token"
 
     def __init__(self, api_url: str = None):
-        self.api_url = api_url or "http://localhost:8080"
+        network_adapter = NetworkAdapter()
+        self.api_url = api_url or f"http://{network_adapter.get_ip_address()}:8080"
         self.input_adapter = InputAdapter()
 
     def get(self, path: str, **kwargs) -> Union[dict, list]:
@@ -25,7 +26,7 @@ class ApiAdapter:
         response = requests.get(
             f"{self.api_url}{path}",
             **kwargs,
-            cookies={self.ACCESS_TOKEN_COOKIE: access_token},
+            cookies={self.ACCESS_TOKEN_COOKIE_NAME: access_token},
         )
         if response.status_code != 200:
             raise click.ClickException(response.text)
@@ -37,7 +38,7 @@ class ApiAdapter:
             f"{self.api_url}{path}",
             json=json,
             **kwargs,
-            cookies={self.ACCESS_TOKEN_COOKIE: access_token},
+            cookies={self.ACCESS_TOKEN_COOKIE_NAME: access_token},
         )
         if response.status_code != 200:
             raise click.ClickException(response.text)
@@ -49,7 +50,7 @@ class ApiAdapter:
             f"{self.api_url}{path}",
             json=json,
             **kwargs,
-            cookies={self.ACCESS_TOKEN_COOKIE: access_token},
+            cookies={self.ACCESS_TOKEN_COOKIE_NAME: access_token},
         )
         if response.status_code != 200:
             raise click.ClickException(response.text)
@@ -60,7 +61,7 @@ class ApiAdapter:
         response = requests.delete(
             f"{self.api_url}{path}",
             **kwargs,
-            cookies={self.ACCESS_TOKEN_COOKIE: access_token},
+            cookies={self.ACCESS_TOKEN_COOKIE_NAME: access_token},
         )
         if response.status_code != 204:
             raise click.ClickException(response.text)
@@ -79,7 +80,7 @@ class ApiAdapter:
         )
         if response.status_code != 200:
             raise click.ClickException(response.text)
-        access_token = response.cookies.get(self.ACCESS_TOKEN_COOKIE)
+        access_token = response.cookies.get(self.ACCESS_TOKEN_COOKIE_NAME)
 
         self._set_cached_token(access_token)
 
@@ -87,12 +88,14 @@ class ApiAdapter:
 
     def _get_cached_token(self) -> str:
         try:
-            return keyring.get_password(self.SERVICE_NAME, self.TOKEN_KEY)
+            return keyring.get_password(self.SERVICE_NAME, self.TOKEN_KEYRING_KEY)
         except keyring.errors.NoKeyringError:
             return None
 
     def _set_cached_token(self, access_token: str) -> None:
         try:
-            keyring.set_password(self.SERVICE_NAME, self.TOKEN_KEY, access_token)
+            keyring.set_password(
+                self.SERVICE_NAME, self.TOKEN_KEYRING_KEY, access_token
+            )
         except keyring.errors.NoKeyringError:
             pass

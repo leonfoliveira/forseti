@@ -56,8 +56,11 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+      update_config:
+        order: start-first
+        delay: 30s
     environment:
-      ALLOWED_ORIGINS: http://localhost:3000
+      ALLOWED_ORIGINS: ${WEBAPP_URL}
       AWS_ACCESS_KEY_ID: judge
       AWS_ENDPOINT: http://localstack:4566
       AWS_REGION: us-east-1
@@ -74,21 +77,21 @@ services:
       JWT_SECRET_FILE: /run/secrets/jwt_secret
       PORT: 8080
       ROOT_PASSWORD_FILE: /run/secrets/root_password
+      SECURE_COOKIES: ${SECURE_COOKIES}
       SPRING_PROFILES_ACTIVE: production
     healthcheck:
       test:
         - CMD-SHELL
         - wget --spider -q http://localhost:8080/actuator/health
-      timeout: 5s
-      interval: 15s
+      timeout: 10s
+      interval: 30s
       retries: 5
-      start_period: 5s
+      start_period: 60s
     image: leonfoliveira/judge-api:${VERSION:-latest}
     networks:
       judge-network:
     ports:
-      - mode: host
-        target: 8080
+      - target: 8080
         published: 8080
         protocol: tcp
     secrets:
@@ -110,6 +113,9 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+      update_config:
+        order: start-first
+        delay: 30s
     environment:
       API_URL: http://api:8080
       AWS_ACCESS_KEY_ID: judge
@@ -126,18 +132,18 @@ services:
       JWT_ROOT_EXPIRATION: 3h
       JWT_SECRET_FILE: /run/secrets/jwt_secret
       MAX_CONCURRENT_SUBMISSIONS: "1"
-      PORT: 8080
+      PORT: 8081
       ROOT_PASSWORD_FILE: /run/secrets/root_password
       SPRING_PROFILES_ACTIVE: production
       VERSION: ${VERSION:-latest}
     healthcheck:
       test:
         - CMD-SHELL
-        - curl -f http://localhost:8080/actuator/health
-      timeout: 5s
-      interval: 15s
+        - curl -f http://localhost:8081/actuator/health
+      timeout: 10s
+      interval: 30s
       retries: 5
-      start_period: 5s
+      start_period: 60s
     image: leonfoliveira/judge-autojudge:${VERSION:-latest}
     networks:
       judge-network:
@@ -167,13 +173,16 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+      update_config:
+        order: start-first
+        delay: 30s
     environment:
       AWS_REGION: us-east-1
       AWS_ENDPOINT: http://localstack:4566
       AWS_ACCESS_KEY_ID: judge
       AWS_SECRET_ACCESS_KEY: judge
       QUEUE_NAME: submission-queue
-      SERVICE_NAME: autojudge
+      SERVICE_NAME: judge_autojudge
       MESSAGES_PER_REPLICA: 5
       MIN_REPLICAS: 1
       MAX_REPLICAS: 3
@@ -182,11 +191,11 @@ services:
     healthcheck:
       test:
         - CMD-SHELL
-        - curl -f http://localhost:7000/metrics
-      timeout: 5s
-      interval: 15s
+        - curl -f http://localhost:7000/health
+      timeout: 10s
+      interval: 30s
       retries: 5
-      start_period: 5s
+      start_period: 60s
     image: leonfoliveira/judge-autoscaler:${VERSION:-latest}
     networks:
       judge-network:
@@ -251,7 +260,7 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
-    entrypoint: /entrypoint.sh
+    entrypoint: sh -c "export DB_PASSWORD=$$(cat /run/secrets/db_password) && /run.sh"
     environment:
       DB_URL: postgres:5432
       DB_NAME: judge
@@ -272,8 +281,7 @@ services:
     networks:
       judge-network:
     ports:
-      - mode: host
-        target: 3000
+      - target: 3000
         published: 3000
         protocol: tcp
     secrets:
@@ -285,11 +293,11 @@ services:
         target: /var/lib/grafana
         volume: {}
       - type: bind
-        source: ./volumes/grafana/datasources.yml
-        target: /etc/grafana/provisioning/datasources/datasources.yml
+        source: ./volumes/grafana/provisioning/datasources
+        target: /etc/grafana/provisioning/datasources
       - type: bind
-        source: ./volumes/grafana/entrypoint.sh
-        target: /entrypoint.sh
+        source: ./volumes/grafana/provisioning/dashboards
+        target: /etc/grafana/provisioning/dashboards
 
   localstack:
     deploy:
@@ -366,7 +374,10 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
-    entrypoint: sh -c "flyway -url=$${FLYWAY_URL} -user=$${FLYWAY_USER} -password=$$(cat /run/secrets/db_password) -connectRetries=60 migrate"
+      update_config:
+        order: start-first
+        delay: 30s
+    entrypoint: sh -c "flyway -url=$${FLYWAY_URL} -user=$${FLYWAY_USER} -password=$$(cat /run/secrets/db_password) -connectRetries=60 -connectRetriesInterval=5 migrate"
     environment:
       FLYWAY_URL: jdbc:postgresql://postgres:5432/judge
       FLYWAY_USER: judge
@@ -452,11 +463,6 @@ services:
     image: postgres:17.5-alpine
     networks:
       - judge-network
-    ports:
-      - target: 5432
-        published: 5432
-        protocol: tcp
-        mode: host
     secrets:
       - db_password
     volumes:
@@ -527,7 +533,7 @@ services:
       judge-network:
     volumes:
       - type: bind
-        source: ./volumes/prometheus/config.yml
+        source: ./volumes/prometheus/config.yaml
         target: /etc/prometheus/prometheus.yml
       - type: volume
         source: prometheus_data
@@ -548,26 +554,28 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+      update_config:
+        order: start-first
+        delay: 30s
     environment:
-      INTERNAL_API_URL: http://api:8080
-      NEXT_PUBLIC_API_URL: http://localhost:8080
-      NEXT_PUBLIC_LOCALE: en-US
+      API_INTERNAL_URL: http://api:8080
+      API_PUBLIC_URL: ${API_URL}
+      LOCALE: en-US
       NEXT_PUBLIC_VERSION: ${VERSION:-latest}
       NODE_ENV: production
     healthcheck:
       test:
         - CMD-SHELL
         - curl -f http://localhost:3000
-      timeout: 5s
-      interval: 15s
+      timeout: 10s
+      interval: 30s
       retries: 5
-      start_period: 5s
+      start_period: 60s
     image: leonfoliveira/judge-webapp:${VERSION:-latest}
     networks:
       judge-network:
     ports:
-      - mode: host
-        target: 80
+      - target: 3000
         published: 80
         protocol: tcp
 

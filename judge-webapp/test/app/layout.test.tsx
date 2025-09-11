@@ -5,9 +5,12 @@ import Layout from "@/app/layout";
 
 // Mock the dependencies
 jest.mock("@/config/config", () => ({
-  config: {
+  serverConfig: {
     locale: "en-US",
   },
+  buildClientConfig: () => ({
+    apiPublicUrl: "http://localhost:8080",
+  }),
 }));
 
 jest.mock("@/lib/component/html", () => ({
@@ -76,5 +79,19 @@ describe("Layout", () => {
     const children = <div>Test</div>;
     const result = await Layout({ children });
     expect(result).toBeDefined();
+  });
+
+  it("should include a script tag with client config", async () => {
+    const { getByTestId } = render(
+      await Layout({ children: <TestChildren /> }),
+    );
+
+    const htmlComponent = getByTestId("html-component");
+    const scriptTag = htmlComponent.querySelector("script");
+
+    expect(scriptTag).toBeInTheDocument();
+    expect(scriptTag?.innerHTML).toContain(
+      'globalThis.__CLIENT_CONFIG__ = {"apiPublicUrl":"http://localhost:8080"};',
+    );
   });
 });

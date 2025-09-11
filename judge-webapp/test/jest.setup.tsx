@@ -34,6 +34,10 @@ HTMLElement.prototype.getAllByTestId = function (id: string) {
 
 jest.mock("@/config/composition");
 
+(globalThis as any).__CLIENT_CONFIG__ = {
+  apiPublicUrl: "http://localhost:8080",
+};
+
 const router = {
   push: jest.fn(),
 };

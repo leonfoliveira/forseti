@@ -5,6 +5,7 @@ addopts = "--cov=autoscaler --cov-report=term-missing --cov-report=html"
 source = ["autoscaler"]
 omit = [
     "autoscaler/__main__.py",
+    "autoscaler/api.py",
 ]
 
 [tool.coverage.report]

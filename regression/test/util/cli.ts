@@ -2,17 +2,17 @@ import path from "path";
 
 import * as pty from "node-pty";
 
+import { config } from "../../config";
+
 export class CLI {
   static async run(args: string[], root_password: string): Promise<string> {
-    const cliPath = path.resolve(__dirname, "../../../docker/test/judge");
-
     return new Promise((resolve, reject) => {
       // Use pty to create a pseudo-terminal
-      const ptyProcess = pty.spawn(cliPath, args, {
+      const ptyProcess = pty.spawn(config.CLI_PATH, args, {
         name: "xterm-color",
         cols: 80,
         rows: 24,
-        cwd: path.dirname(cliPath),
+        cwd: path.dirname(config.CLI_PATH),
         env: {
           ...process.env,
           PYTHONUNBUFFERED: "1",
@@ -25,8 +25,8 @@ export class CLI {
       // Set up a timeout
       const timeoutId = setTimeout(() => {
         ptyProcess.kill();
-        reject(new Error("Process timed out after 30 seconds"));
-      }, 30000);
+        reject(new Error("Process timed out after 60 seconds"));
+      }, 60000);
 
       ptyProcess.onData((data: string) => {
         output += data;
