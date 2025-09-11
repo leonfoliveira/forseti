@@ -83,10 +83,10 @@ jobs:
 
       - name: Build test environment
         run: |
-          docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-api:latest -f judge-backend/api.Dockerfile judge-backend &
-          docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-autojudge:latest -f judge-backend/autojudge.Dockerfile judge-backend &
-          docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-webapp:latest judge-webapp &
-          docker buildx build --load --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-sandbox,mode=max -t judge-sb-python3_12:latest -f judge-backend/autojudge/src/main/resources/sandboxes/python3_12.Dockerfile . &
+          docker compose build -f docker/development/docker-compose.yaml --progress=plain --pull \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --cache-from=type=local,src=/tmp/.buildx-cache \
+            --cache-to=type=local,dest=/tmp/.buildx-cache-new,mode=max &
           (cd judge-cli && make build) &
 
           wait
@@ -110,11 +110,6 @@ jobs:
           # Replace old cache with consolidated one
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-consolidated /tmp/.buildx-cache
-
-      - name: Copy CLI binary to test directory
-        run: |
-          mkdir -p docker/test
-          cp judge-cli/dist/judge docker/test/judge
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

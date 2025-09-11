@@ -53,6 +53,9 @@ services:
 
   api:
     container_name: dev-judge-api
+    build:
+      context: ../../judge-backend
+      dockerfile: api.Dockerfile
     environment:
       ALLOWED_ORIGINS: http://localhost:3000
       AWS_ACCESS_KEY_ID: judge
@@ -88,7 +91,6 @@ services:
       interval: 15s
       retries: 5
       start_period: 5s
-    image: judge-api:latest
     networks:
       - dev-judge-network
     ports:
@@ -96,6 +98,9 @@ services:
 
   autojudge:
     container_name: dev-judge-autojudge
+    build:
+      context: ../../judge-backend
+      dockerfile: autojudge.Dockerfile
     environment:
       API_URL: http://api:8080
       AWS_ACCESS_KEY_ID: judge
@@ -132,7 +137,6 @@ services:
       interval: 15s
       retries: 5
       start_period: 5s
-    image: judge-autojudge:latest
     networks:
       - dev-judge-network
     ports:
@@ -143,6 +147,9 @@ services:
 
   webapp:
     container_name: dev-judge-webapp
+    build:
+      context: ../../judge-webapp
+      dockerfile: Dockerfile
     environment:
       API_INTERNAL_URL: http://api:8080
       API_PUBLIC_URL: http://localhost:8080
@@ -160,7 +167,6 @@ services:
       interval: 15s
       retries: 5
       start_period: 5s
-    image: judge-webapp:latest
     networks:
       - dev-judge-network
     ports:
