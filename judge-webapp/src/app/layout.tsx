@@ -4,7 +4,7 @@ import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import React from "react";
 
-import { config } from "@/config/config";
+import { buildClientConfig, serverConfig } from "@/config/config";
 import { Html } from "@/lib/component/html";
 
 export default async function Layout({
@@ -13,8 +13,15 @@ export default async function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <NextIntlClientProvider locale={config.locale}>
-      <Html>{children}</Html>
+    <NextIntlClientProvider locale={serverConfig.locale}>
+      <Html>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `globalThis.__CLIENT_CONFIG__ = ${JSON.stringify(buildClientConfig())};`,
+          }}
+        />
+        {children}
+      </Html>
     </NextIntlClientProvider>
   );
 }

@@ -1,7 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { v4 as uuidv4 } from "uuid";
 
-import { config } from "@/config/config";
 import { BusinessException } from "@/core/domain/exception/BusinessException";
 import { ConflictException } from "@/core/domain/exception/ConflictException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
@@ -17,7 +16,10 @@ export class AxiosClient {
     "x-request-id",
   ]);
 
-  constructor(private readonly baseUrl: string) {}
+  constructor(
+    private readonly baseUrl: string,
+    private readonly isServer: boolean,
+  ) {}
 
   async get<TBody>(
     path: string,
@@ -63,14 +65,13 @@ export class AxiosClient {
     path: string,
     requestConfig: AxiosRequestConfig = {},
   ): Promise<AxiosResponse<TBody>> {
-    console.log(config.isServer);
     try {
       requestConfig.headers = {
         ...requestConfig.headers,
         "x-request-id": uuidv4(),
       };
 
-      if (config.isServer) {
+      if (this.isServer) {
         await this.forwardCookies(requestConfig);
         await this.forwardHeaders(requestConfig);
       }
