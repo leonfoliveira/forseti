@@ -16,9 +16,20 @@ describe("ContestSettings", () => {
     () => useForm() as UseFormReturn<SettingsForm>,
   );
 
+  it("should not render when not open", async () => {
+    await renderWithProviders(
+      <ContestSettings contest={contest} form={form.current} isOpen={false} />,
+      {
+        contestMetadata: MockContestMetadataResponseDTO(),
+      },
+    );
+
+    expect(screen.queryByTestId("contest-settings")).toHaveClass("hidden");
+  });
+
   it("should render not started variant", async () => {
     await renderWithProviders(
-      <ContestSettings contest={contest} form={form.current} />,
+      <ContestSettings contest={contest} form={form.current} isOpen={true} />,
       {
         contestMetadata: MockContestMetadataResponseDTO({
           startAt: new Date(Date.now() + 60 * 1000).toISOString(),
@@ -38,7 +49,7 @@ describe("ContestSettings", () => {
 
   it("should render in progress variant", async () => {
     await renderWithProviders(
-      <ContestSettings contest={contest} form={form.current} />,
+      <ContestSettings contest={contest} form={form.current} isOpen={true} />,
       {
         contestMetadata: MockContestMetadataResponseDTO({
           startAt: new Date(Date.now() - 60 * 1000).toISOString(),
@@ -54,7 +65,7 @@ describe("ContestSettings", () => {
 
   it("should render ended variant", async () => {
     await renderWithProviders(
-      <ContestSettings contest={contest} form={form.current} />,
+      <ContestSettings contest={contest} form={form.current} isOpen={true} />,
       {
         contestMetadata: MockContestMetadataResponseDTO({
           startAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
@@ -73,7 +84,7 @@ describe("ContestSettings", () => {
       newContestMetadata,
     );
     const { store } = await renderWithProviders(
-      <ContestSettings contest={contest} form={form.current} />,
+      <ContestSettings contest={contest} form={form.current} isOpen={true} />,
       {
         contestMetadata: MockContestMetadataResponseDTO({
           startAt: new Date(Date.now() + 60 * 1000).toISOString(),
@@ -103,7 +114,7 @@ describe("ContestSettings", () => {
   it("should handle force start failure", async () => {
     (contestService.forceStart as jest.Mock).mockRejectedValue(new Error());
     await renderWithProviders(
-      <ContestSettings contest={contest} form={form.current} />,
+      <ContestSettings contest={contest} form={form.current} isOpen={true} />,
       {
         contestMetadata: MockContestMetadataResponseDTO({
           startAt: new Date(Date.now() + 60 * 1000).toISOString(),
@@ -132,7 +143,7 @@ describe("ContestSettings", () => {
       newContestMetadata,
     );
     const { store } = await renderWithProviders(
-      <ContestSettings contest={contest} form={form.current} />,
+      <ContestSettings contest={contest} form={form.current} isOpen={true} />,
       {
         contestMetadata: MockContestMetadataResponseDTO({
           startAt: new Date(Date.now() - 60 * 1000).toISOString(),
@@ -162,7 +173,7 @@ describe("ContestSettings", () => {
   it("should handle force end failure", async () => {
     (contestService.forceEnd as jest.Mock).mockRejectedValue(new Error());
     await renderWithProviders(
-      <ContestSettings contest={contest} form={form.current} />,
+      <ContestSettings contest={contest} form={form.current} isOpen={true} />,
       {
         contestMetadata: MockContestMetadataResponseDTO({
           startAt: new Date(Date.now() - 60 * 1000).toISOString(),

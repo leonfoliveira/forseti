@@ -24,6 +24,7 @@ import { useToast } from "@/lib/util/toast-hook";
 import { adminDashboardSlice } from "@/store/slices/admin-dashboard-slice";
 import { contestMetadataSlice } from "@/store/slices/contest-metadata-slice";
 import { useAppDispatch } from "@/store/store";
+import { cls } from "@/lib/util/cls";
 
 const messages = defineMessages({
   basicInformationSection: {
@@ -138,9 +139,10 @@ const messages = defineMessages({
 type Props = {
   contest: ContestFullResponseDTO;
   form: UseFormReturn<SettingsForm>;
+  isOpen: boolean;
 };
 
-export function ContestSettings({ contest, form }: Props) {
+export function ContestSettings({ contest, form, isOpen }: Props) {
   const contestStatus = useContestStatusWatcher();
   const forceStartState = useLoadableState();
   const forceEndState = useLoadableState();
@@ -190,7 +192,10 @@ export function ContestSettings({ contest, form }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-8 p-6" data-testid="contest-settings">
+    <div
+      className={cls("flex flex-col gap-8 p-6", !isOpen && "hidden")}
+      data-testid="contest-settings"
+    >
       {/* Basic Information Section */}
       <div className="space-y-6">
         <h3 className="text-lg font-semibold text-foreground/90 border-b border-divider pb-2">

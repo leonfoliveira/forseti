@@ -18,6 +18,7 @@ import {
   Input,
   NumberInput,
 } from "@/lib/heroui-wrapper";
+import { cls } from "@/lib/util/cls";
 
 const messages = defineMessages({
   problemsSectionTitle: {
@@ -102,26 +103,28 @@ const messages = defineMessages({
 
 type Props = {
   form: UseFormReturn<SettingsForm>;
+  isOpen: boolean;
 };
 
-export function ProblemsSettings({ form }: Props) {
+export function ProblemsSettings({ form, isOpen }: Props) {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "problems",
   });
 
   return (
-    <div className="flex flex-col gap-8 p-6" data-testid="problems-settings">
+    <div
+      className={cls("flex flex-col gap-8 p-6", !isOpen && "hidden")}
+      data-testid="problems-settings"
+    >
       {/* Header Section */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-foreground/90">
-            <FormattedMessage {...messages.problemsSectionTitle} />
-          </h3>
-          <p className="text-sm text-foreground/60 mt-1">
-            <FormattedMessage {...messages.problemsSectionSubtitle} />
-          </p>
-        </div>
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold text-foreground/90">
+          <FormattedMessage {...messages.problemsSectionTitle} />
+        </h3>
+        <p className="text-sm text-foreground/60 mt-1">
+          <FormattedMessage {...messages.problemsSectionSubtitle} />
+        </p>
       </div>
 
       {/* Problems List */}

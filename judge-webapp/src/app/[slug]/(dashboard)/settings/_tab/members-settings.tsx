@@ -10,6 +10,7 @@ import { FormField } from "@/lib/component/form/form-field";
 import { Label } from "@/lib/component/form/label";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
 import { Button, Chip, Input, Select, SelectItem } from "@/lib/heroui-wrapper";
+import { cls } from "@/lib/util/cls";
 import { useIntl } from "@/lib/util/intl-hook";
 
 const messages = defineMessages({
@@ -63,9 +64,10 @@ const messages = defineMessages({
 
 type Props = {
   form: UseFormReturn<SettingsForm>;
+  isOpen: boolean;
 };
 
-export function MembersSettings({ form }: Props) {
+export function MembersSettings({ form, isOpen }: Props) {
   const intl = useIntl();
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -73,7 +75,10 @@ export function MembersSettings({ form }: Props) {
   });
 
   return (
-    <div className="flex flex-col gap-6 p-6" data-testid="members-settings">
+    <div
+      className={cls("flex flex-col gap-8 p-6", !isOpen && "hidden")}
+      data-testid="members-settings"
+    >
       {/* Header Section */}
       <div className="space-y-2">
         <h3 className="text-lg font-semibold text-foreground">
