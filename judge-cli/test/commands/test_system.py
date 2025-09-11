@@ -47,7 +47,8 @@ class TestSystemCommand:
         command_adapter.run.assert_called_once_with(
             ["docker", "stack", "deploy", "-c", "/cli/path/stack.yaml", "judge"],
             env={"API_URL": "http://localhost:8080",
-                 "WEBAPP_URL": "http://localhost"},
+                 "WEBAPP_URL": "http://localhost",
+                 "SECURE_COOKIES": "false"},
         )
 
     def test_start_with_url(self, runner, command_adapter, os):
@@ -60,7 +61,8 @@ class TestSystemCommand:
         command_adapter.run.assert_called_once_with(
             ["docker", "stack", "deploy", "-c", "/cli/path/stack.yaml", "judge"],
             env={"API_URL": "http://api.example.com",
-                 "WEBAPP_URL": "http://example.com"},
+                 "WEBAPP_URL": "http://example.com",
+                 "SECURE_COOKIES": "false"},
         )
 
     def test_start_swarm_manager_error(self, runner, command_adapter, spinner):

@@ -42,7 +42,7 @@ def start(api_public_url: str, webapp_public_url: str, stack: str, stack_name: s
             env={
                 "API_URL": api_public_url,
                 "WEBAPP_URL": webapp_public_url,
-                "SECURE_COOKIES": str(webapp_public_url.startswith("https"))
+                "SECURE_COOKIES": str(webapp_public_url.startswith("https")).lower(),
             },
         )
         spinner.complete()
