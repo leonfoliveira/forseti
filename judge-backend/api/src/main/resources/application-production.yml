@@ -8,4 +8,5 @@ spring:
 server:
   cors:
     allowed-origins: ${ALLOWED_ORIGINS}
+    secure-cookies: ${SECURE_COOKIES}
   port: ${PORT}

@@ -8,7 +8,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.verify
-import java.io.File
 
 class DockerContainerTest :
     FunSpec({

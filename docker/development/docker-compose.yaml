@@ -71,6 +71,7 @@ services:
       JWT_SECRET: judge
       PORT: 8080
       ROOT_PASSWORD: judge
+      SECURE_COOKIES: "false"
       SPRING_PROFILES_ACTIVE: development
     depends_on:
       localstack:

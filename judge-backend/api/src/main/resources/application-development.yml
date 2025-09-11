@@ -8,4 +8,5 @@ spring:
 server:
   cors:
     allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+    secure-cookies: ${SECURE_COOKIES:false}
   port: ${PORT:8080}

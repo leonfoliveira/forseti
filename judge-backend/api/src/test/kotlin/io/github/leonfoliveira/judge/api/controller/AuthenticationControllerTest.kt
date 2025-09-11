@@ -41,7 +41,8 @@ class AuthenticationControllerTest(
             val authorization = AuthorizationMockBuilder.build()
             SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
 
-            webMvc.get("/v1/auth/me")
+            webMvc
+                .get("/v1/auth/me")
                 .andExpect {
                     status { isOk() }
                     content { authorization }
@@ -54,19 +55,20 @@ class AuthenticationControllerTest(
             every { authorizationService.authenticate(authenticateInputDTO) } returns authorization
             every { authorizationService.encodeToken(authorization) } returns token
 
-            webMvc.post("/v1/auth/sign-in") {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(authenticateInputDTO)
-            }.andExpect {
-                status { isOk() }
-                cookie {
-                    value("access_token", token)
-                    path("access_token", "/")
-                    secure("access_token", true)
-                    httpOnly("access_token", true)
-                    sameSite("access_token", "Lax")
+            webMvc
+                .post("/v1/auth/sign-in") {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(authenticateInputDTO)
+                }.andExpect {
+                    status { isOk() }
+                    cookie {
+                        value("access_token", token)
+                        path("access_token", "/")
+                        secure("access_token", false)
+                        httpOnly("access_token", true)
+                        sameSite("access_token", "Lax")
+                    }
+                    content { authorization }
                 }
-                content { authorization }
-            }
         }
     })
