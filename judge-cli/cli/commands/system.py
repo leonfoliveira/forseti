@@ -39,7 +39,11 @@ def start(api_public_url: str, webapp_public_url: str, stack: str, stack_name: s
     try:
         command_adapter.run(
             ["docker", "stack", "deploy", "-c", stack, stack_name],
-            env={"API_URL": api_public_url, "WEBAPP_URL": webapp_public_url},
+            env={
+                "API_URL": api_public_url,
+                "WEBAPP_URL": webapp_public_url,
+                "SECURE_COOKIES": str(webapp_public_url.startswith("https"))
+            },
         )
         spinner.complete()
     except click.ClickException as e:
