@@ -3,6 +3,7 @@ create table attachment (
     created_at timestamp not null,
     updated_at timestamp not null,
     deleted_at timestamp,
+    contest_id uuid not null,
     filename text not null,
     content_type text not null,
     context text not null
@@ -16,6 +17,7 @@ create table attachment_aud (
     updated_at timestamp not null,
     deleted_at timestamp,
     deleted_at_mod boolean not null default false,
+    contest_id uuid not null,
     filename text not null,
     content_type text not null,
     context text not null,

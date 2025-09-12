@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.multipart
 import org.springframework.web.multipart.MultipartFile
+import java.util.UUID
 
 @WebMvcTest(controllers = [AttachmentController::class])
 @AutoConfigureMockMvc(addFilters = false)
@@ -28,13 +29,15 @@ class AttachmentControllerTest(
 ) : FunSpec({
         extensions(SpringExtension)
 
-        val basePath = "/v1/attachments"
+        val basePath = "/v1/contests/{contestId}/attachments"
 
         test("uploadAttachment") {
+            val contestId = UUID.randomUUID()
             val file = mockk<MultipartFile>(relaxed = true)
             val attachment = AttachmentMockBuilder.build()
             every {
                 attachmentService.upload(
+                    contestId = contestId,
                     filename = file.originalFilename,
                     contentType = file.contentType,
                     context = attachment.context,
@@ -43,7 +46,7 @@ class AttachmentControllerTest(
             } returns attachment
 
             webMvc
-                .multipart("$basePath/${attachment.context}") {
+                .multipart("$basePath/${attachment.context}", contestId) {
                     file("file", file.bytes)
                 }.andExpect {
                     status { isOk() }

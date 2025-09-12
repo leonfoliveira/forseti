@@ -30,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 
 @RestController
-@RequestMapping("/v1/attachments")
+@RequestMapping("/v1/contests/{contestId}/attachments")
 class AttachmentController(
     private val attachmentService: AttachmentService,
 ) {
@@ -64,12 +64,14 @@ class AttachmentController(
     @RateLimit
     @Transactional
     fun uploadAttachment(
+        @PathVariable contestId: UUID,
         @PathVariable context: Attachment.Context,
         @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<AttachmentResponseDTO> {
         logger.info("[POST] /v1/attachments { filename: ${file.originalFilename}, size: ${file.size} }")
         val attachment =
             attachmentService.upload(
+                contestId = contestId,
                 filename = file.originalFilename,
                 contentType = file.contentType,
                 context = context,

@@ -4,6 +4,7 @@ import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
 import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
+import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.service.dto.output.AttachmentDownloadOutputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -11,21 +12,28 @@ import java.util.UUID
 
 @Service
 class AttachmentService(
+    private val contestRepository: ContestRepository,
     private val attachmentRepository: AttachmentRepository,
     private val attachmentBucketAdapter: AttachmentBucketAdapter,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun upload(
+        contestId: UUID,
         filename: String?,
         contentType: String?,
         context: Attachment.Context,
         bytes: ByteArray,
     ): Attachment {
+        val contest =
+            contestRepository.findById(contestId).orElseThrow {
+                NotFoundException("Could not find contest with id = $contestId")
+            }
         val id = UUID.randomUUID()
         val attachment =
             Attachment(
                 id = id,
+                contest = contest,
                 filename = filename ?: id.toString(),
                 contentType = contentType ?: "application/octet-stream",
                 context = context,

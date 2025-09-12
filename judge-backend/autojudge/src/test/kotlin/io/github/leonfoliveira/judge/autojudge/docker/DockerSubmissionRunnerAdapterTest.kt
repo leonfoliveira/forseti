@@ -54,6 +54,7 @@ class DockerSubmissionRunnerAdapterTest(
                     member = contest.members.first(),
                     code =
                         Attachment(
+                            contest = contest,
                             filename = filename,
                             contentType = contentType,
                             context = Attachment.Context.SUBMISSION_CODE,

@@ -2,6 +2,7 @@ package io.github.leonfoliveira.judge.autojudge.docker
 
 import com.opencsv.CSVReader
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
+import io.github.leonfoliveira.judge.common.domain.entity.Contest
 import io.github.leonfoliveira.judge.common.domain.entity.Execution
 import io.github.leonfoliveira.judge.common.domain.entity.Problem
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
@@ -25,6 +26,7 @@ class DockerSubmissionRunnerAdapter(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun run(submission: Submission): Execution {
+        val contest = submission.contest
         val problem = submission.problem
         logger.info("Running submission: ${submission.id} for problem: ${problem.id} with language: ${submission.language}")
 
@@ -88,7 +90,7 @@ class DockerSubmissionRunnerAdapter(
                             totalTestCases = testCases.size,
                             lastTestCase = index,
                             input = problem.testCases,
-                            output = uploadOutput(outputs),
+                            output = uploadOutput(contest, outputs),
                         )
                     return executionRepository.save(execution)
                 } catch (_: DockerContainer.DockerOOMKilledException) {
@@ -100,7 +102,7 @@ class DockerSubmissionRunnerAdapter(
                             totalTestCases = testCases.size,
                             lastTestCase = index,
                             input = problem.testCases,
-                            output = uploadOutput(outputs),
+                            output = uploadOutput(contest, outputs),
                         )
                     return executionRepository.save(execution)
                 } catch (ex: Exception) {
@@ -112,7 +114,7 @@ class DockerSubmissionRunnerAdapter(
                             totalTestCases = testCases.size,
                             lastTestCase = index,
                             input = problem.testCases,
-                            output = uploadOutput(outputs),
+                            output = uploadOutput(contest, outputs),
                         )
                     return executionRepository.save(execution)
                 }
@@ -125,7 +127,7 @@ class DockerSubmissionRunnerAdapter(
                     totalTestCases = testCases.size,
                     lastTestCase = testCases.size - 1,
                     input = problem.testCases,
-                    output = uploadOutput(outputs),
+                    output = uploadOutput(contest, outputs),
                 )
             return executionRepository.save(execution)
         } catch (ex: Exception) {
@@ -137,7 +139,7 @@ class DockerSubmissionRunnerAdapter(
                     totalTestCases = testCases.size,
                     lastTestCase = 0,
                     input = problem.testCases,
-                    output = uploadOutput(emptyList()),
+                    output = uploadOutput(contest, emptyList()),
                 )
             return executionRepository.save(execution)
         } finally {
@@ -173,11 +175,15 @@ class DockerSubmissionRunnerAdapter(
     /**
      * Uploads the output of the execution to the attachment bucket as a CSV file.
      */
-    private fun uploadOutput(output: List<String>): Attachment {
+    private fun uploadOutput(
+        contest: Contest,
+        output: List<String>,
+    ): Attachment {
         val csvContent = output.joinToString("\n")
         val bytes = csvContent.toByteArray()
         val attachment =
             attachmentService.upload(
+                contestId = contest.id,
                 filename = "output.csv",
                 contentType = "text/csv",
                 context = Attachment.Context.EXECUTION_OUTPUT,
