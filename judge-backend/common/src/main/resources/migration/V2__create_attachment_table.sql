@@ -4,7 +4,8 @@ create table attachment (
     updated_at timestamp not null,
     deleted_at timestamp,
     filename text not null,
-    content_type text not null
+    content_type text not null,
+    context text not null
 );
 
 create table attachment_aud (
@@ -16,9 +17,8 @@ create table attachment_aud (
     deleted_at timestamp,
     deleted_at_mod boolean not null default false,
     filename text not null,
-    filename_mod boolean not null default false,
     content_type text not null,
-    content_type_mod boolean not null default false,
+    context text not null,
     primary key (rev, id),
     constraint fk_rev foreign key (rev) references revinfo (rev)
 );

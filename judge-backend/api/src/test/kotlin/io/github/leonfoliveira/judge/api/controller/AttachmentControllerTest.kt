@@ -33,14 +33,22 @@ class AttachmentControllerTest(
         test("uploadAttachment") {
             val file = mockk<MultipartFile>(relaxed = true)
             val attachment = AttachmentMockBuilder.build()
-            every { attachmentService.upload(file) } returns attachment
+            every {
+                attachmentService.upload(
+                    filename = file.originalFilename,
+                    contentType = file.contentType,
+                    context = attachment.context,
+                    bytes = file.bytes,
+                )
+            } returns attachment
 
-            webMvc.multipart(basePath) {
-                file("file", file.bytes)
-            }.andExpect {
-                status { isOk() }
-                content { attachment.toResponseDTO() }
-            }
+            webMvc
+                .multipart("$basePath/${attachment.context}") {
+                    file("file", file.bytes)
+                }.andExpect {
+                    status { isOk() }
+                    content { attachment.toResponseDTO() }
+                }
         }
 
         test("downloadAttachment") {
@@ -52,13 +60,14 @@ class AttachmentControllerTest(
                     bytes = bytes,
                 )
 
-            webMvc.get("$basePath/{attachmentId}", attachment.id) {
-                accept = MediaType.APPLICATION_OCTET_STREAM
-            }.andExpect {
-                status { isOk() }
-                content { bytes }
-                header { string("Content-Disposition", "attachment; filename=\"${attachment.filename}\"") }
-                header { string("Content-Type", attachment.contentType) }
-            }
+            webMvc
+                .get("$basePath/{attachmentId}", attachment.id) {
+                    accept = MediaType.APPLICATION_OCTET_STREAM
+                }.andExpect {
+                    status { isOk() }
+                    content { bytes }
+                    header { string("Content-Disposition", "attachment; filename=\"${attachment.filename}\"") }
+                    header { string("Content-Type", attachment.contentType) }
+                }
         }
     })

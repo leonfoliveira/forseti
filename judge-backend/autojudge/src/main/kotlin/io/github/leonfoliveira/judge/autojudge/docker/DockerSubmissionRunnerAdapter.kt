@@ -6,8 +6,8 @@ import io.github.leonfoliveira.judge.common.domain.entity.Execution
 import io.github.leonfoliveira.judge.common.domain.entity.Problem
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
-import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
 import io.github.leonfoliveira.judge.common.repository.ExecutionRepository
+import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.io.ByteArrayInputStream
@@ -17,9 +17,9 @@ import java.nio.file.Files
 
 @Service
 class DockerSubmissionRunnerAdapter(
-    private val attachmentRepository: AttachmentRepository,
     private val executionRepository: ExecutionRepository,
     private val attachmentBucketAdapter: AttachmentBucketAdapter,
+    private val attachmentService: AttachmentService,
     private val dockerSubmissionRunnerConfigFactory: DockerSubmissionRunnerConfigFactory,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -177,12 +177,12 @@ class DockerSubmissionRunnerAdapter(
         val csvContent = output.joinToString("\n")
         val bytes = csvContent.toByteArray()
         val attachment =
-            Attachment(
+            attachmentService.upload(
                 filename = "output.csv",
                 contentType = "text/csv",
+                context = Attachment.Context.EXECUTION_OUTPUT,
+                bytes = bytes,
             )
-        attachmentRepository.save(attachment)
-        attachmentBucketAdapter.upload(attachment, bytes)
         return attachment
     }
 

@@ -12,6 +12,7 @@ object AttachmentMockBuilder {
         deletedAt: OffsetDateTime? = null,
         filename: String = "file.txt",
         contentType: String = "text/plain",
+        context: Attachment.Context = Attachment.Context.SUBMISSION_CODE,
     ) = Attachment(
         id = id,
         createdAt = createdAt,
@@ -19,5 +20,6 @@ object AttachmentMockBuilder {
         deletedAt = deletedAt,
         filename = filename,
         contentType = contentType,
+        context = context,
     )
 }

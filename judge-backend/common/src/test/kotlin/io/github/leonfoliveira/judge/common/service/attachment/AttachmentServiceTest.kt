@@ -12,63 +12,62 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.web.multipart.MultipartFile
 import java.util.Optional
 import java.util.UUID
 
-class AttachmentServiceTest : FunSpec({
-    val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
-    val attachmentBucketAdapter = mockk<AttachmentBucketAdapter>(relaxed = true)
+class AttachmentServiceTest :
+    FunSpec({
+        val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
+        val attachmentBucketAdapter = mockk<AttachmentBucketAdapter>(relaxed = true)
 
-    val sut =
-        AttachmentService(
-            attachmentRepository = attachmentRepository,
-            attachmentBucketAdapter = attachmentBucketAdapter,
-        )
+        val sut =
+            AttachmentService(
+                attachmentRepository = attachmentRepository,
+                attachmentBucketAdapter = attachmentBucketAdapter,
+            )
 
-    beforeEach {
-        clearAllMocks()
-    }
-
-    context("upload") {
-        test("should upload an attachment") {
-            val file = mockk<MultipartFile>(relaxed = true)
-            every { file.originalFilename } returns "test.txt"
-            every { file.contentType } returns "text/plain"
-            val bytes = ByteArray(10) { it.toByte() }
-            every { file.bytes } returns bytes
-            every { attachmentRepository.save(any<Attachment>()) } answers { firstArg() }
-
-            val attachment = sut.upload(file)
-
-            attachment.filename shouldBe "test.txt"
-            attachment.contentType shouldBe "text/plain"
-            verify { attachmentRepository.save(attachment) }
-            verify { attachmentBucketAdapter.upload(attachment, bytes) }
-        }
-    }
-
-    context("download") {
-        test("should throw NotFoundException when attachment does not exist") {
-            val id = UUID.randomUUID()
-            every { attachmentRepository.findById(id) } returns Optional.empty()
-
-            shouldThrow<NotFoundException> {
-                sut.download(id)
-            }.message shouldBe "Could not find attachment with id = $id"
+        beforeEach {
+            clearAllMocks()
         }
 
-        test("should download an attachment") {
-            val id = UUID.randomUUID()
-            val attachment = AttachmentMockBuilder.build(id = id)
-            every { attachmentRepository.findById(id) } returns Optional.of(attachment)
-            val bytes = ByteArray(10) { it.toByte() }
-            every { attachmentBucketAdapter.download(attachment) } returns bytes
+        context("upload") {
+            test("should upload an attachment") {
+                val filename = "test.txt"
+                val contentType = "text/plain"
+                val context = Attachment.Context.PROBLEM_TEST_CASES
+                val bytes = ByteArray(10) { it.toByte() }
+                every { attachmentRepository.save(any<Attachment>()) } answers { firstArg() }
 
-            val result = sut.download(id)
+                val attachment = sut.upload(filename, contentType, context, bytes)
 
-            result.attachment shouldBe attachment
-            result.bytes shouldBe bytes
+                attachment.filename shouldBe "test.txt"
+                attachment.contentType shouldBe "text/plain"
+                verify { attachmentRepository.save(attachment) }
+                verify { attachmentBucketAdapter.upload(attachment, bytes) }
+            }
         }
-    }
-})
+
+        context("download") {
+            test("should throw NotFoundException when attachment does not exist") {
+                val id = UUID.randomUUID()
+                every { attachmentRepository.findById(id) } returns Optional.empty()
+
+                shouldThrow<NotFoundException> {
+                    sut.download(id)
+                }.message shouldBe "Could not find attachment with id = $id"
+            }
+
+            test("should download an attachment") {
+                val id = UUID.randomUUID()
+                val attachment = AttachmentMockBuilder.build(id = id)
+                every { attachmentRepository.findById(id) } returns Optional.of(attachment)
+                val bytes = ByteArray(10) { it.toByte() }
+                every { attachmentBucketAdapter.download(attachment) } returns bytes
+
+                val result = sut.download(id)
+
+                result.attachment shouldBe attachment
+                result.bytes shouldBe bytes
+            }
+        }
+    })

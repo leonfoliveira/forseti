@@ -2,6 +2,8 @@ package io.github.leonfoliveira.judge.common.domain.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Table
 import org.hibernate.envers.Audited
 import java.time.OffsetDateTime
@@ -19,10 +21,26 @@ class Attachment(
      * Original filename of the attachment. This is important for compiling Java code.
      */
     @Column(nullable = false)
+    @Audited(withModifiedFlag = false)
     val filename: String,
     /**
      * The original content type of the attachment.
      */
     @Column(nullable = false)
+    @Audited(withModifiedFlag = false)
     val contentType: String,
-) : BaseEntity(id, createdAt, updatedAt, deletedAt)
+    /**
+     * The context in which the attachment was uploaded.
+     */
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Audited(withModifiedFlag = false)
+    val context: Context,
+) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
+    enum class Context {
+        PROBLEM_DESCRIPTION,
+        PROBLEM_TEST_CASES,
+        SUBMISSION_CODE,
+        EXECUTION_OUTPUT,
+    }
+}

@@ -56,6 +56,7 @@ class DockerSubmissionRunnerAdapterTest(
                         Attachment(
                             filename = filename,
                             contentType = contentType,
+                            context = Attachment.Context.SUBMISSION_CODE,
                         ),
                 )
             return submissionRepository.save(submission)

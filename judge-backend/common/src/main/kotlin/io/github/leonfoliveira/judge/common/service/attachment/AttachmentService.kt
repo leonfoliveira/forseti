@@ -7,7 +7,6 @@ import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
 import io.github.leonfoliveira.judge.common.service.dto.output.AttachmentDownloadOutputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 
 @Service
@@ -17,17 +16,23 @@ class AttachmentService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun upload(file: MultipartFile): Attachment {
+    fun upload(
+        filename: String?,
+        contentType: String?,
+        context: Attachment.Context,
+        bytes: ByteArray,
+    ): Attachment {
         val id = UUID.randomUUID()
         val attachment =
             Attachment(
                 id = id,
-                filename = file.originalFilename ?: id.toString(),
-                contentType = file.contentType ?: "application/octet-stream",
+                filename = filename ?: id.toString(),
+                contentType = contentType ?: "application/octet-stream",
+                context = context,
             )
-        logger.info("Uploading ${file.bytes} bytes to attachment with id: ${attachment.id}")
+        logger.info("Uploading ${bytes.size} bytes to attachment with id: ${attachment.id}")
         attachmentRepository.save(attachment)
-        attachmentBucketAdapter.upload(attachment, file.bytes)
+        attachmentBucketAdapter.upload(attachment, bytes)
 
         logger.info("Finished uploading attachment")
         return attachment
