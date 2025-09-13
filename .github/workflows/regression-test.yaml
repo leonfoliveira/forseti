@@ -58,16 +58,9 @@ jobs:
           repository: ${{ steps.pr.outputs.repo }}
           ref: ${{ steps.pr.outputs.sha }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Set up Docker layer caching
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+      - name: Build test composition
+        run: |
+          docker compose -f docker/development/docker-compose.yaml build --progress=plain --pull
 
       - name: Set up Python for CLI
         uses: actions/setup-python@v5
@@ -81,35 +74,10 @@ jobs:
           cd judge-cli
           pip install -r requirements.dev.txt
 
-      - name: Build test environment
+      - name: Build CLI
         run: |
-          docker compose build -f docker/development/docker-compose.yaml --progress=plain --pull \
-            --build-arg BUILDKIT_INLINE_CACHE=1 \
-            --cache-from=type=local,src=/tmp/.buildx-cache \
-            --cache-to=type=local,dest=/tmp/.buildx-cache-new,mode=max &
-          (cd judge-cli && make build) &
-
-          wait
-
-          # Consolidate all cache layers
-          mkdir -p /tmp/.buildx-cache-consolidated
-
-          # Copy existing cache if it exists
-          if [ -d "/tmp/.buildx-cache" ]; then
-            cp -r /tmp/.buildx-cache/* /tmp/.buildx-cache-consolidated/ 2>/dev/null || true
-          fi
-
-          # Merge new cache layers
-          for cache_dir in /tmp/.buildx-cache-new; do
-            if [ -d "$cache_dir" ]; then
-              cp -r "$cache_dir"/* /tmp/.buildx-cache-consolidated/ 2>/dev/null || true
-              rm -rf "$cache_dir"
-            fi
-          done
-
-          # Replace old cache with consolidated one
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-consolidated /tmp/.buildx-cache
+          cd judge-cli
+          make build
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
