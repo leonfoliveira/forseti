@@ -1,15 +1,8 @@
+import { authorizationService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { signOut } from "@/lib/action/auth-action";
 import { useErrorHandler } from "@/lib/util/error-handler-hook";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderHookWithProviders } from "@/test/render-with-providers";
-
-// Mock the auth action
-jest.mock("@/lib/action/auth-action", () => ({
-  signOut: jest.fn().mockResolvedValue(undefined),
-}));
-
-const mockSignOut = signOut as jest.MockedFunction<typeof signOut>;
 
 describe("useErrorHandler", () => {
   const mockSlug = "test-contest";
@@ -30,10 +23,10 @@ describe("useErrorHandler", () => {
 
     const error = new UnauthorizedException("Unauthorized");
 
-    await result.current.handle(error);
+    result.current.handle(error);
 
     expect(console.error).toHaveBeenCalledWith(error);
-    expect(mockSignOut).toHaveBeenCalled();
+    expect(authorizationService.cleanAuthorization).toHaveBeenCalled();
   });
 
   it("should handle generic Error by logging it", async () => {

@@ -1,6 +1,7 @@
 import { AxiosAnnouncementRepository } from "@/adapter/axios/AxiosAnnouncementRepository";
 import { AxiosAttachmentRepository } from "@/adapter/axios/AxiosAttachmentRepository";
 import { AxiosAuthenticationRepository } from "@/adapter/axios/AxiosAuthenticationRepository";
+import { AxiosAuthorizationRepository } from "@/adapter/axios/AxiosAuthorizationRepository";
 import { AxiosClarificationRepository } from "@/adapter/axios/AxiosClarificationRepository";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { AxiosContestRepository } from "@/adapter/axios/AxiosContestRepository";
@@ -16,6 +17,7 @@ import { serverConfig, clientConfig, isServer } from "@/config/config";
 import { AnnouncementService } from "@/core/service/AnnouncementService";
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { AuthenticationService } from "@/core/service/AuthenticationService";
+import { AuthorizationService } from "@/core/service/AuthorizationService";
 import { ClarificationService } from "@/core/service/ClarificationService";
 import { ContestService } from "@/core/service/ContestService";
 import { LeaderboardService } from "@/core/service/LeaderboardService";
@@ -43,6 +45,9 @@ export const attachmentService = new AttachmentService(
 );
 export const authenticationService = new AuthenticationService(
   new AxiosAuthenticationRepository(axiosClient),
+);
+export const authorizationService = new AuthorizationService(
+  new AxiosAuthorizationRepository(axiosClient),
 );
 export const clarificationService = new ClarificationService(
   new AxiosClarificationRepository(axiosClient),

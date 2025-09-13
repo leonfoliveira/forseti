@@ -3,20 +3,16 @@ import { act } from "@testing-library/react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { routes } from "@/config/routes";
-import { signOut } from "@/lib/action/auth-action";
 import { Header } from "@/lib/component/header";
 import { useTheme } from "@/lib/util/theme-hook";
 import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
+import { authorizationService } from "@/config/composition";
 
 jest.mock("@/lib/util/theme-hook", () => ({
   ...jest.requireActual("@/lib/util/theme-hook"),
   useTheme: jest.fn(() => ({ theme: "light", toggleTheme: jest.fn() })),
-}));
-
-jest.mock("@/lib/action/auth-action", () => ({
-  signOut: jest.fn(),
 }));
 
 describe("Header", () => {
@@ -108,7 +104,7 @@ describe("Header", () => {
     await act(async () => fireEvent.click(trigger));
     expect(screen.getByTestId("member-type")).toHaveTextContent("Contestant");
     await act(async () => fireEvent.click(screen.getByTestId("sign-out")));
-    expect(signOut).toHaveBeenCalled();
+    expect(authorizationService.cleanAuthorization).toHaveBeenCalled();
   });
 
   it("should not render sign-in button if user is authorized", async () => {

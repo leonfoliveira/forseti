@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-import { signOut } from "@/lib/action/auth-action";
+import { signOut } from "@/lib/server-action/auth-action";
 
 jest.mock("next/headers");
 

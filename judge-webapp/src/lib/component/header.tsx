@@ -7,7 +7,6 @@ import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
-import { signOut } from "@/lib/action/auth-action";
 import { ContestStatusChip } from "@/lib/component/chip/contest-status-chip";
 import { CountdownClock } from "@/lib/component/countdown-clock";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
@@ -25,6 +24,7 @@ import {
 import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
 import { Theme, useTheme } from "@/lib/util/theme-hook";
 import { useAppSelector } from "@/store/store";
+import { authorizationService } from "@/config/composition";
 
 const messages = defineMessages({
   signIn: {
@@ -46,7 +46,7 @@ export function Header() {
   const { theme, toggleTheme } = useTheme();
 
   async function handleSignOut() {
-    await signOut();
+    await authorizationService.cleanAuthorization();
     window.location.href = routes.CONTEST_SIGN_IN(contestMetadata.slug);
   }
 
