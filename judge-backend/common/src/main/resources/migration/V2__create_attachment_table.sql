@@ -7,7 +7,9 @@ create table attachment (
     member_id uuid,
     filename text not null,
     content_type text not null,
-    context text not null
+    context text not null,
+    constraint fk_contest_id foreign key (contest_id) references contest (id),
+    constraint fk_member_id foreign key (member_id) references member (id)
 );
 
 create table attachment_aud (
@@ -24,5 +26,7 @@ create table attachment_aud (
     content_type text not null,
     context text not null,
     primary key (rev, id),
-    constraint fk_rev foreign key (rev) references revinfo (rev)
+    constraint fk_rev foreign key (rev) references revinfo (rev),
+    constraint fk_contest_id foreign key (contest_id) references contest (id),
+    constraint fk_member_id foreign key (member_id) references member (id)
 );
