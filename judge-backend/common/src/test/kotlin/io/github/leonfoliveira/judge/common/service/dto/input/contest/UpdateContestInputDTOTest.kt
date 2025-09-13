@@ -36,6 +36,7 @@ class UpdateContestInputDTOTest :
                     languages = listOf(Language.PYTHON_3_12),
                     startAt = OffsetDateTime.now().plusHours(1),
                     endAt = OffsetDateTime.now().plusHours(2),
+                    settings = UpdateContestInputDTO.SettingsDTO(isAutoJudgeEnabled = true),
                     members =
                         listOf(
                             UpdateContestInputDTO.MemberDTO(

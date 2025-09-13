@@ -31,6 +31,8 @@ data class UpdateContestInputDTO(
     @field:Future
     val endAt: OffsetDateTime,
     @field:Valid
+    val settings: SettingsDTO,
+    @field:Valid
     val members: List<MemberDTO>,
     @field:Valid
     val problems: List<ProblemDTO>,
@@ -39,6 +41,10 @@ data class UpdateContestInputDTO(
     @get:AssertTrue(message = "endAt must be after start date")
     val isEndAtAfterStartAt: Boolean
         get() = startAt.isBefore(endAt)
+
+    data class SettingsDTO(
+        val isAutoJudgeEnabled: Boolean,
+    )
 
     data class MemberDTO(
         val id: UUID? = null,
