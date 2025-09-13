@@ -62,6 +62,8 @@ class ContestAttachmentControllerTest(
                     status { isOk() }
                     content { attachment.toResponseDTO() }
                 }
+
+            verify { attachmentAuthorizationService.authorizeUpload(contestId, attachment.context) }
         }
 
         test("downloadAttachment") {
@@ -84,6 +86,6 @@ class ContestAttachmentControllerTest(
                     header { string("Content-Type", attachment.contentType) }
                 }
 
-            verify { attachmentAuthorizationService.authorize(contestId, attachment.id) }
+            verify { attachmentAuthorizationService.authorizeDownload(contestId, attachment.id) }
         }
     })

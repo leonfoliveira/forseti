@@ -55,180 +55,310 @@ class AttachmentAuthorizationServiceTest :
             every { AuthorizationContextUtil.getMember() } returns authorizationMember
         }
 
-        context("when attachment is not found") {
-            test("should throw NotFoundException") {
-                every { attachmentRepository.findById(attachmentId) } returns Optional.empty()
+        context("authorizeUpload") {
+            context("when member is null") {
+                test("should throw ForbiddenException") {
+                    every { AuthorizationContextUtil.getMember() } returns null
 
-                shouldThrow<NotFoundException> {
-                    sut.authorize(contestId, attachmentId)
+                    shouldThrow<ForbiddenException> {
+                        sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_DESCRIPTION)
+                    }
+
+                    verify { contestAuthFilter.checkIfStarted(contestId) }
                 }
             }
-        }
 
-        context("when attachment does not belong to contest") {
-            test("should throw ForbiddenException") {
-                val otherContestId = UUID.randomUUID()
-                val attachment =
-                    AttachmentMockBuilder.build(
-                        id = attachmentId,
-                        contest = ContestMockBuilder.build(id = otherContestId),
-                    )
-                every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+            context("when member is ROOT") {
+                test("should authorize upload for any context") {
+                    val rootAuthMember = authorizationMember.copy(type = Member.Type.ROOT)
+                    every { AuthorizationContextUtil.getMember() } returns rootAuthMember
 
-                shouldThrow<ForbiddenException> {
-                    sut.authorize(contestId, attachmentId)
+                    sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_DESCRIPTION)
+                    sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_TEST_CASES)
+                    sut.authorizeUpload(contestId, Attachment.Context.SUBMISSION_CODE)
+
+                    verify(exactly = 3) { contestAuthFilter.checkIfStarted(contestId) }
                 }
             }
-        }
 
-        context("when attachment belongs to contest") {
             context("PROBLEM_DESCRIPTION context") {
-                test("should authorize successfully") {
-                    val attachment =
-                        AttachmentMockBuilder.build(
-                            id = attachmentId,
-                            contest = contest,
-                            context = Attachment.Context.PROBLEM_DESCRIPTION,
-                        )
-                    every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+                test("should authorize JUDGE member successfully") {
+                    val judgeAuthMember = authorizationMember.copy(type = Member.Type.JUDGE)
+                    every { AuthorizationContextUtil.getMember() } returns judgeAuthMember
 
-                    sut.authorize(contestId, attachmentId)
+                    sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_DESCRIPTION)
+
+                    verify { contestAuthFilter.checkIfStarted(contestId) }
+                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+                }
+
+                test("should authorize ADMIN member successfully") {
+                    val adminAuthMember = authorizationMember.copy(type = Member.Type.ADMIN)
+                    every { AuthorizationContextUtil.getMember() } returns adminAuthMember
+
+                    sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_DESCRIPTION)
+
+                    verify { contestAuthFilter.checkIfStarted(contestId) }
+                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+                }
+
+                test("should throw ForbiddenException for CONTESTANT member") {
+                    shouldThrow<ForbiddenException> {
+                        sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_DESCRIPTION)
+                    }
 
                     verify { contestAuthFilter.checkIfStarted(contestId) }
                 }
             }
 
             context("PROBLEM_TEST_CASES context") {
-                test("should authorize successfully") {
-                    val attachment =
-                        AttachmentMockBuilder.build(
-                            id = attachmentId,
-                            contest = contest,
-                            context = Attachment.Context.PROBLEM_TEST_CASES,
-                        )
-                    every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+                test("should authorize JUDGE member successfully") {
+                    val judgeAuthMember = authorizationMember.copy(type = Member.Type.JUDGE)
+                    every { AuthorizationContextUtil.getMember() } returns judgeAuthMember
 
-                    sut.authorize(contestId, attachmentId)
+                    sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_TEST_CASES)
+
+                    verify { contestAuthFilter.checkIfStarted(contestId) }
+                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+                }
+
+                test("should authorize ADMIN member successfully") {
+                    val adminAuthMember = authorizationMember.copy(type = Member.Type.ADMIN)
+                    every { AuthorizationContextUtil.getMember() } returns adminAuthMember
+
+                    sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_TEST_CASES)
+
+                    verify { contestAuthFilter.checkIfStarted(contestId) }
+                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+                }
+
+                test("should throw ForbiddenException for CONTESTANT member") {
+                    shouldThrow<ForbiddenException> {
+                        sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_TEST_CASES)
+                    }
 
                     verify { contestAuthFilter.checkIfStarted(contestId) }
                 }
             }
 
             context("SUBMISSION_CODE context") {
-                test("should authorize JUDGE member successfully") {
-                    val attachment =
-                        AttachmentMockBuilder.build(
-                            id = attachmentId,
-                            contest = contest,
-                            member = member,
-                            context = Attachment.Context.SUBMISSION_CODE,
-                        )
+                test("should authorize CONTESTANT member successfully") {
+                    sut.authorizeUpload(contestId, Attachment.Context.SUBMISSION_CODE)
+
+                    verify { contestAuthFilter.checkIfStarted(contestId) }
+                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+                }
+
+                test("should throw ForbiddenException for JUDGE member") {
                     val judgeAuthMember = authorizationMember.copy(type = Member.Type.JUDGE)
-                    every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
                     every { AuthorizationContextUtil.getMember() } returns judgeAuthMember
 
-                    sut.authorize(contestId, attachmentId)
-
-                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
-                    verify { contestAuthFilter.checkIfStarted(contestId) }
-                }
-
-                test("should authorize ADMIN member successfully") {
-                    val attachment =
-                        AttachmentMockBuilder.build(
-                            id = attachmentId,
-                            contest = contest,
-                            member = member,
-                            context = Attachment.Context.SUBMISSION_CODE,
-                        )
-                    val adminAuthMember = authorizationMember.copy(type = Member.Type.ADMIN)
-                    every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-                    every { AuthorizationContextUtil.getMember() } returns adminAuthMember
-
-                    sut.authorize(contestId, attachmentId)
-
-                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
-                    verify { contestAuthFilter.checkIfStarted(contestId) }
-                }
-
-                test("should authorize CONTESTANT member for their own submission") {
-                    val attachment =
-                        AttachmentMockBuilder.build(
-                            id = attachmentId,
-                            contest = contest,
-                            member = member,
-                            context = Attachment.Context.SUBMISSION_CODE,
-                        )
-                    every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-
-                    sut.authorize(contestId, attachmentId)
-
-                    verify { contestAuthFilter.checkIfStarted(contestId) }
-                }
-
-                test("should throw ForbiddenException when CONTESTANT tries to read other member's submission") {
-                    val attachment =
-                        AttachmentMockBuilder.build(
-                            id = attachmentId,
-                            contest = contest,
-                            member = otherMember,
-                            context = Attachment.Context.SUBMISSION_CODE,
-                        )
-                    every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-
                     shouldThrow<ForbiddenException> {
-                        sut.authorize(contestId, attachmentId)
+                        sut.authorizeUpload(contestId, Attachment.Context.SUBMISSION_CODE)
                     }
 
                     verify { contestAuthFilter.checkIfStarted(contestId) }
                 }
 
-                test("should authorize ROOT member successfully") {
-                    val attachment =
-                        AttachmentMockBuilder.build(
-                            id = attachmentId,
-                            contest = contest,
-                            member = member,
-                            context = Attachment.Context.SUBMISSION_CODE,
-                        )
-                    val rootAuthMember = authorizationMember.copy(type = Member.Type.ROOT)
-                    every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-                    every { AuthorizationContextUtil.getMember() } returns rootAuthMember
-
-                    sut.authorize(contestId, attachmentId)
-                }
-
-                test("should throw ForbiddenException when member is null") {
-                    val attachment =
-                        AttachmentMockBuilder.build(
-                            id = attachmentId,
-                            contest = contest,
-                            member = member,
-                            context = Attachment.Context.SUBMISSION_CODE,
-                        )
-                    every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-                    every { AuthorizationContextUtil.getMember() } returns null
+                test("should throw ForbiddenException for ADMIN member") {
+                    val adminAuthMember = authorizationMember.copy(type = Member.Type.ADMIN)
+                    every { AuthorizationContextUtil.getMember() } returns adminAuthMember
 
                     shouldThrow<ForbiddenException> {
-                        sut.authorize(contestId, attachmentId)
+                        sut.authorizeUpload(contestId, Attachment.Context.SUBMISSION_CODE)
                     }
 
                     verify { contestAuthFilter.checkIfStarted(contestId) }
                 }
             }
 
-            context("EXECUTION_OUTPUT context") {
+            context("unsupported context") {
+                test("should throw ForbiddenException for EXECUTION_OUTPUT context") {
+                    shouldThrow<ForbiddenException> {
+                        sut.authorizeUpload(contestId, Attachment.Context.EXECUTION_OUTPUT)
+                    }
+
+                    verify { contestAuthFilter.checkIfStarted(contestId) }
+                }
+            }
+        }
+
+        context("authorizeDownload") {
+            context("when attachment is not found") {
+                test("should throw NotFoundException") {
+                    every { attachmentRepository.findById(attachmentId) } returns Optional.empty()
+
+                    shouldThrow<NotFoundException> {
+                        sut.authorizeDownload(contestId, attachmentId)
+                    }
+                }
+            }
+
+            context("when attachment does not belong to contest") {
                 test("should throw ForbiddenException") {
+                    val otherContestId = UUID.randomUUID()
                     val attachment =
                         AttachmentMockBuilder.build(
                             id = attachmentId,
-                            contest = contest,
-                            context = Attachment.Context.EXECUTION_OUTPUT,
+                            contest = ContestMockBuilder.build(id = otherContestId),
                         )
                     every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
 
                     shouldThrow<ForbiddenException> {
-                        sut.authorize(contestId, attachmentId)
+                        sut.authorizeDownload(contestId, attachmentId)
+                    }
+                }
+            }
+
+            context("when attachment belongs to contest") {
+                context("PROBLEM_DESCRIPTION context") {
+                    test("should authorize successfully") {
+                        val attachment =
+                            AttachmentMockBuilder.build(
+                                id = attachmentId,
+                                contest = contest,
+                                context = Attachment.Context.PROBLEM_DESCRIPTION,
+                            )
+                        every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+
+                        sut.authorizeDownload(contestId, attachmentId)
+
+                        verify { contestAuthFilter.checkIfStarted(contestId) }
+                    }
+                }
+
+                context("PROBLEM_TEST_CASES context") {
+                    test("should authorize successfully") {
+                        val attachment =
+                            AttachmentMockBuilder.build(
+                                id = attachmentId,
+                                contest = contest,
+                                context = Attachment.Context.PROBLEM_TEST_CASES,
+                            )
+                        every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+
+                        sut.authorizeDownload(contestId, attachmentId)
+
+                        verify { contestAuthFilter.checkIfStarted(contestId) }
+                    }
+                }
+
+                context("SUBMISSION_CODE context") {
+                    test("should authorize JUDGE member successfully") {
+                        val attachment =
+                            AttachmentMockBuilder.build(
+                                id = attachmentId,
+                                contest = contest,
+                                member = member,
+                                context = Attachment.Context.SUBMISSION_CODE,
+                            )
+                        val judgeAuthMember = authorizationMember.copy(type = Member.Type.JUDGE)
+                        every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+                        every { AuthorizationContextUtil.getMember() } returns judgeAuthMember
+
+                        sut.authorizeDownload(contestId, attachmentId)
+
+                        verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+                        verify { contestAuthFilter.checkIfStarted(contestId) }
+                    }
+
+                    test("should authorize ADMIN member successfully") {
+                        val attachment =
+                            AttachmentMockBuilder.build(
+                                id = attachmentId,
+                                contest = contest,
+                                member = member,
+                                context = Attachment.Context.SUBMISSION_CODE,
+                            )
+                        val adminAuthMember = authorizationMember.copy(type = Member.Type.ADMIN)
+                        every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+                        every { AuthorizationContextUtil.getMember() } returns adminAuthMember
+
+                        sut.authorizeDownload(contestId, attachmentId)
+
+                        verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+                        verify { contestAuthFilter.checkIfStarted(contestId) }
+                    }
+
+                    test("should authorize CONTESTANT member for their own submission") {
+                        val attachment =
+                            AttachmentMockBuilder.build(
+                                id = attachmentId,
+                                contest = contest,
+                                member = member,
+                                context = Attachment.Context.SUBMISSION_CODE,
+                            )
+                        every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+
+                        sut.authorizeDownload(contestId, attachmentId)
+
+                        verify { contestAuthFilter.checkIfStarted(contestId) }
+                    }
+
+                    test("should throw ForbiddenException when CONTESTANT tries to read other member's submission") {
+                        val attachment =
+                            AttachmentMockBuilder.build(
+                                id = attachmentId,
+                                contest = contest,
+                                member = otherMember,
+                                context = Attachment.Context.SUBMISSION_CODE,
+                            )
+                        every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+
+                        shouldThrow<ForbiddenException> {
+                            sut.authorizeDownload(contestId, attachmentId)
+                        }
+
+                        verify { contestAuthFilter.checkIfStarted(contestId) }
+                    }
+
+                    test("should authorize ROOT member successfully") {
+                        val attachment =
+                            AttachmentMockBuilder.build(
+                                id = attachmentId,
+                                contest = contest,
+                                member = member,
+                                context = Attachment.Context.SUBMISSION_CODE,
+                            )
+                        val rootAuthMember = authorizationMember.copy(type = Member.Type.ROOT)
+                        every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+                        every { AuthorizationContextUtil.getMember() } returns rootAuthMember
+
+                        sut.authorizeDownload(contestId, attachmentId)
+                    }
+
+                    test("should throw ForbiddenException when member is null") {
+                        val attachment =
+                            AttachmentMockBuilder.build(
+                                id = attachmentId,
+                                contest = contest,
+                                member = member,
+                                context = Attachment.Context.SUBMISSION_CODE,
+                            )
+                        every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+                        every { AuthorizationContextUtil.getMember() } returns null
+
+                        shouldThrow<ForbiddenException> {
+                            sut.authorizeDownload(contestId, attachmentId)
+                        }
+
+                        verify { contestAuthFilter.checkIfStarted(contestId) }
+                    }
+                }
+
+                context("EXECUTION_OUTPUT context") {
+                    test("should throw ForbiddenException") {
+                        val attachment =
+                            AttachmentMockBuilder.build(
+                                id = attachmentId,
+                                contest = contest,
+                                context = Attachment.Context.EXECUTION_OUTPUT,
+                            )
+                        every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+
+                        shouldThrow<ForbiddenException> {
+                            sut.authorizeDownload(contestId, attachmentId)
+                        }
                     }
                 }
             }
