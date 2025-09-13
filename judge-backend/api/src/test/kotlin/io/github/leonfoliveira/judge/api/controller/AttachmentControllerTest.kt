@@ -2,16 +2,21 @@ package io.github.leonfoliveira.judge.api.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
+import io.github.leonfoliveira.judge.api.security.JwtAuthentication
+import io.github.leonfoliveira.judge.api.service.AttachmentAuthorizationService
 import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
 import io.github.leonfoliveira.judge.common.service.dto.output.AttachmentDownloadOutputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
@@ -25,6 +30,8 @@ import java.util.UUID
 class AttachmentControllerTest(
     @MockkBean(relaxed = true)
     val attachmentService: AttachmentService,
+    @MockkBean(relaxed = true)
+    val attachmentAuthorizationService: AttachmentAuthorizationService,
     val webMvc: MockMvc,
 ) : FunSpec({
         extensions(SpringExtension)
@@ -35,9 +42,12 @@ class AttachmentControllerTest(
             val contestId = UUID.randomUUID()
             val file = mockk<MultipartFile>(relaxed = true)
             val attachment = AttachmentMockBuilder.build()
+            val authorization = AuthorizationMockBuilder.build()
+            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
             every {
                 attachmentService.upload(
                     contestId = contestId,
+                    memberId = authorization.member.id,
                     filename = file.originalFilename,
                     contentType = file.contentType,
                     context = attachment.context,
@@ -55,6 +65,7 @@ class AttachmentControllerTest(
         }
 
         test("downloadAttachment") {
+            val contestId = UUID.randomUUID()
             val attachment = AttachmentMockBuilder.build()
             val bytes = "test data".toByteArray()
             every { attachmentService.download(attachment.id) } returns
@@ -64,7 +75,7 @@ class AttachmentControllerTest(
                 )
 
             webMvc
-                .get("$basePath/{attachmentId}", attachment.id) {
+                .get("$basePath/{attachmentId}", contestId, attachment.id) {
                     accept = MediaType.APPLICATION_OCTET_STREAM
                 }.andExpect {
                     status { isOk() }
@@ -72,5 +83,7 @@ class AttachmentControllerTest(
                     header { string("Content-Disposition", "attachment; filename=\"${attachment.filename}\"") }
                     header { string("Content-Type", attachment.contentType) }
                 }
+
+            verify { attachmentAuthorizationService.authorize(contestId, attachment.id) }
         }
     })

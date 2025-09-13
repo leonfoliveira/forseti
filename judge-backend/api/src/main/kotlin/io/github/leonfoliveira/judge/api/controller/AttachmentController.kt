@@ -3,7 +3,9 @@ package io.github.leonfoliveira.judge.api.controller
 import io.github.leonfoliveira.judge.api.dto.response.AttachmentResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
+import io.github.leonfoliveira.judge.api.service.AttachmentAuthorizationService
 import io.github.leonfoliveira.judge.api.util.ApiMetrics
+import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
@@ -33,6 +35,7 @@ import java.util.UUID
 @RequestMapping("/v1/contests/{contestId}/attachments")
 class AttachmentController(
     private val attachmentService: AttachmentService,
+    private val attachmentAuthorizationService: AttachmentAuthorizationService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -69,9 +72,11 @@ class AttachmentController(
         @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<AttachmentResponseDTO> {
         logger.info("[POST] /v1/attachments { filename: ${file.originalFilename}, size: ${file.size} }")
+        val member = AuthorizationContextUtil.getMember()
         val attachment =
             attachmentService.upload(
                 contestId = contestId,
+                memberId = member?.id,
                 filename = file.originalFilename,
                 contentType = file.contentType,
                 context = context,
@@ -102,9 +107,11 @@ class AttachmentController(
     )
     @Transactional(readOnly = true)
     fun downloadAttachment(
+        @PathVariable contestId: UUID,
         @PathVariable attachmentId: UUID,
     ): ResponseEntity<ByteArray> {
         logger.info("[GET] /v1/attachments/$attachmentId")
+        attachmentAuthorizationService.authorize(contestId, attachmentId)
         val download = attachmentService.download(attachmentId)
         val headers =
             HttpHeaders().apply {

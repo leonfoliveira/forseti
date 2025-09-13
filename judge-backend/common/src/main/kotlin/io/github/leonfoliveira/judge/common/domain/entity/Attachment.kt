@@ -28,6 +28,13 @@ class Attachment(
     @Audited(withModifiedFlag = false)
     val contest: Contest,
     /**
+     * The member who uploaded this attachment.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    @Audited(withModifiedFlag = false)
+    val member: Member? = null,
+    /**
      * Original filename of the attachment. This is important for compiling Java code.
      */
     @Column(nullable = false)

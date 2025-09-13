@@ -2,6 +2,7 @@ package io.github.leonfoliveira.judge.common.mock.entity
 
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.entity.Contest
+import io.github.leonfoliveira.judge.common.domain.entity.Member
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -12,6 +13,7 @@ object AttachmentMockBuilder {
         updatedAt: OffsetDateTime = OffsetDateTime.now(),
         deletedAt: OffsetDateTime? = null,
         contest: Contest = ContestMockBuilder.build(),
+        member: Member = MemberMockBuilder.build(),
         filename: String = "file.txt",
         contentType: String = "text/plain",
         context: Attachment.Context = Attachment.Context.SUBMISSION_CODE,
@@ -21,6 +23,7 @@ object AttachmentMockBuilder {
         updatedAt = updatedAt,
         deletedAt = deletedAt,
         contest = contest,
+        member = member,
         filename = filename,
         contentType = contentType,
         context = context,

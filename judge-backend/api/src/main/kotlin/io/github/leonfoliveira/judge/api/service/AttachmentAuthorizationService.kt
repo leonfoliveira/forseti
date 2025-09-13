@@ -1,7 +1,10 @@
 package io.github.leonfoliveira.judge.api.service
 
+import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
+import io.github.leonfoliveira.judge.common.domain.entity.Member
+import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
 import org.springframework.stereotype.Service
@@ -12,13 +15,39 @@ class AttachmentAuthorizationService(
     private val attachmentRepository: AttachmentRepository,
     private val contestAuthFilter: ContestAuthFilter,
 ) {
-    fun authorize(attachmentId: UUID) {
+    fun authorize(
+        contestId: UUID,
+        attachmentId: UUID,
+    ) {
         val attachment =
             attachmentRepository.findById(attachmentId).orElseThrow {
                 NotFoundException("Could not find attachment with id = $attachmentId")
             }
-    }
 
-    private fun authorizeProblemDescription(attachment: Attachment) {
+        if (attachment.contest.id != contestId) {
+            throw ForbiddenException("This attachment does not belong to this contest")
+        }
+
+        val member = AuthorizationContextUtil.getMember()
+        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+
+        when (attachment.context) {
+            Attachment.Context.PROBLEM_DESCRIPTION -> contestAuthFilter.checkIfStarted(contestId)
+            Attachment.Context.PROBLEM_TEST_CASES -> contestAuthFilter.checkIfStarted(contestId)
+            Attachment.Context.SUBMISSION_CODE -> {
+                contestAuthFilter.checkIfStarted(contestId)
+                when (member?.type) {
+                    null -> throw ForbiddenException("Only logged members can read SUBMISSION_CODE attachments")
+                    Member.Type.JUDGE, Member.Type.ADMIN -> contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+                    Member.Type.CONTESTANT -> {
+                        if (attachment.member?.id != member.id) {
+                            throw ForbiddenException("Cannot read other members' SUBMISSION_CODE attachments")
+                        }
+                    }
+                    else -> return
+                }
+            }
+            else -> throw ForbiddenException("Cannot read ${attachment.context} attachments")
+        }
     }
 }
