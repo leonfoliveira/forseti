@@ -28,119 +28,119 @@ import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
   basicInformationSection: {
-    id: "app.[slug].(dashboard).settings.contest.basic-information-section",
+    id: "app.[slug].(dashboard).settings._tab.contest.basic-information-section",
     defaultMessage: "Basic Information",
   },
   slugLabel: {
-    id: "app.[slug].(dashboard).settings.contest.slug-label",
+    id: "app.[slug].(dashboard).settings._tab.contest.slug-label",
     defaultMessage: "Slug",
   },
   slugDescription: {
-    id: "app.[slug].(dashboard).settings.contest.slug-description",
+    id: "app.[slug].(dashboard).settings._tab.contest.slug-description",
     defaultMessage: "Unique identifier for the contest URL",
   },
   titleLabel: {
-    id: "app.[slug].(dashboard).settings.contest.title-label",
+    id: "app.[slug].(dashboard).settings._tab.contest.title-label",
     defaultMessage: "Title",
   },
   titleDescription: {
-    id: "app.[slug].(dashboard).settings.contest.title-description",
+    id: "app.[slug].(dashboard).settings._tab.contest.title-description",
     defaultMessage: "Display name for the contest",
   },
   contestConfigurationSection: {
-    id: "app.[slug].(dashboard).settings.contest.contest-configuration-section",
+    id: "app.[slug].(dashboard).settings._tab.contest.contest-configuration-section",
     defaultMessage: "Configuration",
   },
   languagesLabel: {
-    id: "app.[slug].(dashboard).settings.contest.languages-label",
+    id: "app.[slug].(dashboard).settings._tab.contest.languages-label",
     defaultMessage: "Languages",
   },
   languageDescription: {
-    id: "app.[slug].(dashboard).settings.contest.languages-description",
+    id: "app.[slug].(dashboard).settings._tab.contest.languages-description",
     defaultMessage:
       "Make sure the sandboxes for the selected languages are installed",
   },
   startLabel: {
-    id: "app.[slug].(dashboard).settings.contest.start-label",
+    id: "app.[slug].(dashboard).settings._tab.contest.start-label",
     defaultMessage: "Start",
   },
   startDescription: {
-    id: "app.[slug].(dashboard).settings.contest.start-description",
+    id: "app.[slug].(dashboard).settings._tab.contest.start-description",
     defaultMessage: "Start time of the contest",
   },
   endLabel: {
-    id: "app.[slug].(dashboard).settings.contest.end-label",
+    id: "app.[slug].(dashboard).settings._tab.contest.end-label",
     defaultMessage: "End",
   },
   endDescription: {
-    id: "app.[slug].(dashboard).settings.contest.end-description",
+    id: "app.[slug].(dashboard).settings._tab.contest.end-description",
     defaultMessage: "End time of the contest",
   },
   isAutoJudgeEnabledLabel: {
-    id: "app.[slug].(dashboard).settings.contest.is-auto-judge-enabled-label",
+    id: "app.[slug].(dashboard).settings._tab.contest.is-auto-judge-enabled-label",
     defaultMessage: "Enable Auto Judge",
   },
   forceStartLabel: {
-    id: "app.[slug].(dashboard).settings.contest.force-start-label",
+    id: "app.[slug].(dashboard).settings._tab.contest.force-start-label",
     defaultMessage: "Force Start Now",
   },
   forceEndLabel: {
-    id: "app.[slug].(dashboard).settings.contest.force-end-label",
+    id: "app.[slug].(dashboard).settings._tab.contest.force-end-label",
     defaultMessage: "Force End Now",
   },
   controlSection: {
-    id: "app.[slug].(dashboard).settings.contest.control-section",
+    id: "app.[slug].(dashboard).settings._tab.contest.control-section",
     defaultMessage: "Control",
   },
   controlTimeSection: {
-    id: "app.[slug].(dashboard).settings.contest.control-time-section",
+    id: "app.[slug].(dashboard).settings._tab.contest.control-time-section",
     defaultMessage:
       "Use these actions to override the scheduled contest timing",
   },
   currentStatus: {
-    id: "app.[slug].(dashboard).settings.contest.current-status",
+    id: "app.[slug].(dashboard).settings._tab.contest.current-status",
     defaultMessage: "Current Status: {status}",
   },
   forceStartBody: {
-    id: "app.[slug].(dashboard).settings.contest.force-start-body",
+    id: "app.[slug].(dashboard).settings._tab.contest.force-start-body",
     defaultMessage: "Are you sure you want to force start the contest?",
   },
   forceStartAlertTitle: {
-    id: "app.[slug].(dashboard).settings.contest.force-start-alert-title",
+    id: "app.[slug].(dashboard).settings._tab.contest.force-start-alert-title",
     defaultMessage: "Attention",
   },
   forceStartAlertBody: {
-    id: "app.[slug].(dashboard).settings.contest.force-start-alert-body",
+    id: "app.[slug].(dashboard).settings._tab.contest.force-start-alert-body",
     defaultMessage:
       "The contest will start accepting submissions and this action cannot be undone. However, you will still be able to edit the contest settings afterwards.",
   },
   forceEndBody: {
-    id: "app.[slug].(dashboard).settings.contest.force-end-body",
+    id: "app.[slug].(dashboard).settings._tab.contest.force-end-body",
     defaultMessage: "Are you sure you want to force end the contest?",
   },
   forceEndAlertTitle: {
-    id: "app.[slug].(dashboard).settings.contest.force-end-alert-title",
+    id: "app.[slug].(dashboard).settings._tab.contest.force-end-alert-title",
     defaultMessage: "Attention",
   },
   forceEndAlertBody: {
-    id: "app.[slug].(dashboard).settings.contest.force-end-alert-body",
+    id: "app.[slug].(dashboard).settings._tab.contest.force-end-alert-body",
     defaultMessage:
       "The contest will stop accepting submissions and this action cannot be undone. You will not be able to edit the contest settings afterwards.",
   },
   forceStartSuccess: {
-    id: "app.[slug].(dashboard).settings.contest.force-start-success",
+    id: "app.[slug].(dashboard).settings._tab.contest.force-start-success",
     defaultMessage: "Contest has started.",
   },
   forceStartError: {
-    id: "app.[slug].(dashboard).settings.contest.force-start-error",
+    id: "app.[slug].(dashboard).settings._tab.contest.force-start-error",
     defaultMessage: "Failed to start contest.",
   },
   forceEndSuccess: {
-    id: "app.[slug].(dashboard).settings.contest.force-end-success",
+    id: "app.[slug].(dashboard).settings._tab.contest.force-end-success",
     defaultMessage: "Contest has ended.",
   },
   forceEndError: {
-    id: "app.[slug].(dashboard).settings.contest.force-end-error",
+    id: "app.[slug].(dashboard).settings._tab.contest.force-end-error",
     defaultMessage: "Failed to end contest.",
   },
 });

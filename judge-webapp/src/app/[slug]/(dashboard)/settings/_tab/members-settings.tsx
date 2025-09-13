@@ -15,49 +15,49 @@ import { useIntl } from "@/lib/util/intl-hook";
 
 const messages = defineMessages({
   sectionTitle: {
-    id: "app.[slug].(dashboard).settings._tabs.members-settings.section-title",
+    id: "app.[slug].(dashboard).settings._tab.members-settings.section-title",
     defaultMessage: "Contest Members",
   },
   sectionDescription: {
-    id: "app.[slug].(dashboard).settings._tabs.members-settings.section-description",
+    id: "app.[slug].(dashboard).settings._tab.members-settings.section-description",
     defaultMessage:
       "Manage participants and their access levels for this contest.",
   },
   typeLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.members-settings.type-label",
+    id: "app.[slug].(dashboard).settings._tab.members-settings.type-label",
     defaultMessage: "Type",
   },
   nameLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.members-settings.name-label",
+    id: "app.[slug].(dashboard).settings._tab.members-settings.name-label",
     defaultMessage: "Name",
   },
   loginLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.members-settings.login-label",
+    id: "app.[slug].(dashboard).settings._tab.members-settings.login-label",
     defaultMessage: "Login",
   },
   passwordLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.members-settings.password-label",
+    id: "app.[slug].(dashboard).settings._tab.members-settings.password-label",
     defaultMessage: "Password",
   },
   actionsLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.members-settings.actions-label",
+    id: "app.[slug].(dashboard).settings._tab.members-settings.actions-label",
     defaultMessage: "Actions",
   },
   newMemberLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.members-settings.new-member-label",
+    id: "app.[slug].(dashboard).settings._tab.members-settings.new-member-label",
     defaultMessage: "Add Member",
   },
   emptyStateTitle: {
-    id: "app.[slug].(dashboard).settings._tabs.members-settings.empty-state-title",
+    id: "app.[slug].(dashboard).settings._tab.members-settings.empty-state-title",
     defaultMessage: "No Members Added Yet",
   },
   emptyStateDescription: {
-    id: "app.[slug].(dashboard).settings._tabs.members-settings.empty-state-description",
+    id: "app.[slug].(dashboard).settings._tab.members-settings.empty-state-description",
     defaultMessage:
       "Start by adding contest participants. You can assign different roles and access levels.",
   },
   addFirstMemberLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.members-settings.add-first-member-label",
+    id: "app.[slug].(dashboard).settings._tab.members-settings.add-first-member-label",
     defaultMessage: "Add First Member",
   },
 });
