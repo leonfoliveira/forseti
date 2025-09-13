@@ -54,6 +54,12 @@ class Contest(
     @Column(name = "end_at", nullable = false)
     var endAt: OffsetDateTime,
     /**
+     * Settings to control various aspects of the contest.
+     */
+    @Column(name = "settings", nullable = false, columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
+    var settings: ContestSettings = ContestSettings(),
+    /**
      * Members of the contest, which can include contestants, juries, and other participants.
      */
     @Audited(withModifiedFlag = false)
@@ -79,15 +85,9 @@ class Contest(
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var announcements: List<Announcement> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
-    fun hasStarted(): Boolean {
-        return !startAt.isAfter(OffsetDateTime.now())
-    }
+    fun hasStarted(): Boolean = !startAt.isAfter(OffsetDateTime.now())
 
-    fun isActive(): Boolean {
-        return hasStarted() && !hasFinished()
-    }
+    fun isActive(): Boolean = hasStarted() && !hasFinished()
 
-    fun hasFinished(): Boolean {
-        return !endAt.isAfter(OffsetDateTime.now())
-    }
+    fun hasFinished(): Boolean = !endAt.isAfter(OffsetDateTime.now())
 }

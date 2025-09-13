@@ -7,7 +7,8 @@ create table contest (
     slug text not null unique,
     languages text[] not null,
     start_at timestamp not null,
-    end_at timestamp not null
+    end_at timestamp not null,
+    settings jsonb not null
 );
 
 create index idx_contest_slug on contest (slug);
@@ -30,6 +31,8 @@ create table contest_aud (
     start_at_mod boolean not null default false,
     end_at timestamp not null,
     end_at_mod boolean not null default false,
+    settings jsonb not null,
+    settings_mod boolean not null default false,
     primary key (rev, id),
     constraint fk_rev foreign key (rev) references revinfo (rev)
 );
