@@ -19,6 +19,7 @@ import {
   NumberInput,
 } from "@/lib/heroui-wrapper";
 import { cls } from "@/lib/util/cls";
+import { useAppSelector } from "@/store/store";
 
 const messages = defineMessages({
   problemsSectionTitle: {
@@ -107,6 +108,7 @@ type Props = {
 };
 
 export function ProblemsSettings({ form, isOpen }: Props) {
+  const contestId = useAppSelector((state) => state.contestMetadata.id);
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "problems",
@@ -213,6 +215,7 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                                     className="cursor-pointer underline"
                                     onClick={() =>
                                       attachmentService.download(
+                                        contestId,
                                         problem.description,
                                       )
                                     }
@@ -264,6 +267,7 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                                     className="cursor-pointer underline"
                                     onClick={() =>
                                       attachmentService.download(
+                                        contestId,
                                         problem.testCases,
                                       )
                                     }

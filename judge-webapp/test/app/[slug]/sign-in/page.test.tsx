@@ -3,17 +3,15 @@ import { useRouter } from "next/navigation";
 import React, { act } from "react";
 
 import SignInPage from "@/app/[slug]/sign-in/page";
-import { authenticationService } from "@/config/composition";
+import {
+  authenticationService,
+  authorizationService,
+} from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { signOut } from "@/lib/action/auth-action";
 import { useToast } from "@/lib/util/toast-hook";
 import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
-
-jest.mock("@/lib/action/auth-action", () => ({
-  signOut: jest.fn(),
-}));
 
 describe("SignInPage", () => {
   const mockContestMetadata = MockContestMetadataResponseDTO({
@@ -59,11 +57,13 @@ describe("SignInPage", () => {
       fireEvent.click(screen.getByTestId("sign-in"));
     });
 
-    expect(authenticationService.authenticate).toHaveBeenCalledWith({
-      contestId: mockContestMetadata.id,
-      login: "testuser",
-      password: "testpassword",
-    });
+    expect(authenticationService.authenticate).toHaveBeenCalledWith(
+      mockContestMetadata.id,
+      {
+        login: "testuser",
+        password: "testpassword",
+      },
+    );
   });
 
   it("should handle unauthorized exception", async () => {
@@ -125,6 +125,6 @@ describe("SignInPage", () => {
       fireEvent.click(screen.getByTestId("enter-guest"));
     });
 
-    expect(signOut).toHaveBeenCalled();
+    expect(authorizationService.cleanAuthorization).toHaveBeenCalled();
   });
 });

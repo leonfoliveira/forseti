@@ -4,30 +4,53 @@ import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
 import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
+import io.github.leonfoliveira.judge.common.repository.ContestRepository
+import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.github.leonfoliveira.judge.common.service.dto.output.AttachmentDownloadOutputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 
 @Service
 class AttachmentService(
+    private val contestRepository: ContestRepository,
+    private val memberRepository: MemberRepository,
     private val attachmentRepository: AttachmentRepository,
     private val attachmentBucketAdapter: AttachmentBucketAdapter,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun upload(file: MultipartFile): Attachment {
+    fun upload(
+        contestId: UUID,
+        memberId: UUID?,
+        filename: String?,
+        contentType: String?,
+        context: Attachment.Context,
+        bytes: ByteArray,
+    ): Attachment {
+        val contest =
+            contestRepository.findById(contestId).orElseThrow {
+                NotFoundException("Could not find contest with id = $contestId")
+            }
+        val member =
+            memberId?.let {
+                memberRepository.findById(memberId).orElseThrow {
+                    NotFoundException("Could not find member with id = $memberId")
+                }
+            }
         val id = UUID.randomUUID()
         val attachment =
             Attachment(
                 id = id,
-                filename = file.originalFilename ?: id.toString(),
-                contentType = file.contentType ?: "application/octet-stream",
+                contest = contest,
+                member = member,
+                filename = filename ?: id.toString(),
+                contentType = contentType ?: "application/octet-stream",
+                context = context,
             )
-        logger.info("Uploading ${file.bytes} bytes to attachment with id: ${attachment.id}")
+        logger.info("Uploading ${bytes.size} bytes to attachment with id: ${attachment.id}")
         attachmentRepository.save(attachment)
-        attachmentBucketAdapter.upload(attachment, file.bytes)
+        attachmentBucketAdapter.upload(attachment, bytes)
 
         logger.info("Finished uploading attachment")
         return attachment

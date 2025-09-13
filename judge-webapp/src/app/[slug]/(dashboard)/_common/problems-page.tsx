@@ -23,6 +23,7 @@ import {
 } from "@/lib/component/table/grid-table";
 import { Button } from "@/lib/heroui-wrapper";
 import { cls } from "@/lib/util/cls";
+import { useAppSelector } from "@/store/store";
 
 const messages = defineMessages({
   pageTitle: {
@@ -52,6 +53,7 @@ export function ProblemsPage({
   problems,
   contestantClassificationProblems,
 }: Props) {
+  const contestId = useAppSelector((state) => state.contestMetadata.id);
   const problemStatus = contestantClassificationProblems?.reduce(
     (acc, problem) => {
       acc[problem.id] = problem;
@@ -118,7 +120,7 @@ export function ProblemsPage({
                   variant="light"
                   size="sm"
                   onPress={() =>
-                    attachmentService.download(problem.description)
+                    attachmentService.download(contestId, problem.description)
                   }
                   data-testid="problem-download"
                 >

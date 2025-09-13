@@ -1,7 +1,12 @@
+import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { Attachment } from "@/core/domain/model/Attachment";
 
 export interface AttachmentRepository {
-  upload(file: File): Promise<Attachment>;
+  upload(
+    contestId: string,
+    context: AttachmentContext,
+    file: File,
+  ): Promise<Attachment>;
 
-  download(attachment: Attachment): Promise<File>;
+  download(contestId: string, attachment: Attachment): Promise<File>;
 }

@@ -2,21 +2,8 @@ import { render } from "@testing-library/react";
 import React from "react";
 
 import ContestLayout from "@/app/[slug]/layout";
+import { authorizationService, contestService } from "@/config/composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-
-// Mock the dependencies
-jest.mock("next/navigation", () => ({
-  notFound: jest.fn(),
-}));
-
-jest.mock("@/config/composition", () => ({
-  authenticationService: {
-    getAuthorization: jest.fn(),
-  },
-  contestService: {
-    findContestMetadataBySlug: jest.fn(),
-  },
-}));
 
 jest.mock("@/lib/component/footer", () => ({
   Footer: () => <div data-testid="footer">Footer Component</div>,
@@ -45,11 +32,6 @@ jest.mock("@/store/store-provider", () => ({
 
 const mockNotFound = require("next/navigation").notFound;
 
-const {
-  authenticationService,
-  contestService,
-} = require("@/config/composition");
-
 describe("ContestLayout", () => {
   const TestChildren = () => (
     <div data-testid="test-children">Test Content</div>
@@ -60,8 +42,10 @@ describe("ContestLayout", () => {
   const mockParams = Promise.resolve({ slug: "test-contest" });
   beforeEach(() => {
     jest.clearAllMocks();
-    authenticationService.getAuthorization.mockResolvedValue(mockAuthorization);
-    contestService.findContestMetadataBySlug.mockResolvedValue(
+    (authorizationService.getAuthorization as jest.Mock).mockResolvedValue(
+      mockAuthorization,
+    );
+    (contestService.findContestMetadataBySlug as jest.Mock).mockResolvedValue(
       mockContestMetadata,
     );
   });
@@ -99,13 +83,13 @@ describe("ContestLayout", () => {
     });
   });
 
-  it("should call authenticationService", async () => {
+  it("should call authorizationService", async () => {
     await ContestLayout({
       params: mockParams,
       children: <TestChildren />,
     });
 
-    expect(authenticationService.getAuthorization).toHaveBeenCalled();
+    expect(authorizationService.getAuthorization).toHaveBeenCalled();
   });
 
   it("should call contestService with slug from params", async () => {
@@ -175,7 +159,9 @@ describe("ContestLayout", () => {
 
   it("should handle authentication service errors gracefully", async () => {
     const authError = new Error("Auth service error");
-    authenticationService.getAuthorization.mockRejectedValue(authError);
+    (authorizationService.getAuthorization as jest.Mock).mockRejectedValue(
+      authError,
+    );
 
     await expect(
       ContestLayout({

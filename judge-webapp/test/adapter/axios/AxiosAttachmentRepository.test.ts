@@ -3,6 +3,7 @@ import { mock } from "jest-mock-extended";
 
 import { AxiosAttachmentRepository } from "@/adapter/axios/AxiosAttachmentRepository";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
+import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { MockAttachment } from "@/test/mock/model/MockAttachment";
 
 describe("AxiosAttachmentRepository", () => {
@@ -10,20 +11,26 @@ describe("AxiosAttachmentRepository", () => {
 
   const sut = new AxiosAttachmentRepository(axiosClient);
 
+  const contestId = "contest-123";
+
   describe("upload", () => {
     it("should upload a file and return an attachment", async () => {
       const file = new File(["content"], "test.txt", { type: "text/plain" });
       const expectedAttachment = MockAttachment();
+      const context = AttachmentContext.PROBLEM_DESCRIPTION;
       axiosClient.post.mockResolvedValue({
         data: expectedAttachment,
       } as AxiosResponse);
 
-      const result = await sut.upload(file);
+      const result = await sut.upload(contestId, context, file);
 
-      expect(axiosClient.post).toHaveBeenCalledWith("/v1/attachments", {
-        data: expect.any(FormData),
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      expect(axiosClient.post).toHaveBeenCalledWith(
+        `/v1/contests/${contestId}/attachments/${context}`,
+        {
+          data: expect.any(FormData),
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
       expect(result).toEqual(expectedAttachment);
     });
   });
@@ -43,10 +50,10 @@ describe("AxiosAttachmentRepository", () => {
         },
       } as unknown as AxiosResponse);
 
-      const result = await sut.download(attachment);
+      const result = await sut.download(contestId, attachment);
 
       expect(axiosClient.get).toHaveBeenCalledWith(
-        `/v1/attachments/${attachment.id}`,
+        `/v1/contests/${contestId}/attachments/${attachment.id}`,
         { responseType: "blob" },
       );
       expect(result).toBeInstanceOf(File);
@@ -65,10 +72,10 @@ describe("AxiosAttachmentRepository", () => {
         },
       } as unknown as AxiosResponse);
 
-      const result = await sut.download(attachment);
+      const result = await sut.download(contestId, attachment);
 
       expect(axiosClient.get).toHaveBeenCalledWith(
-        `/v1/attachments/${attachment.id}`,
+        `/v1/contests/${contestId}/attachments/${attachment.id}`,
         { responseType: "blob" },
       );
       expect(result).toBeInstanceOf(File);

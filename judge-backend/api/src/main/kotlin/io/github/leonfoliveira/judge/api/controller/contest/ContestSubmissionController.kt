@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.controller
+package io.github.leonfoliveira.judge.api.controller.contest
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.submission.SubmissionFullResponseDTO
@@ -34,7 +34,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1/contests/{contestId}/submissions")
-class SubmissionController(
+class ContestSubmissionController(
     private val contestAuthFilter: ContestAuthFilter,
     private val createSubmissionService: CreateSubmissionService,
     private val findSubmissionService: FindSubmissionService,

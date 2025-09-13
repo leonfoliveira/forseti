@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.controller
+package io.github.leonfoliveira.judge.api.controller.contest
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
@@ -21,7 +21,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1/contests/{contestId}/leaderboard")
-class LeaderboardController(
+class ContestLeaderboardController(
     val contestAuthFilter: ContestAuthFilter,
     val findLeaderboardService: FindLeaderboardService,
 ) {

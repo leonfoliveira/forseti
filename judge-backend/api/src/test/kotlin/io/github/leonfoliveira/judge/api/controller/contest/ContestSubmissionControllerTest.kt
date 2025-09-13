@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.controller
+package io.github.leonfoliveira.judge.api.controller.contest
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
@@ -32,10 +32,10 @@ import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import java.util.UUID
 
-@WebMvcTest(controllers = [SubmissionController::class])
+@WebMvcTest(controllers = [ContestSubmissionController::class])
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = [SubmissionController::class, JacksonConfig::class, GlobalExceptionHandler::class])
-class SubmissionControllerTest(
+@ContextConfiguration(classes = [ContestSubmissionController::class, JacksonConfig::class, GlobalExceptionHandler::class])
+class ContestSubmissionControllerTest(
     @MockkBean(relaxed = true)
     private val contestAuthFilter: ContestAuthFilter,
     @MockkBean(relaxed = true)

@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.controller
+package io.github.leonfoliveira.judge.api.controller.contest
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.announcement.AnnouncementResponseDTO
@@ -27,7 +27,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1/contests")
-class AnnouncementController(
+class ContestAnnouncementController(
     private val contestAuthFilter: ContestAuthFilter,
     private val createAnnouncementService: CreateAnnouncementService,
 ) {
@@ -44,22 +44,42 @@ class AnnouncementController(
             ApiResponse(
                 responseCode = "400",
                 description = "Invalid request format",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = ErrorResponseDTO::class),
+                    ),
+                ],
             ),
             ApiResponse(
                 responseCode = "401",
                 description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = ErrorResponseDTO::class),
+                    ),
+                ],
             ),
             ApiResponse(
                 responseCode = "403",
                 description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = ErrorResponseDTO::class),
+                    ),
+                ],
             ),
             ApiResponse(
                 responseCode = "404",
                 description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = ErrorResponseDTO::class),
+                    ),
+                ],
             ),
         ],
     )

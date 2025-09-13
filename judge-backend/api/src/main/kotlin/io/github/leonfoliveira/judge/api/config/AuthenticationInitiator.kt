@@ -23,7 +23,7 @@ class AuthenticationInitiator(
                 password = hashAdapter.hash(rootPassword)
             }
                 ?: Member(
-                    id = UUID.fromString(Member.ROOT_ID),
+                    id = Member.ROOT_ID,
                     type = Member.Type.ROOT,
                     name = Member.ROOT_NAME,
                     login = Member.ROOT_LOGIN,
@@ -35,7 +35,7 @@ class AuthenticationInitiator(
                 password = hashAdapter.hash(UUID.randomUUID().toString())
             }
                 ?: Member(
-                    id = UUID.fromString(Member.AUTOJUDGE_ID),
+                    id = Member.AUTOJUDGE_ID,
                     type = Member.Type.AUTOJUDGE,
                     name = Member.AUTOJUDGE_NAME,
                     login = Member.AUTOJUDGE_LOGIN,

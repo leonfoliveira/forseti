@@ -1,7 +1,7 @@
 import { mock } from "jest-mock-extended";
 import { v4 as uuidv4 } from "uuid";
 
-
+import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { ContestRepository } from "@/core/repository/ContestRepository";
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { ContestService } from "@/core/service/ContestService";
@@ -39,9 +39,13 @@ describe("ClarificationService", () => {
       await sut.updateContest(inputDTO);
 
       expect(attachmentService.upload).toHaveBeenCalledWith(
+        inputDTO.id,
+        AttachmentContext.PROBLEM_DESCRIPTION,
         inputDTO.problems[0].newDescription,
       );
       expect(attachmentService.upload).toHaveBeenCalledWith(
+        inputDTO.id,
+        AttachmentContext.PROBLEM_TEST_CASES,
         inputDTO.problems[0].newTestCases,
       );
       expect(contestRepository.updateContest).toHaveBeenCalledWith({

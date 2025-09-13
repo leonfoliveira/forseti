@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.controller
+package io.github.leonfoliveira.judge.api.controller.contest
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.clarification.ClarificationResponseDTO
@@ -29,7 +29,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1/contests/{contestId}/clarifications")
-class ClarificationController(
+class ContestClarificationController(
     val contestAuthFilter: ContestAuthFilter,
     val createClarificationService: CreateClarificationService,
     val deleteClarificationService: DeleteClarificationService,

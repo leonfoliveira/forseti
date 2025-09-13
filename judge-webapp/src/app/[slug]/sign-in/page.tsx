@@ -6,11 +6,13 @@ import { useForm } from "react-hook-form";
 
 import { SignInFormType } from "@/app/[slug]/sign-in/_form/sign-in-form";
 import { signInFormSchema } from "@/app/[slug]/sign-in/_form/sign-in-form-schema";
-import { authenticationService } from "@/config/composition";
+import {
+  authenticationService,
+  authorizationService,
+} from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { defineMessages } from "@/i18n/message";
-import { signOut } from "@/lib/action/auth-action";
 import { Form } from "@/lib/component/form/form";
 import { FormField } from "@/lib/component/form/form-field";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
@@ -90,10 +92,7 @@ export default function SignInPage() {
   async function signIn(data: SignInFormType) {
     signInState.start();
     try {
-      await authenticationService.authenticate({
-        contestId: contestMetadata.id,
-        ...data,
-      });
+      await authenticationService.authenticate(contestMetadata.id, data);
       window.location.href = routes.CONTEST(contestMetadata.slug);
     } catch (error) {
       signInState.fail(error, {
@@ -113,7 +112,7 @@ export default function SignInPage() {
   }
 
   async function enterAsGuest() {
-    await signOut();
+    await authorizationService.cleanAuthorization();
     window.location.href = routes.CONTEST(contestMetadata.slug);
   }
 

@@ -87,11 +87,11 @@ class Member(
     }
 
     companion object {
-        const val ROOT_ID = "00000000-0000-0000-0000-000000000000"
+        val ROOT_ID: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
         const val ROOT_NAME = "Root"
         const val ROOT_LOGIN = "root"
 
-        const val AUTOJUDGE_ID = "11111111-1111-1111-1111-111111111111"
+        val AUTOJUDGE_ID: UUID = UUID.fromString("11111111-1111-1111-1111-111111111111")
         const val AUTOJUDGE_NAME = "Autojudge"
         const val AUTOJUDGE_LOGIN = "autojudge"
     }

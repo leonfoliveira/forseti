@@ -34,7 +34,6 @@ class UpdateContestServiceTest :
         val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val hashAdapter = mockk<HashAdapter>(relaxed = true)
-        val createContestService = mockk<CreateContestService>(relaxed = true)
         val deleteContestService = mockk<DeleteContestService>(relaxed = true)
         val testCasesValidator = mockk<TestCasesValidator>(relaxed = true)
 
@@ -43,7 +42,6 @@ class UpdateContestServiceTest :
                 attachmentRepository,
                 contestRepository,
                 hashAdapter,
-                createContestService,
                 deleteContestService,
                 testCasesValidator,
             )
@@ -208,13 +206,11 @@ class UpdateContestServiceTest :
                     )
                 every { contestRepository.findById(inputDTO.id) } returns Optional.of(contest)
                 every { contestRepository.findBySlug(inputDTO.slug) } returns null
-                val newMember = MemberMockBuilder.build()
-                val newProblem = ProblemMockBuilder.build()
-                every { createContestService.createMember(contest, any()) } returns newMember
-                every { createContestService.createProblem(contest, any()) } returns newProblem
                 every { hashAdapter.hash(any()) } returns "hashedPassword"
                 val descriptionAttachment = AttachmentMockBuilder.build()
                 val testCasesAttachment = AttachmentMockBuilder.build()
+                every { attachmentRepository.findById(inputProblemToCreate.description.id) } returns Optional.of(descriptionAttachment)
+                every { attachmentRepository.findById(inputProblemToCreate.testCases.id) } returns Optional.of(testCasesAttachment)
                 every { attachmentRepository.findById(inputProblemToUpdateFull.description.id) } returns Optional.of(descriptionAttachment)
                 every { attachmentRepository.findById(inputProblemToUpdateFull.testCases.id) } returns Optional.of(testCasesAttachment)
                 every { contestRepository.save(any<Contest>()) } answers { firstArg() }
@@ -226,8 +222,6 @@ class UpdateContestServiceTest :
                     ),
                 )
 
-                verify { createContestService.createMember(contest, inputMemberToCreate.toCreateDTO()) }
-                verify { createContestService.createProblem(contest, inputProblemToCreate.toCreateDTO()) }
                 verify { deleteContestService.deleteMembers(listOf(memberToDelete)) }
                 verify { deleteContestService.deleteProblems(listOf(problemToDelete)) }
 
@@ -238,7 +232,6 @@ class UpdateContestServiceTest :
                 contest.endAt shouldBe inputDTO.endAt
 
                 contest.members.size shouldBe 3
-                contest.members[0] shouldBe newMember
                 contest.members[1].id shouldBe inputMemberToUpdateMinimum.id
                 contest.members[1].type shouldBe inputMemberToUpdateMinimum.type
                 contest.members[1].name shouldBe inputMemberToUpdateMinimum.name
@@ -251,7 +244,6 @@ class UpdateContestServiceTest :
                 contest.members[2].password shouldBe "hashedPassword"
 
                 contest.problems.size shouldBe 3
-                contest.problems[0] shouldBe newProblem
                 contest.problems[1].id shouldBe inputProblemToUpdateMinimum.id
                 contest.problems[1].letter shouldBe inputProblemToUpdateMinimum.letter
                 contest.problems[1].title shouldBe inputProblemToUpdateMinimum.title
@@ -280,6 +272,18 @@ class UpdateContestServiceTest :
                 shouldThrow<NotFoundException> {
                     sut.forceStart(contestId)
                 }.message shouldBe "Could not find contest with id = $contestId"
+            }
+
+            test("should start the contest successfully") {
+                val contestId = UUID.randomUUID()
+                val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
+                every { contestRepository.findById(contestId) } returns Optional.of(contest)
+                every { contestRepository.save(any<Contest>()) } answers { firstArg() }
+
+                sut.forceStart(contestId)
+
+                verify { contestRepository.save(contest) }
+                contest.startAt shouldBe now
             }
 
             test("should throw ForbiddenException when contest has already started") {

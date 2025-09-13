@@ -1,9 +1,9 @@
 # !/bin/bash
 
-docker build -t judge-api -f ../judge-backend/api.Dockerfile ../judge-backend
-docker build -t judge-autojudge -f ../judge-backend/autojudge.Dockerfile ../judge-backend
-docker build -t judge-webapp ../judge-webapp
-docker build -t judge-autoscaler ../judge-autoscaler
+docker build -t judge-api -f ../judge-backend/api.Dockerfile ../judge-backend --no-cache
+docker build -t judge-autojudge -f ../judge-backend/autojudge.Dockerfile ../judge-backend --no-cache
+docker build -t judge-webapp ../judge-webapp --no-cache
+docker build -t judge-autoscaler ../judge-autoscaler --no-cache
 (cd ../judge-cli && make build)
 
 mkdir -p ./production/volumes/migrations

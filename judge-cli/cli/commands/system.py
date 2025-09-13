@@ -1,5 +1,6 @@
-import click
 import os
+
+import click
 
 from cli.util.command_adapter import CommandAdapter
 from cli.util.network_adapter import NetworkAdapter
@@ -16,8 +17,12 @@ STACK_NAME_HELP = f"Stack name (default: {DEFAULT_STACK_NAME})"
 
 
 @system.command(help="Deploy services in Docker Swarm.")
-@click.option("--api-public-url", help="Public URL for the API (default: http://<node-ip>:8080)")
-@click.option("--webapp-public-url", help="Public URL for the Webapp (default: http://<node-ip>)")
+@click.option(
+    "--api-public-url", help="Public URL for the API (default: http://<node-ip>:8080)"
+)
+@click.option(
+    "--webapp-public-url", help="Public URL for the Webapp (default: http://<node-ip>)"
+)
 @click.option("--stack", help="Stack file (default: stack.yaml in CLI directory)")
 @click.option("--stack-name", help=STACK_NAME_HELP, default=DEFAULT_STACK_NAME)
 def start(api_public_url: str, webapp_public_url: str, stack: str, stack_name: str):
@@ -56,7 +61,7 @@ def start(api_public_url: str, webapp_public_url: str, stack: str, stack_name: s
     grafana_private_url = f"http://{manager_ip}:3000"
     webapp_private_url = f"http://{manager_ip}"
 
-    click.echo(f"System started at:")
+    click.echo("System started at:")
     click.echo(f"API: {api_private_url} (public: {api_public_url})")
     click.echo(f"Grafana: {grafana_private_url}")
     click.echo(f"Webapp: {webapp_private_url} (public: {webapp_public_url})")

@@ -1,31 +1,13 @@
 package io.github.leonfoliveira.judge.common.service.dto.input.contest
 
-import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
-import io.github.leonfoliveira.judge.common.service.dto.input.attachment.AttachmentInputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import jakarta.validation.Validation
 import java.time.OffsetDateTime
-import java.util.UUID
 
 class CreateContestInputDTOTest :
     FunSpec({
-        context("MemberDTO#toString") {
-            test("should mask password in toString") {
-                val input =
-                    CreateContestInputDTO.MemberDTO(
-                        type = Member.Type.ROOT,
-                        name = "Test User",
-                        login = "testUser",
-                        password = "testPassword",
-                    )
-                val expected = "MemberDTO(type=ROOT, name='Test User', login='testUser', password='******')"
-
-                input.toString() shouldBe expected
-            }
-        }
-
         context("validation") {
             val inputDTO =
                 CreateContestInputDTO(
@@ -34,32 +16,6 @@ class CreateContestInputDTOTest :
                     languages = listOf(Language.PYTHON_3_12),
                     startAt = OffsetDateTime.now().plusHours(1),
                     endAt = OffsetDateTime.now().plusHours(2),
-                    members =
-                        listOf(
-                            CreateContestInputDTO.MemberDTO(
-                                type = Member.Type.CONTESTANT,
-                                name = "Contestant",
-                                login = "contestant",
-                                password = "password123",
-                            ),
-                        ),
-                    problems =
-                        listOf(
-                            CreateContestInputDTO.ProblemDTO(
-                                letter = 'A',
-                                title = "Problem A",
-                                description =
-                                    AttachmentInputDTO(
-                                        id = UUID.randomUUID(),
-                                    ),
-                                timeLimit = 1000,
-                                memoryLimit = 256,
-                                testCases =
-                                    AttachmentInputDTO(
-                                        id = UUID.randomUUID(),
-                                    ),
-                            ),
-                        ),
                 )
 
             val validator = Validation.buildDefaultValidatorFactory().validator
@@ -74,18 +30,6 @@ class CreateContestInputDTOTest :
                 inputDTO.copy(startAt = OffsetDateTime.now().minusHours(1)),
                 inputDTO.copy(endAt = OffsetDateTime.now().minusHours(1)),
                 inputDTO.copy(startAt = OffsetDateTime.now().plusHours(2), endAt = OffsetDateTime.now().plusHours(1)),
-                inputDTO.copy(members = listOf(inputDTO.members[0].copy(name = ""))),
-                inputDTO.copy(members = listOf(inputDTO.members[0].copy(name = "a".repeat(65)))),
-                inputDTO.copy(members = listOf(inputDTO.members[0].copy(login = ""))),
-                inputDTO.copy(members = listOf(inputDTO.members[0].copy(login = "a".repeat(33)))),
-                inputDTO.copy(members = listOf(inputDTO.members[0].copy(password = ""))),
-                inputDTO.copy(members = listOf(inputDTO.members[0].copy(password = "a".repeat(33)))),
-                inputDTO.copy(members = listOf(inputDTO.members[0].copy(login = "login"), inputDTO.members[0].copy(login = "login"))),
-                inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(title = ""))),
-                inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(title = "a".repeat(256)))),
-                inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(timeLimit = 0))),
-                inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(memoryLimit = 0))),
-                inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(letter = 'A'), inputDTO.problems[0].copy(letter = 'A'))),
             ).forEachIndexed { idx, invalidInputDTO ->
                 test("should throw validation exception for invalid input #$idx") {
                     val violations = validator.validate(invalidInputDTO)

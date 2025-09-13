@@ -75,8 +75,8 @@ class ApiAdapter:
 
         password = self.input_adapter.password("Root password: ")
         response = requests.post(
-            f"{self.api_url}/v1/auth/sign-in",
-            json={"login": "root", "password": password},
+            f"{self.api_url}/v1/root/sign-in",
+            json={"password": password},
         )
         if response.status_code != 200:
             raise click.ClickException(response.text)

@@ -19,6 +19,7 @@ describe("SubmissionsPage", () => {
   ];
   const problems = [MockProblemFullResponseDTO(), MockProblemFullResponseDTO()];
   const languages = [Language.CPP_17, Language.JAVA_21];
+  const contestMetadata = MockContestMetadataResponseDTO();
 
   it("should render create variant", async () => {
     await renderWithProviders(
@@ -30,7 +31,7 @@ describe("SubmissionsPage", () => {
       />,
       {
         authorization: MockAuthorization(),
-        contestMetadata: MockContestMetadataResponseDTO(),
+        contestMetadata,
       },
     );
 
@@ -70,7 +71,7 @@ describe("SubmissionsPage", () => {
       />,
       {
         authorization: MockAuthorization(),
-        contestMetadata: MockContestMetadataResponseDTO(),
+        contestMetadata,
       },
     );
 
@@ -190,6 +191,7 @@ describe("SubmissionsPage", () => {
     });
 
     expect(attachmentService.download).toHaveBeenCalledWith(
+      contestMetadata.id,
       submissions[1].code,
     );
   });

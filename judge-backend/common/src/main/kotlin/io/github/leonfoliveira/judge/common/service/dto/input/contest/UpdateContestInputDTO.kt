@@ -57,19 +57,9 @@ data class UpdateContestInputDTO(
         val isIdAndPasswordNull: Boolean
             get() = id == null && password.isNullOrBlank()
 
-        fun toCreateDTO(): CreateContestInputDTO.MemberDTO {
-            return CreateContestInputDTO.MemberDTO(
-                type = type,
-                name = name,
-                login = login,
-                password = password!!,
-            )
-        }
-
-        override fun toString(): String {
-            return "MemberDTO(id=$id, type=$type, name='$name', login='$login', " +
+        override fun toString(): String =
+            "MemberDTO(id=$id, type=$type, name='$name', login='$login', " +
                 "password=${if (password.isNullOrBlank()) "null" else "'******'"})"
-        }
     }
 
     @get:JsonIgnore
@@ -94,16 +84,5 @@ data class UpdateContestInputDTO(
         @field:Min(1)
         val memoryLimit: Int,
         val testCases: AttachmentInputDTO,
-    ) {
-        fun toCreateDTO(): CreateContestInputDTO.ProblemDTO {
-            return CreateContestInputDTO.ProblemDTO(
-                letter = letter,
-                title = title,
-                description = description,
-                timeLimit = timeLimit,
-                memoryLimit = memoryLimit,
-                testCases = testCases,
-            )
-        }
-    }
+    )
 }

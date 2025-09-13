@@ -1,11 +1,14 @@
-package io.github.leonfoliveira.judge.api.controller
+package io.github.leonfoliveira.judge.api.controller.contest
 
 import io.github.leonfoliveira.judge.api.dto.response.AttachmentResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
+import io.github.leonfoliveira.judge.api.service.AttachmentAuthorizationService
 import io.github.leonfoliveira.judge.api.util.ApiMetrics
+import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.api.util.RateLimit
+import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
@@ -29,14 +32,15 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 
 @RestController
-@RequestMapping("/v1/attachments")
-class AttachmentController(
+@RequestMapping("/v1/contests/{contestId}/attachments")
+class ContestAttachmentController(
     private val attachmentService: AttachmentService,
+    private val attachmentAuthorizationService: AttachmentAuthorizationService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Timed(ApiMetrics.API_ATTACHMENT_UPLOAD_TIME)
-    @PostMapping
+    @PostMapping("{context}")
     @Operation(
         summary = "Upload an attachment",
         description = "Uploads a file as an attachment and returns its metadata containing its ID to later reference.",
@@ -63,10 +67,22 @@ class AttachmentController(
     @RateLimit
     @Transactional
     fun uploadAttachment(
+        @PathVariable contestId: UUID,
+        @PathVariable context: Attachment.Context,
         @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<AttachmentResponseDTO> {
-        logger.info("[POST] /v1/attachments { filename: ${file.originalFilename}, size: ${file.size} }")
-        val attachment = attachmentService.upload(file)
+        logger.info("[POST] /v1/contests/$contestId/attachments/$context { filename: ${file.originalFilename}, size: ${file.size} }")
+        attachmentAuthorizationService.authorizeUpload(contestId, context)
+        val member = AuthorizationContextUtil.getMember()
+        val attachment =
+            attachmentService.upload(
+                contestId = contestId,
+                memberId = member?.id,
+                filename = file.originalFilename,
+                contentType = file.contentType,
+                context = context,
+                bytes = file.bytes,
+            )
         return ResponseEntity.ok(attachment.toResponseDTO())
     }
 
@@ -92,9 +108,11 @@ class AttachmentController(
     )
     @Transactional(readOnly = true)
     fun downloadAttachment(
+        @PathVariable contestId: UUID,
         @PathVariable attachmentId: UUID,
     ): ResponseEntity<ByteArray> {
-        logger.info("[GET] /v1/attachments/$attachmentId")
+        logger.info("[GET] /v1/contests/$contestId/attachments/$attachmentId")
+        attachmentAuthorizationService.authorizeDownload(contestId, attachmentId)
         val download = attachmentService.download(attachmentId)
         val headers =
             HttpHeaders().apply {

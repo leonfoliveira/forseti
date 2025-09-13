@@ -1,5 +1,6 @@
-import click
 import threading
+
+import click
 
 
 class Spinner:
@@ -33,6 +34,7 @@ class Spinner:
     def _spin(self):
         while self.running:
             click.echo(
-                f"\r{self.CHARS[self.idx % len(self.CHARS)]} {self.label}", nl=False)
+                f"\r{self.CHARS[self.idx % len(self.CHARS)]} {self.label}", nl=False
+            )
             self.idx += 1
             threading.Event().wait(0.1)

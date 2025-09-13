@@ -26,7 +26,6 @@ class UpdateContestService(
     private val attachmentRepository: AttachmentRepository,
     private val contestRepository: ContestRepository,
     private val hashAdapter: HashAdapter,
-    private val createContestService: CreateContestService,
     private val deleteContestService: DeleteContestService,
     private val testCasesValidator: TestCasesValidator,
 ) {
@@ -41,7 +40,8 @@ class UpdateContestService(
             throw ForbiddenException("Contest cannot have ROOT members")
         }
         val contest =
-            contestRepository.findById(inputDTO.id)
+            contestRepository
+                .findById(inputDTO.id)
                 .orElseThrow { NotFoundException("Could not find contest with id = ${inputDTO.id}") }
         if (contest.hasFinished()) {
             throw ForbiddenException("Contest has already finished and cannot be updated")
@@ -68,8 +68,8 @@ class UpdateContestService(
 
         val membersToCreate = inputDTO.members.filter { it.id == null }
         val problemsToCreate = inputDTO.problems.filter { it.id == null }
-        val createdMembers = membersToCreate.map { createContestService.createMember(contest, it.toCreateDTO()) }
-        val createdProblems = problemsToCreate.map { createContestService.createProblem(contest, it.toCreateDTO()) }
+        val createdMembers = membersToCreate.map { createMember(contest, it) }
+        val createdProblems = problemsToCreate.map { createProblem(contest, it) }
 
         val membersToUpdate = inputDTO.members.filter { it.id != null }
         val problemsToUpdate = inputDTO.problems.filter { it.id != null }
@@ -95,7 +95,8 @@ class UpdateContestService(
 
     fun forceStart(contestId: UUID): Contest {
         val contest =
-            contestRepository.findById(contestId)
+            contestRepository
+                .findById(contestId)
                 .orElseThrow { NotFoundException("Could not find contest with id = $contestId") }
         if (contest.hasStarted()) {
             throw ForbiddenException("Contest with id: $contestId has already started")
@@ -108,7 +109,8 @@ class UpdateContestService(
 
     fun forceEnd(contestId: UUID): Contest {
         val contest =
-            contestRepository.findById(contestId)
+            contestRepository
+                .findById(contestId)
                 .orElseThrow { NotFoundException("Could not find contest with id = $contestId") }
         if (!contest.isActive()) {
             throw ForbiddenException("Contest with id: $contestId is not active")
@@ -117,6 +119,59 @@ class UpdateContestService(
         contest.endAt = OffsetDateTime.now()
         contestRepository.save(contest)
         return contest
+    }
+
+    fun createMember(
+        contest: Contest,
+        memberDTO: UpdateContestInputDTO.MemberDTO,
+    ): Member {
+        logger.info("Creating member with login: ${memberDTO.login}")
+
+        if (memberDTO.login == Member.ROOT_LOGIN) {
+            throw ForbiddenException("Member login cannot be '${Member.ROOT_LOGIN}'")
+        }
+
+        val hashedPassword = hashAdapter.hash(memberDTO.password!!)
+        val member =
+            Member(
+                type = memberDTO.type,
+                name = memberDTO.name,
+                login = memberDTO.login,
+                password = hashedPassword,
+                contest = contest,
+            )
+
+        return member
+    }
+
+    fun createProblem(
+        contest: Contest,
+        problemDTO: UpdateContestInputDTO.ProblemDTO,
+    ): Problem {
+        logger.info("Creating problem with title: ${problemDTO.title}")
+
+        val description =
+            attachmentRepository.findById(problemDTO.description.id).orElseThrow {
+                NotFoundException("Could not find description attachment with id: ${problemDTO.description.id}")
+            }
+        val testCases =
+            attachmentRepository.findById(problemDTO.testCases.id).orElseThrow {
+                NotFoundException("Could not find testCases attachment with id: ${problemDTO.testCases.id}")
+            }
+        testCasesValidator.validate(testCases)
+
+        val problem =
+            Problem(
+                letter = problemDTO.letter,
+                title = problemDTO.title,
+                description = description,
+                timeLimit = problemDTO.timeLimit,
+                memoryLimit = problemDTO.memoryLimit,
+                testCases = testCases,
+                contest = contest,
+            )
+
+        return problem
     }
 
     private fun updateMember(

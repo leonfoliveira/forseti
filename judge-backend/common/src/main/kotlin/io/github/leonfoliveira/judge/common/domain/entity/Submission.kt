@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
@@ -65,6 +66,12 @@ class Submission(
     @JoinColumn(name = "code_id", nullable = false)
     @Audited(withModifiedFlag = false)
     val code: Attachment,
+    /**
+     * The list of executions associated with this submission.
+     */
+    @Audited(withModifiedFlag = false)
+    @OneToMany(mappedBy = "submission", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    val executions: List<Execution> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
     val contest get() = problem.contest
 

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import React from "react";
 
-import { authenticationService, contestService } from "@/config/composition";
+import { authorizationService, contestService } from "@/config/composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { Footer } from "@/lib/component/footer";
 import { Header } from "@/lib/component/header";
@@ -20,7 +20,7 @@ export default async function ContestLayout({
 
   try {
     const [authorization, contestMetadata] = await Promise.all([
-      authenticationService.getAuthorization(),
+      authorizationService.getAuthorization(),
       contestService.findContestMetadataBySlug(slug),
     ]);
 

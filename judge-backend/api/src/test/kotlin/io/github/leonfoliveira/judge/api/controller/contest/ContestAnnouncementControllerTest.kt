@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.controller
+package io.github.leonfoliveira.judge.api.controller.contest
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
@@ -22,10 +22,10 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 import java.util.UUID
 
-@WebMvcTest(controllers = [AnnouncementController::class])
+@WebMvcTest(controllers = [ContestAnnouncementController::class])
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = [AnnouncementController::class])
-class AnnouncementControllerTest(
+@ContextConfiguration(classes = [ContestAnnouncementController::class])
+class ContestAnnouncementControllerTest(
     @MockkBean(relaxed = true)
     private val createAnnouncementService: CreateAnnouncementService,
     @MockkBean(relaxed = true)
@@ -48,13 +48,14 @@ class AnnouncementControllerTest(
             SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
             every { createAnnouncementService.create(contestId, authorization.member.id, body) } returns announcement
 
-            webMvc.post(basePath, contestId) {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(body)
-            }.andExpect {
-                status { isOk() }
-                content { announcement.toResponseDTO() }
-            }
+            webMvc
+                .post(basePath, contestId) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(body)
+                }.andExpect {
+                    status { isOk() }
+                    content { announcement.toResponseDTO() }
+                }
 
             verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
         }
