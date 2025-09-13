@@ -1,3 +1,4 @@
+import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { Attachment } from "@/core/domain/model/Attachment";
 import { ContestRepository } from "@/core/repository/ContestRepository";
 import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
@@ -13,7 +14,7 @@ export class ContestService {
   async updateContest(inputDTO: UpdateContestInputDTO) {
     const request = {
       ...inputDTO,
-      problems: await this.uploadFiles(inputDTO.problems),
+      problems: await this.uploadFiles(inputDTO.id, inputDTO.problems),
     };
     return await this.contestRepository.updateContest(request);
   }
@@ -43,16 +44,25 @@ export class ContestService {
   }
 
   private async uploadFiles(
+    contestId: string,
     problems: UpdateContestInputDTO["problems"],
   ): Promise<UpdateContestRequestDTO["problems"]> {
     return await Promise.all(
       problems.map(async (it) => {
         const [description, testCases] = await Promise.all([
           it.newDescription
-            ? await this.attachmentService.upload(it.newDescription)
+            ? await this.attachmentService.upload(
+                contestId,
+                AttachmentContext.PROBLEM_DESCRIPTION,
+                it.newDescription,
+              )
             : (it.description as Attachment),
           it.newTestCases
-            ? await this.attachmentService.upload(it.newTestCases)
+            ? await this.attachmentService.upload(
+                contestId,
+                AttachmentContext.PROBLEM_TEST_CASES,
+                it.newTestCases,
+              )
             : (it.testCases as Attachment),
         ]);
 

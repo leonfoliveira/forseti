@@ -71,7 +71,7 @@ class ContestAttachmentController(
         @PathVariable context: Attachment.Context,
         @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<AttachmentResponseDTO> {
-        logger.info("[POST] /v1/attachments { filename: ${file.originalFilename}, size: ${file.size} }")
+        logger.info("[POST] /v1/contests/$contestId/attachments/$context { filename: ${file.originalFilename}, size: ${file.size} }")
         val member = AuthorizationContextUtil.getMember()
         val attachment =
             attachmentService.upload(
@@ -110,7 +110,7 @@ class ContestAttachmentController(
         @PathVariable contestId: UUID,
         @PathVariable attachmentId: UUID,
     ): ResponseEntity<ByteArray> {
-        logger.info("[GET] /v1/attachments/$attachmentId")
+        logger.info("[GET] /v1/contests/$contestId/attachments/$attachmentId")
         attachmentAuthorizationService.authorize(contestId, attachmentId)
         val download = attachmentService.download(attachmentId)
         val headers =

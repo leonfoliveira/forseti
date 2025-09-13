@@ -1,7 +1,7 @@
 import { mock } from "jest-mock-extended";
 import { v4 as uuidv4 } from "uuid";
 
-
+import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
 import { AttachmentService } from "@/core/service/AttachmentService";
@@ -30,6 +30,11 @@ describe("SubmissionService", () => {
       const result = await sut.createSubmission(contestId, inputDTO);
 
       expect(result).toEqual(submission);
+      expect(attachmentService.upload).toHaveBeenCalledWith(
+        contestId,
+        AttachmentContext.SUBMISSION_CODE,
+        inputDTO.code,
+      );
       expect(submissionRepository.createSubmission).toHaveBeenCalledWith(
         contestId,
         {

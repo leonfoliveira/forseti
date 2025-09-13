@@ -8,10 +8,13 @@ import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockP
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("ProblemsPage", () => {
+  const contestMetadata = MockContestMetadataResponseDTO();
   const problems = [MockProblemPublicResponseDTO()];
 
   it("should render variant without status", async () => {
-    await renderWithProviders(<ProblemsPage problems={problems} />);
+    await renderWithProviders(<ProblemsPage problems={problems} />, {
+      contestMetadata,
+    });
 
     expect(document.title).toBe("Judge - Problems");
     expect(screen.getByTestId("problem-letter")).toHaveTextContent("A");
@@ -37,7 +40,7 @@ describe("ProblemsPage", () => {
           },
         ]}
       />,
-      { contestMetadata: MockContestMetadataResponseDTO() },
+      { contestMetadata },
     );
 
     expect(screen.getByTestId("problem-letter")).toHaveTextContent("A");
@@ -49,12 +52,15 @@ describe("ProblemsPage", () => {
   });
 
   it("should handle download problem description", async () => {
-    await renderWithProviders(<ProblemsPage problems={problems} />);
+    await renderWithProviders(<ProblemsPage problems={problems} />, {
+      contestMetadata,
+    });
 
     await act(async () => {
       fireEvent.click(screen.getByTestId("problem-download"));
     });
     expect(attachmentService.download).toHaveBeenCalledWith(
+      contestMetadata.id,
       problems[0].description,
     );
   });

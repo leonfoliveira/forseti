@@ -440,6 +440,7 @@ export function SubmissionsPage({
                       size="sm"
                       onPress={() =>
                         attachmentService.download(
+                          contestId,
                           (submission as SubmissionFullResponseDTO).code,
                         )
                       }

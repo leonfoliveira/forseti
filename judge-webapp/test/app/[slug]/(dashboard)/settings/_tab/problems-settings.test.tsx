@@ -5,16 +5,19 @@ import { v4 as uuidv4 } from "uuid";
 import { SettingsForm } from "@/app/[slug]/(dashboard)/settings/_form/settings-form";
 import { ProblemsSettings } from "@/app/[slug]/(dashboard)/settings/_tab/problems-settings";
 import { attachmentService } from "@/config/composition";
+import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("ProblemsSettings", () => {
   const { result: form } = renderHook(
     () => useForm() as UseFormReturn<SettingsForm>,
   );
+  const contestMetadata = MockContestMetadataResponseDTO();
 
   it("should not render when not open", async () => {
     await renderWithProviders(
       <ProblemsSettings form={form.current} isOpen={false} />,
+      { contestMetadata },
     );
 
     expect(screen.queryByTestId("problems-settings")).toHaveClass("hidden");
@@ -23,6 +26,7 @@ describe("ProblemsSettings", () => {
   it("should render empty state correctly", async () => {
     await renderWithProviders(
       <ProblemsSettings form={form.current} isOpen={true} />,
+      { contestMetadata },
     );
 
     expect(screen.queryByTestId("problem")).not.toBeInTheDocument();
@@ -33,6 +37,7 @@ describe("ProblemsSettings", () => {
   it("should handle problem addition and removal", async () => {
     await renderWithProviders(
       <ProblemsSettings form={form.current} isOpen={true} />,
+      { contestMetadata },
     );
 
     fireEvent.click(screen.getByTestId("add-first-problem"));
@@ -68,6 +73,7 @@ describe("ProblemsSettings", () => {
     ] as any);
     await renderWithProviders(
       <ProblemsSettings form={form.current} isOpen={true} />,
+      { contestMetadata },
     );
 
     expect(screen.queryByTestId("description-alert")).toBeInTheDocument();
@@ -77,9 +83,11 @@ describe("ProblemsSettings", () => {
 
     expect(attachmentService.download).toHaveBeenCalledTimes(2);
     expect(attachmentService.download).toHaveBeenCalledWith(
+      contestMetadata.id,
       form.current.getValues("problems")[0].description,
     );
     expect(attachmentService.download).toHaveBeenCalledWith(
+      contestMetadata.id,
       form.current.getValues("problems")[0].testCases,
     );
   });

@@ -1,5 +1,6 @@
 import { mock } from "jest-mock-extended";
 
+import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { Attachment } from "@/core/domain/model/Attachment";
 import { AttachmentRepository } from "@/core/repository/AttachmentRepository";
 import { AttachmentService } from "@/core/service/AttachmentService";
@@ -8,6 +9,8 @@ describe("AttachmentService", () => {
   const attachmentRepository = mock<AttachmentRepository>();
 
   const sut = new AttachmentService(attachmentRepository);
+
+  const contestId = "contest-1";
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -22,11 +25,16 @@ describe("AttachmentService", () => {
         contentType: "text/plain",
       } as Attachment;
       attachmentRepository.upload.mockResolvedValue(attachment);
+      const context = AttachmentContext.PROBLEM_DESCRIPTION;
 
-      const result = await sut.upload(file);
+      const result = await sut.upload(contestId, context, file);
 
       expect(result).toEqual(attachment);
-      expect(attachmentRepository.upload).toHaveBeenCalledWith(file);
+      expect(attachmentRepository.upload).toHaveBeenCalledWith(
+        contestId,
+        context,
+        file,
+      );
     });
   });
 
@@ -48,8 +56,12 @@ describe("AttachmentService", () => {
       const appendChildSpy = jest.spyOn(document.body, "appendChild");
       const removeChildSpy = jest.spyOn(document.body, "removeChild");
 
-      await sut.download(attachment);
+      await sut.download(contestId, attachment);
 
+      expect(attachmentRepository.download).toHaveBeenCalledWith(
+        contestId,
+        attachment,
+      );
       expect(createObjectURLSpy).toHaveBeenCalledWith(file);
       expect(appendChildSpy).toHaveBeenCalled();
       expect(removeChildSpy).toHaveBeenCalled();

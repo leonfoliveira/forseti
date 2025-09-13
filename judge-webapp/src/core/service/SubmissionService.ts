@@ -1,3 +1,4 @@
+import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
@@ -14,7 +15,11 @@ export class SubmissionService {
     contestId: string,
     inputDTO: CreateSubmissionInputDTO,
   ) {
-    const attachment = await this.attachmentService.upload(inputDTO.code);
+    const attachment = await this.attachmentService.upload(
+      contestId,
+      AttachmentContext.SUBMISSION_CODE,
+      inputDTO.code,
+    );
     return await this.submissionRepository.createSubmission(contestId, {
       ...inputDTO,
       code: attachment,
