@@ -19,6 +19,9 @@ describe("SettingsFormMapper", () => {
     languages: [Language.CPP_17, Language.JAVA_21],
     startAt: "2025-09-03T10:00:00Z",
     endAt: "2025-09-03T18:00:00Z",
+    settings: {
+      isAutoJudgeEnabled: true,
+    },
     problems: [
       {
         id: "problem-1",
@@ -70,6 +73,9 @@ describe("SettingsFormMapper", () => {
         languages: [Language.CPP_17, Language.JAVA_21],
         startAt: parseAbsoluteToLocal("2025-09-03T10:00:00Z"),
         endAt: parseAbsoluteToLocal("2025-09-03T18:00:00Z"),
+        settings: {
+          isAutoJudgeEnabled: true,
+        },
         problems: [
           {
             _id: "problem-2",
@@ -170,6 +176,9 @@ describe("SettingsFormMapper", () => {
       languages: [Language.PYTHON_3_12],
       startAt: parseAbsoluteToLocal("2025-09-03T10:00:00Z"),
       endAt: parseAbsoluteToLocal("2025-09-03T18:00:00Z"),
+      settings: {
+        isAutoJudgeEnabled: false,
+      },
       problems: [
         {
           _id: "problem-1",
@@ -218,6 +227,9 @@ describe("SettingsFormMapper", () => {
         languages: [Language.PYTHON_3_12],
         startAt: "2025-09-03T10:00:00.000Z",
         endAt: "2025-09-03T18:00:00.000Z",
+        settings: {
+          isAutoJudgeEnabled: false,
+        },
         problems: [
           {
             id: "problem-1",

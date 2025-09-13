@@ -8,7 +8,7 @@ import {
   UseFormReturn,
 } from "react-hook-form";
 
-import { SelectProps } from "@/lib/heroui-wrapper";
+import { SelectProps, SwitchProps } from "@/lib/heroui-wrapper";
 import { useIntl } from "@/lib/util/intl-hook";
 
 type HeroUIFormProps = {
@@ -28,6 +28,7 @@ type Props<
   name: FieldPath<TFieldValues>;
   isFile?: boolean;
   isSelect?: boolean;
+  isSwitch?: boolean;
 };
 
 export function FormField<TFieldValues extends FieldValues>({
@@ -36,6 +37,7 @@ export function FormField<TFieldValues extends FieldValues>({
   name,
   isFile,
   isSelect,
+  isSwitch,
   onChange,
 }: Props<TFieldValues>) {
   const intl = useIntl();
@@ -68,6 +70,12 @@ export function FormField<TFieldValues extends FieldValues>({
 
         if (isSelect) {
           (fieldProps as Partial<SelectProps>).selectedKeys = [field.value];
+        }
+
+        if (isSwitch) {
+          (fieldProps as Partial<SwitchProps>).isSelected = field.value;
+          delete fieldProps.isInvalid;
+          delete fieldProps.errorMessage;
         }
 
         return React.cloneElement(children, {

@@ -11,6 +11,9 @@ export type ContestFullResponseDTO = {
   languages: Language[];
   startAt: string;
   endAt: string;
+  settings: {
+    isAutoJudgeEnabled: boolean;
+  };
   announcements: AnnouncementResponseDTO[];
   clarifications: ClarificationResponseDTO[];
   members: MemberFullResponseDTO[];

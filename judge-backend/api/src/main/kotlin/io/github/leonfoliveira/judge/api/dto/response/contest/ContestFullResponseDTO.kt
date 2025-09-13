@@ -20,23 +20,24 @@ class ContestFullResponseDTO(
     val languages: List<Language>,
     val startAt: OffsetDateTime,
     val endAt: OffsetDateTime,
+    val settings: Contest.Settings,
     val members: List<MemberFullResponseDTO>,
     val problems: List<ProblemFullResponseDTO>,
     val clarifications: List<ClarificationResponseDTO>,
     val announcements: List<AnnouncementResponseDTO>,
 )
 
-fun Contest.toFullResponseDTO(): ContestFullResponseDTO {
-    return ContestFullResponseDTO(
+fun Contest.toFullResponseDTO(): ContestFullResponseDTO =
+    ContestFullResponseDTO(
         id = this.id,
         slug = this.slug,
         title = this.title,
         languages = this.languages,
         startAt = this.startAt,
         endAt = this.endAt,
+        settings = this.settings,
         members = this.members.map { it.toFullResponseDTO() },
         problems = this.problems.map { it.toFullResponseDTO() },
         clarifications = this.clarifications.map { it.toResponseDTO() },
         announcements = this.announcements.map { it.toResponseDTO() },
     )
-}

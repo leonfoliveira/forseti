@@ -92,6 +92,6 @@ class Contest(
     fun hasFinished(): Boolean = !endAt.isAfter(OffsetDateTime.now())
 
     data class Settings(
-        var isAutoJudgeEnabled: Boolean = false,
+        var isAutoJudgeEnabled: Boolean = true,
     )
 }

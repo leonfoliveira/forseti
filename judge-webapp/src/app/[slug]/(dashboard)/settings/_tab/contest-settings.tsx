@@ -10,7 +10,7 @@ import { defineMessages } from "@/i18n/message";
 import { FormField } from "@/lib/component/form/form-field";
 import { FormattedMessage } from "@/lib/component/format/formatted-message";
 import { ConfirmationModal } from "@/lib/component/modal/confirmation-modal";
-import { Alert } from "@/lib/heroui-wrapper";
+import { Alert, Switch } from "@/lib/heroui-wrapper";
 import { Button } from "@/lib/heroui-wrapper";
 import { Divider } from "@/lib/heroui-wrapper";
 import { DatePicker } from "@/lib/heroui-wrapper";
@@ -49,11 +49,16 @@ const messages = defineMessages({
   },
   contestConfigurationSection: {
     id: "app.[slug].(dashboard).settings.contest.contest-configuration-section",
-    defaultMessage: "Contest Configuration",
+    defaultMessage: "Configuration",
   },
   languagesLabel: {
     id: "app.[slug].(dashboard).settings.contest.languages-label",
     defaultMessage: "Languages",
+  },
+  languageDescription: {
+    id: "app.[slug].(dashboard).settings.contest.languages-description",
+    defaultMessage:
+      "Make sure the sandboxes for the selected languages are installed",
   },
   startLabel: {
     id: "app.[slug].(dashboard).settings.contest.start-label",
@@ -71,6 +76,10 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard).settings.contest.end-description",
     defaultMessage: "End time of the contest",
   },
+  isAutoJudgeEnabledLabel: {
+    id: "app.[slug].(dashboard).settings.contest.is-auto-judge-enabled-label",
+    defaultMessage: "Enable Auto Judge",
+  },
   forceStartLabel: {
     id: "app.[slug].(dashboard).settings.contest.force-start-label",
     defaultMessage: "Force Start Now",
@@ -81,7 +90,7 @@ const messages = defineMessages({
   },
   controlSection: {
     id: "app.[slug].(dashboard).settings.contest.control-section",
-    defaultMessage: "Contest Control",
+    defaultMessage: "Control",
   },
   controlTimeSection: {
     id: "app.[slug].(dashboard).settings.contest.control-time-section",
@@ -218,6 +227,26 @@ export function ContestSettings({ contest, form, isOpen }: Props) {
             />
           </FormField>
         </div>
+
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
+          <FormField form={form} name="startAt">
+            <DatePicker
+              label={<FormattedMessage {...messages.startLabel} />}
+              granularity="minute"
+              description={<FormattedMessage {...messages.startDescription} />}
+              isDisabled={contestStatus !== ContestStatus.NOT_STARTED}
+              data-testid="start-at-picker"
+            />
+          </FormField>
+          <FormField form={form} name="endAt">
+            <DatePicker
+              label={<FormattedMessage {...messages.endLabel} />}
+              granularity="minute"
+              description={<FormattedMessage {...messages.endDescription} />}
+              data-testid="end-at-picker"
+            />
+          </FormField>
+        </div>
       </div>
 
       {/* Contest Configuration Section */}
@@ -234,40 +263,30 @@ export function ContestSettings({ contest, form, isOpen }: Props) {
               classNames={{
                 wrapper: "bg-content2/50 rounded-sm p-4",
               }}
+              description={
+                <FormattedMessage {...messages.languageDescription} />
+              }
             >
               {Object.keys(Language).map((it) => (
-                <Checkbox key={it} value={it}>
-                  <span className="text-sm font-medium">
+                <Checkbox
+                  key={it}
+                  value={it}
+                  label={
                     <FormattedMessage
                       {...globalMessages.language[it as Language]}
                     />
-                  </span>
-                </Checkbox>
+                  }
+                />
               ))}
             </CheckboxGroup>
           </FormField>
 
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
-            <FormField form={form} name="startAt">
-              <DatePicker
-                label={<FormattedMessage {...messages.startLabel} />}
-                granularity="minute"
-                description={
-                  <FormattedMessage {...messages.startDescription} />
-                }
-                isDisabled={contestStatus !== ContestStatus.NOT_STARTED}
-                data-testid="start-at-picker"
-              />
-            </FormField>
-            <FormField form={form} name="endAt">
-              <DatePicker
-                label={<FormattedMessage {...messages.endLabel} />}
-                granularity="minute"
-                description={<FormattedMessage {...messages.endDescription} />}
-                data-testid="end-at-picker"
-              />
-            </FormField>
-          </div>
+          <FormField form={form} name="settings.isAutoJudgeEnabled" isSwitch>
+            <Switch
+              label={<FormattedMessage {...messages.isAutoJudgeEnabledLabel} />}
+              data-testid="is-auto-judge-enabled"
+            />
+          </FormField>
         </div>
       </div>
 
