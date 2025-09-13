@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.judge.common.listener
 
-import io.github.leonfoliveira.judge.common.event.SubmissionJudgeEvent
+import io.github.leonfoliveira.judge.common.event.SubmissionAutoJudgeEvent
 import io.github.leonfoliveira.judge.common.port.SubmissionQueueAdapter
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -13,8 +13,8 @@ class SubmissionJudgeEventListener(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @TransactionalEventListener(SubmissionJudgeEvent::class, phase = TransactionPhase.AFTER_COMMIT)
-    fun onApplicationEvent(event: SubmissionJudgeEvent) {
+    @TransactionalEventListener(SubmissionAutoJudgeEvent::class, phase = TransactionPhase.AFTER_COMMIT)
+    fun onApplicationEvent(event: SubmissionAutoJudgeEvent) {
         logger.info("Handling submission judge event: ${event.submission}")
         submissionQueueAdapter.enqueue(event.submission)
     }

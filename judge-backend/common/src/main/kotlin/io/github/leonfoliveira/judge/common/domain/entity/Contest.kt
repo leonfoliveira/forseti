@@ -58,7 +58,7 @@ class Contest(
      */
     @Column(name = "settings", nullable = false, columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
-    var settings: ContestSettings = ContestSettings(),
+    var settings: Settings = Settings(),
     /**
      * Members of the contest, which can include contestants, juries, and other participants.
      */
@@ -90,4 +90,8 @@ class Contest(
     fun isActive(): Boolean = hasStarted() && !hasFinished()
 
     fun hasFinished(): Boolean = !endAt.isAfter(OffsetDateTime.now())
+
+    data class Settings(
+        var isAutoJudgeEnabled: Boolean = false,
+    )
 }

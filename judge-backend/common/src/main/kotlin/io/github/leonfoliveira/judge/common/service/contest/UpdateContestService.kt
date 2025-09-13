@@ -1,7 +1,6 @@
 package io.github.leonfoliveira.judge.common.service.contest
 
 import io.github.leonfoliveira.judge.common.domain.entity.Contest
-import io.github.leonfoliveira.judge.common.domain.entity.ContestSettings
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.entity.Problem
 import io.github.leonfoliveira.judge.common.domain.exception.BusinessException
@@ -67,7 +66,7 @@ class UpdateContestService(
         contest.startAt = inputDTO.startAt
         contest.endAt = inputDTO.endAt
         contest.settings =
-            ContestSettings(
+            Contest.Settings(
                 isAutoJudgeEnabled = inputDTO.settings.isAutoJudgeEnabled,
             )
 
