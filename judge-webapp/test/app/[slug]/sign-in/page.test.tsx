@@ -59,11 +59,13 @@ describe("SignInPage", () => {
       fireEvent.click(screen.getByTestId("sign-in"));
     });
 
-    expect(authenticationService.authenticate).toHaveBeenCalledWith({
-      contestId: mockContestMetadata.id,
-      login: "testuser",
-      password: "testpassword",
-    });
+    expect(authenticationService.authenticate).toHaveBeenCalledWith(
+      mockContestMetadata.id,
+      {
+        login: "testuser",
+        password: "testpassword",
+      },
+    );
   });
 
   it("should handle unauthorized exception", async () => {

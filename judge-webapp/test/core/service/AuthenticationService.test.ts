@@ -48,13 +48,15 @@ describe("AuthenticationService", () => {
 
   describe("authenticate", () => {
     it("should call authenticationRepository.authenticate with correct parameters", async () => {
+      const contestId = "contest123";
       const requestDTO = MockAuthenticateRequestDTO();
       const authorization = MockAuthorization();
       authenticationRepository.authenticate.mockResolvedValue(authorization);
 
-      const result = await sut.authenticate(requestDTO);
+      const result = await sut.authenticate(contestId, requestDTO);
 
       expect(authenticationRepository.authenticate).toHaveBeenCalledWith(
+        contestId,
         requestDTO,
       );
       expect(result).toEqual(authorization);

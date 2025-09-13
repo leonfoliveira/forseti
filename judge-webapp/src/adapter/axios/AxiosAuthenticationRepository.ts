@@ -12,10 +12,11 @@ export class AxiosAuthenticationRepository implements AuthenticationRepository {
   }
 
   async authenticate(
+    contestId: string,
     requestDTO: AuthenticateRequestDTO,
   ): Promise<Authorization> {
     const response = await this.axiosClient.post<Authorization>(
-      `/v1/auth/sign-in`,
+      `/v1/contests/${contestId}/sign-in`,
       { data: requestDTO },
     );
     return response.data;

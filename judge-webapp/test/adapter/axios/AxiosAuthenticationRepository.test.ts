@@ -35,12 +35,16 @@ describe("AxiosAuthenticationRepository", () => {
       axiosClient.post.mockResolvedValueOnce({
         data: expectedAuthorization,
       } as AxiosResponse);
+      const contestId = "contest123";
 
-      const result = await sut.authenticate(requestDTO);
+      const result = await sut.authenticate(contestId, requestDTO);
 
-      expect(axiosClient.post).toHaveBeenCalledWith(`/v1/auth/sign-in`, {
-        data: requestDTO,
-      });
+      expect(axiosClient.post).toHaveBeenCalledWith(
+        `/v1/contests/${contestId}/sign-in`,
+        {
+          data: requestDTO,
+        },
+      );
       expect(result).toEqual(expectedAuthorization);
     });
   });

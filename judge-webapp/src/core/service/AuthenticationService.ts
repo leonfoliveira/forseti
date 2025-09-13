@@ -25,8 +25,12 @@ export class AuthenticationService {
   }
 
   async authenticate(
+    contestId: string,
     requestDTO: AuthenticateRequestDTO,
   ): Promise<Authorization> {
-    return await this.authenticationRepository.authenticate(requestDTO);
+    return await this.authenticationRepository.authenticate(
+      contestId,
+      requestDTO,
+    );
   }
 }

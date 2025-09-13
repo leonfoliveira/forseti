@@ -4,5 +4,8 @@ import { AuthenticateRequestDTO } from "@/core/repository/dto/request/Authentica
 export interface AuthenticationRepository {
   getAuthorization(): Promise<Authorization>;
 
-  authenticate(requestDTO: AuthenticateRequestDTO): Promise<Authorization>;
+  authenticate(
+    contestId: string,
+    requestDTO: AuthenticateRequestDTO,
+  ): Promise<Authorization>;
 }

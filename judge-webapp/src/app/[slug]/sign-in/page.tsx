@@ -90,10 +90,7 @@ export default function SignInPage() {
   async function signIn(data: SignInFormType) {
     signInState.start();
     try {
-      await authenticationService.authenticate({
-        contestId: contestMetadata.id,
-        ...data,
-      });
+      await authenticationService.authenticate(contestMetadata.id, data);
       window.location.href = routes.CONTEST(contestMetadata.slug);
     } catch (error) {
       signInState.fail(error, {
