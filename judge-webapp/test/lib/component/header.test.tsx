@@ -2,13 +2,13 @@ import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 import { usePathname, useRouter } from "next/navigation";
 
+import { authorizationService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { Header } from "@/lib/component/header";
 import { useTheme } from "@/lib/util/theme-hook";
 import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { authorizationService } from "@/config/composition";
 
 jest.mock("@/lib/util/theme-hook", () => ({
   ...jest.requireActual("@/lib/util/theme-hook"),

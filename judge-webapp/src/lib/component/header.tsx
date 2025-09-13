@@ -3,6 +3,7 @@
 import { ChevronDownIcon, MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import { useRouter, usePathname } from "next/navigation";
 
+import { authorizationService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { globalMessages } from "@/i18n/global";
@@ -24,7 +25,6 @@ import {
 import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
 import { Theme, useTheme } from "@/lib/util/theme-hook";
 import { useAppSelector } from "@/store/store";
-import { authorizationService } from "@/config/composition";
 
 const messages = defineMessages({
   signIn: {
