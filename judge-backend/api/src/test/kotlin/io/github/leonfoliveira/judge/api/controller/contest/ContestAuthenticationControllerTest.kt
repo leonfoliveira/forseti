@@ -2,12 +2,10 @@ package io.github.leonfoliveira.judge.api.controller.contest
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import io.github.leonfoliveira.judge.api.controller.root.RootAuthenticationController
 import io.github.leonfoliveira.judge.api.service.AuthorizationCookieService
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.ContestAuthenticateInputDTO
-import io.github.leonfoliveira.judge.common.service.dto.input.authorization.RootAuthenticateInputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every

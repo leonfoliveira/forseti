@@ -107,6 +107,7 @@ class TestSystemCommand:
 
     def test_status(self, runner, command_adapter):
         result = runner.invoke(system, ["status"])
+        command_adapter.run.return_value = ["some", "output"]
         assert result.exit_code == 0
         command_adapter.run.assert_called_once_with(
             ["docker", "stack", "ps", "judge"]

@@ -2,14 +2,17 @@ package io.github.leonfoliveira.judge.autojudge.docker
 
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.entity.Contest
+import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ProblemMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
 import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
+import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.github.leonfoliveira.judge.common.repository.SubmissionRepository
 import io.github.leonfoliveira.judge.common.testcontainer.LocalStackTestContainer
 import io.github.leonfoliveira.judge.common.testcontainer.PostgresTestContainer
@@ -29,17 +32,57 @@ class DockerSubmissionRunnerAdapterTest(
     val contestRepository: ContestRepository,
     val attachmentBucketAdapter: AttachmentBucketAdapter,
     val submissionRepository: SubmissionRepository,
+    val memberRepository: MemberRepository,
 ) : FunSpec({
         extensions(SpringExtension)
+
+        lateinit var contest: Contest
+
+        beforeSpec {
+            contest = ContestMockBuilder.build()
+            contest = contestRepository.save(contest)
+
+            val root = MemberMockBuilder.build(id = Member.ROOT_ID, contest = null)
+            val autojudge = MemberMockBuilder.build(id = Member.AUTOJUDGE_ID, contest = null)
+            memberRepository.saveAll(listOf(root, autojudge))
+
+            val member = MemberMockBuilder.build(contest = contest)
+            contest.members = listOf(member)
+            contest = contestRepository.save(contest)
+
+            val descriptionAttachment =
+                AttachmentMockBuilder.build(
+                    contest = contest,
+                    member = contest.members.first(),
+                    context = Attachment.Context.PROBLEM_DESCRIPTION,
+                )
+            val testCasesAttachment =
+                AttachmentMockBuilder.build(
+                    contest = contest,
+                    member = contest.members.first(),
+                    context = Attachment.Context.PROBLEM_TEST_CASES,
+                )
+            val problem =
+                ProblemMockBuilder.build(
+                    contest = contest,
+                    timeLimit = 500,
+                    memoryLimit = 128,
+                    description = descriptionAttachment,
+                    testCases = testCasesAttachment,
+                )
+            val testCases =
+                """
+                1,2
+                2,4
+                """.trimIndent()
+            attachmentBucketAdapter.upload(testCasesAttachment, testCases.toByteArray())
+            contest.problems = listOf(problem)
+            contest = contestRepository.save(contest)
+        }
 
         beforeEach {
             clearAllMocks()
         }
-
-        val contest = ContestMockBuilder.build()
-        contest.problems = listOf(ProblemMockBuilder.build(contest = contest, timeLimit = 500, memoryLimit = 128))
-        contest.members = listOf(MemberMockBuilder.build(contest = contest))
-        contestRepository.save(contest)
 
         fun createSubmission(
             contest: Contest,
@@ -55,6 +98,7 @@ class DockerSubmissionRunnerAdapterTest(
                     code =
                         Attachment(
                             contest = contest,
+                            member = contest.members.first(),
                             filename = filename,
                             contentType = contentType,
                             context = Attachment.Context.SUBMISSION_CODE,
@@ -70,13 +114,6 @@ class DockerSubmissionRunnerAdapterTest(
             }
             return resource.readText()
         }
-
-        val testCases =
-            """
-            1,2
-            2,4
-            """.trimIndent()
-        attachmentBucketAdapter.upload(contest.problems.first().testCases, testCases.toByteArray())
 
         context("C++ 17") {
             listOf(

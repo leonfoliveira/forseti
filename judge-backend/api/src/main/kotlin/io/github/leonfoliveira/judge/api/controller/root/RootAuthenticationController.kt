@@ -2,12 +2,9 @@ package io.github.leonfoliveira.judge.api.controller.root
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.service.AuthorizationCookieService
-import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.RateLimit
-import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
-import io.github.leonfoliveira.judge.common.service.dto.input.authorization.ContestAuthenticateInputDTO
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.RootAuthenticateInputDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -18,7 +15,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping

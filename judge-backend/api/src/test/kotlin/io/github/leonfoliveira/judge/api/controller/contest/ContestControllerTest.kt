@@ -70,26 +70,6 @@ class ContestControllerTest(
                     languages = listOf(Language.PYTHON_3_12),
                     startAt = OffsetDateTime.now().plusHours(1),
                     endAt = OffsetDateTime.now().plusHours(2),
-                    members =
-                        listOf(
-                            CreateContestInputDTO.MemberDTO(
-                                type = Member.Type.CONTESTANT,
-                                name = "Member",
-                                login = "member",
-                                password = "password123",
-                            ),
-                        ),
-                    problems =
-                        listOf(
-                            CreateContestInputDTO.ProblemDTO(
-                                letter = 'A',
-                                title = "Problem A",
-                                description = AttachmentInputDTO(id = UUID.randomUUID()),
-                                timeLimit = 1000,
-                                memoryLimit = 512,
-                                testCases = AttachmentInputDTO(id = UUID.randomUUID()),
-                            ),
-                        ),
                 )
             val contest = ContestMockBuilder.build()
             every { createContestService.create(body) } returns contest

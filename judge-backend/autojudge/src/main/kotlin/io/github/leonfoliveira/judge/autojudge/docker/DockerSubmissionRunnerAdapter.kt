@@ -4,6 +4,7 @@ import com.opencsv.CSVReader
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.entity.Contest
 import io.github.leonfoliveira.judge.common.domain.entity.Execution
+import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.entity.Problem
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
@@ -184,6 +185,7 @@ class DockerSubmissionRunnerAdapter(
         val attachment =
             attachmentService.upload(
                 contestId = contest.id,
+                memberId = Member.AUTOJUDGE_ID,
                 filename = "output.csv",
                 contentType = "text/csv",
                 context = Attachment.Context.EXECUTION_OUTPUT,
