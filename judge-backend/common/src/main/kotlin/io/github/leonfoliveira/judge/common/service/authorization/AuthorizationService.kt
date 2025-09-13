@@ -1,14 +1,17 @@
 package io.github.leonfoliveira.judge.common.service.authorization
 
+import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.InternalServerException
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.port.HashAdapter
 import io.github.leonfoliveira.judge.common.port.JwtAdapter
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
-import io.github.leonfoliveira.judge.common.service.dto.input.authorization.AuthenticateInputDTO
+import io.github.leonfoliveira.judge.common.service.dto.input.authorization.ContestAuthenticateInputDTO
+import io.github.leonfoliveira.judge.common.service.dto.input.authorization.RootAuthenticateInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class AuthorizationService(
@@ -22,18 +25,36 @@ class AuthorizationService(
         logger.info("Authenticating autojudge")
 
         val member =
-            memberRepository.findByLogin("autojudge")
+            memberRepository.findByLogin(Member.AUTOJUDGE_LOGIN)
                 ?: throw InternalServerException("Could not find autojudge member")
 
         logger.info("Finished authenticating autojudge member")
         return jwtAdapter.buildAuthorization(member)
     }
 
-    fun authenticate(inputDTO: AuthenticateInputDTO): Authorization {
-        logger.info("Authenticating member for contest with id = ${inputDTO.contestId}")
+    fun authenticateRoot(inputDTO: RootAuthenticateInputDTO): Authorization {
+        logger.info("Authenticating root")
 
         val member =
-            memberRepository.findByLoginAndContestId(inputDTO.login, inputDTO.contestId)
+            memberRepository.findByLogin(Member.ROOT_LOGIN)
+                ?: throw InternalServerException("Could not find root member")
+
+        if (!hashAdapter.verify(inputDTO.password, member.password)) {
+            throw UnauthorizedException("Invalid password")
+        }
+
+        logger.info("Finished authenticating root member")
+        return jwtAdapter.buildAuthorization(member)
+    }
+
+    fun authenticate(
+        contestId: UUID,
+        inputDTO: ContestAuthenticateInputDTO,
+    ): Authorization {
+        logger.info("Authenticating member for contest with id = $contestId")
+
+        val member =
+            memberRepository.findByLoginAndContestId(inputDTO.login, contestId)
                 ?: memberRepository.findByLoginAndContestId(inputDTO.login, null)
                 ?: throw UnauthorizedException("Invalid login or password")
 

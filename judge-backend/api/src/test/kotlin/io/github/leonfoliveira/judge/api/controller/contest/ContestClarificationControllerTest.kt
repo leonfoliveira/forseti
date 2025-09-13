@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.controller
+package io.github.leonfoliveira.judge.api.controller.contest
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
@@ -24,10 +24,10 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.post
 import java.util.UUID
 
-@WebMvcTest(controllers = [ClarificationController::class])
+@WebMvcTest(controllers = [ContestClarificationController::class])
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = [ClarificationController::class])
-class ClarificationControllerTest(
+@ContextConfiguration(classes = [ContestClarificationController::class])
+class ContestClarificationControllerTest(
     @MockkBean(relaxed = true)
     private val deleteClarificationService: DeleteClarificationService,
     @MockkBean(relaxed = true)
@@ -52,13 +52,14 @@ class ClarificationControllerTest(
             SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
             every { createClarificationService.create(contestId, authorization.member.id, body) } returns clarification
 
-            webMvc.post(basePath, contestId) {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(body)
-            }.andExpect {
-                status { isOk() }
-                content { clarification.toResponseDTO() }
-            }
+            webMvc
+                .post(basePath, contestId) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(body)
+                }.andExpect {
+                    status { isOk() }
+                    content { clarification.toResponseDTO() }
+                }
 
             verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
         }
@@ -67,11 +68,12 @@ class ClarificationControllerTest(
             val contestId = UUID.randomUUID()
             val id = UUID.randomUUID()
 
-            webMvc.delete("$basePath/{clarificationId}", contestId, id) {
-                contentType = MediaType.APPLICATION_JSON
-            }.andExpect {
-                status { isNoContent() }
-            }
+            webMvc
+                .delete("$basePath/{clarificationId}", contestId, id) {
+                    contentType = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isNoContent() }
+                }
 
             verify { deleteClarificationService.delete(id) }
         }

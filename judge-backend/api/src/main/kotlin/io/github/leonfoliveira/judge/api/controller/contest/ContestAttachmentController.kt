@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.controller
+package io.github.leonfoliveira.judge.api.controller.contest
 
 import io.github.leonfoliveira.judge.api.dto.response.AttachmentResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
@@ -33,7 +33,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1/contests/{contestId}/attachments")
-class AttachmentController(
+class ContestAttachmentController(
     private val attachmentService: AttachmentService,
     private val attachmentAuthorizationService: AttachmentAuthorizationService,
 ) {

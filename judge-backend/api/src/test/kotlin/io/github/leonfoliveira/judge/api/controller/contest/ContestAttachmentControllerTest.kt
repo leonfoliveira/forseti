@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.controller
+package io.github.leonfoliveira.judge.api.controller.contest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
@@ -24,10 +24,10 @@ import org.springframework.test.web.servlet.multipart
 import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 
-@WebMvcTest(controllers = [AttachmentController::class])
+@WebMvcTest(controllers = [ContestAttachmentController::class])
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = [AttachmentController::class])
-class AttachmentControllerTest(
+@ContextConfiguration(classes = [ContestAttachmentController::class])
+class ContestAttachmentControllerTest(
     @MockkBean(relaxed = true)
     val attachmentService: AttachmentService,
     @MockkBean(relaxed = true)

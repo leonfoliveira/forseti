@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.controller
+package io.github.leonfoliveira.judge.api.controller.contest
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature

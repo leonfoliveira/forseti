@@ -94,7 +94,6 @@ class AttachmentAuthorizationServiceTest :
 
                     sut.authorize(contestId, attachmentId)
 
-                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
                     verify { contestAuthFilter.checkIfStarted(contestId) }
                 }
             }
@@ -111,31 +110,11 @@ class AttachmentAuthorizationServiceTest :
 
                     sut.authorize(contestId, attachmentId)
 
-                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
                     verify { contestAuthFilter.checkIfStarted(contestId) }
                 }
             }
 
             context("SUBMISSION_CODE context") {
-                test("should throw ForbiddenException when member is null") {
-                    val attachment =
-                        AttachmentMockBuilder.build(
-                            id = attachmentId,
-                            contest = contest,
-                            member = member,
-                            context = Attachment.Context.SUBMISSION_CODE,
-                        )
-                    every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-                    every { AuthorizationContextUtil.getMember() } returns null
-
-                    shouldThrow<ForbiddenException> {
-                        sut.authorize(contestId, attachmentId)
-                    }
-
-                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
-                    verify { contestAuthFilter.checkIfStarted(contestId) }
-                }
-
                 test("should authorize JUDGE member successfully") {
                     val attachment =
                         AttachmentMockBuilder.build(
@@ -184,7 +163,6 @@ class AttachmentAuthorizationServiceTest :
 
                     sut.authorize(contestId, attachmentId)
 
-                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
                     verify { contestAuthFilter.checkIfStarted(contestId) }
                 }
 
@@ -202,7 +180,6 @@ class AttachmentAuthorizationServiceTest :
                         sut.authorize(contestId, attachmentId)
                     }
 
-                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
                     verify { contestAuthFilter.checkIfStarted(contestId) }
                 }
 
@@ -219,8 +196,23 @@ class AttachmentAuthorizationServiceTest :
                     every { AuthorizationContextUtil.getMember() } returns rootAuthMember
 
                     sut.authorize(contestId, attachmentId)
+                }
 
-                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+                test("should throw ForbiddenException when member is null") {
+                    val attachment =
+                        AttachmentMockBuilder.build(
+                            id = attachmentId,
+                            contest = contest,
+                            member = member,
+                            context = Attachment.Context.SUBMISSION_CODE,
+                        )
+                    every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+                    every { AuthorizationContextUtil.getMember() } returns null
+
+                    shouldThrow<ForbiddenException> {
+                        sut.authorize(contestId, attachmentId)
+                    }
+
                     verify { contestAuthFilter.checkIfStarted(contestId) }
                 }
             }
@@ -238,8 +230,6 @@ class AttachmentAuthorizationServiceTest :
                     shouldThrow<ForbiddenException> {
                         sut.authorize(contestId, attachmentId)
                     }
-
-                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
                 }
             }
         }

@@ -7,7 +7,7 @@ import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.port.HashAdapter
 import io.github.leonfoliveira.judge.common.port.JwtAdapter
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
-import io.github.leonfoliveira.judge.common.service.dto.input.authorization.AuthenticateInputDTO
+import io.github.leonfoliveira.judge.common.service.dto.input.authorization.ContestAuthenticateInputDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -16,120 +16,121 @@ import io.mockk.every
 import io.mockk.mockk
 import java.util.UUID
 
-class AuthorizationServiceTest : FunSpec({
-    val memberRepository = mockk<MemberRepository>(relaxed = true)
-    val hashAdapter = mockk<HashAdapter>(relaxed = true)
-    val jwtAdapter = mockk<JwtAdapter>(relaxed = true)
+class AuthorizationServiceTest :
+    FunSpec({
+        val memberRepository = mockk<MemberRepository>(relaxed = true)
+        val hashAdapter = mockk<HashAdapter>(relaxed = true)
+        val jwtAdapter = mockk<JwtAdapter>(relaxed = true)
 
-    val sut =
-        AuthorizationService(
-            memberRepository = memberRepository,
-            hashAdapter = hashAdapter,
-            jwtAdapter = jwtAdapter,
-        )
+        val sut =
+            AuthorizationService(
+                memberRepository = memberRepository,
+                hashAdapter = hashAdapter,
+                jwtAdapter = jwtAdapter,
+            )
 
-    beforeEach {
-        clearAllMocks()
-    }
-
-    context("authenticateAutoJudge") {
-        test("should throw InternalServerException when autojudge member is not found") {
-            every { memberRepository.findByLogin("autojudge") } returns null
-
-            shouldThrow<InternalServerException> {
-                sut.authenticateAutoJudge()
-            }.message shouldBe "Could not find autojudge member"
+        beforeEach {
+            clearAllMocks()
         }
 
-        test("should return Authorization when autojudge authentication is successful") {
-            val member = MemberMockBuilder.build(login = "autojudge")
-            every { memberRepository.findByLogin("autojudge") } returns member
-            val authorization = AuthorizationMockBuilder.build()
-            every { jwtAdapter.buildAuthorization(member) } returns authorization
+        context("authenticateAutoJudge") {
+            test("should throw InternalServerException when autojudge member is not found") {
+                every { memberRepository.findByLogin("autojudge") } returns null
 
-            val result = sut.authenticateAutoJudge()
+                shouldThrow<InternalServerException> {
+                    sut.authenticateAutoJudge()
+                }.message shouldBe "Could not find autojudge member"
+            }
 
-            result shouldBe authorization
-        }
-    }
+            test("should return Authorization when autojudge authentication is successful") {
+                val member = MemberMockBuilder.build(login = "autojudge")
+                every { memberRepository.findByLogin("autojudge") } returns member
+                val authorization = AuthorizationMockBuilder.build()
+                every { jwtAdapter.buildAuthorization(member) } returns authorization
 
-    context("authenticate without contestId") {
-        val inputDTO = AuthenticateInputDTO(null, "testLogin", "testPassword")
+                val result = sut.authenticateAutoJudge()
 
-        test("should throw UnauthorizedException when member is not found") {
-            every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns null
-
-            shouldThrow<UnauthorizedException> {
-                sut.authenticate(inputDTO)
-            }.message shouldBe "Invalid login or password"
+                result shouldBe authorization
+            }
         }
 
-        test("should throw UnauthorizedException when password does not match") {
-            val member = MemberMockBuilder.build()
-            every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns member
-            every { hashAdapter.verify(inputDTO.password, member.password) } returns false
+        context("authenticate without contestId") {
+            val inputDTO = ContestAuthenticateInputDTO(null, "testLogin", "testPassword")
 
-            shouldThrow<UnauthorizedException> {
-                sut.authenticate(inputDTO)
-            }.message shouldBe "Invalid login or password"
+            test("should throw UnauthorizedException when member is not found") {
+                every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns null
+
+                shouldThrow<UnauthorizedException> {
+                    sut.authenticate(inputDTO)
+                }.message shouldBe "Invalid login or password"
+            }
+
+            test("should throw UnauthorizedException when password does not match") {
+                val member = MemberMockBuilder.build()
+                every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns member
+                every { hashAdapter.verify(inputDTO.password, member.password) } returns false
+
+                shouldThrow<UnauthorizedException> {
+                    sut.authenticate(inputDTO)
+                }.message shouldBe "Invalid login or password"
+            }
+
+            test("should return Authorization when authentication is successful") {
+                val member = MemberMockBuilder.build()
+                every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns member
+                every { hashAdapter.verify(inputDTO.password, member.password) } returns true
+                val authorization = AuthorizationMockBuilder.build()
+                every { jwtAdapter.buildAuthorization(member) } returns authorization
+
+                val result = sut.authenticate(inputDTO)
+
+                result shouldBe authorization
+            }
         }
 
-        test("should return Authorization when authentication is successful") {
-            val member = MemberMockBuilder.build()
-            every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns member
-            every { hashAdapter.verify(inputDTO.password, member.password) } returns true
-            val authorization = AuthorizationMockBuilder.build()
-            every { jwtAdapter.buildAuthorization(member) } returns authorization
+        context("authenticate with contestId") {
+            val contestId = UUID.randomUUID()
+            val inputDTO = ContestAuthenticateInputDTO(contestId, "testLogin", "testPassword")
 
-            val result = sut.authenticate(inputDTO)
+            test("should throw UnauthorizedException when member is not found") {
+                every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns null
 
-            result shouldBe authorization
+                shouldThrow<UnauthorizedException> {
+                    sut.authenticate(inputDTO)
+                }.message shouldBe "Invalid login or password"
+            }
+
+            test("should throw UnauthorizedException when password does not match") {
+                val member = MemberMockBuilder.build()
+                every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns member
+                every { hashAdapter.verify(inputDTO.password, member.password) } returns false
+
+                shouldThrow<UnauthorizedException> {
+                    sut.authenticate(inputDTO)
+                }.message shouldBe "Invalid login or password"
+            }
+
+            test("should return Authorization when authentication is successful") {
+                val member = MemberMockBuilder.build(login = inputDTO.login)
+                every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns member
+                every { hashAdapter.verify(inputDTO.password, member.password) } returns true
+                val authorization = AuthorizationMockBuilder.build()
+                every { jwtAdapter.buildAuthorization(member) } returns authorization
+
+                val result = sut.authenticate(inputDTO)
+
+                result shouldBe authorization
+            }
         }
-    }
 
-    context("authenticate with contestId") {
-        val contestId = UUID.randomUUID()
-        val inputDTO = AuthenticateInputDTO(contestId, "testLogin", "testPassword")
+        context("encodeToken") {
+            test("should encode authorization to token") {
+                val authorization = AuthorizationMockBuilder.build()
+                every { jwtAdapter.encodeToken(authorization) } returns "encodedToken"
 
-        test("should throw UnauthorizedException when member is not found") {
-            every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns null
+                val result = sut.encodeToken(authorization)
 
-            shouldThrow<UnauthorizedException> {
-                sut.authenticate(inputDTO)
-            }.message shouldBe "Invalid login or password"
+                result shouldBe "encodedToken"
+            }
         }
-
-        test("should throw UnauthorizedException when password does not match") {
-            val member = MemberMockBuilder.build()
-            every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns member
-            every { hashAdapter.verify(inputDTO.password, member.password) } returns false
-
-            shouldThrow<UnauthorizedException> {
-                sut.authenticate(inputDTO)
-            }.message shouldBe "Invalid login or password"
-        }
-
-        test("should return Authorization when authentication is successful") {
-            val member = MemberMockBuilder.build(login = inputDTO.login)
-            every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns member
-            every { hashAdapter.verify(inputDTO.password, member.password) } returns true
-            val authorization = AuthorizationMockBuilder.build()
-            every { jwtAdapter.buildAuthorization(member) } returns authorization
-
-            val result = sut.authenticate(inputDTO)
-
-            result shouldBe authorization
-        }
-    }
-
-    context("encodeToken") {
-        test("should encode authorization to token") {
-            val authorization = AuthorizationMockBuilder.build()
-            every { jwtAdapter.encodeToken(authorization) } returns "encodedToken"
-
-            val result = sut.encodeToken(authorization)
-
-            result shouldBe "encodedToken"
-        }
-    }
-})
+    })

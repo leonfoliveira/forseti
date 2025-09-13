@@ -19,6 +19,8 @@ class AttachmentAuthorizationService(
         contestId: UUID,
         attachmentId: UUID,
     ) {
+        contestAuthFilter.checkIfStarted(contestId)
+
         val attachment =
             attachmentRepository.findById(attachmentId).orElseThrow {
                 NotFoundException("Could not find attachment with id = $attachmentId")
@@ -29,22 +31,20 @@ class AttachmentAuthorizationService(
         }
 
         val member = AuthorizationContextUtil.getMember()
-        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
 
         when (attachment.context) {
-            Attachment.Context.PROBLEM_DESCRIPTION -> contestAuthFilter.checkIfStarted(contestId)
-            Attachment.Context.PROBLEM_TEST_CASES -> contestAuthFilter.checkIfStarted(contestId)
+            Attachment.Context.PROBLEM_DESCRIPTION -> return
+            Attachment.Context.PROBLEM_TEST_CASES -> return
             Attachment.Context.SUBMISSION_CODE -> {
-                contestAuthFilter.checkIfStarted(contestId)
                 when (member?.type) {
-                    null -> throw ForbiddenException("Only logged members can read SUBMISSION_CODE attachments")
                     Member.Type.JUDGE, Member.Type.ADMIN -> contestAuthFilter.checkIfMemberBelongsToContest(contestId)
                     Member.Type.CONTESTANT -> {
                         if (attachment.member?.id != member.id) {
                             throw ForbiddenException("Cannot read other members' SUBMISSION_CODE attachments")
                         }
                     }
-                    else -> return
+                    Member.Type.ROOT -> return
+                    else -> throw ForbiddenException("Only logged members can read SUBMISSION_CODE attachments")
                 }
             }
             else -> throw ForbiddenException("Cannot read ${attachment.context} attachments")
