@@ -16,8 +16,8 @@ export const serverConfig = {
 export type ClientConfig = {
   apiPublicUrl: string;
 };
-export const clientConfig = (globalThis as any)
-  .__CLIENT_CONFIG__ as ClientConfig;
+export const clientConfig =
+  ((globalThis as any).__CLIENT_CONFIG__ as ClientConfig) || serverConfig;
 
 export function buildClientConfig(): ClientConfig {
   return {

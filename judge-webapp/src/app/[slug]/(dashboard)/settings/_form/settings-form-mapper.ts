@@ -39,6 +39,7 @@ export class SettingsFormMapper {
       languages: contest.languages,
       startAt: parseAbsoluteToLocal(contest.startAt),
       endAt: parseAbsoluteToLocal(contest.endAt),
+      settings: contest.settings,
       members,
       problems,
     };
@@ -52,6 +53,7 @@ export class SettingsFormMapper {
       languages: form.languages,
       startAt: form.startAt.toDate().toISOString(),
       endAt: form.endAt.toDate().toISOString(),
+      settings: form.settings,
       members: form.members.map((member) => ({
         id: member._id,
         type: member.type,

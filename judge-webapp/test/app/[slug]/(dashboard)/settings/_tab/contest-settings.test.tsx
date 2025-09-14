@@ -45,6 +45,7 @@ describe("ContestSettings", () => {
     expect(screen.getByTestId("end-at-picker")).toBeEnabled();
     expect(screen.getByTestId("force-start")).toBeEnabled();
     expect(screen.getByTestId("force-end")).not.toBeEnabled();
+    expect(screen.getByTestId("is-auto-judge-enabled")).toBeEnabled();
   });
 
   it("should render in progress variant", async () => {

@@ -65,6 +65,10 @@ class UpdateContestService(
         contest.languages = inputDTO.languages
         contest.startAt = inputDTO.startAt
         contest.endAt = inputDTO.endAt
+        contest.settings =
+            Contest.Settings(
+                isAutoJudgeEnabled = inputDTO.settings.isAutoJudgeEnabled,
+            )
 
         val membersToCreate = inputDTO.members.filter { it.id == null }
         val problemsToCreate = inputDTO.problems.filter { it.id == null }

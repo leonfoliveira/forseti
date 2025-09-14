@@ -3,8 +3,8 @@ package io.github.leonfoliveira.judge.common.service.submission
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
+import io.github.leonfoliveira.judge.common.event.SubmissionAutoJudgeEvent
 import io.github.leonfoliveira.judge.common.event.SubmissionEvent
-import io.github.leonfoliveira.judge.common.event.SubmissionJudgeEvent
 import io.github.leonfoliveira.judge.common.repository.SubmissionRepository
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
@@ -48,7 +48,7 @@ class UpdateSubmissionService(
         submission.answer = Submission.Answer.NO_ANSWER
         submissionRepository.save(submission)
         applicationEventPublisher.publishEvent(SubmissionEvent(this, submission))
-        applicationEventPublisher.publishEvent(SubmissionJudgeEvent(this, submission))
+        applicationEventPublisher.publishEvent(SubmissionAutoJudgeEvent(this, submission))
         logger.info("Submission updated enqueued and emitted")
         return submission
     }

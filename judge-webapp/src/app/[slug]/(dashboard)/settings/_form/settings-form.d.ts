@@ -11,6 +11,9 @@ export type SettingsForm = {
   languages: Language[];
   startAt: ZonedDateTime;
   endAt: ZonedDateTime;
+  settings: {
+    isAutoJudgeEnabled: boolean;
+  };
   problems: {
     _id?: string;
     title: string;

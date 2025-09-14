@@ -3,8 +3,8 @@ package io.github.leonfoliveira.judge.common.service.submission
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
+import io.github.leonfoliveira.judge.common.event.SubmissionAutoJudgeEvent
 import io.github.leonfoliveira.judge.common.event.SubmissionEvent
-import io.github.leonfoliveira.judge.common.event.SubmissionJudgeEvent
 import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.github.leonfoliveira.judge.common.repository.ProblemRepository
@@ -65,8 +65,13 @@ class CreateSubmissionService(
             )
         submissionRepository.save(submission)
         applicationEventPublisher.publishEvent(SubmissionEvent(this, submission))
-        applicationEventPublisher.publishEvent(SubmissionJudgeEvent(this, submission))
-        logger.info("Submission created, enqueued and emitted")
+        if (contest.settings.isAutoJudgeEnabled) {
+            applicationEventPublisher.publishEvent(SubmissionAutoJudgeEvent(this, submission))
+        } else {
+            logger.info("Auto-judge is disabled for this contest, skipping auto-judge")
+        }
+
+        logger.info("Submission created")
         return submission
     }
 }

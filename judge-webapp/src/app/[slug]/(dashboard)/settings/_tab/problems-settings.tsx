@@ -23,81 +23,81 @@ import { useAppSelector } from "@/store/store";
 
 const messages = defineMessages({
   problemsSectionTitle: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.section-title",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.section-title",
     defaultMessage: "Contest Problems",
   },
   problemsSectionSubtitle: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.section-subtitle",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.section-subtitle",
     defaultMessage:
       "Configure the problems for this contest. Each problem requires a title, description, and test cases.",
   },
   titleLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.title-label",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.title-label",
     defaultMessage: "Title",
   },
   titleDescription: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.title-description",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.title-description",
     defaultMessage: "A clear, descriptive name for the problem",
   },
   descriptionLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.description-label",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.description-label",
     defaultMessage: "Description",
   },
   descriptionFileDescription: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.description-file-description",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.description-file-description",
     defaultMessage: "Upload a PDF or text file with the problem statement",
   },
   timeLimitLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.time-limit-label",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.time-limit-label",
     defaultMessage: "Time Limit",
   },
   timeLimitDescription: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.time-limit-description",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.time-limit-description",
     defaultMessage: "Maximum execution time per test case",
   },
   memoryLimitLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.memory-limit-label",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.memory-limit-label",
     defaultMessage: "Memory Limit",
   },
   memoryLimitDescription: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.memory-limit-description",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.memory-limit-description",
     defaultMessage: "Maximum memory usage per test case",
   },
   testCasesLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.test-cases-label",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.test-cases-label",
     defaultMessage: "Test Cases",
   },
   testCasesDescription: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.test-cases-description",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.test-cases-description",
     defaultMessage: "Upload a CSV file with input/output test cases",
   },
   currentFileLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.current-file-label",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.current-file-label",
     defaultMessage: "Current: {filename}",
   },
   newLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.new-label",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.new-label",
     defaultMessage: "New Problem",
   },
   problemHeaderSubtitle: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.problem-header-subtitle",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.problem-header-subtitle",
     defaultMessage: "Configure problem details and constraints",
   },
   executionConstraintsTitle: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.execution-constraints-title",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.execution-constraints-title",
     defaultMessage: "Execution Constraints",
   },
   emptyStateTitle: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.empty-state-title",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.empty-state-title",
     defaultMessage: "No Problems Added Yet",
   },
   emptyStateDescription: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.empty-state-description",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.empty-state-description",
     defaultMessage:
       "Start by adding your first problem. Each problem should include a clear title, description, test cases, and execution constraints.",
   },
   addFirstProblemLabel: {
-    id: "app.[slug].(dashboard).settings._tabs.problems-settings.add-first-problem-label",
+    id: "app.[slug].(dashboard).settings._tab.problems-settings.add-first-problem-label",
     defaultMessage: "Add First Problem",
   },
 });

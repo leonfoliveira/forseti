@@ -151,7 +151,37 @@
             "save-error": "Falha ao salvar alterações",
             "save-slug-in-use": "Este slug já está em uso"
           },
-          "_tabs": {
+          "_tab": {
+            "contest": {
+              "basic-information-section": "Informações Básicas",
+              "slug-label": "Slug",
+              "slug-description": "Identificador único para a URL do concurso",
+              "title-label": "Título",
+              "title-description": "Nome de exibição do concurso",
+              "contest-configuration-section": "Configuração do Concurso",
+              "languages-label": "Linguagens",
+              "start-label": "Início",
+              "start-description": "Horário de início do concurso",
+              "end-label": "Fim",
+              "end-description": "Horário de fim do concurso",
+              "languages-description": "Certifique-se de que os sandboxes para as linguagens selecionadas estão instalados",
+              "is-auto-judge-enabled-label": "Juiz Automático Habilitado",
+              "force-start-label": "Forçar Início Agora",
+              "force-end-label": "Forçar Fim Agora",
+              "control-section": "Controle do Concurso",
+              "control-time-section": "Use essas ações para substituir o cronograma do concurso",
+              "current-status": "Status Atual: {status}",
+              "force-start-body": "Tem certeza de que deseja forçar o início do concurso?",
+              "force-start-alert-title": "Atenção",
+              "force-start-alert-body": "O concurso começará a aceitar submissões e esta ação não pode ser desfeita. No entanto, você ainda poderá editar as configurações do concurso posteriormente.",
+              "force-end-body": "Tem certeza de que deseja forçar o fim do concurso?",
+              "force-end-alert-title": "Atenção",
+              "force-end-alert-body": "O concurso parará de aceitar submissões e esta ação não pode ser desfeita. Você não poderá editar as configurações do concurso posteriormente.",
+              "force-start-success": "Concurso iniciado.",
+              "force-start-error": "Falha ao iniciar concurso.",
+              "force-end-success": "Concurso finalizado.",
+              "force-end-error": "Falha ao finalizar concurso."
+            },
             "problems-settings": {
               "section-title": "Problemas do Concurso",
               "section-subtitle": "Configure os problemas para este concurso. Cada problema requer um título, descrição e casos de teste.",
@@ -186,34 +216,6 @@
               "empty-state-description": "Comece adicionando participantes do concurso. Você pode atribuir diferentes funções e níveis de acesso.",
               "add-first-member-label": "Adicionar Primeiro Membro"
             }
-          },
-          "contest": {
-            "basic-information-section": "Informações Básicas",
-            "slug-label": "Slug",
-            "slug-description": "Identificador único para a URL do concurso",
-            "title-label": "Título",
-            "title-description": "Nome de exibição do concurso",
-            "contest-configuration-section": "Configuração do Concurso",
-            "languages-label": "Linguagens",
-            "start-label": "Início",
-            "start-description": "Horário de início do concurso",
-            "end-label": "Fim",
-            "end-description": "Horário de fim do concurso",
-            "force-start-label": "Forçar Início Agora",
-            "force-end-label": "Forçar Fim Agora",
-            "control-section": "Controle do Concurso",
-            "control-time-section": "Use essas ações para substituir o cronograma do concurso",
-            "current-status": "Status Atual: {status}",
-            "force-start-body": "Tem certeza de que deseja forçar o início do concurso?",
-            "force-start-alert-title": "Atenção",
-            "force-start-alert-body": "O concurso começará a aceitar submissões e esta ação não pode ser desfeita. No entanto, você ainda poderá editar as configurações do concurso posteriormente.",
-            "force-end-body": "Tem certeza de que deseja forçar o fim do concurso?",
-            "force-end-alert-title": "Atenção",
-            "force-end-alert-body": "O concurso parará de aceitar submissões e esta ação não pode ser desfeita. Você não poderá editar as configurações do concurso posteriormente.",
-            "force-start-success": "Concurso iniciado.",
-            "force-start-error": "Falha ao iniciar concurso.",
-            "force-end-success": "Concurso finalizado.",
-            "force-end-error": "Falha ao finalizar concurso."
           },
           "_form": {
             "settings-form-schema": {

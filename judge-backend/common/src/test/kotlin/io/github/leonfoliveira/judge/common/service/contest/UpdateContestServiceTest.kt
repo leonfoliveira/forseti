@@ -63,6 +63,7 @@ class UpdateContestServiceTest :
                     languages = listOf(Language.PYTHON_3_12),
                     startAt = OffsetDateTime.now().plusHours(1),
                     endAt = OffsetDateTime.now().plusHours(2),
+                    settings = UpdateContestInputDTO.SettingsDTO(isAutoJudgeEnabled = true),
                     members =
                         listOf(
                             UpdateContestInputDTO.MemberDTO(
@@ -230,6 +231,7 @@ class UpdateContestServiceTest :
                 contest.languages shouldBe inputDTO.languages
                 contest.startAt shouldBe inputDTO.startAt
                 contest.endAt shouldBe inputDTO.endAt
+                contest.settings.isAutoJudgeEnabled shouldBe inputDTO.settings.isAutoJudgeEnabled
 
                 contest.members.size shouldBe 3
                 contest.members[1].id shouldBe inputMemberToUpdateMinimum.id

@@ -9,6 +9,9 @@ export type UpdateContestRequestDTO = {
   languages: Language[];
   startAt: string;
   endAt: string;
+  settings: {
+    isAutoJudgeEnabled: boolean;
+  };
   members: {
     id?: string;
     type: MemberType;

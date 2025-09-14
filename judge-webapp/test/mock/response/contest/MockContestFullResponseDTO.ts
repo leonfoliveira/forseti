@@ -17,6 +17,9 @@ export function MockContestFullResponseDTO(
     languages: [Language.CPP_17, Language.JAVA_21],
     startAt: "2025-01-01T10:00:00Z",
     endAt: "2025-01-01T15:00:00Z",
+    settings: {
+      isAutoJudgeEnabled: false,
+    },
     announcements: [MockAnnouncementResponseDTO()],
     clarifications: [MockClarificationResponseDTO()],
     members: [MockMemberFullResponseDTO()],
