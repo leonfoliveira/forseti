@@ -31,4 +31,15 @@ class SessionCookieServiceTest :
             cookie shouldContain "Secure"
             cookie shouldContain "Path=/"
         }
+
+        test("should return a clear cookie string") {
+            val cookie = sut.buildClearCookie()
+
+            cookie shouldContain "session_id="
+            cookie shouldContain "HttpOnly"
+            cookie shouldContain "SameSite=Lax"
+            cookie shouldContain "Secure"
+            cookie shouldContain "Path=/"
+            cookie shouldContain "Max-Age=0"
+        }
     })

@@ -11,10 +11,12 @@ import io.github.leonfoliveira.judge.common.service.dto.input.authorization.Cont
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.RootAuthenticateInputDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.util.UUID
 
 class AuthorizationServiceTest :
@@ -124,6 +126,18 @@ class AuthorizationServiceTest :
                 val result = sut.authenticate(contestId, inputDTO)
 
                 result shouldBe session
+            }
+        }
+
+        context("deleteSession") {
+            test("should delete session successfully") {
+                val session = SessionMockBuilder.build()
+                every { sessionRepository.save(any()) } returns session
+
+                sut.deleteSession(session)
+
+                session.deletedAt.shouldNotBeNull()
+                verify { sessionRepository.save(session) }
             }
         }
     })

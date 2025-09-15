@@ -76,6 +76,15 @@ class AuthenticationService(
         return session
     }
 
+    fun deleteSession(session: Session) {
+        logger.info("Deleting session with id = ${session.id}")
+
+        session.deletedAt = OffsetDateTime.now()
+        sessionRepository.save(session)
+
+        logger.info("Finished deleting session")
+    }
+
     private fun buildSession(member: Member): Session {
         val expiresAt =
             OffsetDateTime.now().plusSeconds(

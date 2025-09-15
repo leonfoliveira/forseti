@@ -1,7 +1,6 @@
 package io.github.leonfoliveira.judge.api.service
 
 import io.github.leonfoliveira.judge.common.domain.entity.Session
-import io.github.leonfoliveira.judge.common.service.authentication.AuthenticationService
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Service
@@ -21,6 +20,19 @@ class SessionCookieService(
                 .secure(secureCookies)
                 .path("/")
                 .maxAge(Duration.between(OffsetDateTime.now(), session.expiresAt))
+                .sameSite("Lax")
+                .build()
+        return cookie.toString()
+    }
+
+    fun buildClearCookie(): String {
+        val cookie =
+            ResponseCookie
+                .from("session_id", "")
+                .httpOnly(true)
+                .secure(secureCookies)
+                .path("/")
+                .maxAge(0)
                 .sameSite("Lax")
                 .build()
         return cookie.toString()

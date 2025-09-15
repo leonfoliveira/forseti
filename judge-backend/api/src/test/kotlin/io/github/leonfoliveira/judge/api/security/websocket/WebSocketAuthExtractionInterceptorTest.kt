@@ -1,7 +1,6 @@
 package io.github.leonfoliveira.judge.api.security.websocket
 
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
-import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
@@ -13,7 +12,6 @@ import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.MessageHeaders
 import org.springframework.security.core.context.SecurityContextHolder
-import java.util.UUID
 
 class WebSocketAuthExtractionInterceptorTest :
     FunSpec({
