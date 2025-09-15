@@ -7,13 +7,11 @@ import java.time.OffsetDateTime
 
 data class SessionResponseDTO(
     val member: MemberPublicResponseDTO,
-    val ip: String,
     val expiresAt: OffsetDateTime,
 )
 
 fun Session.toResponseDTO() =
     SessionResponseDTO(
         member = member.toPublicResponseDTO(),
-        ip = ip,
         expiresAt = expiresAt,
     )

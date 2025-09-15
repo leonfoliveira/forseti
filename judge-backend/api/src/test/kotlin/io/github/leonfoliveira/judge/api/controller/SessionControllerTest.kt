@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.api.controller
 
 import com.ninjasquad.springmockk.MockkBean
-import io.github.leonfoliveira.judge.api.security.JwtAuthentication
+import io.github.leonfoliveira.judge.api.security.SessionAuthentication
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -23,7 +23,7 @@ class SessionControllerTest(
 
         test("getSession") {
             val session = SessionMockBuilder.build()
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(session)
+            SecurityContextHolder.getContext().authentication = SessionAuthentication(session)
 
             webMvc
                 .get("/v1/session/me")

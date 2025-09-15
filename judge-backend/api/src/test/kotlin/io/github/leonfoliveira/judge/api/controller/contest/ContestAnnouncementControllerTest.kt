@@ -3,10 +3,9 @@ package io.github.leonfoliveira.judge.api.controller.contest
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
-import io.github.leonfoliveira.judge.api.security.JwtAuthentication
+import io.github.leonfoliveira.judge.api.security.SessionAuthentication
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.mock.entity.AnnouncementMockBuilder
-import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.service.announcement.CreateAnnouncementService
 import io.github.leonfoliveira.judge.common.service.dto.input.announcement.CreateAnnouncementInputDTO
@@ -46,7 +45,7 @@ class ContestAnnouncementControllerTest(
                 )
             val announcement = AnnouncementMockBuilder.build()
             val session = SessionMockBuilder.build()
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(session)
+            SecurityContextHolder.getContext().authentication = SessionAuthentication(session)
             every { createAnnouncementService.create(contestId, session.member.id, body) } returns announcement
 
             webMvc

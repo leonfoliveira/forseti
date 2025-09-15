@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.judge.api.security.http
 
-import io.github.leonfoliveira.judge.api.security.JwtAuthentication
+import io.github.leonfoliveira.judge.api.security.SessionAuthentication
 import io.github.leonfoliveira.judge.api.service.RateLimitService
 import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.api.util.SessionUtil
@@ -31,7 +31,7 @@ class HttpRateLimitInterceptor(
             return true
         }
 
-        val auth = SecurityContextHolder.getContext().authentication as? JwtAuthentication
+        val auth = SecurityContextHolder.getContext().authentication as? SessionAuthentication
         if (auth?.principal?.member?.type == Member.Type.ROOT) {
             logger.info("User is ROOT, bypassing rate limiting")
             return true

@@ -2,9 +2,11 @@ package io.github.leonfoliveira.judge.api.controller.root
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import io.github.leonfoliveira.judge.api.service.AuthorizationCookieService
+import io.github.leonfoliveira.judge.api.dto.response.session.toResponseDTO
+import io.github.leonfoliveira.judge.api.service.SessionCookieService
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
-import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
+import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
+import io.github.leonfoliveira.judge.common.service.authentication.AuthenticationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.RootAuthenticateInputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -14,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
 @WebMvcTest(controllers = [RootAuthenticationController::class])
@@ -22,9 +23,9 @@ import org.springframework.test.web.servlet.post
 @ContextConfiguration(classes = [RootAuthenticationController::class])
 class RootAuthenticationControllerTest(
     @MockkBean(relaxed = true)
-    private val authorizationService: AuthorizationService,
+    private val authenticationService: AuthenticationService,
     @MockkBean(relaxed = true)
-    private val authorizationCookieService: AuthorizationCookieService,
+    private val sessionCookieService: SessionCookieService,
     private val webMvc: MockMvc,
 ) : FunSpec({
         extensions(SpringExtension)
@@ -38,12 +39,12 @@ class RootAuthenticationControllerTest(
 
         test("authenticateRoot") {
             val authorization = AuthorizationMockBuilder.build()
+            val session = SessionMockBuilder.build()
             val token =
-                "access_token=mocked_token; Max-Age=3600; Expires=${authorization.expiresAt.toInstant()}; " +
+                "session_id=${session.id}; Max-Age=3600; Expires=${session.expiresAt.toInstant()}; " +
                     "Path=/; HttpOnly; SameSite=Lax; Secure"
-            every { authorizationService.authenticateRoot(authenticateInputDTO) } returns authorization
-            every { authorizationService.encodeToken(authorization) } returns token
-            every { authorizationCookieService.buildCookie(authorization) } returns token
+            every { authenticationService.authenticateRoot(authenticateInputDTO) } returns session
+            every { sessionCookieService.buildCookie(session) } returns token
 
             webMvc
                 .post("/v1/root/sign-in") {
@@ -52,13 +53,13 @@ class RootAuthenticationControllerTest(
                 }.andExpect {
                     status { isOk() }
                     cookie {
-                        value("access_token", "mocked_token")
-                        path("access_token", "/")
-                        secure("access_token", true)
-                        httpOnly("access_token", true)
-                        sameSite("access_token", "Lax")
+                        value("session_id", session.id.toString())
+                        path("session_id", "/")
+                        secure("session_id", true)
+                        httpOnly("session_id", true)
+                        sameSite("session_id", "Lax")
                     }
-                    content { authorization }
+                    content { session.toResponseDTO() }
                 }
         }
     })

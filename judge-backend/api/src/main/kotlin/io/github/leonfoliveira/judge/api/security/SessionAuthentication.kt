@@ -1,13 +1,12 @@
 package io.github.leonfoliveira.judge.api.security
 
 import io.github.leonfoliveira.judge.common.domain.entity.Session
-import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 
 @SkipCoverage
-class JwtAuthentication(
+class SessionAuthentication(
     private var principal: Session? = null,
 ) : Authentication {
     override fun getName(): String? = null

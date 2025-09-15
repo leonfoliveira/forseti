@@ -1,9 +1,7 @@
 package io.github.leonfoliveira.judge.api.security.http
 
-import io.github.leonfoliveira.judge.api.security.JwtAuthentication
+import io.github.leonfoliveira.judge.api.security.SessionAuthentication
 import io.github.leonfoliveira.judge.common.domain.entity.Session
-import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
-import io.github.leonfoliveira.judge.common.port.JwtAdapter
 import io.github.leonfoliveira.judge.common.repository.SessionRepository
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -30,7 +28,7 @@ class HttpAuthExtractionFilter(
 
         val sessionId = request.cookies?.find { it.name == "session_id" }?.value
         val session = extractSession(sessionId)
-        SecurityContextHolder.getContext().authentication = JwtAuthentication(session)
+        SecurityContextHolder.getContext().authentication = SessionAuthentication(session)
         return filterChain.doFilter(request, response)
     }
 

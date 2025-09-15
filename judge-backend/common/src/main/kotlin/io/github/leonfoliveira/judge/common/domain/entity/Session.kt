@@ -27,8 +27,6 @@ class Session(
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
     val member: Member,
-    @Column(nullable = false)
-    val ip: String,
     @Column(name = "expires_at", nullable = false)
     @Audited(withModifiedFlag = false)
     val expiresAt: OffsetDateTime,

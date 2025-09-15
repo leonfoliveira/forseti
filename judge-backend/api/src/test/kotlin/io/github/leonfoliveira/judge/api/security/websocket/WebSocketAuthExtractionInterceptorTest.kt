@@ -1,11 +1,9 @@
 package io.github.leonfoliveira.judge.api.security.websocket
 
-import io.github.leonfoliveira.judge.api.security.JwtAuthentication
+import io.github.leonfoliveira.judge.api.security.SessionAuthentication
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
-import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
-import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -37,11 +35,11 @@ class WebSocketAuthExtractionInterceptorTest :
                     type = Member.Type.CONTESTANT,
                 )
             val session = SessionMockBuilder.build()
-            val jwtAuthentication = JwtAuthentication(session)
+            val sessionAuthentication = SessionAuthentication(session)
 
             val messageHeaders =
                 mapOf<String, Any>(
-                    "simpUser" to jwtAuthentication,
+                    "simpUser" to sessionAuthentication,
                 )
             val message =
                 mockk<Message<*>> {
@@ -54,7 +52,7 @@ class WebSocketAuthExtractionInterceptorTest :
 
             // Then
             result shouldBe message
-            SecurityContextHolder.getContext().authentication shouldBe jwtAuthentication
+            SecurityContextHolder.getContext().authentication shouldBe sessionAuthentication
         }
 
         test("should handle null JWT authentication in message headers") {

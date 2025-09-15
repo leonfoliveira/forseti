@@ -5,12 +5,11 @@ import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.controller.advice.GlobalExceptionHandler
 import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
-import io.github.leonfoliveira.judge.api.security.JwtAuthentication
+import io.github.leonfoliveira.judge.api.security.SessionAuthentication
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.config.JacksonConfig
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
-import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
@@ -55,7 +54,7 @@ class ContestSubmissionControllerTest(
 
         beforeEach {
             val session = SessionMockBuilder.build(member = member)
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(session)
+            SecurityContextHolder.getContext().authentication = SessionAuthentication(session)
         }
 
         val basePath = "/v1/contests/{contestId}/submissions"

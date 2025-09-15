@@ -1,10 +1,11 @@
 package io.github.leonfoliveira.judge.api.controller.contest
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
-import io.github.leonfoliveira.judge.api.service.AuthorizationCookieService
+import io.github.leonfoliveira.judge.api.dto.response.session.SessionResponseDTO
+import io.github.leonfoliveira.judge.api.dto.response.session.toResponseDTO
+import io.github.leonfoliveira.judge.api.service.SessionCookieService
 import io.github.leonfoliveira.judge.api.util.RateLimit
-import io.github.leonfoliveira.judge.common.domain.model.Authorization
-import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
+import io.github.leonfoliveira.judge.common.service.authentication.AuthenticationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.ContestAuthenticateInputDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -25,8 +26,8 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1/contests/{contestId}")
 class ContestAuthenticationController(
-    val authorizationService: AuthorizationService,
-    val authorizationCookieService: AuthorizationCookieService,
+    val authenticationService: AuthenticationService,
+    val sessionCookieService: SessionCookieService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -53,13 +54,13 @@ class ContestAuthenticationController(
     fun authenticateToContest(
         @PathVariable contestId: UUID,
         @RequestBody body: ContestAuthenticateInputDTO,
-    ): ResponseEntity<Authorization> {
+    ): ResponseEntity<SessionResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/sign-in $body")
-        val authorization = authorizationService.authenticate(contestId, body)
-        val cookie = authorizationCookieService.buildCookie(authorization)
+        val session = authenticationService.authenticate(contestId, body)
+        val cookie = sessionCookieService.buildCookie(session)
         return ResponseEntity
             .ok()
             .header(HttpHeaders.SET_COOKIE, cookie)
-            .body(authorization)
+            .body(session.toResponseDTO())
     }
 }

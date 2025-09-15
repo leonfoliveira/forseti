@@ -12,7 +12,6 @@ object SessionMockBuilder {
         updatedAt: OffsetDateTime = OffsetDateTime.now(),
         deletedAt: OffsetDateTime? = null,
         member: Member = MemberMockBuilder.build(),
-        ip: String = "127.0.0.1",
         expiresAt: OffsetDateTime = OffsetDateTime.now().plusHours(1),
     ) = Session(
         id = id,
@@ -20,7 +19,6 @@ object SessionMockBuilder {
         updatedAt = updatedAt,
         deletedAt = deletedAt,
         member = member,
-        ip = ip,
         expiresAt = expiresAt,
     )
 }

@@ -1,11 +1,9 @@
 package io.github.leonfoliveira.judge.api.security.http
 
-import io.github.leonfoliveira.judge.api.security.JwtAuthentication
+import io.github.leonfoliveira.judge.api.security.SessionAuthentication
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
-import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
-import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
@@ -17,7 +15,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.method.HandlerMethod
-import java.util.UUID
 
 class HttpPrivateInterceptorTest :
     FunSpec({
@@ -46,7 +43,7 @@ class HttpPrivateInterceptorTest :
             val handler = mockk<HandlerMethod>(relaxed = true)
             every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.CONTESTANT])
             SecurityContextHolder.getContext().authentication =
-                JwtAuthentication(
+                SessionAuthentication(
                     SessionMockBuilder.build(
                         member = MemberMockBuilder.build(type = Member.Type.ROOT),
                     ),
@@ -61,7 +58,7 @@ class HttpPrivateInterceptorTest :
             val handler = mockk<HandlerMethod>(relaxed = true)
             every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT])
             SecurityContextHolder.getContext().authentication =
-                JwtAuthentication(
+                SessionAuthentication(
                     SessionMockBuilder.build(
                         member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
                     ),
@@ -78,7 +75,7 @@ class HttpPrivateInterceptorTest :
             val handler = mockk<HandlerMethod>(relaxed = true)
             every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT, Member.Type.CONTESTANT])
             SecurityContextHolder.getContext().authentication =
-                JwtAuthentication(
+                SessionAuthentication(
                     SessionMockBuilder.build(
                         member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
                     ),

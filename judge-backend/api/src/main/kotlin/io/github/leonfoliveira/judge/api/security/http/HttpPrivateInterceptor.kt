@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.judge.api.security.http
 
-import io.github.leonfoliveira.judge.api.security.JwtAuthentication
+import io.github.leonfoliveira.judge.api.security.SessionAuthentication
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
@@ -26,7 +26,7 @@ class HttpPrivateInterceptor : HandlerInterceptor {
             logger.info("Handler is not a HandlerMethod")
             return true
         }
-        val auth = SecurityContextHolder.getContext().authentication as? JwtAuthentication
+        val auth = SecurityContextHolder.getContext().authentication as? SessionAuthentication
 
         if (auth?.principal?.member?.type == Member.Type.ROOT) {
             logger.info("User is ROOT, bypassing access")

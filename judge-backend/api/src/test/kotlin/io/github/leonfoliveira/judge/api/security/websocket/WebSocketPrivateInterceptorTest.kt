@@ -1,10 +1,8 @@
 package io.github.leonfoliveira.judge.api.security.websocket
 
-import io.github.leonfoliveira.judge.api.security.JwtAuthentication
+import io.github.leonfoliveira.judge.api.security.SessionAuthentication
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
-import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
-import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
@@ -19,7 +17,6 @@ import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.support.MessageHeaderAccessor
 import org.springframework.security.core.context.SecurityContextHolder
-import java.util.UUID
 
 class WebSocketPrivateInterceptorTest :
     FunSpec({
@@ -61,7 +58,7 @@ class WebSocketPrivateInterceptorTest :
             every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
             every { accessor.destination } returns "/topic/contests/1/submissions/full"
             val authentication =
-                JwtAuthentication(
+                SessionAuthentication(
                     SessionMockBuilder.build(
                         member =
                             MemberMockBuilder.build(
@@ -96,7 +93,7 @@ class WebSocketPrivateInterceptorTest :
             every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
             every { accessor.destination } returns "/topic/contests/1/submissions/full"
             val authentication =
-                JwtAuthentication(
+                SessionAuthentication(
                     SessionMockBuilder.build(
                         member =
                             MemberMockBuilder.build(
@@ -125,7 +122,7 @@ class WebSocketPrivateInterceptorTest :
             every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
             every { accessor.destination } returns "/topic/contests/1/submissions/full"
             val authentication =
-                JwtAuthentication(
+                SessionAuthentication(
                     SessionMockBuilder.build(
                         member =
                             MemberMockBuilder.build(

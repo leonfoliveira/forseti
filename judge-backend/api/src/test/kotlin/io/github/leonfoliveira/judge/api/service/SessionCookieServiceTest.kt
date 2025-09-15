@@ -1,20 +1,17 @@
 package io.github.leonfoliveira.judge.api.service
 
-import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
-import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
+import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.string.shouldContain
 import io.mockk.every
-import io.mockk.mockk
 import io.mockk.mockkStatic
 import java.time.OffsetDateTime
 
-class AuthorizationCookieServiceTest :
+class SessionCookieServiceTest :
     FunSpec({
-        val authorizationService = mockk<AuthorizationService>()
         val secureCookies = true
 
-        val sut = AuthorizationCookieService(authorizationService, secureCookies)
+        val sut = SessionCookieService(secureCookies)
 
         val now = OffsetDateTime.now()
 
@@ -24,12 +21,11 @@ class AuthorizationCookieServiceTest :
         }
 
         test("should return a cookie string") {
-            val authorization = AuthorizationMockBuilder.build()
-            every { authorizationService.encodeToken(authorization) } returns "mocked_token"
+            val session = SessionMockBuilder.build()
 
-            val cookie = sut.buildCookie(authorization)
+            val cookie = sut.buildCookie(session)
 
-            cookie shouldContain "access_token=mocked_token"
+            cookie shouldContain "session_id=${session.id}"
             cookie shouldContain "HttpOnly"
             cookie shouldContain "SameSite=Lax"
             cookie shouldContain "Secure"

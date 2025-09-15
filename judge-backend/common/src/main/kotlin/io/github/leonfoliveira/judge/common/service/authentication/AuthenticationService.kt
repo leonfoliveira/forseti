@@ -1,38 +1,46 @@
-package io.github.leonfoliveira.judge.common.service.authorization
+package io.github.leonfoliveira.judge.common.service.authentication
 
 import io.github.leonfoliveira.judge.common.domain.entity.Member
+import io.github.leonfoliveira.judge.common.domain.entity.Session
 import io.github.leonfoliveira.judge.common.domain.exception.InternalServerException
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
-import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.port.HashAdapter
-import io.github.leonfoliveira.judge.common.port.JwtAdapter
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
+import io.github.leonfoliveira.judge.common.repository.SessionRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.ContestAuthenticateInputDTO
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.RootAuthenticateInputDTO
+import io.github.leonfoliveira.judge.common.util.UnitUtil
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.time.OffsetDateTime
 import java.util.UUID
 
 @Service
-class AuthorizationService(
+class AuthenticationService(
     private val memberRepository: MemberRepository,
+    private val sessionRepository: SessionRepository,
     private val hashAdapter: HashAdapter,
-    private val jwtAdapter: JwtAdapter,
+    @Value("\${security.jwt.expiration}")
+    private val expiration: String,
+    @Value("\${security.jwt.root-expiration}")
+    private val rootExpiration: String,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun authenticateAutoJudge(): Authorization {
+    fun authenticateAutoJudge(): Session {
         logger.info("Authenticating autojudge")
 
         val member =
             memberRepository.findByLogin(Member.AUTOJUDGE_LOGIN)
                 ?: throw InternalServerException("Could not find autojudge member")
 
-        logger.info("Finished authenticating autojudge member")
-        return jwtAdapter.buildAuthorization(member)
+        val session = buildSession(member)
+        logger.info("Finished authenticating autojudge member with session id = ${session.id}")
+        return session
     }
 
-    fun authenticateRoot(inputDTO: RootAuthenticateInputDTO): Authorization {
+    fun authenticateRoot(inputDTO: RootAuthenticateInputDTO): Session {
         logger.info("Authenticating root")
 
         val member =
@@ -43,14 +51,15 @@ class AuthorizationService(
             throw UnauthorizedException("Invalid password")
         }
 
-        logger.info("Finished authenticating root member")
-        return jwtAdapter.buildAuthorization(member)
+        val session = buildSession(member)
+        logger.info("Finished authenticating root member with session id = ${session.id}")
+        return session
     }
 
     fun authenticate(
         contestId: UUID,
         inputDTO: ContestAuthenticateInputDTO,
-    ): Authorization {
+    ): Session {
         logger.info("Authenticating member for contest with id = $contestId")
 
         val member =
@@ -62,12 +71,26 @@ class AuthorizationService(
             throw UnauthorizedException("Invalid login or password")
         }
 
-        logger.info("Finished authenticating member with id = ${member.id}")
-        return jwtAdapter.buildAuthorization(member)
+        val session = buildSession(member)
+        logger.info("Finished authenticating member with session id = ${session.id}")
+        return session
     }
 
-    fun encodeToken(authorization: Authorization): String {
-        logger.info("Encoding token for member with id = ${authorization.member.id}")
-        return jwtAdapter.encodeToken(authorization)
+    private fun buildSession(member: Member): Session {
+        val expiresAt =
+            OffsetDateTime.now().plusSeconds(
+                if (member.type == Member.Type.ROOT) {
+                    UnitUtil.parseTimeValue(rootExpiration)
+                } else {
+                    UnitUtil.parseTimeValue(expiration)
+                } / 1000L,
+            )
+
+        val session =
+            Session(
+                member = member,
+                expiresAt = expiresAt,
+            )
+        return sessionRepository.save(session)
     }
 }
