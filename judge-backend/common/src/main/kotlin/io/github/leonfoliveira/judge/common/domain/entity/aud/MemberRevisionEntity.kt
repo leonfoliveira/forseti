@@ -35,6 +35,12 @@ class MemberRevisionEntity(
     @Column(name = "session_id")
     var sessionId: UUID? = null,
     /**
+     * The IP address from which the request originated.
+     * This can be useful for security and auditing purposes.
+     */
+    @Column(name = "ip")
+    var ip: String? = null,
+    /**
      * The trace ID for tracking the request that caused this revision.
      * This is useful for debugging and tracing the origin of changes.
      */

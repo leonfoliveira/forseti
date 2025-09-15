@@ -1,6 +1,7 @@
 package io.github.leonfoliveira.judge.common.adapter.aws
 
 import io.github.leonfoliveira.judge.common.adapter.aws.message.SqsMessage
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
@@ -15,6 +16,7 @@ abstract class SqsConsumer<TPayload : Serializable> {
         val traceId =
             message.traceId
                 ?: UUID.randomUUID().toString()
+        RequestContext.getCurrent().traceId = traceId
         MDC.put("traceId", traceId)
 
         logger.info("Received message: {}", message)
