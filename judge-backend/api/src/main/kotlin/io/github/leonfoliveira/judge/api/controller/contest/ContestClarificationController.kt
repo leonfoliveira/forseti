@@ -6,11 +6,11 @@ import io.github.leonfoliveira.judge.api.dto.response.clarification.toResponseDT
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.api.util.RateLimit
-import io.github.leonfoliveira.judge.api.util.SessionUtil
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.service.clarification.CreateClarificationService
 import io.github.leonfoliveira.judge.common.service.clarification.DeleteClarificationService
 import io.github.leonfoliveira.judge.common.service.dto.input.clarification.CreateClarificationInputDTO
+import io.github.leonfoliveira.judge.common.util.SessionUtil
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema

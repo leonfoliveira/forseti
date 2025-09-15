@@ -3,6 +3,7 @@ package io.github.leonfoliveira.judge.api.util
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.service.contest.FindContestService
+import io.github.leonfoliveira.judge.common.util.SessionUtil
 import org.springframework.stereotype.Component
 import java.util.UUID
 

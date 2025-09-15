@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.api.security.websocket
 
-import io.github.leonfoliveira.judge.api.security.SessionAuthentication
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
+import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel

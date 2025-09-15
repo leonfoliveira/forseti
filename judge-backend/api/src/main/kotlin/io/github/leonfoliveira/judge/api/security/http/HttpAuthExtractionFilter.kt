@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.api.security.http
 
-import io.github.leonfoliveira.judge.api.security.SessionAuthentication
 import io.github.leonfoliveira.judge.common.domain.entity.Session
+import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
 import io.github.leonfoliveira.judge.common.repository.SessionRepository
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

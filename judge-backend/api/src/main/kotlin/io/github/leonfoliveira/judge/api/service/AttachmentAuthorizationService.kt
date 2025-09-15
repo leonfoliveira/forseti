@@ -1,12 +1,12 @@
 package io.github.leonfoliveira.judge.api.service
 
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
-import io.github.leonfoliveira.judge.api.util.SessionUtil
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
+import io.github.leonfoliveira.judge.common.util.SessionUtil
 import org.springframework.stereotype.Service
 import java.util.UUID
 

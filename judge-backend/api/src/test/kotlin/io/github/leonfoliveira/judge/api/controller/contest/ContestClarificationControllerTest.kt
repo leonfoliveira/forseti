@@ -3,8 +3,8 @@ package io.github.leonfoliveira.judge.api.controller.contest
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.dto.response.clarification.toResponseDTO
-import io.github.leonfoliveira.judge.api.security.SessionAuthentication
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
+import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
 import io.github.leonfoliveira.judge.common.mock.entity.ClarificationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.service.clarification.CreateClarificationService

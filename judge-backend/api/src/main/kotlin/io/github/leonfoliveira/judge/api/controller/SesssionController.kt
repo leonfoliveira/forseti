@@ -4,8 +4,8 @@ import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.session.SessionResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.judge.api.util.RateLimit
-import io.github.leonfoliveira.judge.api.util.SessionUtil
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
+import io.github.leonfoliveira.judge.common.util.SessionUtil
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema

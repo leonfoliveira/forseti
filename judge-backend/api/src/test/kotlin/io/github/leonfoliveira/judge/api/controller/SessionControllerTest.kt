@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.api.controller
 
 import com.ninjasquad.springmockk.MockkBean
-import io.github.leonfoliveira.judge.api.security.SessionAuthentication
+import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension

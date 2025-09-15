@@ -7,9 +7,9 @@ import io.github.leonfoliveira.judge.api.service.AttachmentAuthorizationService
 import io.github.leonfoliveira.judge.api.util.ApiMetrics
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.api.util.RateLimit
-import io.github.leonfoliveira.judge.api.util.SessionUtil
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
+import io.github.leonfoliveira.judge.common.util.SessionUtil
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content

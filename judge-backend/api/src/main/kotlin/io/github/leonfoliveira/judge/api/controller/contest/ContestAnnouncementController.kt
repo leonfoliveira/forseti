@@ -6,10 +6,10 @@ import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.api.util.RateLimit
-import io.github.leonfoliveira.judge.api.util.SessionUtil
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.service.announcement.CreateAnnouncementService
 import io.github.leonfoliveira.judge.common.service.dto.input.announcement.CreateAnnouncementInputDTO
+import io.github.leonfoliveira.judge.common.util.SessionUtil
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema

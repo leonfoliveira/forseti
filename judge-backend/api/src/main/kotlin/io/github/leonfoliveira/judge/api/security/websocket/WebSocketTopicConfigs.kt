@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.judge.api.security.websocket
 
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
-import io.github.leonfoliveira.judge.api.util.SessionUtil
 import io.github.leonfoliveira.judge.common.domain.entity.Member
+import io.github.leonfoliveira.judge.common.util.SessionUtil
 import org.springframework.stereotype.Component
 import java.util.UUID
 import kotlin.collections.contains

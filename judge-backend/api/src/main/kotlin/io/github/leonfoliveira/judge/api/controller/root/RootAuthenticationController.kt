@@ -5,7 +5,6 @@ import io.github.leonfoliveira.judge.api.dto.response.session.SessionResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.judge.api.service.SessionCookieService
 import io.github.leonfoliveira.judge.api.util.RateLimit
-import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.github.leonfoliveira.judge.common.service.authentication.AuthenticationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.RootAuthenticateInputDTO
 import io.swagger.v3.oas.annotations.Operation

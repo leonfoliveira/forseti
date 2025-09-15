@@ -29,11 +29,11 @@ class MemberRevisionEntity(
     @Column(name = "timestamp", nullable = false)
     private val timestamp: LocalDateTime = LocalDateTime.now(),
     /**
-     * The ID of the logged member who made the revision.
-     * Will be null if the revision was made by a system process or an anonymous user.
+     * The ID of the session that made the change.
+     * This is useful for tracking which user made the change.
      */
-    @Column(name = "member_id")
-    var memberId: UUID? = null,
+    @Column(name = "session_id")
+    var sessionId: UUID? = null,
     /**
      * The trace ID for tracking the request that caused this revision.
      * This is useful for debugging and tracing the origin of changes.
