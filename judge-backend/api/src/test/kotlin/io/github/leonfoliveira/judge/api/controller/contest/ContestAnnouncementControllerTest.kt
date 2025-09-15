@@ -7,6 +7,7 @@ import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.mock.entity.AnnouncementMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.service.announcement.CreateAnnouncementService
 import io.github.leonfoliveira.judge.common.service.dto.input.announcement.CreateAnnouncementInputDTO
 import io.kotest.core.spec.style.FunSpec
@@ -44,9 +45,9 @@ class ContestAnnouncementControllerTest(
                     text = "This is a test announcement",
                 )
             val announcement = AnnouncementMockBuilder.build()
-            val authorization = AuthorizationMockBuilder.build()
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
-            every { createAnnouncementService.create(contestId, authorization.member.id, body) } returns announcement
+            val session = SessionMockBuilder.build()
+            SecurityContextHolder.getContext().authentication = JwtAuthentication(session)
+            every { createAnnouncementService.create(contestId, session.member.id, body) } returns announcement
 
             webMvc
                 .post(basePath, contestId) {

@@ -5,10 +5,10 @@ import io.github.leonfoliveira.judge.api.dto.response.submission.SubmissionFullR
 import io.github.leonfoliveira.judge.api.dto.response.submission.SubmissionPublicResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
-import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.api.util.RateLimit
+import io.github.leonfoliveira.judge.api.util.SessionUtil
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.service.dto.input.submission.CreateSubmissionInputDTO
@@ -79,7 +79,7 @@ class ContestSubmissionController(
         logger.info("[POST] /v1/contests/$contestId/submissions $body")
         contestAuthFilter.checkIfStarted(contestId)
         contestAuthFilter.checkIfMemberBelongsToContest(contestId)
-        val member = AuthorizationContextUtil.getMember()!!
+        val member = SessionUtil.getCurrent()!!.member
         val submission =
             createSubmissionService.create(
                 memberId = member.id,
@@ -180,7 +180,7 @@ class ContestSubmissionController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<List<SubmissionFullResponseDTO>> {
         logger.info("[GET] /v1/contests/$contestId/submissions/full/members/me")
-        val member = AuthorizationContextUtil.getMember()!!
+        val member = SessionUtil.getCurrent()!!.member
         val submissions = findSubmissionService.findAllByMember(member.id)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }

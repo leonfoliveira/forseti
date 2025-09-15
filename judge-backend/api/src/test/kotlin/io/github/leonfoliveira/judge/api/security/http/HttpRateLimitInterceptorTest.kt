@@ -7,6 +7,8 @@ import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.TooManyRequestsException
 import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -44,13 +46,8 @@ class HttpRateLimitInterceptorTest :
             val handler = mockk<HandlerMethod>(relaxed = true)
             SecurityContextHolder.getContext().authentication =
                 JwtAuthentication(
-                    AuthorizationMockBuilder.build(
-                        member =
-                            AuthorizationMember(
-                                id = UUID.randomUUID(),
-                                type = Member.Type.ROOT,
-                                name = "Root",
-                            ),
+                    SessionMockBuilder.build(
+                        member = MemberMockBuilder.build(type = Member.Type.ROOT),
                     ),
                 )
             sut.preHandle(request, response, handler) shouldBe true
@@ -82,13 +79,8 @@ class HttpRateLimitInterceptorTest :
             val memberId = UUID.randomUUID()
             SecurityContextHolder.getContext().authentication =
                 JwtAuthentication(
-                    AuthorizationMockBuilder.build(
-                        member =
-                            AuthorizationMember(
-                                id = memberId,
-                                type = Member.Type.CONTESTANT,
-                                name = "User",
-                            ),
+                    SessionMockBuilder.build(
+                        member = MemberMockBuilder.build(id = memberId, type = Member.Type.CONTESTANT),
                     ),
                 )
             every { rateLimitService.tryConsume(any(), any(), any(), any()) } returns true

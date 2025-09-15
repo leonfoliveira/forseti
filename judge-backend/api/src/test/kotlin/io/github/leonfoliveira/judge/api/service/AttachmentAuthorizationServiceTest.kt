@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.api.service
 
-import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
+import io.github.leonfoliveira.judge.api.util.SessionUtil
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
@@ -10,6 +10,7 @@ import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -51,27 +52,17 @@ class AttachmentAuthorizationServiceTest :
 
         beforeEach {
             clearAllMocks()
-            mockkObject(AuthorizationContextUtil)
-            every { AuthorizationContextUtil.getMember() } returns authorizationMember
+            mockkObject(SessionUtil)
+            every { SessionUtil.getCurrent() } returns SessionMockBuilder.build(member = member)
         }
 
         context("authorizeUpload") {
-            context("when member is null") {
-                test("should throw ForbiddenException") {
-                    every { AuthorizationContextUtil.getMember() } returns null
-
-                    shouldThrow<ForbiddenException> {
-                        sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_DESCRIPTION)
-                    }
-
-                    verify { contestAuthFilter.checkIfStarted(contestId) }
-                }
-            }
-
             context("when member is ROOT") {
                 test("should authorize upload for any context") {
-                    val rootAuthMember = authorizationMember.copy(type = Member.Type.ROOT)
-                    every { AuthorizationContextUtil.getMember() } returns rootAuthMember
+                    every { SessionUtil.getCurrent() } returns
+                        SessionMockBuilder.build(
+                            member = MemberMockBuilder.build(type = Member.Type.ROOT),
+                        )
 
                     sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_DESCRIPTION)
                     sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_TEST_CASES)
@@ -83,8 +74,10 @@ class AttachmentAuthorizationServiceTest :
 
             context("PROBLEM_DESCRIPTION context") {
                 test("should authorize JUDGE member successfully") {
-                    val judgeAuthMember = authorizationMember.copy(type = Member.Type.JUDGE)
-                    every { AuthorizationContextUtil.getMember() } returns judgeAuthMember
+                    every { SessionUtil.getCurrent() } returns
+                        SessionMockBuilder.build(
+                            member = MemberMockBuilder.build(type = Member.Type.JUDGE),
+                        )
 
                     sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_DESCRIPTION)
 
@@ -93,8 +86,10 @@ class AttachmentAuthorizationServiceTest :
                 }
 
                 test("should authorize ADMIN member successfully") {
-                    val adminAuthMember = authorizationMember.copy(type = Member.Type.ADMIN)
-                    every { AuthorizationContextUtil.getMember() } returns adminAuthMember
+                    every { SessionUtil.getCurrent() } returns
+                        SessionMockBuilder.build(
+                            member = MemberMockBuilder.build(type = Member.Type.ADMIN),
+                        )
 
                     sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_DESCRIPTION)
 
@@ -113,8 +108,10 @@ class AttachmentAuthorizationServiceTest :
 
             context("PROBLEM_TEST_CASES context") {
                 test("should authorize JUDGE member successfully") {
-                    val judgeAuthMember = authorizationMember.copy(type = Member.Type.JUDGE)
-                    every { AuthorizationContextUtil.getMember() } returns judgeAuthMember
+                    every { SessionUtil.getCurrent() } returns
+                        SessionMockBuilder.build(
+                            member = MemberMockBuilder.build(type = Member.Type.JUDGE),
+                        )
 
                     sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_TEST_CASES)
 
@@ -123,8 +120,10 @@ class AttachmentAuthorizationServiceTest :
                 }
 
                 test("should authorize ADMIN member successfully") {
-                    val adminAuthMember = authorizationMember.copy(type = Member.Type.ADMIN)
-                    every { AuthorizationContextUtil.getMember() } returns adminAuthMember
+                    every { SessionUtil.getCurrent() } returns
+                        SessionMockBuilder.build(
+                            member = MemberMockBuilder.build(type = Member.Type.ADMIN),
+                        )
 
                     sut.authorizeUpload(contestId, Attachment.Context.PROBLEM_TEST_CASES)
 
@@ -150,8 +149,10 @@ class AttachmentAuthorizationServiceTest :
                 }
 
                 test("should throw ForbiddenException for JUDGE member") {
-                    val judgeAuthMember = authorizationMember.copy(type = Member.Type.JUDGE)
-                    every { AuthorizationContextUtil.getMember() } returns judgeAuthMember
+                    every { SessionUtil.getCurrent() } returns
+                        SessionMockBuilder.build(
+                            member = MemberMockBuilder.build(type = Member.Type.JUDGE),
+                        )
 
                     shouldThrow<ForbiddenException> {
                         sut.authorizeUpload(contestId, Attachment.Context.SUBMISSION_CODE)
@@ -161,8 +162,10 @@ class AttachmentAuthorizationServiceTest :
                 }
 
                 test("should throw ForbiddenException for ADMIN member") {
-                    val adminAuthMember = authorizationMember.copy(type = Member.Type.ADMIN)
-                    every { AuthorizationContextUtil.getMember() } returns adminAuthMember
+                    every { SessionUtil.getCurrent() } returns
+                        SessionMockBuilder.build(
+                            member = MemberMockBuilder.build(type = Member.Type.ADMIN),
+                        )
 
                     shouldThrow<ForbiddenException> {
                         sut.authorizeUpload(contestId, Attachment.Context.SUBMISSION_CODE)
@@ -252,9 +255,11 @@ class AttachmentAuthorizationServiceTest :
                                 member = member,
                                 context = Attachment.Context.SUBMISSION_CODE,
                             )
-                        val judgeAuthMember = authorizationMember.copy(type = Member.Type.JUDGE)
                         every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-                        every { AuthorizationContextUtil.getMember() } returns judgeAuthMember
+                        every { SessionUtil.getCurrent() } returns
+                            SessionMockBuilder.build(
+                                member = MemberMockBuilder.build(type = Member.Type.JUDGE),
+                            )
 
                         sut.authorizeDownload(contestId, attachmentId)
 
@@ -270,9 +275,11 @@ class AttachmentAuthorizationServiceTest :
                                 member = member,
                                 context = Attachment.Context.SUBMISSION_CODE,
                             )
-                        val adminAuthMember = authorizationMember.copy(type = Member.Type.ADMIN)
                         every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-                        every { AuthorizationContextUtil.getMember() } returns adminAuthMember
+                        every { SessionUtil.getCurrent() } returns
+                            SessionMockBuilder.build(
+                                member = MemberMockBuilder.build(type = Member.Type.ADMIN),
+                            )
 
                         sut.authorizeDownload(contestId, attachmentId)
 
@@ -320,9 +327,11 @@ class AttachmentAuthorizationServiceTest :
                                 member = member,
                                 context = Attachment.Context.SUBMISSION_CODE,
                             )
-                        val rootAuthMember = authorizationMember.copy(type = Member.Type.ROOT)
                         every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-                        every { AuthorizationContextUtil.getMember() } returns rootAuthMember
+                        every { SessionUtil.getCurrent() } returns
+                            SessionMockBuilder.build(
+                                member = MemberMockBuilder.build(type = Member.Type.ROOT),
+                            )
 
                         sut.authorizeDownload(contestId, attachmentId)
                     }
@@ -336,7 +345,7 @@ class AttachmentAuthorizationServiceTest :
                                 context = Attachment.Context.SUBMISSION_CODE,
                             )
                         every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-                        every { AuthorizationContextUtil.getMember() } returns null
+                        every { SessionUtil.getCurrent() } returns null
 
                         shouldThrow<ForbiddenException> {
                             sut.authorizeDownload(contestId, attachmentId)

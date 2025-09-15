@@ -6,6 +6,7 @@ import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.api.service.AttachmentAuthorizationService
 import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
 import io.github.leonfoliveira.judge.common.service.dto.output.AttachmentDownloadOutputDTO
 import io.kotest.core.spec.style.FunSpec
@@ -42,12 +43,11 @@ class ContestAttachmentControllerTest(
             val contestId = UUID.randomUUID()
             val file = mockk<MultipartFile>(relaxed = true)
             val attachment = AttachmentMockBuilder.build()
-            val authorization = AuthorizationMockBuilder.build()
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
+            val session = SessionMockBuilder.build()
             every {
                 attachmentService.upload(
                     contestId = contestId,
-                    memberId = authorization.member.id,
+                    memberId = session.member.id,
                     filename = file.originalFilename,
                     contentType = file.contentType,
                     context = attachment.context,

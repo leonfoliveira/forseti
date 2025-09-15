@@ -7,6 +7,7 @@ import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ClarificationMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.service.clarification.CreateClarificationService
 import io.github.leonfoliveira.judge.common.service.clarification.DeleteClarificationService
 import io.github.leonfoliveira.judge.common.service.dto.input.clarification.CreateClarificationInputDTO
@@ -48,9 +49,9 @@ class ContestClarificationControllerTest(
                     text = "This is a test clarification",
                 )
             val clarification = ClarificationMockBuilder.build()
-            val authorization = AuthorizationMockBuilder.build()
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
-            every { createClarificationService.create(contestId, authorization.member.id, body) } returns clarification
+            val session = SessionMockBuilder.build()
+            SecurityContextHolder.getContext().authentication = JwtAuthentication(session)
+            every { createClarificationService.create(contestId, session.member.id, body) } returns clarification
 
             webMvc
                 .post(basePath, contestId) {

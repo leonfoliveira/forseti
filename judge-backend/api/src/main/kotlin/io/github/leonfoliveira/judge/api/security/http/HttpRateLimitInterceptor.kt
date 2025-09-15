@@ -2,8 +2,8 @@ package io.github.leonfoliveira.judge.api.security.http
 
 import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.api.service.RateLimitService
-import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.RateLimit
+import io.github.leonfoliveira.judge.api.util.SessionUtil
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.TooManyRequestsException
 import jakarta.servlet.http.HttpServletRequest
@@ -66,10 +66,10 @@ class HttpRateLimitInterceptor(
 
     private fun extractKey(request: HttpServletRequest): String {
         val ipAddress = getClientIp(request)
-        val userId = AuthorizationContextUtil.getMember()?.id
+        val member = SessionUtil.getCurrent()?.member
 
-        if (userId != null) {
-            return "${userId}_$ipAddress"
+        if (member != null) {
+            return "${member.id}_$ipAddress"
         }
         return ipAddress
     }

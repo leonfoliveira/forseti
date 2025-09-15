@@ -11,6 +11,8 @@ import io.github.leonfoliveira.judge.common.config.JacksonConfig
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
+import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
 import io.github.leonfoliveira.judge.common.service.dto.input.attachment.AttachmentInputDTO
 import io.github.leonfoliveira.judge.common.service.dto.input.submission.CreateSubmissionInputDTO
@@ -49,11 +51,11 @@ class ContestSubmissionControllerTest(
 ) : FunSpec({
         extensions(SpringExtension)
 
-        val member = AuthorizationMockBuilder.buildMember()
+        val member = MemberMockBuilder.build()
 
         beforeEach {
-            val authorization = AuthorizationMockBuilder.build(member = member)
-            SecurityContextHolder.getContext().authentication = JwtAuthentication(authorization)
+            val session = SessionMockBuilder.build(member = member)
+            SecurityContextHolder.getContext().authentication = JwtAuthentication(session)
         }
 
         val basePath = "/v1/contests/{contestId}/submissions"

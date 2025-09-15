@@ -11,14 +11,14 @@ class ContestAuthFilter(
     val findContestService: FindContestService,
 ) {
     fun checkIfMemberBelongsToContest(contestId: UUID) {
-        val member = AuthorizationContextUtil.getMember()
-        if (member?.type != Member.Type.ROOT && member?.contestId != contestId) {
+        val member = SessionUtil.getCurrent()?.member
+        if (member?.type != Member.Type.ROOT && member?.contest?.id != contestId) {
             throw ForbiddenException("You are not authorized to access this contest")
         }
     }
 
     fun checkIfStarted(contestId: UUID) {
-        val member = AuthorizationContextUtil.getMember()
+        val member = SessionUtil.getCurrent()?.member
         val contest = findContestService.findById(contestId)
         if (!setOf(Member.Type.ROOT, Member.Type.ADMIN).contains(member?.type) && !contest.hasStarted()) {
             throw ForbiddenException("You are not authorized to access this contest before it starts")

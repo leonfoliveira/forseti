@@ -1,10 +1,11 @@
 package io.github.leonfoliveira.judge.api.controller
 
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
-import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
+import io.github.leonfoliveira.judge.api.dto.response.session.SessionResponseDTO
+import io.github.leonfoliveira.judge.api.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.judge.api.util.RateLimit
+import io.github.leonfoliveira.judge.api.util.SessionUtil
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
-import io.github.leonfoliveira.judge.common.domain.model.Authorization
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -17,21 +18,21 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/v1/auth")
-class AuthorizationController {
+@RequestMapping("/v1/session")
+class SesssionController {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/me")
     @RateLimit
     @Operation(
-        summary = "Get current authorization",
-        description = "Returns the authorization of the current user.",
+        summary = "Get current session",
+        description = "Returns the session of the current user.",
     )
     @ApiResponses(
         value = [
             ApiResponse(
                 responseCode = "200",
-                description = "Authorization retrieved successfully",
+                description = "Session retrieved successfully",
             ),
             ApiResponse(
                 responseCode = "401",
@@ -45,12 +46,12 @@ class AuthorizationController {
             ),
         ],
     )
-    fun getAuthorization(): ResponseEntity<Authorization> {
-        logger.info("[GET] /v1/auth/me")
-        val authorization = AuthorizationContextUtil.get()
-        if (authorization == null) {
+    fun getSession(): ResponseEntity<SessionResponseDTO> {
+        logger.info("[GET] /v1/session/me")
+        val session = SessionUtil.getCurrent()
+        if (session == null) {
             throw UnauthorizedException()
         }
-        return ResponseEntity.ok(authorization)
+        return ResponseEntity.ok(session.toResponseDTO())
     }
 }

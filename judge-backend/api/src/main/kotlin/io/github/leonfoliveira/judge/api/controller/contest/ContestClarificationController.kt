@@ -3,10 +3,10 @@ package io.github.leonfoliveira.judge.api.controller.contest
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.clarification.ClarificationResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.clarification.toResponseDTO
-import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.api.util.RateLimit
+import io.github.leonfoliveira.judge.api.util.SessionUtil
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.service.clarification.CreateClarificationService
 import io.github.leonfoliveira.judge.common.service.clarification.DeleteClarificationService
@@ -73,7 +73,7 @@ class ContestClarificationController(
         logger.info("[POST] /v1/contests/$contestId/clarifications $body")
         contestAuthFilter.checkIfStarted(contestId)
         contestAuthFilter.checkIfMemberBelongsToContest(contestId)
-        val member = AuthorizationContextUtil.getMember()!!
+        val member = SessionUtil.getCurrent()!!.member
         val clarification = createClarificationService.create(contestId, member.id, body)
         return ResponseEntity.ok(clarification.toResponseDTO())
     }
