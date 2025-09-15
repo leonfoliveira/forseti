@@ -4,14 +4,17 @@ import io.github.leonfoliveira.judge.api.dto.response.member.MemberPublicRespons
 import io.github.leonfoliveira.judge.api.dto.response.member.toPublicResponseDTO
 import io.github.leonfoliveira.judge.common.domain.entity.Session
 import java.time.OffsetDateTime
+import java.util.UUID
 
 data class SessionResponseDTO(
+    val id: UUID,
     val member: MemberPublicResponseDTO,
     val expiresAt: OffsetDateTime,
 )
 
 fun Session.toResponseDTO() =
     SessionResponseDTO(
+        id = id,
         member = member.toPublicResponseDTO(),
         expiresAt = expiresAt,
     )
