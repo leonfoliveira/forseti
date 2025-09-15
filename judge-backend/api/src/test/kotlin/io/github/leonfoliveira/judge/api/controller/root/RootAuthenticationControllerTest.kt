@@ -4,7 +4,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.judge.api.service.SessionCookieService
-import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.service.authentication.AuthenticationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.RootAuthenticateInputDTO
@@ -38,7 +37,6 @@ class RootAuthenticationControllerTest(
             )
 
         test("authenticateRoot") {
-            val authorization = AuthorizationMockBuilder.build()
             val session = SessionMockBuilder.build()
             val token =
                 "session_id=${session.id}; Max-Age=3600; Expires=${session.expiresAt.toInstant()}; " +

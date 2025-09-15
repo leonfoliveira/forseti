@@ -2,7 +2,6 @@ package io.github.leonfoliveira.judge.api.security.websocket
 
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.domain.entity.Member
-import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
@@ -26,14 +25,6 @@ class WebSocketAuthExtractionInterceptorTest :
         }
 
         test("should extract JWT authentication from message headers and set in security context") {
-            // Given
-            val authorizationMember =
-                AuthorizationMember(
-                    id = UUID.randomUUID(),
-                    contestId = UUID.randomUUID(),
-                    name = "Member Name",
-                    type = Member.Type.CONTESTANT,
-                )
             val session = SessionMockBuilder.build()
             val sessionAuthentication = SessionAuthentication(session)
 

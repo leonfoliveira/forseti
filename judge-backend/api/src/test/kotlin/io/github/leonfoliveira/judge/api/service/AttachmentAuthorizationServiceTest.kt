@@ -5,7 +5,6 @@ import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
@@ -41,14 +40,6 @@ class AttachmentAuthorizationServiceTest :
         val contest = ContestMockBuilder.build(id = contestId)
         val member = MemberMockBuilder.build(id = memberId, type = Member.Type.CONTESTANT)
         val otherMember = MemberMockBuilder.build(id = otherMemberId, type = Member.Type.CONTESTANT)
-
-        val authorizationMember =
-            AuthorizationMember(
-                id = memberId,
-                contestId = contestId,
-                type = Member.Type.CONTESTANT,
-                name = "Test User",
-            )
 
         beforeEach {
             clearAllMocks()

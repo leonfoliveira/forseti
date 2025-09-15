@@ -1,9 +1,6 @@
 package io.github.leonfoliveira.judge.common.domain.entity.aud
 
 import io.github.leonfoliveira.judge.common.domain.entity.Session
-import io.github.leonfoliveira.judge.common.domain.model.Authorization
-import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
-import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

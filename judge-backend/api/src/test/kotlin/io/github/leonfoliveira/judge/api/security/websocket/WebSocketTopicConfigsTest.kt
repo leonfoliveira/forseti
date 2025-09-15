@@ -3,7 +3,6 @@ package io.github.leonfoliveira.judge.api.security.websocket
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
-import io.github.leonfoliveira.judge.common.domain.model.AuthorizationMember
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder

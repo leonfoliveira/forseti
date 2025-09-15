@@ -2,11 +2,9 @@ package io.github.leonfoliveira.judge.common.service.authentication
 
 import io.github.leonfoliveira.judge.common.domain.exception.InternalServerException
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
-import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.port.HashAdapter
-import io.github.leonfoliveira.judge.common.port.JwtAdapter
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.github.leonfoliveira.judge.common.repository.SessionRepository
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.ContestAuthenticateInputDTO
@@ -80,7 +78,7 @@ class AuthorizationServiceTest :
                 }.message shouldBe "Invalid password"
             }
 
-            test("should return Authorization when root authentication is successful") {
+            test("should return Session when root authentication is successful") {
                 val inputDTO = RootAuthenticateInputDTO("testPassword")
                 val member = MemberMockBuilder.build(login = "root")
                 every { memberRepository.findByLogin("root") } returns member
@@ -116,7 +114,7 @@ class AuthorizationServiceTest :
                 }.message shouldBe "Invalid login or password"
             }
 
-            test("should return Authorization when authentication is successful") {
+            test("should return Session when authentication is successful") {
                 val member = MemberMockBuilder.build(login = inputDTO.login)
                 every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns member
                 every { hashAdapter.verify(inputDTO.password, member.password) } returns true
