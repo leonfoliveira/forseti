@@ -1,4 +1,5 @@
 import { render } from "@testing-library/react";
+import { notFound } from "next/navigation";
 import React from "react";
 
 import ContestLayout from "@/app/[slug]/layout";
@@ -30,8 +31,6 @@ jest.mock("@/store/store-provider", () => ({
   ),
 }));
 
-const mockNotFound = require("next/navigation").notFound;
-
 describe("ContestLayout", () => {
   const TestChildren = () => (
     <div data-testid="test-children">Test Content</div>
@@ -46,6 +45,17 @@ describe("ContestLayout", () => {
     (contestService.findContestMetadataBySlug as jest.Mock).mockResolvedValue(
       mockContestMetadata,
     );
+  });
+
+  it("should call notFound for invalid slug format", async () => {
+    const invalidParams = Promise.resolve({ slug: "invalid/slug" });
+
+    await ContestLayout({
+      params: invalidParams,
+      children: <TestChildren />,
+    });
+
+    expect(notFound).toHaveBeenCalled();
   });
 
   it("should render layout with header, content, and footer when data loads successfully", async () => {
@@ -119,7 +129,7 @@ describe("ContestLayout", () => {
   });
 
   it("should call notFound when NotFoundException is thrown", async () => {
-    contestService.findContestMetadataBySlug.mockRejectedValue(
+    (contestService.findContestMetadataBySlug as jest.Mock).mockRejectedValue(
       new NotFoundException("Contest not found"),
     );
 
@@ -128,12 +138,14 @@ describe("ContestLayout", () => {
       children: <TestChildren />,
     });
 
-    expect(mockNotFound).toHaveBeenCalled();
+    expect(notFound).toHaveBeenCalled();
   });
 
   it("should rethrow non-NotFoundException errors", async () => {
     const genericError = new Error("Generic error");
-    contestService.findContestMetadataBySlug.mockRejectedValue(genericError);
+    (contestService.findContestMetadataBySlug as jest.Mock).mockRejectedValue(
+      genericError,
+    );
 
     await expect(
       ContestLayout({
@@ -142,7 +154,7 @@ describe("ContestLayout", () => {
       }),
     ).rejects.toThrow("Generic error");
 
-    expect(mockNotFound).not.toHaveBeenCalled();
+    expect(notFound).not.toHaveBeenCalled();
   });
 
   it("should be an async function (server component)", () => {

@@ -50,7 +50,7 @@ class ContestAuthenticationController(
             ),
         ],
     )
-    @Transactional(readOnly = true)
+    @Transactional
     fun authenticateToContest(
         @PathVariable contestId: UUID,
         @RequestBody body: ContestAuthenticateInputDTO,

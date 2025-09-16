@@ -44,7 +44,7 @@ class HttpConfig(
             .authorizeHttpRequests { it.anyRequest().permitAll() }
             .csrf { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .addFilterAfter(httpRequestContextFilter, OncePerRequestFilter::class.java)
+            .addFilterBefore(httpRequestContextFilter, BasicAuthenticationFilter::class.java)
             .addFilterAfter(httpAuthExtractionFilter, BasicAuthenticationFilter::class.java)
             .build()
 

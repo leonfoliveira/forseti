@@ -53,7 +53,7 @@ class RootAuthenticationController(
             ),
         ],
     )
-    @Transactional(readOnly = true)
+    @Transactional
     fun authenticate(
         @RequestBody body: RootAuthenticateInputDTO,
     ): ResponseEntity<SessionResponseDTO> {

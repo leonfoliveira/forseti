@@ -18,6 +18,10 @@ export default async function ContestLayout({
 }) {
   const { slug } = await params;
 
+  if (!/^[a-zA-Z0-9-]+$/.test(slug)) {
+    notFound();
+  }
+
   try {
     const [session, contestMetadata] = await Promise.all([
       sessionService.getSession(),
