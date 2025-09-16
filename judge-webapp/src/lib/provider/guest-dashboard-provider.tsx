@@ -10,6 +10,7 @@ import {
   submissionListener,
   submissionService,
 } from "@/config/composition";
+import { ListenerClient } from "@/core/domain/model/ListenerClient";
 import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/repository/dto/response/leaderboard/LeaderboardResponseDTO";
@@ -39,10 +40,10 @@ export function GuestDashboardProvider({
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const listenerClientRef = React.useRef<ListenerClient | null>(null);
 
   useEffect(() => {
     state.start();
-    const listenerClient = listenerClientFactory.create();
 
     async function fetch() {
       try {
@@ -52,30 +53,31 @@ export function GuestDashboardProvider({
           submissionService.findAllContestSubmissions(contestMetadata.id),
         ]);
 
-        await listenerClient.connect();
+        listenerClientRef.current = listenerClientFactory.create();
+        await listenerClientRef.current.connect();
         await Promise.all([
           leaderboardListener.subscribeForLeaderboard(
-            listenerClient,
+            listenerClientRef.current,
             contestMetadata.id,
             receiveLeaderboard,
           ),
           submissionListener.subscribeForContest(
-            listenerClient,
+            listenerClientRef.current,
             contestMetadata.id,
             receiveSubmission,
           ),
           announcementListener.subscribeForContest(
-            listenerClient,
+            listenerClientRef.current,
             contestMetadata.id,
             receiveAnnouncement,
           ),
           clarificationListener.subscribeForContest(
-            listenerClient,
+            listenerClientRef.current,
             contestMetadata.id,
             receiveClarification,
           ),
           clarificationListener.subscribeForContestDeleted(
-            listenerClient,
+            listenerClientRef.current,
             contestMetadata.id,
             deleteClarification,
           ),
@@ -97,7 +99,9 @@ export function GuestDashboardProvider({
     fetch();
 
     return () => {
-      listenerClient.disconnect();
+      if (listenerClientRef.current) {
+        listenerClientRef.current.disconnect();
+      }
     };
   }, [session, contestMetadata.id]);
 
