@@ -88,8 +88,10 @@ class ApiAdapter:
 
     def _get_cached_session_id(self) -> str:
         try:
-            return keyring.get_password(self.SESSION_ID_COOKIE, self.SESSION_ID_KEYRING_KEY)
+            return keyring.get_password(self.SERVICE_NAME, self.SESSION_ID_KEYRING_KEY)
         except keyring.errors.NoKeyringError:
+            click.echo(
+                "Warning: No keyring backend available, session ID will not be cached.")
             return None
 
     def _set_cached_session_id(self, session_id: str) -> None:

@@ -9,7 +9,7 @@ import { ServerException } from "@/core/domain/exception/ServerException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 
 export class AxiosClient {
-  static readonly COOKIES_TO_FORWARD = new Set(["access_token"]);
+  static readonly COOKIES_TO_FORWARD = new Set(["session_id"]);
   static readonly HEADERS_TO_FORWARD = new Set([
     "x-forwarded-for",
     "user-agent",

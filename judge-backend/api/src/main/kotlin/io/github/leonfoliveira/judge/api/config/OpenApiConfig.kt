@@ -21,11 +21,11 @@ class OpenApiConfig {
             .components(
                 Components()
                     .addSecuritySchemes(
-                        "access_token",
+                        "session_id",
                         SecurityScheme()
                             .type(SecurityScheme.Type.APIKEY)
                             .`in`(SecurityScheme.In.COOKIE)
-                            .name("access_token"),
+                            .name("session_id"),
                     ),
             )
     }
