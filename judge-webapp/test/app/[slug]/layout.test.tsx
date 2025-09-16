@@ -2,7 +2,7 @@ import { render } from "@testing-library/react";
 import React from "react";
 
 import ContestLayout from "@/app/[slug]/layout";
-import { authorizationService, contestService } from "@/config/composition";
+import { sessionService, contestService } from "@/config/composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 
 jest.mock("@/lib/component/footer", () => ({
@@ -37,14 +37,12 @@ describe("ContestLayout", () => {
     <div data-testid="test-children">Test Content</div>
   );
 
-  const mockAuthorization = { id: "auth-1", userId: "user-1" };
+  const mockSession = { id: "session-1" };
   const mockContestMetadata = { id: "contest-1", slug: "test-contest" };
   const mockParams = Promise.resolve({ slug: "test-contest" });
   beforeEach(() => {
     jest.clearAllMocks();
-    (authorizationService.getAuthorization as jest.Mock).mockResolvedValue(
-      mockAuthorization,
-    );
+    (sessionService.getSession as jest.Mock).mockResolvedValue(mockSession);
     (contestService.findContestMetadataBySlug as jest.Mock).mockResolvedValue(
       mockContestMetadata,
     );
@@ -78,18 +76,18 @@ describe("ContestLayout", () => {
     );
 
     expect(preloadedState).toEqual({
-      authorization: mockAuthorization,
+      session: mockSession,
       contestMetadata: mockContestMetadata,
     });
   });
 
-  it("should call authorizationService", async () => {
+  it("should call sessionService", async () => {
     await ContestLayout({
       params: mockParams,
       children: <TestChildren />,
     });
 
-    expect(authorizationService.getAuthorization).toHaveBeenCalled();
+    expect(sessionService.getSession).toHaveBeenCalled();
   });
 
   it("should call contestService with slug from params", async () => {
@@ -157,17 +155,15 @@ describe("ContestLayout", () => {
     expect(layoutModule.dynamic).toBe("force-dynamic");
   });
 
-  it("should handle authentication service errors gracefully", async () => {
-    const authError = new Error("Auth service error");
-    (authorizationService.getAuthorization as jest.Mock).mockRejectedValue(
-      authError,
-    );
+  it("should handle session service errors gracefully", async () => {
+    const authError = new Error("Session service error");
+    (sessionService.getSession as jest.Mock).mockRejectedValue(authError);
 
     await expect(
       ContestLayout({
         params: mockParams,
         children: <TestChildren />,
       }),
-    ).rejects.toThrow("Auth service error");
+    ).rejects.toThrow("Session service error");
   });
 });

@@ -1,9 +1,9 @@
-import { Authorization } from "@/core/domain/model/Authorization";
 import { AuthenticateRequestDTO } from "@/core/repository/dto/request/AuthenticateRequestDTO";
+import { SessionResponseDTO } from "@/core/repository/dto/response/session/SessionResponseDTO";
 
 export interface AuthenticationRepository {
   authenticate(
     contestId: string,
     requestDTO: AuthenticateRequestDTO,
-  ): Promise<Authorization>;
+  ): Promise<SessionResponseDTO>;
 }

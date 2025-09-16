@@ -1,4 +1,4 @@
-import { authorizationService } from "@/config/composition";
+import { sessionService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useAppSelector } from "@/store/store";
@@ -7,7 +7,7 @@ export function useErrorHandler() {
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
 
   async function handleSignOut() {
-    await authorizationService.cleanAuthorization();
+    await sessionService.deleteSession();
     window.location.href = routes.CONTEST_SIGN_IN(contestMetadata.slug);
   }
 

@@ -34,7 +34,7 @@ export function GuestDashboardProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const authorization = useAppSelector((state) => state.authorization);
+  const session = useAppSelector((state) => state.session);
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
@@ -99,7 +99,7 @@ export function GuestDashboardProvider({
     return () => {
       listenerClient.disconnect();
     };
-  }, [authorization, contestMetadata.id]);
+  }, [session, contestMetadata.id]);
 
   function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
     dispatch(guestDashboardSlice.actions.setLeaderboard(leaderboard));

@@ -3,7 +3,7 @@
 import { ChevronDownIcon, MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import { useRouter, usePathname } from "next/navigation";
 
-import { authorizationService } from "@/config/composition";
+import { sessionService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { globalMessages } from "@/i18n/global";
@@ -39,18 +39,18 @@ const messages = defineMessages({
 
 export function Header() {
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
-  const authorization = useAppSelector((state) => state.authorization);
+  const session = useAppSelector((state) => state.session);
   const contestStatus = useContestStatusWatcher();
   const pathname = usePathname();
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
 
   async function handleSignOut() {
-    await authorizationService.cleanAuthorization();
+    await sessionService.deleteSession();
     window.location.href = routes.CONTEST_SIGN_IN(contestMetadata.slug);
   }
 
-  const isAuthorized = !!authorization?.member;
+  const isAuthorized = !!session?.member;
 
   return (
     <Navbar
@@ -95,7 +95,7 @@ export function Header() {
           <Dropdown>
             <DropdownTrigger data-testid="user-dropdown-trigger">
               <Button variant="light">
-                {authorization.member.name}
+                {session.member.name}
                 <ChevronDownIcon className="h-3" />
               </Button>
             </DropdownTrigger>
@@ -107,7 +107,7 @@ export function Header() {
               >
                 <p className="font-semibold">
                   <FormattedMessage
-                    {...globalMessages.memberType[authorization.member.type]}
+                    {...globalMessages.memberType[session.member.type]}
                   />
                 </p>
               </DropdownItem>

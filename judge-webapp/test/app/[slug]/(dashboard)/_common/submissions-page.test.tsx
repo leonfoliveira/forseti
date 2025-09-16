@@ -6,9 +6,9 @@ import { attachmentService, submissionService } from "@/config/composition";
 import { Language } from "@/core/domain/enumerate/Language";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { useToast } from "@/lib/util/toast-hook";
-import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemFullResponseDTO } from "@/test/mock/response/problem/MockProblemFullResponseDTO";
+import { MockSession } from "@/test/mock/response/session/MockSession";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -30,7 +30,7 @@ describe("SubmissionsPage", () => {
         canCreate
       />,
       {
-        authorization: MockAuthorization(),
+        session: MockSession(),
         contestMetadata,
       },
     );
@@ -70,7 +70,7 @@ describe("SubmissionsPage", () => {
         canEdit
       />,
       {
-        authorization: MockAuthorization(),
+        session: MockSession(),
         contestMetadata,
       },
     );
@@ -94,7 +94,7 @@ describe("SubmissionsPage", () => {
         canCreate
       />,
       {
-        authorization: MockAuthorization(),
+        session: MockSession(),
         contestMetadata,
       },
     );
@@ -139,7 +139,7 @@ describe("SubmissionsPage", () => {
         canCreate
       />,
       {
-        authorization: MockAuthorization(),
+        session: MockSession(),
         contestMetadata,
       },
     );
@@ -181,7 +181,7 @@ describe("SubmissionsPage", () => {
         canEdit
       />,
       {
-        authorization: MockAuthorization(),
+        session: MockSession(),
         contestMetadata,
       },
     );
@@ -206,7 +206,7 @@ describe("SubmissionsPage", () => {
         canEdit
       />,
       {
-        authorization: MockAuthorization(),
+        session: MockSession(),
         contestMetadata,
       },
     );
@@ -243,7 +243,7 @@ describe("SubmissionsPage", () => {
         canEdit
       />,
       {
-        authorization: MockAuthorization(),
+        session: MockSession(),
         contestMetadata,
       },
     );
@@ -277,7 +277,7 @@ describe("SubmissionsPage", () => {
         canEdit
       />,
       {
-        authorization: MockAuthorization(),
+        session: MockSession(),
         contestMetadata,
       },
     );
@@ -318,7 +318,7 @@ describe("SubmissionsPage", () => {
         canEdit
       />,
       {
-        authorization: MockAuthorization(),
+        session: MockSession(),
         contestMetadata,
       },
     );

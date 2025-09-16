@@ -6,10 +6,7 @@ import { useForm } from "react-hook-form";
 
 import { SignInFormType } from "@/app/[slug]/sign-in/_form/sign-in-form";
 import { signInFormSchema } from "@/app/[slug]/sign-in/_form/sign-in-form-schema";
-import {
-  authenticationService,
-  authorizationService,
-} from "@/config/composition";
+import { authenticationService, sessionService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { defineMessages } from "@/i18n/message";
@@ -112,7 +109,7 @@ export default function SignInPage() {
   }
 
   async function enterAsGuest() {
-    await authorizationService.cleanAuthorization();
+    await sessionService.deleteSession();
     window.location.href = routes.CONTEST(contestMetadata.slug);
   }
 

@@ -8,9 +8,9 @@ import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { useAppSelector } from "@/store/store";
 
 export default function DashboardProblemsPage() {
-  const authorization = useAppSelector((state) => state.authorization);
+  const session = useAppSelector((state) => state.session);
 
-  switch (authorization?.member.type) {
+  switch (session?.member.type) {
     case MemberType.ROOT:
     case MemberType.ADMIN:
       return <AdminProblemsPage />;

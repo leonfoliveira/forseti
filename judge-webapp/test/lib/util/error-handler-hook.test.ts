@@ -1,4 +1,4 @@
-import { authorizationService } from "@/config/composition";
+import { sessionService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useErrorHandler } from "@/lib/util/error-handler-hook";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
@@ -26,7 +26,7 @@ describe("useErrorHandler", () => {
     result.current.handle(error);
 
     expect(console.error).toHaveBeenCalledWith(error);
-    expect(authorizationService.cleanAuthorization).toHaveBeenCalled();
+    expect(sessionService.deleteSession).toHaveBeenCalled();
   });
 
   it("should handle generic Error by logging it", async () => {

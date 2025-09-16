@@ -46,7 +46,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const authorization = useAppSelector((state) => state.authorization);
+  const session = useAppSelector((state) => state.session);
   const slug = useAppSelector((state) => state.contestMetadata.slug);
   const pathname = usePathname();
   const router = useRouter();
@@ -75,8 +75,8 @@ export default function DashboardLayout({
   ];
 
   if (
-    authorization &&
-    [MemberType.ROOT, MemberType.ADMIN].includes(authorization.member.type)
+    session &&
+    [MemberType.ROOT, MemberType.ADMIN].includes(session.member.type)
   ) {
     tabs.push({
       title: messages.tabSettings,

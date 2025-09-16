@@ -58,7 +58,7 @@ type Props = {
  * A generic leaderboard page component for displaying contest results.
  */
 export function LeaderboardPage({ problems, leaderboard }: Props) {
-  const authorization = useAppSelector((state) => state.authorization);
+  const session = useAppSelector((state) => state.session);
 
   function getMedal(index: number) {
     if (index >= 3) {
@@ -111,7 +111,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
               key={member.id}
               className={cls(
                 index % 2 == 1 && "bg-content2",
-                member.id === authorization?.member.id && "bg-primary-50",
+                member.id === session?.member.id && "bg-primary-50",
               )}
               data-testid="member"
             >

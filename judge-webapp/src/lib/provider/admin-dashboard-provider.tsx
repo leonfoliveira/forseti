@@ -43,7 +43,7 @@ export function AdminDashboardProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const authorization = useAppSelector((state) => state.authorization);
+  const session = useAppSelector((state) => state.session);
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
@@ -108,7 +108,7 @@ export function AdminDashboardProvider({
     return () => {
       listenerClient.disconnect();
     };
-  }, [authorization, contestMetadata.id]);
+  }, [session, contestMetadata.id]);
 
   function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
     dispatch(adminDashboardSlice.actions.setLeaderboard(leaderboard));
@@ -125,7 +125,7 @@ export function AdminDashboardProvider({
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
     dispatch(adminDashboardSlice.actions.mergeAnnouncement(announcement));
 
-    if (announcement.member.id !== authorization?.member.id) {
+    if (announcement.member.id !== session?.member.id) {
       toast.warning({
         ...messages.announcement,
         values: { text: announcement.text },

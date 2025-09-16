@@ -4,8 +4,9 @@ import { useRouter } from "next/navigation";
 import DashboardLayout from "@/app/[slug]/(dashboard)/layout";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockMemberPublicResponseDTO } from "@/test/mock/response/member/MockMemberPublicResponseDTO";
+import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/lib/provider/dashboard-provider", () => ({
@@ -41,8 +42,8 @@ describe("DashboardLayout", () => {
         <span data-testid="child" />
       </DashboardLayout>,
       {
-        authorization: MockAuthorization({
-          member: { ...MockAuthorization().member, type: MemberType.ADMIN },
+        session: MockSession({
+          member: { ...MockMemberPublicResponseDTO(), type: MemberType.ADMIN },
         }),
         contestMetadata: MockContestMetadataResponseDTO(),
       },

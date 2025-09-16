@@ -204,7 +204,7 @@ export function SubmissionsPage({
   canCreate,
   canEdit,
 }: Props) {
-  const authorization = useAppSelector((state) => state.authorization);
+  const session = useAppSelector((state) => state.session);
   const contestId = useAppSelector((state) => state.contestMetadata.id);
   const createState = useLoadableState();
   const resubmitState = useLoadableState();
@@ -391,8 +391,7 @@ export function SubmissionsPage({
               key={submission.id}
               className={cls(
                 index % 2 == 1 && "bg-content2",
-                authorization?.member.id === submission.member.id &&
-                  "bg-primary-50",
+                session?.member.id === submission.member.id && "bg-primary-50",
                 submission.status === SubmissionStatus.FAILED && "bg-danger-50",
               )}
               data-testid="submission"

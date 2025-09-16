@@ -46,7 +46,7 @@ export function ContestantDashboardProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const authorization = useAppSelector((state) => state.authorization);
+  const session = useAppSelector((state) => state.session);
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
@@ -81,7 +81,7 @@ export function ContestantDashboardProvider({
           submissionListener.subscribeForMemberFull(
             listenerClient,
             contestMetadata.id,
-            authorization!.member.id,
+            session!.member.id,
             receiveMemberSubmission,
           ),
           announcementListener.subscribeForContest(
@@ -97,7 +97,7 @@ export function ContestantDashboardProvider({
           clarificationListener.subscribeForMemberChildren(
             listenerClient,
             contestMetadata.id,
-            authorization!.member.id,
+            session!.member.id,
             receiveClarificationAnswer,
           ),
           clarificationListener.subscribeForContestDeleted(
@@ -126,7 +126,7 @@ export function ContestantDashboardProvider({
     return () => {
       listenerClient.disconnect();
     };
-  }, [authorization, contestMetadata.id]);
+  }, [session, contestMetadata.id]);
 
   function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
     dispatch(contestantDashboardSlice.actions.setLeaderboard(leaderboard));

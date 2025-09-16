@@ -11,10 +11,10 @@ import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
 import { useAppSelector } from "@/store/store";
 
 export function DashboardProvider({ children }: { children: React.ReactNode }) {
-  const authorization = useAppSelector((state) => state.authorization);
+  const session = useAppSelector((state) => state.session);
   const contestStatus = useContestStatusWatcher();
 
-  switch (authorization?.member?.type) {
+  switch (session?.member?.type) {
     case MemberType.ROOT:
     case MemberType.ADMIN:
       return <AdminDashboardProvider>{children}</AdminDashboardProvider>;

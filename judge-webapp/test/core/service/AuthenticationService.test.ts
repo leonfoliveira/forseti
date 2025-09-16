@@ -2,8 +2,8 @@ import { mock } from "jest-mock-extended";
 
 import { AuthenticationRepository } from "@/core/repository/AuthenticationRepository";
 import { AuthenticationService } from "@/core/service/AuthenticationService";
-import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
 import { MockAuthenticateRequestDTO } from "@/test/mock/request/MockAuthenticateRequestDTO";
+import { MockSession } from "@/test/mock/response/session/MockSession";
 
 describe("AuthenticationService", () => {
   const authenticationRepository = mock<AuthenticationRepository>();
@@ -14,8 +14,8 @@ describe("AuthenticationService", () => {
     it("should call authenticationRepository.authenticate with correct parameters", async () => {
       const contestId = "contest123";
       const requestDTO = MockAuthenticateRequestDTO();
-      const authorization = MockAuthorization();
-      authenticationRepository.authenticate.mockResolvedValue(authorization);
+      const session = MockSession();
+      authenticationRepository.authenticate.mockResolvedValue(session);
 
       const result = await sut.authenticate(contestId, requestDTO);
 
@@ -23,7 +23,7 @@ describe("AuthenticationService", () => {
         contestId,
         requestDTO,
       );
-      expect(result).toEqual(authorization);
+      expect(result).toEqual(session);
     });
   });
 });
