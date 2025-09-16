@@ -315,6 +315,14 @@ services:
         delay: 5s
     environment:
       SERVICES: s3,sqs
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "awslocal sqs get-queue-url --queue-name submission-queue"
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
     image: gresau/localstack-persist:4.4.0
     networks:
       judge-network:
