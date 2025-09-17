@@ -40,7 +40,7 @@ describe("DashboardAnnouncementsPage", () => {
     "should render correct page for member type",
     async (memberType, expectedTestId) => {
       await renderWithProviders(<DashboardAnnouncementsPage />, {
-        authorization: { member: { type: memberType } },
+        session: { member: { type: memberType } },
       } as any);
 
       expect(screen.getByTestId(expectedTestId)).toBeInTheDocument();

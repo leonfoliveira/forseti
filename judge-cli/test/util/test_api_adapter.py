@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 import jwt
 import time
 
@@ -29,34 +29,21 @@ class TestApiAdapter:
     def sut(self):
         yield ApiAdapter()
 
-    def test_authenticate_with_stored_token_not_expired(self, sut, keyring):
-        access_token = self._setup_valid_token(keyring)
+    def test_authenticate_with_stored_session_not_expired(self, sut, keyring, requests):
+        session_id = self._setup_valid_session(keyring, requests)
 
-        assert sut._authenticate() == access_token
+        assert sut._authenticate() == session_id
 
-    def test_authenticate_with_stored_token_expired(self, sut, keyring, requests, input_adapter):
-        access_token = jwt.encode(
-            {"exp": time.time() - 3600}, "secret", algorithm="HS256")
-        keyring.get_password.return_value = access_token
-
-        input_adapter.password.return_value = "password"
-        response = requests.Response()
-        response.status_code = 200
-        response.cookies = {"access_token": "new_token"}
-        requests.post.return_value = response
-
-        assert sut._authenticate() == "new_token"
-
-    def test_authenticate_without_stored_token(self, sut, keyring, requests, input_adapter):
+    def test_authenticate_without_stored_session(self, sut, keyring, requests, input_adapter):
         keyring.get_password.return_value = None
 
         input_adapter.password.return_value = "password"
         response = requests.Response()
         response.status_code = 200
-        response.cookies = {"access_token": "new_token"}
+        response.cookies = {"session_id": "123"}
         requests.post.return_value = response
 
-        assert sut._authenticate() == "new_token"
+        assert sut._authenticate() == "123"
 
     def test_authenticate_with_failed_request(self, sut, keyring, requests, input_adapter):
         keyring.get_password.return_value = None
@@ -72,26 +59,32 @@ class TestApiAdapter:
         assert "Unauthorized" in str(ex.value)
 
     def test_get_successful(self, sut, keyring, requests):
-        access_token = self._setup_valid_token(keyring)
+        session_id = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 200
         response.json.return_value = {"key": "value"}
-        requests.get.return_value = response
+        requests.get.side_effect = [
+            MagicMock(status_code=200),
+            response
+        ]
 
         result = sut.get("/test-path")
 
         requests.get.assert_called_with(
             f"{sut.api_url}/test-path",
-            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
+            cookies={sut.SESSION_ID_COOKIE: session_id},
         )
         assert result == {"key": "value"}
 
     def test_get_failed(self, sut, keyring, requests):
-        access_token = self._setup_valid_token(keyring)
+        session_id = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 404
         response.text = "Not Found"
-        requests.get.return_value = response
+        requests.get.side_effect = [
+            MagicMock(status_code=200),
+            response
+        ]
 
         with pytest.raises(Exception) as ex:
             sut.get("/test-path")
@@ -99,11 +92,11 @@ class TestApiAdapter:
 
         requests.get.assert_called_with(
             f"{sut.api_url}/test-path",
-            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
+            cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
     def test_post_successful(self, sut, keyring, requests):
-        access_token = self._setup_valid_token(keyring)
+        session_id = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 200
         response.json.return_value = {"key": "value"}
@@ -114,12 +107,12 @@ class TestApiAdapter:
         requests.post.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
-            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
+            cookies={sut.SESSION_ID_COOKIE: session_id},
         )
         assert result == {"key": "value"}
 
     def test_post_failed(self, sut, keyring, requests):
-        access_token = self._setup_valid_token(keyring)
+        session_id = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 400
         response.text = "Bad Request"
@@ -132,11 +125,11 @@ class TestApiAdapter:
         requests.post.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
-            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
+            cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
     def test_put_successful(self, sut, keyring, requests):
-        access_token = self._setup_valid_token(keyring)
+        session_id = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 200
         response.json.return_value = {"key": "value"}
@@ -147,12 +140,12 @@ class TestApiAdapter:
         requests.put.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
-            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
+            cookies={sut.SESSION_ID_COOKIE: session_id},
         )
         assert result == {"key": "value"}
 
     def test_put_failed(self, sut, keyring, requests):
-        access_token = self._setup_valid_token(keyring)
+        session_id = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 403
         response.text = "Forbidden"
@@ -165,11 +158,11 @@ class TestApiAdapter:
         requests.put.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
-            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
+            cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
     def test_delete_successful(self, sut, keyring, requests):
-        access_token = self._setup_valid_token(keyring)
+        session_id = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 204
         requests.delete.return_value = response
@@ -178,11 +171,11 @@ class TestApiAdapter:
 
         requests.delete.assert_called_with(
             f"{sut.api_url}/test-path",
-            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
+            cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
     def test_delete_failed(self, sut, keyring, requests):
-        access_token = self._setup_valid_token(keyring)
+        session_id = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 500
         response.text = "Server Error"
@@ -194,26 +187,26 @@ class TestApiAdapter:
 
         requests.delete.assert_called_with(
             f"{sut.api_url}/test-path",
-            cookies={sut.ACCESS_TOKEN_COOKIE_NAME: access_token},
+            cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
-    def test_get_cached_token_with_keyring_error(self, sut, keyring):
+    def test_get_cached_session_id_with_keyring_error(self, sut, keyring):
         keyring.errors.NoKeyringError = Exception
         keyring.get_password.side_effect = keyring.errors.NoKeyringError
 
-        result = sut._get_cached_token()
+        result = sut._get_cached_session_id()
 
         assert result is None
 
-    def test_set_cached_token_with_keyring_error(self, sut, keyring):
+    def test_set_cached_session_id_with_keyring_error(self, sut, keyring):
         keyring.errors.NoKeyringError = Exception
         keyring.set_password.side_effect = keyring.errors.NoKeyringError
 
         # Should not raise an exception
-        sut._set_cached_token("test_token")
+        sut._set_cached_session_id("test_session")
 
         keyring.set_password.assert_called_once_with(
-            sut.SERVICE_NAME, sut.TOKEN_KEYRING_KEY, "test_token"
+            sut.SERVICE_NAME, sut.SESSION_ID_KEYRING_KEY, "test_session"
         )
 
     def test_api_adapter_with_custom_url(self):
@@ -227,8 +220,8 @@ class TestApiAdapter:
             adapter = ApiAdapter()
             assert adapter.api_url == "http://localhost:8080"
 
-    def _setup_valid_token(self, keyring):
-        access_token = jwt.encode(
-            {"exp": time.time() + 3600}, "secret", algorithm="HS256")
-        keyring.get_password.return_value = access_token
-        return access_token
+    def _setup_valid_session(self, keyring, requests):
+        session_id = "123"
+        keyring.get_password.return_value = session_id
+        requests.get.return_value = MagicMock(status_code=200)
+        return session_id

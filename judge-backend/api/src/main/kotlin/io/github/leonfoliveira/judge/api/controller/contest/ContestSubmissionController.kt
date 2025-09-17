@@ -5,7 +5,6 @@ import io.github.leonfoliveira.judge.api.dto.response.submission.SubmissionFullR
 import io.github.leonfoliveira.judge.api.dto.response.submission.SubmissionPublicResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.submission.toFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.submission.toPublicResponseDTO
-import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.api.util.RateLimit
@@ -15,6 +14,7 @@ import io.github.leonfoliveira.judge.common.service.dto.input.submission.CreateS
 import io.github.leonfoliveira.judge.common.service.submission.CreateSubmissionService
 import io.github.leonfoliveira.judge.common.service.submission.FindSubmissionService
 import io.github.leonfoliveira.judge.common.service.submission.UpdateSubmissionService
+import io.github.leonfoliveira.judge.common.util.SessionUtil
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -79,7 +79,7 @@ class ContestSubmissionController(
         logger.info("[POST] /v1/contests/$contestId/submissions $body")
         contestAuthFilter.checkIfStarted(contestId)
         contestAuthFilter.checkIfMemberBelongsToContest(contestId)
-        val member = AuthorizationContextUtil.getMember()!!
+        val member = SessionUtil.getCurrent()!!.member
         val submission =
             createSubmissionService.create(
                 memberId = member.id,
@@ -180,7 +180,7 @@ class ContestSubmissionController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<List<SubmissionFullResponseDTO>> {
         logger.info("[GET] /v1/contests/$contestId/submissions/full/members/me")
-        val member = AuthorizationContextUtil.getMember()!!
+        val member = SessionUtil.getCurrent()!!.member
         val submissions = findSubmissionService.findAllByMember(member.id)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }

@@ -1,14 +1,13 @@
 package io.github.leonfoliveira.judge.api.security.websocket
 
-import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
+import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.support.ChannelInterceptor
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
-import kotlin.text.get
 
 @Component
 class WebSocketAuthExtractionInterceptor(
@@ -22,8 +21,8 @@ class WebSocketAuthExtractionInterceptor(
     ): Message<*>? {
         logger.info("Started WebSocketAuthExtractionInterceptor")
 
-        val jwtAuthentication = message.headers.get("simpUser") as? JwtAuthentication
-        SecurityContextHolder.getContext().authentication = jwtAuthentication
+        val sessionAuthentication = message.headers.get("simpUser") as? SessionAuthentication
+        SecurityContextHolder.getContext().authentication = sessionAuthentication
 
         return message
     }

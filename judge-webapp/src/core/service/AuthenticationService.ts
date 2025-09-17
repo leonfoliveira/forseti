@@ -1,6 +1,6 @@
-import { Authorization } from "@/core/domain/model/Authorization";
 import { AuthenticationRepository } from "@/core/repository/AuthenticationRepository";
 import { AuthenticateRequestDTO } from "@/core/repository/dto/request/AuthenticateRequestDTO";
+import { SessionResponseDTO } from "@/core/repository/dto/response/session/SessionResponseDTO";
 
 export class AuthenticationService {
   constructor(
@@ -10,7 +10,7 @@ export class AuthenticationService {
   async authenticate(
     contestId: string,
     requestDTO: AuthenticateRequestDTO,
-  ): Promise<Authorization> {
+  ): Promise<SessionResponseDTO> {
     return await this.authenticationRepository.authenticate(
       contestId,
       requestDTO,

@@ -2,9 +2,10 @@ package io.github.leonfoliveira.judge.api.controller.contest
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import io.github.leonfoliveira.judge.api.service.AuthorizationCookieService
-import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
-import io.github.leonfoliveira.judge.common.service.authorization.AuthorizationService
+import io.github.leonfoliveira.judge.api.dto.response.session.toResponseDTO
+import io.github.leonfoliveira.judge.api.service.SessionCookieService
+import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
+import io.github.leonfoliveira.judge.common.service.authentication.AuthenticationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.ContestAuthenticateInputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -22,9 +23,9 @@ import java.util.UUID
 @ContextConfiguration(classes = [ContestAuthenticationController::class])
 class ContestAuthenticationControllerTest(
     @MockkBean(relaxed = true)
-    private val authorizationService: AuthorizationService,
+    private val authenticationService: AuthenticationService,
     @MockkBean(relaxed = true)
-    private val authorizationCookieService: AuthorizationCookieService,
+    private val sessionCookieService: SessionCookieService,
     private val webMvc: MockMvc,
 ) : FunSpec({
         extensions(SpringExtension)
@@ -39,13 +40,12 @@ class ContestAuthenticationControllerTest(
 
         test("authenticateToContest") {
             val contestId = UUID.randomUUID()
-            val authorization = AuthorizationMockBuilder.build()
+            val session = SessionMockBuilder.build()
             val token =
-                "access_token=mocked_token; Max-Age=3600; Expires=${authorization.expiresAt.toInstant()}; " +
+                "session_id=${session.id}; Max-Age=3600; Expires=${session.expiresAt.toInstant()}; " +
                     "Path=/; HttpOnly; SameSite=Lax; Secure"
-            every { authorizationService.authenticate(contestId, authenticateInputDTO) } returns authorization
-            every { authorizationService.encodeToken(authorization) } returns token
-            every { authorizationCookieService.buildCookie(authorization) } returns token
+            every { authenticationService.authenticate(contestId, authenticateInputDTO) } returns session
+            every { sessionCookieService.buildCookie(session) } returns token
 
             webMvc
                 .post("/v1/contests/{contestId}/sign-in", contestId) {
@@ -54,13 +54,13 @@ class ContestAuthenticationControllerTest(
                 }.andExpect {
                     status { isOk() }
                     cookie {
-                        value("access_token", "mocked_token")
-                        path("access_token", "/")
-                        secure("access_token", true)
-                        httpOnly("access_token", true)
-                        sameSite("access_token", "Lax")
+                        value("session_id", session.id.toString())
+                        path("session_id", "/")
+                        secure("session_id", true)
+                        httpOnly("session_id", true)
+                        sameSite("session_id", "Lax")
                     }
-                    content { authorization }
+                    content { session.toResponseDTO() }
                 }
         }
     })

@@ -3,14 +3,14 @@ import { useDispatch, useSelector, useStore } from "react-redux";
 import { combineReducers } from "redux";
 
 import { adminDashboardSlice } from "@/store/slices/admin-dashboard-slice";
-import { authorizationSlice } from "@/store/slices/authorization-slice";
 import { contestMetadataSlice } from "@/store/slices/contest-metadata-slice";
 import { contestantDashboardSlice } from "@/store/slices/contestant-dashboard-slice";
 import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
 import { judgeDashboardSlice } from "@/store/slices/judge-dashboard-slice";
+import { sessionSlice } from "@/store/slices/session-slice";
 
 const rootReducer = combineReducers({
-  authorization: authorizationSlice.reducer,
+  session: sessionSlice.reducer,
   contestMetadata: contestMetadataSlice.reducer,
   contestantDashboard: contestantDashboardSlice.reducer,
   guestDashboard: guestDashboardSlice.reducer,

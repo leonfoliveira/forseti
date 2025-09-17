@@ -7,11 +7,11 @@ import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { useAppSelector } from "@/store/store";
 
 export default function DashboardSettingsPage() {
-  const authorization = useAppSelector((state) => state.authorization);
+  const session = useAppSelector((state) => state.session);
 
   if (
-    !authorization ||
-    ![MemberType.ROOT, MemberType.ADMIN].includes(authorization?.member.type)
+    !session ||
+    ![MemberType.ROOT, MemberType.ADMIN].includes(session?.member.type)
   ) {
     forbidden();
   }

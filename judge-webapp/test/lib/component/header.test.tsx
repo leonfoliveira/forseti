@@ -2,12 +2,12 @@ import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 import { usePathname, useRouter } from "next/navigation";
 
-import { authorizationService } from "@/config/composition";
+import { sessionService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { Header } from "@/lib/component/header";
 import { useTheme } from "@/lib/util/theme-hook";
-import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/lib/util/theme-hook", () => ({
@@ -16,11 +16,11 @@ jest.mock("@/lib/util/theme-hook", () => ({
 }));
 
 describe("Header", () => {
-  const authorization = MockAuthorization();
+  const session = MockSession();
   const contestMetadata = MockContestMetadataResponseDTO();
 
   it("should render brand correctly", async () => {
-    await renderWithProviders(<Header />, { authorization, contestMetadata });
+    await renderWithProviders(<Header />, { session, contestMetadata });
 
     expect(screen.getByTestId("title")).toHaveTextContent(
       contestMetadata.title,
@@ -30,7 +30,7 @@ describe("Header", () => {
 
   it("should render countdown when contest has started", async () => {
     await renderWithProviders(<Header />, {
-      authorization,
+      session,
       contestMetadata: {
         ...contestMetadata,
         startAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
@@ -43,7 +43,7 @@ describe("Header", () => {
 
   it("should not render countdown when contest has not started", async () => {
     await renderWithProviders(<Header />, {
-      authorization,
+      session,
       contestMetadata: {
         ...contestMetadata,
         startAt: new Date(Date.now() + 1000 * 60 * 60).toISOString(),
@@ -58,7 +58,7 @@ describe("Header", () => {
     const toggleTheme = jest.fn();
     (useTheme as jest.Mock).mockReturnValue({ theme: "dark", toggleTheme });
     await renderWithProviders(<Header />, {
-      authorization,
+      session,
       contestMetadata,
     });
 
@@ -73,7 +73,7 @@ describe("Header", () => {
     const toggleTheme = jest.fn();
     (useTheme as jest.Mock).mockReturnValue({ theme: "light", toggleTheme });
     await renderWithProviders(<Header />, {
-      authorization,
+      session,
       contestMetadata,
     });
 
@@ -86,7 +86,7 @@ describe("Header", () => {
 
   it("should not render dropdown if not authorized", async () => {
     await renderWithProviders(<Header />, {
-      authorization: null,
+      session: null,
       contestMetadata,
     });
 
@@ -95,21 +95,21 @@ describe("Header", () => {
 
   it("should render dropdown correctly", async () => {
     await renderWithProviders(<Header />, {
-      authorization,
+      session,
       contestMetadata,
     });
 
     const trigger = screen.getByTestId("user-dropdown-trigger");
-    expect(trigger).toHaveTextContent(authorization.member.name);
+    expect(trigger).toHaveTextContent(session.member.name);
     await act(async () => fireEvent.click(trigger));
     expect(screen.getByTestId("member-type")).toHaveTextContent("Contestant");
     await act(async () => fireEvent.click(screen.getByTestId("sign-out")));
-    expect(authorizationService.cleanAuthorization).toHaveBeenCalled();
+    expect(sessionService.deleteSession).toHaveBeenCalled();
   });
 
   it("should not render sign-in button if user is authorized", async () => {
     await renderWithProviders(<Header />, {
-      authorization,
+      session,
       contestMetadata,
     });
 
@@ -121,7 +121,7 @@ describe("Header", () => {
       routes.CONTEST_SIGN_IN(contestMetadata.slug),
     );
     await renderWithProviders(<Header />, {
-      authorization: null,
+      session: null,
       contestMetadata,
     });
 
@@ -133,7 +133,7 @@ describe("Header", () => {
       routes.CONTEST(contestMetadata.slug),
     );
     await renderWithProviders(<Header />, {
-      authorization: null,
+      session: null,
       contestMetadata,
     });
 

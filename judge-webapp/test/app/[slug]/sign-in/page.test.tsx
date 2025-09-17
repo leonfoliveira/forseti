@@ -3,14 +3,11 @@ import { useRouter } from "next/navigation";
 import React, { act } from "react";
 
 import SignInPage from "@/app/[slug]/sign-in/page";
-import {
-  authenticationService,
-  authorizationService,
-} from "@/config/composition";
+import { authenticationService, sessionService } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { useToast } from "@/lib/util/toast-hook";
-import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SignInPage", () => {
@@ -37,9 +34,9 @@ describe("SignInPage", () => {
   });
 
   it("should sign-in successfully", async () => {
-    const authorization = MockAuthorization();
+    const session = MockSession();
     (authenticationService.authenticate as jest.Mock).mockResolvedValue(
-      authorization,
+      session,
     );
 
     await renderWithProviders(<SignInPage />, {
@@ -87,7 +84,7 @@ describe("SignInPage", () => {
     });
 
     expect(useRouter().push).not.toHaveBeenCalled();
-    expect(store.getState().authorization).toBeNull();
+    expect(store.getState().session).toBeNull();
     expect(screen.getAllByText("Wrong login or password")).toHaveLength(2);
   });
 
@@ -112,7 +109,7 @@ describe("SignInPage", () => {
     });
 
     expect(useRouter().push).not.toHaveBeenCalled();
-    expect(store.getState().authorization).toBeNull();
+    expect(store.getState().session).toBeNull();
     expect(useToast().error).toHaveBeenCalled();
   });
 
@@ -125,6 +122,6 @@ describe("SignInPage", () => {
       fireEvent.click(screen.getByTestId("enter-guest"));
     });
 
-    expect(authorizationService.cleanAuthorization).toHaveBeenCalled();
+    expect(sessionService.deleteSession).toHaveBeenCalled();
   });
 });

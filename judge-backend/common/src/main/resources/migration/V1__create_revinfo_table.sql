@@ -1,7 +1,8 @@
 create table revinfo (
     rev bigint primary key,
     "timestamp" timestamp not null,
-    member_id uuid,
+    session_id uuid,
+    ip text,
     trace_id text
 );
 

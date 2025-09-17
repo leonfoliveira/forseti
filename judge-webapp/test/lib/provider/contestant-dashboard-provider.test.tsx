@@ -16,12 +16,12 @@ import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 import { ContestantDashboardProvider } from "@/lib/provider/contestant-dashboard-provider";
 import { useToast } from "@/lib/util/toast-hook";
-import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockContestPublicResponseDTO } from "@/test/mock/response/contest/MockContestPublicResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
+import { MockSession } from "@/test/mock/response/session/MockSession";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -34,7 +34,7 @@ jest.mock("@/lib/component/page/error-page", () => ({
 }));
 
 describe("ContestantDashboardProvider", () => {
-  const authorization = MockAuthorization();
+  const session = MockSession();
   const contestMetadata = MockContestMetadataResponseDTO();
   const contest = MockContestPublicResponseDTO();
   const leaderboard = MockLeaderboardResponseDTO();
@@ -67,7 +67,7 @@ describe("ContestantDashboardProvider", () => {
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     expect(contestService.findContestById).toHaveBeenCalledWith(
@@ -96,7 +96,7 @@ describe("ContestantDashboardProvider", () => {
     expect(submissionListener.subscribeForMemberFull).toHaveBeenCalledWith(
       listenerClient,
       contestMetadata.id,
-      authorization.member.id,
+      session.member.id,
       expect.any(Function),
     );
     expect(announcementListener.subscribeForContest).toHaveBeenCalledWith(
@@ -114,7 +114,7 @@ describe("ContestantDashboardProvider", () => {
     ).toHaveBeenCalledWith(
       listenerClient,
       contestMetadata.id,
-      authorization.member.id,
+      session.member.id,
       expect.any(Function),
     );
     expect(
@@ -144,7 +144,7 @@ describe("ContestantDashboardProvider", () => {
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     const state = store.getState().contestantDashboard;
@@ -160,7 +160,7 @@ describe("ContestantDashboardProvider", () => {
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -179,7 +179,7 @@ describe("ContestantDashboardProvider", () => {
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -200,7 +200,7 @@ describe("ContestantDashboardProvider", () => {
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -222,7 +222,7 @@ describe("ContestantDashboardProvider", () => {
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -241,7 +241,7 @@ describe("ContestantDashboardProvider", () => {
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -260,7 +260,7 @@ describe("ContestantDashboardProvider", () => {
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -279,7 +279,7 @@ describe("ContestantDashboardProvider", () => {
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -298,7 +298,7 @@ describe("ContestantDashboardProvider", () => {
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -320,7 +320,7 @@ describe("ContestantDashboardProvider", () => {
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -338,7 +338,7 @@ describe("ContestantDashboardProvider", () => {
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -354,7 +354,7 @@ describe("ContestantDashboardProvider", () => {
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {

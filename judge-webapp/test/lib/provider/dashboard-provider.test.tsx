@@ -2,7 +2,7 @@ import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { DashboardProvider } from "@/lib/provider/dashboard-provider";
 import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
-import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
+import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/lib/provider/admin-dashboard-provider", () => ({
@@ -52,10 +52,9 @@ describe("DashboardProvider", () => {
           <TestComponent />
         </DashboardProvider>,
         {
-          authorization: MockAuthorization({
+          session: MockSession({
             member: {
               id: "test-id",
-              contestId: "contest-id",
               name: "Test User",
               type: MemberType.ROOT,
             },
@@ -77,10 +76,9 @@ describe("DashboardProvider", () => {
           <TestComponent />
         </DashboardProvider>,
         {
-          authorization: MockAuthorization({
+          session: MockSession({
             member: {
               id: "test-id",
-              contestId: "contest-id",
               name: "Test User",
               type: MemberType.ADMIN,
             },
@@ -102,10 +100,9 @@ describe("DashboardProvider", () => {
           <TestComponent />
         </DashboardProvider>,
         {
-          authorization: MockAuthorization({
+          session: MockSession({
             member: {
               id: "test-id",
-              contestId: "contest-id",
               name: "Test User",
               type: MemberType.JUDGE,
             },
@@ -127,10 +124,9 @@ describe("DashboardProvider", () => {
           <TestComponent />
         </DashboardProvider>,
         {
-          authorization: MockAuthorization({
+          session: MockSession({
             member: {
               id: "test-id",
-              contestId: "contest-id",
               name: "Test User",
               type: MemberType.CONTESTANT,
             },
@@ -150,10 +146,9 @@ describe("DashboardProvider", () => {
           <TestComponent />
         </DashboardProvider>,
         {
-          authorization: MockAuthorization({
+          session: MockSession({
             member: {
               id: "test-id",
-              contestId: "contest-id",
               name: "Test User",
               type: MemberType.CONTESTANT,
             },
@@ -173,10 +168,9 @@ describe("DashboardProvider", () => {
           <TestComponent />
         </DashboardProvider>,
         {
-          authorization: MockAuthorization({
+          session: MockSession({
             member: {
               id: "test-id",
-              contestId: "contest-id",
               name: "Test User",
               type: MemberType.CONTESTANT,
             },
@@ -198,7 +192,7 @@ describe("DashboardProvider", () => {
           <TestComponent />
         </DashboardProvider>,
         {
-          authorization: null,
+          session: null,
         },
       );
 
@@ -214,7 +208,7 @@ describe("DashboardProvider", () => {
           <TestComponent />
         </DashboardProvider>,
         {
-          authorization: null,
+          session: null,
         },
       );
 
@@ -230,7 +224,7 @@ describe("DashboardProvider", () => {
           <TestComponent />
         </DashboardProvider>,
         {
-          authorization: null,
+          session: null,
         },
       );
 

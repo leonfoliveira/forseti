@@ -1,13 +1,10 @@
-import { authorizationSlice } from "@/store/slices/authorization-slice";
-import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
+import { sessionSlice } from "@/store/slices/session-slice";
+import { MockSession } from "@/test/mock/response/session/MockSession";
 
-describe("authorizationSlice", () => {
-  it("should set authorization", () => {
-    const authorization = MockAuthorization();
-    const state = authorizationSlice.reducer(
-      null,
-      authorizationSlice.actions.set(authorization),
-    );
-    expect(state).toEqual(authorization);
+describe("sessionSlice", () => {
+  it("should set session", () => {
+    const session = MockSession();
+    const state = sessionSlice.reducer(null, sessionSlice.actions.set(session));
+    expect(state).toEqual(session);
   });
 });

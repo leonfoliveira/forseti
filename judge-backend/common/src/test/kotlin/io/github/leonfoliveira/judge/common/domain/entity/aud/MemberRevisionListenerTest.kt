@@ -1,58 +1,45 @@
 package io.github.leonfoliveira.judge.common.domain.entity.aud
 
-import io.github.leonfoliveira.judge.common.domain.model.Authorization
-import io.github.leonfoliveira.judge.common.mock.entity.AuthorizationMockBuilder
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
+import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
+import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import org.slf4j.MDC
-import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import java.util.UUID
 
-class MemberRevisionListenerTest : FunSpec({
-    val sut = MemberRevisionListener()
+class MemberRevisionListenerTest :
+    FunSpec({
+        val sut = MemberRevisionListener()
 
-    class MockAuthorization(val authorization: Authorization) : Authentication {
-        override fun getAuthorities() = emptyList<org.springframework.security.core.GrantedAuthority>()
+        test("should not set sessionId and traceId if no authentication is present") {
+            SecurityContextHolder.clearContext()
+            RequestContext.clearContext()
+            val revisionEntity = MemberRevisionEntity()
 
-        override fun getCredentials() = null
+            sut.newRevision(revisionEntity)
 
-        override fun getDetails() = null
+            revisionEntity.sessionId shouldBe null
+            revisionEntity.ip shouldBe null
+            revisionEntity.traceId shouldBe null
+        }
 
-        override fun getPrincipal() = authorization
+        test("should set memberId and traceId in new revision") {
+            val revisionEntity = MemberRevisionEntity()
+            val sessionId = UUID.randomUUID()
+            SecurityContextHolder.getContext().authentication =
+                SessionAuthentication(
+                    SessionMockBuilder.build(
+                        id = sessionId,
+                    ),
+                )
+            RequestContext.getCurrent().ip = "127.0.0.1"
+            RequestContext.getCurrent().traceId = "test-trace-id"
 
-        override fun getName() = authorization.member.name
+            sut.newRevision(revisionEntity)
 
-        override fun isAuthenticated() = true
-
-        override fun setAuthenticated(isAuthenticated: Boolean) {}
-    }
-
-    test("should not set memberId and traceId if no authentication is present") {
-        SecurityContextHolder.clearContext()
-        val revisionEntity = MemberRevisionEntity()
-
-        sut.newRevision(revisionEntity)
-
-        revisionEntity.memberId shouldBe null
-        revisionEntity.traceId shouldBe null
-    }
-
-    test("should set memberId and traceId in new revision") {
-        val revisionEntity = MemberRevisionEntity()
-        val memberId = UUID.randomUUID()
-        SecurityContextHolder.getContext().authentication =
-            MockAuthorization(
-                AuthorizationMockBuilder.build(
-                    member = AuthorizationMockBuilder.buildMember(id = memberId),
-                ),
-            )
-        val traceId = "test-trace-id"
-        MDC.put("traceId", traceId)
-
-        sut.newRevision(revisionEntity)
-
-        revisionEntity.memberId shouldBe memberId
-        revisionEntity.traceId shouldBe traceId
-    }
-})
+            revisionEntity.sessionId shouldBe sessionId
+            revisionEntity.ip shouldBe "127.0.0.1"
+            revisionEntity.traceId shouldBe "test-trace-id"
+        }
+    })

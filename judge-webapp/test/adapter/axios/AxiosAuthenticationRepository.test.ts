@@ -3,7 +3,7 @@ import { mock } from "jest-mock-extended";
 
 import { AxiosAuthenticationRepository } from "@/adapter/axios/AxiosAuthenticationRepository";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
-import { Authorization } from "@/core/domain/model/Authorization";
+import { SessionResponseDTO } from "@/core/repository/dto/response/session/SessionResponseDTO";
 import { MockAuthenticateRequestDTO } from "@/test/mock/request/MockAuthenticateRequestDTO";
 
 describe("AxiosAuthenticationRepository", () => {
@@ -12,13 +12,13 @@ describe("AxiosAuthenticationRepository", () => {
   const sut = new AxiosAuthenticationRepository(axiosClient);
 
   describe("authenticate", () => {
-    it("should authenticate a member and return an authorization", async () => {
+    it("should authenticate a member and return a session", async () => {
       const requestDTO = MockAuthenticateRequestDTO();
-      const expectedAuthorization = {
-        token: "authToken",
-      } as unknown as Authorization;
+      const expectedSession = {
+        id: "123",
+      } as unknown as SessionResponseDTO;
       axiosClient.post.mockResolvedValueOnce({
-        data: expectedAuthorization,
+        data: expectedSession,
       } as AxiosResponse);
       const contestId = "contest123";
 
@@ -30,7 +30,7 @@ describe("AxiosAuthenticationRepository", () => {
           data: requestDTO,
         },
       );
-      expect(result).toEqual(expectedAuthorization);
+      expect(result).toEqual(expectedSession);
     });
   });
 });

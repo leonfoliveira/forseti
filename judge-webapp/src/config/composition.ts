@@ -1,11 +1,11 @@
 import { AxiosAnnouncementRepository } from "@/adapter/axios/AxiosAnnouncementRepository";
 import { AxiosAttachmentRepository } from "@/adapter/axios/AxiosAttachmentRepository";
 import { AxiosAuthenticationRepository } from "@/adapter/axios/AxiosAuthenticationRepository";
-import { AxiosAuthorizationRepository } from "@/adapter/axios/AxiosAuthorizationRepository";
 import { AxiosClarificationRepository } from "@/adapter/axios/AxiosClarificationRepository";
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
 import { AxiosContestRepository } from "@/adapter/axios/AxiosContestRepository";
 import { AxiosLeaderboardRepository } from "@/adapter/axios/AxiosLeaderboardRepository";
+import { AxiosSessionRepository } from "@/adapter/axios/AxiosSessionRepository";
 import { AxiosSubmissionRepository } from "@/adapter/axios/AxiosSubmissionRepository";
 import { LocalStorageRepository } from "@/adapter/localstorage/LocalStorageRepository";
 import { StompAnnouncementListener } from "@/adapter/stomp/StompAnnouncementListener";
@@ -17,10 +17,10 @@ import { serverConfig, clientConfig, isServer } from "@/config/config";
 import { AnnouncementService } from "@/core/service/AnnouncementService";
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { AuthenticationService } from "@/core/service/AuthenticationService";
-import { AuthorizationService } from "@/core/service/AuthorizationService";
 import { ClarificationService } from "@/core/service/ClarificationService";
 import { ContestService } from "@/core/service/ContestService";
 import { LeaderboardService } from "@/core/service/LeaderboardService";
+import { SessionService } from "@/core/service/SessionService";
 import { StorageService } from "@/core/service/StorageService";
 import { SubmissionService } from "@/core/service/SubmissionService";
 
@@ -46,8 +46,8 @@ export const attachmentService = new AttachmentService(
 export const authenticationService = new AuthenticationService(
   new AxiosAuthenticationRepository(axiosClient),
 );
-export const authorizationService = new AuthorizationService(
-  new AxiosAuthorizationRepository(axiosClient),
+export const sessionService = new SessionService(
+  new AxiosSessionRepository(axiosClient),
 );
 export const clarificationService = new ClarificationService(
   new AxiosClarificationRepository(axiosClient),

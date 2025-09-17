@@ -101,7 +101,7 @@ describe("AxiosClient", () => {
       const sut = new AxiosClient(baseUrl, true);
 
       const clientCookies = [
-        { name: "access_token", value: "token" },
+        { name: "session_id", value: "123" },
         { name: "other", value: "value" },
       ];
       const mockCookies = {
@@ -131,7 +131,7 @@ describe("AxiosClient", () => {
         withCredentials: true,
         headers: {
           "x-request-id": clientHeaders["x-request-id"],
-          Cookie: "access_token=token",
+          Cookie: "session_id=123",
           "x-forwarded-for": clientHeaders["x-forwarded-for"],
           "user-agent": clientHeaders["user-agent"],
         },

@@ -1,4 +1,3 @@
-
 import { screen } from "@testing-library/dom";
 import { mock } from "jest-mock-extended";
 import { act } from "react";
@@ -18,12 +17,12 @@ import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 import { JudgeDashboardProvider } from "@/lib/provider/judge-dashboard-provider";
 import { useToast } from "@/lib/util/toast-hook";
-import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockContestPublicResponseDTO } from "@/test/mock/response/contest/MockContestPublicResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
+import { MockSession } from "@/test/mock/response/session/MockSession";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -35,7 +34,7 @@ jest.mock("@/lib/component/page/error-page", () => ({
 }));
 
 describe("JudgeDashboardProvider", () => {
-  const authorization = MockAuthorization();
+  const session = MockSession();
   const contestMetadata = MockContestMetadataResponseDTO();
   const contest = MockContestPublicResponseDTO();
   const leaderboard = MockLeaderboardResponseDTO();
@@ -61,7 +60,7 @@ describe("JudgeDashboardProvider", () => {
       <JudgeDashboardProvider>
         <div data-testid="child" />
       </JudgeDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     expect(contestService.findContestById).toHaveBeenCalledWith(
@@ -120,7 +119,7 @@ describe("JudgeDashboardProvider", () => {
       <JudgeDashboardProvider>
         <div data-testid="child" />
       </JudgeDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     const state = store.getState().judgeDashboard;
@@ -136,7 +135,7 @@ describe("JudgeDashboardProvider", () => {
       <JudgeDashboardProvider>
         <div data-testid="child" />
       </JudgeDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -153,7 +152,7 @@ describe("JudgeDashboardProvider", () => {
       <JudgeDashboardProvider>
         <div data-testid="child" />
       </JudgeDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -174,7 +173,7 @@ describe("JudgeDashboardProvider", () => {
       <JudgeDashboardProvider>
         <div data-testid="child" />
       </JudgeDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -187,13 +186,13 @@ describe("JudgeDashboardProvider", () => {
 
   it("should handle announcements update", async () => {
     const otherAnnouncement = MockAnnouncementResponseDTO({
-      member: authorization.member,
+      member: session.member,
     });
     const { store } = await renderWithProviders(
       <JudgeDashboardProvider>
         <div data-testid="child" />
       </JudgeDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -214,7 +213,7 @@ describe("JudgeDashboardProvider", () => {
       <JudgeDashboardProvider>
         <div data-testid="child" />
       </JudgeDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -233,7 +232,7 @@ describe("JudgeDashboardProvider", () => {
       <JudgeDashboardProvider>
         <div data-testid="child" />
       </JudgeDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -254,7 +253,7 @@ describe("JudgeDashboardProvider", () => {
       <JudgeDashboardProvider>
         <div data-testid="child" />
       </JudgeDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -270,7 +269,7 @@ describe("JudgeDashboardProvider", () => {
       <JudgeDashboardProvider>
         <div data-testid="child" />
       </JudgeDashboardProvider>,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {

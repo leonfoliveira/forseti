@@ -3,7 +3,6 @@ package io.github.leonfoliveira.judge.api.controller.contest
 import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.clarification.ClarificationResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.clarification.toResponseDTO
-import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.api.util.RateLimit
@@ -11,6 +10,7 @@ import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.service.clarification.CreateClarificationService
 import io.github.leonfoliveira.judge.common.service.clarification.DeleteClarificationService
 import io.github.leonfoliveira.judge.common.service.dto.input.clarification.CreateClarificationInputDTO
+import io.github.leonfoliveira.judge.common.util.SessionUtil
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -73,7 +73,7 @@ class ContestClarificationController(
         logger.info("[POST] /v1/contests/$contestId/clarifications $body")
         contestAuthFilter.checkIfStarted(contestId)
         contestAuthFilter.checkIfMemberBelongsToContest(contestId)
-        val member = AuthorizationContextUtil.getMember()!!
+        val member = SessionUtil.getCurrent()!!.member
         val clarification = createClarificationService.create(contestId, member.id, body)
         return ResponseEntity.ok(clarification.toResponseDTO())
     }

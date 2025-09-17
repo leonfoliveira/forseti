@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.judge.api.security.websocket
 
-import io.github.leonfoliveira.judge.api.security.JwtAuthentication
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
+import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
@@ -25,7 +25,7 @@ class WebSocketPrivateInterceptor(
         val accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) ?: return message
         val destination = accessor.destination ?: return message
         logger.info("Started PrivateWebSocketInterceptor for destination: $destination")
-        val auth = SecurityContextHolder.getContext().authentication as? JwtAuthentication
+        val auth = SecurityContextHolder.getContext().authentication as? SessionAuthentication
 
         if (auth?.principal?.member?.type == Member.Type.ROOT) {
             logger.info("User is ROOT, bypassing access")
@@ -33,9 +33,10 @@ class WebSocketPrivateInterceptor(
         }
 
         val privateFilter =
-            webSocketTopicConfigs.privateFilters.entries.find {
-                it.key.matches(destination)
-            }?.value
+            webSocketTopicConfigs.privateFilters.entries
+                .find {
+                    it.key.matches(destination)
+                }?.value
 
         if (privateFilter == null) {
             logger.info("No private configuration found for destination: $destination")

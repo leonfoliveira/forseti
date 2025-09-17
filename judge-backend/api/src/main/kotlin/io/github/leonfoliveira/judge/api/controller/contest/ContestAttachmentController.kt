@@ -5,11 +5,11 @@ import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.github.leonfoliveira.judge.api.service.AttachmentAuthorizationService
 import io.github.leonfoliveira.judge.api.util.ApiMetrics
-import io.github.leonfoliveira.judge.api.util.AuthorizationContextUtil
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
+import io.github.leonfoliveira.judge.common.util.SessionUtil
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -73,11 +73,11 @@ class ContestAttachmentController(
     ): ResponseEntity<AttachmentResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/attachments/$context { filename: ${file.originalFilename}, size: ${file.size} }")
         attachmentAuthorizationService.authorizeUpload(contestId, context)
-        val member = AuthorizationContextUtil.getMember()
+        val member = SessionUtil.getCurrent()!!.member
         val attachment =
             attachmentService.upload(
                 contestId = contestId,
-                memberId = member?.id,
+                memberId = member.id,
                 filename = file.originalFilename,
                 contentType = file.contentType,
                 context = context,

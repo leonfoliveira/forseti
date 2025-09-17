@@ -1,10 +1,10 @@
 import { screen } from "@testing-library/dom";
 
 import { LeaderboardPage } from "@/app/[slug]/(dashboard)/_common/leaderboard-page";
-import { MockAuthorization } from "@/test/mock/model/MockAuthorization";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
+import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("LeaderboardPage", () => {
@@ -13,10 +13,10 @@ describe("LeaderboardPage", () => {
 
   it("should render common LeaderboardPage with correct data", async () => {
     const contestMetadata = MockContestMetadataResponseDTO();
-    const authorization = MockAuthorization();
+    const session = MockSession();
     await renderWithProviders(
       <LeaderboardPage problems={problems} leaderboard={leaderboard} />,
-      { authorization, contestMetadata },
+      { session, contestMetadata },
     );
 
     expect(document.title).toBe("Judge - Leaderboard");

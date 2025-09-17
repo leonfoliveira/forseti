@@ -14,7 +14,7 @@ describe("DashboardSettingsPage", () => {
     "should throw forbidden when user is not allowed",
     async (memberType) => {
       await renderWithProviders(<DashboardSettingsPage />, {
-        authorization: { member: { type: memberType } },
+        session: { member: { type: memberType } },
       } as any);
 
       expect(forbidden).toHaveBeenCalled();
@@ -25,7 +25,7 @@ describe("DashboardSettingsPage", () => {
     "should render correctly",
     async (memberType) => {
       await renderWithProviders(<DashboardSettingsPage />, {
-        authorization: { member: { type: memberType } },
+        session: { member: { type: memberType } },
       } as any);
 
       expect(screen.getByTestId("admin-page")).toBeInTheDocument();

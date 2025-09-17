@@ -19,7 +19,7 @@ describe("ContestantProblemsPage", () => {
     const leaderboard = MockLeaderboardResponseDTO();
     await renderWithProviders(<ContestantProblemsPage />, {
       contestMetadata,
-      authorization: { member: { id: leaderboard.members[0].id } },
+      session: { member: { id: leaderboard.members[0].id } },
       contestantDashboard: {
         contest: { problems },
         leaderboard,
