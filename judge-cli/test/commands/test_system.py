@@ -44,25 +44,21 @@ class TestSystemCommand:
 
         result = runner.invoke(system, ["start"])
         assert result.exit_code == 0
-        command_adapter.run.assert_called_once_with(
+        command_adapter.run.assert_any_call(
             ["docker", "stack", "deploy", "-c", "/cli/path/stack.yaml", "judge"],
-            env={"API_URL": "http://localhost:8080",
-                 "WEBAPP_URL": "http://localhost",
-                 "SECURE_COOKIES": "false"},
+            env={"DOMAIN": "judge"},
         )
 
-    def test_start_with_url(self, runner, command_adapter, os):
+    def test_start_with_domain(self, runner, command_adapter, os):
         command_adapter.get_cli_path.return_value = "/cli/path"
         os.path.join.side_effect = lambda *args: "/".join(args)
 
         result = runner.invoke(
-            system, ["start", "--api-public-url", "http://api.example.com", "--webapp-public-url", "http://example.com"])
+            system, ["start", "--domain", "example.com"])
         assert result.exit_code == 0
-        command_adapter.run.assert_called_once_with(
+        command_adapter.run.assert_called_with(
             ["docker", "stack", "deploy", "-c", "/cli/path/stack.yaml", "judge"],
-            env={"API_URL": "http://api.example.com",
-                 "WEBAPP_URL": "http://example.com",
-                 "SECURE_COOKIES": "false"},
+            env={"DOMAIN": "example.com"},
         )
 
     def test_start_swarm_manager_error(self, runner, command_adapter, spinner):
@@ -72,7 +68,7 @@ class TestSystemCommand:
         assert result.exit_code == 1
         assert "This node is not a swarm manager" in result.output
 
-    def test_start_other_error(self, runner, command_adapter, spinner):
+    def test_start_swarm_manager_other_error(self, runner, command_adapter, spinner):
         command_adapter.run.side_effect = click.ClickException(
             "Some other error")
         result = runner.invoke(system, ["start"])

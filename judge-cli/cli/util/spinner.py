@@ -22,14 +22,14 @@ class Spinner:
         if self.thread:
             self.thread.join()
             self.thread = None
-            click.echo(f"\r✓ {self.label}")
+            click.echo(f"\r{click.style('✓', fg='green')} {self.label}")
 
     def fail(self):
         self.running = False
         if self.thread:
             self.thread.join()
             self.thread = None
-            click.echo(f"\r✗ {self.label}")
+            click.echo(f"\r{click.style('✗', fg='red')} {self.label}")
 
     def _spin(self):
         while self.running:
