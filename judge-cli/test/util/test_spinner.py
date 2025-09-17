@@ -58,7 +58,8 @@ class TestSpinner:
         assert sut.running is False
         assert sut.thread is None
         mock_thread.join.assert_called_once()
-        click.echo.assert_called_with("\r✓ Testing")
+        click.echo.assert_called_with(
+            f"\r{click.style('✓', fg='green')} Testing")
 
     def test_complete_without_thread(self, sut, click, threading):
         sut.complete()
@@ -80,7 +81,8 @@ class TestSpinner:
         assert sut.running is False
         assert sut.thread is None
         mock_thread.join.assert_called_once()
-        click.echo.assert_called_with("\r✗ Testing")
+        click.echo.assert_called_with(
+            f"\r{click.style('✗', fg='red')} Testing")
 
     def test_fail_without_thread(self, sut, click, threading):
         sut.fail()

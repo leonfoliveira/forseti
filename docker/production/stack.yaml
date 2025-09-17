@@ -11,6 +11,8 @@ secrets:
     external: true
   root_password:
     external: true
+  traefik_admin_password:
+    external: true
 
 services:
   alloy:
@@ -31,6 +33,14 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - timeout 3 bash -c '</dev/tcp/localhost/12345' && echo "OK" || exit 1
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
     image: grafana/alloy:v1.9.2
     networks:
       judge-network:
@@ -44,6 +54,16 @@ services:
 
   api:
     deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.api.rule=Host(`api.${DOMAIN:-judge}`)
+        - traefik.http.routers.api.entrypoints=websecure
+        - traefik.http.routers.api.tls=true
+        - traefik.http.services.api.loadbalancer.server.port=8080
+        - traefik.http.services.api.loadbalancer.sticky.cookie=true
+        - traefik.http.services.api.loadbalancer.sticky.cookie.name=api-session
+        - traefik.http.services.api.loadbalancer.sticky.cookie.secure=true
+        - traefik.http.services.api.loadbalancer.sticky.cookie.httponly=true
       mode: replicated
       replicas: 1
       resources:
@@ -60,7 +80,7 @@ services:
         order: start-first
         delay: 30s
     environment:
-      ALLOWED_ORIGINS: ${WEBAPP_URL}
+      ALLOWED_ORIGINS: ${DOMAIN:-judge}
       AWS_ACCESS_KEY_ID: judge
       AWS_ENDPOINT: http://localstack:4566
       AWS_REGION: us-east-1
@@ -77,7 +97,7 @@ services:
       JWT_SECRET_FILE: /run/secrets/jwt_secret
       PORT: 8080
       ROOT_PASSWORD_FILE: /run/secrets/root_password
-      SECURE_COOKIES: ${SECURE_COOKIES}
+      SECURE_COOKIES: "true"
       SPRING_PROFILES_ACTIVE: production
     healthcheck:
       test:
@@ -90,10 +110,6 @@ services:
     image: leonfoliveira/judge-api:${VERSION:-latest}
     networks:
       judge-network:
-    ports:
-      - target: 8080
-        published: 8080
-        protocol: tcp
     secrets:
       - db_password
       - jwt_secret
@@ -224,7 +240,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: gcr.io/cadvisor/cadvisor:v0.49.1
     networks:
       judge-network:
@@ -248,6 +264,12 @@ services:
 
   grafana:
     deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN:-judge}`)
+        - traefik.http.routers.grafana.entrypoints=websecure
+        - traefik.http.routers.grafana.tls=true
+        - traefik.http.services.grafana.loadbalancer.server.port=3000
       mode: replicated
       replicas: 1
       resources:
@@ -276,14 +298,10 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: grafana/grafana-oss:12.0.2
     networks:
       judge-network:
-    ports:
-      - target: 3000
-        published: 3000
-        protocol: tcp
     secrets:
       - db_password
       - grafana_admin_password
@@ -322,7 +340,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: gresau/localstack-persist:4.4.0
     networks:
       judge-network:
@@ -358,7 +376,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: grafana/loki:3.4.4
     networks:
       judge-network:
@@ -424,7 +442,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: prom/node-exporter:v1.9.1
     networks:
       judge-network:
@@ -467,7 +485,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: postgres:17.5-alpine
     networks:
       - judge-network
@@ -504,7 +522,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: prometheuscommunity/postgres-exporter:v0.17.1
     networks:
       - judge-network
@@ -535,7 +553,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: prom/prometheus:v3.4.1
     networks:
       judge-network:
@@ -548,8 +566,93 @@ services:
         target: /prometheus
         volume: {}
 
+  traefik:
+    command:
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls=true
+      - --providers.file.filename=/dynamic/tls.yaml
+      - --providers.swarm.endpoint=unix:///var/run/docker.sock
+      - --providers.swarm.watch=true
+      - --providers.swarm.exposedbydefault=false
+      - --providers.swarm.network=judge_judge-network
+      - --api.dashboard=true
+      - --api.insecure=false
+      - --log.level=INFO
+      - --accesslog=true
+      - --metrics.prometheus=true
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.dashboard.rule=Host(`traefik.${DOMAIN:-judge}`)
+        - traefik.http.routers.dashboard.entrypoints=websecure
+        - traefik.http.routers.dashboard.service=api@internal
+        - traefik.http.routers.dashboard.tls=true
+        - traefik.http.middlewares.dashboard-auth.basicauth.usersfile=/run/secrets/traefik_admin_password
+        - traefik.http.routers.dashboard.middlewares=dashboard-auth@swarm
+        - traefik.http.services.traefik.loadbalancer.server.port=8080
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - traefik version
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
+    image: traefik:v3.5.2
+    networks:
+      - judge-network
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+    secrets:
+      - traefik_admin_password
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - type: bind
+        source: ./volumes/traefik/certs
+        target: /certs
+        read_only: true
+      - type: bind
+        source: ./volumes/traefik/dynamic
+        target: /dynamic
+        read_only: true
+
   webapp:
     deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.webapp.rule=Host(`${DOMAIN:-judge}`)
+        - traefik.http.routers.webapp.entrypoints=websecure
+        - traefik.http.routers.webapp.tls=true
+        - traefik.http.services.webapp.loadbalancer.server.port=3000
       mode: replicated
       replicas: 1
       resources:
@@ -567,7 +670,7 @@ services:
         delay: 30s
     environment:
       API_INTERNAL_URL: http://api:8080
-      API_PUBLIC_URL: ${API_URL}
+      API_PUBLIC_URL: https://api.${DOMAIN:-judge}
       LOCALE: en-US
       NEXT_PUBLIC_VERSION: ${VERSION:-latest}
       NODE_ENV: production
@@ -582,10 +685,6 @@ services:
     image: leonfoliveira/judge-webapp:${VERSION:-latest}
     networks:
       judge-network:
-    ports:
-      - target: 3000
-        published: 80
-        protocol: tcp
 
 volumes:
   grafana_data:

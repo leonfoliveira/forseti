@@ -14,41 +14,28 @@ def system():
 
 DEFAULT_STACK_NAME = "judge"
 STACK_NAME_HELP = f"Stack name (default: {DEFAULT_STACK_NAME})"
+DEFAULT_DOMAIN = "judge"
 
 
 @system.command(help="Deploy services in Docker Swarm.")
 @click.option(
-    "--api-public-url", help="Public URL for the API (default: http://<node-ip>:8080)"
-)
-@click.option(
-    "--webapp-public-url", help="Public URL for the Webapp (default: http://<node-ip>)"
+    "--domain", help=f"Domain name (e.g., example.com) to configure public URLs. (default: ${DEFAULT_DOMAIN})", default=DEFAULT_DOMAIN
 )
 @click.option("--stack", help="Stack file (default: stack.yaml in CLI directory)")
 @click.option("--stack-name", help=STACK_NAME_HELP, default=DEFAULT_STACK_NAME)
-def start(api_public_url: str, webapp_public_url: str, stack: str, stack_name: str):
+def start(domain: str, stack: str, stack_name: str):
     command_adapter = CommandAdapter()
-    network_adapter = NetworkAdapter()
     spinner = Spinner("Deploying services")
 
     if stack is None:
         cli_path = command_adapter.get_cli_path()
         stack = os.path.join(cli_path, "stack.yaml")
 
-    manager_ip = network_adapter.get_ip_address()
-    if api_public_url is None:
-        api_public_url = f"http://{manager_ip}:8080"
-    if webapp_public_url is None:
-        webapp_public_url = f"http://{manager_ip}"
-
     spinner.start()
     try:
         command_adapter.run(
             ["docker", "stack", "deploy", "-c", stack, stack_name],
-            env={
-                "API_URL": api_public_url,
-                "WEBAPP_URL": webapp_public_url,
-                "SECURE_COOKIES": str(webapp_public_url.startswith("https")).lower(),
-            },
+            env={"DOMAIN": domain},
         )
         spinner.complete()
     except click.ClickException as e:
@@ -57,14 +44,11 @@ def start(api_public_url: str, webapp_public_url: str, stack: str, stack_name: s
             raise click.ClickException("This node is not a swarm manager")
         raise e
 
-    api_private_url = f"http://{manager_ip}:8080"
-    grafana_private_url = f"http://{manager_ip}:3000"
-    webapp_private_url = f"http://{manager_ip}"
-
     click.echo("System started at:")
-    click.echo(f"API: {api_private_url} (public: {api_public_url})")
-    click.echo(f"Grafana: {grafana_private_url}")
-    click.echo(f"Webapp: {webapp_private_url} (public: {webapp_public_url})")
+    click.echo(f"API: https://api.{domain}")
+    click.echo(f"Grafana: https://grafana.{domain}")
+    click.echo(f"Traefik: https://traefik.{domain}")
+    click.echo(f"Webapp: https://{domain}")
 
 
 @system.command(help="Shut down all services in Docker Swarm.")
@@ -114,11 +98,6 @@ def status(stack_name: str):
 def scale(service: str, replicas: str, stack_name: str):
     command_adapter = CommandAdapter()
     spinner = Spinner("Scaling service")
-
-    if service == "api":
-        raise click.ClickException(
-            "Scaling the API service is currently not supported."
-        )
 
     spinner.start()
     try:

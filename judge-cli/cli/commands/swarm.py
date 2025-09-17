@@ -1,3 +1,4 @@
+import bcrypt
 import re
 import secrets
 
@@ -37,6 +38,7 @@ def init(ctx, ip: str):
     db_password = input_adapter.password("DB password:")
     root_password = input_adapter.password("Root password:")
     grafana_admin_password = input_adapter.password("Grafana admin password:")
+    traefik_admin_password = input_adapter.password("Traefik admin password:")
     jwt_secret = input_adapter.password("JWT secret (blank=random):")
     if len(jwt_secret) == 0:
         jwt_secret = secrets.token_urlsafe(32)
@@ -56,6 +58,10 @@ def init(ctx, ip: str):
     command_adapter.run(
         ["docker", "secret", "create", "root_password", "-"],
         input=root_password,
+    )
+    command_adapter.run(
+        ["docker", "secret", "create", "traefik_admin_password", "-"],
+        input=f"admin:{bcrypt.hashpw(traefik_admin_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')}",
     )
 
     # Show swarm join info
@@ -79,7 +85,8 @@ def info():
         raise e
 
     # Extract tokens and manager IP
-    worker_match = re.search(r"docker swarm join --token (\S+)", worker_result[2])
+    worker_match = re.search(
+        r"docker swarm join --token (\S+)", worker_result[2])
     manager_match = re.search(
         r"docker swarm join --token (\S+) ([^\:]+):2377", manager_result[2]
     )
@@ -104,7 +111,8 @@ def join(token: str, manager_ip: str):
 
     try:
         command_adapter.run(
-            ["docker", "swarm", "join", "--token", token, f"{manager_ip}:2377"],
+            ["docker", "swarm", "join", "--token",
+                token, f"{manager_ip}:2377"],
         )
     except CommandAdapter.Error as e:
         if "This node is already part of a swarm" in str(e):
