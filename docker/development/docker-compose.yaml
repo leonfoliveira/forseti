@@ -22,6 +22,52 @@ services:
     volumes:
       - dev-postgres_data:/var/lib/postgresql/data
 
+  minio:
+    container_name: dev-judge-minio
+    environment:
+      MINIO_ROOT_USER: judge
+      MINIO_ROOT_PASSWORD: judge
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "curl -f http://localhost:9000/minio/health/live || exit 1"
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    networks:
+      - dev-judge-network
+    ports:
+      - 9000:9000
+      - 9001:9001
+    command: server /data --console-address ":9001"
+    volumes:
+      - dev-minio_data:/data
+
+  rabbitmq:
+    container_name: dev-judge-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: judge
+      RABBITMQ_DEFAULT_PASS: judge
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "rabbitmq-diagnostics"
+        - "check_port_connectivity"
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: rabbitmq:4.1.4-management-alpine
+    networks:
+      - dev-judge-network
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - dev-rabbitmq_data:/var/lib/rabbitmq
+
   localstack:
     container_name: dev-judge-localstack
     environment:
@@ -186,4 +232,6 @@ networks:
 
 volumes:
   dev-postgres_data:
+  dev-minio_data:
+  dev-rabbitmq_data:
   dev-localstack_data:
