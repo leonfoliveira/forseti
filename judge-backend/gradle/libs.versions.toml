@@ -7,7 +7,6 @@ hibernate-envers = "6.6.13.Final"
 hibernate-types = "2.21.1"
 jackson = "2.18.3"
 java-diff-utils = "4.15"
-java-jwt = "4.5.0"
 kotest = "5.9.1"
 kotest-spring = "1.3.0"
 kotlin = "2.1.20"
@@ -34,7 +33,6 @@ flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 jackson-datatype-jsr310 = { module = 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310', version.ref = "jackson" }
 jackson-module-kotlin = { module = 'com.fasterxml.jackson.module:jackson-module-kotlin', version.ref = "jackson" }
 java-diff-utils = { module = 'io.github.java-diff-utils:java-diff-utils', version.ref = "java-diff-utils" }
-java-jwt = { module = 'com.auth0:java-jwt', version.ref = "java-jwt" }
 kotest-assertions-core = { module = 'io.kotest:kotest-assertions-core', version.ref = "kotest" }
 kotest-runner-junit5 = { module = 'io.kotest:kotest-runner-junit5', version.ref = "kotest" }
 kotest-spring = { module = 'io.kotest.extensions:kotest-extensions-spring', version.ref = "kotest-spring" }

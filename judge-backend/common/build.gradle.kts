@@ -13,7 +13,6 @@ dependencies {
     implementation(libs.hibernate.envers)
     implementation(libs.hibernate.types)
     implementation(libs.flyway)
-    implementation(libs.java.jwt)
     implementation(libs.opencsv)
     implementation(libs.postgresql)
 }
