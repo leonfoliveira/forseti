@@ -33,6 +33,14 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - timeout 3 bash -c '</dev/tcp/localhost/12345' && echo "OK" || exit 1
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
     image: grafana/alloy:v1.9.2
     networks:
       judge-network:
@@ -232,7 +240,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: gcr.io/cadvisor/cadvisor:v0.49.1
     networks:
       judge-network:
@@ -290,7 +298,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: grafana/grafana-oss:12.0.2
     networks:
       judge-network:
@@ -332,7 +340,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: gresau/localstack-persist:4.4.0
     networks:
       judge-network:
@@ -368,7 +376,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: grafana/loki:3.4.4
     networks:
       judge-network:
@@ -434,7 +442,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: prom/node-exporter:v1.9.1
     networks:
       judge-network:
@@ -477,7 +485,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: postgres:17.5-alpine
     networks:
       - judge-network
@@ -514,7 +522,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: prometheuscommunity/postgres-exporter:v0.17.1
     networks:
       - judge-network
@@ -545,7 +553,7 @@ services:
       timeout: 5s
       interval: 15s
       retries: 5
-      start_period: 5s
+      start_period: 10s
     image: prom/prometheus:v3.4.1
     networks:
       judge-network:
