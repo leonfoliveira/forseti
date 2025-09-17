@@ -99,11 +99,6 @@ def scale(service: str, replicas: str, stack_name: str):
     command_adapter = CommandAdapter()
     spinner = Spinner("Scaling service")
 
-    if service == "api":
-        raise click.ClickException(
-            "Scaling the API service is currently not supported."
-        )
-
     spinner.start()
     try:
         command_adapter.run(

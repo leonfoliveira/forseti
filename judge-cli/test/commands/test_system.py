@@ -156,8 +156,3 @@ class TestSystemCommand:
             "Some other error")
         result = runner.invoke(system, ["scale", "web", "3"])
         assert result.exit_code == 1
-
-    def test_scale_api_service_not_supported(self, runner, command_adapter, spinner):
-        result = runner.invoke(system, ["scale", "api", "3"])
-        assert result.exit_code == 1
-        assert "Scaling the API service is currently not supported." in result.output
