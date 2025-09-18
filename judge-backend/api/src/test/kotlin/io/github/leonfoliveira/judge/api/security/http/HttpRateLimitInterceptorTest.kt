@@ -1,5 +1,6 @@
 package io.github.leonfoliveira.judge.api.security.http
 
+import io.github.leonfoliveira.judge.api.middleware.http.HttpRateLimitInterceptor
 import io.github.leonfoliveira.judge.api.service.RateLimitService
 import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.entity.Member

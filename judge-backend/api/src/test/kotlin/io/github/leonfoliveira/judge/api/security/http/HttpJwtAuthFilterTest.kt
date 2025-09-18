@@ -1,5 +1,6 @@
 package io.github.leonfoliveira.judge.api.security.http
 
+import io.github.leonfoliveira.judge.api.middleware.http.HttpAuthExtractionFilter
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.repository.SessionRepository
 import io.kotest.core.spec.style.FunSpec

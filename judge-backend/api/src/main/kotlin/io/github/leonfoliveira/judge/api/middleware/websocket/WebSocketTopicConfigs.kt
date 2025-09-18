@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.security.websocket
+package io.github.leonfoliveira.judge.api.middleware.websocket
 
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.domain.entity.Member

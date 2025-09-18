@@ -1,5 +1,7 @@
 package io.github.leonfoliveira.judge.api.security.websocket
 
+import io.github.leonfoliveira.judge.api.middleware.websocket.WebSocketPrivateInterceptor
+import io.github.leonfoliveira.judge.api.middleware.websocket.WebSocketTopicConfigs
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication

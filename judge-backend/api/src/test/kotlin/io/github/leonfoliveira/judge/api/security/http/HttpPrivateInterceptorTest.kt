@@ -1,5 +1,6 @@
 package io.github.leonfoliveira.judge.api.security.http
 
+import io.github.leonfoliveira.judge.api.middleware.http.HttpPrivateInterceptor
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException

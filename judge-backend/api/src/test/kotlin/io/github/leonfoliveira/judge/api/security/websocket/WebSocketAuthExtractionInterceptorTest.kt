@@ -1,5 +1,6 @@
 package io.github.leonfoliveira.judge.api.security.websocket
 
+import io.github.leonfoliveira.judge.api.middleware.websocket.WebSocketAuthExtractionInterceptor
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder

@@ -1,8 +1,9 @@
 package io.github.leonfoliveira.judge.api.config
 
-import io.github.leonfoliveira.judge.api.security.http.HttpAuthExtractionFilter
-import io.github.leonfoliveira.judge.api.security.http.HttpPrivateInterceptor
-import io.github.leonfoliveira.judge.api.security.http.HttpRateLimitInterceptor
+import io.github.leonfoliveira.judge.api.middleware.http.HttpAuthExtractionFilter
+import io.github.leonfoliveira.judge.api.middleware.http.HttpPrivateInterceptor
+import io.github.leonfoliveira.judge.api.middleware.http.HttpRateLimitInterceptor
+import io.github.leonfoliveira.judge.api.middleware.http.HttpRequestContextFilter
 import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

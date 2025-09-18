@@ -5,7 +5,8 @@ set -e
 # Function to wait for a service to be ready
 wait_for_service() {
     local host=$1
-    local service_name=$2
+    local port=$2
+    local service_name=$3
     local max_attempts=${4:-30}
     local attempt=1
     
@@ -34,21 +35,26 @@ fi
 
 # Wait for PostgreSQL to be ready
 if [ -n "$DB_URL" ]; then
-    # Extract host and port from JDBC URL
-    # Format: jdbc:postgresql://host:port/database
-    DB_HOST=$(echo "$DB_URL" | sed 's|jdbc:postgresql://||')
-    
-    wait_for_service "$DB_HOST" "PostgreSQL" 60
+    # jdbc:postgresql://host:port/database
+    DB_HOST=$(echo "$DB_URL" | sed 's|jdbc:postgresql://||' | cut -d'/' -f1 | cut -d':' -f1)
+    DB_PORT=$(echo "$DB_URL" | sed 's|jdbc:postgresql://||' | cut -d'/' -f1 | cut -d':' -f2)
+
+    wait_for_service "$DB_HOST" "$DB_PORT" "PostgreSQL" 60
 fi
 
 # Wait for Minio to be ready
 if [ -n "$MINIO_ENDPOINT" ]; then
-    MINIO_HOST=$(echo "$MINIO_ENDPOINT" | sed 's|http://||')
-    
-    wait_for_service "$MINIO_HOST" "Minio" 30
+    # http://host:port
+    MINIO_HOST=$(echo "$MINIO_ENDPOINT" | sed 's|http://||' | cut -d'/' -f1 | cut -d':' -f1)
+    MINIO_PORT=$(echo "$MINIO_ENDPOINT" | sed 's|http://||' | cut -d'/' -f1 | cut -d':' -f2)
+
+    wait_for_service "$MINIO_HOST" "$MINIO_PORT" "Minio" 30
 fi
 
-
+# Wait for RabbitMQ to be ready
+if [ -n "$RABBITMQ_HOST" ] && [ -n "$RABBITMQ_PORT" ]; then
+    wait_for_service "$RABBITMQ_HOST" "$RABBITMQ_PORT" "RabbitMQ" 30
+fi
 
 # Load secrets into environment variables
 if [ -n "$DB_PASSWORD_FILE" ]; then

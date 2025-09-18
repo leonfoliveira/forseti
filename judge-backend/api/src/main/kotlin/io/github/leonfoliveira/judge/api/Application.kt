@@ -1,5 +1,6 @@
 package io.github.leonfoliveira.judge.api
 
+import org.springframework.amqp.rabbit.annotation.EnableRabbit
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.runApplication
@@ -24,6 +25,7 @@ import java.util.TimeZone
     ],
 )
 @EnableScheduling
+@EnableRabbit
 class Application
 
 fun main(args: Array<String>) {

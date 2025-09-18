@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.security.http
+package io.github.leonfoliveira.judge.api.middleware.http
 
 import io.github.leonfoliveira.judge.api.service.RateLimitService
 import io.github.leonfoliveira.judge.api.util.RateLimit

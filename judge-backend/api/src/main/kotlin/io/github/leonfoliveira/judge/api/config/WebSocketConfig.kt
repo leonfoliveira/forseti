@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.api.config
 
-import io.github.leonfoliveira.judge.api.security.websocket.WebSocketAuthExtractionInterceptor
-import io.github.leonfoliveira.judge.api.security.websocket.WebSocketPrivateInterceptor
+import io.github.leonfoliveira.judge.api.middleware.websocket.WebSocketAuthExtractionInterceptor
+import io.github.leonfoliveira.judge.api.middleware.websocket.WebSocketPrivateInterceptor
 import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
@@ -26,7 +26,8 @@ class WebSocketConfig(
     }
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
-        registry.addEndpoint("/ws")
+        registry
+            .addEndpoint("/ws")
             .setAllowedOrigins(allowedOrigins)
             .withSockJS()
     }

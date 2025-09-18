@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.security.http
+package io.github.leonfoliveira.judge.api.middleware.http
 
 import io.github.leonfoliveira.judge.common.domain.entity.Session
 import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication

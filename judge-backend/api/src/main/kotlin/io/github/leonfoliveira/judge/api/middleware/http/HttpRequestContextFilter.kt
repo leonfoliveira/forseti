@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.config
+package io.github.leonfoliveira.judge.api.middleware.http
 
 import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import jakarta.servlet.FilterChain
@@ -24,8 +24,8 @@ class HttpRequestContextFilter : OncePerRequestFilter() {
             request.getHeader("X-Trace-Id")
                 ?: UUID.randomUUID().toString()
 
-        RequestContext.getCurrent().ip = ip
-        RequestContext.getCurrent().traceId = traceId
+        RequestContext.Companion.getCurrent().ip = ip
+        RequestContext.Companion.getCurrent().traceId = traceId
 
         MDC.put("traceId", traceId)
 

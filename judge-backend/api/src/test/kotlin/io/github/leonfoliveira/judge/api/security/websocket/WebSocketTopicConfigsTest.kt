@@ -1,5 +1,6 @@
 package io.github.leonfoliveira.judge.api.security.websocket
 
+import io.github.leonfoliveira.judge.api.middleware.websocket.WebSocketTopicConfigs
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException

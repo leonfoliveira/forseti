@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.api.config
+package io.github.leonfoliveira.judge.api.listener
 
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.port.HashAdapter
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
-class AuthenticationInitiator(
+class ApplicationReadyEventListener(
     private val memberRepository: MemberRepository,
     private val hashAdapter: HashAdapter,
     @Value("\${security.root.password}")
@@ -19,26 +19,26 @@ class AuthenticationInitiator(
     @EventListener(ApplicationReadyEvent::class)
     fun createOrUpdateSystemMembers() {
         val root =
-            memberRepository.findByLogin(Member.ROOT_LOGIN)?.apply {
+            memberRepository.findByLogin(Member.Companion.ROOT_LOGIN)?.apply {
                 password = hashAdapter.hash(rootPassword)
             }
                 ?: Member(
-                    id = Member.ROOT_ID,
+                    id = Member.Companion.ROOT_ID,
                     type = Member.Type.ROOT,
-                    name = Member.ROOT_NAME,
-                    login = Member.ROOT_LOGIN,
+                    name = Member.Companion.ROOT_NAME,
+                    login = Member.Companion.ROOT_LOGIN,
                     password = hashAdapter.hash(rootPassword),
                 )
 
         val autoJudge =
-            memberRepository.findByLogin(Member.AUTOJUDGE_LOGIN)?.apply {
+            memberRepository.findByLogin(Member.Companion.AUTOJUDGE_LOGIN)?.apply {
                 password = hashAdapter.hash(UUID.randomUUID().toString())
             }
                 ?: Member(
-                    id = Member.AUTOJUDGE_ID,
+                    id = Member.Companion.AUTOJUDGE_ID,
                     type = Member.Type.AUTOJUDGE,
-                    name = Member.AUTOJUDGE_NAME,
-                    login = Member.AUTOJUDGE_LOGIN,
+                    name = Member.Companion.AUTOJUDGE_NAME,
+                    login = Member.Companion.AUTOJUDGE_LOGIN,
                     password = hashAdapter.hash(UUID.randomUUID().toString()),
                 )
 
