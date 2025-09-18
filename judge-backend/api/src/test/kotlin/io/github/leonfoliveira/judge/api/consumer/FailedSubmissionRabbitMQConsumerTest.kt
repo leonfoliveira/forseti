@@ -3,11 +3,10 @@ package io.github.leonfoliveira.judge.api.consumer
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.common.adapter.rabbitmq.message.RabbitMQMessage
-import io.github.leonfoliveira.judge.common.adapter.rabbitmq.message.SubmissionQueuePayload
+import io.github.leonfoliveira.judge.common.adapter.rabbitmq.message.SubmissionMessagePayload
 import io.github.leonfoliveira.judge.common.config.JacksonConfig
 import io.github.leonfoliveira.judge.common.service.submission.UpdateSubmissionService
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.UUID
@@ -22,7 +21,7 @@ class FailedSubmissionRabbitMQConsumerTest(
         val event =
             RabbitMQMessage(
                 payload =
-                    SubmissionQueuePayload(
+                    SubmissionMessagePayload(
                         submissionId = UUID.randomUUID(),
                         contestId = UUID.randomUUID(),
                     ),

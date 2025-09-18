@@ -16,8 +16,8 @@ spring:
     virtual-host: /
     queue:
       submission-queue: submission-queue
-      submission-queue-exchange: submission-queue-exchange
-      submission-queue-routing-key: submission-queue-routing-key
+      submission-exchange: submission-exchange
+      submission-routing-key: submission-routing-key
       submission-failed-queue: submission-failed-queue
 minio:
   endpoint: http://localhost:9000
@@ -28,6 +28,6 @@ security:
   jwt:
     secret: judge
     expiration: 12h
-    root-expiration: $12h
+    root-expiration: 12h
   root:
     password: judge

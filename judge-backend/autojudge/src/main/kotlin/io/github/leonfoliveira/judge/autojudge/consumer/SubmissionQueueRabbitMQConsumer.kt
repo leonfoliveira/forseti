@@ -4,7 +4,7 @@ import io.github.leonfoliveira.judge.autojudge.event.SubmissionJudgedEvent
 import io.github.leonfoliveira.judge.autojudge.service.RunSubmissionService
 import io.github.leonfoliveira.judge.autojudge.util.AutoJudgeMetrics
 import io.github.leonfoliveira.judge.common.adapter.rabbitmq.RabbitMQConsumer
-import io.github.leonfoliveira.judge.common.adapter.rabbitmq.message.SubmissionQueuePayload
+import io.github.leonfoliveira.judge.common.adapter.rabbitmq.message.SubmissionMessagePayload
 import io.github.leonfoliveira.judge.common.service.submission.FindSubmissionService
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tags
@@ -19,7 +19,7 @@ class SubmissionQueueRabbitMQConsumer(
     private val runSubmissionService: RunSubmissionService,
     private val applicationEventPublisher: ApplicationEventPublisher,
     private val meterRegistry: MeterRegistry,
-) : RabbitMQConsumer<SubmissionQueuePayload>() {
+) : RabbitMQConsumer<SubmissionMessagePayload>() {
     @RabbitListener(
         queues = ["\${spring.rabbitmq.queue.submission-queue}"],
         concurrency = "\${submission.max-concurrent}",
@@ -28,9 +28,9 @@ class SubmissionQueueRabbitMQConsumer(
         super.receiveMessage(jsonMessage)
     }
 
-    override fun getPayloadType(): Class<SubmissionQueuePayload> = SubmissionQueuePayload::class.java
+    override fun getPayloadType(): Class<SubmissionMessagePayload> = SubmissionMessagePayload::class.java
 
-    override fun handlePayload(payload: SubmissionQueuePayload) {
+    override fun handlePayload(payload: SubmissionMessagePayload) {
         meterRegistry.counter(AutoJudgeMetrics.AUTO_JUDGE_RECEIVED_SUBMISSION).increment()
 
         try {

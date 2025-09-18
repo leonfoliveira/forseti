@@ -14,7 +14,7 @@ import io.github.leonfoliveira.judge.common.port.AttachmentBucket
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.github.leonfoliveira.judge.common.repository.SubmissionRepository
-import io.github.leonfoliveira.judge.common.testcontainer.LocalStackTestContainer
+import io.github.leonfoliveira.judge.common.testcontainer.MinioTestContainer
 import io.github.leonfoliveira.judge.common.testcontainer.PostgresTestContainer
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -26,7 +26,7 @@ import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test")
 @SpringBootTest
-@Import(PostgresTestContainer::class, LocalStackTestContainer::class)
+@Import(PostgresTestContainer::class, MinioTestContainer::class)
 class DockerSubmissionRunnerAdapterTest(
     val sut: DockerSubmissionRunnerAdapter,
     val contestRepository: ContestRepository,

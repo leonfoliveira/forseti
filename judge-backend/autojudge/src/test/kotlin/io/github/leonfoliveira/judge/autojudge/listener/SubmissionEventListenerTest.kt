@@ -5,7 +5,6 @@ import io.github.leonfoliveira.judge.autojudge.feign.ApiClient
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import io.mockk.verify
 

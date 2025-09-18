@@ -2,11 +2,10 @@ package io.github.leonfoliveira.judge.autojudge.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import io.github.leonfoliveira.judge.autojudge.event.SubmissionJudgedEvent
 import io.github.leonfoliveira.judge.autojudge.service.RunSubmissionService
 import io.github.leonfoliveira.judge.autojudge.util.AutoJudgeMetrics
 import io.github.leonfoliveira.judge.common.adapter.rabbitmq.message.RabbitMQMessage
-import io.github.leonfoliveira.judge.common.adapter.rabbitmq.message.SubmissionQueuePayload
+import io.github.leonfoliveira.judge.common.adapter.rabbitmq.message.SubmissionMessagePayload
 import io.github.leonfoliveira.judge.common.config.JacksonConfig
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
@@ -52,7 +51,7 @@ class SubmissionQueueRabbitMQConsumerTest(
                 RabbitMQMessage(
                     id = UUID.randomUUID(),
                     payload =
-                        SubmissionQueuePayload(
+                        SubmissionMessagePayload(
                             submissionId = UUID.randomUUID(),
                             contestId = UUID.randomUUID(),
                         ),
@@ -89,7 +88,7 @@ class SubmissionQueueRabbitMQConsumerTest(
                 RabbitMQMessage(
                     id = UUID.randomUUID(),
                     payload =
-                        SubmissionQueuePayload(
+                        SubmissionMessagePayload(
                             submissionId = UUID.randomUUID(),
                             contestId = UUID.randomUUID(),
                         ),

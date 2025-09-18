@@ -63,12 +63,13 @@ subprojects {
         testImplementation(rootProject.libs.bundles.kotest)
         testImplementation(rootProject.libs.bundles.mockk)
         testImplementation(rootProject.libs.bundles.testcontainers)
-        testImplementation(rootProject.libs.spring.boot.starter.test)
+        testImplementation(rootProject.libs.bundles.spring.test)
 
+        testFixturesImplementation(rootProject.libs.bundles.spring)
         testFixturesImplementation(rootProject.libs.bundles.kotest)
         testFixturesImplementation(rootProject.libs.bundles.mockk)
+        testFixturesImplementation(rootProject.libs.bundles.spring.test)
         testFixturesImplementation(rootProject.libs.bundles.testcontainers)
-        testFixturesImplementation(rootProject.libs.spring.boot.starter.test)
 
         developmentOnly(rootProject.libs.spring.boot.dev.tools)
     }

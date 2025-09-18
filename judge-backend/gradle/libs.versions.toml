@@ -7,7 +7,7 @@ hibernate-types = "2.21.1"
 jackson = "2.18.3"
 java-diff-utils = "4.15"
 kotest = "5.9.1"
-kotest-spring = "1.3.0"
+kotest-extensions-spring = "1.3.0"
 kotlin = "2.1.20"
 kover = "0.9.1"
 ktlint = "12.1.1"
@@ -33,7 +33,7 @@ jackson-module-kotlin = { module = 'com.fasterxml.jackson.module:jackson-module-
 java-diff-utils = { module = 'io.github.java-diff-utils:java-diff-utils', version.ref = "java-diff-utils" }
 kotest-assertions-core = { module = 'io.kotest:kotest-assertions-core', version.ref = "kotest" }
 kotest-runner-junit5 = { module = 'io.kotest:kotest-runner-junit5', version.ref = "kotest" }
-kotest-spring = { module = 'io.kotest.extensions:kotest-extensions-spring', version.ref = "kotest-spring" }
+kotest-extensions-spring = { module = 'io.kotest.extensions:kotest-extensions-spring', version.ref = "kotest-extensions-spring" }
 kotlin-reflect = { module = 'org.jetbrains.kotlin:kotlin-reflect', version.ref = "kotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 micrometer-tracing-bridge-otel = { module = "io.micrometer:micrometer-tracing-bridge-otel", version.ref = "micrometer-otel" }
@@ -70,7 +70,6 @@ jackson = [
 kotest = [
     "kotest-assertions-core",
     "kotest-runner-junit5",
-    "kotest-spring"
 ]
 micrometer = [
     "micrometer-tracing-bridge-otel",
@@ -90,6 +89,10 @@ spring = [
     "spring-boot-starter-validation",
     "spring-boot-starter-web",
     "spring-boot-starter-websocket",
+]
+spring-test = [
+    "kotest-extensions-spring",
+    "spring-boot-starter-test",
 ]
 testcontainers = [
     "spring-boot-testcontainers",

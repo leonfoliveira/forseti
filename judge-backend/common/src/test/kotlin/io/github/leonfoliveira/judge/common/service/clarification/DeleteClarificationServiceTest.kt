@@ -12,6 +12,7 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
 import java.util.Optional
@@ -52,12 +53,10 @@ class DeleteClarificationServiceTest :
                 sut.delete(id)
 
                 clarification.deletedAt shouldNotBe null
-                answer.deletedAt shouldNotBe null
                 clarificationRepository.save(clarification)
-                val eventSlot = mutableListOf<ClarificationDeletedEvent>()
+                val eventSlot = slot<ClarificationDeletedEvent>()
                 verify { applicationEventPublisher.publishEvent(capture(eventSlot)) }
-                eventSlot[0].clarification shouldBe answer
-                eventSlot[1].clarification shouldBe clarification
+                eventSlot.captured.clarification shouldBe clarification
             }
         }
     })

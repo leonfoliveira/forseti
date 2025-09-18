@@ -4,10 +4,6 @@ spring:
     username: judge
     password: judge
     driver-class-name: org.postgresql.Driver
-  amqp:
-    deserialization:
-      trust:
-        all: true
   rabbitmq:
     host: localhost
     port: 5672
