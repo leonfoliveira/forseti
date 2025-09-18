@@ -18,6 +18,7 @@ class SubmissionEventsListener(
     @TransactionalEventListener(SubmissionCreatedEvent::class, phase = TransactionPhase.AFTER_COMMIT)
     fun onApplicationEvent(event: SubmissionCreatedEvent) {
         logger.info("Handling submission created event: ${event.submission}")
+
         produceSubmissionQueue(event.submission)
     }
 

@@ -4,7 +4,7 @@ import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.common.event.SubmissionEvent
+import io.github.leonfoliveira.judge.common.event.SubmissionCreatedEvent
 import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
@@ -17,7 +17,6 @@ import io.github.leonfoliveira.judge.common.service.dto.input.attachment.Attachm
 import io.github.leonfoliveira.judge.common.service.dto.input.submission.CreateSubmissionInputDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.ints.exactly
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -145,42 +144,8 @@ class CreateSubmissionServiceTest :
                 submission.code shouldBe attachment
 
                 every { submissionRepository.save(submission) } returns submission
-                val eventSlot1 = slot<SubmissionEvent>()
-                val eventSlot2 = slot<SubmissionAutoJudgeEvent>()
+                val eventSlot1 = slot<SubmissionCreatedEvent>()
                 verify { applicationEventPublisher.publishEvent(capture(eventSlot1)) }
-                verify { applicationEventPublisher.publishEvent(capture(eventSlot2)) }
-                eventSlot1.captured.submission shouldBe submission
-                eventSlot2.captured.submission shouldBe submission
-            }
-
-            test("should not publish auto-judge event when auto-judge is disabled") {
-                val contest =
-                    ContestMockBuilder.build(
-                        languages = listOf(Language.PYTHON_3_12),
-                        startAt = OffsetDateTime.now().minusHours(1),
-                    )
-                contest.settings.isAutoJudgeEnabled = false
-                val member = MemberMockBuilder.build(contest = contest)
-                val problem = ProblemMockBuilder.build(contest = contest)
-                val attachment = AttachmentMockBuilder.build()
-                every { memberRepository.findById(memberId) } returns Optional.of(member)
-                every { problemRepository.findById(problemId) } returns Optional.of(problem)
-                every { attachmentRepository.findById(inputDTO.code.id) } returns Optional.of(attachment)
-                every { submissionRepository.save(any<Submission>()) } answers { firstArg() }
-
-                val submission = sut.create(memberId, inputDTO)
-
-                submission.member shouldBe member
-                submission.problem shouldBe problem
-                submission.language shouldBe inputDTO.language
-                submission.status shouldBe Submission.Status.JUDGING
-                submission.code shouldBe attachment
-
-                every { submissionRepository.save(submission) } returns submission
-                val eventSlot1 = slot<SubmissionEvent>()
-                val eventSlot2 = slot<SubmissionAutoJudgeEvent>()
-                verify { applicationEventPublisher.publishEvent(capture(eventSlot1)) }
-                verify(exactly = 0) { applicationEventPublisher.publishEvent(capture(eventSlot2)) }
                 eventSlot1.captured.submission shouldBe submission
             }
         }

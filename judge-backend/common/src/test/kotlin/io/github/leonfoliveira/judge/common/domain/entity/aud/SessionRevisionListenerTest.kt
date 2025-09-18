@@ -8,14 +8,14 @@ import io.kotest.matchers.shouldBe
 import org.springframework.security.core.context.SecurityContextHolder
 import java.util.UUID
 
-class MemberRevisionListenerTest :
+class SessionRevisionListenerTest :
     FunSpec({
-        val sut = MemberRevisionListener()
+        val sut = SessionRevisionListener()
 
         test("should not set sessionId and traceId if no authentication is present") {
             SecurityContextHolder.clearContext()
             RequestContext.clearContext()
-            val revisionEntity = MemberRevisionEntity()
+            val revisionEntity = SessionRevisionEntity()
 
             sut.newRevision(revisionEntity)
 
@@ -25,7 +25,7 @@ class MemberRevisionListenerTest :
         }
 
         test("should set memberId and traceId in new revision") {
-            val revisionEntity = MemberRevisionEntity()
+            val revisionEntity = SessionRevisionEntity()
             val sessionId = UUID.randomUUID()
             SecurityContextHolder.getContext().authentication =
                 SessionAuthentication(
