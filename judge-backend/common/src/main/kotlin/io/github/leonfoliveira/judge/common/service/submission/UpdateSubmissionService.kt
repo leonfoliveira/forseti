@@ -3,7 +3,6 @@ package io.github.leonfoliveira.judge.common.service.submission
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.common.event.SubmissionEvent
 import io.github.leonfoliveira.judge.common.event.SubmissionRerunEvent
 import io.github.leonfoliveira.judge.common.event.SubmissionUpdatedEvent
 import io.github.leonfoliveira.judge.common.repository.SubmissionRepository
