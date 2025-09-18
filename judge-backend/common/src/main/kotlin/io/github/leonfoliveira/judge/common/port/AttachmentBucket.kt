@@ -2,7 +2,7 @@ package io.github.leonfoliveira.judge.common.port
 
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 
-interface AttachmentBucketAdapter {
+interface AttachmentBucket {
     fun upload(
         attachment: Attachment,
         bytes: ByteArray,

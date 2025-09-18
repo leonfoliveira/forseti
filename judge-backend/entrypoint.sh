@@ -5,8 +5,7 @@ set -e
 # Function to wait for a service to be ready
 wait_for_service() {
     local host=$1
-    local port=$2
-    local service_name=$3
+    local service_name=$2
     local max_attempts=${4:-30}
     local attempt=1
     
@@ -37,21 +36,19 @@ fi
 if [ -n "$DB_URL" ]; then
     # Extract host and port from JDBC URL
     # Format: jdbc:postgresql://host:port/database
-    DB_HOST=$(echo "$DB_URL" | sed 's|jdbc:postgresql://||' | cut -d':' -f1)
-    DB_PORT=$(echo "$DB_URL" | sed 's|jdbc:postgresql://||' | cut -d':' -f2 | cut -d'/' -f1)
+    DB_HOST=$(echo "$DB_URL" | sed 's|jdbc:postgresql://||')
     
-    wait_for_service "$DB_HOST" "$DB_PORT" "PostgreSQL" 60
+    wait_for_service "$DB_HOST" "PostgreSQL" 60
 fi
 
-# Wait for LocalStack to be ready (if AWS services are configured)
-if [ -n "$AWS_ENDPOINT" ]; then
-    # Extract host and port from AWS endpoint
-    # Format: http://host:port
-    AWS_HOST=$(echo "$AWS_ENDPOINT" | sed 's|http://||' | cut -d':' -f1)
-    AWS_PORT=$(echo "$AWS_ENDPOINT" | sed 's|http://||' | cut -d':' -f2)
+# Wait for Minio to be ready
+if [ -n "$MINIO_ENDPOINT" ]; then
+    MINIO_HOST=$(echo "$MINIO_ENDPOINT" | sed 's|http://||')
     
-    wait_for_service "$AWS_HOST" "$AWS_PORT" "LocalStack" 30
+    wait_for_service "$MINIO_HOST" "Minio" 30
 fi
+
+
 
 # Load secrets into environment variables
 if [ -n "$DB_PASSWORD_FILE" ]; then

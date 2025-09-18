@@ -2,7 +2,7 @@ package io.github.leonfoliveira.judge.common.service.attachment
 
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
+import io.github.leonfoliveira.judge.common.port.AttachmentBucket
 import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
@@ -16,7 +16,7 @@ class AttachmentService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
     private val attachmentRepository: AttachmentRepository,
-    private val attachmentBucketAdapter: AttachmentBucketAdapter,
+    private val attachmentBucket: AttachmentBucket,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -50,7 +50,7 @@ class AttachmentService(
             )
         logger.info("Uploading ${bytes.size} bytes to attachment with id: ${attachment.id}")
         attachmentRepository.save(attachment)
-        attachmentBucketAdapter.upload(attachment, bytes)
+        attachmentBucket.upload(attachment, bytes)
 
         logger.info("Finished uploading attachment")
         return attachment
@@ -62,7 +62,7 @@ class AttachmentService(
             attachmentRepository.findById(id).orElseThrow {
                 NotFoundException("Could not find attachment with id = $id")
             }
-        val bytes = attachmentBucketAdapter.download(attachment)
+        val bytes = attachmentBucket.download(attachment)
 
         logger.info("Finished downloading attachment")
         return AttachmentDownloadOutputDTO(

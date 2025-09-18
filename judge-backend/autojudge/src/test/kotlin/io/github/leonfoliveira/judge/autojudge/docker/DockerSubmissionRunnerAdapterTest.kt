@@ -10,7 +10,7 @@ import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ProblemMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
-import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
+import io.github.leonfoliveira.judge.common.port.AttachmentBucket
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
 import io.github.leonfoliveira.judge.common.repository.SubmissionRepository
@@ -30,7 +30,7 @@ import org.springframework.test.context.ActiveProfiles
 class DockerSubmissionRunnerAdapterTest(
     val sut: DockerSubmissionRunnerAdapter,
     val contestRepository: ContestRepository,
-    val attachmentBucketAdapter: AttachmentBucketAdapter,
+    val attachmentBucket: AttachmentBucket,
     val submissionRepository: SubmissionRepository,
     val memberRepository: MemberRepository,
 ) : FunSpec({
@@ -75,7 +75,7 @@ class DockerSubmissionRunnerAdapterTest(
                 1,2
                 2,4
                 """.trimIndent()
-            attachmentBucketAdapter.upload(testCasesAttachment, testCases.toByteArray())
+            attachmentBucket.upload(testCasesAttachment, testCases.toByteArray())
             contest.problems = listOf(problem)
             contest = contestRepository.save(contest)
         }
@@ -127,7 +127,7 @@ class DockerSubmissionRunnerAdapterTest(
                 test("should run a submission with C++ 17 and return $expectedAnswer") {
                     val submission = createSubmission(contest, Language.CPP_17, filename, "text/plain")
                     val code = importCode("/code/cpp17/$filename")
-                    attachmentBucketAdapter.upload(submission.code, code.toByteArray())
+                    attachmentBucket.upload(submission.code, code.toByteArray())
                     sut.run(submission).answer shouldBe expectedAnswer
                 }
             }
@@ -145,7 +145,7 @@ class DockerSubmissionRunnerAdapterTest(
                 test("should run a submission with Java 21 and return $expectedAnswer") {
                     val submission = createSubmission(contest, Language.JAVA_21, filename, "text/plain")
                     val code = importCode("/code/java21/$filename")
-                    attachmentBucketAdapter.upload(submission.code, code.toByteArray())
+                    attachmentBucket.upload(submission.code, code.toByteArray())
                     sut.run(submission).answer shouldBe expectedAnswer
                 }
             }
@@ -162,7 +162,7 @@ class DockerSubmissionRunnerAdapterTest(
                 test("should run a submission with Python 3.12 and return $expectedAnswer") {
                     val submission = createSubmission(contest, Language.PYTHON_3_12, filename, "text/plain")
                     val code = importCode("/code/python3_12/$filename")
-                    attachmentBucketAdapter.upload(submission.code, code.toByteArray())
+                    attachmentBucket.upload(submission.code, code.toByteArray())
                     sut.run(submission).answer shouldBe expectedAnswer
                 }
             }

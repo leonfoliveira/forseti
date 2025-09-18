@@ -8,21 +8,22 @@ spring:
     enabled: true
     locations: classpath:migration
     baseline-on-migrate: true
-  cloud:
-    aws:
-      endpoint: http://localhost:4566
-      region:
-        static: us-east-1
-      credentials:
-        access-key: judge
-        secret-key: judge
-      stack:
-        auto: false
-      s3:
-        bucket: judge
-      sqs:
-        submission-queue: submission-queue
-        submission-failed-queue: submission-failed-queue
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: judge
+    password: judge
+    virtual-host: /
+    queue:
+      submission-queue: submission-queue
+      submission-queue-exchange: submission-queue-exchange
+      submission-queue-routing-key: submission-queue-routing-key
+      submission-failed-queue: submission-failed-queue
+minio:
+  endpoint: http://localhost:9000
+  access-key: judge
+  secret-key: judgepassword
+  bucket: judge
 security:
   jwt:
     secret: judge

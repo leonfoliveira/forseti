@@ -26,7 +26,7 @@ services:
     container_name: dev-judge-minio
     environment:
       MINIO_ROOT_USER: judge
-      MINIO_ROOT_PASSWORD: judge
+      MINIO_ROOT_PASSWORD: judgepassword
     healthcheck:
       test:
         - "CMD-SHELL"
@@ -47,12 +47,13 @@ services:
 
   rabbitmq:
     container_name: dev-judge-rabbitmq
+    entrypoint: /init.sh
     environment:
-      RABBITMQ_DEFAULT_USER: judge
-      RABBITMQ_DEFAULT_PASS: judge
+      RABBITMQ_USER: judge
+      RABBITMQ_PASSWORD: judge
     healthcheck:
       test:
-        - "CMD-SHELL"
+        - "CMD"
         - "rabbitmq-diagnostics"
         - "check_port_connectivity"
       timeout: 5s
@@ -67,27 +68,9 @@ services:
       - 15672:15672
     volumes:
       - dev-rabbitmq_data:/var/lib/rabbitmq
-
-  localstack:
-    container_name: dev-judge-localstack
-    environment:
-      SERVICES: s3,sqs
-    healthcheck:
-      test:
-        - "CMD-SHELL"
-        - "awslocal sqs get-queue-url --queue-name submission-queue"
-      timeout: 5s
-      interval: 15s
-      retries: 5
-      start_period: 5s
-    image: gresau/localstack-persist:4.4.0
-    networks:
-      - dev-judge-network
-    ports:
-      - 4566:4566
-    volumes:
-      - dev-localstack_data:/persisted-data
-      - ./volumes/localstack:/etc/localstack/init/ready.d
+      - ./volumes/rabbitmq/init.sh:/init.sh:ro
+      - ./volumes/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./volumes/rabbitmq/definitions.template.json:/etc/rabbitmq/definitions.template.json:ro
 
   migration:
     container_name: dev-judge-migration
@@ -131,12 +114,14 @@ services:
       SECURE_COOKIES: "false"
       SPRING_PROFILES_ACTIVE: development
     depends_on:
-      localstack:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       migration:
         condition: service_completed_successfully
-      postgres:
-        condition: service_healthy
     healthcheck:
       test:
         - CMD-SHELL
@@ -175,13 +160,15 @@ services:
       ROOT_PASSWORD: judge
       SPRING_PROFILES_ACTIVE: development
     depends_on:
-      api:
+      postgres:
         condition: service_healthy
-      localstack:
+      minio:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       migration:
         condition: service_completed_successfully
-      postgres:
+      api:
         condition: service_healthy
     healthcheck:
       test:

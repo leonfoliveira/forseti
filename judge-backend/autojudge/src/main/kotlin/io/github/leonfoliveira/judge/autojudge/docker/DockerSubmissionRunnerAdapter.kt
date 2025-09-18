@@ -7,7 +7,7 @@ import io.github.leonfoliveira.judge.common.domain.entity.Execution
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.entity.Problem
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
-import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
+import io.github.leonfoliveira.judge.common.port.AttachmentBucket
 import io.github.leonfoliveira.judge.common.repository.ExecutionRepository
 import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
 import org.slf4j.LoggerFactory
@@ -20,7 +20,7 @@ import java.nio.file.Files
 @Service
 class DockerSubmissionRunnerAdapter(
     private val executionRepository: ExecutionRepository,
-    private val attachmentBucketAdapter: AttachmentBucketAdapter,
+    private val attachmentBucket: AttachmentBucket,
     private val attachmentService: AttachmentService,
     private val dockerSubmissionRunnerConfigFactory: DockerSubmissionRunnerConfigFactory,
 ) {
@@ -156,7 +156,7 @@ class DockerSubmissionRunnerAdapter(
         submission: Submission,
         tmpDir: File,
     ): File {
-        val bytes = attachmentBucketAdapter.download(submission.code)
+        val bytes = attachmentBucket.download(submission.code)
         val romFile = File(tmpDir, submission.code.filename)
         romFile.writeBytes(bytes)
         return romFile
@@ -166,7 +166,7 @@ class DockerSubmissionRunnerAdapter(
      * Downloads the test cases from the attachment bucket and parses them as CSV.
      */
     private fun loadTestCases(problem: Problem): List<Array<String>> {
-        val bytes = attachmentBucketAdapter.download(problem.testCases)
+        val bytes = attachmentBucket.download(problem.testCases)
         val csvReader = CSVReader(InputStreamReader(ByteArrayInputStream(bytes)))
         return csvReader.use { reader ->
             reader.readAll()

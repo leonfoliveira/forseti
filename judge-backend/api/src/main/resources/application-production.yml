@@ -1,10 +1,6 @@
 spring:
   config:
     import: classpath:common-production.yml
-  cloud:
-    aws:
-      sqs:
-        submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE}
 server:
   cors:
     allowed-origins: ${ALLOWED_ORIGINS}

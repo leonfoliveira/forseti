@@ -2,7 +2,7 @@ package io.github.leonfoliveira.judge.common.listener
 
 import io.github.leonfoliveira.judge.common.event.SubmissionAutoJudgeEvent
 import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
-import io.github.leonfoliveira.judge.common.port.SubmissionQueueAdapter
+import io.github.leonfoliveira.judge.common.port.SubmissionQueueProducer
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.mockk
@@ -10,9 +10,9 @@ import io.mockk.verify
 
 class SubmissionJudgeEventListenerTest :
     FunSpec({
-        val submissionQueueAdapter = mockk<SubmissionQueueAdapter>(relaxed = true)
+        val submissionQueueProducer = mockk<SubmissionQueueProducer>(relaxed = true)
 
-        val sut = SubmissionJudgeEventListener(submissionQueueAdapter)
+        val sut = SubmissionJudgeEventListener(submissionQueueProducer)
 
         beforeEach {
             clearAllMocks()
@@ -24,6 +24,6 @@ class SubmissionJudgeEventListenerTest :
 
             sut.onApplicationEvent(event)
 
-            verify { submissionQueueAdapter.enqueue(submission) }
+            verify { submissionQueueProducer.produce(submission) }
         }
     })
