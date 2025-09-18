@@ -1,6 +1,5 @@
 package io.github.leonfoliveira.judge.common.listener
 
-import io.github.leonfoliveira.judge.common.event.SubmissionAutoJudgeEvent
 import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
 import io.github.leonfoliveira.judge.common.port.SubmissionQueueProducer
 import io.kotest.core.spec.style.FunSpec
@@ -12,7 +11,7 @@ class SubmissionJudgeEventListenerTest :
     FunSpec({
         val submissionQueueProducer = mockk<SubmissionQueueProducer>(relaxed = true)
 
-        val sut = SubmissionJudgeEventListener(submissionQueueProducer)
+        val sut = SubmissionEventsListener(submissionQueueProducer)
 
         beforeEach {
             clearAllMocks()

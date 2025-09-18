@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.api.listener
 
 import io.github.leonfoliveira.judge.api.emitter.StompAnnouncementEmitter
-import io.github.leonfoliveira.judge.common.event.AnnouncementEvent
+import io.github.leonfoliveira.judge.common.event.AnnouncementCreatedEvent
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
@@ -13,8 +13,8 @@ class AnnouncementEventListener(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @TransactionalEventListener(AnnouncementEvent::class, phase = TransactionPhase.AFTER_COMMIT)
-    fun onApplicationEvent(event: AnnouncementEvent) {
+    @TransactionalEventListener(AnnouncementCreatedEvent::class, phase = TransactionPhase.AFTER_COMMIT)
+    fun onApplicationEvent(event: AnnouncementCreatedEvent) {
         logger.info("Handling announcement event: ${event.announcement}")
         stompAnnouncementEmitter.emit(event.announcement)
     }

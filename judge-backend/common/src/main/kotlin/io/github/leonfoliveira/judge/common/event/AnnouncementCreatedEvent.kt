@@ -1,9 +1,9 @@
 package io.github.leonfoliveira.judge.common.event
 
-import io.github.leonfoliveira.judge.common.domain.entity.Submission
+import io.github.leonfoliveira.judge.common.domain.entity.Announcement
 import org.springframework.context.ApplicationEvent
 
-class SubmissionAutoJudgeEvent(
+class AnnouncementCreatedEvent(
     source: Any,
-    val submission: Submission,
+    val announcement: Announcement,
 ) : ApplicationEvent(source)

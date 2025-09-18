@@ -1,15 +1,15 @@
 package io.github.leonfoliveira.judge.autojudge.consumer
 
-import io.github.leonfoliveira.judge.autojudge.feign.ApiClient
+import io.github.leonfoliveira.judge.autojudge.event.SubmissionJudgedEvent
 import io.github.leonfoliveira.judge.autojudge.service.RunSubmissionService
 import io.github.leonfoliveira.judge.autojudge.util.AutoJudgeMetrics
 import io.github.leonfoliveira.judge.common.adapter.rabbitmq.RabbitMQConsumer
-import io.github.leonfoliveira.judge.common.adapter.rabbitmq.message.RabbitMQMessage
 import io.github.leonfoliveira.judge.common.adapter.rabbitmq.message.SubmissionQueuePayload
 import io.github.leonfoliveira.judge.common.service.submission.FindSubmissionService
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tags
 import org.springframework.amqp.rabbit.annotation.RabbitListener
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import java.util.function.Supplier
 
@@ -17,7 +17,7 @@ import java.util.function.Supplier
 class SubmissionQueueRabbitMQConsumer(
     private val findSubmissionService: FindSubmissionService,
     private val runSubmissionService: RunSubmissionService,
-    private val apiClient: ApiClient,
+    private val applicationEventPublisher: ApplicationEventPublisher,
     private val meterRegistry: MeterRegistry,
 ) : RabbitMQConsumer<SubmissionQueuePayload>() {
     @RabbitListener(
@@ -41,9 +41,9 @@ class SubmissionQueueRabbitMQConsumer(
                     Supplier {
                         runSubmissionService.run(submission)
                     },
-                )
+                )!!
 
-            apiClient.updateSubmissionAnswer(payload.contestId, payload.submissionId, answer!!)
+            applicationEventPublisher.publishEvent(SubmissionJudgedEvent(this, submission, answer))
             meterRegistry.counter(AutoJudgeMetrics.AUTO_JUDGE_SUCCESSFUL_SUBMISSION, Tags.of("answer", answer.toString())).increment()
         } catch (ex: Exception) {
             meterRegistry.counter(AutoJudgeMetrics.AUTO_JUDGE_FAILED_SUBMISSION).increment()
