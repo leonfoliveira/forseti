@@ -59,6 +59,8 @@ springmockk = { module = "com.ninja-squad:springmockk", version.ref = "springmoc
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainers-localstack = { module = "org.testcontainers:localstack", version.ref = "testcontainers" }
 testcontainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+testcontainers-minio = { module = "org.testcontainers:minio", version.ref = "testcontainers" }
+testcontainers-rabbitmq = { module = "org.testcontainers:rabbitmq", version.ref = "testcontainers" }
 
 [bundles]
 jackson = [
@@ -94,6 +96,8 @@ testcontainers = [
     "testcontainers-junit-jupiter",
     "testcontainers-localstack",
     "testcontainers-postgres",
+    "testcontainers-minio",
+    "testcontainers-rabbitmq"
 ]
 
 [plugins]
