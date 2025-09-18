@@ -95,13 +95,6 @@ services:
       dockerfile: api.Dockerfile
     environment:
       ALLOWED_ORIGINS: http://localhost:3000
-      AWS_ACCESS_KEY_ID: judge
-      AWS_ENDPOINT: http://localstack:4566
-      AWS_REGION: us-east-1
-      AWS_S3_BUCKET: judge
-      AWS_SECRET_ACCESS_KEY: judge
-      AWS_SQS_SUBMISSION_FAILED_QUEUE: submission-failed-queue
-      AWS_SQS_SUBMISSION_QUEUE: submission-queue
       DB_PASSWORD: judge
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge
@@ -109,7 +102,20 @@ services:
       JWT_EXPIRATION: 6h
       JWT_ROOT_EXPIRATION: 3h
       JWT_SECRET: judge
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: judge
+      MINIO_SECRET_KEY: judgepassword
+      MINIO_BUCKET: judge
       PORT: 8080
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: judge
+      RABBITMQ_PASSWORD: judge
+      RABBITMQ_VHOST: /
+      RABBITMQ_SUBMISSION_QUEUE: submission-queue
+      RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
+      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
+      RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       ROOT_PASSWORD: judge
       SECURE_COOKIES: "false"
       SPRING_PROFILES_ACTIVE: development
@@ -142,12 +148,6 @@ services:
       dockerfile: autojudge.Dockerfile
     environment:
       API_URL: http://api:8080
-      AWS_ACCESS_KEY_ID: judge
-      AWS_ENDPOINT: http://localstack:4566
-      AWS_REGION: us-east-1
-      AWS_S3_BUCKET: judge
-      AWS_SECRET_ACCESS_KEY: judge
-      AWS_SQS_SUBMISSION_QUEUE: submission-queue
       DB_PASSWORD: judge
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge
@@ -156,7 +156,20 @@ services:
       JWT_ROOT_EXPIRATION: 3h
       JWT_SECRET: judge
       MAX_CONCURRENT_SUBMISSIONS: "1"
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: judge
+      MINIO_SECRET_KEY: judgepassword
+      MINIO_BUCKET: judge
       PORT: 8081
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: judge
+      RABBITMQ_PASSWORD: judge
+      RABBITMQ_VHOST: /
+      RABBITMQ_SUBMISSION_QUEUE: submission-queue
+      RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
+      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
+      RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       ROOT_PASSWORD: judge
       SPRING_PROFILES_ACTIVE: development
     depends_on:

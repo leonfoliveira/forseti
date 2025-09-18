@@ -1,0 +1,6 @@
+{
+  "python.testing.pytestArgs": ["judge-cli"],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestArgs": ["-v", "-s", "./judge-cli", "-p", "test_*.py"]
+}

@@ -1,3 +1,4 @@
+from typing import Optional
 import bcrypt
 import re
 import secrets
@@ -35,34 +36,24 @@ def init(ctx, ip: str):
         raise e
 
     # Set up secrets
-    db_password = input_adapter.password("DB password:")
-    root_password = input_adapter.password("Root password:")
-    grafana_admin_password = input_adapter.password("Grafana admin password:")
-    traefik_admin_password = input_adapter.password("Traefik admin password:")
-    jwt_secret = input_adapter.password("JWT secret (blank=random):")
-    if len(jwt_secret) == 0:
-        jwt_secret = secrets.token_urlsafe(32)
+    def _create_secret(secret_name: str, prompt: str, default: Optional[str] = None, mapper: Optional[callable] = None) -> str:
+        value = input_adapter.password(prompt) or default
+        if mapper:
+            value = mapper(value)
+        command_adapter.run(
+            ["docker", "secret", "create", secret_name, "-"],
+            input=value,
+        )
 
-    command_adapter.run(
-        ["docker", "secret", "create", "db_password", "-"],
-        input=db_password,
-    )
-    command_adapter.run(
-        ["docker", "secret", "create", "grafana_admin_password", "-"],
-        input=grafana_admin_password,
-    )
-    command_adapter.run(
-        ["docker", "secret", "create", "jwt_secret", "-"],
-        input=jwt_secret,
-    )
-    command_adapter.run(
-        ["docker", "secret", "create", "root_password", "-"],
-        input=root_password,
-    )
-    command_adapter.run(
-        ["docker", "secret", "create", "traefik_admin_password", "-"],
-        input=f"admin:{bcrypt.hashpw(traefik_admin_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')}",
-    )
+    _create_secret("db_password", "DB password:")
+    _create_secret("minio_password", "MinIO password:")
+    _create_secret("rabbitmq_password", "RabbitMQ password:")
+    _create_secret("root_password", "Root password:")
+    _create_secret("grafana_admin_password", "Grafana admin password:")
+    _create_secret("traefik_admin_password", "Traefik admin password:", mapper=lambda p: bcrypt.hashpw(
+        p.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'))
+    _create_secret("jwt_secret", "JWT secret (blank=random):",
+                   default=secrets.token_urlsafe(32))
 
     # Show swarm join info
     ctx.invoke(info)
