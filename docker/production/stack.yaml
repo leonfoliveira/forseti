@@ -85,13 +85,6 @@ services:
         delay: 30s
     environment:
       ALLOWED_ORIGINS: ${DOMAIN:-judge}
-      AWS_ACCESS_KEY_ID: judge
-      AWS_ENDPOINT: http://localstack:4566
-      AWS_REGION: us-east-1
-      AWS_S3_BUCKET: judge
-      AWS_SECRET_ACCESS_KEY: judge
-      AWS_SQS_SUBMISSION_FAILED_QUEUE: submission-failed-queue
-      AWS_SQS_SUBMISSION_QUEUE: submission-queue
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge
@@ -99,7 +92,20 @@ services:
       JWT_EXPIRATION: 6h
       JWT_ROOT_EXPIRATION: 3h
       JWT_SECRET_FILE: /run/secrets/jwt_secret
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: judge
+      MINIO_SECRET_KEY_FILE: /run/secrets/minio_secret_key
+      MINIO_BUCKET: judge
       PORT: 8080
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: judge
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
+      RABBITMQ_VHOST: /
+      RABBITMQ_SUBMISSION_QUEUE: submission-queue
+      RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
+      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
+      RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       ROOT_PASSWORD_FILE: /run/secrets/root_password
       SECURE_COOKIES: "true"
       SPRING_PROFILES_ACTIVE: production
@@ -117,6 +123,8 @@ services:
     secrets:
       - db_password
       - jwt_secret
+      - minio_secret_key
+      - rabbitmq_password
       - root_password
 
   autojudge:
@@ -152,7 +160,20 @@ services:
       JWT_ROOT_EXPIRATION: 3h
       JWT_SECRET_FILE: /run/secrets/jwt_secret
       MAX_CONCURRENT_SUBMISSIONS: "1"
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: judge
+      MINIO_SECRET_KEY_FILE: /run/secrets/minio_secret_key
+      MINIO_BUCKET: judge
       PORT: 8081
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: judge
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
+      RABBITMQ_VHOST: /
+      RABBITMQ_SUBMISSION_QUEUE: submission-queue
+      RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
+      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
+      RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       ROOT_PASSWORD_FILE: /run/secrets/root_password
       SPRING_PROFILES_ACTIVE: production
       VERSION: ${VERSION:-latest}
@@ -177,6 +198,8 @@ services:
     secrets:
       - db_password
       - jwt_secret
+      - minio_secret_key
+      - rabbitmq_password
       - root_password
 
   autojudge-autoscaler:

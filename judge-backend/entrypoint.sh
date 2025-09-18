@@ -61,6 +61,14 @@ if [ -n "$DB_PASSWORD_FILE" ]; then
   export DB_PASSWORD=$(cat "$DB_PASSWORD_FILE")
 fi
 
+if [ -n "$MINIO_SECRET_KEY_FILE" ]; then
+  export MINIO_SECRET_KEY=$(cat "$MINIO_SECRET_KEY_FILE")
+fi
+
+if [ -n "$RABBITMQ_PASSWORD_FILE" ]; then
+  export RABBITMQ_PASSWORD=$(cat "$RABBITMQ_PASSWORD_FILE")
+fi
+
 if [ -n "$JWT_SECRET_FILE" ]; then
   export JWT_SECRET=$(cat "$JWT_SECRET_FILE")
 fi
