@@ -425,6 +425,7 @@ services:
     environment:
       MINIO_ROOT_USER: judge
       MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_password
+      MINIO_PROMETHEUS_AUTH_TYPE: public
     healthcheck:
       test:
         - "CMD-SHELL"
@@ -677,6 +678,7 @@ services:
     environment:
       RABBITMQ_USER: judge
       RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
+      RABBITMQ_ENABLED_PLUGINS: "[rabbitmq_prometheus]"
     healthcheck:
       test:
         - "CMD"
