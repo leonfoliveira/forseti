@@ -27,21 +27,15 @@ wait_for_service() {
     exit 1
 }
 
-# Install netcat if not available (for health checks)
-if ! command -v nc >/dev/null 2>&1; then
-    echo "Installing netcat..."
-    apk add --no-cache netcat-openbsd 2>/dev/null || true
+# Wait for RabbitMQ to be ready
+if [ -n "$RABBITMQ_HOST" ] && [ -n "$RABBITMQ_PORT" ]; then
+    wait_for_service "$RABBITMQ_HOST" "$RABBITMQ_PORT" "RabbitMQ" 30
 fi
 
-# Wait for LocalStack to be ready (if AWS services are configured)
-if [ -n "$AWS_ENDPOINT" ]; then
-    # Extract host and port from AWS endpoint
-    # Format: http://host:port
-    AWS_HOST=$(echo "$AWS_ENDPOINT" | sed 's|http://||' | cut -d':' -f1)
-    AWS_PORT=$(echo "$AWS_ENDPOINT" | sed 's|http://||' | cut -d':' -f2)
-    
-    wait_for_service "$AWS_HOST" "$AWS_PORT" "LocalStack" 30
+# Load secrets into environment variables
+if [ -n "$RABBITMQ_PASSWORD_FILE" ]; then
+  export RABBITMQ_PASSWORD=$(cat "$RABBITMQ_PASSWORD_FILE")
 fi
 
-echo "Starting autoscaler application..."
+echo "Starting application..."
 exec python -m autoscaler
