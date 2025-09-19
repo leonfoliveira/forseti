@@ -27,12 +27,6 @@ wait_for_service() {
     exit 1
 }
 
-# Install netcat if not available (for health checks)
-if ! command -v nc >/dev/null 2>&1; then
-    echo "Installing netcat..."
-    apk add --no-cache netcat-openbsd 2>/dev/null || true
-fi
-
 # Wait for PostgreSQL to be ready
 if [ -n "$DB_URL" ]; then
     # jdbc:postgresql://host:port/database

@@ -70,7 +70,7 @@ services:
       - dev-rabbitmq_data:/var/lib/rabbitmq
       - ./volumes/rabbitmq/init.sh:/init.sh:ro
       - ./volumes/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
-      - ./volumes/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./volumes/rabbitmq/definitions.template.json:/etc/rabbitmq/definitions.template.json:ro
 
   migration:
     container_name: dev-judge-migration

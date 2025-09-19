@@ -109,7 +109,7 @@ services:
     healthcheck:
       test:
         - CMD-SHELL
-        - wget --spider -q http://localhost:8080/actuator/health
+        - curl -f http://localhost:8080/actuator/health
       timeout: 10s
       interval: 30s
       retries: 5
@@ -668,11 +668,24 @@ services:
         read_only: true
 
   rabbitmq:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
     entrypoint: /init.sh
     environment:
       RABBITMQ_USER: judge
       RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
-      RABBITMQ_ENABLED_PLUGINS: "[rabbitmq_prometheus]"
+      RABBITMQ_ENABLED_PLUGINS: "rabbitmq_management,rabbitmq_prometheus"
     healthcheck:
       test:
         - "CMD"
@@ -684,7 +697,7 @@ services:
       start_period: 5s
     image: rabbitmq:4.1.4-management-alpine
     networks:
-      - judge-network
+      judge-network:
     secrets:
       - rabbitmq_password
     volumes:
@@ -701,8 +714,9 @@ services:
         target: /etc/rabbitmq/rabbitmq.conf
         read_only: true
       - type: bind
-        source: ./volumes/rabbitmq/definitions.json
-        target: /etc/rabbitmq/definitions.json
+        source: ./volumes/rabbitmq/definitions.template.json
+        target: /etc/rabbitmq/definitions.template.json
+        read_only: true
 
   webapp:
     deploy:
