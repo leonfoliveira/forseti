@@ -41,6 +41,10 @@ def init(ctx, ip: str):
             prompt, validate=InputAdapter.length_validator(8))
         if mapper:
             value = mapper(value)
+        try:
+            command_adapter.run(["docker", "secret", "rm", secret_name])
+        except Exception:
+            pass  # Ignore if the secret does not exist
         command_adapter.run(
             ["docker", "secret", "create", secret_name, "-"],
             input=value,

@@ -52,7 +52,8 @@ class TestSwarmCommand:
         # Mock the command_adapter.run calls
         command_adapter.run.side_effect = [
             [],    # docker swarm init
-            [], [], [], [], [], [],  # docker secret create commands
+            Exception(), [], [], [], [], [],
+            [], [], [], [], [], [],  # docker secret commands
             [
                 "To add a worker to this swarm, run the following command:",
                 "",
@@ -76,7 +77,7 @@ class TestSwarmCommand:
 
         # Verify that all secrets were created
         secret_calls = [
-            call for call in command_adapter.run.call_args_list[1:7]]
+            call for call in command_adapter.run.call_args_list[1:14:2]]
         # Fourth argument is the secret name
         secret_names = [call[0][0][3] for call in secret_calls]
         assert "db_password" in secret_names
