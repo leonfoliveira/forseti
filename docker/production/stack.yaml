@@ -402,6 +402,7 @@ services:
         target: /flyway/sql
 
   minio:
+    command: server /data
     deploy:
       mode: replicated
       replicas: 1
