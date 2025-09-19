@@ -700,8 +700,8 @@ services:
         target: /etc/rabbitmq/rabbitmq.conf
         read_only: true
       - type: bind
-        source: ./volumes/rabbitmq/definitions.template.json
-        target: /etc/rabbitmq/definitions.template.json
+        source: ./volumes/rabbitmq/definitions.json
+        target: /etc/rabbitmq/definitions.json
         read_only: true
 
   webapp:
