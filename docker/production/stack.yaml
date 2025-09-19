@@ -91,7 +91,7 @@ services:
       SESSION_ROOT_EXPIRATION: 3h
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: judge
-      MINIO_SECRET_KEY_FILE: /run/secrets/minio_secret_key
+      MINIO_SECRET_KEY_FILE: /run/secrets/minio_password
       MINIO_BUCKET: judge
       PORT: 8080
       RABBITMQ_HOST: rabbitmq
@@ -119,7 +119,7 @@ services:
       judge-network:
     secrets:
       - db_password
-      - minio_secret_key
+      - minio_password
       - rabbitmq_password
       - root_password
 
@@ -156,7 +156,7 @@ services:
       MAX_CONCURRENT_SUBMISSIONS: "1"
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: judge
-      MINIO_SECRET_KEY_FILE: /run/secrets/minio_secret_key
+      MINIO_SECRET_KEY_FILE: /run/secrets/minio_password
       MINIO_BUCKET: judge
       PORT: 8081
       RABBITMQ_HOST: rabbitmq
@@ -191,7 +191,7 @@ services:
         target: /tmp
     secrets:
       - db_password
-      - minio_secret_key
+      - minio_password
       - rabbitmq_password
       - root_password
 
@@ -751,3 +751,4 @@ volumes:
   minio_data:
   postgres_data:
   prometheus_data:
+  rabbitmq_data:
