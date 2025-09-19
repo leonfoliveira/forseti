@@ -1,7 +1,5 @@
 import pytest
 from unittest.mock import MagicMock, patch
-import jwt
-import time
 
 from cli.util.api_adapter import ApiAdapter
 

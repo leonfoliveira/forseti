@@ -7,8 +7,6 @@ secrets:
     external: true
   grafana_admin_password:
     external: true
-  jwt_secret:
-    external: true
   minio_password:
     external: true
   rabbitmq_password:
@@ -89,9 +87,8 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge
       JAVA_TOOL_OPTIONS: -Xms1024m -Xmx1024m
-      JWT_EXPIRATION: 6h
-      JWT_ROOT_EXPIRATION: 3h
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
+      SESSION_EXPIRATION: 6h
+      SESSION_ROOT_EXPIRATION: 3h
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: judge
       MINIO_SECRET_KEY_FILE: /run/secrets/minio_secret_key
@@ -122,7 +119,6 @@ services:
       judge-network:
     secrets:
       - db_password
-      - jwt_secret
       - minio_secret_key
       - rabbitmq_password
       - root_password
@@ -156,9 +152,7 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge
       JAVA_TOOL_OPTIONS: -Xms1536M -Xmx1536M
-      JWT_EXPIRATION: 6h
-      JWT_ROOT_EXPIRATION: 3h
-      JWT_SECRET_FILE: /run/secrets/jwt_secret
+      SESSION_AUTOJUDGE_EXPIRATION: 10m
       MAX_CONCURRENT_SUBMISSIONS: "1"
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: judge
@@ -197,7 +191,6 @@ services:
         target: /tmp
     secrets:
       - db_password
-      - jwt_secret
       - minio_secret_key
       - rabbitmq_password
       - root_password

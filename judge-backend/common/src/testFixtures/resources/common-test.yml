@@ -25,9 +25,9 @@ minio:
   secret-key: judgepassword
   bucket: judge
 security:
-  jwt:
-    secret: judge
+  session:
     expiration: 12h
     root-expiration: 12h
+    autojudge-expiration: 10m
   root:
     password: judge

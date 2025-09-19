@@ -3,7 +3,6 @@ package io.github.leonfoliveira.judge.common.adapter.rabbitmq
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.leonfoliveira.judge.common.adapter.rabbitmq.message.RabbitMQMessage
 import io.github.leonfoliveira.judge.common.domain.model.RequestContext
-import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +15,6 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @Transactional
     open fun receiveMessage(jsonMessage: String) {
         logger.info("Received message: {}", jsonMessage)
 
@@ -33,7 +31,7 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
         val payload = objectMapper.treeToValue(payloadJson, getPayloadType())
         val message = RabbitMQMessage(id, traceId, payload)
 
-        RequestContext.getCurrent().traceId = traceId
+        RequestContext.getContext().traceId = traceId
         MDC.put("traceId", traceId)
 
         try {

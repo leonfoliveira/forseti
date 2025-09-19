@@ -27,17 +27,11 @@ class TestSwarmCommand:
         with patch(f"{BASE_PATH}.NetworkAdapter") as mock:
             yield mock.return_value
 
-    @pytest.fixture(autouse=True)
-    def secrets(self):
-        with patch(f"{BASE_PATH}.secrets") as mock:
-            mock.token_urlsafe.return_value = "random_jwt_secret_123"
-            yield mock
-
     @pytest.fixture
     def runner(self):
         return CliRunner()
 
-    def test_init(self, runner, command_adapter, input_adapter, network_adapter, secrets):
+    def test_init(self, runner, command_adapter, input_adapter, network_adapter):
         # Mock network adapter behavior
         network_adapter.get_ip_address.return_value = "192.168.1.100"
 
@@ -49,7 +43,6 @@ class TestSwarmCommand:
             "root_password",
             "grafana_admin_password",
             "traefik_admin_password",
-            "jwt_secret",
         ]
 
         worker_token = "SWMTKN-1-xxxx"
@@ -59,7 +52,7 @@ class TestSwarmCommand:
         # Mock the command_adapter.run calls
         command_adapter.run.side_effect = [
             [],    # docker swarm init
-            [], [], [], [], [], [], [],  # docker secret create commands
+            [], [], [], [], [], [],  # docker secret create commands
             [
                 "To add a worker to this swarm, run the following command:",
                 "",
@@ -83,7 +76,7 @@ class TestSwarmCommand:
 
         # Verify that all secrets were created
         secret_calls = [
-            call for call in command_adapter.run.call_args_list[1:8]]
+            call for call in command_adapter.run.call_args_list[1:7]]
         # Fourth argument is the secret name
         secret_names = [call[0][0][3] for call in secret_calls]
         assert "db_password" in secret_names
@@ -91,10 +84,9 @@ class TestSwarmCommand:
         assert "rabbitmq_password" in secret_names
         assert "root_password" in secret_names
         assert "grafana_admin_password" in secret_names
-        assert "jwt_secret" in secret_names
         assert "traefik_admin_password" in secret_names
 
-    def test_init_already_in_swarm(self, runner, command_adapter, input_adapter, network_adapter, secrets):
+    def test_init_already_in_swarm(self, runner, command_adapter, input_adapter, network_adapter):
         # Mock network adapter behavior
         network_adapter.get_ip_address.return_value = "192.168.1.100"
 
@@ -109,55 +101,7 @@ class TestSwarmCommand:
         assert result.exit_code == 1
         assert "This node is already part of a swarm" in result.output
 
-    def test_init_with_empty_jwt_secret(self, runner, command_adapter, input_adapter, network_adapter, secrets):
-        """Test automatic JWT secret generation when user provides empty input."""
-        # Mock network adapter behavior
-        network_adapter.get_ip_address.return_value = "192.168.1.100"
-
-        # Mock password inputs with empty JWT secret
-        input_adapter.password.side_effect = [
-            "db_password",
-            "minio_password",
-            "rabbitmq_password",
-            "root_password",
-            "grafana_admin_password",
-            "traefik_admin_password",
-            ""  # Empty JWT secret should trigger random generation
-        ]
-
-        worker_token = "SWMTKN-1-xxxx"
-        manager_token = "SWMTKN-1-yyyy"
-        manager_ip = "192.168.1.100"
-
-        command_adapter.run.side_effect = [
-            [],    # docker swarm init
-            [], [], [], [], [], [], [],  # docker secret create commands
-            [
-                "To add a worker to this swarm, run the following command:",
-                "",
-                f"    docker swarm join --token {worker_token} {manager_ip}:2377"
-            ],
-            [
-                "To add a manager to this swarm, run the following command:",
-                "",
-                f"    docker swarm join --token {manager_token} {manager_ip}:2377"
-            ]
-        ]
-
-        result = runner.invoke(swarm, ["init"])
-
-        assert result.exit_code == 0
-
-        # Verify that secrets.token_urlsafe was called to generate random JWT secret
-        secrets.token_urlsafe.assert_called_once_with(32)
-
-        # Verify that the jwt_secret was created with the random value
-        jwt_secret_call = command_adapter.run.call_args_list[7]
-        assert jwt_secret_call[0][0] == [
-            "docker", "secret", "create", "jwt_secret", "-"]
-        assert jwt_secret_call[1]["input"] == "random_jwt_secret_123"
-
-    def test_init_other_error(self, runner, command_adapter, input_adapter, network_adapter, secrets):
+    def test_init_other_error(self, runner, command_adapter, input_adapter, network_adapter):
         # Mock network adapter behavior
         network_adapter.get_ip_address.return_value = "192.168.1.100"
 

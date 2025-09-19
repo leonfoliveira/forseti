@@ -12,9 +12,9 @@ from cli.util.spinner import Spinner
 @click.option(
     "--sandboxes",
     multiple=True,
-    help="Specify sandboxes to install (e.g., cpp17, java21, python3_12). "
-    "(default: cpp17, java21, python3_12)",
-    default=["cpp17", "java21", "python3_12"],
+    help="Specify sandboxes to install (e.g., cpp17, java21, python312). "
+    "(default: cpp17, java21, python312)",
+    default=["cpp17", "java21", "python312"],
 )
 @click.option("--stack", help="Stack file (default: stack.yaml in CLI directory)")
 def install(sandboxes: List[str], stack: Optional[str]):
@@ -28,7 +28,8 @@ def install(sandboxes: List[str], stack: Optional[str]):
     try:
         command_adapter.run(["docker", "--version"])
     except click.ClickException:
-        raise click.ClickException("Docker is not installed or not found in PATH.")
+        raise click.ClickException(
+            "Docker is not installed or not found in PATH.")
 
     _build_sandboxes(command_adapter, sandboxes)
     _pull_stack_images(command_adapter, stack)
@@ -44,7 +45,8 @@ def _build_sandboxes(command_adapter: CommandAdapter, sandboxes: List[str]):
 
     try:
         for sandbox in sandboxes:
-            sandbox_path = os.path.join(cli_path, "sandboxes", f"{sandbox}.Dockerfile")
+            sandbox_path = os.path.join(
+                cli_path, "sandboxes", f"{sandbox}.Dockerfile")
             command_adapter.run(
                 [
                     "docker",

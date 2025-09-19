@@ -12,7 +12,7 @@ class AnnouncementEventListenerTest :
     FunSpec({
         val stompAnnouncementEmitter = mockk<StompAnnouncementEmitter>(relaxed = true)
 
-        val sut = AnnouncementEventListener(stompAnnouncementEmitter)
+        val sut = AnnouncementEventsApiListener(stompAnnouncementEmitter)
 
         beforeEach {
             clearAllMocks()

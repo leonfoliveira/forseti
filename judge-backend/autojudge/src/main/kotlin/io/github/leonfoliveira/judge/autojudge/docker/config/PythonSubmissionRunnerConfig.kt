@@ -17,7 +17,7 @@ class PythonSubmissionRunnerConfig(
     fun python3d12() =
         DockerSubmissionRunnerConfig(
             language = Language.PYTHON_3_12,
-            image = "judge-sb-python3.12:$version",
+            image = "judge-sb-python312:$version",
             createCompileCommand = null,
             createRunCommand = { codeFile, _ ->
                 arrayOf("python", codeFile.name)

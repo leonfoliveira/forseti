@@ -2,7 +2,7 @@ package io.github.leonfoliveira.judge.api.middleware.websocket
 
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.domain.entity.Member
-import io.github.leonfoliveira.judge.common.util.SessionUtil
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import org.springframework.stereotype.Component
 import java.util.UUID
 import kotlin.collections.contains
@@ -34,7 +34,7 @@ class WebSocketTopicConfigs(
                 contestAuthFilter.checkIfMemberBelongsToContest(contestId)
                 contestAuthFilter.checkIfStarted(contestId)
 
-                val member = SessionUtil.getCurrent()?.member
+                val member = RequestContext.getContext().session?.member
                 memberId == member?.id
             },
             Regex("/topic/contests/[a-fA-F0-9-]+/clarifications/deleted") to { destination ->
@@ -63,7 +63,7 @@ class WebSocketTopicConfigs(
 
                 contestAuthFilter.checkIfStarted(contestId)
 
-                val member = SessionUtil.getCurrent()?.member
+                val member = RequestContext.getContext().session?.member
                 setOf(Member.Type.ADMIN, Member.Type.JUDGE).contains(member?.type)
             },
             Regex("/topic/contests/[a-fA-F0-9-]+/submissions/full/members/[a-fA-F0-9-]+") to { destination ->
@@ -73,7 +73,7 @@ class WebSocketTopicConfigs(
                 contestAuthFilter.checkIfMemberBelongsToContest(contestId)
                 contestAuthFilter.checkIfStarted(contestId)
 
-                val member = SessionUtil.getCurrent()?.member
+                val member = RequestContext.getContext().session?.member
                 memberId == member?.id
             },
         )

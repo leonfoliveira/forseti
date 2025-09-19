@@ -61,7 +61,7 @@ jobs:
       - name: Build test composition
         run: |
           docker compose -f docker/development/docker-compose.yaml build --progress=plain --pull
-          docker build -f judge-backend/autojudge/src/main/resources/sandboxes/python3_12.Dockerfile -t judge-sb-python3.12:latest .
+          docker build -f judge-backend/autojudge/src/main/resources/sandboxes/python312.Dockerfile -t judge-sb-python312:latest .
 
       - name: Set up Python for CLI
         uses: actions/setup-python@v5

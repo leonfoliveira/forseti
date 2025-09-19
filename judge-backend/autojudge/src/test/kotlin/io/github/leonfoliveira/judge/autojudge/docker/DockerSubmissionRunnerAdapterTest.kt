@@ -161,7 +161,7 @@ class DockerSubmissionRunnerAdapterTest(
             ).forEach { (filename, expectedAnswer) ->
                 test("should run a submission with Python 3.12 and return $expectedAnswer") {
                     val submission = createSubmission(contest, Language.PYTHON_3_12, filename, "text/plain")
-                    val code = importCode("/code/python3_12/$filename")
+                    val code = importCode("/code/python312/$filename")
                     attachmentBucket.upload(submission.code, code.toByteArray())
                     sut.run(submission).answer shouldBe expectedAnswer
                 }

@@ -2,14 +2,13 @@ package io.github.leonfoliveira.judge.api.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.service.SessionCookieService
-import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.service.authentication.AuthenticationService
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
@@ -30,7 +29,7 @@ class SessionControllerTest(
 
         test("getSession") {
             val session = SessionMockBuilder.build()
-            SecurityContextHolder.getContext().authentication = SessionAuthentication(session)
+            RequestContext.getContext().session = session
 
             webMvc
                 .get("/v1/session/me")
@@ -42,7 +41,7 @@ class SessionControllerTest(
 
         test("deleteSession") {
             val session = SessionMockBuilder.build()
-            SecurityContextHolder.getContext().authentication = SessionAuthentication(session)
+            RequestContext.getContext().session = session
 
             webMvc
                 .delete("/v1/session/me")

@@ -52,8 +52,6 @@ def init(ctx, ip: str):
     _create_secret("grafana_admin_password", "Grafana admin password:")
     _create_secret("traefik_admin_password", "Traefik admin password:", mapper=lambda p: bcrypt.hashpw(
         p.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'))
-    _create_secret("jwt_secret", "JWT secret (blank=random):",
-                   default=secrets.token_urlsafe(32))
 
     # Show swarm join info
     ctx.invoke(info)

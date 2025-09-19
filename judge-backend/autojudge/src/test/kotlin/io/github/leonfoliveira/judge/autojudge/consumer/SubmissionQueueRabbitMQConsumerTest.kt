@@ -2,6 +2,7 @@ package io.github.leonfoliveira.judge.autojudge.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
+import io.github.leonfoliveira.judge.autojudge.adapter.feign.ApiClient
 import io.github.leonfoliveira.judge.autojudge.service.RunSubmissionService
 import io.github.leonfoliveira.judge.autojudge.util.AutoJudgeMetrics
 import io.github.leonfoliveira.judge.common.adapter.rabbitmq.message.RabbitMQMessage
@@ -21,7 +22,6 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.ApplicationEventPublisher
 import java.util.UUID
 import java.util.function.Supplier
 
@@ -32,7 +32,7 @@ class SubmissionQueueRabbitMQConsumerTest(
     @MockkBean(relaxed = true)
     val runSubmissionService: RunSubmissionService,
     @MockkBean(relaxed = true)
-    val applicationEventPublisher: ApplicationEventPublisher,
+    val apiClient: ApiClient,
     @MockkBean(relaxed = true)
     val meterRegistry: MeterRegistry,
     val objectMapper: ObjectMapper,

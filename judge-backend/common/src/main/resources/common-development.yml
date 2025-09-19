@@ -19,16 +19,21 @@ spring:
       submission-exchange: ${RABBITMQ_SUBMISSION_EXCHANGE:submission-exchange}
       submission-routing-key: ${RABBITMQ_SUBMISSION_ROUTING_KEY:submission-routing-key}
       submission-failed-queue: ${RABBITMQ_SUBMISSION_FAILED_QUEUE:submission-failed-queue}
+    listener:
+      simple:
+        retry:
+          enabled: false
+        default-requeue-rejected: false
 minio:
   endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
   access-key: ${MINIO_ACCESS_KEY:judge}
   secret-key: ${MINIO_SECRET_KEY:judgepassword}
   bucket: ${MINIO_BUCKET:judge}
 security:
-  jwt:
-    secret: ${JWT_SECRET:judge}
-    expiration: ${JWT_EXPIRATION:12h}
-    root-expiration: ${JWT_ROOT_EXPIRATION:12h}
+  session:
+    expiration: ${SESSION_EXPIRATION:12h}
+    root-expiration: ${SESSION_ROOT_EXPIRATION:12h}
+    autojudge-expiration: ${SESSION_AUTOJUDGE_EXPIRATION:12h}
   root:
     password: ${ROOT_PASSWORD:judge}
   rate-limit:

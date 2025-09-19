@@ -42,9 +42,9 @@ class ContestAuthenticationControllerTest(
             val contestId = UUID.randomUUID()
             val session = SessionMockBuilder.build()
             val token =
-                "session_id=${session.id}; Max-Age=3600; Expires=${session.expiresAt.toInstant()}; " +
+                "session_id=${session.id}; Max-Age=3600; Expires=${session.expiresAt?.toInstant()}; " +
                     "Path=/; HttpOnly; SameSite=Lax; Secure"
-            every { authenticationService.authenticate(contestId, authenticateInputDTO) } returns session
+            every { authenticationService.authenticateToContest(contestId, authenticateInputDTO) } returns session
             every { sessionCookieService.buildCookie(session) } returns token
 
             webMvc

@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.judge.autojudge.consumer
 
-import io.github.leonfoliveira.judge.autojudge.event.SubmissionJudgedEvent
+import io.github.leonfoliveira.judge.autojudge.adapter.feign.ApiClient
 import io.github.leonfoliveira.judge.autojudge.service.RunSubmissionService
 import io.github.leonfoliveira.judge.autojudge.util.AutoJudgeMetrics
 import io.github.leonfoliveira.judge.common.adapter.rabbitmq.RabbitMQConsumer
@@ -8,8 +8,9 @@ import io.github.leonfoliveira.judge.common.adapter.rabbitmq.message.SubmissionM
 import io.github.leonfoliveira.judge.common.service.submission.FindSubmissionService
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tags
+import jakarta.transaction.Transactional
+import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.annotation.RabbitListener
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Component
 import java.util.function.Supplier
 
@@ -17,15 +18,24 @@ import java.util.function.Supplier
 class SubmissionQueueRabbitMQConsumer(
     private val findSubmissionService: FindSubmissionService,
     private val runSubmissionService: RunSubmissionService,
-    private val applicationEventPublisher: ApplicationEventPublisher,
+    private val apiClient: ApiClient,
     private val meterRegistry: MeterRegistry,
 ) : RabbitMQConsumer<SubmissionMessagePayload>() {
+    private val logger = LoggerFactory.getLogger(SubmissionQueueRabbitMQConsumer::class.java)
+
     @RabbitListener(
         queues = ["\${spring.rabbitmq.queue.submission-queue}"],
         concurrency = "\${submission.max-concurrent}",
     )
+    @Transactional
     override fun receiveMessage(jsonMessage: String) {
-        super.receiveMessage(jsonMessage)
+        try {
+            super.receiveMessage(jsonMessage)
+        } catch (ex: Exception) {
+            // Log the exception and let Spring AMQP handle the retry/rejection
+            logger.error("Exception in message processing, will be retried: {}", ex.message, ex)
+            throw ex
+        }
     }
 
     override fun getPayloadType(): Class<SubmissionMessagePayload> = SubmissionMessagePayload::class.java
@@ -43,7 +53,7 @@ class SubmissionQueueRabbitMQConsumer(
                     },
                 )!!
 
-            applicationEventPublisher.publishEvent(SubmissionJudgedEvent(this, submission, answer))
+            apiClient.updateSubmissionAnswer(payload.contestId, payload.submissionId, answer)
             meterRegistry.counter(AutoJudgeMetrics.AUTO_JUDGE_SUCCESSFUL_SUBMISSION, Tags.of("answer", answer.toString())).increment()
         } catch (ex: Exception) {
             meterRegistry.counter(AutoJudgeMetrics.AUTO_JUDGE_FAILED_SUBMISSION).increment()

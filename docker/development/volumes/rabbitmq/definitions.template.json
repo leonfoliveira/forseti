@@ -28,7 +28,8 @@
       "durable": true,
       "auto_delete": false,
       "arguments": {
-        "x-dead-letter-exchange": "submission-failed-exchange"
+        "x-dead-letter-exchange": "submission-failed-exchange",
+        "x-dead-letter-routing-key": "submission-failed-routing-key"
       }
     },
     {
@@ -37,7 +38,8 @@
       "durable": true,
       "auto_delete": false,
       "arguments": {
-        "x-dead-letter-exchange": "submission-dlq-exchange"
+        "x-dead-letter-exchange": "submission-dlq-exchange",
+        "x-dead-letter-routing-key": "submission-dlq-routing-key"
       }
     },
     {

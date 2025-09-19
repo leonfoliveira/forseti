@@ -1,6 +1,7 @@
 package io.github.leonfoliveira.judge.api.config
 
-import io.github.leonfoliveira.judge.api.middleware.websocket.WebSocketAuthExtractionInterceptor
+import io.github.leonfoliveira.judge.api.middleware.websocket.WebSocketContextExtractionInterceptor
+import io.github.leonfoliveira.judge.api.middleware.websocket.WebSocketContextHandshakeInterceptor
 import io.github.leonfoliveira.judge.api.middleware.websocket.WebSocketPrivateInterceptor
 import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import org.springframework.beans.factory.annotation.Value
@@ -17,7 +18,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 class WebSocketConfig(
     @Value("\${server.cors.allowed-origins}")
     val allowedOrigins: String,
-    val webSocketAuthExtractionInterceptor: WebSocketAuthExtractionInterceptor,
+    val webSocketContextHandshakeInterceptor: WebSocketContextHandshakeInterceptor,
+    val webSocketContextExtractionInterceptor: WebSocketContextExtractionInterceptor,
     val webSocketPrivateInterceptor: WebSocketPrivateInterceptor,
 ) : WebSocketMessageBrokerConfigurer {
     override fun configureMessageBroker(registry: MessageBrokerRegistry) {
@@ -28,11 +30,12 @@ class WebSocketConfig(
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry
             .addEndpoint("/ws")
+            .addInterceptors(webSocketContextHandshakeInterceptor)
             .setAllowedOrigins(allowedOrigins)
             .withSockJS()
     }
 
     override fun configureClientInboundChannel(registration: ChannelRegistration) {
-        registration.interceptors(webSocketAuthExtractionInterceptor, webSocketPrivateInterceptor)
+        registration.interceptors(webSocketContextExtractionInterceptor, webSocketPrivateInterceptor)
     }
 }

@@ -3,11 +3,10 @@ package io.github.leonfoliveira.judge.api.middleware.http
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
-import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
@@ -26,9 +25,9 @@ class HttpPrivateInterceptor : HandlerInterceptor {
             logger.info("Handler is not a HandlerMethod")
             return true
         }
-        val auth = SecurityContextHolder.getContext().authentication as? SessionAuthentication
+        val session = RequestContext.getContext().session
 
-        if (auth?.principal?.member?.type == Member.Type.ROOT) {
+        if (session?.member?.type == Member.Type.ROOT) {
             logger.info("User is ROOT, bypassing access")
             return true
         }
@@ -43,9 +42,9 @@ class HttpPrivateInterceptor : HandlerInterceptor {
         }
 
         if (privateAnnotation.allowed.isNotEmpty() &&
-            auth?.principal?.member?.type !in privateAnnotation.allowed
+            session?.member?.type !in privateAnnotation.allowed
         ) {
-            logger.info("User type not allowed: ${auth?.principal?.member?.type}")
+            logger.info("User type not allowed: ${session?.member?.type}")
             throw ForbiddenException()
         }
 

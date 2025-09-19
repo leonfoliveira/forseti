@@ -8,8 +8,8 @@ import io.github.leonfoliveira.judge.api.util.ApiMetrics
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
-import io.github.leonfoliveira.judge.common.util.SessionUtil
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -73,7 +73,7 @@ class ContestAttachmentController(
     ): ResponseEntity<AttachmentResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/attachments/$context { filename: ${file.originalFilename}, size: ${file.size} }")
         attachmentAuthorizationService.authorizeUpload(contestId, context)
-        val member = SessionUtil.getCurrent()!!.member
+        val member = RequestContext.getContext().session!!.member
         val attachment =
             attachmentService.upload(
                 contestId = contestId,

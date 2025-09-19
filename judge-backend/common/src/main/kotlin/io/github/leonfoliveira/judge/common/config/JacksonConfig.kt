@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
@@ -15,6 +16,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 @Configuration
+@SkipCoverage
 class JacksonConfig {
     class OffsetDateTimeSerializer : JsonSerializer<OffsetDateTime>() {
         private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX")

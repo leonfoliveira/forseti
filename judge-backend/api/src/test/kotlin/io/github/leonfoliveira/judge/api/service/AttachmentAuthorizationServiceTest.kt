@@ -5,18 +5,17 @@ import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
-import io.github.leonfoliveira.judge.common.util.SessionUtil
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
 import io.mockk.verify
 import java.util.Optional
 import java.util.UUID
@@ -43,14 +42,13 @@ class AttachmentAuthorizationServiceTest :
 
         beforeEach {
             clearAllMocks()
-            mockkObject(SessionUtil)
-            every { SessionUtil.getCurrent() } returns SessionMockBuilder.build(member = member)
+            RequestContext.getContext().session = SessionMockBuilder.build(member = member)
         }
 
         context("authorizeUpload") {
             context("when member is ROOT") {
                 test("should authorize upload for any context") {
-                    every { SessionUtil.getCurrent() } returns
+                    RequestContext.getContext().session =
                         SessionMockBuilder.build(
                             member = MemberMockBuilder.build(type = Member.Type.ROOT),
                         )
@@ -65,7 +63,7 @@ class AttachmentAuthorizationServiceTest :
 
             context("PROBLEM_DESCRIPTION context") {
                 test("should authorize JUDGE member successfully") {
-                    every { SessionUtil.getCurrent() } returns
+                    RequestContext.getContext().session =
                         SessionMockBuilder.build(
                             member = MemberMockBuilder.build(type = Member.Type.JUDGE),
                         )
@@ -77,7 +75,7 @@ class AttachmentAuthorizationServiceTest :
                 }
 
                 test("should authorize ADMIN member successfully") {
-                    every { SessionUtil.getCurrent() } returns
+                    RequestContext.getContext().session =
                         SessionMockBuilder.build(
                             member = MemberMockBuilder.build(type = Member.Type.ADMIN),
                         )
@@ -99,7 +97,7 @@ class AttachmentAuthorizationServiceTest :
 
             context("PROBLEM_TEST_CASES context") {
                 test("should authorize JUDGE member successfully") {
-                    every { SessionUtil.getCurrent() } returns
+                    RequestContext.getContext().session =
                         SessionMockBuilder.build(
                             member = MemberMockBuilder.build(type = Member.Type.JUDGE),
                         )
@@ -111,7 +109,7 @@ class AttachmentAuthorizationServiceTest :
                 }
 
                 test("should authorize ADMIN member successfully") {
-                    every { SessionUtil.getCurrent() } returns
+                    RequestContext.getContext().session =
                         SessionMockBuilder.build(
                             member = MemberMockBuilder.build(type = Member.Type.ADMIN),
                         )
@@ -140,7 +138,7 @@ class AttachmentAuthorizationServiceTest :
                 }
 
                 test("should throw ForbiddenException for JUDGE member") {
-                    every { SessionUtil.getCurrent() } returns
+                    RequestContext.getContext().session =
                         SessionMockBuilder.build(
                             member = MemberMockBuilder.build(type = Member.Type.JUDGE),
                         )
@@ -153,7 +151,7 @@ class AttachmentAuthorizationServiceTest :
                 }
 
                 test("should throw ForbiddenException for ADMIN member") {
-                    every { SessionUtil.getCurrent() } returns
+                    RequestContext.getContext().session =
                         SessionMockBuilder.build(
                             member = MemberMockBuilder.build(type = Member.Type.ADMIN),
                         )
@@ -247,7 +245,7 @@ class AttachmentAuthorizationServiceTest :
                                 context = Attachment.Context.SUBMISSION_CODE,
                             )
                         every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-                        every { SessionUtil.getCurrent() } returns
+                        RequestContext.getContext().session =
                             SessionMockBuilder.build(
                                 member = MemberMockBuilder.build(type = Member.Type.JUDGE),
                             )
@@ -267,7 +265,7 @@ class AttachmentAuthorizationServiceTest :
                                 context = Attachment.Context.SUBMISSION_CODE,
                             )
                         every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-                        every { SessionUtil.getCurrent() } returns
+                        RequestContext.getContext().session =
                             SessionMockBuilder.build(
                                 member = MemberMockBuilder.build(type = Member.Type.ADMIN),
                             )
@@ -319,7 +317,7 @@ class AttachmentAuthorizationServiceTest :
                                 context = Attachment.Context.SUBMISSION_CODE,
                             )
                         every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-                        every { SessionUtil.getCurrent() } returns
+                        RequestContext.getContext().session =
                             SessionMockBuilder.build(
                                 member = MemberMockBuilder.build(type = Member.Type.ROOT),
                             )
@@ -336,7 +334,7 @@ class AttachmentAuthorizationServiceTest :
                                 context = Attachment.Context.SUBMISSION_CODE,
                             )
                         every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
-                        every { SessionUtil.getCurrent() } returns null
+                        RequestContext.getContext().session = null
 
                         shouldThrow<ForbiddenException> {
                             sut.authorizeDownload(contestId, attachmentId)

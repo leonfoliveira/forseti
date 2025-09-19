@@ -69,10 +69,6 @@ if [ -n "$RABBITMQ_PASSWORD_FILE" ]; then
   export RABBITMQ_PASSWORD=$(cat "$RABBITMQ_PASSWORD_FILE")
 fi
 
-if [ -n "$JWT_SECRET_FILE" ]; then
-  export JWT_SECRET=$(cat "$JWT_SECRET_FILE")
-fi
-
 if [ -n "$ROOT_PASSWORD_FILE" ]; then
   export ROOT_PASSWORD=$(cat "$ROOT_PASSWORD_FILE")
 fi

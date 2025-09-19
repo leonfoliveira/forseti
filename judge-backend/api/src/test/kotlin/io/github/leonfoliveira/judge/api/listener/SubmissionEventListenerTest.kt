@@ -19,7 +19,7 @@ class SubmissionEventListenerTest :
         val stompLeaderboardEmitter = mockk<StompLeaderboardEmitter>(relaxed = true)
         val findLeaderboardService = mockk<FindLeaderboardService>(relaxed = true)
 
-        val sut = SubmissionEventListener(stompSubmissionEmitter, stompLeaderboardEmitter, findLeaderboardService)
+        val sut = SubmissionEventsApiListener(stompSubmissionEmitter, stompLeaderboardEmitter, findLeaderboardService)
 
         beforeEach {
             clearAllMocks()

@@ -2,14 +2,13 @@ package io.github.leonfoliveira.judge.api.middleware.websocket
 
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
-import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.support.ChannelInterceptor
 import org.springframework.messaging.support.MessageHeaderAccessor
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 
 @Component
@@ -25,9 +24,9 @@ class WebSocketPrivateInterceptor(
         val accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) ?: return message
         val destination = accessor.destination ?: return message
         logger.info("Started PrivateWebSocketInterceptor for destination: $destination")
-        val auth = SecurityContextHolder.getContext().authentication as? SessionAuthentication
+        val session = RequestContext.getContext().session
 
-        if (auth?.principal?.member?.type == Member.Type.ROOT) {
+        if (session?.member?.type == Member.Type.ROOT) {
             logger.info("User is ROOT, bypassing access")
             return message
         }

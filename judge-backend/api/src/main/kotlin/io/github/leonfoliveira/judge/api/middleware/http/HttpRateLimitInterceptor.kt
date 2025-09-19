@@ -4,12 +4,10 @@ import io.github.leonfoliveira.judge.api.service.RateLimitService
 import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.TooManyRequestsException
-import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
-import io.github.leonfoliveira.judge.common.util.SessionUtil
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
@@ -31,8 +29,8 @@ class HttpRateLimitInterceptor(
             return true
         }
 
-        val auth = SecurityContextHolder.getContext().authentication as? SessionAuthentication
-        if (auth?.principal?.member?.type == Member.Type.ROOT) {
+        val session = RequestContext.getContext().session
+        if (session?.member?.type == Member.Type.ROOT) {
             logger.info("User is ROOT, bypassing rate limiting")
             return true
         }
@@ -66,7 +64,7 @@ class HttpRateLimitInterceptor(
 
     private fun extractKey(request: HttpServletRequest): String {
         val ipAddress = getClientIp(request)
-        val member = SessionUtil.getCurrent()?.member
+        val member = RequestContext.getContext().session?.member
 
         if (member != null) {
             return "${member.id}_$ipAddress"

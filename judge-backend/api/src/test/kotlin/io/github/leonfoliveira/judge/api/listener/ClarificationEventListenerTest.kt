@@ -13,7 +13,7 @@ class ClarificationEventListenerTest :
     FunSpec({
         val stompClarificationEmitter = mockk<StompClarificationEmitter>(relaxed = true)
 
-        val sut = ClarificationEventListener(stompClarificationEmitter)
+        val sut = ClarificationEventsApiListener(stompClarificationEmitter)
 
         beforeEach {
             clearAllMocks()

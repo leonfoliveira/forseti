@@ -2,17 +2,16 @@ package io.github.leonfoliveira.judge.api.util
 
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.service.contest.FindContestService
-import io.github.leonfoliveira.judge.common.util.SessionUtil
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -27,13 +26,13 @@ class ContestAuthFilterTest :
 
         beforeEach {
             clearAllMocks()
-            mockkObject(SessionUtil)
+            RequestContext.clearContext()
         }
 
         context("checkIfMemberBelongsToContest") {
             test("should throw ForbiddenException when contestId does not match") {
                 val contestId = UUID.randomUUID()
-                every { SessionUtil.getCurrent() } returns SessionMockBuilder.build()
+                RequestContext.getContext().session = SessionMockBuilder.build()
 
                 shouldThrow<ForbiddenException> {
                     sut.checkIfMemberBelongsToContest(contestId)
@@ -42,7 +41,7 @@ class ContestAuthFilterTest :
 
             test("should not throw ForbiddenException when contestId matches") {
                 val contestId = UUID.randomUUID()
-                every { SessionUtil.getCurrent() } returns
+                RequestContext.getContext().session =
                     SessionMockBuilder.build(
                         member = MemberMockBuilder.build(contest = ContestMockBuilder.build(id = contestId)),
                     )
@@ -52,7 +51,7 @@ class ContestAuthFilterTest :
 
             test("should not throw ForbiddenException when member is ROOT") {
                 val contestId = UUID.randomUUID()
-                every { SessionUtil.getCurrent() } returns
+                RequestContext.getContext().session =
                     SessionMockBuilder.build(
                         member = MemberMockBuilder.build(type = Member.Type.ROOT),
                     )
@@ -64,7 +63,7 @@ class ContestAuthFilterTest :
         context("checkIfStarted") {
             test("should throw ForbiddenException when contest has not started and member is CONTESTANT") {
                 val contestId = UUID.randomUUID()
-                every { SessionUtil.getCurrent() } returns SessionMockBuilder.build()
+                RequestContext.getContext().session = SessionMockBuilder.build()
                 every {
                     findContestService.findById(contestId)
                 } returns ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().plusHours(1))
@@ -76,7 +75,7 @@ class ContestAuthFilterTest :
 
             test("should not throw ForbiddenException when contest has started and member is CONTESTANT") {
                 val contestId = UUID.randomUUID()
-                every { SessionUtil.getCurrent() } returns SessionMockBuilder.build()
+                RequestContext.getContext().session = SessionMockBuilder.build()
                 every {
                     findContestService.findById(contestId)
                 } returns ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1))
@@ -86,7 +85,7 @@ class ContestAuthFilterTest :
 
             test("should not throw ForbiddenException when member is ADMIN") {
                 val contestId = UUID.randomUUID()
-                every { SessionUtil.getCurrent() } returns
+                RequestContext.getContext().session =
                     SessionMockBuilder.build(
                         member = MemberMockBuilder.build(type = Member.Type.ADMIN),
                     )
@@ -99,7 +98,7 @@ class ContestAuthFilterTest :
 
             test("should not throw ForbiddenException when member is ROOT") {
                 val contestId = UUID.randomUUID()
-                every { SessionUtil.getCurrent() } returns
+                RequestContext.getContext().session =
                     SessionMockBuilder.build(
                         member = MemberMockBuilder.build(type = Member.Type.ROOT),
                     )

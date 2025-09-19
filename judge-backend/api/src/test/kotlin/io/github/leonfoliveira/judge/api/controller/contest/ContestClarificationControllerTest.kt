@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.dto.response.clarification.toResponseDTO
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
-import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import io.github.leonfoliveira.judge.common.mock.entity.ClarificationMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.service.clarification.CreateClarificationService
@@ -17,7 +17,6 @@ import io.mockk.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
@@ -49,7 +48,7 @@ class ContestClarificationControllerTest(
                 )
             val clarification = ClarificationMockBuilder.build()
             val session = SessionMockBuilder.build()
-            SecurityContextHolder.getContext().authentication = SessionAuthentication(session)
+            RequestContext.getContext().session = session
             every { createClarificationService.create(contestId, session.member.id, body) } returns clarification
 
             webMvc

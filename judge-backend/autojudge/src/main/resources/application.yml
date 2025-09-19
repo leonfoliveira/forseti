@@ -3,6 +3,5 @@ spring:
     import: classpath:common.yml
   application:
     name: judge-autojudge
-    version: ${VERSION:latest}
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:development}

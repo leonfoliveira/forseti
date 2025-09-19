@@ -80,7 +80,6 @@ mockk = [
     "springmockk"
 ]
 spring = [
-    "spring-cloud-starter-feign",
     "spring-boot-starter",
     "spring-boot-starter-actuator",
     "spring-boot-starter-amqp",
@@ -89,6 +88,7 @@ spring = [
     "spring-boot-starter-validation",
     "spring-boot-starter-web",
     "spring-boot-starter-websocket",
+    "spring-cloud-starter-feign",
 ]
 spring-test = [
     "kotest-extensions-spring",
