@@ -39,3 +39,13 @@ class TestInputAdapter:
         questionary.password.assert_called_once_with(
             "Enter password", style="bold")
         assert result == "secret"
+
+    def test_length_validator_valid(self):
+        validator = InputAdapter.length_validator(5)
+        assert validator("abcdef") is True
+        assert validator("12345") is True
+
+    def test_length_validator_invalid(self):
+        validator = InputAdapter.length_validator(5)
+        assert validator("abcd") == "Must be at least 5 characters long"
+        assert validator("1234") == "Must be at least 5 characters long"

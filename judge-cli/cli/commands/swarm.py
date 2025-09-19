@@ -36,8 +36,9 @@ def init(ctx, ip: str):
         raise e
 
     # Set up secrets
-    def _create_secret(secret_name: str, prompt: str, default: Optional[str] = None, mapper: Optional[callable] = None) -> str:
-        value = input_adapter.password(prompt) or default
+    def _create_secret(secret_name: str, prompt: str, mapper: Optional[callable] = None) -> str:
+        value = input_adapter.password(
+            prompt, validate=InputAdapter.length_validator(8))
         if mapper:
             value = mapper(value)
         command_adapter.run(
