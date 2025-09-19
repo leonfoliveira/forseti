@@ -703,7 +703,6 @@ services:
       - type: bind
         source: ./volumes/rabbitmq/definitions.json
         target: /etc/rabbitmq/definitions.json
-        read_only: true
 
   webapp:
     deploy:
