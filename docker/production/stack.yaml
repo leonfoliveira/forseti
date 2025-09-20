@@ -213,17 +213,18 @@ services:
         order: start-first
         delay: 30s
     environment:
-      AWS_REGION: us-east-1
-      AWS_ENDPOINT: http://localstack:4566
-      AWS_ACCESS_KEY_ID: judge
-      AWS_SECRET_ACCESS_KEY: judge
-      QUEUE_NAME: submission-queue
-      SERVICE_NAME: judge_autojudge
-      MESSAGES_PER_REPLICA: 5
-      MIN_REPLICAS: 1
-      MAX_REPLICAS: 3
       COOLDOWN: 60
       INTERVAL: 10
+      MESSAGES_PER_REPLICA: 5
+      MAX_REPLICAS: 3
+      MIN_REPLICAS: 1
+      QUEUE_NAME: submission-queue
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: judge
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
+      RABBITMQ_VHOST: /
+      SERVICE_NAME: judge_autojudge
     healthcheck:
       test:
         - CMD-SHELL
@@ -239,6 +240,8 @@ services:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
+    secrets:
+      - rabbitmq_password
 
   cadvisor:
     deploy:
