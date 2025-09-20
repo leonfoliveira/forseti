@@ -3,6 +3,9 @@ spring:
     import: classpath:common-production.yml
 server:
   cors:
-    allowed-origins: ${ALLOWED_ORIGINS}
-    secure-cookies: ${SECURE_COOKIES}
-  port: ${PORT}
+    allowed-origins: ${WEBAPP_PUBLIC_URL}
+  port: 8080
+security:
+  cookie:
+    domain: ${COOKIE_DOMAIN}
+    secure: true

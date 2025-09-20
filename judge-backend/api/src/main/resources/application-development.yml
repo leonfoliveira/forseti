@@ -3,6 +3,9 @@ spring:
     import: classpath:common-development.yml
 server:
   cors:
-    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
-    secure-cookies: ${SECURE_COOKIES:false}
+    allowed-origins: ${WEBAPP_PUBLIC_URL:http://localhost:3000}
   port: ${PORT:8080}
+security:
+  cookie:
+    domain: ${COOKIE_DOMAIN:.localhost}
+    secure: false

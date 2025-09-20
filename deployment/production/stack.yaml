@@ -83,7 +83,7 @@ services:
         order: start-first
         delay: 30s
     environment:
-      ALLOWED_ORIGINS: https://${DOMAIN:-judge}
+      COOKIE_DOMAIN: .${DOMAIN:-judge}
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge
@@ -105,8 +105,9 @@ services:
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       ROOT_PASSWORD_FILE: /run/secrets/root_password
-      SECURE_COOKIES: "true"
       SPRING_PROFILES_ACTIVE: production
+      VERSION: ${VERSION:-latest}
+      WEBAPP_PUBLIC_URL: https://${DOMAIN:-judge}
     healthcheck:
       test:
         - CMD-SHELL

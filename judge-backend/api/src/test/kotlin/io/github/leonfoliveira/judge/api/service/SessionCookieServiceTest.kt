@@ -9,9 +9,14 @@ import java.time.OffsetDateTime
 
 class SessionCookieServiceTest :
     FunSpec({
-        val secureCookies = true
+        val cookieDomain = ".localhost"
+        val cookieSecure = true
 
-        val sut = SessionCookieService(secureCookies)
+        val sut =
+            SessionCookieService(
+                cookieDomain = cookieDomain,
+                cookieSecure = cookieSecure,
+            )
 
         val now = OffsetDateTime.now()
 
@@ -26,6 +31,7 @@ class SessionCookieServiceTest :
             val cookie = sut.buildCookie(session)
 
             cookie shouldContain "session_id=${session.id}"
+            cookie shouldContain "Domain=.localhost"
             cookie shouldContain "HttpOnly"
             cookie shouldContain "Secure"
             cookie shouldContain "Path=/"
@@ -35,6 +41,7 @@ class SessionCookieServiceTest :
             val cookie = sut.buildClearCookie()
 
             cookie shouldContain "session_id="
+            cookie shouldContain "Domain=.localhost"
             cookie shouldContain "HttpOnly"
             cookie shouldContain "Secure"
             cookie shouldContain "Path=/"
