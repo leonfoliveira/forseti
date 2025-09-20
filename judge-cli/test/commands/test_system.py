@@ -46,7 +46,7 @@ class TestSystemCommand:
         assert result.exit_code == 0
         command_adapter.run.assert_any_call(
             ["docker", "stack", "deploy", "-c", "/cli/path/stack.yaml", "judge"],
-            env={"DOMAIN": "judge"},
+            env={"DOMAIN": "judge.app"},
         )
 
     def test_start_with_domain(self, runner, command_adapter, os):

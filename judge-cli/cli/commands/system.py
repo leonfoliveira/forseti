@@ -14,7 +14,7 @@ def system():
 
 DEFAULT_STACK_NAME = "judge"
 STACK_NAME_HELP = f"Stack name (default: {DEFAULT_STACK_NAME})"
-DEFAULT_DOMAIN = "judge"
+DEFAULT_DOMAIN = "judge.app"
 
 
 @system.command(help="Deploy services in Docker Swarm.")
