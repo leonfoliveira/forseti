@@ -1,13 +1,19 @@
-from typing import Union
-
 import click
 import keyring
 import keyring.errors
 import requests
+import warnings
+from typing import Union
+from urllib3.exceptions import InsecureRequestWarning
 
 from .input_adapter import InputAdapter
 
+
+warnings.simplefilter("ignore", InsecureRequestWarning)
+
+
 DEFAULT_API_URL = "https://api.judge"
+VERIFY_SSL = False
 
 
 class ApiAdapter:
@@ -24,6 +30,7 @@ class ApiAdapter:
         response = requests.get(
             f"{self.api_url}{path}",
             **kwargs,
+            verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
         )
         if response.status_code != 200:
@@ -36,6 +43,7 @@ class ApiAdapter:
             f"{self.api_url}{path}",
             json=json,
             **kwargs,
+            verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
         )
         if response.status_code != 200:
@@ -48,6 +56,7 @@ class ApiAdapter:
             f"{self.api_url}{path}",
             json=json,
             **kwargs,
+            verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
         )
         if response.status_code != 200:
@@ -59,6 +68,7 @@ class ApiAdapter:
         response = requests.delete(
             f"{self.api_url}{path}",
             **kwargs,
+            verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
         )
         if response.status_code != 204:
@@ -67,6 +77,7 @@ class ApiAdapter:
     def _authenticate(self):
         if session_id := self._get_cached_session_id():
             response = requests.get(f"{self.api_url}/v1/session/me",
+                                    verify=VERIFY_SSL,
                                     cookies={self.SESSION_ID_COOKIE: session_id})
             if response.status_code == 200:
                 return session_id
@@ -74,6 +85,7 @@ class ApiAdapter:
         password = self.input_adapter.password("Root password: ")
         response = requests.post(
             f"{self.api_url}/v1/root/sign-in",
+            verify=VERIFY_SSL,
             json={"login": "root", "password": password},
         )
         if response.status_code != 200:
