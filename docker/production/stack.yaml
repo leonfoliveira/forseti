@@ -142,12 +142,6 @@ services:
         delay: 30s
     environment:
       API_URL: http://api:8080
-      AWS_ACCESS_KEY_ID: judge
-      AWS_ENDPOINT: http://localstack:4566
-      AWS_REGION: us-east-1
-      AWS_S3_BUCKET: judge
-      AWS_SECRET_ACCESS_KEY: judge
-      AWS_SQS_SUBMISSION_QUEUE: submission-queue
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge

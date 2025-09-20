@@ -231,4 +231,3 @@ volumes:
   dev-postgres_data:
   dev-minio_data:
   dev-rabbitmq_data:
-  dev-localstack_data:
