@@ -27,7 +27,6 @@ class SessionCookieServiceTest :
 
             cookie shouldContain "session_id=${session.id}"
             cookie shouldContain "HttpOnly"
-            cookie shouldContain "SameSite=Lax"
             cookie shouldContain "Secure"
             cookie shouldContain "Path=/"
         }
@@ -37,7 +36,6 @@ class SessionCookieServiceTest :
 
             cookie shouldContain "session_id="
             cookie shouldContain "HttpOnly"
-            cookie shouldContain "SameSite=Lax"
             cookie shouldContain "Secure"
             cookie shouldContain "Path=/"
             cookie shouldContain "Max-Age=0"

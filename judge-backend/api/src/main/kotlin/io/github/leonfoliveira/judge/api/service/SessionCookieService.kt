@@ -20,7 +20,7 @@ class SessionCookieService(
                 .secure(secureCookies)
                 .path("/")
                 .maxAge(Duration.between(OffsetDateTime.now(), session.expiresAt))
-                .sameSite("Lax")
+                .sameSite(null)
                 .build()
         return cookie.toString()
     }
@@ -33,7 +33,7 @@ class SessionCookieService(
                 .secure(secureCookies)
                 .path("/")
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite(null)
                 .build()
         return cookie.toString()
     }
