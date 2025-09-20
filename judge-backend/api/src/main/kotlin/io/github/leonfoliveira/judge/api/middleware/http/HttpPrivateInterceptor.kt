@@ -3,11 +3,13 @@ package io.github.leonfoliveira.judge.api.middleware.http
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
+import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
 
@@ -39,6 +41,11 @@ class HttpPrivateInterceptor : HandlerInterceptor {
         if (privateAnnotation == null) {
             logger.info("No @Private annotation found, skipping access check")
             return true
+        }
+
+        if (privateAnnotation.allowed.isEmpty() && session == null) {
+            logger.info("No session found")
+            throw UnauthorizedException()
         }
 
         if (privateAnnotation.allowed.isNotEmpty() &&

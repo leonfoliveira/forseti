@@ -3,6 +3,7 @@ package io.github.leonfoliveira.judge.api.middleware.http
 import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
+import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
@@ -50,6 +51,18 @@ class HttpPrivateInterceptorTest :
                 )
 
             sut.preHandle(request, response, handler) shouldBe true
+        }
+
+        test("should return UnauthorizedException when no session is found and allowed is empty") {
+            val request = mockk<HttpServletRequest>(relaxed = true)
+            val response = mockk<HttpServletResponse>(relaxed = true)
+            val handler = mockk<HandlerMethod>(relaxed = true)
+            every { handler.getMethodAnnotation(Private::class.java) } returns Private()
+            SecurityContextHolder.clearContext()
+
+            shouldThrow<UnauthorizedException> {
+                sut.preHandle(request, response, handler)
+            }
         }
 
         test("should return ForbiddenException when user type is not allowed") {
