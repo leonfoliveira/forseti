@@ -17,7 +17,7 @@ from cli.util.spinner import Spinner
     default=["cpp17", "java21", "python312"],
 )
 @click.option("--stack", help="Stack file (default: stack.yaml in CLI directory)")
-@click.option("--domain", help="Domain for the TLS certificate (default: judge)", default="judge")
+@click.option("--domain", help="Domain for the TLS certificate (default: judge)", default="judge.app")
 def install(sandboxes: List[str], stack: Optional[str], domain: str):
     command_adapter = CommandAdapter()
 

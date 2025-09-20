@@ -36,11 +36,9 @@ def init(ctx, ip: str):
         raise e
 
     # Set up secrets
-    def _create_secret(secret_name: str, prompt: str, mapper: Optional[callable] = None) -> str:
+    def _create_secret(secret_name: str, prompt: str) -> str:
         value = input_adapter.password(
             prompt, validate=InputAdapter.length_validator(8))
-        if mapper:
-            value = mapper(value)
         try:
             command_adapter.run(["docker", "secret", "rm", secret_name])
         except Exception:
@@ -50,13 +48,10 @@ def init(ctx, ip: str):
             input=value,
         )
 
+    _create_secret("root_password", "Root password:")
     _create_secret("db_password", "DB password:")
     _create_secret("minio_password", "MinIO password:")
     _create_secret("rabbitmq_password", "RabbitMQ password:")
-    _create_secret("root_password", "Root password:")
-    _create_secret("grafana_admin_password", "Grafana admin password:")
-    _create_secret("traefik_admin_password", "Traefik admin password:", mapper=lambda p: bcrypt.hashpw(
-        p.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'))
 
     # Show swarm join info
     ctx.invoke(info)

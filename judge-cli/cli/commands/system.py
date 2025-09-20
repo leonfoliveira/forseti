@@ -45,10 +45,10 @@ def start(domain: str, stack: str, stack_name: str):
         raise e
 
     click.echo("System started at:")
+    click.echo(f"Webapp: https://{domain}")
     click.echo(f"API: https://api.{domain}")
     click.echo(f"Grafana: https://grafana.{domain}")
     click.echo(f"Traefik: https://traefik.{domain}")
-    click.echo(f"Webapp: https://{domain}")
 
 
 @system.command(help="Shut down all services in Docker Swarm.")

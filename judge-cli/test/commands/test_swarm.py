@@ -52,8 +52,7 @@ class TestSwarmCommand:
         # Mock the command_adapter.run calls
         command_adapter.run.side_effect = [
             [],    # docker swarm init
-            Exception(), [], [], [], [], [],
-            [], [], [], [], [], [],  # docker secret commands
+            Exception(), [], [], [], [], [], [], [],  # docker secret commands
             [
                 "To add a worker to this swarm, run the following command:",
                 "",
@@ -84,8 +83,6 @@ class TestSwarmCommand:
         assert "minio_password" in secret_names
         assert "rabbitmq_password" in secret_names
         assert "root_password" in secret_names
-        assert "grafana_admin_password" in secret_names
-        assert "traefik_admin_password" in secret_names
 
     def test_init_already_in_swarm(self, runner, command_adapter, input_adapter, network_adapter):
         # Mock network adapter behavior
