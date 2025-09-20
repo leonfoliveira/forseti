@@ -7,7 +7,9 @@ import keyring.errors
 import requests
 
 from .input_adapter import InputAdapter
-from .network_adapter import NetworkAdapter
+
+
+DEFAULT_API_URL = "https://api.judge"
 
 
 class ApiAdapter:
@@ -16,8 +18,7 @@ class ApiAdapter:
     SESSION_ID_COOKIE = "session_id"
 
     def __init__(self, api_url: str = None):
-        network_adapter = NetworkAdapter()
-        self.api_url = api_url or f"http://{network_adapter.get_ip_address()}:8080"
+        self.api_url = api_url or DEFAULT_API_URL
         self.input_adapter = InputAdapter()
 
     def get(self, path: str, **kwargs) -> Union[dict, list]:
