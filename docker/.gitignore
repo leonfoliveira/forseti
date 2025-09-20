@@ -1,4 +1,4 @@
 */judge
+production/certs
 production/volumes/migrations
-production/volumes/traefik/certs
 production/sandboxes

@@ -656,7 +656,7 @@ services:
         target: /var/run/docker.sock
         read_only: true
       - type: bind
-        source: ./volumes/traefik/certs
+        source: ./certs
         target: /certs
         read_only: true
       - type: bind
