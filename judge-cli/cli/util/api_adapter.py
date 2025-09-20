@@ -1,6 +1,7 @@
 import click
 import keyring
 import keyring.errors
+import re
 import requests
 import warnings
 from typing import Union
@@ -90,7 +91,8 @@ class ApiAdapter:
         )
         if response.status_code != 200:
             raise click.ClickException(response.text)
-        session_id = response.cookies.get(self.SESSION_ID_COOKIE)
+        cookies = response.headers["Set-Cookie"]
+        session_id = re.search(r"(?<=session_id=)[^;]+", cookies).group(0)
 
         self._set_cached_session_id(session_id)
 

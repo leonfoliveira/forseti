@@ -38,7 +38,7 @@ class TestApiAdapter:
         input_adapter.password.return_value = "password"
         response = requests.Response()
         response.status_code = 200
-        response.cookies = {"session_id": "123"}
+        response.headers = {"Set-Cookie": "session_id=123"}
         requests.post.return_value = response
 
         assert sut._authenticate() == "123"
