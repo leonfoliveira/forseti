@@ -143,7 +143,7 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge
-      JAVA_TOOL_OPTIONS: -Xms1536M -Xmx1536M
+      JAVA_TOOL_OPTIONS: -Xms1024M -Xmx1024M
       SESSION_AUTOJUDGE_EXPIRATION: 10m
       MAX_CONCURRENT_SUBMISSIONS: "1"
       MINIO_ENDPOINT: http://minio:9000
