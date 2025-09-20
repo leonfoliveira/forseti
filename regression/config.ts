@@ -6,5 +6,5 @@ export const config = {
     process.env.CLI_PATH || path.resolve(__dirname, "../judge-cli/dist/judge"),
   DOCKER_COMPOSE_PATH:
     process.env.DOCKER_COMPOSE_PATH ||
-    path.resolve(__dirname, "../docker/development/docker-compose.yaml"),
+    path.resolve(__dirname, "../deployment/development/docker-compose.yaml"),
 };

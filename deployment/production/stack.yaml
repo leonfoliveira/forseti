@@ -66,6 +66,7 @@ services:
         - traefik.http.services.api.loadbalancer.sticky.cookie.name=api-session
         - traefik.http.services.api.loadbalancer.sticky.cookie.secure=true
         - traefik.http.services.api.loadbalancer.sticky.cookie.httponly=true
+        - traefik.http.services.api.loadbalancer.sticky.cookie.samesite=none
       mode: replicated
       replicas: 1
       resources:
