@@ -12,11 +12,11 @@ export class RootActor extends Actor {
   }
 
   async createContest(): Promise<string> {
-    return await CLI.run(["contest", "create", this.slug], "judge");
+    return await CLI.run(["contest", "create", this.slug]);
   }
 
   async deleteContest(contestId: string) {
-    await CLI.run(["contest", "delete", contestId], "judge");
+    await CLI.run(["contest", "delete", contestId]);
   }
 
   async addProblem(problem: Problem) {

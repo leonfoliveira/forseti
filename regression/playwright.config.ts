@@ -23,10 +23,6 @@ export default defineConfig({
   workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",
-  /* Global setup to start Docker containers and wait for webapp health */
-  globalSetup: require.resolve("./setup.ts"),
-  /* Global teardown to stop Docker containers */
-  globalTeardown: require.resolve("./teardown.ts"),
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   timeout: 120_000, // Set a global timeout of 120 seconds
   expect: {
@@ -34,7 +30,7 @@ export default defineConfig({
   },
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.BASE_URL || "http://localhost:3000",
+    baseURL: process.env.WEBAPP_PUBLIC_URL || "http://localhost:3000",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",

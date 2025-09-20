@@ -5,7 +5,7 @@ import * as pty from "node-pty";
 import { config } from "../../config";
 
 export class CLI {
-  static async run(args: string[], root_password: string): Promise<string> {
+  static async run(args: string[]): Promise<string> {
     return new Promise((resolve, reject) => {
       // Use pty to create a pseudo-terminal
       const ptyProcess = pty.spawn(config.CLI_PATH, args, {
@@ -34,7 +34,7 @@ export class CLI {
         // Check if we need to provide the root password
         if (data.includes("Root password:") && !passwordSent) {
           passwordSent = true;
-          ptyProcess.write(root_password + "\r");
+          ptyProcess.write(config.ROOT_PASSWORD + "\r");
         }
       });
 

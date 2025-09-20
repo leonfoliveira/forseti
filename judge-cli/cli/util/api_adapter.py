@@ -13,7 +13,7 @@ from .input_adapter import InputAdapter
 warnings.simplefilter("ignore", InsecureRequestWarning)
 
 
-DEFAULT_API_URL = "https://api.judge"
+DEFAULT_API_URL = "https://api.judge.app"
 VERIFY_SSL = False
 
 
