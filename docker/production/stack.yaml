@@ -82,7 +82,7 @@ services:
         order: start-first
         delay: 30s
     environment:
-      ALLOWED_ORIGINS: ${DOMAIN:-judge}
+      ALLOWED_ORIGINS: https://${DOMAIN:-judge}
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge
