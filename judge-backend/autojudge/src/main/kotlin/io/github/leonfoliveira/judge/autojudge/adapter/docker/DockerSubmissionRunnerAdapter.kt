@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.autojudge.docker
+package io.github.leonfoliveira.judge.autojudge.adapter.docker
 
 import com.opencsv.CSVReader
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment

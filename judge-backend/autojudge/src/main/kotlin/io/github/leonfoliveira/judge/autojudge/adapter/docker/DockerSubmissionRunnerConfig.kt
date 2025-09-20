@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.judge.autojudge.docker
+package io.github.leonfoliveira.judge.autojudge.adapter.docker
 
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import java.io.File

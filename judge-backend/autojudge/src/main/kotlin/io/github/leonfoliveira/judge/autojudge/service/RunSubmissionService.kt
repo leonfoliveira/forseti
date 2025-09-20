@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.judge.autojudge.service
 
-import io.github.leonfoliveira.judge.autojudge.docker.DockerSubmissionRunnerAdapter
+import io.github.leonfoliveira.judge.autojudge.adapter.docker.DockerSubmissionRunnerAdapter
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

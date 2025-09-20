@@ -1,5 +1,6 @@
-package io.github.leonfoliveira.judge.autojudge.docker
+package io.github.leonfoliveira.judge.autojudge.adapter.docker
 
+import io.github.leonfoliveira.judge.autojudge.adapter.docker.DockerContainer
 import io.github.leonfoliveira.judge.common.adapter.util.CommandError
 import io.github.leonfoliveira.judge.common.adapter.util.CommandRunner
 import io.kotest.assertions.throwables.shouldThrow

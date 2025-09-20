@@ -1,6 +1,6 @@
-package io.github.leonfoliveira.judge.autojudge.docker.config
+package io.github.leonfoliveira.judge.autojudge.adapter.docker.config
 
-import io.github.leonfoliveira.judge.autojudge.docker.DockerSubmissionRunnerConfig
+import io.github.leonfoliveira.judge.autojudge.adapter.docker.DockerSubmissionRunnerConfig
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import org.springframework.beans.factory.annotation.Value
@@ -9,20 +9,18 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @SkipCoverage
-class JavaSubmissionRunnerConfig(
+class CppSubmissionRunnerConfig(
     @Value("\${spring.application.version}")
     private val version: String,
 ) {
     @Bean
-    fun java21() =
+    fun cpp17() =
         DockerSubmissionRunnerConfig(
-            language = Language.JAVA_21,
-            image = "judge-sb-java21:$version",
+            language = Language.CPP_17,
+            image = "judge-sb-cpp17:$version",
             createCompileCommand = { codeFile ->
-                arrayOf("javac", "-d", ".", codeFile.name)
+                arrayOf("g++", "-o", "a.out", codeFile.name, "-O2", "-std=c++17", "-DONLINE_JUDGE")
             },
-            createRunCommand = { codeFile, memoryLimit ->
-                arrayOf("java", "-Xmx${memoryLimit}m", "-cp", ".", codeFile.nameWithoutExtension)
-            },
+            createRunCommand = { _, _ -> arrayOf("./a.out") },
         )
 }

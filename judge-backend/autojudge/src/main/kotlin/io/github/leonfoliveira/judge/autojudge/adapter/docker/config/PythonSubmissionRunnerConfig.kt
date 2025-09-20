@@ -1,6 +1,6 @@
-package io.github.leonfoliveira.judge.autojudge.docker.config
+package io.github.leonfoliveira.judge.autojudge.adapter.docker.config
 
-import io.github.leonfoliveira.judge.autojudge.docker.DockerSubmissionRunnerConfig
+import io.github.leonfoliveira.judge.autojudge.adapter.docker.DockerSubmissionRunnerConfig
 import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import org.springframework.beans.factory.annotation.Value
