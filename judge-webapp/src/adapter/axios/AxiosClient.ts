@@ -13,7 +13,7 @@ export class AxiosClient {
   static readonly HEADERS_TO_FORWARD = new Set([
     "x-forwarded-for",
     "user-agent",
-    "x-request-id",
+    "x-trace-id",
   ]);
 
   constructor(
@@ -68,7 +68,7 @@ export class AxiosClient {
     try {
       requestConfig.headers = {
         ...requestConfig.headers,
-        "x-request-id": uuidv4(),
+        "x-trace-id": uuidv4(),
       };
 
       if (this.isServer) {
