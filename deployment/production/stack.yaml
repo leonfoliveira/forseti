@@ -303,6 +303,7 @@ services:
       DB_NAME: judge
       DB_USER: judge
       DB_PASSWORD_FILE: /run/secrets/db_password
+      GF_SECURITY_ADMIN_USER: root
       GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/root_password
       LOKI_URL: http://loki:3100
       PROMETHEUS_URL: http://prometheus:9090
