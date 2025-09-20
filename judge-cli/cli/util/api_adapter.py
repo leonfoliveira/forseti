@@ -24,7 +24,6 @@ class ApiAdapter:
         response = requests.get(
             f"{self.api_url}{path}",
             **kwargs,
-            verify=False,
             cookies={self.SESSION_ID_COOKIE: session_id},
         )
         if response.status_code != 200:
@@ -37,7 +36,6 @@ class ApiAdapter:
             f"{self.api_url}{path}",
             json=json,
             **kwargs,
-            verify=False,
             cookies={self.SESSION_ID_COOKIE: session_id},
         )
         if response.status_code != 200:
@@ -50,7 +48,6 @@ class ApiAdapter:
             f"{self.api_url}{path}",
             json=json,
             **kwargs,
-            verify=False,
             cookies={self.SESSION_ID_COOKIE: session_id},
         )
         if response.status_code != 200:
@@ -62,7 +59,6 @@ class ApiAdapter:
         response = requests.delete(
             f"{self.api_url}{path}",
             **kwargs,
-            verify=False,
             cookies={self.SESSION_ID_COOKIE: session_id},
         )
         if response.status_code != 204:
@@ -71,16 +67,14 @@ class ApiAdapter:
     def _authenticate(self):
         if session_id := self._get_cached_session_id():
             response = requests.get(f"{self.api_url}/v1/session/me",
-                                    verify=False,
                                     cookies={self.SESSION_ID_COOKIE: session_id})
             if response.status_code == 200:
                 return session_id
 
         password = self.input_adapter.password("Root password: ")
         response = requests.post(
-            f"{self.api_url}/v1/auth/sign-in",
+            f"{self.api_url}/v1/root/sign-in",
             json={"login": "root", "password": password},
-            verify=False,
         )
         if response.status_code != 200:
             raise click.ClickException(response.text)

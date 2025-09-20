@@ -17,7 +17,8 @@ from cli.util.spinner import Spinner
     default=["cpp17", "java21", "python312"],
 )
 @click.option("--stack", help="Stack file (default: stack.yaml in CLI directory)")
-def install(sandboxes: List[str], stack: Optional[str]):
+@click.option("--domain", help="Domain for the TLS certificate (default: judge)", default="judge")
+def install(sandboxes: List[str], stack: Optional[str], domain: str):
     command_adapter = CommandAdapter()
 
     # Set default stack path if not provided
@@ -26,15 +27,47 @@ def install(sandboxes: List[str], stack: Optional[str]):
         stack = os.path.join(cli_path, "stack.yaml")
 
     try:
+        command_adapter.run(["mkcert", "-install"])
+    except click.ClickException:
+        raise click.ClickException(
+            "mkcert is not installed or not found in PATH.")
+
+    try:
         command_adapter.run(["docker", "--version"])
     except click.ClickException:
         raise click.ClickException(
             "Docker is not installed or not found in PATH.")
 
+    _install_certificates(command_adapter, domain)
     _build_sandboxes(command_adapter, sandboxes)
     _pull_stack_images(command_adapter, stack)
 
     click.echo("Installation completed successfully.")
+
+
+def _install_certificates(command_adapter: CommandAdapter, domain: str):
+    cli_path = command_adapter.get_cli_path()
+    certs_path = os.path.join(cli_path, "certs")
+
+    spinner = Spinner("Installing TLS certificates")
+    spinner.start()
+
+    try:
+        if not os.path.exists(certs_path):
+            os.makedirs(certs_path)
+
+        command_adapter.run(
+            [
+                "mkcert",
+                "-cert-file", f"{certs_path}/cert.pem",
+                "-key-file", f"{certs_path}/key.pem",
+                f"*.{domain}", "localhost", "127.0.0.1", "::1"
+            ],
+        )
+        spinner.complete()
+    except Exception as e:
+        spinner.fail()
+        raise e
 
 
 def _build_sandboxes(command_adapter: CommandAdapter, sandboxes: List[str]):
@@ -58,11 +91,10 @@ def _build_sandboxes(command_adapter: CommandAdapter, sandboxes: List[str]):
                     ".",
                 ],
             )
+        spinner.complete()
     except Exception as e:
         spinner.fail()
         raise e
-    finally:
-        spinner.complete()
 
 
 def _pull_stack_images(command_adapter: CommandAdapter, stack: str):
@@ -73,8 +105,7 @@ def _pull_stack_images(command_adapter: CommandAdapter, stack: str):
         command_adapter.run(
             ["docker", "compose", "-f", stack, "pull"],
         )
+        spinner.complete()
     except Exception as e:
         spinner.fail()
         raise e
-    finally:
-        spinner.complete()

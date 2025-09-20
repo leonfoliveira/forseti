@@ -70,29 +70,69 @@ class TestInstallCommand:
         assert result.exit_code == 0
         assert "Installation completed successfully." in result.output
 
+    def test_install_no_mkcert(self, runner, command_adapter, os, spinner):
+        # Simulate mkcert not being installed by raising an error
+        command_adapter.run.side_effect = click.ClickException(
+            "mkcert: command not found")
+
+        result = runner.invoke(install)
+
+        assert result.exit_code == 1
+        assert "mkcert is not installed or not found in PATH." in result.output
+
     def test_install_no_docker(self, runner, command_adapter, os, spinner):
         # Simulate Docker not being installed by raising an error
-        command_adapter.run.side_effect = click.ClickException(
+        command_adapter.run.side_effect = [[], click.ClickException(
             "docker: command not found")
+        ]
 
         result = runner.invoke(install)
 
         assert result.exit_code == 1
         assert "Docker is not installed or not found in PATH." in result.output
 
+    def test_install_certificates_failure(self, runner, command_adapter, os, spinner):
+        """Test installation when certificate installation fails."""
+        os.path.join.side_effect = lambda *args: "/".join(args)
+        command_adapter.get_cli_path.return_value = "/cli/path"
+
+        # First call (docker --version) succeeds, second call (mkcert -install) fails
+        command_adapter.run.side_effect = [
+            [],
+            [],  # docker --version
+            click.ClickException("mkcert failed")
+        ]
+
+        result = runner.invoke(install)
+
+        assert result.exit_code == 1
+        assert "mkcert failed" in result.output
+
+    def test_install_certificates(self, runner, command_adapter, os, spinner):
+        """Test successful certificate installation."""
+        os.path.join.side_effect = lambda *args: "/".join(args)
+        os.path.exists.return_value = False
+        command_adapter.get_cli_path.return_value = "/cli/path"
+
+        result = runner.invoke(install)
+
+        assert result.exit_code == 0
+        assert "Installation completed successfully." in result.output
+        command_adapter.run.assert_any_call(["mkcert", "-install"])
+        command_adapter.run.assert_any_call(["mkcert", "-cert-file", "/cli/path/certs/cert.pem",
+                                            "-key-file", "/cli/path/certs/key.pem", "*.judge", "localhost", "127.0.0.1", "::1"])
+
     def test_install_build_sandboxes_failure(self, runner, command_adapter, os, spinner):
         """Test installation when sandbox building fails."""
         os.path.join.side_effect = lambda *args: "/".join(args)
         command_adapter.get_cli_path.return_value = "/cli/path"
 
-        # First call (docker --version) succeeds, subsequent calls fail
-        def side_effect(cmd, **kwargs):
-            if cmd == ["docker", "--version"]:
-                return []
-            else:
-                raise click.ClickException("Build failed")
-
-        command_adapter.run.side_effect = side_effect
+        command_adapter.run.side_effect = [
+            [],  # docker --version
+            [],  # mkcert -install
+            [],  # mkcert command
+            click.ClickException("Build failed")  # sandbox build fails
+        ]
 
         result = runner.invoke(install)
 
@@ -104,19 +144,13 @@ class TestInstallCommand:
         os.path.join.side_effect = lambda *args: "/".join(args)
         command_adapter.get_cli_path.return_value = "/cli/path"
 
-        call_count = 0
-
-        def side_effect(cmd, **kwargs):
-            nonlocal call_count
-            call_count += 1
-            if call_count == 1:  # docker --version
-                return []
-            elif "build" in cmd:  # sandbox builds
-                return []
-            else:  # docker compose pull
-                raise click.ClickException("Pull failed")
-
-        command_adapter.run.side_effect = side_effect
+        command_adapter.run.side_effect = [
+            [],  # docker --version
+            [],  # mkcert -install
+            [],  # mkcert command
+            [], [], [],  # sandbox builds
+            click.ClickException("Pull failed")  # image pull fails
+        ]
 
         result = runner.invoke(install)
 

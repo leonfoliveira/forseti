@@ -70,7 +70,6 @@ class TestApiAdapter:
 
         requests.get.assert_called_with(
             f"{sut.api_url}/test-path",
-            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
         assert result == {"key": "value"}
@@ -91,7 +90,6 @@ class TestApiAdapter:
 
         requests.get.assert_called_with(
             f"{sut.api_url}/test-path",
-            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
@@ -107,7 +105,6 @@ class TestApiAdapter:
         requests.post.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
-            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
         assert result == {"key": "value"}
@@ -126,7 +123,6 @@ class TestApiAdapter:
         requests.post.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
-            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
@@ -142,7 +138,6 @@ class TestApiAdapter:
         requests.put.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
-            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
         assert result == {"key": "value"}
@@ -161,7 +156,6 @@ class TestApiAdapter:
         requests.put.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
-            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
@@ -175,7 +169,6 @@ class TestApiAdapter:
 
         requests.delete.assert_called_with(
             f"{sut.api_url}/test-path",
-            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
@@ -192,7 +185,6 @@ class TestApiAdapter:
 
         requests.delete.assert_called_with(
             f"{sut.api_url}/test-path",
-            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
