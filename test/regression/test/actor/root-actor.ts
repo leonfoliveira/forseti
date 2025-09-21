@@ -1,12 +1,11 @@
 import { expect, Page } from "@playwright/test";
 
 import { Actor } from "@/test/actor/actor";
+import { config } from "@/test/config";
 import { Member } from "@/test/entity/member";
 import { Problem } from "@/test/entity/problem";
 import { CLI } from "@/test/util/cli";
 import { FileUtil } from "@/test/util/file-util";
-
-import { config } from "../../config";
 
 export class RootActor extends Actor {
   constructor(page: Page, slug: string, member: Member) {

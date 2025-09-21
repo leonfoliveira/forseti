@@ -20,7 +20,7 @@ jobs:
 
       - name: Start test composition
         run: |
-          docker compose -f deployment/development/docker-compose.yaml up -d
+          docker compose -f deployment/development/docker-compose.yaml up -d --wait
 
       - name: Set up Python for CLI
         uses: actions/setup-python@v5
