@@ -6,17 +6,31 @@ import { Problem } from "@/test/entity/problem";
 import { CLI } from "@/test/util/cli";
 import { FileUtil } from "@/test/util/file-util";
 
+import { config } from "../../config";
+
 export class RootActor extends Actor {
   constructor(page: Page, slug: string, member: Member) {
     super(page, slug, member);
   }
 
   async createContest(): Promise<string> {
-    return await CLI.run(["contest", "create", this.slug]);
+    return await CLI.run([
+      "contest",
+      "create",
+      this.slug,
+      "--api-url",
+      config.API_URL,
+    ]);
   }
 
   async deleteContest(contestId: string) {
-    await CLI.run(["contest", "delete", contestId]);
+    await CLI.run([
+      "contest",
+      "delete",
+      contestId,
+      "--api-url",
+      config.API_URL,
+    ]);
   }
 
   async addProblem(problem: Problem) {

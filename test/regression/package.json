@@ -6,7 +6,6 @@
     "lint": "eslint 'test/**/*.{ts,tsx}'",
     "format": "eslint 'test/**/*.{ts,tsx}' --fix",
     "test": "playwright test",
-    "test:production": "WEBAPP_PUBLIC_URL=https://judge.app playwright test",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug",
     "test:report": "playwright show-report"

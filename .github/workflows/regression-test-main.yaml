@@ -1,0 +1,62 @@
+name: Regression Test - Main Branch
+
+on:
+  workflow_dispatch:
+
+jobs:
+  regression-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Build test composition
+        run: |
+          docker compose -f deployment/development/docker-compose.yaml build --progress=plain --pull
+          docker build -f judge-backend/autojudge/src/main/resources/sandboxes/python312.Dockerfile -t judge-sb-python312:latest .
+
+      - name: Start test composition
+        run: |
+          docker compose -f deployment/development/docker-compose.yaml up -d
+
+      - name: Set up Python for CLI
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: judge-cli/requirements.dev.txt
+
+      - name: Install CLI dependencies
+        run: |
+          cd judge-cli
+          pip install -r requirements.dev.txt
+
+      - name: Build CLI
+        run: |
+          cd judge-cli
+          make build
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: test/regression/package.json
+
+      - name: Install regression test dependencies
+        run: |
+          cd test/regression
+          npm ci
+
+      - name: Install Playwright browsers
+        run: |
+          cd test/regression
+          npx playwright install --with-deps
+
+      - name: Run regression tests
+        run: |
+          cd test/regression
+          npm run test
