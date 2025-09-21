@@ -94,7 +94,7 @@ services:
       context: ../../judge-backend
       dockerfile: api.Dockerfile
     environment:
-      COOKIE_DOMAIN: .judge.app
+      COOKIE_SECURE: "false"
       DB_PASSWORD: judge
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge
@@ -118,7 +118,7 @@ services:
       ROOT_PASSWORD: judge
       SPRING_PROFILES_ACTIVE: development
       VERSION: latest
-      WEBAPP_PUBLIC_URL: https://judge.app
+      WEBAPP_PUBLIC_URL: http://localhost:3000
     depends_on:
       postgres:
         condition: service_healthy
@@ -205,7 +205,7 @@ services:
       dockerfile: Dockerfile
     environment:
       API_INTERNAL_URL: http://api:8080
-      API_PUBLIC_URL: https://api.judge.app
+      API_PUBLIC_URL: http://localhost:8080
       LOCALE: en-US
       NEXT_PUBLIC_VERSION: latest
       NODE_ENV: development
@@ -224,29 +224,6 @@ services:
       - dev-judge-network
     ports:
       - 3000:3000
-
-  traefik:
-    container_name: dev-judge-traefik
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - traefik version
-      timeout: 5s
-      interval: 15s
-      retries: 5
-      start_period: 10s
-    image: traefik:v3.5.2
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./volumes/traefik/:/etc/traefik/:ro
-      - ./certs:/certs:ro
-    networks:
-      - dev-judge-network
-    extra_hosts:
-      - host.docker.internal:host-gateway
 
 networks:
   dev-judge-network:
