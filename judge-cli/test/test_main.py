@@ -129,6 +129,7 @@ class TestMainCLI:
 
         # Verify the module structure
         assert hasattr(main_module, 'judge')
+        assert hasattr(main_module, 'backup')
         assert hasattr(main_module, 'contest')
         assert hasattr(main_module, 'install')
         assert hasattr(main_module, 'swarm')
@@ -137,11 +138,11 @@ class TestMainCLI:
         # Test that the judge function has the right commands
         judge_func = main_module.judge
         assert hasattr(judge_func, 'commands')
-        assert len(judge_func.commands) == 4
+        assert len(judge_func.commands) == 5
 
         # Verify command names
         command_names = set(judge_func.commands.keys())
-        expected_commands = {'contest', 'install', 'swarm', 'system'}
+        expected_commands = {'backup', 'contest', 'install', 'swarm', 'system'}
         assert command_names == expected_commands
 
     def test_command_registration_order(self):
@@ -152,7 +153,7 @@ class TestMainCLI:
         commands_list = list(main_module.judge.commands.keys())
 
         # While order isn't strictly required, this test ensures consistency
-        expected_commands = ['contest', 'install', 'swarm', 'system']
+        expected_commands = ['backup', 'contest', 'install', 'swarm', 'system']
         assert commands_list == expected_commands
 
     def test_cli_integration_smoke_test(self, runner):

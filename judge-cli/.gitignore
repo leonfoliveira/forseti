@@ -10,6 +10,7 @@ dist/
 # Generated version file
 cli/_version.py
 
+backups/
 certs/
 sandboxes/
 stack.yaml

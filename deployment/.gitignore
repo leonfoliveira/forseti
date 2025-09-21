@@ -1,4 +1,5 @@
 */judge
 production/certs
+production/backups
 production/volumes/migrations
 production/sandboxes
