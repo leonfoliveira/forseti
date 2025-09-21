@@ -1,4 +1,7 @@
 */judge
+
+development/certs
+
 production/certs
 production/backups
 production/volumes/migrations

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "HTTPS=true NODE_EXTRA_CA_CERTS=\"$(mkcert -CAROOT)/rootCA.pem\" next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint 'src/**/*.{ts,tsx}' 'test/**/*.{ts,tsx}'",

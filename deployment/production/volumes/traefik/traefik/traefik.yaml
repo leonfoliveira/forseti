@@ -1,0 +1,26 @@
+entrypoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entrypoint:
+          to: websecure
+          scheme: https
+          permanent: true
+  websecure:
+    address: ":443"
+    http:
+      tls: {}
+providers:
+  file:
+    filename: /etc/traefik/providers.yaml
+  swarm:
+    endpoint: "unix:///var/run/docker.sock"
+    watch: true
+    exposedByDefault: false
+    network: judge_network
+log:
+  level: INFO
+accessLog: {}
+metrics:
+  prometheus: {}
