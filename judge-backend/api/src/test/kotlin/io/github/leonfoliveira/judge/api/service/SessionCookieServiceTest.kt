@@ -3,6 +3,7 @@ package io.github.leonfoliveira.judge.api.service
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotContain
 import io.mockk.every
 import io.mockk.mockkStatic
 import java.time.OffsetDateTime
@@ -10,13 +11,6 @@ import java.time.OffsetDateTime
 class SessionCookieServiceTest :
     FunSpec({
         val cookieDomain = ".localhost"
-        val cookieSecure = true
-
-        val sut =
-            SessionCookieService(
-                cookieDomain = cookieDomain,
-                cookieSecure = cookieSecure,
-            )
 
         val now = OffsetDateTime.now()
 
@@ -25,26 +19,69 @@ class SessionCookieServiceTest :
             every { OffsetDateTime.now() } returns now
         }
 
-        test("should return a cookie string") {
-            val session = SessionMockBuilder.build()
+        context("secure = true") {
+            val sut =
+                SessionCookieService(
+                    cookieDomain = cookieDomain,
+                    cookieSecure = true,
+                )
 
-            val cookie = sut.buildCookie(session)
+            test("should return a cookie string") {
+                val session = SessionMockBuilder.build()
 
-            cookie shouldContain "session_id=${session.id}"
-            cookie shouldContain "Domain=.localhost"
-            cookie shouldContain "HttpOnly"
-            cookie shouldContain "Secure"
-            cookie shouldContain "Path=/"
+                val cookie = sut.buildCookie(session)
+
+                cookie shouldContain "session_id=${session.id}"
+                cookie shouldContain "Domain=.localhost"
+                cookie shouldContain "HttpOnly"
+                cookie shouldContain "Secure"
+                cookie shouldContain "Path=/"
+                cookie shouldContain "SameSite=None"
+            }
+
+            test("should return a clear cookie string") {
+                val cookie = sut.buildClearCookie()
+
+                cookie shouldContain "session_id="
+                cookie shouldContain "Domain=.localhost"
+                cookie shouldContain "HttpOnly"
+                cookie shouldContain "Secure"
+                cookie shouldContain "Path=/"
+                cookie shouldContain "Max-Age=0"
+                cookie shouldContain "SameSite=None"
+            }
         }
 
-        test("should return a clear cookie string") {
-            val cookie = sut.buildClearCookie()
+        context("secure = false") {
+            val sut =
+                SessionCookieService(
+                    cookieDomain = cookieDomain,
+                    cookieSecure = false,
+                )
 
-            cookie shouldContain "session_id="
-            cookie shouldContain "Domain=.localhost"
-            cookie shouldContain "HttpOnly"
-            cookie shouldContain "Secure"
-            cookie shouldContain "Path=/"
-            cookie shouldContain "Max-Age=0"
+            test("should return a cookie string") {
+                val session = SessionMockBuilder.build()
+
+                val cookie = sut.buildCookie(session)
+
+                cookie shouldContain "session_id=${session.id}"
+                cookie shouldNotContain "Domain=.localhost"
+                cookie shouldContain "HttpOnly"
+                cookie shouldNotContain "Secure"
+                cookie shouldContain "Path=/"
+                cookie shouldContain "SameSite=Lax"
+            }
+
+            test("should return a clear cookie string") {
+                val cookie = sut.buildClearCookie()
+
+                cookie shouldContain "session_id="
+                cookie shouldNotContain "Domain=.localhost"
+                cookie shouldContain "HttpOnly"
+                cookie shouldNotContain "Secure"
+                cookie shouldContain "Path=/"
+                cookie shouldContain "Max-Age=0"
+                cookie shouldContain "SameSite=Lax"
+            }
         }
     })

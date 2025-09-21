@@ -3,9 +3,9 @@ spring:
     import: classpath:common-production.yml
 server:
   cors:
-    allowed-origins: ${WEBAPP_PUBLIC_URL}
-  port: 8080
+    allowed-origins: ${WEBAPP_PUBLIC_URL:https://judge.app}
+  port: ${PORT:8080}
 security:
   cookie:
-    domain: ${COOKIE_DOMAIN}
-    secure: true
+    domain: ${COOKIE_DOMAIN:.judge.app}
+    secure: ${COOKIE_SECURE:true}
