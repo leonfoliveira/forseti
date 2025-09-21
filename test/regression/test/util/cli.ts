@@ -2,7 +2,7 @@ import path from "path";
 
 import * as pty from "node-pty";
 
-import { config } from "../../config";
+import { config } from "@/test/config";
 
 export class CLI {
   static async run(args: string[]): Promise<string> {

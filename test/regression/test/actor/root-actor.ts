@@ -1,6 +1,7 @@
 import { expect, Page } from "@playwright/test";
 
 import { Actor } from "@/test/actor/actor";
+import { config } from "@/test/config";
 import { Member } from "@/test/entity/member";
 import { Problem } from "@/test/entity/problem";
 import { CLI } from "@/test/util/cli";
@@ -12,11 +13,23 @@ export class RootActor extends Actor {
   }
 
   async createContest(): Promise<string> {
-    return await CLI.run(["contest", "create", this.slug]);
+    return await CLI.run([
+      "contest",
+      "create",
+      this.slug,
+      "--api-url",
+      config.API_URL,
+    ]);
   }
 
   async deleteContest(contestId: string) {
-    await CLI.run(["contest", "delete", contestId]);
+    await CLI.run([
+      "contest",
+      "delete",
+      contestId,
+      "--api-url",
+      config.API_URL,
+    ]);
   }
 
   async addProblem(problem: Problem) {
