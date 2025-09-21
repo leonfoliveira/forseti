@@ -241,10 +241,10 @@ services:
       resources:
         limits:
           cpus: "0.2"
-          memory: 128M
+          memory: 256M
         reservations:
           cpus: "0.1"
-          memory: 64M
+          memory: 128M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -557,10 +557,10 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 256M
+          memory: 512M
         reservations:
           cpus: "0.25"
-          memory: 128M
+          memory: 256M
       restart_policy:
         condition: on-failure
         delay: 5s

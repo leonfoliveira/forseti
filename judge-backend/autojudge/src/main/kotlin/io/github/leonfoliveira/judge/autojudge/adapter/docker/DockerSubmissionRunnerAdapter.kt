@@ -45,7 +45,7 @@ class DockerSubmissionRunnerAdapter(
             DockerContainer.create(
                 imageName = config.image,
                 memoryLimit = problem.memoryLimit,
-                name = "judge_${submission.id}",
+                name = "judge_sb.${submission.id}",
             )
         logger.info("Starting Docker container")
         container.start()
