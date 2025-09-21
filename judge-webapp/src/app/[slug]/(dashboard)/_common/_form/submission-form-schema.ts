@@ -38,8 +38,11 @@ export const submissionFormSchema = Joi.object({
       return helpers.error("file.too-large");
     }
     return value;
-  }).messages({
-    "file.required": messages.codeRequired.id,
-    "file.too-large": messages.codeTooLarge.id,
-  }),
+  })
+    .required()
+    .messages({
+      "any.required": messages.codeRequired.id,
+      "file.required": messages.codeRequired.id,
+      "file.too-large": messages.codeTooLarge.id,
+    }),
 });

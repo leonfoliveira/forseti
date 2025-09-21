@@ -54,6 +54,13 @@ describe("submissionFormSchema", () => {
   });
 
   describe("code", () => {
+    it("should be required", () => {
+      expect(
+        submissionFormSchema.validate({ ...validData, code: undefined }).error
+          ?.message,
+      ).not.toBeUndefined();
+    });
+
     it("should not be empty array", () => {
       expect(
         submissionFormSchema.validate({ ...validData, code: [] }).error

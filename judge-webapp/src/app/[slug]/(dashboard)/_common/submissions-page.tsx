@@ -220,8 +220,11 @@ export function SubmissionsPage({
   const judgeForm = useForm<SubmissionJudgeFormType>({
     resolver: joiResolver(submissionJudgeFormSchema),
   });
+  const formRef = React.useRef<HTMLFormElement>(null);
 
   async function createSubmission(data: SubmissionFormType) {
+    console.log(data);
+
     createState.start();
     try {
       await submissionService.createSubmission(
@@ -229,6 +232,7 @@ export function SubmissionsPage({
         SubmissionFormMap.toInputDTO(data),
       );
       form.reset();
+      formRef.current?.reset();
       toast.success(messages.createSuccess);
       createState.finish();
     } catch (error) {
@@ -237,6 +241,7 @@ export function SubmissionsPage({
       });
     }
   }
+  console.log(form.watch("code"));
 
   async function resubmitSubmission(submissionId: string) {
     resubmitState.start();
@@ -298,11 +303,11 @@ export function SubmissionsPage({
             <Divider />
             <CardBody>
               <form
-                // isDisabled={createState.isLoading}
                 onSubmit={form.handleSubmit(createSubmission)}
                 className="grid gap-2"
+                ref={formRef}
               >
-                <FormField form={form} name="problemId">
+                <FormField form={form} name="problemId" isSelect>
                   <Select
                     label={<FormattedMessage {...messages.problemLabel} />}
                   >
@@ -316,7 +321,7 @@ export function SubmissionsPage({
                     ))}
                   </Select>
                 </FormField>
-                <FormField form={form} name="language">
+                <FormField form={form} name="language" isSelect>
                   <Select
                     label={<FormattedMessage {...messages.languageLabel} />}
                   >
