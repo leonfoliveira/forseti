@@ -16,29 +16,49 @@ class SessionCookieService(
 ) {
     fun buildCookie(session: Session): String {
         val cookie =
-            ResponseCookie
-                .from("session_id", session.id.toString())
-                .domain(cookieDomain)
-                .httpOnly(true)
-                .secure(cookieSecure)
-                .path("/")
-                .maxAge(Duration.between(OffsetDateTime.now(), session.expiresAt))
-                .sameSite("None")
-                .build()
+            if (cookieSecure) {
+                ResponseCookie
+                    .from("session_id", session.id.toString())
+                    .domain(cookieDomain)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(Duration.between(OffsetDateTime.now(), session.expiresAt))
+                    .sameSite("None")
+                    .build()
+            } else {
+                ResponseCookie
+                    .from("session_id", session.id.toString())
+                    .httpOnly(true)
+                    .path("/")
+                    .maxAge(Duration.between(OffsetDateTime.now(), session.expiresAt))
+                    .sameSite("Lax")
+                    .build()
+            }
         return cookie.toString()
     }
 
     fun buildClearCookie(): String {
         val cookie =
-            ResponseCookie
-                .from("session_id", "")
-                .domain(cookieDomain)
-                .httpOnly(true)
-                .secure(cookieSecure)
-                .path("/")
-                .maxAge(0)
-                .sameSite("None")
-                .build()
+            if (cookieSecure) {
+                ResponseCookie
+                    .from("session_id", "")
+                    .domain(cookieDomain)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(0)
+                    .sameSite("None")
+                    .build()
+            } else {
+                ResponseCookie
+                    .from("session_id", "")
+                    .httpOnly(true)
+                    .path("/")
+                    .maxAge(0)
+                    .sameSite("Lax")
+                    .build()
+            }
         return cookie.toString()
     }
 }

@@ -54,7 +54,7 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.http.routers.api.rule=Host(`api.${DOMAIN:-judge.app}`)
+        - traefik.http.routers.api.rule=Host(`api.judge.app`)
         - traefik.http.routers.api.entrypoints=websecure
         - traefik.http.routers.api.tls=true
         - traefik.http.services.api.loadbalancer.server.port=8080
@@ -79,7 +79,7 @@ services:
         order: start-first
         delay: 30s
     environment:
-      COOKIE_DOMAIN: .${DOMAIN:-judge.app}
+      COOKIE_DOMAIN: .judge.app
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge
@@ -103,7 +103,7 @@ services:
       ROOT_PASSWORD_FILE: /run/secrets/root_password
       SPRING_PROFILES_ACTIVE: production
       VERSION: ${VERSION:-latest}
-      WEBAPP_PUBLIC_URL: https://${DOMAIN:-judge.app}
+      WEBAPP_PUBLIC_URL: https://judge.app
     healthcheck:
       test:
         - CMD-SHELL
@@ -281,7 +281,7 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN:-judge.app}`)
+        - traefik.http.routers.grafana.rule=Host(`grafana.judge.app`)
         - traefik.http.routers.grafana.entrypoints=websecure
         - traefik.http.routers.grafana.tls=true
         - traefik.http.services.grafana.loadbalancer.server.port=3000
@@ -690,7 +690,7 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.http.routers.webapp.rule=Host(`${DOMAIN:-judge.app}`)
+        - traefik.http.routers.webapp.rule=Host(`judge.app`)
         - traefik.http.routers.webapp.entrypoints=websecure
         - traefik.http.routers.webapp.tls=true
         - traefik.http.services.webapp.loadbalancer.server.port=3000
@@ -711,7 +711,7 @@ services:
         delay: 30s
     environment:
       API_INTERNAL_URL: http://api:8080
-      API_PUBLIC_URL: https://api.${DOMAIN:-judge.app}
+      API_PUBLIC_URL: https://api.judge.app
       LOCALE: en-US
       NEXT_PUBLIC_VERSION: ${VERSION:-latest}
       NODE_ENV: production

@@ -8,4 +8,4 @@ server:
 security:
   cookie:
     domain: ${COOKIE_DOMAIN:.judge.app}
-    secure: true
+    secure: ${COOKIE_SECURE:false}
