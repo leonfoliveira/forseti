@@ -5,8 +5,8 @@ import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
-import io.github.leonfoliveira.judge.common.util.SessionUtil
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -20,7 +20,7 @@ class AttachmentAuthorizationService(
         context: Attachment.Context,
     ) {
         contestAuthFilter.checkIfStarted(contestId)
-        val member = SessionUtil.getCurrent()!!.member
+        val member = RequestContext.getContext().session!!.member
         if (member.type == Member.Type.ROOT) {
             return
         }
@@ -59,7 +59,7 @@ class AttachmentAuthorizationService(
             throw ForbiddenException("This attachment does not belong to this contest")
         }
 
-        val member = SessionUtil.getCurrent()?.member
+        val member = RequestContext.getContext().session?.member
 
         when (attachment.context) {
             Attachment.Context.PROBLEM_DESCRIPTION -> return

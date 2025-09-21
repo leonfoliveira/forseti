@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.dto.response.announcement.toResponseDTO
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
-import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import io.github.leonfoliveira.judge.common.mock.entity.AnnouncementMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.service.announcement.CreateAnnouncementService
@@ -16,7 +16,6 @@ import io.mockk.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
@@ -45,7 +44,7 @@ class ContestAnnouncementControllerTest(
                 )
             val announcement = AnnouncementMockBuilder.build()
             val session = SessionMockBuilder.build()
-            SecurityContextHolder.getContext().authentication = SessionAuthentication(session)
+            RequestContext.getContext().session = session
             every { createAnnouncementService.create(contestId, session.member.id, body) } returns announcement
 
             webMvc

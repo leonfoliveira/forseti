@@ -1,5 +1,6 @@
 import click
 
+from cli.commands.backup import backup
 from cli.commands.contest import contest
 from cli.commands.install import install
 from cli.commands.swarm import swarm
@@ -21,6 +22,7 @@ def judge():
     pass
 
 
+judge.add_command(backup)
 judge.add_command(contest)
 judge.add_command(install)
 judge.add_command(swarm)

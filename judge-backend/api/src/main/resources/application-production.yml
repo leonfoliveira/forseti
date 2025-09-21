@@ -1,12 +1,11 @@
 spring:
   config:
     import: classpath:common-production.yml
-  cloud:
-    aws:
-      sqs:
-        submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE}
 server:
   cors:
-    allowed-origins: ${ALLOWED_ORIGINS}
-    secure-cookies: ${SECURE_COOKIES}
-  port: ${PORT}
+    allowed-origins: ${WEBAPP_PUBLIC_URL}
+  port: 8080
+security:
+  cookie:
+    domain: ${COOKIE_DOMAIN}
+    secure: true

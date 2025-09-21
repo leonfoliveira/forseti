@@ -9,18 +9,21 @@ import java.time.OffsetDateTime
 
 @Service
 class SessionCookieService(
-    @Value("\${server.cors.secure-cookies}")
-    private val secureCookies: Boolean,
+    @Value("\${security.cookie.domain}")
+    val cookieDomain: String,
+    @Value("\${security.cookie.secure}")
+    private val cookieSecure: Boolean,
 ) {
     fun buildCookie(session: Session): String {
         val cookie =
             ResponseCookie
                 .from("session_id", session.id.toString())
+                .domain(cookieDomain)
                 .httpOnly(true)
-                .secure(secureCookies)
+                .secure(cookieSecure)
                 .path("/")
                 .maxAge(Duration.between(OffsetDateTime.now(), session.expiresAt))
-                .sameSite("Lax")
+                .sameSite("None")
                 .build()
         return cookie.toString()
     }
@@ -29,11 +32,12 @@ class SessionCookieService(
         val cookie =
             ResponseCookie
                 .from("session_id", "")
+                .domain(cookieDomain)
                 .httpOnly(true)
-                .secure(secureCookies)
+                .secure(cookieSecure)
                 .path("/")
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite("None")
                 .build()
         return cookie.toString()
     }

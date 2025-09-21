@@ -4,21 +4,24 @@ import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityScheme
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class OpenApiConfig {
+class OpenApiConfig(
+    @Value("\${spring.application.version}")
+    private val version: String,
+) {
     @Bean
-    fun openApi(): OpenAPI {
-        return OpenAPI()
+    fun openApi(): OpenAPI =
+        OpenAPI()
             .info(
                 Info()
                     .title("Judge API")
-                    .version("1.0.0")
+                    .version(version)
                     .description("API for the Judge application"),
-            )
-            .components(
+            ).components(
                 Components()
                     .addSecuritySchemes(
                         "session_id",
@@ -28,5 +31,4 @@ class OpenApiConfig {
                             .name("session_id"),
                     ),
             )
-    }
 }

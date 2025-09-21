@@ -4,7 +4,7 @@ import io.github.leonfoliveira.judge.common.domain.entity.Clarification
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.common.event.ClarificationEvent
+import io.github.leonfoliveira.judge.common.event.ClarificationCreatedEvent
 import io.github.leonfoliveira.judge.common.repository.ClarificationRepository
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
@@ -67,7 +67,8 @@ class CreateClarificationService(
                 parent = parent,
             )
         clarificationRepository.save(clarification)
-        applicationEventPublisher.publishEvent(ClarificationEvent(this, clarification))
+        applicationEventPublisher.publishEvent(ClarificationCreatedEvent(this, clarification))
+
         logger.info("Clarification created successfully")
         return clarification
     }

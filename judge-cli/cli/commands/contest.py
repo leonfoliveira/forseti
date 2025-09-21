@@ -5,7 +5,7 @@ from typing import Optional
 import click
 from tabulate import tabulate
 
-from cli.util.api_adapter import ApiAdapter
+from cli.util.api_adapter import ApiAdapter, DEFAULT_API_URL
 
 
 @click.group()
@@ -13,7 +13,7 @@ def contest():
     pass
 
 
-API_URL_HELP = "The API URL (default: http://<node-ip>:8080)"
+API_URL_HELP = f"The API URL (default: {DEFAULT_API_URL})"
 
 
 @contest.command(help="Create a new contest with the given slug.")

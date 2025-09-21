@@ -19,11 +19,36 @@ allprojects {
         mavenCentral()
     }
 
-    apply(plugin = rootProject.libs.plugins.kotlin.jvm.get().pluginId)
-    apply(plugin = rootProject.libs.plugins.kotlin.spring.get().pluginId)
-    apply(plugin = rootProject.libs.plugins.ktlint.get().pluginId)
-    apply(plugin = rootProject.libs.plugins.kover.get().pluginId)
-    apply(plugin = rootProject.libs.plugins.spring.get().pluginId)
+    apply(
+        plugin =
+            rootProject.libs.plugins.kotlin.jvm
+                .get()
+                .pluginId,
+    )
+    apply(
+        plugin =
+            rootProject.libs.plugins.kotlin.spring
+                .get()
+                .pluginId,
+    )
+    apply(
+        plugin =
+            rootProject.libs.plugins.ktlint
+                .get()
+                .pluginId,
+    )
+    apply(
+        plugin =
+            rootProject.libs.plugins.kover
+                .get()
+                .pluginId,
+    )
+    apply(
+        plugin =
+            rootProject.libs.plugins.spring
+                .get()
+                .pluginId,
+    )
     apply(plugin = "java-test-fixtures")
 }
 
@@ -33,16 +58,18 @@ subprojects {
         implementation(rootProject.libs.bundles.micrometer)
         implementation(rootProject.libs.bundles.spring)
         implementation(rootProject.libs.kotlin.reflect)
+        implementation(rootProject.libs.minio)
 
         testImplementation(rootProject.libs.bundles.kotest)
         testImplementation(rootProject.libs.bundles.mockk)
         testImplementation(rootProject.libs.bundles.testcontainers)
-        testImplementation(rootProject.libs.spring.boot.starter.test)
+        testImplementation(rootProject.libs.bundles.spring.test)
 
+        testFixturesImplementation(rootProject.libs.bundles.spring)
         testFixturesImplementation(rootProject.libs.bundles.kotest)
         testFixturesImplementation(rootProject.libs.bundles.mockk)
+        testFixturesImplementation(rootProject.libs.bundles.spring.test)
         testFixturesImplementation(rootProject.libs.bundles.testcontainers)
-        testFixturesImplementation(rootProject.libs.spring.boot.starter.test)
 
         developmentOnly(rootProject.libs.spring.boot.dev.tools)
     }

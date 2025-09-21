@@ -1,10 +1,12 @@
 package io.github.leonfoliveira.judge.autojudge
 
+import org.springframework.amqp.rabbit.annotation.EnableRabbit
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.runApplication
 import org.springframework.cloud.openfeign.EnableFeignClients
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.scheduling.annotation.EnableScheduling
 import java.util.TimeZone
 
 @SpringBootApplication(
@@ -25,9 +27,11 @@ import java.util.TimeZone
 )
 @EnableFeignClients(
     basePackages = [
-        "io.github.leonfoliveira.judge.autojudge.feign",
+        "io.github.leonfoliveira.judge.autojudge.adapter.feign",
     ],
 )
+@EnableRabbit
+@EnableScheduling
 class Application
 
 fun main(args: Array<String>) {

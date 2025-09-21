@@ -1,0 +1,233 @@
+name: judge-dev
+services:
+  postgres:
+    container_name: dev-judge-postgres
+    environment:
+      POSTGRES_USER: judge
+      POSTGRES_PASSWORD: judge
+      POSTGRES_DB: judge
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "pg_isready -U judge -d judge"
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: postgres:17.5-alpine
+    networks:
+      - dev-judge-network
+    ports:
+      - 5432:5432
+    volumes:
+      - dev-postgres_data:/var/lib/postgresql/data
+
+  minio:
+    container_name: dev-judge-minio
+    environment:
+      MINIO_ROOT_USER: judge
+      MINIO_ROOT_PASSWORD: judgepassword
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "curl -f http://localhost:9000/minio/health/live || exit 1"
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    networks:
+      - dev-judge-network
+    ports:
+      - 9000:9000
+      - 9001:9001
+    command: server /data --console-address ":9001"
+    volumes:
+      - dev-minio_data:/data
+
+  rabbitmq:
+    container_name: dev-judge-rabbitmq
+    entrypoint: /init.sh
+    environment:
+      RABBITMQ_USER: judge
+      RABBITMQ_PASSWORD: judge
+    healthcheck:
+      test:
+        - "CMD"
+        - "rabbitmq-diagnostics"
+        - "check_port_connectivity"
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: rabbitmq:4.1.4-management-alpine
+    networks:
+      - dev-judge-network
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - dev-rabbitmq_data:/var/lib/rabbitmq
+      - ./volumes/rabbitmq/init.sh:/init.sh:ro
+      - ./volumes/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./volumes/rabbitmq/definitions.template.json:/etc/rabbitmq/definitions.template.json:ro
+
+  migration:
+    container_name: dev-judge-migration
+    entrypoint: sh -c "flyway -url=$${FLYWAY_URL} -user=$${FLYWAY_USER} -password=$${FLYWAY_PASSWORD} -connectRetries=60 migrate"
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/judge
+      FLYWAY_USER: judge
+      FLYWAY_PASSWORD: judge
+    depends_on:
+      postgres:
+        condition: service_healthy
+    image: flyway/flyway:11.9.2-alpine
+    networks:
+      - dev-judge-network
+    volumes:
+      - ../../judge-backend/common/src/main/resources/migration:/flyway/sql
+
+  api:
+    container_name: dev-judge-api
+    build:
+      context: ../../judge-backend
+      dockerfile: api.Dockerfile
+    environment:
+      ALLOWED_ORIGINS: http://localhost:3000
+      DB_PASSWORD: judge
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_USER: judge
+      JAVA_TOOL_OPTIONS: -Xms1024m -Xmx1024m
+      SESSION_EXPIRATION: 6h
+      SESSION_ROOT_EXPIRATION: 3h
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: judge
+      MINIO_SECRET_KEY: judgepassword
+      MINIO_BUCKET: judge
+      PORT: 8080
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: judge
+      RABBITMQ_PASSWORD: judge
+      RABBITMQ_VHOST: /
+      RABBITMQ_SUBMISSION_QUEUE: submission-queue
+      RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
+      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
+      RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      ROOT_PASSWORD: judge
+      SECURE_COOKIES: "false"
+      SPRING_PROFILES_ACTIVE: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:8080/actuator/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    networks:
+      - dev-judge-network
+    ports:
+      - 8080:8080
+
+  autojudge:
+    container_name: dev-judge-autojudge
+    build:
+      context: ../../judge-backend
+      dockerfile: autojudge.Dockerfile
+    environment:
+      API_URL: http://api:8080
+      DB_PASSWORD: judge
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_USER: judge
+      JAVA_TOOL_OPTIONS: -Xms1024m -Xmx1024m
+      SESSION_AUTOJUDGE_EXPIRATION: 10m
+      MAX_CONCURRENT_SUBMISSIONS: "1"
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: judge
+      MINIO_SECRET_KEY: judgepassword
+      MINIO_BUCKET: judge
+      PORT: 8081
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: judge
+      RABBITMQ_PASSWORD: judge
+      RABBITMQ_VHOST: /
+      RABBITMQ_SUBMISSION_QUEUE: submission-queue
+      RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
+      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
+      RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      ROOT_PASSWORD: judge
+      SPRING_PROFILES_ACTIVE: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:8081/actuator/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    networks:
+      - dev-judge-network
+    ports:
+      - 8081:8081
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp
+
+  webapp:
+    container_name: dev-judge-webapp
+    build:
+      context: ../../judge-webapp
+      dockerfile: Dockerfile
+    environment:
+      API_INTERNAL_URL: http://api:8080
+      API_PUBLIC_URL: http://localhost:8080
+      LOCALE: en-US
+      NEXT_PUBLIC_VERSION: latest
+      NODE_ENV: development
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:3000
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    networks:
+      - dev-judge-network
+    ports:
+      - 3000:3000
+
+networks:
+  dev-judge-network:
+    driver: bridge
+
+volumes:
+  dev-postgres_data:
+  dev-minio_data:
+  dev-rabbitmq_data:

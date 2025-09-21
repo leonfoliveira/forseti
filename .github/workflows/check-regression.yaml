@@ -3,7 +3,7 @@ name: Check Regression
 on:
   pull_request:
     paths:
-      - "regression/**"
+      - "test/regression/**"
       - ".github/workflows/check-regression.yaml"
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: regression
+        working-directory: test/regression
 
     steps:
       - name: Checkout code
@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 22
           cache: "npm"
-          cache-dependency-path: regression/package-lock.json
+          cache-dependency-path: test/regression/package-lock.json
 
       - name: Install
         run: npm ci

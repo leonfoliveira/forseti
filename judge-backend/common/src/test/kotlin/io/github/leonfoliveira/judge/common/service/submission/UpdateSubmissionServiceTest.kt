@@ -3,8 +3,8 @@ package io.github.leonfoliveira.judge.common.service.submission
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.common.event.SubmissionAutoJudgeEvent
-import io.github.leonfoliveira.judge.common.event.SubmissionEvent
+import io.github.leonfoliveira.judge.common.event.SubmissionRerunEvent
+import io.github.leonfoliveira.judge.common.event.SubmissionUpdatedEvent
 import io.github.leonfoliveira.judge.common.mock.entity.SubmissionMockBuilder
 import io.github.leonfoliveira.judge.common.repository.SubmissionRepository
 import io.kotest.assertions.throwables.shouldThrow
@@ -54,7 +54,7 @@ class UpdateSubmissionServiceTest :
 
                 submission.status shouldBe Submission.Status.FAILED
                 submissionRepository.save(submission)
-                val eventSlot = slot<SubmissionEvent>()
+                val eventSlot = slot<SubmissionUpdatedEvent>()
                 verify { applicationEventPublisher.publishEvent(capture(eventSlot)) }
                 eventSlot.captured.submission shouldBe submission
             }
@@ -90,8 +90,8 @@ class UpdateSubmissionServiceTest :
                 submission.status shouldBe Submission.Status.JUDGING
                 submission.answer shouldBe Submission.Answer.NO_ANSWER
                 submissionRepository.save(submission)
-                val eventSlot1 = slot<SubmissionEvent>()
-                val eventSlot2 = slot<SubmissionAutoJudgeEvent>()
+                val eventSlot1 = slot<SubmissionUpdatedEvent>()
+                val eventSlot2 = slot<SubmissionRerunEvent>()
                 verify { applicationEventPublisher.publishEvent(capture(eventSlot1)) }
                 verify { applicationEventPublisher.publishEvent(capture(eventSlot2)) }
                 eventSlot1.captured.submission shouldBe submission
@@ -139,7 +139,7 @@ class UpdateSubmissionServiceTest :
                 submission.status shouldBe Submission.Status.JUDGED
                 submission.answer shouldBe Submission.Answer.ACCEPTED
                 submissionRepository.save(submission)
-                val eventSlot = slot<SubmissionEvent>()
+                val eventSlot = slot<SubmissionUpdatedEvent>()
                 verify { applicationEventPublisher.publishEvent(capture(eventSlot)) }
                 eventSlot.captured.submission shouldBe submission
             }
@@ -154,7 +154,7 @@ class UpdateSubmissionServiceTest :
                 submission.status shouldBe Submission.Status.JUDGED
                 submission.answer shouldBe Submission.Answer.ACCEPTED
                 submissionRepository.save(submission)
-                val eventSlot = slot<SubmissionEvent>()
+                val eventSlot = slot<SubmissionUpdatedEvent>()
                 verify { applicationEventPublisher.publishEvent(capture(eventSlot)) }
                 eventSlot.captured.submission shouldBe submission
             }

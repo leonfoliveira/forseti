@@ -13,19 +13,10 @@ class StompClarificationEmitter(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun emit(clarification: Clarification) {
+        val contest = clarification.contest
         logger.info(
             "Emitting clarification with id: ${clarification.id} for contest with id: ${clarification.contest.id}",
         )
-
-        val contest = clarification.contest
-
-        if (clarification.deletedAt != null) {
-            messagingTemplate.convertAndSend(
-                "/topic/contests/${contest.id}/clarifications/deleted",
-                mapOf("id" to clarification.id),
-            )
-            return
-        }
 
         messagingTemplate.convertAndSend(
             "/topic/contests/${contest.id}/clarifications",
@@ -38,5 +29,17 @@ class StompClarificationEmitter(
                 clarification.toResponseDTO(),
             )
         }
+    }
+
+    fun emitDeleted(clarification: Clarification) {
+        val contest = clarification.contest
+        logger.info(
+            "Emitting deleted clarification with id: ${clarification.id} for contest with id: ${contest.id}",
+        )
+
+        messagingTemplate.convertAndSend(
+            "/topic/contests/${contest.id}/clarifications/deleted",
+            mapOf("id" to clarification.id),
+        )
     }
 }

@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.judge.api.config
 
-import io.github.leonfoliveira.judge.api.security.http.HttpAuthExtractionFilter
-import io.github.leonfoliveira.judge.api.security.http.HttpPrivateInterceptor
-import io.github.leonfoliveira.judge.api.security.http.HttpRateLimitInterceptor
+import io.github.leonfoliveira.judge.api.middleware.http.HttpContextExtractionFilter
+import io.github.leonfoliveira.judge.api.middleware.http.HttpPrivateInterceptor
+import io.github.leonfoliveira.judge.api.middleware.http.HttpRateLimitInterceptor
 import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
-import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
@@ -24,8 +23,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class HttpConfig(
     @Value("\${server.cors.allowed-origins}")
     val allowedOrigins: String,
-    private val httpRequestContextFilter: HttpRequestContextFilter,
-    private val httpAuthExtractionFilter: HttpAuthExtractionFilter,
+    private val httpContextExtractionFilter: HttpContextExtractionFilter,
     private val httpPrivateInterceptor: HttpPrivateInterceptor,
     private val httpRateLimitInterceptor: HttpRateLimitInterceptor,
 ) : WebMvcConfigurer {
@@ -44,8 +42,7 @@ class HttpConfig(
             .authorizeHttpRequests { it.anyRequest().permitAll() }
             .csrf { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .addFilterBefore(httpRequestContextFilter, BasicAuthenticationFilter::class.java)
-            .addFilterAfter(httpAuthExtractionFilter, BasicAuthenticationFilter::class.java)
+            .addFilterAfter(httpContextExtractionFilter, BasicAuthenticationFilter::class.java)
             .build()
 
     override fun addInterceptors(registry: InterceptorRegistry) {

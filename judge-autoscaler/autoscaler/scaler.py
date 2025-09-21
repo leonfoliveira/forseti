@@ -8,10 +8,12 @@ from autoscaler.queue_monitor import QueueMonitor
 from autoscaler.service_monitor import ServiceMonitor
 
 CURRENT_REPLICAS = Gauge(
-    "autoscaler_current_replicas", "Current number of replicas", ["service_name"]
+    "autoscaler_current_replicas", "Current number of replicas", [
+        "service_name"]
 )
 DESIRED_REPLICAS = Gauge(
-    "autoscaler_desired_replicas", "Desired number of replicas", ["service_name"]
+    "autoscaler_desired_replicas", "Desired number of replicas", [
+        "service_name"]
 )
 SCALING_COUNT = Counter(
     "autoscaler_scaling_count",
@@ -19,7 +21,8 @@ SCALING_COUNT = Counter(
     ["service_name", "direction"],
 )
 FAIL_COUNT = Counter(
-    "autoscaler_fail_count", "Number of failed scaling actions", ["service_name"]
+    "autoscaler_fail_count", "Number of failed scaling actions", [
+        "service_name"]
 )
 
 
@@ -71,7 +74,7 @@ class Scaler:
             if desired_replicas != current_replicas and not is_cooling_down:
                 direction = "up" if desired_replicas > current_replicas else "down"
                 logging.info(
-                    f"Scaling {direction} service {self.service_monitor.service_name}"
+                    f"Scaling {direction} service {self.service_monitor.service_name} "
                     f"from {current_replicas} to {desired_replicas} replicas"
                 )
                 self.service_monitor.scale(desired_replicas)

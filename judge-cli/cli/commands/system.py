@@ -14,7 +14,7 @@ def system():
 
 DEFAULT_STACK_NAME = "judge"
 STACK_NAME_HELP = f"Stack name (default: {DEFAULT_STACK_NAME})"
-DEFAULT_DOMAIN = "judge"
+DEFAULT_DOMAIN = "judge.app"
 
 
 @system.command(help="Deploy services in Docker Swarm.")
@@ -45,10 +45,10 @@ def start(domain: str, stack: str, stack_name: str):
         raise e
 
     click.echo("System started at:")
+    click.echo(f"Webapp: https://{domain}")
     click.echo(f"API: https://api.{domain}")
     click.echo(f"Grafana: https://grafana.{domain}")
     click.echo(f"Traefik: https://traefik.{domain}")
-    click.echo(f"Webapp: https://{domain}")
 
 
 @system.command(help="Shut down all services in Docker Swarm.")

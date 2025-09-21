@@ -3,6 +3,7 @@ package io.github.leonfoliveira.judge.api.controller.contest
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.github.leonfoliveira.judge.api.service.AttachmentAuthorizationService
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
@@ -41,6 +42,7 @@ class ContestAttachmentControllerTest(
             val file = mockk<MultipartFile>(relaxed = true)
             val attachment = AttachmentMockBuilder.build()
             val session = SessionMockBuilder.build()
+            RequestContext.getContext().session = session
             every {
                 attachmentService.upload(
                     contestId = contestId,

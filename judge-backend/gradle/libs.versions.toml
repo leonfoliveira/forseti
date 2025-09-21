@@ -1,5 +1,4 @@
 [versions]
-bucket4j = "8.10.1"
 caffeine = "3.1.8"
 feign = "4.3.0"
 flyway = "9.22.3"
@@ -8,24 +7,23 @@ hibernate-types = "2.21.1"
 jackson = "2.18.3"
 java-diff-utils = "4.15"
 kotest = "5.9.1"
-kotest-spring = "1.3.0"
+kotest-extensions-spring = "1.3.0"
 kotlin = "2.1.20"
 kover = "0.9.1"
 ktlint = "12.1.1"
 micrometer-otel = "1.5.0"
 micrometer-prometheus = "1.15.1"
+minio = "8.5.17"
 mockk = "1.13.17"
 opencsv = "5.11"
 postgresql = "42.7.5"
 snakeyaml = "2.4"
 spring-boot = "3.4.5"
-spring-cloud = "3.3.0"
 springdoc-openapi = "2.8.9"
 springmockk = "4.0.2"
 testcontainers = "1.21.0"
 
 [libraries]
-bucket4j-core = { module = "com.bucket4j:bucket4j-core", version.ref = "bucket4j" }
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 hibernate-envers = { module = "org.hibernate.orm:hibernate-envers", version.ref = "hibernate-envers" }
 hibernate-types = { module = "com.vladmihalcea:hibernate-types-60", version.ref = "hibernate-types" }
@@ -35,17 +33,19 @@ jackson-module-kotlin = { module = 'com.fasterxml.jackson.module:jackson-module-
 java-diff-utils = { module = 'io.github.java-diff-utils:java-diff-utils', version.ref = "java-diff-utils" }
 kotest-assertions-core = { module = 'io.kotest:kotest-assertions-core', version.ref = "kotest" }
 kotest-runner-junit5 = { module = 'io.kotest:kotest-runner-junit5', version.ref = "kotest" }
-kotest-spring = { module = 'io.kotest.extensions:kotest-extensions-spring', version.ref = "kotest-spring" }
+kotest-extensions-spring = { module = 'io.kotest.extensions:kotest-extensions-spring', version.ref = "kotest-extensions-spring" }
 kotlin-reflect = { module = 'org.jetbrains.kotlin:kotlin-reflect', version.ref = "kotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 micrometer-tracing-bridge-otel = { module = "io.micrometer:micrometer-tracing-bridge-otel", version.ref = "micrometer-otel" }
 micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer-prometheus" }
+minio = { module = "io.minio:minio", version.ref = "minio" }
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
 spring-boot-dev-tools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
 spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot" }
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "spring-boot" }
+spring-boot-starter-amqp = { module = "org.springframework.boot:spring-boot-starter-amqp", version.ref = "spring-boot" }
 spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "spring-boot" }
 spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "spring-boot" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot" }
@@ -54,19 +54,14 @@ spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-start
 spring-boot-starter-websocket = { module = "org.springframework.boot:spring-boot-starter-websocket", version.ref = "spring-boot" }
 spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers", version.ref = "spring-boot" }
 spring-cloud-starter-feign = { module = "org.springframework.cloud:spring-cloud-starter-openfeign", version.ref = "feign" }
-spring-cloud-starter-s3 = { module = "io.awspring.cloud:spring-cloud-aws-starter-s3", version.ref = "spring-cloud" }
-spring-cloud-starter-sqs = { module = "io.awspring.cloud:spring-cloud-aws-starter-sqs", version.ref = "spring-cloud" }
 springdoc-openapi-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc-openapi" }
 springmockk = { module = "com.ninja-squad:springmockk", version.ref = "springmockk" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
-testcontainers-localstack = { module = "org.testcontainers:localstack", version.ref = "testcontainers" }
 testcontainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+testcontainers-minio = { module = "org.testcontainers:minio", version.ref = "testcontainers" }
+testcontainers-rabbitmq = { module = "org.testcontainers:rabbitmq", version.ref = "testcontainers" }
 
 [bundles]
-bucket4j = [
-    "bucket4j-core",
-    "caffeine"
-]
 jackson = [
     "jackson-datatype-jsr310",
     "jackson-module-kotlin"
@@ -74,7 +69,6 @@ jackson = [
 kotest = [
     "kotest-assertions-core",
     "kotest-runner-junit5",
-    "kotest-spring"
 ]
 micrometer = [
     "micrometer-tracing-bridge-otel",
@@ -85,23 +79,26 @@ mockk = [
     "springmockk"
 ]
 spring = [
-    "spring-cloud-starter-s3",
-    "spring-cloud-starter-sqs",
-    "spring-cloud-starter-feign",
     "spring-boot-starter",
     "spring-boot-starter-actuator",
+    "spring-boot-starter-amqp",
     "spring-boot-starter-data-jpa",
     "spring-boot-starter-security",
     "spring-boot-starter-validation",
     "spring-boot-starter-web",
     "spring-boot-starter-websocket",
-    "caffeine"
+    "spring-cloud-starter-feign",
+]
+spring-test = [
+    "kotest-extensions-spring",
+    "spring-boot-starter-test",
 ]
 testcontainers = [
     "spring-boot-testcontainers",
     "testcontainers-junit-jupiter",
-    "testcontainers-localstack",
     "testcontainers-postgres",
+    "testcontainers-minio",
+    "testcontainers-rabbitmq"
 ]
 
 [plugins]

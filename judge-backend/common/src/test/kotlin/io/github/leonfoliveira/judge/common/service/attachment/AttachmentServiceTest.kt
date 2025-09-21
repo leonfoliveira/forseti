@@ -5,7 +5,7 @@ import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
-import io.github.leonfoliveira.judge.common.port.AttachmentBucketAdapter
+import io.github.leonfoliveira.judge.common.port.AttachmentBucket
 import io.github.leonfoliveira.judge.common.repository.AttachmentRepository
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
@@ -24,14 +24,14 @@ class AttachmentServiceTest :
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
-        val attachmentBucketAdapter = mockk<AttachmentBucketAdapter>(relaxed = true)
+        val attachmentBucket = mockk<AttachmentBucket>(relaxed = true)
 
         val sut =
             AttachmentService(
                 contestRepository = contestRepository,
                 memberRepository = memberRepository,
                 attachmentRepository = attachmentRepository,
-                attachmentBucketAdapter = attachmentBucketAdapter,
+                attachmentBucket = attachmentBucket,
             )
 
         beforeEach {
@@ -57,7 +57,7 @@ class AttachmentServiceTest :
                 attachment.filename shouldBe "test.txt"
                 attachment.contentType shouldBe "text/plain"
                 verify { attachmentRepository.save(attachment) }
-                verify { attachmentBucketAdapter.upload(attachment, bytes) }
+                verify { attachmentBucket.upload(attachment, bytes) }
             }
 
             test("should throw NotFoundException when contest does not exist") {
@@ -106,7 +106,7 @@ class AttachmentServiceTest :
                 val attachment = AttachmentMockBuilder.build(id = id)
                 every { attachmentRepository.findById(id) } returns Optional.of(attachment)
                 val bytes = ByteArray(10) { it.toByte() }
-                every { attachmentBucketAdapter.download(attachment) } returns bytes
+                every { attachmentBucket.download(attachment) } returns bytes
 
                 val result = sut.download(id)
 

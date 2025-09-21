@@ -2,7 +2,7 @@ package io.github.leonfoliveira.judge.common.service.announcement
 
 import io.github.leonfoliveira.judge.common.domain.entity.Announcement
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.judge.common.event.AnnouncementEvent
+import io.github.leonfoliveira.judge.common.event.AnnouncementCreatedEvent
 import io.github.leonfoliveira.judge.common.repository.AnnouncementRepository
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
 import io.github.leonfoliveira.judge.common.repository.MemberRepository
@@ -44,7 +44,8 @@ class CreateAnnouncementService(
                 text = input.text,
             )
         announcementRepository.save(announcement)
-        applicationEventPublisher.publishEvent(AnnouncementEvent(this, announcement))
+        applicationEventPublisher.publishEvent(AnnouncementCreatedEvent(this, announcement))
+
         logger.info("Announcement created successfully")
         return announcement
     }

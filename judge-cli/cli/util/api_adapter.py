@@ -1,14 +1,20 @@
-import time
-from typing import Union
-
 import click
-import jwt
 import keyring
 import keyring.errors
+import re
 import requests
+import warnings
+from typing import Union
+from urllib3.exceptions import InsecureRequestWarning
 
 from .input_adapter import InputAdapter
-from .network_adapter import NetworkAdapter
+
+
+warnings.simplefilter("ignore", InsecureRequestWarning)
+
+
+DEFAULT_API_URL = "https://api.judge.app"
+VERIFY_SSL = False
 
 
 class ApiAdapter:
@@ -17,8 +23,7 @@ class ApiAdapter:
     SESSION_ID_COOKIE = "session_id"
 
     def __init__(self, api_url: str = None):
-        network_adapter = NetworkAdapter()
-        self.api_url = api_url or f"http://{network_adapter.get_ip_address()}:8080"
+        self.api_url = api_url or DEFAULT_API_URL
         self.input_adapter = InputAdapter()
 
     def get(self, path: str, **kwargs) -> Union[dict, list]:
@@ -26,6 +31,7 @@ class ApiAdapter:
         response = requests.get(
             f"{self.api_url}{path}",
             **kwargs,
+            verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
         )
         if response.status_code != 200:
@@ -38,6 +44,7 @@ class ApiAdapter:
             f"{self.api_url}{path}",
             json=json,
             **kwargs,
+            verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
         )
         if response.status_code != 200:
@@ -50,6 +57,7 @@ class ApiAdapter:
             f"{self.api_url}{path}",
             json=json,
             **kwargs,
+            verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
         )
         if response.status_code != 200:
@@ -61,6 +69,7 @@ class ApiAdapter:
         response = requests.delete(
             f"{self.api_url}{path}",
             **kwargs,
+            verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
         )
         if response.status_code != 204:
@@ -69,6 +78,7 @@ class ApiAdapter:
     def _authenticate(self):
         if session_id := self._get_cached_session_id():
             response = requests.get(f"{self.api_url}/v1/session/me",
+                                    verify=VERIFY_SSL,
                                     cookies={self.SESSION_ID_COOKIE: session_id})
             if response.status_code == 200:
                 return session_id
@@ -76,11 +86,13 @@ class ApiAdapter:
         password = self.input_adapter.password("Root password: ")
         response = requests.post(
             f"{self.api_url}/v1/root/sign-in",
-            json={"password": password},
+            verify=VERIFY_SSL,
+            json={"login": "root", "password": password},
         )
         if response.status_code != 200:
             raise click.ClickException(response.text)
-        session_id = response.cookies.get(self.SESSION_ID_COOKIE)
+        cookies = response.headers["Set-Cookie"]
+        session_id = re.search(r"(?<=session_id=)[^;]+", cookies).group(0)
 
         self._set_cached_session_id(session_id)
 

@@ -46,7 +46,7 @@ describe("AxiosClient", () => {
         method: "GET",
         withCredentials: true,
         headers: {
-          "x-request-id": expect.any(String),
+          "x-trace-id": expect.any(String),
         },
       });
       expect(response).toEqual(mockResponse);
@@ -91,7 +91,7 @@ describe("AxiosClient", () => {
         method: "GET",
         headers: {
           Authorization: "custom",
-          "x-request-id": expect.any(String),
+          "x-trace-id": expect.any(String),
         },
         withCredentials: true,
       });
@@ -110,7 +110,7 @@ describe("AxiosClient", () => {
       const clientHeaders = {
         "x-forwarded-for": "192.0.0.1",
         "user-agent": "Mozilla/5.0",
-        "x-request-id": uuidv4(),
+        "x-trace-id": uuidv4(),
         other: "value",
       };
       const mockHeaders = {
@@ -130,7 +130,7 @@ describe("AxiosClient", () => {
         method: "GET",
         withCredentials: true,
         headers: {
-          "x-request-id": clientHeaders["x-request-id"],
+          "x-trace-id": clientHeaders["x-trace-id"],
           Cookie: "session_id=123",
           "x-forwarded-for": clientHeaders["x-forwarded-for"],
           "user-agent": clientHeaders["user-agent"],
@@ -152,7 +152,7 @@ describe("AxiosClient", () => {
         data: "value",
         withCredentials: true,
         headers: {
-          "x-request-id": expect.any(String),
+          "x-trace-id": expect.any(String),
         },
       });
       expect(response).toEqual(mockResponse);
@@ -172,7 +172,7 @@ describe("AxiosClient", () => {
         data: "value",
         withCredentials: true,
         headers: {
-          "x-request-id": expect.any(String),
+          "x-trace-id": expect.any(String),
         },
       });
       expect(response).toEqual(mockResponse);
@@ -190,7 +190,7 @@ describe("AxiosClient", () => {
         method: "DELETE",
         withCredentials: true,
         headers: {
-          "x-request-id": expect.any(String),
+          "x-trace-id": expect.any(String),
         },
       });
     });

@@ -4,10 +4,10 @@ import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.session.SessionResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.judge.api.service.SessionCookieService
+import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.api.util.RateLimit
-import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import io.github.leonfoliveira.judge.common.service.authentication.AuthenticationService
-import io.github.leonfoliveira.judge.common.util.SessionUtil
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -31,6 +31,7 @@ class SessionController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @GetMapping("/me")
+    @Private
     @RateLimit
     @Operation(
         summary = "Get current session",
@@ -56,14 +57,12 @@ class SessionController(
     )
     fun getSession(): ResponseEntity<SessionResponseDTO> {
         logger.info("[GET] /v1/session/me")
-        val session = SessionUtil.getCurrent()
-        if (session == null) {
-            throw UnauthorizedException()
-        }
+        val session = RequestContext.getContext().session!!
         return ResponseEntity.ok(session.toResponseDTO())
     }
 
     @DeleteMapping("/me")
+    @Private
     @RateLimit
     @Operation(
         summary = "Delete current session",
@@ -90,10 +89,7 @@ class SessionController(
     @Transactional
     fun deleteSession(): ResponseEntity<Void> {
         logger.info("[DELETE] /v1/session/me")
-        val session = SessionUtil.getCurrent()
-        if (session == null) {
-            throw UnauthorizedException()
-        }
+        val session = RequestContext.getContext().session!!
         authenticationService.deleteSession(session)
         val cookie = sessionCookieService.buildClearCookie()
         return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, cookie).build()

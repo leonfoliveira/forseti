@@ -9,14 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: docker/production
+        working-directory: deployment/production
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: deployment/setup-buildx-action@v3
 
       - name: Set up Docker layer caching
         uses: actions/cache@v4
@@ -113,6 +113,6 @@ jobs:
       - name: Upload ZIP to release
         uses: softprops/action-gh-release@v1
         with:
-          files: docker/production/judge-${{ steps.vars.outputs.tag }}.zip
+          files: deployment/production/judge-${{ steps.vars.outputs.tag }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

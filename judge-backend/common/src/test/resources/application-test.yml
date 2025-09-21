@@ -1,27 +1,29 @@
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/judge}
-    username: ${DB_USER:judge}
-    password: ${DB_PASSWORD:judge}
+    url: jdbc:postgresql://localhost:5432/judge
+    username: judge
+    password: judge
     driver-class-name: org.postgresql.Driver
-  cloud:
-    aws:
-      endpoint: ${AWS_ENDPOINT:http://localhost:4566}
-      region:
-        static: ${AWS_REGION:us-east-1}
-      credentials:
-        access-key: ${AWS_ACCESS_KEY_ID:judge}
-        secret-key: ${AWS_SECRET_ACCESS_KEY:judge}
-      stack:
-        auto: false
-      s3:
-        bucket: ${AWS_S3_BUCKET:judge}
-      sqs:
-        submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:submission-queue}
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: judge
+    password: judge
+    virtual-host: /
+    queue:
+      submission-queue: submission-queue
+      submission-exchange: submission-exchange
+      submission-routing-key: submission-routing-key
+      submission-failed-queue: submission-failed-queue
+minio:
+  endpoint: http://localhost:9000
+  access-key: judge
+  secret-key: judgepassword
+  bucket: judge
 security:
-  jwt:
-    secret: ${JWT_SECRET:judge}
-    expiration: ${JWT_EXPIRATION:12h}
-    root-expiration: ${JWT_ROOT_EXPIRATION:12h}
+  session:
+    expiration: 12h
+    root-expiration: 12h
+    autojudge-expiration: 10m
   root:
-    password: ${ROOT_PASSWORD:judge}
+    password: judge

@@ -1,28 +1,29 @@
 package io.github.leonfoliveira.judge.api.listener
 
 import io.github.leonfoliveira.judge.api.emitter.StompAnnouncementEmitter
-import io.github.leonfoliveira.judge.common.event.AnnouncementEvent
+import io.github.leonfoliveira.judge.common.event.AnnouncementCreatedEvent
 import io.github.leonfoliveira.judge.common.mock.entity.AnnouncementMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.mockk
 import io.mockk.verify
 
-class AnnouncementEventListenerTest : FunSpec({
-    val stompAnnouncementEmitter = mockk<StompAnnouncementEmitter>(relaxed = true)
+class AnnouncementEventListenerTest :
+    FunSpec({
+        val stompAnnouncementEmitter = mockk<StompAnnouncementEmitter>(relaxed = true)
 
-    val sut = AnnouncementEventListener(stompAnnouncementEmitter)
+        val sut = AnnouncementEventsApiListener(stompAnnouncementEmitter)
 
-    beforeEach {
-        clearAllMocks()
-    }
+        beforeEach {
+            clearAllMocks()
+        }
 
-    test("should emit announcement on event") {
-        val announcement = AnnouncementMockBuilder.build()
-        val event = AnnouncementEvent(this, announcement)
+        test("should emit announcement on event") {
+            val announcement = AnnouncementMockBuilder.build()
+            val event = AnnouncementCreatedEvent(this, announcement)
 
-        sut.onApplicationEvent(event)
+            sut.onApplicationEvent(event)
 
-        verify { stompAnnouncementEmitter.emit(announcement) }
-    }
-})
+            verify { stompAnnouncementEmitter.emit(announcement) }
+        }
+    })

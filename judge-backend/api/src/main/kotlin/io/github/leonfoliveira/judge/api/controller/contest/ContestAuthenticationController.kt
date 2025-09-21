@@ -56,7 +56,7 @@ class ContestAuthenticationController(
         @RequestBody body: ContestAuthenticateInputDTO,
     ): ResponseEntity<SessionResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/sign-in $body")
-        val session = authenticationService.authenticate(contestId, body)
+        val session = authenticationService.authenticateToContest(contestId, body)
         val cookie = sessionCookieService.buildCookie(session)
         return ResponseEntity
             .ok()

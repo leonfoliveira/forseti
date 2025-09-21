@@ -1,0 +1,28 @@
+{
+  "name": "e2e",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "lint": "eslint 'test/**/*.{ts,tsx}'",
+    "format": "eslint 'test/**/*.{ts,tsx}' --fix",
+    "test": "playwright test",
+    "test:production": "WEBAPP_PUBLIC_URL=https://judge.app playwright test",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.32.0",
+    "@playwright/test": "1.54.1",
+    "@types/node": "24.1.0",
+    "eslint": "9.32.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-prettier": "5.5.3",
+    "globals": "16.3.0",
+    "jiti": "2.5.1",
+    "node-pty": "^1.0.0",
+    "prettier": "3.6.2",
+    "typescript-eslint": "8.38.0"
+  }
+}

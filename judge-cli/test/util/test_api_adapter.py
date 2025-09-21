@@ -1,7 +1,5 @@
 import pytest
 from unittest.mock import MagicMock, patch
-import jwt
-import time
 
 from cli.util.api_adapter import ApiAdapter
 
@@ -40,7 +38,7 @@ class TestApiAdapter:
         input_adapter.password.return_value = "password"
         response = requests.Response()
         response.status_code = 200
-        response.cookies = {"session_id": "123"}
+        response.headers = {"Set-Cookie": "session_id=123"}
         requests.post.return_value = response
 
         assert sut._authenticate() == "123"
@@ -72,6 +70,7 @@ class TestApiAdapter:
 
         requests.get.assert_called_with(
             f"{sut.api_url}/test-path",
+            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
         assert result == {"key": "value"}
@@ -92,6 +91,7 @@ class TestApiAdapter:
 
         requests.get.assert_called_with(
             f"{sut.api_url}/test-path",
+            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
@@ -107,6 +107,7 @@ class TestApiAdapter:
         requests.post.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
+            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
         assert result == {"key": "value"}
@@ -125,6 +126,7 @@ class TestApiAdapter:
         requests.post.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
+            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
@@ -140,6 +142,7 @@ class TestApiAdapter:
         requests.put.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
+            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
         assert result == {"key": "value"}
@@ -158,6 +161,7 @@ class TestApiAdapter:
         requests.put.assert_called_with(
             f"{sut.api_url}/test-path",
             json={"data": "value"},
+            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
@@ -171,6 +175,7 @@ class TestApiAdapter:
 
         requests.delete.assert_called_with(
             f"{sut.api_url}/test-path",
+            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
@@ -187,6 +192,7 @@ class TestApiAdapter:
 
         requests.delete.assert_called_with(
             f"{sut.api_url}/test-path",
+            verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
         )
 
@@ -215,10 +221,8 @@ class TestApiAdapter:
         assert adapter.api_url == custom_url
 
     def test_api_adapter_with_default_url(self):
-        with patch("cli.util.api_adapter.NetworkAdapter") as mock_network_adapter:
-            mock_network_adapter.return_value.get_ip_address.return_value = "localhost"
-            adapter = ApiAdapter()
-            assert adapter.api_url == "http://localhost:8080"
+        adapter = ApiAdapter()
+        assert adapter.api_url == "https://api.judge.app"
 
     def _setup_valid_session(self, keyring, requests):
         session_id = "123"

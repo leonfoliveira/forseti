@@ -1,0 +1,106 @@
+{
+  "rabbit_version": "4.1.4",
+  "users": [
+    {
+      "name": "$RABBITMQ_USER",
+      "password": "$RABBITMQ_PASSWORD",
+      "tags": ["administrator"]
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "$RABBITMQ_USER",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "queues": [
+    {
+      "name": "submission-queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "submission-failed-exchange"
+      }
+    },
+    {
+      "name": "submission-failed-queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "submission-dlq-exchange"
+      }
+    },
+    {
+      "name": "submission-dlq",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "submission-exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "submission-failed-exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "submission-dlq-exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "submission-exchange",
+      "vhost": "/",
+      "destination": "submission-queue",
+      "destination_type": "queue",
+      "routing_key": "submission-routing-key",
+      "arguments": {}
+    },
+    {
+      "source": "submission-failed-exchange",
+      "vhost": "/",
+      "destination": "submission-failed-queue",
+      "destination_type": "queue",
+      "routing_key": "submission-failed-routing-key",
+      "arguments": {}
+    },
+    {
+      "source": "submission-dlq-exchange",
+      "vhost": "/",
+      "destination": "submission-dlq",
+      "destination_type": "queue",
+      "routing_key": "submission-dlq-routing-key",
+      "arguments": {}
+    }
+  ]
+}

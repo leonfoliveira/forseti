@@ -4,8 +4,8 @@ import signal
 import threading
 import time
 
-import boto3
 import docker
+import pika
 
 from autoscaler.api import start_flask_app
 from autoscaler.queue_monitor import QueueMonitor
@@ -18,12 +18,14 @@ logging.basicConfig(
 )
 
 
-aws_region = os.environ.get("AWS_REGION", "us-east-1")
-aws_endpoint = os.environ.get("AWS_ENDPOINT", "http://localhost:4566")
-aws_access_key_id = os.environ.get("AWS_ACCESS_KEY_ID", "test")
-aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY", "test")
-queue_name = os.environ.get("QUEUE_NAME", "submission-queue")
-service_name = os.environ.get("SERVICE_NAME", "judge_autojudge")
+rabbitmq_host = os.environ["RABBITMQ_HOST"]
+rabbitmq_port = os.environ["RABBITMQ_PORT"]
+rabbitmq_username = os.environ["RABBITMQ_USER"]
+rabbitmq_password = os.environ["RABBITMQ_PASSWORD"]
+rabbitmq_vhost = os.environ["RABBITMQ_VHOST"]
+
+queue_name = os.environ["QUEUE_NAME"]
+service_name = os.environ["SERVICE_NAME"]
 
 messages_per_replica = int(os.environ.get("MESSAGES_PER_REPLICA", 1))
 min_replicas = int(os.environ.get("MIN_REPLICAS", 1))
@@ -34,17 +36,22 @@ interval = int(os.environ.get("INTERVAL", 10))
 port = int(os.environ.get("PORT", 7000))
 
 
-sqs_client = boto3.client(
-    "sqs",
-    region_name=aws_region,
-    endpoint_url=aws_endpoint,
-    aws_access_key_id=aws_access_key_id,
-    aws_secret_access_key=aws_secret_access_key,
+pika_client = pika.BlockingConnection(
+    pika.ConnectionParameters(
+        host=rabbitmq_host,
+        port=int(rabbitmq_port),
+        virtual_host=rabbitmq_vhost,
+        credentials=pika.PlainCredentials(
+            username=rabbitmq_username,
+            password=rabbitmq_password,
+        ),
+    )
 )
 docker_client = docker.from_env()
 
+
 queue_monitor = QueueMonitor(
-    sqs_client=sqs_client,
+    pika_client=pika_client,
     queue_name=queue_name,
 )
 service_monitor = ServiceMonitor(
@@ -76,8 +83,7 @@ if __name__ == "__main__":
     logging.info("Starting auto-scaler")
 
     server_thread = threading.Thread(
-        target=start_flask_app, args=[
-            queue_monitor, service_monitor, port], daemon=True
+        target=start_flask_app, args=[queue_monitor, service_monitor, port], daemon=True
     )
     server_thread.start()
 

@@ -9,51 +9,52 @@ import io.mockk.verify
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import java.time.OffsetDateTime
 
-class StompClarificationEmitterTest : FunSpec({
-    val messagingTemplate = mockk<SimpMessagingTemplate>(relaxed = true)
+class StompClarificationEmitterTest :
+    FunSpec({
+        val messagingTemplate = mockk<SimpMessagingTemplate>(relaxed = true)
 
-    val sut = StompClarificationEmitter(messagingTemplate)
+        val sut = StompClarificationEmitter(messagingTemplate)
 
-    beforeTest {
-        clearAllMocks()
-    }
-
-    test("should emit clarification deleted events") {
-        val clarification = ClarificationMockBuilder.build(deletedAt = OffsetDateTime.now())
-
-        sut.emit(clarification)
-
-        verify {
-            messagingTemplate.convertAndSend(
-                "/topic/contests/${clarification.contest.id}/clarifications/deleted",
-                mapOf("id" to clarification.id),
-            )
+        beforeTest {
+            clearAllMocks()
         }
-    }
 
-    test("should emit clarification events") {
-        val clarification = ClarificationMockBuilder.build()
+        test("should emit clarification events") {
+            val clarification = ClarificationMockBuilder.build()
 
-        sut.emit(clarification)
+            sut.emit(clarification)
 
-        verify {
-            messagingTemplate.convertAndSend(
-                "/topic/contests/${clarification.contest.id}/clarifications",
-                clarification.toResponseDTO(),
-            )
+            verify {
+                messagingTemplate.convertAndSend(
+                    "/topic/contests/${clarification.contest.id}/clarifications",
+                    clarification.toResponseDTO(),
+                )
+            }
         }
-    }
 
-    test("should emit clarification children events") {
-        val clarification = ClarificationMockBuilder.build(parent = ClarificationMockBuilder.build())
+        test("should emit clarification children events") {
+            val clarification = ClarificationMockBuilder.build(parent = ClarificationMockBuilder.build())
 
-        sut.emit(clarification)
+            sut.emit(clarification)
 
-        verify {
-            messagingTemplate.convertAndSend(
-                "/topic/contests/${clarification.contest.id}/clarifications/children/members/${clarification.parent!!.member.id}",
-                clarification.toResponseDTO(),
-            )
+            verify {
+                messagingTemplate.convertAndSend(
+                    "/topic/contests/${clarification.contest.id}/clarifications/children/members/${clarification.parent!!.member.id}",
+                    clarification.toResponseDTO(),
+                )
+            }
         }
-    }
-})
+
+        test("should emit clarification deleted events") {
+            val clarification = ClarificationMockBuilder.build(deletedAt = OffsetDateTime.now())
+
+            sut.emitDeleted(clarification)
+
+            verify {
+                messagingTemplate.convertAndSend(
+                    "/topic/contests/${clarification.contest.id}/clarifications/deleted",
+                    mapOf("id" to clarification.id),
+                )
+            }
+        }
+    })

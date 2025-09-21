@@ -1,10 +1,6 @@
 spring:
   config:
     import: classpath:common-development.yml
-  cloud:
-    aws:
-      sqs:
-        submission-failed-queue: submission-failed-queue
 server:
   cors:
     allowed-origins: http://localhost:3000

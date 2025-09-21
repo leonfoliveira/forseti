@@ -1,0 +1,751 @@
+networks:
+  network:
+    driver: overlay
+
+secrets:
+  db_password:
+    external: true
+  minio_password:
+    external: true
+  rabbitmq_password:
+    external: true
+  root_password:
+    external: true
+
+services:
+  alloy:
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    deploy:
+      mode: global
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 512M
+        reservations:
+          cpus: "0.1"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - timeout 3 bash -c '</dev/tcp/localhost/12345' && echo "OK" || exit 1
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
+    image: grafana/alloy:v1.9.2
+    networks:
+      network:
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ./volumes/alloy/config.alloy
+        target: /etc/alloy/config.alloy
+
+  api:
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.api.rule=Host(`api.${DOMAIN:-judge.app}`)
+        - traefik.http.routers.api.entrypoints=websecure
+        - traefik.http.routers.api.tls=true
+        - traefik.http.services.api.loadbalancer.server.port=8080
+        - traefik.http.services.api.loadbalancer.sticky.cookie=true
+        - traefik.http.services.api.loadbalancer.sticky.cookie.name=api-session
+        - traefik.http.services.api.loadbalancer.sticky.cookie.secure=true
+        - traefik.http.services.api.loadbalancer.sticky.cookie.httponly=true
+        - traefik.http.services.api.loadbalancer.sticky.cookie.samesite=none
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1024M
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      update_config:
+        order: start-first
+        delay: 30s
+    environment:
+      COOKIE_DOMAIN: .${DOMAIN:-judge.app}
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_USER: judge
+      JAVA_TOOL_OPTIONS: -Xms1024m -Xmx1024m
+      SESSION_EXPIRATION: 6h
+      SESSION_ROOT_EXPIRATION: 3h
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: judge
+      MINIO_SECRET_KEY_FILE: /run/secrets/minio_password
+      MINIO_BUCKET: judge
+      PORT: 8080
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: judge
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
+      RABBITMQ_VHOST: /
+      RABBITMQ_SUBMISSION_QUEUE: submission-queue
+      RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
+      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
+      RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      ROOT_PASSWORD_FILE: /run/secrets/root_password
+      SPRING_PROFILES_ACTIVE: production
+      VERSION: ${VERSION:-latest}
+      WEBAPP_PUBLIC_URL: https://${DOMAIN:-judge.app}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:8080/actuator/health
+      timeout: 10s
+      interval: 30s
+      retries: 5
+      start_period: 60s
+    image: leonfoliveira/judge-api:${VERSION:-latest}
+    networks:
+      network:
+    secrets:
+      - db_password
+      - minio_password
+      - rabbitmq_password
+      - root_password
+
+  autojudge:
+    deploy:
+      mode: replicated
+      replicas: 0
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1024M
+        reservations:
+          cpus: "1.0"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      update_config:
+        order: start-first
+        delay: 30s
+    environment:
+      API_URL: http://api:8080
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      DB_URL: jdbc:postgresql://postgres:5432/judge
+      DB_USER: judge
+      JAVA_TOOL_OPTIONS: -Xms1024M -Xmx1024M
+      SESSION_AUTOJUDGE_EXPIRATION: 10m
+      MAX_CONCURRENT_SUBMISSIONS: "1"
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: judge
+      MINIO_SECRET_KEY_FILE: /run/secrets/minio_password
+      MINIO_BUCKET: judge
+      PORT: 8081
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: judge
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
+      RABBITMQ_VHOST: /
+      RABBITMQ_SUBMISSION_QUEUE: submission-queue
+      RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
+      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
+      RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      ROOT_PASSWORD_FILE: /run/secrets/root_password
+      SPRING_PROFILES_ACTIVE: production
+      VERSION: ${VERSION:-latest}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:8081/actuator/health
+      timeout: 10s
+      interval: 30s
+      retries: 5
+      start_period: 60s
+    image: leonfoliveira/judge-autojudge:${VERSION:-latest}
+    networks:
+      network:
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: /tmp
+        target: /tmp
+    secrets:
+      - db_password
+      - minio_password
+      - rabbitmq_password
+      - root_password
+
+  autojudge-autoscaler:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 128M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      update_config:
+        order: start-first
+        delay: 30s
+    environment:
+      COOLDOWN: 60
+      INTERVAL: 10
+      MESSAGES_PER_REPLICA: 5
+      MAX_REPLICAS: 3
+      MIN_REPLICAS: 1
+      QUEUE_NAME: submission-queue
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: judge
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
+      RABBITMQ_VHOST: /
+      SERVICE_NAME: judge_autojudge
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:7000/health
+      timeout: 10s
+      interval: 30s
+      retries: 5
+      start_period: 60s
+    image: leonfoliveira/judge-autoscaler:${VERSION:-latest}
+    networks:
+      network:
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    secrets:
+      - rabbitmq_password
+
+  cadvisor:
+    deploy:
+      mode: global
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:8080/healthz
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    networks:
+      network:
+    volumes:
+      - type: bind
+        source: /
+        target: /rootfs
+        read_only: true
+      - type: bind
+        source: /var/run
+        target: /var/run
+        read_only: true
+      - type: bind
+        source: /sys
+        target: /sys
+        read_only: true
+      - type: bind
+        source: /var/lib/docker
+        target: /var/lib/docker
+        read_only: true
+
+  grafana:
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN:-judge.app}`)
+        - traefik.http.routers.grafana.entrypoints=websecure
+        - traefik.http.routers.grafana.tls=true
+        - traefik.http.services.grafana.loadbalancer.server.port=3000
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    entrypoint: sh -c "export DB_PASSWORD=$$(cat /run/secrets/db_password) && /run.sh"
+    environment:
+      DB_URL: postgres:5432
+      DB_NAME: judge
+      DB_USER: judge
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      GF_SECURITY_ADMIN_USER: root
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/root_password
+      LOKI_URL: http://loki:3100
+      PROMETHEUS_URL: http://prometheus:9090
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:3000/api/health
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
+    image: grafana/grafana-oss:12.0.2
+    networks:
+      network:
+    secrets:
+      - db_password
+      - root_password
+    volumes:
+      - type: volume
+        source: grafana_data
+        target: /var/lib/grafana
+        volume: {}
+      - type: bind
+        source: ./volumes/grafana/provisioning/datasources
+        target: /etc/grafana/provisioning/datasources
+      - type: bind
+        source: ./volumes/grafana/provisioning/dashboards
+        target: /etc/grafana/provisioning/dashboards
+
+  loki:
+    command:
+      - -config.file=/etc/loki/local-config.yaml
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:3100/ready
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
+    image: grafana/loki:3.4.4
+    networks:
+      network:
+    volumes:
+      - type: volume
+        source: loki_data
+        target: /var/lib/loki
+        volume: {}
+
+  migration:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      update_config:
+        order: start-first
+        delay: 30s
+    entrypoint: sh -c "flyway -url=$${FLYWAY_URL} -user=$${FLYWAY_USER} -password=$$(cat /run/secrets/db_password) -connectRetries=60 -connectRetriesInterval=5 migrate"
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/judge
+      FLYWAY_USER: judge
+    image: flyway/flyway:11.9.2-alpine
+    networks:
+      network:
+    secrets:
+      - db_password
+    volumes:
+      - type: bind
+        source: ./volumes/migrations
+        target: /flyway/sql
+
+  minio:
+    command: server /data
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      MINIO_ROOT_USER: judge
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_password
+      MINIO_PROMETHEUS_AUTH_TYPE: public
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "curl -f http://localhost:9000/minio/health/live || exit 1"
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    networks:
+      network:
+    secrets:
+      - minio_password
+    volumes:
+      - type: volume
+        source: minio_data
+        target: /data
+        volume: {}
+
+  node-exporter:
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/rootfs"
+      - "--collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+|var/run/docker.sock|run/user)($$|/)"
+    deploy:
+      mode: global
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 128M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:9100/metrics
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
+    image: prom/node-exporter:v1.9.1
+    networks:
+      network:
+    volumes:
+      - type: bind
+        source: /proc
+        target: /host/proc
+        read_only: true
+      - type: bind
+        source: /sys
+        target: /host/sys
+        read_only: true
+      - type: bind
+        source: /
+        target: /rootfs
+        read_only: true
+
+  postgres:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      POSTGRES_USER: judge
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_DB: judge
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "pg_isready -U judge -d judge"
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
+    image: postgres:17.5-alpine
+    networks:
+      network:
+    secrets:
+      - db_password
+    volumes:
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgresql/data
+        volume: {}
+
+  postgres-exporter:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 128M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      DATA_SOURCE_URI: postgres:5432/judge?sslmode=disable
+      DATA_SOURCE_USER: judge
+      DATA_SOURCE_PASS_FILE: /run/secrets/db_password
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:9187/metrics
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
+    image: prometheuscommunity/postgres-exporter:v0.17.1
+    networks:
+      network:
+    secrets:
+      - db_password
+
+  prometheus:
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:9090/-/healthy
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
+    image: prom/prometheus:v3.4.1
+    networks:
+      network:
+    volumes:
+      - type: bind
+        source: ./volumes/prometheus/config.yaml
+        target: /etc/prometheus/prometheus.yml
+      - type: volume
+        source: prometheus_data
+        target: /prometheus
+        volume: {}
+
+  traefik:
+    command:
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls=true
+      - --providers.file.filename=/dynamic/tls.yaml
+      - --providers.swarm.endpoint=unix:///var/run/docker.sock
+      - --providers.swarm.watch=true
+      - --providers.swarm.exposedbydefault=false
+      - --providers.swarm.network=judge_network
+      - --log.level=INFO
+      - --accesslog=true
+      - --metrics.prometheus=true
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - traefik version
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
+    image: traefik:v3.5.2
+    networks:
+      network:
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - type: bind
+        source: ./certs
+        target: /certs
+        read_only: true
+      - type: bind
+        source: ./volumes/traefik/dynamic
+        target: /dynamic
+        read_only: true
+
+  rabbitmq:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    entrypoint: /init.sh
+    environment:
+      RABBITMQ_USER: judge
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
+      RABBITMQ_ENABLED_PLUGINS: "rabbitmq_management,rabbitmq_prometheus"
+    healthcheck:
+      test:
+        - "CMD"
+        - "rabbitmq-diagnostics"
+        - "check_port_connectivity"
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: rabbitmq:4.1.4-management-alpine
+    networks:
+      network:
+    secrets:
+      - rabbitmq_password
+    volumes:
+      - type: volume
+        source: rabbitmq_data
+        target: /var/lib/rabbitmq
+        volume: {}
+      - type: bind
+        source: ./volumes/rabbitmq/init.sh
+        target: /init.sh
+        read_only: true
+      - type: bind
+        source: ./volumes/rabbitmq/rabbitmq.conf
+        target: /etc/rabbitmq/rabbitmq.conf
+        read_only: true
+      - type: bind
+        source: ./volumes/rabbitmq/definitions.template.json
+        target: /etc/rabbitmq/definitions.template.json
+        read_only: true
+
+  webapp:
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.webapp.rule=Host(`${DOMAIN:-judge.app}`)
+        - traefik.http.routers.webapp.entrypoints=websecure
+        - traefik.http.routers.webapp.tls=true
+        - traefik.http.services.webapp.loadbalancer.server.port=3000
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 512M
+        reservations:
+          cpus: "1.0"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      update_config:
+        order: start-first
+        delay: 30s
+    environment:
+      API_INTERNAL_URL: http://api:8080
+      API_PUBLIC_URL: https://api.${DOMAIN:-judge.app}
+      LOCALE: en-US
+      NEXT_PUBLIC_VERSION: ${VERSION:-latest}
+      NODE_ENV: production
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -f http://localhost:3000
+      timeout: 10s
+      interval: 30s
+      retries: 5
+      start_period: 60s
+    image: leonfoliveira/judge-webapp:${VERSION:-latest}
+    networks:
+      network:
+
+volumes:
+  grafana_data:
+  loki_data:
+  minio_data:
+  postgres_data:
+  prometheus_data:
+  rabbitmq_data:
