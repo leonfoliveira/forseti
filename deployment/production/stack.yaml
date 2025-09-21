@@ -585,21 +585,6 @@ services:
         volume: {}
 
   traefik:
-    command:
-      - --entrypoints.web.address=:80
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      - --entrypoints.web.http.redirections.entrypoint.scheme=https
-      - --entrypoints.web.http.redirections.entrypoint.permanent=true
-      - --entrypoints.websecure.address=:443
-      - --entrypoints.websecure.http.tls=true
-      - --providers.file.filename=/dynamic/tls.yaml
-      - --providers.swarm.endpoint=unix:///var/run/docker.sock
-      - --providers.swarm.watch=true
-      - --providers.swarm.exposedbydefault=false
-      - --providers.swarm.network=judge_network
-      - --log.level=INFO
-      - --accesslog=true
-      - --metrics.prometheus=true
     deploy:
       mode: replicated
       replicas: 1
@@ -646,8 +631,8 @@ services:
         target: /certs
         read_only: true
       - type: bind
-        source: ./volumes/traefik/dynamic
-        target: /dynamic
+        source: ./volumes/traefik
+        target: /etc/traefik
         read_only: true
 
   rabbitmq:

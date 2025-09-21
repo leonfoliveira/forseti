@@ -1,0 +1,31 @@
+http:
+  routers:
+    api-router:
+      rule: Host(`api.judge.app`)
+      entrypoints:
+        - websecure
+      service: api-service
+      tls: {}
+
+    webapp-router:
+      rule: Host(`judge.app`)
+      entrypoints:
+        - websecure
+      service: webapp-service
+      tls: {}
+
+  services:
+    api-service:
+      loadBalancer:
+        servers:
+          - url: http://host.docker.internal:8080
+
+    webapp-service:
+      loadBalancer:
+        servers:
+          - url: http://host.docker.internal:3000
+
+tls:
+  certificates:
+    - certFile: /certs/cert.pem
+      keyFile: /certs/key.pem
