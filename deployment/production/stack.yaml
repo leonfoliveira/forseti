@@ -54,9 +54,12 @@ services:
     deploy:
       labels:
         - traefik.enable=true
+        - traefik.http.middlewares.api-ratelimit.ratelimit.average=10
+        - traefik.http.middlewares.api-ratelimit.ratelimit.burst=20
         - traefik.http.routers.api.rule=Host(`api.judge.app`)
         - traefik.http.routers.api.entrypoints=websecure
         - traefik.http.routers.api.tls=true
+        - traefik.http.routers.api.middlewares=api-ratelimit
         - traefik.http.services.api.loadbalancer.server.port=8080
         - traefik.http.services.api.loadbalancer.sticky.cookie=true
         - traefik.http.services.api.loadbalancer.sticky.cookie.name=api-session
@@ -281,9 +284,12 @@ services:
     deploy:
       labels:
         - traefik.enable=true
+        - traefik.http.middlewares.grafana-ratelimit.ratelimit.average=10
+        - traefik.http.middlewares.grafana-ratelimit.ratelimit.burst=20
         - traefik.http.routers.grafana.rule=Host(`grafana.judge.app`)
         - traefik.http.routers.grafana.entrypoints=websecure
         - traefik.http.routers.grafana.tls=true
+        - traefik.http.routers.grafana.middlewares=grafana-ratelimit
         - traefik.http.services.grafana.loadbalancer.server.port=3000
       mode: replicated
       replicas: 1
@@ -690,9 +696,12 @@ services:
     deploy:
       labels:
         - traefik.enable=true
+        - traefik.http.middlewares.webapp-ratelimit.ratelimit.average=10
+        - traefik.http.middlewares.webapp-ratelimit.ratelimit.burst=20
         - traefik.http.routers.webapp.rule=Host(`judge.app`)
         - traefik.http.routers.webapp.entrypoints=websecure
         - traefik.http.routers.webapp.tls=true
+        - traefik.http.routers.webapp.middlewares=webapp-ratelimit
         - traefik.http.services.webapp.loadbalancer.server.port=3000
       mode: replicated
       replicas: 1
