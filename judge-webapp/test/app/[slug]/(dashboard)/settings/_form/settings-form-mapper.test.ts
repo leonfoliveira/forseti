@@ -173,7 +173,7 @@ describe("SettingsFormMapper", () => {
       id: "contest-1",
       slug: "updated-contest",
       title: "Updated Contest",
-      languages: [Language.PYTHON_3_12],
+      languages: [Language.PYTHON_312],
       startAt: parseAbsoluteToLocal("2025-09-03T10:00:00Z"),
       endAt: parseAbsoluteToLocal("2025-09-03T18:00:00Z"),
       settings: {
@@ -224,7 +224,7 @@ describe("SettingsFormMapper", () => {
         id: "contest-1",
         slug: "updated-contest",
         title: "Updated Contest",
-        languages: [Language.PYTHON_3_12],
+        languages: [Language.PYTHON_312],
         startAt: "2025-09-03T10:00:00.000Z",
         endAt: "2025-09-03T18:00:00.000Z",
         settings: {

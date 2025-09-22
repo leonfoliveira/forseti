@@ -38,31 +38,31 @@ test("Default contest behaviour", async ({ page }) => {
 
   const tleSubmission = new Submission(
     problem,
-    SubmissionLanguage.PYTHON_3_12,
+    SubmissionLanguage.PYTHON_312,
     "code_time_limit_exceeded.py",
     SubmissionAnswer.TIME_LIMIT_EXCEEDED,
   );
   const reSubmission = new Submission(
     problem,
-    SubmissionLanguage.PYTHON_3_12,
+    SubmissionLanguage.PYTHON_312,
     "code_runtime_error.py",
     SubmissionAnswer.RUNTIME_ERROR,
   );
   const meSubmission = new Submission(
     problem,
-    SubmissionLanguage.PYTHON_3_12,
+    SubmissionLanguage.PYTHON_312,
     "code_memory_limit_exceeded.py",
     SubmissionAnswer.MEMORY_LIMIT_EXCEEDED,
   );
   const waSubmission = new Submission(
     problem,
-    SubmissionLanguage.PYTHON_3_12,
+    SubmissionLanguage.PYTHON_312,
     "code_wrong_answer.py",
     SubmissionAnswer.WRONG_ANSWER,
   );
   const acSubmission = new Submission(
     problem,
-    SubmissionLanguage.PYTHON_3_12,
+    SubmissionLanguage.PYTHON_312,
     "code_accepted.py",
     SubmissionAnswer.ACCEPTED,
   );

@@ -61,7 +61,7 @@
       "formatted-language": {
         "cpp_17": "C++ 17",
         "java_21": "Java 21",
-        "python_3_12": "Python 3.12"
+        "python_312": "Python 3.12"
       },
       "formatted-member-type": {
         "root": "Root",

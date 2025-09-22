@@ -17,7 +17,7 @@ object ContestMockBuilder {
         deletedAt: OffsetDateTime? = null,
         slug: String = "contest",
         title: String = "Contest Title",
-        languages: List<Language> = listOf(Language.PYTHON_3_12),
+        languages: List<Language> = listOf(Language.PYTHON_312),
         startAt: OffsetDateTime = OffsetDateTime.now().plusHours(1),
         endAt: OffsetDateTime = OffsetDateTime.now().plusHours(2),
         settings: Contest.Settings = Contest.Settings(isAutoJudgeEnabled = true),

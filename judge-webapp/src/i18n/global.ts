@@ -29,8 +29,8 @@ const language = defineMessages({
     id: "i18n.global.formatted-language.java_21",
     defaultMessage: "Java 21",
   },
-  [Language.PYTHON_3_12]: {
-    id: "i18n.global.formatted-language.python_3_12",
+  [Language.PYTHON_312]: {
+    id: "i18n.global.formatted-language.python_312",
     defaultMessage: "Python 3.12",
   },
 });

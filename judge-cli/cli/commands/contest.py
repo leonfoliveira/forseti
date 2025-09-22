@@ -26,7 +26,7 @@ def create(slug: str, api_url: Optional[str]):
     payload = {
         "slug": slug,
         "title": "New Contest",
-        "languages": ["CPP_17", "JAVA_21", "PYTHON_3_12"],
+        "languages": ["CPP_17", "JAVA_21", "PYTHON_312"],
         "startAt": "2100-01-01T00:00:00.000Z",
         "endAt": "2100-01-01T01:00:00.000Z",
     }

@@ -16,7 +16,7 @@ object SubmissionMockBuilder {
         deletedAt: OffsetDateTime? = null,
         member: Member = MemberMockBuilder.build(),
         problem: Problem = ProblemMockBuilder.build(),
-        language: Language = Language.PYTHON_3_12,
+        language: Language = Language.PYTHON_312,
         status: Submission.Status = Submission.Status.JUDGING,
         answer: Submission.Answer = Submission.Answer.NO_ANSWER,
         code: Attachment = AttachmentMockBuilder.build(),

@@ -24,10 +24,10 @@ services:
       resources:
         limits:
           cpus: "0.2"
-          memory: 512M
+          memory: 256M
         reservations:
           cpus: "0.1"
-          memory: 256M
+          memory: 128M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -54,8 +54,8 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.http.middlewares.api-ratelimit.ratelimit.average=10
-        - traefik.http.middlewares.api-ratelimit.ratelimit.burst=20
+        - traefik.http.middlewares.api-ratelimit.ratelimit.average=20
+        - traefik.http.middlewares.api-ratelimit.ratelimit.burst=40
         - traefik.http.routers.api.rule=Host(`api.judge.app`)
         - traefik.http.routers.api.entrypoints=websecure
         - traefik.http.routers.api.tls=true
@@ -284,8 +284,8 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.http.middlewares.grafana-ratelimit.ratelimit.average=10
-        - traefik.http.middlewares.grafana-ratelimit.ratelimit.burst=20
+        - traefik.http.middlewares.grafana-ratelimit.ratelimit.average=100
+        - traefik.http.middlewares.grafana-ratelimit.ratelimit.burst=200
         - traefik.http.routers.grafana.rule=Host(`grafana.judge.app`)
         - traefik.http.routers.grafana.entrypoints=websecure
         - traefik.http.routers.grafana.tls=true
@@ -696,8 +696,8 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.http.middlewares.webapp-ratelimit.ratelimit.average=10
-        - traefik.http.middlewares.webapp-ratelimit.ratelimit.burst=20
+        - traefik.http.middlewares.webapp-ratelimit.ratelimit.average=100
+        - traefik.http.middlewares.webapp-ratelimit.ratelimit.burst=200
         - traefik.http.routers.webapp.rule=Host(`judge.app`)
         - traefik.http.routers.webapp.entrypoints=websecure
         - traefik.http.routers.webapp.tls=true

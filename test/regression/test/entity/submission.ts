@@ -10,7 +10,7 @@ export class Submission {
 }
 
 export enum SubmissionLanguage {
-  PYTHON_3_12 = "Python 3.12",
+  PYTHON_312 = "Python 3.12",
   CPP_17 = "C++ 17",
   JAVA_21 = "Java 21",
 }

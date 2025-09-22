@@ -33,7 +33,7 @@ class CreateContestServiceTest :
                 CreateContestInputDTO(
                     slug = "test-contest",
                     title = "Test Contest",
-                    languages = listOf(Language.PYTHON_3_12),
+                    languages = listOf(Language.PYTHON_312),
                     startAt = OffsetDateTime.now().plusHours(1),
                     endAt = OffsetDateTime.now().plusHours(2),
                 )

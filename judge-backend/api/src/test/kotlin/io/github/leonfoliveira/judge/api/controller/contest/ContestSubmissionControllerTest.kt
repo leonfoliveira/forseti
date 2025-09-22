@@ -63,7 +63,7 @@ class ContestSubmissionControllerTest(
             val body =
                 CreateSubmissionInputDTO(
                     problemId = UUID.randomUUID(),
-                    language = Language.PYTHON_3_12,
+                    language = Language.PYTHON_312,
                     code = AttachmentInputDTO(id = UUID.randomUUID()),
                 )
             val submission = SubmissionMockBuilder.build()
