@@ -4,7 +4,6 @@ import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.session.SessionResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.judge.api.service.SessionCookieService
-import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.service.authentication.AuthenticationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.ContestAuthenticateInputDTO
 import io.swagger.v3.oas.annotations.Operation
@@ -32,7 +31,6 @@ class ContestAuthenticationController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping("/sign-in")
-    @RateLimit
     @Operation(
         summary = "Sign in to a contest",
         description = "Authenticate a user to access a specific contest.",

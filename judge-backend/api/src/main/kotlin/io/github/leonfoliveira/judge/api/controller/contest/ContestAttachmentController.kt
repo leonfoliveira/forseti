@@ -6,7 +6,6 @@ import io.github.leonfoliveira.judge.api.dto.response.toResponseDTO
 import io.github.leonfoliveira.judge.api.service.AttachmentAuthorizationService
 import io.github.leonfoliveira.judge.api.util.ApiMetrics
 import io.github.leonfoliveira.judge.api.util.Private
-import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import io.github.leonfoliveira.judge.common.service.attachment.AttachmentService
@@ -64,7 +63,6 @@ class ContestAttachmentController(
         ],
     )
     @Private
-    @RateLimit
     @Transactional
     fun uploadAttachment(
         @PathVariable contestId: UUID,
@@ -88,7 +86,6 @@ class ContestAttachmentController(
 
     @Timed(ApiMetrics.API_ATTACHMENT_DOWNLOAD_TIME)
     @GetMapping("/{attachmentId}")
-    @RateLimit
     @Operation(
         summary = "Downloads an attachment",
         description = "Downloads an attachment by its ID. The ID is returned when the attachment is uploaded.",

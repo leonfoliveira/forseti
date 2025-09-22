@@ -1,5 +1,4 @@
 [versions]
-caffeine = "3.1.8"
 feign = "4.3.0"
 flyway = "9.22.3"
 hibernate-envers = "6.6.13.Final"
@@ -24,7 +23,6 @@ springmockk = "4.0.2"
 testcontainers = "1.21.0"
 
 [libraries]
-caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 hibernate-envers = { module = "org.hibernate.orm:hibernate-envers", version.ref = "hibernate-envers" }
 hibernate-types = { module = "com.vladmihalcea:hibernate-types-60", version.ref = "hibernate-types" }
 flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }

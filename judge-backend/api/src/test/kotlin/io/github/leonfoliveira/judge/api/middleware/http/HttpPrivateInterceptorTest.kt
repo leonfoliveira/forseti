@@ -4,7 +4,7 @@ import io.github.leonfoliveira.judge.api.util.Private
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.UnauthorizedException
-import io.github.leonfoliveira.judge.common.domain.model.SessionAuthentication
+import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
@@ -14,12 +14,15 @@ import io.mockk.every
 import io.mockk.mockk
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.method.HandlerMethod
 
 class HttpPrivateInterceptorTest :
     FunSpec({
         val sut = HttpPrivateInterceptor()
+
+        beforeEach {
+            RequestContext.clearContext()
+        }
 
         test("should return true when handler is not a HandlerMethod") {
             val request = mockk<HttpServletRequest>(relaxed = true)
@@ -43,11 +46,9 @@ class HttpPrivateInterceptorTest :
             val response = mockk<HttpServletResponse>(relaxed = true)
             val handler = mockk<HandlerMethod>(relaxed = true)
             every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.CONTESTANT])
-            SecurityContextHolder.getContext().authentication =
-                SessionAuthentication(
-                    SessionMockBuilder.build(
-                        member = MemberMockBuilder.build(type = Member.Type.ROOT),
-                    ),
+            RequestContext.getContext().session =
+                SessionMockBuilder.build(
+                    member = MemberMockBuilder.build(type = Member.Type.ROOT),
                 )
 
             sut.preHandle(request, response, handler) shouldBe true
@@ -58,7 +59,6 @@ class HttpPrivateInterceptorTest :
             val response = mockk<HttpServletResponse>(relaxed = true)
             val handler = mockk<HandlerMethod>(relaxed = true)
             every { handler.getMethodAnnotation(Private::class.java) } returns Private()
-            SecurityContextHolder.clearContext()
 
             shouldThrow<UnauthorizedException> {
                 sut.preHandle(request, response, handler)
@@ -70,11 +70,9 @@ class HttpPrivateInterceptorTest :
             val response = mockk<HttpServletResponse>(relaxed = true)
             val handler = mockk<HandlerMethod>(relaxed = true)
             every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT])
-            SecurityContextHolder.getContext().authentication =
-                SessionAuthentication(
-                    SessionMockBuilder.build(
-                        member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
-                    ),
+            RequestContext.getContext().session =
+                SessionMockBuilder.build(
+                    member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
                 )
 
             shouldThrow<ForbiddenException> {
@@ -87,11 +85,9 @@ class HttpPrivateInterceptorTest :
             val response = mockk<HttpServletResponse>(relaxed = true)
             val handler = mockk<HandlerMethod>(relaxed = true)
             every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT, Member.Type.CONTESTANT])
-            SecurityContextHolder.getContext().authentication =
-                SessionAuthentication(
-                    SessionMockBuilder.build(
-                        member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
-                    ),
+            RequestContext.getContext().session =
+                SessionMockBuilder.build(
+                    member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
                 )
 
             sut.preHandle(request, response, handler) shouldBe true

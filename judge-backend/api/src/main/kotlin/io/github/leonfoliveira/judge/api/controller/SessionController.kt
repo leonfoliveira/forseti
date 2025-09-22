@@ -5,7 +5,6 @@ import io.github.leonfoliveira.judge.api.dto.response.session.SessionResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.judge.api.service.SessionCookieService
 import io.github.leonfoliveira.judge.api.util.Private
-import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import io.github.leonfoliveira.judge.common.service.authentication.AuthenticationService
 import io.swagger.v3.oas.annotations.Operation
@@ -32,7 +31,6 @@ class SessionController(
 
     @GetMapping("/me")
     @Private
-    @RateLimit
     @Operation(
         summary = "Get current session",
         description = "Returns the session of the current user.",
@@ -63,7 +61,6 @@ class SessionController(
 
     @DeleteMapping("/me")
     @Private
-    @RateLimit
     @Operation(
         summary = "Delete current session",
         description = "Deletes the session of the current user, effectively logging them out.",

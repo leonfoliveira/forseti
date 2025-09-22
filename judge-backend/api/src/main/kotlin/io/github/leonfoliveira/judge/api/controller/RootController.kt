@@ -5,7 +5,6 @@ import io.github.leonfoliveira.judge.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.session.SessionResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.judge.api.service.SessionCookieService
-import io.github.leonfoliveira.judge.api.util.RateLimit
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.service.authentication.AuthenticationService
 import io.github.leonfoliveira.judge.common.service.dto.input.authorization.AuthenticateInputDTO
@@ -32,7 +31,6 @@ class RootController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping("/sign-in")
-    @RateLimit
     @Operation(
         summary = "Sign in as root",
         description = "Authenticates a root user.",
