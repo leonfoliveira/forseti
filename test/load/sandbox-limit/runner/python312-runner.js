@@ -2,7 +2,7 @@ import { Runner } from "../runner.js";
 
 class Python312Runner extends Runner {
   constructor(actor, problemId) {
-    super("PYTHON_3_12", actor, problemId);
+    super("PYTHON_312", actor, problemId);
   }
 
   buildTimeLimitCode(multiplier) {
