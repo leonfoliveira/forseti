@@ -1,10 +1,12 @@
-class Actor {
-  constructor(apiClient, contestId) {
-    this.apiClient = apiClient;
-    this.contestId = contestId;
-  }
+import { ApiClient } from "./api";
 
-  async signIn(login, password) {
+export class Actor {
+  constructor(
+    private readonly apiClient: ApiClient,
+    private readonly contestId: string
+  ) {}
+
+  async signIn(login: string, password: string) {
     const response = await this.apiClient.request(
       `/v1/contests/${this.contestId}/sign-in`,
       {
@@ -15,12 +17,12 @@ class Actor {
         }),
       }
     );
-    const cookies = response.headers.get("set-cookie");
-    const sessionId = /session_id=([^;]+)/.exec(cookies)[1];
+    const cookies = response.headers.get("set-cookie") as string;
+    const sessionId = (/session_id=([^;]+)/.exec(cookies) as any)[1] as string;
     this.apiClient.sessionId = sessionId;
   }
 
-  async uploadAttachment(file, context) {
+  async uploadAttachment(file: File, context: string) {
     const formData = new FormData();
     formData.append("file", file);
     const response = await this.apiClient.request(
@@ -31,11 +33,15 @@ class Actor {
       },
       true
     );
-    const data = await response.json();
+    const data = (await response.json()) as { id: string };
     return data.id;
   }
 
-  async createSubmission(problemId, language, attachmentId) {
+  async createSubmission(
+    problemId: string,
+    language: string,
+    attachmentId: string
+  ) {
     const response = await this.apiClient.request(
       `/v1/contests/${this.contestId}/submissions`,
       {
@@ -47,7 +53,7 @@ class Actor {
         }),
       }
     );
-    const data = await response.json();
+    const data = (await response.json()) as { id: string };
     return data.id;
   }
 
@@ -58,9 +64,11 @@ class Actor {
         method: "GET",
       }
     );
-    const data = await response.json();
+    const data = (await response.json()) as {
+      id: string;
+      status: string;
+      answer: string;
+    }[];
     return data;
   }
 }
-
-module.exports = { Actor };

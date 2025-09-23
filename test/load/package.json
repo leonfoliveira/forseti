@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "sandbox:limit": "node sandbox-limit/index.js"
+    "sandbox:limit": "ts-node sandbox-limit/index.ts"
   },
   "dependencies": {
     "@stomp/stompjs": "^7.2.0",
+    "@types/node": "^24.5.2",
     "dotenv": "^17.2.2",
-    "sockjs-client": "^1.6.1"
+    "sockjs-client": "^1.6.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   }
 }

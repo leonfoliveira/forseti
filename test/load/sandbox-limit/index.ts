@@ -1,14 +1,14 @@
-import { ApiClient } from "../util/api.js";
-import { Actor } from "../util/actor.js";
-import { Cpp17Runner } from "./runner/cpp17-runner.js";
-import { Java21Runner } from "./runner/java21-runner.js";
-import { Python312Runner } from "./runner/python312-runner.js";
+import { ApiClient } from "../util/api";
+import { Actor } from "../util/actor";
+import { Cpp17Runner } from "./runner/cpp17-runner";
+import { Java21Runner } from "./runner/java21-runner";
+import { Python312Runner } from "./runner/python312-runner";
 import "dotenv/config";
 
 const apiUrl = process.env.API_URL || "https://api.judge.app";
-const contestId = process.env.CONTEST_ID;
-const problemId = process.env.PROBLEM_ID;
-const rootPassword = process.env.ROOT_PASSWORD;
+const contestId = process.env.CONTEST_ID as string;
+const problemId = process.env.PROBLEM_ID as string;
+const rootPassword = process.env.ROOT_PASSWORD as string;
 
 const apiClient = new ApiClient(apiUrl);
 const actor = new Actor(apiClient, contestId);
@@ -64,4 +64,4 @@ async function main() {
   console.table(results);
 }
 
-main();
+console.log("Sandbox Limit Test");

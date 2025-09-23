@@ -1,11 +1,12 @@
-import { Runner } from "../runner.js";
+import { Actor } from "../../util/actor";
+import { Runner } from "../runner";
 
-class Java21Runner extends Runner {
-  constructor(actor, problemId) {
+export class Java21Runner extends Runner {
+  constructor(actor: Actor, problemId: string) {
     super("JAVA_21", actor, problemId);
   }
 
-  buildTimeLimitCode(multiplier) {
+  buildTimeLimitCode(multiplier: number) {
     return `
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +28,7 @@ public class Main {
 `;
   }
 
-  buildMemoryLimitCode(multiplier) {
+  buildMemoryLimitCode(multiplier: number) {
     return `
 import java.util.Scanner;
 
@@ -45,11 +46,9 @@ public class Main {
 `;
   }
 
-  buildFile(code) {
+  buildFile(code: string) {
     const blob = new Blob([code], { type: "text/x-java" });
     const file = new File([blob], "Main.java", { type: "text/x-java" });
     return file;
   }
 }
-
-export { Java21Runner };

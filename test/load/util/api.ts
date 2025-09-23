@@ -10,14 +10,17 @@ function getRandomIp() {
   return blocks.join(".");
 }
 
-class ApiClient {
-  constructor(baseUrl) {
-    this.baseUrl = baseUrl;
-    this.sessionId = null;
-  }
+export class ApiClient {
+  public sessionId: string | null = null;
 
-  async request(path, options = {}, multiPart = false) {
-    const headers = {
+  constructor(private readonly baseUrl: string) {}
+
+  async request(
+    path: string,
+    options: Record<string, any> = {},
+    multiPart = false
+  ) {
+    const headers: Record<string, any> = {
       "X-Forwarded-For": getRandomIp(),
       Cookie: this.sessionId ? `session_id=${this.sessionId}` : "",
     };
@@ -35,5 +38,3 @@ class ApiClient {
     return response;
   }
 }
-
-module.exports = { ApiClient };

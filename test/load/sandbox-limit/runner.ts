@@ -1,11 +1,13 @@
-class Runner {
-  constructor(language, actor, problemId) {
-    this.language = language;
-    this.actor = actor;
-    this.problemId = problemId;
-  }
+import { Actor } from "../util/actor";
 
-  async submitCode(file, language) {
+export class Runner {
+  constructor(
+    public readonly language: string,
+    private readonly actor: Actor,
+    private readonly problemId: string
+  ) {}
+
+  async submitCode(file: File, language: string) {
     const attachmentId = await this.actor.uploadAttachment(
       file,
       "SUBMISSION_CODE"
@@ -19,7 +21,7 @@ class Runner {
     return submission;
   }
 
-  async pullSubmission(submissionId) {
+  async pullSubmission(submissionId: string) {
     while (true) {
       const submissions = await this.actor.findAllSubmissionsForMember();
       const submission = submissions.find((s) => s.id === submissionId);
@@ -31,11 +33,9 @@ class Runner {
     }
   }
 
-  buildTimeLimitCode(multiplier) {}
+  buildTimeLimitCode(multiplier: number) {}
 
-  buildMemoryLimitCode(multiplier) {}
+  buildMemoryLimitCode(multiplier: number) {}
 
-  buildFile(code) {}
+  buildFile(code: string) {}
 }
-
-export { Runner };

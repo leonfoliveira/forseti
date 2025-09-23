@@ -1,11 +1,12 @@
-import { Runner } from "../runner.js";
+import { Actor } from "../../util/actor";
+import { Runner } from "../runner";
 
-class Cpp17Runner extends Runner {
-  constructor(actor, problemId) {
+export class Cpp17Runner extends Runner {
+  constructor(actor: Actor, problemId: string) {
     super("CPP_17", actor, problemId);
   }
 
-  buildTimeLimitCode(multiplier) {
+  buildTimeLimitCode(multiplier: number) {
     return `
 #include <iostream>
 #include <thread>
@@ -24,7 +25,7 @@ int main() {
 `;
   }
 
-  buildMemoryLimitCode(multiplier) {
+  buildMemoryLimitCode(multiplier: number) {
     return `
 #include <iostream>
 #include <vector>
@@ -45,11 +46,9 @@ int main() {
 `;
   }
 
-  buildFile(code) {
+  buildFile(code: string) {
     const blob = new Blob([code], { type: "text/x-c++src" });
     const file = new File([blob], "code.cpp", { type: "text/x-c++src" });
     return file;
   }
 }
-
-export { Cpp17Runner };
