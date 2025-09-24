@@ -3,14 +3,16 @@ import os
 import signal
 import threading
 import time
+from dotenv import load_dotenv
 
 import docker
-import pika
 
 from autoscaler.api import start_flask_app
 from autoscaler.queue_monitor import QueueMonitor
 from autoscaler.scaler import Scaler
 from autoscaler.service_monitor import ServiceMonitor
+
+load_dotenv()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -18,41 +20,34 @@ logging.basicConfig(
 )
 
 
-rabbitmq_host = os.environ["RABBITMQ_HOST"]
-rabbitmq_port = os.environ["RABBITMQ_PORT"]
-rabbitmq_username = os.environ["RABBITMQ_USER"]
-rabbitmq_password = os.environ["RABBITMQ_PASSWORD"]
-rabbitmq_vhost = os.environ["RABBITMQ_VHOST"]
+rabbitmq_host = os.getenv("RABBITMQ_HOST")
+rabbitmq_port = os.getenv("RABBITMQ_PORT")
+rabbitmq_username = os.getenv("RABBITMQ_USER")
+rabbitmq_password = os.getenv("RABBITMQ_PASSWORD")
+rabbitmq_vhost = os.getenv("RABBITMQ_VHOST")
 
-queue_name = os.environ["QUEUE_NAME"]
-service_name = os.environ["SERVICE_NAME"]
+queue_name = os.getenv("QUEUE_NAME")
+service_name = os.getenv("SERVICE_NAME")
 
-messages_per_replica = int(os.environ.get("MESSAGES_PER_REPLICA", 1))
-min_replicas = int(os.environ.get("MIN_REPLICAS", 1))
-max_replicas = int(os.environ.get("MAX_REPLICAS", 3))
-cooldown = int(os.environ.get("COOLDOWN", 60))
-interval = int(os.environ.get("INTERVAL", 10))
+messages_per_replica = int(os.getenv("MESSAGES_PER_REPLICA", 1))
+min_replicas = int(os.getenv("MIN_REPLICAS", 1))
+max_replicas = int(os.getenv("MAX_REPLICAS", 3))
+cooldown = int(os.getenv("COOLDOWN", 60))
+interval = int(os.getenv("INTERVAL", 10))
 
 port = int(os.environ.get("PORT", 7000))
 
 
-pika_client = pika.BlockingConnection(
-    pika.ConnectionParameters(
-        host=rabbitmq_host,
-        port=int(rabbitmq_port),
-        virtual_host=rabbitmq_vhost,
-        credentials=pika.PlainCredentials(
-            username=rabbitmq_username,
-            password=rabbitmq_password,
-        ),
-    )
-)
 docker_client = docker.from_env()
 
 
 queue_monitor = QueueMonitor(
-    pika_client=pika_client,
     queue_name=queue_name,
+    host=rabbitmq_host,
+    port=int(rabbitmq_port),
+    vhost=rabbitmq_vhost,
+    username=rabbitmq_username,
+    password=rabbitmq_password,
 )
 service_monitor = ServiceMonitor(
     docker_client=docker_client,
@@ -83,7 +78,8 @@ if __name__ == "__main__":
     logging.info("Starting auto-scaler")
 
     server_thread = threading.Thread(
-        target=start_flask_app, args=[queue_monitor, service_monitor, port], daemon=True
+        target=start_flask_app, args=[
+            queue_monitor, service_monitor, port], daemon=True
     )
     server_thread.start()
 

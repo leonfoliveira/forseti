@@ -702,7 +702,7 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": ["last"],
           "fields": "",
           "values": false
         },
@@ -1011,6 +1011,7 @@
     }
   ],
   "preload": false,
+  "refresh": "5s",
   "schemaVersion": 41,
   "tags": [],
   "templating": {
@@ -1096,5 +1097,5 @@
   "timezone": "browser",
   "title": "System overview",
   "uid": "c596373d-43b7-4cda-8a57-4d8efc754d4a",
-  "version": 15
+  "version": 2
 }

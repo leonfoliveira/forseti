@@ -1,37 +1,38 @@
+from unittest.mock import patch
 import pytest
-
-from pika import BlockingConnection
-from pika.adapters.blocking_connection import BlockingChannel
 
 from autoscaler.queue_monitor import QueueMonitor
 
-BASE_PATH = "judge-autoscaler.autoscaler.queue_monitor"
+BASE_PATH = "autoscaler.queue_monitor"
 
 
 class TestQueueMonitor:
     queue_name = "test_queue"
+    host = "localhost"
+    port = 15672
+    vhost = "/"
+    username = "guest"
+    password = "guest"
+
+    @pytest.fixture(autouse=True)
+    def requests(self):
+        with patch(f"{BASE_PATH}.requests") as mock_requests:
+            yield mock_requests
 
     @pytest.fixture
-    def channel(self, pika_client: BlockingConnection):
-        yield pika_client.channel()
+    def sut(self):
+        yield QueueMonitor(queue_name=self.queue_name, host=self.host, port=self.port, vhost=self.vhost, username=self.username, password=self.password)
 
-    @pytest.fixture
-    def sut(self, pika_client: BlockingConnection, channel: BlockingChannel):
-        channel.queue_declare(queue=self.queue_name)
-        yield QueueMonitor(pika_client, queue_name=self.queue_name)
+    def test_get_number_of_messages(self, sut: QueueMonitor, requests):
+        requests.get.return_value.status_code = 200
+        requests.get.return_value.json.return_value = {
+            "messages_ready": 3,
+            "messages_unacknowledged": 2
+        }
 
-    def test_get_number_of_messages(self, sut: QueueMonitor, channel: BlockingChannel):
-        assert sut.get_number_of_messages() == 0
-
-        channel.basic_publish(
-            exchange="",
-            routing_key=self.queue_name,
-            body="Test Message 1",
+        assert sut.get_number_of_messages() == 5
+        assert requests.get.call_count == 1
+        requests.get.assert_called_with(
+            f"http://{self.host}:{self.port}/api/queues/{self.vhost}/{self.queue_name}",
+            auth=(self.username, self.password),
         )
-        channel.basic_publish(
-            exchange="",
-            routing_key=self.queue_name,
-            body="Test Message 2",
-        )
-
-        assert sut.get_number_of_messages() == 2

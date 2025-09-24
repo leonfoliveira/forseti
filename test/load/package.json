@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "sandbox:limit": "ts-node sandbox-limit/index.ts"
+    "autojudge-scale": "ts-node autojudge-scale/index.ts",
+    "sandbox-limit": "ts-node sandbox-limit/index.ts"
   },
   "dependencies": {
     "@stomp/stompjs": "^7.2.0",

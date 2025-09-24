@@ -215,7 +215,7 @@ services:
       MIN_REPLICAS: 1
       QUEUE_NAME: submission-queue
       RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
+      RABBITMQ_PORT: 15672
       RABBITMQ_USER: judge
       RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
       RABBITMQ_VHOST: /
@@ -590,57 +590,6 @@ services:
         target: /prometheus
         volume: {}
 
-  traefik:
-    deploy:
-      mode: replicated
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 256M
-        reservations:
-          cpus: "0.25"
-          memory: 128M
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - traefik version
-      timeout: 5s
-      interval: 15s
-      retries: 5
-      start_period: 10s
-    image: traefik:v3.5.2
-    networks:
-      network:
-    ports:
-      - target: 80
-        published: 80
-        protocol: tcp
-        mode: host
-      - target: 443
-        published: 443
-        protocol: tcp
-        mode: host
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-        read_only: true
-      - type: bind
-        source: ./certs
-        target: /certs
-        read_only: true
-      - type: bind
-        source: ./volumes/traefik
-        target: /etc/traefik
-        read_only: true
-
   rabbitmq:
     deploy:
       mode: replicated
@@ -690,6 +639,57 @@ services:
       - type: bind
         source: ./volumes/rabbitmq/definitions.template.json
         target: /etc/rabbitmq/definitions.template.json
+        read_only: true
+
+  traefik:
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - traefik version
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
+    image: traefik:v3.5.2
+    networks:
+      network:
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - type: bind
+        source: ./certs
+        target: /certs
+        read_only: true
+      - type: bind
+        source: ./volumes/traefik
+        target: /etc/traefik
         read_only: true
 
   webapp:

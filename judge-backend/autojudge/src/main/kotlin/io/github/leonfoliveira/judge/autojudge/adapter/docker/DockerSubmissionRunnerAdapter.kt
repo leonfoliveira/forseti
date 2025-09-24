@@ -82,6 +82,7 @@ class DockerSubmissionRunnerAdapter(
                         status = Submission.Answer.WRONG_ANSWER
                         break
                     }
+                    logger.info("All test cases passed")
                 } catch (_: DockerContainer.DockerTimeOutException) {
                     logger.info("Test case with index: $index timed out")
                     val execution =
@@ -120,7 +121,6 @@ class DockerSubmissionRunnerAdapter(
                     return executionRepository.save(execution)
                 }
             }
-            logger.info("All test cases passed")
             val execution =
                 Execution(
                     submission = submission,

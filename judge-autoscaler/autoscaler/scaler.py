@@ -67,6 +67,7 @@ class Scaler:
                 time.time() - self.last_scale_time < self.cooldown
             )
             logging.info(
+                f"Messages: {messages}, "
                 f"Current replicas: {current_replicas}, "
                 f"Desired replicas: {desired_replicas}, "
                 f"Cooling down: {is_cooling_down}"

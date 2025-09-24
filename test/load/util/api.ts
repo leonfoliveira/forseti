@@ -27,13 +27,16 @@ export class ApiClient {
     if (!multiPart) {
       headers["Content-Type"] = "application/json";
     }
+
     const response = await fetch(`${this.baseUrl}${path}`, {
       ...options,
       headers,
     });
     if (!response.ok) {
       const body = await response.text();
-      throw new Error(`${path}: ${response.status} - ${body}`);
+      throw new Error(
+        `[${options.method}] ${path}: ${response.status} - ${body}`
+      );
     }
     return response;
   }
