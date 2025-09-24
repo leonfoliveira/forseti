@@ -203,6 +203,26 @@ class AttachmentAuthorizationServiceTest :
             }
 
             context("when attachment belongs to contest") {
+                context("when member is ROOT") {
+                    test("should authorize download for any context") {
+                        val attachment =
+                            AttachmentMockBuilder.build(
+                                id = attachmentId,
+                                contest = contest,
+                                context = Attachment.Context.EXECUTION_OUTPUT,
+                            )
+                        every { attachmentRepository.findById(attachmentId) } returns Optional.of(attachment)
+                        RequestContext.getContext().session =
+                            SessionMockBuilder.build(
+                                member = MemberMockBuilder.build(type = Member.Type.ROOT),
+                            )
+
+                        sut.authorizeDownload(contestId, attachmentId)
+
+                        verify { attachmentRepository.findById(attachmentId) }
+                    }
+                }
+
                 context("PROBLEM_DESCRIPTION context") {
                     test("should authorize successfully") {
                         val attachment =

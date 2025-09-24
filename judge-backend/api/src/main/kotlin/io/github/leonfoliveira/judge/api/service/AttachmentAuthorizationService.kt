@@ -60,6 +60,9 @@ class AttachmentAuthorizationService(
         }
 
         val member = RequestContext.getContext().session?.member
+        if (member?.type == Member.Type.ROOT) {
+            return
+        }
 
         when (attachment.context) {
             Attachment.Context.PROBLEM_DESCRIPTION -> return
