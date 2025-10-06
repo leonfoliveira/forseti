@@ -98,7 +98,7 @@ services:
       DB_PASSWORD: judge
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge
-      JAVA_TOOL_OPTIONS: -Xms1024m -Xmx1024m
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=25.0"
       SESSION_EXPIRATION: 6h
       SESSION_ROOT_EXPIRATION: 3h
       MINIO_ENDPOINT: http://minio:9000
@@ -151,7 +151,7 @@ services:
       DB_PASSWORD: judge
       DB_URL: jdbc:postgresql://postgres:5432/judge
       DB_USER: judge
-      JAVA_TOOL_OPTIONS: -Xms1024m -Xmx1024m
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=25.0"
       SESSION_AUTOJUDGE_EXPIRATION: 10m
       MAX_CONCURRENT_SUBMISSIONS: "1"
       MINIO_ENDPOINT: http://minio:9000
