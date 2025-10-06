@@ -19,7 +19,7 @@ DEFAULT_DOMAIN = "judge.app"
 
 @system.command(help="Deploy services in Docker Swarm.")
 @click.option(
-    "--domain", help=f"Domain name (e.g., example.com) to configure public URLs. (default: ${DEFAULT_DOMAIN})", default=DEFAULT_DOMAIN
+    "--domain", help=f"Domain name (e.g., example.com) to configure public URLs. (default: {DEFAULT_DOMAIN})", default=DEFAULT_DOMAIN
 )
 @click.option("--stack", help="Stack file (default: stack.yaml in CLI directory)")
 @click.option("--stack-name", help=STACK_NAME_HELP, default=DEFAULT_STACK_NAME)
@@ -111,6 +111,45 @@ def scale(service: str, replicas: str, stack_name: str):
                 f"{stack_name}_{service}",
             ],
         )
+        spinner.complete()
+    except click.ClickException as e:
+        spinner.fail()
+        if "not found" in e.message:
+            raise click.ClickException(f"Service {service} not found")
+        if "This node is not a swarm manager" in e.message:
+            raise click.ClickException("This node is not a swarm manager")
+        raise e
+
+
+@system.command(help="Update a service with new configuration.")
+@click.argument("service", required=True)
+@click.option("--force", is_flag=True, help="Force update even if no changes detected")
+@click.option("--stack-name", help=STACK_NAME_HELP, default=DEFAULT_STACK_NAME)
+def update(service: str, force: bool, stack_name: str):
+    command_adapter = CommandAdapter()
+    spinner = Spinner("Updating service environment variable")
+
+    spinner.start()
+    try:
+        if force:
+            command_adapter.run(
+                [
+                    "docker",
+                    "service",
+                    "update",
+                    "--force",
+                    f"{stack_name}_{service}",
+                ],
+            )
+        else:
+            command_adapter.run(
+                [
+                    "docker",
+                    "service",
+                    "update",
+                    f"{stack_name}_{service}",
+                ],
+            )
         spinner.complete()
     except click.ClickException as e:
         spinner.fail()

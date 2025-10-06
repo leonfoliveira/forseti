@@ -156,3 +156,37 @@ class TestSystemCommand:
             "Some other error")
         result = runner.invoke(system, ["scale", "web", "3"])
         assert result.exit_code == 1
+
+    def test_update_without_force(self, runner, command_adapter):
+        result = runner.invoke(system, ["update", "web"])
+        assert result.exit_code == 0
+        command_adapter.run.assert_any_call(
+            ["docker", "service", "update", "judge_web"]
+        )
+
+    def test_update_with_force(self, runner, command_adapter):
+        result = runner.invoke(system, ["update", "web", "--force"])
+        assert result.exit_code == 0
+        command_adapter.run.assert_any_call(
+            ["docker", "service", "update", "--force", "judge_web"]
+        )
+
+    def test_update_swarm_manager_error(self, runner, command_adapter):
+        command_adapter.run.side_effect = click.ClickException(
+            "This node is not a swarm manager")
+        result = runner.invoke(system, ["update", "web"])
+        assert result.exit_code == 1
+        assert "This node is not a swarm manager" in result.output
+
+    def test_update_not_found_in_stack(self, runner, command_adapter):
+        command_adapter.run.side_effect = click.ClickException(
+            "service web not found")
+        result = runner.invoke(system, ["update", "web"])
+        assert result.exit_code == 1
+        assert "Service web not found" in result.output
+
+    def test_update_other_error(self, runner, command_adapter):
+        command_adapter.run.side_effect = click.ClickException(
+            "Some other error")
+        result = runner.invoke(system, ["update", "web"])
+        assert result.exit_code == 1
