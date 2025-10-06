@@ -562,7 +562,7 @@
           "refId": "A"
         }
       ],
-      "title": "Database Storage",
+      "title": "PostgreSQL Storage",
       "type": "stat"
     },
     {
