@@ -1,4 +1,4 @@
-# Management
+# Setup
 
 This guide covers the operational aspects of the Judge platform, including resource configuration, service scaling, and system administration tasks.
 
