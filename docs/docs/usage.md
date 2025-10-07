@@ -68,13 +68,13 @@ The contest dashboard is the primary interface for all users during a contest, a
 
 The authentication page where participants can sign in to access the contest. Users are automatically redirected to the appropriate dashboard based on their assigned role.
 
-![Sign In Page](./img/sign-in.png)
+![Sign In Page](./img/usage/sign-in.png)
 
 ### Wait Page
 
 A holding page that prevents non-administrative users (Judges, Contestants and Guests) from accessing the contest before its scheduled start time. This ensures fair competition by maintaining equal access timing for all participants.
 
-![Wait Page](./img/wait-page.png)
+![Wait Page](./img/usage/wait-page.png)
 
 > **Note:** Admin and Root users can access the dashboard at any time to prepare the contest environment and verify configurations.
 
@@ -86,7 +86,7 @@ Administrators and Root users have full control over contest management, with ac
 
 Displays the real-time classification and ranking of all contestants, showing solved problems, penalty times, and submission attempts. Use this view to monitor contest progress and identify leading participants.
 
-![Admin Leaderboard](./img/admin-leaderboard.png)
+![Admin Leaderboard](./img/usage/admin-leaderboard.png)
 
 **Key Features:**
 
@@ -97,7 +97,7 @@ Displays the real-time classification and ranking of all contestants, showing so
 
 Presents all problems available in the contest with their metadata, including difficulty indicators, submission counts, and acceptance rates.
 
-![Admin Problems](./img/admin-problems.png)
+![Admin Problems](./img/usage/admin-problems.png)
 
 **Key Features:**
 
@@ -107,7 +107,7 @@ Presents all problems available in the contest with their metadata, including di
 
 Provides a comprehensive view of all submissions across the entire contest. This is the central hub for submission management and quality control.
 
-![Admin Submissions](./img/admin-submissions.png)
+![Admin Submissions](./img/usage/admin-submissions.png)
 
 **Key Features:**
 
@@ -118,7 +118,7 @@ Provides a comprehensive view of all submissions across the entire contest. This
 
 Manages all clarification requests from contestants. Timely and accurate responses to clarifications are crucial for contest fairness and participant satisfaction.
 
-![Admin Clarifications](./img/admin-clarifications.png)
+![Admin Clarifications](./img/usage/admin-clarifications.png)
 
 **Key Features:**
 
@@ -129,7 +129,7 @@ Manages all clarification requests from contestants. Timely and accurate respons
 
 Creates and manages contest-wide announcements to communicate important information to all participants.
 
-![Admin Announcements](./img/admin-announcements.png)
+![Admin Announcements](./img/usage/admin-announcements.png)
 
 **Key Features:**
 
@@ -144,7 +144,7 @@ Comprehensive contest configuration interface for managing all aspects of the co
 
 **Contest Settings:**
 
-![Admin Settings Contest](./img/admin-settings-contest.png)
+![Admin Settings Contest](./img/usage/admin-settings-contest.png)
 
 **Key Features:**
 
@@ -155,7 +155,7 @@ Comprehensive contest configuration interface for managing all aspects of the co
 
 **Problem Management:**
 
-![Admin Settings Problems](./img/admin-settings-problems.png)
+![Admin Settings Problems](./img/usage/admin-settings-problems.png)
 
 **Key Features:**
 
@@ -168,7 +168,7 @@ Comprehensive contest configuration interface for managing all aspects of the co
 
 **Member Management:**
 
-![Admin Settings Members](./img/admin-settings-members.png)
+![Admin Settings Members](./img/usage/admin-settings-members.png)
 
 **Key Features:**
 
@@ -184,7 +184,7 @@ Judges have specialized privileges focused on evaluation and participant support
 
 Presents the current contest standings with the same comprehensive view available to administrators.
 
-![Judge Leaderboard](./img/judge-leaderboard.png)
+![Judge Leaderboard](./img/usage/judge-leaderboard.png)
 
 **Key Features:**
 
@@ -195,7 +195,7 @@ Presents the current contest standings with the same comprehensive view availabl
 
 Displays all contest problems with detailed statistics to assist in evaluation and understanding submission patterns.
 
-![Judge Problems](./img/judge-problems.png)
+![Judge Problems](./img/usage/judge-problems.png)
 
 **Key Features:**
 
@@ -205,7 +205,7 @@ Displays all contest problems with detailed statistics to assist in evaluation a
 
 Provides access to all contest submissions for evaluation purposes. Judges can rejudge submissions and apply manual verdicts when necessary.
 
-![Judge Submissions](./img/judge-submissions.png)
+![Judge Submissions](./img/usage/judge-submissions.png)
 
 **Key Features:**
 
@@ -216,7 +216,7 @@ Provides access to all contest submissions for evaluation purposes. Judges can r
 
 Enables judges to review and respond to contestant clarification requests, supporting the administrative team in maintaining communication.
 
-![Judge Clarifications](./img/judge-clarifications.png)
+![Judge Clarifications](./img/usage/judge-clarifications.png)
 
 **Key Features:**
 
@@ -227,7 +227,7 @@ Enables judges to review and respond to contestant clarification requests, suppo
 
 Allows judges to create and publish announcements to communicate with participants.
 
-![Judge Announcements](./img/judge-announcements.png)
+![Judge Announcements](./img/usage/judge-announcements.png)
 
 **Key Features:**
 
@@ -242,7 +242,7 @@ Contestants have focused access to submit solutions, track their progress, and c
 
 Displays the current standings, allowing contestants to monitor their position and compare their performance with other participants.
 
-![Contestant Leaderboard](./img/contestant-leaderboard.png)
+![Contestant Leaderboard](./img/usage/contestant-leaderboard.png)
 
 **Key Features:**
 
@@ -253,7 +253,7 @@ Displays the current standings, allowing contestants to monitor their position a
 
 Shows all available problems in the contest with submission status indicators for quick navigation.
 
-![Contestant Problems](./img/contestant-problems.png)
+![Contestant Problems](./img/usage/contestant-problems.png)
 
 **Key Features:**
 
@@ -264,7 +264,7 @@ Shows all available problems in the contest with submission status indicators fo
 
 The primary interface for creating new submissions and tracking their evaluation status.
 
-![Contestant Submissions](./img/contestant-submissions.png)
+![Contestant Submissions](./img/usage/contestant-submissions.png)
 
 **Key Features:**
 
@@ -285,7 +285,7 @@ The primary interface for creating new submissions and tracking their evaluation
 
 Enables contestants to request clarification on problem statements or contest rules when they encounter ambiguities.
 
-![Contestant Clarifications](./img/contestant-clarifications.png)
+![Contestant Clarifications](./img/usage/contestant-clarifications.png)
 
 **Key Features:**
 
@@ -298,7 +298,7 @@ Enables contestants to request clarification on problem statements or contest ru
 
 Displays all contest announcements from organizers. Check this section regularly for important updates.
 
-![Contestant Announcements](./img/contestant-announcements.png)
+![Contestant Announcements](./img/usage/contestant-announcements.png)
 
 **Key Features:**
 
@@ -312,7 +312,7 @@ Guests have read-only access to observe the contest without participating. This 
 
 View-only access to the current contest standings and participant rankings.
 
-![Guest Leaderboard](./img/guest-leaderboard.png)
+![Guest Leaderboard](./img/usage/guest-leaderboard.png)
 
 **Key Features:**
 
@@ -323,7 +323,7 @@ View-only access to the current contest standings and participant rankings.
 
 Browse all contest problems to understand the competition challenges, without the ability to submit solutions.
 
-![Guest Problems](./img/guest-problems.png)
+![Guest Problems](./img/usage/guest-problems.png)
 
 **Key Features:**
 
@@ -334,7 +334,7 @@ Browse all contest problems to understand the competition challenges, without th
 
 Monitor all contest submissions in real-time, providing insight into participant activity and problem difficulty.
 
-![Guest Submissions](./img/guest-submissions.png)
+![Guest Submissions](./img/usage/guest-submissions.png)
 
 **Key Features:**
 
@@ -344,7 +344,7 @@ Monitor all contest submissions in real-time, providing insight into participant
 
 View all public clarifications to follow contestant questions and official responses.
 
-![Guest Clarifications](./img/guest-clarifications.png)
+![Guest Clarifications](./img/usage/guest-clarifications.png)
 
 **Key Features:**
 
@@ -354,7 +354,7 @@ View all public clarifications to follow contestant questions and official respo
 
 Access all contest announcements to stay informed about important updates and changes.
 
-![Guest Announcements](./img/guest-announcements.png)
+![Guest Announcements](./img/usage/guest-announcements.png)
 
 **Key Features:**
 
