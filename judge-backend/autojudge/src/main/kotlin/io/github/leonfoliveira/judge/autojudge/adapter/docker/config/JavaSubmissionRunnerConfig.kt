@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.autojudge.adapter.docker.config
 
 import io.github.leonfoliveira.judge.autojudge.adapter.docker.DockerSubmissionRunnerConfig
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -16,7 +16,7 @@ class JavaSubmissionRunnerConfig(
     @Bean
     fun java21() =
         DockerSubmissionRunnerConfig(
-            language = Language.JAVA_21,
+            language = Submission.Language.JAVA_21,
             image = "judge-sb-java21:$version",
             createCompileCommand = { codeFile ->
                 arrayOf("javac", "-d", ".", codeFile.name)

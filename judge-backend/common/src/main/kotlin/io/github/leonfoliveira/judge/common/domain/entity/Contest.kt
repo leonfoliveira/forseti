@@ -1,6 +1,5 @@
 package io.github.leonfoliveira.judge.common.domain.entity
 
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -43,7 +42,7 @@ class Contest(
     @Column(nullable = false)
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Enumerated(EnumType.STRING)
-    var languages: List<Language>,
+    var languages: List<Submission.Language>,
     /**
      * The start time of the contest.
      */

@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.autojudge.adapter.docker.config
 
 import io.github.leonfoliveira.judge.autojudge.adapter.docker.DockerSubmissionRunnerConfig
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.util.SkipCoverage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -16,7 +16,7 @@ class CppSubmissionRunnerConfig(
     @Bean
     fun cpp17() =
         DockerSubmissionRunnerConfig(
-            language = Language.CPP_17,
+            language = Submission.Language.CPP_17,
             image = "judge-sb-cpp17:$version",
             createCompileCommand = { codeFile ->
                 arrayOf("g++", "-o", "a.out", codeFile.name, "-O2", "-std=c++17", "-DONLINE_JUDGE")

@@ -9,7 +9,7 @@ import io.github.leonfoliveira.judge.api.dto.response.member.toPublicResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.problem.ProblemPublicResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.problem.toPublicResponseDTO
 import io.github.leonfoliveira.judge.common.domain.entity.Contest
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -17,7 +17,7 @@ data class ContestPublicOutputDTO(
     val id: UUID,
     val slug: String,
     val title: String,
-    val languages: List<Language>,
+    val languages: List<Submission.Language>,
     val startAt: OffsetDateTime,
     val endAt: OffsetDateTime,
     val members: List<MemberPublicResponseDTO>,
@@ -26,8 +26,8 @@ data class ContestPublicOutputDTO(
     val announcements: List<AnnouncementResponseDTO>,
 )
 
-fun Contest.toPublicOutputDTO(): ContestPublicOutputDTO {
-    return ContestPublicOutputDTO(
+fun Contest.toPublicOutputDTO(): ContestPublicOutputDTO =
+    ContestPublicOutputDTO(
         id = this.id,
         slug = this.slug,
         title = this.title,
@@ -39,4 +39,3 @@ fun Contest.toPublicOutputDTO(): ContestPublicOutputDTO {
         clarifications = this.clarifications.map { it.toResponseDTO() },
         announcements = this.announcements.map { it.toResponseDTO() },
     )
-}

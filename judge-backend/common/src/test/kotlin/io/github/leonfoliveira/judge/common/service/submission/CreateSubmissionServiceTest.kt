@@ -1,7 +1,6 @@
 package io.github.leonfoliveira.judge.common.service.submission
 
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import io.github.leonfoliveira.judge.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.judge.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.judge.common.event.SubmissionCreatedEvent
@@ -55,7 +54,7 @@ class CreateSubmissionServiceTest :
             val inputDTO =
                 CreateSubmissionInputDTO(
                     problemId = problemId,
-                    language = Language.PYTHON_312,
+                    language = Submission.Language.PYTHON_312,
                     code = AttachmentInputDTO(id = UUID.randomUUID()),
                 )
 
@@ -106,7 +105,7 @@ class CreateSubmissionServiceTest :
             test("should throw ForbiddenException when contest is not active") {
                 val contest =
                     ContestMockBuilder.build(
-                        languages = listOf(Language.PYTHON_312),
+                        languages = listOf(Submission.Language.PYTHON_312),
                         startAt = OffsetDateTime.now().plusHours(1),
                     )
                 val member = MemberMockBuilder.build(contest = contest)
@@ -124,7 +123,7 @@ class CreateSubmissionServiceTest :
             test("should create submission and publish events") {
                 val contest =
                     ContestMockBuilder.build(
-                        languages = listOf(Language.PYTHON_312),
+                        languages = listOf(Submission.Language.PYTHON_312),
                         startAt = OffsetDateTime.now().minusHours(1),
                     )
                 val member = MemberMockBuilder.build(contest = contest)

@@ -10,7 +10,7 @@ import io.github.leonfoliveira.judge.api.dto.response.contest.toPublicOutputDTO
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.config.JacksonConfig
 import io.github.leonfoliveira.judge.common.domain.entity.Member
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ProblemMockBuilder
@@ -67,7 +67,7 @@ class ContestControllerTest(
                 CreateContestInputDTO(
                     slug = "test-contest",
                     title = "Test Contest",
-                    languages = listOf(Language.PYTHON_312),
+                    languages = listOf(Submission.Language.PYTHON_312),
                     startAt = OffsetDateTime.now().plusHours(1),
                     endAt = OffsetDateTime.now().plusHours(2),
                 )
@@ -91,7 +91,7 @@ class ContestControllerTest(
                     id = UUID.randomUUID(),
                     slug = "updated-contest",
                     title = "Updated Contest",
-                    languages = listOf(Language.PYTHON_312),
+                    languages = listOf(Submission.Language.PYTHON_312),
                     startAt = OffsetDateTime.now().plusHours(1),
                     endAt = OffsetDateTime.now().plusHours(2),
                     settings =

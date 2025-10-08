@@ -5,7 +5,6 @@ import io.github.leonfoliveira.judge.api.dto.response.member.toPublicResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.problem.ProblemPublicResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.problem.toPublicResponseDTO
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -13,13 +12,13 @@ data class SubmissionPublicResponseDTO(
     val id: UUID,
     val member: MemberPublicResponseDTO,
     val problem: ProblemPublicResponseDTO,
-    val language: Language,
+    val language: Submission.Language,
     val answer: Submission.Answer,
     val createdAt: OffsetDateTime,
 )
 
-fun Submission.toPublicResponseDTO(): SubmissionPublicResponseDTO {
-    return SubmissionPublicResponseDTO(
+fun Submission.toPublicResponseDTO(): SubmissionPublicResponseDTO =
+    SubmissionPublicResponseDTO(
         id = id,
         member = member.toPublicResponseDTO(),
         problem = problem.toPublicResponseDTO(),
@@ -27,4 +26,3 @@ fun Submission.toPublicResponseDTO(): SubmissionPublicResponseDTO {
         answer = answer,
         createdAt = createdAt,
     )
-}

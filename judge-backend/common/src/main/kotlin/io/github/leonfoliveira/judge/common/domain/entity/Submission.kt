@@ -1,6 +1,5 @@
 package io.github.leonfoliveira.judge.common.domain.entity
 
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -76,6 +75,17 @@ class Submission(
     val executions: List<Execution> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
     val contest get() = problem.contest
+
+    enum class Language {
+        /** C++ 17 */
+        CPP_17,
+
+        /** Java 21 */
+        JAVA_21,
+
+        /** Python 3.12 */
+        PYTHON_312,
+    }
 
     enum class Status {
         /**

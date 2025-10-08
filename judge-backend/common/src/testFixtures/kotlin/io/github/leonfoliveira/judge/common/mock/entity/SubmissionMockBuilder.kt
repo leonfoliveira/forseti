@@ -4,7 +4,6 @@ import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.entity.Problem
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -16,7 +15,7 @@ object SubmissionMockBuilder {
         deletedAt: OffsetDateTime? = null,
         member: Member = MemberMockBuilder.build(),
         problem: Problem = ProblemMockBuilder.build(),
-        language: Language = Language.PYTHON_312,
+        language: Submission.Language = Submission.Language.PYTHON_312,
         status: Submission.Status = Submission.Status.JUDGING,
         answer: Submission.Answer = Submission.Answer.NO_ANSWER,
         code: Attachment = AttachmentMockBuilder.build(),
