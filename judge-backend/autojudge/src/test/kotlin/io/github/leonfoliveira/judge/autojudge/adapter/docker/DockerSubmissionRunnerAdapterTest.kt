@@ -1,6 +1,5 @@
 package io.github.leonfoliveira.judge.autojudge.adapter.docker
 
-import io.github.leonfoliveira.judge.autojudge.adapter.docker.DockerSubmissionRunnerAdapter
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.entity.Contest
 import io.github.leonfoliveira.judge.common.domain.entity.Member
