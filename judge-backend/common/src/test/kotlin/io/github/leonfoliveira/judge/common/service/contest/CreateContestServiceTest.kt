@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.judge.common.service.contest
 
 import io.github.leonfoliveira.judge.common.domain.entity.Contest
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.domain.exception.ConflictException
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.repository.ContestRepository
@@ -33,7 +33,7 @@ class CreateContestServiceTest :
                 CreateContestInputDTO(
                     slug = "test-contest",
                     title = "Test Contest",
-                    languages = listOf(Language.PYTHON_312),
+                    languages = listOf(Submission.Language.PYTHON_312),
                     startAt = OffsetDateTime.now().plusHours(1),
                     endAt = OffsetDateTime.now().plusHours(2),
                 )

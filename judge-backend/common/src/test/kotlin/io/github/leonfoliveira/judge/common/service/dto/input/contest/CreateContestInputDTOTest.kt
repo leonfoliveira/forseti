@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.judge.common.service.dto.input.contest
 
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import jakarta.validation.Validation
@@ -13,7 +13,7 @@ class CreateContestInputDTOTest :
                 CreateContestInputDTO(
                     slug = "test-contest",
                     title = "Test Contest",
-                    languages = listOf(Language.PYTHON_312),
+                    languages = listOf(Submission.Language.PYTHON_312),
                     startAt = OffsetDateTime.now().plusHours(1),
                     endAt = OffsetDateTime.now().plusHours(2),
                 )

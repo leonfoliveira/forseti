@@ -102,7 +102,10 @@ export function ProblemsPage({
                 {problem.title}
               </GridTableCell>
               {problemStatus && (
-                <GridTableCell data-testid="problem-status">
+                <GridTableCell
+                  className="justify-end"
+                  data-testid="problem-status"
+                >
                   <ProblemStatusChip
                     size="sm"
                     isAccepted={problemStatus[problem.id].isAccepted}

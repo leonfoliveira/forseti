@@ -61,11 +61,13 @@ class DockerSubmissionRunnerAdapter(
 
             val outputs = mutableListOf<String>()
             var status = Submission.Answer.ACCEPTED
+            var lastTestCase: Int? = null
             logger.info("Running test cases")
             for ((index, testCase) in testCases.withIndex()) {
                 val input = testCase[0]
                 val expectedOutput = testCase[1]
                 try {
+                    lastTestCase = index
                     val output =
                         runCode(
                             container = container,
@@ -126,7 +128,7 @@ class DockerSubmissionRunnerAdapter(
                     submission = submission,
                     answer = status,
                     totalTestCases = testCases.size,
-                    lastTestCase = testCases.size - 1,
+                    lastTestCase = lastTestCase,
                     input = problem.testCases,
                     output = uploadOutput(contest, outputs),
                 )
@@ -138,7 +140,6 @@ class DockerSubmissionRunnerAdapter(
                     submission = submission,
                     answer = Submission.Answer.COMPILATION_ERROR,
                     totalTestCases = testCases.size,
-                    lastTestCase = 0,
                     input = problem.testCases,
                     output = uploadOutput(contest, emptyList()),
                 )

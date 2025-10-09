@@ -3,4 +3,11 @@ repo_url: https://github.com/leonfoliveira/judge
 edit_uri: /leonfoliveira/judge/edit/main/docs/docs
 nav:
   - Home: index.md
+  - Setup: setup.md
+  - Usage: usage.md
+  - Development: development.md
 theme: readthedocs
+extra:
+  version: !ENV [VERSION, "latest"]
+extra_css:
+  - css/custom.css

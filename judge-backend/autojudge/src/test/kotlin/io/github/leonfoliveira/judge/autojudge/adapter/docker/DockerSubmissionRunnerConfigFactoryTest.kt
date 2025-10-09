@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.judge.autojudge.adapter.docker
 
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.context.SpringBootTest
@@ -12,7 +12,7 @@ class DockerSubmissionRunnerConfigFactoryTest(
     val sut: DockerSubmissionRunnerConfigFactory,
 ) : FunSpec({
         test("should have configs for all languages") {
-            val languages = Language.entries.toTypedArray()
+            val languages = Submission.Language.entries.toTypedArray()
 
             languages.forEach {
                 sut.get(it) shouldNotBe null
@@ -21,5 +21,5 @@ class DockerSubmissionRunnerConfigFactoryTest(
     })
 
 @Configuration
-@ComponentScan("io.github.leonfoliveira.judge.autojudge.docker.config")
+@ComponentScan("io.github.leonfoliveira.judge.autojudge.adapter.docker.config")
 class Configs

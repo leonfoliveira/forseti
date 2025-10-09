@@ -9,7 +9,7 @@ import io.github.leonfoliveira.judge.api.dto.response.member.toFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.problem.ProblemFullResponseDTO
 import io.github.leonfoliveira.judge.api.dto.response.problem.toFullResponseDTO
 import io.github.leonfoliveira.judge.common.domain.entity.Contest
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -17,7 +17,7 @@ class ContestFullResponseDTO(
     val id: UUID,
     val slug: String,
     val title: String,
-    val languages: List<Language>,
+    val languages: List<Submission.Language>,
     val startAt: OffsetDateTime,
     val endAt: OffsetDateTime,
     val settings: Contest.Settings,

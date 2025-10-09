@@ -2,7 +2,7 @@ package io.github.leonfoliveira.judge.common.service.dto.input.contest
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.leonfoliveira.judge.common.domain.entity.Member
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import io.github.leonfoliveira.judge.common.service.dto.input.attachment.AttachmentInputDTO
 import jakarta.validation.Valid
 import jakarta.validation.constraints.AssertFalse
@@ -26,7 +26,7 @@ data class UpdateContestInputDTO(
     @field:Size(max = 255)
     val title: String,
     @field:NotEmpty
-    val languages: List<Language>,
+    val languages: List<Submission.Language>,
     val startAt: OffsetDateTime,
     @field:Future
     val endAt: OffsetDateTime,

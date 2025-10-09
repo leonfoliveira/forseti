@@ -8,7 +8,6 @@ import io.github.leonfoliveira.judge.api.dto.response.submission.toPublicRespons
 import io.github.leonfoliveira.judge.api.util.ContestAuthFilter
 import io.github.leonfoliveira.judge.common.config.JacksonConfig
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import io.github.leonfoliveira.judge.common.domain.model.RequestContext
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
@@ -63,7 +62,7 @@ class ContestSubmissionControllerTest(
             val body =
                 CreateSubmissionInputDTO(
                     problemId = UUID.randomUUID(),
-                    language = Language.PYTHON_312,
+                    language = Submission.Language.PYTHON_312,
                     code = AttachmentInputDTO(id = UUID.randomUUID()),
                 )
             val submission = SubmissionMockBuilder.build()

@@ -5,7 +5,7 @@ import io.github.leonfoliveira.judge.common.domain.entity.Clarification
 import io.github.leonfoliveira.judge.common.domain.entity.Contest
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.entity.Problem
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
+import io.github.leonfoliveira.judge.common.domain.entity.Submission
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -17,7 +17,7 @@ object ContestMockBuilder {
         deletedAt: OffsetDateTime? = null,
         slug: String = "contest",
         title: String = "Contest Title",
-        languages: List<Language> = listOf(Language.PYTHON_312),
+        languages: List<Submission.Language> = listOf(Submission.Language.PYTHON_312),
         startAt: OffsetDateTime = OffsetDateTime.now().plusHours(1),
         endAt: OffsetDateTime = OffsetDateTime.now().plusHours(2),
         settings: Contest.Settings = Contest.Settings(isAutoJudgeEnabled = true),

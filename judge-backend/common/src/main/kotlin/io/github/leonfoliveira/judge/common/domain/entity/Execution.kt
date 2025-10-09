@@ -47,9 +47,9 @@ class Execution(
     /**
      * Index of the last test case executed.
      */
-    @Column("last_test_case", nullable = false)
+    @Column("last_test_case")
     @Audited(withModifiedFlag = false)
-    val lastTestCase: Int = 0,
+    val lastTestCase: Int? = null,
     /**
      * The input attachment for the execution.
      */

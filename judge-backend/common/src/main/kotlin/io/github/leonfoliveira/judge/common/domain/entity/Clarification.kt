@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
+import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
@@ -61,5 +62,6 @@ class Clarification(
      */
     @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @OrderBy("createdAt ASC")
     var children: List<Clarification> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt)

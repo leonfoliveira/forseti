@@ -1,11 +1,9 @@
 package io.github.leonfoliveira.judge.autojudge.adapter.docker
 
-import io.github.leonfoliveira.judge.autojudge.adapter.docker.DockerSubmissionRunnerAdapter
 import io.github.leonfoliveira.judge.common.domain.entity.Attachment
 import io.github.leonfoliveira.judge.common.domain.entity.Contest
 import io.github.leonfoliveira.judge.common.domain.entity.Member
 import io.github.leonfoliveira.judge.common.domain.entity.Submission
-import io.github.leonfoliveira.judge.common.domain.enumerate.Language
 import io.github.leonfoliveira.judge.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.judge.common.mock.entity.MemberMockBuilder
@@ -87,7 +85,7 @@ class DockerSubmissionRunnerAdapterTest(
 
         fun createSubmission(
             contest: Contest,
-            language: Language,
+            language: Submission.Language,
             filename: String,
             contentType: String,
         ): Submission {
@@ -126,7 +124,7 @@ class DockerSubmissionRunnerAdapterTest(
                 Pair("wrong_answer.cpp", Submission.Answer.WRONG_ANSWER),
             ).forEach { (filename, expectedAnswer) ->
                 test("should run a submission with C++ 17 and return $expectedAnswer") {
-                    val submission = createSubmission(contest, Language.CPP_17, filename, "text/plain")
+                    val submission = createSubmission(contest, Submission.Language.CPP_17, filename, "text/plain")
                     val code = importCode("/code/cpp17/$filename")
                     attachmentBucket.upload(submission.code, code.toByteArray())
                     sut.run(submission).answer shouldBe expectedAnswer
@@ -144,7 +142,7 @@ class DockerSubmissionRunnerAdapterTest(
                 Pair("WrongAnswer.java", Submission.Answer.WRONG_ANSWER),
             ).forEach { (filename, expectedAnswer) ->
                 test("should run a submission with Java 21 and return $expectedAnswer") {
-                    val submission = createSubmission(contest, Language.JAVA_21, filename, "text/plain")
+                    val submission = createSubmission(contest, Submission.Language.JAVA_21, filename, "text/plain")
                     val code = importCode("/code/java21/$filename")
                     attachmentBucket.upload(submission.code, code.toByteArray())
                     sut.run(submission).answer shouldBe expectedAnswer
@@ -161,7 +159,7 @@ class DockerSubmissionRunnerAdapterTest(
                 Pair("wrong_answer.py", Submission.Answer.WRONG_ANSWER),
             ).forEach { (filename, expectedAnswer) ->
                 test("should run a submission with Python 3.12 and return $expectedAnswer") {
-                    val submission = createSubmission(contest, Language.PYTHON_312, filename, "text/plain")
+                    val submission = createSubmission(contest, Submission.Language.PYTHON_312, filename, "text/plain")
                     val code = importCode("/code/python312/$filename")
                     attachmentBucket.upload(submission.code, code.toByteArray())
                     sut.run(submission).answer shouldBe expectedAnswer

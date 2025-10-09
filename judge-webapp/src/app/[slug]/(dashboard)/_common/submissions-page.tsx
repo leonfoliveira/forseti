@@ -223,8 +223,6 @@ export function SubmissionsPage({
   const formRef = React.useRef<HTMLFormElement>(null);
 
   async function createSubmission(data: SubmissionFormType) {
-    console.log(data);
-
     createState.start();
     try {
       await submissionService.createSubmission(
@@ -241,7 +239,6 @@ export function SubmissionsPage({
       });
     }
   }
-  console.log(form.watch("code"));
 
   async function resubmitSubmission(submissionId: string) {
     resubmitState.start();

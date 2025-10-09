@@ -2,23 +2,10 @@
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/leonfoliveira/judge)
 
-A fullstack application for running programming contests
+A comprehensive, production-ready platform for running secure and scalable competitive programming contests.
 
-## Production
+## Documentation
 
-### Requirements
+📚 **[View Full Documentation](https://leonfoliveira.github.io/judge/)**
 
-- Unix based system or wsl2
-- [docker](https://www.docker.com/)
-
-### Installation
-
-1. Download the latest [release](https://github.com/leonfoliveira/judge/releases).
-2. Unzip it
-3. Run `./judge install`
-
-### Running
-
-```shell
-./judge start
-```
+For detailed information about setup, usage, and development, please visit our comprehensive documentation site.
