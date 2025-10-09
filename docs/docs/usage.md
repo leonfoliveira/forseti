@@ -372,8 +372,8 @@ The platform uses a standard competitive programming ranking system based on the
 
 1. **Problems Solved**: Number of problems with accepted solutions
 2. **Total Penalty Time**: Cumulative penalty calculated as:
-   - 20 minutes added for each wrong submission before the first accepted solution
-   - Plus the time elapsed (in seconds) from contest start to the accepted submission for each solved problem
+    - 20 minutes added for each wrong submission before the first accepted solution
+    - Plus the time elapsed (in seconds) from contest start to the accepted submission for each solved problem
 3. **Acceptance Timestamps**: If tied on problems solved and penalty time, ranking is determined by the time of first acceptance, then second acceptance, and so on (measured in milliseconds for precision)
 4. **Alphabetical Order**: As a final tiebreaker, participants are ordered alphabetically by name
 
