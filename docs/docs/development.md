@@ -308,8 +308,7 @@ The ROOT user has bypass access to all endpoints and authorization checks, regar
 
 #### Root
 
-<details>
-<summary>[POST] /v1/root/sign-in</summary>
+**[POST] /v1/root/sign-in**
 
 Sign in as root
 
@@ -337,12 +336,9 @@ Sign in as root
 }
 ```
 
-</details>
-
 #### Session
 
-<details>
-<summary>[GET] /v1/session/me</summary>
+**[GET] /v1/session/me**
 
 Get current session
 
@@ -362,10 +358,7 @@ Get current session
 }
 ```
 
-</details>
-
-<details>
-<summary>[DELETE] /v1/session/me</summary>
+**[DELETE] /v1/session/me**
 
 Delete current session (logout)
 
@@ -373,12 +366,9 @@ Delete current session (logout)
 
 **Response:** 204 No Content
 
-</details>
-
 #### Contest
 
-<details>
-<summary>[POST] /v1/contests</summary>
+**[POST] /v1/contests**
 
 Create a contest
 
@@ -419,10 +409,7 @@ Create a contest
 }
 ```
 
-</details>
-
-<details>
-<summary>[PUT] /v1/contests</summary>
+**[PUT] /v1/contests**
 
 Update a contest
 
@@ -464,10 +451,7 @@ Update a contest
 }
 ```
 
-</details>
-
-<details>
-<summary>[GET] /v1/contests/metadata</summary>
+**[GET] /v1/contests/metadata**
 
 Find all contest metadata
 
@@ -487,10 +471,7 @@ Find all contest metadata
 ]
 ```
 
-</details>
-
-<details>
-<summary>[GET] /v1/contests/slug/{contestSlug}/metadata</summary>
+**[GET] /v1/contests/slug/{contestSlug}/metadata**
 
 Find contest metadata by slug
 
@@ -508,10 +489,7 @@ Find contest metadata by slug
 }
 ```
 
-</details>
-
-<details>
-<summary>[GET] /v1/contests/{contestId}</summary>
+**[GET] /v1/contests/{contestId}**
 
 Find contest by id
 
@@ -533,10 +511,7 @@ Find contest by id
 }
 ```
 
-</details>
-
-<details>
-<summary>[GET] /v1/contests/{contestId}/full</summary>
+**[GET] /v1/contests/{contestId}/full**
 
 Find full contest by id (includes all members)
 
@@ -562,10 +537,7 @@ Find full contest by id (includes all members)
 }
 ```
 
-</details>
-
-<details>
-<summary>[PUT] /v1/contests/{contestId}/start</summary>
+**[PUT] /v1/contests/{contestId}/start**
 
 Force start a contest
 
@@ -583,10 +555,7 @@ Force start a contest
 }
 ```
 
-</details>
-
-<details>
-<summary>[PUT] /v1/contests/{contestId}/end</summary>
+**[PUT] /v1/contests/{contestId}/end**
 
 Force end a contest
 
@@ -604,10 +573,7 @@ Force end a contest
 }
 ```
 
-</details>
-
-<details>
-<summary>[DELETE] /v1/contests/{contestId}</summary>
+**[DELETE] /v1/contests/{contestId}**
 
 Delete a contest
 
@@ -615,10 +581,7 @@ Delete a contest
 
 **Response:** 204 No Content
 
-</details>
-
-<details>
-<summary>[POST] /v1/contests/{contestId}/sign-in</summary>
+**[POST] /v1/contests/{contestId}/sign-in**
 
 Sign in to a contest
 
@@ -647,12 +610,9 @@ Sign in to a contest
 }
 ```
 
-</details>
-
 #### Announcements
 
-<details>
-<summary>[POST] /v1/contests/{contestId}/announcements</summary>
+**[POST] /v1/contests/{contestId}/announcements**
 
 Create an announcement
 
@@ -681,12 +641,9 @@ Create an announcement
 }
 ```
 
-</details>
-
 #### Attachments
 
-<details>
-<summary>[POST] /v1/contests/{contestId}/attachments/{context}</summary>
+**[POST] /v1/contests/{contestId}/attachments/{context}**
 
 Upload an attachment
 
@@ -711,10 +668,7 @@ Upload an attachment
 }
 ```
 
-</details>
-
-<details>
-<summary>[GET] /v1/contests/{contestId}/attachments/{attachmentId}</summary>
+**[GET] /v1/contests/{contestId}/attachments/{attachmentId}**
 
 Download an attachment
 
@@ -722,12 +676,9 @@ Download an attachment
 
 **Response:** File download with appropriate headers
 
-</details>
-
 #### Clarifications
 
-<details>
-<summary>[POST] /v1/contests/{contestId}/clarifications</summary>
+**[POST] /v1/contests/{contestId}/clarifications**
 
 Create a clarification
 
@@ -767,10 +718,7 @@ Create a clarification
 }
 ```
 
-</details>
-
-<details>
-<summary>[DELETE] /v1/contests/{contestId}/clarifications/{clarificationId}</summary>
+**[DELETE] /v1/contests/{contestId}/clarifications/{clarificationId}**
 
 Delete a clarification
 
@@ -778,12 +726,9 @@ Delete a clarification
 
 **Response:** 204 No Content
 
-</details>
-
 #### Leaderboard
 
-<details>
-<summary>[GET] /v1/contests/{contestId}/leaderboard</summary>
+**[GET] /v1/contests/{contestId}/leaderboard**
 
 Find contest leaderboard by id
 
@@ -807,12 +752,9 @@ Find contest leaderboard by id
 }
 ```
 
-</details>
-
 #### Submissions
 
-<details>
-<summary>[POST] /v1/contests/{contestId}/submissions</summary>
+**[POST] /v1/contests/{contestId}/submissions**
 
 Create a submission
 
@@ -855,10 +797,7 @@ Create a submission
 }
 ```
 
-</details>
-
-<details>
-<summary>[GET] /v1/contests/{contestId}/submissions</summary>
+**[GET] /v1/contests/{contestId}/submissions**
 
 Find all contest submissions
 
@@ -885,10 +824,7 @@ Find all contest submissions
 ]
 ```
 
-</details>
-
-<details>
-<summary>[GET] /v1/contests/{contestId}/submissions/full</summary>
+**[GET] /v1/contests/{contestId}/submissions/full**
 
 Find all contest full submissions
 
@@ -923,10 +859,7 @@ Find all contest full submissions
 ]
 ```
 
-</details>
-
-<details>
-<summary>[GET] /v1/contests/{contestId}/submissions/full/members/me</summary>
+**[GET] /v1/contests/{contestId}/submissions/full/members/me**
 
 Find all full submissions for current member
 
@@ -961,10 +894,7 @@ Find all full submissions for current member
 ]
 ```
 
-</details>
-
-<details>
-<summary>[PUT] /v1/contests/{contestId}/submissions/{id}/answer/{answer}</summary>
+**[PUT] /v1/contests/{contestId}/submissions/{id}/answer/{answer}**
 
 Update a submission answer
 
@@ -972,10 +902,7 @@ Update a submission answer
 
 **Response:** 204 No Content
 
-</details>
-
-<details>
-<summary>[PUT] /v1/contests/{contestId}/submissions/{id}/answer/{answer}/force</summary>
+**[PUT] /v1/contests/{contestId}/submissions/{id}/answer/{answer}/force**
 
 Force update a submission answer
 
@@ -983,10 +910,7 @@ Force update a submission answer
 
 **Response:** 204 No Content
 
-</details>
-
-<details>
-<summary>[POST] /v1/contests/{contestId}/submissions/{id}/rerun</summary>
+**[POST] /v1/contests/{contestId}/submissions/{id}/rerun**
 
 Rerun a submission
 
@@ -994,14 +918,11 @@ Rerun a submission
 
 **Response:** 204 No Content
 
-</details>
-
 ### WebSocket Topics
 
 The API exposes a STOMP over SockJS WebSocket broker at `/ws` for real-time contest updates.
 
-<details>
-<summary>/topic/contests/{contestId}/announcements</summary>
+**/topic/contests/{contestId}/announcements**
 
 Broadcasts new announcements created in the contest
 
@@ -1020,10 +941,7 @@ Broadcasts new announcements created in the contest
 }
 ```
 
-</details>
-
-<details>
-<summary>/topic/contests/{contestId}/clarifications</summary>
+**/topic/contests/{contestId}/clarifications**
 
 Broadcasts new clarifications (questions) created in the contest
 
@@ -1051,19 +969,13 @@ Broadcasts new clarifications (questions) created in the contest
 }
 ```
 
-</details>
-
-<details>
-<summary>/topic/contests/{contestId}/clarifications/children/members/{memberId}</summary>
+**/topic/contests/{contestId}/clarifications/children/members/{memberId}**
 
 Broadcasts clarification responses (answers) to a specific member who asked the original question
 
 **Message Format:** Same as `/topic/contests/{contestId}/clarifications`
 
-</details>
-
-<details>
-<summary>/topic/contests/{contestId}/clarifications/deleted</summary>
+**/topic/contests/{contestId}/clarifications/deleted**
 
 Broadcasts when a clarification is deleted
 
@@ -1075,10 +987,7 @@ Broadcasts when a clarification is deleted
 }
 ```
 
-</details>
-
-<details>
-<summary>/topic/contests/{contestId}/leaderboard</summary>
+**/topic/contests/{contestId}/leaderboard**
 
 Broadcasts updated leaderboard data whenever submissions are judged
 
@@ -1111,10 +1020,7 @@ Broadcasts updated leaderboard data whenever submissions are judged
 }
 ```
 
-</details>
-
-<details>
-<summary>/topic/contests/{contestId}/submissions</summary>
+**/topic/contests/{contestId}/submissions**
 
 Broadcasts public submission updates (visible to all contest participants)
 
@@ -1137,10 +1043,7 @@ Broadcasts public submission updates (visible to all contest participants)
 }
 ```
 
-</details>
-
-<details>
-<summary>/topic/contests/{contestId}/submissions/full</summary>
+**/topic/contests/{contestId}/submissions/full**
 
 Broadcasts full submission updates (for judges and admins with detailed execution information)
 
@@ -1171,21 +1074,15 @@ Broadcasts full submission updates (for judges and admins with detailed executio
 }
 ```
 
-</details>
-
-<details>
-<summary>/topic/contests/{contestId}/submissions/full/members/{memberId}</summary>
+**/topic/contests/{contestId}/submissions/full/members/{memberId}**
 
 Broadcasts full submission updates for a specific member (allows contestants to see their own submissions with full details)
 
 **Message Format:** Same as `/topic/contests/{contestId}/submissions/full`
 
-</details>
-
 ### Consumers
 
-<details>
-<summary>submission-failed-queue</summary>
+**submission-failed-queue**
 
 Marks a submission as failed and emits a WebSocket notification.
 
@@ -1200,8 +1097,6 @@ Marks a submission as failed and emits a WebSocket notification.
 }
 ```
 
-</details>
-
 ## Autojudge
 
 ### Sandboxes
@@ -1210,8 +1105,7 @@ For security, submission code is executed in isolated Docker alpine:3.22.1 sandb
 
 ### Consumers
 
-<details>
-<summary>submission-queue</summary>
+**submission-queue**
 
 Executes a submission in a sandbox environment, evaluates the results, and sends the verdict back to the API.
 
