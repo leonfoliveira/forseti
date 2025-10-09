@@ -18,7 +18,7 @@ Create a new contest with a unique identifier:
 ./judge contest create <slug>
 ```
 
-> **Note:** The `<slug>` must be unique and will be used in URLs and as the primary identifier for the contest.
+> **Note:** The `<slug>` must be unique and will be used in URLs.
 
 #### Listing Contests
 
