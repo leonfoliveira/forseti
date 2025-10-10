@@ -137,6 +137,7 @@ export function ClarificationsPage({
   const deleteModal = useModal<string>();
   const form = useForm<ClarificationFormType>({
     resolver: joiResolver(clarificationFormSchema),
+    defaultValues: ClarificationFormMap.getDefault(),
   });
 
   async function createClarification(data: ClarificationFormType) {
@@ -377,6 +378,7 @@ function AnswerForm({
   const createClarificationState = useLoadableState();
   const form = useForm<ClarificationFormType>({
     resolver: joiResolver(clarificationFormSchema),
+    defaultValues: ClarificationFormMap.getDefault(),
   });
   const toast = useToast();
 

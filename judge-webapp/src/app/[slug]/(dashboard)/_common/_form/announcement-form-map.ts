@@ -7,4 +7,10 @@ export class AnnouncementFormMap {
       text: data.text,
     };
   }
+
+  static getDefault(): AnnouncementFormType {
+    return {
+      text: "",
+    };
+  }
 }

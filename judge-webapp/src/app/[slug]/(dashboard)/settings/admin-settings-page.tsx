@@ -11,7 +11,7 @@ import { settingsFormSchema } from "@/app/[slug]/(dashboard)/settings/_form/sett
 import { ContestSettings } from "@/app/[slug]/(dashboard)/settings/_tab/contest-settings";
 import { MembersSettings } from "@/app/[slug]/(dashboard)/settings/_tab/members-settings";
 import { ProblemsSettings } from "@/app/[slug]/(dashboard)/settings/_tab/problems-settings";
-import { contestService } from "@/config/composition";
+import { contestService, leaderboardService } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ConflictException } from "@/core/domain/exception/ConflictException";
@@ -140,8 +140,14 @@ export function AdminSettingsPage() {
         /* Redirect to new path if slug has changed */
         router.push(routes.CONTEST_SETTINGS(newContest.slug));
       } else {
+        const leaderboard = await leaderboardService.findContestLeaderboard(
+          newContest.id,
+        );
+
         dispatch(contestMetadataSlice.actions.set(newContest));
         dispatch(adminDashboardSlice.actions.setContest(newContest));
+        dispatch(adminDashboardSlice.actions.setLeaderboard(leaderboard));
+
         toast.success(messages.saveSuccess);
         saveModal.close();
         saveState.finish();

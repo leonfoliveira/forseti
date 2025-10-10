@@ -9,4 +9,12 @@ export class SubmissionFormMap {
       code: data.code[0],
     };
   }
+
+  static getDefault(): SubmissionFormType {
+    return {
+      problemId: undefined,
+      language: undefined,
+      code: undefined,
+    } as unknown as SubmissionFormType;
+  }
 }

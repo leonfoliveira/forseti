@@ -7,6 +7,7 @@ import io.github.leonfoliveira.judge.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.judge.common.service.authentication.AuthenticationService
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
+import io.mockk.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
@@ -55,5 +56,23 @@ class SessionControllerTest(
                         sameSite("session_id", "Lax")
                     }
                 }
+        }
+
+        test("deleteSession without session") {
+            RequestContext.getContext().session = null
+            webMvc
+                .delete("/v1/session/me")
+                .andExpect {
+                    status { isNoContent() }
+                    cookie {
+                        value("session_id", "")
+                        path("session_id", "/")
+                        secure("session_id", true)
+                        httpOnly("session_id", true)
+                        sameSite("session_id", "Lax")
+                    }
+                }
+
+            verify(exactly = 0) { authenticationService.deleteSession(any()) }
         }
     })

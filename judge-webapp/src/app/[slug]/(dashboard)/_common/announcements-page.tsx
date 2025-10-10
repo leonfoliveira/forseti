@@ -74,6 +74,7 @@ export function AnnouncementsPage({
 
   const form = useForm<AnnouncementFormType>({
     resolver: joiResolver(announcementFormSchema),
+    defaultValues: AnnouncementFormMap.getDefault(),
   });
 
   async function createAnnouncement(data: AnnouncementFormType) {

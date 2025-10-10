@@ -216,9 +216,11 @@ export function SubmissionsPage({
   const judgeModal = useModal<string>();
   const form = useForm<SubmissionFormType>({
     resolver: joiResolver(submissionFormSchema),
+    defaultValues: SubmissionFormMap.getDefault(),
   });
   const judgeForm = useForm<SubmissionJudgeFormType>({
     resolver: joiResolver(submissionJudgeFormSchema),
+    defaultValues: { answer: undefined },
   });
   const formRef = React.useRef<HTMLFormElement>(null);
 
