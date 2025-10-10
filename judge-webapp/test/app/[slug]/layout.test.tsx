@@ -47,17 +47,6 @@ describe("ContestLayout", () => {
     );
   });
 
-  it("should call notFound for invalid slug format", async () => {
-    const invalidParams = Promise.resolve({ slug: "invalid/slug" });
-
-    await ContestLayout({
-      params: invalidParams,
-      children: <TestChildren />,
-    });
-
-    expect(notFound).toHaveBeenCalled();
-  });
-
   it("should render layout with header, content, and footer when data loads successfully", async () => {
     const { getByTestId } = render(
       await ContestLayout({

@@ -11,4 +11,12 @@ export class ClarificationFormMap {
       text: data.text,
     };
   }
+
+  static getDefault(): ClarificationFormType {
+    return {
+      parentId: undefined,
+      problemId: undefined,
+      text: "",
+    };
+  }
 }
