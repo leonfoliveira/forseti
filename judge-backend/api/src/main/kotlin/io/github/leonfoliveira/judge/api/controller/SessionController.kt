@@ -60,7 +60,6 @@ class SessionController(
     }
 
     @DeleteMapping("/me")
-    @Private
     @Operation(
         summary = "Delete current session",
         description = "Deletes the session of the current user, effectively logging them out.",
@@ -86,8 +85,10 @@ class SessionController(
     @Transactional
     fun deleteSession(): ResponseEntity<Void> {
         logger.info("[DELETE] /v1/session/me")
-        val session = RequestContext.getContext().session!!
-        authenticationService.deleteSession(session)
+        val session = RequestContext.getContext().session
+        if (session != null) {
+            authenticationService.deleteSession(session)
+        }
         val cookie = sessionCookieService.buildClearCookie()
         return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, cookie).build()
     }
