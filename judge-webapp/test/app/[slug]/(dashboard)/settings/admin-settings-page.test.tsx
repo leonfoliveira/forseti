@@ -2,11 +2,12 @@ import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 
 import { AdminSettingsPage } from "@/app/[slug]/(dashboard)/settings/admin-settings-page";
-import { contestService } from "@/config/composition";
+import { contestService, leaderboardService } from "@/config/composition";
 import { useToast } from "@/lib/util/toast-hook";
 import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
+import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 
 jest.mock("@/app/[slug]/(dashboard)/settings/_tab/contest-settings", () => ({
   ContestSettings: (props: any) =>
@@ -97,6 +98,10 @@ describe("AdminSettingsPage", () => {
   it("should handle save success", async () => {
     const newContest = MockContestFullResponseDTO();
     (contestService.updateContest as jest.Mock).mockResolvedValue(newContest);
+    const newLeaderboard = MockLeaderboardResponseDTO();
+    (leaderboardService.findContestLeaderboard as jest.Mock).mockResolvedValue(
+      newLeaderboard,
+    );
     const { store } = await renderWithProviders(<AdminSettingsPage />, {
       contestMetadata: MockContestMetadataResponseDTO({
         startAt: new Date(Date.now() - 60 * 1000).toISOString(),
@@ -116,6 +121,7 @@ describe("AdminSettingsPage", () => {
     expect(saveConfirmationModal).toBeInTheDocument();
     expect(contestService.updateContest).toHaveBeenCalled();
     expect(store.getState().adminDashboard.contest).toBe(newContest);
+    expect(store.getState().adminDashboard.leaderboard).toBe(newLeaderboard);
     expect(useToast().success).toHaveBeenCalled();
   });
 
