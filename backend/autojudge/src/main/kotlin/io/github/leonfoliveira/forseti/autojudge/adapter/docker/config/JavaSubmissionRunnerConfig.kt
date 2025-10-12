@@ -17,7 +17,7 @@ class JavaSubmissionRunnerConfig(
     fun java21() =
         DockerSubmissionRunnerConfig(
             language = Submission.Language.JAVA_21,
-            image = "judge-sb-java21:$version",
+            image = "forseti-sb-java21:$version",
             createCompileCommand = { codeFile ->
                 arrayOf("javac", "-d", ".", codeFile.name)
             },

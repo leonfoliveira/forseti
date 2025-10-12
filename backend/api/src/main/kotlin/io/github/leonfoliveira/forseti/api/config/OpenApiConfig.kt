@@ -18,9 +18,9 @@ class OpenApiConfig(
         OpenAPI()
             .info(
                 Info()
-                    .title("Judge API")
+                    .title("Forseti API")
                     .version(version)
-                    .description("API for the Judge application"),
+                    .description("API for the Forseti application"),
             ).components(
                 Components()
                     .addSecuritySchemes(

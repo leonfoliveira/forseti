@@ -31,7 +31,7 @@ class DockerSubmissionRunnerAdapter(
         val problem = submission.problem
         logger.info("Running submission: ${submission.id} for problem: ${problem.id} with language: ${submission.language}")
 
-        val tmpDir = Files.createTempDirectory("judge_${submission.id}").toFile()
+        val tmpDir = Files.createTempDirectory("forseti_${submission.id}").toFile()
         logger.info("Temporary directory created: ${tmpDir.absolutePath}")
         logger.info("Storing submission code file")
         val codeFile = loadCode(submission, tmpDir)
@@ -45,7 +45,7 @@ class DockerSubmissionRunnerAdapter(
             DockerContainer.create(
                 imageName = config.image,
                 memoryLimit = problem.memoryLimit,
-                name = "judge_sb.${submission.id}",
+                name = "forseti_sb.${submission.id}",
             )
         logger.info("Starting Docker container")
         container.start()

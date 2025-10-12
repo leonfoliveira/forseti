@@ -17,7 +17,7 @@ class CppSubmissionRunnerConfig(
     fun cpp17() =
         DockerSubmissionRunnerConfig(
             language = Submission.Language.CPP_17,
-            image = "judge-sb-cpp17:$version",
+            image = "forseti-sb-cpp17:$version",
             createCompileCommand = { codeFile ->
                 arrayOf("g++", "-o", "a.out", codeFile.name, "-O2", "-std=c++17", "-DONLINE_JUDGE")
             },
