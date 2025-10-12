@@ -1,10 +1,10 @@
-# Judge Platform
+# Forseti Judge Platform
 
 A comprehensive, production-ready platform for running secure and scalable competitive programming contests.
 
 ## Overview
 
-Judge is a fullstack distributed system designed to manage competitive programming contests in secure, offline environments. With features for isolated code execution, real-time judging, leaderboards, and contest administration, it operates entirely without internet connectivity once deployed. Built with modern technologies and deployed using Docker Swarm, it provides a robust, self-contained solution for contests of any scale—from small educational events to large-scale competitions with hundreds of participants.
+Forseti Judge is a fullstack distributed system designed to manage competitive programming contests in secure, offline environments. With features for isolated code execution, real-time judging, leaderboards, and contest administration, it operates entirely without internet connectivity once deployed. Built with modern technologies and deployed using Docker Swarm, it provides a robust, self-contained solution for contests of any scale—from small educational events to large-scale competitions with hundreds of participants.
 
 ### Key Features
 
@@ -116,13 +116,13 @@ Technical reference for developers:
 
 ## Support and Resources
 
-- **GitHub Repository**: [leonfoliveira/judge](https://github.com/leonfoliveira/judge)
-- **Report Issues**: [GitHub Issues](https://github.com/leonfoliveira/judge/issues)
-- **Latest Release**: [Releases Page](https://github.com/leonfoliveira/judge/releases)
+- **GitHub Repository**: [leonfoliveira/forseti](https://github.com/leonfoliveira/forseti)
+- **Report Issues**: [GitHub Issues](https://github.com/leonfoliveira/forseti/issues)
+- **Latest Release**: [Releases Page](https://github.com/leonfoliveira/juforsetidge/releases)
 
 ## License
 
-See the [LICENSE](https://github.com/leonfoliveira/judge/blob/main/LICENSE) file in the repository.
+See the [LICENSE](https://github.com/leonfoliveira/forseti/blob/main/LICENSE) file in the repository.
 
 ---
 

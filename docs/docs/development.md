@@ -2,9 +2,9 @@
 
 ## Architecture
 
-The judge platform is built on a distributed architecture, designed to handle competitive programming contests at scale.
+The forseti judge platform is built on a distributed architecture, designed to handle competitive programming contests at scale.
 
-![Architecture](./img/development/judge.jpg)
+![Architecture](./img/development/architecture.jpg)
 
 ### Traefik
 
