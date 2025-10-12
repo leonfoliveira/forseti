@@ -3,7 +3,7 @@ name: Check Webapp
 on:
   pull_request:
     paths:
-      - "judge-webapp/**"
+      - "applications/webapp/**"
       - ".github/workflows/check-webapp.yaml"
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: judge-webapp
+        working-directory: applications/webapp
 
     steps:
       - name: Checkout code
@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 22
           cache: "npm"
-          cache-dependency-path: judge-webapp/package-lock.json
+          cache-dependency-path: applications/webapp/package-lock.json
 
       - name: Install
         run: npm ci

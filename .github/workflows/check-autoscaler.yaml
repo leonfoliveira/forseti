@@ -3,7 +3,7 @@ name: Check Autoscaler
 on:
   pull_request:
     paths:
-      - "judge-autoscaler/**"
+      - "applications/autoscaler/**"
       - ".github/workflows/check-autoscaler.yaml"
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: judge-autoscaler
+        working-directory: applications/autoscaler
 
     steps:
       - name: Checkout code
@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
-          cache-dependency-path: judge-autoscaler/requirements.dev.txt
+          cache-dependency-path: applications/autoscaler/requirements.dev.txt
 
       - name: Install dependencies
         run: pip install -r requirements.dev.txt

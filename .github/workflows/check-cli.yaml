@@ -3,7 +3,7 @@ name: Check CLI
 on:
   pull_request:
     paths:
-      - "judge-cli/**"
+      - "applications/cli/**"
       - ".github/workflows/check-cli.yaml"
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: judge-cli
+        working-directory: applications/cli
 
     steps:
       - name: Checkout code
@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
-          cache-dependency-path: judge-cli/requirements.dev.txt
+          cache-dependency-path: applications/cli/requirements.dev.txt
 
       - name: Install dependencies
         run: pip install -r requirements.dev.txt

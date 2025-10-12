@@ -16,7 +16,7 @@ jobs:
       - name: Build test composition
         run: |
           docker compose -f deployment/development/docker-compose.yaml build --progress=plain --pull
-          docker build -f judge-backend/autojudge/src/main/resources/sandboxes/python312.Dockerfile -t judge-sb-python312:latest .
+          docker build -f applications/backend/autojudge/src/main/resources/sandboxes/python312.Dockerfile -t applications-sb-python312:latest .
 
       - name: Start test composition
         run: |
@@ -27,16 +27,16 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
-          cache-dependency-path: judge-cli/requirements.dev.txt
+          cache-dependency-path: applications/cli/requirements.dev.txt
 
       - name: Install CLI dependencies
         run: |
-          cd judge-cli
+          cd applications/cli
           pip install -r requirements.dev.txt
 
       - name: Build CLI
         run: |
-          cd judge-cli
+          cd applications/cli
           make build
 
       - name: Set up Node.js

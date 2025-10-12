@@ -21,7 +21,7 @@ RUN curl -L "https://download.docker.com/linux/static/stable/x86_64/docker-${DOC
     && rm -r docker
 ENV DOCKER_HOST=unix:///var/run/docker.sock
 
-COPY --from=builder /app/autojudge/build/libs/judge-autojudge.jar app.jar
+COPY --from=builder /app/autojudge/build/libs/autojudge.jar app.jar
 COPY ./entrypoint.sh entrypoint.sh
 
 EXPOSE 8081

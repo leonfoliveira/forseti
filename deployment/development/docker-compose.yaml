@@ -86,12 +86,12 @@ services:
     networks:
       - dev-forseti-network
     volumes:
-      - ../../backend/common/src/main/resources/migration:/flyway/sql
+      - ../../applications/backend/common/src/main/resources/migration:/flyway/sql
 
   api:
     container_name: dev-forseti-api
     build:
-      context: ../../backend
+      context: ../../applications/backend
       dockerfile: api.Dockerfile
     environment:
       COOKIE_SECURE: "false"
@@ -144,7 +144,7 @@ services:
   autojudge:
     container_name: dev-forseti-autojudge
     build:
-      context: ../../backend
+      context: ../../applications/backend
       dockerfile: autojudge.Dockerfile
     environment:
       API_URL: http://api:8080
@@ -201,7 +201,7 @@ services:
   webapp:
     container_name: dev-forseti-webapp
     build:
-      context: ../../webapp
+      context: ../../applications/webapp
       dockerfile: Dockerfile
     environment:
       API_INTERNAL_URL: http://api:8080
