@@ -110,15 +110,15 @@ jobs:
         run: |
           cp ../../README.md .
           cp ../../LICENSE .
-          cp ../../applications/cli/dist/judge .
+          cp ../../applications/cli/dist/forseti .
 
       - name: Create ZIP file with tag name
-        run: zip -r applications-${{ steps.vars.outputs.tag }}.zip *
+        run: zip -r forseti-${{ steps.vars.outputs.tag }}.zip *
 
       - name: Upload ZIP to release
         uses: softprops/action-gh-release@v1
         with:
-          files: deployment/production/applications-${{ steps.vars.outputs.tag }}.zip
+          files: deployment/production/forseti-${{ steps.vars.outputs.tag }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
