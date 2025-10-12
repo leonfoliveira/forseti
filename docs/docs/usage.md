@@ -1,10 +1,10 @@
 # Usage
 
-This guide provides comprehensive instructions for using the Judge platform, covering both the command-line interface for contest administration and the web-based dashboard for different user roles.
+This guide provides comprehensive instructions for using the Forseti Judge platform, covering both the command-line interface for contest administration and the web-based dashboard for different user roles.
 
 ## CLI
 
-The Judge CLI tool (`./judge`) provides essential commands for Root administrators to manage the contest lifecycle. These commands enable quick contest operations directly from the command line.
+The Forseti Judge CLI tool (`./forseti`) provides essential commands for Root administrators to manage the contest lifecycle. These commands enable quick contest operations directly from the command line.
 
 ### Contest Management
 
@@ -15,7 +15,7 @@ The CLI offers streamlined contest management operations for administrators. All
 Create a new contest with a unique identifier:
 
 ```shell
-./judge contest create <slug>
+./forseti contest create <slug>
 ```
 
 > **Note:** The `<slug>` must be unique and will be used in URLs.
@@ -25,7 +25,7 @@ Create a new contest with a unique identifier:
 Display all contests in the system:
 
 ```shell
-./judge contest ls
+./forseti contest ls
 ```
 
 This command shows contest details including ID, slug, status, and timing information.
@@ -35,7 +35,7 @@ This command shows contest details including ID, slug, status, and timing inform
 Force start a contest before its scheduled start time:
 
 ```shell
-./judge contest start <contest-id>
+./forseti contest start <contest-id>
 ```
 
 > **Use Case:** Useful when you need to begin a contest immediately for testing or when schedules change unexpectedly.
@@ -45,7 +45,7 @@ Force start a contest before its scheduled start time:
 Force end a contest before its scheduled end time:
 
 ```shell
-./judge contest end <contest-id>
+./forseti contest end <contest-id>
 ```
 
 > **Warning:** This immediately terminates the contest. All submissions after this point will be rejected. Ensure all participants are notified before executing this command.
@@ -55,14 +55,14 @@ Force end a contest before its scheduled end time:
 Permanently delete a contest and all associated data:
 
 ```shell
-./judge contest delete <contest-id>
+./forseti contest delete <contest-id>
 ```
 
 > **Warning:** This action is irreversible and will remove all contest data, including submissions, clarifications, and announcements. Always create a backup before deleting a contest.
 
 ## Dashboard
 
-The contest dashboard is the primary interface for all users during a contest, accessible at `https://judge.app`. The dashboard provides role-based views with different capabilities and access levels depending on the user's role: Root, Admin, Judge, Contestant, or Guest.
+The contest dashboard is the primary interface for all users during a contest, accessible at `https://forseti.live/{slug}`. The dashboard provides role-based views with different capabilities and access levels depending on the user's role: Root, Admin, Judge, Contestant, or Guest.
 
 ### Sign In
 

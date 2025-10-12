@@ -56,7 +56,7 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.api-ratelimit.ratelimit.average=20
         - traefik.http.middlewares.api-ratelimit.ratelimit.burst=40
-        - traefik.http.routers.api.rule=Host(`api.judge.app`)
+        - traefik.http.routers.api.rule=Host(`api.forseti.live`)
         - traefik.http.routers.api.entrypoints=websecure
         - traefik.http.routers.api.tls=true
         - traefik.http.routers.api.middlewares=api-ratelimit
@@ -82,20 +82,20 @@ services:
         order: start-first
         delay: 30s
     environment:
-      COOKIE_DOMAIN: .judge.app
+      COOKIE_DOMAIN: .forseti.live
       DB_PASSWORD_FILE: /run/secrets/db_password
-      DB_URL: jdbc:postgresql://postgres:5432/judge
-      DB_USER: judge
+      DB_URL: jdbc:postgresql://postgres:5432/forseti
+      DB_USER: forseti
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=25.0"
       SESSION_EXPIRATION: 6h
       SESSION_ROOT_EXPIRATION: 3h
       MINIO_ENDPOINT: http://minio:9000
-      MINIO_ACCESS_KEY: judge
+      MINIO_ACCESS_KEY: forseti
       MINIO_SECRET_KEY_FILE: /run/secrets/minio_password
-      MINIO_BUCKET: judge
+      MINIO_BUCKET: forseti
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
-      RABBITMQ_USER: judge
+      RABBITMQ_USER: forseti
       RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
       RABBITMQ_VHOST: /
       RABBITMQ_SUBMISSION_QUEUE: submission-queue
@@ -105,7 +105,7 @@ services:
       ROOT_PASSWORD_FILE: /run/secrets/root_password
       SPRING_PROFILES_ACTIVE: production
       VERSION: ${VERSION:-latest}
-      WEBAPP_PUBLIC_URL: https://judge.app
+      WEBAPP_PUBLIC_URL: https://forseti.live
     healthcheck:
       test:
         - CMD-SHELL
@@ -114,7 +114,7 @@ services:
       interval: 30s
       retries: 5
       start_period: 60s
-    image: leonfoliveira/judge-api:${VERSION:-latest}
+    image: leonfoliveira/forseti-api:${VERSION:-latest}
     networks:
       network:
     secrets:
@@ -143,18 +143,18 @@ services:
     environment:
       API_URL: http://api:8080
       DB_PASSWORD_FILE: /run/secrets/db_password
-      DB_URL: jdbc:postgresql://postgres:5432/judge
-      DB_USER: judge
+      DB_URL: jdbc:postgresql://postgres:5432/forseti
+      DB_USER: forseti
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=25.0"
       SESSION_AUTOJUDGE_EXPIRATION: 10m
       MAX_CONCURRENT_SUBMISSIONS: "1"
       MINIO_ENDPOINT: http://minio:9000
-      MINIO_ACCESS_KEY: judge
+      MINIO_ACCESS_KEY: forseti
       MINIO_SECRET_KEY_FILE: /run/secrets/minio_password
-      MINIO_BUCKET: judge
+      MINIO_BUCKET: forseti
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
-      RABBITMQ_USER: judge
+      RABBITMQ_USER: forseti
       RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
       RABBITMQ_VHOST: /
       RABBITMQ_SUBMISSION_QUEUE: submission-queue
@@ -172,7 +172,7 @@ services:
       interval: 30s
       retries: 5
       start_period: 60s
-    image: leonfoliveira/judge-autojudge:${VERSION:-latest}
+    image: leonfoliveira/forseti-autojudge:${VERSION:-latest}
     networks:
       network:
     volumes:
@@ -214,10 +214,10 @@ services:
       QUEUE_NAME: submission-queue
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 15672
-      RABBITMQ_USER: judge
+      RABBITMQ_USER: forseti
       RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
       RABBITMQ_VHOST: /
-      SERVICE_NAME: judge_autojudge
+      SERVICE_NAME: forseti_autojudge
     healthcheck:
       test:
         - CMD-SHELL
@@ -226,7 +226,7 @@ services:
       interval: 30s
       retries: 5
       start_period: 60s
-    image: leonfoliveira/judge-autoscaler:${VERSION:-latest}
+    image: leonfoliveira/forseti-autoscaler:${VERSION:-latest}
     networks:
       network:
     volumes:
@@ -284,7 +284,7 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.grafana-ratelimit.ratelimit.average=100
         - traefik.http.middlewares.grafana-ratelimit.ratelimit.burst=200
-        - traefik.http.routers.grafana.rule=Host(`grafana.judge.app`)
+        - traefik.http.routers.grafana.rule=Host(`grafana.forseti.live`)
         - traefik.http.routers.grafana.entrypoints=websecure
         - traefik.http.routers.grafana.tls=true
         - traefik.http.routers.grafana.middlewares=grafana-ratelimit
@@ -304,8 +304,8 @@ services:
     entrypoint: sh -c "export DB_PASSWORD=$$(cat /run/secrets/db_password) && /run.sh"
     environment:
       DB_URL: postgres:5432
-      DB_NAME: judge
-      DB_USER: judge
+      DB_NAME: forseti
+      DB_USER: forseti
       DB_PASSWORD_FILE: /run/secrets/db_password
       GF_SECURITY_ADMIN_USER: root
       GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/root_password
@@ -389,8 +389,8 @@ services:
         delay: 30s
     entrypoint: sh -c "flyway -url=$${FLYWAY_URL} -user=$${FLYWAY_USER} -password=$$(cat /run/secrets/db_password) -connectRetries=60 -connectRetriesInterval=5 migrate"
     environment:
-      FLYWAY_URL: jdbc:postgresql://postgres:5432/judge
-      FLYWAY_USER: judge
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/forseti
+      FLYWAY_USER: forseti
     image: flyway/flyway:11.9.2-alpine
     networks:
       network:
@@ -417,7 +417,7 @@ services:
         condition: on-failure
         delay: 5s
     environment:
-      MINIO_ROOT_USER: judge
+      MINIO_ROOT_USER: forseti
       MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_password
       MINIO_PROMETHEUS_AUTH_TYPE: public
     healthcheck:
@@ -497,13 +497,13 @@ services:
         condition: on-failure
         delay: 5s
     environment:
-      POSTGRES_USER: judge
+      POSTGRES_USER: forseti
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
-      POSTGRES_DB: judge
+      POSTGRES_DB: forseti
     healthcheck:
       test:
         - "CMD-SHELL"
-        - "pg_isready -U judge -d judge"
+        - "pg_isready -U forseti -d forseti"
       timeout: 5s
       interval: 15s
       retries: 5
@@ -534,8 +534,8 @@ services:
         condition: on-failure
         delay: 5s
     environment:
-      DATA_SOURCE_URI: postgres:5432/judge?sslmode=disable
-      DATA_SOURCE_USER: judge
+      DATA_SOURCE_URI: postgres:5432/forseti?sslmode=disable
+      DATA_SOURCE_USER: forseti
       DATA_SOURCE_PASS_FILE: /run/secrets/db_password
     healthcheck:
       test:
@@ -604,7 +604,7 @@ services:
         delay: 5s
     entrypoint: /init.sh
     environment:
-      RABBITMQ_USER: judge
+      RABBITMQ_USER: forseti
       RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
       RABBITMQ_ENABLED_PLUGINS: "rabbitmq_management,rabbitmq_prometheus"
     healthcheck:
@@ -696,7 +696,7 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.webapp-ratelimit.ratelimit.average=100
         - traefik.http.middlewares.webapp-ratelimit.ratelimit.burst=200
-        - traefik.http.routers.webapp.rule=Host(`judge.app`)
+        - traefik.http.routers.webapp.rule=Host(`forseti.live`)
         - traefik.http.routers.webapp.entrypoints=websecure
         - traefik.http.routers.webapp.tls=true
         - traefik.http.routers.webapp.middlewares=webapp-ratelimit
@@ -718,7 +718,7 @@ services:
         delay: 30s
     environment:
       API_INTERNAL_URL: http://api:8080
-      API_PUBLIC_URL: https://api.judge.app
+      API_PUBLIC_URL: https://api.forseti.live
       LOCALE: en-US
       NEXT_PUBLIC_VERSION: ${VERSION:-latest}
       NODE_ENV: production
@@ -730,7 +730,7 @@ services:
       interval: 30s
       retries: 5
       start_period: 60s
-    image: leonfoliveira/judge-webapp:${VERSION:-latest}
+    image: leonfoliveira/forseti-webapp:${VERSION:-latest}
     networks:
       network:
 

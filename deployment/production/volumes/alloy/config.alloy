@@ -1,9 +1,9 @@
-discovery.docker "judge" {
+discovery.docker "forseti" {
   host = "unix:///var/run/docker.sock"
 }
 
-discovery.relabel "judge" {
-  targets = discovery.docker.judge.targets
+discovery.relabel "forseti" {
+  targets = discovery.docker.forseti.targets
 
   rule {
     source_labels = ["__meta_docker_container_id"]
@@ -18,19 +18,19 @@ discovery.relabel "judge" {
 
   rule {
     source_labels = ["__meta_docker_container_label_com_docker_swarm_service_name"]
-    regex         = "judge_(.*)"
+    regex         = "forseti_(.*)"
     target_label  = "service_name"
   }
 }
 
-loki.source.docker "judge" {
+loki.source.docker "forseti" {
   host              = "unix:///var/run/docker.sock"
-  targets           = discovery.relabel.judge.output
-  forward_to        = [loki.process.judge.receiver]
+  targets           = discovery.relabel.forseti.output
+  forward_to        = [loki.process.forseti.receiver]
   refresh_interval  = "5s"
 }
 
-loki.process "judge" {
+loki.process "forseti" {
   stage.regex {
     expression = "level=(?P<level>\\S+)"
   }

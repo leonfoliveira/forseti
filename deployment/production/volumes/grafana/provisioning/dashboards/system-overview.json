@@ -322,7 +322,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "(sum(rate(container_cpu_usage_seconds_total{name=~\"judge_[^sb].+\"}[$timeframe])) by (name) / sum(container_spec_cpu_quota{name=~\"judge_[^sb].+\"}/container_spec_cpu_period{name=~\"judge_[^sb].+\"}) by (name))",
+          "expr": "(sum(rate(container_cpu_usage_seconds_total{name=~\"forseti_[^sb].+\"}[$timeframe])) by (name) / sum(container_spec_cpu_quota{name=~\"forseti_[^sb].+\"}/container_spec_cpu_period{name=~\"forseti_[^sb].+\"}) by (name))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -430,7 +430,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(container_memory_usage_bytes{name=~\"judge_[^sb].+\"}) by (name) / sum(container_spec_memory_limit_bytes{name=~\"judge_[^sb].+\"}) by (name)",
+          "expr": "sum(container_memory_usage_bytes{name=~\"forseti_[^sb].+\"}) by (name) / sum(container_spec_memory_limit_bytes{name=~\"forseti_[^sb].+\"}) by (name)",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
@@ -806,7 +806,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "count(container_last_seen{image=~\"judge-sb-.*\"}) by (image)",
+          "expr": "count(container_last_seen{image=~\"forseti-sb-.*\"}) by (image)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"

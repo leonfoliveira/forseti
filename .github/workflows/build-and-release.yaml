@@ -44,10 +44,10 @@ jobs:
       - name: Build images
         run: |
           # Build all images in parallel with enhanced caching
-          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-api:${{ steps.vars.outputs.tag }} -f ../../judge-backend/api.Dockerfile ../../judge-backend --load &
-          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-autojudge:${{ steps.vars.outputs.tag }} -f ../../judge-backend/autojudge.Dockerfile ../../judge-backend --load &
-          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-webapp:${{ steps.vars.outputs.tag }} ../../judge-webapp --load &
-          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t judge-autoscaler:${{ steps.vars.outputs.tag }} ../../judge-autoscaler --load &
+          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t applications-api:${{ steps.vars.outputs.tag }} -f ../../applications/backend/api.Dockerfile ../../applications/backend --load &
+          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t applications-autojudge:${{ steps.vars.outputs.tag }} -f ../../applications/backend/autojudge.Dockerfile ../../applications/backend --load &
+          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t applications-webapp:${{ steps.vars.outputs.tag }} ../../applications/webapp --load &
+          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t applications-autoscaler:${{ steps.vars.outputs.tag }} ../../applications/autoscaler --load &
 
           # Wait for all builds to complete
           wait
@@ -60,65 +60,65 @@ jobs:
 
       - name: Tag images
         run: |
-          docker tag judge-api:${{ steps.vars.outputs.tag }} leonfoliveira/judge-api:${{ steps.vars.outputs.tag }}
-          docker tag judge-autojudge:${{ steps.vars.outputs.tag }} leonfoliveira/judge-autojudge:${{ steps.vars.outputs.tag }}
-          docker tag judge-webapp:${{ steps.vars.outputs.tag }} leonfoliveira/judge-webapp:${{ steps.vars.outputs.tag }}
-          docker tag judge-autoscaler:${{ steps.vars.outputs.tag }} leonfoliveira/judge-autoscaler:${{ steps.vars.outputs.tag }}
-          docker tag judge-api:${{ steps.vars.outputs.tag }} leonfoliveira/judge-api:latest
-          docker tag judge-autojudge:${{ steps.vars.outputs.tag }} leonfoliveira/judge-autojudge:latest
-          docker tag judge-webapp:${{ steps.vars.outputs.tag }} leonfoliveira/judge-webapp:latest
-          docker tag judge-autoscaler:${{ steps.vars.outputs.tag }} leonfoliveira/judge-autoscaler:latest
+          docker tag applications-api:${{ steps.vars.outputs.tag }} leonfoliveira/applications-api:${{ steps.vars.outputs.tag }}
+          docker tag applications-autojudge:${{ steps.vars.outputs.tag }} leonfoliveira/applications-autojudge:${{ steps.vars.outputs.tag }}
+          docker tag applications-webapp:${{ steps.vars.outputs.tag }} leonfoliveira/applications-webapp:${{ steps.vars.outputs.tag }}
+          docker tag applications-autoscaler:${{ steps.vars.outputs.tag }} leonfoliveira/applications-autoscaler:${{ steps.vars.outputs.tag }}
+          docker tag applications-api:${{ steps.vars.outputs.tag }} leonfoliveira/applications-api:latest
+          docker tag applications-autojudge:${{ steps.vars.outputs.tag }} leonfoliveira/applications-autojudge:latest
+          docker tag applications-webapp:${{ steps.vars.outputs.tag }} leonfoliveira/applications-webapp:latest
+          docker tag applications-autoscaler:${{ steps.vars.outputs.tag }} leonfoliveira/applications-autoscaler:latest
 
       - name: Push images to Docker Hub
         env:
           DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
         run: |
           echo $DOCKER_HUB_ACCESS_TOKEN | docker login -u leonfoliveira --password-stdin
-          docker push leonfoliveira/judge-api:${{ steps.vars.outputs.tag }}
-          docker push leonfoliveira/judge-autojudge:${{ steps.vars.outputs.tag }}
-          docker push leonfoliveira/judge-webapp:${{ steps.vars.outputs.tag }}
-          docker push leonfoliveira/judge-autoscaler:${{ steps.vars.outputs.tag }}
-          docker push leonfoliveira/judge-api:latest
-          docker push leonfoliveira/judge-autojudge:latest
-          docker push leonfoliveira/judge-webapp:latest
-          docker push leonfoliveira/judge-autoscaler:latest
+          docker push leonfoliveira/applications-api:${{ steps.vars.outputs.tag }}
+          docker push leonfoliveira/applications-autojudge:${{ steps.vars.outputs.tag }}
+          docker push leonfoliveira/applications-webapp:${{ steps.vars.outputs.tag }}
+          docker push leonfoliveira/applications-autoscaler:${{ steps.vars.outputs.tag }}
+          docker push leonfoliveira/applications-api:latest
+          docker push leonfoliveira/applications-autojudge:latest
+          docker push leonfoliveira/applications-webapp:latest
+          docker push leonfoliveira/applications-autoscaler:latest
 
       - name: Set up Python for CLI build
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: "pip"
-          cache-dependency-path: judge-cli/requirements.dev.txt
+          cache-dependency-path: cli/requirements.dev.txt
 
       - name: Install CLI build dependencies
-        run: pip install -r ../../judge-cli/requirements.dev.txt
+        run: pip install -r ../../applications/cli/requirements.dev.txt
 
       - name: Build cli
-        run: cd ../../judge-cli && make build VERSION=${{ steps.vars.outputs.tag }}
+        run: cd ../../applications/cli && make build VERSION=${{ steps.vars.outputs.tag }}
 
       - name: Copy migrations to production directory
         run: |
           mkdir -p volumes/migrations
-          cp -r ../../judge-backend/common/src/main/resources/migration/* volumes/migrations/
+          cp -r ../../applications/backend/common/src/main/resources/migration/* volumes/migrations/
 
       - name: Copy sandboxes to production directory
         run: |
           mkdir -p sandboxes
-          cp -r ../../judge-backend/autojudge/src/main/resources/sandboxes/* sandboxes/
+          cp -r ../../applications/backend/autojudge/src/main/resources/sandboxes/* sandboxes/
 
       - name: Copy additional files to production directory
         run: |
           cp ../../README.md .
           cp ../../LICENSE .
-          cp ../../judge-cli/dist/judge .
+          cp ../../applications/cli/dist/judge .
 
       - name: Create ZIP file with tag name
-        run: zip -r judge-${{ steps.vars.outputs.tag }}.zip *
+        run: zip -r applications-${{ steps.vars.outputs.tag }}.zip *
 
       - name: Upload ZIP to release
         uses: softprops/action-gh-release@v1
         with:
-          files: deployment/production/judge-${{ steps.vars.outputs.tag }}.zip
+          files: deployment/production/applications-${{ steps.vars.outputs.tag }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

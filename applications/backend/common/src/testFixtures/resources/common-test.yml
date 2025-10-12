@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: forseti
+    username: forseti
+    password: forseti
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    locations: classpath:migration
+    baseline-on-migrate: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: forseti
+    password: forseti
+    virtual-host: /
+    queue:
+      submission-queue: submission-queue
+      submission-exchange: submission-exchange
+      submission-routing-key: submission-routing-key
+      submission-failed-queue: submission-failed-queue
+minio:
+  endpoint: http://localhost:9000
+  access-key: forseti
+  secret-key: forseti8
+  bucket: forseti
+security:
+  session:
+    expiration: 12h
+    root-expiration: 12h
+    autojudge-expiration: 10m
+  root:
+    password: forseti

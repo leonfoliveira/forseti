@@ -3,7 +3,7 @@ name: Check Backend
 on:
   pull_request:
     paths:
-      - "judge-backend/**"
+      - "applications/backend/**"
       - ".github/workflows/check-backend.yaml"
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: judge-backend
+        working-directory: applications/backend
 
     steps:
       - name: Checkout code
@@ -30,7 +30,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('judge-backend/**/*.gradle*', 'judge-backend/gradle.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('applications/backend/**/*.gradle*', 'applications/backend/gradle.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
