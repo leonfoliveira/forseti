@@ -1,4 +1,5 @@
 from unittest.mock import patch
+import urllib
 import pytest
 
 from autoscaler.queue_monitor import QueueMonitor
@@ -26,13 +27,12 @@ class TestQueueMonitor:
     def test_get_number_of_messages(self, sut: QueueMonitor, requests):
         requests.get.return_value.status_code = 200
         requests.get.return_value.json.return_value = {
-            "messages_ready": 3,
-            "messages_unacknowledged": 2
+            "messages": 5,
         }
 
         assert sut.get_number_of_messages() == 5
         assert requests.get.call_count == 1
         requests.get.assert_called_with(
-            f"http://{self.host}:{self.port}/api/queues/{self.vhost}/{self.queue_name}",
+            f"http://{self.host}:{self.port}/api/queues/{urllib.parse.quote(self.vhost, safe='')}/{self.queue_name}",
             auth=(self.username, self.password),
         )

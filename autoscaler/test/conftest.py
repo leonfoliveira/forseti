@@ -1,5 +1,4 @@
 import pytest
-from testcontainers.rabbitmq import RabbitMqContainer
 
 import docker
 
