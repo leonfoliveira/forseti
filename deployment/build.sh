@@ -14,6 +14,8 @@ cp -r ../applications/backend/common/src/main/resources/migration/* ./production
 mkdir -p ./production/sandboxes
 cp -r ../applications/backend/autojudge/src/main/resources/sandboxes/* ./production/sandboxes/
 
-docker build -t forseti-sb-cpp17:latest -f ../applications/backend/autojudge/src/main/resources/sandboxes/cpp17.Dockerfile .
-docker build -t forseti-sb-java21:latest -f ../applications/backend/autojudge/src/main/resources/sandboxes/java21.Dockerfile .
-docker build -t forseti-sb-python312:latest -f ../applications/backend/autojudge/src/main/resources/sandboxes/python312.Dockerfile .
+cd ../applications/backend/autojudge/src/main/resources/sandboxes
+docker build -t forseti-sb-cpp17:latest -f cpp17.Dockerfile .
+docker build -t forseti-sb-java21:latest -f java21.Dockerfile .
+docker build -t forseti-sb-python312:latest -f python312.Dockerfile .
+cd - > /dev/null
