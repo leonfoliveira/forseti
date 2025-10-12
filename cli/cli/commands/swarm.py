@@ -1,7 +1,4 @@
-from typing import Optional
-import bcrypt
 import re
-import secrets
 
 import click
 
@@ -38,7 +35,8 @@ def init(ctx, ip: str):
     # Set up secrets
     def _create_secret(secret_name: str, prompt: str) -> str:
         value = input_adapter.password(
-            prompt, validate=InputAdapter.length_validator(8))
+            prompt, validate=InputAdapter.length_validator(8)
+        )
         try:
             command_adapter.run(["docker", "secret", "rm", secret_name])
         except Exception:
@@ -74,8 +72,7 @@ def info():
         raise e
 
     # Extract tokens and manager IP
-    worker_match = re.search(
-        r"docker swarm join --token (\S+)", worker_result[2])
+    worker_match = re.search(r"docker swarm join --token (\S+)", worker_result[2])
     manager_match = re.search(
         r"docker swarm join --token (\S+) ([^\:]+):2377", manager_result[2]
     )
@@ -100,8 +97,7 @@ def join(token: str, manager_ip: str):
 
     try:
         command_adapter.run(
-            ["docker", "swarm", "join", "--token",
-                token, f"{manager_ip}:2377"],
+            ["docker", "swarm", "join", "--token", token, f"{manager_ip}:2377"],
         )
     except CommandAdapter.Error as e:
         if "This node is already part of a swarm" in str(e):

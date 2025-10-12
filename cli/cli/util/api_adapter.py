@@ -1,14 +1,14 @@
+import re
+import warnings
+from typing import Union
+
 import click
 import keyring
 import keyring.errors
-import re
 import requests
-import warnings
-from typing import Union
 from urllib3.exceptions import InsecureRequestWarning
 
 from .input_adapter import InputAdapter
-
 
 warnings.simplefilter("ignore", InsecureRequestWarning)
 
@@ -77,9 +77,11 @@ class ApiAdapter:
 
     def _authenticate(self):
         if session_id := self._get_cached_session_id():
-            response = requests.get(f"{self.api_url}/v1/session/me",
-                                    verify=VERIFY_SSL,
-                                    cookies={self.SESSION_ID_COOKIE: session_id})
+            response = requests.get(
+                f"{self.api_url}/v1/session/me",
+                verify=VERIFY_SSL,
+                cookies={self.SESSION_ID_COOKIE: session_id},
+            )
             if response.status_code == 200:
                 return session_id
 
@@ -103,7 +105,8 @@ class ApiAdapter:
             return keyring.get_password(self.SERVICE_NAME, self.SESSION_ID_KEYRING_KEY)
         except keyring.errors.NoKeyringError:
             click.echo(
-                "Warning: No keyring backend available, session ID will not be cached.")
+                "Warning: No keyring backend available, session ID will not be cached."
+            )
             return None
 
     def _set_cached_session_id(self, session_id: str) -> None:

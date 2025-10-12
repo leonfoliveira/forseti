@@ -17,7 +17,11 @@ from cli.util.spinner import Spinner
     default=["cpp17", "java21", "python312"],
 )
 @click.option("--stack", help="Stack file (default: stack.yaml in CLI directory)")
-@click.option("--domain", help="Domain for the TLS certificate (default: forseti)", default="forseti.app")
+@click.option(
+    "--domain",
+    help="Domain for the TLS certificate (default: forseti)",
+    default="forseti.app",
+)
 def install(sandboxes: List[str], stack: Optional[str], domain: str):
     command_adapter = CommandAdapter()
 
@@ -29,14 +33,12 @@ def install(sandboxes: List[str], stack: Optional[str], domain: str):
     try:
         command_adapter.run(["mkcert", "-install"])
     except click.ClickException:
-        raise click.ClickException(
-            "mkcert is not installed or not found in PATH.")
+        raise click.ClickException("mkcert is not installed or not found in PATH.")
 
     try:
         command_adapter.run(["docker", "--version"])
     except click.ClickException:
-        raise click.ClickException(
-            "Docker is not installed or not found in PATH.")
+        raise click.ClickException("Docker is not installed or not found in PATH.")
 
     _install_certificates(command_adapter, domain)
     _build_sandboxes(command_adapter, sandboxes)
@@ -59,9 +61,14 @@ def _install_certificates(command_adapter: CommandAdapter, domain: str):
         command_adapter.run(
             [
                 "mkcert",
-                "-cert-file", f"{certs_path}/cert.pem",
-                "-key-file", f"{certs_path}/key.pem",
-                f"*.{domain}", "localhost", "127.0.0.1", "::1"
+                "-cert-file",
+                f"{certs_path}/cert.pem",
+                "-key-file",
+                f"{certs_path}/key.pem",
+                f"*.{domain}",
+                "localhost",
+                "127.0.0.1",
+                "::1",
             ],
         )
         spinner.complete()
@@ -78,8 +85,7 @@ def _build_sandboxes(command_adapter: CommandAdapter, sandboxes: List[str]):
 
     try:
         for sandbox in sandboxes:
-            sandbox_path = os.path.join(
-                cli_path, "sandboxes", f"{sandbox}.Dockerfile")
+            sandbox_path = os.path.join(cli_path, "sandboxes", f"{sandbox}.Dockerfile")
             command_adapter.run(
                 [
                     "docker",

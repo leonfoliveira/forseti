@@ -1,5 +1,6 @@
-import click
 import os
+
+import click
 
 from cli.util.command_adapter import CommandAdapter
 from cli.util.spinner import Spinner
@@ -25,10 +26,24 @@ def backup():
     spinner.start()
     try:
         for volume in volumes:
-            command_adapter.run([
-                "docker", "run", "--rm", "-v", f"{volume}:/data", "-v", "./backups:/backups", "alpine",
-                "tar", "-czvf", f"/backups/{volume}.tar.gz", "-C", "/data", "."
-            ])
+            command_adapter.run(
+                [
+                    "docker",
+                    "run",
+                    "--rm",
+                    "-v",
+                    f"{volume}:/data",
+                    "-v",
+                    "./backups:/backups",
+                    "alpine",
+                    "tar",
+                    "-czvf",
+                    f"/backups/{volume}.tar.gz",
+                    "-C",
+                    "/data",
+                    ".",
+                ]
+            )
         spinner.complete()
     except Exception as e:
         spinner.fail()

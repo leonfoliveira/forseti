@@ -1,5 +1,6 @@
-import requests
 import urllib.parse
+
+import requests
 
 
 class QueueMonitor:
@@ -21,7 +22,8 @@ class QueueMonitor:
 
     def get_number_of_messages(self) -> int:
         response = requests.get(
-            f"http://{self.host}:{self.port}/api/queues/{urllib.parse.quote(self.vhost, safe='')}/{self.queue_name}",
+            f"http://{self.host}:{self.port}/api/queues/"
+            f"{urllib.parse.quote(self.vhost, safe='')}/{self.queue_name}",
             auth=(self.username, self.password),
         )
         response.raise_for_status()

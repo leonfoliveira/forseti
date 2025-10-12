@@ -5,7 +5,7 @@ from typing import Optional
 import click
 from tabulate import tabulate
 
-from cli.util.api_adapter import ApiAdapter, DEFAULT_API_URL
+from cli.util.api_adapter import DEFAULT_API_URL, ApiAdapter
 
 
 @click.group()

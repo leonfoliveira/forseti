@@ -14,4 +14,5 @@ class InputAdapter:
             if len(value) < min_length:
                 return f"Must be at least {min_length} characters long"
             return True
+
         return validate_length

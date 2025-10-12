@@ -3,7 +3,6 @@ import os
 import click
 
 from cli.util.command_adapter import CommandAdapter
-from cli.util.network_adapter import NetworkAdapter
 from cli.util.spinner import Spinner
 
 
@@ -19,7 +18,10 @@ DEFAULT_DOMAIN = "forseti.app"
 
 @system.command(help="Deploy services in Docker Swarm.")
 @click.option(
-    "--domain", help=f"Domain name (e.g., example.com) to configure public URLs. (default: {DEFAULT_DOMAIN})", default=DEFAULT_DOMAIN
+    "--domain",
+    help=f"Domain name (e.g., example.com) to configure public URLs."
+    f"(default: {DEFAULT_DOMAIN})",
+    default=DEFAULT_DOMAIN,
 )
 @click.option("--stack", help="Stack file (default: stack.yaml in CLI directory)")
 @click.option("--stack-name", help=STACK_NAME_HELP, default=DEFAULT_STACK_NAME)

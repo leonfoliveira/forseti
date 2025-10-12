@@ -3,9 +3,9 @@ import os
 import signal
 import threading
 import time
-from dotenv import load_dotenv
 
 import docker
+from dotenv import load_dotenv
 
 from autoscaler.api import start_flask_app
 from autoscaler.queue_monitor import QueueMonitor
@@ -78,8 +78,7 @@ if __name__ == "__main__":
     logging.info("Starting auto-scaler")
 
     server_thread = threading.Thread(
-        target=start_flask_app, args=[
-            queue_monitor, service_monitor, port], daemon=True
+        target=start_flask_app, args=[queue_monitor, service_monitor, port], daemon=True
     )
     server_thread.start()
 
