@@ -7,5 +7,5 @@ server:
   port: ${PORT:8080}
 security:
   cookie:
-    domain: ${COOKIE_DOMAIN:.forseti.app}
+    domain: ${COOKIE_DOMAIN:.forseti.live}
     secure: ${COOKIE_SECURE:false}

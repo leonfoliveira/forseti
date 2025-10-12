@@ -13,7 +13,7 @@ def system():
 
 DEFAULT_STACK_NAME = "forseti"
 STACK_NAME_HELP = f"Stack name (default: {DEFAULT_STACK_NAME})"
-DEFAULT_DOMAIN = "forseti.app"
+DEFAULT_DOMAIN = "forseti.live"
 
 
 @system.command(help="Deploy services in Docker Swarm.")

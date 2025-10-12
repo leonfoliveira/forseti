@@ -20,7 +20,7 @@ from cli.util.spinner import Spinner
 @click.option(
     "--domain",
     help="Domain for the TLS certificate (default: forseti)",
-    default="forseti.app",
+    default="forseti.live",
 )
 def install(sandboxes: List[str], stack: Optional[str], domain: str):
     command_adapter = CommandAdapter()

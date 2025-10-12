@@ -13,7 +13,7 @@ from .input_adapter import InputAdapter
 warnings.simplefilter("ignore", InsecureRequestWarning)
 
 
-DEFAULT_API_URL = "https://api.forseti.app"
+DEFAULT_API_URL = "https://api.forseti.live"
 VERIFY_SSL = False
 
 
