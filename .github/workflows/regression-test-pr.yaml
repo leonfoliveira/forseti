@@ -61,7 +61,7 @@ jobs:
       - name: Build test composition
         run: |
           docker compose -f deployment/development/docker-compose.yaml build --progress=plain --pull
-          docker build -f applications/backend/autojudge/src/main/resources/sandboxes/python312.Dockerfile -t applications-sb-python312:latest .
+          docker build -f applications/backend/autojudge/src/main/resources/sandboxes/python312.Dockerfile -t applications-sb-python312:latest applications/backend/autojudge/src/main/resources/sandboxes/
 
       - name: Start test composition
         run: |
