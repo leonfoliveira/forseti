@@ -1,0 +1,7 @@
+spring:
+  config:
+    import: classpath:common.yml
+  application:
+    name: forseti-autojudge
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:development}

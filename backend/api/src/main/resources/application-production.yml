@@ -1,0 +1,11 @@
+spring:
+  config:
+    import: classpath:common-production.yml
+server:
+  cors:
+    allowed-origins: ${WEBAPP_PUBLIC_URL:https://forseti.app}
+  port: ${PORT:8080}
+security:
+  cookie:
+    domain: ${COOKIE_DOMAIN:.forseti.app}
+    secure: ${COOKIE_SECURE:true}
