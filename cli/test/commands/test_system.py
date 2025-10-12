@@ -45,8 +45,8 @@ class TestSystemCommand:
         result = runner.invoke(system, ["start"])
         assert result.exit_code == 0
         command_adapter.run.assert_any_call(
-            ["docker", "stack", "deploy", "-c", "/cli/path/stack.yaml", "judge"],
-            env={"DOMAIN": "judge.app"},
+            ["docker", "stack", "deploy", "-c", "/cli/path/stack.yaml", "forseti"],
+            env={"DOMAIN": "forseti.app"},
         )
 
     def test_start_with_domain(self, runner, command_adapter, os):
@@ -57,7 +57,7 @@ class TestSystemCommand:
             system, ["start", "--domain", "example.com"])
         assert result.exit_code == 0
         command_adapter.run.assert_called_with(
-            ["docker", "stack", "deploy", "-c", "/cli/path/stack.yaml", "judge"],
+            ["docker", "stack", "deploy", "-c", "/cli/path/stack.yaml", "forseti"],
             env={"DOMAIN": "example.com"},
         )
 
@@ -78,7 +78,7 @@ class TestSystemCommand:
         result = runner.invoke(system, ["stop"])
         assert result.exit_code == 0
         command_adapter.run.assert_called_once_with(
-            ["docker", "stack", "rm", "judge"]
+            ["docker", "stack", "rm", "forseti"]
         )
 
     def test_stop_swarm_manager_error(self, runner, command_adapter, spinner):
@@ -106,7 +106,7 @@ class TestSystemCommand:
         command_adapter.run.return_value = ["some", "output"]
         assert result.exit_code == 0
         command_adapter.run.assert_called_once_with(
-            ["docker", "stack", "ps", "judge"]
+            ["docker", "stack", "ps", "forseti"]
         )
 
     def test_status_swarm_manager_error(self, runner, command_adapter):
@@ -134,7 +134,7 @@ class TestSystemCommand:
         assert result.exit_code == 0
         command_adapter.run.assert_called_once_with(
             ["docker", "service", "update", "--replicas",
-                "3", "judge_web"]
+                "3", "forseti_web"]
         )
 
     def test_scale_swarm_manager_error(self, runner, command_adapter, spinner):
@@ -161,14 +161,14 @@ class TestSystemCommand:
         result = runner.invoke(system, ["update", "web"])
         assert result.exit_code == 0
         command_adapter.run.assert_any_call(
-            ["docker", "service", "update", "judge_web"]
+            ["docker", "service", "update", "forseti_web"]
         )
 
     def test_update_with_force(self, runner, command_adapter):
         result = runner.invoke(system, ["update", "web", "--force"])
         assert result.exit_code == 0
         command_adapter.run.assert_any_call(
-            ["docker", "service", "update", "--force", "judge_web"]
+            ["docker", "service", "update", "--force", "forseti_web"]
         )
 
     def test_update_swarm_manager_error(self, runner, command_adapter):

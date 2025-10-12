@@ -47,12 +47,12 @@ class TestBackupCommand:
         # Verify command adapter was called for each volume
         assert command_adapter.run.call_count == 6
         for volume in (
-            "judge_grafana_data",
-            "judge_loki_data",
-            "judge_minio_data",
-            "judge_postgres_data",
-            "judge_prometheus_data",
-            "judge_rabbitmq_data",
+            "forseti_grafana_data",
+            "forseti_loki_data",
+            "forseti_minio_data",
+            "forseti_postgres_data",
+            "forseti_prometheus_data",
+            "forseti_rabbitmq_data",
         ):
             command_adapter.run.assert_any_call(self._create_command(volume))
 

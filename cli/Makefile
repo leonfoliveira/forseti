@@ -8,7 +8,7 @@ build:
 	else \
 		python3 generate_version.py --version $(VERSION); \
 	fi
-	pyinstaller --onefile -n judge -p . cli/__main__.py
+	pyinstaller --onefile -n forseti -p . cli/__main__.py
 
 lint:
 	black cli --check

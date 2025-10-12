@@ -12,9 +12,9 @@ def system():
     pass
 
 
-DEFAULT_STACK_NAME = "judge"
+DEFAULT_STACK_NAME = "forseti"
 STACK_NAME_HELP = f"Stack name (default: {DEFAULT_STACK_NAME})"
-DEFAULT_DOMAIN = "judge.app"
+DEFAULT_DOMAIN = "forseti.app"
 
 
 @system.command(help="Deploy services in Docker Swarm.")

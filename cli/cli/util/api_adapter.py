@@ -13,12 +13,12 @@ from .input_adapter import InputAdapter
 warnings.simplefilter("ignore", InsecureRequestWarning)
 
 
-DEFAULT_API_URL = "https://api.judge.app"
+DEFAULT_API_URL = "https://api.forseti.app"
 VERIFY_SSL = False
 
 
 class ApiAdapter:
-    SERVICE_NAME = "judge-cli"
+    SERVICE_NAME = "forseti-cli"
     SESSION_ID_KEYRING_KEY = "session_id"
     SESSION_ID_COOKIE = "session_id"
 

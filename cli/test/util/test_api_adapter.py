@@ -222,7 +222,7 @@ class TestApiAdapter:
 
     def test_api_adapter_with_default_url(self):
         adapter = ApiAdapter()
-        assert adapter.api_url == "https://api.judge.app"
+        assert adapter.api_url == "https://api.forseti.app"
 
     def _setup_valid_session(self, keyring, requests):
         session_id = "123"

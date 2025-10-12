@@ -15,18 +15,18 @@ from cli.config import __build_date__, __git_commit__, __version__
         f"({__git_commit__[:8] if __git_commit__ != 'unknown' else 'unknown'}, "
         f"built {__build_date__})"
     ),
-    prog_name="judge",
+    prog_name="forseti",
 )
-def judge():
-    """Judge CLI - Contest management and automation tool."""
+def forseti():
+    """Forseti CLI - Contest management and automation tool."""
     pass
 
 
-judge.add_command(backup)
-judge.add_command(contest)
-judge.add_command(install)
-judge.add_command(swarm)
-judge.add_command(system)
+forseti.add_command(backup)
+forseti.add_command(contest)
+forseti.add_command(install)
+forseti.add_command(swarm)
+forseti.add_command(system)
 
 if __name__ == "__main__":
-    judge()  # pragma: no cover
+    forseti()  # pragma: no cover

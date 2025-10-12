@@ -120,7 +120,7 @@ class TestInstallCommand:
         assert "Installation completed successfully." in result.output
         command_adapter.run.assert_any_call(["mkcert", "-install"])
         command_adapter.run.assert_any_call(["mkcert", "-cert-file", "/cli/path/certs/cert.pem",
-                                            "-key-file", "/cli/path/certs/key.pem", "*.judge.app", "localhost", "127.0.0.1", "::1"])
+                                            "-key-file", "/cli/path/certs/key.pem", "*.forseti.app", "localhost", "127.0.0.1", "::1"])
 
     def test_install_build_sandboxes_failure(self, runner, command_adapter, os, spinner):
         """Test installation when sandbox building fails."""

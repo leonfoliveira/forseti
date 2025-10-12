@@ -17,7 +17,7 @@ from cli.util.spinner import Spinner
     default=["cpp17", "java21", "python312"],
 )
 @click.option("--stack", help="Stack file (default: stack.yaml in CLI directory)")
-@click.option("--domain", help="Domain for the TLS certificate (default: judge)", default="judge.app")
+@click.option("--domain", help="Domain for the TLS certificate (default: forseti)", default="forseti.app")
 def install(sandboxes: List[str], stack: Optional[str], domain: str):
     command_adapter = CommandAdapter()
 
@@ -85,7 +85,7 @@ def _build_sandboxes(command_adapter: CommandAdapter, sandboxes: List[str]):
                     "docker",
                     "build",
                     "-t",
-                    f"judge-sb-{sandbox}:{__version__}",
+                    f"forseti-sb-{sandbox}:{__version__}",
                     "-f",
                     sandbox_path,
                     ".",

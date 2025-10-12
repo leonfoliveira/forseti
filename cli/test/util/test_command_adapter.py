@@ -51,12 +51,12 @@ class TestCommandAdapter:
 
     def test_get_cli_path_frozen(self, sut):
         with patch(f"{BASE_PATH}.sys") as mock_sys:
-            mock_sys.executable = "/usr/bin/judge"
+            mock_sys.executable = "/usr/bin/forseti"
             mock_sys.frozen = True
             with patch(f"{BASE_PATH}.getattr", return_value=True):
                 with patch(f"{BASE_PATH}.os.path.dirname", return_value="/usr/bin") as mock_dirname:
                     result = sut.get_cli_path()
-                    mock_dirname.assert_called_with("/usr/bin/judge")
+                    mock_dirname.assert_called_with("/usr/bin/forseti")
                     assert result == "/usr/bin"
 
     def test_get_cli_path_not_frozen(self, sut):
