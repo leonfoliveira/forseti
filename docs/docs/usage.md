@@ -62,7 +62,7 @@ Permanently delete a contest and all associated data:
 
 ## Dashboard
 
-The contest dashboard is the primary interface for all users during a contest, accessible at `https://forseti.live`. The dashboard provides role-based views with different capabilities and access levels depending on the user's role: Root, Admin, Judge, Contestant, or Guest.
+The contest dashboard is the primary interface for all users during a contest, accessible at `https://forseti.live/{slug}`. The dashboard provides role-based views with different capabilities and access levels depending on the user's role: Root, Admin, Judge, Contestant, or Guest.
 
 ### Sign In
 
