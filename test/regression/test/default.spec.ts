@@ -23,7 +23,7 @@ test("Default contest behaviour", async ({ page }) => {
     1000,
     512,
   );
-  const rootMember = new Member(MemberType.ROOT, "Root", "root", "judge");
+  const rootMember = new Member(MemberType.ROOT, "Root", "root", "forseti");
   const judgeMember = new Member(MemberType.JUDGE, "Judge", "judge", "judge");
   const contestantMember = new Member(
     MemberType.CONTESTANT,
