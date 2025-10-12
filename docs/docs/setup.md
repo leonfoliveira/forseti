@@ -168,17 +168,19 @@ Configure environment variables in `stack.yaml` to customize service behavior. V
 - `SESSION_ROOT_EXPIRATION`: Should be shorter than regular sessions for admin accounts
 - `SESSION_AUTOJUDGE_EXPIRATION`: Keep short as autojudge authenticates frequently
 
-**Performance Tuning:**
+**AutoJudge Scaling:**
 
 - `MAX_CONCURRENT_SUBMISSIONS`: Increase for better throughput if you have sufficient resources
 - `MESSAGES_PER_REPLICA`: Lower values = more aggressive scaling; higher = more conservative
-
-**Autoscaling:**
-
 - `MIN_REPLICAS`: Should be at least 1 to handle baseline load
 - `MAX_REPLICAS`: Set based on cluster capacity and expected peak load
 - `COOLDOWN`: Prevents rapid scaling oscillations; increase if experiencing instability
 - `INTERVAL`: Lower values provide faster response to load changes but increase overhead
+
+> **Important:** The maximum system capacity for concurrent submissions is calculated as `MAX_REPLICAS × MAX_CONCURRENT_SUBMISSIONS`. Before increasing these values, verify that:
+> - Your infrastructure has sufficient CPU and memory resources to handle peak load
+> - Each submission can execute within its configured time and memory limits without resource contention
+> - The system maintains fair resource allocation across all concurrent executions
 
 ## CLI Commands
 
