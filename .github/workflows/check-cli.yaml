@@ -2,13 +2,29 @@ name: Check CLI
 
 on:
   pull_request:
-    paths:
-      - "applications/cli/**"
-      - ".github/workflows/check-cli.yaml"
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      cli: ${{ steps.changes.outputs.cli }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            cli:
+              - 'applications/cli/**'
+              - '.github/workflows/check-cli.yaml'
+
   check-cli:
     runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.cli == 'true'
     defaults:
       run:
         working-directory: applications/cli
@@ -36,3 +52,21 @@ jobs:
 
           # Wait for all tasks to complete
           wait
+
+  check-cli-status:
+    runs-on: ubuntu-latest
+    needs: [changes, check-cli]
+    if: always()
+    steps:
+      - name: Check status
+        run: |
+          if [[ "${{ needs.changes.outputs.cli }}" == "true" ]]; then
+            # If there were changes, ensure the check-cli job succeeded
+            if [[ "${{ needs.check-cli.result }}" != "success" ]]; then
+              echo "CLI checks failed"
+              exit 1
+            fi
+            echo "CLI checks passed"
+          else
+            echo "No CLI changes detected, skipping checks"
+          fi

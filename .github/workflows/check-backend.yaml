@@ -2,13 +2,29 @@ name: Check Backend
 
 on:
   pull_request:
-    paths:
-      - "applications/backend/**"
-      - ".github/workflows/check-backend.yaml"
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.changes.outputs.backend }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            backend:
+              - 'applications/backend/**'
+              - '.github/workflows/check-backend.yaml'
+
   check-backend:
     runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     defaults:
       run:
         working-directory: applications/backend
@@ -47,3 +63,21 @@ jobs:
 
           # Wait for all tasks to complete
           wait
+
+  check-backend-status:
+    runs-on: ubuntu-latest
+    needs: [changes, check-backend]
+    if: always()
+    steps:
+      - name: Check status
+        run: |
+          if [[ "${{ needs.changes.outputs.backend }}" == "true" ]]; then
+            # If there were changes, ensure the check-backend job succeeded
+            if [[ "${{ needs.check-backend.result }}" != "success" ]]; then
+              echo "Backend checks failed"
+              exit 1
+            fi
+            echo "Backend checks passed"
+          else
+            echo "No backend changes detected, skipping checks"
+          fi
