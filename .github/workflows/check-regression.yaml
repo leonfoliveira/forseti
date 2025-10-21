@@ -2,13 +2,29 @@ name: Check Regression
 
 on:
   pull_request:
-    paths:
-      - "test/regression/**"
-      - ".github/workflows/check-regression.yaml"
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      regression: ${{ steps.changes.outputs.regression }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            regression:
+              - 'test/regression/**'
+              - '.github/workflows/check-regression.yaml'
+
   check-regression:
     runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.regression == 'true'
     defaults:
       run:
         working-directory: test/regression
@@ -29,3 +45,21 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+  check-regression-status:
+    runs-on: ubuntu-latest
+    needs: [changes, check-regression]
+    if: always()
+    steps:
+      - name: Check status
+        run: |
+          if [[ "${{ needs.changes.outputs.regression }}" == "true" ]]; then
+            # If there were changes, ensure the check-regression job succeeded
+            if [[ "${{ needs.check-regression.result }}" != "success" ]]; then
+              echo "Regression checks failed"
+              exit 1
+            fi
+            echo "Regression checks passed"
+          else
+            echo "No regression changes detected, skipping checks"
+          fi
