@@ -9,6 +9,7 @@ import io.github.leonfoliveira.forseti.common.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.repository.ProblemRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -20,6 +21,7 @@ class DeleteContestService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    @Transactional
     fun delete(id: UUID) {
         logger.info("Deleting contest with id: $id")
 

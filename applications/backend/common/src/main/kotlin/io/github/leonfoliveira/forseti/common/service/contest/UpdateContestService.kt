@@ -15,6 +15,7 @@ import io.github.leonfoliveira.forseti.common.util.TestCasesValidator
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
@@ -31,6 +32,7 @@ class UpdateContestService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    @Transactional
     fun update(
         @Valid inputDTO: UpdateContestInputDTO,
     ): Contest {
@@ -97,6 +99,7 @@ class UpdateContestService(
         return contest
     }
 
+    @Transactional
     fun forceStart(contestId: UUID): Contest {
         val contest =
             contestRepository
@@ -111,6 +114,7 @@ class UpdateContestService(
         return contest
     }
 
+    @Transactional
     fun forceEnd(contestId: UUID): Contest {
         val contest =
             contestRepository

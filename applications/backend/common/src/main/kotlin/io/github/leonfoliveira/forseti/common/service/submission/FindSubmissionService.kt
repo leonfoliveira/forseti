@@ -7,6 +7,7 @@ import io.github.leonfoliveira.forseti.common.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.repository.SubmissionRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -17,6 +18,7 @@ class FindSubmissionService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    @Transactional(readOnly = true)
     fun findById(submissionId: UUID): Submission {
         logger.info("Finding submission with id: $submissionId")
 
@@ -29,6 +31,7 @@ class FindSubmissionService(
         return submission
     }
 
+    @Transactional(readOnly = true)
     fun findAllByContest(contestId: UUID): List<Submission> {
         logger.info("Finding all submissions for contest with id: $contestId")
 
@@ -46,6 +49,7 @@ class FindSubmissionService(
         return submissions.sortedBy { it.createdAt }
     }
 
+    @Transactional(readOnly = true)
     fun findAllByMember(memberId: UUID): List<Submission> {
         logger.info("Finding all submissions for member with id: $memberId")
 

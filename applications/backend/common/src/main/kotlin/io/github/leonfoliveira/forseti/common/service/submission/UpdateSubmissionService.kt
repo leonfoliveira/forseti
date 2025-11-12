@@ -9,6 +9,7 @@ import io.github.leonfoliveira.forseti.common.repository.SubmissionRepository
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -18,6 +19,7 @@ class UpdateSubmissionService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    @Transactional
     fun fail(submissionId: UUID): Submission {
         logger.info("Failing submission with id: $submissionId")
 
@@ -34,6 +36,7 @@ class UpdateSubmissionService(
         return submission
     }
 
+    @Transactional
     fun rerun(id: UUID): Submission {
         logger.info("Rerunning submission with id: $id")
 
@@ -55,6 +58,7 @@ class UpdateSubmissionService(
         return submission
     }
 
+    @Transactional
     fun updateAnswer(
         submissionId: UUID,
         answer: Submission.Answer,

@@ -7,6 +7,7 @@ import io.github.leonfoliveira.forseti.common.service.dto.input.contest.CreateCo
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 
 @Service
@@ -16,6 +17,7 @@ class CreateContestService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    @Transactional
     fun create(
         @Valid inputDTO: CreateContestInputDTO,
     ): Contest {

@@ -10,6 +10,7 @@ import io.github.leonfoliveira.forseti.common.service.dto.input.announcement.Cre
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -21,6 +22,7 @@ class CreateAnnouncementService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    @Transactional
     fun create(
         contestId: UUID,
         memberId: UUID,

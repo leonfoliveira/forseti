@@ -21,7 +21,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -43,7 +42,6 @@ class ContestSubmissionController(
 
     @PostMapping
     @Private(Member.Type.CONTESTANT)
-    @Transactional
     @Operation(summary = "Create a submission")
     @ApiResponses(
         value = [
@@ -87,7 +85,6 @@ class ContestSubmissionController(
     }
 
     @GetMapping
-    @Transactional(readOnly = true)
     @Operation(summary = "Find all contest submissions")
     @ApiResponses(
         value = [
@@ -115,7 +112,6 @@ class ContestSubmissionController(
 
     @GetMapping("/full")
     @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
-    @Transactional(readOnly = true)
     @Operation(summary = "Find all contest full submissions")
     @ApiResponses(
         value = [
@@ -149,7 +145,6 @@ class ContestSubmissionController(
 
     @GetMapping("/full/members/me")
     @Private(Member.Type.CONTESTANT)
-    @Transactional(readOnly = true)
     @Operation(summary = "Find all full submissions for a member")
     @ApiResponses(
         value = [
@@ -182,7 +177,6 @@ class ContestSubmissionController(
 
     @PutMapping("/{id}/answer/{answer}")
     @Private(Member.Type.AUTOJUDGE)
-    @Transactional
     @Operation(summary = "Update a submission answer")
     @ApiResponses(
         value = [
@@ -216,7 +210,6 @@ class ContestSubmissionController(
 
     @PutMapping("/{id}/answer/{answer}/force")
     @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
-    @Transactional
     @Operation(summary = "Force update a submission answer")
     @ApiResponses(
         value = [
@@ -251,7 +244,6 @@ class ContestSubmissionController(
 
     @PostMapping("/{id}/rerun")
     @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
-    @Transactional
     @Operation(summary = "Rerun a submission")
     @ApiResponses(
         value = [

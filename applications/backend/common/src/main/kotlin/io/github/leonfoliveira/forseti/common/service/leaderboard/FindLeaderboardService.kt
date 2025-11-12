@@ -9,6 +9,7 @@ import io.github.leonfoliveira.forseti.common.repository.ContestRepository
 import io.github.leonfoliveira.forseti.common.service.dto.output.LeaderboardOutputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -23,6 +24,7 @@ class FindLeaderboardService(
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    @Transactional(readOnly = true)
     fun findByContestId(contestId: UUID): LeaderboardOutputDTO {
         logger.info("Building outputDTO for contest with id: $contestId")
         val contest =

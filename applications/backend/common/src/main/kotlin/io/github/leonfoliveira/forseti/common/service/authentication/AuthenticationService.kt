@@ -12,6 +12,7 @@ import io.github.leonfoliveira.forseti.common.util.UnitUtil
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -29,6 +30,7 @@ class AuthenticationService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    @Transactional
     fun authenticate(inputDTO: AuthenticateInputDTO): Session {
         logger.info("Authenticating")
 
@@ -45,6 +47,7 @@ class AuthenticationService(
         return session
     }
 
+    @Transactional
     fun authenticateToContest(
         contestId: UUID,
         inputDTO: ContestAuthenticateInputDTO,
@@ -82,6 +85,7 @@ class AuthenticationService(
         return sessionRepository.save(session)
     }
 
+    @Transactional
     fun deleteSession(session: Session) {
         logger.info("Deleting session with id = ${session.id}")
 
