@@ -3,10 +3,8 @@ package io.github.leonfoliveira.forseti.autojudge.service
 import io.github.leonfoliveira.forseti.autojudge.adapter.docker.DockerSubmissionRunnerAdapter
 import io.github.leonfoliveira.forseti.autojudge.adapter.feign.ApiClient
 import io.github.leonfoliveira.forseti.autojudge.util.AutoJudgeMetrics
-import io.github.leonfoliveira.forseti.common.domain.entity.Submission
 import io.github.leonfoliveira.forseti.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.forseti.common.repository.SubmissionRepository
-import io.github.leonfoliveira.forseti.common.service.submission.FindSubmissionService
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tags
 import jakarta.transaction.Transactional
