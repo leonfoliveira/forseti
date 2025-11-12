@@ -1,9 +1,12 @@
-package io.github.leonfoliveira.forseti.common.event
+package io.github.leonfoliveira.forseti.common.domain.event
 
 import io.github.leonfoliveira.forseti.common.domain.entity.Clarification
 import org.springframework.context.ApplicationEvent
 
-class ClarificationCreatedEvent(
+/**
+ * Event triggered when a clarification is deleted
+ */
+class ClarificationDeletedEvent(
     source: Any,
     val clarification: Clarification,
 ) : ApplicationEvent(source)

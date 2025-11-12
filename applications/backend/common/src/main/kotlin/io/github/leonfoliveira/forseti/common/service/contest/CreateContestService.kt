@@ -17,6 +17,13 @@ class CreateContestService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Creates a new contest.
+     *
+     * @param inputDTO Data for creating the contest
+     * @return The created contest
+     * @throws ConflictException if a contest with the same slug already exists
+     */
     @Transactional
     fun create(
         @Valid inputDTO: CreateContestInputDTO,

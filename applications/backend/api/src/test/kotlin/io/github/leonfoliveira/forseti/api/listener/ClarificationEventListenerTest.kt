@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.forseti.api.listener
 
 import io.github.leonfoliveira.forseti.api.emitter.StompClarificationEmitter
-import io.github.leonfoliveira.forseti.common.event.ClarificationCreatedEvent
-import io.github.leonfoliveira.forseti.common.event.ClarificationDeletedEvent
+import io.github.leonfoliveira.forseti.common.domain.event.ClarificationCreatedEvent
+import io.github.leonfoliveira.forseti.common.domain.event.ClarificationDeletedEvent
 import io.github.leonfoliveira.forseti.common.mock.entity.ClarificationMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks

@@ -1,9 +1,10 @@
 package io.github.leonfoliveira.forseti.common.service.clarification
 
 import io.github.leonfoliveira.forseti.common.domain.entity.Clarification
+import io.github.leonfoliveira.forseti.common.domain.event.ClarificationDeletedEvent
 import io.github.leonfoliveira.forseti.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.forseti.common.event.ClarificationDeletedEvent
 import io.github.leonfoliveira.forseti.common.repository.ClarificationRepository
+import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -17,6 +18,13 @@ class DeleteClarificationService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Soft deletes a clarification and all its children.
+     *
+     * @param id The ID of the clarification to be deleted.
+     * @throws NotFoundException if the clarification is not found.
+     */
+    @Transactional
     fun delete(id: UUID) {
         logger.info("Deleting clarification with id: $id")
 
@@ -32,6 +40,11 @@ class DeleteClarificationService(
         logger.info("Clarification deleted successfully")
     }
 
+    /**
+     * Recursively soft deletes a clarification and all its children.
+     *
+     * @param clarification The clarification to be deleted.
+     */
     private fun delete(clarification: Clarification) {
         clarification.deletedAt = OffsetDateTime.now()
         clarification.children.forEach { delete(it) }

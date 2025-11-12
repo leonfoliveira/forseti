@@ -3,8 +3,8 @@ package io.github.leonfoliveira.forseti.api.listener
 import io.github.leonfoliveira.forseti.api.emitter.StompLeaderboardEmitter
 import io.github.leonfoliveira.forseti.api.emitter.StompSubmissionEmitter
 import io.github.leonfoliveira.forseti.common.domain.entity.Submission
-import io.github.leonfoliveira.forseti.common.event.SubmissionCreatedEvent
-import io.github.leonfoliveira.forseti.common.event.SubmissionUpdatedEvent
+import io.github.leonfoliveira.forseti.common.domain.event.SubmissionCreatedEvent
+import io.github.leonfoliveira.forseti.common.domain.event.SubmissionUpdatedEvent
 import io.github.leonfoliveira.forseti.common.service.leaderboard.FindLeaderboardService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component

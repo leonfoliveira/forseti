@@ -21,6 +21,9 @@ class JacksonConfig {
     class OffsetDateTimeSerializer : JsonSerializer<OffsetDateTime>() {
         private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX")
 
+        /**
+         * Serializes an OffsetDateTime object to a JSON string using the ISO-8601 specification.
+         */
         override fun serialize(
             value: OffsetDateTime?,
             gen: JsonGenerator?,
@@ -32,6 +35,12 @@ class JacksonConfig {
         }
     }
 
+    /**
+     * Configures and provides a customized Jackson ObjectMapper bean.
+     * - Registers a module to handle OffsetDateTime serialization.
+     * - Disables writing dates as timestamps.
+     * - Disables failure on unknown properties during deserialization.
+     */
     @Bean
     @Primary
     fun objectMapper(): ObjectMapper {

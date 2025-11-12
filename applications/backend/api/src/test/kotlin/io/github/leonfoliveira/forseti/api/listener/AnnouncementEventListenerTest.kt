@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.forseti.api.listener
 
 import io.github.leonfoliveira.forseti.api.emitter.StompAnnouncementEmitter
-import io.github.leonfoliveira.forseti.common.event.AnnouncementCreatedEvent
+import io.github.leonfoliveira.forseti.common.domain.event.AnnouncementCreatedEvent
 import io.github.leonfoliveira.forseti.common.mock.entity.AnnouncementMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks

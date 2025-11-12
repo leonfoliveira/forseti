@@ -1,10 +1,10 @@
 package io.github.leonfoliveira.forseti.common.service.submission
 
 import io.github.leonfoliveira.forseti.common.domain.entity.Submission
+import io.github.leonfoliveira.forseti.common.domain.event.SubmissionRerunEvent
+import io.github.leonfoliveira.forseti.common.domain.event.SubmissionUpdatedEvent
 import io.github.leonfoliveira.forseti.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.forseti.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.forseti.common.event.SubmissionRerunEvent
-import io.github.leonfoliveira.forseti.common.event.SubmissionUpdatedEvent
 import io.github.leonfoliveira.forseti.common.mock.entity.SubmissionMockBuilder
 import io.github.leonfoliveira.forseti.common.repository.SubmissionRepository
 import io.kotest.assertions.throwables.shouldThrow

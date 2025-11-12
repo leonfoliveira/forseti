@@ -14,6 +14,11 @@ class FindContestService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Find all contests.
+     *
+     * @return List of contests.
+     */
     @Transactional(readOnly = true)
     fun findAll(): List<Contest> {
         logger.info("Finding all contests")
@@ -22,6 +27,13 @@ class FindContestService(
         return contests
     }
 
+    /**
+     * Find contest by id.
+     *
+     * @param id Contest id.
+     * @return Contest.
+     * @throws NotFoundException if contest is not found.
+     */
     @Transactional(readOnly = true)
     fun findById(id: UUID): Contest {
         logger.info("Finding contest with id: $id")
@@ -33,6 +45,13 @@ class FindContestService(
         return contest
     }
 
+    /**
+     * Find contest by slug.
+     *
+     * @param slug Contest slug.
+     * @return Contest.
+     * @throws NotFoundException if contest is not found.
+     */
     @Transactional(readOnly = true)
     fun findBySlug(slug: String): Contest {
         logger.info("Finding contest with slug: $slug")

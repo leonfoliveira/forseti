@@ -3,6 +3,7 @@ package io.github.leonfoliveira.forseti.common.service.authentication
 import io.github.leonfoliveira.forseti.common.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.domain.entity.Session
 import io.github.leonfoliveira.forseti.common.domain.exception.UnauthorizedException
+import io.github.leonfoliveira.forseti.common.domain.model.RequestContext
 import io.github.leonfoliveira.forseti.common.port.HashAdapter
 import io.github.leonfoliveira.forseti.common.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.repository.SessionRepository
@@ -30,6 +31,13 @@ class AuthenticationService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Authenticates a member and creates a session.
+     *
+     * @param inputDTO The authentication input data.
+     * @return The created session.
+     * @throws UnauthorizedException if the login or password is invalid.
+     */
     @Transactional
     fun authenticate(inputDTO: AuthenticateInputDTO): Session {
         logger.info("Authenticating")
@@ -47,6 +55,14 @@ class AuthenticationService(
         return session
     }
 
+    /**
+     * Authenticates a member for a specific contest and creates a session.
+     *
+     * @param contestId The ID of the contest.
+     * @param inputDTO The contest authentication input data.
+     * @return The created session.
+     * @throws UnauthorizedException if the login or password is invalid.
+     */
     @Transactional
     fun authenticateToContest(
         contestId: UUID,
@@ -68,6 +84,13 @@ class AuthenticationService(
         return session
     }
 
+    /**
+     * Creates a session for a member.
+     *
+     * @param member The member for whom the session is created.
+     * @return The created session.
+     */
+    @Transactional
     fun createSession(member: Member): Session {
         val expiration =
             when (member.type) {
@@ -85,9 +108,18 @@ class AuthenticationService(
         return sessionRepository.save(session)
     }
 
+    /**
+     * Soft deletes the current session from RequestContext.
+     */
     @Transactional
-    fun deleteSession(session: Session) {
-        logger.info("Deleting session with id = ${session.id}")
+    fun deleteCurrentSession() {
+        logger.info("Deleting current session")
+
+        val session = RequestContext.getContext().session
+        if (session == null) {
+            logger.info("No session found in request context")
+            return
+        }
 
         session.deletedAt = OffsetDateTime.now()
         sessionRepository.save(session)

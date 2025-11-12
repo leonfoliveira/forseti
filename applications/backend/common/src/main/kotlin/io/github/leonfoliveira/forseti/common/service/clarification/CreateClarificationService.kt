@@ -2,13 +2,14 @@ package io.github.leonfoliveira.forseti.common.service.clarification
 
 import io.github.leonfoliveira.forseti.common.domain.entity.Clarification
 import io.github.leonfoliveira.forseti.common.domain.entity.Member
+import io.github.leonfoliveira.forseti.common.domain.event.ClarificationCreatedEvent
 import io.github.leonfoliveira.forseti.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.forseti.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.forseti.common.event.ClarificationCreatedEvent
 import io.github.leonfoliveira.forseti.common.repository.ClarificationRepository
 import io.github.leonfoliveira.forseti.common.repository.ContestRepository
 import io.github.leonfoliveira.forseti.common.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.service.dto.input.clarification.CreateClarificationInputDTO
+import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -23,6 +24,17 @@ class CreateClarificationService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Creates a clarification for a contest.
+     *
+     * @param contestId The ID of the contest.
+     * @param memberId The ID of the member creating the clarification.
+     * @param input The input data for creating the clarification.
+     * @return The created clarification.
+     * @throws NotFoundException if the contest, member, problem, or parent clarification is not found.
+     * @throws ForbiddenException if the member is not allowed to create the clarification.
+     */
+    @Transactional
     fun create(
         contestId: UUID,
         memberId: UUID,
@@ -39,9 +51,11 @@ class CreateClarificationService(
                 NotFoundException("Could not find member with id $memberId")
             }
 
+        // Business rule: Contestants cannot create clarifications with a parent
         if (member.type == Member.Type.CONTESTANT && input.parentId != null) {
             throw ForbiddenException("Contestants cannot create clarifications with a parent")
         }
+        // Business rule: Judges and Admins cannot create clarifications without a parent
         if (setOf(Member.Type.JUDGE, Member.Type.ADMIN).contains(member.type) && input.parentId == null) {
             throw ForbiddenException("${member.type} members cannot create clarifications without a parent")
         }

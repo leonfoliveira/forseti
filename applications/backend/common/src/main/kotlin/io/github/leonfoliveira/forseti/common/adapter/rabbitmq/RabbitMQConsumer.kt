@@ -15,6 +15,10 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Method to receive a message from RabbitMQ, deserialize it, and handle the payload.
+     * It also loads the traceId into the RequestContext to keep track of the entire information flow.
+     */
     open fun receiveMessage(jsonMessage: String) {
         logger.info("Received message: {}", jsonMessage)
 
@@ -44,7 +48,13 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
         }
     }
 
+    /**
+     * Method to get the payload type for deserialization.
+     */
     protected abstract fun getPayloadType(): Class<TPayload>
 
+    /**
+     * Method to handle the payload after deserialization.
+     */
     protected abstract fun handlePayload(payload: TPayload)
 }

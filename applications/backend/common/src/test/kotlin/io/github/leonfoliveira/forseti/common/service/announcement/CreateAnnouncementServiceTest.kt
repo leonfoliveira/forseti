@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.forseti.common.service.announcement
 
 import io.github.leonfoliveira.forseti.common.domain.entity.Announcement
+import io.github.leonfoliveira.forseti.common.domain.event.AnnouncementCreatedEvent
 import io.github.leonfoliveira.forseti.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.forseti.common.event.AnnouncementCreatedEvent
 import io.github.leonfoliveira.forseti.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.forseti.common.repository.AnnouncementRepository

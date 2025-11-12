@@ -18,6 +18,13 @@ class FindSubmissionService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Finds a submission by its ID.
+     *
+     * @param submissionId ID of the submission to find
+     * @return The found submission
+     * @throws NotFoundException if the submission is not found
+     */
     @Transactional(readOnly = true)
     fun findById(submissionId: UUID): Submission {
         logger.info("Finding submission with id: $submissionId")
@@ -31,6 +38,13 @@ class FindSubmissionService(
         return submission
     }
 
+    /**
+     * Finds all submissions for a given contest.
+     *
+     * @param contestId ID of the contest
+     * @return List of submissions for the contest
+     * @throws NotFoundException if the contest is not found
+     */
     @Transactional(readOnly = true)
     fun findAllByContest(contestId: UUID): List<Submission> {
         logger.info("Finding all submissions for contest with id: $contestId")
@@ -49,6 +63,13 @@ class FindSubmissionService(
         return submissions.sortedBy { it.createdAt }
     }
 
+    /**
+     * Finds all submissions for a given member.
+     *
+     * @param memberId ID of the member
+     * @return List of submissions for the member
+     * @throws NotFoundException if the member is not found
+     */
     @Transactional(readOnly = true)
     fun findAllByMember(memberId: UUID): List<Submission> {
         logger.info("Finding all submissions for member with id: $memberId")

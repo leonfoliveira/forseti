@@ -83,10 +83,7 @@ class SessionController(
     )
     fun deleteSession(): ResponseEntity<Void> {
         logger.info("[DELETE] /v1/session/me")
-        val session = RequestContext.getContext().session
-        if (session != null) {
-            authenticationService.deleteSession(session)
-        }
+        authenticationService.deleteCurrentSession()
         val cookie = sessionCookieService.buildClearCookie()
         return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, cookie).build()
     }

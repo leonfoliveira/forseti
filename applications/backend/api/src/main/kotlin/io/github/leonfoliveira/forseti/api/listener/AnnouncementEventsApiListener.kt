@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.forseti.api.listener
 
 import io.github.leonfoliveira.forseti.api.emitter.StompAnnouncementEmitter
-import io.github.leonfoliveira.forseti.common.event.AnnouncementCreatedEvent
+import io.github.leonfoliveira.forseti.common.domain.event.AnnouncementCreatedEvent
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase

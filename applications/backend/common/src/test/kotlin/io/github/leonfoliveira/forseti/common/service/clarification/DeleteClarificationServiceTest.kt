@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.forseti.common.service.clarification
 
 import io.github.leonfoliveira.forseti.common.domain.entity.Clarification
+import io.github.leonfoliveira.forseti.common.domain.event.ClarificationDeletedEvent
 import io.github.leonfoliveira.forseti.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.forseti.common.event.ClarificationDeletedEvent
 import io.github.leonfoliveira.forseti.common.mock.entity.ClarificationMockBuilder
 import io.github.leonfoliveira.forseti.common.repository.ClarificationRepository
 import io.kotest.assertions.throwables.shouldThrow

@@ -5,7 +5,6 @@ import io.github.leonfoliveira.forseti.common.domain.exception.BusinessException
 import io.github.leonfoliveira.forseti.common.domain.exception.ConflictException
 import io.github.leonfoliveira.forseti.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.forseti.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.forseti.common.domain.exception.TooManyRequestsException
 import io.github.leonfoliveira.forseti.common.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.forseti.common.util.SkipCoverage
 import jakarta.validation.ConstraintViolationException
@@ -31,7 +30,6 @@ class GlobalExceptionHandler {
             UnauthorizedException::class to HttpStatus.UNAUTHORIZED,
             ForbiddenException::class to HttpStatus.FORBIDDEN,
             ConflictException::class to HttpStatus.CONFLICT,
-            TooManyRequestsException::class to HttpStatus.TOO_MANY_REQUESTS,
         )
 
     @ExceptionHandler(BusinessException::class)

@@ -5,6 +5,9 @@ import io.github.leonfoliveira.forseti.common.util.SkipCoverage
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 
+/**
+ * Authentication implementation for session-based authentication
+ */
 @SkipCoverage
 class SessionAuthentication(
     private var principal: Session? = null,

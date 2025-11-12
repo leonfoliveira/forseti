@@ -1,6 +1,7 @@
 package io.github.leonfoliveira.forseti.common.service.authentication
 
 import io.github.leonfoliveira.forseti.common.domain.exception.UnauthorizedException
+import io.github.leonfoliveira.forseti.common.domain.model.RequestContext
 import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.forseti.common.port.HashAdapter
@@ -111,8 +112,9 @@ class AuthorizationServiceTest :
             test("should delete session successfully") {
                 val session = SessionMockBuilder.build()
                 every { sessionRepository.save(any()) } returns session
+                RequestContext.getContext().session = session
 
-                sut.deleteSession(session)
+                sut.deleteCurrentSession()
 
                 session.deletedAt.shouldNotBeNull()
                 verify { sessionRepository.save(session) }

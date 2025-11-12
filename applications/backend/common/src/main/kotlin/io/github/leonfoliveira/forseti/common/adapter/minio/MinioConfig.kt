@@ -31,6 +31,9 @@ class MinioConfig(
             .credentials(accessKey, secretKey)
             .build()
 
+    /**
+     * Create the bucket if it does not exist on application startup
+     */
     @EventListener(ApplicationReadyEvent::class)
     fun init() {
         val client = minioClient()

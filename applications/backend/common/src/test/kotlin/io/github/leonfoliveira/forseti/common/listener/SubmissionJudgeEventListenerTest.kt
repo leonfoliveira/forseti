@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.forseti.common.listener
 
 import io.github.leonfoliveira.forseti.common.domain.entity.Contest
-import io.github.leonfoliveira.forseti.common.event.SubmissionCreatedEvent
-import io.github.leonfoliveira.forseti.common.event.SubmissionRerunEvent
+import io.github.leonfoliveira.forseti.common.domain.event.SubmissionCreatedEvent
+import io.github.leonfoliveira.forseti.common.domain.event.SubmissionRerunEvent
 import io.github.leonfoliveira.forseti.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.ProblemMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SubmissionMockBuilder
