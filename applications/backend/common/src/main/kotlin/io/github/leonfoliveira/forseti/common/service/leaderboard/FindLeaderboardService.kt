@@ -75,7 +75,7 @@ class FindLeaderboardService(
                         }
                     }
 
-                    // The precision from the previous comparisons makes it almost impossible to reach this point,
+                    // The precision from the previous comparisons makes it almost impossible to reach this point, but if we do, sort by name alphabetically.
                     return@sortedWith a.name.compareTo(b.name)
                 }
 
