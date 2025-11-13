@@ -7,9 +7,9 @@ import io.github.leonfoliveira.forseti.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.forseti.common.repository.SubmissionRepository
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tags
-import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 import java.util.function.Supplier
 

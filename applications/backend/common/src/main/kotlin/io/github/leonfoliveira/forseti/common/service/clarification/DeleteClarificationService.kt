@@ -4,10 +4,10 @@ import io.github.leonfoliveira.forseti.common.domain.entity.Clarification
 import io.github.leonfoliveira.forseti.common.domain.event.ClarificationDeletedEvent
 import io.github.leonfoliveira.forseti.common.domain.exception.NotFoundException
 import io.github.leonfoliveira.forseti.common.repository.ClarificationRepository
-import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
 import java.util.UUID
 

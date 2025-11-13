@@ -9,10 +9,10 @@ import io.github.leonfoliveira.forseti.common.repository.ClarificationRepository
 import io.github.leonfoliveira.forseti.common.repository.ContestRepository
 import io.github.leonfoliveira.forseti.common.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.service.dto.input.clarification.CreateClarificationInputDTO
-import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
