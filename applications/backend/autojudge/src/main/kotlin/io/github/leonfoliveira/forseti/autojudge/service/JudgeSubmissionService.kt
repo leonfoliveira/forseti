@@ -22,6 +22,13 @@ class JudgeSubmissionService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Judges a submission by running it in a Docker container and calls the API to update its answer.
+     *
+     * @param contestId The ID of the contest.
+     * @param submissionId The ID of the submission to be judged.
+     * @throws NotFoundException if the submission with the given ID does not exist.
+     */
     @Transactional
     fun judge(
         contestId: UUID,

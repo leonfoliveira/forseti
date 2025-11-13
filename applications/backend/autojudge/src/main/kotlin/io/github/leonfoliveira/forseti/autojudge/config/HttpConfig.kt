@@ -10,6 +10,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 @EnableWebSecurity
 class HttpConfig : WebMvcConfigurer {
+    /**
+     * Security filter chain configuration.
+     * Disables CSRF and allows all requests.
+     * AutoJudge service only exposes health and metrics endpoints.
+     */
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain =
         http

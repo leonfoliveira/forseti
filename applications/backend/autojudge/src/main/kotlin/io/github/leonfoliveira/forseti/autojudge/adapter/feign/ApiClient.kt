@@ -8,6 +8,13 @@ import java.util.UUID
 
 @FeignClient(name = "apiClient", url = "\${external.api.url}", configuration = [FeignConfig::class])
 interface ApiClient {
+    /**
+     * Update submission answer.
+     *
+     * @param contestId The ID of the contest.
+     * @param submissionId The ID of the submission.
+     * @param answer The new answer for the submission.
+     */
     @PutMapping("/v1/contests/{contestId}/submissions/{submissionId}/answer/{answer}")
     fun updateSubmissionAnswer(
         @PathVariable contestId: UUID,

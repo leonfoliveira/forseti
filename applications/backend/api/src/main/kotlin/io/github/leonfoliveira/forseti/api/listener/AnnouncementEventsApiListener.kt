@@ -13,6 +13,11 @@ class AnnouncementEventsApiListener(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Handles the AnnouncementCreatedEvent after the transaction is committed.
+     *
+     * @param event The AnnouncementCreatedEvent containing the announcement details.
+     */
     @TransactionalEventListener(AnnouncementCreatedEvent::class, phase = TransactionPhase.AFTER_COMMIT)
     fun onApplicationEvent(event: AnnouncementCreatedEvent) {
         logger.info("Handling announcement event: ${event.announcement}")

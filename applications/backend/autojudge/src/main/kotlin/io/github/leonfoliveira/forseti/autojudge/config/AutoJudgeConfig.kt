@@ -21,12 +21,18 @@ class AutoJudgeConfig(
 
     var currentSession: Session = refreshSession()
 
+    /**
+     * Refreshes the AutoJudge session.
+     */
     private fun refreshSession(): Session {
         val session = authenticationService.createSession(autoJudgeMember)
         RequestContext.getContext().session = session
         return session
     }
 
+    /**
+     * Scheduled task to refresh the AutoJudge session every minute if it's about to expire.
+     */
     @Scheduled(fixedRate = 60 * 1000, initialDelay = 60 * 1000)
     private fun refreshSessionSchedule() {
         if (currentSession.expiresAt.isAfter(OffsetDateTime.now().plusMinutes(1))) {

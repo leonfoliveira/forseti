@@ -17,6 +17,11 @@ class FailedSubmissionRabbitMQConsumer(
 
     override fun getPayloadType(): Class<SubmissionMessagePayload> = SubmissionMessagePayload::class.java
 
+    /**
+     * Handles the failed submission payload by marking the submission as failed.
+     *
+     * @param payload The payload containing the submission ID.
+     */
     override fun handlePayload(payload: SubmissionMessagePayload) {
         updateSubmissionService.fail(payload.submissionId)
     }

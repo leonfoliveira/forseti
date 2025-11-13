@@ -11,6 +11,13 @@ import kotlin.collections.contains
 class WebSocketTopicConfigs(
     private val contestAuthFilter: ContestAuthFilter,
 ) {
+    /**
+     * Map of private topic destination patterns to their corresponding access filter functions.
+     *
+     * The key is a Regex pattern that matches the topic destination.
+     * The value is a function that takes the destination string and returns a Boolean indicating
+     * whether the user has access to that topic.
+     */
     val privateFilters: Map<Regex, (String) -> Boolean> =
         mapOf(
             Regex("/topic/contests/[a-fA-F0-9-]+/announcements") to { destination ->

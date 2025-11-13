@@ -12,6 +12,11 @@ class StompAnnouncementEmitter(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Emits an announcement to the appropriate STOMP topic.
+     *
+     * @param announcement The announcement to be emitted.
+     */
     fun emit(announcement: Announcement) {
         logger.info(
             "Emitting announcement with id: ${announcement.id} for contest with id: ${announcement.contest.id}",

@@ -32,6 +32,9 @@ class GlobalExceptionHandler {
             ConflictException::class to HttpStatus.CONFLICT,
         )
 
+    /**
+     * Handles BusinessException and maps them to appropriate HTTP status codes.
+     */
     @ExceptionHandler(BusinessException::class)
     fun handleBusinessException(
         ex: BusinessException,

@@ -18,6 +18,9 @@ class WebSocketContextExtractionInterceptor(
 ) : ChannelInterceptor {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Fill the RequestContext from the WebSocket session attributes.
+     */
     override fun preSend(
         message: Message<*>,
         channel: MessageChannel,

@@ -22,11 +22,18 @@ class WebSocketConfig(
     val webSocketContextExtractionInterceptor: WebSocketContextExtractionInterceptor,
     val webSocketPrivateInterceptor: WebSocketPrivateInterceptor,
 ) : WebSocketMessageBrokerConfigurer {
+    /**
+     * Configure message broker with application destination prefixes and simple broker.
+     */
     override fun configureMessageBroker(registry: MessageBrokerRegistry) {
         registry.enableSimpleBroker("/topic")
         registry.setApplicationDestinationPrefixes("/app")
     }
 
+    /**
+     * Register STOMP endpoints with SockJS and CORS configuration.
+     * It also adds a handshake interceptor to extract context information during the handshake process.
+     */
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry
             .addEndpoint("/ws")
@@ -35,6 +42,9 @@ class WebSocketConfig(
             .withSockJS()
     }
 
+    /**
+     * Configure client inbound channel with interceptors for context extraction and private subscription handling.
+     */
     override fun configureClientInboundChannel(registration: ChannelRegistration) {
         registration.interceptors(webSocketContextExtractionInterceptor, webSocketPrivateInterceptor)
     }

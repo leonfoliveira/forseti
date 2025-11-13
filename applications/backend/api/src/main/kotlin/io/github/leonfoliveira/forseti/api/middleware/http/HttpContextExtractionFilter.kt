@@ -17,6 +17,9 @@ import kotlin.jvm.optionals.getOrElse
 class HttpContextExtractionFilter(
     private val sessionRepository: SessionRepository,
 ) : OncePerRequestFilter() {
+    /**
+     * Fill the RequestContext with relevant information from the HTTP request.
+     */
     public override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -38,6 +41,12 @@ class HttpContextExtractionFilter(
         return filterChain.doFilter(request, response)
     }
 
+    /**
+     * Fetch the session from the database using the session ID from the cookie.
+     *
+     * @param sessionId The session ID from the cookie.
+     * @return The session if found and valid, null otherwise.
+     */
     private fun extractSession(sessionId: String?): Session? {
         if (sessionId == null) {
             logger.info("Invalid or missing session_id cookie")

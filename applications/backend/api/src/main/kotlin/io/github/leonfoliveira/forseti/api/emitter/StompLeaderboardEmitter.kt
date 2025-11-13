@@ -11,6 +11,11 @@ class StompLeaderboardEmitter(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Emits a leaderboard to the appropriate STOMP topic.
+     *
+     * @param leaderboard The leaderboard to be emitted.
+     */
     fun emit(leaderboard: LeaderboardOutputDTO) {
         logger.info(
             "Emitting leaderboard for contest: ${leaderboard.contestId}",

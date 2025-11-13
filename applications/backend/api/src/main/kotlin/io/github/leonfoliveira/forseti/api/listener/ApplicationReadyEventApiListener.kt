@@ -15,6 +15,9 @@ class ApplicationReadyEventApiListener(
     @Value("\${security.root.password}")
     private val rootPassword: String,
 ) {
+    /**
+     * Updates the root user's password when the application is ready.
+     */
     @EventListener(ApplicationReadyEvent::class)
     fun updateRootPassword() {
         val root =

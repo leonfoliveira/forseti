@@ -20,6 +20,11 @@ class SubmissionQueueRabbitMQConsumer(
 
     override fun getPayloadType(): Class<SubmissionMessagePayload> = SubmissionMessagePayload::class.java
 
+    /**
+     * Handles a submission enqueued for judging
+     *
+     * @param payload The submission message payload
+     */
     override fun handlePayload(payload: SubmissionMessagePayload) {
         judgeSubmissionService.judge(payload.contestId, payload.submissionId)
     }
