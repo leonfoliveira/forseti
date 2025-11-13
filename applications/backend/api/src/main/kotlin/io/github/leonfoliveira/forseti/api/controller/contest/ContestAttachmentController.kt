@@ -3,7 +3,7 @@ package io.github.leonfoliveira.forseti.api.controller.contest
 import io.github.leonfoliveira.forseti.api.dto.response.AttachmentResponseDTO
 import io.github.leonfoliveira.forseti.api.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.forseti.api.dto.response.toResponseDTO
-import io.github.leonfoliveira.forseti.api.service.AttachmentAuthorizationService
+import io.github.leonfoliveira.forseti.api.service.attachment.AttachmentAuthorizationService
 import io.github.leonfoliveira.forseti.api.util.ApiMetrics
 import io.github.leonfoliveira.forseti.api.util.Private
 import io.github.leonfoliveira.forseti.common.domain.entity.Attachment

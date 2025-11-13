@@ -13,6 +13,9 @@ class OpenApiConfig(
     @Value("\${spring.application.version}")
     private val version: String,
 ) {
+    /**
+     * Configures the OpenAPI documentation for the Forseti API.
+     */
     @Bean
     fun openApi(): OpenAPI =
         OpenAPI()

@@ -17,6 +17,12 @@ class MinioAttachmentBucket(
 ) : AttachmentBucket {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Uploads an attachment to the MinIO bucket
+     *
+     * @param attachment the attachment metadata
+     * @param bytes the attachment content
+     */
     override fun upload(
         attachment: Attachment,
         bytes: ByteArray,
@@ -38,6 +44,12 @@ class MinioAttachmentBucket(
         logger.info("Successfully uploaded")
     }
 
+    /**
+     * Downloads an attachment from the MinIO bucket
+     *
+     * @param attachment the attachment metadata
+     * @return the attachment content as a byte array
+     */
     override fun download(attachment: Attachment): ByteArray {
         val key = attachment.id.toString()
         logger.info("Downloading file with key: $key")

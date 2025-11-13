@@ -9,6 +9,7 @@ import io.github.leonfoliveira.forseti.common.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.repository.ProblemRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -20,6 +21,14 @@ class DeleteContestService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Soft delete a contest.
+     *
+     * @param id The id of the contest to be deleted.
+     * @throws NotFoundException if the contest does not exist.
+     * @throws ForbiddenException if the contest has already started.
+     */
+    @Transactional
     fun delete(id: UUID) {
         logger.info("Deleting contest with id: $id")
 
@@ -27,6 +36,7 @@ class DeleteContestService(
             contestRepository.findById(id).orElseThrow {
                 NotFoundException("Could not find contest with id = $id")
             }
+        // Business rule: A contest that has started cannot be deleted
         if (contest.hasStarted()) {
             throw ForbiddenException("Contest already started")
         }
@@ -36,6 +46,12 @@ class DeleteContestService(
         logger.info("Finished deleting contest with id: $id")
     }
 
+    /**
+     * Soft delete a list of members.
+     *
+     * @param members The list of members to be deleted.
+     */
+    @Transactional
     fun deleteMembers(members: List<Member>) {
         logger.info("Deleting members: ${members.joinToString { it.id.toString() }}")
 
@@ -45,6 +61,12 @@ class DeleteContestService(
         logger.info("Finished deleting members: ${members.joinToString { it.id.toString() }}")
     }
 
+    /**
+     * Soft delete a list of problems.
+     *
+     * @param problems The list of problems to be deleted.
+     */
+    @Transactional
     fun deleteProblems(problems: List<Problem>) {
         logger.info("Deleting problems: ${problems.joinToString { it.id.toString() }}")
 

@@ -2,8 +2,8 @@ package io.github.leonfoliveira.forseti.api.listener
 
 import io.github.leonfoliveira.forseti.api.emitter.StompLeaderboardEmitter
 import io.github.leonfoliveira.forseti.api.emitter.StompSubmissionEmitter
-import io.github.leonfoliveira.forseti.common.event.SubmissionCreatedEvent
-import io.github.leonfoliveira.forseti.common.event.SubmissionUpdatedEvent
+import io.github.leonfoliveira.forseti.common.domain.event.SubmissionCreatedEvent
+import io.github.leonfoliveira.forseti.common.domain.event.SubmissionUpdatedEvent
 import io.github.leonfoliveira.forseti.common.mock.entity.SubmissionMockBuilder
 import io.github.leonfoliveira.forseti.common.service.dto.output.LeaderboardOutputDTO
 import io.github.leonfoliveira.forseti.common.service.leaderboard.FindLeaderboardService

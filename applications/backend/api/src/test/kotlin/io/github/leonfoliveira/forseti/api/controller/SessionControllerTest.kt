@@ -73,6 +73,6 @@ class SessionControllerTest(
                     }
                 }
 
-            verify(exactly = 0) { authenticationService.deleteSession(any()) }
+            verify(exactly = 0) { authenticationService.deleteCurrentSession() }
         }
     })

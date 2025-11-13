@@ -1,9 +1,9 @@
 package io.github.leonfoliveira.forseti.common.service.submission
 
 import io.github.leonfoliveira.forseti.common.domain.entity.Submission
+import io.github.leonfoliveira.forseti.common.domain.event.SubmissionCreatedEvent
 import io.github.leonfoliveira.forseti.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.forseti.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.forseti.common.event.SubmissionCreatedEvent
 import io.github.leonfoliveira.forseti.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder

@@ -12,6 +12,11 @@ class StompClarificationEmitter(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Emits a clarification to the appropriate STOMP topics.
+     *
+     * @param clarification The clarification to be emitted.
+     */
     fun emit(clarification: Clarification) {
         val contest = clarification.contest
         logger.info(
@@ -31,6 +36,11 @@ class StompClarificationEmitter(
         }
     }
 
+    /**
+     * Emits a deleted clarification event to the appropriate STOMP topic.
+     *
+     * @param clarification The clarification that was deleted.
+     */
     fun emitDeleted(clarification: Clarification) {
         val contest = clarification.contest
         logger.info(

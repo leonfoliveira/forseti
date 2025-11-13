@@ -12,9 +12,15 @@ import org.springframework.context.annotation.Configuration
 class FeignConfig(
     private val autoJudgeConfig: AutoJudgeConfig,
 ) : RequestInterceptor {
+    /**
+     * Configure Feign retryer.
+     */
     @Bean
     fun retryer(): Retryer = Retryer.Default(100, 1000, 3)
 
+    /**
+     * Add session cookie and trace id to outgoing requests.
+     */
     override fun apply(template: RequestTemplate) {
         template.header("Cookie", "session_id=${autoJudgeConfig.currentSession.id}")
 

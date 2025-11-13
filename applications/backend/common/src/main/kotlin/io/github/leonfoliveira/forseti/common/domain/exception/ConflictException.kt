@@ -1,3 +1,8 @@
 package io.github.leonfoliveira.forseti.common.domain.exception
 
-class ConflictException(message: String = "Conflict") : BusinessException(message)
+/**
+ * Conflict exception class for handling errors related to resource conflicts, such as duplicate entries
+ */
+class ConflictException(
+    message: String = "Conflict",
+) : BusinessException(message)

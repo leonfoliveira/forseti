@@ -26,6 +26,10 @@ class DockerSubmissionRunnerAdapter(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Runs the submission inside a Docker container, compares the output with the expected output,
+     * and returns the execution result.
+     */
     fun run(submission: Submission): Execution {
         val contest = submission.contest
         val problem = submission.problem
@@ -34,9 +38,11 @@ class DockerSubmissionRunnerAdapter(
         val tmpDir = Files.createTempDirectory("forseti_${submission.id}").toFile()
         logger.info("Temporary directory created: ${tmpDir.absolutePath}")
         logger.info("Storing submission code file")
+        // Code file needs to be stored in ROM memory for Docker to access it
         val codeFile = loadCode(submission, tmpDir)
         logger.info("Code file stored at: ${codeFile.absolutePath}")
         logger.info("Loading test cases")
+        // Test cases can be loaded in RAM memory as they will be passed via stdin
         val testCases = loadTestCases(problem)
         logger.info("Creating Docker container")
         val config = dockerSubmissionRunnerConfigFactory.get(submission.language)
@@ -152,6 +158,10 @@ class DockerSubmissionRunnerAdapter(
     /**
      * Downloads the code file from the attachment bucket and stores it in a temporary directory.
      * It needs to be store in ROM memory because the Docker container needs to access it as a volume.
+     *
+     * @param submission The submission containing the code attachment.
+     * @param tmpDir The temporary directory to store the code file.
+     * @return The file object pointing to the stored code file.
      */
     private fun loadCode(
         submission: Submission,
@@ -165,6 +175,9 @@ class DockerSubmissionRunnerAdapter(
 
     /**
      * Downloads the test cases from the attachment bucket and parses them as CSV.
+     *
+     * @param problem The problem containing the test cases attachment.
+     * @return A list of test cases, where each test case is represented as an array of strings.
      */
     private fun loadTestCases(problem: Problem): List<Array<String>> {
         val bytes = attachmentBucket.download(problem.testCases)
@@ -176,6 +189,10 @@ class DockerSubmissionRunnerAdapter(
 
     /**
      * Uploads the output of the execution to the attachment bucket as a CSV file.
+     *
+     * @param contest The contest to which the attachment will be associated.
+     * @param output The output of the execution as a list of strings.
+     * @return The attachment representing the uploaded output file.
      */
     private fun uploadOutput(
         contest: Contest,
@@ -195,6 +212,17 @@ class DockerSubmissionRunnerAdapter(
         return attachment
     }
 
+    /**
+     * Runs the code inside the Docker container with the given input, time limit, and memory limit.
+     *
+     * @param container The Docker container where the code will be executed.
+     * @param config The configuration for running the submission.
+     * @param codeFile The file containing the code to be executed.
+     * @param input The input to be provided to the code.
+     * @param timeLimit The time limit for execution in milliseconds.
+     * @param memoryLimit The memory limit for execution in bytes.
+     * @return The output produced by the code.
+     */
     private fun runCode(
         container: DockerContainer,
         config: DockerSubmissionRunnerConfig,
@@ -209,6 +237,13 @@ class DockerSubmissionRunnerAdapter(
             timeLimit = timeLimit,
         )
 
+    /**
+     * Evaluates the output of the code against the expected output.
+     *
+     * @param output The output produced by the code.
+     * @param expectedOutput The expected output for comparison.
+     * @return True if the output matches the expected output, false otherwise.
+     */
     private fun evaluate(
         output: String,
         expectedOutput: String,

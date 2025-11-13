@@ -7,6 +7,14 @@ import java.io.InputStreamReader
 object CommandRunner {
     private val logger = LoggerFactory.getLogger(CommandRunner::class.java)
 
+    /**
+     * Runs a command-line process with the specified command and optional input.
+     *
+     * @param command The command to execute as an array of strings.
+     * @param input Optional input to be passed to the process's standard input.
+     * @return The standard output of the process as a string.
+     * @throws CommandError if the process exits with a non-zero exit code.
+     */
     fun run(
         command: Array<String>,
         input: String? = null,

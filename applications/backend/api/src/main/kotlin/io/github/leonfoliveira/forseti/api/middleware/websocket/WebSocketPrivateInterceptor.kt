@@ -17,6 +17,9 @@ class WebSocketPrivateInterceptor(
 ) : ChannelInterceptor {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Checks if the incoming WebSocket message has access to the destination based on the private topic configurations.
+     */
     override fun preSend(
         message: Message<*>,
         channel: MessageChannel,
@@ -26,6 +29,7 @@ class WebSocketPrivateInterceptor(
         logger.info("Started PrivateWebSocketInterceptor for destination: $destination")
         val session = RequestContext.getContext().session
 
+        // ROOT users bypass all checks
         if (session?.member?.type == Member.Type.ROOT) {
             logger.info("User is ROOT, bypassing access")
             return message
@@ -37,11 +41,13 @@ class WebSocketPrivateInterceptor(
                     it.key.matches(destination)
                 }?.value
 
+        // If no private configuration is present, the topic is public
         if (privateFilter == null) {
             logger.info("No private configuration found for destination: $destination")
             return message
         }
 
+        // If a private configuration is present, check if the user can access the destination
         if (!privateFilter(destination)) {
             logger.info("User is NOT allowed to access destination")
             throw ForbiddenException()

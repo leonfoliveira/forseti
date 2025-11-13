@@ -25,6 +25,9 @@ class HttpConfig(
     private val httpContextExtractionFilter: HttpContextExtractionFilter,
     private val httpPrivateInterceptor: HttpPrivateInterceptor,
 ) : WebMvcConfigurer {
+    /**
+     * Configure CORS to allow requests from the frontend application.
+     */
     override fun addCorsMappings(registry: CorsRegistry) {
         registry
             .addMapping("/**")
@@ -34,6 +37,12 @@ class HttpConfig(
             .allowCredentials(true)
     }
 
+    /**
+     * Configure the security filter chain.
+     * Disable CSRF and default spring security authentication.
+     * It will be handled by the custom interceptor [HttpPrivateInterceptor]
+     * using @Private annotations on controller level.
+     */
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain =
         http

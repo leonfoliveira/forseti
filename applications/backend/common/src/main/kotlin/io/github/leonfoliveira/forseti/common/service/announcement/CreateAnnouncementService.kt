@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.forseti.common.service.announcement
 
 import io.github.leonfoliveira.forseti.common.domain.entity.Announcement
+import io.github.leonfoliveira.forseti.common.domain.event.AnnouncementCreatedEvent
 import io.github.leonfoliveira.forseti.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.forseti.common.event.AnnouncementCreatedEvent
 import io.github.leonfoliveira.forseti.common.repository.AnnouncementRepository
 import io.github.leonfoliveira.forseti.common.repository.ContestRepository
 import io.github.leonfoliveira.forseti.common.repository.MemberRepository
@@ -10,6 +10,7 @@ import io.github.leonfoliveira.forseti.common.service.dto.input.announcement.Cre
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -21,6 +22,16 @@ class CreateAnnouncementService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Creates a new announcement for a contest
+     *
+     * @param contestId The id of the contest
+     * @param memberId The id of the member creating the announcement
+     * @param input The announcement input data
+     * @return The created announcement
+     * @throws NotFoundException if the contest or member does not exist
+     */
+    @Transactional
     fun create(
         contestId: UUID,
         memberId: UUID,

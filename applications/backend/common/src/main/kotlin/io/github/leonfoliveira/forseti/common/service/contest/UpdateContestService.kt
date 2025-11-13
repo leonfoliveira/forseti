@@ -15,6 +15,7 @@ import io.github.leonfoliveira.forseti.common.util.TestCasesValidator
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
@@ -31,11 +32,27 @@ class UpdateContestService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Updates a contest with the provided input data.
+     * For members and problems:
+     * - If an ID is provided, the existing entity is updated.
+     * - If no ID is provided, a new entity is created.
+     * - Any existing entities not included in the input are deleted.
+     *
+     * @param inputDTO The input data for updating the contest.
+     * @return The updated contest.
+     * @throws NotFoundException If the contest or any referenced entities are not found.
+     * @throws ForbiddenException If the update violates any business rules.
+     * @throws ConflictException If there is a conflict with existing data (e.g., duplicate slug).
+     * @throws BusinessException If any business logic validation fails.
+     */
+    @Transactional
     fun update(
         @Valid inputDTO: UpdateContestInputDTO,
     ): Contest {
         logger.info("Updating contest with id: ${inputDTO.id}")
 
+        // Business rule: Contest cannot have ROOT members
         if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
             throw ForbiddenException("Contest cannot have ROOT members")
         }
@@ -43,19 +60,23 @@ class UpdateContestService(
             contestRepository
                 .findById(inputDTO.id)
                 .orElseThrow { NotFoundException("Could not find contest with id = ${inputDTO.id}") }
+        // Business rule: No updates allowed if contest has finished
         if (contest.hasFinished()) {
             throw ForbiddenException("Contest has already finished and cannot be updated")
         }
+        // Business rule: Start time cannot be changed if contest has started
         if (contest.hasStarted()) {
             if (!inputDTO.startAt.truncatedTo(ChronoUnit.SECONDS).isEqual(contest.startAt.truncatedTo(ChronoUnit.SECONDS))) {
                 throw ForbiddenException("Contest has already started and cannot have its start time updated")
             }
         } else {
+            // Validation rule: Start time must be in the future
             if (inputDTO.startAt.isBefore(OffsetDateTime.now())) {
                 throw BusinessException("Contest start time must be in the future")
             }
         }
         val duplicatedContestBySlug = contestRepository.findBySlug(inputDTO.slug)
+        // Validation rule: Slug must be unique
         if (duplicatedContestBySlug != null && duplicatedContestBySlug.id != contest.id) {
             throw ConflictException("Contest with slug '${inputDTO.slug}' already exists")
         }
@@ -97,11 +118,21 @@ class UpdateContestService(
         return contest
     }
 
+    /**
+     * Forces the start of a contest by setting its start time to the current time.
+     *
+     * @param contestId The ID of the contest to be started.
+     * @return The updated contest with the new start time.
+     * @throws NotFoundException If the contest with the given ID is not found.
+     * @throws ForbiddenException If the contest has already started.
+     */
+    @Transactional
     fun forceStart(contestId: UUID): Contest {
         val contest =
             contestRepository
                 .findById(contestId)
                 .orElseThrow { NotFoundException("Could not find contest with id = $contestId") }
+        // Business rule: Contest cannot be started if it has already started
         if (contest.hasStarted()) {
             throw ForbiddenException("Contest with id: $contestId has already started")
         }
@@ -111,11 +142,21 @@ class UpdateContestService(
         return contest
     }
 
+    /**
+     * Forces the end of a contest by setting its end time to the current time.
+     *
+     * @param contestId The ID of the contest to be ended.
+     * @return The updated contest with the new end time.
+     * @throws NotFoundException If the contest with the given ID is not found.
+     * @throws ForbiddenException If the contest is not currently active.
+     */
+    @Transactional
     fun forceEnd(contestId: UUID): Contest {
         val contest =
             contestRepository
                 .findById(contestId)
                 .orElseThrow { NotFoundException("Could not find contest with id = $contestId") }
+        // Business rule: Only active contests can be ended
         if (!contest.isActive()) {
             throw ForbiddenException("Contest with id: $contestId is not active")
         }
@@ -125,12 +166,16 @@ class UpdateContestService(
         return contest
     }
 
-    fun createMember(
+    /**
+     * Creates a new member for the given contest based on the provided DTO.
+     */
+    private fun createMember(
         contest: Contest,
         memberDTO: UpdateContestInputDTO.MemberDTO,
     ): Member {
         logger.info("Creating member with login: ${memberDTO.login}")
 
+        // Forbid members to have ROOT login. It is required to ensure a root can sign-in in any contest.
         if (memberDTO.login == Member.ROOT_LOGIN) {
             throw ForbiddenException("Member login cannot be '${Member.ROOT_LOGIN}'")
         }
@@ -148,7 +193,10 @@ class UpdateContestService(
         return member
     }
 
-    fun createProblem(
+    /**
+     * Creates a new problem for the given contest based on the provided DTO.
+     */
+    private fun createProblem(
         contest: Contest,
         problemDTO: UpdateContestInputDTO.ProblemDTO,
     ): Problem {
@@ -162,6 +210,7 @@ class UpdateContestService(
             attachmentRepository.findById(problemDTO.testCases.id).orElseThrow {
                 NotFoundException("Could not find testCases attachment with id: ${problemDTO.testCases.id}")
             }
+        // Validate if the test cases file follows the expected format
         testCasesValidator.validate(testCases)
 
         val problem =
@@ -178,6 +227,14 @@ class UpdateContestService(
         return problem
     }
 
+    /**
+     * Updates an existing member based on the provided DTO.
+     *
+     * @param membersHash A map of existing members keyed by their IDs.
+     * @param memberDTO The DTO containing updated member information.
+     * @return The updated member.
+     * @throws NotFoundException If the member with the given ID is not found.
+     */
     private fun updateMember(
         membersHash: Map<UUID, Member>,
         memberDTO: UpdateContestInputDTO.MemberDTO,
@@ -198,6 +255,14 @@ class UpdateContestService(
         return member
     }
 
+    /**
+     * Updates an existing problem based on the provided DTO.
+     *
+     * @param problemsHash A map of existing problems keyed by their IDs.
+     * @param problemDTO The DTO containing updated problem information.
+     * @return The updated problem.
+     * @throws NotFoundException If the problem or any referenced attachments are not found.
+     */
     private fun updateProblem(
         problemsHash: Map<UUID, Problem>,
         problemDTO: UpdateContestInputDTO.ProblemDTO,

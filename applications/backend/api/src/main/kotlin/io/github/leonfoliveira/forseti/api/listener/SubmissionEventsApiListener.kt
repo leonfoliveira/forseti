@@ -3,8 +3,8 @@ package io.github.leonfoliveira.forseti.api.listener
 import io.github.leonfoliveira.forseti.api.emitter.StompLeaderboardEmitter
 import io.github.leonfoliveira.forseti.api.emitter.StompSubmissionEmitter
 import io.github.leonfoliveira.forseti.common.domain.entity.Submission
-import io.github.leonfoliveira.forseti.common.event.SubmissionCreatedEvent
-import io.github.leonfoliveira.forseti.common.event.SubmissionUpdatedEvent
+import io.github.leonfoliveira.forseti.common.domain.event.SubmissionCreatedEvent
+import io.github.leonfoliveira.forseti.common.domain.event.SubmissionUpdatedEvent
 import io.github.leonfoliveira.forseti.common.service.leaderboard.FindLeaderboardService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -19,12 +19,22 @@ class SubmissionEventsApiListener(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Handles SubmissionCreatedEvent after the transaction is committed
+     *
+     * @param event the SubmissionCreatedEvent
+     */
     @TransactionalEventListener(SubmissionCreatedEvent::class, phase = TransactionPhase.AFTER_COMMIT)
     fun onApplicationEvent(event: SubmissionCreatedEvent) {
         logger.info("Handling submission created event: ${event.submission}")
         emmitSubmissionAndLeaderboard(event.submission)
     }
 
+    /**
+     * Handles SubmissionUpdatedEvent after the transaction is committed
+     *
+     * @param event the SubmissionUpdatedEvent
+     */
     @TransactionalEventListener(SubmissionUpdatedEvent::class, phase = TransactionPhase.AFTER_COMMIT)
     fun onApplicationEvent(event: SubmissionUpdatedEvent) {
         logger.info("Handling submission updated event: ${event.submission}")

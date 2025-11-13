@@ -12,6 +12,9 @@ import org.springframework.web.socket.server.HandshakeInterceptor
 class WebSocketContextHandshakeInterceptor : HandshakeInterceptor {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Stores the current RequestContext in the WebSocket session attributes before the handshake.
+     */
     override fun beforeHandshake(
         request: ServerHttpRequest,
         response: ServerHttpResponse,

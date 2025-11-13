@@ -23,7 +23,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -47,7 +46,6 @@ class ContestController(
 
     @PostMapping
     @Private(Member.Type.ROOT)
-    @Transactional
     @Operation(summary = "Create a contest")
     @ApiResponses(
         value = [
@@ -84,7 +82,6 @@ class ContestController(
 
     @PutMapping
     @Private(Member.Type.ADMIN)
-    @Transactional
     @Operation(summary = "Update a contest")
     @ApiResponses(
         value = [
@@ -127,7 +124,6 @@ class ContestController(
 
     @GetMapping("/metadata")
     @Private(Member.Type.ROOT)
-    @Transactional(readOnly = true)
     @Operation(summary = "Find all contest metadata")
     @ApiResponses(
         value = [
@@ -151,7 +147,6 @@ class ContestController(
     }
 
     @GetMapping("/slug/{contestSlug}/metadata")
-    @Transactional(readOnly = true)
     @Operation(summary = "Find contest metadata by slug")
     @ApiResponses(
         value = [
@@ -177,7 +172,6 @@ class ContestController(
     }
 
     @GetMapping("/{contestId}")
-    @Transactional(readOnly = true)
     @Operation(summary = "Find contest by id")
     @ApiResponses(
         value = [
@@ -215,7 +209,6 @@ class ContestController(
 
     @GetMapping("/{contestId}/full")
     @Private(Member.Type.ADMIN)
-    @Transactional(readOnly = true)
     @Operation(summary = "Find full contest by id")
     @ApiResponses(
         value = [
@@ -263,7 +256,6 @@ class ContestController(
 
     @PutMapping("/{contestId}/start")
     @Private(Member.Type.ADMIN)
-    @Transactional
     @Operation(summary = "Force start a contest")
     @ApiResponses(
         value = [
@@ -311,7 +303,6 @@ class ContestController(
 
     @PutMapping("/{contestId}/end")
     @Private(Member.Type.ADMIN)
-    @Transactional
     @Operation(summary = "Force end a contest")
     @ApiResponses(
         value = [
@@ -359,7 +350,6 @@ class ContestController(
 
     @DeleteMapping("/{contestId}")
     @Private(Member.Type.ROOT)
-    @Transactional
     @Operation(summary = "Delete a contest")
     @ApiResponses(
         value = [

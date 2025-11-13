@@ -16,6 +16,9 @@ import org.springframework.web.servlet.HandlerInterceptor
 class HttpPrivateInterceptor : HandlerInterceptor {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Checks if the incoming request has access to the destination based on the @Private annotation.
+     */
     override fun preHandle(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -28,6 +31,7 @@ class HttpPrivateInterceptor : HandlerInterceptor {
         }
         val session = RequestContext.getContext().session
 
+        // ROOT users bypass all checks
         if (session?.member?.type == Member.Type.ROOT) {
             logger.info("User is ROOT, bypassing access")
             return true
@@ -37,16 +41,19 @@ class HttpPrivateInterceptor : HandlerInterceptor {
             handler.getMethodAnnotation(Private::class.java)
                 ?: handler.beanType.getAnnotation(Private::class.java)
 
+        // If no @Private annotation is present, the endpoint is public
         if (privateAnnotation == null) {
             logger.info("No @Private annotation found, skipping access check")
             return true
         }
 
+        // If @Private is present without allowed types, any authenticated user can access
         if (privateAnnotation.allowed.isEmpty() && session == null) {
             logger.info("No session found")
             throw UnauthorizedException()
         }
 
+        // If @Private has allowed types, check if the user's type is in the allowed list
         if (privateAnnotation.allowed.isNotEmpty() &&
             session?.member?.type !in privateAnnotation.allowed
         ) {

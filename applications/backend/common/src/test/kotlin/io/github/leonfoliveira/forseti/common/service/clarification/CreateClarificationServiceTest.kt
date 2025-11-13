@@ -2,9 +2,9 @@ package io.github.leonfoliveira.forseti.common.service.clarification
 
 import io.github.leonfoliveira.forseti.common.domain.entity.Clarification
 import io.github.leonfoliveira.forseti.common.domain.entity.Member
+import io.github.leonfoliveira.forseti.common.domain.event.ClarificationCreatedEvent
 import io.github.leonfoliveira.forseti.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.forseti.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.forseti.common.event.ClarificationCreatedEvent
 import io.github.leonfoliveira.forseti.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.forseti.common.repository.ClarificationRepository

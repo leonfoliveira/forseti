@@ -1,9 +1,9 @@
 package io.github.leonfoliveira.forseti.common.service.submission
 
 import io.github.leonfoliveira.forseti.common.domain.entity.Submission
+import io.github.leonfoliveira.forseti.common.domain.event.SubmissionCreatedEvent
 import io.github.leonfoliveira.forseti.common.domain.exception.ForbiddenException
 import io.github.leonfoliveira.forseti.common.domain.exception.NotFoundException
-import io.github.leonfoliveira.forseti.common.event.SubmissionCreatedEvent
 import io.github.leonfoliveira.forseti.common.repository.AttachmentRepository
 import io.github.leonfoliveira.forseti.common.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.repository.ProblemRepository
@@ -13,6 +13,7 @@ import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import java.util.UUID
 
@@ -27,6 +28,16 @@ class CreateSubmissionService(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Creates a new submission.
+     *
+     * @param memberId ID of the member creating the submission
+     * @param inputDTO Data for creating the submission
+     * @return The created submission
+     * @throws NotFoundException if the member, problem, or code attachment is not found
+     * @throws ForbiddenException if the language is not allowed or the contest is not active
+     */
+    @Transactional
     fun create(
         memberId: UUID,
         @Valid inputDTO: CreateSubmissionInputDTO,
@@ -47,9 +58,11 @@ class CreateSubmissionService(
             }
         val contest = problem.contest
 
+        // A contest has a set of allowed languages, so we need to check if the input language is allowed
         if (contest.languages.none { it == inputDTO.language }) {
             throw ForbiddenException("Language ${inputDTO.language} is not allowed for this contest")
         }
+        // Business rule: Submissions can only be created if the contest is active
         if (!contest.isActive()) {
             throw ForbiddenException("Contest is not active")
         }

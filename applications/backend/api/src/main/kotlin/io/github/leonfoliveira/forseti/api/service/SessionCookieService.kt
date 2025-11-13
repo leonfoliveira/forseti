@@ -14,6 +14,12 @@ class SessionCookieService(
     @Value("\${security.cookie.secure}")
     private val cookieSecure: Boolean,
 ) {
+    /**
+     * Builds a session cookie string for the given session.
+     *
+     * @param session The session for which to build the cookie.
+     * @return The session cookie string.
+     */
     fun buildCookie(session: Session): String {
         val cookie =
             if (cookieSecure) {
@@ -38,6 +44,11 @@ class SessionCookieService(
         return cookie.toString()
     }
 
+    /**
+     * Builds a cookie string that clears the session cookie.
+     *
+     * @return The clear session cookie string.
+     */
     fun buildClearCookie(): String {
         val cookie =
             if (cookieSecure) {

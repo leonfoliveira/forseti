@@ -13,6 +13,11 @@ class StompSubmissionEmitter(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Emits a submission to the appropriate STOMP topics.
+     *
+     * @param submission The submission to be emitted.
+     */
     fun emit(submission: Submission) {
         logger.info(
             "Emitting submission with id: ${submission.id} " +
