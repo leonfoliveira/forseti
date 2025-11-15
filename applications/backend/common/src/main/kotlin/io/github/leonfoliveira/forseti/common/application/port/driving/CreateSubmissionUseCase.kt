@@ -2,6 +2,7 @@ package io.github.leonfoliveira.forseti.common.application.port.driving
 
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
 import io.github.leonfoliveira.forseti.common.application.dto.input.submission.CreateSubmissionInputDTO
+import jakarta.validation.Valid
 import java.util.UUID
 
 interface CreateSubmissionUseCase {
@@ -14,6 +15,6 @@ interface CreateSubmissionUseCase {
      */
     fun create(
         memberId: UUID,
-        inputDTO: CreateSubmissionInputDTO,
+        @Valid inputDTO: CreateSubmissionInputDTO,
     ): Submission
 }

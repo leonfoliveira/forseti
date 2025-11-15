@@ -2,6 +2,7 @@ package io.github.leonfoliveira.forseti.common.application.port.driving
 
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Contest
 import io.github.leonfoliveira.forseti.common.application.dto.input.contest.UpdateContestInputDTO
+import jakarta.validation.Valid
 import java.util.UUID
 
 interface UpdateContestUseCase {
@@ -11,7 +12,9 @@ interface UpdateContestUseCase {
      * @param inputDTO The input data containing the contest updates.
      * @return The updated contest entity.
      */
-    fun update(inputDTO: UpdateContestInputDTO): Contest
+    fun update(
+        @Valid inputDTO: UpdateContestInputDTO,
+    ): Contest
 
     /**
      * Forces a contest to start immediately, regardless of its scheduled start time.
