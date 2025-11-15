@@ -6,7 +6,7 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.session.toRespon
 import io.github.leonfoliveira.forseti.api.adapter.util.Private
 import io.github.leonfoliveira.forseti.api.adapter.util.SessionCookieUtil
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.service.authentication.AuthenticationService
+import io.github.leonfoliveira.forseti.common.application.port.driving.AuthenticationUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/v1/session")
 class SessionController(
-    val authenticationService: AuthenticationService,
+    val authenticationUseCase: AuthenticationUseCase,
     val sessionCookieUtil: SessionCookieUtil,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -83,7 +83,7 @@ class SessionController(
     )
     fun deleteSession(): ResponseEntity<Void> {
         logger.info("[DELETE] /v1/session/me")
-        authenticationService.deleteCurrentSession()
+        authenticationUseCase.deleteCurrentSession()
         val cookie = sessionCookieUtil.buildClearCookie()
         return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, cookie).build()
     }

@@ -6,7 +6,7 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.announcement.toR
 import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
 import io.github.leonfoliveira.forseti.common.application.dto.input.announcement.CreateAnnouncementInputDTO
-import io.github.leonfoliveira.forseti.common.application.service.announcement.CreateAnnouncementService
+import io.github.leonfoliveira.forseti.common.application.port.driving.CreateAnnouncementUseCase
 import io.github.leonfoliveira.forseti.common.mock.entity.AnnouncementMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
@@ -26,7 +26,7 @@ import java.util.UUID
 @ContextConfiguration(classes = [ContestAnnouncementController::class])
 class ContestAnnouncementControllerTest(
     @MockkBean(relaxed = true)
-    private val createAnnouncementService: CreateAnnouncementService,
+    private val createAnnouncementUseCase: CreateAnnouncementUseCase,
     @MockkBean(relaxed = true)
     private val contestAuthFilter: ContestAuthFilter,
     private val webMvc: MockMvc,
@@ -45,7 +45,7 @@ class ContestAnnouncementControllerTest(
             val announcement = AnnouncementMockBuilder.build()
             val session = SessionMockBuilder.build()
             RequestContext.getContext().session = session
-            every { createAnnouncementService.create(contestId, session.member.id, body) } returns announcement
+            every { createAnnouncementUseCase.create(contestId, session.member.id, body) } returns announcement
 
             webMvc
                 .post(basePath, contestId) {

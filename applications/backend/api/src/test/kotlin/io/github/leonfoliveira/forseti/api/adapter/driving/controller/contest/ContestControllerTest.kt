@@ -14,10 +14,10 @@ import io.github.leonfoliveira.forseti.common.application.domain.entity.Submissi
 import io.github.leonfoliveira.forseti.common.application.dto.input.attachment.AttachmentInputDTO
 import io.github.leonfoliveira.forseti.common.application.dto.input.contest.CreateContestInputDTO
 import io.github.leonfoliveira.forseti.common.application.dto.input.contest.UpdateContestInputDTO
-import io.github.leonfoliveira.forseti.common.application.service.contest.CreateContestService
-import io.github.leonfoliveira.forseti.common.application.service.contest.DeleteContestService
-import io.github.leonfoliveira.forseti.common.application.service.contest.FindContestService
-import io.github.leonfoliveira.forseti.common.application.service.contest.UpdateContestService
+import io.github.leonfoliveira.forseti.common.application.port.driving.CreateContestUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.DeleteContestUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.FindContestUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.UpdateContestUseCase
 import io.github.leonfoliveira.forseti.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.ProblemMockBuilder
@@ -44,13 +44,13 @@ class ContestControllerTest(
     @MockkBean(relaxed = true)
     private val contestAuthFilter: ContestAuthFilter,
     @MockkBean(relaxed = true)
-    private val createContestService: CreateContestService,
+    private val createContestUseCase: CreateContestUseCase,
     @MockkBean(relaxed = true)
-    private val updateContestService: UpdateContestService,
+    private val updateContestUseCase: UpdateContestUseCase,
     @MockkBean(relaxed = true)
-    private val findContestService: FindContestService,
+    private val findContestUseCase: FindContestUseCase,
     @MockkBean(relaxed = true)
-    private val deleteContestService: DeleteContestService,
+    private val deleteContestUseCase: DeleteContestUseCase,
     private val webMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) : FunSpec({
@@ -72,7 +72,7 @@ class ContestControllerTest(
                     endAt = OffsetDateTime.now().plusHours(2),
                 )
             val contest = ContestMockBuilder.build()
-            every { createContestService.create(body) } returns contest
+            every { createContestUseCase.create(body) } returns contest
 
             webMvc
                 .post(basePath) {
@@ -122,7 +122,7 @@ class ContestControllerTest(
                         ),
                 )
             val contest = ContestMockBuilder.build()
-            every { updateContestService.update(body) } returns contest
+            every { updateContestUseCase.update(body) } returns contest
 
             webMvc
                 .put(basePath, contestId) {
@@ -136,7 +136,7 @@ class ContestControllerTest(
 
         test("findAllContestMetadata") {
             val contests = listOf(ContestMockBuilder.build(), ContestMockBuilder.build())
-            every { findContestService.findAll() } returns contests
+            every { findContestUseCase.findAll() } returns contests
 
             webMvc
                 .get("$basePath/metadata") {
@@ -150,7 +150,7 @@ class ContestControllerTest(
         test("findContestMetadataBySlug") {
             val slug = "test-contest"
             val contest = ContestMockBuilder.build(slug = slug)
-            every { findContestService.findBySlug(slug) } returns contest
+            every { findContestUseCase.findBySlug(slug) } returns contest
 
             webMvc
                 .get("$basePath/slug/{slug}/metadata", slug) {
@@ -164,7 +164,7 @@ class ContestControllerTest(
         test("findContestById") {
             val contestId = UUID.randomUUID()
             val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1))
-            every { findContestService.findById(contestId) } returns contest
+            every { findContestUseCase.findById(contestId) } returns contest
 
             webMvc
                 .get("$basePath/{contestId}", contestId) {
@@ -186,7 +186,7 @@ class ContestControllerTest(
                             ProblemMockBuilder.build(),
                         ),
                 )
-            every { findContestService.findById(contestId) } returns contest
+            every { findContestUseCase.findById(contestId) } returns contest
 
             webMvc
                 .get("$basePath/{contestId}/full", contestId) {
@@ -200,7 +200,7 @@ class ContestControllerTest(
         test("forceStartContest") {
             val contestId = UUID.randomUUID()
             val contest = ContestMockBuilder.build(id = contestId)
-            every { updateContestService.forceStart(contestId) } returns contest
+            every { updateContestUseCase.forceStart(contestId) } returns contest
 
             webMvc
                 .put("$basePath/{contestId}/start", contestId) {
@@ -214,7 +214,7 @@ class ContestControllerTest(
         test("forceEndContest") {
             val contestId = UUID.randomUUID()
             val contest = ContestMockBuilder.build(id = contestId)
-            every { updateContestService.forceEnd(contestId) } returns contest
+            every { updateContestUseCase.forceEnd(contestId) } returns contest
 
             webMvc
                 .put("$basePath/{contestId}/end", contestId) {
@@ -235,6 +235,6 @@ class ContestControllerTest(
                     status { isNoContent() }
                 }
 
-            verify { deleteContestService.delete(contestId) }
+            verify { deleteContestUseCase.delete(contestId) }
         }
     })

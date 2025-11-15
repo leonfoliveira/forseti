@@ -11,6 +11,7 @@ import io.github.leonfoliveira.forseti.common.application.dto.input.contest.Upda
 import io.github.leonfoliveira.forseti.common.application.port.driven.HashAdapter
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.AttachmentRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
+import io.github.leonfoliveira.forseti.common.application.port.driving.UpdateContestUseCase
 import io.github.leonfoliveira.forseti.common.application.util.TestCasesValidator
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
@@ -29,7 +30,7 @@ class UpdateContestService(
     private val hashAdapter: HashAdapter,
     private val deleteContestService: DeleteContestService,
     private val testCasesValidator: TestCasesValidator,
-) {
+) : UpdateContestUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -47,7 +48,7 @@ class UpdateContestService(
      * @throws BusinessException If any business logic validation fails.
      */
     @Transactional
-    fun update(
+    override fun update(
         @Valid inputDTO: UpdateContestInputDTO,
     ): Contest {
         logger.info("Updating contest with id: ${inputDTO.id}")
@@ -127,7 +128,7 @@ class UpdateContestService(
      * @throws ForbiddenException If the contest has already started.
      */
     @Transactional
-    fun forceStart(contestId: UUID): Contest {
+    override fun forceStart(contestId: UUID): Contest {
         val contest =
             contestRepository.findEntityById(contestId)
                 ?: throw NotFoundException("Could not find contest with id = $contestId")
@@ -150,7 +151,7 @@ class UpdateContestService(
      * @throws ForbiddenException If the contest is not currently active.
      */
     @Transactional
-    fun forceEnd(contestId: UUID): Contest {
+    override fun forceEnd(contestId: UUID): Contest {
         val contest =
             contestRepository.findEntityById(contestId)
                 ?: throw NotFoundException("Could not find contest with id = $contestId")

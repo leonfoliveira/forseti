@@ -12,10 +12,10 @@ import io.github.leonfoliveira.forseti.api.adapter.util.Private
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.dto.input.contest.CreateContestInputDTO
 import io.github.leonfoliveira.forseti.common.application.dto.input.contest.UpdateContestInputDTO
-import io.github.leonfoliveira.forseti.common.application.service.contest.CreateContestService
-import io.github.leonfoliveira.forseti.common.application.service.contest.DeleteContestService
-import io.github.leonfoliveira.forseti.common.application.service.contest.FindContestService
-import io.github.leonfoliveira.forseti.common.application.service.contest.UpdateContestService
+import io.github.leonfoliveira.forseti.common.application.port.driving.CreateContestUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.DeleteContestUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.FindContestUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.UpdateContestUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -37,10 +37,10 @@ import java.util.UUID
 @RequestMapping("/v1/contests")
 class ContestController(
     private val contestAuthFilter: ContestAuthFilter,
-    private val createContestService: CreateContestService,
-    private val updateContestService: UpdateContestService,
-    private val findContestService: FindContestService,
-    private val deleteContestService: DeleteContestService,
+    private val createContestUseCase: CreateContestUseCase,
+    private val updateContestUseCase: UpdateContestUseCase,
+    private val findContestUseCase: FindContestUseCase,
+    private val deleteContestUseCase: DeleteContestUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -76,7 +76,7 @@ class ContestController(
         @RequestBody body: CreateContestInputDTO,
     ): ResponseEntity<ContestFullResponseDTO> {
         logger.info("[POST] /v1/contests $body")
-        val contest = createContestService.create(body)
+        val contest = createContestUseCase.create(body)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 
@@ -118,7 +118,7 @@ class ContestController(
     ): ResponseEntity<ContestFullResponseDTO> {
         logger.info("[PUT] /v1/contests - $body")
         contestAuthFilter.checkIfMemberBelongsToContest(body.id)
-        val contest = updateContestService.update(body)
+        val contest = updateContestUseCase.update(body)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 
@@ -142,7 +142,7 @@ class ContestController(
     )
     fun findAllContestMetadata(): ResponseEntity<List<ContestMetadataResponseDTO>> {
         logger.info("[GET] /v1contests/metadata")
-        val contests = findContestService.findAll()
+        val contests = findContestUseCase.findAll()
         return ResponseEntity.ok(contests.map { it.toMetadataDTO() })
     }
 
@@ -167,7 +167,7 @@ class ContestController(
         @PathVariable contestSlug: String,
     ): ResponseEntity<ContestMetadataResponseDTO> {
         logger.info("[GET] /v1/contests/slug/$contestSlug/metadata")
-        val contest = findContestService.findBySlug(contestSlug)
+        val contest = findContestUseCase.findBySlug(contestSlug)
         return ResponseEntity.ok(contest.toMetadataDTO())
     }
 
@@ -203,7 +203,7 @@ class ContestController(
     ): ResponseEntity<ContestPublicOutputDTO> {
         logger.info("[GET] /v1/contests/$contestId")
         contestAuthFilter.checkIfStarted(contestId)
-        val contest = findContestService.findById(contestId)
+        val contest = findContestUseCase.findById(contestId)
         return ResponseEntity.ok(contest.toPublicOutputDTO())
     }
 
@@ -250,7 +250,7 @@ class ContestController(
     ): ResponseEntity<ContestFullResponseDTO> {
         logger.info("[GET] /v1/contests/$contestId/full")
         contestAuthFilter.checkIfMemberBelongsToContest(contestId)
-        val contest = findContestService.findById(contestId)
+        val contest = findContestUseCase.findById(contestId)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 
@@ -297,7 +297,7 @@ class ContestController(
     ): ResponseEntity<ContestMetadataResponseDTO> {
         logger.info("[PUT] /v1/contests/$contestId/start")
         contestAuthFilter.checkIfMemberBelongsToContest(contestId)
-        val contest = updateContestService.forceStart(contestId)
+        val contest = updateContestUseCase.forceStart(contestId)
         return ResponseEntity.ok().body(contest.toMetadataDTO())
     }
 
@@ -344,7 +344,7 @@ class ContestController(
     ): ResponseEntity<ContestMetadataResponseDTO> {
         logger.info("[PUT] /v1/contests/$contestId/end")
         contestAuthFilter.checkIfMemberBelongsToContest(contestId)
-        val contest = updateContestService.forceEnd(contestId)
+        val contest = updateContestUseCase.forceEnd(contestId)
         return ResponseEntity.ok().body(contest.toMetadataDTO())
     }
 
@@ -375,7 +375,7 @@ class ContestController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<Void> {
         logger.info("[DELETE] /v1/contests/$contestId")
-        deleteContestService.delete(contestId)
+        deleteContestUseCase.delete(contestId)
         return ResponseEntity.noContent().build()
     }
 }

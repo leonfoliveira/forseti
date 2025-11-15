@@ -7,6 +7,7 @@ import io.github.leonfoliveira.forseti.common.application.domain.entity.Submissi
 import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
 import io.github.leonfoliveira.forseti.common.application.dto.output.LeaderboardOutputDTO
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
+import io.github.leonfoliveira.forseti.common.application.port.driving.FindLeaderboardUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,7 +18,7 @@ import java.util.UUID
 @Service
 class FindLeaderboardService(
     private val contestRepository: ContestRepository,
-) {
+) : FindLeaderboardUseCase {
     companion object {
         private const val WRONG_SUBMISSION_PENALTY = 1200 // 20 minutes
     }
@@ -38,7 +39,7 @@ class FindLeaderboardService(
      * @throws NotFoundException If the contest is not found
      */
     @Transactional(readOnly = true)
-    fun findByContestId(contestId: UUID): LeaderboardOutputDTO {
+    override fun findByContestId(contestId: UUID): LeaderboardOutputDTO {
         logger.info("Building outputDTO for contest with id: $contestId")
         val contest =
             contestRepository.findEntityById(contestId)

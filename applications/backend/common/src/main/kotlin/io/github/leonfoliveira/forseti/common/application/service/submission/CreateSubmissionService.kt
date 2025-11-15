@@ -9,6 +9,7 @@ import io.github.leonfoliveira.forseti.common.application.port.driven.repository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ProblemRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.SubmissionRepository
+import io.github.leonfoliveira.forseti.common.application.port.driving.CreateSubmissionUseCase
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
@@ -25,7 +26,7 @@ class CreateSubmissionService(
     private val problemRepository: ProblemRepository,
     private val submissionRepository: SubmissionRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
-) {
+) : CreateSubmissionUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -38,7 +39,7 @@ class CreateSubmissionService(
      * @throws ForbiddenException if the language is not allowed or the contest is not active
      */
     @Transactional
-    fun create(
+    override fun create(
         memberId: UUID,
         @Valid inputDTO: CreateSubmissionInputDTO,
     ): Submission {

@@ -2,6 +2,7 @@ package io.github.leonfoliveira.forseti.autojudge.application.service
 
 import io.github.leonfoliveira.forseti.autojudge.application.port.driven.ApiClient
 import io.github.leonfoliveira.forseti.autojudge.application.port.driven.SubmissionRunner
+import io.github.leonfoliveira.forseti.autojudge.application.port.driving.JudgeSubmissionUseCase
 import io.github.leonfoliveira.forseti.autojudge.application.util.AutoJudgeMetrics
 import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.SubmissionRepository
@@ -19,7 +20,7 @@ class JudgeSubmissionService(
     private val submissionRunner: SubmissionRunner,
     private val apiClient: ApiClient,
     private val meterRegistry: MeterRegistry,
-) {
+) : JudgeSubmissionUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -30,7 +31,7 @@ class JudgeSubmissionService(
      * @throws NotFoundException if the submission with the given ID does not exist.
      */
     @Transactional
-    fun judge(
+    override fun judge(
         contestId: UUID,
         submissionId: UUID,
     ) {

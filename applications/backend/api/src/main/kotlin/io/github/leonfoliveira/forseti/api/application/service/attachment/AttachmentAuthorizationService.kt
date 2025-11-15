@@ -1,5 +1,6 @@
 package io.github.leonfoliveira.forseti.api.application.service.attachment
 
+import io.github.leonfoliveira.forseti.api.application.port.driving.AttachmentAuthorizationUseCase
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.exception.ForbiddenException
@@ -13,7 +14,7 @@ import java.util.UUID
 class AttachmentAuthorizationService(
     private val attachmentRepository: AttachmentRepository,
     configs: List<AttachmentAuthorizationConfig>,
-) {
+) : AttachmentAuthorizationUseCase {
     private val configMap = configs.associateBy { it.getContext() }
 
     /**
@@ -23,7 +24,7 @@ class AttachmentAuthorizationService(
      * @param context The context of the attachment to be uploaded.
      * @throws ForbiddenException if the upload is not authorized.
      */
-    fun authorizeUpload(
+    override fun authorizeUpload(
         contestId: UUID,
         context: Attachment.Context,
     ) {
@@ -52,7 +53,7 @@ class AttachmentAuthorizationService(
      * @param attachmentId The ID of the attachment to be downloaded.
      * @throws ForbiddenException if the download is not authorized.
      */
-    fun authorizeDownload(
+    override fun authorizeDownload(
         contestId: UUID,
         attachmentId: UUID,
     ) {

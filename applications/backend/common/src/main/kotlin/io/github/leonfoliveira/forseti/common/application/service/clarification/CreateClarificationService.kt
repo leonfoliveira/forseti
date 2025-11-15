@@ -9,6 +9,7 @@ import io.github.leonfoliveira.forseti.common.application.dto.input.clarificatio
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ClarificationRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
+import io.github.leonfoliveira.forseti.common.application.port.driving.CreateClarificationUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -21,7 +22,7 @@ class CreateClarificationService(
     private val memberRepository: MemberRepository,
     private val clarificationRepository: ClarificationRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
-) {
+) : CreateClarificationUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -35,7 +36,7 @@ class CreateClarificationService(
      * @throws ForbiddenException if the member is not allowed to create the clarification.
      */
     @Transactional
-    fun create(
+    override fun create(
         contestId: UUID,
         memberId: UUID,
         input: CreateClarificationInputDTO,

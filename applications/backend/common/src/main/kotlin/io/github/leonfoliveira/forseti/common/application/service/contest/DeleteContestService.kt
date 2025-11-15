@@ -7,6 +7,7 @@ import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFo
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ProblemRepository
+import io.github.leonfoliveira.forseti.common.application.port.driving.DeleteContestUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,7 +19,7 @@ class DeleteContestService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
     private val problemRepository: ProblemRepository,
-) {
+) : DeleteContestUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -29,7 +30,7 @@ class DeleteContestService(
      * @throws ForbiddenException if the contest has already started.
      */
     @Transactional
-    fun delete(id: UUID) {
+    override fun delete(id: UUID) {
         logger.info("Deleting contest with id: $id")
 
         val contest =
@@ -51,7 +52,7 @@ class DeleteContestService(
      * @param members The list of members to be deleted.
      */
     @Transactional
-    fun deleteMembers(members: List<Member>) {
+    override fun deleteMembers(members: List<Member>) {
         logger.info("Deleting members: ${members.joinToString { it.id.toString() }}")
 
         members.forEach { it.deletedAt = OffsetDateTime.now() }

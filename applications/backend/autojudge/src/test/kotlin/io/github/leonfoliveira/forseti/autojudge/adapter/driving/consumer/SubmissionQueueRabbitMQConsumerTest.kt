@@ -2,7 +2,7 @@ package io.github.leonfoliveira.forseti.autojudge.adapter.driving.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import io.github.leonfoliveira.forseti.autojudge.application.service.JudgeSubmissionService
+import io.github.leonfoliveira.forseti.autojudge.application.port.driving.JudgeSubmissionUseCase
 import io.github.leonfoliveira.forseti.common.adapter.config.JacksonConfig
 import io.github.leonfoliveira.forseti.common.adapter.driven.rabbitmq.message.RabbitMQMessage
 import io.github.leonfoliveira.forseti.common.adapter.driven.rabbitmq.message.SubmissionMessagePayload
@@ -16,9 +16,9 @@ import java.util.UUID
 @SpringBootTest(classes = [SubmissionQueueRabbitMQConsumer::class, JacksonConfig::class])
 class SubmissionQueueRabbitMQConsumerTest(
     @MockkBean(relaxed = true)
-    val judgeSubmissionService: JudgeSubmissionService,
-    val objectMapper: ObjectMapper,
-    val sut: SubmissionQueueRabbitMQConsumer,
+    private val judgeSubmissionUseCase: JudgeSubmissionUseCase,
+    private val objectMapper: ObjectMapper,
+    private val sut: SubmissionQueueRabbitMQConsumer,
 ) : FunSpec({
         test("should process payload successfully") {
             val message =
@@ -34,7 +34,7 @@ class SubmissionQueueRabbitMQConsumerTest(
 
             sut.receiveMessage(jsonMessage)
 
-            verify { judgeSubmissionService.judge(message.payload.contestId, message.payload.submissionId) }
+            verify { judgeSubmissionUseCase.judge(message.payload.contestId, message.payload.submissionId) }
         }
 
         test("should propagate exceptions from judge service") {
@@ -49,13 +49,13 @@ class SubmissionQueueRabbitMQConsumerTest(
                 )
             val jsonMessage = objectMapper.writeValueAsString(message)
 
-            every { judgeSubmissionService.judge(message.payload.contestId, message.payload.submissionId) } throws
+            every { judgeSubmissionUseCase.judge(message.payload.contestId, message.payload.submissionId) } throws
                 RuntimeException("Test exception")
 
             shouldThrow<RuntimeException> {
                 sut.receiveMessage(jsonMessage)
             }
 
-            verify { judgeSubmissionService.judge(message.payload.contestId, message.payload.submissionId) }
+            verify { judgeSubmissionUseCase.judge(message.payload.contestId, message.payload.submissionId) }
         }
     })

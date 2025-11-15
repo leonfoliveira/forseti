@@ -1,12 +1,13 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.controller
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.dto.request.NoLoginAuthenticateRequestDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.SessionCookieUtil
+import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.dto.input.authorization.AuthenticateInputDTO
-import io.github.leonfoliveira.forseti.common.application.service.authentication.AuthenticationService
+import io.github.leonfoliveira.forseti.common.application.port.driving.AuthenticationUseCase
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -23,44 +24,33 @@ import org.springframework.test.web.servlet.post
 @ContextConfiguration(classes = [RootController::class])
 class RootAuthenticationControllerTest(
     @MockkBean(relaxed = true)
-    private val authenticationService: AuthenticationService,
+    private val authenticationUseCase: AuthenticationUseCase,
     @MockkBean(relaxed = true)
     private val sessionCookieUtil: SessionCookieUtil,
     private val webMvc: MockMvc,
+    private val objectMapper: ObjectMapper,
 ) : FunSpec({
         extensions(SpringExtension)
 
-        val objectMapper = jacksonObjectMapper()
-
-        val noLoginAuthenticateRequestDTO =
-            NoLoginAuthenticateRequestDTO(password = "testPassword")
-
-        val authenticateInputDTO =
-            AuthenticateInputDTO(
-                login = "root",
-                password = "testPassword",
-            )
-
         test("authenticateRoot") {
+            val body = NoLoginAuthenticateRequestDTO(password = "password")
             val session = SessionMockBuilder.build()
-            val token =
-                "session_id=${session.id}; Max-Age=3600; Expires=${session.expiresAt.toInstant()}; " +
-                    "Path=/; HttpOnly; SameSite=Lax; Secure"
-            every { authenticationService.authenticate(authenticateInputDTO) } returns session
-            every { sessionCookieUtil.buildCookie(session) } returns token
+            val authenticateInputDTO =
+                AuthenticateInputDTO(
+                    login = Member.ROOT_LOGIN,
+                    password = body.password,
+                )
+            every { authenticationUseCase.authenticate(authenticateInputDTO) } returns session
+            every { sessionCookieUtil.buildCookie(session) } returns "session_id=cookie_value"
 
             webMvc
                 .post("/v1/root/sign-in") {
                     contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(noLoginAuthenticateRequestDTO)
+                    content = objectMapper.writeValueAsString(body)
                 }.andExpect {
                     status { isOk() }
                     cookie {
-                        value("session_id", session.id.toString())
-                        path("session_id", "/")
-                        secure("session_id", true)
-                        httpOnly("session_id", true)
-                        sameSite("session_id", "Lax")
+                        value("session_id", "cookie_value")
                     }
                     content { session.toResponseDTO() }
                 }

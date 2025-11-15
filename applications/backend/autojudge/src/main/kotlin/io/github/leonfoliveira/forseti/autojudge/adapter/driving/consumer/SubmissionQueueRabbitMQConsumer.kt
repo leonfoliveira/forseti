@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.forseti.autojudge.adapter.driving.consumer
 
-import io.github.leonfoliveira.forseti.autojudge.application.service.JudgeSubmissionService
+import io.github.leonfoliveira.forseti.autojudge.application.port.driving.JudgeSubmissionUseCase
 import io.github.leonfoliveira.forseti.common.adapter.driven.rabbitmq.RabbitMQConsumer
 import io.github.leonfoliveira.forseti.common.adapter.driven.rabbitmq.message.SubmissionMessagePayload
 import org.springframework.amqp.rabbit.annotation.RabbitListener
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class SubmissionQueueRabbitMQConsumer(
-    private val judgeSubmissionService: JudgeSubmissionService,
+    private val judgeSubmissionUseCase: JudgeSubmissionUseCase,
 ) : RabbitMQConsumer<SubmissionMessagePayload>() {
     @RabbitListener(
         queues = ["\${spring.rabbitmq.queue.submission-queue}"],
@@ -26,6 +26,6 @@ class SubmissionQueueRabbitMQConsumer(
      * @param payload The submission message payload
      */
     override fun handlePayload(payload: SubmissionMessagePayload) {
-        judgeSubmissionService.judge(payload.contestId, payload.submissionId)
+        judgeSubmissionUseCase.judge(payload.contestId, payload.submissionId)
     }
 }

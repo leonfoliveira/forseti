@@ -3,7 +3,7 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.controller.contest
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.common.application.dto.output.LeaderboardOutputDTO
-import io.github.leonfoliveira.forseti.common.application.service.leaderboard.FindLeaderboardService
+import io.github.leonfoliveira.forseti.common.application.port.driving.FindLeaderboardUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -21,7 +21,7 @@ import java.util.UUID
 @RequestMapping("/v1/contests/{contestId}/leaderboard")
 class ContestLeaderboardController(
     val contestAuthFilter: ContestAuthFilter,
-    val findLeaderboardService: FindLeaderboardService,
+    val findLeaderboardUseCase: FindLeaderboardUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -47,7 +47,7 @@ class ContestLeaderboardController(
     ): ResponseEntity<LeaderboardOutputDTO> {
         logger.info("[GET] /v1/contests/$contestId/leaderboard")
         contestAuthFilter.checkIfStarted(contestId)
-        val leaderboard = findLeaderboardService.findByContestId(contestId)
+        val leaderboard = findLeaderboardUseCase.findByContestId(contestId)
         return ResponseEntity.ok(leaderboard)
     }
 }

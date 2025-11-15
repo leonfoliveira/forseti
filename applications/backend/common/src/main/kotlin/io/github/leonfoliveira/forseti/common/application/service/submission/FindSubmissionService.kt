@@ -5,6 +5,7 @@ import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFo
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.SubmissionRepository
+import io.github.leonfoliveira.forseti.common.application.port.driving.FindSubmissionUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -15,7 +16,7 @@ class FindSubmissionService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
     private val submissionRepository: SubmissionRepository,
-) {
+) : FindSubmissionUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -26,7 +27,7 @@ class FindSubmissionService(
      * @throws NotFoundException if the submission is not found
      */
     @Transactional(readOnly = true)
-    fun findById(submissionId: UUID): Submission {
+    override fun findById(submissionId: UUID): Submission {
         logger.info("Finding submission with id: $submissionId")
 
         val submission =
@@ -45,7 +46,7 @@ class FindSubmissionService(
      * @throws NotFoundException if the contest is not found
      */
     @Transactional(readOnly = true)
-    fun findAllByContest(contestId: UUID): List<Submission> {
+    override fun findAllByContest(contestId: UUID): List<Submission> {
         logger.info("Finding all submissions for contest with id: $contestId")
 
         val contest =
@@ -69,7 +70,7 @@ class FindSubmissionService(
      * @throws NotFoundException if the member is not found
      */
     @Transactional(readOnly = true)
-    fun findAllByMember(memberId: UUID): List<Submission> {
+    override fun findAllByMember(memberId: UUID): List<Submission> {
         logger.info("Finding all submissions for member with id: $memberId")
 
         val member =

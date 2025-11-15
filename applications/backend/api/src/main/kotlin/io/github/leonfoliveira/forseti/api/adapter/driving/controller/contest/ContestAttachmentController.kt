@@ -4,11 +4,11 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.AttachmentRespon
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.toResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.Private
-import io.github.leonfoliveira.forseti.api.application.service.attachment.AttachmentAuthorizationService
+import io.github.leonfoliveira.forseti.api.application.port.driving.AttachmentAuthorizationUseCase
 import io.github.leonfoliveira.forseti.api.application.util.ApiMetrics
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.service.attachment.AttachmentService
+import io.github.leonfoliveira.forseti.common.application.port.driving.AttachmentUseCase
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -33,8 +33,8 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1/contests/{contestId}/attachments")
 class ContestAttachmentController(
-    private val attachmentService: AttachmentService,
-    private val attachmentAuthorizationService: AttachmentAuthorizationService,
+    private val attachmentUseCase: AttachmentUseCase,
+    private val attachmentAuthorizationUseCase: AttachmentAuthorizationUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -70,10 +70,10 @@ class ContestAttachmentController(
         @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<AttachmentResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/attachments/$context { filename: ${file.originalFilename}, size: ${file.size} }")
-        attachmentAuthorizationService.authorizeUpload(contestId, context)
+        attachmentAuthorizationUseCase.authorizeUpload(contestId, context)
         val member = RequestContext.getContext().session!!.member
         val attachment =
-            attachmentService.upload(
+            attachmentUseCase.upload(
                 contestId = contestId,
                 memberId = member.id,
                 filename = file.originalFilename,
@@ -109,8 +109,8 @@ class ContestAttachmentController(
         @PathVariable attachmentId: UUID,
     ): ResponseEntity<ByteArray> {
         logger.info("[GET] /v1/contests/$contestId/attachments/$attachmentId")
-        attachmentAuthorizationService.authorizeDownload(contestId, attachmentId)
-        val download = attachmentService.download(attachmentId)
+        attachmentAuthorizationUseCase.authorizeDownload(contestId, attachmentId)
+        val download = attachmentUseCase.download(attachmentId)
         val headers =
             HttpHeaders().apply {
                 contentDisposition =

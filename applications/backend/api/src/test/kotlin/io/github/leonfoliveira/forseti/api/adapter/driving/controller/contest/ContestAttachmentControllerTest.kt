@@ -2,10 +2,10 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.controller.contest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.toResponseDTO
-import io.github.leonfoliveira.forseti.api.application.service.attachment.AttachmentAuthorizationService
+import io.github.leonfoliveira.forseti.api.application.port.driving.AttachmentAuthorizationUseCase
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
 import io.github.leonfoliveira.forseti.common.application.dto.output.AttachmentDownloadOutputDTO
-import io.github.leonfoliveira.forseti.common.application.service.attachment.AttachmentService
+import io.github.leonfoliveira.forseti.common.application.port.driving.AttachmentUseCase
 import io.github.leonfoliveira.forseti.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
@@ -28,9 +28,9 @@ import java.util.UUID
 @ContextConfiguration(classes = [ContestAttachmentController::class])
 class ContestAttachmentControllerTest(
     @MockkBean(relaxed = true)
-    val attachmentService: AttachmentService,
+    val attachmentUseCase: AttachmentUseCase,
     @MockkBean(relaxed = true)
-    val attachmentAuthorizationService: AttachmentAuthorizationService,
+    val attachmentAuthorizationUseCase: AttachmentAuthorizationUseCase,
     val webMvc: MockMvc,
 ) : FunSpec({
         extensions(SpringExtension)
@@ -44,7 +44,7 @@ class ContestAttachmentControllerTest(
             val session = SessionMockBuilder.build()
             RequestContext.getContext().session = session
             every {
-                attachmentService.upload(
+                attachmentUseCase.upload(
                     contestId = contestId,
                     memberId = session.member.id,
                     filename = file.originalFilename,
@@ -62,14 +62,14 @@ class ContestAttachmentControllerTest(
                     content { attachment.toResponseDTO() }
                 }
 
-            verify { attachmentAuthorizationService.authorizeUpload(contestId, attachment.context) }
+            verify { attachmentAuthorizationUseCase.authorizeUpload(contestId, attachment.context) }
         }
 
         test("downloadAttachment") {
             val contestId = UUID.randomUUID()
             val attachment = AttachmentMockBuilder.build()
             val bytes = "test data".toByteArray()
-            every { attachmentService.download(attachment.id) } returns
+            every { attachmentUseCase.download(attachment.id) } returns
                 AttachmentDownloadOutputDTO(
                     attachment = attachment,
                     bytes = bytes,
@@ -85,6 +85,6 @@ class ContestAttachmentControllerTest(
                     header { string("Content-Type", attachment.contentType) }
                 }
 
-            verify { attachmentAuthorizationService.authorizeDownload(contestId, attachment.id) }
+            verify { attachmentAuthorizationUseCase.authorizeDownload(contestId, attachment.id) }
         }
     })

@@ -2,13 +2,13 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.consumer
 
 import io.github.leonfoliveira.forseti.common.adapter.driven.rabbitmq.RabbitMQConsumer
 import io.github.leonfoliveira.forseti.common.adapter.driven.rabbitmq.message.SubmissionMessagePayload
-import io.github.leonfoliveira.forseti.common.application.service.submission.UpdateSubmissionService
+import io.github.leonfoliveira.forseti.common.application.port.driving.UpdateSubmissionUseCase
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.stereotype.Component
 
 @Component
 class FailedSubmissionRabbitMQConsumer(
-    private val updateSubmissionService: UpdateSubmissionService,
+    private val updateSubmissionUseCase: UpdateSubmissionUseCase,
 ) : RabbitMQConsumer<SubmissionMessagePayload>() {
     @RabbitListener(queues = ["\${spring.rabbitmq.queue.submission-failed-queue}"])
     override fun receiveMessage(jsonMessage: String) {
@@ -23,6 +23,6 @@ class FailedSubmissionRabbitMQConsumer(
      * @param payload The payload containing the submission ID.
      */
     override fun handlePayload(payload: SubmissionMessagePayload) {
-        updateSubmissionService.fail(payload.submissionId)
+        updateSubmissionUseCase.fail(payload.submissionId)
     }
 }

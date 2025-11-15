@@ -6,6 +6,7 @@ import io.github.leonfoliveira.forseti.common.application.domain.event.Submissio
 import io.github.leonfoliveira.forseti.common.application.domain.exception.ForbiddenException
 import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.SubmissionRepository
+import io.github.leonfoliveira.forseti.common.application.port.driving.UpdateSubmissionUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -16,7 +17,7 @@ import java.util.UUID
 class UpdateSubmissionService(
     private val submissionRepository: SubmissionRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
-) {
+) : UpdateSubmissionUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -28,7 +29,7 @@ class UpdateSubmissionService(
      * @throws NotFoundException if the submission with the given ID does not exist.
      */
     @Transactional
-    fun fail(submissionId: UUID): Submission {
+    override fun fail(submissionId: UUID): Submission {
         logger.info("Failing submission with id: $submissionId")
 
         val submission =
@@ -52,7 +53,7 @@ class UpdateSubmissionService(
      * @throws ForbiddenException if the submission is already being judged.
      */
     @Transactional
-    fun rerun(id: UUID): Submission {
+    override fun rerun(id: UUID): Submission {
         logger.info("Rerunning submission with id: $id")
 
         val submission =
@@ -83,10 +84,10 @@ class UpdateSubmissionService(
      * @throws ForbiddenException if the provided answer is NO_ANSWER.
      */
     @Transactional
-    fun updateAnswer(
+    override fun updateAnswer(
         submissionId: UUID,
         answer: Submission.Answer,
-        force: Boolean = false,
+        force: Boolean,
     ): Submission {
         logger.info("Updating submission with id: $submissionId with answer: $answer")
 

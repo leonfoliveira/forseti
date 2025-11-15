@@ -4,6 +4,7 @@ import io.github.leonfoliveira.forseti.common.application.domain.entity.Clarific
 import io.github.leonfoliveira.forseti.common.application.domain.event.ClarificationDeletedEvent
 import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ClarificationRepository
+import io.github.leonfoliveira.forseti.common.application.port.driving.DeleteClarificationUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -15,7 +16,7 @@ import java.util.UUID
 class DeleteClarificationService(
     private val clarificationRepository: ClarificationRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
-) {
+) : DeleteClarificationUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -25,7 +26,7 @@ class DeleteClarificationService(
      * @throws NotFoundException if the clarification is not found.
      */
     @Transactional
-    fun delete(id: UUID) {
+    override fun delete(id: UUID) {
         logger.info("Deleting clarification with id: $id")
 
         val clarification =

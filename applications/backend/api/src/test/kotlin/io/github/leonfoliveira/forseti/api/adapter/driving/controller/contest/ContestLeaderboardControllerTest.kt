@@ -5,17 +5,17 @@ import io.github.leonfoliveira.forseti.api.adapter.driving.controller.advice.Glo
 import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.common.adapter.config.JacksonConfig
 import io.github.leonfoliveira.forseti.common.application.dto.output.LeaderboardOutputDTO
-import io.github.leonfoliveira.forseti.common.application.service.leaderboard.FindLeaderboardService
+import io.github.leonfoliveira.forseti.common.application.port.driving.FindLeaderboardUseCase
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
+import io.mockk.mockk
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
-import java.time.OffsetDateTime
 import java.util.UUID
 
 @WebMvcTest(controllers = [ContestLeaderboardController::class])
@@ -25,7 +25,7 @@ class ContestLeaderboardControllerTest(
     @MockkBean(relaxed = true)
     private val contestAuthFilter: ContestAuthFilter,
     @MockkBean(relaxed = true)
-    private val findLeaderboardService: FindLeaderboardService,
+    private val findLeaderboardUseCase: FindLeaderboardUseCase,
     private val webMvc: MockMvc,
 ) : FunSpec({
         extensions(SpringExtension)
@@ -34,15 +34,8 @@ class ContestLeaderboardControllerTest(
 
         test("findContestLeaderboardById") {
             val contestId = UUID.randomUUID()
-            val leaderboard =
-                LeaderboardOutputDTO(
-                    contestId = contestId,
-                    slug = "test-contest",
-                    startAt = OffsetDateTime.now(),
-                    members = emptyList(),
-                    issuedAt = OffsetDateTime.now(),
-                )
-            every { findLeaderboardService.findByContestId(contestId) } returns leaderboard
+            val leaderboard = mockk<LeaderboardOutputDTO>(relaxed = true)
+            every { findLeaderboardUseCase.findByContestId(contestId) } returns leaderboard
 
             webMvc
                 .get(basePath, contestId) {

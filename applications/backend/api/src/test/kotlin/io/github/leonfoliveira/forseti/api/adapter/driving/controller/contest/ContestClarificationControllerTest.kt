@@ -6,8 +6,8 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.clarification.to
 import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
 import io.github.leonfoliveira.forseti.common.application.dto.input.clarification.CreateClarificationInputDTO
-import io.github.leonfoliveira.forseti.common.application.service.clarification.CreateClarificationService
-import io.github.leonfoliveira.forseti.common.application.service.clarification.DeleteClarificationService
+import io.github.leonfoliveira.forseti.common.application.port.driving.CreateClarificationUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.DeleteClarificationUseCase
 import io.github.leonfoliveira.forseti.common.mock.entity.ClarificationMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
@@ -28,11 +28,11 @@ import java.util.UUID
 @ContextConfiguration(classes = [ContestClarificationController::class])
 class ContestClarificationControllerTest(
     @MockkBean(relaxed = true)
-    private val deleteClarificationService: DeleteClarificationService,
-    @MockkBean(relaxed = true)
-    private val createClarificationService: CreateClarificationService,
-    @MockkBean(relaxed = true)
     private val contestAuthFilter: ContestAuthFilter,
+    @MockkBean(relaxed = true)
+    private val createClarificationUseCase: CreateClarificationUseCase,
+    @MockkBean(relaxed = true)
+    private val deleteClarificationUseCase: DeleteClarificationUseCase,
     private val webMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) : FunSpec({
@@ -49,7 +49,7 @@ class ContestClarificationControllerTest(
             val clarification = ClarificationMockBuilder.build()
             val session = SessionMockBuilder.build()
             RequestContext.getContext().session = session
-            every { createClarificationService.create(contestId, session.member.id, body) } returns clarification
+            every { createClarificationUseCase.create(contestId, session.member.id, body) } returns clarification
 
             webMvc
                 .post(basePath, contestId) {
@@ -65,15 +65,15 @@ class ContestClarificationControllerTest(
 
         test("deleteClarificationById") {
             val contestId = UUID.randomUUID()
-            val id = UUID.randomUUID()
+            val clarificationId = UUID.randomUUID()
 
             webMvc
-                .delete("$basePath/{clarificationId}", contestId, id) {
+                .delete("$basePath/{clarificationId}", contestId, clarificationId) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
                     status { isNoContent() }
                 }
 
-            verify { deleteClarificationService.delete(id) }
+            verify { deleteClarificationUseCase.delete(clarificationId) }
         }
     })

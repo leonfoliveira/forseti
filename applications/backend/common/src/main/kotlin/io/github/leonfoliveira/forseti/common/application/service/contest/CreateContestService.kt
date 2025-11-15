@@ -4,6 +4,7 @@ import io.github.leonfoliveira.forseti.common.application.domain.entity.Contest
 import io.github.leonfoliveira.forseti.common.application.domain.exception.ConflictException
 import io.github.leonfoliveira.forseti.common.application.dto.input.contest.CreateContestInputDTO
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
+import io.github.leonfoliveira.forseti.common.application.port.driving.CreateContestUseCase
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -14,7 +15,7 @@ import org.springframework.validation.annotation.Validated
 @Validated
 class CreateContestService(
     private val contestRepository: ContestRepository,
-) {
+) : CreateContestUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -25,7 +26,7 @@ class CreateContestService(
      * @throws ConflictException if a contest with the same slug already exists
      */
     @Transactional
-    fun create(
+    override fun create(
         @Valid inputDTO: CreateContestInputDTO,
     ): Contest {
         logger.info("Creating contest with title: ${inputDTO.title}")

@@ -2,18 +2,16 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.controller.contest
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import io.github.leonfoliveira.forseti.api.adapter.driving.controller.advice.GlobalExceptionHandler
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.submission.toFullResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.submission.toPublicResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
-import io.github.leonfoliveira.forseti.common.adapter.config.JacksonConfig
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
 import io.github.leonfoliveira.forseti.common.application.dto.input.attachment.AttachmentInputDTO
 import io.github.leonfoliveira.forseti.common.application.dto.input.submission.CreateSubmissionInputDTO
-import io.github.leonfoliveira.forseti.common.application.service.submission.CreateSubmissionService
-import io.github.leonfoliveira.forseti.common.application.service.submission.FindSubmissionService
-import io.github.leonfoliveira.forseti.common.application.service.submission.UpdateSubmissionService
+import io.github.leonfoliveira.forseti.common.application.port.driving.CreateSubmissionUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.FindSubmissionUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.UpdateSubmissionUseCase
 import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SubmissionMockBuilder
@@ -33,18 +31,18 @@ import java.util.UUID
 
 @WebMvcTest(controllers = [ContestSubmissionController::class])
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = [ContestSubmissionController::class, JacksonConfig::class, GlobalExceptionHandler::class])
+@ContextConfiguration(classes = [ContestSubmissionController::class])
 class ContestSubmissionControllerTest(
     @MockkBean(relaxed = true)
     private val contestAuthFilter: ContestAuthFilter,
     @MockkBean(relaxed = true)
-    private val createSubmissionService: CreateSubmissionService,
+    private val createSubmissionUseCase: CreateSubmissionUseCase,
     @MockkBean(relaxed = true)
-    private val findSubmissionService: FindSubmissionService,
+    private val findSubmissionUseCase: FindSubmissionUseCase,
     @MockkBean(relaxed = true)
-    private val updateSubmissionService: UpdateSubmissionService,
-    private val objectMapper: ObjectMapper,
+    private val updateSubmissionUseCase: UpdateSubmissionUseCase,
     private val webMvc: MockMvc,
+    private val objectMapper: ObjectMapper,
 ) : FunSpec({
         extensions(SpringExtension)
 
@@ -66,7 +64,9 @@ class ContestSubmissionControllerTest(
                     code = AttachmentInputDTO(id = UUID.randomUUID()),
                 )
             val submission = SubmissionMockBuilder.build()
-            every { createSubmissionService.create(member.id, body) } returns submission
+            val session = SessionMockBuilder.build()
+            RequestContext.getContext().session = session
+            every { createSubmissionUseCase.create(session.member.id, body) } returns submission
 
             webMvc
                 .post(basePath, contestId) {
@@ -78,7 +78,8 @@ class ContestSubmissionControllerTest(
                 }
 
             verify { contestAuthFilter.checkIfStarted(contestId) }
-            verify { createSubmissionService.create(member.id, body) }
+            verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+            verify { createSubmissionUseCase.create(session.member.id, body) }
         }
 
         test("findAllContestSubmissions") {
@@ -88,7 +89,7 @@ class ContestSubmissionControllerTest(
                     SubmissionMockBuilder.build(),
                     SubmissionMockBuilder.build(),
                 )
-            every { findSubmissionService.findAllByContest(contestId) } returns submissions
+            every { findSubmissionUseCase.findAllByContest(contestId) } returns submissions
 
             webMvc
                 .get(basePath, contestId) {
@@ -106,7 +107,7 @@ class ContestSubmissionControllerTest(
                     SubmissionMockBuilder.build(),
                     SubmissionMockBuilder.build(),
                 )
-            every { findSubmissionService.findAllByContest(contestId) } returns submissions
+            every { findSubmissionUseCase.findAllByContest(contestId) } returns submissions
 
             webMvc
                 .get("$basePath/full", contestId) {
@@ -121,7 +122,7 @@ class ContestSubmissionControllerTest(
 
         test("findAllFullSubmissionsForMember") {
             val submissions = listOf(SubmissionMockBuilder.build(), SubmissionMockBuilder.build())
-            every { findSubmissionService.findAllByMember(member.id) } returns submissions
+            every { findSubmissionUseCase.findAllByMember(member.id) } returns submissions
             val contestId = UUID.randomUUID()
 
             webMvc
@@ -135,17 +136,17 @@ class ContestSubmissionControllerTest(
 
         test("updateSubmissionAnswer") {
             val contestId = UUID.randomUUID()
-            val submissionId = UUID.randomUUID()
+            val id = UUID.randomUUID()
             val answer = Submission.Answer.ACCEPTED
 
             webMvc
-                .put("$basePath/{id}/answer/{answer}", contestId, submissionId, answer) {
+                .put("$basePath/{id}/answer/{answer}", contestId, id, answer) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
                     status { isNoContent() }
                 }
 
-            verify { updateSubmissionService.updateAnswer(submissionId, answer) }
+            verify { updateSubmissionUseCase.updateAnswer(id, answer) }
         }
 
         test("updateSubmissionAnswerForce") {
@@ -161,21 +162,21 @@ class ContestSubmissionControllerTest(
                 }
 
             verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
-            verify { updateSubmissionService.updateAnswer(submissionId, answer, force = true) }
+            verify { updateSubmissionUseCase.updateAnswer(submissionId, answer, force = true) }
         }
 
         test("rerunSubmission") {
             val contestId = UUID.randomUUID()
-            val submissionId = UUID.randomUUID()
+            val id = UUID.randomUUID()
 
             webMvc
-                .post("$basePath/{id}/rerun", contestId, submissionId) {
+                .post("$basePath/{id}/rerun", contestId, id) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
                     status { isNoContent() }
                 }
 
             verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
-            verify { updateSubmissionService.rerun(submissionId) }
+            verify { updateSubmissionUseCase.rerun(id) }
         }
     })

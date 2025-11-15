@@ -3,10 +3,11 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.controller
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.util.SessionCookieUtil
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.service.authentication.AuthenticationService
+import io.github.leonfoliveira.forseti.common.application.port.driving.AuthenticationUseCase
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
+import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -20,13 +21,16 @@ import org.springframework.test.web.servlet.get
 @ContextConfiguration(classes = [SessionController::class])
 class SessionControllerTest(
     @MockkBean(relaxed = true)
-    private val authenticationService: AuthenticationService,
+    private val authenticationUseCase: AuthenticationUseCase,
     @MockkBean(relaxed = true)
     private val sessionCookieUtil: SessionCookieUtil,
-    @MockkBean(relaxed = true)
     private val webMvc: MockMvc,
 ) : FunSpec({
         extensions(SpringExtension)
+
+        beforeEach {
+            every { sessionCookieUtil.buildClearCookie() } returns "session_id="
+        }
 
         test("getSession") {
             val session = SessionMockBuilder.build()
@@ -50,10 +54,6 @@ class SessionControllerTest(
                     status { isNoContent() }
                     cookie {
                         value("session_id", "")
-                        path("session_id", "/")
-                        secure("session_id", true)
-                        httpOnly("session_id", true)
-                        sameSite("session_id", "Lax")
                     }
                 }
         }
@@ -66,13 +66,9 @@ class SessionControllerTest(
                     status { isNoContent() }
                     cookie {
                         value("session_id", "")
-                        path("session_id", "/")
-                        secure("session_id", true)
-                        httpOnly("session_id", true)
-                        sameSite("session_id", "Lax")
                     }
                 }
 
-            verify(exactly = 0) { authenticationService.deleteCurrentSession() }
+            verify { authenticationUseCase.deleteCurrentSession() }
         }
     })

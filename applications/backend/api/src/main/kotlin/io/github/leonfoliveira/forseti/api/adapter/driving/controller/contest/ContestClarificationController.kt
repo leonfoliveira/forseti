@@ -8,8 +8,8 @@ import io.github.leonfoliveira.forseti.api.adapter.util.Private
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
 import io.github.leonfoliveira.forseti.common.application.dto.input.clarification.CreateClarificationInputDTO
-import io.github.leonfoliveira.forseti.common.application.service.clarification.CreateClarificationService
-import io.github.leonfoliveira.forseti.common.application.service.clarification.DeleteClarificationService
+import io.github.leonfoliveira.forseti.common.application.port.driving.CreateClarificationUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.DeleteClarificationUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -30,8 +30,8 @@ import java.util.UUID
 @RequestMapping("/v1/contests/{contestId}/clarifications")
 class ContestClarificationController(
     val contestAuthFilter: ContestAuthFilter,
-    val createClarificationService: CreateClarificationService,
-    val deleteClarificationService: DeleteClarificationService,
+    val createClarificationUseCase: CreateClarificationUseCase,
+    val deleteClarificationUseCase: DeleteClarificationUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -72,7 +72,7 @@ class ContestClarificationController(
         contestAuthFilter.checkIfStarted(contestId)
         contestAuthFilter.checkIfMemberBelongsToContest(contestId)
         val member = RequestContext.getContext().session!!.member
-        val clarification = createClarificationService.create(contestId, member.id, body)
+        val clarification = createClarificationUseCase.create(contestId, member.id, body)
         return ResponseEntity.ok(clarification.toResponseDTO())
     }
 
@@ -111,7 +111,7 @@ class ContestClarificationController(
         @PathVariable clarificationId: UUID,
     ): ResponseEntity<Unit> {
         logger.info("[DELETE] /v1/contests/$contestId/clarifications/$clarificationId")
-        deleteClarificationService.delete(clarificationId)
+        deleteClarificationUseCase.delete(clarificationId)
         return ResponseEntity.noContent().build()
     }
 }

@@ -11,9 +11,9 @@ import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
 import io.github.leonfoliveira.forseti.common.application.dto.input.submission.CreateSubmissionInputDTO
-import io.github.leonfoliveira.forseti.common.application.service.submission.CreateSubmissionService
-import io.github.leonfoliveira.forseti.common.application.service.submission.FindSubmissionService
-import io.github.leonfoliveira.forseti.common.application.service.submission.UpdateSubmissionService
+import io.github.leonfoliveira.forseti.common.application.port.driving.CreateSubmissionUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.FindSubmissionUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.UpdateSubmissionUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -34,9 +34,9 @@ import java.util.UUID
 @RequestMapping("/v1/contests/{contestId}/submissions")
 class ContestSubmissionController(
     private val contestAuthFilter: ContestAuthFilter,
-    private val createSubmissionService: CreateSubmissionService,
-    private val findSubmissionService: FindSubmissionService,
-    private val updateSubmissionService: UpdateSubmissionService,
+    private val createSubmissionUseCase: CreateSubmissionUseCase,
+    private val findSubmissionUseCase: FindSubmissionUseCase,
+    private val updateSubmissionUseCase: UpdateSubmissionUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -77,7 +77,7 @@ class ContestSubmissionController(
         contestAuthFilter.checkIfMemberBelongsToContest(contestId)
         val member = RequestContext.getContext().session!!.member
         val submission =
-            createSubmissionService.create(
+            createSubmissionUseCase.create(
                 memberId = member.id,
                 inputDTO = body,
             )
@@ -106,7 +106,7 @@ class ContestSubmissionController(
     ): ResponseEntity<List<SubmissionPublicResponseDTO>> {
         logger.info("[GET] /v1/contests/$contestId/submissions")
         contestAuthFilter.checkIfStarted(contestId)
-        val submissions = findSubmissionService.findAllByContest(contestId)
+        val submissions = findSubmissionUseCase.findAllByContest(contestId)
         return ResponseEntity.ok(submissions.map { it.toPublicResponseDTO() })
     }
 
@@ -139,7 +139,7 @@ class ContestSubmissionController(
         logger.info("[GET] /v1/contests/$contestId/submissions/full")
         contestAuthFilter.checkIfStarted(contestId)
         contestAuthFilter.checkIfMemberBelongsToContest(contestId)
-        val submissions = findSubmissionService.findAllByContest(contestId)
+        val submissions = findSubmissionUseCase.findAllByContest(contestId)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }
 
@@ -171,7 +171,7 @@ class ContestSubmissionController(
     ): ResponseEntity<List<SubmissionFullResponseDTO>> {
         logger.info("[GET] /v1/contests/$contestId/submissions/full/members/me")
         val member = RequestContext.getContext().session!!.member
-        val submissions = findSubmissionService.findAllByMember(member.id)
+        val submissions = findSubmissionUseCase.findAllByMember(member.id)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }
 
@@ -204,7 +204,7 @@ class ContestSubmissionController(
         @PathVariable answer: Submission.Answer,
     ): ResponseEntity<Void> {
         logger.info("[PUT] /v1/contests/$contestId/submissions/$id/answer/$answer")
-        updateSubmissionService.updateAnswer(id, answer)
+        updateSubmissionUseCase.updateAnswer(id, answer)
         return ResponseEntity.noContent().build()
     }
 
@@ -238,7 +238,7 @@ class ContestSubmissionController(
     ): ResponseEntity<Void> {
         logger.info("[PUT] /v1/contests/$contestId/submissions/$id/answer/$answer/force")
         contestAuthFilter.checkIfMemberBelongsToContest(contestId)
-        updateSubmissionService.updateAnswer(id, answer, force = true)
+        updateSubmissionUseCase.updateAnswer(id, answer, force = true)
         return ResponseEntity.noContent().build()
     }
 
@@ -271,7 +271,7 @@ class ContestSubmissionController(
     ): ResponseEntity<Void> {
         logger.info("[POST] /v1/contests/$contestId/submissions/$id/rerun - id: $id")
         contestAuthFilter.checkIfMemberBelongsToContest(contestId)
-        updateSubmissionService.rerun(id)
+        updateSubmissionUseCase.rerun(id)
         return ResponseEntity.noContent().build()
     }
 }

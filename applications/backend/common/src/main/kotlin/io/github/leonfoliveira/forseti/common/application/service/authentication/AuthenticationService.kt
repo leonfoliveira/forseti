@@ -9,6 +9,7 @@ import io.github.leonfoliveira.forseti.common.application.dto.input.authorizatio
 import io.github.leonfoliveira.forseti.common.application.port.driven.HashAdapter
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.SessionRepository
+import io.github.leonfoliveira.forseti.common.application.port.driving.AuthenticationUseCase
 import io.github.leonfoliveira.forseti.common.application.util.UnitUtil
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -28,7 +29,7 @@ class AuthenticationService(
     private val rootExpiration: String,
     @Value("\${security.session.autojudge-expiration}")
     private val autoJudgeExpiration: String,
-) {
+) : AuthenticationUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -39,7 +40,7 @@ class AuthenticationService(
      * @throws UnauthorizedException if the login or password is invalid.
      */
     @Transactional
-    fun authenticate(inputDTO: AuthenticateInputDTO): Session {
+    override fun authenticate(inputDTO: AuthenticateInputDTO): Session {
         logger.info("Authenticating")
 
         val member =
@@ -64,7 +65,7 @@ class AuthenticationService(
      * @throws UnauthorizedException if the login or password is invalid.
      */
     @Transactional
-    fun authenticateToContest(
+    override fun authenticateToContest(
         contestId: UUID,
         inputDTO: ContestAuthenticateInputDTO,
     ): Session {
@@ -91,7 +92,7 @@ class AuthenticationService(
      * @return The created session.
      */
     @Transactional
-    fun createSession(member: Member): Session {
+    override fun createSession(member: Member): Session {
         val expiration =
             when (member.type) {
                 Member.Type.ROOT -> rootExpiration
@@ -112,7 +113,7 @@ class AuthenticationService(
      * Soft deletes the current session from RequestContext.
      */
     @Transactional
-    fun deleteCurrentSession() {
+    override fun deleteCurrentSession() {
         logger.info("Deleting current session")
 
         val session = RequestContext.getContext().session

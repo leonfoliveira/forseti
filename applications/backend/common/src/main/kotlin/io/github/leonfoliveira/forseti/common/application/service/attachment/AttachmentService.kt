@@ -7,6 +7,7 @@ import io.github.leonfoliveira.forseti.common.application.port.driven.Attachment
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.AttachmentRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
+import io.github.leonfoliveira.forseti.common.application.port.driving.AttachmentUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,7 +19,7 @@ class AttachmentService(
     private val memberRepository: MemberRepository,
     private val attachmentRepository: AttachmentRepository,
     private val attachmentBucket: AttachmentBucket,
-) {
+) : AttachmentUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -34,7 +35,7 @@ class AttachmentService(
      * @throws NotFoundException if the contest or member (if provided) does not exist.
      */
     @Transactional
-    fun upload(
+    override fun upload(
         contestId: UUID,
         memberId: UUID?,
         filename: String?,
@@ -76,7 +77,7 @@ class AttachmentService(
      * @throws NotFoundException if the attachment with the given ID does not exist.
      */
     @Transactional(readOnly = true)
-    fun download(id: UUID): AttachmentDownloadOutputDTO {
+    override fun download(id: UUID): AttachmentDownloadOutputDTO {
         logger.info("Downloading attachment with id: $id")
         val attachment =
             attachmentRepository.findEntityById(id)
