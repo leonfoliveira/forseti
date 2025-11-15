@@ -1,5 +1,6 @@
 package io.github.leonfoliveira.forseti.common.application.service.dto.input.clarification
 
+import io.github.leonfoliveira.forseti.common.application.dto.input.clarification.CreateClarificationInputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import jakarta.validation.Validation

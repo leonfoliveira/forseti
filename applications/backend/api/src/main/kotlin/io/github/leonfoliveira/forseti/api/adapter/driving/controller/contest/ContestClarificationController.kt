@@ -7,9 +7,9 @@ import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.api.adapter.util.Private
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
+import io.github.leonfoliveira.forseti.common.application.dto.input.clarification.CreateClarificationInputDTO
 import io.github.leonfoliveira.forseti.common.application.service.clarification.CreateClarificationService
 import io.github.leonfoliveira.forseti.common.application.service.clarification.DeleteClarificationService
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.clarification.CreateClarificationInputDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema

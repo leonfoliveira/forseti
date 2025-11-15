@@ -10,12 +10,12 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.contest.toPublic
 import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.api.adapter.util.Private
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
+import io.github.leonfoliveira.forseti.common.application.dto.input.contest.CreateContestInputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.input.contest.UpdateContestInputDTO
 import io.github.leonfoliveira.forseti.common.application.service.contest.CreateContestService
 import io.github.leonfoliveira.forseti.common.application.service.contest.DeleteContestService
 import io.github.leonfoliveira.forseti.common.application.service.contest.FindContestService
 import io.github.leonfoliveira.forseti.common.application.service.contest.UpdateContestService
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.contest.CreateContestInputDTO
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.contest.UpdateContestInputDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema

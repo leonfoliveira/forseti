@@ -2,11 +2,11 @@ package io.github.leonfoliveira.forseti.common.application.service.authenticatio
 
 import io.github.leonfoliveira.forseti.common.application.domain.exception.UnauthorizedException
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
+import io.github.leonfoliveira.forseti.common.application.dto.input.authorization.AuthenticateInputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.input.authorization.ContestAuthenticateInputDTO
 import io.github.leonfoliveira.forseti.common.application.port.driven.HashAdapter
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.SessionRepository
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.authorization.AuthenticateInputDTO
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.authorization.ContestAuthenticateInputDTO
 import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.assertions.throwables.shouldThrow

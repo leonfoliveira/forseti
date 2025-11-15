@@ -4,11 +4,11 @@ import io.github.leonfoliveira.forseti.common.application.domain.entity.Submissi
 import io.github.leonfoliveira.forseti.common.application.domain.event.SubmissionCreatedEvent
 import io.github.leonfoliveira.forseti.common.application.domain.exception.ForbiddenException
 import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
+import io.github.leonfoliveira.forseti.common.application.dto.input.submission.CreateSubmissionInputDTO
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.AttachmentRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ProblemRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.SubmissionRepository
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.submission.CreateSubmissionInputDTO
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher

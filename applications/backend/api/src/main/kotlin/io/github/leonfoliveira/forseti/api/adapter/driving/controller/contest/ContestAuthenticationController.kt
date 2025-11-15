@@ -4,8 +4,8 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.session.SessionResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.SessionCookieUtil
+import io.github.leonfoliveira.forseti.common.application.dto.input.authorization.ContestAuthenticateInputDTO
 import io.github.leonfoliveira.forseti.common.application.service.authentication.AuthenticationService
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.authorization.ContestAuthenticateInputDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema

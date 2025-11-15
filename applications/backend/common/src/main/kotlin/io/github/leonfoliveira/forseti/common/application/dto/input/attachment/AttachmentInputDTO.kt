@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.forseti.common.application.service.dto.input.attachment
+package io.github.leonfoliveira.forseti.common.application.dto.input.attachment
 
 import jakarta.validation.constraints.NotEmpty
 import java.util.UUID

@@ -5,8 +5,8 @@ import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.announcement.toResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
+import io.github.leonfoliveira.forseti.common.application.dto.input.announcement.CreateAnnouncementInputDTO
 import io.github.leonfoliveira.forseti.common.application.service.announcement.CreateAnnouncementService
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.announcement.CreateAnnouncementInputDTO
 import io.github.leonfoliveira.forseti.common.mock.entity.AnnouncementMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec

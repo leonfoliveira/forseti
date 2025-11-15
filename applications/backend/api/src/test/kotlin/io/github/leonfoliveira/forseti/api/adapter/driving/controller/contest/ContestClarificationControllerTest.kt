@@ -5,9 +5,9 @@ import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.clarification.toResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
+import io.github.leonfoliveira.forseti.common.application.dto.input.clarification.CreateClarificationInputDTO
 import io.github.leonfoliveira.forseti.common.application.service.clarification.CreateClarificationService
 import io.github.leonfoliveira.forseti.common.application.service.clarification.DeleteClarificationService
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.clarification.CreateClarificationInputDTO
 import io.github.leonfoliveira.forseti.common.mock.entity.ClarificationMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec

@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.forseti.api.application.port.driven
 
-import io.github.leonfoliveira.forseti.common.application.service.dto.output.LeaderboardOutputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.output.LeaderboardOutputDTO
 
 interface LeaderboardEmitter {
     /**

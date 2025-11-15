@@ -5,8 +5,8 @@ import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.dto.request.NoLoginAuthenticateRequestDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.SessionCookieUtil
+import io.github.leonfoliveira.forseti.common.application.dto.input.authorization.AuthenticateInputDTO
 import io.github.leonfoliveira.forseti.common.application.service.authentication.AuthenticationService
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.authorization.AuthenticateInputDTO
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension

@@ -11,13 +11,13 @@ import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.common.adapter.config.JacksonConfig
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
+import io.github.leonfoliveira.forseti.common.application.dto.input.attachment.AttachmentInputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.input.contest.CreateContestInputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.input.contest.UpdateContestInputDTO
 import io.github.leonfoliveira.forseti.common.application.service.contest.CreateContestService
 import io.github.leonfoliveira.forseti.common.application.service.contest.DeleteContestService
 import io.github.leonfoliveira.forseti.common.application.service.contest.FindContestService
 import io.github.leonfoliveira.forseti.common.application.service.contest.UpdateContestService
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.attachment.AttachmentInputDTO
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.contest.CreateContestInputDTO
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.contest.UpdateContestInputDTO
 import io.github.leonfoliveira.forseti.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.ProblemMockBuilder

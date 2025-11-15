@@ -10,7 +10,7 @@ import io.github.leonfoliveira.forseti.api.adapter.util.Private
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.submission.CreateSubmissionInputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.input.submission.CreateSubmissionInputDTO
 import io.github.leonfoliveira.forseti.common.application.service.submission.CreateSubmissionService
 import io.github.leonfoliveira.forseti.common.application.service.submission.FindSubmissionService
 import io.github.leonfoliveira.forseti.common.application.service.submission.UpdateSubmissionService

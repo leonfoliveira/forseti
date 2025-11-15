@@ -1,6 +1,7 @@
 package io.github.leonfoliveira.forseti.common.application.service.dto.input.contest
 
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
+import io.github.leonfoliveira.forseti.common.application.dto.input.contest.CreateContestInputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import jakarta.validation.Validation

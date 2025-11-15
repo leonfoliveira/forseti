@@ -1,9 +1,9 @@
-package io.github.leonfoliveira.forseti.common.application.service.dto.input.contest
+package io.github.leonfoliveira.forseti.common.application.dto.input.contest
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.attachment.AttachmentInputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.input.attachment.AttachmentInputDTO
 import jakarta.validation.Valid
 import jakarta.validation.constraints.AssertFalse
 import jakarta.validation.constraints.AssertTrue

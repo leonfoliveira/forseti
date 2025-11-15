@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.forseti.api.adapter.driven.emitter
 
-import io.github.leonfoliveira.forseti.common.application.service.dto.output.LeaderboardOutputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.output.LeaderboardOutputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every

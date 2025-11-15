@@ -4,7 +4,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.driving.controller.advice.GlobalExceptionHandler
 import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.common.adapter.config.JacksonConfig
-import io.github.leonfoliveira.forseti.common.application.service.dto.output.LeaderboardOutputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.output.LeaderboardOutputDTO
 import io.github.leonfoliveira.forseti.common.application.service.leaderboard.FindLeaderboardService
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension

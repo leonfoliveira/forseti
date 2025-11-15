@@ -2,7 +2,8 @@ package io.github.leonfoliveira.forseti.common.application.service.dto.input.con
 
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.attachment.AttachmentInputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.input.attachment.AttachmentInputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.input.contest.UpdateContestInputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import jakarta.validation.Validation

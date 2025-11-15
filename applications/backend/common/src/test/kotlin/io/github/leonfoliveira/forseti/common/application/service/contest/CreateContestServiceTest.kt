@@ -3,8 +3,8 @@ package io.github.leonfoliveira.forseti.common.application.service.contest
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Contest
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
 import io.github.leonfoliveira.forseti.common.application.domain.exception.ConflictException
+import io.github.leonfoliveira.forseti.common.application.dto.input.contest.CreateContestInputDTO
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.contest.CreateContestInputDTO
 import io.github.leonfoliveira.forseti.common.mock.entity.ContestMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec

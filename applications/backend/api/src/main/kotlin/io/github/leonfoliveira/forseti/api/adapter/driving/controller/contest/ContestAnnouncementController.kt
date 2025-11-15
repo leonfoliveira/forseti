@@ -7,8 +7,8 @@ import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.api.adapter.util.Private
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.service.announcement.CreateAnnouncementService
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.announcement.CreateAnnouncementInputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.input.announcement.CreateAnnouncementInputDTO
+import io.github.leonfoliveira.forseti.common.application.port.driving.CreateAnnouncementUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -27,7 +27,7 @@ import java.util.UUID
 @RequestMapping("/v1/contests")
 class ContestAnnouncementController(
     private val contestAuthFilter: ContestAuthFilter,
-    private val createAnnouncementService: CreateAnnouncementService,
+    private val createAnnouncementUseCase: CreateAnnouncementUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -87,7 +87,7 @@ class ContestAnnouncementController(
         contestAuthFilter.checkIfStarted(contestId)
         contestAuthFilter.checkIfMemberBelongsToContest(contestId)
         val member = RequestContext.getContext().session!!.member
-        val announcement = createAnnouncementService.create(contestId, member.id, body)
+        val announcement = createAnnouncementUseCase.create(contestId, member.id, body)
         return ResponseEntity.ok(announcement.toResponseDTO())
     }
 }

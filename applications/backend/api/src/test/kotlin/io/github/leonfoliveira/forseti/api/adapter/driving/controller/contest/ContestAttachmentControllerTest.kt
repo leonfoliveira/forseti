@@ -4,8 +4,8 @@ import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.toResponseDTO
 import io.github.leonfoliveira.forseti.api.application.service.attachment.AttachmentAuthorizationService
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
+import io.github.leonfoliveira.forseti.common.application.dto.output.AttachmentDownloadOutputDTO
 import io.github.leonfoliveira.forseti.common.application.service.attachment.AttachmentService
-import io.github.leonfoliveira.forseti.common.application.service.dto.output.AttachmentDownloadOutputDTO
 import io.github.leonfoliveira.forseti.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec

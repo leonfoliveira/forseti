@@ -1,5 +1,6 @@
 package io.github.leonfoliveira.forseti.common.application.service.dto.input.authorization
 
+import io.github.leonfoliveira.forseti.common.application.dto.input.authorization.AuthenticateInputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 

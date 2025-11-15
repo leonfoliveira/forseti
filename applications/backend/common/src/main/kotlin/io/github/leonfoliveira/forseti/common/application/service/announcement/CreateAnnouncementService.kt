@@ -3,10 +3,11 @@ package io.github.leonfoliveira.forseti.common.application.service.announcement
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Announcement
 import io.github.leonfoliveira.forseti.common.application.domain.event.AnnouncementCreatedEvent
 import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
+import io.github.leonfoliveira.forseti.common.application.dto.input.announcement.CreateAnnouncementInputDTO
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.AnnouncementRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
-import io.github.leonfoliveira.forseti.common.application.service.dto.input.announcement.CreateAnnouncementInputDTO
+import io.github.leonfoliveira.forseti.common.application.port.driving.CreateAnnouncementUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -19,7 +20,7 @@ class CreateAnnouncementService(
     private val memberRepository: MemberRepository,
     private val announcementRepository: AnnouncementRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
-) {
+) : CreateAnnouncementUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -32,7 +33,7 @@ class CreateAnnouncementService(
      * @throws NotFoundException if the contest or member does not exist
      */
     @Transactional
-    fun create(
+    override fun create(
         contestId: UUID,
         memberId: UUID,
         input: CreateAnnouncementInputDTO,

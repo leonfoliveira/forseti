@@ -2,7 +2,7 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.controller.contest
 
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
-import io.github.leonfoliveira.forseti.common.application.service.dto.output.LeaderboardOutputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.output.LeaderboardOutputDTO
 import io.github.leonfoliveira.forseti.common.application.service.leaderboard.FindLeaderboardService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content

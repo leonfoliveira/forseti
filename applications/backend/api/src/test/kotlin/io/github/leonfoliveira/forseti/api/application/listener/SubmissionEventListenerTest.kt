@@ -4,7 +4,7 @@ import io.github.leonfoliveira.forseti.api.application.port.driven.LeaderboardEm
 import io.github.leonfoliveira.forseti.api.application.port.driven.SubmissionEmitter
 import io.github.leonfoliveira.forseti.common.application.domain.event.SubmissionCreatedEvent
 import io.github.leonfoliveira.forseti.common.application.domain.event.SubmissionUpdatedEvent
-import io.github.leonfoliveira.forseti.common.application.service.dto.output.LeaderboardOutputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.output.LeaderboardOutputDTO
 import io.github.leonfoliveira.forseti.common.application.service.leaderboard.FindLeaderboardService
 import io.github.leonfoliveira.forseti.common.mock.entity.SubmissionMockBuilder
 import io.kotest.core.spec.style.FunSpec

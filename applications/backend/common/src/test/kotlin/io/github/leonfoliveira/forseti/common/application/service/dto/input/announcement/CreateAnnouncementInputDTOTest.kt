@@ -1,5 +1,6 @@
 package io.github.leonfoliveira.forseti.common.application.service.dto.input.announcement
 
+import io.github.leonfoliveira.forseti.common.application.dto.input.announcement.CreateAnnouncementInputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import jakarta.validation.Validation

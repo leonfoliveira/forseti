@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.forseti.common.application.service.dto.input.clarification
+package io.github.leonfoliveira.forseti.common.application.dto.input.clarification
 
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size

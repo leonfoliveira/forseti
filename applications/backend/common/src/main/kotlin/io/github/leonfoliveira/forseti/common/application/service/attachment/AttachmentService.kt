@@ -2,11 +2,11 @@ package io.github.leonfoliveira.forseti.common.application.service.attachment
 
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
 import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
+import io.github.leonfoliveira.forseti.common.application.dto.output.AttachmentDownloadOutputDTO
 import io.github.leonfoliveira.forseti.common.application.port.driven.AttachmentBucket
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.AttachmentRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
-import io.github.leonfoliveira.forseti.common.application.service.dto.output.AttachmentDownloadOutputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

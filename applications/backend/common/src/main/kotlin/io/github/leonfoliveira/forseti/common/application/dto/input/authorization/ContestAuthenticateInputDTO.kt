@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.forseti.common.application.service.dto.input.authorization
+package io.github.leonfoliveira.forseti.common.application.dto.input.authorization
 
 data class ContestAuthenticateInputDTO(
     val login: String,

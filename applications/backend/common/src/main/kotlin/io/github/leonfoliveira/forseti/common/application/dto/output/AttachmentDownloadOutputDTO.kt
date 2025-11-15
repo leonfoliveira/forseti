@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.forseti.common.application.service.dto.output
+package io.github.leonfoliveira.forseti.common.application.dto.output
 
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
 

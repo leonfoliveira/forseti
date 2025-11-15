@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.forseti.api.adapter.driven.emitter
 
 import io.github.leonfoliveira.forseti.api.application.port.driven.LeaderboardEmitter
-import io.github.leonfoliveira.forseti.common.application.service.dto.output.LeaderboardOutputDTO
+import io.github.leonfoliveira.forseti.common.application.dto.output.LeaderboardOutputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
