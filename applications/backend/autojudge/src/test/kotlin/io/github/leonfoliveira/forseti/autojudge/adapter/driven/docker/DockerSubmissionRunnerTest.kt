@@ -26,7 +26,7 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 @SpringBootTest
 @Import(PostgresTestContainer::class, MinioTestContainer::class)
-class DockerSubmissionRunnerAdapterTest(
+class DockerSubmissionRunnerTest(
     val sut: DockerSubmissionRunner,
     val contestRepository: ContestRepository,
     val submissionRepository: SubmissionRepository,

@@ -3,13 +3,13 @@ package io.github.leonfoliveira.forseti.api.adapter.util
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.exception.ForbiddenException
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.service.contest.FindContestService
+import io.github.leonfoliveira.forseti.common.application.port.driving.FindContestUseCase
 import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
 class ContestAuthFilter(
-    val findContestService: FindContestService,
+    private val findContestUseCase: FindContestUseCase,
 ) {
     /**
      * Checks if the member in the current session belongs to the specified contest.
@@ -42,7 +42,7 @@ class ContestAuthFilter(
                 .getContext()
                 .session
                 ?.member
-        val contest = findContestService.findById(contestId)
+        val contest = findContestUseCase.findById(contestId)
         if (!setOf(Member.Type.ROOT, Member.Type.ADMIN).contains(member?.type) && !contest.hasStarted()) {
             throw ForbiddenException("You are not authorized to access this contest before it starts")
         }

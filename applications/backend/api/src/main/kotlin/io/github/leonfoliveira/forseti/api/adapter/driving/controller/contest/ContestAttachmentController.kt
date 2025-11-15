@@ -8,7 +8,8 @@ import io.github.leonfoliveira.forseti.api.application.port.driving.AttachmentAu
 import io.github.leonfoliveira.forseti.api.application.util.ApiMetrics
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.port.driving.AttachmentUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.DownloadAttachmentUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.UploadAttachmentUseCase
 import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -33,7 +34,8 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1/contests/{contestId}/attachments")
 class ContestAttachmentController(
-    private val attachmentUseCase: AttachmentUseCase,
+    private val uploadAttachmentUseCase: UploadAttachmentUseCase,
+    private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
     private val attachmentAuthorizationUseCase: AttachmentAuthorizationUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -73,7 +75,7 @@ class ContestAttachmentController(
         attachmentAuthorizationUseCase.authorizeUpload(contestId, context)
         val member = RequestContext.getContext().session!!.member
         val attachment =
-            attachmentUseCase.upload(
+            uploadAttachmentUseCase.upload(
                 contestId = contestId,
                 memberId = member.id,
                 filename = file.originalFilename,
@@ -110,7 +112,7 @@ class ContestAttachmentController(
     ): ResponseEntity<ByteArray> {
         logger.info("[GET] /v1/contests/$contestId/attachments/$attachmentId")
         attachmentAuthorizationUseCase.authorizeDownload(contestId, attachmentId)
-        val download = attachmentUseCase.download(attachmentId)
+        val download = downloadAttachmentUseCase.download(attachmentId)
         val headers =
             HttpHeaders().apply {
                 contentDisposition =

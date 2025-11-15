@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.http
 
+import io.github.leonfoliveira.forseti.api.application.port.driving.FindSessionUseCase
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Session
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.port.driven.repository.SessionRepository
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -14,7 +14,7 @@ import java.util.UUID
 
 @Component
 class HttpContextExtractionFilter(
-    private val sessionRepository: SessionRepository,
+    private val findSessionUseCase: FindSessionUseCase,
 ) : OncePerRequestFilter() {
     /**
      * Fill the RequestContext with relevant information from the HTTP request.
@@ -58,7 +58,7 @@ class HttpContextExtractionFilter(
 
         val session =
             try {
-                sessionRepository.findEntityById(UUID.fromString(sessionId))
+                findSessionUseCase.findByIdNullable(UUID.fromString(sessionId))
             } catch (e: IllegalArgumentException) {
                 logger.info("Invalid session_id format")
                 return null

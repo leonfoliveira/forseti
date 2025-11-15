@@ -7,7 +7,8 @@ import io.github.leonfoliveira.forseti.common.application.port.driven.Attachment
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.AttachmentRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
-import io.github.leonfoliveira.forseti.common.application.port.driving.AttachmentUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.DownloadAttachmentUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.UploadAttachmentUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,7 +20,8 @@ class AttachmentService(
     private val memberRepository: MemberRepository,
     private val attachmentRepository: AttachmentRepository,
     private val attachmentBucket: AttachmentBucket,
-) : AttachmentUseCase {
+) : UploadAttachmentUseCase,
+    DownloadAttachmentUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -78,16 +80,31 @@ class AttachmentService(
      */
     @Transactional(readOnly = true)
     override fun download(id: UUID): AttachmentDownloadOutputDTO {
-        logger.info("Downloading attachment with id: $id")
         val attachment =
             attachmentRepository.findEntityById(id)
                 ?: throw NotFoundException("Could not find attachment with id = $id")
+        return AttachmentDownloadOutputDTO(
+            attachment = attachment,
+            bytes = download(attachment),
+        )
+    }
+
+    /**
+     * Downloads an attachment from the storage bucket.
+     *
+     * @param attachment The Attachment entity to be downloaded.
+     * @return An AttachmentDownloadOutputDTO containing the attachment metadata and its byte content.
+     * @throws NotFoundException if the attachment does not exist.
+     */
+    @Transactional(readOnly = true)
+    override fun download(attachment: Attachment): ByteArray {
+        logger.info("Downloading attachment with id: ${attachment.id}")
+        val attachment =
+            attachmentRepository.findEntityById(attachment.id)
+                ?: throw NotFoundException("Could not find attachment with id = ${attachment.id}")
         val bytes = attachmentBucket.download(attachment)
 
         logger.info("Finished downloading attachment")
-        return AttachmentDownloadOutputDTO(
-            attachment = attachment,
-            bytes = bytes,
-        )
+        return bytes
     }
 }

@@ -10,7 +10,7 @@ import java.time.OffsetDateTime
 @Service
 class SessionCookieUtil(
     @Value("\${security.cookie.domain}")
-    val cookieDomain: String,
+    private val cookieDomain: String,
     @Value("\${security.cookie.secure}")
     private val cookieSecure: Boolean,
 ) {

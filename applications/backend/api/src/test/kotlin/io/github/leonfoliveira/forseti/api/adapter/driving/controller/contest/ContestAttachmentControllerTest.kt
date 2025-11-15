@@ -5,7 +5,8 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.toResponseDTO
 import io.github.leonfoliveira.forseti.api.application.port.driving.AttachmentAuthorizationUseCase
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
 import io.github.leonfoliveira.forseti.common.application.dto.output.AttachmentDownloadOutputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.AttachmentUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.DownloadAttachmentUseCase
+import io.github.leonfoliveira.forseti.common.application.port.driving.UploadAttachmentUseCase
 import io.github.leonfoliveira.forseti.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
@@ -28,7 +29,9 @@ import java.util.UUID
 @ContextConfiguration(classes = [ContestAttachmentController::class])
 class ContestAttachmentControllerTest(
     @MockkBean(relaxed = true)
-    val attachmentUseCase: AttachmentUseCase,
+    val uploadAttachmentUseCase: UploadAttachmentUseCase,
+    @MockkBean(relaxed = true)
+    val downloadAttachmentUseCase: DownloadAttachmentUseCase,
     @MockkBean(relaxed = true)
     val attachmentAuthorizationUseCase: AttachmentAuthorizationUseCase,
     val webMvc: MockMvc,
@@ -44,7 +47,7 @@ class ContestAttachmentControllerTest(
             val session = SessionMockBuilder.build()
             RequestContext.getContext().session = session
             every {
-                attachmentUseCase.upload(
+                uploadAttachmentUseCase.upload(
                     contestId = contestId,
                     memberId = session.member.id,
                     filename = file.originalFilename,
@@ -69,7 +72,7 @@ class ContestAttachmentControllerTest(
             val contestId = UUID.randomUUID()
             val attachment = AttachmentMockBuilder.build()
             val bytes = "test data".toByteArray()
-            every { attachmentUseCase.download(attachment.id) } returns
+            every { downloadAttachmentUseCase.download(attachment.id) } returns
                 AttachmentDownloadOutputDTO(
                     attachment = attachment,
                     bytes = bytes,

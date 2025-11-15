@@ -3,7 +3,7 @@ package io.github.leonfoliveira.forseti.api.adapter.util
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.exception.ForbiddenException
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.service.contest.FindContestService
+import io.github.leonfoliveira.forseti.common.application.port.driving.FindContestUseCase
 import io.github.leonfoliveira.forseti.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
@@ -17,11 +17,11 @@ import java.util.UUID
 
 class ContestAuthFilterTest :
     FunSpec({
-        val findContestService = mockk<FindContestService>(relaxed = true)
+        val findContestUseCase = mockk<FindContestUseCase>(relaxed = true)
 
         val sut =
             ContestAuthFilter(
-                findContestService = findContestService,
+                findContestUseCase = findContestUseCase,
             )
 
         beforeEach {
@@ -65,7 +65,7 @@ class ContestAuthFilterTest :
                 val contestId = UUID.randomUUID()
                 RequestContext.Companion.getContext().session = SessionMockBuilder.build()
                 every {
-                    findContestService.findById(contestId)
+                    findContestUseCase.findById(contestId)
                 } returns ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().plusHours(1))
 
                 shouldThrow<ForbiddenException> {
@@ -77,7 +77,7 @@ class ContestAuthFilterTest :
                 val contestId = UUID.randomUUID()
                 RequestContext.Companion.getContext().session = SessionMockBuilder.build()
                 every {
-                    findContestService.findById(contestId)
+                    findContestUseCase.findById(contestId)
                 } returns ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1))
 
                 sut.checkIfStarted(contestId)
@@ -90,7 +90,7 @@ class ContestAuthFilterTest :
                         member = MemberMockBuilder.build(type = Member.Type.ADMIN),
                     )
                 every {
-                    findContestService.findById(contestId)
+                    findContestUseCase.findById(contestId)
                 } returns ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().plusHours(1))
 
                 sut.checkIfStarted(contestId)
@@ -103,7 +103,7 @@ class ContestAuthFilterTest :
                         member = MemberMockBuilder.build(type = Member.Type.ROOT),
                     )
                 every {
-                    findContestService.findById(contestId)
+                    findContestUseCase.findById(contestId)
                 } returns ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().plusHours(1))
 
                 sut.checkIfStarted(contestId)

@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.http
 
+import io.github.leonfoliveira.forseti.api.application.port.driving.FindSessionUseCase
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.port.driven.repository.SessionRepository
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -18,9 +18,9 @@ import java.time.OffsetDateTime
 
 class HttpContextExtractionFilterTest :
     FunSpec({
-        val sessionRepository = mockk<SessionRepository>(relaxed = true)
+        val findSessionUseCase = mockk<FindSessionUseCase>(relaxed = true)
 
-        val sut = HttpContextExtractionFilter(sessionRepository)
+        val sut = HttpContextExtractionFilter(findSessionUseCase)
 
         beforeEach {
             RequestContext.clearContext()
@@ -104,12 +104,12 @@ class HttpContextExtractionFilterTest :
             val response = mockk<HttpServletResponse>(relaxed = true)
             val filterChain = mockk<FilterChain>(relaxed = true)
             every { request.cookies } returns arrayOf(Cookie("session_id", "00000000-0000-0000-0000-000000000000"))
-            every { sessionRepository.findEntityById(any()) } returns null
+            every { findSessionUseCase.findByIdNullable(any()) } returns null
 
             sut.doFilterInternal(request, response, filterChain)
 
             RequestContext.getContext().session shouldBe null
-            verify { sessionRepository.findEntityById(any()) }
+            verify { findSessionUseCase.findByIdNullable(any()) }
         }
 
         test("should not set authorization when session is expired") {
@@ -121,12 +121,12 @@ class HttpContextExtractionFilterTest :
                     expiresAt = OffsetDateTime.now().minusHours(1),
                 )
             every { request.cookies } returns arrayOf(Cookie("session_id", expiredSession.id.toString()))
-            every { sessionRepository.findEntityById(expiredSession.id) } returns expiredSession
+            every { findSessionUseCase.findByIdNullable(expiredSession.id) } returns expiredSession
 
             sut.doFilterInternal(request, response, filterChain)
 
             RequestContext.getContext().session shouldBe null
-            verify { sessionRepository.findEntityById(expiredSession.id) }
+            verify { findSessionUseCase.findByIdNullable(expiredSession.id) }
         }
 
         test("should set authorization when access token is valid") {
@@ -135,7 +135,7 @@ class HttpContextExtractionFilterTest :
             val filterChain = mockk<FilterChain>(relaxed = true)
             val expectedSession = SessionMockBuilder.build()
             every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
-            every { sessionRepository.findEntityById(expectedSession.id) } returns expectedSession
+            every { findSessionUseCase.findByIdNullable(expectedSession.id) } returns expectedSession
 
             sut.doFilterInternal(request, response, filterChain)
 

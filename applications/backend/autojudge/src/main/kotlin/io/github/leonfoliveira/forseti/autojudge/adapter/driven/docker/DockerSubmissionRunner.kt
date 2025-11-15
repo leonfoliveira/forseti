@@ -1,16 +1,13 @@
 package io.github.leonfoliveira.forseti.autojudge.adapter.driven.docker
 
 import com.opencsv.CSVReader
+import io.github.leonfoliveira.forseti.autojudge.application.dto.input.CreateExecutionInputDTO
 import io.github.leonfoliveira.forseti.autojudge.application.port.driven.SubmissionRunner
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Contest
+import io.github.leonfoliveira.forseti.autojudge.application.port.driving.CreateExecutionUseCase
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Execution
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Problem
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
-import io.github.leonfoliveira.forseti.common.application.port.driven.AttachmentBucket
-import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ExecutionRepository
-import io.github.leonfoliveira.forseti.common.application.service.attachment.AttachmentService
+import io.github.leonfoliveira.forseti.common.application.port.driving.DownloadAttachmentUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.io.ByteArrayInputStream
@@ -20,9 +17,8 @@ import java.nio.file.Files
 
 @Service
 class DockerSubmissionRunner(
-    private val executionRepository: ExecutionRepository,
-    private val attachmentBucket: AttachmentBucket,
-    private val attachmentService: AttachmentService,
+    private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
+    private val createExecutionUseCase: CreateExecutionUseCase,
     private val dockerSubmissionRunnerConfigFactory: DockerSubmissionRunnerConfigFactory,
 ) : SubmissionRunner {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -30,9 +26,11 @@ class DockerSubmissionRunner(
     /**
      * Runs the submission inside a Docker container, compares the output with the expected output,
      * and returns the execution result.
+     *
+     * @param submission The submission to be executed.
+     * @return The execution result containing the status and outputs.
      */
     override fun run(submission: Submission): Execution {
-        val contest = submission.contest
         val problem = submission.problem
         logger.info("Running submission: ${submission.id} for problem: ${problem.id} with language: ${submission.language}")
 
@@ -94,63 +92,64 @@ class DockerSubmissionRunner(
                     logger.info("All test cases passed")
                 } catch (_: DockerContainer.DockerTimeOutException) {
                     logger.info("Test case with index: $index timed out")
-                    val execution =
-                        Execution(
+                    return createExecutionUseCase.create(
+                        CreateExecutionInputDTO(
                             submission = submission,
                             answer = Submission.Answer.TIME_LIMIT_EXCEEDED,
                             totalTestCases = testCases.size,
                             lastTestCase = index,
                             input = problem.testCases,
-                            output = uploadOutput(contest, outputs),
-                        )
-                    return executionRepository.save(execution)
+                            output = outputs,
+                        ),
+                    )
                 } catch (_: DockerContainer.DockerOOMKilledException) {
                     logger.info("Test case with index: $index ran out of memory")
-                    val execution =
-                        Execution(
+                    return createExecutionUseCase.create(
+                        CreateExecutionInputDTO(
                             submission = submission,
                             answer = Submission.Answer.MEMORY_LIMIT_EXCEEDED,
                             totalTestCases = testCases.size,
                             lastTestCase = index,
                             input = problem.testCases,
-                            output = uploadOutput(contest, outputs),
-                        )
-                    return executionRepository.save(execution)
+                            output = outputs,
+                        ),
+                    )
                 } catch (ex: Exception) {
                     logger.info("Error while running test case with index: $index", ex)
-                    val execution =
-                        Execution(
+                    return createExecutionUseCase.create(
+                        CreateExecutionInputDTO(
                             submission = submission,
                             answer = Submission.Answer.RUNTIME_ERROR,
                             totalTestCases = testCases.size,
                             lastTestCase = index,
                             input = problem.testCases,
-                            output = uploadOutput(contest, outputs),
-                        )
-                    return executionRepository.save(execution)
+                            output = outputs,
+                        ),
+                    )
                 }
             }
-            val execution =
-                Execution(
+            return createExecutionUseCase.create(
+                CreateExecutionInputDTO(
                     submission = submission,
                     answer = status,
                     totalTestCases = testCases.size,
                     lastTestCase = lastTestCase,
                     input = problem.testCases,
-                    output = uploadOutput(contest, outputs),
-                )
-            return executionRepository.save(execution)
+                    output = outputs,
+                ),
+            )
         } catch (ex: Exception) {
             logger.info("Error while compiling submission", ex)
-            val execution =
-                Execution(
+            return createExecutionUseCase.create(
+                CreateExecutionInputDTO(
                     submission = submission,
                     answer = Submission.Answer.COMPILATION_ERROR,
                     totalTestCases = testCases.size,
+                    lastTestCase = null,
                     input = problem.testCases,
-                    output = uploadOutput(contest, emptyList()),
-                )
-            return executionRepository.save(execution)
+                    output = emptyList(),
+                ),
+            )
         } finally {
             container.kill()
         }
@@ -168,7 +167,7 @@ class DockerSubmissionRunner(
         submission: Submission,
         tmpDir: File,
     ): File {
-        val bytes = attachmentBucket.download(submission.code)
+        val bytes = downloadAttachmentUseCase.download(submission.code)
         val romFile = File(tmpDir, submission.code.filename)
         romFile.writeBytes(bytes)
         return romFile
@@ -181,36 +180,11 @@ class DockerSubmissionRunner(
      * @return A list of test cases, where each test case is represented as an array of strings.
      */
     private fun loadTestCases(problem: Problem): List<Array<String>> {
-        val bytes = attachmentBucket.download(problem.testCases)
+        val bytes = downloadAttachmentUseCase.download(problem.testCases)
         val csvReader = CSVReader(InputStreamReader(ByteArrayInputStream(bytes)))
         return csvReader.use { reader ->
             reader.readAll()
         }
-    }
-
-    /**
-     * Uploads the output of the execution to the attachment bucket as a CSV file.
-     *
-     * @param contest The contest to which the attachment will be associated.
-     * @param output The output of the execution as a list of strings.
-     * @return The attachment representing the uploaded output file.
-     */
-    private fun uploadOutput(
-        contest: Contest,
-        output: List<String>,
-    ): Attachment {
-        val csvContent = output.joinToString("\n")
-        val bytes = csvContent.toByteArray()
-        val attachment =
-            attachmentService.upload(
-                contestId = contest.id,
-                memberId = Member.AUTOJUDGE_ID,
-                filename = "output.csv",
-                contentType = "text/csv",
-                context = Attachment.Context.EXECUTION_OUTPUT,
-                bytes = bytes,
-            )
-        return attachment
     }
 
     /**

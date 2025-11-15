@@ -90,7 +90,7 @@ class AttachmentServiceTest :
             }
         }
 
-        context("download") {
+        context("download - byId") {
             test("should throw NotFoundException when attachment does not exist") {
                 val id = UUID.randomUUID()
                 every { attachmentRepository.findEntityById(id) } returns null
@@ -111,6 +111,20 @@ class AttachmentServiceTest :
 
                 result.attachment shouldBe attachment
                 result.bytes shouldBe bytes
+            }
+        }
+
+        context("download - byEntity") {
+            test("should download an attachment") {
+                val id = UUID.randomUUID()
+                val attachment = AttachmentMockBuilder.build(id = id)
+                every { attachmentRepository.findEntityById(id) } returns attachment
+                val bytes = ByteArray(10) { it.toByte() }
+                every { attachmentBucket.download(attachment) } returns bytes
+
+                val result = sut.download(attachment)
+
+                result shouldBe bytes
             }
         }
     })
