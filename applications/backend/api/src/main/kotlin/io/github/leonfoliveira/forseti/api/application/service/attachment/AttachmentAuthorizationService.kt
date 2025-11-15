@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.forseti.api.application.service.attachment
 
-import io.github.leonfoliveira.forseti.api.application.port.driving.AttachmentAuthorizationUseCase
+import io.github.leonfoliveira.forseti.api.application.port.driving.attachment.AttachmentAuthorizationUseCase
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.exception.ForbiddenException

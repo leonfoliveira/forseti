@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.http
 
-import io.github.leonfoliveira.forseti.api.application.port.driving.FindSessionUseCase
+import io.github.leonfoliveira.forseti.api.application.port.driving.session.FindSessionUseCase
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
 import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec

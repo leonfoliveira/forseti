@@ -1,4 +1,4 @@
-package io.github.leonfoliveira.forseti.api.application.port.driving
+package io.github.leonfoliveira.forseti.api.application.port.driving.session
 
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Session
 import java.util.UUID

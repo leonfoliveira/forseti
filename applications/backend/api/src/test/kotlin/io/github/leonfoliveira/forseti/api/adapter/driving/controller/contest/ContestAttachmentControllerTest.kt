@@ -2,7 +2,7 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.controller.contest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.toResponseDTO
-import io.github.leonfoliveira.forseti.api.application.port.driving.AttachmentAuthorizationUseCase
+import io.github.leonfoliveira.forseti.api.application.port.driving.attachment.AttachmentAuthorizationUseCase
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
 import io.github.leonfoliveira.forseti.common.application.dto.output.AttachmentDownloadOutputDTO
 import io.github.leonfoliveira.forseti.common.application.port.driving.DownloadAttachmentUseCase

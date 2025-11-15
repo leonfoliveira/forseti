@@ -4,7 +4,7 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.AttachmentRespon
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.toResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.Private
-import io.github.leonfoliveira.forseti.api.application.port.driving.AttachmentAuthorizationUseCase
+import io.github.leonfoliveira.forseti.api.application.port.driving.attachment.AttachmentAuthorizationUseCase
 import io.github.leonfoliveira.forseti.api.application.util.ApiMetrics
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext

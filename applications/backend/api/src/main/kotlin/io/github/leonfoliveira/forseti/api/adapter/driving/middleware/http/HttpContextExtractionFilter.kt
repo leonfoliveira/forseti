@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.http
 
-import io.github.leonfoliveira.forseti.api.application.port.driving.FindSessionUseCase
+import io.github.leonfoliveira.forseti.api.application.port.driving.session.FindSessionUseCase
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Session
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
 import jakarta.servlet.FilterChain
