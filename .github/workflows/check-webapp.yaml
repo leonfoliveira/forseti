@@ -4,10 +4,12 @@ on:
   pull_request:
 
 jobs:
-  changes:
+  check-webapp:
     runs-on: ubuntu-latest
-    outputs:
-      webapp: ${{ steps.changes.outputs.webapp }}
+    defaults:
+      run:
+        working-directory: applications/webapp
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,19 +23,8 @@ jobs:
               - 'applications/webapp/**'
               - '.github/workflows/check-webapp.yaml'
 
-  check-webapp:
-    runs-on: ubuntu-latest
-    needs: changes
-    if: needs.changes.outputs.webapp == 'true'
-    defaults:
-      run:
-        working-directory: applications/webapp
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Setup Node.js
+        if: steps.changes.outputs.webapp == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -41,9 +32,11 @@ jobs:
           cache-dependency-path: applications/webapp/package-lock.json
 
       - name: Install
+        if: steps.changes.outputs.webapp == 'true'
         run: npm ci
 
       - name: Run checks in parallel
+        if: steps.changes.outputs.webapp == 'true'
         run: |
           # Run lint, i18n checks, and tests in parallel
           npm run lint &
@@ -54,22 +47,13 @@ jobs:
           wait
 
       - name: Build
+        if: steps.changes.outputs.webapp == 'true'
         run: npm run build
 
-  check-webapp-status:
-    runs-on: ubuntu-latest
-    needs: [changes, check-webapp]
-    if: always()
-    steps:
-      - name: Check status
+      - name: Report status
         run: |
-          if [[ "${{ needs.changes.outputs.webapp }}" == "true" ]]; then
-            # If there were changes, ensure the check-webapp job succeeded
-            if [[ "${{ needs.check-webapp.result }}" != "success" ]]; then
-              echo "Webapp checks failed"
-              exit 1
-            fi
-            echo "Webapp checks passed"
+          if [[ "${{ steps.changes.outputs.webapp }}" == "true" ]]; then
+            echo "Webapp checks completed successfully"
           else
             echo "No webapp changes detected, skipping checks"
           fi

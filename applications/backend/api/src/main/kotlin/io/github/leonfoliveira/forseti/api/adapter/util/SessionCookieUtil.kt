@@ -1,0 +1,75 @@
+package io.github.leonfoliveira.forseti.api.adapter.util
+
+import io.github.leonfoliveira.forseti.common.application.domain.entity.Session
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.ResponseCookie
+import org.springframework.stereotype.Service
+import java.time.Duration
+import java.time.OffsetDateTime
+
+@Service
+class SessionCookieUtil(
+    @Value("\${security.cookie.domain}")
+    private val cookieDomain: String,
+    @Value("\${security.cookie.secure}")
+    private val cookieSecure: Boolean,
+) {
+    /**
+     * Builds a session cookie string for the given session.
+     *
+     * @param session The session for which to build the cookie.
+     * @return The session cookie string.
+     */
+    fun buildCookie(session: Session): String {
+        val cookie =
+            if (cookieSecure) {
+                ResponseCookie
+                    .from("session_id", session.id.toString())
+                    .domain(cookieDomain)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(Duration.between(OffsetDateTime.now(), session.expiresAt))
+                    .sameSite("None")
+                    .build()
+            } else {
+                ResponseCookie
+                    .from("session_id", session.id.toString())
+                    .httpOnly(true)
+                    .path("/")
+                    .maxAge(Duration.between(OffsetDateTime.now(), session.expiresAt))
+                    .sameSite("Lax")
+                    .build()
+            }
+        return cookie.toString()
+    }
+
+    /**
+     * Builds a cookie string that clears the session cookie.
+     *
+     * @return The clear session cookie string.
+     */
+    fun buildClearCookie(): String {
+        val cookie =
+            if (cookieSecure) {
+                ResponseCookie
+                    .from("session_id", "")
+                    .domain(cookieDomain)
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(0)
+                    .sameSite("None")
+                    .build()
+            } else {
+                ResponseCookie
+                    .from("session_id", "")
+                    .httpOnly(true)
+                    .path("/")
+                    .maxAge(0)
+                    .sameSite("Lax")
+                    .build()
+            }
+        return cookie.toString()
+    }
+}

@@ -4,10 +4,12 @@ on:
   pull_request:
 
 jobs:
-  changes:
+  check-backend:
     runs-on: ubuntu-latest
-    outputs:
-      backend: ${{ steps.changes.outputs.backend }}
+    defaults:
+      run:
+        working-directory: applications/backend
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,19 +23,8 @@ jobs:
               - 'applications/backend/**'
               - '.github/workflows/check-backend.yaml'
 
-  check-backend:
-    runs-on: ubuntu-latest
-    needs: changes
-    if: needs.changes.outputs.backend == 'true'
-    defaults:
-      run:
-        working-directory: applications/backend
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Set up JDK 21
+        if: steps.changes.outputs.backend == 'true'
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -41,6 +32,7 @@ jobs:
           cache: gradle
 
       - name: Cache Gradle
+        if: steps.changes.outputs.backend == 'true'
         uses: actions/cache@v4
         with:
           path: |
@@ -51,9 +43,11 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Grant execute permission for gradlew
+        if: steps.changes.outputs.backend == 'true'
         run: chmod +x ./gradlew
 
       - name: Run checks and builds in parallel
+        if: steps.changes.outputs.backend == 'true'
         run: |
           # Run linting, testing, and builds in parallel
           ./gradlew ktlintCheck &
@@ -64,20 +58,10 @@ jobs:
           # Wait for all tasks to complete
           wait
 
-  check-backend-status:
-    runs-on: ubuntu-latest
-    needs: [changes, check-backend]
-    if: always()
-    steps:
-      - name: Check status
+      - name: Report status
         run: |
-          if [[ "${{ needs.changes.outputs.backend }}" == "true" ]]; then
-            # If there were changes, ensure the check-backend job succeeded
-            if [[ "${{ needs.check-backend.result }}" != "success" ]]; then
-              echo "Backend checks failed"
-              exit 1
-            fi
-            echo "Backend checks passed"
+          if [[ "${{ steps.changes.outputs.backend }}" == "true" ]]; then
+            echo "Backend checks completed successfully"
           else
             echo "No backend changes detected, skipping checks"
           fi

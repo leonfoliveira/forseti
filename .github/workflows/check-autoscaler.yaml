@@ -4,10 +4,12 @@ on:
   pull_request:
 
 jobs:
-  changes:
+  check-autoscaler:
     runs-on: ubuntu-latest
-    outputs:
-      autoscaler: ${{ steps.changes.outputs.autoscaler }}
+    defaults:
+      run:
+        working-directory: applications/autoscaler
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,19 +23,8 @@ jobs:
               - 'applications/autoscaler/**'
               - '.github/workflows/check-autoscaler.yaml'
 
-  check-autoscaler:
-    runs-on: ubuntu-latest
-    needs: changes
-    if: needs.changes.outputs.autoscaler == 'true'
-    defaults:
-      run:
-        working-directory: applications/autoscaler
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Set up Python 3.12
+        if: steps.changes.outputs.autoscaler == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -41,9 +32,11 @@ jobs:
           cache-dependency-path: applications/autoscaler/requirements.dev.txt
 
       - name: Install dependencies
+        if: steps.changes.outputs.autoscaler == 'true'
         run: pip install -r requirements.dev.txt
 
       - name: Run checks in parallel
+        if: steps.changes.outputs.autoscaler == 'true'
         run: |
           # Run lint and test in parallel
           make lint &
@@ -52,20 +45,10 @@ jobs:
           # Wait for all tasks to complete
           wait
 
-  check-autoscaler-status:
-    runs-on: ubuntu-latest
-    needs: [changes, check-autoscaler]
-    if: always()
-    steps:
-      - name: Check status
+      - name: Report status
         run: |
-          if [[ "${{ needs.changes.outputs.autoscaler }}" == "true" ]]; then
-            # If there were changes, ensure the check-autoscaler job succeeded
-            if [[ "${{ needs.check-autoscaler.result }}" != "success" ]]; then
-              echo "Autoscaler checks failed"
-              exit 1
-            fi
-            echo "Autoscaler checks passed"
+          if [[ "${{ steps.changes.outputs.autoscaler }}" == "true" ]]; then
+            echo "Autoscaler checks completed successfully"
           else
             echo "No autoscaler changes detected, skipping checks"
           fi

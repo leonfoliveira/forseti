@@ -1,9 +1,9 @@
 package io.github.leonfoliveira.forseti.common.mock.entity
 
-import io.github.leonfoliveira.forseti.common.domain.entity.Clarification
-import io.github.leonfoliveira.forseti.common.domain.entity.Contest
-import io.github.leonfoliveira.forseti.common.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.domain.entity.Problem
+import io.github.leonfoliveira.forseti.common.application.domain.entity.Clarification
+import io.github.leonfoliveira.forseti.common.application.domain.entity.Contest
+import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
+import io.github.leonfoliveira.forseti.common.application.domain.entity.Problem
 import java.time.OffsetDateTime
 import java.util.UUID
 
