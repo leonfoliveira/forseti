@@ -4,10 +4,12 @@ on:
   pull_request:
 
 jobs:
-  changes:
+  check-cli:
     runs-on: ubuntu-latest
-    outputs:
-      cli: ${{ steps.changes.outputs.cli }}
+    defaults:
+      run:
+        working-directory: applications/cli
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,19 +23,8 @@ jobs:
               - 'applications/cli/**'
               - '.github/workflows/check-cli.yaml'
 
-  check-cli:
-    runs-on: ubuntu-latest
-    needs: changes
-    if: needs.changes.outputs.cli == 'true'
-    defaults:
-      run:
-        working-directory: applications/cli
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Set up Python 3.12
+        if: steps.changes.outputs.cli == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -41,9 +32,11 @@ jobs:
           cache-dependency-path: applications/cli/requirements.dev.txt
 
       - name: Install dependencies
+        if: steps.changes.outputs.cli == 'true'
         run: pip install -r requirements.dev.txt
 
       - name: Run checks and build in parallel
+        if: steps.changes.outputs.cli == 'true'
         run: |
           # Run lint, test, and build in parallel
           make lint &
@@ -53,20 +46,10 @@ jobs:
           # Wait for all tasks to complete
           wait
 
-  check-cli-status:
-    runs-on: ubuntu-latest
-    needs: [changes, check-cli]
-    if: always()
-    steps:
-      - name: Check status
+      - name: Report status
         run: |
-          if [[ "${{ needs.changes.outputs.cli }}" == "true" ]]; then
-            # If there were changes, ensure the check-cli job succeeded
-            if [[ "${{ needs.check-cli.result }}" != "success" ]]; then
-              echo "CLI checks failed"
-              exit 1
-            fi
-            echo "CLI checks passed"
+          if [[ "${{ steps.changes.outputs.cli }}" == "true" ]]; then
+            echo "CLI checks completed successfully"
           else
             echo "No CLI changes detected, skipping checks"
           fi
