@@ -13,12 +13,12 @@ import org.springframework.test.context.ActiveProfiles
 )
 @EntityScan(
     basePackages = [
-        "io.github.leonfoliveira.forseti.common.domain.entity",
+        "io.github.leonfoliveira.forseti.common.application.domain.entity",
     ],
 )
 @EnableJpaRepositories(
     basePackages = [
-        "io.github.leonfoliveira.forseti.common.repository",
+        "io.github.leonfoliveira.forseti.common.application.port.driven.repository",
     ],
 )
 @ActiveProfiles("test")

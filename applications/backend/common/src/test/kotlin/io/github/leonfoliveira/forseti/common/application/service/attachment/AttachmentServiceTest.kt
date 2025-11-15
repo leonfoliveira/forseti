@@ -3,6 +3,9 @@ package io.github.leonfoliveira.forseti.common.application.service.attachment
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
 import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
 import io.github.leonfoliveira.forseti.common.application.port.driven.AttachmentBucket
+import io.github.leonfoliveira.forseti.common.application.port.driven.repository.AttachmentRepository
+import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
+import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.mock.entity.AttachmentMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder

@@ -3,6 +3,7 @@ package io.github.leonfoliveira.forseti.common.application.service.clarification
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Clarification
 import io.github.leonfoliveira.forseti.common.application.domain.event.ClarificationDeletedEvent
 import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
+import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ClarificationRepository
 import io.github.leonfoliveira.forseti.common.mock.entity.ClarificationMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec

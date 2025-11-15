@@ -5,6 +5,9 @@ import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.event.ClarificationCreatedEvent
 import io.github.leonfoliveira.forseti.common.application.domain.exception.ForbiddenException
 import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
+import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ClarificationRepository
+import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
+import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.application.service.dto.input.clarification.CreateClarificationInputDTO
 import io.github.leonfoliveira.forseti.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder

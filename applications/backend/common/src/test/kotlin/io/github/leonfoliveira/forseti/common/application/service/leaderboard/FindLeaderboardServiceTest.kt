@@ -3,6 +3,7 @@ package io.github.leonfoliveira.forseti.common.application.service.leaderboard
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
 import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
+import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
 import io.github.leonfoliveira.forseti.common.mock.entity.ContestMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.ProblemMockBuilder
