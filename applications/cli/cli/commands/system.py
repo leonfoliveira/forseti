@@ -50,7 +50,6 @@ def start(domain: str, stack: str, stack_name: str):
     click.echo(f"Webapp: https://{domain}")
     click.echo(f"API: https://api.{domain}")
     click.echo(f"Grafana: https://grafana.{domain}")
-    click.echo(f"Traefik: https://traefik.{domain}")
 
 
 @system.command(help="Shut down all services in Docker Swarm.")

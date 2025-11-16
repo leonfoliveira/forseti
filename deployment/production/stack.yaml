@@ -577,12 +577,17 @@ services:
       retries: 5
       start_period: 10s
     image: prom/prometheus:v3.4.1
+    user: root
     networks:
       network:
     volumes:
       - type: bind
         source: ./volumes/prometheus/config.yaml
         target: /etc/prometheus/prometheus.yml
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
       - type: volume
         source: prometheus_data
         target: /prometheus

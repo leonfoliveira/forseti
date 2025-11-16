@@ -11,6 +11,9 @@ entrypoints:
     address: ":443"
     http:
       tls: {}
+api:
+  dashboard: true
+  insecure: true
 providers:
   file:
     filename: /etc/traefik/providers.yaml
