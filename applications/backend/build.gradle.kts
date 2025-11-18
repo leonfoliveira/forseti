@@ -56,6 +56,7 @@ subprojects {
     dependencies {
         implementation(rootProject.libs.bundles.jackson)
         implementation(rootProject.libs.bundles.micrometer)
+        implementation(rootProject.libs.bundles.prometheus)
         implementation(rootProject.libs.bundles.spring)
         implementation(rootProject.libs.kotlin.reflect)
         implementation(rootProject.libs.minio)
