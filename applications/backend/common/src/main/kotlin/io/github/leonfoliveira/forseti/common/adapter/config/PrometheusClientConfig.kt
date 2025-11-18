@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.event.EventListener
 
 @Configuration
-class PrometheusConfig(
+class PrometheusClientConfig(
     @Value("\${spring.application.version}")
     private val version: String,
     @Value("\${spring.profiles.active}")
