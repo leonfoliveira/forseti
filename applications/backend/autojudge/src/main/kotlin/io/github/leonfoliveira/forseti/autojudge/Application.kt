@@ -1,6 +1,5 @@
 package io.github.leonfoliveira.forseti.autojudge
 
-import io.prometheus.metrics.instrumentation.jvm.JvmMetrics
 import org.springframework.amqp.rabbit.annotation.EnableRabbit
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
@@ -38,5 +37,4 @@ class Application
 fun main(args: Array<String>) {
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
     runApplication<Application>(*args)
-    JvmMetrics.builder().register()
 }

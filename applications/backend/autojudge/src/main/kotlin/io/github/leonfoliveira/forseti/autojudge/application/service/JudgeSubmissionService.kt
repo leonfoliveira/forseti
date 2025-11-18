@@ -41,10 +41,10 @@ class JudgeSubmissionService(
 
         val answer =
             try {
-                val startTime = System.nanoTime()
-                val execution = submissionRunner.run(submission)
-                val duration = (System.nanoTime() - startTime) / 1_000_000_000.0
-                AutoJudgeMetrics.AUTO_JUDGE_SUBMISSION_RUN_TIME_SECONDS.observe(duration)
+                val execution =
+                    AutoJudgeMetrics.AUTO_JUDGE_SUBMISSION_RUN_TIME_SECONDS.run {
+                        submissionRunner.run(submission)
+                    }
 
                 AutoJudgeMetrics.AUTO_JUDGE_SUCCESSFUL_SUBMISSION
                     .labelValues(execution.answer.toString())
