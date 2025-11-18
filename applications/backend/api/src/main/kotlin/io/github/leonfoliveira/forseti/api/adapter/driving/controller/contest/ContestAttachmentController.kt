@@ -5,12 +5,10 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.toResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.Private
 import io.github.leonfoliveira.forseti.api.application.port.driving.attachment.AttachmentAuthorizationUseCase
-import io.github.leonfoliveira.forseti.api.application.util.ApiMetrics
 import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
 import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
 import io.github.leonfoliveira.forseti.common.application.port.driving.DownloadAttachmentUseCase
 import io.github.leonfoliveira.forseti.common.application.port.driving.UploadAttachmentUseCase
-import io.micrometer.core.annotation.Timed
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -40,7 +38,6 @@ class ContestAttachmentController(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @Timed(ApiMetrics.API_ATTACHMENT_UPLOAD_TIME)
     @PostMapping("{context}")
     @Operation(
         summary = "Upload an attachment",
@@ -86,7 +83,6 @@ class ContestAttachmentController(
         return ResponseEntity.ok(attachment.toResponseDTO())
     }
 
-    @Timed(ApiMetrics.API_ATTACHMENT_DOWNLOAD_TIME)
     @GetMapping("/{attachmentId}")
     @Operation(
         summary = "Downloads an attachment",
