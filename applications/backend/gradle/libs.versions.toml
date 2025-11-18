@@ -41,6 +41,7 @@ minio = { module = "io.minio:minio", version.ref = "minio" }
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 prometheus-metrics-core = { module = "io.prometheus:prometheus-metrics-core", version.ref = "prometheus" }
+prometheus-metrics-exporter-servlet-jakarta = { module = "io.prometheus:prometheus-metrics-exporter-servlet-jakarta", version.ref = "prometheus" }
 prometheus-metrics-instrumentation-jvm = { module = "io.prometheus:prometheus-metrics-instrumentation-jvm", version.ref = "prometheus" }
 snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
 spring-boot-dev-tools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
@@ -81,6 +82,7 @@ mockk = [
 ]
 prometheus = [
     "prometheus-metrics-core",
+    "prometheus-metrics-exporter-servlet-jakarta",
     "prometheus-metrics-instrumentation-jvm"
 ]
 spring = [
