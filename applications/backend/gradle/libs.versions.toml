@@ -16,6 +16,7 @@ minio = "8.5.17"
 mockk = "1.13.17"
 opencsv = "5.11"
 postgresql = "42.7.5"
+prometheus = "1.4.3"
 snakeyaml = "2.4"
 spring-boot = "3.4.5"
 springdoc-openapi = "2.8.9"
@@ -39,6 +40,9 @@ micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-p
 minio = { module = "io.minio:minio", version.ref = "minio" }
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+prometheus-metrics-core = { module = "io.prometheus:prometheus-metrics-core", version.ref = "prometheus" }
+prometheus-metrics-exporter-servlet-jakarta = { module = "io.prometheus:prometheus-metrics-exporter-servlet-jakarta", version.ref = "prometheus" }
+prometheus-metrics-instrumentation-jvm = { module = "io.prometheus:prometheus-metrics-instrumentation-jvm", version.ref = "prometheus" }
 snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
 spring-boot-dev-tools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
 spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot" }
@@ -75,6 +79,11 @@ micrometer = [
 mockk = [
     "mockk",
     "springmockk"
+]
+prometheus = [
+    "prometheus-metrics-core",
+    "prometheus-metrics-exporter-servlet-jakarta",
+    "prometheus-metrics-instrumentation-jvm"
 ]
 spring = [
     "spring-boot-starter",
