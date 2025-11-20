@@ -6,3 +6,5 @@ rootProject.name = "backend"
 include("api")
 include("autojudge")
 include("common")
+
+include("core")
