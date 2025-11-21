@@ -2,6 +2,7 @@ package live.forseti.infrastructure.adapter.driving.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.session.RefreshSessionUseCase
 import live.forseti.infrastructure.adapter.dto.message.RabbitMQMessage
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
@@ -9,7 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.io.Serializable
 import java.util.UUID
 
-abstract class RabbitMQConsumer<TPayload : Serializable> {
+abstract class RabbitMQConsumer<TPayload : Serializable>(
+    private val memberId: UUID,
+) {
+    @Autowired
+    private lateinit var refreshSessionUseCase: RefreshSessionUseCase
+
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
@@ -35,8 +41,7 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
         val payload = objectMapper.treeToValue(payloadJson, getPayloadType())
         val message = RabbitMQMessage(id, traceId, payload)
 
-        RequestContext.getContext().traceId = traceId
-        MDC.put("traceId", traceId)
+        initRequestContext(message)
 
         try {
             handlePayload(message.payload)
@@ -46,6 +51,14 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
         } finally {
             MDC.clear()
         }
+    }
+
+    private fun initRequestContext(message: RabbitMQMessage<*>) {
+        RequestContext.getContext().traceId = message.traceId
+        MDC.put("traceId", message.traceId)
+
+        val session = refreshSessionUseCase.refresh(memberId)
+        RequestContext.getContext().session = session
     }
 
     /**

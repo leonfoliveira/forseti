@@ -1,5 +1,6 @@
 package live.forseti.autojudge.adapter.driving.consumer
 
+import live.forseti.core.domain.entity.Member
 import live.forseti.core.port.driving.usecase.submission.JudgeSubmissionUseCase
 import live.forseti.infrastructure.adapter.driving.consumer.RabbitMQConsumer
 import live.forseti.infrastructure.adapter.dto.message.payload.SubmissionMessagePayload
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component
 @Component
 class SubmissionQueueRabbitMQConsumer(
     private val judgeSubmissionUseCase: JudgeSubmissionUseCase,
-) : RabbitMQConsumer<SubmissionMessagePayload>() {
+) : RabbitMQConsumer<SubmissionMessagePayload>(Member.AUTOJUDGE_ID) {
     @RabbitListener(
         queues = ["\${spring.rabbitmq.queue.submission-queue}"],
         concurrency = "\${submission.max-concurrent}",

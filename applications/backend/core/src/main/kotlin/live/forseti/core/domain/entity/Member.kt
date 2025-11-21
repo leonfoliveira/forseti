@@ -68,6 +68,11 @@ class Member(
         ROOT,
 
         /**
+         * Represents a system-level member used for API interactions.
+         */
+        API,
+
+        /**
          * Represents a worker who judges submissions.
          */
         AUTOJUDGE,
@@ -93,7 +98,11 @@ class Member(
         const val ROOT_NAME = "Root"
         const val ROOT_LOGIN = "root"
 
-        val AUTOJUDGE_ID: UUID = UUID.fromString("11111111-1111-1111-1111-111111111111")
+        val API_ID: UUID = UUID.fromString("11111111-1111-1111-1111-111111111111")
+        const val API_NAME = "Api"
+        const val API_LOGIN = "api"
+
+        val AUTOJUDGE_ID: UUID = UUID.fromString("22222222-2222-2222-2222-222222222222")
         const val AUTOJUDGE_NAME = "Autojudge"
         const val AUTOJUDGE_LOGIN = "autojudge"
     }
