@@ -2,7 +2,7 @@ package live.forseti.core.application.service.session
 
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driven.repository.SessionRepository
-import live.forseti.core.port.driving.usecase.session.DeleteSessionUsecase
+import live.forseti.core.port.driving.usecase.session.DeleteSessionUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -11,7 +11,7 @@ import java.time.OffsetDateTime
 @Service
 class DeleteSessionService(
     private val sessionRepository: SessionRepository,
-) : DeleteSessionUsecase {
+) : DeleteSessionUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**

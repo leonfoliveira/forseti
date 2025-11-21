@@ -23,8 +23,8 @@ kover {
         filters {
             excludes {
                 classes.addAll(
-                    "io.github.leonfoliveira.forseti.api.Application",
-                    "io.github.leonfoliveira.forseti.api.ApplicationKt",
+                    "live.forseti.api.Application",
+                    "live.forseti.api.ApplicationKt",
                 )
                 annotatedBy(
                     "org.springframework.context.annotation.Configuration",

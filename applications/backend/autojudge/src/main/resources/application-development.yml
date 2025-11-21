@@ -1,10 +1,7 @@
 spring:
   config:
-    import: classpath:common-development.yml
+    import: classpath:core-development.yml
 server:
   port: ${PORT:8081}
-external:
-  api:
-    url: ${API_URL:http://localhost:8080}
 submission:
   max-concurrent: ${MAX_CONCURRENT_SUBMISSIONS:1}

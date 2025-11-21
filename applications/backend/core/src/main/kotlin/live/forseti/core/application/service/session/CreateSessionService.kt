@@ -3,10 +3,8 @@ package live.forseti.core.application.service.session
 import live.forseti.core.application.util.UnitUtil
 import live.forseti.core.domain.entity.Member
 import live.forseti.core.domain.entity.Session
-import live.forseti.core.port.driven.Hasher
-import live.forseti.core.port.driven.repository.MemberRepository
 import live.forseti.core.port.driven.repository.SessionRepository
-import live.forseti.core.port.driving.usecase.session.CreateSessionUsecase
+import live.forseti.core.port.driving.usecase.session.CreateSessionUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -22,7 +20,7 @@ class CreateSessionService(
     private val rootExpiration: String,
     @Value("\${security.session.autojudge-expiration}")
     private val autoJudgeExpiration: String,
-) : CreateSessionUsecase {
+) : CreateSessionUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**

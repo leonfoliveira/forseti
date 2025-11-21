@@ -25,11 +25,11 @@ class PrometheusClientConfig(
         ServletRegistrationBean<PrometheusMetricsServlet?>(PrometheusMetricsServlet(), "/metrics/*")
 
     /**
-     * Initializes JVM and common application metrics after the application is ready.
+     * Initializes JVM and core application metrics after the application is ready.
      */
     @EventListener(ApplicationReadyEvent::class)
     fun initializeMetrics() {
         JvmMetrics.builder().register()
-        CoreMetrics.FORSETI_INFO.setLabelValues(version, environment)
+        CoreMetrics.INFO.setLabelValues(version, environment)
     }
 }

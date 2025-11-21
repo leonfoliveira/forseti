@@ -13,6 +13,9 @@ jpa:
         time_zone: UTC
   flyway:
     enabled: false
+external:
+  api:
+    url: ${API_URL:http://localhost:8080}
 management:
   endpoints:
     web:

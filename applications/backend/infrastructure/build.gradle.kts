@@ -4,12 +4,13 @@ kotlin {
 
 dependencies {
     implementation(project(":core"))
+    implementation(libs.opencsv)
 
     testImplementation(testFixtures(project(":core")))
 }
 
 tasks.bootJar {
-    archiveFileName.set("api.jar")
+    archiveFileName.set("infrastructure.jar")
 }
 
 tasks.bootRun {
@@ -21,8 +22,8 @@ kover {
         filters {
             excludes {
                 classes.addAll(
-                    "io.github.leonfoliveira.forseti.api.Application",
-                    "io.github.leonfoliveira.forseti.api.ApplicationKt",
+                    "live.forseti.infrastructure.Application",
+                    "live.forseti.infrastructure.ApplicationKt",
                 )
                 annotatedBy(
                     "org.springframework.context.annotation.Configuration",

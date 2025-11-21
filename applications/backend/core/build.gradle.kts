@@ -59,7 +59,7 @@ kover {
     reports {
         filters {
             excludes {
-                packages("io.github.leonfoliveira.forseti.core.mock")
+                packages("live.forseti.core.mock")
                 annotatedBy(
                     "org.springframework.context.annotation.Configuration",
                 )

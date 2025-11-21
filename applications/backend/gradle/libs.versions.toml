@@ -10,8 +10,6 @@ kotest-extensions-spring = "1.3.0"
 kotlin = "2.1.20"
 kover = "0.9.1"
 ktlint = "12.1.1"
-micrometer-otel = "1.5.0"
-micrometer-prometheus = "1.15.1"
 minio = "8.5.17"
 mockk = "1.13.17"
 opencsv = "5.11"
@@ -35,8 +33,6 @@ kotest-runner-junit5 = { module = 'io.kotest:kotest-runner-junit5', version.ref 
 kotest-extensions-spring = { module = 'io.kotest.extensions:kotest-extensions-spring', version.ref = "kotest-extensions-spring" }
 kotlin-reflect = { module = 'org.jetbrains.kotlin:kotlin-reflect', version.ref = "kotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
-micrometer-tracing-bridge-otel = { module = "io.micrometer:micrometer-tracing-bridge-otel", version.ref = "micrometer-otel" }
-micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer-prometheus" }
 minio = { module = "io.minio:minio", version.ref = "minio" }
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
@@ -71,10 +67,6 @@ jackson = [
 kotest = [
     "kotest-assertions-core",
     "kotest-runner-junit5",
-]
-micrometer = [
-    "micrometer-tracing-bridge-otel",
-    "micrometer-registry-prometheus"
 ]
 mockk = [
     "mockk",

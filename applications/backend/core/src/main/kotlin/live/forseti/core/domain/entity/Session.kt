@@ -30,4 +30,9 @@ class Session(
     @Column(name = "expires_at", nullable = false)
     @Audited(withModifiedFlag = false)
     val expiresAt: OffsetDateTime,
-) : BaseEntity(id, createdAt, updatedAt, deletedAt)
+) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
+    fun isAboutToExpire(thresholdMinutes: Long): Boolean {
+        val thresholdTime = OffsetDateTime.now().plusMinutes(thresholdMinutes)
+        return expiresAt.isBefore(thresholdTime)
+    }
+}
