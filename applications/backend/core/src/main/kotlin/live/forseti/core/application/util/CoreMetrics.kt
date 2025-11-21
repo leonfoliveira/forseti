@@ -18,7 +18,7 @@ class CoreMetrics {
         val RECEIVED_SUBMISSION: Counter =
             Counter
                 .builder()
-                .name("forseti_received_submission")
+                .name("forseti_received_submission_total")
                 .help("Total number of received submissions")
                 .register()
 
@@ -26,7 +26,7 @@ class CoreMetrics {
         val SUCCESSFUL_SUBMISSION: Counter =
             Counter
                 .builder()
-                .name("forseti_successful_submission")
+                .name("forseti_successful_submission_total")
                 .help("Total number of successfully judged submissions")
                 .labelNames("answer")
                 .register()
@@ -35,7 +35,7 @@ class CoreMetrics {
         val FAILED_SUBMISSION: Counter =
             Counter
                 .builder()
-                .name("forseti_failed_submission")
+                .name("forseti_failed_submission_total")
                 .help("Total number of failed judged submissions")
                 .register()
 
