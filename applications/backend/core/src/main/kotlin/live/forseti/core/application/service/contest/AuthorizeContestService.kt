@@ -21,7 +21,7 @@ class AuthorizeContestService(
      */
     override fun checkIfMemberBelongsToContest(contestId: UUID) {
         val member =
-            RequestContext.Companion
+            RequestContext
                 .getContext()
                 .session
                 ?.member
@@ -39,7 +39,7 @@ class AuthorizeContestService(
      */
     override fun checkIfStarted(contestId: UUID) {
         val member =
-            RequestContext.Companion
+            RequestContext
                 .getContext()
                 .session
                 ?.member

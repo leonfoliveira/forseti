@@ -31,6 +31,12 @@ class Session(
     @Audited(withModifiedFlag = false)
     val expiresAt: OffsetDateTime,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
+    /**
+     * Checks if the session is about to expire within the given threshold in minutes.
+     *
+     * @param thresholdMinutes The threshold in minutes to check against.
+     * @return True if the session is about to expire, false otherwise.
+     */
     fun isAboutToExpire(thresholdMinutes: Long): Boolean {
         val thresholdTime = OffsetDateTime.now().plusMinutes(thresholdMinutes)
         return expiresAt.isBefore(thresholdTime)

@@ -35,7 +35,7 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
         val payload = objectMapper.treeToValue(payloadJson, getPayloadType())
         val message = RabbitMQMessage(id, traceId, payload)
 
-        RequestContext.Companion.getContext().traceId = traceId
+        RequestContext.getContext().traceId = traceId
         MDC.put("traceId", traceId)
 
         try {

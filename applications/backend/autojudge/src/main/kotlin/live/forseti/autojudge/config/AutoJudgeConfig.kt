@@ -15,6 +15,10 @@ class AutoJudgeConfig(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    companion object {
+        private const val SESSION_EXPIRATION_THRESHOLD_MINUTES = 1L
+    }
+
     val autoJudgeMember = findMemberUseCase.findById(Member.AUTOJUDGE_ID)
 
     /**
@@ -31,7 +35,7 @@ class AutoJudgeConfig(
     @Scheduled(fixedRate = 60 * 1000)
     private fun refreshSessionSchedule() {
         val session = RequestContext.getContext().session
-        if (session == null || session.isAboutToExpire(1)) {
+        if (session == null || session.isAboutToExpire(SESSION_EXPIRATION_THRESHOLD_MINUTES)) {
             refreshSession()
             logger.info("Refreshing AutoJudge session")
         } else {

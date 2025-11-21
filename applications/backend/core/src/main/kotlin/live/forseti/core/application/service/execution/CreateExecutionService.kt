@@ -65,7 +65,7 @@ class CreateExecutionService(
         val attachment =
             uploadAttachmentService.upload(
                 contestId = contest.id,
-                memberId = Member.Companion.AUTOJUDGE_ID,
+                memberId = Member.AUTOJUDGE_ID,
                 filename = outputFileName,
                 contentType = outputContentType,
                 context = Attachment.Context.EXECUTION_OUTPUT,
