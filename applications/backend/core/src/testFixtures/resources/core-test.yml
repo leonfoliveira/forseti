@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: test
   application:
     name: forseti-test
     version: latest
@@ -44,4 +46,3 @@ security:
     autojudge-expiration: 10m
   root:
     password: forseti
-    
