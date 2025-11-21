@@ -8,6 +8,7 @@ import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driven.repository.AttachmentRepository
 import live.forseti.core.port.driving.usecase.attachment.AuthorizeAttachmentUseCase
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -24,6 +25,7 @@ class AuthorizeAttachmentService(
      * @param context The context of the attachment to be uploaded.
      * @throws ForbiddenException if the upload is not authorized.
      */
+    @Transactional(readOnly = true)
     override fun authorizeUpload(
         contestId: UUID,
         context: Attachment.Context,
@@ -53,6 +55,7 @@ class AuthorizeAttachmentService(
      * @param attachmentId The ID of the attachment to be downloaded.
      * @throws ForbiddenException if the download is not authorized.
      */
+    @Transactional(readOnly = true)
     override fun authorizeDownload(
         contestId: UUID,
         attachmentId: UUID,

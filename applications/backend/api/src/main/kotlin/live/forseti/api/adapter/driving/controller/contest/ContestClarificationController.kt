@@ -37,7 +37,6 @@ class ContestClarificationController(
 
     @PostMapping
     @Private(Member.Type.CONTESTANT, Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
-    @Transactional
     @Operation(summary = "Create a clarification")
     @ApiResponses(
         value = [
@@ -105,7 +104,6 @@ class ContestClarificationController(
         ],
     )
     @Private(Member.Type.JUDGE, Member.Type.ADMIN)
-    @Transactional(readOnly = true)
     fun deleteClarificationById(
         @PathVariable contestId: UUID,
         @PathVariable clarificationId: UUID,

@@ -24,14 +24,14 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/v1/contests")
+@RequestMapping("/v1/contests/{contestId}/announcements")
 class ContestAnnouncementController(
     private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val createAnnouncementUseCase: CreateAnnouncementUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping("/{contestId}/announcements")
+    @PostMapping
     @Private(Member.Type.JUDGE, Member.Type.ADMIN)
     @Operation(summary = "Create an announcement")
     @ApiResponses(

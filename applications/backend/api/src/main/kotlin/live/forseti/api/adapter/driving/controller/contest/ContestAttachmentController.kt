@@ -62,7 +62,6 @@ class ContestAttachmentController(
         ],
     )
     @Private
-    @Transactional
     fun uploadAttachment(
         @PathVariable contestId: UUID,
         @PathVariable context: Attachment.Context,
@@ -101,7 +100,6 @@ class ContestAttachmentController(
             ),
         ],
     )
-    @Transactional(readOnly = true)
     fun downloadAttachment(
         @PathVariable contestId: UUID,
         @PathVariable attachmentId: UUID,

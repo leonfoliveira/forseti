@@ -48,7 +48,6 @@ class ContestAuthenticationController(
             ),
         ],
     )
-    @Transactional
     fun authenticateToContest(
         @PathVariable contestId: UUID,
         @RequestBody body: ContestAuthenticateInputDTO,

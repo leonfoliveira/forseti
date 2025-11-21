@@ -141,7 +141,7 @@ class ContestController(
         ],
     )
     fun findAllContestMetadata(): ResponseEntity<List<ContestMetadataResponseDTO>> {
-        logger.info("[GET] /v1contests/metadata")
+        logger.info("[GET] /v1/contests/metadata")
         val contests = findContestUseCase.findAll()
         return ResponseEntity.ok(contests.map { it.toMetadataDTO() })
     }

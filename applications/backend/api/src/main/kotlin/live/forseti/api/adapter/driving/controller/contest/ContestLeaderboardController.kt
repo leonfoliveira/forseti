@@ -42,7 +42,7 @@ class ContestLeaderboardController(
             ),
         ],
     )
-    fun findContestLeaderboardById(
+    fun buildContestLeaderboardById(
         @PathVariable contestId: UUID,
     ): ResponseEntity<LeaderboardOutputDTO> {
         logger.info("[GET] /v1/contests/$contestId/leaderboard")

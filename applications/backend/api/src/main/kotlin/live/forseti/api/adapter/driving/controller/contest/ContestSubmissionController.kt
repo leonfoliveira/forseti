@@ -175,7 +175,7 @@ class ContestSubmissionController(
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }
 
-    @PutMapping("/{id}/answer/{answer}")
+    @PutMapping("/{submissionId}/answer/{answer}")
     @Private(Member.Type.AUTOJUDGE)
     @Operation(summary = "Update a submission answer")
     @ApiResponses(
@@ -200,15 +200,15 @@ class ContestSubmissionController(
     )
     fun updateSubmissionAnswer(
         @PathVariable contestId: UUID,
-        @PathVariable id: UUID,
+        @PathVariable submissionId: UUID,
         @PathVariable answer: Submission.Answer,
     ): ResponseEntity<Void> {
-        logger.info("[PUT] /v1/contests/$contestId/submissions/$id/answer/$answer")
-        updateSubmissionUseCase.updateAnswer(id, answer)
+        logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId/answer/$answer")
+        updateSubmissionUseCase.updateAnswer(submissionId, answer)
         return ResponseEntity.noContent().build()
     }
 
-    @PutMapping("/{id}/answer/{answer}/force")
+    @PutMapping("/{submissionId}/answer/{answer}/force")
     @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Operation(summary = "Force update a submission answer")
     @ApiResponses(
@@ -233,16 +233,16 @@ class ContestSubmissionController(
     )
     fun updateSubmissionAnswerForce(
         @PathVariable contestId: UUID,
-        @PathVariable id: UUID,
+        @PathVariable submissionId: UUID,
         @PathVariable answer: Submission.Answer,
     ): ResponseEntity<Void> {
-        logger.info("[PUT] /v1/contests/$contestId/submissions/$id/answer/$answer/force")
+        logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId/answer/$answer/force")
         authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
-        updateSubmissionUseCase.updateAnswer(id, answer, force = true)
+        updateSubmissionUseCase.updateAnswer(submissionId, answer, force = true)
         return ResponseEntity.noContent().build()
     }
 
-    @PostMapping("/{id}/rerun")
+    @PostMapping("/{submissionId}/rerun")
     @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Operation(summary = "Rerun a submission")
     @ApiResponses(
@@ -267,11 +267,11 @@ class ContestSubmissionController(
     )
     fun rerunSubmission(
         @PathVariable contestId: UUID,
-        @PathVariable id: UUID,
+        @PathVariable submissionId: UUID,
     ): ResponseEntity<Void> {
-        logger.info("[POST] /v1/contests/$contestId/submissions/$id/rerun - id: $id")
+        logger.info("[POST] /v1/contests/$contestId/submissions/$submissionId/rerun")
         authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
-        updateSubmissionUseCase.rerun(id)
+        updateSubmissionUseCase.rerun(submissionId)
         return ResponseEntity.noContent().build()
     }
 }
