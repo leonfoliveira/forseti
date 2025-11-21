@@ -6,16 +6,10 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
-import live.forseti.core.domain.entity.Attachment
 import live.forseti.core.domain.entity.AttachmentMockBuilder
-import live.forseti.core.domain.entity.ContestMockBuilder
-import live.forseti.core.domain.entity.MemberMockBuilder
 import live.forseti.core.domain.exception.NotFoundException
 import live.forseti.core.port.driven.AttachmentBucket
 import live.forseti.core.port.driven.repository.AttachmentRepository
-import live.forseti.core.port.driven.repository.ContestRepository
-import live.forseti.core.port.driven.repository.MemberRepository
 import java.util.UUID
 
 class DownloadAttachmentServiceTest :

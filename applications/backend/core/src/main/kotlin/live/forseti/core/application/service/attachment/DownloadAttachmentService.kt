@@ -4,10 +4,7 @@ import live.forseti.core.domain.entity.Attachment
 import live.forseti.core.domain.exception.NotFoundException
 import live.forseti.core.port.driven.AttachmentBucket
 import live.forseti.core.port.driven.repository.AttachmentRepository
-import live.forseti.core.port.driven.repository.ContestRepository
-import live.forseti.core.port.driven.repository.MemberRepository
 import live.forseti.core.port.driving.usecase.attachment.DownloadAttachmentUseCase
-import live.forseti.core.port.driving.usecase.attachment.UploadAttachmentUseCase
 import live.forseti.core.port.dto.output.AttachmentDownloadOutputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

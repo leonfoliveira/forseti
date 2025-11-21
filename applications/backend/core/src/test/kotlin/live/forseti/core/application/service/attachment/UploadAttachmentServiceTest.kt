@@ -8,7 +8,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import live.forseti.core.domain.entity.Attachment
-import live.forseti.core.domain.entity.AttachmentMockBuilder
 import live.forseti.core.domain.entity.ContestMockBuilder
 import live.forseti.core.domain.entity.MemberMockBuilder
 import live.forseti.core.domain.exception.NotFoundException

@@ -1,11 +1,5 @@
 package live.forseti.core.domain.entity
 
-import live.forseti.core.domain.entity.Announcement
-import live.forseti.core.domain.entity.Clarification
-import live.forseti.core.domain.entity.Contest
-import live.forseti.core.domain.entity.Member
-import live.forseti.core.domain.entity.Problem
-import live.forseti.core.domain.entity.Submission
 import java.time.OffsetDateTime
 import java.util.UUID
 

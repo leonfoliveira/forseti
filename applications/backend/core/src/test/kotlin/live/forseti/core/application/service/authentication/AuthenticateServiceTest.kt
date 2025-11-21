@@ -2,7 +2,6 @@ package live.forseti.core.application.service.authentication
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -12,10 +11,8 @@ import live.forseti.core.application.service.session.CreateSessionService
 import live.forseti.core.domain.entity.MemberMockBuilder
 import live.forseti.core.domain.entity.SessionMockBuilder
 import live.forseti.core.domain.exception.UnauthorizedException
-import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driven.Hasher
 import live.forseti.core.port.driven.repository.MemberRepository
-import live.forseti.core.port.driven.repository.SessionRepository
 import live.forseti.core.port.dto.input.authorization.AuthenticateInputDTO
 import live.forseti.core.port.dto.input.authorization.ContestAuthenticateInputDTO
 import java.util.UUID
