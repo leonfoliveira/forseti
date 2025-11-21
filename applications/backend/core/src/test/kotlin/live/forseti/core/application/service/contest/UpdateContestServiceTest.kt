@@ -9,6 +9,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
 import live.forseti.core.application.util.TestCasesValidator
+import live.forseti.core.domain.entity.Attachment
 import live.forseti.core.domain.entity.AttachmentMockBuilder
 import live.forseti.core.domain.entity.Contest
 import live.forseti.core.domain.entity.ContestMockBuilder
@@ -155,6 +156,23 @@ class UpdateContestServiceTest :
                 }.message shouldBe "Could not find description attachment with id: ${inputDTO.problems[0].description.id}"
             }
 
+            test("should throw ForbiddenException when problem description attachment has wrong context") {
+                val contest =
+                    ContestMockBuilder.build(
+                        members = listOf(MemberMockBuilder.build(id = inputDTO.members[0].id!!)),
+                        problems = listOf(ProblemMockBuilder.build(id = inputDTO.problems[0].id!!)),
+                    )
+                val descriptionAttachment = AttachmentMockBuilder.build(context = Attachment.Context.SUBMISSION_CODE)
+                every { contestRepository.findEntityById(inputDTO.id) } returns contest
+                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { attachmentRepository.findEntityById(inputDTO.problems[0].description.id) } returns
+                    descriptionAttachment
+
+                shouldThrow<ForbiddenException> {
+                    sut.update(inputDTO)
+                }.message shouldBe "Attachment with id: ${descriptionAttachment.id} is not a valid problem description"
+            }
+
             test("should throw NotFoundException when problem test cases attachment does not exist") {
                 val contest =
                     ContestMockBuilder.build(
@@ -164,12 +182,31 @@ class UpdateContestServiceTest :
                 every { contestRepository.findEntityById(inputDTO.id) } returns contest
                 every { contestRepository.findBySlug(inputDTO.slug) } returns null
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].description.id) } returns
-                    AttachmentMockBuilder.build()
+                    AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_DESCRIPTION)
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].testCases.id) } returns null
 
                 shouldThrow<NotFoundException> {
                     sut.update(inputDTO)
                 }.message shouldBe "Could not find testCases attachment with id: ${inputDTO.problems[0].testCases.id}"
+            }
+
+            test("should throw ForbiddenException when problem test cases attachment has wrong context") {
+                val contest =
+                    ContestMockBuilder.build(
+                        members = listOf(MemberMockBuilder.build(id = inputDTO.members[0].id!!)),
+                        problems = listOf(ProblemMockBuilder.build(id = inputDTO.problems[0].id!!)),
+                    )
+                val testCasesAttachment = AttachmentMockBuilder.build(context = Attachment.Context.SUBMISSION_CODE)
+                every { contestRepository.findEntityById(inputDTO.id) } returns contest
+                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { attachmentRepository.findEntityById(inputDTO.problems[0].description.id) } returns
+                    AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_DESCRIPTION)
+                every { attachmentRepository.findEntityById(inputDTO.problems[0].testCases.id) } returns
+                    testCasesAttachment
+
+                shouldThrow<ForbiddenException> {
+                    sut.update(inputDTO)
+                }.message shouldBe "Attachment with id: ${testCasesAttachment.id} is not a valid problem test cases"
             }
 
             test("should update contest successfully") {
@@ -207,8 +244,8 @@ class UpdateContestServiceTest :
                 every { contestRepository.findEntityById(inputDTO.id) } returns contest
                 every { contestRepository.findBySlug(inputDTO.slug) } returns null
                 every { hasher.hash(any()) } returns "hashedPassword"
-                val descriptionAttachment = AttachmentMockBuilder.build()
-                val testCasesAttachment = AttachmentMockBuilder.build()
+                val descriptionAttachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_DESCRIPTION)
+                val testCasesAttachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_TEST_CASES)
                 every { attachmentRepository.findEntityById(inputProblemToCreate.description.id) } returns
                     descriptionAttachment
                 every { attachmentRepository.findEntityById(inputProblemToCreate.testCases.id) } returns testCasesAttachment

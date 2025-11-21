@@ -1,6 +1,7 @@
 package live.forseti.core.application.service.submission
 
 import jakarta.validation.Valid
+import live.forseti.core.domain.entity.Attachment
 import live.forseti.core.domain.entity.Submission
 import live.forseti.core.domain.event.SubmissionCreatedEvent
 import live.forseti.core.domain.exception.ForbiddenException
@@ -54,6 +55,9 @@ class CreateSubmissionService(
         val code =
             attachmentRepository.findEntityById(inputDTO.code.id)
                 ?: throw NotFoundException("Could not find code attachment with id = ${inputDTO.code.id}")
+        if (code.context != Attachment.Context.SUBMISSION_CODE) {
+            throw ForbiddenException("Attachment with id = ${inputDTO.code.id} is not a submission code")
+        }
         val contest = problem.contest
 
         // A contest has a set of allowed languages, so we need to check if the input language is allowed

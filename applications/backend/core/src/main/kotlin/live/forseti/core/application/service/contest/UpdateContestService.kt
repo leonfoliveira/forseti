@@ -2,6 +2,7 @@ package live.forseti.core.application.service.contest
 
 import jakarta.validation.Valid
 import live.forseti.core.application.util.TestCasesValidator
+import live.forseti.core.domain.entity.Attachment
 import live.forseti.core.domain.entity.Contest
 import live.forseti.core.domain.entity.Member
 import live.forseti.core.domain.entity.Problem
@@ -204,9 +205,15 @@ class UpdateContestService(
         val description =
             attachmentRepository.findEntityById(problemDTO.description.id)
                 ?: throw NotFoundException("Could not find description attachment with id: ${problemDTO.description.id}")
+        if (description.context != Attachment.Context.PROBLEM_DESCRIPTION) {
+            throw ForbiddenException("Attachment with id: ${description.id} is not a valid problem description")
+        }
         val testCases =
             attachmentRepository.findEntityById(problemDTO.testCases.id)
                 ?: throw NotFoundException("Could not find testCases attachment with id: ${problemDTO.testCases.id}")
+        if (testCases.context != Attachment.Context.PROBLEM_TEST_CASES) {
+            throw ForbiddenException("Attachment with id: ${testCases.id} is not a valid problem test cases")
+        }
         // Validate if the test cases file follows the expected format
         testCasesValidator.validate(testCases)
 
@@ -274,12 +281,18 @@ class UpdateContestService(
             val description =
                 attachmentRepository.findEntityById(problemDTO.description.id)
                     ?: throw NotFoundException("Could not find description attachment with id: ${problemDTO.description.id}")
+            if (description.context != Attachment.Context.PROBLEM_DESCRIPTION) {
+                throw ForbiddenException("Attachment with id: ${description.id} is not a valid problem description")
+            }
             problem.description = description
         }
         if (problem.testCases.id != problemDTO.testCases.id) {
             val testCases =
                 attachmentRepository.findEntityById(problemDTO.testCases.id)
                     ?: throw NotFoundException("Could not find testCases attachment with id: ${problemDTO.testCases.id}")
+            if (testCases.context != Attachment.Context.PROBLEM_TEST_CASES) {
+                throw ForbiddenException("Attachment with id: ${testCases.id} is not a valid problem test cases")
+            }
             testCasesValidator.validate(testCases)
             problem.testCases = testCases
         }

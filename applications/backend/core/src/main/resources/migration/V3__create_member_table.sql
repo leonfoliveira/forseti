@@ -11,7 +11,7 @@ create table member (
     constraint fk_contest_id foreign key (contest_id) references contest (id)
 );
 
-create unique index uq_idx_member_login_contest on member (login, contest_id);
+create index idx_member_login_contest on member (login, contest_id);
 create index idx_member_contest_id on member (contest_id);
 create index idx_member_login on member (login);
 

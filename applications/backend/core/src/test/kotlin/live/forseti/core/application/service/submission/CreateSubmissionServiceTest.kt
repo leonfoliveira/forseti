@@ -8,6 +8,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import live.forseti.core.domain.entity.Attachment
 import live.forseti.core.domain.entity.AttachmentMockBuilder
 import live.forseti.core.domain.entity.ContestMockBuilder
 import live.forseti.core.domain.entity.MemberMockBuilder
@@ -85,6 +86,18 @@ class CreateSubmissionServiceTest :
                 shouldThrow<NotFoundException> {
                     sut.create(memberId, inputDTO)
                 }.message shouldBe "Could not find code attachment with id = ${inputDTO.code.id}"
+            }
+
+            test("should throw ForbiddenException when attachment has wrong context") {
+                val contest = ContestMockBuilder.build(languages = listOf())
+                val problem = ProblemMockBuilder.build(contest = contest)
+                val attachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_TEST_CASES)
+                every { problemRepository.findEntityById(problemId) } returns problem
+                every { attachmentRepository.findEntityById(inputDTO.code.id) } returns attachment
+
+                shouldThrow<ForbiddenException> {
+                    sut.create(memberId, inputDTO)
+                }.message shouldBe "Attachment with id = ${inputDTO.code.id} is not a submission code"
             }
 
             test("should throw ForbiddenException when language is not allowed for the contest") {
