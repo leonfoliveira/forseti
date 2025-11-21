@@ -5,8 +5,6 @@ kotlin {
 dependencies {
     implementation(project(":core"))
     implementation(project(":infrastructure"))
-    implementation(libs.java.diff.utils)
-    implementation(libs.opencsv)
 
     testImplementation(testFixtures(project(":core")))
 }

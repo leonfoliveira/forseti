@@ -10,11 +10,17 @@ plugins {
 }
 
 dependencies {
+    implementation(libs.bundles.jackson)
+    implementation(libs.bundles.prometheus)
+    implementation(libs.flyway)
     implementation(libs.hibernate.envers)
     implementation(libs.hibernate.types)
-    implementation(libs.flyway)
+    implementation(libs.java.diff.utils)
+    implementation(libs.kotlin.reflect)
     implementation(libs.opencsv)
     implementation(libs.postgresql)
+
+    testFixturesImplementation(rootProject.libs.bundles.testcontainers)
 }
 
 tasks.bootJar {
@@ -59,7 +65,6 @@ kover {
     reports {
         filters {
             excludes {
-                packages("live.forseti.core.mock")
                 annotatedBy(
                     "org.springframework.context.annotation.Configuration",
                 )

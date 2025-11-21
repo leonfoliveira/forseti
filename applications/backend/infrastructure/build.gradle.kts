@@ -4,6 +4,8 @@ kotlin {
 
 dependencies {
     implementation(project(":core"))
+
+    implementation(libs.minio)
     implementation(libs.opencsv)
 
     testImplementation(testFixtures(project(":core")))
@@ -21,10 +23,6 @@ kover {
     reports {
         filters {
             excludes {
-                classes.addAll(
-                    "live.forseti.infrastructure.Application",
-                    "live.forseti.infrastructure.ApplicationKt",
-                )
                 annotatedBy(
                     "org.springframework.context.annotation.Configuration",
                 )

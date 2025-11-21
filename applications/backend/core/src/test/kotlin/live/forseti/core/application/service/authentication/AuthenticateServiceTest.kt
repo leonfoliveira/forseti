@@ -6,7 +6,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import live.forseti.core.application.service.session.CreateSessionService
 import live.forseti.core.domain.entity.MemberMockBuilder
 import live.forseti.core.domain.entity.SessionMockBuilder
