@@ -7,7 +7,7 @@ import live.forseti.core.domain.exception.NotFoundException
 import live.forseti.core.port.driven.repository.ContestRepository
 import live.forseti.core.port.driven.repository.MemberRepository
 import live.forseti.core.port.driven.repository.ProblemRepository
-import live.forseti.core.port.driving.usecase.DeleteContestUseCase
+import live.forseti.core.port.driving.usecase.contest.DeleteContestUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

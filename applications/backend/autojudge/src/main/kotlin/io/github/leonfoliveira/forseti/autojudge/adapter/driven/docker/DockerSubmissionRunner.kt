@@ -4,10 +4,10 @@ import com.opencsv.CSVReader
 import io.github.leonfoliveira.forseti.autojudge.application.dto.input.CreateExecutionInputDTO
 import io.github.leonfoliveira.forseti.autojudge.application.port.driven.SubmissionRunner
 import io.github.leonfoliveira.forseti.autojudge.application.port.driving.CreateExecutionUseCase
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Execution
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Problem
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
-import io.github.leonfoliveira.forseti.common.application.port.driving.DownloadAttachmentUseCase
+import live.forseti.core.domain.entity.Execution
+import live.forseti.core.domain.entity.Problem
+import live.forseti.core.domain.entity.Submission
+import live.forseti.core.port.driving.usecase.DownloadAttachmentUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.io.ByteArrayInputStream

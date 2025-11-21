@@ -1,10 +1,10 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.websocket
 
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
+import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.domain.model.RequestContext
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
 import org.springframework.web.socket.WebSocketHandler

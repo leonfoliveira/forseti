@@ -5,20 +5,20 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.submission.Submi
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.submission.SubmissionPublicResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.submission.toFullResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.submission.toPublicResponseDTO
-import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.api.adapter.util.Private
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.dto.input.submission.CreateSubmissionInputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.CreateSubmissionUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.FindSubmissionUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.UpdateSubmissionUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import live.forseti.core.domain.entity.Member
+import live.forseti.core.domain.entity.Submission
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
+import live.forseti.core.port.driving.usecase.submission.CreateSubmissionUseCase
+import live.forseti.core.port.driving.usecase.submission.FindSubmissionUseCase
+import live.forseti.core.port.driving.usecase.submission.UpdateSubmissionUseCase
+import live.forseti.core.port.dto.input.submission.CreateSubmissionInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -33,7 +33,7 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1/contests/{contestId}/submissions")
 class ContestSubmissionController(
-    private val contestAuthFilter: ContestAuthFilter,
+    private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val createSubmissionUseCase: CreateSubmissionUseCase,
     private val findSubmissionUseCase: FindSubmissionUseCase,
     private val updateSubmissionUseCase: UpdateSubmissionUseCase,
@@ -73,8 +73,8 @@ class ContestSubmissionController(
         @RequestBody body: CreateSubmissionInputDTO,
     ): ResponseEntity<SubmissionFullResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/submissions $body")
-        contestAuthFilter.checkIfStarted(contestId)
-        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+        authorizeContestUseCase.checkIfStarted(contestId)
+        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val member = RequestContext.getContext().session!!.member
         val submission =
             createSubmissionUseCase.create(
@@ -105,7 +105,7 @@ class ContestSubmissionController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<List<SubmissionPublicResponseDTO>> {
         logger.info("[GET] /v1/contests/$contestId/submissions")
-        contestAuthFilter.checkIfStarted(contestId)
+        authorizeContestUseCase.checkIfStarted(contestId)
         val submissions = findSubmissionUseCase.findAllByContest(contestId)
         return ResponseEntity.ok(submissions.map { it.toPublicResponseDTO() })
     }
@@ -137,8 +137,8 @@ class ContestSubmissionController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<List<SubmissionFullResponseDTO>> {
         logger.info("[GET] /v1/contests/$contestId/submissions/full")
-        contestAuthFilter.checkIfStarted(contestId)
-        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+        authorizeContestUseCase.checkIfStarted(contestId)
+        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val submissions = findSubmissionUseCase.findAllByContest(contestId)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }
@@ -237,7 +237,7 @@ class ContestSubmissionController(
         @PathVariable answer: Submission.Answer,
     ): ResponseEntity<Void> {
         logger.info("[PUT] /v1/contests/$contestId/submissions/$id/answer/$answer/force")
-        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         updateSubmissionUseCase.updateAnswer(id, answer, force = true)
         return ResponseEntity.noContent().build()
     }
@@ -270,7 +270,7 @@ class ContestSubmissionController(
         @PathVariable id: UUID,
     ): ResponseEntity<Void> {
         logger.info("[POST] /v1/contests/$contestId/submissions/$id/rerun - id: $id")
-        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         updateSubmissionUseCase.rerun(id)
         return ResponseEntity.noContent().build()
     }

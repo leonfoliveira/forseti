@@ -2,12 +2,12 @@ package io.github.leonfoliveira.forseti.autojudge.application.service
 
 import io.github.leonfoliveira.forseti.autojudge.application.dto.input.CreateExecutionInputDTO
 import io.github.leonfoliveira.forseti.autojudge.application.port.driving.CreateExecutionUseCase
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Contest
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Execution
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ExecutionRepository
 import io.github.leonfoliveira.forseti.common.application.service.attachment.AttachmentService
+import live.forseti.core.domain.entity.Attachment
+import live.forseti.core.domain.entity.Contest
+import live.forseti.core.domain.entity.Execution
+import live.forseti.core.domain.entity.Member
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

@@ -1,6 +1,6 @@
 spring:
   config:
-    import: classpath:common-development.yml
+    import: classpath:core-development.yml
 server:
   cors:
     allowed-origins: http://localhost:3000

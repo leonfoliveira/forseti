@@ -4,13 +4,13 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.session.SessionResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.SessionCookieUtil
-import io.github.leonfoliveira.forseti.common.application.dto.input.authorization.ContestAuthenticateInputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.AuthenticationUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import live.forseti.core.port.driving.usecase.authentication.AuthenticateUseCase
+import live.forseti.core.port.dto.input.authorization.ContestAuthenticateInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
@@ -25,7 +25,7 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1/contests/{contestId}")
 class ContestAuthenticationController(
-    val authenticationUseCase: AuthenticationUseCase,
+    val authenticateUseCase: AuthenticateUseCase,
     val sessionCookieUtil: SessionCookieUtil,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -54,7 +54,7 @@ class ContestAuthenticationController(
         @RequestBody body: ContestAuthenticateInputDTO,
     ): ResponseEntity<SessionResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/sign-in $body")
-        val session = authenticationUseCase.authenticateToContest(contestId, body)
+        val session = authenticateUseCase.authenticateToContest(contestId, body)
         val cookie = sessionCookieUtil.buildCookie(session)
         return ResponseEntity
             .ok()

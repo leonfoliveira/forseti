@@ -8,8 +8,8 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.member.MemberPub
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.member.toPublicResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.problem.ProblemPublicResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.problem.toPublicResponseDTO
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Contest
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
+import live.forseti.core.domain.entity.Contest
+import live.forseti.core.domain.entity.Submission
 import java.time.OffsetDateTime
 import java.util.UUID
 

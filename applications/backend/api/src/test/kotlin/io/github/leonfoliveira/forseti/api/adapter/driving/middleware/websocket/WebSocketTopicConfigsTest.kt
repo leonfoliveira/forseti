@@ -1,12 +1,5 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.websocket
 
-import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.application.domain.exception.ForbiddenException
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.mock.entity.ContestMockBuilder
-import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -14,12 +7,19 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import live.forseti.core.domain.entity.ContestMockBuilder
+import live.forseti.core.domain.entity.Member
+import live.forseti.core.domain.entity.MemberMockBuilder
+import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.domain.exception.ForbiddenException
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import java.util.UUID
 
 class WebSocketTopicConfigsTest :
     FunSpec({
-        val contestAuthFilter = mockk<ContestAuthFilter>(relaxed = true)
-        val sut = WebSocketTopicConfigs(contestAuthFilter)
+        val authorizeContestUseCase = mockk<AuthorizeContestUseCase>(relaxed = true)
+        val sut = WebSocketTopicConfigs(authorizeContestUseCase)
 
         beforeEach {
             RequestContext.clearContext()
@@ -50,7 +50,7 @@ class WebSocketTopicConfigsTest :
                 val destination = "/topic/contests/$contestId/announcements"
 
                 test("should return true when contest access is allowed") {
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
 
                     val filter =
                         sut.privateFilters.entries
@@ -59,11 +59,11 @@ class WebSocketTopicConfigsTest :
                     val result = filter(destination)
 
                     result shouldBe true
-                    verify { contestAuthFilter.checkIfStarted(contestId) }
+                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
                 }
 
                 test("should throw exception when contest access is forbidden") {
-                    every { contestAuthFilter.checkIfStarted(contestId) } throws ForbiddenException("Access denied")
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } throws ForbiddenException("Access denied")
 
                     val filter =
                         sut.privateFilters.entries
@@ -81,7 +81,7 @@ class WebSocketTopicConfigsTest :
                 val destination = "/topic/contests/$contestId/clarifications"
 
                 test("should return true when contest access is allowed") {
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
 
                     val filter =
                         sut.privateFilters.entries
@@ -93,7 +93,7 @@ class WebSocketTopicConfigsTest :
                     val result = filter(destination)
 
                     result shouldBe true
-                    verify { contestAuthFilter.checkIfStarted(contestId) }
+                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
                 }
             }
 
@@ -103,8 +103,8 @@ class WebSocketTopicConfigsTest :
                 val destination = "/topic/contests/$contestId/clarifications/children/members/$memberId"
 
                 test("should return true when member owns the clarification") {
-                    every { contestAuthFilter.checkIfMemberBelongsToContest(contestId) } returns Unit
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
                     RequestContext.getContext().session =
                         SessionMockBuilder.build(
                             member = MemberMockBuilder.build(id = memberId, contest = ContestMockBuilder.build(id = contestId)),
@@ -118,13 +118,13 @@ class WebSocketTopicConfigsTest :
                     val result = filter(destination)
 
                     result shouldBe true
-                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
-                    verify { contestAuthFilter.checkIfStarted(contestId) }
+                    verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
+                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
                 }
 
                 test("should return false when member does not own the clarification") {
-                    every { contestAuthFilter.checkIfMemberBelongsToContest(contestId) } returns Unit
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
                     RequestContext.getContext().session = SessionMockBuilder.build()
 
                     val filter =
@@ -138,8 +138,8 @@ class WebSocketTopicConfigsTest :
                 }
 
                 test("should return false when member is null") {
-                    every { contestAuthFilter.checkIfMemberBelongsToContest(contestId) } returns Unit
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
                     RequestContext.getContext().session = null
 
                     val filter =
@@ -158,7 +158,7 @@ class WebSocketTopicConfigsTest :
                 val destination = "/topic/contests/$contestId/clarifications/deleted"
 
                 test("should return true when contest access is allowed") {
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
 
                     val filter =
                         sut.privateFilters.entries
@@ -168,7 +168,7 @@ class WebSocketTopicConfigsTest :
                     val result = filter(destination)
 
                     result shouldBe true
-                    verify { contestAuthFilter.checkIfStarted(contestId) }
+                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
                 }
             }
 
@@ -177,7 +177,7 @@ class WebSocketTopicConfigsTest :
                 val destination = "/topic/contests/$contestId/leaderboard"
 
                 test("should return true when contest access is allowed") {
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
 
                     val filter =
                         sut.privateFilters.entries
@@ -187,7 +187,7 @@ class WebSocketTopicConfigsTest :
                     val result = filter(destination)
 
                     result shouldBe true
-                    verify { contestAuthFilter.checkIfStarted(contestId) }
+                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
                 }
             }
 
@@ -196,7 +196,7 @@ class WebSocketTopicConfigsTest :
                 val destination = "/topic/contests/$contestId/submissions"
 
                 test("should return true when contest access is allowed") {
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
 
                     val filter =
                         sut.privateFilters.entries
@@ -206,7 +206,7 @@ class WebSocketTopicConfigsTest :
                     val result = filter(destination)
 
                     result shouldBe true
-                    verify { contestAuthFilter.checkIfStarted(contestId) }
+                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
                 }
             }
 
@@ -215,7 +215,7 @@ class WebSocketTopicConfigsTest :
                 val destination = "/topic/contests/$contestId/submissions/full"
 
                 test("should return true when member is ADMIN") {
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
                     RequestContext.getContext().session =
                         SessionMockBuilder.build(
                             member =
@@ -236,7 +236,7 @@ class WebSocketTopicConfigsTest :
                 }
 
                 test("should return true when member is JUDGE") {
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
                     RequestContext.getContext().session =
                         SessionMockBuilder.build(
                             member =
@@ -257,7 +257,7 @@ class WebSocketTopicConfigsTest :
                 }
 
                 test("should return false when member is CONTESTANT") {
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
                     RequestContext.getContext().session =
                         SessionMockBuilder.build(
                             member =
@@ -278,7 +278,7 @@ class WebSocketTopicConfigsTest :
                 }
 
                 test("should return false when member is null") {
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
                     RequestContext.getContext().session = null
 
                     val filter =
@@ -298,8 +298,8 @@ class WebSocketTopicConfigsTest :
                 val destination = "/topic/contests/$contestId/submissions/full/members/$memberId"
 
                 test("should return true when member owns the submissions") {
-                    every { contestAuthFilter.checkIfMemberBelongsToContest(contestId) } returns Unit
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
                     RequestContext.getContext().session =
                         SessionMockBuilder.build(
                             member =
@@ -317,13 +317,13 @@ class WebSocketTopicConfigsTest :
                     val result = filter(destination)
 
                     result shouldBe true
-                    verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
-                    verify { contestAuthFilter.checkIfStarted(contestId) }
+                    verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
+                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
                 }
 
                 test("should return false when member does not own the submissions") {
-                    every { contestAuthFilter.checkIfMemberBelongsToContest(contestId) } returns Unit
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
                     RequestContext.getContext().session = SessionMockBuilder.build()
 
                     val filter =
@@ -337,8 +337,8 @@ class WebSocketTopicConfigsTest :
                 }
 
                 test("should return false when member is null") {
-                    every { contestAuthFilter.checkIfMemberBelongsToContest(contestId) } returns Unit
-                    every { contestAuthFilter.checkIfStarted(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) } returns Unit
+                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
                     RequestContext.getContext().session = null
 
                     val filter =

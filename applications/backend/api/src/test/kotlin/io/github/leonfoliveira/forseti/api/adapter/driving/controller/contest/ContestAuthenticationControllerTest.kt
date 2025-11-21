@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.SessionCookieUtil
-import io.github.leonfoliveira.forseti.common.application.dto.input.authorization.ContestAuthenticateInputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.AuthenticationUseCase
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
+import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.port.driving.usecase.authentication.AuthenticateUseCase
+import live.forseti.core.port.dto.input.authorization.ContestAuthenticateInputDTO
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
@@ -23,7 +23,7 @@ import java.util.UUID
 @ContextConfiguration(classes = [ContestAuthenticationController::class])
 class ContestAuthenticationControllerTest(
     @MockkBean(relaxed = true)
-    private val authenticationUseCase: AuthenticationUseCase,
+    private val authenticateUseCase: AuthenticateUseCase,
     @MockkBean(relaxed = true)
     private val sessionCookieUtil: SessionCookieUtil,
     private val webMvc: MockMvc,
@@ -35,7 +35,7 @@ class ContestAuthenticationControllerTest(
             val contestId = UUID.randomUUID()
             val body = ContestAuthenticateInputDTO(login = "user", password = "password")
             val session = SessionMockBuilder.build()
-            every { authenticationUseCase.authenticateToContest(contestId, body) } returns session
+            every { authenticateUseCase.authenticateToContest(contestId, body) } returns session
             every { sessionCookieUtil.buildCookie(session) } returns "session_id=cookie_value"
 
             webMvc

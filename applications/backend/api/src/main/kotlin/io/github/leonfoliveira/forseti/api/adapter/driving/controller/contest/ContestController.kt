@@ -7,20 +7,20 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.contest.ContestP
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.contest.toFullResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.contest.toMetadataDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.contest.toPublicOutputDTO
-import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.api.adapter.util.Private
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.application.dto.input.contest.CreateContestInputDTO
-import io.github.leonfoliveira.forseti.common.application.dto.input.contest.UpdateContestInputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.CreateContestUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.DeleteContestUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.FindContestUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.UpdateContestUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import live.forseti.core.domain.entity.Member
+import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
+import live.forseti.core.port.driving.usecase.contest.CreateContestUseCase
+import live.forseti.core.port.driving.usecase.contest.DeleteContestUseCase
+import live.forseti.core.port.driving.usecase.contest.FindContestUseCase
+import live.forseti.core.port.driving.usecase.contest.UpdateContestUseCase
+import live.forseti.core.port.dto.input.contest.CreateContestInputDTO
+import live.forseti.core.port.dto.input.contest.UpdateContestInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -36,7 +36,7 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1/contests")
 class ContestController(
-    private val contestAuthFilter: ContestAuthFilter,
+    private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val createContestUseCase: CreateContestUseCase,
     private val updateContestUseCase: UpdateContestUseCase,
     private val findContestUseCase: FindContestUseCase,
@@ -117,7 +117,7 @@ class ContestController(
         @RequestBody body: UpdateContestInputDTO,
     ): ResponseEntity<ContestFullResponseDTO> {
         logger.info("[PUT] /v1/contests - $body")
-        contestAuthFilter.checkIfMemberBelongsToContest(body.id)
+        authorizeContestUseCase.checkIfMemberBelongsToContest(body.id)
         val contest = updateContestUseCase.update(body)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
@@ -202,7 +202,7 @@ class ContestController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestPublicOutputDTO> {
         logger.info("[GET] /v1/contests/$contestId")
-        contestAuthFilter.checkIfStarted(contestId)
+        authorizeContestUseCase.checkIfStarted(contestId)
         val contest = findContestUseCase.findById(contestId)
         return ResponseEntity.ok(contest.toPublicOutputDTO())
     }
@@ -249,7 +249,7 @@ class ContestController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestFullResponseDTO> {
         logger.info("[GET] /v1/contests/$contestId/full")
-        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val contest = findContestUseCase.findById(contestId)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
@@ -296,7 +296,7 @@ class ContestController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestMetadataResponseDTO> {
         logger.info("[PUT] /v1/contests/$contestId/start")
-        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val contest = updateContestUseCase.forceStart(contestId)
         return ResponseEntity.ok().body(contest.toMetadataDTO())
     }
@@ -343,7 +343,7 @@ class ContestController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestMetadataResponseDTO> {
         logger.info("[PUT] /v1/contests/$contestId/end")
-        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val contest = updateContestUseCase.forceEnd(contestId)
         return ResponseEntity.ok().body(contest.toMetadataDTO())
     }

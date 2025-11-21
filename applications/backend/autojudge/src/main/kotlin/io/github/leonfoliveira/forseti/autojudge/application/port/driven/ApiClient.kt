@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.forseti.autojudge.application.port.driven
 
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
+import live.forseti.core.domain.entity.Submission
 import java.util.UUID
 
 interface ApiClient {

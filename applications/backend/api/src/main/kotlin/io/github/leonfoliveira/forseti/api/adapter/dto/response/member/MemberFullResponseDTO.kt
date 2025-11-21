@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.forseti.api.adapter.dto.response.member
 
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
+import live.forseti.core.domain.entity.Member
 import java.util.UUID
 
 data class MemberFullResponseDTO(

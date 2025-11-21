@@ -4,8 +4,8 @@ import io.github.leonfoliveira.forseti.autojudge.application.port.driven.ApiClie
 import io.github.leonfoliveira.forseti.autojudge.application.port.driven.SubmissionRunner
 import io.github.leonfoliveira.forseti.autojudge.application.port.driving.JudgeSubmissionUseCase
 import io.github.leonfoliveira.forseti.autojudge.application.util.AutoJudgeMetrics
-import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.SubmissionRepository
+import live.forseti.core.domain.exception.NotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

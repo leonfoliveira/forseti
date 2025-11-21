@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.websocket
 
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
+import live.forseti.core.domain.model.RequestContext
 import org.slf4j.LoggerFactory
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse

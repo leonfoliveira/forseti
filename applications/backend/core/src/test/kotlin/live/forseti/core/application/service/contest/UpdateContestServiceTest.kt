@@ -20,7 +20,7 @@ import live.forseti.core.domain.exception.BusinessException
 import live.forseti.core.domain.exception.ConflictException
 import live.forseti.core.domain.exception.ForbiddenException
 import live.forseti.core.domain.exception.NotFoundException
-import live.forseti.core.port.driven.HashAdapter
+import live.forseti.core.port.driven.Hasher
 import live.forseti.core.port.driven.repository.AttachmentRepository
 import live.forseti.core.port.driven.repository.ContestRepository
 import live.forseti.core.port.dto.input.attachment.AttachmentInputDTO
@@ -32,7 +32,7 @@ class UpdateContestServiceTest :
     FunSpec({
         val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
         val contestRepository = mockk<ContestRepository>(relaxed = true)
-        val hashAdapter = mockk<HashAdapter>(relaxed = true)
+        val hasher = mockk<Hasher>(relaxed = true)
         val deleteContestService = mockk<DeleteContestService>(relaxed = true)
         val testCasesValidator = mockk<TestCasesValidator>(relaxed = true)
 
@@ -40,7 +40,7 @@ class UpdateContestServiceTest :
             UpdateContestService(
                 attachmentRepository,
                 contestRepository,
-                hashAdapter,
+                hasher,
                 deleteContestService,
                 testCasesValidator,
             )
@@ -206,7 +206,7 @@ class UpdateContestServiceTest :
                     )
                 every { contestRepository.findEntityById(inputDTO.id) } returns contest
                 every { contestRepository.findBySlug(inputDTO.slug) } returns null
-                every { hashAdapter.hash(any()) } returns "hashedPassword"
+                every { hasher.hash(any()) } returns "hashedPassword"
                 val descriptionAttachment = AttachmentMockBuilder.build()
                 val testCasesAttachment = AttachmentMockBuilder.build()
                 every { attachmentRepository.findEntityById(inputProblemToCreate.description.id) } returns

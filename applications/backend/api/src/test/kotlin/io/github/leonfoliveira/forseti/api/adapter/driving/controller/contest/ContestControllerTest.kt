@@ -7,24 +7,24 @@ import io.github.leonfoliveira.forseti.api.adapter.driving.controller.advice.Glo
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.contest.toFullResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.contest.toMetadataDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.contest.toPublicOutputDTO
-import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
-import io.github.leonfoliveira.forseti.common.adapter.config.JacksonConfig
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
-import io.github.leonfoliveira.forseti.common.application.dto.input.attachment.AttachmentInputDTO
-import io.github.leonfoliveira.forseti.common.application.dto.input.contest.CreateContestInputDTO
-import io.github.leonfoliveira.forseti.common.application.dto.input.contest.UpdateContestInputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.CreateContestUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.DeleteContestUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.FindContestUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.UpdateContestUseCase
-import io.github.leonfoliveira.forseti.common.mock.entity.ContestMockBuilder
-import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
-import io.github.leonfoliveira.forseti.common.mock.entity.ProblemMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import io.mockk.verify
+import live.forseti.core.config.JacksonConfig
+import live.forseti.core.domain.entity.ContestMockBuilder
+import live.forseti.core.domain.entity.Member
+import live.forseti.core.domain.entity.MemberMockBuilder
+import live.forseti.core.domain.entity.ProblemMockBuilder
+import live.forseti.core.domain.entity.Submission
+import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
+import live.forseti.core.port.driving.usecase.contest.CreateContestUseCase
+import live.forseti.core.port.driving.usecase.contest.DeleteContestUseCase
+import live.forseti.core.port.driving.usecase.contest.FindContestUseCase
+import live.forseti.core.port.driving.usecase.contest.UpdateContestUseCase
+import live.forseti.core.port.dto.input.attachment.AttachmentInputDTO
+import live.forseti.core.port.dto.input.contest.CreateContestInputDTO
+import live.forseti.core.port.dto.input.contest.UpdateContestInputDTO
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
@@ -42,7 +42,7 @@ import java.util.UUID
 @ContextConfiguration(classes = [ContestController::class, JacksonConfig::class, GlobalExceptionHandler::class])
 class ContestControllerTest(
     @MockkBean(relaxed = true)
-    private val contestAuthFilter: ContestAuthFilter,
+    private val authorizeContestUseCase: AuthorizeContestUseCase,
     @MockkBean(relaxed = true)
     private val createContestUseCase: CreateContestUseCase,
     @MockkBean(relaxed = true)

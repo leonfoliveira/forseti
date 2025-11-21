@@ -4,7 +4,7 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.member.MemberPub
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.member.toPublicResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.problem.ProblemPublicResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.problem.toPublicResponseDTO
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Clarification
+import live.forseti.core.domain.entity.Clarification
 import java.time.OffsetDateTime
 import java.util.UUID
 

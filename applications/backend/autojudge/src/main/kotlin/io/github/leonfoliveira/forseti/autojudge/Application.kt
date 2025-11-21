@@ -11,18 +11,18 @@ import java.util.TimeZone
 
 @SpringBootApplication(
     scanBasePackages = [
-        "io.github.leonfoliveira.forseti.common",
+        "io.github.leonfoliveira.forseti.core",
         "io.github.leonfoliveira.forseti.autojudge",
     ],
 )
 @EntityScan(
     basePackages = [
-        "io.github.leonfoliveira.forseti.common.application.domain.entity",
+        "io.github.leonfoliveira.forseti.core.domain.entity",
     ],
 )
 @EnableJpaRepositories(
     basePackages = [
-        "io.github.leonfoliveira.forseti.common.application.port.driven.repository",
+        "io.github.leonfoliveira.forseti.core.port.driven.repository",
     ],
 )
 @EnableFeignClients(

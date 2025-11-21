@@ -6,7 +6,7 @@ import live.forseti.core.domain.exception.NotFoundException
 import live.forseti.core.port.driven.repository.AnnouncementRepository
 import live.forseti.core.port.driven.repository.ContestRepository
 import live.forseti.core.port.driven.repository.MemberRepository
-import live.forseti.core.port.driving.usecase.CreateAnnouncementUseCase
+import live.forseti.core.port.driving.usecase.announcement.CreateAnnouncementUseCase
 import live.forseti.core.port.dto.input.announcement.CreateAnnouncementInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher

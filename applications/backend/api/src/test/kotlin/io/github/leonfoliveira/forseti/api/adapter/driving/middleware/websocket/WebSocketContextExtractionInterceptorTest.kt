@@ -1,14 +1,14 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.websocket
 
-import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import org.slf4j.MDC
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
@@ -17,8 +17,8 @@ import org.springframework.messaging.support.MessageHeaderAccessor
 
 class WebSocketContextExtractionInterceptorTest :
     FunSpec({
-        val contestAuthFilter = mockk<ContestAuthFilter>(relaxed = true)
-        val sut = WebSocketContextExtractionInterceptor(contestAuthFilter)
+        val authorizeContestUseCase = mockk<AuthorizeContestUseCase>(relaxed = true)
+        val sut = WebSocketContextExtractionInterceptor(authorizeContestUseCase)
 
         beforeEach {
             RequestContext.clearContext()

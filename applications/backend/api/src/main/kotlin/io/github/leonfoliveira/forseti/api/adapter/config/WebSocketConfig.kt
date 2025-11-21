@@ -3,7 +3,6 @@ package io.github.leonfoliveira.forseti.api.adapter.config
 import io.github.leonfoliveira.forseti.api.adapter.driving.middleware.websocket.WebSocketContextExtractionInterceptor
 import io.github.leonfoliveira.forseti.api.adapter.driving.middleware.websocket.WebSocketContextHandshakeInterceptor
 import io.github.leonfoliveira.forseti.api.adapter.driving.middleware.websocket.WebSocketPrivateInterceptor
-import io.github.leonfoliveira.forseti.common.application.util.SkipCoverage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.messaging.simp.config.ChannelRegistration
@@ -14,7 +13,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-@SkipCoverage
 class WebSocketConfig(
     @Value("\${server.cors.allowed-origins}")
     val allowedOrigins: String,

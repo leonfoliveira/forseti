@@ -4,7 +4,7 @@ import jakarta.validation.Valid
 import live.forseti.core.domain.entity.Contest
 import live.forseti.core.domain.exception.ConflictException
 import live.forseti.core.port.driven.repository.ContestRepository
-import live.forseti.core.port.driving.usecase.CreateContestUseCase
+import live.forseti.core.port.driving.usecase.contest.CreateContestUseCase
 import live.forseti.core.port.dto.input.contest.CreateContestInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

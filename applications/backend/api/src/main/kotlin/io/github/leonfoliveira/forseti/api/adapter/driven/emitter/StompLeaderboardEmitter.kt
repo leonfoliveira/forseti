@@ -1,7 +1,6 @@
 package io.github.leonfoliveira.forseti.api.adapter.driven.emitter
 
-import io.github.leonfoliveira.forseti.api.application.port.driven.LeaderboardEmitter
-import io.github.leonfoliveira.forseti.common.application.dto.output.LeaderboardOutputDTO
+import live.forseti.core.port.dto.output.LeaderboardOutputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Component
 @Component
 class StompLeaderboardEmitter(
     private val messagingTemplate: SimpMessagingTemplate,
-) : LeaderboardEmitter {
+) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -17,7 +16,7 @@ class StompLeaderboardEmitter(
      *
      * @param leaderboard The leaderboard to be emitted.
      */
-    override fun emit(leaderboard: LeaderboardOutputDTO) {
+    fun emit(leaderboard: LeaderboardOutputDTO) {
         logger.info(
             "Emitting leaderboard for contest: ${leaderboard.contestId}",
         )

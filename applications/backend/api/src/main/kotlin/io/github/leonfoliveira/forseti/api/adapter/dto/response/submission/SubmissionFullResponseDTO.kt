@@ -6,7 +6,7 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.member.toPublicR
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.problem.ProblemPublicResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.problem.toPublicResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.toResponseDTO
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
+import live.forseti.core.domain.entity.Submission
 import java.time.OffsetDateTime
 import java.util.UUID
 

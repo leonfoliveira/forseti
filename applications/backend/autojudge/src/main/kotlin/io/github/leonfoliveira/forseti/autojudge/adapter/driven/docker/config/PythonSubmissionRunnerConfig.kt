@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.forseti.autojudge.adapter.driven.docker.config
 
 import io.github.leonfoliveira.forseti.autojudge.adapter.driven.docker.DockerSubmissionRunnerConfig
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
 import io.github.leonfoliveira.forseti.common.application.util.SkipCoverage
+import live.forseti.core.domain.entity.Submission
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

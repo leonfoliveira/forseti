@@ -1,14 +1,14 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.websocket
 
-import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
+import live.forseti.core.domain.entity.Member
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
 class WebSocketTopicConfigs(
-    private val contestAuthFilter: ContestAuthFilter,
+    private val authorizeContestUseCase: AuthorizeContestUseCase,
 ) {
     /**
      * Map of private topic destination patterns to their corresponding access filter functions.
@@ -22,14 +22,14 @@ class WebSocketTopicConfigs(
             Regex("/topic/contests/[a-fA-F0-9-]+/announcements") to { destination ->
                 val contestId = UUID.fromString(destination.split("/")[3])
 
-                contestAuthFilter.checkIfStarted(contestId)
+                authorizeContestUseCase.checkIfStarted(contestId)
 
                 true
             },
             Regex("/topic/contests/[a-fA-F0-9-]+/clarifications") to { destination ->
                 val contestId = UUID.fromString(destination.split("/")[3])
 
-                contestAuthFilter.checkIfStarted(contestId)
+                authorizeContestUseCase.checkIfStarted(contestId)
 
                 true
             },
@@ -37,8 +37,8 @@ class WebSocketTopicConfigs(
                 val contestId = UUID.fromString(destination.split("/")[3])
                 val memberId = UUID.fromString(destination.split("/")[7])
 
-                contestAuthFilter.checkIfMemberBelongsToContest(contestId)
-                contestAuthFilter.checkIfStarted(contestId)
+                authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
+                authorizeContestUseCase.checkIfStarted(contestId)
 
                 val member = RequestContext.getContext().session?.member
                 memberId == member?.id
@@ -46,28 +46,28 @@ class WebSocketTopicConfigs(
             Regex("/topic/contests/[a-fA-F0-9-]+/clarifications/deleted") to { destination ->
                 val contestId = UUID.fromString(destination.split("/")[3])
 
-                contestAuthFilter.checkIfStarted(contestId)
+                authorizeContestUseCase.checkIfStarted(contestId)
 
                 true
             },
             Regex("/topic/contests/[a-fA-F0-9-]+/leaderboard") to { destination ->
                 val contestId = UUID.fromString(destination.split("/")[3])
 
-                contestAuthFilter.checkIfStarted(contestId)
+                authorizeContestUseCase.checkIfStarted(contestId)
 
                 true
             },
             Regex("/topic/contests/[a-fA-F0-9-]+/submissions") to { destination ->
                 val contestId = UUID.fromString(destination.split("/")[3])
 
-                contestAuthFilter.checkIfStarted(contestId)
+                authorizeContestUseCase.checkIfStarted(contestId)
 
                 true
             },
             Regex("/topic/contests/[a-fA-F0-9-]+/submissions/full") to { destination ->
                 val contestId = UUID.fromString(destination.split("/")[3])
 
-                contestAuthFilter.checkIfStarted(contestId)
+                authorizeContestUseCase.checkIfStarted(contestId)
 
                 val member = RequestContext.getContext().session?.member
                 setOf(Member.Type.ADMIN, Member.Type.JUDGE).contains(member?.type)
@@ -76,8 +76,8 @@ class WebSocketTopicConfigs(
                 val contestId = UUID.fromString(destination.split("/")[3])
                 val memberId = UUID.fromString(destination.split("/")[7])
 
-                contestAuthFilter.checkIfMemberBelongsToContest(contestId)
-                contestAuthFilter.checkIfStarted(contestId)
+                authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
+                authorizeContestUseCase.checkIfStarted(contestId)
 
                 val member = RequestContext.getContext().session?.member
                 memberId == member?.id

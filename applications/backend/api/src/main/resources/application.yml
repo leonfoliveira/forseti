@@ -1,6 +1,6 @@
 spring:
   config:
-    import: classpath:common.yml
+    import: classpath:core.yml
   application:
     name: forseti-api
   profiles:

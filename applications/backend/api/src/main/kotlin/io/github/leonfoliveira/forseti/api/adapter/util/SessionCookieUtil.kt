@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.forseti.api.adapter.util
 
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Session
+import live.forseti.core.domain.entity.Session
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Service

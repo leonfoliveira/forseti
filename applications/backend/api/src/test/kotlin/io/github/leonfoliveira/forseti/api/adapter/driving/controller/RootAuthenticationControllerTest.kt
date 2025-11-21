@@ -5,13 +5,13 @@ import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.dto.request.NoLoginAuthenticateRequestDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.session.toResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.SessionCookieUtil
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.application.dto.input.authorization.AuthenticateInputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.AuthenticationUseCase
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
+import live.forseti.core.domain.entity.Member
+import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.port.driving.usecase.authentication.AuthenticateUseCase
+import live.forseti.core.port.dto.input.authorization.AuthenticateInputDTO
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.post
 @ContextConfiguration(classes = [RootController::class])
 class RootAuthenticationControllerTest(
     @MockkBean(relaxed = true)
-    private val authenticationUseCase: AuthenticationUseCase,
+    private val authenticateUseCase: AuthenticateUseCase,
     @MockkBean(relaxed = true)
     private val sessionCookieUtil: SessionCookieUtil,
     private val webMvc: MockMvc,
@@ -40,7 +40,7 @@ class RootAuthenticationControllerTest(
                     login = Member.ROOT_LOGIN,
                     password = body.password,
                 )
-            every { authenticationUseCase.authenticate(authenticateInputDTO) } returns session
+            every { authenticateUseCase.authenticate(authenticateInputDTO) } returns session
             every { sessionCookieUtil.buildCookie(session) } returns "session_id=cookie_value"
 
             webMvc

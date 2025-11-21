@@ -1,8 +1,5 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.http
 
-import io.github.leonfoliveira.forseti.api.application.port.driving.session.FindSessionUseCase
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -13,6 +10,9 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.session.FindSessionUseCase
 import org.slf4j.MDC
 import java.time.OffsetDateTime
 

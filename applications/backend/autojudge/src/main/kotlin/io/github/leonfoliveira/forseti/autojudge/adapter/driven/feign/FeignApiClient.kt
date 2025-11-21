@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.forseti.autojudge.adapter.driven.feign
 
 import io.github.leonfoliveira.forseti.autojudge.application.port.driven.ApiClient
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
+import live.forseti.core.domain.entity.Submission
 import org.springframework.cloud.openfeign.FeignClient
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping

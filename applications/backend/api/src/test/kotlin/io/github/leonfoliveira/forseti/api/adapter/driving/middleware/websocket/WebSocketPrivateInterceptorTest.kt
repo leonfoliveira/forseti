@@ -1,10 +1,5 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.websocket
 
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.application.domain.exception.ForbiddenException
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -12,6 +7,11 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import live.forseti.core.domain.entity.Member
+import live.forseti.core.domain.entity.MemberMockBuilder
+import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.domain.exception.ForbiddenException
+import live.forseti.core.domain.model.RequestContext
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor

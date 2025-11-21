@@ -4,7 +4,7 @@ import live.forseti.core.domain.entity.Clarification
 import live.forseti.core.domain.event.ClarificationDeletedEvent
 import live.forseti.core.domain.exception.NotFoundException
 import live.forseti.core.port.driven.repository.ClarificationRepository
-import live.forseti.core.port.driving.usecase.DeleteClarificationUseCase
+import live.forseti.core.port.driving.usecase.clarification.DeleteClarificationUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service

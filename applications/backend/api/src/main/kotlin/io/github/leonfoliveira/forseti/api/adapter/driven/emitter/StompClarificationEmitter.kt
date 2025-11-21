@@ -1,8 +1,7 @@
 package io.github.leonfoliveira.forseti.api.adapter.driven.emitter
 
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.clarification.toResponseDTO
-import io.github.leonfoliveira.forseti.api.application.port.driven.ClarificationEmitter
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Clarification
+import live.forseti.core.domain.entity.Clarification
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Component
 @Component
 class StompClarificationEmitter(
     private val messagingTemplate: SimpMessagingTemplate,
-) : ClarificationEmitter {
+) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -18,7 +17,7 @@ class StompClarificationEmitter(
      *
      * @param clarification The clarification to be emitted.
      */
-    override fun emit(clarification: Clarification) {
+    fun emit(clarification: Clarification) {
         val contest = clarification.contest
         logger.info(
             "Emitting clarification with id: ${clarification.id} for contest with id: ${clarification.contest.id}",
@@ -42,7 +41,7 @@ class StompClarificationEmitter(
      *
      * @param clarification The clarification that was deleted.
      */
-    override fun emitDeleted(clarification: Clarification) {
+    fun emitDeleted(clarification: Clarification) {
         val contest = clarification.contest
         logger.info(
             "Emitting deleted clarification with id: ${clarification.id} for contest with id: ${contest.id}",

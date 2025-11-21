@@ -2,7 +2,6 @@ package io.github.leonfoliveira.forseti.api.adapter.config
 
 import io.github.leonfoliveira.forseti.api.adapter.driving.middleware.http.HttpContextExtractionFilter
 import io.github.leonfoliveira.forseti.api.adapter.driving.middleware.http.HttpPrivateInterceptor
-import io.github.leonfoliveira.forseti.common.application.util.SkipCoverage
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,7 +17,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 @EnableWebSecurity
-@SkipCoverage
 class HttpConfig(
     @Value("\${server.cors.allowed-origins}")
     val allowedOrigins: String,

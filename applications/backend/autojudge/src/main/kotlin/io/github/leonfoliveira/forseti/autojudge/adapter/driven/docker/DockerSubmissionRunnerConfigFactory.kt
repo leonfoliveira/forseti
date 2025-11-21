@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.forseti.autojudge.adapter.driven.docker
 
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
+import live.forseti.core.domain.entity.Submission
 import org.springframework.stereotype.Component
 
 @Component

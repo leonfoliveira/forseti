@@ -2,11 +2,11 @@ package io.github.leonfoliveira.forseti.api.adapter.driven.emitter
 
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.submission.toFullResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.submission.toPublicResponseDTO
-import io.github.leonfoliveira.forseti.common.mock.entity.SubmissionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.mockk
 import io.mockk.verify
+import live.forseti.core.domain.entity.SubmissionMockBuilder
 import org.springframework.messaging.simp.SimpMessagingTemplate
 
 class StompSubmissionEmitterTest :

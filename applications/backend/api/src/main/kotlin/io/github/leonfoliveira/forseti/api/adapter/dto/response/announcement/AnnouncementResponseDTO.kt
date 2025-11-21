@@ -2,7 +2,7 @@ package io.github.leonfoliveira.forseti.api.adapter.dto.response.announcement
 
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.member.MemberPublicResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.member.toPublicResponseDTO
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Announcement
+import live.forseti.core.domain.entity.Announcement
 import java.time.OffsetDateTime
 import java.util.UUID
 

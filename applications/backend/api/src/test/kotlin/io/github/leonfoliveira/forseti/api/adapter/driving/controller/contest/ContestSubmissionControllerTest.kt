@@ -4,21 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.submission.toFullResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.submission.toPublicResponseDTO
-import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.dto.input.attachment.AttachmentInputDTO
-import io.github.leonfoliveira.forseti.common.application.dto.input.submission.CreateSubmissionInputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.CreateSubmissionUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.FindSubmissionUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.UpdateSubmissionUseCase
-import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
-import io.github.leonfoliveira.forseti.common.mock.entity.SubmissionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import io.mockk.verify
+import live.forseti.core.domain.entity.MemberMockBuilder
+import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.domain.entity.Submission
+import live.forseti.core.domain.entity.SubmissionMockBuilder
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
+import live.forseti.core.port.driving.usecase.submission.CreateSubmissionUseCase
+import live.forseti.core.port.driving.usecase.submission.FindSubmissionUseCase
+import live.forseti.core.port.driving.usecase.submission.UpdateSubmissionUseCase
+import live.forseti.core.port.dto.input.attachment.AttachmentInputDTO
+import live.forseti.core.port.dto.input.submission.CreateSubmissionInputDTO
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
@@ -34,7 +34,7 @@ import java.util.UUID
 @ContextConfiguration(classes = [ContestSubmissionController::class])
 class ContestSubmissionControllerTest(
     @MockkBean(relaxed = true)
-    private val contestAuthFilter: ContestAuthFilter,
+    private val authorizeContestUseCase: AuthorizeContestUseCase,
     @MockkBean(relaxed = true)
     private val createSubmissionUseCase: CreateSubmissionUseCase,
     @MockkBean(relaxed = true)
@@ -77,8 +77,8 @@ class ContestSubmissionControllerTest(
                     content { submission.toFullResponseDTO() }
                 }
 
-            verify { contestAuthFilter.checkIfStarted(contestId) }
-            verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+            verify { authorizeContestUseCase.checkIfStarted(contestId) }
+            verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
             verify { createSubmissionUseCase.create(session.member.id, body) }
         }
 
@@ -117,7 +117,7 @@ class ContestSubmissionControllerTest(
                     content { submissions.map { it.toFullResponseDTO() } }
                 }
 
-            verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+            verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
         }
 
         test("findAllFullSubmissionsForMember") {
@@ -161,7 +161,7 @@ class ContestSubmissionControllerTest(
                     status { isNoContent() }
                 }
 
-            verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+            verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
             verify { updateSubmissionUseCase.updateAnswer(submissionId, answer, force = true) }
         }
 
@@ -176,7 +176,7 @@ class ContestSubmissionControllerTest(
                     status { isNoContent() }
                 }
 
-            verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+            verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
             verify { updateSubmissionUseCase.rerun(id) }
         }
     })

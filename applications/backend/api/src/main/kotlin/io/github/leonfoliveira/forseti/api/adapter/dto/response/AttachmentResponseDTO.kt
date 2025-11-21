@@ -1,6 +1,6 @@
 package io.github.leonfoliveira.forseti.api.adapter.dto.response
 
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
+import live.forseti.core.domain.entity.Attachment
 import java.util.UUID
 
 data class AttachmentResponseDTO(

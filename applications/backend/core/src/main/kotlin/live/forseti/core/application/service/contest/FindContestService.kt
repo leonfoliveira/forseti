@@ -3,7 +3,7 @@ package live.forseti.core.application.service.contest
 import live.forseti.core.domain.entity.Contest
 import live.forseti.core.domain.exception.NotFoundException
 import live.forseti.core.port.driven.repository.ContestRepository
-import live.forseti.core.port.driving.usecase.FindContestUseCase
+import live.forseti.core.port.driving.usecase.contest.FindContestUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

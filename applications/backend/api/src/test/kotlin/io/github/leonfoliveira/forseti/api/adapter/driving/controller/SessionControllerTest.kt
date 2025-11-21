@@ -2,13 +2,13 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.util.SessionCookieUtil
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.port.driving.AuthenticationUseCase
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import io.mockk.verify
+import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.session.DeleteSessionUsecase
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.get
 @ContextConfiguration(classes = [SessionController::class])
 class SessionControllerTest(
     @MockkBean(relaxed = true)
-    private val authenticationUseCase: AuthenticationUseCase,
+    private val deleteSessionUseCase: DeleteSessionUsecase,
     @MockkBean(relaxed = true)
     private val sessionCookieUtil: SessionCookieUtil,
     private val webMvc: MockMvc,
@@ -69,6 +69,6 @@ class SessionControllerTest(
                     }
                 }
 
-            verify { authenticationUseCase.deleteCurrentSession() }
+            verify { deleteSessionUseCase.deleteCurrent() }
         }
     })

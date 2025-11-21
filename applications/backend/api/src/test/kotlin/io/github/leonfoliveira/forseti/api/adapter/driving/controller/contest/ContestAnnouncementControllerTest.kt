@@ -3,16 +3,16 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.controller.contest
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.announcement.toResponseDTO
-import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.dto.input.announcement.CreateAnnouncementInputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.CreateAnnouncementUseCase
-import io.github.leonfoliveira.forseti.common.mock.entity.AnnouncementMockBuilder
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import io.mockk.verify
+import live.forseti.core.domain.entity.AnnouncementMockBuilder
+import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.announcement.CreateAnnouncementUseCase
+import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
+import live.forseti.core.port.dto.input.announcement.CreateAnnouncementInputDTO
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
@@ -28,7 +28,7 @@ class ContestAnnouncementControllerTest(
     @MockkBean(relaxed = true)
     private val createAnnouncementUseCase: CreateAnnouncementUseCase,
     @MockkBean(relaxed = true)
-    private val contestAuthFilter: ContestAuthFilter,
+    private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val webMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) : FunSpec({
@@ -56,6 +56,6 @@ class ContestAnnouncementControllerTest(
                     content { announcement.toResponseDTO() }
                 }
 
-            verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+            verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
         }
     })

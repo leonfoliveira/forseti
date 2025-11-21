@@ -1,13 +1,13 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.controller.advice
 
-import io.github.leonfoliveira.forseti.common.application.domain.exception.BusinessException
-import io.github.leonfoliveira.forseti.common.application.domain.exception.ForbiddenException
-import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
-import io.github.leonfoliveira.forseti.common.application.domain.exception.UnauthorizedException
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import jakarta.validation.ConstraintViolationException
+import live.forseti.core.domain.exception.BusinessException
+import live.forseti.core.domain.exception.ForbiddenException
+import live.forseti.core.domain.exception.NotFoundException
+import live.forseti.core.domain.exception.UnauthorizedException
 import org.springframework.http.HttpStatus
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.HttpRequestMethodNotSupportedException

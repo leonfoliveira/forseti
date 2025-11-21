@@ -1,9 +1,5 @@
 package io.github.leonfoliveira.forseti.autojudge.adapter.driven.docker
 
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Contest
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
 import io.github.leonfoliveira.forseti.common.application.port.driven.AttachmentBucket
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ContestRepository
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
@@ -19,6 +15,10 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
+import live.forseti.core.domain.entity.Attachment
+import live.forseti.core.domain.entity.Contest
+import live.forseti.core.domain.entity.Member
+import live.forseti.core.domain.entity.Submission
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles

@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.forseti.autojudge.application.port.driving
 
 import io.github.leonfoliveira.forseti.autojudge.application.dto.input.CreateExecutionInputDTO
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Execution
+import live.forseti.core.domain.entity.Execution
 
 interface CreateExecutionUseCase {
     /**

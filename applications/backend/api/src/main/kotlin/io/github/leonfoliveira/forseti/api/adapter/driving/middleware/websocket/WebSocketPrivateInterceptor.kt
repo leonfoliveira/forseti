@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.websocket
 
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.application.domain.exception.ForbiddenException
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
+import live.forseti.core.domain.entity.Member
+import live.forseti.core.domain.exception.ForbiddenException
+import live.forseti.core.domain.model.RequestContext
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel

@@ -3,7 +3,7 @@ package live.forseti.core.application.service.problem
 import live.forseti.core.domain.entity.Problem
 import live.forseti.core.domain.exception.NotFoundException
 import live.forseti.core.port.driven.repository.ProblemRepository
-import live.forseti.core.port.driving.usecase.FindProblemUseCase
+import live.forseti.core.port.driving.usecase.problem.FindProblemUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

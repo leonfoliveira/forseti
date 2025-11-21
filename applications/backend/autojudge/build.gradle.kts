@@ -3,11 +3,12 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":common"))
+    implementation(project(":core"))
+    implementation(project(":infrastructure"))
     implementation(libs.java.diff.utils)
     implementation(libs.opencsv)
 
-    testImplementation(testFixtures(project(":common")))
+    testImplementation(testFixtures(project(":core")))
 }
 
 tasks.bootJar {
@@ -24,7 +25,6 @@ kover {
                 )
                 annotatedBy(
                     "org.springframework.context.annotation.Configuration",
-                    "io.github.leonfoliveira.forseti.common.util.SkipCoverage",
                 )
             }
         }

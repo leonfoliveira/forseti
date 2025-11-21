@@ -1,13 +1,12 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.controller.advice
 
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.ErrorResponseDTO
-import io.github.leonfoliveira.forseti.common.application.domain.exception.BusinessException
-import io.github.leonfoliveira.forseti.common.application.domain.exception.ConflictException
-import io.github.leonfoliveira.forseti.common.application.domain.exception.ForbiddenException
-import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
-import io.github.leonfoliveira.forseti.common.application.domain.exception.UnauthorizedException
-import io.github.leonfoliveira.forseti.common.application.util.SkipCoverage
 import jakarta.validation.ConstraintViolationException
+import live.forseti.core.domain.exception.BusinessException
+import live.forseti.core.domain.exception.ConflictException
+import live.forseti.core.domain.exception.ForbiddenException
+import live.forseti.core.domain.exception.NotFoundException
+import live.forseti.core.domain.exception.UnauthorizedException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -91,7 +90,6 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException::class)
-    @SkipCoverage
     fun handleNoResourceFoundException(ex: NoResourceFoundException): ResponseEntity<ErrorResponseDTO> {
         logger.info("Resource not found, message: ${ex.message}", ex)
         return ResponseEntity

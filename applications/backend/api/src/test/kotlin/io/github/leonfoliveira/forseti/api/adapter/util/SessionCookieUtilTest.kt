@@ -1,11 +1,11 @@
 package io.github.leonfoliveira.forseti.api.adapter.util
 
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
 import io.mockk.every
 import io.mockk.mockkStatic
+import live.forseti.core.domain.entity.SessionMockBuilder
 import java.time.OffsetDateTime
 
 class SessionCookieUtilTest :

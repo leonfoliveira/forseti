@@ -1,14 +1,14 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.controller.contest
 
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.ErrorResponseDTO
-import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
-import io.github.leonfoliveira.forseti.common.application.dto.output.LeaderboardOutputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.FindLeaderboardUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
+import live.forseti.core.port.driving.usecase.leaderboard.BuildLeaderboardUseCase
+import live.forseti.core.port.dto.output.LeaderboardOutputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -20,8 +20,8 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1/contests/{contestId}/leaderboard")
 class ContestLeaderboardController(
-    val contestAuthFilter: ContestAuthFilter,
-    val findLeaderboardUseCase: FindLeaderboardUseCase,
+    val authorizeContestUseCase: AuthorizeContestUseCase,
+    val buildLeaderboardUseCase: BuildLeaderboardUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -46,8 +46,8 @@ class ContestLeaderboardController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<LeaderboardOutputDTO> {
         logger.info("[GET] /v1/contests/$contestId/leaderboard")
-        contestAuthFilter.checkIfStarted(contestId)
-        val leaderboard = findLeaderboardUseCase.findByContestId(contestId)
+        authorizeContestUseCase.checkIfStarted(contestId)
+        val leaderboard = buildLeaderboardUseCase.build(contestId)
         return ResponseEntity.ok(leaderboard)
     }
 }

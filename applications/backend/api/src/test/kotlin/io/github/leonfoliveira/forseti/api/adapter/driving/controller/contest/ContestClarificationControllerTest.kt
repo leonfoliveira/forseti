@@ -3,17 +3,17 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.controller.contest
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.clarification.toResponseDTO
-import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.dto.input.clarification.CreateClarificationInputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.CreateClarificationUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.DeleteClarificationUseCase
-import io.github.leonfoliveira.forseti.common.mock.entity.ClarificationMockBuilder
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import io.mockk.verify
+import live.forseti.core.domain.entity.ClarificationMockBuilder
+import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.clarification.CreateClarificationUseCase
+import live.forseti.core.port.driving.usecase.clarification.DeleteClarificationUseCase
+import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
+import live.forseti.core.port.dto.input.clarification.CreateClarificationInputDTO
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
@@ -28,7 +28,7 @@ import java.util.UUID
 @ContextConfiguration(classes = [ContestClarificationController::class])
 class ContestClarificationControllerTest(
     @MockkBean(relaxed = true)
-    private val contestAuthFilter: ContestAuthFilter,
+    private val authorizeContestUseCase: AuthorizeContestUseCase,
     @MockkBean(relaxed = true)
     private val createClarificationUseCase: CreateClarificationUseCase,
     @MockkBean(relaxed = true)
@@ -60,7 +60,7 @@ class ContestClarificationControllerTest(
                     content { clarification.toResponseDTO() }
                 }
 
-            verify { contestAuthFilter.checkIfMemberBelongsToContest(contestId) }
+            verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
         }
 
         test("deleteClarificationById") {

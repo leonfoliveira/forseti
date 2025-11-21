@@ -1,12 +1,6 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.http
 
 import io.github.leonfoliveira.forseti.api.adapter.util.Private
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.application.domain.exception.ForbiddenException
-import io.github.leonfoliveira.forseti.common.application.domain.exception.UnauthorizedException
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.mock.entity.MemberMockBuilder
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -14,6 +8,12 @@ import io.mockk.every
 import io.mockk.mockk
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import live.forseti.core.domain.entity.Member
+import live.forseti.core.domain.entity.MemberMockBuilder
+import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.domain.exception.ForbiddenException
+import live.forseti.core.domain.exception.UnauthorizedException
+import live.forseti.core.domain.model.RequestContext
 import org.springframework.web.method.HandlerMethod
 
 class HttpPrivateInterceptorTest :

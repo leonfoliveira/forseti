@@ -2,8 +2,6 @@ package io.github.leonfoliveira.forseti.autojudge.application.service
 
 import io.github.leonfoliveira.forseti.autojudge.application.port.driven.ApiClient
 import io.github.leonfoliveira.forseti.autojudge.application.port.driven.SubmissionRunner
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
-import io.github.leonfoliveira.forseti.common.application.domain.exception.NotFoundException
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.SubmissionRepository
 import io.github.leonfoliveira.forseti.common.mock.entity.ExecutionMockBuilder
 import io.github.leonfoliveira.forseti.common.mock.entity.SubmissionMockBuilder
@@ -15,6 +13,8 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import live.forseti.core.domain.entity.Submission
+import live.forseti.core.domain.exception.NotFoundException
 import java.util.UUID
 import java.util.function.Supplier
 

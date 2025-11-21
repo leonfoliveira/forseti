@@ -1,7 +1,6 @@
 package io.github.leonfoliveira.forseti.autojudge.application.service
 
 import io.github.leonfoliveira.forseti.autojudge.application.dto.input.CreateExecutionInputDTO
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.ExecutionRepository
 import io.github.leonfoliveira.forseti.common.application.service.attachment.AttachmentService
 import io.github.leonfoliveira.forseti.common.mock.entity.AttachmentMockBuilder
@@ -11,6 +10,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import live.forseti.core.domain.entity.Submission
 
 class CreateExecutionServiceTest :
     FunSpec({

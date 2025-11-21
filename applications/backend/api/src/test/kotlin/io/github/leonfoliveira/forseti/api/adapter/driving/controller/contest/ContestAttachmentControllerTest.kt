@@ -2,18 +2,18 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.controller.contest
 
 import com.ninjasquad.springmockk.MockkBean
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.toResponseDTO
-import io.github.leonfoliveira.forseti.api.application.port.driving.attachment.AttachmentAuthorizationUseCase
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.dto.output.AttachmentDownloadOutputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.DownloadAttachmentUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.UploadAttachmentUseCase
-import io.github.leonfoliveira.forseti.common.mock.entity.AttachmentMockBuilder
-import io.github.leonfoliveira.forseti.common.mock.entity.SessionMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import live.forseti.core.domain.entity.AttachmentMockBuilder
+import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.attachment.AuthorizeAttachmentUseCase
+import live.forseti.core.port.driving.usecase.attachment.DownloadAttachmentUseCase
+import live.forseti.core.port.driving.usecase.attachment.UploadAttachmentUseCase
+import live.forseti.core.port.dto.output.AttachmentDownloadOutputDTO
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
@@ -33,7 +33,7 @@ class ContestAttachmentControllerTest(
     @MockkBean(relaxed = true)
     val downloadAttachmentUseCase: DownloadAttachmentUseCase,
     @MockkBean(relaxed = true)
-    val attachmentAuthorizationUseCase: AttachmentAuthorizationUseCase,
+    val authorizeAttachmentUseCase: AuthorizeAttachmentUseCase,
     val webMvc: MockMvc,
 ) : FunSpec({
         extensions(SpringExtension)
@@ -65,7 +65,7 @@ class ContestAttachmentControllerTest(
                     content { attachment.toResponseDTO() }
                 }
 
-            verify { attachmentAuthorizationUseCase.authorizeUpload(contestId, attachment.context) }
+            verify { authorizeAttachmentUseCase.authorizeUpload(contestId, attachment.context) }
         }
 
         test("downloadAttachment") {
@@ -88,6 +88,6 @@ class ContestAttachmentControllerTest(
                     header { string("Content-Type", attachment.contentType) }
                 }
 
-            verify { attachmentAuthorizationUseCase.authorizeDownload(contestId, attachment.id) }
+            verify { authorizeAttachmentUseCase.authorizeDownload(contestId, attachment.id) }
         }
     })

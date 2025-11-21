@@ -6,7 +6,7 @@ import live.forseti.core.domain.event.SubmissionUpdatedEvent
 import live.forseti.core.domain.exception.ForbiddenException
 import live.forseti.core.domain.exception.NotFoundException
 import live.forseti.core.port.driven.repository.SubmissionRepository
-import live.forseti.core.port.driving.usecase.UpdateSubmissionUseCase
+import live.forseti.core.port.driving.usecase.submission.UpdateSubmissionUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service

@@ -1,8 +1,8 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.consumer
 
-import io.github.leonfoliveira.forseti.common.adapter.driven.rabbitmq.RabbitMQConsumer
-import io.github.leonfoliveira.forseti.common.adapter.driven.rabbitmq.message.SubmissionMessagePayload
-import io.github.leonfoliveira.forseti.common.application.port.driving.UpdateSubmissionUseCase
+import live.forseti.core.port.driving.usecase.submission.UpdateSubmissionUseCase
+import live.forseti.infrastruture.adapter.rabbitmq.RabbitMQConsumer
+import live.forseti.infrastruture.adapter.rabbitmq.payload.SubmissionMessagePayload
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.stereotype.Component
 

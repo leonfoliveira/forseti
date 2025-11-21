@@ -3,17 +3,17 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.controller.contest
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.announcement.AnnouncementResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.announcement.toResponseDTO
-import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.api.adapter.util.Private
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.dto.input.announcement.CreateAnnouncementInputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.CreateAnnouncementUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import live.forseti.core.domain.entity.Member
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.announcement.CreateAnnouncementUseCase
+import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
+import live.forseti.core.port.dto.input.announcement.CreateAnnouncementInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
@@ -26,7 +26,7 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1/contests")
 class ContestAnnouncementController(
-    private val contestAuthFilter: ContestAuthFilter,
+    private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val createAnnouncementUseCase: CreateAnnouncementUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -84,8 +84,8 @@ class ContestAnnouncementController(
         @RequestBody body: CreateAnnouncementInputDTO,
     ): ResponseEntity<AnnouncementResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/announcements $body")
-        contestAuthFilter.checkIfStarted(contestId)
-        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+        authorizeContestUseCase.checkIfStarted(contestId)
+        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val member = RequestContext.getContext().session!!.member
         val announcement = createAnnouncementUseCase.create(contestId, member.id, body)
         return ResponseEntity.ok(announcement.toResponseDTO())

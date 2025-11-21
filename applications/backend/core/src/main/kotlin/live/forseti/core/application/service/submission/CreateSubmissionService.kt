@@ -9,7 +9,7 @@ import live.forseti.core.port.driven.repository.AttachmentRepository
 import live.forseti.core.port.driven.repository.MemberRepository
 import live.forseti.core.port.driven.repository.ProblemRepository
 import live.forseti.core.port.driven.repository.SubmissionRepository
-import live.forseti.core.port.driving.usecase.CreateSubmissionUseCase
+import live.forseti.core.port.driving.usecase.submission.CreateSubmissionUseCase
 import live.forseti.core.port.dto.input.submission.CreateSubmissionInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher

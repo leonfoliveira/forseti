@@ -1,11 +1,11 @@
 package io.github.leonfoliveira.forseti.api.adapter.driven.emitter
 
-import io.github.leonfoliveira.forseti.common.application.dto.output.LeaderboardOutputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import live.forseti.core.port.dto.output.LeaderboardOutputDTO
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import java.util.UUID
 

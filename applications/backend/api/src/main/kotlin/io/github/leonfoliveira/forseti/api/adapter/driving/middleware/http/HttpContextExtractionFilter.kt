@@ -1,11 +1,11 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.http
 
-import io.github.leonfoliveira.forseti.api.application.port.driving.session.FindSessionUseCase
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Session
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import live.forseti.core.domain.entity.Session
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.session.FindSessionUseCase
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter

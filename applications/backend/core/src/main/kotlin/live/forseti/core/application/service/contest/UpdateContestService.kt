@@ -9,10 +9,10 @@ import live.forseti.core.domain.exception.BusinessException
 import live.forseti.core.domain.exception.ConflictException
 import live.forseti.core.domain.exception.ForbiddenException
 import live.forseti.core.domain.exception.NotFoundException
-import live.forseti.core.port.driven.HashAdapter
+import live.forseti.core.port.driven.Hasher
 import live.forseti.core.port.driven.repository.AttachmentRepository
 import live.forseti.core.port.driven.repository.ContestRepository
-import live.forseti.core.port.driving.usecase.UpdateContestUseCase
+import live.forseti.core.port.driving.usecase.contest.UpdateContestUseCase
 import live.forseti.core.port.dto.input.contest.UpdateContestInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -27,7 +27,7 @@ import java.util.UUID
 class UpdateContestService(
     private val attachmentRepository: AttachmentRepository,
     private val contestRepository: ContestRepository,
-    private val hashAdapter: HashAdapter,
+    private val hasher: Hasher,
     private val deleteContestService: DeleteContestService,
     private val testCasesValidator: TestCasesValidator,
 ) : UpdateContestUseCase {
@@ -179,7 +179,7 @@ class UpdateContestService(
             throw ForbiddenException("Member login cannot be '${Member.ROOT_LOGIN}'")
         }
 
-        val hashedPassword = hashAdapter.hash(memberDTO.password!!)
+        val hashedPassword = hasher.hash(memberDTO.password!!)
         val member =
             Member(
                 type = memberDTO.type,
@@ -246,7 +246,7 @@ class UpdateContestService(
         member.name = memberDTO.name
         member.login = memberDTO.login
         if (memberDTO.password != null) {
-            member.password = hashAdapter.hash(memberDTO.password)
+            member.password = hasher.hash(memberDTO.password)
         }
 
         return member

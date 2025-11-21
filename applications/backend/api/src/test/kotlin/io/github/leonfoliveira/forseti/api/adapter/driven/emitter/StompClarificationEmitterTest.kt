@@ -1,11 +1,11 @@
 package io.github.leonfoliveira.forseti.api.adapter.driven.emitter
 
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.clarification.toResponseDTO
-import io.github.leonfoliveira.forseti.common.mock.entity.ClarificationMockBuilder
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.mockk
 import io.mockk.verify
+import live.forseti.core.domain.entity.ClarificationMockBuilder
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import java.time.OffsetDateTime
 

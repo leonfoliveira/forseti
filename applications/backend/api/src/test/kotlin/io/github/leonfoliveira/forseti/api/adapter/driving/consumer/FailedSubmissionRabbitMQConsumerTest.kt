@@ -2,12 +2,12 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import io.github.leonfoliveira.forseti.common.adapter.config.JacksonConfig
-import io.github.leonfoliveira.forseti.common.adapter.driven.rabbitmq.message.RabbitMQMessage
-import io.github.leonfoliveira.forseti.common.adapter.driven.rabbitmq.message.SubmissionMessagePayload
-import io.github.leonfoliveira.forseti.common.application.port.driving.UpdateSubmissionUseCase
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.verify
+import live.forseti.core.config.JacksonConfig
+import live.forseti.core.port.driving.usecase.submission.UpdateSubmissionUseCase
+import live.forseti.infrastruture.adapter.rabbitmq.RabbitMQMessage
+import live.forseti.infrastruture.adapter.rabbitmq.payload.SubmissionMessagePayload
 import org.springframework.boot.test.context.SpringBootTest
 import java.util.UUID
 

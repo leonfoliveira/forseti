@@ -4,16 +4,16 @@ import io.github.leonfoliveira.forseti.api.adapter.dto.response.AttachmentRespon
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.toResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.util.Private
-import io.github.leonfoliveira.forseti.api.application.port.driving.attachment.AttachmentAuthorizationUseCase
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.port.driving.DownloadAttachmentUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.UploadAttachmentUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import live.forseti.core.domain.entity.Attachment
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.attachment.AuthorizeAttachmentUseCase
+import live.forseti.core.port.driving.usecase.attachment.DownloadAttachmentUseCase
+import live.forseti.core.port.driving.usecase.attachment.UploadAttachmentUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
@@ -34,7 +34,7 @@ import java.util.UUID
 class ContestAttachmentController(
     private val uploadAttachmentUseCase: UploadAttachmentUseCase,
     private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
-    private val attachmentAuthorizationUseCase: AttachmentAuthorizationUseCase,
+    private val authorizeAttachmentUseCase: AuthorizeAttachmentUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -69,7 +69,7 @@ class ContestAttachmentController(
         @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<AttachmentResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/attachments/$context { filename: ${file.originalFilename}, size: ${file.size} }")
-        attachmentAuthorizationUseCase.authorizeUpload(contestId, context)
+        authorizeAttachmentUseCase.authorizeUpload(contestId, context)
         val member = RequestContext.getContext().session!!.member
         val attachment =
             uploadAttachmentUseCase.upload(
@@ -107,7 +107,7 @@ class ContestAttachmentController(
         @PathVariable attachmentId: UUID,
     ): ResponseEntity<ByteArray> {
         logger.info("[GET] /v1/contests/$contestId/attachments/$attachmentId")
-        attachmentAuthorizationUseCase.authorizeDownload(contestId, attachmentId)
+        authorizeAttachmentUseCase.authorizeDownload(contestId, attachmentId)
         val download = downloadAttachmentUseCase.download(attachmentId)
         val headers =
             HttpHeaders().apply {

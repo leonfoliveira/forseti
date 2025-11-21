@@ -1,10 +1,10 @@
 package io.github.leonfoliveira.forseti.autojudge.application.config
 
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Session
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
 import io.github.leonfoliveira.forseti.common.application.port.driven.repository.MemberRepository
 import io.github.leonfoliveira.forseti.common.application.service.authentication.AuthenticationService
+import live.forseti.core.domain.entity.Member
+import live.forseti.core.domain.entity.Session
+import live.forseti.core.domain.model.RequestContext
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.Scheduled

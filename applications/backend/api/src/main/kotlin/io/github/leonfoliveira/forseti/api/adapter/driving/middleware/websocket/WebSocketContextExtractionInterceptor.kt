@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.forseti.api.adapter.driving.middleware.websocket
 
-import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.messaging.Message
@@ -14,7 +14,7 @@ import java.util.UUID
 
 @Component
 class WebSocketContextExtractionInterceptor(
-    val contestAuthFilter: ContestAuthFilter,
+    val authorizeContestUseCase: AuthorizeContestUseCase,
 ) : ChannelInterceptor {
     private val logger = LoggerFactory.getLogger(this::class.java)
 

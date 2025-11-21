@@ -1,7 +1,7 @@
 package io.github.leonfoliveira.forseti.autojudge.application.dto.input
 
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Attachment
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Submission
+import live.forseti.core.domain.entity.Attachment
+import live.forseti.core.domain.entity.Submission
 
 data class CreateExecutionInputDTO(
     val submission: Submission,

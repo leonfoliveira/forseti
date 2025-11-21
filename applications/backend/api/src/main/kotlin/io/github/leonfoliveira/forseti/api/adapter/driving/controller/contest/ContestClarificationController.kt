@@ -3,18 +3,18 @@ package io.github.leonfoliveira.forseti.api.adapter.driving.controller.contest
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.ErrorResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.clarification.ClarificationResponseDTO
 import io.github.leonfoliveira.forseti.api.adapter.dto.response.clarification.toResponseDTO
-import io.github.leonfoliveira.forseti.api.adapter.util.ContestAuthFilter
 import io.github.leonfoliveira.forseti.api.adapter.util.Private
-import io.github.leonfoliveira.forseti.common.application.domain.entity.Member
-import io.github.leonfoliveira.forseti.common.application.domain.model.RequestContext
-import io.github.leonfoliveira.forseti.common.application.dto.input.clarification.CreateClarificationInputDTO
-import io.github.leonfoliveira.forseti.common.application.port.driving.CreateClarificationUseCase
-import io.github.leonfoliveira.forseti.common.application.port.driving.DeleteClarificationUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import live.forseti.core.domain.entity.Member
+import live.forseti.core.domain.model.RequestContext
+import live.forseti.core.port.driving.usecase.clarification.CreateClarificationUseCase
+import live.forseti.core.port.driving.usecase.clarification.DeleteClarificationUseCase
+import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
+import live.forseti.core.port.dto.input.clarification.CreateClarificationInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
@@ -29,7 +29,7 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1/contests/{contestId}/clarifications")
 class ContestClarificationController(
-    val contestAuthFilter: ContestAuthFilter,
+    val authorizeContestUseCase: AuthorizeContestUseCase,
     val createClarificationUseCase: CreateClarificationUseCase,
     val deleteClarificationUseCase: DeleteClarificationUseCase,
 ) {
@@ -69,8 +69,8 @@ class ContestClarificationController(
         @RequestBody body: CreateClarificationInputDTO,
     ): ResponseEntity<ClarificationResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/clarifications $body")
-        contestAuthFilter.checkIfStarted(contestId)
-        contestAuthFilter.checkIfMemberBelongsToContest(contestId)
+        authorizeContestUseCase.checkIfStarted(contestId)
+        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val member = RequestContext.getContext().session!!.member
         val clarification = createClarificationUseCase.create(contestId, member.id, body)
         return ResponseEntity.ok(clarification.toResponseDTO())
