@@ -12,9 +12,9 @@ mkdir -p ./production/volumes/migrations
 cp -r ../applications/backend/common/src/main/resources/migration/* ./production/volumes/migrations/
 
 mkdir -p ./production/sandboxes
-cp -r ../applications/backend/autojudge/src/main/resources/sandboxes/* ./production/sandboxes/
+cp -r ../applications/backend/infrastructure/src/main/resources/sandboxes/* ./production/sandboxes/
 
-cd ../applications/backend/autojudge/src/main/resources/sandboxes
+cd ../applications/backend/infrastructure/src/main/resources/sandboxes
 docker build -t forseti-sb-cpp17:latest -f cpp17.Dockerfile .
 docker build -t forseti-sb-java21:latest -f java21.Dockerfile .
 docker build -t forseti-sb-python312:latest -f python312.Dockerfile .

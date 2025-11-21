@@ -61,7 +61,7 @@ jobs:
       - name: Build test composition
         run: |
           docker compose -f deployment/development/docker-compose.yaml build --progress=plain --pull
-          cd applications/backend/autojudge/src/main/resources/sandboxes && docker build -f python312.Dockerfile -t forseti-sb-python312:latest .
+          cd applications/backend/infrastructure/src/main/resources/sandboxes && docker build -f python312.Dockerfile -t forseti-sb-python312:latest .
 
       - name: Start test composition
         run: |

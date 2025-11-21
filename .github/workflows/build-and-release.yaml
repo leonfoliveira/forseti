@@ -104,7 +104,7 @@ jobs:
       - name: Copy sandboxes to production directory
         run: |
           mkdir -p sandboxes
-          cp -r ../../applications/backend/autojudge/src/main/resources/sandboxes/* sandboxes/
+          cp -r ../../applications/backend/infrastructure/src/main/resources/sandboxes/* sandboxes/
 
       - name: Copy additional files to production directory
         run: |
