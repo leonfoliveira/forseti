@@ -1,0 +1,13 @@
+meta {
+  name: submission
+  seq: 15
+}
+
+auth {
+  mode: inherit
+}
+
+vars:pre-request {
+  base_url: {{api_url}}/v1/contests/{{contest_id}}/submissions
+  submission_id: 123
+}

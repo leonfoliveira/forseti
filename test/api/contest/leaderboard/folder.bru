@@ -1,0 +1,12 @@
+meta {
+  name: leaderboard
+  seq: 14
+}
+
+auth {
+  mode: inherit
+}
+
+vars:pre-request {
+  base_url: {{api_url}}/v1/contests/{{contest_id}}/leaderboard
+}

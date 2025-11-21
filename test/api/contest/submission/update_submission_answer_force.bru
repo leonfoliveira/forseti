@@ -1,0 +1,20 @@
+meta {
+  name: update_submission_answer_force
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{base_url}}/{{submission_id}}/answer/{{answer}}/force
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  answer: {{Submission.Answer.ACCEPTED}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,20 @@
+meta {
+  name: download_attachment
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/{{attachment_id}}
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  attachment_id: 123
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

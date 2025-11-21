@@ -1,0 +1,15 @@
+meta {
+  name: delete_session
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{base_url}}/me
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
