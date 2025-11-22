@@ -5,8 +5,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
-import io.mockk.unmockkObject
 import io.mockk.verify
 import live.forseti.core.application.service.member.FindMemberService
 import live.forseti.core.domain.entity.MemberMockBuilder
@@ -28,11 +26,6 @@ class RefreshSessionServiceTest :
 
         beforeEach {
             clearAllMocks()
-            mockkObject(RequestContext)
-        }
-
-        afterEach {
-            unmockkObject(RequestContext)
         }
 
         context("refresh") {
@@ -40,8 +33,7 @@ class RefreshSessionServiceTest :
             val member = MemberMockBuilder.build(id = memberId)
 
             test("should create new session when no current session exists") {
-                val mockContext = RequestContext(session = null)
-                every { RequestContext.getContext() } returns mockContext
+                RequestContext.getContext().session = null
                 every { findMemberService.findById(memberId) } returns member
                 val newSession = SessionMockBuilder.build(member = member)
                 every { createSessionService.create(member) } returns newSession
@@ -57,10 +49,9 @@ class RefreshSessionServiceTest :
                 val expiringSession =
                     SessionMockBuilder.build(
                         member = member,
-                        expiresAt = OffsetDateTime.now().plusSeconds(30), // Expires in 30 seconds, less than 1 minute threshold
+                        expiresAt = OffsetDateTime.now().plusSeconds(30),
                     )
-                val mockContext = RequestContext(session = expiringSession)
-                every { RequestContext.getContext() } returns mockContext
+                RequestContext.getContext().session = expiringSession
                 every { findMemberService.findById(memberId) } returns member
                 val newSession = SessionMockBuilder.build(member = member)
                 every { createSessionService.create(member) } returns newSession
@@ -77,10 +68,9 @@ class RefreshSessionServiceTest :
                 val sessionForDifferentMember =
                     SessionMockBuilder.build(
                         member = differentMember,
-                        expiresAt = OffsetDateTime.now().plusHours(1), // Valid session but for different member
+                        expiresAt = OffsetDateTime.now().plusHours(1),
                     )
-                val mockContext = RequestContext(session = sessionForDifferentMember)
-                every { RequestContext.getContext() } returns mockContext
+                RequestContext.getContext().session = sessionForDifferentMember
                 every { findMemberService.findById(memberId) } returns member
                 val newSession = SessionMockBuilder.build(member = member)
                 every { createSessionService.create(member) } returns newSession
@@ -96,10 +86,9 @@ class RefreshSessionServiceTest :
                 val validSession =
                     SessionMockBuilder.build(
                         member = member,
-                        expiresAt = OffsetDateTime.now().plusHours(1), // Expires in 1 hour, well above 1 minute threshold
+                        expiresAt = OffsetDateTime.now().plusHours(1),
                     )
-                val mockContext = RequestContext(session = validSession)
-                every { RequestContext.getContext() } returns mockContext
+                RequestContext.getContext().session = validSession
 
                 val result = sut.refresh(memberId)
 

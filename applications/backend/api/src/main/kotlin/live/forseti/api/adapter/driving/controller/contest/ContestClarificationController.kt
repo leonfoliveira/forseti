@@ -17,7 +17,6 @@ import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import live.forseti.core.port.dto.input.clarification.CreateClarificationInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
