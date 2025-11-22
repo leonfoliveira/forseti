@@ -26,6 +26,7 @@ paths:
 # Paths to ignore during analysis
 paths-ignore:
   # Build outputs and dependencies
+  - applications/backend/.gradle/
   - applications/backend/**/.gradle/
   - applications/backend/.kotlin/
   - applications/backend/**/build/
