@@ -22,6 +22,8 @@ paths:
   - applications/webapp/src/
   - applications/autoscaler/autoscaler/
   - applications/cli/cli/
+  - .github/workflows/
+  - deployment/
 
 # Paths to ignore during analysis
 paths-ignore:
@@ -39,10 +41,15 @@ paths-ignore:
   - applications/cli/build/
   - applications/cli/dist/
 
-  # Documentation and configuration
+  # Deployment volumes and generated files
+  - deployment/development/volumes/
+  - deployment/production/volumes/
+  - deployment/production/backups/
+  - deployment/production/certs/
+  - deployment/production/sandboxes/
+
+  # Documentation and non-code configuration
   - "**/*.md"
-  - "**/*.yml"
-  - "**/*.yaml"
   - "**/*.json"
   - "**/package-lock.json"
   - "**/gradle.properties"
