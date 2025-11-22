@@ -28,7 +28,7 @@ jobs:
 
       - name: Set up Python 3.12
         if: steps.changes.outputs.cli == 'true'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: "pip"

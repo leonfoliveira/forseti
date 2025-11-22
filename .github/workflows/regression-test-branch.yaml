@@ -24,7 +24,7 @@ jobs:
           docker compose -f deployment/development/docker-compose.yaml up -d --wait
 
       - name: Set up Python for CLI
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: "pip"
