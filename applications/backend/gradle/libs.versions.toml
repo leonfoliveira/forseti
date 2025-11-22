@@ -1,7 +1,7 @@
 [versions]
 feign = "4.3.0"
 flyway = "9.22.3"
-hibernate-envers = "6.6.13.Final"
+hibernate-envers = "7.1.9.Final"
 hibernate-types = "2.21.1"
 jackson = "2.18.3"
 java-diff-utils = "4.15"
