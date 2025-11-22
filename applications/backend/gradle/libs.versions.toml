@@ -1,6 +1,6 @@
 [versions]
 feign = "4.3.0"
-flyway = "9.22.3"
+flyway = "11.17.1"
 hibernate-envers = "6.6.13.Final"
 hibernate-types = "2.21.1"
 jackson = "2.18.3"
