@@ -20,6 +20,7 @@ class HttpConfig : WebMvcConfigurer {
     fun filterChain(http: HttpSecurity): SecurityFilterChain =
         http
             .authorizeHttpRequests { it.anyRequest().permitAll() }
+            .csrf { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .build()
 }

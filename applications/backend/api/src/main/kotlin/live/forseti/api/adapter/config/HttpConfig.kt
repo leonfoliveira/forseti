@@ -45,6 +45,7 @@ class HttpConfig(
     fun filterChain(http: HttpSecurity): SecurityFilterChain =
         http
             .authorizeHttpRequests { it.anyRequest().permitAll() }
+            .csrf { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterAfter(httpContextExtractionFilter, BasicAuthenticationFilter::class.java)
             .build()
