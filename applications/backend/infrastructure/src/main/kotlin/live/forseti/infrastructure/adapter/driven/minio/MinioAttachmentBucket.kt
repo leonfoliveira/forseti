@@ -28,7 +28,7 @@ class MinioAttachmentBucket(
         bytes: ByteArray,
     ) {
         val key = attachment.id.toString()
-        logger.info("Uploading $bytes bytes with key: $key")
+        logger.info("Uploading ${bytes.size} bytes with key: $key")
 
         val putObjectRequest =
             PutObjectArgs
