@@ -101,6 +101,7 @@ services:
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=25.0"
       SESSION_EXPIRATION: 6h
       SESSION_ROOT_EXPIRATION: 3h
+      SESSION_AUTOJUDGE_EXPIRATION: 10m
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: forseti
       MINIO_SECRET_KEY: forseti8
@@ -152,6 +153,8 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=25.0"
+      SESSION_EXPIRATION: 6h
+      SESSION_ROOT_EXPIRATION: 3h
       SESSION_AUTOJUDGE_EXPIRATION: 10m
       MAX_CONCURRENT_SUBMISSIONS: "1"
       MINIO_ENDPOINT: http://minio:9000
