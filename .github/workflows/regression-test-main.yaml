@@ -1,4 +1,4 @@
-name: Regression Test - Main Branch
+name: Regression Test - Branch
 
 on:
   workflow_dispatch:
@@ -8,10 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout main branch
+      - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: main
 
       - name: Build test composition
         run: |
