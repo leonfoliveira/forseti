@@ -1,0 +1,60 @@
+name: "Forseti CodeQL Configuration"
+
+# Disable default queries and use custom configuration
+disable-default-queries: false
+
+# Additional query packs to include
+packs:
+  # Core security and quality packs for each language
+  - codeql/java-queries
+  - codeql/javascript-queries
+  - codeql/python-queries
+
+# Custom queries
+queries:
+  # Security-focused queries
+  - uses: security-extended
+  - uses: security-and-quality
+
+# Paths to include in analysis
+paths:
+  - applications/backend/**/src/
+  - applications/webapp/src/
+  - applications/autoscaler/autoscaler/
+  - applications/cli/cli/
+
+# Paths to ignore during analysis
+paths-ignore:
+  # Build outputs and dependencies
+  - applications/backend/**/.gradle/
+  - applications/backend/.kotlin/
+  - applications/backend/**/build/
+  - applications/webapp/node_modules/
+  - applications/webapp/.next/
+  - applications/webapp/coverage/
+  - applications/autoscaler/__pycache__/
+  - applications/autoscaler/htmlcov/
+  - applications/cli/__pycache__/
+  - applications/cli/build/
+  - applications/cli/dist/
+
+  # Documentation and configuration
+  - "**/*.md"
+  - "**/*.yml"
+  - "**/*.yaml"
+  - "**/*.json"
+  - "**/package-lock.json"
+  - "**/gradle.properties"
+
+# Language-specific configurations
+java:
+  source-root: applications/backend/
+
+javascript:
+  source-root:
+    - applications/webapp/
+
+python:
+  source-root:
+    - applications/autoscaler/
+    - applications/cli/

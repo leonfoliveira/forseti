@@ -1,0 +1,81 @@
+version: 2
+updates:
+  # Java/Kotlin backend dependencies
+  - package-ecosystem: "gradle"
+    directory: "/applications/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "leonfoliveira"
+    labels:
+      - "dependencies"
+      - "backend"
+    commit-message:
+      prefix: "chore(backend)"
+      include: "scope"
+
+  # Node.js webapp dependencies
+  - package-ecosystem: "npm"
+    directory: "/applications/webapp"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "leonfoliveira"
+    labels:
+      - "dependencies"
+      - "webapp"
+    commit-message:
+      prefix: "chore(webapp)"
+      include: "scope"
+
+  # Python autoscaler dependencies
+  - package-ecosystem: "pip"
+    directory: "/applications/autoscaler"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "leonfoliveira"
+    labels:
+      - "dependencies"
+      - "autoscaler"
+    commit-message:
+      prefix: "chore(autoscaler)"
+      include: "scope"
+
+  # Python CLI dependencies
+  - package-ecosystem: "pip"
+    directory: "/applications/cli"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "leonfoliveira"
+    labels:
+      - "dependencies"
+      - "cli"
+    commit-message:
+      prefix: "chore(cli)"
+      include: "scope"
+
+  # GitHub Actions workflow dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "leonfoliveira"
+    labels:
+      - "dependencies"
+      - "ci/cd"
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
