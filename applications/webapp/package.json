@@ -46,7 +46,7 @@
     "@babel/parser": "7.28.0",
     "@babel/traverse": "7.28.0",
     "@eslint/eslintrc": "3.3.1",
-    "@formatjs/cli": "6.7.2",
+    "@formatjs/cli": "6.7.4",
     "@lingual/i18n-check": "0.8.4",
     "@testing-library/dom": "10.4.0",
     "@testing-library/jest-dom": "6.6.3",
