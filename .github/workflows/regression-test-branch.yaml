@@ -3,6 +3,9 @@ name: Regression Test - Branch
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   regression-test:
     runs-on: ubuntu-latest

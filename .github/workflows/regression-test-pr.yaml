@@ -4,6 +4,11 @@ on:
   issue_comment:
     types: [created]
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
 jobs:
   regression-test:
     if: github.event.issue.pull_request && contains(github.event.comment.body, '/regression')

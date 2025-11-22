@@ -3,6 +3,9 @@ name: Check Regression
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   check-regression:
     runs-on: ubuntu-latest

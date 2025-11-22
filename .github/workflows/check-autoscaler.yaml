@@ -3,6 +3,9 @@ name: Check Autoscaler
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   check-autoscaler:
     runs-on: ubuntu-latest
