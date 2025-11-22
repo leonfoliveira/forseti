@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
@@ -12,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class HttpConfig : WebMvcConfigurer {
     /**
      * Security filter chain configuration.
-     * Disables CSRF and allows all requests.
+     * Allow all requests.
      * AutoJudge service only exposes health and metrics endpoints.
      */
     @Bean
@@ -20,5 +21,6 @@ class HttpConfig : WebMvcConfigurer {
         http
             .authorizeHttpRequests { it.anyRequest().permitAll() }
             .csrf { it.disable() }
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .build()
 }

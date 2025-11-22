@@ -37,7 +37,7 @@ class HttpConfig(
 
     /**
      * Configure the security filter chain.
-     * Disable CSRF and default spring security authentication.
+     * Disable default spring security authentication.
      * It will be handled by the custom interceptor [HttpPrivateInterceptor]
      * using @Private annotations on controller level.
      */
