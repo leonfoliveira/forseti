@@ -15,6 +15,8 @@ updates:
     commit-message:
       prefix: "chore(backend)"
       include: "scope"
+    vulnerability-alerts:
+      severity: "high"
 
   # Node.js webapp dependencies
   - package-ecosystem: "npm"
@@ -31,6 +33,8 @@ updates:
     commit-message:
       prefix: "chore(webapp)"
       include: "scope"
+    vulnerability-alerts:
+      severity: "high"
 
   # Python autoscaler dependencies
   - package-ecosystem: "pip"
@@ -47,6 +51,8 @@ updates:
     commit-message:
       prefix: "chore(autoscaler)"
       include: "scope"
+    vulnerability-alerts:
+      severity: "high"
 
   # Python CLI dependencies
   - package-ecosystem: "pip"
@@ -63,6 +69,8 @@ updates:
     commit-message:
       prefix: "chore(cli)"
       include: "scope"
+    vulnerability-alerts:
+      severity: "high"
 
   # GitHub Actions workflow dependencies
   - package-ecosystem: "github-actions"
@@ -79,3 +87,5 @@ updates:
     commit-message:
       prefix: "chore(ci)"
       include: "scope"
+    vulnerability-alerts:
+      severity: "high"
