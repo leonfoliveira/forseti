@@ -58,7 +58,7 @@ jobs:
             core.setOutput('repo', pullRequest.head.repo.full_name);
 
       - name: Checkout PR code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ${{ steps.pr.outputs.repo }}
           ref: ${{ steps.pr.outputs.sha }}
