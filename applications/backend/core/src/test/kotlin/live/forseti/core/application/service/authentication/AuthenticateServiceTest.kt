@@ -7,6 +7,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import live.forseti.core.application.service.session.CreateSessionService
+import live.forseti.core.domain.entity.Member
 import live.forseti.core.domain.entity.MemberMockBuilder
 import live.forseti.core.domain.entity.SessionMockBuilder
 import live.forseti.core.domain.exception.UnauthorizedException
@@ -44,6 +45,17 @@ class AuthenticateServiceTest :
                 }.message shouldBe "Invalid login or password"
             }
 
+            listOf(Member.Type.API, Member.Type.AUTOJUDGE).forEach {
+                test("should throw UnauthorizedException when member type is $it") {
+                    val member = MemberMockBuilder.build(type = it)
+                    every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns member
+
+                    shouldThrow<UnauthorizedException> {
+                        sut.authenticate(inputDTO)
+                    }.message shouldBe "Invalid login or password"
+                }
+            }
+
             test("should throw UnauthorizedException when password does not match") {
                 val member = MemberMockBuilder.build()
                 every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns member
@@ -77,6 +89,17 @@ class AuthenticateServiceTest :
                 shouldThrow<UnauthorizedException> {
                     sut.authenticateToContest(contestId, inputDTO)
                 }.message shouldBe "Invalid login or password"
+            }
+
+            listOf(Member.Type.API, Member.Type.AUTOJUDGE).forEach {
+                test("should throw UnauthorizedException when member type is $it") {
+                    val member = MemberMockBuilder.build(type = it)
+                    every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns member
+
+                    shouldThrow<UnauthorizedException> {
+                        sut.authenticateToContest(contestId, inputDTO)
+                    }.message shouldBe "Invalid login or password"
+                }
             }
 
             test("should throw UnauthorizedException when password does not match") {

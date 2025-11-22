@@ -9,8 +9,6 @@ import java.util.UUID
 interface MemberRepository : BaseRepository<Member> {
     fun findEntityById(id: UUID): Member?
 
-    fun findByLogin(login: String): Member?
-
     fun findByLoginAndContestId(
         login: String,
         contestId: UUID?,

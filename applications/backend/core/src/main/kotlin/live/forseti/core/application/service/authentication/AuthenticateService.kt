@@ -1,6 +1,7 @@
 package live.forseti.core.application.service.authentication
 
 import live.forseti.core.application.service.session.CreateSessionService
+import live.forseti.core.domain.entity.Member
 import live.forseti.core.domain.entity.Session
 import live.forseti.core.domain.exception.UnauthorizedException
 import live.forseti.core.port.driven.Hasher
@@ -21,6 +22,10 @@ class AuthenticateService(
 ) : AuthenticateUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    companion object {
+        val FORBIDDEN_MEMBER_TYPES = listOf(Member.Type.API, Member.Type.AUTOJUDGE)
+    }
+
     /**
      * Authenticates a member and creates a session.
      *
@@ -35,6 +40,9 @@ class AuthenticateService(
         val member =
             memberRepository.findByLoginAndContestId(inputDTO.login, null)
                 ?: throw UnauthorizedException("Invalid login or password")
+        if (FORBIDDEN_MEMBER_TYPES.contains(member.type)) {
+            throw UnauthorizedException("Invalid login or password")
+        }
 
         if (!hasher.verify(inputDTO.password, member.password)) {
             throw UnauthorizedException("Invalid login or password")
@@ -64,6 +72,9 @@ class AuthenticateService(
             memberRepository.findByLoginAndContestId(inputDTO.login, contestId)
                 ?: memberRepository.findByLoginAndContestId(inputDTO.login, null)
                 ?: throw UnauthorizedException("Invalid login or password")
+        if (FORBIDDEN_MEMBER_TYPES.contains(member.type)) {
+            throw UnauthorizedException("Invalid login or password")
+        }
 
         if (!hasher.verify(inputDTO.password, member.password)) {
             throw UnauthorizedException("Invalid login or password")
