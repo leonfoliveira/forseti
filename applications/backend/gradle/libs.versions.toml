@@ -19,7 +19,7 @@ snakeyaml = "2.4"
 spring-boot = "3.4.5"
 springdoc-openapi = "2.8.9"
 springmockk = "4.0.2"
-testcontainers = "1.21.0"
+testcontainers = "1.21.3"
 
 [libraries]
 hibernate-envers = { module = "org.hibernate.orm:hibernate-envers", version.ref = "hibernate-envers" }
