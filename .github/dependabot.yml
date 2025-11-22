@@ -7,8 +7,6 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 5
-    reviewers:
-      - "leonfoliveira"
     labels:
       - "dependencies"
       - "backend"
@@ -25,8 +23,6 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 5
-    reviewers:
-      - "leonfoliveira"
     labels:
       - "dependencies"
       - "webapp"
@@ -43,8 +39,6 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 5
-    reviewers:
-      - "leonfoliveira"
     labels:
       - "dependencies"
       - "autoscaler"
@@ -61,8 +55,6 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 5
-    reviewers:
-      - "leonfoliveira"
     labels:
       - "dependencies"
       - "cli"
@@ -79,8 +71,6 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 3
-    reviewers:
-      - "leonfoliveira"
     labels:
       - "dependencies"
       - "ci/cd"
