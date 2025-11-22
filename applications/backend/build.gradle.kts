@@ -54,12 +54,7 @@ allprojects {
 
 subprojects {
     dependencies {
-        implementation(rootProject.libs.bundles.jackson)
-        implementation(rootProject.libs.bundles.micrometer)
-        implementation(rootProject.libs.bundles.prometheus)
         implementation(rootProject.libs.bundles.spring)
-        implementation(rootProject.libs.kotlin.reflect)
-        implementation(rootProject.libs.minio)
 
         testImplementation(rootProject.libs.bundles.kotest)
         testImplementation(rootProject.libs.bundles.mockk)
@@ -70,7 +65,6 @@ subprojects {
         testFixturesImplementation(rootProject.libs.bundles.kotest)
         testFixturesImplementation(rootProject.libs.bundles.mockk)
         testFixturesImplementation(rootProject.libs.bundles.spring.test)
-        testFixturesImplementation(rootProject.libs.bundles.testcontainers)
 
         developmentOnly(rootProject.libs.spring.boot.dev.tools)
     }

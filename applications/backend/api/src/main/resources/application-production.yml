@@ -1,6 +1,6 @@
 spring:
   config:
-    import: classpath:common-production.yml
+    import: classpath:core-production.yml
 server:
   cors:
     allowed-origins: ${WEBAPP_PUBLIC_URL:https://forseti.live}

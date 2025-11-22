@@ -1,0 +1,20 @@
+meta {
+  name: delete_clarification_by_id
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{base_url}}/{{clarification_id}}
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  clarification_id: 123
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

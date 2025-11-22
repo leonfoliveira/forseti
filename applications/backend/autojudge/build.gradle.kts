@@ -3,11 +3,10 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":common"))
-    implementation(libs.java.diff.utils)
-    implementation(libs.opencsv)
+    implementation(project(":core"))
+    implementation(project(":infrastructure"))
 
-    testImplementation(testFixtures(project(":common")))
+    testImplementation(testFixtures(project(":core")))
 }
 
 tasks.bootJar {
@@ -19,12 +18,11 @@ kover {
         filters {
             excludes {
                 classes.addAll(
-                    "io.github.leonfoliveira.forseti.autojudge.Application",
-                    "io.github.leonfoliveira.forseti.autojudge.ApplicationKt",
+                    "live.forseti.autojudge.Application",
+                    "live.forseti.autojudge.ApplicationKt",
                 )
                 annotatedBy(
                     "org.springframework.context.annotation.Configuration",
-                    "io.github.leonfoliveira.forseti.common.util.SkipCoverage",
                 )
             }
         }

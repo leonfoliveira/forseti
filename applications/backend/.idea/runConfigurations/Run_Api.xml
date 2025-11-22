@@ -3,7 +3,7 @@
     <envs>
       <env name="SPRING_PROFILES_ACTIVE" value="development" />
     </envs>
-    <option name="MAIN_CLASS_NAME" value="io.github.leonfoliveira.forseti.api.ApplicationKt" />
+    <option name="MAIN_CLASS_NAME" value="live.forseti.api.ApplicationKt" />
     <module name="backend.api.main" />
     <shortenClasspath name="ARGS_FILE" />
     <extension name="net.ashald.envfile">

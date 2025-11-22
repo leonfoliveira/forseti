@@ -1,0 +1,14 @@
+meta {
+  name: contest
+  seq: 3
+}
+
+auth {
+  mode: inherit
+}
+
+vars:pre-request {
+  base_url: {{api_url}}/v1/contests
+  contest_id: 123
+  contest_slug: abc
+}

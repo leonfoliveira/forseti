@@ -1,0 +1,23 @@
+meta {
+  name: authenticate_to_contest
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/sign-in
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "login": "contestant",
+    "password": "123"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

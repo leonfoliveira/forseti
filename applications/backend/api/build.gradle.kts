@@ -3,10 +3,12 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":common"))
+    implementation(project(":core"))
+    implementation(project(":infrastructure"))
+
     implementation(rootProject.libs.springdoc.openapi.ui)
 
-    testImplementation(testFixtures(project(":common")))
+    testImplementation(testFixtures(project(":core")))
 }
 
 tasks.bootJar {
@@ -14,7 +16,7 @@ tasks.bootJar {
 }
 
 tasks.bootRun {
-    dependsOn(":common:flywayMigrate")
+    dependsOn(":core:flywayMigrate")
 }
 
 kover {
@@ -22,12 +24,11 @@ kover {
         filters {
             excludes {
                 classes.addAll(
-                    "io.github.leonfoliveira.forseti.api.Application",
-                    "io.github.leonfoliveira.forseti.api.ApplicationKt",
+                    "live.forseti.api.Application",
+                    "live.forseti.api.ApplicationKt",
                 )
                 annotatedBy(
                     "org.springframework.context.annotation.Configuration",
-                    "io.github.leonfoliveira.forseti.common.util.SkipCoverage",
                 )
             }
         }

@@ -1,0 +1,38 @@
+meta {
+  name: create_contest
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base_url}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "slug": "{{$randomWord}}",
+    "title": "{{$randomWords}}",
+    "languages": [
+      "{{Submission.Language.CPP_17}}",
+      "{{Submission.Language.JAVA_21}}",
+      "{{Submission.Language.PYTHON_312}}"
+    ],
+    "startAt": "2026-01-01T00:00:00Z",
+    "endAt": "2026-01-02T00:00:00Z"
+  }
+}
+
+script:post-response {
+  const contestId = res.body.id;
+  const contestSlug = res.body.slug;
+  
+  bru.setVar("contest_id", contestId)
+  bru.setVar("contest_slug", contestSlug)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
