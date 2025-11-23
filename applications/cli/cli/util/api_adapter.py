@@ -92,6 +92,7 @@ class ApiAdapter:
                 f"{self.api_url}/v1/session/me",
                 verify=VERIFY_SSL,
                 cookies={self.SESSION_ID_COOKIE: session_id},
+                headers={self.CSRF_TOKEN_HEADER: csrf_token},
             )
             if response.status_code == 200:
                 return session_id, csrf_token
