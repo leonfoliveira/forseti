@@ -45,6 +45,9 @@ describe("AxiosClient", () => {
         url: `${baseUrl}/test`,
         method: "GET",
         withCredentials: true,
+        withXSRFToken: true,
+        xsrfCookieName: "csrf_token",
+        xsrfHeaderName: "x-csrf-token",
         headers: {
           "x-trace-id": expect.any(String),
         },
@@ -94,6 +97,9 @@ describe("AxiosClient", () => {
           "x-trace-id": expect.any(String),
         },
         withCredentials: true,
+        withXSRFToken: true,
+        xsrfCookieName: "csrf_token",
+        xsrfHeaderName: "x-csrf-token",
       });
     });
 
@@ -135,6 +141,9 @@ describe("AxiosClient", () => {
           "x-forwarded-for": clientHeaders["x-forwarded-for"],
           "user-agent": clientHeaders["user-agent"],
         },
+        withXSRFToken: true,
+        xsrfCookieName: "csrf_token",
+        xsrfHeaderName: "x-csrf-token",
       });
     });
   });
@@ -151,6 +160,9 @@ describe("AxiosClient", () => {
         method: "POST",
         data: "value",
         withCredentials: true,
+        withXSRFToken: true,
+        xsrfCookieName: "csrf_token",
+        xsrfHeaderName: "x-csrf-token",
         headers: {
           "x-trace-id": expect.any(String),
         },
@@ -171,6 +183,9 @@ describe("AxiosClient", () => {
         method: "PUT",
         data: "value",
         withCredentials: true,
+        withXSRFToken: true,
+        xsrfCookieName: "csrf_token",
+        xsrfHeaderName: "x-csrf-token",
         headers: {
           "x-trace-id": expect.any(String),
         },
@@ -189,6 +204,9 @@ describe("AxiosClient", () => {
         url: `${baseUrl}/test`,
         method: "DELETE",
         withCredentials: true,
+        withXSRFToken: true,
+        xsrfCookieName: "csrf_token",
+        xsrfHeaderName: "x-csrf-token",
         headers: {
           "x-trace-id": expect.any(String),
         },

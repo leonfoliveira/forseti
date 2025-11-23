@@ -15,6 +15,8 @@ export class AxiosClient {
     "user-agent",
     "x-trace-id",
   ]);
+  static readonly CSRF_COOKIE_NAME = "csrf_token";
+  static readonly CSRF_HEADER_NAME = "x-csrf-token";
 
   constructor(
     private readonly baseUrl: string,
@@ -70,6 +72,10 @@ export class AxiosClient {
         ...requestConfig.headers,
         "x-trace-id": uuidv4(),
       };
+
+      requestConfig.xsrfCookieName = AxiosClient.CSRF_COOKIE_NAME;
+      requestConfig.xsrfHeaderName = AxiosClient.CSRF_HEADER_NAME;
+      requestConfig.withXSRFToken = true;
 
       if (this.isServer) {
         await this.forwardCookies(requestConfig);
