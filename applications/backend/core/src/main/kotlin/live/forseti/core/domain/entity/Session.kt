@@ -21,12 +21,21 @@ class Session(
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
     /**
+     * The CSRF token associated with this session.
+     */
+    @Column(name = "csrf_token", nullable = false)
+    @Audited(withModifiedFlag = false)
+    val csrfToken: UUID,
+    /**
      * The member to which this session belongs.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
     val member: Member,
+    /**
+     * The expiration time of this session.
+     */
     @Column(name = "expires_at", nullable = false)
     @Audited(withModifiedFlag = false)
     val expiresAt: OffsetDateTime,

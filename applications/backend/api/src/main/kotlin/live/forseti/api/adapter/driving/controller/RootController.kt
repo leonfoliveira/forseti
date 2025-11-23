@@ -9,7 +9,8 @@ import live.forseti.api.adapter.dto.request.NoLoginAuthenticateRequestDTO
 import live.forseti.api.adapter.dto.response.ErrorResponseDTO
 import live.forseti.api.adapter.dto.response.session.SessionResponseDTO
 import live.forseti.api.adapter.dto.response.session.toResponseDTO
-import live.forseti.api.adapter.util.SessionCookieUtil
+import live.forseti.api.adapter.util.cookie.CsrfCookieBuilder
+import live.forseti.api.adapter.util.cookie.SessionCookieBuilder
 import live.forseti.core.domain.entity.Member
 import live.forseti.core.port.driving.usecase.authentication.AuthenticateUseCase
 import live.forseti.core.port.dto.input.authorization.AuthenticateInputDTO
@@ -25,7 +26,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/root")
 class RootController(
     val authenticateUseCase: AuthenticateUseCase,
-    val sessionCookieUtil: SessionCookieUtil,
+    val sessionCookieBuilder: SessionCookieBuilder,
+    val csrfCookieBuilder: CsrfCookieBuilder,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -63,10 +65,13 @@ class RootController(
                     password = body.password,
                 ),
             )
-        val cookie = sessionCookieUtil.buildCookie(session)
+
+        val sessionCookie = sessionCookieBuilder.buildCookie(session)
+        val csrfCookie = csrfCookieBuilder.buildCookie(session)
+
         return ResponseEntity
             .ok()
-            .header(HttpHeaders.SET_COOKIE, cookie)
+            .header(HttpHeaders.SET_COOKIE, sessionCookie, csrfCookie)
             .body(session.toResponseDTO())
     }
 }

@@ -6,7 +6,8 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import live.forseti.api.adapter.dto.response.session.toResponseDTO
-import live.forseti.api.adapter.util.SessionCookieUtil
+import live.forseti.api.adapter.util.cookie.CsrfCookieBuilder
+import live.forseti.api.adapter.util.cookie.SessionCookieBuilder
 import live.forseti.core.domain.entity.SessionMockBuilder
 import live.forseti.core.port.driving.usecase.authentication.AuthenticateUseCase
 import live.forseti.core.port.dto.input.authorization.ContestAuthenticateInputDTO
@@ -25,7 +26,9 @@ class ContestAuthenticationControllerTest(
     @MockkBean(relaxed = true)
     private val authenticateUseCase: AuthenticateUseCase,
     @MockkBean(relaxed = true)
-    private val sessionCookieUtil: SessionCookieUtil,
+    private val sessionCookieBuilder: SessionCookieBuilder,
+    @MockkBean(relaxed = true)
+    private val csrfCookieBuilder: CsrfCookieBuilder,
     private val webMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) : FunSpec({
@@ -36,7 +39,8 @@ class ContestAuthenticationControllerTest(
             val body = ContestAuthenticateInputDTO(login = "user", password = "password")
             val session = SessionMockBuilder.build()
             every { authenticateUseCase.authenticateToContest(contestId, body) } returns session
-            every { sessionCookieUtil.buildCookie(session) } returns "session_id=cookie_value"
+            every { sessionCookieBuilder.buildCookie(session) } returns "session_id=cookie_value"
+            every { csrfCookieBuilder.buildCookie(session) } returns "csrf_token=cookie_value"
 
             webMvc
                 .post("/v1/contests/{contestId}/sign-in", contestId) {
@@ -46,6 +50,7 @@ class ContestAuthenticationControllerTest(
                     status { isOk() }
                     cookie {
                         value("session_id", "cookie_value")
+                        value("csrf_token", "cookie_value")
                     }
                     content { session.toResponseDTO() }
                 }

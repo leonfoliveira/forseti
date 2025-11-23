@@ -7,7 +7,8 @@ import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import live.forseti.api.adapter.dto.request.NoLoginAuthenticateRequestDTO
 import live.forseti.api.adapter.dto.response.session.toResponseDTO
-import live.forseti.api.adapter.util.SessionCookieUtil
+import live.forseti.api.adapter.util.cookie.CsrfCookieBuilder
+import live.forseti.api.adapter.util.cookie.SessionCookieBuilder
 import live.forseti.core.domain.entity.Member
 import live.forseti.core.domain.entity.SessionMockBuilder
 import live.forseti.core.port.driving.usecase.authentication.AuthenticateUseCase
@@ -26,7 +27,9 @@ class RootAuthenticationControllerTest(
     @MockkBean(relaxed = true)
     private val authenticateUseCase: AuthenticateUseCase,
     @MockkBean(relaxed = true)
-    private val sessionCookieUtil: SessionCookieUtil,
+    private val sessionCookieBuilder: SessionCookieBuilder,
+    @MockkBean(relaxed = true)
+    private val csrfCookieBuilder: CsrfCookieBuilder,
     private val webMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) : FunSpec({
@@ -41,7 +44,8 @@ class RootAuthenticationControllerTest(
                     password = body.password,
                 )
             every { authenticateUseCase.authenticate(authenticateInputDTO) } returns session
-            every { sessionCookieUtil.buildCookie(session) } returns "session_id=cookie_value"
+            every { sessionCookieBuilder.buildCookie(session) } returns "session_id=cookie_value"
+            every { csrfCookieBuilder.buildCookie(session) } returns "csrf_token=cookie_value"
 
             webMvc
                 .post("/v1/root/sign-in") {
@@ -51,6 +55,7 @@ class RootAuthenticationControllerTest(
                     status { isOk() }
                     cookie {
                         value("session_id", "cookie_value")
+                        value("csrf_token", "cookie_value")
                     }
                     content { session.toResponseDTO() }
                 }

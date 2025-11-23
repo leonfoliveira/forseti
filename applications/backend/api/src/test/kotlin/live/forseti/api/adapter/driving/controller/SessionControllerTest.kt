@@ -5,7 +5,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import io.mockk.verify
-import live.forseti.api.adapter.util.SessionCookieUtil
+import live.forseti.api.adapter.util.cookie.SessionCookieBuilder
 import live.forseti.core.domain.entity.SessionMockBuilder
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.session.DeleteSessionUseCase
@@ -23,13 +23,13 @@ class SessionControllerTest(
     @MockkBean(relaxed = true)
     private val deleteSessionUseCase: DeleteSessionUseCase,
     @MockkBean(relaxed = true)
-    private val sessionCookieUtil: SessionCookieUtil,
+    private val sessionCookieBuilder: SessionCookieBuilder,
     private val webMvc: MockMvc,
 ) : FunSpec({
         extensions(SpringExtension)
 
         beforeEach {
-            every { sessionCookieUtil.buildClearCookie() } returns "session_id="
+            every { sessionCookieBuilder.buildCleanCookie() } returns "session_id="
         }
 
         test("getSession") {

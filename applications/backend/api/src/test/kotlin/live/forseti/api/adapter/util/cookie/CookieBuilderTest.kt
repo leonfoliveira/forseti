@@ -1,14 +1,13 @@
-package live.forseti.api.adapter.util
+package live.forseti.api.adapter.util.cookie
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
 import io.mockk.every
 import io.mockk.mockkStatic
-import live.forseti.core.domain.entity.SessionMockBuilder
 import java.time.OffsetDateTime
 
-class SessionCookieUtilTest :
+class CookieBuilderTest :
     FunSpec({
         val cookieDomain = ".localhost"
 
@@ -19,19 +18,20 @@ class SessionCookieUtilTest :
             every { OffsetDateTime.now() } returns now
         }
 
+        val cookieKey = "session_id"
+        val cookieValue = "123"
+
         context("secure = true") {
             val sut =
-                SessionCookieUtil(
+                CookieBuilder(
                     cookieDomain = cookieDomain,
                     cookieSecure = true,
                 )
 
             test("should return a cookie string") {
-                val session = SessionMockBuilder.build()
+                val cookie = sut.from(cookieKey, cookieValue).build().toString()
 
-                val cookie = sut.buildCookie(session)
-
-                cookie shouldContain "session_id=${session.id}"
+                cookie shouldContain "$cookieKey=$cookieValue"
                 cookie shouldContain "Domain=.localhost"
                 cookie shouldContain "HttpOnly"
                 cookie shouldContain "Secure"
@@ -40,9 +40,9 @@ class SessionCookieUtilTest :
             }
 
             test("should return a clear cookie string") {
-                val cookie = sut.buildClearCookie()
+                val cookie = sut.clean(cookieKey).build().toString()
 
-                cookie shouldContain "session_id="
+                cookie shouldContain "$cookieKey="
                 cookie shouldContain "Domain=.localhost"
                 cookie shouldContain "HttpOnly"
                 cookie shouldContain "Secure"
@@ -54,17 +54,15 @@ class SessionCookieUtilTest :
 
         context("secure = false") {
             val sut =
-                SessionCookieUtil(
+                CookieBuilder(
                     cookieDomain = cookieDomain,
                     cookieSecure = false,
                 )
 
             test("should return a cookie string") {
-                val session = SessionMockBuilder.build()
+                val cookie = sut.from(cookieKey, cookieValue).build().toString()
 
-                val cookie = sut.buildCookie(session)
-
-                cookie shouldContain "session_id=${session.id}"
+                cookie shouldContain "$cookieKey=$cookieValue"
                 cookie shouldNotContain "Domain=.localhost"
                 cookie shouldContain "HttpOnly"
                 cookie shouldNotContain "Secure"
@@ -73,9 +71,9 @@ class SessionCookieUtilTest :
             }
 
             test("should return a clear cookie string") {
-                val cookie = sut.buildClearCookie()
+                val cookie = sut.clean(cookieKey).build().toString()
 
-                cookie shouldContain "session_id="
+                cookie shouldContain "$cookieKey="
                 cookie shouldNotContain "Domain=.localhost"
                 cookie shouldContain "HttpOnly"
                 cookie shouldNotContain "Secure"
