@@ -10,6 +10,10 @@ delete {
   auth: inherit
 }
 
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
 vars:pre-request {
   clarification_id: 123
 }

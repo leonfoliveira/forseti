@@ -10,6 +10,10 @@ put {
   auth: inherit
 }
 
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
 settings {
   encodeUrl: true
   timeout: 0

@@ -2,7 +2,6 @@ package live.forseti.api.adapter.util.cookie
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.string.shouldContain
-import io.kotest.matchers.string.shouldNotContain
 import io.mockk.every
 import io.mockk.mockk
 import live.forseti.core.domain.entity.SessionMockBuilder
