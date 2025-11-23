@@ -44,13 +44,18 @@ class HttpConfig(
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain =
         http
+            // Authorization protection is handled by the HttpPrivateInterceptor
             .authorizeHttpRequests { it.anyRequest().permitAll() }
+            // CSRF protection is handled by the HttpContextExtractionFilter
             .csrf { it.disable() }
-            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            // Session management is handled manually
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.NEVER) }
+            // Filter to extract context (ip, traceId, session) from HTTP requests
             .addFilterAfter(httpContextExtractionFilter, BasicAuthenticationFilter::class.java)
             .build()
 
     override fun addInterceptors(registry: InterceptorRegistry) {
+        // Interceptor to enforce @Private annotations
         registry.addInterceptor(httpPrivateInterceptor)
     }
 }

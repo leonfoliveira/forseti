@@ -19,8 +19,11 @@ class HttpConfig : WebMvcConfigurer {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain =
         http
+            // There is no private endpoints in AutoJudge service
             .authorizeHttpRequests { it.anyRequest().permitAll() }
+            // There is no write operations in AutoJudge service, so CSRF protection is not needed
             .csrf { it.disable() }
-            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            // Session management is handled manually
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.NEVER) }
             .build()
 }
