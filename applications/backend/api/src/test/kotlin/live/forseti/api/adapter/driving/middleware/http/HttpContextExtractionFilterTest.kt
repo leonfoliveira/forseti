@@ -1,5 +1,6 @@
 package live.forseti.api.adapter.driving.middleware.http
 
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -11,6 +12,8 @@ import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import live.forseti.core.domain.entity.SessionMockBuilder
+import live.forseti.core.domain.exception.ForbiddenException
+import live.forseti.core.domain.exception.UnauthorizedException
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.session.FindSessionUseCase
 import org.slf4j.MDC
@@ -99,20 +102,21 @@ class HttpContextExtractionFilterTest :
             RequestContext.getContext().session shouldBe null
         }
 
-        test("should not set authorization when session is not found") {
+        test("should throw UnauthorizedException when session is not found") {
             val request = mockk<HttpServletRequest>(relaxed = true)
             val response = mockk<HttpServletResponse>(relaxed = true)
             val filterChain = mockk<FilterChain>(relaxed = true)
             every { request.cookies } returns arrayOf(Cookie("session_id", "00000000-0000-0000-0000-000000000000"))
             every { findSessionUseCase.findByIdNullable(any()) } returns null
 
-            sut.doFilterInternal(request, response, filterChain)
+            shouldThrow<UnauthorizedException> {
+                sut.doFilterInternal(request, response, filterChain)
+            }
 
-            RequestContext.getContext().session shouldBe null
             verify { findSessionUseCase.findByIdNullable(any()) }
         }
 
-        test("should not set authorization with csrf token mismatch") {
+        test("should throw ForbiddenException with csrf token mismatch") {
             val request = mockk<HttpServletRequest>(relaxed = true)
             val response = mockk<HttpServletResponse>(relaxed = true)
             val filterChain = mockk<FilterChain>(relaxed = true)
@@ -121,7 +125,9 @@ class HttpContextExtractionFilterTest :
             every { request.getHeader("X-CSRF-Token") } returns "invalid-csrf-token"
             every { findSessionUseCase.findByIdNullable(expectedSession.id) } returns expectedSession
 
-            sut.doFilterInternal(request, response, filterChain)
+            shouldThrow<ForbiddenException> {
+                sut.doFilterInternal(request, response, filterChain)
+            }
 
             RequestContext.getContext().session shouldBe null
             verify { findSessionUseCase.findByIdNullable(expectedSession.id) }
@@ -139,7 +145,9 @@ class HttpContextExtractionFilterTest :
             every { request.getHeader("X-CSRF-Token") } returns expiredSession.csrfToken.toString()
             every { findSessionUseCase.findByIdNullable(expiredSession.id) } returns expiredSession
 
-            sut.doFilterInternal(request, response, filterChain)
+            shouldThrow<UnauthorizedException> {
+                sut.doFilterInternal(request, response, filterChain)
+            }
 
             RequestContext.getContext().session shouldBe null
             verify { findSessionUseCase.findByIdNullable(expiredSession.id) }

@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import live.forseti.core.domain.entity.Session
+import live.forseti.core.domain.exception.ForbiddenException
+import live.forseti.core.domain.exception.UnauthorizedException
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.session.FindSessionUseCase
 import org.slf4j.MDC
@@ -52,7 +54,7 @@ class HttpContextExtractionFilter(
         csrfToken: String?,
     ): Session? {
         if (sessionId == null) {
-            logger.info("Invalid or missing session_id cookie")
+            logger.info("No session_id cookie")
             return null
         }
         if (sessionId.isBlank()) {
@@ -70,15 +72,15 @@ class HttpContextExtractionFilter(
 
         if (session == null) {
             logger.info("Could not find session")
-            return null
+            throw UnauthorizedException()
         }
         if (session.csrfToken.toString() != csrfToken) {
             logger.info("CSRF token mismatch")
-            return null
+            throw ForbiddenException()
         }
         if (session.expiresAt < OffsetDateTime.now()) {
             logger.info("Session expired")
-            return null
+            throw UnauthorizedException()
         }
 
         logger.info("Finished extracting session")
