@@ -112,6 +112,21 @@ class HttpContextExtractionFilterTest :
             verify { findSessionUseCase.findByIdNullable(any()) }
         }
 
+        test("should not set authorization with csrf token mismatch") {
+            val request = mockk<HttpServletRequest>(relaxed = true)
+            val response = mockk<HttpServletResponse>(relaxed = true)
+            val filterChain = mockk<FilterChain>(relaxed = true)
+            val expectedSession = SessionMockBuilder.build()
+            every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
+            every { request.getHeader("X-CSRF-Token") } returns "invalid-csrf-token"
+            every { findSessionUseCase.findByIdNullable(expectedSession.id) } returns expectedSession
+
+            sut.doFilterInternal(request, response, filterChain)
+
+            RequestContext.getContext().session shouldBe null
+            verify { findSessionUseCase.findByIdNullable(expectedSession.id) }
+        }
+
         test("should not set authorization when session is expired") {
             val request = mockk<HttpServletRequest>(relaxed = true)
             val response = mockk<HttpServletResponse>(relaxed = true)
@@ -121,6 +136,7 @@ class HttpContextExtractionFilterTest :
                     expiresAt = OffsetDateTime.now().minusHours(1),
                 )
             every { request.cookies } returns arrayOf(Cookie("session_id", expiredSession.id.toString()))
+            every { request.getHeader("X-CSRF-Token") } returns expiredSession.csrfToken.toString()
             every { findSessionUseCase.findByIdNullable(expiredSession.id) } returns expiredSession
 
             sut.doFilterInternal(request, response, filterChain)
@@ -135,6 +151,7 @@ class HttpContextExtractionFilterTest :
             val filterChain = mockk<FilterChain>(relaxed = true)
             val expectedSession = SessionMockBuilder.build()
             every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
+            every { request.getHeader("X-CSRF-Token") } returns expectedSession.csrfToken.toString()
             every { findSessionUseCase.findByIdNullable(expectedSession.id) } returns expectedSession
 
             sut.doFilterInternal(request, response, filterChain)

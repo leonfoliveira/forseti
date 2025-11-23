@@ -30,12 +30,13 @@ class HttpContextExtractionFilter(
             request.getHeader("X-Forwarded-For")
                 ?: request.remoteAddr
         val sessionId = request.cookies?.find { it.name == "session_id" }?.value
+        val csrfToken = request.getHeader("X-CSRF-Token")
 
         val context = RequestContext.getContext()
 
         context.ip = ip
         context.traceId = MDC.get("traceId")
-        context.session = extractSession(sessionId)
+        context.session = extractSession(sessionId, csrfToken)
 
         return filterChain.doFilter(request, response)
     }
@@ -46,7 +47,10 @@ class HttpContextExtractionFilter(
      * @param sessionId The session ID from the cookie.
      * @return The session if found and valid, null otherwise.
      */
-    private fun extractSession(sessionId: String?): Session? {
+    private fun extractSession(
+        sessionId: String?,
+        csrfToken: String?,
+    ): Session? {
         if (sessionId == null) {
             logger.info("Invalid or missing session_id cookie")
             return null
@@ -66,6 +70,10 @@ class HttpContextExtractionFilter(
 
         if (session == null) {
             logger.info("Could not find session")
+            return null
+        }
+        if (session.csrfToken.toString() != csrfToken) {
+            logger.info("CSRF token mismatch")
             return null
         }
         if (session.expiresAt < OffsetDateTime.now()) {
