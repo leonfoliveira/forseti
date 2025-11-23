@@ -85,9 +85,8 @@ class ApiAdapter:
             raise click.ClickException(response.text)
 
     def _authenticate(self):
-        if (
-            (session_id := self._get_cached_value(self.SESSION_ID_KEYRING_KEY))
-            and (csrf_token := self._get_cached_value(self.CSRF_TOKEN_KEYRING_KEY))
+        if (session_id := self._get_cached_value(self.SESSION_ID_KEYRING_KEY)) and (
+            csrf_token := self._get_cached_value(self.CSRF_TOKEN_KEYRING_KEY)
         ):
             response = requests.get(
                 f"{self.api_url}/v1/session/me",
@@ -125,8 +124,6 @@ class ApiAdapter:
 
     def _set_cached_value(self, key: str, value: str) -> None:
         try:
-            keyring.set_password(
-                self.SERVICE_NAME, key, value
-            )
+            keyring.set_password(self.SERVICE_NAME, key, value)
         except keyring.errors.NoKeyringError:
             pass
