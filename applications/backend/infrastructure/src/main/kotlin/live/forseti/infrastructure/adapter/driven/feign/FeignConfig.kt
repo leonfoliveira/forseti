@@ -23,6 +23,7 @@ class FeignConfig : RequestInterceptor {
         val session = RequestContext.getContext().session
         if (session != null) {
             template.header("Cookie", "session_id=${session.id}")
+            template.header("X-CSRF-Token", session.csrfToken.toString())
         }
 
         val traceId = MDC.get("traceId")
