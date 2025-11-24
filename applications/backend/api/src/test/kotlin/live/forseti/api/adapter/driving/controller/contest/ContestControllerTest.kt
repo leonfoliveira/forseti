@@ -7,7 +7,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import io.mockk.verify
-import live.forseti.api.adapter.driving.controller.advice.GlobalExceptionHandler
+import live.forseti.api.adapter.driving.advice.GlobalExceptionHandler
 import live.forseti.api.adapter.dto.response.contest.toFullResponseDTO
 import live.forseti.api.adapter.dto.response.contest.toMetadataDTO
 import live.forseti.api.adapter.dto.response.contest.toPublicOutputDTO

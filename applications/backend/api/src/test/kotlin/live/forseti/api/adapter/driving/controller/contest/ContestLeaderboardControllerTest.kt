@@ -5,7 +5,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import io.mockk.mockk
-import live.forseti.api.adapter.driving.controller.advice.GlobalExceptionHandler
+import live.forseti.api.adapter.driving.advice.GlobalExceptionHandler
 import live.forseti.core.config.JacksonConfig
 import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import live.forseti.core.port.driving.usecase.leaderboard.BuildLeaderboardUseCase

@@ -18,12 +18,6 @@ class TestSystemCommand:
             yield mock.return_value
 
     @pytest.fixture(autouse=True)
-    def network_adapter(self):
-        with patch(f"{BASE_PATH}.NetworkAdapter") as mock:
-            mock.return_value.get_ip_address.return_value = "localhost"
-            yield mock.return_value
-
-    @pytest.fixture(autouse=True)
     def spinner(self):
         with patch(f"{BASE_PATH}.Spinner") as mock:
             yield mock.return_value
@@ -37,8 +31,7 @@ class TestSystemCommand:
     def runner(self):
         return CliRunner()
 
-    def test_start(self, runner, command_adapter, network_adapter, os):
-        network_adapter.get_ip_address.return_value = "localhost"
+    def test_start(self, runner, command_adapter, os):
         command_adapter.get_cli_path.return_value = "/cli/path"
         os.path.join.side_effect = lambda *args: "/".join(args)
 

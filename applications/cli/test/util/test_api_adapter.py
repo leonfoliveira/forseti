@@ -38,10 +38,10 @@ class TestApiAdapter:
         input_adapter.password.return_value = "password"
         response = requests.Response()
         response.status_code = 200
-        response.headers = {"Set-Cookie": "session_id=123"}
+        response.headers = {"Set-Cookie": "session_id=123; csrf_token=abc;"}
         requests.post.return_value = response
 
-        assert sut._authenticate() == "123"
+        assert sut._authenticate() == ("123", "abc")
 
     def test_authenticate_with_failed_request(self, sut, keyring, requests, input_adapter):
         keyring.get_password.return_value = None
@@ -57,7 +57,7 @@ class TestApiAdapter:
         assert "Unauthorized" in str(ex.value)
 
     def test_get_successful(self, sut, keyring, requests):
-        session_id = self._setup_valid_session(keyring, requests)
+        session_id, csrf_token = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 200
         response.json.return_value = {"key": "value"}
@@ -72,11 +72,12 @@ class TestApiAdapter:
             f"{sut.api_url}/test-path",
             verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
+            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
         )
         assert result == {"key": "value"}
 
     def test_get_failed(self, sut, keyring, requests):
-        session_id = self._setup_valid_session(keyring, requests)
+        session_id, csrf_token = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 404
         response.text = "Not Found"
@@ -93,10 +94,11 @@ class TestApiAdapter:
             f"{sut.api_url}/test-path",
             verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
+            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
         )
 
     def test_post_successful(self, sut, keyring, requests):
-        session_id = self._setup_valid_session(keyring, requests)
+        session_id, csrf_token = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 200
         response.json.return_value = {"key": "value"}
@@ -109,11 +111,12 @@ class TestApiAdapter:
             json={"data": "value"},
             verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
+            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
         )
         assert result == {"key": "value"}
 
     def test_post_failed(self, sut, keyring, requests):
-        session_id = self._setup_valid_session(keyring, requests)
+        session_id, csrf_token = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 400
         response.text = "Bad Request"
@@ -128,10 +131,11 @@ class TestApiAdapter:
             json={"data": "value"},
             verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
+            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
         )
 
     def test_put_successful(self, sut, keyring, requests):
-        session_id = self._setup_valid_session(keyring, requests)
+        session_id, csrf_token = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 200
         response.json.return_value = {"key": "value"}
@@ -144,11 +148,12 @@ class TestApiAdapter:
             json={"data": "value"},
             verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
+            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
         )
         assert result == {"key": "value"}
 
     def test_put_failed(self, sut, keyring, requests):
-        session_id = self._setup_valid_session(keyring, requests)
+        session_id, csrf_token = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 403
         response.text = "Forbidden"
@@ -163,10 +168,11 @@ class TestApiAdapter:
             json={"data": "value"},
             verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
+            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
         )
 
     def test_delete_successful(self, sut, keyring, requests):
-        session_id = self._setup_valid_session(keyring, requests)
+        session_id, csrf_token = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 204
         requests.delete.return_value = response
@@ -177,10 +183,11 @@ class TestApiAdapter:
             f"{sut.api_url}/test-path",
             verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
+            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
         )
 
     def test_delete_failed(self, sut, keyring, requests):
-        session_id = self._setup_valid_session(keyring, requests)
+        session_id, csrf_token = self._setup_valid_session(keyring, requests)
         response = requests.Response()
         response.status_code = 500
         response.text = "Server Error"
@@ -194,22 +201,23 @@ class TestApiAdapter:
             f"{sut.api_url}/test-path",
             verify=False,
             cookies={sut.SESSION_ID_COOKIE: session_id},
+            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
         )
 
-    def test_get_cached_session_id_with_keyring_error(self, sut, keyring):
+    def test_get_cached_value_with_keyring_error(self, sut, keyring):
         keyring.errors.NoKeyringError = Exception
         keyring.get_password.side_effect = keyring.errors.NoKeyringError
 
-        result = sut._get_cached_session_id()
+        result = sut._get_cached_value(sut.SESSION_ID_KEYRING_KEY)
 
         assert result is None
 
-    def test_set_cached_session_id_with_keyring_error(self, sut, keyring):
+    def test_set_cached_value_with_keyring_error(self, sut, keyring):
         keyring.errors.NoKeyringError = Exception
         keyring.set_password.side_effect = keyring.errors.NoKeyringError
 
         # Should not raise an exception
-        sut._set_cached_session_id("test_session")
+        sut._set_cached_value(sut.SESSION_ID_KEYRING_KEY, "test_session")
 
         keyring.set_password.assert_called_once_with(
             sut.SERVICE_NAME, sut.SESSION_ID_KEYRING_KEY, "test_session"
@@ -226,6 +234,7 @@ class TestApiAdapter:
 
     def _setup_valid_session(self, keyring, requests):
         session_id = "123"
-        keyring.get_password.return_value = session_id
+        csrf_token = "abc"
+        keyring.get_password.side_effect = [session_id, csrf_token]
         requests.get.return_value = MagicMock(status_code=200)
-        return session_id
+        return session_id, csrf_token

@@ -15,6 +15,8 @@ export class AxiosClient {
     "user-agent",
     "x-trace-id",
   ]);
+  static readonly CSRF_COOKIE_NAME = "csrf_token";
+  static readonly CSRF_HEADER_NAME = "x-csrf-token";
 
   constructor(
     private readonly baseUrl: string,
@@ -68,6 +70,7 @@ export class AxiosClient {
     try {
       requestConfig.headers = {
         ...requestConfig.headers,
+        [AxiosClient.CSRF_HEADER_NAME]: await this.getCsrfToken(),
         "x-trace-id": uuidv4(),
       };
 
@@ -105,6 +108,20 @@ export class AxiosClient {
         }
       }
       throw error;
+    }
+  }
+
+  private async getCsrfToken(): Promise<string | null> {
+    if (this.isServer) {
+      const { cookies } = await import("next/headers");
+      const cookiesFn = await cookies();
+      const csrfCookie = cookiesFn.get(AxiosClient.CSRF_COOKIE_NAME);
+      return csrfCookie ? csrfCookie.value : null;
+    } else {
+      const match = document.cookie.match(
+        new RegExp(`(^| )${AxiosClient.CSRF_COOKIE_NAME}=([^;]+)`),
+      );
+      return match ? match[2] : null;
     }
   }
 

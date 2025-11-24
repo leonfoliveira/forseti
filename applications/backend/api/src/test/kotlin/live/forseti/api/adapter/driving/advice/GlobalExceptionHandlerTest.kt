@@ -1,9 +1,10 @@
-package live.forseti.api.adapter.driving.controller.advice
+package live.forseti.api.adapter.driving.advice
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import jakarta.validation.ConstraintViolationException
+import live.forseti.api.adapter.driving.advice.GlobalExceptionHandler
 import live.forseti.core.domain.exception.BusinessException
 import live.forseti.core.domain.exception.ForbiddenException
 import live.forseti.core.domain.exception.NotFoundException

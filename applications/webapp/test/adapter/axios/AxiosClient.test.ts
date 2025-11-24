@@ -32,6 +32,7 @@ describe("AxiosClient", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    document.cookie = "csrf_token=abc";
   });
 
   describe("get", () => {
@@ -46,6 +47,7 @@ describe("AxiosClient", () => {
         method: "GET",
         withCredentials: true,
         headers: {
+          "x-csrf-token": "abc",
           "x-trace-id": expect.any(String),
         },
       });
@@ -92,6 +94,7 @@ describe("AxiosClient", () => {
         headers: {
           Authorization: "custom",
           "x-trace-id": expect.any(String),
+          "x-csrf-token": "abc",
         },
         withCredentials: true,
       });
@@ -105,6 +108,7 @@ describe("AxiosClient", () => {
         { name: "other", value: "value" },
       ];
       const mockCookies = {
+        get: jest.fn().mockReturnValue({ value: "abc" }),
         getAll: jest.fn().mockReturnValue(clientCookies),
       };
       const clientHeaders = {
@@ -131,6 +135,7 @@ describe("AxiosClient", () => {
         withCredentials: true,
         headers: {
           "x-trace-id": clientHeaders["x-trace-id"],
+          "x-csrf-token": "abc",
           Cookie: "session_id=123",
           "x-forwarded-for": clientHeaders["x-forwarded-for"],
           "user-agent": clientHeaders["user-agent"],
@@ -153,6 +158,7 @@ describe("AxiosClient", () => {
         withCredentials: true,
         headers: {
           "x-trace-id": expect.any(String),
+          "x-csrf-token": "abc",
         },
       });
       expect(response).toEqual(mockResponse);
@@ -173,6 +179,7 @@ describe("AxiosClient", () => {
         withCredentials: true,
         headers: {
           "x-trace-id": expect.any(String),
+          "x-csrf-token": "abc",
         },
       });
       expect(response).toEqual(mockResponse);
@@ -191,6 +198,7 @@ describe("AxiosClient", () => {
         withCredentials: true,
         headers: {
           "x-trace-id": expect.any(String),
+          "x-csrf-token": "abc",
         },
       });
     });

@@ -10,6 +10,10 @@ post {
   auth: inherit
 }
 
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
 body:json {
   {
     "login": "contestant",

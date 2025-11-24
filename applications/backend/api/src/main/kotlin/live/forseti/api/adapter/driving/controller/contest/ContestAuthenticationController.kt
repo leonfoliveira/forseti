@@ -8,7 +8,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import live.forseti.api.adapter.dto.response.ErrorResponseDTO
 import live.forseti.api.adapter.dto.response.session.SessionResponseDTO
 import live.forseti.api.adapter.dto.response.session.toResponseDTO
-import live.forseti.api.adapter.util.SessionCookieUtil
+import live.forseti.api.adapter.util.cookie.CsrfCookieBuilder
+import live.forseti.api.adapter.util.cookie.SessionCookieBuilder
 import live.forseti.core.port.driving.usecase.authentication.AuthenticateUseCase
 import live.forseti.core.port.dto.input.authorization.ContestAuthenticateInputDTO
 import org.slf4j.LoggerFactory
@@ -25,7 +26,8 @@ import java.util.UUID
 @RequestMapping("/v1/contests/{contestId}")
 class ContestAuthenticationController(
     val authenticateUseCase: AuthenticateUseCase,
-    val sessionCookieUtil: SessionCookieUtil,
+    val sessionCookieBuilder: SessionCookieBuilder,
+    val csrfCookieBuilder: CsrfCookieBuilder,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -53,10 +55,13 @@ class ContestAuthenticationController(
     ): ResponseEntity<SessionResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/sign-in $body")
         val session = authenticateUseCase.authenticateToContest(contestId, body)
-        val cookie = sessionCookieUtil.buildCookie(session)
+
+        val sessionCookie = sessionCookieBuilder.buildCookie(session)
+        val csrfCookie = csrfCookieBuilder.buildCookie(session)
+
         return ResponseEntity
             .ok()
-            .header(HttpHeaders.SET_COOKIE, cookie)
+            .header(HttpHeaders.SET_COOKIE, sessionCookie, csrfCookie)
             .body(session.toResponseDTO())
     }
 }

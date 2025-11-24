@@ -5,6 +5,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.verify
 import live.forseti.core.config.JacksonConfig
+import live.forseti.core.port.driving.usecase.session.RefreshSessionUseCase
 import live.forseti.core.port.driving.usecase.submission.UpdateSubmissionUseCase
 import live.forseti.infrastructure.adapter.dto.message.RabbitMQMessage
 import live.forseti.infrastructure.adapter.dto.message.payload.SubmissionMessagePayload
@@ -13,6 +14,8 @@ import java.util.UUID
 
 @SpringBootTest(classes = [FailedSubmissionRabbitMQConsumer::class, JacksonConfig::class])
 class FailedSubmissionRabbitMQConsumerTest(
+    @MockkBean(relaxed = true)
+    private val refreshSessionUseCase: RefreshSessionUseCase,
     @MockkBean(relaxed = true)
     private val updateSubmissionUseCase: UpdateSubmissionUseCase,
     private val objectMapper: ObjectMapper,

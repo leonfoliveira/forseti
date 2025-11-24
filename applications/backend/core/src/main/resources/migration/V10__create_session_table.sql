@@ -3,6 +3,7 @@ create table session (
     created_at timestamp not null,
     updated_at timestamp not null,
     deleted_at timestamp,
+    csrf_token uuid not null,
     member_id uuid not null,
     expires_at timestamp not null,
     constraint fk_member_id foreign key (member_id) references member (id)
@@ -18,6 +19,7 @@ create table session_aud (
     updated_at timestamp not null,
     deleted_at timestamp,
     deleted_at_mod boolean not null default false,
+    csrf_token uuid not null,
     member_id uuid not null,
     expires_at timestamp not null,
     primary key (rev, id),
