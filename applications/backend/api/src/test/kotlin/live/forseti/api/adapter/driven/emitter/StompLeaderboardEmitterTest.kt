@@ -20,7 +20,7 @@ class StompLeaderboardEmitterTest :
             clearAllMocks()
         }
 
-        test("should emmit leaderboard events") {
+        test("should emit leaderboard events") {
             val leaderboard = mockk<LeaderboardOutputDTO>(relaxed = true)
             val contestId = UUID.randomUUID()
             every { leaderboard.contestId } returns contestId
