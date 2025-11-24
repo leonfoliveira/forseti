@@ -23,11 +23,14 @@ spring:
     username: ${RABBITMQ_USER:forseti}
     password: ${RABBITMQ_PASSWORD} # No default for security reasons
     virtual-host: ${RABBITMQ_VHOST:/}
+    exchange:
+      submission-exchange: ${RABBITMQ_SUBMISSION_EXCHANGE:submission-exchange}
+      websocket-exchange: ${RABBITMQ_WEBSOCKET_EXCHANGE:websocket-exchange}
     queue:
       submission-queue: ${RABBITMQ_SUBMISSION_QUEUE:submission-queue}
-      submission-exchange: ${RABBITMQ_SUBMISSION_EXCHANGE:submission-exchange}
-      submission-routing-key: ${RABBITMQ_SUBMISSION_ROUTING_KEY:submission-routing-key}
       submission-failed-queue: ${RABBITMQ_SUBMISSION_FAILED_QUEUE:submission-failed-queue}
+    routing-key:
+      submission-routing-key: ${RABBITMQ_SUBMISSION_ROUTING_KEY:submission-routing-key}
     listener:
       simple:
         retry:

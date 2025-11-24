@@ -9,7 +9,7 @@ import java.io.Serializable
 
 abstract class RabbitMQProducer<TPayload : Serializable>(
     private val exchange: String,
-    private val routingKey: String,
+    private val routingKey: String = "",
 ) {
     @Autowired
     private lateinit var rabbitTemplate: RabbitTemplate

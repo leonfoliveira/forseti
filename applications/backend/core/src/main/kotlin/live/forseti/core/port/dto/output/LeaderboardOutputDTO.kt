@@ -1,5 +1,6 @@
 package live.forseti.core.port.dto.output
 
+import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -9,7 +10,7 @@ data class LeaderboardOutputDTO(
     val startAt: OffsetDateTime,
     val members: List<MemberDTO>,
     val issuedAt: OffsetDateTime,
-) {
+) : Serializable {
     data class MemberDTO(
         val id: UUID,
         val name: String,

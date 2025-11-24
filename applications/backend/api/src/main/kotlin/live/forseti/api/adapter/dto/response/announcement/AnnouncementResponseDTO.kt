@@ -3,6 +3,7 @@ package live.forseti.api.adapter.dto.response.announcement
 import live.forseti.api.adapter.dto.response.member.MemberPublicResponseDTO
 import live.forseti.api.adapter.dto.response.member.toPublicResponseDTO
 import live.forseti.core.domain.entity.Announcement
+import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -11,7 +12,7 @@ data class AnnouncementResponseDTO(
     val createdAt: OffsetDateTime,
     val member: MemberPublicResponseDTO,
     val text: String,
-)
+) : Serializable
 
 fun Announcement.toResponseDTO(): AnnouncementResponseDTO =
     AnnouncementResponseDTO(

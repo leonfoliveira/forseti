@@ -2,6 +2,7 @@ package live.forseti.api.adapter.dto.response.contest
 
 import live.forseti.core.domain.entity.Contest
 import live.forseti.core.domain.entity.Submission
+import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -12,7 +13,7 @@ class ContestMetadataResponseDTO(
     val languages: List<Submission.Language>,
     val startAt: OffsetDateTime,
     val endAt: OffsetDateTime,
-)
+) : Serializable
 
 fun Contest.toMetadataDTO(): ContestMetadataResponseDTO =
     ContestMetadataResponseDTO(
