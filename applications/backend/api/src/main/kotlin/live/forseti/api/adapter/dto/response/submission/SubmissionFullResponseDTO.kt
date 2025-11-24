@@ -7,6 +7,7 @@ import live.forseti.api.adapter.dto.response.problem.ProblemPublicResponseDTO
 import live.forseti.api.adapter.dto.response.problem.toPublicResponseDTO
 import live.forseti.api.adapter.dto.response.toResponseDTO
 import live.forseti.core.domain.entity.Submission
+import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -19,7 +20,7 @@ data class SubmissionFullResponseDTO(
     val answer: Submission.Answer,
     val code: AttachmentResponseDTO,
     val createdAt: OffsetDateTime,
-)
+) : Serializable
 
 fun Submission.toFullResponseDTO(): SubmissionFullResponseDTO =
     SubmissionFullResponseDTO(

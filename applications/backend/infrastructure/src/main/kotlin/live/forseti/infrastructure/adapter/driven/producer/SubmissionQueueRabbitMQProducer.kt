@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class SubmissionQueueRabbitMQProducer(
-    @Value("\${spring.rabbitmq.queue.submission-exchange}")
+    @Value("\${spring.rabbitmq.exchange.submission-exchange}")
     exchange: String,
-    @Value("\${spring.rabbitmq.queue.submission-routing-key}")
+    @Value("\${spring.rabbitmq.routing-key.submission-routing-key}")
     routingKey: String,
 ) : RabbitMQProducer<SubmissionMessagePayload>(exchange, routingKey),
     SubmissionQueueProducer {

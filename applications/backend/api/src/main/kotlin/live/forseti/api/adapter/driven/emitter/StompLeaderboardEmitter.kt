@@ -1,13 +1,13 @@
 package live.forseti.api.adapter.driven.emitter
 
+import live.forseti.core.port.driven.WebSocketFanoutProducer
 import live.forseti.core.port.dto.output.LeaderboardOutputDTO
 import org.slf4j.LoggerFactory
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
 
 @Component
 class StompLeaderboardEmitter(
-    private val messagingTemplate: SimpMessagingTemplate,
+    private val webSocketFanoutProducer: WebSocketFanoutProducer,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -21,7 +21,7 @@ class StompLeaderboardEmitter(
             "Emitting leaderboard for contest: ${leaderboard.contestId}",
         )
 
-        messagingTemplate.convertAndSend(
+        webSocketFanoutProducer.produce(
             "/topic/contests/${leaderboard.contestId}/leaderboard",
             leaderboard,
         )

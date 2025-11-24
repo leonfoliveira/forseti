@@ -3,13 +3,13 @@ package live.forseti.api.adapter.driven.emitter
 import live.forseti.api.adapter.dto.response.submission.toFullResponseDTO
 import live.forseti.api.adapter.dto.response.submission.toPublicResponseDTO
 import live.forseti.core.domain.entity.Submission
+import live.forseti.core.port.driven.WebSocketFanoutProducer
 import org.slf4j.LoggerFactory
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
 
 @Component
 class StompSubmissionEmitter(
-    private val messagingTemplate: SimpMessagingTemplate,
+    private val webSocketFanoutProducer: WebSocketFanoutProducer,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -26,15 +26,15 @@ class StompSubmissionEmitter(
 
         val contest = submission.contest
 
-        messagingTemplate.convertAndSend(
+        webSocketFanoutProducer.produce(
             "/topic/contests/${contest.id}/submissions",
             submission.toPublicResponseDTO(),
         )
-        messagingTemplate.convertAndSend(
+        webSocketFanoutProducer.produce(
             "/topic/contests/${contest.id}/submissions/full",
             submission.toFullResponseDTO(),
         )
-        messagingTemplate.convertAndSend(
+        webSocketFanoutProducer.produce(
             "/topic/contests/${contest.id}/submissions/full/members/${submission.member.id}",
             submission.toFullResponseDTO(),
         )

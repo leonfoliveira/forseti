@@ -6,13 +6,13 @@ import io.mockk.mockk
 import io.mockk.verify
 import live.forseti.api.adapter.dto.response.announcement.toResponseDTO
 import live.forseti.core.domain.entity.AnnouncementMockBuilder
-import org.springframework.messaging.simp.SimpMessagingTemplate
+import live.forseti.core.port.driven.WebSocketFanoutProducer
 
 class StompAnnouncementEmitterTest :
     FunSpec({
-        val messagingTemplate = mockk<SimpMessagingTemplate>(relaxed = true)
+        val webSocketFanoutProducer = mockk<WebSocketFanoutProducer>(relaxed = true)
 
-        val sut = StompAnnouncementEmitter(messagingTemplate)
+        val sut = StompAnnouncementEmitter(webSocketFanoutProducer)
 
         beforeEach {
             clearAllMocks()
@@ -24,7 +24,7 @@ class StompAnnouncementEmitterTest :
             sut.emit(announcement)
 
             verify {
-                messagingTemplate.convertAndSend(
+                webSocketFanoutProducer.produce(
                     "/topic/contests/${announcement.contest.id}/announcements",
                     announcement.toResponseDTO(),
                 )

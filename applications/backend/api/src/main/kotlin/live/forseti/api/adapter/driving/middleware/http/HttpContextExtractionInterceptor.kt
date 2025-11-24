@@ -28,19 +28,24 @@ class HttpContextExtractionInterceptor(
         response: HttpServletResponse,
         handler: Any,
     ): Boolean {
+        val traceId = request.getHeader("X-Trace-Id") ?: UUID.randomUUID().toString()
+        MDC.put("traceId", traceId)
+
         logger.info("Started HttpContextExtractionInterceptor")
 
         val ip =
             request.getHeader("X-Forwarded-For")
                 ?: request.remoteAddr
+
         val sessionId = request.cookies?.find { it.name == "session_id" }?.value
         val csrfToken = request.getHeader("X-CSRF-Token")
+        val session = extractSession(sessionId, csrfToken)
 
         val context = RequestContext.getContext()
 
+        context.traceId = traceId
         context.ip = ip
-        context.traceId = MDC.get("traceId")
-        context.session = extractSession(sessionId, csrfToken)
+        context.session = session
 
         logger.info("Finished HttpContextExtractionInterceptor")
         return true

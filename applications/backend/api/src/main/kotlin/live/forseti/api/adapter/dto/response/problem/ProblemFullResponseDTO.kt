@@ -3,6 +3,7 @@ package live.forseti.api.adapter.dto.response.problem
 import live.forseti.api.adapter.dto.response.AttachmentResponseDTO
 import live.forseti.api.adapter.dto.response.toResponseDTO
 import live.forseti.core.domain.entity.Problem
+import java.io.Serializable
 import java.util.UUID
 
 data class ProblemFullResponseDTO(
@@ -13,7 +14,7 @@ data class ProblemFullResponseDTO(
     val timeLimit: Int,
     val memoryLimit: Int,
     val testCases: AttachmentResponseDTO,
-)
+) : Serializable
 
 fun Problem.toFullResponseDTO(): ProblemFullResponseDTO =
     ProblemFullResponseDTO(

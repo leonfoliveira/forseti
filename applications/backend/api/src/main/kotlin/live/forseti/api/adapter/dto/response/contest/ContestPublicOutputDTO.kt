@@ -10,6 +10,7 @@ import live.forseti.api.adapter.dto.response.problem.ProblemPublicResponseDTO
 import live.forseti.api.adapter.dto.response.problem.toPublicResponseDTO
 import live.forseti.core.domain.entity.Contest
 import live.forseti.core.domain.entity.Submission
+import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -24,7 +25,7 @@ data class ContestPublicOutputDTO(
     val problems: List<ProblemPublicResponseDTO>,
     val clarifications: List<ClarificationResponseDTO>,
     val announcements: List<AnnouncementResponseDTO>,
-)
+) : Serializable
 
 fun Contest.toPublicOutputDTO(): ContestPublicOutputDTO =
     ContestPublicOutputDTO(

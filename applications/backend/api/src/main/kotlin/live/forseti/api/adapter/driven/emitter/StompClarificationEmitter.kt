@@ -2,13 +2,14 @@ package live.forseti.api.adapter.driven.emitter
 
 import live.forseti.api.adapter.dto.response.clarification.toResponseDTO
 import live.forseti.core.domain.entity.Clarification
+import live.forseti.core.port.driven.WebSocketFanoutProducer
 import org.slf4j.LoggerFactory
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
+import java.io.Serializable
 
 @Component
 class StompClarificationEmitter(
-    private val messagingTemplate: SimpMessagingTemplate,
+    private val webSocketFanoutProducer: WebSocketFanoutProducer,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -23,13 +24,13 @@ class StompClarificationEmitter(
             "Emitting clarification with id: ${clarification.id} for contest with id: ${clarification.contest.id}",
         )
 
-        messagingTemplate.convertAndSend(
+        webSocketFanoutProducer.produce(
             "/topic/contests/${contest.id}/clarifications",
             clarification.toResponseDTO(),
         )
 
         if (clarification.parent != null) {
-            messagingTemplate.convertAndSend(
+            webSocketFanoutProducer.produce(
                 "/topic/contests/${contest.id}/clarifications/children/members/${clarification.parent!!.member.id}",
                 clarification.toResponseDTO(),
             )
@@ -47,9 +48,9 @@ class StompClarificationEmitter(
             "Emitting deleted clarification with id: ${clarification.id} for contest with id: ${contest.id}",
         )
 
-        messagingTemplate.convertAndSend(
+        webSocketFanoutProducer.produce(
             "/topic/contests/${contest.id}/clarifications/deleted",
-            mapOf("id" to clarification.id),
+            mapOf("id" to clarification.id) as Serializable,
         )
     }
 }

@@ -5,18 +5,16 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import live.forseti.core.port.driven.WebSocketFanoutProducer
 import live.forseti.core.port.dto.output.LeaderboardOutputDTO
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import java.util.UUID
 
 class StompLeaderboardEmitterTest :
     FunSpec({
-        val messagingTemplate = mockk<SimpMessagingTemplate>(relaxed = true)
+        val webSocketFanoutProducer = mockk<WebSocketFanoutProducer>(relaxed = true)
 
         val sut =
-            StompLeaderboardEmitter(
-                messagingTemplate = messagingTemplate,
-            )
+            StompLeaderboardEmitter(webSocketFanoutProducer)
 
         beforeEach {
             clearAllMocks()
@@ -30,7 +28,7 @@ class StompLeaderboardEmitterTest :
             sut.emit(leaderboard)
 
             verify {
-                messagingTemplate.convertAndSend(
+                webSocketFanoutProducer.produce(
                     "/topic/contests/$contestId/leaderboard",
                     leaderboard,
                 )

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.session.RefreshSessionUseCase
 import live.forseti.infrastructure.adapter.dto.message.RabbitMQMessage
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,7 +20,7 @@ abstract class RabbitMQConsumer<TPayload : Serializable>(
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     /**
      * Method to receive a message from RabbitMQ, deserialize it, and handle the payload.

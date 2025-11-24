@@ -19,11 +19,14 @@ spring:
     username: forseti
     password: forseti
     virtual-host: /
+    exchange:
+      submission-exchange: submission-exchange
+      websocket-exchange: websocket-exchange
     queue:
       submission-queue: submission-queue
-      submission-exchange: submission-exchange
-      submission-routing-key: submission-routing-key
       submission-failed-queue: submission-failed-queue
+    routing-key:
+      submission-routing-key: submission-routing-key
 jpa:
   jpa:
     show-sql: false

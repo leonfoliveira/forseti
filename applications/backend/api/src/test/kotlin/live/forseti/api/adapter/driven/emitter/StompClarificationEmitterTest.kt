@@ -6,14 +6,15 @@ import io.mockk.mockk
 import io.mockk.verify
 import live.forseti.api.adapter.dto.response.clarification.toResponseDTO
 import live.forseti.core.domain.entity.ClarificationMockBuilder
-import org.springframework.messaging.simp.SimpMessagingTemplate
+import live.forseti.core.port.driven.WebSocketFanoutProducer
+import java.io.Serializable
 import java.time.OffsetDateTime
 
 class StompClarificationEmitterTest :
     FunSpec({
-        val messagingTemplate = mockk<SimpMessagingTemplate>(relaxed = true)
+        val webSocketFanoutProducer = mockk<WebSocketFanoutProducer>(relaxed = true)
 
-        val sut = StompClarificationEmitter(messagingTemplate)
+        val sut = StompClarificationEmitter(webSocketFanoutProducer)
 
         beforeTest {
             clearAllMocks()
@@ -25,7 +26,7 @@ class StompClarificationEmitterTest :
             sut.emit(clarification)
 
             verify {
-                messagingTemplate.convertAndSend(
+                webSocketFanoutProducer.produce(
                     "/topic/contests/${clarification.contest.id}/clarifications",
                     clarification.toResponseDTO(),
                 )
@@ -38,7 +39,7 @@ class StompClarificationEmitterTest :
             sut.emit(clarification)
 
             verify {
-                messagingTemplate.convertAndSend(
+                webSocketFanoutProducer.produce(
                     "/topic/contests/${clarification.contest.id}/clarifications/children/members/${clarification.parent!!.member.id}",
                     clarification.toResponseDTO(),
                 )
@@ -51,9 +52,9 @@ class StompClarificationEmitterTest :
             sut.emitDeleted(clarification)
 
             verify {
-                messagingTemplate.convertAndSend(
+                webSocketFanoutProducer.produce(
                     "/topic/contests/${clarification.contest.id}/clarifications/deleted",
-                    mapOf("id" to clarification.id),
+                    mapOf("id" to clarification.id) as Serializable,
                 )
             }
         }
