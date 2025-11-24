@@ -20,7 +20,7 @@ class StompClarificationEmitterTest :
             clearAllMocks()
         }
 
-        test("should emmit clarification events") {
+        test("should emit clarification events") {
             val clarification = ClarificationMockBuilder.build()
 
             sut.emit(clarification)
@@ -33,7 +33,7 @@ class StompClarificationEmitterTest :
             }
         }
 
-        test("should emmit clarification children events") {
+        test("should emit clarification children events") {
             val clarification = ClarificationMockBuilder.build(parent = ClarificationMockBuilder.build())
 
             sut.emit(clarification)
@@ -46,7 +46,7 @@ class StompClarificationEmitterTest :
             }
         }
 
-        test("should emmit clarification deleted events") {
+        test("should emit clarification deleted events") {
             val clarification = ClarificationMockBuilder.build(deletedAt = OffsetDateTime.now())
 
             sut.emitDeleted(clarification)
