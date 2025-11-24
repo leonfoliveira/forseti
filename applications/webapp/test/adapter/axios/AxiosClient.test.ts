@@ -32,6 +32,7 @@ describe("AxiosClient", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    document.cookie = "csrf_token=abc";
   });
 
   describe("get", () => {
@@ -45,10 +46,8 @@ describe("AxiosClient", () => {
         url: `${baseUrl}/test`,
         method: "GET",
         withCredentials: true,
-        withXSRFToken: true,
-        xsrfCookieName: "csrf_token",
-        xsrfHeaderName: "x-csrf-token",
         headers: {
+          "x-csrf-token": "abc",
           "x-trace-id": expect.any(String),
         },
       });
@@ -95,11 +94,9 @@ describe("AxiosClient", () => {
         headers: {
           Authorization: "custom",
           "x-trace-id": expect.any(String),
+          "x-csrf-token": "abc",
         },
         withCredentials: true,
-        withXSRFToken: true,
-        xsrfCookieName: "csrf_token",
-        xsrfHeaderName: "x-csrf-token",
       });
     });
 
@@ -111,6 +108,7 @@ describe("AxiosClient", () => {
         { name: "other", value: "value" },
       ];
       const mockCookies = {
+        get: jest.fn().mockReturnValue({ value: "abc" }),
         getAll: jest.fn().mockReturnValue(clientCookies),
       };
       const clientHeaders = {
@@ -137,13 +135,11 @@ describe("AxiosClient", () => {
         withCredentials: true,
         headers: {
           "x-trace-id": clientHeaders["x-trace-id"],
+          "x-csrf-token": "abc",
           Cookie: "session_id=123",
           "x-forwarded-for": clientHeaders["x-forwarded-for"],
           "user-agent": clientHeaders["user-agent"],
         },
-        withXSRFToken: true,
-        xsrfCookieName: "csrf_token",
-        xsrfHeaderName: "x-csrf-token",
       });
     });
   });
@@ -160,11 +156,9 @@ describe("AxiosClient", () => {
         method: "POST",
         data: "value",
         withCredentials: true,
-        withXSRFToken: true,
-        xsrfCookieName: "csrf_token",
-        xsrfHeaderName: "x-csrf-token",
         headers: {
           "x-trace-id": expect.any(String),
+          "x-csrf-token": "abc",
         },
       });
       expect(response).toEqual(mockResponse);
@@ -183,11 +177,9 @@ describe("AxiosClient", () => {
         method: "PUT",
         data: "value",
         withCredentials: true,
-        withXSRFToken: true,
-        xsrfCookieName: "csrf_token",
-        xsrfHeaderName: "x-csrf-token",
         headers: {
           "x-trace-id": expect.any(String),
+          "x-csrf-token": "abc",
         },
       });
       expect(response).toEqual(mockResponse);
@@ -204,11 +196,9 @@ describe("AxiosClient", () => {
         url: `${baseUrl}/test`,
         method: "DELETE",
         withCredentials: true,
-        withXSRFToken: true,
-        xsrfCookieName: "csrf_token",
-        xsrfHeaderName: "x-csrf-token",
         headers: {
           "x-trace-id": expect.any(String),
+          "x-csrf-token": "abc",
         },
       });
     });

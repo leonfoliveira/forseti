@@ -70,12 +70,9 @@ export class AxiosClient {
     try {
       requestConfig.headers = {
         ...requestConfig.headers,
+        [AxiosClient.CSRF_HEADER_NAME]: await this.getCsrfToken(),
         "x-trace-id": uuidv4(),
       };
-
-      requestConfig.xsrfCookieName = AxiosClient.CSRF_COOKIE_NAME;
-      requestConfig.xsrfHeaderName = AxiosClient.CSRF_HEADER_NAME;
-      requestConfig.withXSRFToken = true;
 
       if (this.isServer) {
         await this.forwardCookies(requestConfig);
@@ -111,6 +108,20 @@ export class AxiosClient {
         }
       }
       throw error;
+    }
+  }
+
+  private async getCsrfToken(): Promise<string | null> {
+    if (this.isServer) {
+      const { cookies } = await import("next/headers");
+      const cookiesFn = await cookies();
+      const csrfCookie = cookiesFn.get(AxiosClient.CSRF_COOKIE_NAME);
+      return csrfCookie ? csrfCookie.value : null;
+    } else {
+      const match = document.cookie.match(
+        new RegExp(`(^| )${AxiosClient.CSRF_COOKIE_NAME}=([^;]+)`),
+      );
+      return match ? match[2] : null;
     }
   }
 
