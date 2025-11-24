@@ -19,11 +19,11 @@ import live.forseti.core.port.driving.usecase.session.FindSessionUseCase
 import org.slf4j.MDC
 import java.time.OffsetDateTime
 
-class HttpContextExtractionFilterTest :
+class HttpContextExtractionInterceptorTest :
     FunSpec({
         val findSessionUseCase = mockk<FindSessionUseCase>(relaxed = true)
 
-        val sut = HttpContextExtractionFilter(findSessionUseCase)
+        val sut = HttpContextExtractionInterceptor(findSessionUseCase)
 
         beforeEach {
             RequestContext.clearContext()
@@ -37,7 +37,7 @@ class HttpContextExtractionFilterTest :
             every { request.getHeader("X-Forwarded-For") } returns "127.0.0.1"
             every { request.cookies } returns null
 
-            sut.doFilterInternal(request, response, filterChain)
+            sut.preHandle(request, response, filterChain)
 
             RequestContext.getContext().ip shouldBe "127.0.0.1"
         }
@@ -50,7 +50,7 @@ class HttpContextExtractionFilterTest :
             every { request.remoteAddr } returns "127.0.0.1"
             every { request.cookies } returns null
 
-            sut.doFilterInternal(request, response, filterChain)
+            sut.preHandle(request, response, filterChain)
 
             RequestContext.getContext().ip shouldBe "127.0.0.1"
         }
@@ -63,7 +63,7 @@ class HttpContextExtractionFilterTest :
             val traceId = "trace-id"
             MDC.put("traceId", traceId)
 
-            sut.doFilterInternal(request, response, filterChain)
+            sut.preHandle(request, response, filterChain)
 
             RequestContext.getContext().traceId shouldBe traceId
             MDC.clear()
@@ -75,7 +75,7 @@ class HttpContextExtractionFilterTest :
             val filterChain = mockk<FilterChain>(relaxed = true)
             every { request.cookies } returns null
 
-            sut.doFilterInternal(request, response, filterChain)
+            sut.preHandle(request, response, filterChain)
 
             RequestContext.getContext().session shouldBe null
         }
@@ -86,7 +86,7 @@ class HttpContextExtractionFilterTest :
             val filterChain = mockk<FilterChain>(relaxed = true)
             every { request.cookies } returns arrayOf(Cookie("session_id", ""))
 
-            sut.doFilterInternal(request, response, filterChain)
+            sut.preHandle(request, response, filterChain)
 
             RequestContext.getContext().session shouldBe null
         }
@@ -97,7 +97,7 @@ class HttpContextExtractionFilterTest :
             val filterChain = mockk<FilterChain>(relaxed = true)
             every { request.cookies } returns arrayOf(Cookie("session_id", "invalid-id"))
 
-            sut.doFilterInternal(request, response, filterChain)
+            sut.preHandle(request, response, filterChain)
 
             RequestContext.getContext().session shouldBe null
         }
@@ -110,7 +110,7 @@ class HttpContextExtractionFilterTest :
             every { findSessionUseCase.findByIdNullable(any()) } returns null
 
             shouldThrow<UnauthorizedException> {
-                sut.doFilterInternal(request, response, filterChain)
+                sut.preHandle(request, response, filterChain)
             }
 
             verify { findSessionUseCase.findByIdNullable(any()) }
@@ -126,7 +126,7 @@ class HttpContextExtractionFilterTest :
             every { findSessionUseCase.findByIdNullable(expectedSession.id) } returns expectedSession
 
             shouldThrow<ForbiddenException> {
-                sut.doFilterInternal(request, response, filterChain)
+                sut.preHandle(request, response, filterChain)
             }
 
             RequestContext.getContext().session shouldBe null
@@ -146,7 +146,7 @@ class HttpContextExtractionFilterTest :
             every { findSessionUseCase.findByIdNullable(expiredSession.id) } returns expiredSession
 
             shouldThrow<UnauthorizedException> {
-                sut.doFilterInternal(request, response, filterChain)
+                sut.preHandle(request, response, filterChain)
             }
 
             RequestContext.getContext().session shouldBe null
@@ -162,7 +162,7 @@ class HttpContextExtractionFilterTest :
             every { request.getHeader("X-CSRF-Token") } returns expectedSession.csrfToken.toString()
             every { findSessionUseCase.findByIdNullable(expectedSession.id) } returns expectedSession
 
-            sut.doFilterInternal(request, response, filterChain)
+            sut.preHandle(request, response, filterChain)
 
             RequestContext.getContext().session shouldBe expectedSession
         }

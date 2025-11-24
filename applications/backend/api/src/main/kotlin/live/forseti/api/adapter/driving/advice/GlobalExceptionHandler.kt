@@ -1,4 +1,4 @@
-package live.forseti.api.adapter.driving.controller.advice
+package live.forseti.api.adapter.driving.advice
 
 import jakarta.validation.ConstraintViolationException
 import live.forseti.api.adapter.dto.response.ErrorResponseDTO

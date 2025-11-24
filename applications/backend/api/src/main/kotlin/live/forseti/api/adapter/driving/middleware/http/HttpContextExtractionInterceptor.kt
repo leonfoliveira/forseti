@@ -1,6 +1,5 @@
 package live.forseti.api.adapter.driving.middleware.http
 
-import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import live.forseti.core.domain.entity.Session
@@ -8,25 +7,28 @@ import live.forseti.core.domain.exception.ForbiddenException
 import live.forseti.core.domain.exception.UnauthorizedException
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.session.FindSessionUseCase
+import org.slf4j.LoggerFactory
 import org.slf4j.MDC
 import org.springframework.stereotype.Component
-import org.springframework.web.filter.OncePerRequestFilter
+import org.springframework.web.servlet.HandlerInterceptor
 import java.time.OffsetDateTime
 import java.util.UUID
 
 @Component
-class HttpContextExtractionFilter(
+class HttpContextExtractionInterceptor(
     private val findSessionUseCase: FindSessionUseCase,
-) : OncePerRequestFilter() {
+) : HandlerInterceptor {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     /**
      * Fill the RequestContext with relevant information from the HTTP request.
      */
-    public override fun doFilterInternal(
+    override fun preHandle(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        filterChain: FilterChain,
-    ) {
-        logger.info("Started HttpAuthExtractionFilter")
+        handler: Any,
+    ): Boolean {
+        logger.info("Started HttpContextExtractionInterceptor")
 
         val ip =
             request.getHeader("X-Forwarded-For")
@@ -40,7 +42,8 @@ class HttpContextExtractionFilter(
         context.traceId = MDC.get("traceId")
         context.session = extractSession(sessionId, csrfToken)
 
-        return filterChain.doFilter(request, response)
+        logger.info("Finished HttpContextExtractionInterceptor")
+        return true
     }
 
     /**
