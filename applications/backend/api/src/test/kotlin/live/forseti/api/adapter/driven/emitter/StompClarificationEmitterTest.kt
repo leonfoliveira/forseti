@@ -7,7 +7,6 @@ import io.mockk.verify
 import live.forseti.api.adapter.dto.response.clarification.toResponseDTO
 import live.forseti.core.domain.entity.ClarificationMockBuilder
 import live.forseti.core.port.driven.WebSocketFanoutProducer
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import java.io.Serializable
 import java.time.OffsetDateTime
 

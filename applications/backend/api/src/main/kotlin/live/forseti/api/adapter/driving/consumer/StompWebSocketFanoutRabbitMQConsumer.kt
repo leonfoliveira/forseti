@@ -19,7 +19,8 @@ class StompWebSocketFanoutRabbitMQConsumer(
             QueueBinding(
                 value =
                     Queue(
-                        value = "", // Empty name will generate a unique temporary queue name
+                        // Empty name will generate a unique temporary queue name
+                        value = "",
                         durable = "false",
                         exclusive = "true",
                         autoDelete = "true",

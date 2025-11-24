@@ -8,7 +8,6 @@ import live.forseti.api.adapter.dto.response.submission.toFullResponseDTO
 import live.forseti.api.adapter.dto.response.submission.toPublicResponseDTO
 import live.forseti.core.domain.entity.SubmissionMockBuilder
 import live.forseti.core.port.driven.WebSocketFanoutProducer
-import org.springframework.messaging.simp.SimpMessagingTemplate
 
 class StompSubmissionEmitterTest :
     FunSpec({

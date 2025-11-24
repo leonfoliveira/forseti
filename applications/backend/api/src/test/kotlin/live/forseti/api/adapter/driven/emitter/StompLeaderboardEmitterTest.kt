@@ -7,7 +7,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import live.forseti.core.port.driven.WebSocketFanoutProducer
 import live.forseti.core.port.dto.output.LeaderboardOutputDTO
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import java.util.UUID
 
 class StompLeaderboardEmitterTest :
