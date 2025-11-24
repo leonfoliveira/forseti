@@ -86,7 +86,7 @@ services:
     networks:
       - dev-forseti-network
     volumes:
-      - ../../applications/backend/common/src/main/resources/migration:/flyway/sql
+      - ../../applications/backend/core/src/main/resources/migration:/flyway/sql
 
   api:
     container_name: dev-forseti-api

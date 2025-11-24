@@ -9,7 +9,7 @@ docker build -t forseti-autoscaler ../applications/autoscaler --no-cache
 cp ../applications/cli/dist/forseti ./production/forseti
 
 mkdir -p ./production/volumes/migrations
-cp -r ../applications/backend/common/src/main/resources/migration/* ./production/volumes/migrations/
+cp -r ../applications/backend/core/src/main/resources/migration/* ./production/volumes/migrations/
 
 mkdir -p ./production/sandboxes
 cp -r ../applications/backend/infrastructure/src/main/resources/sandboxes/* ./production/sandboxes/

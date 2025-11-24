@@ -99,7 +99,7 @@ jobs:
       - name: Copy migrations to production directory
         run: |
           mkdir -p volumes/migrations
-          cp -r ../../applications/backend/common/src/main/resources/migration/* volumes/migrations/
+          cp -r ../../applications/backend/core/src/main/resources/migration/* volumes/migrations/
 
       - name: Copy sandboxes to production directory
         run: |

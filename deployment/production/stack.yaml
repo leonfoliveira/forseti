@@ -103,6 +103,7 @@ services:
       RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      RABBITMQ_WEBSOCKET_EXCHANGE: websocket-exchange
       ROOT_PASSWORD_FILE: /run/secrets/root_password
       SPRING_PROFILES_ACTIVE: production
       VERSION: ${VERSION:-latest}
@@ -164,6 +165,7 @@ services:
       RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      RABBITMQ_WEBSOCKET_EXCHANGE: websocket-exchange
       ROOT_PASSWORD_FILE: /run/secrets/root_password
       SPRING_PROFILES_ACTIVE: production
       VERSION: ${VERSION:-latest}
