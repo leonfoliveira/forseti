@@ -1,9 +1,9 @@
-discovery.docker "forseti" {
+discovery.docker "default" {
   host = "unix:///var/run/docker.sock"
 }
 
-discovery.relabel "forseti" {
-  targets = discovery.docker.forseti.targets
+discovery.relabel "default" {
+  targets = discovery.docker.default.targets
 
   rule {
     source_labels = ["__meta_docker_container_id"]
@@ -23,14 +23,14 @@ discovery.relabel "forseti" {
   }
 }
 
-loki.source.docker "forseti" {
+loki.source.docker "default" {
   host              = "unix:///var/run/docker.sock"
-  targets           = discovery.relabel.forseti.output
-  forward_to        = [loki.process.forseti.receiver]
+  targets           = discovery.relabel.default.output
+  forward_to        = [loki.process.default.receiver]
   refresh_interval  = "5s"
 }
 
-loki.process "forseti" {
+loki.process "default" {
   stage.regex {
     expression = "level=(?P<level>\\S+)"
   }
