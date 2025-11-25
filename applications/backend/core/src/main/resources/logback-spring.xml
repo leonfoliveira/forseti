@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
+        <layout class="live.forseti.core.config.logging.SanitizingPatternLayout">
             <pattern>ts=%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} level=%-5level trace_id=%X{traceId} logger=%logger{36} msg=%msg%n</pattern>
-        </encoder>
+        </layout>
     </appender>
 
     <springProfile name="test">

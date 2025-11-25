@@ -9,6 +9,7 @@ import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.session.FindSessionUseCase
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC
+import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
 import java.time.OffsetDateTime
@@ -19,6 +20,14 @@ class HttpContextExtractionInterceptor(
     private val findSessionUseCase: FindSessionUseCase,
 ) : HandlerInterceptor {
     private val logger = LoggerFactory.getLogger(this::class.java)
+
+    companion object {
+        val signInPaths =
+            setOf(
+                Regex("/v1/root/sign-in"),
+                Regex("/v1/contests/[a-fA-F0-9-]+/sign-in"),
+            )
+    }
 
     /**
      * Fill the RequestContext with relevant information from the HTTP request.
@@ -38,8 +47,17 @@ class HttpContextExtractionInterceptor(
                 ?: request.remoteAddr
 
         val sessionId = request.cookies?.find { it.name == "session_id" }?.value
-        val csrfToken = request.getHeader("X-CSRF-Token")
-        val session = extractSession(sessionId, csrfToken)
+        val session = extractSession(sessionId)
+
+        // CSRF Protection
+        val isSignInPath = signInPaths.any { it.matches(request.requestURI) }
+        if (request.method != HttpMethod.GET.toString() && !isSignInPath) {
+            val csrfToken = request.getHeader("X-CSRF-Token")
+            if (session != null && session.csrfToken.toString() != csrfToken) {
+                logger.info("CSRF token mismatch")
+                throw ForbiddenException()
+            }
+        }
 
         val context = RequestContext.getContext()
 
@@ -57,10 +75,7 @@ class HttpContextExtractionInterceptor(
      * @param sessionId The session ID from the cookie.
      * @return The session if found and valid, null otherwise.
      */
-    private fun extractSession(
-        sessionId: String?,
-        csrfToken: String?,
-    ): Session? {
+    private fun extractSession(sessionId: String?): Session? {
         if (sessionId == null) {
             logger.info("No session_id cookie")
             return null
@@ -81,10 +96,6 @@ class HttpContextExtractionInterceptor(
         if (session == null) {
             logger.info("Could not find session")
             throw UnauthorizedException()
-        }
-        if (session.csrfToken.toString() != csrfToken) {
-            logger.info("CSRF token mismatch")
-            throw ForbiddenException()
         }
         if (session.expiresAt < OffsetDateTime.now()) {
             logger.info("Session expired")
