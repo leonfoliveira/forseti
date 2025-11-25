@@ -558,8 +558,9 @@ services:
 
   prometheus:
     command:
-      - --config.file=/etc/prometheus/prometheus.yml
+      - --config.file=/etc/prometheus/prometheus.yaml
       - --storage.tsdb.path=/prometheus
+      - --web.enable-remote-write-receiver
     deploy:
       mode: replicated
       replicas: 1
@@ -588,7 +589,7 @@ services:
     volumes:
       - type: bind
         source: ./volumes/prometheus/config.yaml
-        target: /etc/prometheus/prometheus.yml
+        target: /etc/prometheus/prometheus.yaml
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock

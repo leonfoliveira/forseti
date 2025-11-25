@@ -12,7 +12,6 @@ discovery.relabel "default" {
 
   rule {
     source_labels = ["__meta_docker_container_name"]
-    regex         = "/(.*)"
     target_label  = "container_name"
   }
 
@@ -22,6 +21,10 @@ discovery.relabel "default" {
     target_label  = "service_name"
   }
 }
+
+/*
+// LOGS
+*/
 
 loki.source.docker "default" {
   host              = "unix:///var/run/docker.sock"
@@ -64,10 +67,308 @@ loki.write "default" {
   endpoint {
     url = "http://loki:3100/loki/api/v1/push"
   }
-  external_labels = {}
 }
 
+/*
+// METRICS
+*/
+
+// api
+discovery.relabel "api" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "api"
+    action        = "keep"
+  }
+}
+
+prometheus.scrape "api" {
+  targets    = discovery.relabel.api.output
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+// autojudge
+discovery.relabel "autojudge" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "autojudge"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:8081"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "autojudge" {
+  targets    = discovery.relabel.autojudge.output
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+// autojudge-autoscaler
+discovery.relabel "autojudge_autoscaler" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "autojudge-autoscaler"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:7000"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "autojudge_autoscaler" {
+  targets    = discovery.relabel.autojudge_autoscaler.output
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+// cadvisor
+discovery.relabel "cadvisor" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "cadvisor"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:8080"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "cadvisor" {
+  targets    = discovery.relabel.cadvisor.output
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+// grafana
+discovery.relabel "grafana" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "grafana"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:3000"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "grafana" {
+  targets    = discovery.relabel.grafana.output
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+  metrics_path = "/metrics"
+}
+
+// loki
+discovery.relabel "loki" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "loki"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:3100"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "loki" {
+  targets    = discovery.relabel.loki.output
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+  metrics_path = "/metrics"
+}
+
+// minio
+discovery.relabel "minio" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "minio"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:9000"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "minio" {
+  targets      = discovery.relabel.minio.output
+  metrics_path = "/minio/v2/metrics/cluster"
+  forward_to   = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+// node-exporter
+discovery.relabel "node_exporter" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "node-exporter"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:9100"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "node_exporter" {
+  targets    = discovery.relabel.node_exporter.output
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+// postgres
+discovery.relabel "postgres" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "postgres-exporter"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:9187"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "postgres" {
+  targets    = discovery.relabel.postgres.output
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+// prometheus
+discovery.relabel "prometheus" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "prometheus"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:9090"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "prometheus" {
+  targets    = discovery.relabel.prometheus.output
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+// rabbitmq
+discovery.relabel "rabbitmq" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "rabbitmq"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:15692"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "rabbitmq" {
+  targets      = discovery.relabel.rabbitmq.output
+  metrics_path = "/metrics/per-object"
+  forward_to   = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+// traefik
+discovery.relabel "traefik" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "traefik"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:8080"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "traefik" {
+  targets    = discovery.relabel.traefik.output
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+prometheus.remote_write "default" {
+  endpoint {
+    url = "http://prometheus:9090/api/v1/write"
+  }
+}
+
+/*
+// General Configuration
+*/
+
 logging {
-  level  = "info"
+  level  = "debug"
   format = "logfmt"
 }
