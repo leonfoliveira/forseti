@@ -53,7 +53,7 @@ class HttpContextExtractionInterceptor(
         val isSignInPath = signInPaths.any { it.matches(request.requestURI) }
         if (request.method != HttpMethod.GET.toString() && !isSignInPath) {
             val csrfToken = request.getHeader("X-CSRF-Token")
-            if (session?.csrfToken.toString() != csrfToken) {
+            if (session != null && session.csrfToken.toString() != csrfToken) {
                 logger.info("CSRF token mismatch")
                 throw ForbiddenException()
             }
