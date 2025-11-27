@@ -12,7 +12,9 @@ otelcol.receiver.otlp "default" {
   }
 
   output {
-    traces = [otelcol.exporter.otlp.tempo.input]
+    traces  = [otelcol.exporter.otlp.tempo.input]
+    logs    = [otelcol.exporter.otlp.loki.input]
+    metrics = [otelcol.exporter.otlp.prometheus.input]
   }
 }
 
@@ -47,12 +49,12 @@ otelcol.exporter.otlp "tempo" {
 // Raw Logs
 */
 
-discovery.docker "loki" {
+discovery.docker "default" {
   host = "unix:///var/run/docker.sock"
 }
 
-discovery.relabel "loki" {
-  targets = discovery.docker.loki.targets
+discovery.relabel "default" {
+  targets = discovery.docker.default.targets
 
   rule {
     source_labels = ["__meta_docker_container_id"]

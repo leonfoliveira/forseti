@@ -30,6 +30,7 @@ wait_for_service() {
 # Wait for dependent services to be healthy
 wait_for_service "Loki" "http://loki:3100/ready"
 wait_for_service "Prometheus" "http://prometheus:9090/-/healthy"
+wait_for_service "Tempo" "http://tempo:3200/ready"
 
 # Start
 echo "Starting Loki..."

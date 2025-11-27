@@ -717,14 +717,17 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
-    # healthcheck:
-    #   test:
-    #     - CMD-SHELL
-    #     - wget --spider -q http://localhost:3200/ready
-    #   timeout: 5s
-    #   interval: 15s
-    #   retries: 20
-    #   start_period: 10s
+    healthcheck:
+      test:
+        - CMD
+        - wget
+        - --spider
+        - -q
+        - http://localhost:3200/ready
+      timeout: 5s
+      interval: 15s
+      retries: 20
+      start_period: 10s
     image: grafana/tempo:2.9.0
     networks:
       network:
