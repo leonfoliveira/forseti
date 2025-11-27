@@ -11,9 +11,11 @@ entrypoints:
     address: ":443"
     http:
       tls: {}
+
 api:
   dashboard: true
   insecure: true
+
 providers:
   file:
     filename: /etc/traefik/providers.yaml
@@ -22,13 +24,30 @@ providers:
     watch: true
     exposedByDefault: false
     network: forseti_network
+
+accessLog: {}
+
+experimental:
+  otlpLogs: true
 log:
   level: INFO
-accessLog: {}
+  otlp:
+    serviceName: "traefik"
+    grpc:
+      endpoint: "alloy:4317"
+      insecure: true
+
 metrics:
-  prometheus: {}
+  otlp:
+    serviceName: "traefik"
+    pushInterval: "15s"
+    grpc:
+      endpoint: "alloy:4317"
+      insecure: true
+
 tracing:
   serviceName: "traefik"
   otlp:
     grpc:
       endpoint: "alloy:4317"
+      insecure: true
