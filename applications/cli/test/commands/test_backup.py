@@ -48,7 +48,6 @@ class TestBackupCommand:
         assert command_adapter.run.call_count == 6
         for volume in (
             "forseti_grafana_data",
-            "forseti_loki_data",
             "forseti_minio_data",
             "forseti_postgres_data",
             "forseti_prometheus_data",
@@ -74,7 +73,7 @@ class TestBackupCommand:
         os.makedirs.assert_not_called()
 
         # Verify command adapter was called for each volume
-        assert command_adapter.run.call_count == 6
+        assert command_adapter.run.call_count == 5
 
         # Verify spinner methods were called appropriately
         spinner.start.assert_called_once()

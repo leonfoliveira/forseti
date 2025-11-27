@@ -16,6 +16,7 @@ WORKDIR /app
 RUN apk add --no-cache curl
 
 COPY --from=builder /app/api/build/libs/api.jar app.jar
+COPY --from=builder /app/opentelemetry-javaagent.jar opentelemetry-javaagent.jar
 COPY ./entrypoint.sh entrypoint.sh
 
 EXPOSE 8080

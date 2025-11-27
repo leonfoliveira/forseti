@@ -47,7 +47,7 @@ services:
 
   rabbitmq:
     container_name: dev-forseti-rabbitmq
-    entrypoint: /init.sh
+    entrypoint: /entrypoint.sh
     environment:
       RABBITMQ_USER: forseti
       RABBITMQ_PASSWORD: forseti
@@ -68,7 +68,7 @@ services:
       - 15672:15672
     volumes:
       - dev-rabbitmq_data:/var/lib/rabbitmq
-      - ./volumes/rabbitmq/init.sh:/init.sh:ro
+      - ./volumes/rabbitmq/entrypoint.sh:/entrypoint.sh:ro
       - ./volumes/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./volumes/rabbitmq/definitions.template.json:/etc/rabbitmq/definitions.template.json:ro
 

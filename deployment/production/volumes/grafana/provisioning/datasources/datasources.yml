@@ -5,15 +5,29 @@ datasources:
     type: loki
     access: proxy
     url: ${LOKI_URL}
+    editable: false
     version: 1
-    editable: true
 
   - name: Prometheus
     type: prometheus
     access: proxy
     url: ${PROMETHEUS_URL}
+    editable: false
+    uid: prometheus
+    jsonData:
+      httpMethod: GET
     version: 1
-    editable: true
+
+  - name: Tempo
+    type: tempo
+    access: proxy
+    url: ${TEMPO_URL}
+    jsonData:
+      httpMethod: GET
+      serviceMap:
+        datasourceUid: "prometheus"
+    editable: false
+    version: 1
 
   - name: Postgres
     type: postgres
@@ -25,5 +39,5 @@ datasources:
       sslmode: disable
     secureJsonData:
       password: ${DB_PASSWORD}
+    editable: false
     version: 1
-    editable: true

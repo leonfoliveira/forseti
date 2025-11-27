@@ -55,6 +55,7 @@ allprojects {
 subprojects {
     dependencies {
         implementation(rootProject.libs.bundles.spring)
+        implementation(rootProject.libs.bundles.opentelemetry)
 
         testImplementation(rootProject.libs.bundles.kotest)
         testImplementation(rootProject.libs.bundles.mockk)

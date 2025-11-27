@@ -50,22 +50,31 @@ if [ -n "$RABBITMQ_HOST" ] && [ -n "$RABBITMQ_PORT" ]; then
     wait_for_service "$RABBITMQ_HOST" "$RABBITMQ_PORT" "RabbitMQ" 30
 fi
 
+# Wait for Alloy to be ready
+if [ -n "$OTEL_EXPORTER_OTLP_TRACES_ENDPOINT" ]; then
+    # http://host:port
+    ALLOY_HOST=$(echo "$OTEL_EXPORTER_OTLP_TRACES_ENDPOINT" | sed 's|http://||' | cut -d'/' -f1 | cut -d':' -f1)
+    ALLOY_PORT=$(echo "$OTEL_EXPORTER_OTLP_TRACES_ENDPOINT" | sed 's|http://||' | cut -d'/' -f1 | cut -d':' -f2)
+
+    wait_for_service "$ALLOY_HOST" "$ALLOY_PORT" "Alloy" 30
+fi
+
 # Load secrets into environment variables
 if [ -n "$DB_PASSWORD_FILE" ]; then
-  export DB_PASSWORD=$(cat "$DB_PASSWORD_FILE")
+    export DB_PASSWORD=$(cat "$DB_PASSWORD_FILE")
 fi
 
 if [ -n "$MINIO_SECRET_KEY_FILE" ]; then
-  export MINIO_SECRET_KEY=$(cat "$MINIO_SECRET_KEY_FILE")
+    export MINIO_SECRET_KEY=$(cat "$MINIO_SECRET_KEY_FILE")
 fi
 
 if [ -n "$RABBITMQ_PASSWORD_FILE" ]; then
-  export RABBITMQ_PASSWORD=$(cat "$RABBITMQ_PASSWORD_FILE")
+    export RABBITMQ_PASSWORD=$(cat "$RABBITMQ_PASSWORD_FILE")
 fi
 
 if [ -n "$ROOT_PASSWORD_FILE" ]; then
-  export ROOT_PASSWORD=$(cat "$ROOT_PASSWORD_FILE")
+    export ROOT_PASSWORD=$(cat "$ROOT_PASSWORD_FILE")
 fi
 
-echo "Starting application..."
-exec java -jar app.jar
+echo "Starting backend application..."
+exec java -javaagent:opentelemetry-javaagent.jar -jar app.jar

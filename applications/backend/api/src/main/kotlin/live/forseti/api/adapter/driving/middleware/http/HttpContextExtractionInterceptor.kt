@@ -1,5 +1,6 @@
 package live.forseti.api.adapter.driving.middleware.http
 
+import io.opentelemetry.api.trace.Span
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import live.forseti.core.domain.entity.Session
@@ -37,14 +38,7 @@ class HttpContextExtractionInterceptor(
         response: HttpServletResponse,
         handler: Any,
     ): Boolean {
-        val traceId = request.getHeader("X-Trace-Id") ?: UUID.randomUUID().toString()
-        MDC.put("traceId", traceId)
-
         logger.info("Started HttpContextExtractionInterceptor")
-
-        val ip =
-            request.getHeader("X-Forwarded-For")
-                ?: request.remoteAddr
 
         val sessionId = request.cookies?.find { it.name == "session_id" }?.value
         val session = extractSession(sessionId)
@@ -61,8 +55,8 @@ class HttpContextExtractionInterceptor(
 
         val context = RequestContext.getContext()
 
-        context.traceId = traceId
-        context.ip = ip
+        context.traceId = Span.current().spanContext.traceId
+        context.ip = request.getHeader("X-Forwarded-For") ?: request.remoteAddr
         context.session = session
 
         logger.info("Finished HttpContextExtractionInterceptor")

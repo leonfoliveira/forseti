@@ -9,7 +9,6 @@ import io.mockk.mockkStatic
 import live.forseti.core.domain.entity.SessionMockBuilder
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
-import org.slf4j.MDC
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
@@ -98,6 +97,5 @@ class WebSocketContextExtractionInterceptorTest :
             context.session shouldBe existingContext.session
             context.ip shouldBe existingContext.ip
             context.traceId shouldBe existingContext.traceId
-            MDC.get("traceId") shouldBe existingContext.traceId
         }
     })

@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="live.forseti.core.config.logging.SanitizingPatternLayout">
-            <pattern>ts=%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} level=%-5level trace_id=%X{traceId} logger=%logger{36} msg=%msg%n</pattern>
-        </layout>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="live.forseti.core.config.logging.SanitizingPatternLayout">
+                <pattern>ts=%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} level=%-5level trace_id=%X{trace_id} span_id=%X{span_id} logger=%logger{36} msg=%msg%n</pattern>
+            </layout>
+        </encoder>
+    </appender>
+
+    <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.mdc.v1_0.OpenTelemetryAppender">
+        <appender-ref ref="CONSOLE"/>
     </appender>
 
     <springProfile name="test">
         <root level="INFO">
-            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="OTEL"/>
         </root>
     </springProfile>
 
     <springProfile name="development">
         <root level="INFO">
-            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="OTEL"/>
         </root>
     </springProfile>
 
     <springProfile name="production">
         <root level="INFO">
-            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="OTEL"/>
         </root>
     </springProfile>
 
     <springProfile name="migration">
         <root level="INFO">
-            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="OTEL"/>
         </root>
     </springProfile>
 </configuration>

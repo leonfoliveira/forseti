@@ -32,10 +32,17 @@ if [ -n "$RABBITMQ_HOST" ] && [ -n "$RABBITMQ_PORT" ]; then
     wait_for_service "$RABBITMQ_HOST" "$RABBITMQ_PORT" "RabbitMQ" 30
 fi
 
-# Load secrets into environment variables
-if [ -n "$RABBITMQ_PASSWORD_FILE" ]; then
-  export RABBITMQ_PASSWORD=$(cat "$RABBITMQ_PASSWORD_FILE")
+# Check Docker socket availability
+if [ -S "/var/run/docker.sock" ]; then
+    echo "Docker socket is available"
+else
+    echo "WARNING: Docker socket not found at /var/run/docker.sock"
 fi
 
-echo "Starting application..."
+# Load secrets into environment variables
+if [ -n "$RABBITMQ_PASSWORD_FILE" ]; then
+    export RABBITMQ_PASSWORD=$(cat "$RABBITMQ_PASSWORD_FILE")
+fi
+
+echo "Starting autoscaler application..."
 exec python -m autoscaler
