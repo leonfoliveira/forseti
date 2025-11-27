@@ -15,6 +15,10 @@ WORKDIR /app
 
 RUN apk add --no-cache curl
 
+ARG OTEL_JAVA_AGENT_VERSION="2.22.0"
+RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OTEL_JAVA_AGENT_VERSION}/opentelemetry-javaagent.jar \
+    -O /app/opentelemetry-javaagent.jar
+
 COPY --from=builder /app/api/build/libs/api.jar app.jar
 COPY ./entrypoint.sh entrypoint.sh
 

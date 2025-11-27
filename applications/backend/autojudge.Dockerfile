@@ -15,6 +15,10 @@ WORKDIR /app
 
 RUN apk add --no-cache ca-certificates curl
 
+ARG OTEL_JAVA_AGENT_VERSION="2.22.0"
+RUN curl -L https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OTEL_JAVA_AGENT_VERSION}/opentelemetry-javaagent.jar \
+    -O /app/opentelemetry-javaagent.jar
+
 ARG DOCKER_CLI_VERSION=26.1.3
 RUN curl -L "https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_CLI_VERSION}.tgz" | tar xz \
     && mv docker/docker /usr/local/bin/docker \

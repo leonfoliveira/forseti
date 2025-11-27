@@ -80,7 +80,6 @@ services:
         delay: 5s
       update_config:
         order: start-first
-        delay: 30s
     environment:
       COOKIE_DOMAIN: .forseti.live
       DB_PASSWORD_FILE: /run/secrets/db_password
@@ -105,6 +104,11 @@ services:
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       RABBITMQ_WEBSOCKET_EXCHANGE: websocket-exchange
       ROOT_PASSWORD_FILE: /run/secrets/root_password
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://alloy:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_LOGS_EXPORTER: none
+      OTEL_METRICS_EXPORTER: none
+      OTEL_SERVICE_NAME: api
       SPRING_PROFILES_ACTIVE: production
       VERSION: ${VERSION:-latest}
       WEBAPP_PUBLIC_URL: https://forseti.live
@@ -141,7 +145,6 @@ services:
         delay: 5s
       update_config:
         order: start-first
-        delay: 30s
     environment:
       API_URL: http://api:8080
       DB_PASSWORD_FILE: /run/secrets/db_password
@@ -167,6 +170,11 @@ services:
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       RABBITMQ_WEBSOCKET_EXCHANGE: websocket-exchange
       ROOT_PASSWORD_FILE: /run/secrets/root_password
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://alloy:4317
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      OTEL_LOGS_EXPORTER: none
+      OTEL_METRICS_EXPORTER: none
+      OTEL_SERVICE_NAME: autojudge
       SPRING_PROFILES_ACTIVE: production
       VERSION: ${VERSION:-latest}
     healthcheck:
@@ -207,9 +215,6 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
-      update_config:
-        order: start-first
-        delay: 30s
     environment:
       COOLDOWN: 60
       INTERVAL: 10
@@ -316,6 +321,7 @@ services:
       GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/root_password
       LOKI_URL: http://loki:3100
       PROMETHEUS_URL: http://prometheus:9090
+      TEMPO_URL: http://tempo:3200
     healthcheck:
       test:
         - CMD-SHELL
@@ -343,8 +349,6 @@ services:
         target: /etc/grafana/provisioning/dashboards
 
   loki:
-    command:
-      - -config.file=/etc/loki/local-config.yaml
     deploy:
       mode: replicated
       replicas: 1
@@ -366,14 +370,29 @@ services:
       interval: 15s
       retries: 5
       start_period: 10s
+    entrypoint: /entrypoint.sh
+    environment:
+      MINIO_ACCESS_KEY: forseti
+      MINIO_SECRET_KEY_FILE: /run/secrets/minio_password
+      MINIO_BUCKET: forseti-loki
     image: grafana/loki:3.4.4
     networks:
       network:
     volumes:
+      - type: bind
+        source: ./volumes/loki/entrypoint.sh
+        target: /entrypoint.sh
+        read_only: true
+      - type: bind
+        source: ./volumes/loki/config.yaml
+        target: /etc/loki/config.yaml
+        read_only: true
       - type: volume
         source: loki_data
-        target: /var/lib/loki
+        target: /loki
         volume: {}
+    secrets:
+      - minio_password
 
   migration:
     deploy:
@@ -381,17 +400,14 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: "0.5"
-          memory: 256M
+          cpus: "0.25"
+          memory: 128M
         reservations:
-          cpus: "0.5"
-          memory: 256M
+          cpus: "0.25"
+          memory: 128M
       restart_policy:
         condition: on-failure
         delay: 5s
-      update_config:
-        order: start-first
-        delay: 30s
     entrypoint: sh -c "flyway -url=$${FLYWAY_URL} -user=$${FLYWAY_USER} -password=$$(cat /run/secrets/db_password) -connectRetries=60 -connectRetriesInterval=5 migrate"
     environment:
       FLYWAY_URL: jdbc:postgresql://postgres:5432/forseti
@@ -421,6 +437,8 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+      update_config:
+        order: start-first
     environment:
       MINIO_ROOT_USER: forseti
       MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_password
@@ -443,6 +461,34 @@ services:
         source: minio_data
         target: /data
         volume: {}
+
+  minio-init:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128M
+        reservations:
+          cpus: "0.25"
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    entrypoint: |
+      sh -c '
+        mc alias set minio http://minio:9000 forseti $$(cat /run/secrets/minio_password);
+        mc mb minio/forseti --ignore-existing;
+        mc mb minio/forseti-loki --ignore-existing;
+        mc mb minio/forseti-tempo --ignore-existing;
+        echo "MinIO buckets initialized successfully";
+      '
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    networks:
+      network:
+    secrets:
+      - minio_password
 
   node-exporter:
     command:
@@ -501,6 +547,8 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+      update_config:
+        order: start-first
     environment:
       POSTGRES_USER: forseti
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
@@ -583,16 +631,12 @@ services:
       retries: 5
       start_period: 10s
     image: prom/prometheus:v3.4.1
-    user: root
     networks:
       network:
     volumes:
       - type: bind
         source: ./volumes/prometheus/config.yaml
         target: /etc/prometheus/prometheus.yaml
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
         read_only: true
       - type: volume
         source: prometheus_data
@@ -613,7 +657,9 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
-    entrypoint: /init.sh
+      update_config:
+        order: start-first
+    entrypoint: /entrypoint.sh
     environment:
       RABBITMQ_USER: forseti
       RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
@@ -638,8 +684,8 @@ services:
         target: /var/lib/rabbitmq
         volume: {}
       - type: bind
-        source: ./volumes/rabbitmq/init.sh
-        target: /init.sh
+        source: ./volumes/rabbitmq/entrypoint.sh
+        target: /entrypoint.sh
         read_only: true
       - type: bind
         source: ./volumes/rabbitmq/rabbitmq.conf
@@ -649,6 +695,52 @@ services:
         source: ./volumes/rabbitmq/definitions.template.json
         target: /etc/rabbitmq/definitions.template.json
         read_only: true
+
+  tempo:
+    entrypoint: sh /entrypoint.sh
+    environment:
+      MINIO_ACCESS_KEY: forseti
+      MINIO_SECRET_KEY_FILE: /run/secrets/minio_password
+      MINIO_BUCKET: forseti-tempo
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    # healthcheck:
+    #   test:
+    #     - CMD-SHELL
+    #     - wget --spider -q http://localhost:3200/ready
+    #   timeout: 5s
+    #   interval: 15s
+    #   retries: 20
+    #   start_period: 10s
+    image: grafana/tempo:2.9.0
+    networks:
+      network:
+    volumes:
+      - type: bind
+        source: ./volumes/tempo/entrypoint.sh
+        target: /entrypoint.sh
+        read_only: true
+      - type: bind
+        source: ./volumes/tempo/config.yaml
+        target: /etc/tempo/config.yaml
+        read_only: true
+      - type: volume
+        source: tempo_data
+        target: /var/tempo
+        volume: {}
+    secrets:
+      - minio_password
 
   traefik:
     deploy:
@@ -667,6 +759,8 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+      update_config:
+        order: start-first
     healthcheck:
       test:
         - CMD-SHELL
@@ -726,7 +820,6 @@ services:
         delay: 5s
       update_config:
         order: start-first
-        delay: 30s
     environment:
       API_INTERNAL_URL: http://api:8080
       API_PUBLIC_URL: https://api.forseti.live
@@ -752,3 +845,4 @@ volumes:
   postgres_data:
   prometheus_data:
   rabbitmq_data:
+  tempo_data:

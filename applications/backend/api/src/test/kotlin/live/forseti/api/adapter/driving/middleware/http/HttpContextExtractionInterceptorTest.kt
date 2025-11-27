@@ -7,6 +7,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import io.opentelemetry.api.trace.Span
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
@@ -16,9 +17,7 @@ import live.forseti.core.domain.exception.ForbiddenException
 import live.forseti.core.domain.exception.UnauthorizedException
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.session.FindSessionUseCase
-import org.slf4j.MDC
 import java.time.OffsetDateTime
-import java.util.UUID
 
 class HttpContextExtractionInterceptorTest :
     FunSpec({
@@ -58,33 +57,16 @@ class HttpContextExtractionInterceptorTest :
             RequestContext.getContext().ip shouldBe "127.0.0.1"
         }
 
-        test("should set traceId from X-Trace-Id header") {
-            val request = mockk<HttpServletRequest>(relaxed = true)
-            val response = mockk<HttpServletResponse>(relaxed = true)
-            val filterChain = mockk<FilterChain>(relaxed = true)
-            val traceId = UUID.randomUUID().toString()
-            every { request.method } returns "GET"
-            every { request.getHeader("X-Trace-Id") } returns traceId
-            every { request.cookies } returns null
-
-            sut.preHandle(request, response, filterChain)
-
-            RequestContext.getContext().traceId shouldBe traceId
-            MDC.get("traceId") shouldBe traceId
-        }
-
-        test("should generate new traceId when X-Trace-Id header is not present") {
+        test("should set traceId from span header") {
             val request = mockk<HttpServletRequest>(relaxed = true)
             val response = mockk<HttpServletResponse>(relaxed = true)
             val filterChain = mockk<FilterChain>(relaxed = true)
             every { request.method } returns "GET"
-            every { request.getHeader("X-Trace-Id") } returns null
             every { request.cookies } returns null
 
             sut.preHandle(request, response, filterChain)
 
-            val traceId = RequestContext.getContext().traceId
-            traceId shouldBe MDC.get("traceId")
+            RequestContext.getContext().traceId shouldBe Span.current().spanContext.traceId
         }
 
         test("should not set authorization when no session_id cookie is present") {

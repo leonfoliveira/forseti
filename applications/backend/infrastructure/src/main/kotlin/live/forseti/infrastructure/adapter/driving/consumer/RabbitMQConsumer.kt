@@ -1,12 +1,12 @@
 package live.forseti.infrastructure.adapter.driving.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.opentelemetry.api.trace.Span
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.session.RefreshSessionUseCase
 import live.forseti.infrastructure.adapter.dto.message.RabbitMQMessage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.Serializable
 import java.util.UUID
@@ -42,24 +42,20 @@ abstract class RabbitMQConsumer<TPayload : Serializable>(
         val payload = objectMapper.treeToValue(payloadJson, getPayloadType())
         val message = RabbitMQMessage(id, traceId, payload)
 
-        initRequestContext(message)
+        initRequestContext()
 
         try {
             handlePayload(message.payload)
         } catch (ex: Exception) {
             logger.error("Error thrown from consumer {}: {}", this.javaClass.simpleName, ex.message)
             throw ex
-        } finally {
-            MDC.clear()
         }
     }
 
-    private fun initRequestContext(message: RabbitMQMessage<*>) {
-        RequestContext.getContext().traceId = message.traceId
-        MDC.put("traceId", message.traceId)
-
+    private fun initRequestContext() {
         val session = refreshSessionUseCase.refresh(memberId)
         RequestContext.getContext().session = session
+        RequestContext.getContext().traceId = Span.current().spanContext.traceId
     }
 
     /**

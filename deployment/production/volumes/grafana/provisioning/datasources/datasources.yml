@@ -6,14 +6,21 @@ datasources:
     access: proxy
     url: ${LOKI_URL}
     version: 1
-    editable: true
+    editable: false
 
   - name: Prometheus
     type: prometheus
     access: proxy
     url: ${PROMETHEUS_URL}
     version: 1
-    editable: true
+    editable: false
+
+  - name: Tempo
+    type: tempo
+    access: proxy
+    url: ${TEMPO_URL}
+    version: 1
+    editable: false
 
   - name: Postgres
     type: postgres
@@ -26,4 +33,4 @@ datasources:
     secureJsonData:
       password: ${DB_PASSWORD}
     version: 1
-    editable: true
+    editable: false

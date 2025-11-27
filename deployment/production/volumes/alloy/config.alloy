@@ -43,7 +43,7 @@ loki.process "default" {
   }
 
   stage.regex {
-    expression = "trace_id=(?P<trace_id>\\S+)"
+    expression = "trace_id=(?P<trace_id>[^:\\s]+)(:(?P<span_id>\\S+))?"
   }
 
   stage.replace {
@@ -57,6 +57,7 @@ loki.process "default" {
       level    = "",
       logger   = "",
       trace_id = "",
+      span_id  = "",
     }
   }
 
@@ -358,9 +359,63 @@ prometheus.scrape "traefik" {
   scrape_interval = "15s"
 }
 
+// tempo
+discovery.relabel "tempo" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "tempo"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:3200"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "tempo" {
+  targets    = discovery.relabel.tempo.output
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+// Remote Write
+
 prometheus.remote_write "default" {
   endpoint {
     url = "http://prometheus:9090/api/v1/write"
+  }
+}
+
+
+/*
+// TRACES
+*/
+
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    traces = [otelcol.exporter.otlp.tempo.input]
+  }
+}
+
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "http://tempo:4317"
+    tls {
+      insecure = true
+    }
   }
 }
 

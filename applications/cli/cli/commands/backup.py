@@ -16,7 +16,6 @@ def backup():
 
     volumes = (
         "forseti_grafana_data",
-        "forseti_loki_data",
         "forseti_minio_data",
         "forseti_postgres_data",
         "forseti_prometheus_data",

@@ -4,7 +4,6 @@ import feign.RequestInterceptor
 import feign.RequestTemplate
 import feign.Retryer
 import live.forseti.core.domain.model.RequestContext
-import org.slf4j.MDC
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -24,11 +23,6 @@ class FeignConfig : RequestInterceptor {
         if (session != null) {
             template.header("Cookie", "session_id=${session.id}")
             template.header("X-CSRF-Token", session.csrfToken.toString())
-        }
-
-        val traceId = MDC.get("traceId")
-        if (traceId != null) {
-            template.header("X-Trace-Id", traceId)
         }
     }
 }

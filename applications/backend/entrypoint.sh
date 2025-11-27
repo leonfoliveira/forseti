@@ -50,6 +50,15 @@ if [ -n "$RABBITMQ_HOST" ] && [ -n "$RABBITMQ_PORT" ]; then
     wait_for_service "$RABBITMQ_HOST" "$RABBITMQ_PORT" "RabbitMQ" 30
 fi
 
+# Wait for Alloy to be ready
+if [ -n "$OTEL_EXPORTER_OTLP_TRACES_ENDPOINT" ] then
+    # http://host:port
+    ALLOY_HOST=$(echo "$OTEL_EXPORTER_OTLP_TRACES_ENDPOINT" | sed 's|http://||' | cut -d'/' -f1 | cut -d':' -f1)
+    ALLOY_PORT=$(echo "$OTEL_EXPORTER_OTLP_TRACES_ENDPOINT" | sed 's|http://||' | cut -d'/' -f1 | cut -d':' -f2)
+
+    wait_for_service "$ALLOY_HOST" "$ALLOY_PORT" "Alloy" 30
+fi
+
 # Load secrets into environment variables
 if [ -n "$DB_PASSWORD_FILE" ]; then
   export DB_PASSWORD=$(cat "$DB_PASSWORD_FILE")
@@ -68,4 +77,4 @@ if [ -n "$ROOT_PASSWORD_FILE" ]; then
 fi
 
 echo "Starting application..."
-exec java -jar app.jar
+exec java -javaagent:opentelemetry-javaagent.jar -jar app.jar

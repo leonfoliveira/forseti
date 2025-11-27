@@ -1,5 +1,6 @@
 package live.forseti.api.adapter.driving.middleware.http
 
+import io.opentelemetry.api.trace.Span
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import live.forseti.core.domain.entity.Session
@@ -8,7 +9,6 @@ import live.forseti.core.domain.exception.UnauthorizedException
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.session.FindSessionUseCase
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
@@ -37,8 +37,12 @@ class HttpContextExtractionInterceptor(
         response: HttpServletResponse,
         handler: Any,
     ): Boolean {
-        val traceId = request.getHeader("X-Trace-Id") ?: UUID.randomUUID().toString()
+        val spanContext = Span.current().spanContext
+        val traceId = spanContext.traceId
+        val spanId = spanContext.spanId
+        
         MDC.put("traceId", traceId)
+        MDC.put("spanId", spanId)
 
         logger.info("Started HttpContextExtractionInterceptor")
 

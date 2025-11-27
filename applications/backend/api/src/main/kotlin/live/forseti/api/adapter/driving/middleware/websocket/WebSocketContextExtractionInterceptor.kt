@@ -3,7 +3,6 @@ package live.forseti.api.adapter.driving.middleware.websocket
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
@@ -35,7 +34,6 @@ class WebSocketContextExtractionInterceptor(
         if (context.traceId == null) {
             context.traceId = UUID.randomUUID().toString()
         }
-        MDC.put("traceId", context.traceId)
         RequestContext.setContext(context)
 
         logger.info("Extracted context from WebSocket attributes: $context")
