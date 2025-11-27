@@ -27,3 +27,8 @@ log:
 accessLog: {}
 metrics:
   prometheus: {}
+tracing:
+  serviceName: "traefik"
+  otlp:
+    grpc:
+      endpoint: "alloy:4317"

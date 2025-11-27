@@ -74,6 +74,16 @@ loki.write "default" {
 // METRICS
 */
 
+// alloy
+prometheus.exporter.self "alloy" {
+}
+
+prometheus.scrape "alloy" {
+  targets    = prometheus.exporter.self.alloy.targets
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
 // api
 discovery.relabel "api" {
   targets = discovery.relabel.default.output
