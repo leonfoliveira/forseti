@@ -1,52 +1,5 @@
-/*
-// OTEL
-*/
-
-otelcol.receiver.otlp "default" {
-  grpc {
-    endpoint = "0.0.0.0:4317"
-  }
-
-  http {
-    endpoint = "0.0.0.0:4318"
-  }
-
-  output {
-    traces  = [otelcol.exporter.otlp.tempo.input]
-    logs    = [otelcol.exporter.otlp.loki.input]
-    metrics = [otelcol.exporter.otlp.prometheus.input]
-  }
-}
-
-otelcol.exporter.otlp "loki" {
-  client {
-    endpoint = "http://loki:3100/loki/api/v1/push"
-    tls {
-      insecure = true
-    }
-  }
-}
-
-otelcol.exporter.otlp "prometheus" {
-  client {
-    endpoint = "http://prometheus:9090/api/v1/write"
-    tls {
-      insecure = true
-    }
-  }
-}
-
-otelcol.exporter.otlp "tempo" {
-  client {
-    endpoint = "http://tempo:4317"
-    tls {
-      insecure = true
-    }
-  }
-}
-
 /**
-// Raw Logs
+// Logs
 */
 
 discovery.docker "default" {
@@ -71,17 +24,11 @@ discovery.relabel "default" {
     regex         = "forseti_(.*)"
     target_label  = "service_name"
   }
-
-  rule {
-    source_labels = ["service_name"]
-    regex         = "(api|autojudge|traefik)"
-    action        = "drop"
-  }
 }
 
 loki.source.docker "default" {
   host              = "unix:///var/run/docker.sock"
-  targets           = discovery.relabel.loki.output
+  targets           = discovery.relabel.default.output
   forward_to        = [loki.process.default.receiver]
   refresh_interval  = "5s"
 }
@@ -124,7 +71,7 @@ loki.write "default" {
 }
 
 /*
-// Raw Metrics
+// Metrics
 */
 
 // alloy
@@ -134,6 +81,56 @@ prometheus.exporter.self "alloy" {
 prometheus.scrape "alloy" {
   targets    = prometheus.exporter.self.alloy.targets
   forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+// api
+discovery.relabel "api" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "api"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:8080"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "api" {
+  targets      = discovery.relabel.api.output
+  metrics_path = "/metrics"
+  forward_to   = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+// autojudge
+discovery.relabel "autojudge" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "autojudge"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:8081"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "autojudge" {
+  targets      = discovery.relabel.autojudge.output
+  metrics_path = "/metrics"
+  forward_to   = [prometheus.remote_write.default.receiver]
   scrape_interval = "15s"
 }
 
@@ -381,11 +378,61 @@ prometheus.scrape "tempo" {
   scrape_interval = "15s"
 }
 
-// Remote Write
+// traefik
+discovery.relabel "traefik" {
+  targets = discovery.relabel.default.output
 
+  rule {
+    source_labels = ["service_name"]
+    regex         = "traefik"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:8080"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "traefik" {
+  targets    = discovery.relabel.traefik.output
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
+// remote write
 prometheus.remote_write "default" {
   endpoint {
     url = "http://prometheus:9090/api/v1/write"
+  }
+}
+
+/*
+// Traces
+*/
+
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    traces  = [otelcol.exporter.otlp.tempo.input]
+  }
+}
+
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "tempo:4317"
+    tls {
+      insecure = true
+    }
   }
 }
 

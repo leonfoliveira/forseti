@@ -25,25 +25,12 @@ providers:
     exposedByDefault: false
     network: forseti_network
 
-accessLog: {}
-
-experimental:
-  otlpLogs: true
 log:
   level: INFO
-  otlp:
-    serviceName: "traefik"
-    grpc:
-      endpoint: "alloy:4317"
-      insecure: true
+accessLog: {}
 
 metrics:
-  otlp:
-    serviceName: "traefik"
-    pushInterval: "15s"
-    grpc:
-      endpoint: "alloy:4317"
-      insecure: true
+  prometheus: {}
 
 tracing:
   serviceName: "traefik"
