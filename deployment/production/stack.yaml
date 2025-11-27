@@ -484,7 +484,7 @@ services:
         mc mb minio/forseti-tempo --ignore-existing;
         echo "MinIO buckets initialized successfully";
       '
-    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    image: minio/mc:RELEASE.2025-09-07T16-13-09Z
     networks:
       network:
     secrets:
