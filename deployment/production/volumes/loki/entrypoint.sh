@@ -1,31 +1,36 @@
 #!/bin/sh
+
 set -e
 
-# Load secrets
+# Function to wait for HTTP health endpoint
+wait_for_http_health() {
+    local service_name=$1
+    local url=$2
+    local max_attempts=${3:-60}
+    local attempt=1
+    
+    echo "Waiting for $service_name at $url..."
+    
+    while [ $attempt -le $max_attempts ]; do
+        if wget --spider -q "$url" 2>/dev/null; then
+            echo "$service_name is healthy!"
+            return 0
+        fi
+        
+        echo "Attempt $attempt/$max_attempts: $service_name not healthy yet, waiting..."
+        sleep 2
+        attempt=$((attempt + 1))
+    done
+    
+    echo "ERROR: $service_name at $url is not available after $max_attempts attempts"
+    exit 1
+}
+
+# Load secrets into environment variables
 export MINIO_SECRET_KEY=$(cat /run/secrets/minio_password)
 
-# Wait for MinIO to be healthy
-echo "Waiting for MinIO to be healthy..."
+# Wait for dependent services to be healthy
+wait_for_http_health "MinIO" "http://minio:9000/minio/health/live" 60
 
-max_attempts=60
-attempt=0
-
-while [ $attempt -lt $max_attempts ]; do
-  if wget --spider -q http://minio:9000/minio/health/live 2>/dev/null; then
-    echo "MinIO is healthy!"
-    break
-  fi
-  
-  echo "MinIO not yet healthy (attempt $((attempt+1))/$max_attempts)"
-  attempt=$((attempt+1))
-  sleep 2
-done
-
-if [ $attempt -eq $max_attempts ]; then
-  echo "ERROR: Timeout waiting for MinIO to be healthy"
-  exit 1
-fi
-
-# Start
 echo "Starting Loki..."
 exec /usr/bin/loki -config.expand-env=true -config.file=/etc/loki/config.yaml
