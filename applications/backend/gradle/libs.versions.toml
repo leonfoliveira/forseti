@@ -14,6 +14,7 @@ minio = "8.5.17"
 mockk = "1.13.17"
 opencsv = "5.11"
 opentelemetry = "1.56.0"
+opentelemetry-mdc = "2.11.0-alpha"
 postgresql = "42.7.5"
 prometheus = "1.4.3"
 snakeyaml = "2.4"
@@ -37,6 +38,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 minio = { module = "io.minio:minio", version.ref = "minio" }
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 opentelemetry-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "opentelemetry" }
+opentelemetry-instrumentation-logback-mdc = { module = "io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0", version.ref = "opentelemetry-mdc" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 prometheus-metrics-core = { module = "io.prometheus:prometheus-metrics-core", version.ref = "prometheus" }
 prometheus-metrics-exporter-servlet-jakarta = { module = "io.prometheus:prometheus-metrics-exporter-servlet-jakarta", version.ref = "prometheus" }
@@ -73,6 +75,10 @@ kotest = [
 mockk = [
     "mockk",
     "springmockk"
+]
+opentelemetry = [
+    "opentelemetry-api",
+    "opentelemetry-instrumentation-logback-mdc"
 ]
 prometheus = [
     "prometheus-metrics-core",

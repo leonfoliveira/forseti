@@ -9,6 +9,7 @@ import live.forseti.core.domain.exception.UnauthorizedException
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.session.FindSessionUseCase
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
@@ -37,18 +38,7 @@ class HttpContextExtractionInterceptor(
         response: HttpServletResponse,
         handler: Any,
     ): Boolean {
-        val spanContext = Span.current().spanContext
-        val traceId = spanContext.traceId
-        val spanId = spanContext.spanId
-        
-        MDC.put("traceId", traceId)
-        MDC.put("spanId", spanId)
-
         logger.info("Started HttpContextExtractionInterceptor")
-
-        val ip =
-            request.getHeader("X-Forwarded-For")
-                ?: request.remoteAddr
 
         val sessionId = request.cookies?.find { it.name == "session_id" }?.value
         val session = extractSession(sessionId)
@@ -65,8 +55,8 @@ class HttpContextExtractionInterceptor(
 
         val context = RequestContext.getContext()
 
-        context.traceId = traceId
-        context.ip = ip
+        context.traceId = Span.current().spanContext.traceId
+        context.ip = request.getHeader("X-Forwarded-For") ?: request.remoteAddr
         context.session = session
 
         logger.info("Finished HttpContextExtractionInterceptor")

@@ -13,6 +13,22 @@ tasks.bootJar {
     archiveFileName.set("autojudge.jar")
 }
 
+tasks.bootRun {
+    dependsOn(":core:flywayMigrate")
+    val agentPath = rootProject.file("opentelemetry-javaagent.jar")
+    if (agentPath.exists()) {
+        jvmArgs(
+            "-javaagent:${agentPath.absolutePath}",
+            "-Dotel.logs.exporter=none",
+            "-Dotel.traces.exporter=none",
+            "-Dotel.metrics.exporter=none",
+        )
+        println("OpenTelemetry Java agent enabled: ${agentPath.absolutePath}")
+    } else {
+        println("WARNING: OpenTelemetry Java agent not found at ${agentPath.absolutePath}")
+    }
+}
+
 kover {
     reports {
         filters {

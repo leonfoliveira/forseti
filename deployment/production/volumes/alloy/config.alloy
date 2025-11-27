@@ -43,7 +43,11 @@ loki.process "default" {
   }
 
   stage.regex {
-    expression = "trace_id=(?P<trace_id>[^:\\s]+)(:(?P<span_id>\\S+))?"
+    expression = "trace_id=(?P<trace_id>\\S+)"
+  }
+
+  stage.regex {
+    expression = "span_id=(?P<span_id>\\S+)"
   }
 
   stage.replace {
