@@ -452,6 +452,6 @@ otelcol.exporter.otlp "default" {
 */
 
 logging {
-  level  = "debug"
+  level  = "info"
   format = "logfmt"
 }
