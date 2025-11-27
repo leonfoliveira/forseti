@@ -427,11 +427,18 @@ otelcol.receiver.otlp "default" {
   }
 
   output {
-    traces  = [otelcol.exporter.otlp.tempo.input]
+    traces  = [otelcol.connector.servicegraph.default.input, otelcol.exporter.otlp.default.input]
   }
 }
 
-otelcol.exporter.otlp "tempo" {
+otelcol.connector.servicegraph "default" {
+  dimensions = ["http.method", "http.target"]
+  output {
+    metrics = [otelcol.exporter.otlp.default.input]
+  }
+}
+
+otelcol.exporter.otlp "default" {
   client {
     endpoint = "tempo:4317"
     tls {

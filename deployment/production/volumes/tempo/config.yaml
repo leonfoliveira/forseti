@@ -21,3 +21,30 @@ storage:
       bucket: ${MINIO_BUCKET}
     wal:
       path: /var/tempo/wal
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+  storage:
+    path: /var/tempo/metrics-generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+  traces_storage:
+    path: /var/tempo/metrics-generator/traces
+  processor:
+    service_graphs:
+      dimensions:
+        - http.method
+        - http.target
+        - http.status_code
+    span_metrics:
+      dimensions:
+        - http.method
+        - http.target
+        - http.status_code
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors: [service-graphs, span-metrics]
