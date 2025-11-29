@@ -1,6 +1,12 @@
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
-import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmissionInputDTO";
+
+export type CreateSubmissionInputDTO = {
+  problemId: string;
+  language: SubmissionLanguage;
+  code: File;
+};
 
 export interface SubmissionWritter {
   /**

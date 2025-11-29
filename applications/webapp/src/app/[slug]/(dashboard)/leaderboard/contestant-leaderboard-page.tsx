@@ -1,7 +1,7 @@
 import React from "react";
 
 import { LeaderboardPage } from "@/app/[slug]/(dashboard)/_common/leaderboard-page";
-import { useAppSelector } from "@/store/store";
+import { useAppSelector } from "@/app/_store/store";
 
 export function ContestantLeaderboardPage() {
   const problems = useAppSelector(

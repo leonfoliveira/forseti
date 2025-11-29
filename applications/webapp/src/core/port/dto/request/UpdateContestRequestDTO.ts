@@ -1,12 +1,12 @@
-import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 
 export type UpdateContestRequestDTO = {
   id: string;
   slug: string;
   title: string;
-  languages: Language[];
+  languages: SubmissionLanguage[];
   startAt: string;
   endAt: string;
   settings: {

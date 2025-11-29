@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { SettingsForm } from "@/app/[slug]/(dashboard)/settings/_form/settings-form";
 import { ProblemsSettings } from "@/app/[slug]/(dashboard)/settings/_tab/problems-settings";
-import { attachmentService } from "@/config/composition";
+import { attachmentReader } from "@/config/composition";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -81,12 +81,12 @@ describe("ProblemsSettings", () => {
     fireEvent.click(screen.getByTestId("download-description"));
     fireEvent.click(screen.getByTestId("download-test-cases"));
 
-    expect(attachmentService.download).toHaveBeenCalledTimes(2);
-    expect(attachmentService.download).toHaveBeenCalledWith(
+    expect(attachmentReader.download).toHaveBeenCalledTimes(2);
+    expect(attachmentReader.download).toHaveBeenCalledWith(
       contestMetadata.id,
       form.current.getValues("problems")[0].description,
     );
-    expect(attachmentService.download).toHaveBeenCalledWith(
+    expect(attachmentReader.download).toHaveBeenCalledWith(
       contestMetadata.id,
       form.current.getValues("problems")[0].testCases,
     );

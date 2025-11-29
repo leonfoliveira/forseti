@@ -1,10 +1,10 @@
 import React from "react";
 
+import { CountdownClock } from "@/app/_lib/component/countdown-clock";
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { useAppSelector } from "@/app/_store/store";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
-import { CountdownClock } from "@/lib/component/countdown-clock";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
-import { useAppSelector } from "@/store/store";
 
 const messages = defineMessages({
   startAt: {

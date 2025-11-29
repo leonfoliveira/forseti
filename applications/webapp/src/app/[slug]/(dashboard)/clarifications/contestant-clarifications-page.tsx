@@ -3,7 +3,7 @@
 import React from "react";
 
 import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications-page";
-import { useAppSelector } from "@/store/store";
+import { useAppSelector } from "@/app/_store/store";
 
 export function ContestantClarificationsPage() {
   const contestId = useAppSelector((state) => state.contestMetadata.id);

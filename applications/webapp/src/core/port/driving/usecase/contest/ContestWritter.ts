@@ -1,6 +1,22 @@
+import { UpdateContestRequestDTO } from "@/core/port/dto/request/UpdateContestRequestDTO";
+import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
 import { ContestMetadataResponseDTO } from "@/core/port/dto/response/contest/ContestMetadataResponseDTO";
-import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
+
+export type UpdateContestInputDTO = Omit<
+  UpdateContestRequestDTO,
+  "problems"
+> & {
+  problems: (Omit<
+    UpdateContestRequestDTO["problems"][number],
+    "description" | "testCases"
+  > & {
+    description?: AttachmentResponseDTO;
+    newDescription?: File;
+    testCases?: AttachmentResponseDTO;
+    newTestCases?: File;
+  })[];
+};
 
 export interface ContestWritter {
   /**
@@ -9,9 +25,7 @@ export interface ContestWritter {
    * @param inputDTO Data for updating the contest
    * @return The updated contest details
    */
-  updateContest(
-    inputDTO: UpdateContestInputDTO,
-  ): Promise<ContestFullResponseDTO>;
+  update(inputDTO: UpdateContestInputDTO): Promise<ContestFullResponseDTO>;
 
   /**
    * Force start a contest immediately.

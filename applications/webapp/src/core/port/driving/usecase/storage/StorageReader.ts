@@ -1,4 +1,4 @@
-export interface StorageWritter {
+export interface StorageReader {
   /**
    * Store a value associated with a key.
    *

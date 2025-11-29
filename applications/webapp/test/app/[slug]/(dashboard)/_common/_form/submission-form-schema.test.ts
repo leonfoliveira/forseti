@@ -1,5 +1,5 @@
 import { submissionFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/submission-form-schema";
-import { Language } from "@/core/domain/enumerate/Language";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 
 describe("submissionFormSchema", () => {
   const mockFile = new File(["test code"], "test.cpp", { type: "text/plain" });
@@ -11,7 +11,7 @@ describe("submissionFormSchema", () => {
 
   const validData = {
     problemId: "problem-1",
-    language: Language.CPP_17,
+    language: SubmissionLanguage.CPP_17,
     code: [mockFile],
   };
 

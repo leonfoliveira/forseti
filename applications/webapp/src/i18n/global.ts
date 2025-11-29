@@ -1,7 +1,7 @@
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
-import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { defineMessages } from "@/i18n/message";
 
@@ -21,15 +21,15 @@ const contestStatus = defineMessages({
 });
 
 const language = defineMessages({
-  [Language.CPP_17]: {
+  [SubmissionLanguage.CPP_17]: {
     id: "i18n.global.formatted-language.cpp_17",
     defaultMessage: "C++ 17",
   },
-  [Language.JAVA_21]: {
+  [SubmissionLanguage.JAVA_21]: {
     id: "i18n.global.formatted-language.java_21",
     defaultMessage: "Java 21",
   },
-  [Language.PYTHON_312]: {
+  [SubmissionLanguage.PYTHON_312]: {
     id: "i18n.global.formatted-language.python_312",
     defaultMessage: "Python 3.12",
   },

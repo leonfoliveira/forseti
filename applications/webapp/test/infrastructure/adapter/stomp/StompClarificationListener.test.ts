@@ -1,8 +1,8 @@
 import { mock } from "jest-mock-extended";
 import { v4 as uuidv4 } from "uuid";
 
-import { StompClarificationListener } from "@/infrastructure/adapter/stomp/StompClarificationListener";
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
+import { StompClarificationListener } from "@/infrastructure/adapter/stomp/StompClarificationListener";
 
 describe("StompClarificationListener", () => {
   const sut = new StompClarificationListener();

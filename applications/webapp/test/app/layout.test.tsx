@@ -13,7 +13,7 @@ jest.mock("@/config/config", () => ({
   }),
 }));
 
-jest.mock("@/lib/component/html", () => ({
+jest.mock("@/app/_lib/component/html", () => ({
   Html: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="html-component">{children}</div>
   ),

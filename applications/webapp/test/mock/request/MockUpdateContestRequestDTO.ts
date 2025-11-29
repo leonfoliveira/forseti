@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 
-import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { UpdateContestRequestDTO } from "@/core/port/dto/request/UpdateContestRequestDTO";
-import { MockAttachment } from "@/test/mock/model/MockAttachment";
+import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachment";
 
 export function MockUpdateContestRequestDTO(
   partial: Partial<UpdateContestRequestDTO> = {},
@@ -12,7 +12,7 @@ export function MockUpdateContestRequestDTO(
     id: uuidv4(),
     slug: "test-contest",
     title: "Test Contest",
-    languages: [Language.CPP_17, Language.JAVA_21],
+    languages: [SubmissionLanguage.CPP_17, SubmissionLanguage.JAVA_21],
     startAt: "2025-01-01T10:00:00Z",
     endAt: "2025-01-01T15:00:00Z",
     settings: {
@@ -32,13 +32,13 @@ export function MockUpdateContestRequestDTO(
         id: uuidv4(),
         letter: "A",
         title: "Test Problem",
-        description: MockAttachment({
+        description: MockAttachmentResponseDTO({
           filename: "problem.pdf",
           contentType: "application/pdf",
         }),
         timeLimit: 1000,
         memoryLimit: 256,
-        testCases: MockAttachment({
+        testCases: MockAttachmentResponseDTO({
           filename: "testcases.csv",
           contentType: "text/csv",
         }),

@@ -1,9 +1,9 @@
-import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { SubmissionRepository } from "@/core/port/driven/repository/SubmissionRepository";
 import { CreateSubmissionRequestDTO } from "@/core/port/dto/request/CreateSubmissionRequestDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
-import { SubmissionRepository } from "@/core/port/driven/repository/SubmissionRepository";
+import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 
 export class AxiosSubmissionRepository implements SubmissionRepository {
   private basePath = (contestId: string) =>

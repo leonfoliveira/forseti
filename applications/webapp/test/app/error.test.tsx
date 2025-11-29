@@ -4,7 +4,7 @@ import ServerErrorPage from "@/app/error";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 // Mock the ErrorPage component
-jest.mock("@/lib/component/page/error-page", () => ({
+jest.mock("@/app/_lib/component/page/error-page", () => ({
   ErrorPage: () => <div data-testid="error-page">Error Page Component</div>,
 }));
 

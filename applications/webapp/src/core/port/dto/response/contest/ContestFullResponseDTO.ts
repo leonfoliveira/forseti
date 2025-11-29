@@ -1,4 +1,4 @@
-import { Language } from "@/core/domain/enumerate/Language";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { MemberFullResponseDTO } from "@/core/port/dto/response/member/MemberFullResponseDTO";
@@ -8,7 +8,7 @@ export type ContestFullResponseDTO = {
   id: string;
   slug: string;
   title: string;
-  languages: Language[];
+  languages: SubmissionLanguage[];
   startAt: string;
   endAt: string;
   settings: {

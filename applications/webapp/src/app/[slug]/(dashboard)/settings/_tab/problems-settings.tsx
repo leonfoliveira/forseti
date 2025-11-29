@@ -3,11 +3,9 @@ import React from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 
 import { SettingsForm } from "@/app/[slug]/(dashboard)/settings/_form/settings-form";
-import { attachmentService } from "@/config/composition";
-import { defineMessages } from "@/i18n/message";
-import { FileInput } from "@/lib/component/form/file-input";
-import { FormField } from "@/lib/component/form/form-field";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
+import { FileInput } from "@/app/_lib/component/form/file-input";
+import { FormField } from "@/app/_lib/component/form/form-field";
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import {
   Alert,
   Button,
@@ -17,9 +15,11 @@ import {
   Chip,
   Input,
   NumberInput,
-} from "@/lib/heroui-wrapper";
-import { cls } from "@/lib/util/cls";
-import { useAppSelector } from "@/store/store";
+} from "@/app/_lib/heroui-wrapper";
+import { cls } from "@/app/_lib/util/cls";
+import { useAppSelector } from "@/app/_store/store";
+import { attachmentReader } from "@/config/composition";
+import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   problemsSectionTitle: {
@@ -214,7 +214,7 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                                     key="anchor"
                                     className="cursor-pointer underline"
                                     onClick={() =>
-                                      attachmentService.download(
+                                      attachmentReader.download(
                                         contestId,
                                         problem.description,
                                       )
@@ -266,7 +266,7 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                                     key="anchor"
                                     className="cursor-pointer underline"
                                     onClick={() =>
-                                      attachmentService.download(
+                                      attachmentReader.download(
                                         contestId,
                                         problem.testCases,
                                       )

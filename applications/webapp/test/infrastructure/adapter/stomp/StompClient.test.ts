@@ -1,8 +1,8 @@
 import { CompatClient } from "@stomp/stompjs";
 import { mock } from "jest-mock-extended";
 
-import { StompClient } from "@/infrastructure/adapter/stomp/StompClient";
 import { ServerException } from "@/core/domain/exception/ServerException";
+import { StompClient } from "@/infrastructure/adapter/stomp/StompClient";
 
 describe("StompClient", () => {
   const client = mock<CompatClient>();

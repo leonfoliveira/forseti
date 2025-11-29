@@ -2,9 +2,9 @@ import { AxiosResponse } from "axios";
 import { mock } from "jest-mock-extended";
 import { v4 as uuidv4 } from "uuid";
 
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 import { AxiosSubmissionRepository } from "@/infrastructure/adapter/axios/AxiosSubmissionRepository";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
 

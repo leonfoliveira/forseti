@@ -1,10 +1,10 @@
 import { AxiosResponse } from "axios";
 import { mock } from "jest-mock-extended";
 
+import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { AxiosAttachmentRepository } from "@/infrastructure/adapter/axios/AxiosAttachmentRepository";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
-import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
-import { MockAttachment } from "@/test/mock/model/MockAttachment";
+import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachment";
 
 describe("AxiosAttachmentRepository", () => {
   const axiosClient = mock<AxiosClient>();
@@ -16,7 +16,7 @@ describe("AxiosAttachmentRepository", () => {
   describe("upload", () => {
     it("should upload a file and return an attachment", async () => {
       const file = new File(["content"], "test.txt", { type: "text/plain" });
-      const expectedAttachment = MockAttachment();
+      const expectedAttachment = MockAttachmentResponseDTO();
       const context = AttachmentContext.PROBLEM_DESCRIPTION;
       axiosClient.post.mockResolvedValue({
         data: expectedAttachment,
@@ -37,7 +37,7 @@ describe("AxiosAttachmentRepository", () => {
 
   describe("download", () => {
     it("should download an attachment and return a file", async () => {
-      const attachment = MockAttachment();
+      const attachment = MockAttachmentResponseDTO();
       const blob = new Blob(["content"], { type: "text/plain" });
       const contentDisposition = 'attachment; filename="download.txt"';
       const contentType = "text/plain";
@@ -62,7 +62,7 @@ describe("AxiosAttachmentRepository", () => {
     });
 
     it("should handle missing filename in content-disposition", async () => {
-      const attachment = MockAttachment();
+      const attachment = MockAttachmentResponseDTO();
       const blob = new Blob(["content"], { type: "text/plain" });
 
       axiosClient.get.mockResolvedValue({

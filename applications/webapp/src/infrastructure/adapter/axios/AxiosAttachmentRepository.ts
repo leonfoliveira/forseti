@@ -1,7 +1,7 @@
-import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
-import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 import { AttachmentRepository } from "@/core/port/driven/repository/AttachmentRepository";
+import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
+import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 
 export class AxiosAttachmentRepository implements AttachmentRepository {
   private basePath = (contestId: string) =>

@@ -6,13 +6,9 @@ import {
 } from "@heroicons/react/24/solid";
 import React from "react";
 
-import { attachmentService } from "@/config/composition";
-import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
-import { defineMessages } from "@/i18n/message";
-import { ProblemStatusChip } from "@/lib/component/chip/problem-status-chip";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
-import { Metadata } from "@/lib/component/metadata";
+import { ProblemStatusChip } from "@/app/_lib/component/chip/problem-status-chip";
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { Metadata } from "@/app/_lib/component/metadata";
 import {
   GridTable,
   GridTableBody,
@@ -20,10 +16,14 @@ import {
   GridTableColumn,
   GridTableHeader,
   GridTableRow,
-} from "@/lib/component/table/grid-table";
-import { Button } from "@/lib/heroui-wrapper";
-import { cls } from "@/lib/util/cls";
-import { useAppSelector } from "@/store/store";
+} from "@/app/_lib/component/table/grid-table";
+import { Button } from "@/app/_lib/heroui-wrapper";
+import { cls } from "@/app/_lib/util/cls";
+import { useAppSelector } from "@/app/_store/store";
+import { attachmentReader } from "@/config/composition";
+import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
+import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
@@ -123,7 +123,7 @@ export function ProblemsPage({
                   variant="light"
                   size="sm"
                   onPress={() =>
-                    attachmentService.download(contestId, problem.description)
+                    attachmentReader.download(contestId, problem.description)
                   }
                   data-testid="problem-download"
                 >

@@ -4,8 +4,8 @@ import { AdminSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/admin
 import { ContestantSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/contestant-submissions-page";
 import { GuestSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/guest-submissions-page";
 import { JudgeSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/judge-submissions-page";
+import { useAppSelector } from "@/app/_store/store";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { useAppSelector } from "@/store/store";
 
 export default function DashboardSubmissionsPage() {
   const session = useAppSelector((state) => state.session);

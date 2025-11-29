@@ -4,8 +4,8 @@ import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import React from "react";
 
+import { Html } from "@/app/_lib/component/html";
 import { buildClientConfig, serverConfig } from "@/config/config";
-import { Html } from "@/lib/component/html";
 
 export default async function Layout({
   children,

@@ -1,7 +1,7 @@
 import React from "react";
 
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions-page";
-import { useAppSelector } from "@/store/store";
+import { useAppSelector } from "@/app/_store/store";
 
 export function ContestantSubmissionsPage() {
   const submissions = useAppSelector(

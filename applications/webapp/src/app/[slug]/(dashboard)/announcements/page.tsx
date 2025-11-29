@@ -4,8 +4,8 @@ import { AdminAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/a
 import { ContestantAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/contestant-announcements-page";
 import { GuestAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/guest-announcements-page";
 import { JudgeAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/judge-announcements-page";
+import { useAppSelector } from "@/app/_store/store";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { useAppSelector } from "@/store/store";
 
 export default function DashboardAnnouncementsPage() {
   const session = useAppSelector((state) => state.session);

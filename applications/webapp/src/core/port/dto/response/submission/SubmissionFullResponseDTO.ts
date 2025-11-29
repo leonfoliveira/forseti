@@ -1,5 +1,5 @@
-import { Language } from "@/core/domain/enumerate/Language";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 import { MemberFullResponseDTO } from "@/core/port/dto/response/member/MemberFullResponseDTO";
@@ -9,7 +9,7 @@ export type SubmissionFullResponseDTO = {
   id: string;
   problem: ProblemFullResponseDTO;
   member: MemberFullResponseDTO;
-  language: Language;
+  language: SubmissionLanguage;
   status: SubmissionStatus;
   answer: SubmissionAnswer;
   code: AttachmentResponseDTO;

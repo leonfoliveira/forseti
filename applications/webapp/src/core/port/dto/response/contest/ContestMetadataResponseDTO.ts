@@ -1,10 +1,10 @@
-import { Language } from "@/core/domain/enumerate/Language";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 
 export type ContestMetadataResponseDTO = {
   id: string;
   slug: string;
   title: string;
-  languages: Language[];
+  languages: SubmissionLanguage[];
   startAt: string;
   endAt: string;
 };

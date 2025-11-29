@@ -2,13 +2,13 @@
 
 import { usePathname, useRouter } from "next/navigation";
 
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { Tab, Tabs } from "@/app/_lib/heroui-wrapper";
+import { DashboardProvider } from "@/app/_lib/provider/dashboard-provider";
+import { useAppSelector } from "@/app/_store/store";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { defineMessages } from "@/i18n/message";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
-import { Tab, Tabs } from "@/lib/heroui-wrapper";
-import { DashboardProvider } from "@/lib/provider/dashboard-provider";
-import { useAppSelector } from "@/store/store";
 
 const messages = defineMessages({
   tabLeaderboard: {

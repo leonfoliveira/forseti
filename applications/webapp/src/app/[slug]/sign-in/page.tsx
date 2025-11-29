@@ -6,14 +6,10 @@ import { useForm } from "react-hook-form";
 
 import { SignInFormType } from "@/app/[slug]/sign-in/_form/sign-in-form";
 import { signInFormSchema } from "@/app/[slug]/sign-in/_form/sign-in-form-schema";
-import { authenticationService, sessionService } from "@/config/composition";
-import { routes } from "@/config/routes";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { defineMessages } from "@/i18n/message";
-import { Form } from "@/lib/component/form/form";
-import { FormField } from "@/lib/component/form/form-field";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
-import { Metadata } from "@/lib/component/metadata";
+import { Form } from "@/app/_lib/component/form/form";
+import { FormField } from "@/app/_lib/component/form/form-field";
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { Metadata } from "@/app/_lib/component/metadata";
 import {
   Button,
   Card,
@@ -22,10 +18,14 @@ import {
   CardHeader,
   Divider,
   Input,
-} from "@/lib/heroui-wrapper";
-import { useLoadableState } from "@/lib/util/loadable-state";
-import { useToast } from "@/lib/util/toast-hook";
-import { useAppSelector } from "@/store/store";
+} from "@/app/_lib/heroui-wrapper";
+import { useLoadableState } from "@/app/_lib/util/loadable-state";
+import { useToast } from "@/app/_lib/util/toast-hook";
+import { useAppSelector } from "@/app/_store/store";
+import { authenticationWritter, sessionWritter } from "@/config/composition";
+import { routes } from "@/config/routes";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
+import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   wrongLoginPassword: {
@@ -89,7 +89,7 @@ export default function SignInPage() {
   async function signIn(data: SignInFormType) {
     signInState.start();
     try {
-      await authenticationService.authenticate(contestMetadata.id, data);
+      await authenticationWritter.authenticate(contestMetadata.id, data);
       window.location.href = routes.CONTEST(contestMetadata.slug);
     } catch (error) {
       signInState.fail(error, {
@@ -109,7 +109,7 @@ export default function SignInPage() {
   }
 
   async function enterAsGuest() {
-    await sessionService.deleteSession();
+    await sessionWritter.deleteCurrent();
     window.location.href = routes.CONTEST(contestMetadata.slug);
   }
 

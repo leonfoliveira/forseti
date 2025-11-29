@@ -2,10 +2,10 @@ import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions-page";
-import { attachmentService, submissionService } from "@/config/composition";
-import { Language } from "@/core/domain/enumerate/Language";
+import { useToast } from "@/app/_lib/util/toast-hook";
+import { attachmentReader, submissionWritter } from "@/config/composition";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { useToast } from "@/lib/util/toast-hook";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemFullResponseDTO } from "@/test/mock/response/problem/MockProblemFullResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
@@ -18,7 +18,7 @@ describe("SubmissionsPage", () => {
     MockSubmissionFullResponseDTO(),
   ];
   const problems = [MockProblemFullResponseDTO(), MockProblemFullResponseDTO()];
-  const languages = [Language.CPP_17, Language.JAVA_21];
+  const languages = [SubmissionLanguage.CPP_17, SubmissionLanguage.JAVA_21];
   const contestMetadata = MockContestMetadataResponseDTO();
 
   it("should render create variant", async () => {
@@ -115,20 +115,17 @@ describe("SubmissionsPage", () => {
       fireEvent.click(screen.getByTestId("create-form-submit"));
     });
 
-    expect(submissionService.createSubmission).toHaveBeenCalledWith(
-      contestMetadata.id,
-      {
-        problemId: problems[0].id,
-        language: languages[0],
-        code,
-      },
-    );
+    expect(submissionWritter.create).toHaveBeenCalledWith(contestMetadata.id, {
+      problemId: problems[0].id,
+      language: languages[0],
+      code,
+    });
     expect(useToast().success).toHaveBeenCalled();
   });
 
   it("should handle create error", async () => {
     const contestMetadata = MockContestMetadataResponseDTO();
-    (submissionService.createSubmission as jest.Mock).mockRejectedValueOnce(
+    (submissionWritter.create as jest.Mock).mockRejectedValueOnce(
       new Error("Failed to create"),
     );
     await renderWithProviders(
@@ -160,14 +157,11 @@ describe("SubmissionsPage", () => {
       fireEvent.click(screen.getByTestId("create-form-submit"));
     });
 
-    expect(submissionService.createSubmission).toHaveBeenCalledWith(
-      contestMetadata.id,
-      {
-        problemId: problems[0].id,
-        language: languages[0],
-        code,
-      },
-    );
+    expect(submissionWritter.create).toHaveBeenCalledWith(contestMetadata.id, {
+      problemId: problems[0].id,
+      language: languages[0],
+      code,
+    });
     expect(useToast().error).toHaveBeenCalled();
   });
 
@@ -190,7 +184,7 @@ describe("SubmissionsPage", () => {
       fireEvent.click(screen.getAllByTestId("submission-download")[0]);
     });
 
-    expect(attachmentService.download).toHaveBeenCalledWith(
+    expect(attachmentReader.download).toHaveBeenCalledWith(
       contestMetadata.id,
       submissions[1].code,
     );
@@ -223,7 +217,7 @@ describe("SubmissionsPage", () => {
       );
     });
 
-    expect(submissionService.rerunSubmission).toHaveBeenCalledWith(
+    expect(submissionWritter.rerun).toHaveBeenCalledWith(
       contestMetadata.id,
       submissions[1].id,
     );
@@ -232,7 +226,7 @@ describe("SubmissionsPage", () => {
 
   it("should handle resubmit error", async () => {
     const contestMetadata = MockContestMetadataResponseDTO();
-    (submissionService.rerunSubmission as jest.Mock).mockRejectedValueOnce(
+    (submissionWritter.rerun as jest.Mock).mockRejectedValueOnce(
       new Error("Failed to resubmit"),
     );
     await renderWithProviders(
@@ -260,7 +254,7 @@ describe("SubmissionsPage", () => {
       );
     });
 
-    expect(submissionService.rerunSubmission).toHaveBeenCalledWith(
+    expect(submissionWritter.rerun).toHaveBeenCalledWith(
       contestMetadata.id,
       submissions[1].id,
     );
@@ -297,7 +291,7 @@ describe("SubmissionsPage", () => {
       );
     });
 
-    expect(submissionService.updateSubmissionAnswer).toHaveBeenCalledWith(
+    expect(submissionWritter.updateAnswer).toHaveBeenCalledWith(
       contestMetadata.id,
       submissions[1].id,
       SubmissionAnswer.ACCEPTED,
@@ -307,9 +301,9 @@ describe("SubmissionsPage", () => {
 
   it("should handle judge error", async () => {
     const contestMetadata = MockContestMetadataResponseDTO();
-    (
-      submissionService.updateSubmissionAnswer as jest.Mock
-    ).mockRejectedValueOnce(new Error("Failed to judge"));
+    (submissionWritter.updateAnswer as jest.Mock).mockRejectedValueOnce(
+      new Error("Failed to judge"),
+    );
     await renderWithProviders(
       <SubmissionsPage
         submissions={submissions}
@@ -338,7 +332,7 @@ describe("SubmissionsPage", () => {
       );
     });
 
-    expect(submissionService.updateSubmissionAnswer).toHaveBeenCalledWith(
+    expect(submissionWritter.updateAnswer).toHaveBeenCalledWith(
       contestMetadata.id,
       submissions[1].id,
       SubmissionAnswer.ACCEPTED,

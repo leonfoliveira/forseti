@@ -1,8 +1,8 @@
 import { mock } from "jest-mock-extended";
 import { v4 as uuidv4 } from "uuid";
 
-import { StompLeaderboardListener } from "@/infrastructure/adapter/stomp/StompLeaderboardListener";
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
+import { StompLeaderboardListener } from "@/infrastructure/adapter/stomp/StompLeaderboardListener";
 
 describe("StompLeaderboardListener", () => {
   const sut = new StompLeaderboardListener();

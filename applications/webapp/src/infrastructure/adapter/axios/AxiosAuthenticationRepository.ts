@@ -1,7 +1,7 @@
-import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 import { AuthenticationRepository } from "@/core/port/driven/repository/AuthenticationRepository";
 import { AuthenticateRequestDTO } from "@/core/port/dto/request/AuthenticateRequestDTO";
 import { SessionResponseDTO } from "@/core/port/dto/response/session/SessionResponseDTO";
+import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 
 export class AxiosAuthenticationRepository implements AuthenticationRepository {
   private basePath = (contestId: string) => `/v1/contests/${contestId}`;

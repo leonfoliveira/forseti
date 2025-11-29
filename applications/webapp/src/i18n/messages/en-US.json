@@ -1,56 +1,4 @@
 {
-  "lib": {
-    "provider": {
-      "judge-dashboard-provider": {
-        "submission-failed": "New failed submission",
-        "announcement": "New announcement: {text}",
-        "new-clarification": "New clarification"
-      },
-      "guest-dashboard-provider": {
-        "announcement": "New announcement: {text}"
-      },
-      "contestant-dashboard-provider": {
-        "problem-answer": "Problem {letter}: {answer}",
-        "announcement": "New announcement: {text}",
-        "clarification-answer": "New answer for a clarification"
-      },
-      "admin-dashboard-provider": {
-        "submission-failed": "New failed submission",
-        "announcement": "New announcement: {text}",
-        "new-clarification": "New clarification"
-      }
-    },
-    "component": {
-      "header": {
-        "sign-in": "Sign In",
-        "sign-out": "Sign Out"
-      },
-      "footer": {
-        "text": "Forseti {version}"
-      },
-      "page": {
-        "loading-page": {
-          "label": "Loading"
-        },
-        "error-page": {
-          "description": "An unexpected error has occurred.",
-          "reload": "Reload the page"
-        }
-      },
-      "modal": {
-        "confirmation-modal": {
-          "cancel-label": "Cancel",
-          "confirm-label": "Confirm"
-        }
-      },
-      "format": {
-        "formatted-duration": {
-          "duration": "{hours}:{minutes}:{seconds}",
-          "duration-with-days": "{days}d {hours}:{minutes}:{seconds}"
-        }
-      }
-    }
-  },
   "i18n": {
     "global": {
       "formatted-contest": {
@@ -95,6 +43,58 @@
     },
     "forbidden": {
       "description": "You do not have permission to access this page."
+    },
+    "_lib": {
+      "provider": {
+        "judge-dashboard-provider": {
+          "submission-failed": "New failed submission",
+          "announcement": "New announcement: {text}",
+          "new-clarification": "New clarification"
+        },
+        "guest-dashboard-provider": {
+          "announcement": "New announcement: {text}"
+        },
+        "contestant-dashboard-provider": {
+          "problem-answer": "Problem {letter}: {answer}",
+          "announcement": "New announcement: {text}",
+          "clarification-answer": "New answer for a clarification"
+        },
+        "admin-dashboard-provider": {
+          "submission-failed": "New failed submission",
+          "announcement": "New announcement: {text}",
+          "new-clarification": "New clarification"
+        }
+      },
+      "component": {
+        "header": {
+          "sign-in": "Sign In",
+          "sign-out": "Sign Out"
+        },
+        "footer": {
+          "text": "Forseti {version}"
+        },
+        "page": {
+          "loading-page": {
+            "label": "Loading"
+          },
+          "error-page": {
+            "description": "An unexpected error has occurred.",
+            "reload": "Reload the page"
+          }
+        },
+        "modal": {
+          "confirmation-modal": {
+            "cancel-label": "Cancel",
+            "confirm-label": "Confirm"
+          }
+        },
+        "format": {
+          "formatted-duration": {
+            "duration": "{hours}:{minutes}:{seconds}",
+            "duration-with-days": "{days}d {hours}:{minutes}:{seconds}"
+          }
+        }
+      }
     },
     "[slug]": {
       "sign-in": {

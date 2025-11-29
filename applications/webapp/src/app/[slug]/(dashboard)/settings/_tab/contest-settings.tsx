@@ -1,30 +1,30 @@
 import { UseFormReturn } from "react-hook-form";
 
 import { SettingsForm } from "@/app/[slug]/(dashboard)/settings/_form/settings-form";
-import { contestService } from "@/config/composition";
+import { FormField } from "@/app/_lib/component/form/form-field";
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
+import { Alert, Switch } from "@/app/_lib/heroui-wrapper";
+import { Button } from "@/app/_lib/heroui-wrapper";
+import { Divider } from "@/app/_lib/heroui-wrapper";
+import { DatePicker } from "@/app/_lib/heroui-wrapper";
+import { CheckboxGroup } from "@/app/_lib/heroui-wrapper";
+import { Checkbox } from "@/app/_lib/heroui-wrapper";
+import { Input } from "@/app/_lib/heroui-wrapper";
+import { cls } from "@/app/_lib/util/cls";
+import { useContestStatusWatcher } from "@/app/_lib/util/contest-status-watcher";
+import { useLoadableState } from "@/app/_lib/util/loadable-state";
+import { useModal } from "@/app/_lib/util/modal-hook";
+import { useToast } from "@/app/_lib/util/toast-hook";
+import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
+import { contestMetadataSlice } from "@/app/_store/slices/contest-metadata-slice";
+import { useAppDispatch } from "@/app/_store/store";
+import { contestWritter } from "@/config/composition";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
-import { Language } from "@/core/domain/enumerate/Language";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
-import { FormField } from "@/lib/component/form/form-field";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
-import { ConfirmationModal } from "@/lib/component/modal/confirmation-modal";
-import { Alert, Switch } from "@/lib/heroui-wrapper";
-import { Button } from "@/lib/heroui-wrapper";
-import { Divider } from "@/lib/heroui-wrapper";
-import { DatePicker } from "@/lib/heroui-wrapper";
-import { CheckboxGroup } from "@/lib/heroui-wrapper";
-import { Checkbox } from "@/lib/heroui-wrapper";
-import { Input } from "@/lib/heroui-wrapper";
-import { cls } from "@/lib/util/cls";
-import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
-import { useLoadableState } from "@/lib/util/loadable-state";
-import { useModal } from "@/lib/util/modal-hook";
-import { useToast } from "@/lib/util/toast-hook";
-import { adminDashboardSlice } from "@/store/slices/admin-dashboard-slice";
-import { contestMetadataSlice } from "@/store/slices/contest-metadata-slice";
-import { useAppDispatch } from "@/store/store";
 
 const messages = defineMessages({
   basicInformationSection: {
@@ -163,7 +163,7 @@ export function ContestSettings({ contest, form, isOpen }: Props) {
   async function forceStart() {
     forceStartState.start();
     try {
-      const newContestMetadata = await contestService.forceStart(contest.id);
+      const newContestMetadata = await contestWritter.forceStart(contest.id);
       dispatch(
         adminDashboardSlice.actions.setContest({
           ...contest,
@@ -183,7 +183,7 @@ export function ContestSettings({ contest, form, isOpen }: Props) {
   async function forceEnd() {
     forceEndState.start();
     try {
-      const newContestMetadata = await contestService.forceEnd(contest.id);
+      const newContestMetadata = await contestWritter.forceEnd(contest.id);
       dispatch(
         adminDashboardSlice.actions.setContest({
           ...contest,
@@ -267,13 +267,13 @@ export function ContestSettings({ contest, form, isOpen }: Props) {
                 <FormattedMessage {...messages.languageDescription} />
               }
             >
-              {Object.keys(Language).map((it) => (
+              {Object.keys(SubmissionLanguage).map((it) => (
                 <Checkbox
                   key={it}
                   value={it}
                   label={
                     <FormattedMessage
-                      {...globalMessages.language[it as Language]}
+                      {...globalMessages.language[it as SubmissionLanguage]}
                     />
                   }
                 />

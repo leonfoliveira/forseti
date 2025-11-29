@@ -4,8 +4,8 @@ import { useForm, UseFormReturn } from "react-hook-form";
 
 import { SettingsForm } from "@/app/[slug]/(dashboard)/settings/_form/settings-form";
 import { ContestSettings } from "@/app/[slug]/(dashboard)/settings/_tab/contest-settings";
-import { contestService } from "@/config/composition";
-import { useToast } from "@/lib/util/toast-hook";
+import { useToast } from "@/app/_lib/util/toast-hook";
+import { contestWritter } from "@/config/composition";
 import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -81,7 +81,7 @@ describe("ContestSettings", () => {
 
   it("should handle force start success", async () => {
     const newContestMetadata = MockContestMetadataResponseDTO();
-    (contestService.forceStart as jest.Mock).mockResolvedValue(
+    (contestWritter.forceStart as jest.Mock).mockResolvedValue(
       newContestMetadata,
     );
     const { store } = await renderWithProviders(
@@ -104,7 +104,7 @@ describe("ContestSettings", () => {
     await act(async () => {
       fireEvent.click(confirmModal.getByTestId("confirm")!);
     });
-    expect(contestService.forceStart).toHaveBeenCalledWith(contest.id);
+    expect(contestWritter.forceStart).toHaveBeenCalledWith(contest.id);
     expect(store.getState().contestMetadata).toBe(newContestMetadata);
     expect(store.getState().adminDashboard.contest).toMatchObject(
       newContestMetadata,
@@ -113,7 +113,7 @@ describe("ContestSettings", () => {
   });
 
   it("should handle force start failure", async () => {
-    (contestService.forceStart as jest.Mock).mockRejectedValue(new Error());
+    (contestWritter.forceStart as jest.Mock).mockRejectedValue(new Error());
     await renderWithProviders(
       <ContestSettings contest={contest} form={form.current} isOpen={true} />,
       {
@@ -134,13 +134,13 @@ describe("ContestSettings", () => {
     await act(async () => {
       fireEvent.click(confirmModal.getByTestId("confirm")!);
     });
-    expect(contestService.forceStart).toHaveBeenCalledWith(contest.id);
+    expect(contestWritter.forceStart).toHaveBeenCalledWith(contest.id);
     expect(useToast().error).toHaveBeenCalled();
   });
 
   it("should handle force end success", async () => {
     const newContestMetadata = MockContestMetadataResponseDTO();
-    (contestService.forceEnd as jest.Mock).mockResolvedValue(
+    (contestWritter.forceEnd as jest.Mock).mockResolvedValue(
       newContestMetadata,
     );
     const { store } = await renderWithProviders(
@@ -163,7 +163,7 @@ describe("ContestSettings", () => {
     await act(async () => {
       fireEvent.click(confirmModal.getByTestId("confirm")!);
     });
-    expect(contestService.forceEnd).toHaveBeenCalledWith(contest.id);
+    expect(contestWritter.forceEnd).toHaveBeenCalledWith(contest.id);
     expect(store.getState().contestMetadata).toBe(newContestMetadata);
     expect(store.getState().adminDashboard.contest).toMatchObject(
       newContestMetadata,
@@ -172,7 +172,7 @@ describe("ContestSettings", () => {
   });
 
   it("should handle force end failure", async () => {
-    (contestService.forceEnd as jest.Mock).mockRejectedValue(new Error());
+    (contestWritter.forceEnd as jest.Mock).mockRejectedValue(new Error());
     await renderWithProviders(
       <ContestSettings contest={contest} form={form.current} isOpen={true} />,
       {
@@ -193,7 +193,7 @@ describe("ContestSettings", () => {
     await act(async () => {
       fireEvent.click(confirmModal.getByTestId("confirm")!);
     });
-    expect(contestService.forceEnd).toHaveBeenCalledWith(contest.id);
+    expect(contestWritter.forceEnd).toHaveBeenCalledWith(contest.id);
     expect(useToast().error).toHaveBeenCalled();
   });
 });

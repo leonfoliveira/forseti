@@ -3,8 +3,8 @@ import { act } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications-page";
-import { clarificationService } from "@/config/composition";
-import { useToast } from "@/lib/util/toast-hook";
+import { useToast } from "@/app/_lib/util/toast-hook";
+import { clarificationWritter } from "@/config/composition";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -130,20 +130,17 @@ describe("ClarificationsPage", () => {
       fireEvent.click(screen.getByTestId("create-form-submit"));
     });
 
-    expect(clarificationService.createClarification).toHaveBeenCalledWith(
-      contestId,
-      {
-        text: "Test clarification",
-        parentId: undefined,
-      },
-    );
+    expect(clarificationWritter.create).toHaveBeenCalledWith(contestId, {
+      text: "Test clarification",
+      parentId: undefined,
+    });
     expect(useToast().success).toHaveBeenCalled();
   });
 
   it("should render creation error", async () => {
-    (
-      clarificationService.createClarification as jest.Mock
-    ).mockRejectedValueOnce(new Error("Test error"));
+    (clarificationWritter.create as jest.Mock).mockRejectedValueOnce(
+      new Error("Test error"),
+    );
 
     await renderWithProviders(
       <ClarificationsPage
@@ -165,13 +162,10 @@ describe("ClarificationsPage", () => {
       fireEvent.click(screen.getByTestId("create-form-submit"));
     });
 
-    expect(clarificationService.createClarification).toHaveBeenCalledWith(
-      contestId,
-      {
-        text: "Test clarification",
-        parentId: undefined,
-      },
-    );
+    expect(clarificationWritter.create).toHaveBeenCalledWith(contestId, {
+      text: "Test clarification",
+      parentId: undefined,
+    });
     expect(useToast().error).toHaveBeenCalled();
   });
 
@@ -197,7 +191,7 @@ describe("ClarificationsPage", () => {
       );
     });
 
-    expect(clarificationService.deleteById).toHaveBeenCalledWith(
+    expect(clarificationWritter.deleteById).toHaveBeenCalledWith(
       contestId,
       clarifications[1].id,
     );
@@ -208,7 +202,7 @@ describe("ClarificationsPage", () => {
   });
 
   it("should handle delete error", async () => {
-    (clarificationService.deleteById as jest.Mock).mockRejectedValueOnce(
+    (clarificationWritter.deleteById as jest.Mock).mockRejectedValueOnce(
       new Error("Test error"),
     );
     await renderWithProviders(
@@ -232,7 +226,7 @@ describe("ClarificationsPage", () => {
       );
     });
 
-    expect(clarificationService.deleteById).toHaveBeenCalledWith(
+    expect(clarificationWritter.deleteById).toHaveBeenCalledWith(
       contestId,
       clarifications[1].id,
     );
@@ -256,20 +250,17 @@ describe("ClarificationsPage", () => {
       fireEvent.click(screen.getAllByTestId("answer-form-submit")[0]);
     });
 
-    expect(clarificationService.createClarification).toHaveBeenCalledWith(
-      contestId,
-      {
-        text: "Test answer",
-        parentId: clarifications[0].id,
-      },
-    );
+    expect(clarificationWritter.create).toHaveBeenCalledWith(contestId, {
+      text: "Test answer",
+      parentId: clarifications[0].id,
+    });
     expect(useToast().success).toHaveBeenCalled();
   });
 
   it("should handle answer error", async () => {
-    (
-      clarificationService.createClarification as jest.Mock
-    ).mockRejectedValueOnce(new Error("Test error"));
+    (clarificationWritter.create as jest.Mock).mockRejectedValueOnce(
+      new Error("Test error"),
+    );
     await renderWithProviders(
       <ClarificationsPage
         contestId={contestId}
@@ -286,13 +277,10 @@ describe("ClarificationsPage", () => {
       fireEvent.click(screen.getAllByTestId("answer-form-submit")[0]);
     });
 
-    expect(clarificationService.createClarification).toHaveBeenCalledWith(
-      contestId,
-      {
-        text: "Test answer",
-        parentId: clarifications[0].id,
-      },
-    );
+    expect(clarificationWritter.create).toHaveBeenCalledWith(contestId, {
+      text: "Test answer",
+      parentId: clarifications[0].id,
+    });
     expect(useToast().error).toHaveBeenCalled();
   });
 });

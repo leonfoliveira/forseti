@@ -2,7 +2,7 @@ import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 
 import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems-page";
-import { attachmentService } from "@/config/composition";
+import { attachmentReader } from "@/config/composition";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -59,7 +59,7 @@ describe("ProblemsPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("problem-download"));
     });
-    expect(attachmentService.download).toHaveBeenCalledWith(
+    expect(attachmentReader.download).toHaveBeenCalledWith(
       contestMetadata.id,
       problems[0].description,
     );

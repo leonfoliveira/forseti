@@ -2,13 +2,13 @@ import axios, { AxiosError } from "axios";
 import { cookies, headers } from "next/headers";
 import { v4 as uuidv4 } from "uuid";
 
-import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 import { BusinessException } from "@/core/domain/exception/BusinessException";
 import { ConflictException } from "@/core/domain/exception/ConflictException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { ServerException } from "@/core/domain/exception/ServerException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
+import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 
 jest.mock("axios", () => ({
   request: jest.fn(),

@@ -29,7 +29,7 @@ jest.mock("next/image", () => ({
 }));
 
 // Mock the Metadata component
-jest.mock("@/lib/component/metadata", () => ({
+jest.mock("@/app/_lib/component/metadata", () => ({
   Metadata: ({
     title,
     description,
@@ -68,10 +68,10 @@ describe("HomePage", () => {
 
     const logoImage = screen.getByTestId("logo-image");
     expect(logoImage).toBeInTheDocument();
-    expect(logoImage).toHaveAttribute("src", "/logo.ico");
+    expect(logoImage).toHaveAttribute("src", "/icon.jpg");
     expect(logoImage).toHaveAttribute("alt", "Logo of forseti");
-    expect(logoImage).toHaveAttribute("width", "75");
-    expect(logoImage).toHaveAttribute("height", "75");
+    expect(logoImage).toHaveAttribute("width", "300");
+    expect(logoImage).toHaveAttribute("height", "300");
   });
 
   it("should have correct layout styling for centering content", async () => {
