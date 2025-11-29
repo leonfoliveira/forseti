@@ -1,5 +1,5 @@
-import { ListenerClient } from "@/core/domain/model/ListenerClient";
-import { AnnouncementListener } from "@/core/listener/AnnouncementListener";
+import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
+import { AnnouncementListener } from "@/core/port/driven/listener/AnnouncementListener";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 
 export class StompAnnouncementListener implements AnnouncementListener {

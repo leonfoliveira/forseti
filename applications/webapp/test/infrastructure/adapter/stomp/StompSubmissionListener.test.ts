@@ -2,7 +2,7 @@ import { mock } from "jest-mock-extended";
 import { v4 as uuidv4 } from "uuid";
 
 import { StompSubmissionListener } from "@/infrastructure/adapter/stomp/StompSubmissionListener";
-import { ListenerClient } from "@/core/domain/model/ListenerClient";
+import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 
 describe("StompSubmissionListener", () => {
   const sut = new StompSubmissionListener();

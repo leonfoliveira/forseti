@@ -12,7 +12,7 @@ import {
   submissionListener,
   submissionService,
 } from "@/config/composition";
-import { ListenerClient } from "@/core/domain/model/ListenerClient";
+import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { GuestDashboardProvider } from "@/lib/provider/guest-dashboard-provider";
 import { useToast } from "@/lib/util/toast-hook";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";

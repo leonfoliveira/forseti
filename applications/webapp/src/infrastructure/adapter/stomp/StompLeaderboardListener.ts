@@ -1,5 +1,5 @@
-import { ListenerClient } from "@/core/domain/model/ListenerClient";
-import { LeaderboardListener } from "@/core/listener/LeaderboardListener";
+import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
+import { LeaderboardListener } from "@/core/port/driven/listener/LeaderboardListener";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
 export class StompLeaderboardListener implements LeaderboardListener {

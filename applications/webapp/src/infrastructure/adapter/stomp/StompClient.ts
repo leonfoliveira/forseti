@@ -1,7 +1,7 @@
 import { CompatClient } from "@stomp/stompjs";
 
 import { ServerException } from "@/core/domain/exception/ServerException";
-import { ListenerClient } from "@/core/domain/model/ListenerClient";
+import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 
 export class StompClient implements ListenerClient {
   constructor(private readonly client: CompatClient) {}
@@ -21,7 +21,9 @@ export class StompClient implements ListenerClient {
       this.client.onStompError = (error) => {
         console.error("STOMP error: ", error);
         reject(
-          new ServerException(error.headers["message"] || "Unknown STOMP error")
+          new ServerException(
+            error.headers["message"] || "Unknown STOMP error",
+          ),
         );
       };
 

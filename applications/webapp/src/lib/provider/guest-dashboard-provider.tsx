@@ -10,7 +10,7 @@ import {
   submissionListener,
   submissionService,
 } from "@/config/composition";
-import { ListenerClient } from "@/core/domain/model/ListenerClient";
+import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";

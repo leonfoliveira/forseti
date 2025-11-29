@@ -2,8 +2,8 @@ import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
 import { StompClient } from "@/infrastructure/adapter/stomp/StompClient";
-import { ListenerClient } from "@/core/domain/model/ListenerClient";
-import { ListenerClientFactory } from "@/core/listener/ListenerFactory";
+import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
+import { ListenerClientFactory } from "@/core/port/driven/listener/ListenerFactory";
 
 export class StompClientFactory implements ListenerClientFactory {
   constructor(private readonly wsUrl: string) {}

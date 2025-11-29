@@ -1,5 +1,5 @@
-import { ListenerClient } from "@/core/domain/model/ListenerClient";
-import { ClarificationListener } from "@/core/listener/ClarificationListener";
+import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
+import { ClarificationListener } from "@/core/port/driven/listener/ClarificationListener";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 
 export class StompClarificationListener implements ClarificationListener {

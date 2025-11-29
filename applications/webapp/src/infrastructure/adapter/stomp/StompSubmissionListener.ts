@@ -1,5 +1,5 @@
-import { ListenerClient } from "@/core/domain/model/ListenerClient";
-import { SubmissionListener } from "@/core/listener/SubmissionListener";
+import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
+import { SubmissionListener } from "@/core/port/driven/listener/SubmissionListener";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 
