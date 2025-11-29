@@ -117,6 +117,10 @@ services:
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       ROOT_PASSWORD: forseti
+      OTEL_LOGS_EXPORTER: none
+      OTEL_METRICS_EXPORTER: none
+      OTEL_TRACES_EXPORTER: none
+      OTEL_SERVICE_NAME: api
       SPRING_PROFILES_ACTIVE: development
       VERSION: latest
       WEBAPP_PUBLIC_URL: http://localhost:3000
@@ -172,6 +176,10 @@ services:
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       ROOT_PASSWORD: forseti
+      OTEL_LOGS_EXPORTER: none
+      OTEL_METRICS_EXPORTER: none
+      OTEL_TRACES_EXPORTER: none
+      OTEL_SERVICE_NAME: autojudge
       SPRING_PROFILES_ACTIVE: development
       VERSION: latest
     depends_on:
