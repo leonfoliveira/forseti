@@ -1,24 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AnnouncementResponseDTO } from "@/core/port/driven/repository/dto/response/announcement/AnnouncementResponseDTO";
-import { ClarificationResponseDTO } from "@/core/port/driven/repository/dto/response/clarification/ClarificationResponseDTO";
-import { ContestFullResponseDTO } from "@/core/port/driven/repository/dto/response/contest/ContestFullResponseDTO";
-import { LeaderboardResponseDTO } from "@/core/port/driven/repository/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/port/driven/repository/dto/response/submission/SubmissionFullResponseDTO";
+import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
+import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
+import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/AdminDashboardResponseDTO";
+import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { findClarification } from "@/store/util/clarification-finder";
 import { mergeEntity } from "@/store/util/entity-util";
 
-type StateType = {
-  contest: ContestFullResponseDTO;
-  leaderboard: LeaderboardResponseDTO;
-  submissions: SubmissionFullResponseDTO[];
-};
-
 export const adminDashboardSlice = createSlice({
   name: "adminDashboard",
-  initialState: null as unknown as StateType,
+  initialState: null as unknown as AdminDashboardResponseDTO,
   reducers: {
-    set(state, action: { payload: StateType }) {
+    set(state, action: { payload: AdminDashboardResponseDTO }) {
       return action.payload;
     },
     setContest(state, action: { payload: ContestFullResponseDTO }) {

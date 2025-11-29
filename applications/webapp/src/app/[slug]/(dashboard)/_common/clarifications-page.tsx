@@ -7,8 +7,8 @@ import { ClarificationFormType } from "@/app/[slug]/(dashboard)/_common/_form/cl
 import { ClarificationFormMap } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form-map";
 import { clarificationFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form-schema";
 import { clarificationService } from "@/config/composition";
-import { ClarificationResponseDTO } from "@/core/port/driven/repository/dto/response/clarification/ClarificationResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/port/driven/repository/dto/response/problem/ProblemPublicResponseDTO";
+import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages, Message } from "@/i18n/message";
 import { FormField } from "@/lib/component/form/form-field";
 import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";

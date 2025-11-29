@@ -1,5 +1,5 @@
 import { AnnouncementRepository } from "@/core/port/driven/repository/AnnouncementRepository";
-import { CreateAnnouncementRequestDTO } from "@/core/port/driven/repository/dto/request/CreateAnnouncementRequestDTO";
+import { CreateAnnouncementRequestDTO } from "@/core/port/dto/request/CreateAnnouncementRequestDTO";
 
 export class AnnouncementService {
   constructor(

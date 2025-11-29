@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-import { CreateClarificationRequestDTO } from "@/core/port/driven/repository/dto/request/CreateClarificationRequestDTO";
+import { CreateClarificationRequestDTO } from "@/core/port/dto/request/CreateClarificationRequestDTO";
 
 export function MockCreateClarificationRequestDTO(
   partial: Partial<CreateClarificationRequestDTO> = {},

@@ -3,8 +3,8 @@
 import { ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
 import React from "react";
 
-import { LeaderboardResponseDTO } from "@/core/port/driven/repository/dto/response/leaderboard/LeaderboardResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/port/driven/repository/dto/response/problem/ProblemPublicResponseDTO";
+import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
 import { ProblemStatusChip } from "@/lib/component/chip/problem-status-chip";
 import { FormattedDuration } from "@/lib/component/format/formatted-duration";

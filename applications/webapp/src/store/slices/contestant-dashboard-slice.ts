@@ -1,26 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AnnouncementResponseDTO } from "@/core/port/driven/repository/dto/response/announcement/AnnouncementResponseDTO";
-import { ClarificationResponseDTO } from "@/core/port/driven/repository/dto/response/clarification/ClarificationResponseDTO";
-import { ContestPublicResponseDTO } from "@/core/port/driven/repository/dto/response/contest/ContestPublicResponseDTO";
-import { LeaderboardResponseDTO } from "@/core/port/driven/repository/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/port/driven/repository/dto/response/submission/SubmissionFullResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/port/driven/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
+import { ContestantDashboardResponseDTO } from "@/core/port/dto/response/dashboard/ContestantDashboardResponseDTO";
+import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { findClarification } from "@/store/util/clarification-finder";
 import { mergeEntity } from "@/store/util/entity-util";
 
-type StateType = {
-  contest: ContestPublicResponseDTO;
-  leaderboard: LeaderboardResponseDTO;
-  submissions: SubmissionPublicResponseDTO[];
-  memberSubmissions: SubmissionFullResponseDTO[];
-};
-
 export const contestantDashboardSlice = createSlice({
   name: "contestantDashboard",
-  initialState: null as unknown as StateType,
+  initialState: null as unknown as ContestantDashboardResponseDTO,
   reducers: {
-    set(state, action: { payload: StateType }) {
+    set(state, action: { payload: ContestantDashboardResponseDTO }) {
       return action.payload;
     },
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {

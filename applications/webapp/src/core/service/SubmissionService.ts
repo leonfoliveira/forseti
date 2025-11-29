@@ -1,7 +1,7 @@
 import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { SubmissionFullResponseDTO } from "@/core/port/driven/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionRepository } from "@/core/port/driven/repository/SubmissionRepository";
+import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmissionInputDTO";
 

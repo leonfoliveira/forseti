@@ -1,8 +1,8 @@
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { CreateSubmissionRequestDTO } from "@/core/port/driven/repository/dto/request/CreateSubmissionRequestDTO";
-import { SubmissionFullResponseDTO } from "@/core/port/driven/repository/dto/response/submission/SubmissionFullResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/port/driven/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { CreateSubmissionRequestDTO } from "@/core/port/dto/request/CreateSubmissionRequestDTO";
+import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { SubmissionRepository } from "@/core/port/driven/repository/SubmissionRepository";
 
 export class AxiosSubmissionRepository implements SubmissionRepository {

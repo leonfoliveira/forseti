@@ -3,7 +3,7 @@ import { mock } from "jest-mock-extended";
 
 import { AxiosAuthenticationRepository } from "@/infrastructure/adapter/axios/AxiosAuthenticationRepository";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
-import { SessionResponseDTO } from "@/core/port/driven/repository/dto/response/session/SessionResponseDTO";
+import { SessionResponseDTO } from "@/core/port/dto/response/session/SessionResponseDTO";
 import { MockAuthenticateRequestDTO } from "@/test/mock/request/MockAuthenticateRequestDTO";
 
 describe("AxiosAuthenticationRepository", () => {

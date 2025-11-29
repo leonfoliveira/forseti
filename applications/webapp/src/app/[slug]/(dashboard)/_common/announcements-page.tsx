@@ -6,7 +6,7 @@ import { AnnouncementFormType } from "@/app/[slug]/(dashboard)/_common/_form/ann
 import { AnnouncementFormMap } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form-map";
 import { announcementFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form-schema";
 import { announcementService } from "@/config/composition";
-import { AnnouncementResponseDTO } from "@/core/port/driven/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { defineMessages } from "@/i18n/message";
 import { FormField } from "@/lib/component/form/form-field";
 import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";

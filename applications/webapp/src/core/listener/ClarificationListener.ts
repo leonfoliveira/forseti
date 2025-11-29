@@ -1,5 +1,5 @@
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
-import { ClarificationResponseDTO } from "@/core/port/driven/repository/dto/response/clarification/ClarificationResponseDTO";
+import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 
 export interface ClarificationListener {
   subscribeForContest: (

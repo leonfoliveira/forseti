@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-import { AnnouncementResponseDTO } from "@/core/port/driven/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { MockMemberPublicResponseDTO } from "@/test/mock/response/member/MockMemberPublicResponseDTO";
 
 export function MockAnnouncementResponseDTO(

@@ -1,5 +1,5 @@
 import { ClarificationFormType } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form";
-import { CreateClarificationRequestDTO } from "@/core/port/driven/repository/dto/request/CreateClarificationRequestDTO";
+import { CreateClarificationRequestDTO } from "@/core/port/dto/request/CreateClarificationRequestDTO";
 
 export class ClarificationFormMap {
   static toInputDTO(

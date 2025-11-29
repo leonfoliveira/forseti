@@ -1,7 +1,7 @@
-import { UpdateContestRequestDTO } from "@/core/port/driven/repository/dto/request/UpdateContestRequestDTO";
-import { ContestFullResponseDTO } from "@/core/port/driven/repository/dto/response/contest/ContestFullResponseDTO";
-import { ContestMetadataResponseDTO } from "@/core/port/driven/repository/dto/response/contest/ContestMetadataResponseDTO";
-import { ContestPublicResponseDTO } from "@/core/port/driven/repository/dto/response/contest/ContestPublicResponseDTO";
+import { UpdateContestRequestDTO } from "@/core/port/dto/request/UpdateContestRequestDTO";
+import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
+import { ContestMetadataResponseDTO } from "@/core/port/dto/response/contest/ContestMetadataResponseDTO";
+import { ContestPublicResponseDTO } from "@/core/port/dto/response/contest/ContestPublicResponseDTO";
 
 export interface ContestRepository {
   updateContest(

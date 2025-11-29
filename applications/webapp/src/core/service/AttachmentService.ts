@@ -1,6 +1,6 @@
 import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
-import { Attachment } from "@/core/domain/model/Attachment";
 import { AttachmentRepository } from "@/core/port/driven/repository/AttachmentRepository";
+import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 
 export class AttachmentService {
   constructor(private attachmentRepository: AttachmentRepository) {}
@@ -9,11 +9,11 @@ export class AttachmentService {
     contestId: string,
     context: AttachmentContext,
     file: File,
-  ): Promise<Attachment> {
+  ): Promise<AttachmentResponseDTO> {
     return this.attachmentRepository.upload(contestId, context, file);
   }
 
-  async download(contestId: string, attachment: Attachment) {
+  async download(contestId: string, attachment: AttachmentResponseDTO) {
     const file = await this.attachmentRepository.download(
       contestId,
       attachment,

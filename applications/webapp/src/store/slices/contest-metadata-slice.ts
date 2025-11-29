@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ContestMetadataResponseDTO } from "@/core/port/driven/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { ContestMetadataResponseDTO } from "@/core/port/dto/response/contest/ContestMetadataResponseDTO";
 
 export const contestMetadataSlice = createSlice({
   name: "contestMetadata",

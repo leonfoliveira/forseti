@@ -1,5 +1,5 @@
-import { Attachment } from "@/core/domain/model/Attachment";
-import { UpdateContestRequestDTO } from "@/core/port/driven/repository/dto/request/UpdateContestRequestDTO";
+import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
+import { UpdateContestRequestDTO } from "@/core/port/dto/request/UpdateContestRequestDTO";
 
 export type UpdateContestInputDTO = Omit<
   UpdateContestRequestDTO,
@@ -9,9 +9,9 @@ export type UpdateContestInputDTO = Omit<
     UpdateContestRequestDTO["problems"][number],
     "description" | "testCases"
   > & {
-    description?: Attachment;
+    description?: AttachmentResponseDTO;
     newDescription?: File;
-    testCases?: Attachment;
+    testCases?: AttachmentResponseDTO;
     newTestCases?: File;
   })[];
 };

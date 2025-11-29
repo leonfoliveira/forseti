@@ -1,4 +1,4 @@
-import { ClarificationResponseDTO } from "@/core/port/driven/repository/dto/response/clarification/ClarificationResponseDTO";
+import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 
 export function findClarification(
   data: ClarificationResponseDTO[],

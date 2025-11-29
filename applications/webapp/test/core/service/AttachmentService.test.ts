@@ -1,7 +1,7 @@
 import { mock } from "jest-mock-extended";
 
 import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
-import { Attachment } from "@/core/domain/model/Attachment";
+import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 import { AttachmentRepository } from "@/core/port/driven/repository/AttachmentRepository";
 import { AttachmentService } from "@/core/service/AttachmentService";
 
@@ -23,7 +23,7 @@ describe("AttachmentService", () => {
         id: "1",
         filename: "test.txt",
         contentType: "text/plain",
-      } as Attachment;
+      } as AttachmentResponseDTO;
       attachmentRepository.upload.mockResolvedValue(attachment);
       const context = AttachmentContext.PROBLEM_DESCRIPTION;
 
@@ -47,7 +47,7 @@ describe("AttachmentService", () => {
         id: "1",
         filename: "test.txt",
         contentType: "text/plain",
-      } as Attachment;
+      } as AttachmentResponseDTO;
       const file = new File(["content"], "test.txt", { type: "text/plain" });
       attachmentRepository.download.mockResolvedValue(file);
 

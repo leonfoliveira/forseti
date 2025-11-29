@@ -1,6 +1,6 @@
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
-import { Attachment } from "@/core/domain/model/Attachment";
+import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 import { AttachmentRepository } from "@/core/port/driven/repository/AttachmentRepository";
 
 export class AxiosAttachmentRepository implements AttachmentRepository {
@@ -13,11 +13,11 @@ export class AxiosAttachmentRepository implements AttachmentRepository {
     contestId: string,
     context: AttachmentContext,
     file: File,
-  ): Promise<Attachment> {
+  ): Promise<AttachmentResponseDTO> {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await this.axiosClient.post<Attachment>(
+    const response = await this.axiosClient.post<AttachmentResponseDTO>(
       `${this.basePath(contestId)}/${context}`,
       {
         data: formData,
@@ -29,7 +29,10 @@ export class AxiosAttachmentRepository implements AttachmentRepository {
     return response.data;
   }
 
-  async download(contestId: string, attachment: Attachment): Promise<File> {
+  async download(
+    contestId: string,
+    attachment: AttachmentResponseDTO,
+  ): Promise<File> {
     const response = await this.axiosClient.get<Blob>(
       `${this.basePath(contestId)}/${attachment.id}`,
       {

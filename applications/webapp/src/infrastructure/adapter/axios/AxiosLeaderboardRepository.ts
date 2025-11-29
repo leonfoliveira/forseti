@@ -1,5 +1,5 @@
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
-import { LeaderboardResponseDTO } from "@/core/port/driven/repository/dto/response/leaderboard/LeaderboardResponseDTO";
+import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { LeaderboardRepository } from "@/core/port/driven/repository/LeaderboardRepository";
 
 export class AxiosLeaderboardRepository implements LeaderboardRepository {

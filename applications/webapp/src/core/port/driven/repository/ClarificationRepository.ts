@@ -1,5 +1,5 @@
-import { CreateClarificationRequestDTO } from "@/core/port/driven/repository/dto/request/CreateClarificationRequestDTO";
-import { ClarificationResponseDTO } from "@/core/port/driven/repository/dto/response/clarification/ClarificationResponseDTO";
+import { CreateClarificationRequestDTO } from "@/core/port/dto/request/CreateClarificationRequestDTO";
+import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 
 export interface ClarificationRepository {
   createClarification(

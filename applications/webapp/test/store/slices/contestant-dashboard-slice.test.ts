@@ -1,7 +1,7 @@
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionFullResponseDTO } from "@/core/port/driven/repository/dto/response/submission/SubmissionFullResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/port/driven/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { contestantDashboardSlice } from "@/store/slices/contestant-dashboard-slice";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";

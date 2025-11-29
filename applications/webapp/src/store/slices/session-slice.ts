@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SessionResponseDTO } from "@/core/port/driven/repository/dto/response/session/SessionResponseDTO";
+import { SessionResponseDTO } from "@/core/port/dto/response/session/SessionResponseDTO";
 
 export const sessionSlice = createSlice({
   name: "session",

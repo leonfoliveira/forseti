@@ -1,8 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
 
-import { Attachment } from "@/core/domain/model/Attachment";
+import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 
-export function MockAttachment(partial: Partial<Attachment> = {}): Attachment {
+export function MockAttachment(
+  partial: Partial<AttachmentResponseDTO> = {},
+): AttachmentResponseDTO {
   return {
     id: uuidv4(),
     filename: "test.txt",

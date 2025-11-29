@@ -1,7 +1,7 @@
 import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
-import { Attachment } from "@/core/domain/model/Attachment";
 import { ContestRepository } from "@/core/port/driven/repository/ContestRepository";
-import { UpdateContestRequestDTO } from "@/core/port/driven/repository/dto/request/UpdateContestRequestDTO";
+import { UpdateContestRequestDTO } from "@/core/port/dto/request/UpdateContestRequestDTO";
+import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 
@@ -56,14 +56,14 @@ export class ContestService {
                 AttachmentContext.PROBLEM_DESCRIPTION,
                 it.newDescription,
               )
-            : (it.description as Attachment),
+            : (it.description as AttachmentResponseDTO),
           it.newTestCases
             ? await this.attachmentService.upload(
                 contestId,
                 AttachmentContext.PROBLEM_TEST_CASES,
                 it.newTestCases,
               )
-            : (it.testCases as Attachment),
+            : (it.testCases as AttachmentResponseDTO),
         ]);
 
         return {

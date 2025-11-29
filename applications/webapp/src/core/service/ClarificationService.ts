@@ -1,5 +1,5 @@
 import { ClarificationRepository } from "@/core/port/driven/repository/ClarificationRepository";
-import { CreateClarificationRequestDTO } from "@/core/port/driven/repository/dto/request/CreateClarificationRequestDTO";
+import { CreateClarificationRequestDTO } from "@/core/port/dto/request/CreateClarificationRequestDTO";
 
 export class ClarificationService {
   constructor(

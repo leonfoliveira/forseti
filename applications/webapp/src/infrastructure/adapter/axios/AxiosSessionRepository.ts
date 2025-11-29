@@ -1,5 +1,5 @@
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
-import { SessionResponseDTO } from "@/core/port/driven/repository/dto/response/session/SessionResponseDTO";
+import { SessionResponseDTO } from "@/core/port/dto/response/session/SessionResponseDTO";
 import { SessionRepository } from "@/core/port/driven/repository/SessionRepository";
 
 export class AxiosSessionRepository implements SessionRepository {

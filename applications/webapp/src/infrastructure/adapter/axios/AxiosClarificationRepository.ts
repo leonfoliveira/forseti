@@ -1,7 +1,7 @@
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 import { ClarificationRepository } from "@/core/port/driven/repository/ClarificationRepository";
-import { CreateClarificationRequestDTO } from "@/core/port/driven/repository/dto/request/CreateClarificationRequestDTO";
-import { ClarificationResponseDTO } from "@/core/port/driven/repository/dto/response/clarification/ClarificationResponseDTO";
+import { CreateClarificationRequestDTO } from "@/core/port/dto/request/CreateClarificationRequestDTO";
+import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 
 export class AxiosClarificationRepository implements ClarificationRepository {
   private basePath = (contestId: string) =>

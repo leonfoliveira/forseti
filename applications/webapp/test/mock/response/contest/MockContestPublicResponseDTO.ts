@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 
 import { Language } from "@/core/domain/enumerate/Language";
-import { ContestPublicResponseDTO } from "@/core/port/driven/repository/dto/response/contest/ContestPublicResponseDTO";
+import { ContestPublicResponseDTO } from "@/core/port/dto/response/contest/ContestPublicResponseDTO";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
 import { MockMemberPublicResponseDTO } from "@/test/mock/response/member/MockMemberPublicResponseDTO";

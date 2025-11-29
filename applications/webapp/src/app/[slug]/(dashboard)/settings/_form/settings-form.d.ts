@@ -2,7 +2,7 @@ import { ZonedDateTime } from "@internationalized/date";
 
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { Attachment } from "@/core/domain/model/Attachment";
+import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 
 export type SettingsForm = {
   id: string;
@@ -17,11 +17,11 @@ export type SettingsForm = {
   problems: {
     _id?: string;
     title: string;
-    description: Attachment;
+    description: AttachmentResponseDTO;
     newDescription?: File[];
     timeLimit: string;
     memoryLimit: string;
-    testCases: Attachment;
+    testCases: AttachmentResponseDTO;
     newTestCases?: File[];
   }[];
   members: {

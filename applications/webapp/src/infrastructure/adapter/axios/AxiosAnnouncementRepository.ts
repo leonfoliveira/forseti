@@ -1,7 +1,7 @@
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 import { AnnouncementRepository } from "@/core/port/driven/repository/AnnouncementRepository";
-import { CreateAnnouncementRequestDTO } from "@/core/port/driven/repository/dto/request/CreateAnnouncementRequestDTO";
-import { AnnouncementResponseDTO } from "@/core/port/driven/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { CreateAnnouncementRequestDTO } from "@/core/port/dto/request/CreateAnnouncementRequestDTO";
+import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 
 export class AxiosAnnouncementRepository implements AnnouncementRepository {
   private basePath = (contestId: string) =>
