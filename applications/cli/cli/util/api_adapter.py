@@ -13,7 +13,6 @@ from .input_adapter import InputAdapter
 warnings.simplefilter("ignore", InsecureRequestWarning)
 
 
-DEFAULT_API_URL = "https://api.forseti.live"
 VERIFY_SSL = False
 
 
@@ -28,7 +27,7 @@ class ApiAdapter:
     CSRF_TOKEN_HEADER = "x-csrf-token"
 
     def __init__(self, api_url: str = None):
-        self.api_url = api_url or DEFAULT_API_URL
+        self.api_url = api_url
         self.input_adapter = InputAdapter()
 
     def get(self, path: str, **kwargs) -> Union[dict, list]:

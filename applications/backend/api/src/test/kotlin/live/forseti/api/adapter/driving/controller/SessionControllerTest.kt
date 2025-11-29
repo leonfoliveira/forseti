@@ -37,7 +37,7 @@ class SessionControllerTest(
             RequestContext.getContext().session = session
 
             webMvc
-                .get("/v1/session/me")
+                .get("/api/v1/session/me")
                 .andExpect {
                     status { isOk() }
                     content { session }
@@ -49,7 +49,7 @@ class SessionControllerTest(
             RequestContext.getContext().session = session
 
             webMvc
-                .delete("/v1/session/me")
+                .delete("/api/v1/session/me")
                 .andExpect {
                     status { isNoContent() }
                     cookie {
@@ -61,7 +61,7 @@ class SessionControllerTest(
         test("deleteSession without session") {
             RequestContext.getContext().session = null
             webMvc
-                .delete("/v1/session/me")
+                .delete("/api/v1/session/me")
                 .andExpect {
                     status { isNoContent() }
                     cookie {

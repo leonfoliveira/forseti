@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/v1/session")
+@RequestMapping("/api/v1/session")
 class SessionController(
     val deleteSessionUseCase: DeleteSessionUseCase,
     val sessionCookieBuilder: SessionCookieBuilder,

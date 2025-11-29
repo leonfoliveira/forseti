@@ -9,12 +9,13 @@ export function isClient(): boolean {
 export const serverConfig = {
   version: process.env.NEXT_PUBLIC_VERSION || "0.0.0",
   locale: process.env.LOCALE || "en-US",
-  apiInternalUrl: process.env.API_INTERNAL_URL || "http://localhost:8080",
-  apiPublicUrl: process.env.API_PUBLIC_URL || "http://localhost:8080",
+  apiPublicUrl: process.env.API_PUBLIC_URL || "http://localhost:8080/api",
+  wsPublicUrl: process.env.WS_PUBLIC_URL || "http://localhost:8080/ws",
 };
 
 export type ClientConfig = {
   apiPublicUrl: string;
+  wsPublicUrl: string;
 };
 export const clientConfig =
   ((globalThis as any).__CLIENT_CONFIG__ as ClientConfig) || serverConfig;
@@ -22,5 +23,6 @@ export const clientConfig =
 export function buildClientConfig(): ClientConfig {
   return {
     apiPublicUrl: serverConfig.apiPublicUrl,
+    wsPublicUrl: serverConfig.wsPublicUrl,
   };
 }

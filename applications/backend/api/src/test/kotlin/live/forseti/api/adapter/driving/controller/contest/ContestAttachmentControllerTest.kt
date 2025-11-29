@@ -38,7 +38,7 @@ class ContestAttachmentControllerTest(
 ) : FunSpec({
         extensions(SpringExtension)
 
-        val basePath = "/v1/contests/{contestId}/attachments"
+        val basePath = "/api/v1/contests/{contestId}/attachments"
 
         test("uploadAttachment") {
             val contestId = UUID.randomUUID()

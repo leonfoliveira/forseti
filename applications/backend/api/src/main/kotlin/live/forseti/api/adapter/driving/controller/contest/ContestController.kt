@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/v1/contests")
+@RequestMapping("/api/v1/contests")
 class ContestController(
     private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val createContestUseCase: CreateContestUseCase,

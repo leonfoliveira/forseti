@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/v1/contests/{contestId}")
+@RequestMapping("/api/v1/contests/{contestId}")
 class ContestAuthenticationController(
     val authenticateUseCase: AuthenticateUseCase,
     val sessionCookieBuilder: SessionCookieBuilder,

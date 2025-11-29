@@ -148,7 +148,7 @@ services:
       context: ../../applications/backend
       dockerfile: autojudge.Dockerfile
     environment:
-      API_URL: http://api:8080
+      API_URL: http://api:8080/api
       DB_PASSWORD: forseti
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
@@ -207,8 +207,8 @@ services:
       context: ../../applications/webapp
       dockerfile: Dockerfile
     environment:
-      API_INTERNAL_URL: http://api:8080
-      API_PUBLIC_URL: http://localhost:8080
+      API_PUBLIC_URL: http://localhost:8080/api
+      WS_PUBLIC_URL: http://localhost:8080/ws
       LOCALE: en-US
       NEXT_PUBLIC_VERSION: latest
       NODE_ENV: development

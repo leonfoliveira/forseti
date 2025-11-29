@@ -53,7 +53,7 @@ class ContestSubmissionControllerTest(
             RequestContext.getContext().session = session
         }
 
-        val basePath = "/v1/contests/{contestId}/submissions"
+        val basePath = "/api/v1/contests/{contestId}/submissions"
 
         test("createSubmission") {
             val contestId = UUID.randomUUID()

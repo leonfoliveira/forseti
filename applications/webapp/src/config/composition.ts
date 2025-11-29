@@ -41,7 +41,7 @@ import { StompSubmissionListener } from "@/infrastructure/adapter/stomp/StompSub
 
 // Listeners
 export const listenerClientFactory = new StompClientFactory(
-  `${clientConfig.apiPublicUrl}/ws`,
+  clientConfig.wsPublicUrl,
 );
 
 export const announcementListener = new StompAnnouncementListener();
