@@ -1,0 +1,16 @@
+import { StompClient } from "@/infrastructure/adapter/stomp/StompClient";
+import { StompClientFactory } from "@/infrastructure/adapter/stomp/StompClientFactory";
+
+describe("StompClientFactory", () => {
+  const wsUrl = "https://example.com/websocket";
+
+  const sut = new StompClientFactory(wsUrl);
+
+  describe("create", () => {
+    it("should create a StompClient with the provided WebSocket URL", () => {
+      const client = sut.create();
+
+      expect(client).toBeInstanceOf(StompClient);
+    });
+  });
+});
