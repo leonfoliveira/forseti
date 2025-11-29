@@ -93,7 +93,7 @@ def generate_config_file(config_file_path, version=None, api_url=None):
     if version is None:
         version = get_git_version()
     if api_url is None:
-        api_url = "http://localhost:8000/api"
+        api_url = "http://localhost:8080/api"
 
     git_commit = get_git_commit()
     build_date = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -121,7 +121,7 @@ def main():
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path(__file__).parent / "cli" / "_version.py",
+        default=Path(__file__).parent / "cli" / "_config.py",
         help="Output path for version file"
     )
     parser.add_argument(

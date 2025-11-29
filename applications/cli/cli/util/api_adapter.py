@@ -32,6 +32,7 @@ class ApiAdapter:
 
     def get(self, path: str, **kwargs) -> Union[dict, list]:
         session_id, csrf_token = self._authenticate()
+        print(f"{self.api_url}{path}")
         response = requests.get(
             f"{self.api_url}{path}",
             **kwargs,
@@ -45,6 +46,7 @@ class ApiAdapter:
 
     def post(self, path: str, json=None, **kwargs) -> Union[dict, list]:
         session_id, csrf_token = self._authenticate()
+        print(f"{self.api_url}{path}")
         response = requests.post(
             f"{self.api_url}{path}",
             json=json,
@@ -59,6 +61,7 @@ class ApiAdapter:
 
     def put(self, path: str, json=None, **kwargs) -> Union[dict, list]:
         session_id, csrf_token = self._authenticate()
+        print(f"{self.api_url}{path}")
         response = requests.put(
             f"{self.api_url}{path}",
             json=json,
@@ -73,6 +76,7 @@ class ApiAdapter:
 
     def delete(self, path: str, **kwargs) -> None:
         session_id, csrf_token = self._authenticate()
+        print(f"{self.api_url}{path}")
         response = requests.delete(
             f"{self.api_url}{path}",
             **kwargs,
@@ -87,6 +91,7 @@ class ApiAdapter:
         if (session_id := self._get_cached_value(self.SESSION_ID_KEYRING_KEY)) and (
             csrf_token := self._get_cached_value(self.CSRF_TOKEN_KEYRING_KEY)
         ):
+            print(f"{self.api_url}/v1/session/me")
             response = requests.get(
                 f"{self.api_url}/v1/session/me",
                 verify=VERIFY_SSL,
@@ -97,6 +102,7 @@ class ApiAdapter:
                 return session_id, csrf_token
 
         password = self.input_adapter.password("Root password: ")
+        print(f"{self.api_url}/v1/root/sign-in")
         response = requests.post(
             f"{self.api_url}/v1/root/sign-in",
             verify=VERIFY_SSL,

@@ -1,5 +1,11 @@
 import React, { useEffect } from "react";
 
+import { ErrorPage } from "@/app/_lib/component/page/error-page";
+import { LoadingPage } from "@/app/_lib/component/page/loading-page";
+import { useLoadableState } from "@/app/_lib/util/loadable-state";
+import { useToast } from "@/app/_lib/util/toast-hook";
+import { guestDashboardSlice } from "@/app/_store/slices/guest-dashboard-slice";
+import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import {
   announcementListener,
   clarificationListener,
@@ -14,12 +20,6 @@ import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
-import { ErrorPage } from "@/app/_lib/component/page/error-page";
-import { LoadingPage } from "@/app/_lib/component/page/loading-page";
-import { useLoadableState } from "@/app/_lib/util/loadable-state";
-import { useToast } from "@/app/_lib/util/toast-hook";
-import { guestDashboardSlice } from "@/app/_store/slices/guest-dashboard-slice";
-import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 
 const messages = defineMessages({
   announcement: {

@@ -2,11 +2,13 @@ import { AttachmentService } from "@/core/application/service/AttachmentService"
 import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { ContestRepository } from "@/core/port/driven/repository/ContestRepository";
 import { ContestReader } from "@/core/port/driving/usecase/contest/ContestReader";
-import { ContestWritter } from "@/core/port/driving/usecase/contest/ContestWritter";
+import {
+  ContestWritter,
+  UpdateContestInputDTO,
+} from "@/core/port/driving/usecase/contest/ContestWritter";
 import { UpdateContestRequestDTO } from "@/core/port/dto/request/UpdateContestRequestDTO";
 import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestMetadataResponseDTO } from "@/core/port/dto/response/contest/ContestMetadataResponseDTO";
-import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 
 export class ContestService implements ContestWritter, ContestReader {
   constructor(

@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
-import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmissionInputDTO";
+import { CreateSubmissionInputDTO } from "@/core/port/driving/usecase/submission/SubmissionWritter";
 
 export function MockCreateSubmissionInputDTO(
   partial: Partial<CreateSubmissionInputDTO> = {},

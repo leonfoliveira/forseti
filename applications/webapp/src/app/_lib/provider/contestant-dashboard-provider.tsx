@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
 
+import { ErrorPage } from "@/app/_lib/component/page/error-page";
+import { LoadingPage } from "@/app/_lib/component/page/loading-page";
+import { useIntl } from "@/app/_lib/util/intl-hook";
+import { useLoadableState } from "@/app/_lib/util/loadable-state";
+import { useToast } from "@/app/_lib/util/toast-hook";
+import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
+import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import {
   announcementListener,
   clarificationListener,
@@ -17,13 +24,6 @@ import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/S
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
-import { ErrorPage } from "@/app/_lib/component/page/error-page";
-import { LoadingPage } from "@/app/_lib/component/page/loading-page";
-import { useIntl } from "@/app/_lib/util/intl-hook";
-import { useLoadableState } from "@/app/_lib/util/loadable-state";
-import { useToast } from "@/app/_lib/util/toast-hook";
-import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
-import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 
 const messages = defineMessages({
   problemAnswer: {

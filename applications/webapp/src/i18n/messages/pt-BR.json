@@ -1,60 +1,4 @@
 {
-  "lib": {
-    "provider": {
-      "judge-dashboard-provider": {
-        "load-error": "Erro ao carregar dados do concurso",
-        "submission-failed": "Nova submissão falhada",
-        "announcement": "Novo anúncio: {text}",
-        "new-clarification": "Nova pergunta"
-      },
-      "guest-dashboard-provider": {
-        "load-error": "Erro ao carregar dados do concurso",
-        "announcement": "Novo anúncio: {text}"
-      },
-      "contestant-dashboard-provider": {
-        "load-error": "Erro ao carregar dados do concurso",
-        "problem-answer": "Problema {letter}: {answer}",
-        "announcement": "Novo anúncio: {text}",
-        "clarification-answer": "Nova resposta para uma pergunta"
-      },
-      "admin-dashboard-provider": {
-        "load-error": "Erro ao carregar dados do concurso",
-        "submission-failed": "Nova submissão falhada",
-        "announcement": "Novo anúncio: {text}",
-        "new-clarification": "Nova pergunta"
-      }
-    },
-    "component": {
-      "header": {
-        "sign-in": "Entrar",
-        "sign-out": "Sair"
-      },
-      "footer": {
-        "text": "Judge {version}"
-      },
-      "page": {
-        "loading-page": {
-          "label": "Carregando"
-        },
-        "error-page": {
-          "description": "Ocorreu um erro inesperado.",
-          "reload": "Recarregar a página"
-        }
-      },
-      "modal": {
-        "confirmation-modal": {
-          "cancel-label": "Cancelar",
-          "confirm-label": "Confirmar"
-        }
-      },
-      "format": {
-        "formatted-duration": {
-          "duration": "{hours}:{minutes}:{seconds}",
-          "duration-with-days": "{days}d {hours}:{minutes}:{seconds}"
-        }
-      }
-    }
-  },
   "i18n": {
     "global": {
       "formatted-contest": {
@@ -90,6 +34,62 @@
     }
   },
   "app": {
+    "_lib": {
+      "provider": {
+        "judge-dashboard-provider": {
+          "load-error": "Erro ao carregar dados do concurso",
+          "submission-failed": "Nova submissão falhada",
+          "announcement": "Novo anúncio: {text}",
+          "new-clarification": "Nova pergunta"
+        },
+        "guest-dashboard-provider": {
+          "load-error": "Erro ao carregar dados do concurso",
+          "announcement": "Novo anúncio: {text}"
+        },
+        "contestant-dashboard-provider": {
+          "load-error": "Erro ao carregar dados do concurso",
+          "problem-answer": "Problema {letter}: {answer}",
+          "announcement": "Novo anúncio: {text}",
+          "clarification-answer": "Nova resposta para uma pergunta"
+        },
+        "admin-dashboard-provider": {
+          "load-error": "Erro ao carregar dados do concurso",
+          "submission-failed": "Nova submissão falhada",
+          "announcement": "Novo anúncio: {text}",
+          "new-clarification": "Nova pergunta"
+        }
+      },
+      "component": {
+        "header": {
+          "sign-in": "Entrar",
+          "sign-out": "Sair"
+        },
+        "footer": {
+          "text": "Judge {version}"
+        },
+        "page": {
+          "loading-page": {
+            "label": "Carregando"
+          },
+          "error-page": {
+            "description": "Ocorreu um erro inesperado.",
+            "reload": "Recarregar a página"
+          }
+        },
+        "modal": {
+          "confirmation-modal": {
+            "cancel-label": "Cancelar",
+            "confirm-label": "Confirmar"
+          }
+        },
+        "format": {
+          "formatted-duration": {
+            "duration": "{hours}:{minutes}:{seconds}",
+            "duration-with-days": "{days}d {hours}:{minutes}:{seconds}"
+          }
+        }
+      }
+    },
     "page": {
       "page-title": "Forseti",
       "page-description": "Aplicação Forseti."

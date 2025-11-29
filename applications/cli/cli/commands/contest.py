@@ -5,7 +5,7 @@ from typing import Optional
 import click
 from tabulate import tabulate
 
-from applications.cli.cli.config import __api_url__
+from cli.config import __api_url__
 from cli.util.api_adapter import ApiAdapter
 
 

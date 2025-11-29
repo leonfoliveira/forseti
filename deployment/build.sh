@@ -1,4 +1,5 @@
 # !/bin/bash
+set -e
 
 docker build -t forseti-api -f ../applications/backend/api.Dockerfile ../applications/backend --no-cache
 docker build -t forseti-autojudge -f ../applications/backend/autojudge.Dockerfile ../applications/backend --no-cache

@@ -1,5 +1,5 @@
 import { SubmissionFormType } from "@/app/[slug]/(dashboard)/_common/_form/submission-form";
-import { CreateSubmissionInputDTO } from "@/core/service/dto/input/CreateSubmissionInputDTO";
+import { CreateSubmissionInputDTO } from "@/core/port/driving/usecase/submission/SubmissionWritter";
 
 export class SubmissionFormMap {
   static toInputDTO(data: SubmissionFormType): CreateSubmissionInputDTO {

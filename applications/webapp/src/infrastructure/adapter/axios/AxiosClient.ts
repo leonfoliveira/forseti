@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
-import { v4 as uuidv4 } from "uuid";
 
 import { BusinessException } from "@/core/domain/exception/BusinessException";
 import { ConflictException } from "@/core/domain/exception/ConflictException";
