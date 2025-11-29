@@ -7,67 +7,99 @@ import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { ServerException } from "@/core/domain/exception/ServerException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 
-export class AxiosClient {
-  static readonly CSRF_COOKIE_NAME = "csrf_token";
-  static readonly CSRF_HEADER_NAME = "x-csrf-token";
-
+export abstract class AxiosClient {
   constructor(private readonly baseUrl: string) {}
 
+  /**
+   * Makes an HTTP GET request.
+   *
+   * @param path resource path
+   * @param requestConfig Axios request configuration.
+   * @returns Axios response.
+   */
   async get<TBody>(
     path: string,
     requestConfig: AxiosRequestConfig = {},
   ): Promise<AxiosResponse<TBody>> {
-    return this.request(path, {
+    return this._request(path, {
       method: "GET",
       ...requestConfig,
     });
   }
 
+  /**
+   * Makes an HTTP POST request.
+   *
+   * @param path resource path
+   * @param requestConfig Axios request configuration.
+   * @returns Axios response.
+   */
   async post<TBody>(
     path: string,
     requestConfig: AxiosRequestConfig = {},
   ): Promise<AxiosResponse<TBody>> {
-    return this.request(path, {
+    return this._request(path, {
       method: "POST",
       ...requestConfig,
     });
   }
 
+  /**
+   * Makes an HTTP PUT request.
+   *
+   * @param path resource path
+   * @param requestConfig Axios request configuration.
+   * @returns Axios response.
+   */
   async put<TBody>(
     path: string,
     requestConfig: AxiosRequestConfig = {},
   ): Promise<AxiosResponse<TBody>> {
-    return this.request(path, {
+    return this._request(path, {
       method: "PUT",
       ...requestConfig,
     });
   }
 
+  /**
+   * Makes an HTTP DELETE request.
+   *
+   * @param path resource path
+   * @param requestConfig Axios request configuration.
+   */
   async delete(
     path: string,
     requestConfig: AxiosRequestConfig = {},
   ): Promise<void> {
-    await this.request(path, {
+    await this._request(path, {
       method: "DELETE",
       ...requestConfig,
     });
   }
 
-  private async request<TBody>(
+  /**
+   * Makes an HTTP request and converts errors to domain exceptions.
+   *
+   * @param path resource path
+   * @param requestConfig Axios request configuration.
+   * @returns Axios response.
+   */
+  private async _request<TBody>(
     path: string,
     requestConfig: AxiosRequestConfig = {},
   ): Promise<AxiosResponse<TBody>> {
     try {
-      requestConfig.headers = {
-        ...requestConfig.headers,
-        [AxiosClient.CSRF_HEADER_NAME]: this.getCsrfToken(),
-      };
+      await this.proxyRequest(requestConfig);
 
-      return await axios.request<TBody>({
+      const response = await axios.request<TBody>({
         ...requestConfig,
         url: requestConfig.url || `${this.baseUrl}${path}`,
         withCredentials: true,
       });
+
+      await this.proxyResponse(response);
+
+      return response;
     } catch (error) {
       if (error instanceof AxiosError) {
         const status = error.response?.status;
@@ -95,10 +127,21 @@ export class AxiosClient {
     }
   }
 
-  private getCsrfToken(): string | null {
-    const match = document.cookie.match(
-      new RegExp(`(^| )${AxiosClient.CSRF_COOKIE_NAME}=([^;]+)`),
-    );
-    return match ? match[2] : null;
-  }
+  /**
+   * Modifies the request before it is sent.
+   *
+   * @param requestConfig Axios request configuration.
+   */
+  protected abstract proxyRequest(
+    requestConfig: AxiosRequestConfig,
+  ): Promise<void>;
+
+  /**
+   * Modifies the response after it is received.
+   *
+   * @param response Axios response.
+   */
+  protected abstract proxyResponse<TBody>(
+    response: AxiosResponse<TBody>,
+  ): Promise<void>;
 }

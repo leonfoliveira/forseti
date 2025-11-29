@@ -824,6 +824,7 @@ services:
       update_config:
         order: start-first
     environment:
+      API_INTERNAL_URL: http://api:8080/api
       API_PUBLIC_URL: https://api.forseti.live/api
       WS_PUBLIC_URL: https://api.forseti.live/ws
       LOCALE: en-US

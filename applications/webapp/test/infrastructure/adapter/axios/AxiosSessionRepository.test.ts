@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import { mock } from "jest-mock-extended";
 
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
-import { AxiosSessionRepository } from "@/infrastructure/adapter/axios/AxiosSessionRepository";
+import { AxiosSessionRepository } from "@/infrastructure/adapter/axios/repository/AxiosSessionRepository";
 import { MockSession } from "@/test/mock/response/session/MockSession";
 
 describe("AxiosSessionRepository", () => {

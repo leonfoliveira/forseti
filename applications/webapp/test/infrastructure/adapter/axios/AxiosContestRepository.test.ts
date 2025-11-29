@@ -3,7 +3,7 @@ import { mock } from "jest-mock-extended";
 import { v4 as uuidv4 } from "uuid";
 
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
-import { AxiosContestRepository } from "@/infrastructure/adapter/axios/AxiosContestRepository";
+import { AxiosContestRepository } from "@/infrastructure/adapter/axios/repository/AxiosContestRepository";
 import { MockUpdateContestRequestDTO } from "@/test/mock/request/MockUpdateContestRequestDTO";
 import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";

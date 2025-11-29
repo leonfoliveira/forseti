@@ -1,14 +1,15 @@
-export function isServer(): boolean {
+export function isServerSide(): boolean {
   return typeof window === "undefined";
 }
 
-export function isClient(): boolean {
+export function isClientSide(): boolean {
   return typeof window !== "undefined";
 }
 
 export const serverConfig = {
   version: process.env.NEXT_PUBLIC_VERSION || "0.0.0",
   locale: process.env.LOCALE || "en-US",
+  apiInternalUrl: process.env.API_INTERNAL_URL || "http://localhost:8080/api",
   apiPublicUrl: process.env.API_PUBLIC_URL || "http://localhost:8080/api",
   wsPublicUrl: process.env.WS_PUBLIC_URL || "http://localhost:8080/ws",
 };

@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import { mock } from "jest-mock-extended";
 
 import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
-import { AxiosAttachmentRepository } from "@/infrastructure/adapter/axios/AxiosAttachmentRepository";
+import { AxiosAttachmentRepository } from "@/infrastructure/adapter/axios/repository/AxiosAttachmentRepository";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachment";
 

@@ -3,7 +3,7 @@ import { mock } from "jest-mock-extended";
 import { v4 as uuidv4 } from "uuid";
 
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
-import { AxiosLeaderboardRepository } from "@/infrastructure/adapter/axios/AxiosLeaderboardRepository";
+import { AxiosLeaderboardRepository } from "@/infrastructure/adapter/axios/repository/AxiosLeaderboardRepository";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 
 describe("AxiosLeaderboardRepository", () => {
