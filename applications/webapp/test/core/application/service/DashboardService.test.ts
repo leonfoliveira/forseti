@@ -137,7 +137,7 @@ describe("DashboardService", () => {
       const leaderboard = MockLeaderboardResponseDTO();
       const submissions = [MockSubmissionFullResponseDTO()];
 
-      contestRepository.findFullContestById.mockResolvedValueOnce(contest);
+      contestRepository.findContestById.mockResolvedValueOnce(contest);
       leaderboardRepository.findContestLeaderboard.mockResolvedValueOnce(
         leaderboard,
       );
@@ -147,7 +147,7 @@ describe("DashboardService", () => {
 
       const result = await sut.getJudge("contest-id");
 
-      expect(contestRepository.findFullContestById).toHaveBeenCalledWith(
+      expect(contestRepository.findContestById).toHaveBeenCalledWith(
         "contest-id",
       );
       expect(leaderboardRepository.findContestLeaderboard).toHaveBeenCalledWith(

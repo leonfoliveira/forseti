@@ -87,7 +87,7 @@ export class DashboardService implements DashboardReader {
    */
   async getJudge(contestId: string): Promise<JudgeDashboardResponseDTO> {
     const [contest, leaderboard, submissions] = await Promise.all([
-      this.contestRepository.findFullContestById(contestId),
+      this.contestRepository.findContestById(contestId),
       this.leaderboardRepository.findContestLeaderboard(contestId),
       this.submissionRepository.findAllContestFullSubmissions(contestId),
     ]);
