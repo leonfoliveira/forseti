@@ -4,7 +4,7 @@ import { SettingsForm } from "@/app/[slug]/(dashboard)/settings/_form/settings-f
 import { contestService } from "@/config/composition";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { Language } from "@/core/domain/enumerate/Language";
-import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
+import { ContestFullResponseDTO } from "@/core/port/driven/repository/dto/response/contest/ContestFullResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 import { FormField } from "@/lib/component/form/form-field";

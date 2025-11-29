@@ -1,6 +1,6 @@
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 import { LeaderboardListener } from "@/core/listener/LeaderboardListener";
-import { LeaderboardResponseDTO } from "@/core/repository/dto/response/leaderboard/LeaderboardResponseDTO";
+import { LeaderboardResponseDTO } from "@/core/port/driven/repository/dto/response/leaderboard/LeaderboardResponseDTO";
 
 export class StompLeaderboardListener implements LeaderboardListener {
   async subscribeForLeaderboard(

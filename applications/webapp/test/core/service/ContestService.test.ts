@@ -2,7 +2,7 @@ import { mock } from "jest-mock-extended";
 import { v4 as uuidv4 } from "uuid";
 
 import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
-import { ContestRepository } from "@/core/repository/ContestRepository";
+import { ContestRepository } from "@/core/port/driven/repository/ContestRepository";
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { ContestService } from "@/core/service/ContestService";
 import { MockUpdateContestInputDTO } from "@/test/mock/input/MockUpdateContestInputDTO";

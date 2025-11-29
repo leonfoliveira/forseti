@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-import { SessionResponseDTO } from "@/core/repository/dto/response/session/SessionResponseDTO";
+import { SessionResponseDTO } from "@/core/port/driven/repository/dto/response/session/SessionResponseDTO";
 import { MockMemberPublicResponseDTO } from "@/test/mock/response/member/MockMemberPublicResponseDTO";
 
 export function MockSession(

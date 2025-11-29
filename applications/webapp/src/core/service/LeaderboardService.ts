@@ -1,4 +1,4 @@
-import { LeaderboardRepository } from "@/core/repository/LeaderboardRepository";
+import { LeaderboardRepository } from "@/core/port/driven/repository/LeaderboardRepository";
 
 export class LeaderboardService {
   constructor(private readonly leaderboardRepository: LeaderboardRepository) {}

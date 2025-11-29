@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
+import { UpdateContestRequestDTO } from "@/core/port/driven/repository/dto/request/UpdateContestRequestDTO";
 import { MockAttachment } from "@/test/mock/model/MockAttachment";
 
 export function MockUpdateContestRequestDTO(

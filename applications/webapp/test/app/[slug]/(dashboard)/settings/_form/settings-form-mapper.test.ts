@@ -3,7 +3,7 @@ import { parseAbsoluteToLocal } from "@internationalized/date";
 import { SettingsFormMapper } from "@/app/[slug]/(dashboard)/settings/_form/settings-form-mapper";
 import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
+import { ContestFullResponseDTO } from "@/core/port/driven/repository/dto/response/contest/ContestFullResponseDTO";
 
 describe("SettingsFormMapper", () => {
   const mockAttachment = {

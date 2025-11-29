@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { SubmissionRepository } from "@/core/repository/SubmissionRepository";
+import { SubmissionRepository } from "@/core/port/driven/repository/SubmissionRepository";
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { SubmissionService } from "@/core/service/SubmissionService";
 import { MockCreateSubmissionInputDTO } from "@/test/mock/input/MockCreateSubmissionInputDTO";

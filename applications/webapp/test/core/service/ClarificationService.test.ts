@@ -1,8 +1,7 @@
 import { mock } from "jest-mock-extended";
 import { v4 as uuidv4 } from "uuid";
 
-
-import { ClarificationRepository } from "@/core/repository/ClarificationRepository";
+import { ClarificationRepository } from "@/core/port/driven/repository/ClarificationRepository";
 import { ClarificationService } from "@/core/service/ClarificationService";
 import { MockCreateClarificationRequestDTO } from "@/test/mock/request/MockCreateClarificationRequestDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";

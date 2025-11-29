@@ -1,6 +1,6 @@
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
 import { AnnouncementListener } from "@/core/listener/AnnouncementListener";
-import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { AnnouncementResponseDTO } from "@/core/port/driven/repository/dto/response/announcement/AnnouncementResponseDTO";
 
 export class StompAnnouncementListener implements AnnouncementListener {
   async subscribeForContest(

@@ -1,4 +1,4 @@
-import { MemberPublicResponseDTO } from "@/core/repository/dto/response/member/MemberPublicResponseDTO";
+import { MemberPublicResponseDTO } from "@/core/port/driven/repository/dto/response/member/MemberPublicResponseDTO";
 
 export type AnnouncementResponseDTO = {
   id: string;

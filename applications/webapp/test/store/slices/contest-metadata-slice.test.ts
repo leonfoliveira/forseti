@@ -1,4 +1,4 @@
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { ContestMetadataResponseDTO } from "@/core/port/driven/repository/dto/response/contest/ContestMetadataResponseDTO";
 import { contestMetadataSlice } from "@/store/slices/contest-metadata-slice";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 

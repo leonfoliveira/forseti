@@ -1,6 +1,6 @@
 import { mock } from "jest-mock-extended";
 
-import { StorageRepository } from "@/core/repository/StorageRepository";
+import { StorageRepository } from "@/core/port/driven/repository/StorageRepository";
 import { StorageService } from "@/core/service/StorageService";
 
 describe("StorageService", () => {

@@ -1,5 +1,5 @@
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
+import { ClarificationResponseDTO } from "@/core/port/driven/repository/dto/response/clarification/ClarificationResponseDTO";
 import { findClarification } from "@/store/util/clarification-finder";
 
 describe("findClarification", () => {

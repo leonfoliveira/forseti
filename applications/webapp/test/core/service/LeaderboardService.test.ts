@@ -1,8 +1,7 @@
 import { mock } from "jest-mock-extended";
 import { v4 as uuidv4 } from "uuid";
 
-
-import { LeaderboardRepository } from "@/core/repository/LeaderboardRepository";
+import { LeaderboardRepository } from "@/core/port/driven/repository/LeaderboardRepository";
 import { LeaderboardService } from "@/core/service/LeaderboardService";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 

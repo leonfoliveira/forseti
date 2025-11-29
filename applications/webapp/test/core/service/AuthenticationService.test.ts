@@ -1,6 +1,6 @@
 import { mock } from "jest-mock-extended";
 
-import { AuthenticationRepository } from "@/core/repository/AuthenticationRepository";
+import { AuthenticationRepository } from "@/core/port/driven/repository/AuthenticationRepository";
 import { AuthenticationService } from "@/core/service/AuthenticationService";
 import { MockAuthenticateRequestDTO } from "@/test/mock/request/MockAuthenticateRequestDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";

@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Language } from "@/core/domain/enumerate/Language";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/port/driven/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { MockMemberPublicResponseDTO } from "@/test/mock/response/member/MockMemberPublicResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 

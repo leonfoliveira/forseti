@@ -1,6 +1,6 @@
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { SessionResponseDTO } from "@/core/repository/dto/response/session/SessionResponseDTO";
-import { SessionRepository } from "@/core/repository/SessionRepository";
+import { SessionResponseDTO } from "@/core/port/driven/repository/dto/response/session/SessionResponseDTO";
+import { SessionRepository } from "@/core/port/driven/repository/SessionRepository";
 
 export class SessionService {
   constructor(private readonly sessionRepository: SessionRepository) {}

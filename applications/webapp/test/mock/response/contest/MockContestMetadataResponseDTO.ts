@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 
 import { Language } from "@/core/domain/enumerate/Language";
-import { ContestMetadataResponseDTO } from "@/core/repository/dto/response/contest/ContestMetadataResponseDTO";
+import { ContestMetadataResponseDTO } from "@/core/port/driven/repository/dto/response/contest/ContestMetadataResponseDTO";
 
 export function MockContestMetadataResponseDTO(
   partial: Partial<ContestMetadataResponseDTO> = {},

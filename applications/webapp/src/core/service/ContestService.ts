@@ -1,7 +1,7 @@
 import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { Attachment } from "@/core/domain/model/Attachment";
-import { ContestRepository } from "@/core/repository/ContestRepository";
-import { UpdateContestRequestDTO } from "@/core/repository/dto/request/UpdateContestRequestDTO";
+import { ContestRepository } from "@/core/port/driven/repository/ContestRepository";
+import { UpdateContestRequestDTO } from "@/core/port/driven/repository/dto/request/UpdateContestRequestDTO";
 import { AttachmentService } from "@/core/service/AttachmentService";
 import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
 

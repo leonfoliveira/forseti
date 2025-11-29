@@ -1,4 +1,4 @@
-import { StorageRepository } from "@/core/repository/StorageRepository";
+import { StorageRepository } from "@/core/port/driven/repository/StorageRepository";
 
 export class StorageService {
   constructor(private readonly storageRepository: StorageRepository) {}

@@ -1,6 +1,6 @@
 import { AxiosClient } from "@/adapter/axios/AxiosClient";
-import { LeaderboardResponseDTO } from "@/core/repository/dto/response/leaderboard/LeaderboardResponseDTO";
-import { LeaderboardRepository } from "@/core/repository/LeaderboardRepository";
+import { LeaderboardResponseDTO } from "@/core/port/driven/repository/dto/response/leaderboard/LeaderboardResponseDTO";
+import { LeaderboardRepository } from "@/core/port/driven/repository/LeaderboardRepository";
 
 export class AxiosLeaderboardRepository implements LeaderboardRepository {
   private basePath = (contestId: string) =>

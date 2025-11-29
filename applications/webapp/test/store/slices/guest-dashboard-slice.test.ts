@@ -1,6 +1,6 @@
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/port/driven/repository/dto/response/submission/SubmissionPublicResponseDTO";
 import { guestDashboardSlice } from "@/store/slices/guest-dashboard-slice";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";

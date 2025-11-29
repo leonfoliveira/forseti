@@ -2,7 +2,7 @@ import { mock } from "jest-mock-extended";
 
 import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { Attachment } from "@/core/domain/model/Attachment";
-import { AttachmentRepository } from "@/core/repository/AttachmentRepository";
+import { AttachmentRepository } from "@/core/port/driven/repository/AttachmentRepository";
 import { AttachmentService } from "@/core/service/AttachmentService";
 
 describe("AttachmentService", () => {

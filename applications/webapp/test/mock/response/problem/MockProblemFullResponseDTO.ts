@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-import { ProblemFullResponseDTO } from "@/core/repository/dto/response/problem/ProblemFullResponseDTO";
+import { ProblemFullResponseDTO } from "@/core/port/driven/repository/dto/response/problem/ProblemFullResponseDTO";
 import { MockAttachment } from "@/test/mock/model/MockAttachment";
 
 export function MockProblemFullResponseDTO(

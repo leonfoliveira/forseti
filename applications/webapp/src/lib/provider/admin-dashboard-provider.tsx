@@ -12,10 +12,10 @@ import {
 } from "@/config/composition";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { ListenerClient } from "@/core/domain/model/ListenerClient";
-import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
-import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
-import { LeaderboardResponseDTO } from "@/core/repository/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
+import { AnnouncementResponseDTO } from "@/core/port/driven/repository/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/core/port/driven/repository/dto/response/clarification/ClarificationResponseDTO";
+import { LeaderboardResponseDTO } from "@/core/port/driven/repository/dto/response/leaderboard/LeaderboardResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/port/driven/repository/dto/response/submission/SubmissionFullResponseDTO";
 import { defineMessages } from "@/i18n/message";
 import { ErrorPage } from "@/lib/component/page/error-page";
 import { LoadingPage } from "@/lib/component/page/loading-page";

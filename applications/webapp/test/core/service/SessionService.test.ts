@@ -1,7 +1,7 @@
 import { mock } from "jest-mock-extended";
 
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { SessionRepository } from "@/core/repository/SessionRepository";
+import { SessionRepository } from "@/core/port/driven/repository/SessionRepository";
 import { SessionService } from "@/core/service/SessionService";
 import { MockSession } from "@/test/mock/response/session/MockSession";
 
