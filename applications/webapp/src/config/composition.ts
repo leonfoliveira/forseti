@@ -1,4 +1,4 @@
-import { clientConfig, isServer } from "@/config/config";
+import { clientConfig } from "@/config/config";
 import { AnnouncementService } from "@/core/application/service/AnnouncementService";
 import { AttachmentService } from "@/core/application/service/AttachmentService";
 import { AuthenticationService } from "@/core/application/service/AuthenticationService";
@@ -50,7 +50,7 @@ export const leaderboardListener = new StompLeaderboardListener();
 export const submissionListener = new StompSubmissionListener();
 
 // Repositories
-const axiosClient = new AxiosClient(clientConfig.apiPublicUrl, isServer());
+const axiosClient = new AxiosClient(clientConfig.apiPublicUrl);
 
 const announcementRepository = new AxiosAnnouncementRepository(axiosClient);
 const attachmentRepository = new AxiosAttachmentRepository(axiosClient);

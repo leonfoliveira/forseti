@@ -9,19 +9,10 @@ import { ServerException } from "@/core/domain/exception/ServerException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 
 export class AxiosClient {
-  static readonly COOKIES_TO_FORWARD = new Set(["session_id"]);
-  static readonly HEADERS_TO_FORWARD = new Set([
-    "x-forwarded-for",
-    "user-agent",
-    "x-trace-id",
-  ]);
   static readonly CSRF_COOKIE_NAME = "csrf_token";
   static readonly CSRF_HEADER_NAME = "x-csrf-token";
 
-  constructor(
-    private readonly baseUrl: string,
-    private readonly isServer: boolean,
-  ) {}
+  constructor(private readonly baseUrl: string) {}
 
   async get<TBody>(
     path: string,
@@ -70,14 +61,8 @@ export class AxiosClient {
     try {
       requestConfig.headers = {
         ...requestConfig.headers,
-        [AxiosClient.CSRF_HEADER_NAME]: await this.getCsrfToken(),
-        "x-trace-id": uuidv4(),
+        [AxiosClient.CSRF_HEADER_NAME]: this.getCsrfToken(),
       };
-
-      if (this.isServer) {
-        await this.forwardCookies(requestConfig);
-        await this.forwardHeaders(requestConfig);
-      }
 
       return await axios.request<TBody>({
         ...requestConfig,
@@ -111,50 +96,10 @@ export class AxiosClient {
     }
   }
 
-  private async getCsrfToken(): Promise<string | null> {
-    if (this.isServer) {
-      const { cookies } = await import("next/headers");
-      const cookiesFn = await cookies();
-      const csrfCookie = cookiesFn.get(AxiosClient.CSRF_COOKIE_NAME);
-      return csrfCookie ? csrfCookie.value : null;
-    } else {
-      const match = document.cookie.match(
-        new RegExp(`(^| )${AxiosClient.CSRF_COOKIE_NAME}=([^;]+)`),
-      );
-      return match ? match[2] : null;
-    }
-  }
-
-  private async forwardCookies(requestConfig: AxiosRequestConfig) {
-    const { cookies } = await import("next/headers");
-    const cookiesFn = await cookies();
-    const allCookies = cookiesFn.getAll();
-
-    requestConfig.headers = {
-      ...requestConfig.headers,
-      Cookie: allCookies
-        .filter((cookie) =>
-          AxiosClient.COOKIES_TO_FORWARD.has(cookie.name.toLowerCase()),
-        )
-        .map((cookie) => `${cookie.name}=${cookie.value}`)
-        .join("; "),
-    };
-  }
-
-  private async forwardHeaders(requestConfig: AxiosRequestConfig) {
-    const { headers } = await import("next/headers");
-    const clientHeaders = await headers();
-
-    const headersToAdd: Record<string, string> = {};
-    clientHeaders.forEach((value, key) => {
-      if (AxiosClient.HEADERS_TO_FORWARD.has(key.toLowerCase())) {
-        headersToAdd[key.toLowerCase()] = value;
-      }
-    });
-
-    requestConfig.headers = {
-      ...requestConfig.headers,
-      ...headersToAdd,
-    };
+  private getCsrfToken(): string | null {
+    const match = document.cookie.match(
+      new RegExp(`(^| )${AxiosClient.CSRF_COOKIE_NAME}=([^;]+)`),
+    );
+    return match ? match[2] : null;
   }
 }

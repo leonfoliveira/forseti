@@ -1,6 +1,4 @@
 import axios, { AxiosError } from "axios";
-import { cookies, headers } from "next/headers";
-import { v4 as uuidv4 } from "uuid";
 
 import { BusinessException } from "@/core/domain/exception/BusinessException";
 import { ConflictException } from "@/core/domain/exception/ConflictException";
@@ -14,21 +12,11 @@ jest.mock("axios", () => ({
   request: jest.fn(),
   AxiosError: jest.requireActual("axios").AxiosError,
 }));
-jest.mock("@/config/config", () => ({
-  config: {
-    isServer: false,
-  },
-}));
-jest.mock("next/headers", () => ({
-  cookies: jest.fn(),
-  headers: jest.fn(),
-}));
 
 describe("AxiosClient", () => {
   const baseUrl = "https://example.com";
-  const isServer = false;
 
-  const sut = new AxiosClient(baseUrl, isServer);
+  const sut = new AxiosClient(baseUrl);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -48,7 +36,6 @@ describe("AxiosClient", () => {
         withCredentials: true,
         headers: {
           "x-csrf-token": "abc",
-          "x-trace-id": expect.any(String),
         },
       });
       expect(response).toEqual(mockResponse);
@@ -93,53 +80,9 @@ describe("AxiosClient", () => {
         method: "GET",
         headers: {
           Authorization: "custom",
-          "x-trace-id": expect.any(String),
           "x-csrf-token": "abc",
         },
         withCredentials: true,
-      });
-    });
-
-    it("should forward cookies and headers in server environment", async () => {
-      const sut = new AxiosClient(baseUrl, true);
-
-      const clientCookies = [
-        { name: "session_id", value: "123" },
-        { name: "other", value: "value" },
-      ];
-      const mockCookies = {
-        get: jest.fn().mockReturnValue({ value: "abc" }),
-        getAll: jest.fn().mockReturnValue(clientCookies),
-      };
-      const clientHeaders = {
-        "x-forwarded-for": "192.0.0.1",
-        "user-agent": "Mozilla/5.0",
-        "x-trace-id": uuidv4(),
-        other: "value",
-      };
-      const mockHeaders = {
-        forEach: jest.fn((callback) => {
-          Object.entries(clientHeaders).forEach(([key, value]) => {
-            callback(value, key);
-          });
-        }),
-      };
-      (headers as jest.Mock).mockResolvedValue(mockHeaders);
-      (cookies as jest.Mock).mockResolvedValue(mockCookies);
-
-      await sut.get("/test");
-
-      expect(axios.request).toHaveBeenCalledWith({
-        url: `${baseUrl}/test`,
-        method: "GET",
-        withCredentials: true,
-        headers: {
-          "x-trace-id": clientHeaders["x-trace-id"],
-          "x-csrf-token": "abc",
-          Cookie: "session_id=123",
-          "x-forwarded-for": clientHeaders["x-forwarded-for"],
-          "user-agent": clientHeaders["user-agent"],
-        },
       });
     });
   });
@@ -157,7 +100,6 @@ describe("AxiosClient", () => {
         data: "value",
         withCredentials: true,
         headers: {
-          "x-trace-id": expect.any(String),
           "x-csrf-token": "abc",
         },
       });
@@ -178,7 +120,6 @@ describe("AxiosClient", () => {
         data: "value",
         withCredentials: true,
         headers: {
-          "x-trace-id": expect.any(String),
           "x-csrf-token": "abc",
         },
       });
@@ -197,7 +138,6 @@ describe("AxiosClient", () => {
         method: "DELETE",
         withCredentials: true,
         headers: {
-          "x-trace-id": expect.any(String),
           "x-csrf-token": "abc",
         },
       });
