@@ -3,18 +3,18 @@ import { notFound } from "next/navigation";
 import React from "react";
 
 import ContestLayout from "@/app/[slug]/layout";
-import { sessionService, contestService } from "@/config/composition";
+import { sessionReader, contestReader } from "@/config/composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 
-jest.mock("@/lib/component/footer", () => ({
+jest.mock("@/app/_lib/component/footer", () => ({
   Footer: () => <div data-testid="footer">Footer Component</div>,
 }));
 
-jest.mock("@/lib/component/header", () => ({
+jest.mock("@/app/_lib/component/header", () => ({
   Header: () => <div data-testid="header">Header Component</div>,
 }));
 
-jest.mock("@/store/store-provider", () => ({
+jest.mock("@/app/_store/store-provider", () => ({
   StoreProvider: ({
     children,
     preloadedState,
@@ -41,8 +41,8 @@ describe("ContestLayout", () => {
   const mockParams = Promise.resolve({ slug: "test-contest" });
   beforeEach(() => {
     jest.clearAllMocks();
-    (sessionService.getSession as jest.Mock).mockResolvedValue(mockSession);
-    (contestService.findContestMetadataBySlug as jest.Mock).mockResolvedValue(
+    (sessionReader.getCurrent as jest.Mock).mockResolvedValue(mockSession);
+    (contestReader.findMetadataBySlug as jest.Mock).mockResolvedValue(
       mockContestMetadata,
     );
   });
@@ -80,22 +80,22 @@ describe("ContestLayout", () => {
     });
   });
 
-  it("should call sessionService", async () => {
+  it("should call sessionReader", async () => {
     await ContestLayout({
       params: mockParams,
       children: <TestChildren />,
     });
 
-    expect(sessionService.getSession).toHaveBeenCalled();
+    expect(sessionReader.getCurrent).toHaveBeenCalled();
   });
 
-  it("should call contestService with slug from params", async () => {
+  it("should call contestReader with slug from params", async () => {
     await ContestLayout({
       params: mockParams,
       children: <TestChildren />,
     });
 
-    expect(contestService.findContestMetadataBySlug).toHaveBeenCalledWith(
+    expect(contestReader.findMetadataBySlug).toHaveBeenCalledWith(
       "test-contest",
     );
   });
@@ -118,7 +118,7 @@ describe("ContestLayout", () => {
   });
 
   it("should call notFound when NotFoundException is thrown", async () => {
-    (contestService.findContestMetadataBySlug as jest.Mock).mockRejectedValue(
+    (contestReader.findMetadataBySlug as jest.Mock).mockRejectedValue(
       new NotFoundException("Contest not found"),
     );
 
@@ -132,7 +132,7 @@ describe("ContestLayout", () => {
 
   it("should rethrow non-NotFoundException errors", async () => {
     const genericError = new Error("Generic error");
-    (contestService.findContestMetadataBySlug as jest.Mock).mockRejectedValue(
+    (contestReader.findMetadataBySlug as jest.Mock).mockRejectedValue(
       genericError,
     );
 
@@ -158,7 +158,7 @@ describe("ContestLayout", () => {
 
   it("should handle session service errors gracefully", async () => {
     const authError = new Error("Session service error");
-    (sessionService.getSession as jest.Mock).mockRejectedValue(authError);
+    (sessionReader.getCurrent as jest.Mock).mockRejectedValue(authError);
 
     await expect(
       ContestLayout({

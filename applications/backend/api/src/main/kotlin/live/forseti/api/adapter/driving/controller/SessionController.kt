@@ -9,6 +9,7 @@ import live.forseti.api.adapter.dto.response.ErrorResponseDTO
 import live.forseti.api.adapter.dto.response.session.SessionResponseDTO
 import live.forseti.api.adapter.dto.response.session.toResponseDTO
 import live.forseti.api.adapter.util.Private
+import live.forseti.api.adapter.util.cookie.CsrfCookieBuilder
 import live.forseti.api.adapter.util.cookie.SessionCookieBuilder
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.session.DeleteSessionUseCase
@@ -21,10 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/v1/session")
+@RequestMapping("/api/v1/session")
 class SessionController(
     val deleteSessionUseCase: DeleteSessionUseCase,
     val sessionCookieBuilder: SessionCookieBuilder,
+    val csrfCookieBuilder: CsrfCookieBuilder,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -84,7 +86,10 @@ class SessionController(
     fun deleteSession(): ResponseEntity<Void> {
         logger.info("[DELETE] /v1/session/me")
         deleteSessionUseCase.deleteCurrent()
-        val cookie = sessionCookieBuilder.buildCleanCookie()
-        return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, cookie).build()
+
+        val sessionCookie = sessionCookieBuilder.buildCleanCookie()
+        val csrfCookie = csrfCookieBuilder.buildCleanCookie()
+
+        return ResponseEntity.noContent().header(HttpHeaders.SET_COOKIE, sessionCookie, csrfCookie).build()
     }
 }

@@ -6,15 +6,11 @@ import { useForm } from "react-hook-form";
 import { ClarificationFormType } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form";
 import { ClarificationFormMap } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form-map";
 import { clarificationFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form-schema";
-import { clarificationService } from "@/config/composition";
-import { ClarificationResponseDTO } from "@/core/repository/dto/response/clarification/ClarificationResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
-import { defineMessages, Message } from "@/i18n/message";
-import { FormField } from "@/lib/component/form/form-field";
-import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
-import { Metadata } from "@/lib/component/metadata";
-import { ConfirmationModal } from "@/lib/component/modal/confirmation-modal";
+import { FormField } from "@/app/_lib/component/form/form-field";
+import { FormattedDateTime } from "@/app/_lib/component/format/formatted-datetime";
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { Metadata } from "@/app/_lib/component/metadata";
+import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
 import {
   Button,
   Card,
@@ -25,11 +21,15 @@ import {
   Input,
   Select,
   SelectItem,
-} from "@/lib/heroui-wrapper";
-import { useIntl } from "@/lib/util/intl-hook";
-import { useLoadableState } from "@/lib/util/loadable-state";
-import { useModal } from "@/lib/util/modal-hook";
-import { useToast } from "@/lib/util/toast-hook";
+} from "@/app/_lib/heroui-wrapper";
+import { useIntl } from "@/app/_lib/util/intl-hook";
+import { useLoadableState } from "@/app/_lib/util/loadable-state";
+import { useModal } from "@/app/_lib/util/modal-hook";
+import { useToast } from "@/app/_lib/util/toast-hook";
+import { clarificationWritter } from "@/config/composition";
+import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
+import { defineMessages, Message } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
@@ -122,6 +122,9 @@ type Props = {
   canAnswer?: boolean;
 };
 
+/**
+ * Displays the clarifications page where users can view, request, and answer clarifications for contest problems.
+ **/
 export function ClarificationsPage({
   contestId,
   problems,
@@ -143,7 +146,7 @@ export function ClarificationsPage({
   async function createClarification(data: ClarificationFormType) {
     createState.start();
     try {
-      await clarificationService.createClarification(
+      await clarificationWritter.create(
         contestId,
         ClarificationFormMap.toInputDTO(data),
       );
@@ -160,7 +163,7 @@ export function ClarificationsPage({
   async function deleteClarification(id: string) {
     deleteState.start();
     try {
-      await clarificationService.deleteById(contestId, id);
+      await clarificationWritter.deleteById(contestId, id);
       deleteState.finish();
       deleteModal.close();
       toast.success(messages.deleteSuccess);
@@ -385,7 +388,7 @@ function AnswerForm({
   async function createClarification(data: ClarificationFormType) {
     createClarificationState.start();
     try {
-      await clarificationService.createClarification(contestId, {
+      await clarificationWritter.create(contestId, {
         ...ClarificationFormMap.toInputDTO(data),
         parentId,
       });

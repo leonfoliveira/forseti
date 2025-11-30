@@ -11,14 +11,9 @@ import { settingsFormSchema } from "@/app/[slug]/(dashboard)/settings/_form/sett
 import { ContestSettings } from "@/app/[slug]/(dashboard)/settings/_tab/contest-settings";
 import { MembersSettings } from "@/app/[slug]/(dashboard)/settings/_tab/members-settings";
 import { ProblemsSettings } from "@/app/[slug]/(dashboard)/settings/_tab/problems-settings";
-import { contestService, leaderboardService } from "@/config/composition";
-import { routes } from "@/config/routes";
-import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
-import { ConflictException } from "@/core/domain/exception/ConflictException";
-import { defineMessages } from "@/i18n/message";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
-import { Metadata } from "@/lib/component/metadata";
-import { ConfirmationModal } from "@/lib/component/modal/confirmation-modal";
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { Metadata } from "@/app/_lib/component/metadata";
+import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
 import {
   Alert,
   Badge,
@@ -30,15 +25,20 @@ import {
   Divider,
   Tab,
   Tabs,
-} from "@/lib/heroui-wrapper";
-import { useContestStatusWatcher } from "@/lib/util/contest-status-watcher";
-import { useLoadableState } from "@/lib/util/loadable-state";
-import { useModal } from "@/lib/util/modal-hook";
-import { TestCaseValidator } from "@/lib/util/test-case-validator";
-import { useToast } from "@/lib/util/toast-hook";
-import { adminDashboardSlice } from "@/store/slices/admin-dashboard-slice";
-import { contestMetadataSlice } from "@/store/slices/contest-metadata-slice";
-import { useAppDispatch, useAppSelector } from "@/store/store";
+} from "@/app/_lib/heroui-wrapper";
+import { useContestStatusWatcher } from "@/app/_lib/util/contest-status-watcher";
+import { useLoadableState } from "@/app/_lib/util/loadable-state";
+import { useModal } from "@/app/_lib/util/modal-hook";
+import { TestCaseValidator } from "@/app/_lib/util/test-case-validator";
+import { useToast } from "@/app/_lib/util/toast-hook";
+import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
+import { contestMetadataSlice } from "@/app/_store/slices/contest-metadata-slice";
+import { useAppDispatch, useAppSelector } from "@/app/_store/store";
+import { contestWritter, leaderboardReader } from "@/config/composition";
+import { routes } from "@/config/routes";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
+import { ConflictException } from "@/core/domain/exception/ConflictException";
+import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
@@ -106,6 +106,10 @@ enum TabKey {
   MEMBERS = "MEMBERS",
 }
 
+/**
+ * Displays the admin settings page for a contest.
+ * Allows administrators to configure contest settings, manage problems, and members.
+ */
 export function AdminSettingsPage() {
   const saveState = useLoadableState();
   const validationState = useLoadableState();
@@ -134,15 +138,13 @@ export function AdminSettingsPage() {
     saveState.start();
     try {
       const inputDTO = SettingsFormMapper.fromFormToInputDTO(data);
-      const newContest = await contestService.updateContest(inputDTO);
+      const newContest = await contestWritter.update(inputDTO);
 
       if (newContest.slug !== contest.slug) {
         /* Redirect to new path if slug has changed */
         router.push(routes.CONTEST_SETTINGS(newContest.slug));
       } else {
-        const leaderboard = await leaderboardService.findContestLeaderboard(
-          newContest.id,
-        );
+        const leaderboard = await leaderboardReader.build(newContest.id);
 
         dispatch(contestMetadataSlice.actions.set(newContest));
         dispatch(adminDashboardSlice.actions.setContest(newContest));

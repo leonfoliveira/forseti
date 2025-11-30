@@ -3,11 +3,9 @@ install:
 
 .PHONY: build
 build:
-	@if [ -z "$(VERSION)" ]; then \
-		python3 generate_version.py --version latest; \
-	else \
-		python3 generate_version.py --version $(VERSION); \
-	fi
+	@python3 generate_config.py \
+		$(if $(VERSION),--version $(VERSION),--version latest) \
+		$(if $(API_URL),--api-url $(API_URL))
 	pyinstaller --onefile -n forseti -p . cli/__main__.py
 
 lint:

@@ -5,6 +5,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import io.mockk.verify
+import live.forseti.api.adapter.util.cookie.CsrfCookieBuilder
 import live.forseti.api.adapter.util.cookie.SessionCookieBuilder
 import live.forseti.core.domain.entity.SessionMockBuilder
 import live.forseti.core.domain.model.RequestContext
@@ -24,12 +25,15 @@ class SessionControllerTest(
     private val deleteSessionUseCase: DeleteSessionUseCase,
     @MockkBean(relaxed = true)
     private val sessionCookieBuilder: SessionCookieBuilder,
+    @MockkBean(relaxed = true)
+    private val csrfCookieBuilder: CsrfCookieBuilder,
     private val webMvc: MockMvc,
 ) : FunSpec({
         extensions(SpringExtension)
 
         beforeEach {
             every { sessionCookieBuilder.buildCleanCookie() } returns "session_id="
+            every { csrfCookieBuilder.buildCleanCookie() } returns "csrf_token="
         }
 
         test("getSession") {
@@ -37,7 +41,7 @@ class SessionControllerTest(
             RequestContext.getContext().session = session
 
             webMvc
-                .get("/v1/session/me")
+                .get("/api/v1/session/me")
                 .andExpect {
                     status { isOk() }
                     content { session }
@@ -49,11 +53,12 @@ class SessionControllerTest(
             RequestContext.getContext().session = session
 
             webMvc
-                .delete("/v1/session/me")
+                .delete("/api/v1/session/me")
                 .andExpect {
                     status { isNoContent() }
                     cookie {
                         value("session_id", "")
+                        value("csrf_token", "")
                     }
                 }
         }
@@ -61,11 +66,12 @@ class SessionControllerTest(
         test("deleteSession without session") {
             RequestContext.getContext().session = null
             webMvc
-                .delete("/v1/session/me")
+                .delete("/api/v1/session/me")
                 .andExpect {
                     status { isNoContent() }
                     cookie {
                         value("session_id", "")
+                        value("csrf_token", "")
                     }
                 }
 

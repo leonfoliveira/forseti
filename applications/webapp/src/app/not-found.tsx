@@ -1,7 +1,7 @@
 "use client";
 
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import { defineMessages } from "@/i18n/message";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
 
 const messages = defineMessages({
   description: {
@@ -10,6 +10,9 @@ const messages = defineMessages({
   },
 });
 
+/**
+ * Displays a not found page for unmatched routes.
+ */
 export default function NotFoundPage() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">

@@ -1,8 +1,8 @@
 import { parseAbsoluteToLocal } from "@internationalized/date";
 
 import { SettingsForm } from "@/app/[slug]/(dashboard)/settings/_form/settings-form";
-import { ContestFullResponseDTO } from "@/core/repository/dto/response/contest/ContestFullResponseDTO";
-import { UpdateContestInputDTO } from "@/core/service/dto/input/UpdateContestInputDTO";
+import { UpdateContestInputDTO } from "@/core/port/driving/usecase/contest/ContestWritter";
+import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
 
 function parseFiles(files: File[] | undefined) {
   return !!files && files.length > 0 ? files[0] : undefined;

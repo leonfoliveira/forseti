@@ -1,4 +1,4 @@
-import { CreateAnnouncementRequestDTO } from "@/core/repository/dto/request/CreateAnnouncementRequestDTO";
+import { CreateAnnouncementRequestDTO } from "@/core/port/dto/request/CreateAnnouncementRequestDTO";
 
 export function MockCreateAnnouncementRequestDTO(
   partial: Partial<CreateAnnouncementRequestDTO> = {},

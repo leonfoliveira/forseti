@@ -3,8 +3,8 @@
 import Image from "next/image";
 import React from "react";
 
+import { Metadata } from "@/app/_lib/component/metadata";
 import { defineMessages } from "@/i18n/message";
-import { Metadata } from "@/lib/component/metadata";
 
 const messages = defineMessages({
   pageTitle: {
@@ -17,6 +17,10 @@ const messages = defineMessages({
   },
 });
 
+/**
+ * The home page of the web application.
+ * Displays the app logo.
+ */
 export default function HomePage() {
   return (
     <>

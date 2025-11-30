@@ -3,8 +3,8 @@
 import { forbidden } from "next/navigation";
 
 import { AdminSettingsPage } from "@/app/[slug]/(dashboard)/settings/admin-settings-page";
+import { useAppSelector } from "@/app/_store/store";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { useAppSelector } from "@/store/store";
 
 export default function DashboardSettingsPage() {
   const session = useAppSelector((state) => state.session);

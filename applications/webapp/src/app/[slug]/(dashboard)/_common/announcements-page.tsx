@@ -5,13 +5,10 @@ import { useForm } from "react-hook-form";
 import { AnnouncementFormType } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form";
 import { AnnouncementFormMap } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form-map";
 import { announcementFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form-schema";
-import { announcementService } from "@/config/composition";
-import { AnnouncementResponseDTO } from "@/core/repository/dto/response/announcement/AnnouncementResponseDTO";
-import { defineMessages } from "@/i18n/message";
-import { FormField } from "@/lib/component/form/form-field";
-import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
-import { Metadata } from "@/lib/component/metadata";
+import { FormField } from "@/app/_lib/component/form/form-field";
+import { FormattedDateTime } from "@/app/_lib/component/format/formatted-datetime";
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { Metadata } from "@/app/_lib/component/metadata";
 import {
   Button,
   Card,
@@ -19,9 +16,12 @@ import {
   CardHeader,
   Divider,
   Input,
-} from "@/lib/heroui-wrapper";
-import { useLoadableState } from "@/lib/util/loadable-state";
-import { useToast } from "@/lib/util/toast-hook";
+} from "@/app/_lib/heroui-wrapper";
+import { useLoadableState } from "@/app/_lib/util/loadable-state";
+import { useToast } from "@/app/_lib/util/toast-hook";
+import { announcementWritter } from "@/config/composition";
+import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
+import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
@@ -64,6 +64,9 @@ type Props = {
   canCreate?: boolean;
 };
 
+/**
+ * Displays the announcements page where users can view and create announcements.
+ **/
 export function AnnouncementsPage({
   contestId,
   announcements,
@@ -80,7 +83,7 @@ export function AnnouncementsPage({
   async function createAnnouncement(data: AnnouncementFormType) {
     createAnnouncementState.start();
     try {
-      await announcementService.createAnnouncement(
+      await announcementWritter.create(
         contestId,
         AnnouncementFormMap.toInputDTO(data),
       );

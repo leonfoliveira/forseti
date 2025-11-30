@@ -3,15 +3,21 @@ import React from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 
 import { SettingsForm } from "@/app/[slug]/(dashboard)/settings/_form/settings-form";
+import { FormField } from "@/app/_lib/component/form/form-field";
+import { Label } from "@/app/_lib/component/form/label";
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import {
+  Button,
+  Chip,
+  Input,
+  Select,
+  SelectItem,
+} from "@/app/_lib/heroui-wrapper";
+import { cls } from "@/app/_lib/util/cls";
+import { useIntl } from "@/app/_lib/util/intl-hook";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
-import { FormField } from "@/lib/component/form/form-field";
-import { Label } from "@/lib/component/form/label";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
-import { Button, Chip, Input, Select, SelectItem } from "@/lib/heroui-wrapper";
-import { cls } from "@/lib/util/cls";
-import { useIntl } from "@/lib/util/intl-hook";
 
 const messages = defineMessages({
   sectionTitle: {
@@ -67,6 +73,10 @@ type Props = {
   isOpen: boolean;
 };
 
+/**
+ * Displays the members settings tab within the admin dashboard.
+ * Allows administrators to manage contest participants and their access levels.
+ */
 export function MembersSettings({ form, isOpen }: Props) {
   const intl = useIntl();
   const { fields, append, remove } = useFieldArray({

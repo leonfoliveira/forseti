@@ -1,14 +1,21 @@
 import { notFound } from "next/navigation";
 import React from "react";
 
-import { sessionService, contestService } from "@/config/composition";
+import { Footer } from "@/app/_lib/component/footer";
+import { Header } from "@/app/_lib/component/header";
+import { StoreProvider } from "@/app/_store/store-provider";
+import { sessionReader, contestReader } from "@/config/composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { Footer } from "@/lib/component/footer";
-import { Header } from "@/lib/component/header";
-import { StoreProvider } from "@/store/store-provider";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Layout component for contest pages.
+ * Fetches session and contest metadata based on the slug parameter.
+ * Renders the header, footer, and children components within a store provider.
+ *
+ * ! This component runs on the server side.
+ */
 export default async function ContestLayout({
   params,
   children,
@@ -20,8 +27,8 @@ export default async function ContestLayout({
 
   try {
     const [session, contestMetadata] = await Promise.all([
-      sessionService.getSession(),
-      contestService.findContestMetadataBySlug(slug),
+      sessionReader.getCurrent(),
+      contestReader.findMetadataBySlug(slug),
     ]);
 
     return (

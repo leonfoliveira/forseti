@@ -15,25 +15,15 @@ import { SubmissionFormMap } from "@/app/[slug]/(dashboard)/_common/_form/submis
 import { submissionFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/submission-form-schema";
 import { SubmissionJudgeFormType } from "@/app/[slug]/(dashboard)/_common/_form/submission-judge-form";
 import { submissionJudgeFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/submission-judge-form-schema";
-import { attachmentService, submissionService } from "@/config/composition";
-import { Language } from "@/core/domain/enumerate/Language";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { ProblemFullResponseDTO } from "@/core/repository/dto/response/problem/ProblemFullResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/repository/dto/response/submission/SubmissionFullResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/repository/dto/response/submission/SubmissionPublicResponseDTO";
-import { globalMessages } from "@/i18n/global";
-import { defineMessages, Message } from "@/i18n/message";
-import { SubmissionAnswerChip } from "@/lib/component/chip/submission-answer-chip";
-import { SubmissionStatusChip } from "@/lib/component/chip/submission-status-chip";
-import { FileInput } from "@/lib/component/form/file-input";
-import { FormField } from "@/lib/component/form/form-field";
-import { FormattedDateTime } from "@/lib/component/format/formatted-datetime";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
-import { GavelIcon } from "@/lib/component/icon/GavelIcon";
-import { Metadata } from "@/lib/component/metadata";
-import { ConfirmationModal } from "@/lib/component/modal/confirmation-modal";
+import { SubmissionAnswerChip } from "@/app/_lib/component/chip/submission-answer-chip";
+import { SubmissionStatusChip } from "@/app/_lib/component/chip/submission-status-chip";
+import { FileInput } from "@/app/_lib/component/form/file-input";
+import { FormField } from "@/app/_lib/component/form/form-field";
+import { FormattedDateTime } from "@/app/_lib/component/format/formatted-datetime";
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { GavelIcon } from "@/app/_lib/component/icon/GavelIcon";
+import { Metadata } from "@/app/_lib/component/metadata";
+import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
 import {
   GridTable,
   GridTableBody,
@@ -41,7 +31,7 @@ import {
   GridTableColumn,
   GridTableHeader,
   GridTableRow,
-} from "@/lib/component/table/grid-table";
+} from "@/app/_lib/component/table/grid-table";
 import {
   Button,
   Card,
@@ -51,13 +41,23 @@ import {
   Select,
   SelectItem,
   Tooltip,
-} from "@/lib/heroui-wrapper";
-import { cls } from "@/lib/util/cls";
-import { useIntl } from "@/lib/util/intl-hook";
-import { useLoadableState } from "@/lib/util/loadable-state";
-import { useModal } from "@/lib/util/modal-hook";
-import { useToast } from "@/lib/util/toast-hook";
-import { useAppSelector } from "@/store/store";
+} from "@/app/_lib/heroui-wrapper";
+import { cls } from "@/app/_lib/util/cls";
+import { useIntl } from "@/app/_lib/util/intl-hook";
+import { useLoadableState } from "@/app/_lib/util/loadable-state";
+import { useModal } from "@/app/_lib/util/modal-hook";
+import { useToast } from "@/app/_lib/util/toast-hook";
+import { useAppSelector } from "@/app/_store/store";
+import { attachmentReader, submissionWritter } from "@/config/composition";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
+import { ProblemFullResponseDTO } from "@/core/port/dto/response/problem/ProblemFullResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { globalMessages } from "@/i18n/global";
+import { defineMessages, Message } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
@@ -189,7 +189,7 @@ const messages = defineMessages({
 type Props = {
   submissions: SubmissionPublicResponseDTO[] | SubmissionFullResponseDTO[];
   problems?: ProblemPublicResponseDTO[] | ProblemFullResponseDTO[];
-  languages?: Language[];
+  languages?: SubmissionLanguage[];
   canCreate?: boolean;
   canEdit?: boolean;
 };
@@ -227,7 +227,7 @@ export function SubmissionsPage({
   async function createSubmission(data: SubmissionFormType) {
     createState.start();
     try {
-      await submissionService.createSubmission(
+      await submissionWritter.create(
         contestId,
         SubmissionFormMap.toInputDTO(data),
       );
@@ -245,7 +245,7 @@ export function SubmissionsPage({
   async function resubmitSubmission(submissionId: string) {
     resubmitState.start();
     try {
-      await submissionService.rerunSubmission(contestId, submissionId);
+      await submissionWritter.rerun(contestId, submissionId);
       toast.success(messages.resubmitSuccess);
       resubmitModal.close();
       resubmitState.finish();
@@ -262,7 +262,7 @@ export function SubmissionsPage({
   ) {
     judgeState.start();
     try {
-      await submissionService.updateSubmissionAnswer(
+      await submissionWritter.updateAnswer(
         contestId,
         submissionId,
         data.answer,
@@ -442,7 +442,7 @@ export function SubmissionsPage({
                       variant="light"
                       size="sm"
                       onPress={() =>
-                        attachmentService.download(
+                        attachmentReader.download(
                           contestId,
                           (submission as SubmissionFullResponseDTO).code,
                         )

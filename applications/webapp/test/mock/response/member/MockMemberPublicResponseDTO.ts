@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { MemberPublicResponseDTO } from "@/core/repository/dto/response/member/MemberPublicResponseDTO";
+import { MemberPublicResponseDTO } from "@/core/port/dto/response/member/MemberPublicResponseDTO";
 
 export function MockMemberPublicResponseDTO(
   partial: Partial<MemberPublicResponseDTO> = {},

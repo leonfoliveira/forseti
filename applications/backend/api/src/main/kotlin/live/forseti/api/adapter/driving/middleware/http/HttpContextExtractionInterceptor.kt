@@ -9,7 +9,6 @@ import live.forseti.core.domain.exception.UnauthorizedException
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.session.FindSessionUseCase
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor

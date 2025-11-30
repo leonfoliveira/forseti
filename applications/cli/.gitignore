@@ -7,8 +7,8 @@ build/
 dist/
 *.spec
 
-# Generated version file
-cli/_version.py
+# Generated config file
+cli/_config.py
 
 backups/
 certs/

@@ -60,7 +60,7 @@ class ContestControllerTest(
             objectMapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         }
 
-        val basePath = "/v1/contests"
+        val basePath = "/api/v1/contests"
 
         test("createContest") {
             val body =

@@ -1,16 +1,16 @@
 import { v4 as uuidv4 } from "uuid";
 
-import { Language } from "@/core/domain/enumerate/Language";
-import { CreateSubmissionRequestDTO } from "@/core/repository/dto/request/CreateSubmissionRequestDTO";
-import { MockAttachment } from "@/test/mock/model/MockAttachment";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
+import { CreateSubmissionRequestDTO } from "@/core/port/dto/request/CreateSubmissionRequestDTO";
+import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachment";
 
 export function MockCreateSubmissionRequestDTO(
   partial: Partial<CreateSubmissionRequestDTO> = {},
 ): CreateSubmissionRequestDTO {
   return {
     problemId: uuidv4(),
-    language: Language.CPP_17,
-    code: MockAttachment({
+    language: SubmissionLanguage.CPP_17,
+    code: MockAttachmentResponseDTO({
       filename: "solution.cpp",
       contentType: "text/plain",
     }),

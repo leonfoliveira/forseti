@@ -1,6 +1,6 @@
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions-page";
 import { AdminSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/admin-submissions-page";
-import { Language } from "@/core/domain/enumerate/Language";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
@@ -17,7 +17,7 @@ describe("AdminSubmissionsPage", () => {
       MockProblemPublicResponseDTO(),
       MockProblemPublicResponseDTO(),
     ];
-    const languages = [Language.CPP_17, Language.JAVA_21];
+    const languages = [SubmissionLanguage.CPP_17, SubmissionLanguage.JAVA_21];
     const submissions = [
       MockSubmissionPublicResponseDTO(),
       MockSubmissionPublicResponseDTO(),

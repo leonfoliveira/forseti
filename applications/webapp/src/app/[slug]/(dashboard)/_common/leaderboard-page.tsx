@@ -3,13 +3,10 @@
 import { ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
 import React from "react";
 
-import { LeaderboardResponseDTO } from "@/core/repository/dto/response/leaderboard/LeaderboardResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/repository/dto/response/problem/ProblemPublicResponseDTO";
-import { defineMessages } from "@/i18n/message";
-import { ProblemStatusChip } from "@/lib/component/chip/problem-status-chip";
-import { FormattedDuration } from "@/lib/component/format/formatted-duration";
-import { FormattedMessage } from "@/lib/component/format/formatted-message";
-import { Metadata } from "@/lib/component/metadata";
+import { ProblemStatusChip } from "@/app/_lib/component/chip/problem-status-chip";
+import { FormattedDuration } from "@/app/_lib/component/format/formatted-duration";
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { Metadata } from "@/app/_lib/component/metadata";
 import {
   GridTable,
   GridTableBody,
@@ -17,10 +14,13 @@ import {
   GridTableColumn,
   GridTableHeader,
   GridTableRow,
-} from "@/lib/component/table/grid-table";
-import { Chip } from "@/lib/heroui-wrapper";
-import { cls } from "@/lib/util/cls";
-import { useAppSelector } from "@/store/store";
+} from "@/app/_lib/component/table/grid-table";
+import { Chip } from "@/app/_lib/heroui-wrapper";
+import { cls } from "@/app/_lib/util/cls";
+import { useAppSelector } from "@/app/_store/store";
+import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
+import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {

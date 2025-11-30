@@ -3,8 +3,8 @@ import { act } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements-page";
-import { announcementService } from "@/config/composition";
-import { useToast } from "@/lib/util/toast-hook";
+import { useToast } from "@/app/_lib/util/toast-hook";
+import { announcementWritter } from "@/config/composition";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -77,14 +77,15 @@ describe("AnnouncementsPage", () => {
       fireEvent.click(screen.getByTestId("announcement-form-submit"));
     });
 
-    expect(
-      announcementService.createAnnouncement as jest.Mock,
-    ).toHaveBeenCalledWith(contestId, { text: "New announcement" });
+    expect(announcementWritter.create as jest.Mock).toHaveBeenCalledWith(
+      contestId,
+      { text: "New announcement" },
+    );
     expect(useToast().success).toHaveBeenCalled();
   });
 
   it("should handle announcement creation error", async () => {
-    announcementService.createAnnouncement = jest
+    announcementWritter.create = jest
       .fn()
       .mockRejectedValueOnce(new Error("Failed to create announcement"));
 
@@ -103,9 +104,10 @@ describe("AnnouncementsPage", () => {
       fireEvent.click(screen.getByTestId("announcement-form-submit"));
     });
 
-    expect(
-      announcementService.createAnnouncement as jest.Mock,
-    ).toHaveBeenCalledWith(contestId, { text: "New announcement" });
+    expect(announcementWritter.create as jest.Mock).toHaveBeenCalledWith(
+      contestId,
+      { text: "New announcement" },
+    );
     expect(useToast().error).toHaveBeenCalled();
   });
 });

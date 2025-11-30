@@ -1,0 +1,28 @@
+import { ClarificationRepository } from "@/core/port/driven/repository/ClarificationRepository";
+import { CreateClarificationRequestDTO } from "@/core/port/dto/request/CreateClarificationRequestDTO";
+import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
+import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
+
+export class AxiosClarificationRepository implements ClarificationRepository {
+  private basePath = (contestId: string) =>
+    `/v1/contests/${contestId}/clarifications`;
+
+  constructor(private readonly axiosClient: AxiosClient) {}
+
+  async create(
+    contestId: string,
+    requestDTO: CreateClarificationRequestDTO,
+  ): Promise<ClarificationResponseDTO> {
+    const response = await this.axiosClient.post<ClarificationResponseDTO>(
+      this.basePath(contestId),
+      { data: requestDTO },
+    );
+    return response.data;
+  }
+
+  async deleteById(contestId: string, clarificationId: string): Promise<void> {
+    await this.axiosClient.delete(
+      `${this.basePath(contestId)}/${clarificationId}`,
+    );
+  }
+}

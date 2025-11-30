@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/v1/contests/{contestId}/announcements")
+@RequestMapping("/api/v1/contests/{contestId}/announcements")
 class ContestAnnouncementController(
     private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val createAnnouncementUseCase: CreateAnnouncementUseCase,

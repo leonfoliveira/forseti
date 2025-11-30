@@ -29,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 
 @RestController
-@RequestMapping("/v1/contests/{contestId}/attachments")
+@RequestMapping("/api/v1/contests/{contestId}/attachments")
 class ContestAttachmentController(
     private val uploadAttachmentUseCase: UploadAttachmentUseCase,
     private val downloadAttachmentUseCase: DownloadAttachmentUseCase,

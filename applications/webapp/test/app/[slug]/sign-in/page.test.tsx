@@ -3,9 +3,9 @@ import { useRouter } from "next/navigation";
 import React, { act } from "react";
 
 import SignInPage from "@/app/[slug]/sign-in/page";
-import { authenticationService, sessionService } from "@/config/composition";
+import { useToast } from "@/app/_lib/util/toast-hook";
+import { authenticationWritter, sessionWritter } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { useToast } from "@/lib/util/toast-hook";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -35,7 +35,7 @@ describe("SignInPage", () => {
 
   it("should sign-in successfully", async () => {
     const session = MockSession();
-    (authenticationService.authenticate as jest.Mock).mockResolvedValue(
+    (authenticationWritter.authenticate as jest.Mock).mockResolvedValue(
       session,
     );
 
@@ -54,7 +54,7 @@ describe("SignInPage", () => {
       fireEvent.click(screen.getByTestId("sign-in"));
     });
 
-    expect(authenticationService.authenticate).toHaveBeenCalledWith(
+    expect(authenticationWritter.authenticate).toHaveBeenCalledWith(
       mockContestMetadata.id,
       {
         login: "testuser",
@@ -64,7 +64,7 @@ describe("SignInPage", () => {
   });
 
   it("should handle unauthorized exception", async () => {
-    (authenticationService.authenticate as jest.Mock).mockRejectedValue(
+    (authenticationWritter.authenticate as jest.Mock).mockRejectedValue(
       new UnauthorizedException("Wrong login or password."),
     );
 
@@ -89,7 +89,7 @@ describe("SignInPage", () => {
   });
 
   it("should handle error", async () => {
-    (authenticationService.authenticate as jest.Mock).mockRejectedValue(
+    (authenticationWritter.authenticate as jest.Mock).mockRejectedValue(
       new Error("An error occurred"),
     );
 
@@ -122,6 +122,6 @@ describe("SignInPage", () => {
       fireEvent.click(screen.getByTestId("enter-guest"));
     });
 
-    expect(sessionService.deleteSession).toHaveBeenCalled();
+    expect(sessionWritter.deleteCurrent).toHaveBeenCalled();
   });
 });

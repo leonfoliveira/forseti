@@ -34,6 +34,8 @@ class ContestAuthenticationControllerTest(
 ) : FunSpec({
         extensions(SpringExtension)
 
+        val basePath = "/api/v1/contests/{contestId}"
+
         test("authenticateToContest") {
             val contestId = UUID.randomUUID()
             val body = ContestAuthenticateInputDTO(login = "user", password = "password")
@@ -43,7 +45,7 @@ class ContestAuthenticationControllerTest(
             every { csrfCookieBuilder.buildCookie(session) } returns "csrf_token=cookie_value"
 
             webMvc
-                .post("/v1/contests/{contestId}/sign-in", contestId) {
+                .post("$basePath/sign-in", contestId) {
                     contentType = MediaType.APPLICATION_JSON
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {

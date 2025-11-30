@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 
-import { ProblemFullResponseDTO } from "@/core/repository/dto/response/problem/ProblemFullResponseDTO";
-import { MockAttachment } from "@/test/mock/model/MockAttachment";
+import { ProblemFullResponseDTO } from "@/core/port/dto/response/problem/ProblemFullResponseDTO";
+import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachment";
 
 export function MockProblemFullResponseDTO(
   partial: Partial<ProblemFullResponseDTO> = {},
@@ -10,13 +10,13 @@ export function MockProblemFullResponseDTO(
     id: uuidv4(),
     letter: "A",
     title: "Test Problem",
-    description: MockAttachment({
+    description: MockAttachmentResponseDTO({
       filename: "problem.pdf",
       contentType: "application/pdf",
     }),
     timeLimit: 1000,
     memoryLimit: 256,
-    testCases: MockAttachment({
+    testCases: MockAttachmentResponseDTO({
       filename: "testcases.csv",
       contentType: "text/csv",
     }),

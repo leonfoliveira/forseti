@@ -1,7 +1,7 @@
-import { Language } from "@/core/domain/enumerate/Language";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 
 export type SubmissionFormType = {
   problemId: string;
-  language: Language;
+  language: SubmissionLanguage;
   code: File[];
 };

@@ -34,7 +34,7 @@ class ContestAnnouncementControllerTest(
 ) : FunSpec({
         extensions(SpringExtension)
 
-        val basePath = "/v1/contests/{contestId}/announcements"
+        val basePath = "/api/v1/contests/{contestId}/announcements"
 
         test("createAnnouncement") {
             val contestId = UUID.randomUUID()

@@ -9,7 +9,7 @@ describe("ForbiddenPage", () => {
 
     const codeElement = screen.getByTestId("code");
     expect(codeElement).toBeInTheDocument();
-    expect(codeElement).toHaveTextContent("404");
+    expect(codeElement).toHaveTextContent("403");
   });
 
   it("should render the description message", async () => {

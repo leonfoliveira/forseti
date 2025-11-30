@@ -3,7 +3,7 @@
 import React from "react";
 
 import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements-page";
-import { useAppSelector } from "@/store/store";
+import { useAppSelector } from "@/app/_store/store";
 
 export function AdminAnnouncementsPage() {
   const contestId = useAppSelector((state) => state.contestMetadata.id);

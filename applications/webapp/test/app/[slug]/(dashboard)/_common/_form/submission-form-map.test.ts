@@ -1,6 +1,6 @@
 import { SubmissionFormType } from "@/app/[slug]/(dashboard)/_common/_form/submission-form";
 import { SubmissionFormMap } from "@/app/[slug]/(dashboard)/_common/_form/submission-form-map";
-import { Language } from "@/core/domain/enumerate/Language";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 
 describe("SubmissionFormMap", () => {
   it("should map to InputDTO", () => {
@@ -9,7 +9,7 @@ describe("SubmissionFormMap", () => {
     });
     const data = {
       problemId: "problem-1",
-      language: Language.CPP_17,
+      language: SubmissionLanguage.CPP_17,
       code: [mockFile],
     } as SubmissionFormType;
 
@@ -17,7 +17,7 @@ describe("SubmissionFormMap", () => {
 
     expect(inputDTO).toEqual({
       problemId: "problem-1",
-      language: Language.CPP_17,
+      language: SubmissionLanguage.CPP_17,
       code: mockFile,
     });
   });
@@ -28,7 +28,7 @@ describe("SubmissionFormMap", () => {
     });
     const data = {
       problemId: "problem-2",
-      language: Language.JAVA_21,
+      language: SubmissionLanguage.JAVA_21,
       code: [mockFile],
     } as SubmissionFormType;
 
@@ -36,7 +36,7 @@ describe("SubmissionFormMap", () => {
 
     expect(inputDTO).toEqual({
       problemId: "problem-2",
-      language: Language.JAVA_21,
+      language: SubmissionLanguage.JAVA_21,
       code: mockFile,
     });
   });

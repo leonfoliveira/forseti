@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
-import { LeaderboardResponseDTO } from "@/core/repository/dto/response/leaderboard/LeaderboardResponseDTO";
+import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
 export function MockLeaderboardResponseDTO(
   partial: Partial<LeaderboardResponseDTO> = {},

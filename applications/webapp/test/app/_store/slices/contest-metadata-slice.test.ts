@@ -1,0 +1,14 @@
+import { contestMetadataSlice } from "@/app/_store/slices/contest-metadata-slice";
+import { ContestMetadataResponseDTO } from "@/core/port/dto/response/contest/ContestMetadataResponseDTO";
+import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+
+describe("contestMetadataSlice", () => {
+  it("should set contest metadata", () => {
+    const metadata = MockContestMetadataResponseDTO();
+    const state = contestMetadataSlice.reducer(
+      null as unknown as ContestMetadataResponseDTO,
+      contestMetadataSlice.actions.set(metadata),
+    );
+    expect(state).toEqual(metadata);
+  });
+});

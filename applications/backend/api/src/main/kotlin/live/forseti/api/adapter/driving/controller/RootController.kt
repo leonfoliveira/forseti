@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/v1/root")
+@RequestMapping("/api/v1/root")
 class RootController(
     val authenticateUseCase: AuthenticateUseCase,
     val sessionCookieBuilder: SessionCookieBuilder,

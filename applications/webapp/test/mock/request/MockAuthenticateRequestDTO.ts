@@ -1,4 +1,4 @@
-import { AuthenticateRequestDTO } from "@/core/repository/dto/request/AuthenticateRequestDTO";
+import { AuthenticateRequestDTO } from "@/core/port/dto/request/AuthenticateRequestDTO";
 
 export function MockAuthenticateRequestDTO(
   partial: Partial<AuthenticateRequestDTO> = {},

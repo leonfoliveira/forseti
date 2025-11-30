@@ -9,7 +9,7 @@ import { MockMemberPublicResponseDTO } from "@/test/mock/response/member/MockMem
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
-jest.mock("@/lib/provider/dashboard-provider", () => ({
+jest.mock("@/app/_lib/provider/dashboard-provider", () => ({
   DashboardProvider: jest.fn(({ children }) => children),
 }));
 

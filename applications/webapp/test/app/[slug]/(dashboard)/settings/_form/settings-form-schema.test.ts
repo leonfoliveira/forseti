@@ -2,8 +2,8 @@ import { now, getLocalTimeZone } from "@internationalized/date";
 
 import { settingsFormSchema } from "@/app/[slug]/(dashboard)/settings/_form/settings-form-schema";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
-import { Language } from "@/core/domain/enumerate/Language";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 
 describe("settingsFormSchema", () => {
   const mockFile = new File(["test content"], "test.txt", {
@@ -24,7 +24,7 @@ describe("settingsFormSchema", () => {
   const validData = {
     slug: "test-contest",
     title: "Test Contest",
-    languages: [Language.CPP_17],
+    languages: [SubmissionLanguage.CPP_17],
     startAt: futureDate,
     endAt: endDate,
     problems: [
