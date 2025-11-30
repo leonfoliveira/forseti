@@ -203,7 +203,7 @@ class ContestControllerTest(
             every { updateContestUseCase.forceStart(contestId) } returns contest
 
             webMvc
-                .put("$basePath/{contestId}/start", contestId) {
+                .put("$basePath/{contestId}:force-start", contestId) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
                     status { isOk() }
@@ -217,7 +217,7 @@ class ContestControllerTest(
             every { updateContestUseCase.forceEnd(contestId) } returns contest
 
             webMvc
-                .put("$basePath/{contestId}/end", contestId) {
+                .put("$basePath/{contestId}:force-end", contestId) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
                     status { isOk() }

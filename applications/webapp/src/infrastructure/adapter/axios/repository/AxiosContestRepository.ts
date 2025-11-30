@@ -54,14 +54,14 @@ export class AxiosContestRepository implements ContestRepository {
 
   async forceStart(contestId: string): Promise<ContestMetadataResponseDTO> {
     const response = await this.axiosClient.put<ContestMetadataResponseDTO>(
-      `${this.basePath}/${contestId}/start`,
+      `${this.basePath}/${contestId}:force-start`,
     );
     return response.data;
   }
 
   async forceEnd(contestId: string): Promise<ContestMetadataResponseDTO> {
     const response = await this.axiosClient.put<ContestMetadataResponseDTO>(
-      `${this.basePath}/${contestId}/end`,
+      `${this.basePath}/${contestId}:force-end`,
     );
     return response.data;
   }

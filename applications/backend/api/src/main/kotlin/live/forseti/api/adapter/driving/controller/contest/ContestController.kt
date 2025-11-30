@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1/contests")
+@RequestMapping("/api/v1")
 class ContestController(
     private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val createContestUseCase: CreateContestUseCase,
@@ -44,7 +44,7 @@ class ContestController(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping
+    @PostMapping("/contests")
     @Private(Member.Type.ROOT)
     @Operation(summary = "Create a contest")
     @ApiResponses(
@@ -80,7 +80,7 @@ class ContestController(
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 
-    @PutMapping
+    @PutMapping("/contests")
     @Private(Member.Type.ADMIN)
     @Operation(summary = "Update a contest")
     @ApiResponses(
@@ -122,7 +122,7 @@ class ContestController(
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 
-    @GetMapping("/metadata")
+    @GetMapping("/contests/metadata")
     @Private(Member.Type.ROOT)
     @Operation(summary = "Find all contest metadata")
     @ApiResponses(
@@ -140,13 +140,13 @@ class ContestController(
             ),
         ],
     )
-    fun findAllContestMetadata(): ResponseEntity<List<ContestMetadataResponseDTO>> {
+    fun findAllMetadata(): ResponseEntity<List<ContestMetadataResponseDTO>> {
         logger.info("[GET] /v1/contests/metadata")
         val contests = findContestUseCase.findAll()
         return ResponseEntity.ok(contests.map { it.toMetadataDTO() })
     }
 
-    @GetMapping("/slug/{contestSlug}/metadata")
+    @GetMapping("/contests/slug/{contestSlug}/metadata")
     @Operation(summary = "Find contest metadata by slug")
     @ApiResponses(
         value = [
@@ -163,7 +163,7 @@ class ContestController(
             ),
         ],
     )
-    fun findContestMetadataBySlug(
+    fun findMetadataBySlug(
         @PathVariable contestSlug: String,
     ): ResponseEntity<ContestMetadataResponseDTO> {
         logger.info("[GET] /v1/contests/slug/$contestSlug/metadata")
@@ -171,7 +171,7 @@ class ContestController(
         return ResponseEntity.ok(contest.toMetadataDTO())
     }
 
-    @GetMapping("/{contestId}")
+    @GetMapping("/contests/{contestId}")
     @Operation(summary = "Find contest by id")
     @ApiResponses(
         value = [
@@ -207,7 +207,7 @@ class ContestController(
         return ResponseEntity.ok(contest.toPublicOutputDTO())
     }
 
-    @GetMapping("/{contestId}/full")
+    @GetMapping("/contests/{contestId}/full")
     @Private(Member.Type.ADMIN)
     @Operation(summary = "Find full contest by id")
     @ApiResponses(
@@ -245,7 +245,7 @@ class ContestController(
             ),
         ],
     )
-    fun findFullContestById(
+    fun findFullById(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestFullResponseDTO> {
         logger.info("[GET] /v1/contests/$contestId/full")
@@ -254,7 +254,7 @@ class ContestController(
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 
-    @PutMapping("/{contestId}/start")
+    @PutMapping("/contests/{contestId}:force-start")
     @Private(Member.Type.ADMIN)
     @Operation(summary = "Force start a contest")
     @ApiResponses(
@@ -292,16 +292,16 @@ class ContestController(
             ),
         ],
     )
-    fun forceStartContest(
+    fun forceStart(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestMetadataResponseDTO> {
-        logger.info("[PUT] /v1/contests/$contestId/start")
+        logger.info("[PUT] /v1/contests/$contestId:force-start")
         authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val contest = updateContestUseCase.forceStart(contestId)
         return ResponseEntity.ok().body(contest.toMetadataDTO())
     }
 
-    @PutMapping("/{contestId}/end")
+    @PutMapping("/contests/{contestId}:force-end")
     @Private(Member.Type.ADMIN)
     @Operation(summary = "Force end a contest")
     @ApiResponses(
@@ -342,13 +342,13 @@ class ContestController(
     fun forceEndContest(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestMetadataResponseDTO> {
-        logger.info("[PUT] /v1/contests/$contestId/end")
+        logger.info("[PUT] /v1/contests/$contestId:force-end")
         authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val contest = updateContestUseCase.forceEnd(contestId)
         return ResponseEntity.ok().body(contest.toMetadataDTO())
     }
 
-    @DeleteMapping("/{contestId}")
+    @DeleteMapping("/contests/{contestId}")
     @Private(Member.Type.ROOT)
     @Operation(summary = "Delete a contest")
     @ApiResponses(

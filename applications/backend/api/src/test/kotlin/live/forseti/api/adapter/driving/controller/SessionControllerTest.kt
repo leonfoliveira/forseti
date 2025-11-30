@@ -36,24 +36,24 @@ class SessionControllerTest(
             every { csrfCookieBuilder.buildCleanCookie() } returns "csrf_token="
         }
 
-        test("getSession") {
+        test("getCurrent") {
             val session = SessionMockBuilder.build()
             RequestContext.getContext().session = session
 
             webMvc
-                .get("/api/v1/session/me")
+                .get("/api/v1/sessions/me")
                 .andExpect {
                     status { isOk() }
                     content { session }
                 }
         }
 
-        test("deleteSession") {
+        test("deleteCurrent") {
             val session = SessionMockBuilder.build()
             RequestContext.getContext().session = session
 
             webMvc
-                .delete("/api/v1/session/me")
+                .delete("/api/v1/sessions/me")
                 .andExpect {
                     status { isNoContent() }
                     cookie {
@@ -63,10 +63,10 @@ class SessionControllerTest(
                 }
         }
 
-        test("deleteSession without session") {
+        test("deleteCurrent without session") {
             RequestContext.getContext().session = null
             webMvc
-                .delete("/api/v1/session/me")
+                .delete("/api/v1/sessions/me")
                 .andExpect {
                     status { isNoContent() }
                     cookie {

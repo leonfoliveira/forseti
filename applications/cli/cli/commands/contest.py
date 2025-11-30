@@ -67,14 +67,14 @@ def delete(contest_id: str, api_url: Optional[str]):
 @click.argument("contest_id", required=True)
 @click.option("--api-url", help=API_URL_HELP, default=__api_url__)
 def start(contest_id: str, api_url: Optional[str]):
-    ApiAdapter(api_url=api_url).put(f"/v1/contests/{contest_id}/start")
+    ApiAdapter(api_url=api_url).put(f"/v1/contests/{contest_id}:force-start")
 
 
 @contest.command(help="Force end a contest by ID.")
 @click.argument("contest_id", required=True)
 @click.option("--api-url", help=API_URL_HELP, default=__api_url__)
 def end(contest_id: str, api_url: Optional[str]):
-    ApiAdapter(api_url=api_url).put(f"/v1/contests/{contest_id}/end")
+    ApiAdapter(api_url=api_url).put(f"/v1/contests/{contest_id}:force-end")
 
 
 def _get_contest_status(contest):

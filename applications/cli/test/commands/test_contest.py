@@ -111,12 +111,13 @@ class TestContestCommand:
         """Test force starting a contest."""
         result = runner.invoke(contest, ["start", "12345"])
         assert result.exit_code == 0
-        api_adapter.put.assert_called_once_with("/v1/contests/12345/start")
+        api_adapter.put.assert_called_once_with(
+            "/v1/contests/12345:force-start")
         assert api_adapter.put.call_count == 1
 
     def test_end_contest(self, runner, api_adapter):
         """Test force ending a contest."""
         result = runner.invoke(contest, ["end", "12345"])
         assert result.exit_code == 0
-        api_adapter.put.assert_called_once_with("/v1/contests/12345/end")
+        api_adapter.put.assert_called_once_with("/v1/contests/12345:force-end")
         assert api_adapter.put.call_count == 1

@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1/contests/{contestId}/leaderboard")
+@RequestMapping("/api/v1")
 class ContestLeaderboardController(
     val authorizeContestUseCase: AuthorizeContestUseCase,
     val buildLeaderboardUseCase: BuildLeaderboardUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @GetMapping
-    @Operation(summary = "Find contest leaderboard by id")
+    @GetMapping("/contests/{contestId}/leaderboard")
+    @Operation(summary = "Build contest leaderboard by id")
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Contest leaderboard found successfully"),
@@ -42,7 +42,7 @@ class ContestLeaderboardController(
             ),
         ],
     )
-    fun buildContestLeaderboardById(
+    fun build(
         @PathVariable contestId: UUID,
     ): ResponseEntity<LeaderboardOutputDTO> {
         logger.info("[GET] /v1/contests/$contestId/leaderboard")

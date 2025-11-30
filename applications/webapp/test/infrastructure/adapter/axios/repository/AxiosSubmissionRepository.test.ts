@@ -86,7 +86,7 @@ describe("AxiosSubmissionRepository", () => {
       const result = await sut.findAllFullForMember(contestId);
 
       expect(axiosClient.get).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/submissions/full/members/me`,
+        `/v1/contests/${contestId}/submissions/members/me`,
       );
       expect(result).toEqual(expectedResponse);
     });
@@ -100,7 +100,10 @@ describe("AxiosSubmissionRepository", () => {
       await sut.updateAnswer(contestId, submissionId, answer);
 
       expect(axiosClient.put).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/submissions/${submissionId}/answer/${answer}/force`,
+        `/v1/contests/${contestId}/submissions/${submissionId}:update-answer-force`,
+        {
+          params: { answer },
+        },
       );
     });
   });
@@ -112,7 +115,7 @@ describe("AxiosSubmissionRepository", () => {
       await sut.rerun(contestId, submissionId);
 
       expect(axiosClient.post).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/submissions/${submissionId}/rerun`,
+        `/v1/contests/${contestId}/submissions/${submissionId}:rerun`,
       );
     });
   });

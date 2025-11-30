@@ -26,7 +26,7 @@ class ApiAdapter:
     CSRF_TOKEN_COOKIE = "csrf_token"
     CSRF_TOKEN_HEADER = "x-csrf-token"
 
-    def __init__(self, api_url: str = None):
+    def __init__(self, api_url: str):
         self.api_url = api_url
         self.input_adapter = InputAdapter()
 
@@ -102,9 +102,9 @@ class ApiAdapter:
                 return session_id, csrf_token
 
         password = self.input_adapter.password("Root password: ")
-        print(f"{self.api_url}/v1/root/sign-in")
+        print(f"{self.api_url}/v1/auth:sign-in-as-root")
         response = requests.post(
-            f"{self.api_url}/v1/root/sign-in",
+            f"{self.api_url}/v1/auth:sign-in-as-root",
             verify=VERIFY_SSL,
             json={"login": "root", "password": password},
         )

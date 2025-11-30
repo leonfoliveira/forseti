@@ -25,7 +25,7 @@ class TestApiAdapter:
 
     @pytest.fixture
     def sut(self):
-        yield ApiAdapter()
+        yield ApiAdapter(api_url="https://test.com")
 
     def test_authenticate_with_stored_session_not_expired(self, sut, keyring, requests):
         session_id = self._setup_valid_session(keyring, requests)
@@ -227,10 +227,6 @@ class TestApiAdapter:
         custom_url = "https://api.example.com"
         adapter = ApiAdapter(api_url=custom_url)
         assert adapter.api_url == custom_url
-
-    def test_api_adapter_with_default_url(self):
-        adapter = ApiAdapter()
-        assert adapter.api_url == "https://api.forseti.live"
 
     def _setup_valid_session(self, keyring, requests):
         session_id = "123"
