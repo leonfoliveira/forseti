@@ -13,7 +13,7 @@ export class AxiosAuthenticationRepository implements AuthenticationRepository {
     requestDTO: AuthenticateRequestDTO,
   ): Promise<SessionResponseDTO> {
     const response = await this.axiosClient.post<SessionResponseDTO>(
-      `${this.basePath(contestId)}/sign-in`,
+      `${this.basePath(contestId)}:sign-in`,
       { data: requestDTO },
     );
     return response.data;

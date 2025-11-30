@@ -2,8 +2,8 @@ import { AxiosResponse } from "axios";
 import { mock } from "jest-mock-extended";
 
 import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
-import { AxiosAttachmentRepository } from "@/infrastructure/adapter/axios/repository/AxiosAttachmentRepository";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
+import { AxiosAttachmentRepository } from "@/infrastructure/adapter/axios/repository/AxiosAttachmentRepository";
 import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachment";
 
 describe("AxiosAttachmentRepository", () => {
@@ -25,9 +25,10 @@ describe("AxiosAttachmentRepository", () => {
       const result = await sut.upload(contestId, context, file);
 
       expect(axiosClient.post).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/attachments/${context}`,
+        `/v1/contests/${contestId}/attachments`,
         {
           data: expect.any(FormData),
+          params: { context },
           headers: { "Content-Type": "multipart/form-data" },
         },
       );

@@ -2,8 +2,8 @@ import { AxiosResponse } from "axios";
 import { mock } from "jest-mock-extended";
 
 import { SessionResponseDTO } from "@/core/port/dto/response/session/SessionResponseDTO";
-import { AxiosAuthenticationRepository } from "@/infrastructure/adapter/axios/repository/AxiosAuthenticationRepository";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
+import { AxiosAuthenticationRepository } from "@/infrastructure/adapter/axios/repository/AxiosAuthenticationRepository";
 import { MockAuthenticateRequestDTO } from "@/test/mock/request/MockAuthenticateRequestDTO";
 
 describe("AxiosAuthenticationRepository", () => {
@@ -25,7 +25,7 @@ describe("AxiosAuthenticationRepository", () => {
       const result = await sut.authenticate(contestId, requestDTO);
 
       expect(axiosClient.post).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/sign-in`,
+        `/v1/contests/${contestId}:sign-in`,
         {
           data: requestDTO,
         },

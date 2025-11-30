@@ -107,7 +107,7 @@ describe("AxiosContestRepository", () => {
       const result = await sut.forceStart(contestId);
 
       expect(axiosClient.put).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/start`,
+        `/v1/contests/${contestId}:force-start`,
       );
       expect(result).toEqual(expectedResponse);
     });
@@ -123,7 +123,7 @@ describe("AxiosContestRepository", () => {
       const result = await sut.forceEnd(contestId);
 
       expect(axiosClient.put).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/end`,
+        `/v1/contests/${contestId}:force-end`,
       );
       expect(result).toEqual(expectedResponse);
     });

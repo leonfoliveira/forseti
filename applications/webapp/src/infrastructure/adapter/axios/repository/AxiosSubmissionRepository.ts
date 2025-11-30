@@ -46,7 +46,7 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     contestId: string,
   ): Promise<SubmissionFullResponseDTO[]> {
     const response = await this.axiosClient.get<SubmissionFullResponseDTO[]>(
-      `${this.basePath(contestId)}/full/members/me`,
+      `${this.basePath(contestId)}/members/me`,
     );
     return response.data;
   }
@@ -57,13 +57,16 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     answer: SubmissionAnswer,
   ): Promise<void> {
     await this.axiosClient.put<void>(
-      `${this.basePath(contestId)}/${submissionId}/answer/${answer}/force`,
+      `${this.basePath(contestId)}/${submissionId}:update-answer-force`,
+      {
+        params: { answer },
+      },
     );
   }
 
   async rerun(contestId: string, submissionId: string): Promise<void> {
     await this.axiosClient.post<void>(
-      `${this.basePath(contestId)}/${submissionId}/rerun`,
+      `${this.basePath(contestId)}/${submissionId}:rerun`,
     );
   }
 }
