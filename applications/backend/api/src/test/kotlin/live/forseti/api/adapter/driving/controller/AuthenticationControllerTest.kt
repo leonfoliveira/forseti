@@ -20,10 +20,10 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 
-@WebMvcTest(controllers = [RootController::class])
+@WebMvcTest(controllers = [AuthenticationController::class])
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = [RootController::class])
-class RootAuthenticationControllerTest(
+@ContextConfiguration(classes = [AuthenticationController::class])
+class AuthenticationControllerTest(
     @MockkBean(relaxed = true)
     private val authenticateUseCase: AuthenticateUseCase,
     @MockkBean(relaxed = true)
@@ -48,7 +48,7 @@ class RootAuthenticationControllerTest(
             every { csrfCookieBuilder.buildCookie(session) } returns "csrf_token=cookie_value"
 
             webMvc
-                .post("/api/v1/root/sign-in") {
+                .post("/api/v1/auth:sign-in-as-root") {
                     contentType = MediaType.APPLICATION_JSON
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {

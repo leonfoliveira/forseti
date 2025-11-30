@@ -58,7 +58,7 @@ class ContestAttachmentControllerTest(
             } returns attachment
 
             webMvc
-                .multipart("$basePath/${attachment.context}", contestId) {
+                .multipart("$basePath?context=${attachment.context}", contestId) {
                     file("file", file.bytes)
                 }.andExpect {
                     status { isOk() }

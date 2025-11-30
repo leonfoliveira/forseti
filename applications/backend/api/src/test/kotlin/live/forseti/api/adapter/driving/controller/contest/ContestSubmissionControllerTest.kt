@@ -126,7 +126,7 @@ class ContestSubmissionControllerTest(
             val contestId = UUID.randomUUID()
 
             webMvc
-                .get("$basePath/full/members/me", contestId) {
+                .get("$basePath/members/me", contestId) {
                     accept = MediaType.APPLICATION_JSON
                 }.andExpect {
                     status { isOk() }
@@ -140,7 +140,7 @@ class ContestSubmissionControllerTest(
             val answer = Submission.Answer.ACCEPTED
 
             webMvc
-                .put("$basePath/{id}/answer/{answer}", contestId, id, answer) {
+                .put("$basePath/{id}:update-answer?answer={answer}", contestId, id, answer) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
                     status { isNoContent() }
@@ -155,7 +155,7 @@ class ContestSubmissionControllerTest(
             val answer = Submission.Answer.ACCEPTED
 
             webMvc
-                .put("$basePath/{id}/answer/{answer}/force", contestId, submissionId, answer) {
+                .put("$basePath/{id}:update-answer-force?answer={answer}", contestId, submissionId, answer) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
                     status { isNoContent() }
@@ -170,7 +170,7 @@ class ContestSubmissionControllerTest(
             val id = UUID.randomUUID()
 
             webMvc
-                .post("$basePath/{id}/rerun", contestId, id) {
+                .post("$basePath/{id}:rerun", contestId, id) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
                     status { isNoContent() }

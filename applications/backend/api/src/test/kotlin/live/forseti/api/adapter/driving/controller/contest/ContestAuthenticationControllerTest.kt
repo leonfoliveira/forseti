@@ -45,7 +45,7 @@ class ContestAuthenticationControllerTest(
             every { csrfCookieBuilder.buildCookie(session) } returns "csrf_token=cookie_value"
 
             webMvc
-                .post("$basePath/sign-in", contestId) {
+                .post("$basePath:sign-in", contestId) {
                     contentType = MediaType.APPLICATION_JSON
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {

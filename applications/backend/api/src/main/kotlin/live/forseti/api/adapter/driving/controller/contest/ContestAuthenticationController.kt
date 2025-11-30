@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1/contests/{contestId}")
+@RequestMapping("/api/v1")
 class ContestAuthenticationController(
     val authenticateUseCase: AuthenticateUseCase,
     val sessionCookieBuilder: SessionCookieBuilder,
@@ -31,7 +31,7 @@ class ContestAuthenticationController(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping("/sign-in")
+    @PostMapping("/contests/{contestId}:sign-in")
     @Operation(
         summary = "Sign in to a contest",
         description = "Authenticate a user to access a specific contest.",
@@ -49,11 +49,11 @@ class ContestAuthenticationController(
             ),
         ],
     )
-    fun authenticateToContest(
+    fun authenticate(
         @PathVariable contestId: UUID,
         @RequestBody body: ContestAuthenticateInputDTO,
     ): ResponseEntity<SessionResponseDTO> {
-        logger.info("[POST] /v1/contests/$contestId/sign-in $body")
+        logger.info("[POST] /v1/contests/$contestId:sign-in $body")
         val session = authenticateUseCase.authenticateToContest(contestId, body)
 
         val sessionCookie = sessionCookieBuilder.buildCookie(session)

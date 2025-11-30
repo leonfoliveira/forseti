@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/session")
+@RequestMapping("/api/v1")
 class SessionController(
     val deleteSessionUseCase: DeleteSessionUseCase,
     val sessionCookieBuilder: SessionCookieBuilder,
@@ -30,7 +30,7 @@ class SessionController(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @GetMapping("/me")
+    @GetMapping("/sessions/me")
     @Private
     @Operation(
         summary = "Get current session",
@@ -55,12 +55,12 @@ class SessionController(
         ],
     )
     fun getSession(): ResponseEntity<SessionResponseDTO> {
-        logger.info("[GET] /v1/session/me")
+        logger.info("[GET] /v1/sessions/me")
         val session = RequestContext.getContext().session!!
         return ResponseEntity.ok(session.toResponseDTO())
     }
 
-    @DeleteMapping("/me")
+    @DeleteMapping("/sessions/me")
     @Operation(
         summary = "Delete current session",
         description = "Deletes the session of the current user, effectively logging them out.",
@@ -84,7 +84,7 @@ class SessionController(
         ],
     )
     fun deleteSession(): ResponseEntity<Void> {
-        logger.info("[DELETE] /v1/session/me")
+        logger.info("[DELETE] /v1/sessions/me")
         deleteSessionUseCase.deleteCurrent()
 
         val sessionCookie = sessionCookieBuilder.buildCleanCookie()

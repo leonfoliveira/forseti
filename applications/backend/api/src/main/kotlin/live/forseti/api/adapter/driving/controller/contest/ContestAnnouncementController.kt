@@ -24,14 +24,14 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1/contests/{contestId}/announcements")
+@RequestMapping("/api/v1")
 class ContestAnnouncementController(
     private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val createAnnouncementUseCase: CreateAnnouncementUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping
+    @PostMapping("/contests/{contestId}/announcements")
     @Private(Member.Type.JUDGE, Member.Type.ADMIN)
     @Operation(summary = "Create an announcement")
     @ApiResponses(
@@ -79,7 +79,7 @@ class ContestAnnouncementController(
             ),
         ],
     )
-    fun createAnnouncement(
+    fun create(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateAnnouncementInputDTO,
     ): ResponseEntity<AnnouncementResponseDTO> {

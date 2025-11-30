@@ -27,11 +27,12 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1/contests/{contestId}/submissions")
+@RequestMapping("/api/v1")
 class ContestSubmissionController(
     private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val createSubmissionUseCase: CreateSubmissionUseCase,
@@ -40,8 +41,8 @@ class ContestSubmissionController(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping
-    @Private(Member.Type.CONTESTANT)
+    @PostMapping("/contests/{contestId}/submissions")
+    @Private(Member.Type.CONTESTANT, Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Operation(summary = "Create a submission")
     @ApiResponses(
         value = [
@@ -68,7 +69,7 @@ class ContestSubmissionController(
             ),
         ],
     )
-    fun createSubmission(
+    fun create(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateSubmissionInputDTO,
     ): ResponseEntity<SubmissionFullResponseDTO> {
@@ -84,8 +85,9 @@ class ContestSubmissionController(
         return ResponseEntity.ok(submission.toFullResponseDTO())
     }
 
-    @GetMapping
-    @Operation(summary = "Find all contest submissions")
+    @GetMapping("/contests/{contestId}/submissions")
+    @Private(Member.Type.CONTESTANT, Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
+    @Operation(summary = "Find all submissions")
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Submissions found successfully"),
@@ -101,7 +103,7 @@ class ContestSubmissionController(
             ),
         ],
     )
-    fun findAllContestSubmissions(
+    fun findAll(
         @PathVariable contestId: UUID,
     ): ResponseEntity<List<SubmissionPublicResponseDTO>> {
         logger.info("[GET] /v1/contests/$contestId/submissions")
@@ -110,7 +112,7 @@ class ContestSubmissionController(
         return ResponseEntity.ok(submissions.map { it.toPublicResponseDTO() })
     }
 
-    @GetMapping("/full")
+    @GetMapping("/contests/{contestId}/submissions/full")
     @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Operation(summary = "Find all contest full submissions")
     @ApiResponses(
@@ -133,7 +135,7 @@ class ContestSubmissionController(
             ),
         ],
     )
-    fun findAllContestFullSubmissions(
+    fun findAllFull(
         @PathVariable contestId: UUID,
     ): ResponseEntity<List<SubmissionFullResponseDTO>> {
         logger.info("[GET] /v1/contests/$contestId/submissions/full")
@@ -143,9 +145,9 @@ class ContestSubmissionController(
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }
 
-    @GetMapping("/full/members/me")
+    @GetMapping("/contests/{contestId}/submissions/members/me")
     @Private(Member.Type.CONTESTANT)
-    @Operation(summary = "Find all full submissions for a member")
+    @Operation(summary = "Find all full submissions for the signed-in member")
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Submissions found successfully"),
@@ -166,16 +168,16 @@ class ContestSubmissionController(
             ),
         ],
     )
-    fun findAllFullSubmissionsForMember(
+    fun findAllFullForMember(
         @PathVariable contestId: UUID,
     ): ResponseEntity<List<SubmissionFullResponseDTO>> {
-        logger.info("[GET] /v1/contests/$contestId/submissions/full/members/me")
+        logger.info("[GET] /v1/contests/$contestId/submissions/members/me")
         val member = RequestContext.getContext().session!!.member
         val submissions = findSubmissionUseCase.findAllByMember(member.id)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }
 
-    @PutMapping("/{submissionId}/answer/{answer}")
+    @PutMapping("/contests/{contestId}/submissions/{submissionId}:update-answer")
     @Private(Member.Type.AUTOJUDGE)
     @Operation(summary = "Update a submission answer")
     @ApiResponses(
@@ -198,17 +200,17 @@ class ContestSubmissionController(
             ),
         ],
     )
-    fun updateSubmissionAnswer(
+    fun updateAnswer(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
-        @PathVariable answer: Submission.Answer,
+        @RequestParam answer: Submission.Answer,
     ): ResponseEntity<Void> {
-        logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId/answer/$answer")
+        logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId:update-answer { answer: $answer }")
         updateSubmissionUseCase.updateAnswer(submissionId, answer)
         return ResponseEntity.noContent().build()
     }
 
-    @PutMapping("/{submissionId}/answer/{answer}/force")
+    @PutMapping("/contests/{contestId}/submissions/{submissionId}:update-answer-force")
     @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Operation(summary = "Force update a submission answer")
     @ApiResponses(
@@ -231,18 +233,18 @@ class ContestSubmissionController(
             ),
         ],
     )
-    fun updateSubmissionAnswerForce(
+    fun updateAnswerForce(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
-        @PathVariable answer: Submission.Answer,
+        @RequestParam answer: Submission.Answer,
     ): ResponseEntity<Void> {
-        logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId/answer/$answer/force")
+        logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId:update-answer-force { answer: $answer }")
         authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         updateSubmissionUseCase.updateAnswer(submissionId, answer, force = true)
         return ResponseEntity.noContent().build()
     }
 
-    @PostMapping("/{submissionId}/rerun")
+    @PostMapping("/contests/{contestId}/submissions/{submissionId}:rerun")
     @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Operation(summary = "Rerun a submission")
     @ApiResponses(
@@ -269,7 +271,7 @@ class ContestSubmissionController(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
     ): ResponseEntity<Void> {
-        logger.info("[POST] /v1/contests/$contestId/submissions/$submissionId/rerun")
+        logger.info("[POST] /v1/contests/$contestId/submissions/$submissionId:rerun")
         authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         updateSubmissionUseCase.rerun(submissionId)
         return ResponseEntity.noContent().build()

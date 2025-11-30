@@ -29,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1/contests/{contestId}/attachments")
+@RequestMapping("/api/v1")
 class ContestAttachmentController(
     private val uploadAttachmentUseCase: UploadAttachmentUseCase,
     private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
@@ -37,7 +37,7 @@ class ContestAttachmentController(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping("{context}")
+    @PostMapping("/contests/{contestId}/attachments")
     @Operation(
         summary = "Upload an attachment",
         description = "Uploads a file as an attachment and returns its metadata containing its ID to later reference.",
@@ -61,12 +61,15 @@ class ContestAttachmentController(
         ],
     )
     @Private
-    fun uploadAttachment(
+    fun upload(
         @PathVariable contestId: UUID,
-        @PathVariable context: Attachment.Context,
+        @RequestParam context: Attachment.Context,
         @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<AttachmentResponseDTO> {
-        logger.info("[POST] /v1/contests/$contestId/attachments/$context { filename: ${file.originalFilename}, size: ${file.size} }")
+        logger.info(
+            "[POST] /v1/contests/$contestId/attachments " +
+                "{ context: $context, filename: ${file.originalFilename}, size: ${file.size} }",
+        )
         authorizeAttachmentUseCase.authorizeUpload(contestId, context)
         val member = RequestContext.getContext().session!!.member
         val attachment =
@@ -81,7 +84,7 @@ class ContestAttachmentController(
         return ResponseEntity.ok(attachment.toResponseDTO())
     }
 
-    @GetMapping("/{attachmentId}")
+    @GetMapping("/contests/{contestId}/attachments/{attachmentId}")
     @Operation(
         summary = "Downloads an attachment",
         description = "Downloads an attachment by its ID. The ID is returned when the attachment is uploaded.",
@@ -99,7 +102,7 @@ class ContestAttachmentController(
             ),
         ],
     )
-    fun downloadAttachment(
+    fun download(
         @PathVariable contestId: UUID,
         @PathVariable attachmentId: UUID,
     ): ResponseEntity<ByteArray> {

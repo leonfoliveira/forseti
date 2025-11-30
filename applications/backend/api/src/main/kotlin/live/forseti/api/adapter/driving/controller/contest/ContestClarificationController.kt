@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1/contests/{contestId}/clarifications")
+@RequestMapping("/api/v1")
 class ContestClarificationController(
     val authorizeContestUseCase: AuthorizeContestUseCase,
     val createClarificationUseCase: CreateClarificationUseCase,
@@ -34,7 +34,7 @@ class ContestClarificationController(
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping
+    @PostMapping("/contests/{contestId}/clarifications")
     @Private(Member.Type.CONTESTANT, Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Operation(summary = "Create a clarification")
     @ApiResponses(
@@ -62,7 +62,7 @@ class ContestClarificationController(
             ),
         ],
     )
-    fun createClarification(
+    fun create(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateClarificationInputDTO,
     ): ResponseEntity<ClarificationResponseDTO> {
@@ -74,7 +74,7 @@ class ContestClarificationController(
         return ResponseEntity.ok(clarification.toResponseDTO())
     }
 
-    @DeleteMapping("/{clarificationId}")
+    @DeleteMapping("/contests/{contestId}/clarifications/{clarificationId}")
     @Operation(
         summary = "Delete a clarification",
         description = "Deletes a clarification by its ID.",
