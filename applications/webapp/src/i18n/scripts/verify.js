@@ -33,11 +33,11 @@ function verify() {
     readKeys(fileName, obj);
   }
 
-  base = fileKeys["en-US"];
-  isValid = true;
+  const base = fileKeys["en-US"];
+  let isValid = true;
   for (const file in fileKeys) {
     if (fileKeys[file].size !== base.size) {
-      missingKeys = [...base].filter((key) => !fileKeys[file].has(key));
+      const missingKeys = [...base].filter((key) => !fileKeys[file].has(key));
       if (missingKeys.length > 0) {
         console.log(`Missing keys for ${file}:`);
         console.table(missingKeys);
