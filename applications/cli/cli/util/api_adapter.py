@@ -26,7 +26,7 @@ class ApiAdapter:
     CSRF_TOKEN_COOKIE = "csrf_token"
     CSRF_TOKEN_HEADER = "x-csrf-token"
 
-    def __init__(self, api_url: str = None):
+    def __init__(self, api_url: str):
         self.api_url = api_url
         self.input_adapter = InputAdapter()
 

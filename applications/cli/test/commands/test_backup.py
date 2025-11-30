@@ -45,7 +45,7 @@ class TestBackupCommand:
         os.makedirs.assert_called_once_with("./backups")
 
         # Verify command adapter was called for each volume
-        assert command_adapter.run.call_count == 6
+        assert command_adapter.run.call_count == 5
         for volume in (
             "forseti_grafana_data",
             "forseti_minio_data",

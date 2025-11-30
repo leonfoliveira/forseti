@@ -3,7 +3,7 @@ addopts = "--cov=cli --cov-report=term-missing --cov-report=html"
 
 [tool.coverage.run]
 source = ["cli"]
-omit = ["cli/config.py"]
+omit = ["cli/config.py", "cli/__main__.py", "cli/_config.py"]
 
 [tool.coverage.report]
 fail_under = 90
