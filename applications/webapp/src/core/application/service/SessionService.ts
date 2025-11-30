@@ -14,7 +14,7 @@ export class SessionService implements SessionReader, SessionWritter {
    */
   async getCurrent(): Promise<SessionResponseDTO | null> {
     try {
-      return await this.sessionRepository.getSession();
+      return await this.sessionRepository.getCurrent();
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         return null;
@@ -27,6 +27,6 @@ export class SessionService implements SessionReader, SessionWritter {
    * Delete the current session.
    */
   async deleteCurrent(): Promise<void> {
-    await this.sessionRepository.deleteSession();
+    await this.sessionRepository.deleteCurrent();
   }
 }

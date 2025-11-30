@@ -37,6 +37,10 @@ const messages = defineMessages({
   },
 });
 
+/**
+ * Header component displayed at the top of the web application.
+ * Includes contest title, status, countdown clock, theme switch, and user authentication options.
+ */
 export function Header() {
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const session = useAppSelector((state) => state.session);

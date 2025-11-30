@@ -64,6 +64,9 @@ type Props = {
   canCreate?: boolean;
 };
 
+/**
+ * Displays the announcements page where users can view and create announcements.
+ **/
 export function AnnouncementsPage({
   contestId,
   announcements,

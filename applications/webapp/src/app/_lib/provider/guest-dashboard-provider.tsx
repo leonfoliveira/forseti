@@ -21,6 +21,9 @@ import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/Lea
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
+/**
+ * Provider component for fetching guest dashboard data and setting up listeners.
+ */
 const messages = defineMessages({
   announcement: {
     id: "app._lib.provider.guest-dashboard-provider.announcement",

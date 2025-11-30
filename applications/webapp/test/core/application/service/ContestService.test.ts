@@ -26,7 +26,7 @@ describe("ClarificationService", () => {
       await sut.update(inputDTO);
 
       expect(attachmentService.upload).not.toHaveBeenCalled();
-      expect(contestRepository.updateContest).toHaveBeenCalledWith(inputDTO);
+      expect(contestRepository.update).toHaveBeenCalledWith(inputDTO);
     });
 
     it("should update a contest with upload files", async () => {
@@ -46,7 +46,7 @@ describe("ClarificationService", () => {
         AttachmentContext.PROBLEM_TEST_CASES,
         inputDTO.problems[0].newTestCases,
       );
-      expect(contestRepository.updateContest).toHaveBeenCalledWith({
+      expect(contestRepository.update).toHaveBeenCalledWith({
         ...inputDTO,
         problems: [
           {
@@ -62,7 +62,7 @@ describe("ClarificationService", () => {
   describe("findMetadataBySlug", () => {
     it("should find contest metadata by slug", async () => {
       const metadata = MockContestMetadataResponseDTO();
-      contestRepository.findContestMetadataBySlug.mockResolvedValue(metadata);
+      contestRepository.findMetadataBySlug.mockResolvedValue(metadata);
 
       const result = await sut.findMetadataBySlug("contest-slug");
 

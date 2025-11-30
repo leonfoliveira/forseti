@@ -22,7 +22,7 @@ describe("AxiosAnnouncementRepository", () => {
         data: expectedResponse,
       } as AxiosResponse);
 
-      const result = await sut.createAnnouncement(contestId, requestDTO);
+      const result = await sut.create(contestId, requestDTO);
 
       expect(axiosClient.post).toHaveBeenCalledWith(
         `/v1/contests/${contestId}/announcements`,

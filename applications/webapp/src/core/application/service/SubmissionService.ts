@@ -26,7 +26,7 @@ export class SubmissionService implements SubmissionWritter {
       AttachmentContext.SUBMISSION_CODE,
       inputDTO.code,
     );
-    return await this.submissionRepository.createSubmission(contestId, {
+    return await this.submissionRepository.create(contestId, {
       ...inputDTO,
       code: attachment,
     });
@@ -44,7 +44,7 @@ export class SubmissionService implements SubmissionWritter {
     submissionId: string,
     answer: SubmissionAnswer,
   ): Promise<void> {
-    return await this.submissionRepository.updateSubmissionAnswer(
+    return await this.submissionRepository.updateAnswer(
       contestId,
       submissionId,
       answer,
@@ -58,9 +58,6 @@ export class SubmissionService implements SubmissionWritter {
    * @param submissionId ID of the submission to rerun
    */
   async rerun(contestId: string, submissionId: string): Promise<void> {
-    return await this.submissionRepository.rerunSubmission(
-      contestId,
-      submissionId,
-    );
+    return await this.submissionRepository.rerun(contestId, submissionId);
   }
 }

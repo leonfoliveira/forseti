@@ -6,6 +6,9 @@ type Props = {
   description: Message;
 };
 
+/**
+ * Metadata component for setting the page title and description.
+ */
 export function Metadata({ title, description }: Props) {
   const intl = useIntl();
 

@@ -9,6 +9,10 @@ const messages = defineMessages({
   },
 });
 
+/**
+ * Footer component displayed at the bottom of the web application.
+ * Includes a link to the Project GitHub repository and displays the current version.
+ */
 export function Footer() {
   return (
     <footer className="bg-content1 text-center text-neutral-400 text-sm border-t border-divider">

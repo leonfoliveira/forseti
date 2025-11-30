@@ -13,16 +13,16 @@ describe("SessionService", () => {
   describe("getSession", () => {
     it("should call sessionRepository.getSession", async () => {
       const session = MockSession();
-      sessionRepository.getSession.mockResolvedValue(session);
+      sessionRepository.getCurrent.mockResolvedValue(session);
 
       const result = await sut.getCurrent();
 
-      expect(sessionRepository.getSession).toHaveBeenCalled();
+      expect(sessionRepository.getCurrent).toHaveBeenCalled();
       expect(result).toEqual(session);
     });
 
     it("should return null if UnauthorizedException is thrown", async () => {
-      sessionRepository.getSession.mockRejectedValue(
+      sessionRepository.getCurrent.mockRejectedValue(
         new UnauthorizedException("Unauthorized"),
       );
 
@@ -36,7 +36,7 @@ describe("SessionService", () => {
     it("should call sessionRepository.deleteSession", async () => {
       await sut.deleteCurrent();
 
-      expect(sessionRepository.deleteSession).toHaveBeenCalled();
+      expect(sessionRepository.deleteCurrent).toHaveBeenCalled();
     });
   });
 });

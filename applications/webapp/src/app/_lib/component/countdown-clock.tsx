@@ -8,6 +8,10 @@ type Props = React.HtmlHTMLAttributes<HTMLSpanElement> & {
   onZero?: () => void;
 };
 
+/**
+ * A countdown clock component that counts down to a specified date and time.
+ * On reaching zero, it can trigger an optional callback function.
+ */
 export function CountdownClock({ to, onZero, ...props }: Props) {
   const [ms, setMs] = useState<number | undefined>();
   const interval = useRef<NodeJS.Timeout | null>(null);

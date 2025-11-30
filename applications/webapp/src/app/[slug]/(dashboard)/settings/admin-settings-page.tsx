@@ -106,6 +106,10 @@ enum TabKey {
   MEMBERS = "MEMBERS",
 }
 
+/**
+ * Displays the admin settings page for a contest.
+ * Allows administrators to configure contest settings, manage problems, and members.
+ */
 export function AdminSettingsPage() {
   const saveState = useLoadableState();
   const validationState = useLoadableState();

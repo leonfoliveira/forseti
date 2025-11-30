@@ -10,6 +10,10 @@ import { useAppSelector } from "@/app/_store/store";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 
+/**
+ * Main dashboard provider that selects the appropriate dashboard provider
+ * based on the user's member type and contest status.
+ */
 export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const session = useAppSelector((state) => state.session);
   const contestStatus = useContestStatusWatcher();

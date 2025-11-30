@@ -122,6 +122,9 @@ type Props = {
   canAnswer?: boolean;
 };
 
+/**
+ * Displays the clarifications page where users can view, request, and answer clarifications for contest problems.
+ **/
 export function ClarificationsPage({
   contestId,
   problems,

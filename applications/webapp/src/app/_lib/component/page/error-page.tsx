@@ -16,6 +16,9 @@ const messages = defineMessages({
   },
 });
 
+/**
+ * Displays a generic error message with a reload button centered on the page.
+ */
 export function ErrorPage() {
   return (
     <div className="h-dvh flex flex-col justify-center items-center">

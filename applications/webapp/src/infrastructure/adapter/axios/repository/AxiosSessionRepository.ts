@@ -5,13 +5,13 @@ import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 export class AxiosSessionRepository implements SessionRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
 
-  async getSession(): Promise<SessionResponseDTO> {
+  async getCurrent(): Promise<SessionResponseDTO> {
     const response =
       await this.axiosClient.get<SessionResponseDTO>("/v1/session/me");
     return response.data;
   }
 
-  async deleteSession(): Promise<void> {
+  async deleteCurrent(): Promise<void> {
     await this.axiosClient.delete("/v1/session/me");
   }
 }

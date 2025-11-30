@@ -4,6 +4,13 @@ import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/S
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 
 export class StompSubmissionListener implements SubmissionListener {
+  /**
+   * Subscribe to submission updates for a contest using STOMP websocket protocol.
+   *
+   * @param client The STOMP client used for subscribing.
+   * @param contestId ID of the contest to subscribe to.
+   * @param cb Callback function to handle received submissions.
+   */
   async subscribeForContest(
     client: ListenerClient,
     contestId: string,
@@ -12,6 +19,13 @@ export class StompSubmissionListener implements SubmissionListener {
     await client.subscribe(`/topic/contests/${contestId}/submissions`, cb);
   }
 
+  /**
+   * Subscribe to full submission updates for a contest using STOMP websocket protocol.
+   *
+   * @param client The STOMP client used for subscribing.
+   * @param contestId ID of the contest to subscribe to.
+   * @param cb Callback function to handle received full submissions.
+   */
   async subscribeForContestFull(
     client: ListenerClient,
     contestId: string,
@@ -20,6 +34,14 @@ export class StompSubmissionListener implements SubmissionListener {
     await client.subscribe(`/topic/contests/${contestId}/submissions/full`, cb);
   }
 
+  /**
+   * Subscribe to full submission updates for the children of a member in a contest using STOMP websocket protocol.
+   *
+   * @param client The STOMP client used for subscribing.
+   * @param contestId ID of the contest to subscribe to.
+   * @param memberId ID of the member whose children submissions to subscribe to.
+   * @param cb Callback function to handle received full submissions.
+   */
   async subscribeForMemberFull(
     client: ListenerClient,
     contestId: string,

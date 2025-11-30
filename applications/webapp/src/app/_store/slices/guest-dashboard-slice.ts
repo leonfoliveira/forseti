@@ -8,6 +8,9 @@ import { GuestDashboardResponseDTO } from "@/core/port/dto/response/dashboard/Gu
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 
+/**
+ * Redux slice for the guest dashboard data.
+ */
 export const guestDashboardSlice = createSlice({
   name: "guestDashboard",
   initialState: null as unknown as GuestDashboardResponseDTO,

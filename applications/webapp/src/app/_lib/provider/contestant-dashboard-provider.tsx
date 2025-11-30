@@ -40,6 +40,9 @@ const messages = defineMessages({
   },
 });
 
+/**
+ * Provider component for fetching contestant dashboard data and setting up listeners.
+ */
 export function ContestantDashboardProvider({
   children,
 }: {

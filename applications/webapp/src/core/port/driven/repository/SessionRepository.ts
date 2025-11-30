@@ -1,7 +1,15 @@
 import { SessionResponseDTO } from "@/core/port/dto/response/session/SessionResponseDTO";
 
 export interface SessionRepository {
-  getSession(): Promise<SessionResponseDTO>;
+  /**
+   * Get the current session.
+   *
+   * @returns The session data
+   */
+  getCurrent(): Promise<SessionResponseDTO>;
 
-  deleteSession(): Promise<void>;
+  /**
+   * Delete the current session.
+   */
+  deleteCurrent(): Promise<void>;
 }

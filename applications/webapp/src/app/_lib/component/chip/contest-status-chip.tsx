@@ -9,6 +9,9 @@ type Props = ChipProps & {
   status: ContestStatus;
 };
 
+/**
+ * Displays a chip component styled according to the contest status.
+ */
 export function ContestStatusChip({ status, ...props }: Props) {
   const text = status && (
     <FormattedMessage {...globalMessages.contestStatus[status]} />

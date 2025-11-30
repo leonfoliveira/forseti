@@ -3,6 +3,13 @@ import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 
 export class StompClarificationListener implements ClarificationListener {
+  /**
+   * Subscribe to clarifications updates for a contest using STOMP websocket protocol.
+   *
+   * @param client The STOMP client used for subscribing.
+   * @param contestId ID of the contest to subscribe to.
+   * @param cb Callback function to handle received clarifications.
+   */
   async subscribeForContest(
     client: ListenerClient,
     contestId: string,
@@ -11,6 +18,14 @@ export class StompClarificationListener implements ClarificationListener {
     await client.subscribe(`/topic/contests/${contestId}/clarifications`, cb);
   }
 
+  /**
+   * Subscribe to clarifications updates for the children of a member in a contest using STOMP websocket protocol.
+   *
+   * @param client The STOMP client used for subscribing.
+   * @param contestId ID of the contest to subscribe to.
+   * @param memberId ID of the member whose children clarifications to subscribe to.
+   * @param cb Callback function to handle received clarifications.
+   */
   async subscribeForMemberChildren(
     client: ListenerClient,
     contestId: string,
@@ -23,6 +38,13 @@ export class StompClarificationListener implements ClarificationListener {
     );
   }
 
+  /**
+   * Subscribe to clarification deletion events for a contest using STOMP websocket protocol.
+   *
+   * @param client The STOMP client used for subscribing.
+   * @param contestId ID of the contest to subscribe to.
+   * @param cb Callback function to handle deleted clarification IDs.
+   */
   async subscribeForContestDeleted(
     client: ListenerClient,
     contestId: string,

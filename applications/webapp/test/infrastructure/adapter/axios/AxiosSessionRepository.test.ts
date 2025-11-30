@@ -17,7 +17,7 @@ describe("AxiosSessionRepository", () => {
         data: session,
       } as AxiosResponse);
 
-      const result = await sut.getSession();
+      const result = await sut.getCurrent();
 
       expect(axiosClient.get).toHaveBeenCalledWith("/v1/session/me");
       expect(result).toEqual(session);
@@ -26,7 +26,7 @@ describe("AxiosSessionRepository", () => {
 
   describe("deleteSession", () => {
     it("should delete the session", async () => {
-      await sut.deleteSession();
+      await sut.deleteCurrent();
       expect(axiosClient.delete).toHaveBeenCalledWith("/v1/session/me");
     });
   });

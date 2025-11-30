@@ -4,6 +4,10 @@ import { useAppSelector } from "@/app/_store/store";
 import { ContestUtil } from "@/core/application/util/contest-util";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 
+/**
+ * Custom hook to watch the current contest status.
+ * It automatically updates the status based on contest metadata changes and startAt/endAt times.
+ */
 export function useContestStatusWatcher() {
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const [status, setStatus] = useState<ContestStatus>(

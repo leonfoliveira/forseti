@@ -32,6 +32,10 @@ type Props = Omit<ModalProps, "title" | "children"> & {
   body: ReactNode;
 };
 
+/**
+ * A modal dialog that asks the user to confirm an action.
+ * Displays a title, body content, and "Cancel" and "Confirm" buttons.
+ */
 export function ConfirmationModal({
   isOpen,
   isLoading,

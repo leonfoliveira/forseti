@@ -11,6 +11,11 @@ const roboto = Roboto({
   subsets: ["latin"],
 });
 
+/**
+ * HTML component that wraps the entire web application.
+ * Sets up the theme and font for the application.
+ * Adds necessary providers.
+ */
 export function Html({ children }: { children: React.ReactNode }) {
   const { theme } = useTheme();
 

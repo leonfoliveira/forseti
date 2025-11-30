@@ -27,25 +27,19 @@ describe("DashboardService", () => {
       const leaderboard = MockLeaderboardResponseDTO();
       const submissions = [MockSubmissionFullResponseDTO()];
 
-      contestRepository.findFullContestById.mockResolvedValueOnce(contest);
-      leaderboardRepository.findContestLeaderboard.mockResolvedValueOnce(
-        leaderboard,
-      );
-      submissionRepository.findAllContestFullSubmissions.mockResolvedValueOnce(
+      contestRepository.findFullById.mockResolvedValueOnce(contest);
+      leaderboardRepository.build.mockResolvedValueOnce(leaderboard);
+      submissionRepository.findAllFullForContest.mockResolvedValueOnce(
         submissions,
       );
 
       const result = await sut.getAdmin("contest-id");
 
-      expect(contestRepository.findFullContestById).toHaveBeenCalledWith(
+      expect(contestRepository.findFullById).toHaveBeenCalledWith("contest-id");
+      expect(leaderboardRepository.build).toHaveBeenCalledWith("contest-id");
+      expect(submissionRepository.findAllFullForContest).toHaveBeenCalledWith(
         "contest-id",
       );
-      expect(leaderboardRepository.findContestLeaderboard).toHaveBeenCalledWith(
-        "contest-id",
-      );
-      expect(
-        submissionRepository.findAllContestFullSubmissions,
-      ).toHaveBeenCalledWith("contest-id");
 
       expect(result).toEqual({
         contest,
@@ -62,28 +56,20 @@ describe("DashboardService", () => {
       const submissions = [MockSubmissionPublicResponseDTO()];
       const memberSubmissions = [MockSubmissionFullResponseDTO()];
 
-      contestRepository.findContestById.mockResolvedValueOnce(contest);
-      leaderboardRepository.findContestLeaderboard.mockResolvedValueOnce(
-        leaderboard,
-      );
-      submissionRepository.findAllContestSubmissions.mockResolvedValueOnce(
-        submissions,
-      );
+      contestRepository.findById.mockResolvedValueOnce(contest);
+      leaderboardRepository.build.mockResolvedValueOnce(leaderboard);
+      submissionRepository.findAllForContest.mockResolvedValueOnce(submissions);
       submissionRepository.findAllFullForMember.mockResolvedValueOnce(
         memberSubmissions,
       );
 
       const result = await sut.getContestant("contest-id");
 
-      expect(contestRepository.findContestById).toHaveBeenCalledWith(
+      expect(contestRepository.findById).toHaveBeenCalledWith("contest-id");
+      expect(leaderboardRepository.build).toHaveBeenCalledWith("contest-id");
+      expect(submissionRepository.findAllForContest).toHaveBeenCalledWith(
         "contest-id",
       );
-      expect(leaderboardRepository.findContestLeaderboard).toHaveBeenCalledWith(
-        "contest-id",
-      );
-      expect(
-        submissionRepository.findAllContestSubmissions,
-      ).toHaveBeenCalledWith("contest-id");
       expect(submissionRepository.findAllFullForMember).toHaveBeenCalledWith(
         "contest-id",
       );
@@ -103,25 +89,17 @@ describe("DashboardService", () => {
       const leaderboard = MockLeaderboardResponseDTO();
       const submissions = [MockSubmissionPublicResponseDTO()];
 
-      contestRepository.findContestById.mockResolvedValueOnce(contest);
-      leaderboardRepository.findContestLeaderboard.mockResolvedValueOnce(
-        leaderboard,
-      );
-      submissionRepository.findAllContestSubmissions.mockResolvedValueOnce(
-        submissions,
-      );
+      contestRepository.findById.mockResolvedValueOnce(contest);
+      leaderboardRepository.build.mockResolvedValueOnce(leaderboard);
+      submissionRepository.findAllForContest.mockResolvedValueOnce(submissions);
 
       const result = await sut.getGuest("contest-id");
 
-      expect(contestRepository.findContestById).toHaveBeenCalledWith(
+      expect(contestRepository.findById).toHaveBeenCalledWith("contest-id");
+      expect(leaderboardRepository.build).toHaveBeenCalledWith("contest-id");
+      expect(submissionRepository.findAllForContest).toHaveBeenCalledWith(
         "contest-id",
       );
-      expect(leaderboardRepository.findContestLeaderboard).toHaveBeenCalledWith(
-        "contest-id",
-      );
-      expect(
-        submissionRepository.findAllContestSubmissions,
-      ).toHaveBeenCalledWith("contest-id");
 
       expect(result).toEqual({
         contest,
@@ -137,25 +115,19 @@ describe("DashboardService", () => {
       const leaderboard = MockLeaderboardResponseDTO();
       const submissions = [MockSubmissionFullResponseDTO()];
 
-      contestRepository.findContestById.mockResolvedValueOnce(contest);
-      leaderboardRepository.findContestLeaderboard.mockResolvedValueOnce(
-        leaderboard,
-      );
-      submissionRepository.findAllContestFullSubmissions.mockResolvedValueOnce(
+      contestRepository.findById.mockResolvedValueOnce(contest);
+      leaderboardRepository.build.mockResolvedValueOnce(leaderboard);
+      submissionRepository.findAllFullForContest.mockResolvedValueOnce(
         submissions,
       );
 
       const result = await sut.getJudge("contest-id");
 
-      expect(contestRepository.findContestById).toHaveBeenCalledWith(
+      expect(contestRepository.findById).toHaveBeenCalledWith("contest-id");
+      expect(leaderboardRepository.build).toHaveBeenCalledWith("contest-id");
+      expect(submissionRepository.findAllFullForContest).toHaveBeenCalledWith(
         "contest-id",
       );
-      expect(leaderboardRepository.findContestLeaderboard).toHaveBeenCalledWith(
-        "contest-id",
-      );
-      expect(
-        submissionRepository.findAllContestFullSubmissions,
-      ).toHaveBeenCalledWith("contest-id");
 
       expect(result).toEqual({
         contest,

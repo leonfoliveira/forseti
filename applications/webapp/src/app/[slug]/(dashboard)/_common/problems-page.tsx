@@ -49,6 +49,9 @@ type Props = {
   contestantClassificationProblems?: LeaderboardResponseDTO["members"][number]["problems"];
 };
 
+/**
+ * Displays the problems page where users can view all problems for the contest.
+ **/
 export function ProblemsPage({
   problems,
   contestantClassificationProblems,

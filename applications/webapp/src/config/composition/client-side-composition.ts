@@ -40,6 +40,11 @@ import { StompClientFactory } from "@/infrastructure/adapter/stomp/StompClientFa
 import { StompLeaderboardListener } from "@/infrastructure/adapter/stomp/StompLeaderboardListener";
 import { StompSubmissionListener } from "@/infrastructure/adapter/stomp/StompSubmissionListener";
 
+/**
+ * Instantiate all client-side composition dependencies
+ *
+ * @returns The client-side composition
+ */
 export function build(): Composition {
   // Listeners
   const listenerClientFactory = new StompClientFactory(

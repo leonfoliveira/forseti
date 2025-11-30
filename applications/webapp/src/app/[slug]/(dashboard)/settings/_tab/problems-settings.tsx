@@ -107,6 +107,10 @@ type Props = {
   isOpen: boolean;
 };
 
+/**
+ * Displays the problems settings tab within the admin dashboard.
+ * Allows administrators to configure the problems for the contest.
+ */
 export function ProblemsSettings({ form, isOpen }: Props) {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
   const { fields, append, remove } = useFieldArray({

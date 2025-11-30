@@ -4,6 +4,13 @@ import React from "react";
 
 import { Label } from "@/app/_lib/component/form/label";
 
+/**
+ * Wrapper components for HeroUI with default props set.
+ */
+
+/**
+ * Display a checkbox input component.
+ */
 export function Checkbox({
   label,
   ...props
@@ -15,6 +22,10 @@ export function Checkbox({
   );
 }
 
+/**
+ * Display a grouper for checkbox inputs that share the same name.
+ * Its value is an array of selected checkbox values.
+ */
 export function CheckboxGroup(props: HeroUI.CheckboxGroupProps) {
   return (
     <HeroUI.CheckboxGroup
@@ -33,6 +44,9 @@ export function CheckboxGroup(props: HeroUI.CheckboxGroupProps) {
   );
 }
 
+/**
+ * Display a date picker input component.
+ */
 export function DatePicker(props: HeroUI.DatePickerProps) {
   return (
     <HeroUI.DatePicker
@@ -46,6 +60,9 @@ export function DatePicker(props: HeroUI.DatePickerProps) {
   );
 }
 
+/**
+ * Display an input text component.
+ */
 export function Input(props: HeroUI.InputProps) {
   return (
     <HeroUI.Input
@@ -59,6 +76,9 @@ export function Input(props: HeroUI.InputProps) {
   );
 }
 
+/**
+ * Display a number input component.
+ */
 export function NumberInput(props: HeroUI.NumberInputProps) {
   return (
     <HeroUI.NumberInput
@@ -73,6 +93,9 @@ export function NumberInput(props: HeroUI.NumberInputProps) {
   );
 }
 
+/**
+ * Display a select input component.
+ */
 export function Select(props: HeroUI.SelectProps) {
   return (
     <HeroUI.Select
@@ -87,6 +110,9 @@ export function Select(props: HeroUI.SelectProps) {
   );
 }
 
+/**
+ * Display a switch input component.
+ */
 export function Switch({
   label,
   ...props

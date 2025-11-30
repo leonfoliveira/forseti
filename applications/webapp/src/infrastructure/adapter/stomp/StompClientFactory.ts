@@ -8,6 +8,11 @@ import { StompClient } from "@/infrastructure/adapter/stomp/StompClient";
 export class StompClientFactory implements ListenerClientFactory {
   constructor(private readonly wsUrl: string) {}
 
+  /**
+   * Create a new STOMP client connected to the configured WebSocket URL.
+   *
+   * @returns A new instance of ListenerClient.
+   */
   public create(): ListenerClient {
     const socket = new SockJS(this.wsUrl);
     const client = Stomp.over(socket);

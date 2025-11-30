@@ -20,7 +20,7 @@ describe("AxiosLeaderboardRepository", () => {
         data: expectedResponse,
       } as AxiosResponse);
 
-      const result = await sut.findContestLeaderboard(contestId);
+      const result = await sut.build(contestId);
 
       expect(axiosClient.get).toHaveBeenCalledWith(
         `/v1/contests/${contestId}/leaderboard`,

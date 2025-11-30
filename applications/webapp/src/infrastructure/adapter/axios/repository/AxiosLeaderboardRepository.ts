@@ -8,9 +8,7 @@ export class AxiosLeaderboardRepository implements LeaderboardRepository {
 
   constructor(private readonly axiosClient: AxiosClient) {}
 
-  async findContestLeaderboard(
-    contestId: string,
-  ): Promise<LeaderboardResponseDTO> {
+  async build(contestId: string): Promise<LeaderboardResponseDTO> {
     const result = await this.axiosClient.get<LeaderboardResponseDTO>(
       this.basePath(contestId),
     );

@@ -16,6 +16,11 @@ type Props = {
   ms: number;
 };
 
+/**
+ * Formats a duration given in milliseconds into a human-readable string.
+ * If the duration includes days, it will be displayed in the format "Xd HH:MM:SS",
+ * otherwise in the format "HH:MM:SS".
+ */
 export function FormattedDuration({ ms }: Props) {
   const totalSeconds = Math.max(0, Math.floor(ms / 1000));
 

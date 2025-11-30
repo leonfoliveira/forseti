@@ -9,6 +9,9 @@ import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/Lea
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 
+/**
+ * Redux slice for the contestant dashboard data.
+ */
 export const contestantDashboardSlice = createSlice({
   name: "contestantDashboard",
   initialState: null as unknown as ContestantDashboardResponseDTO,

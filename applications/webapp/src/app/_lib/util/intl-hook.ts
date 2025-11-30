@@ -2,6 +2,9 @@ import { useTranslations, useFormatter } from "next-intl";
 
 import { Message } from "@/i18n/message";
 
+/**
+ * Custom hook to provide internationalization utilities.
+ */
 export function useIntl() {
   const t = useTranslations();
   const format = useFormatter();

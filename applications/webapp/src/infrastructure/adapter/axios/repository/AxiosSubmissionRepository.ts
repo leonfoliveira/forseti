@@ -11,7 +11,7 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
 
   constructor(private readonly axiosClient: AxiosClient) {}
 
-  async createSubmission(
+  async create(
     contestId: string,
     request: CreateSubmissionRequestDTO,
   ): Promise<SubmissionFullResponseDTO> {
@@ -24,7 +24,7 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     return response.data;
   }
 
-  async findAllContestSubmissions(
+  async findAllForContest(
     contestId: string,
   ): Promise<SubmissionPublicResponseDTO[]> {
     const response = await this.axiosClient.get<SubmissionFullResponseDTO[]>(
@@ -33,7 +33,7 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     return response.data;
   }
 
-  async findAllContestFullSubmissions(
+  async findAllFullForContest(
     contestId: string,
   ): Promise<SubmissionFullResponseDTO[]> {
     const response = await this.axiosClient.get<SubmissionFullResponseDTO[]>(
@@ -51,7 +51,7 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     return response.data;
   }
 
-  async updateSubmissionAnswer(
+  async updateAnswer(
     contestId: string,
     submissionId: string,
     answer: SubmissionAnswer,
@@ -61,10 +61,7 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     );
   }
 
-  async rerunSubmission(
-    contestId: string,
-    submissionId: string,
-  ): Promise<void> {
+  async rerun(contestId: string, submissionId: string): Promise<void> {
     await this.axiosClient.post<void>(
       `${this.basePath(contestId)}/${submissionId}/rerun`,
     );

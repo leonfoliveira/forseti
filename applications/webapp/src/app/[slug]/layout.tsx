@@ -9,6 +9,13 @@ import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Layout component for contest pages.
+ * Fetches session and contest metadata based on the slug parameter.
+ * Renders the header, footer, and children components within a store provider.
+ *
+ * ! This component runs on the server side.
+ */
 export default async function ContestLayout({
   params,
   children,

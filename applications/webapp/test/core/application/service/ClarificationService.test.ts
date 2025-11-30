@@ -17,9 +17,7 @@ describe("ClarificationService", () => {
     it("should call clarificationRepository.create with the correct parameters", async () => {
       const inputDTO = MockCreateClarificationRequestDTO();
       const expectedResult = MockClarificationResponseDTO();
-      clarificationRepository.createClarification.mockResolvedValue(
-        expectedResult,
-      );
+      clarificationRepository.create.mockResolvedValue(expectedResult);
       const result = await sut.create(contestId, inputDTO);
       expect(result).toEqual(expectedResult);
     });

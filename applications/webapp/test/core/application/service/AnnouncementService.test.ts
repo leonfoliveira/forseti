@@ -17,9 +17,7 @@ describe("AnnouncementService", () => {
     it("should call announcementRepository.create with the correct parameters", async () => {
       const inputDTO = MockCreateAnnouncementRequestDTO();
       const expectedResult = MockAnnouncementResponseDTO();
-      announcementRepository.createAnnouncement.mockResolvedValue(
-        expectedResult,
-      );
+      announcementRepository.create.mockResolvedValue(expectedResult);
       const result = await sut.create(contestId, inputDTO);
       expect(result).toEqual(expectedResult);
     });

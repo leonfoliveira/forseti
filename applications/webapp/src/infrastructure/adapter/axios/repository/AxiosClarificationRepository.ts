@@ -9,7 +9,7 @@ export class AxiosClarificationRepository implements ClarificationRepository {
 
   constructor(private readonly axiosClient: AxiosClient) {}
 
-  async createClarification(
+  async create(
     contestId: string,
     requestDTO: CreateClarificationRequestDTO,
   ): Promise<ClarificationResponseDTO> {

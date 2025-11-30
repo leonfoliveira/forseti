@@ -17,6 +17,10 @@ const messages = defineMessages({
   },
 });
 
+/**
+ * The home page of the web application.
+ * Displays the app logo.
+ */
 export default function HomePage() {
   return (
     <>

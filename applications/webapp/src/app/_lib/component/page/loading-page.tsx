@@ -12,7 +12,7 @@ const messages = defineMessages({
 });
 
 /**
- * LoadingPage component displays a loading spinner centered on the page.
+ * Displays a loading spinner centered on the page.
  */
 export function LoadingPage() {
   const intl = useIntl();

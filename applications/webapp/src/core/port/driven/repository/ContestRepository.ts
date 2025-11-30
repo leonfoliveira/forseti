@@ -4,21 +4,58 @@ import { ContestMetadataResponseDTO } from "@/core/port/dto/response/contest/Con
 import { ContestPublicResponseDTO } from "@/core/port/dto/response/contest/ContestPublicResponseDTO";
 
 export interface ContestRepository {
-  updateContest(
-    requestDTO: UpdateContestRequestDTO,
-  ): Promise<ContestFullResponseDTO>;
+  /**
+   * Update a contest.
+   *
+   * @param requestDTO Contest update request data
+   * @returns The updated contest
+   */
+  update(requestDTO: UpdateContestRequestDTO): Promise<ContestFullResponseDTO>;
 
-  findAllContestMetadata(): Promise<ContestMetadataResponseDTO[]>;
+  /**
+   * Find all contest metadata.
+   *
+   * @returns An array of contest metadata
+   */
+  findAllMetadata(): Promise<ContestMetadataResponseDTO[]>;
 
-  findContestById(contestId: string): Promise<ContestPublicResponseDTO>;
+  /**
+   * Find a contest by its ID.
+   *
+   * @param contestId ID of the contest
+   * @returns The public contest data
+   */
+  findById(contestId: string): Promise<ContestPublicResponseDTO>;
 
-  findContestMetadataBySlug(
-    contestId: string,
-  ): Promise<ContestMetadataResponseDTO>;
+  /**
+   * Find contest metadata by its Slug.
+   *
+   * @param slug Slug of the contest
+   * @returns The contest metadata
+   */
+  findMetadataBySlug(slug: string): Promise<ContestMetadataResponseDTO>;
 
-  findFullContestById(contestId: string): Promise<ContestFullResponseDTO>;
+  /**
+   * Find full contest details by its ID.
+   *
+   * @param contestId ID of the contest
+   * @returns The full contest data
+   */
+  findFullById(contestId: string): Promise<ContestFullResponseDTO>;
 
+  /**
+   * Force start a contest by its ID.
+   *
+   * @param contestId ID of the contest
+   * @returns The updated contest metadata
+   */
   forceStart(contestId: string): Promise<ContestMetadataResponseDTO>;
 
+  /**
+   * Force end a contest by its ID.
+   *
+   * @param contestId ID of the contest
+   * @returns The updated contest metadata
+   */
   forceEnd(contestId: string): Promise<ContestMetadataResponseDTO>;
 }

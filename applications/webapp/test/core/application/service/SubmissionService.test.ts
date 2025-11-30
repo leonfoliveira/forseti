@@ -24,7 +24,7 @@ describe("SubmissionService", () => {
       const attachment = MockAttachmentResponseDTO();
       attachmentService.upload.mockResolvedValue(attachment);
       const submission = MockSubmissionFullResponseDTO();
-      submissionRepository.createSubmission.mockResolvedValue(submission);
+      submissionRepository.create.mockResolvedValue(submission);
 
       const result = await sut.create(contestId, inputDTO);
 
@@ -34,13 +34,10 @@ describe("SubmissionService", () => {
         AttachmentContext.SUBMISSION_CODE,
         inputDTO.code,
       );
-      expect(submissionRepository.createSubmission).toHaveBeenCalledWith(
-        contestId,
-        {
-          ...inputDTO,
-          code: attachment,
-        },
-      );
+      expect(submissionRepository.create).toHaveBeenCalledWith(contestId, {
+        ...inputDTO,
+        code: attachment,
+      });
     });
   });
 
@@ -51,7 +48,7 @@ describe("SubmissionService", () => {
 
       await sut.updateAnswer(contestId, submissionId, answer);
 
-      expect(submissionRepository.updateSubmissionAnswer).toHaveBeenCalledWith(
+      expect(submissionRepository.updateAnswer).toHaveBeenCalledWith(
         contestId,
         submissionId,
         answer,
@@ -65,7 +62,7 @@ describe("SubmissionService", () => {
 
       await sut.rerun(contestId, submissionId);
 
-      expect(submissionRepository.rerunSubmission).toHaveBeenCalledWith(
+      expect(submissionRepository.rerun).toHaveBeenCalledWith(
         contestId,
         submissionId,
       );

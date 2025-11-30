@@ -23,7 +23,7 @@ describe("AxiosSubmissionRepository", () => {
         data: expectedResponse,
       } as AxiosResponse);
 
-      const result = await sut.createSubmission(contestId, request);
+      const result = await sut.create(contestId, request);
 
       expect(axiosClient.post).toHaveBeenCalledWith(
         `/v1/contests/${contestId}/submissions`,
@@ -45,7 +45,7 @@ describe("AxiosSubmissionRepository", () => {
         data: expectedResponse,
       } as AxiosResponse);
 
-      const result = await sut.findAllContestSubmissions(contestId);
+      const result = await sut.findAllForContest(contestId);
 
       expect(axiosClient.get).toHaveBeenCalledWith(
         `/v1/contests/${contestId}/submissions`,
@@ -64,7 +64,7 @@ describe("AxiosSubmissionRepository", () => {
         data: expectedResponse,
       } as AxiosResponse);
 
-      const result = await sut.findAllContestFullSubmissions(contestId);
+      const result = await sut.findAllFullForContest(contestId);
 
       expect(axiosClient.get).toHaveBeenCalledWith(
         `/v1/contests/${contestId}/submissions/full`,
@@ -97,7 +97,7 @@ describe("AxiosSubmissionRepository", () => {
       const submissionId = uuidv4();
       const answer = SubmissionAnswer.ACCEPTED;
 
-      await sut.updateSubmissionAnswer(contestId, submissionId, answer);
+      await sut.updateAnswer(contestId, submissionId, answer);
 
       expect(axiosClient.put).toHaveBeenCalledWith(
         `/v1/contests/${contestId}/submissions/${submissionId}/answer/${answer}/force`,
@@ -109,7 +109,7 @@ describe("AxiosSubmissionRepository", () => {
     it("should rerun the submission", async () => {
       const submissionId = uuidv4();
 
-      await sut.rerunSubmission(contestId, submissionId);
+      await sut.rerun(contestId, submissionId);
 
       expect(axiosClient.post).toHaveBeenCalledWith(
         `/v1/contests/${contestId}/submissions/${submissionId}/rerun`,

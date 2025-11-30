@@ -12,6 +12,6 @@ export class LeaderboardService implements LeaderboardReader {
    * @return The constructed leaderboard
    */
   build(contestId: string): Promise<LeaderboardResponseDTO> {
-    return this.leaderboardRepository.findContestLeaderboard(contestId);
+    return this.leaderboardRepository.build(contestId);
   }
 }

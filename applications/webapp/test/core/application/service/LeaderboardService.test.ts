@@ -15,9 +15,7 @@ describe("LeaderboardService", () => {
   describe("build", () => {
     it("should call LeaderboardRepository.create with the correct parameters", async () => {
       const expectedResult = MockLeaderboardResponseDTO();
-      LeaderboardRepository.findContestLeaderboard.mockResolvedValue(
-        expectedResult,
-      );
+      LeaderboardRepository.build.mockResolvedValue(expectedResult);
       const result = await sut.build(contestId);
       expect(result).toEqual(expectedResult);
     });

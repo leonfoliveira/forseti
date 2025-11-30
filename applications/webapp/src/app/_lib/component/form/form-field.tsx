@@ -31,6 +31,9 @@ type Props<
   isSwitch?: boolean;
 };
 
+/**
+ * Wrapper around HeroUI form fields to inject react-hook-form props
+ */
 export function FormField<TFieldValues extends FieldValues>({
   children,
   form,

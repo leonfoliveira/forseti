@@ -73,6 +73,10 @@ type Props = {
   isOpen: boolean;
 };
 
+/**
+ * Displays the members settings tab within the admin dashboard.
+ * Allows administrators to manage contest participants and their access levels.
+ */
 export function MembersSettings({ form, isOpen }: Props) {
   const intl = useIntl();
   const { fields, append, remove } = useFieldArray({

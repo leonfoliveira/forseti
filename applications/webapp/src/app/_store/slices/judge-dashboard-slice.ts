@@ -8,6 +8,9 @@ import { JudgeDashboardResponseDTO } from "@/core/port/dto/response/dashboard/Ju
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 
+/**
+ * Redux slice for the judge dashboard data.
+ */
 export const judgeDashboardSlice = createSlice({
   name: "judgeDashboard",
   initialState: null as unknown as JudgeDashboardResponseDTO,

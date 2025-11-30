@@ -7,6 +7,10 @@ import React from "react";
 import { Html } from "@/app/_lib/component/html";
 import { buildClientConfig, serverConfig } from "@/config/config";
 
+/**
+ * The root layout for the web application.
+ * Initializes internationalization and injects client configuration.
+ */
 export default async function Layout({
   children,
 }: Readonly<{

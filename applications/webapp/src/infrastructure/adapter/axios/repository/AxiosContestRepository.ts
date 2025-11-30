@@ -10,7 +10,7 @@ export class AxiosContestRepository implements ContestRepository {
 
   constructor(private readonly axiosClient: AxiosClient) {}
 
-  async updateContest(
+  async update(
     requestDTO: UpdateContestRequestDTO,
   ): Promise<ContestFullResponseDTO> {
     const response = await this.axiosClient.put<ContestFullResponseDTO>(
@@ -22,21 +22,21 @@ export class AxiosContestRepository implements ContestRepository {
     return response.data;
   }
 
-  async findAllContestMetadata(): Promise<ContestMetadataResponseDTO[]> {
+  async findAllMetadata(): Promise<ContestMetadataResponseDTO[]> {
     const response = await this.axiosClient.get<ContestMetadataResponseDTO[]>(
       `${this.basePath}/metadata`,
     );
     return response.data;
   }
 
-  async findContestById(contestId: string): Promise<ContestPublicResponseDTO> {
+  async findById(contestId: string): Promise<ContestPublicResponseDTO> {
     const response = await this.axiosClient.get<ContestPublicResponseDTO>(
       `${this.basePath}/${contestId}`,
     );
     return response.data;
   }
 
-  async findContestMetadataBySlug(
+  async findMetadataBySlug(
     contestSlug: string,
   ): Promise<ContestMetadataResponseDTO> {
     const response = await this.axiosClient.get<ContestMetadataResponseDTO>(
@@ -45,9 +45,7 @@ export class AxiosContestRepository implements ContestRepository {
     return response.data;
   }
 
-  async findFullContestById(
-    contestId: string,
-  ): Promise<ContestFullResponseDTO> {
+  async findFullById(contestId: string): Promise<ContestFullResponseDTO> {
     const response = await this.axiosClient.get<ContestFullResponseDTO>(
       `${this.basePath}/${contestId}/full`,
     );

@@ -27,7 +27,7 @@ export class ContestService implements ContestWritter, ContestReader {
       ...inputDTO,
       problems: await this.uploadFiles(inputDTO.id, inputDTO.problems),
     };
-    return await this.contestRepository.updateContest(request);
+    return await this.contestRepository.update(request);
   }
 
   /**
@@ -37,7 +37,7 @@ export class ContestService implements ContestWritter, ContestReader {
    * @return The contest metadata
    */
   async findMetadataBySlug(slug: string): Promise<ContestMetadataResponseDTO> {
-    return await this.contestRepository.findContestMetadataBySlug(slug);
+    return await this.contestRepository.findMetadataBySlug(slug);
   }
 
   /**

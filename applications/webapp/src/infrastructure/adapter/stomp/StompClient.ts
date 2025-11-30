@@ -6,6 +6,9 @@ import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 export class StompClient implements ListenerClient {
   constructor(private readonly client: CompatClient) {}
 
+  /**
+   * Connect to the STOMP server.
+   */
   async connect() {
     return new Promise<void>((resolve, reject) => {
       if (this.client.connected) {
@@ -31,6 +34,12 @@ export class StompClient implements ListenerClient {
     });
   }
 
+  /**
+   * Subscribe to a STOMP topic.
+   *
+   * @param topic The topic to subscribe to.
+   * @param callback Callback function to handle received messages.
+   */
   async subscribe<TData>(topic: string, callback: (data: TData) => void) {
     this.client.subscribe(topic, (message) => {
       const data = JSON.parse(message.body) as TData;
@@ -39,6 +48,9 @@ export class StompClient implements ListenerClient {
     console.debug(`Subscribed to topic: ${topic}`);
   }
 
+  /**
+   * Disconnect from the STOMP server.
+   */
   async disconnect() {
     return new Promise<void>((resolve) => {
       this.client.onDisconnect = () => {

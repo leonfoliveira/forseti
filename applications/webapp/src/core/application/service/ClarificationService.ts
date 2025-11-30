@@ -15,10 +15,7 @@ export class ClarificationService implements ClarificationWritter {
    * @return The created clarification
    */
   async create(contestId: string, inputDTO: CreateClarificationRequestDTO) {
-    return await this.clarificationRepository.createClarification(
-      contestId,
-      inputDTO,
-    );
+    return await this.clarificationRepository.create(contestId, inputDTO);
   }
 
   /**

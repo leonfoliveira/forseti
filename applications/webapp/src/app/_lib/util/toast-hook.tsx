@@ -2,6 +2,9 @@ import { FormattedMessage } from "@/app/_lib/component/format/formatted-message"
 import { addToast, ToastProps } from "@/app/_lib/heroui-wrapper";
 import { Message } from "@/i18n/message";
 
+/**
+ * Custom hook to show toast notifications.
+ */
 export function useToast() {
   function show(message: Message, color: ToastProps["color"]) {
     addToast({

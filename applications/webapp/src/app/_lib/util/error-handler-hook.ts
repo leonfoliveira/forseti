@@ -3,6 +3,9 @@ import { sessionWritter } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 
+/**
+ * Custom hook to handle errors with predefined and custom handlers.
+ */
 export function useErrorHandler() {
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
 

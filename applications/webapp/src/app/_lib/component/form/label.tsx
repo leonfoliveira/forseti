@@ -4,6 +4,9 @@ type Props = Omit<React.HTMLProps<HTMLSpanElement>, "size"> & {
   size?: string;
 };
 
+/**
+ * A standard label component for form elements.
+ */
 export function Label({ size = "md", children, ...props }: Props) {
   const textSize = {
     sm: "text-xs",

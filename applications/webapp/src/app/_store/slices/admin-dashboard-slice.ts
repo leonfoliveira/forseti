@@ -9,6 +9,9 @@ import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/Ad
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 
+/**
+ * Redux slice for the admin dashboard data.
+ */
 export const adminDashboardSlice = createSlice({
   name: "adminDashboard",
   initialState: null as unknown as AdminDashboardResponseDTO,

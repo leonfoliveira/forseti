@@ -24,7 +24,7 @@ describe("AxiosContestRepository", () => {
         data: expectedResponse,
       } as AxiosResponse);
 
-      const result = await sut.updateContest(requestDTO);
+      const result = await sut.update(requestDTO);
 
       expect(axiosClient.put).toHaveBeenCalledWith("/v1/contests", {
         data: requestDTO,
@@ -43,7 +43,7 @@ describe("AxiosContestRepository", () => {
         data: expectedResponse,
       } as AxiosResponse);
 
-      const result = await sut.findAllContestMetadata();
+      const result = await sut.findAllMetadata();
 
       expect(axiosClient.get).toHaveBeenCalledWith("/v1/contests/metadata");
       expect(result).toEqual(expectedResponse);
@@ -57,7 +57,7 @@ describe("AxiosContestRepository", () => {
         data: expectedResponse,
       } as AxiosResponse);
 
-      const result = await sut.findContestById(contestId);
+      const result = await sut.findById(contestId);
 
       expect(axiosClient.get).toHaveBeenCalledWith(`/v1/contests/${contestId}`);
       expect(result).toEqual(expectedResponse);
@@ -72,7 +72,7 @@ describe("AxiosContestRepository", () => {
         data: expectedResponse,
       } as AxiosResponse);
 
-      const result = await sut.findContestMetadataBySlug(slug);
+      const result = await sut.findMetadataBySlug(slug);
 
       expect(axiosClient.get).toHaveBeenCalledWith(
         `/v1/contests/slug/${slug}/metadata`,
@@ -88,7 +88,7 @@ describe("AxiosContestRepository", () => {
         data: expectedResponse,
       } as AxiosResponse);
 
-      const result = await sut.findFullContestById(contestId);
+      const result = await sut.findFullById(contestId);
 
       expect(axiosClient.get).toHaveBeenCalledWith(
         `/v1/contests/${contestId}/full`,

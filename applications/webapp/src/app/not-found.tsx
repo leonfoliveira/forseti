@@ -10,6 +10,9 @@ const messages = defineMessages({
   },
 });
 
+/**
+ * Displays a not found page for unmatched routes.
+ */
 export default function NotFoundPage() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">

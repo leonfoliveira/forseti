@@ -38,8 +38,13 @@ import { StompClientFactory } from "@/infrastructure/adapter/stomp/StompClientFa
 import { StompLeaderboardListener } from "@/infrastructure/adapter/stomp/StompLeaderboardListener";
 import { StompSubmissionListener } from "@/infrastructure/adapter/stomp/StompSubmissionListener";
 
+/**
+ * Instantiate all server-side composition dependencies
+ *
+ * @returns The server-side composition
+ */
 export function build(): Composition {
-  // Listeners
+  // Listeners (no server-side implementations)
   const listenerClientFactory = null as unknown as StompClientFactory;
   const announcementListener = null as unknown as StompAnnouncementListener;
   const clarificationListener = null as unknown as StompClarificationListener;
@@ -97,6 +102,7 @@ export function build(): Composition {
   const leaderboardReader: LeaderboardReader = leaderboardService;
   const sessionReader: SessionReader = sessionService;
   const sessionWritter: SessionWritter = sessionService;
+  // Storage use cases have no server-side implementations
   const storageReader: StorageReader = null as unknown as StorageReader;
   const storageWritter: StorageWritter = null as unknown as StorageWritter;
   const submissionWritter: SubmissionWritter = submissionService;

@@ -4,6 +4,10 @@ import { cls } from "@/app/_lib/util/cls";
 
 type GridTableElementProps = React.HTMLProps<HTMLDivElement>;
 
+/**
+ * A grid-based table component.
+ * Used to display tabular data in a flexible grid layout.
+ */
 export function GridTable({
   children,
   className,
@@ -20,6 +24,10 @@ export function GridTable({
   );
 }
 
+/**
+ * The header section of the GridTable.
+ * Contains column headers.
+ */
 export function GridTableHeader({
   children,
   className,
@@ -45,6 +53,9 @@ export function GridTableHeader({
   );
 }
 
+/**
+ * A single column header in the GridTable.
+ */
 export function GridTableColumn({
   children,
   className,
@@ -64,6 +75,10 @@ export function GridTableColumn({
   );
 }
 
+/**
+ * The body section of the GridTable.
+ * Contains rows of data.
+ */
 export function GridTableBody({
   children,
   className,
@@ -81,6 +96,9 @@ export function GridTableBody({
   );
 }
 
+/**
+ * A single row in the GridTable.
+ */
 export function GridTableRow({
   children,
   className,
@@ -102,6 +120,9 @@ export function GridTableRow({
   );
 }
 
+/**
+ * A single cell in the GridTable.
+ */
 export function GridTableCell({
   children,
   className,

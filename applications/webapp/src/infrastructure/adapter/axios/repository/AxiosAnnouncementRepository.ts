@@ -9,7 +9,7 @@ export class AxiosAnnouncementRepository implements AnnouncementRepository {
 
   constructor(private readonly axiosClient: AxiosClient) {}
 
-  async createAnnouncement(
+  async create(
     contestId: string,
     requestDTO: CreateAnnouncementRequestDTO,
   ): Promise<AnnouncementResponseDTO> {

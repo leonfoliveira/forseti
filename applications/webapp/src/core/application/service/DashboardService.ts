@@ -22,9 +22,9 @@ export class DashboardService implements DashboardReader {
    */
   async getAdmin(contestId: string): Promise<AdminDashboardResponseDTO> {
     const [contest, leaderboard, submissions] = await Promise.all([
-      this.contestRepository.findFullContestById(contestId),
-      this.leaderboardRepository.findContestLeaderboard(contestId),
-      this.submissionRepository.findAllContestFullSubmissions(contestId),
+      this.contestRepository.findFullById(contestId),
+      this.leaderboardRepository.build(contestId),
+      this.submissionRepository.findAllFullForContest(contestId),
     ]);
 
     return {
@@ -45,9 +45,9 @@ export class DashboardService implements DashboardReader {
   ): Promise<ContestantDashboardResponseDTO> {
     const [contest, leaderboard, submissions, memberSubmissions] =
       await Promise.all([
-        this.contestRepository.findContestById(contestId),
-        this.leaderboardRepository.findContestLeaderboard(contestId),
-        this.submissionRepository.findAllContestSubmissions(contestId),
+        this.contestRepository.findById(contestId),
+        this.leaderboardRepository.build(contestId),
+        this.submissionRepository.findAllForContest(contestId),
         this.submissionRepository.findAllFullForMember(contestId),
       ]);
 
@@ -67,9 +67,9 @@ export class DashboardService implements DashboardReader {
    */
   async getGuest(contestId: string): Promise<GuestDashboardResponseDTO> {
     const [contest, leaderboard, submissions] = await Promise.all([
-      this.contestRepository.findContestById(contestId),
-      this.leaderboardRepository.findContestLeaderboard(contestId),
-      this.submissionRepository.findAllContestSubmissions(contestId),
+      this.contestRepository.findById(contestId),
+      this.leaderboardRepository.build(contestId),
+      this.submissionRepository.findAllForContest(contestId),
     ]);
 
     return {
@@ -87,9 +87,9 @@ export class DashboardService implements DashboardReader {
    */
   async getJudge(contestId: string): Promise<JudgeDashboardResponseDTO> {
     const [contest, leaderboard, submissions] = await Promise.all([
-      this.contestRepository.findContestById(contestId),
-      this.leaderboardRepository.findContestLeaderboard(contestId),
-      this.submissionRepository.findAllContestFullSubmissions(contestId),
+      this.contestRepository.findById(contestId),
+      this.leaderboardRepository.build(contestId),
+      this.submissionRepository.findAllFullForContest(contestId),
     ]);
 
     return {

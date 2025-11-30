@@ -7,6 +7,9 @@ type Props = {
   options?: DateTimeFormatOptions;
 };
 
+/**
+ * Formats a ISO timestamp into a localized date and time string.
+ */
 export function FormattedDateTime({ timestamp, options }: Props) {
   const date = new Date(timestamp);
   const intl = useIntl();

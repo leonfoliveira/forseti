@@ -9,6 +9,9 @@ type Props = ChipProps & {
   answer: SubmissionAnswer;
 };
 
+/**
+ * Displays a chip component styled according to the submission answer status.
+ */
 export function SubmissionAnswerChip({ answer, ...props }: Props) {
   const text = (
     <FormattedMessage {...globalMessages.submissionAnswer[answer]} />

@@ -10,11 +10,14 @@ const messages = defineMessages({
   },
 });
 
+/**
+ * Displays a forbidden access page.
+ */
 export default function ForbiddenPage() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-8xl font-bold font-mono" data-testid="code">
-        404
+        403
       </h1>
       <h2 className="text-md mt-5" data-testid="description">
         <FormattedMessage {...messages.description} />

@@ -19,9 +19,6 @@ export class AnnouncementService implements AnnouncementWritter {
     contestId: string,
     inputDTO: CreateAnnouncementRequestDTO,
   ): Promise<AnnouncementResponseDTO> {
-    return await this.announcementRepository.createAnnouncement(
-      contestId,
-      inputDTO,
-    );
+    return await this.announcementRepository.create(contestId, inputDTO);
   }
 }

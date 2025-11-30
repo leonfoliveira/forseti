@@ -41,6 +41,10 @@ const messages = defineMessages({
   },
 });
 
+/**
+ * Default layout for contest dashboard pages.
+ * Displays navigation tabs and wraps child components with the appropriate provider.
+ */
 export default function DashboardLayout({
   children,
 }: {

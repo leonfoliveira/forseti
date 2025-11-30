@@ -151,6 +151,10 @@ type Props = {
   isOpen: boolean;
 };
 
+/**
+ * Displays the contest settings tab within the admin dashboard.
+ * Allows administrators to configure contest details, languages, and control contest timing.
+ */
 export function ContestSettings({ contest, form, isOpen }: Props) {
   const contestStatus = useContestStatusWatcher();
   const forceStartState = useLoadableState();

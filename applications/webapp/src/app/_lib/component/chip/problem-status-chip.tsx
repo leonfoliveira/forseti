@@ -10,6 +10,13 @@ type Props = ChipProps & {
   wrongSubmissions: number;
 };
 
+/**
+ * Displays a chip component styled according to the problem resolution status.
+ * If the problem is accepted, it shows the time taken to solve it since the contest started,
+ * along with the number of wrong submissions if any.
+ * If the problem is not accepted but has wrong submissions, it shows the count of wrong submissions.
+ * If there are no submissions, it returns null (no chip displayed).
+ */
 export function ProblemStatusChip({
   isAccepted,
   acceptedAt,

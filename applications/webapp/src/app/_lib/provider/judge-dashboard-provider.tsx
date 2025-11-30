@@ -37,6 +37,9 @@ const messages = defineMessages({
   },
 });
 
+/**
+ * Provider component for fetching judge dashboard data and setting up listeners.
+ */
 export function JudgeDashboardProvider({
   children,
 }: {
