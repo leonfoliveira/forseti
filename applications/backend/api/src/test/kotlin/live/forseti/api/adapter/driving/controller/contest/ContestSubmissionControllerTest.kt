@@ -19,6 +19,7 @@ import live.forseti.core.port.driving.usecase.submission.FindSubmissionUseCase
 import live.forseti.core.port.driving.usecase.submission.UpdateSubmissionUseCase
 import live.forseti.core.port.dto.input.attachment.AttachmentInputDTO
 import live.forseti.core.port.dto.input.submission.CreateSubmissionInputDTO
+import live.forseti.core.port.dto.request.UpdateSubmissionAnswerRequestDTO
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
@@ -138,10 +139,12 @@ class ContestSubmissionControllerTest(
             val contestId = UUID.randomUUID()
             val id = UUID.randomUUID()
             val answer = Submission.Answer.ACCEPTED
+            val body = UpdateSubmissionAnswerRequestDTO(answer = answer)
 
             webMvc
-                .put("$basePath/{id}:update-answer?answer={answer}", contestId, id, answer) {
+                .put("$basePath/{id}:update-answer", contestId, id) {
                     contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(body)
                 }.andExpect {
                     status { isNoContent() }
                 }
@@ -153,10 +156,12 @@ class ContestSubmissionControllerTest(
             val contestId = UUID.randomUUID()
             val submissionId = UUID.randomUUID()
             val answer = Submission.Answer.ACCEPTED
+            val body = UpdateSubmissionAnswerRequestDTO(answer = answer)
 
             webMvc
-                .put("$basePath/{id}:update-answer-force?answer={answer}", contestId, submissionId, answer) {
+                .put("$basePath/{id}:update-answer-force", contestId, submissionId) {
                     contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(body)
                 }.andExpect {
                     status { isNoContent() }
                 }

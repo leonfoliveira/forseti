@@ -22,7 +22,7 @@ export class Actor {
   private contest = {} as { id: string };
 
   async signIn(password: string) {
-    const response = await this.apiClient.request(`/v1/root/sign-in`, {
+    const response = await this.apiClient.request(`/v1/auth:sign-in-as-root`, {
       method: "POST",
       body: JSON.stringify({
         password: password,

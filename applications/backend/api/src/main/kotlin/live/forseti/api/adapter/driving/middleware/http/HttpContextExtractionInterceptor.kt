@@ -24,8 +24,8 @@ class HttpContextExtractionInterceptor(
     companion object {
         val signInPaths =
             setOf(
-                Regex("/v1/root/sign-in"),
-                Regex("/v1/contests/[a-fA-F0-9-]+/sign-in"),
+                Regex("/api/v1/auth:sign-in-as-root"),
+                Regex("/api/v1/contests/[a-fA-F0-9-]+:sign-in"),
             )
     }
 

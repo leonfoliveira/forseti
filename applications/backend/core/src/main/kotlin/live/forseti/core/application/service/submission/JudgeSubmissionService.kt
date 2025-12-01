@@ -6,6 +6,7 @@ import live.forseti.core.port.driven.ApiClient
 import live.forseti.core.port.driven.SubmissionRunner
 import live.forseti.core.port.driven.repository.SubmissionRepository
 import live.forseti.core.port.driving.usecase.submission.JudgeSubmissionUseCase
+import live.forseti.core.port.dto.request.UpdateSubmissionAnswerRequestDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -56,7 +57,7 @@ class JudgeSubmissionService(
                 throw ex
             }
 
-        apiClient.updateSubmissionAnswer(contestId, submissionId, answer)
+        apiClient.updateSubmissionAnswer(contestId, submissionId, UpdateSubmissionAnswerRequestDTO(answer))
         logger.info("Submission judged")
     }
 }

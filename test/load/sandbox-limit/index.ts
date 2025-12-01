@@ -5,7 +5,7 @@ import { Cpp17Runner } from "./runner/cpp17-runner";
 import { Java21Runner } from "./runner/java21-runner";
 import { Python312Runner } from "./runner/python312-runner";
 
-const apiUrl = process.env.API_URL || "https://api.forseti.live";
+const apiUrl = process.env.API_URL || "https://api.forseti.live/api";
 const rootPassword = process.env.ROOT_PASSWORD as string;
 
 const apiClient = new ApiClient(apiUrl);

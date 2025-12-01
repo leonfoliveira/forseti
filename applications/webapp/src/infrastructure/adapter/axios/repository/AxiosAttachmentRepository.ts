@@ -15,15 +15,13 @@ export class AxiosAttachmentRepository implements AttachmentRepository {
     file: File,
   ): Promise<AttachmentResponseDTO> {
     const formData = new FormData();
+    formData.append("context", context);
     formData.append("file", file);
 
     const response = await this.axiosClient.post<AttachmentResponseDTO>(
       this.basePath(contestId),
       {
         data: formData,
-        params: {
-          context,
-        },
         headers: {
           "Content-Type": "multipart/form-data",
         },

@@ -13,6 +13,7 @@ import live.forseti.core.domain.exception.NotFoundException
 import live.forseti.core.port.driven.ApiClient
 import live.forseti.core.port.driven.SubmissionRunner
 import live.forseti.core.port.driven.repository.SubmissionRepository
+import live.forseti.core.port.dto.request.UpdateSubmissionAnswerRequestDTO
 import java.util.UUID
 
 class JudgeSubmissionServiceTest :
@@ -48,7 +49,7 @@ class JudgeSubmissionServiceTest :
 
                 verify { submissionRepository.findEntityById(submissionId) }
                 verify { submissionRunner.run(submission) }
-                verify { apiClient.updateSubmissionAnswer(contestId, submissionId, expectedAnswer) }
+                verify { apiClient.updateSubmissionAnswer(contestId, submissionId, UpdateSubmissionAnswerRequestDTO(expectedAnswer)) }
             }
 
             test("should throw NotFoundException when submission not found") {

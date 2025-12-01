@@ -29,7 +29,13 @@ export default function HomePage() {
         description={messages.pageDescription}
       />
       <div className="h-screen flex justify-center items-center">
-        <Image src="/icon.jpg" alt="Logo of forseti" width={300} height={300} />
+        <Image
+          src="/icon.png"
+          alt="Logo of forseti"
+          width={300}
+          height={300}
+          data-testid="logo-image"
+        />
       </div>
     </>
   );

@@ -1,6 +1,6 @@
 package live.forseti.core.port.driven
 
-import live.forseti.core.domain.entity.Submission
+import live.forseti.core.port.dto.request.UpdateSubmissionAnswerRequestDTO
 import java.util.UUID
 
 interface ApiClient {
@@ -9,11 +9,11 @@ interface ApiClient {
      *
      * @param contestId The ID of the contest.
      * @param submissionId The ID of the submission.
-     * @param answer The new answer for the submission.
+     * @param body The new answer for the submission.
      */
     fun updateSubmissionAnswer(
         contestId: UUID,
         submissionId: UUID,
-        answer: Submission.Answer,
+        body: UpdateSubmissionAnswerRequestDTO,
     )
 }

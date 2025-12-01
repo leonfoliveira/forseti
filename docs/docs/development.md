@@ -308,7 +308,7 @@ The ROOT user has bypass access to all endpoints and authorization checks, regar
 
 #### Root
 
-**[POST] /v1/root/sign-in**
+**[POST] /v1/auth:sign-in-as-root**
 
 Sign in as root
 
@@ -338,7 +338,7 @@ Sign in as root
 
 #### Session
 
-**[GET] /v1/session/me**
+**[GET] /v1/sessions/me**
 
 Get current session
 
@@ -358,7 +358,7 @@ Get current session
 }
 ```
 
-**[DELETE] /v1/session/me**
+**[DELETE] /v1/sessions/me**
 
 Delete current session (logout)
 
@@ -537,7 +537,7 @@ Find full contest by id (includes all members)
 }
 ```
 
-**[PUT] /v1/contests/{contestId}/start**
+**[PUT] /v1/contests/{contestId}:force-start**
 
 Force start a contest
 
@@ -555,7 +555,7 @@ Force start a contest
 }
 ```
 
-**[PUT] /v1/contests/{contestId}/end**
+**[PUT] /v1/contests/{contestId}:force-end**
 
 Force end a contest
 
@@ -581,7 +581,7 @@ Delete a contest
 
 **Response:** 204 No Content
 
-**[POST] /v1/contests/{contestId}/sign-in**
+**[POST] /v1/contests/{contestId}:sign-in**
 
 Sign in to a contest
 
@@ -643,13 +643,13 @@ Create an announcement
 
 #### Attachments
 
-**[POST] /v1/contests/{contestId}/attachments/{context}**
+**[POST] /v1/contests/{contestId}/attachments**
 
 Upload an attachment
 
 **Authorization:** All authenticated users
 
-**Path Parameters:**
+**Query Parameters:**
 
 - `context`: Attachment.Context (PROBLEM_DESCRIPTION, PROBLEM_TEST_CASES, SUBMISSION_CODE, EXECUTION_OUTPUT)
 
@@ -688,8 +688,8 @@ Create a clarification
 
 ```json
 {
-  "problemId": "uuid",
-  "parentId": "uuid",
+  "problemId": "uuid?",
+  "parentId": "uuid?",
   "text": "string max 255 characters"
 }
 ```
@@ -859,7 +859,7 @@ Find all contest full submissions
 ]
 ```
 
-**[GET] /v1/contests/{contestId}/submissions/full/members/me**
+**[GET] /v1/contests/{contestId}/submissions/members/me**
 
 Find all full submissions for current member
 
@@ -894,23 +894,31 @@ Find all full submissions for current member
 ]
 ```
 
-**[PUT] /v1/contests/{contestId}/submissions/{id}/answer/{answer}**
+**[PUT] /v1/contests/{contestId}/submissions/{submissionId}:update-answer**
 
 Update a submission answer
 
 **Authorization:** Autojudge
 
+**Query Parameters:**
+
+- `answer`: Submission.Answer
+
 **Response:** 204 No Content
 
-**[PUT] /v1/contests/{contestId}/submissions/{id}/answer/{answer}/force**
+**[PUT] /v1/contests/{contestId}/submissions/{submissionId}:update-answer-force**
 
 Force update a submission answer
 
 **Authorization:** Judge, Root, Admin
 
+**Query Parameters:**
+
+- `answer`: Submission.Answer
+
 **Response:** 204 No Content
 
-**[POST] /v1/contests/{contestId}/submissions/{id}/rerun**
+**[POST] /v1/contests/{contestId}/submissions/{submissionId}:rerun**
 
 Rerun a submission
 

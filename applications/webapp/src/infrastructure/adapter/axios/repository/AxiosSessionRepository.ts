@@ -7,11 +7,11 @@ export class AxiosSessionRepository implements SessionRepository {
 
   async getCurrent(): Promise<SessionResponseDTO> {
     const response =
-      await this.axiosClient.get<SessionResponseDTO>("/v1/session/me");
+      await this.axiosClient.get<SessionResponseDTO>("/v1/sessions/me");
     return response.data;
   }
 
   async deleteCurrent(): Promise<void> {
-    await this.axiosClient.delete("/v1/session/me");
+    await this.axiosClient.delete("/v1/sessions/me");
   }
 }

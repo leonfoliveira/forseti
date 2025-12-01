@@ -102,7 +102,7 @@ describe("AxiosSubmissionRepository", () => {
       expect(axiosClient.put).toHaveBeenCalledWith(
         `/v1/contests/${contestId}/submissions/${submissionId}:update-answer-force`,
         {
-          params: { answer },
+          data: { answer },
         },
       );
     });

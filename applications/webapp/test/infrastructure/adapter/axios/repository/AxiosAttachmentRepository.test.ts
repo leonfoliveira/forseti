@@ -28,7 +28,6 @@ describe("AxiosAttachmentRepository", () => {
         `/v1/contests/${contestId}/attachments`,
         {
           data: expect.any(FormData),
-          params: { context },
           headers: { "Content-Type": "multipart/form-data" },
         },
       );

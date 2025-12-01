@@ -12,13 +12,13 @@ import live.forseti.api.adapter.dto.response.submission.toFullResponseDTO
 import live.forseti.api.adapter.dto.response.submission.toPublicResponseDTO
 import live.forseti.api.adapter.util.Private
 import live.forseti.core.domain.entity.Member
-import live.forseti.core.domain.entity.Submission
 import live.forseti.core.domain.model.RequestContext
 import live.forseti.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import live.forseti.core.port.driving.usecase.submission.CreateSubmissionUseCase
 import live.forseti.core.port.driving.usecase.submission.FindSubmissionUseCase
 import live.forseti.core.port.driving.usecase.submission.UpdateSubmissionUseCase
 import live.forseti.core.port.dto.input.submission.CreateSubmissionInputDTO
+import live.forseti.core.port.dto.request.UpdateSubmissionAnswerRequestDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -203,10 +203,10 @@ class ContestSubmissionController(
     fun updateAnswer(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
-        @RequestParam answer: Submission.Answer,
+        @RequestBody body: UpdateSubmissionAnswerRequestDTO,
     ): ResponseEntity<Void> {
-        logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId:update-answer { answer: $answer }")
-        updateSubmissionUseCase.updateAnswer(submissionId, answer)
+        logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId:update-answer $body")
+        updateSubmissionUseCase.updateAnswer(submissionId, body.answer)
         return ResponseEntity.noContent().build()
     }
 
@@ -236,11 +236,11 @@ class ContestSubmissionController(
     fun updateAnswerForce(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
-        @RequestParam answer: Submission.Answer,
+        @RequestParam body: UpdateSubmissionAnswerRequestDTO,
     ): ResponseEntity<Void> {
-        logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId:update-answer-force { answer: $answer }")
+        logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId:update-answer-force $body")
         authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
-        updateSubmissionUseCase.updateAnswer(submissionId, answer, force = true)
+        updateSubmissionUseCase.updateAnswer(submissionId, body.answer, force = true)
         return ResponseEntity.noContent().build()
     }
 

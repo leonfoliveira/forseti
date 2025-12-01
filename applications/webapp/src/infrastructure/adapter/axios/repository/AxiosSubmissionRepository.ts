@@ -59,7 +59,7 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     await this.axiosClient.put<void>(
       `${this.basePath(contestId)}/${submissionId}:update-answer-force`,
       {
-        params: { answer },
+        data: { answer },
       },
     );
   }
