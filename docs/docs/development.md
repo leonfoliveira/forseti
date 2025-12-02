@@ -18,19 +18,107 @@ Next.js server responsible for serving the user interface as static content.
 
 JVM service that provides an HTTP interface to the platform's use cases and business rules. It also exposes a WebSocket endpoint that emits contest updates in real-time. Created submissions are enqueued in the `submission-queue`. The service consumes messages from the `submission-failed-queue` to emit failures through its WebSocket connection.
 
+#### WebSocket Fanout Mechanism
+
+Since the API service runs as multiple replicas in a distributed environment, special handling is required to ensure all connected clients receive WebSocket messages regardless of which replica they're connected to. The platform uses a fanout mechanism via RabbitMQ to achieve this:
+
+1. **Message Production**: When an event occurs (new submission, announcement, etc.), the API service uses `WebSocketFanoutProducer` to send the message to a RabbitMQ fanout exchange (`websocket-exchange`)
+
+2. **Fanout Distribution**: Each API replica has a `StompWebSocketFanoutRabbitMQConsumer` that automatically creates a temporary, exclusive queue bound to the fanout exchange. RabbitMQ's fanout exchange broadcasts every message to all bound queues
+
+3. **Local Emission**: Each replica receives the fanout message and forwards it to its local WebSocket clients via the STOMP messaging template
+
+This ensures that all connected clients receive real-time updates regardless of which API replica generated the original event or which replica they're connected to for WebSocket communication.
+
 ### Autojudge
 
 JVM service that consumes messages from the `submission-queue`, executes submission code in isolated sandbox environments, judges the results, and sends them back to the API.
 
 This service is automatically scaled by the `autojudge-autoscaler` based on the number of messages in the `submission-queue`.
 
+#### Docker Execution Environment
+
+The autojudge service uses Docker containers to execute submission code in a secure, isolated environment. The execution process is handled by the `DockerSubmissionRunner`:
+
+##### Security Features
+
+Docker containers are created with strict security restrictions:
+
+- **Network isolation**: `--network=none` prevents any network access
+- **Capability dropping**: `--cap-drop=ALL` removes all Linux capabilities
+- **Privilege restrictions**: `--security-opt=no-new-privileges` prevents privilege escalation
+- **Process limits**: `--pids-limit=64` restricts the number of processes
+- **Resource limits**: CPU and memory are strictly controlled based on problem constraints
+
+##### Execution Flow
+
+1. **Container Setup**: Creates a secure Docker container using language-specific images (e.g., `forseti-sb-cpp17`, `forseti-sb-java21`, `forseti-sb-python312`)
+
+2. **Code Preparation**: Downloads submission code from MinIO storage and copies it to the container's `/app` directory
+
+3. **Compilation** (if needed): For compiled languages like C++ and Java, runs compilation commands inside the container:
+   - C++: `g++ -o a.out {file} -O2 -std=c++17 -DONLINE_JUDGE`
+   - Java: Compilation with appropriate flags and classpath setup
+
+4. **Test Case Execution**: Iterates through test cases from the problem's CSV file:
+   - Executes code with input via stdin
+   - Enforces time and memory limits using `timeout` command
+   - Captures output and compares with expected results
+   - Stops on first failure (fail-fast approach)
+
+5. **Result Evaluation**: Determines final answer based on execution results:
+   - `ACCEPTED`: All test cases passed
+   - `WRONG_ANSWER`: Output doesn't match expected result
+   - `TIME_LIMIT_EXCEEDED`: Execution exceeded time limit
+   - `MEMORY_LIMIT_EXCEEDED`: Process killed due to memory limit (OOM)
+   - `RUNTIME_ERROR`: Unexpected execution error
+   - `COMPILATION_ERROR`: Code failed to compile
+
+6. **Cleanup**: Container is automatically killed and removed after execution
+
+##### Language Support
+
+Each supported language has its own configuration defining:
+- Docker image to use
+- Compilation command (if applicable)
+- Execution command
+- Runtime environment setup
+
+This approach ensures consistent, secure execution while supporting multiple programming languages with their specific requirements.
+
 ### RabbitMQ
 
-Message broker that manages several queues:
+Message broker that manages queues, exchanges, and routing for asynchronous communication between services.
 
-- **submission-queue**: Queue of submissions waiting to be executed by the autojudge.
-- **submission-failed-queue**: Queue of submissions that failed to be judged. Acts as the Dead Letter Queue (DLQ) for `submission-queue`.
-- **submission-dlq**: DLQ for `submission-failed-queue`.
+#### Exchanges
+
+- **submission-exchange** (direct): Routes submission messages to the autojudge service
+- **submission-failed-exchange** (direct): Handles failed submissions as dead letter exchange for submission-queue
+- **submission-dlq-exchange** (direct): Dead letter exchange for submission-failed-queue
+- **websocket-exchange** (fanout): Broadcasts WebSocket messages to all API replicas
+
+#### Queues and Routing
+
+- **submission-queue**: 
+  - Queue of submissions waiting to be executed by the autojudge
+  - Bound to `submission-exchange` with routing key `submission-routing-key`
+  - Dead letter exchange: `submission-failed-exchange` (messages go here on failure/rejection)
+
+- **submission-failed-queue**: 
+  - Queue of submissions that failed to be judged
+  - Bound to `submission-failed-exchange` with routing key `submission-failed-routing-key`
+  - Acts as the Dead Letter Queue (DLQ) for `submission-queue`
+  - Dead letter exchange: `submission-dlq-exchange` (messages go here on retry exhaustion)
+
+- **submission-dlq**: 
+  - Final dead letter queue for submissions that cannot be processed
+  - Bound to `submission-dlq-exchange` with routing key `submission-dlq-routing-key`
+  - Messages here require manual intervention
+
+- **WebSocket fanout queues**: 
+  - Temporary, exclusive, auto-delete queues created by each API replica
+  - Bound to `websocket-exchange` (fanout type ensures all replicas receive messages)
+  - No routing key needed due to fanout exchange behavior
 
 ### MinIO
 
@@ -258,6 +346,7 @@ Represents an authentication session for a member.
 | createdAt | timestamp  | Timestamp of creation                | now()         |
 | updatedAt | timestamp  | Timestamp of last update             | now()         |
 | deletedAt | timestamp? | Timestamp of deletion (soft delete)  | null          |
+| csrfToken | string     | CSRF token for the session           |               |
 | member    | Member     | Member to which this session belongs |               |
 | expiresAt | timestamp  | Timestamp when the session expires   |               |
 
@@ -274,6 +363,7 @@ Authorization is stateful using a cookie-based session mechanism:
 - Cookie `SameSite` attribute is set to `None` (with `Secure`) for production or `Lax` for development
 - Sessions have an expiration time (`expiresAt`) that is validated on each request
 - The `HttpContextExtractionFilter` extracts the session from cookies and validates it before processing requests
+- All state-changing requests require a CSRF token to be sent in the `X-CSRF-Token` header, matching the token stored in the session
 
 #### Endpoint Protection
 
@@ -305,6 +395,8 @@ These checks are applied dynamically based on the endpoint's business logic and 
 The ROOT user has bypass access to all endpoints and authorization checks, regardless of `@Private` annotations or custom filters.
 
 ### HTTP Endpoints
+
+All endpoints are prefixed with `/api`. This is important for Traefik to expose publicly only required paths.
 
 #### Root
 
