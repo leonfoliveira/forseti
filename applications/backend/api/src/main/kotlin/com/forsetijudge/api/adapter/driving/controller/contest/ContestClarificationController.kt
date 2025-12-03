@@ -35,7 +35,7 @@ class ContestClarificationController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping("/contests/{contestId}/clarifications")
-    @Private(Member.Type.CONTESTANT, Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
+    @Private(Member.Type.CONTESTANT, Member.Type.JUDGE, Member.Type.ADMIN)
     @Operation(summary = "Create a clarification")
     @ApiResponses(
         value = [

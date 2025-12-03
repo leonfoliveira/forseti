@@ -1,0 +1,11 @@
+meta {
+  name: sessions
+}
+
+auth {
+  mode: inherit
+}
+
+vars:pre-request {
+  base_url: {{api_url}}/v1/sessions
+}

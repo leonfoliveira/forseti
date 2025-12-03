@@ -75,7 +75,7 @@ script:pre-request {
   async function uploadFile(file, context) {  
     bru.setVar("file", file)  
     bru.setVar("context", context)
-    const response = await bru.runRequest("contest/attachment/upload_attachment")
+    const response = await bru.runRequest("contests/attachment/upload_attachment")
     console.log(response)
     return response.data
   }

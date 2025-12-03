@@ -5,9 +5,13 @@ meta {
 }
 
 post {
-  url: {{base_url}}/{{context}}
+  url: {{base_url}}?context={{context}}
   body: multipartForm
   auth: inherit
+}
+
+params:query {
+  context: {{context}}
 }
 
 headers {

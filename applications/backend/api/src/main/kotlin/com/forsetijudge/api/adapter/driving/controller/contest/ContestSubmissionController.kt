@@ -41,7 +41,7 @@ class ContestSubmissionController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping("/contests/{contestId}/submissions")
-    @Private(Member.Type.CONTESTANT, Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
+    @Private(Member.Type.CONTESTANT)
     @Operation(summary = "Create a submission")
     @ApiResponses(
         value = [
@@ -85,7 +85,6 @@ class ContestSubmissionController(
     }
 
     @GetMapping("/contests/{contestId}/submissions")
-    @Private(Member.Type.CONTESTANT, Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
     @Operation(summary = "Find all submissions")
     @ApiResponses(
         value = [
@@ -112,7 +111,7 @@ class ContestSubmissionController(
     }
 
     @GetMapping("/contests/{contestId}/submissions/full")
-    @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
+    @Private(Member.Type.JUDGE, Member.Type.ADMIN)
     @Operation(summary = "Find all contest full submissions")
     @ApiResponses(
         value = [
@@ -210,7 +209,7 @@ class ContestSubmissionController(
     }
 
     @PutMapping("/contests/{contestId}/submissions/{submissionId}:update-answer-force")
-    @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
+    @Private(Member.Type.JUDGE, Member.Type.ADMIN)
     @Operation(summary = "Force update a submission answer")
     @ApiResponses(
         value = [
@@ -244,7 +243,7 @@ class ContestSubmissionController(
     }
 
     @PostMapping("/contests/{contestId}/submissions/{submissionId}:rerun")
-    @Private(Member.Type.JUDGE, Member.Type.ROOT, Member.Type.ADMIN)
+    @Private(Member.Type.JUDGE, Member.Type.ADMIN)
     @Operation(summary = "Rerun a submission")
     @ApiResponses(
         value = [

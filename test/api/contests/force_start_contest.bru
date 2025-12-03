@@ -1,11 +1,11 @@
 meta {
-  name: find_all_full_submissions_for_member
+  name: force_start_contest
   type: http
-  seq: 4
+  seq: 11
 }
 
-get {
-  url: {{base_url}}/full/members/me
+put {
+  url: {{base_url}}/{{contest_id}}:force-start
   body: none
   auth: inherit
 }

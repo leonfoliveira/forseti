@@ -5,13 +5,19 @@ meta {
 }
 
 put {
-  url: {{base_url}}/{{submission_id}}/answer/{{answer}}/force
-  body: none
+  url: {{base_url}}/{{submission_id}}:update-answer-force
+  body: json
   auth: inherit
 }
 
 headers {
   x-csrf-token: {{csrf_token}}
+}
+
+body:json {
+  {
+    "answer": "{{Submission.Answer.ACCEPTED}}"
+  }
 }
 
 vars:pre-request {
