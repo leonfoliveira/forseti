@@ -7,7 +7,7 @@ spring:
   datasource:
     url: forseti
     username: forseti
-    password: forseti
+    password: forsetijudge
     driver-class-name: org.postgresql.Driver
   flyway:
     enabled: true
@@ -17,7 +17,7 @@ spring:
     host: localhost
     port: 5672
     username: forseti
-    password: forseti
+    password: forsetijudge
     virtual-host: /
     exchange:
       submission-exchange: submission-exchange
@@ -40,7 +40,7 @@ jpa:
 minio:
   endpoint: http://localhost:9000
   access-key: forseti
-  secret-key: forseti8
+  secret-key: forsetijudge
   bucket: forseti
 security:
   session:
@@ -48,4 +48,4 @@ security:
     root-expiration: 12h
     autojudge-expiration: 10m
   root:
-    password: forseti
+    password: forsetijudge
