@@ -2,8 +2,8 @@ import { AxiosResponse } from "axios";
 import { mock } from "jest-mock-extended";
 import { v4 as uuidv4 } from "uuid";
 
-import { AxiosAnnouncementRepository } from "@/infrastructure/adapter/axios/repository/AxiosAnnouncementRepository";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
+import { AxiosAnnouncementRepository } from "@/infrastructure/adapter/axios/repository/AxiosAnnouncementRepository";
 import { MockCreateAnnouncementRequestDTO } from "@/test/mock/request/MockCreateAnnouncementRequestDTO";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 

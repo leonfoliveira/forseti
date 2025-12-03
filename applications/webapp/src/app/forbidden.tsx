@@ -1,27 +1,15 @@
-"use client";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
-import { defineMessages } from "@/i18n/message";
-
-const messages = defineMessages({
-  description: {
-    id: "app.forbidden.description",
-    defaultMessage: "You do not have permission to access this page.",
-  },
-});
+import { routes } from "@/config/routes";
 
 /**
- * Displays a forbidden access page.
+ * Handle forbidden errors on server-side rendering by redirecting to the 403 error page.
  */
-export default function ForbiddenPage() {
-  return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-8xl font-bold font-mono" data-testid="code">
-        403
-      </h1>
-      <h2 className="text-md mt-5" data-testid="description">
-        <FormattedMessage {...messages.description} />
-      </h2>
-    </div>
-  );
+export default async function ForbiddenPage() {
+  const headersList = await headers();
+  const referer = headersList.get("referer");
+  const fromPath = referer ? new URL(referer).pathname : "/";
+
+  return redirect(`${routes.FORBIDDEN}?from=${encodeURIComponent(fromPath)}`);
 }

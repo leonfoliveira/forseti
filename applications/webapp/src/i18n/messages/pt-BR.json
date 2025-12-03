@@ -94,11 +94,21 @@
       "page-title": "Forseti",
       "page-description": "Aplicação Forseti."
     },
-    "not-found": {
-      "description": "A página que você está procurando não foi encontrada."
-    },
-    "forbidden": {
-      "description": "Você não tem permissão para acessar esta página."
+    "error": {
+      "403": {
+        "description": "Você não tem permissão para acessar esta página."
+      },
+      "404": {
+        "description": "A página que você está procurando não foi encontrada."
+      },
+      "500": {
+        "description": "Ocorreu um erro interno no servidor.",
+        "reload": "Tentar novamente"
+      },
+      "503": {
+        "description": "O serviço está temporariamente indisponível. Por favor, tente novamente mais tarde.",
+        "reload": "Tentar novamente"
+      }
     },
     "[slug]": {
       "sign-in": {

@@ -1,27 +1,15 @@
-"use client";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
-import { defineMessages } from "@/i18n/message";
-
-const messages = defineMessages({
-  description: {
-    id: "app.not-found.description",
-    defaultMessage: "The page you are looking for could not be found.",
-  },
-});
+import { routes } from "@/config/routes";
 
 /**
- * Displays a not found page for unmatched routes.
+ * Handle not found errors on server-side rendering by redirecting to the 404 error page.
  */
-export default function NotFoundPage() {
-  return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-8xl font-bold font-mono" data-testid="code">
-        404
-      </h1>
-      <h2 className="text-md mt-5" data-testid="description">
-        <FormattedMessage {...messages.description} />
-      </h2>
-    </div>
-  );
+export default async function NotFoundPage() {
+  const headersList = await headers();
+  const referer = headersList.get("referer");
+  const fromPath = referer ? new URL(referer).pathname : "/";
+
+  return redirect(`${routes.NOT_FOUND}?from=${encodeURIComponent(fromPath)}`);
 }

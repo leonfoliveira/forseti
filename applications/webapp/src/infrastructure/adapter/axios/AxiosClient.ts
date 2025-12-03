@@ -5,6 +5,7 @@ import { ConflictException } from "@/core/domain/exception/ConflictException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { ServerException } from "@/core/domain/exception/ServerException";
+import { ServiceUnavailableException } from "@/core/domain/exception/ServiceUnavailableException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 
 export abstract class AxiosClient {
@@ -119,6 +120,8 @@ export abstract class AxiosClient {
             throw new NotFoundException(message);
           case 409:
             throw new ConflictException(message);
+          case 503:
+            throw new ServiceUnavailableException(message);
           default:
             throw new ServerException(message);
         }
