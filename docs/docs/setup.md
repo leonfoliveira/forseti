@@ -96,7 +96,12 @@ Configure environment variables in `stack.yaml` to customize service behavior. V
 |                          | RABBITMQ_SUBMISSION_EXCHANGE       | submission-exchange                                                                 | Exchange name for submissions                         |
 |                          | RABBITMQ_SUBMISSION_ROUTING_KEY    | submission-routing-key                                                              | Routing key for submissions                           |
 |                          | RABBITMQ_SUBMISSION_FAILED_QUEUE   | submission-failed-queue                                                             | Queue name for failed submissions                     |
+|                          | RABBITMQ_WEBSOCKET_EXCHANGE        | websocket-exchange                                                                  | Exchange name for WebSocket messages                  |
 |                          | ROOT_PASSWORD_FILE                 | /run/secrets/root_password                                                          | File containing root user password                    |
+|                          | OTEL_EXPORTER_OTLP_TRACES_ENDPOINT | http://alloy:4317                                                                   | OpenTelemetry traces exporter endpoint                |
+|                          | OTEL_EXPORTER_OTLP_PROTOCOL        | grpc                                                                                | OpenTelemetry exporter protocol                       |
+|                          | OTEL_LOGS_EXPORTER                 | none                                                                                | OpenTelemetry logs exporter                           |
+|                          | OTEL_METRICS_EXPORTER              | none                                                                                | OpenTelemetry metrics exporter                        |
 |                          | WEBAPP_PUBLIC_URL                  | https://forsetijudge.com                                                            | Public URL of the web application                     |
 | **autojudge**            | API_URL                            | http://api:8080                                                                     | Internal API service URL                              |
 |                          | DB_PASSWORD_FILE                   | /run/secrets/db_password                                                            | File containing the database password                 |
@@ -118,7 +123,12 @@ Configure environment variables in `stack.yaml` to customize service behavior. V
 |                          | RABBITMQ_SUBMISSION_EXCHANGE       | submission-exchange                                                                 | Exchange name for submissions                         |
 |                          | RABBITMQ_SUBMISSION_ROUTING_KEY    | submission-routing-key                                                              | Routing key for submissions                           |
 |                          | RABBITMQ_SUBMISSION_FAILED_QUEUE   | submission-failed-queue                                                             | Queue name for failed submissions                     |
+|                          | RABBITMQ_WEBSOCKET_EXCHANGE        | websocket-exchange                                                                  | Exchange name for WebSocket messages                  |
 |                          | ROOT_PASSWORD_FILE                 | /run/secrets/root_password                                                          | File containing root user password                    |
+|                          | OTEL_EXPORTER_OTLP_TRACES_ENDPOINT | http://alloy:4317                                                                   | OpenTelemetry traces exporter endpoint                |
+|                          | OTEL_EXPORTER_OTLP_PROTOCOL        | grpc                                                                                | OpenTelemetry exporter protocol                       |
+|                          | OTEL_LOGS_EXPORTER                 | none                                                                                | OpenTelemetry logs exporter                           |
+|                          | OTEL_METRICS_EXPORTER              | none                                                                                | OpenTelemetry metrics exporter                        |
 | **autojudge-autoscaler** | COOLDOWN                           | 60                                                                                  | Cooldown period in seconds between scaling operations |
 |                          | INTERVAL                           | 10                                                                                  | Interval in seconds for checking queue metrics        |
 |                          | MESSAGES_PER_REPLICA               | 5                                                                                   | Target number of messages per replica for scaling     |
@@ -139,6 +149,7 @@ Configure environment variables in `stack.yaml` to customize service behavior. V
 |                          | GF_SECURITY_ADMIN_PASSWORD\_\_FILE | /run/secrets/root_password                                                          | File containing Grafana admin password                |
 |                          | LOKI_URL                           | http://loki:3100                                                                    | Loki logging service URL                              |
 |                          | PROMETHEUS_URL                     | http://prometheus:9090                                                              | Prometheus metrics service URL                        |
+|                          | TEMPO_URL                          | http://tempo:3200                                                                   | Tempo tracing service URL                             |
 | **migration**            | FLYWAY_URL                         | jdbc:postgresql://postgres:5432/forseti                                             | Flyway JDBC URL for database migrations               |
 |                          | FLYWAY_USER                        | forseti                                                                             | Flyway database username                              |
 | **minio**                | MINIO_ROOT_USER                    | forseti                                                                             | MinIO root username                                   |
@@ -153,6 +164,7 @@ Configure environment variables in `stack.yaml` to customize service behavior. V
 |                          | RABBITMQ_PASSWORD_FILE             | /run/secrets/rabbitmq_password                                                      | File containing RabbitMQ password                     |
 | **webapp**               | API_INTERNAL_URL                   | http://api:8080                                                                     | Internal API URL for server-side requests             |
 |                          | API_PUBLIC_URL                     | https://api.forsetijudge.com                                                        | Public API URL for client-side requests               |
+|                          | WS_PUBLIC_URL                      | wss://ws.forsetijudge.com                                                           | Public WebSocket URL for real-time features          |
 |                          | LOCALE                             | en-US                                                                               | Application locale/language                           |
 
 ### Important Configuration Notes
@@ -166,7 +178,6 @@ Configure environment variables in `stack.yaml` to customize service behavior. V
 
 - `SESSION_EXPIRATION`: Balance between user convenience and security
 - `SESSION_ROOT_EXPIRATION`: Should be shorter than regular sessions for admin accounts
-- `SESSION_AUTOJUDGE_EXPIRATION`: Keep short as autojudge authenticates frequently
 
 **AutoJudge Scaling:**
 
@@ -218,6 +229,7 @@ Add the following entries to the hosts file on each client machine to resolve th
 ```
 <master-ip>  forsetijudge.com
 <master-ip>  api.forsetijudge.com
+<master-ip>  ws.forsetijudge.com
 <master-ip>  grafana.forsetijudge.com
 ```
 
@@ -331,9 +343,10 @@ Grafana provides real-time monitoring and visualization of system metrics, logs,
 
 #### Pre-configured Data Sources
 
-- **Prometheus**: System and application metrics
 - **Loki**: Centralized logging from all services
 - **PostgreSQL**: Direct database queries for custom analytics
+- **Prometheus**: System and application metrics
+- **Tempo**: Distributed tracing for request performance analysis
 
 #### Default Dashboard: System Overview
 
