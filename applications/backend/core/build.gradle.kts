@@ -67,6 +67,7 @@ kover {
             excludes {
                 annotatedBy(
                     "org.springframework.context.annotation.Configuration",
+                    "com.forsetijudge.core.config.SkipCoverage",
                 )
             }
         }

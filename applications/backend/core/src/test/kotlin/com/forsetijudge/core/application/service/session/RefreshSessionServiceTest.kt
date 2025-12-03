@@ -1,0 +1,100 @@
+package com.forsetijudge.core.application.service.session
+
+import com.forsetijudge.core.application.service.member.FindMemberService
+import com.forsetijudge.core.domain.entity.MemberMockBuilder
+import com.forsetijudge.core.domain.entity.SessionMockBuilder
+import com.forsetijudge.core.domain.model.RequestContext
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import java.time.OffsetDateTime
+import java.util.UUID
+
+class RefreshSessionServiceTest :
+    FunSpec({
+        val createSessionService = mockk<CreateSessionService>(relaxed = true)
+        val findMemberService = mockk<FindMemberService>(relaxed = true)
+
+        val sut =
+            RefreshSessionService(
+                createSessionService = createSessionService,
+                findMemberService = findMemberService,
+            )
+
+        beforeEach {
+            clearAllMocks()
+        }
+
+        context("refresh") {
+            val memberId = UUID.randomUUID()
+            val member = MemberMockBuilder.build(id = memberId)
+
+            test("should create new session when no current session exists") {
+                RequestContext.getContext().session = null
+                every { findMemberService.findById(memberId) } returns member
+                val newSession = SessionMockBuilder.build(member = member)
+                every { createSessionService.create(member) } returns newSession
+
+                val result = sut.refresh(memberId)
+
+                result shouldBe newSession
+                verify { findMemberService.findById(memberId) }
+                verify { createSessionService.create(member) }
+            }
+
+            test("should create new session when current session is about to expire") {
+                val expiringSession =
+                    SessionMockBuilder.build(
+                        member = member,
+                        expiresAt = OffsetDateTime.now().plusSeconds(30),
+                    )
+                RequestContext.getContext().session = expiringSession
+                every { findMemberService.findById(memberId) } returns member
+                val newSession = SessionMockBuilder.build(member = member)
+                every { createSessionService.create(member) } returns newSession
+
+                val result = sut.refresh(memberId)
+
+                result shouldBe newSession
+                verify { findMemberService.findById(memberId) }
+                verify { createSessionService.create(member) }
+            }
+
+            test("should create new session when current session belongs to different member") {
+                val differentMember = MemberMockBuilder.build(id = UUID.randomUUID())
+                val sessionForDifferentMember =
+                    SessionMockBuilder.build(
+                        member = differentMember,
+                        expiresAt = OffsetDateTime.now().plusHours(1),
+                    )
+                RequestContext.getContext().session = sessionForDifferentMember
+                every { findMemberService.findById(memberId) } returns member
+                val newSession = SessionMockBuilder.build(member = member)
+                every { createSessionService.create(member) } returns newSession
+
+                val result = sut.refresh(memberId)
+
+                result shouldBe newSession
+                verify { findMemberService.findById(memberId) }
+                verify { createSessionService.create(member) }
+            }
+
+            test("should return current session when it is still valid and belongs to same member") {
+                val validSession =
+                    SessionMockBuilder.build(
+                        member = member,
+                        expiresAt = OffsetDateTime.now().plusHours(1),
+                    )
+                RequestContext.getContext().session = validSession
+
+                val result = sut.refresh(memberId)
+
+                result shouldBe validSession
+                verify(exactly = 0) { findMemberService.findById(any()) }
+                verify(exactly = 0) { createSessionService.create(any()) }
+            }
+        }
+    })
