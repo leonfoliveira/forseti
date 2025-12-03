@@ -3,7 +3,7 @@ import { ApiClient } from "../util/api";
 import { Actor } from "../util/actor";
 import { Runner } from "./runner";
 
-const apiUrl = process.env.API_URL || "https://api.forseti.live/api";
+const apiUrl = process.env.API_URL || "https://api.forsetijudge.com/api";
 const rootPassword = process.env.ROOT_PASSWORD as string;
 const submissionCount = parseInt(process.env.SUBMISSION_COUNT || "10", 10);
 const batchSize = 15;

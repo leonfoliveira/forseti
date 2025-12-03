@@ -76,7 +76,7 @@ Configure environment variables in `stack.yaml` to customize service behavior. V
 
 | **service**              | **variable**                       | **default**                                                                         | **description**                                       |
 | ------------------------ | ---------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| **api**                  | COOKIE_DOMAIN                      | .forseti.live                                                                       | Domain of the session_id cookie                       |
+| **api**                  | COOKIE_DOMAIN                      | .forsetijudge.com                                                                   | Domain of the session_id cookie                       |
 |                          | DB_PASSWORD_FILE                   | /run/secrets/db_password                                                            | File containing the database password                 |
 |                          | DB_URL                             | jdbc:postgresql://postgres:5432/forseti                                             | JDBC URL for PostgreSQL database connection           |
 |                          | DB_USER                            | forseti                                                                             | Database username                                     |
@@ -97,7 +97,7 @@ Configure environment variables in `stack.yaml` to customize service behavior. V
 |                          | RABBITMQ_SUBMISSION_ROUTING_KEY    | submission-routing-key                                                              | Routing key for submissions                           |
 |                          | RABBITMQ_SUBMISSION_FAILED_QUEUE   | submission-failed-queue                                                             | Queue name for failed submissions                     |
 |                          | ROOT_PASSWORD_FILE                 | /run/secrets/root_password                                                          | File containing root user password                    |
-|                          | WEBAPP_PUBLIC_URL                  | https://forseti.live                                                                | Public URL of the web application                     |
+|                          | WEBAPP_PUBLIC_URL                  | https://forsetijudge.com                                                            | Public URL of the web application                     |
 | **autojudge**            | API_URL                            | http://api:8080                                                                     | Internal API service URL                              |
 |                          | DB_PASSWORD_FILE                   | /run/secrets/db_password                                                            | File containing the database password                 |
 |                          | DB_URL                             | jdbc:postgresql://postgres:5432/forseti                                             | JDBC URL for PostgreSQL database connection           |
@@ -152,7 +152,7 @@ Configure environment variables in `stack.yaml` to customize service behavior. V
 | **rabbitmq**             | RABBITMQ_USER                      | forseti                                                                             | RabbitMQ username                                     |
 |                          | RABBITMQ_PASSWORD_FILE             | /run/secrets/rabbitmq_password                                                      | File containing RabbitMQ password                     |
 | **webapp**               | API_INTERNAL_URL                   | http://api:8080                                                                     | Internal API URL for server-side requests             |
-|                          | API_PUBLIC_URL                     | https://api.forseti.live                                                            | Public API URL for client-side requests               |
+|                          | API_PUBLIC_URL                     | https://api.forsetijudge.com                                                        | Public API URL for client-side requests               |
 |                          | LOCALE                             | en-US                                                                               | Application locale/language                           |
 
 ### Important Configuration Notes
@@ -216,12 +216,12 @@ The self-signed TLS certificates generated during installation need to be truste
 Add the following entries to the hosts file on each client machine to resolve the Forseti Judge platform domains to the master machine's IP address:
 
 ```
-<master-ip>  forseti.live
-<master-ip>  api.forseti.live
-<master-ip>  grafana.forseti.live
+<master-ip>  forsetijudge.com
+<master-ip>  api.forsetijudge.com
+<master-ip>  grafana.forsetijudge.com
 ```
 
-> **Note:** Replace `<master-ip>` with the actual IP address of the master machine. The `grafana.forseti.live` entry is optional and only needed if you want to access the monitoring dashboard from client machines.
+> **Note:** Replace `<master-ip>` with the actual IP address of the master machine. The `grafana.forsetijudge.com` entry is optional and only needed if you want to access the monitoring dashboard from client machines.
 
 **Hosts File Locations:**
 
@@ -321,7 +321,7 @@ Backups are stored in the `backups/` directory and include:
 
 ### Grafana
 
-**Access:** `https://grafana.forseti.live`
+**Access:** `https://grafana.forsetijudge.com`
 
 **Credentials:** `root` / your root password
 

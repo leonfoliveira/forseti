@@ -306,5 +306,5 @@ cd deployment/production
 **Debug Production:**
 
 - Logs: `docker service logs forseti_<service> --follow`
-- Grafana: `https://grafana.forseti.live` (dashboards: "System overview")
+- Grafana: `https://grafana.forsetijudge.com` (dashboards: "System overview")
 - Traces: Tempo integrated via Alloy (`OTEL_EXPORTER_OTLP_TRACES_ENDPOINT`)

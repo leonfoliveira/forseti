@@ -56,7 +56,7 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.api-ratelimit.ratelimit.average=20
         - traefik.http.middlewares.api-ratelimit.ratelimit.burst=40
-        - traefik.http.routers.api.rule=Host(`api.forseti.live`) && (PathPrefix(`/api`) || PathPrefix(`/ws`))
+        - traefik.http.routers.api.rule=Host(`api.forsetijudge.com`) && (PathPrefix(`/api`) || PathPrefix(`/ws`))
         - traefik.http.routers.api.entrypoints=websecure
         - traefik.http.routers.api.tls=true
         - traefik.http.routers.api.middlewares=api-ratelimit
@@ -81,7 +81,7 @@ services:
       update_config:
         order: start-first
     environment:
-      COOKIE_DOMAIN: .forseti.live
+      COOKIE_DOMAIN: .forsetijudge.com
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
@@ -111,7 +111,7 @@ services:
       OTEL_SERVICE_NAME: api
       SPRING_PROFILES_ACTIVE: production
       VERSION: ${VERSION:-latest}
-      WEBAPP_PUBLIC_URL: https://forseti.live
+      WEBAPP_PUBLIC_URL: https://forsetijudge.com
     healthcheck:
       test:
         - CMD-SHELL
@@ -294,7 +294,7 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.grafana-ratelimit.ratelimit.average=100
         - traefik.http.middlewares.grafana-ratelimit.ratelimit.burst=200
-        - traefik.http.routers.grafana.rule=Host(`grafana.forseti.live`)
+        - traefik.http.routers.grafana.rule=Host(`grafana.forsetijudge.com`)
         - traefik.http.routers.grafana.entrypoints=websecure
         - traefik.http.routers.grafana.tls=true
         - traefik.http.routers.grafana.middlewares=grafana-ratelimit
@@ -804,7 +804,7 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.webapp-ratelimit.ratelimit.average=100
         - traefik.http.middlewares.webapp-ratelimit.ratelimit.burst=200
-        - traefik.http.routers.webapp.rule=Host(`forseti.live`)
+        - traefik.http.routers.webapp.rule=Host(`forsetijudge.com`)
         - traefik.http.routers.webapp.entrypoints=websecure
         - traefik.http.routers.webapp.tls=true
         - traefik.http.routers.webapp.middlewares=webapp-ratelimit
@@ -825,8 +825,8 @@ services:
         order: start-first
     environment:
       API_INTERNAL_URL: http://api:8080/api
-      API_PUBLIC_URL: https://api.forseti.live/api
-      WS_PUBLIC_URL: https://api.forseti.live/ws
+      API_PUBLIC_URL: https://api.forsetijudge.com/api
+      WS_PUBLIC_URL: https://api.forsetijudge.com/ws
       LOCALE: en-US
       NEXT_PUBLIC_VERSION: ${VERSION:-latest}
       NODE_ENV: production
