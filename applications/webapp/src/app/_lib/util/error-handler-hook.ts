@@ -24,8 +24,6 @@ export function useErrorHandler() {
     error: Error,
     customHandlers: Record<string, (error: Error) => void> = {},
   ) {
-    console.error(error);
-
     const currentPath = pathname;
 
     const handlers: Record<string, (error: Error) => void> = {

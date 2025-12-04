@@ -1,17 +1,23 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
+
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import { routes } from "@/config/routes";
 
 /**
- * Handle internal server errors on server-side rendering by redirecting to the 500 error page.
+ * Handle internal server errors on client-side rendering by redirecting to the 500 error page.
  */
-export default async function ServerErrorPage() {
-  const headersList = await headers();
-  const referer = headersList.get("referer");
-  const fromPath = referer ? new URL(referer).pathname : "/";
+export default function ServerErrorPage() {
+  const router = useRouter();
+  const pathname = usePathname();
 
-  return redirect(
-    `${routes.INTERNAL_SERVER_ERROR}?from=${encodeURIComponent(fromPath)}`,
-  );
+  useEffect(() => {
+    const fromPath = pathname;
+    router.push(
+      `${routes.INTERNAL_SERVER_ERROR}?from=${encodeURIComponent(fromPath)}`,
+    );
+  }, [router, pathname]);
+
+  return null;
 }

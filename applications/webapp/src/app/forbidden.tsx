@@ -1,15 +1,21 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
+
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import { routes } from "@/config/routes";
 
 /**
- * Handle forbidden errors on server-side rendering by redirecting to the 403 error page.
+ * Handle forbidden errors on client-side rendering by redirecting to the 403 error page.
  */
-export default async function ForbiddenPage() {
-  const headersList = await headers();
-  const referer = headersList.get("referer");
-  const fromPath = referer ? new URL(referer).pathname : "/";
+export default function ForbiddenPage() {
+  const router = useRouter();
+  const pathname = usePathname();
 
-  return redirect(`${routes.FORBIDDEN}?from=${encodeURIComponent(fromPath)}`);
+  useEffect(() => {
+    const fromPath = pathname;
+    router.push(`${routes.FORBIDDEN}?from=${encodeURIComponent(fromPath)}`);
+  }, [router, pathname]);
+
+  return null;
 }

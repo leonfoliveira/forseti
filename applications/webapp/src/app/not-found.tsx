@@ -1,15 +1,21 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
+
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import { routes } from "@/config/routes";
 
 /**
- * Handle not found errors on server-side rendering by redirecting to the 404 error page.
+ * Handle not found errors on client-side rendering by redirecting to the 404 error page.
  */
-export default async function NotFoundPage() {
-  const headersList = await headers();
-  const referer = headersList.get("referer");
-  const fromPath = referer ? new URL(referer).pathname : "/";
+export default function NotFoundPage() {
+  const router = useRouter();
+  const pathname = usePathname();
 
-  return redirect(`${routes.NOT_FOUND}?from=${encodeURIComponent(fromPath)}`);
+  useEffect(() => {
+    const fromPath = pathname;
+    router.push(`${routes.NOT_FOUND}?from=${encodeURIComponent(fromPath)}`);
+  }, [router, pathname]);
+
+  return null;
 }
