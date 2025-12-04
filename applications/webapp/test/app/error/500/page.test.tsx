@@ -5,6 +5,12 @@ import Error500Page from "@/app/error/500/page";
 import { useRouter } from "@/test/jest.setup";
 import { renderWithProviders } from "@/test/render-with-providers";
 
+// Mock Suspense fallback
+jest.mock("react", () => ({
+  ...jest.requireActual("react"),
+  Suspense: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 describe("Error500Page", () => {
   beforeEach(() => {
     jest.clearAllMocks();

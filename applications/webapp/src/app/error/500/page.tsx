@@ -2,6 +2,7 @@
 
 import { ArrowPathRoundedSquareIcon } from "@heroicons/react/24/solid";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import { Button } from "@/app/_lib/heroui-wrapper";
@@ -18,10 +19,7 @@ const messages = defineMessages({
   },
 });
 
-/**
- * Displays a 500 Internal Server Error page.
- */
-export default function Error500Page() {
+function Error500Content() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const previousPath = searchParams.get("from");
@@ -52,5 +50,16 @@ export default function Error500Page() {
         </Button>
       )}
     </div>
+  );
+}
+
+/**
+ * Displays a 500 Internal Server Error page.
+ */
+export default function Error500Page() {
+  return (
+    <Suspense>
+      <Error500Content />
+    </Suspense>
   );
 }
