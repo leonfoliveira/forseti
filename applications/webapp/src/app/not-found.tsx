@@ -1,27 +1,21 @@
 "use client";
 
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
-import { defineMessages } from "@/i18n/message";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-const messages = defineMessages({
-  description: {
-    id: "app.not-found.description",
-    defaultMessage: "The page you are looking for could not be found.",
-  },
-});
+import { routes } from "@/config/routes";
 
 /**
- * Displays a not found page for unmatched routes.
+ * Handle not found errors on client-side rendering by redirecting to the 404 error page.
  */
 export default function NotFoundPage() {
-  return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-8xl font-bold font-mono" data-testid="code">
-        404
-      </h1>
-      <h2 className="text-md mt-5" data-testid="description">
-        <FormattedMessage {...messages.description} />
-      </h2>
-    </div>
-  );
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const fromPath = pathname;
+    router.push(`${routes.NOT_FOUND}?from=${encodeURIComponent(fromPath)}`);
+  }, [router, pathname]);
+
+  return null;
 }

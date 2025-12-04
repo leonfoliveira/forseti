@@ -36,11 +36,12 @@ kover {
         filters {
             excludes {
                 classes.addAll(
-                    "live.forseti.api.Application",
-                    "live.forseti.api.ApplicationKt",
+                    "com.forsetijudge.api.Application",
+                    "com.forsetijudge.api.ApplicationKt",
                 )
                 annotatedBy(
                     "org.springframework.context.annotation.Configuration",
+                    "com.forsetijudge.core.config.SkipCoverage",
                 )
             }
         }

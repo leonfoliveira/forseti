@@ -1,0 +1,30 @@
+meta {
+  name: update_submission_answer_force
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{base_url}}/{{submission_id}}:update-answer-force
+  body: json
+  auth: inherit
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+body:json {
+  {
+    "answer": "{{Submission.Answer.ACCEPTED}}"
+  }
+}
+
+vars:pre-request {
+  answer: {{Submission.Answer.ACCEPTED}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -94,7 +94,7 @@ jobs:
         run: pip install -r ../../applications/cli/requirements.dev.txt
 
       - name: Build cli
-        run: cd ../../applications/cli && make build VERSION=${{ steps.vars.outputs.tag }} API_URL="https://api.forseti.live/api"
+        run: cd ../../applications/cli && make build VERSION=${{ steps.vars.outputs.tag }} API_URL="https://api.forsetijudge.com"
 
       - name: Copy migrations to production directory
         run: |

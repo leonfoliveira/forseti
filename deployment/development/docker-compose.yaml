@@ -4,7 +4,7 @@ services:
     container_name: dev-forseti-postgres
     environment:
       POSTGRES_USER: forseti
-      POSTGRES_PASSWORD: forseti
+      POSTGRES_PASSWORD: forsetijudge
       POSTGRES_DB: forseti
     healthcheck:
       test:
@@ -26,7 +26,7 @@ services:
     container_name: dev-forseti-minio
     environment:
       MINIO_ROOT_USER: forseti
-      MINIO_ROOT_PASSWORD: forseti8
+      MINIO_ROOT_PASSWORD: forsetijudge
     healthcheck:
       test:
         - "CMD-SHELL"
@@ -50,7 +50,7 @@ services:
     entrypoint: /entrypoint.sh
     environment:
       RABBITMQ_USER: forseti
-      RABBITMQ_PASSWORD: forseti
+      RABBITMQ_PASSWORD: forsetijudge
     healthcheck:
       test:
         - "CMD"
@@ -78,7 +78,7 @@ services:
     environment:
       FLYWAY_URL: jdbc:postgresql://postgres:5432/forseti
       FLYWAY_USER: forseti
-      FLYWAY_PASSWORD: forseti
+      FLYWAY_PASSWORD: forsetijudge
     depends_on:
       postgres:
         condition: service_healthy
@@ -95,7 +95,7 @@ services:
       dockerfile: api.Dockerfile
     environment:
       COOKIE_SECURE: "false"
-      DB_PASSWORD: forseti
+      DB_PASSWORD: forsetijudge
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=25.0"
@@ -104,19 +104,19 @@ services:
       SESSION_AUTOJUDGE_EXPIRATION: 10m
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: forseti
-      MINIO_SECRET_KEY: forseti8
+      MINIO_SECRET_KEY: forsetijudge
       MINIO_BUCKET: forseti
       PORT: 8080
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: forseti
-      RABBITMQ_PASSWORD: forseti
+      RABBITMQ_PASSWORD: forsetijudge
       RABBITMQ_VHOST: /
       RABBITMQ_SUBMISSION_QUEUE: submission-queue
       RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
-      ROOT_PASSWORD: forseti
+      ROOT_PASSWORD: forsetijudge
       OTEL_LOGS_EXPORTER: none
       OTEL_METRICS_EXPORTER: none
       OTEL_TRACES_EXPORTER: none
@@ -153,7 +153,7 @@ services:
       dockerfile: autojudge.Dockerfile
     environment:
       API_URL: http://api:8080/api
-      DB_PASSWORD: forseti
+      DB_PASSWORD: forsetijudge
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=25.0"
@@ -163,19 +163,19 @@ services:
       MAX_CONCURRENT_SUBMISSIONS: "1"
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: forseti
-      MINIO_SECRET_KEY: forseti8
+      MINIO_SECRET_KEY: forsetijudge
       MINIO_BUCKET: forseti
       PORT: 8081
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: forseti
-      RABBITMQ_PASSWORD: forseti
+      RABBITMQ_PASSWORD: forsetijudge
       RABBITMQ_VHOST: /
       RABBITMQ_SUBMISSION_QUEUE: submission-queue
       RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
-      ROOT_PASSWORD: forseti
+      ROOT_PASSWORD: forsetijudge
       OTEL_LOGS_EXPORTER: none
       OTEL_METRICS_EXPORTER: none
       OTEL_TRACES_EXPORTER: none

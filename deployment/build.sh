@@ -6,7 +6,7 @@ docker build -t forseti-autojudge -f ../applications/backend/autojudge.Dockerfil
 docker build -t forseti-webapp ../applications/webapp --no-cache
 docker build -t forseti-autoscaler ../applications/autoscaler --no-cache
 
-(cd ../applications/cli && make build API_URL="https://api.forseti.live/api")
+(cd ../applications/cli && make build API_URL="https://api.forsetijudge.com")
 cp ../applications/cli/dist/forseti ./production/forseti
 
 mkdir -p ./production/volumes/migrations

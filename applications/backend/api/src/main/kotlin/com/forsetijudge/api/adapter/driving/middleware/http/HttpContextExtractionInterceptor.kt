@@ -1,0 +1,101 @@
+package com.forsetijudge.api.adapter.driving.middleware.http
+
+import com.forsetijudge.core.domain.entity.Session
+import com.forsetijudge.core.domain.exception.ForbiddenException
+import com.forsetijudge.core.domain.exception.UnauthorizedException
+import com.forsetijudge.core.domain.model.RequestContext
+import com.forsetijudge.core.port.driving.usecase.session.FindSessionUseCase
+import io.opentelemetry.api.trace.Span
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.slf4j.LoggerFactory
+import org.springframework.http.HttpMethod
+import org.springframework.stereotype.Component
+import org.springframework.web.servlet.HandlerInterceptor
+import java.time.OffsetDateTime
+import java.util.UUID
+
+@Component
+class HttpContextExtractionInterceptor(
+    private val findSessionUseCase: FindSessionUseCase,
+) : HandlerInterceptor {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
+    companion object {
+        val signInPaths =
+            setOf(
+                Regex("/api/v1/auth:sign-in-as-root"),
+                Regex("/api/v1/contests/[a-fA-F0-9-]+:sign-in"),
+            )
+    }
+
+    /**
+     * Fill the RequestContext with relevant information from the HTTP request.
+     */
+    override fun preHandle(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        handler: Any,
+    ): Boolean {
+        logger.info("Started HttpContextExtractionInterceptor")
+
+        val sessionId = request.cookies?.find { it.name == "session_id" }?.value
+        val session = extractSession(sessionId)
+
+        // CSRF Protection
+        val isSignInPath = signInPaths.any { it.matches(request.requestURI) }
+        if (request.method != HttpMethod.GET.toString() && !isSignInPath) {
+            val csrfToken = request.getHeader("X-CSRF-Token")
+            if (session != null && session.csrfToken.toString() != csrfToken) {
+                logger.info("CSRF token mismatch")
+                throw ForbiddenException()
+            }
+        }
+
+        val context = RequestContext.getContext()
+
+        context.traceId = Span.current().spanContext.traceId
+        context.ip = request.getHeader("X-Forwarded-For") ?: request.remoteAddr
+        context.session = session
+
+        logger.info("Finished HttpContextExtractionInterceptor")
+        return true
+    }
+
+    /**
+     * Fetch the session from the database using the session ID from the cookie.
+     *
+     * @param sessionId The session ID from the cookie.
+     * @return The session if found and valid, null otherwise.
+     */
+    private fun extractSession(sessionId: String?): Session? {
+        if (sessionId == null) {
+            logger.info("No session_id cookie")
+            return null
+        }
+        if (sessionId.isBlank()) {
+            logger.info("Blank session_id cookie")
+            return null
+        }
+
+        val session =
+            try {
+                findSessionUseCase.findByIdNullable(UUID.fromString(sessionId))
+            } catch (e: IllegalArgumentException) {
+                logger.info("Invalid session_id format")
+                return null
+            }
+
+        if (session == null) {
+            logger.info("Could not find session")
+            throw UnauthorizedException()
+        }
+        if (session.expiresAt < OffsetDateTime.now()) {
+            logger.info("Session expired")
+            throw UnauthorizedException()
+        }
+
+        logger.info("Finished extracting session")
+        return session
+    }
+}

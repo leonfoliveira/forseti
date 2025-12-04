@@ -1,10 +1,23 @@
 "use client";
 
-import { ErrorPage } from "@/app/_lib/component/page/error-page";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+import { routes } from "@/config/routes";
 
 /**
- * Displays an error page for next.js server errors.
+ * Handle internal server errors on client-side rendering by redirecting to the 500 error page.
  */
 export default function ServerErrorPage() {
-  return <ErrorPage />;
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const fromPath = pathname;
+    router.push(
+      `${routes.INTERNAL_SERVER_ERROR}?from=${encodeURIComponent(fromPath)}`,
+    );
+  }, [router, pathname]);
+
+  return null;
 }

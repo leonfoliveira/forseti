@@ -1,11 +1,15 @@
 import { useErrorHandler } from "@/app/_lib/util/error-handler-hook";
 import { sessionWritter } from "@/config/composition";
+import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
+import { ServiceUnavailableException } from "@/core/domain/exception/ServiceUnavailableException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
+import { usePathname, useRouter } from "@/test/jest.setup";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderHookWithProviders } from "@/test/render-with-providers";
 
 describe("useErrorHandler", () => {
   const mockSlug = "test-contest";
+  const mockPath = "/test/path";
   const preloadedState = {
     contestMetadata: MockContestMetadataResponseDTO({ slug: mockSlug }),
   };
@@ -13,6 +17,7 @@ describe("useErrorHandler", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     console.error = jest.fn();
+    (usePathname as jest.Mock).mockReturnValue(mockPath);
   });
 
   it("should handle UnauthorizedException by signing out and redirecting", async () => {
@@ -29,7 +34,39 @@ describe("useErrorHandler", () => {
     expect(sessionWritter.deleteCurrent).toHaveBeenCalled();
   });
 
-  it("should handle generic Error by logging it", async () => {
+  it("should handle ForbiddenException by redirecting with from parameter", async () => {
+    const { result } = await renderHookWithProviders(
+      () => useErrorHandler(),
+      preloadedState,
+    );
+
+    const error = new ForbiddenException("Forbidden");
+
+    result.current.handle(error);
+
+    expect(console.error).toHaveBeenCalledWith(error);
+    expect(useRouter().push).toHaveBeenCalledWith(
+      `/error/403?from=${encodeURIComponent(mockPath)}`,
+    );
+  });
+
+  it("should handle ServiceUnavailableException by redirecting with from parameter", async () => {
+    const { result } = await renderHookWithProviders(
+      () => useErrorHandler(),
+      preloadedState,
+    );
+
+    const error = new ServiceUnavailableException("Service unavailable");
+
+    result.current.handle(error);
+
+    expect(console.error).toHaveBeenCalledWith(error);
+    expect(useRouter().push).toHaveBeenCalledWith(
+      `/error/503?from=${encodeURIComponent(mockPath)}`,
+    );
+  });
+
+  it("should handle generic Error by redirecting to 500 with from parameter", async () => {
     const { result } = await renderHookWithProviders(
       () => useErrorHandler(),
       preloadedState,
@@ -40,6 +77,9 @@ describe("useErrorHandler", () => {
     result.current.handle(error);
 
     expect(console.error).toHaveBeenCalledWith(error);
+    expect(useRouter().push).toHaveBeenCalledWith(
+      `/error/500?from=${encodeURIComponent(mockPath)}`,
+    );
   });
 
   it("should use custom handler when provided", async () => {
@@ -91,7 +131,7 @@ describe("useErrorHandler", () => {
     );
   });
 
-  it("should do nothing when no handler matches and no default is provided", async () => {
+  it("should use default router push when no handler matches and no default is provided", async () => {
     const { result } = await renderHookWithProviders(
       () => useErrorHandler(),
       preloadedState,
@@ -103,6 +143,8 @@ describe("useErrorHandler", () => {
     result.current.handle(error);
 
     expect(console.error).toHaveBeenCalledWith(error);
-    // Should not throw or cause any side effects
+    expect(useRouter().push).toHaveBeenCalledWith(
+      `/error/500?from=${encodeURIComponent(mockPath)}`,
+    );
   });
 });

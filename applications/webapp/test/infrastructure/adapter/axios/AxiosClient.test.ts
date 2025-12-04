@@ -5,6 +5,7 @@ import { ConflictException } from "@/core/domain/exception/ConflictException";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { ServerException } from "@/core/domain/exception/ServerException";
+import { ServiceUnavailableException } from "@/core/domain/exception/ServiceUnavailableException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 
@@ -30,7 +31,7 @@ class TestAxiosClient extends AxiosClient {
     Object.assign(requestConfig.headers, this.requestModifications);
   }
 
-  protected async proxyResponse<TBody>(response: any): Promise<void> {
+  protected async proxyResponse(response: any): Promise<void> {
     // Apply any test modifications to the response
     Object.assign(response, this.responseModifications);
   }
@@ -181,10 +182,6 @@ describe("AxiosClient (Abstract Base Class)", () => {
         data: "original data",
         headers: {},
       };
-      const modifiedResponse = {
-        data: "modified data",
-        headers: {},
-      };
 
       sut.setResponseModifications({ data: "modified data" });
       mockedAxios.request.mockResolvedValue(originalResponse);
@@ -202,6 +199,7 @@ describe("AxiosClient (Abstract Base Class)", () => {
       [403, ForbiddenException, "Forbidden"],
       [404, NotFoundException, "Not found"],
       [409, ConflictException, "Conflict"],
+      [503, ServiceUnavailableException, "Service Unavailable"],
       [500, ServerException, "Internal server error"],
     ])(
       "should throw %s for status %d",
