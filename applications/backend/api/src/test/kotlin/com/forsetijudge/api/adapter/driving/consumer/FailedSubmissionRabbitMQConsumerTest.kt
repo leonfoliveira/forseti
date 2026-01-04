@@ -6,11 +6,11 @@ import com.forsetijudge.core.port.driving.usecase.session.RefreshSessionUseCase
 import com.forsetijudge.core.port.driving.usecase.submission.UpdateSubmissionUseCase
 import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
 import com.forsetijudge.infrastructure.adapter.dto.message.payload.SubmissionMessagePayload
+import com.github.f4b6a3.uuid.UuidCreator
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
-import java.util.UUID
 
 @SpringBootTest(classes = [FailedSubmissionRabbitMQConsumer::class, JacksonConfig::class])
 class FailedSubmissionRabbitMQConsumerTest(
@@ -25,8 +25,8 @@ class FailedSubmissionRabbitMQConsumerTest(
             RabbitMQMessage(
                 payload =
                     SubmissionMessagePayload(
-                        submissionId = UUID.randomUUID(),
-                        contestId = UUID.randomUUID(),
+                        submissionId = UuidCreator.getTimeOrderedEpoch(),
+                        contestId = UuidCreator.getTimeOrderedEpoch(),
                     ),
             )
         val jsonEvent = objectMapper.writeValueAsString(event)

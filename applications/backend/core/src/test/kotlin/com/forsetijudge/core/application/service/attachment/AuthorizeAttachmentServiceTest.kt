@@ -10,13 +10,13 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.UUID
 
 class AuthorizeAttachmentServiceTest :
     FunSpec({
@@ -37,7 +37,7 @@ class AuthorizeAttachmentServiceTest :
 
         context("authorizeUpload") {
             test("should allow ROOT member to upload any attachment") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val context = Attachment.Context.SUBMISSION_CODE
                 RequestContext.getContext().session =
                     SessionMockBuilder.build(
@@ -50,7 +50,7 @@ class AuthorizeAttachmentServiceTest :
             }
 
             test("should call authorizeAdminUpload for ADMIN member") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val context = Attachment.Context.SUBMISSION_CODE
                 val member = MemberMockBuilder.build(type = Member.Type.ADMIN)
                 RequestContext.getContext().session = SessionMockBuilder.build(member = member)
@@ -61,7 +61,7 @@ class AuthorizeAttachmentServiceTest :
             }
 
             test("should call authorizeJudgeUpload for JUDGE member") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val context = Attachment.Context.SUBMISSION_CODE
                 val member = MemberMockBuilder.build(type = Member.Type.JUDGE)
                 RequestContext.getContext().session = SessionMockBuilder.build(member = member)
@@ -72,7 +72,7 @@ class AuthorizeAttachmentServiceTest :
             }
 
             test("should call authorizeContestantUpload for CONTESTANT member") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val context = Attachment.Context.SUBMISSION_CODE
                 val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
                 RequestContext.getContext().session = SessionMockBuilder.build(member = member)
@@ -83,7 +83,7 @@ class AuthorizeAttachmentServiceTest :
             }
 
             test("should call authorizePublicUpload for AUTOJUDGE member") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val context = Attachment.Context.SUBMISSION_CODE
                 val member = MemberMockBuilder.build(type = Member.Type.AUTOJUDGE)
                 RequestContext.getContext().session = SessionMockBuilder.build(member = member)
@@ -94,7 +94,7 @@ class AuthorizeAttachmentServiceTest :
             }
 
             test("should throw ForbiddenException when context config not found") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val context = Attachment.Context.PROBLEM_DESCRIPTION
                 RequestContext.getContext().session =
                     SessionMockBuilder.build(
@@ -109,8 +109,8 @@ class AuthorizeAttachmentServiceTest :
 
         context("authorizeDownload") {
             test("should allow ROOT member to download any attachment") {
-                val contestId = UUID.randomUUID()
-                val attachmentId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val attachmentId = UuidCreator.getTimeOrderedEpoch()
                 val attachment =
                     AttachmentMockBuilder.build(
                         id = attachmentId,
@@ -129,8 +129,8 @@ class AuthorizeAttachmentServiceTest :
             }
 
             test("should call authorizeAdminDownload for ADMIN member") {
-                val contestId = UUID.randomUUID()
-                val attachmentId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val attachmentId = UuidCreator.getTimeOrderedEpoch()
                 val member = MemberMockBuilder.build(type = Member.Type.ADMIN)
                 val attachment =
                     AttachmentMockBuilder.build(
@@ -147,8 +147,8 @@ class AuthorizeAttachmentServiceTest :
             }
 
             test("should call authorizeJudgeDownload for JUDGE member") {
-                val contestId = UUID.randomUUID()
-                val attachmentId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val attachmentId = UuidCreator.getTimeOrderedEpoch()
                 val member = MemberMockBuilder.build(type = Member.Type.JUDGE)
                 val attachment =
                     AttachmentMockBuilder.build(
@@ -165,8 +165,8 @@ class AuthorizeAttachmentServiceTest :
             }
 
             test("should call authorizeContestantDownload for CONTESTANT member") {
-                val contestId = UUID.randomUUID()
-                val attachmentId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val attachmentId = UuidCreator.getTimeOrderedEpoch()
                 val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
                 val attachment =
                     AttachmentMockBuilder.build(
@@ -183,8 +183,8 @@ class AuthorizeAttachmentServiceTest :
             }
 
             test("should call authorizePublicDownload when no session") {
-                val contestId = UUID.randomUUID()
-                val attachmentId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val attachmentId = UuidCreator.getTimeOrderedEpoch()
                 val attachment =
                     AttachmentMockBuilder.build(
                         id = attachmentId,
@@ -200,8 +200,8 @@ class AuthorizeAttachmentServiceTest :
             }
 
             test("should throw NotFoundException when attachment not found") {
-                val contestId = UUID.randomUUID()
-                val attachmentId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val attachmentId = UuidCreator.getTimeOrderedEpoch()
                 RequestContext.getContext().session =
                     SessionMockBuilder.build(
                         member = MemberMockBuilder.build(type = Member.Type.ADMIN),
@@ -214,9 +214,9 @@ class AuthorizeAttachmentServiceTest :
             }
 
             test("should throw ForbiddenException when attachment belongs to different contest") {
-                val contestId = UUID.randomUUID()
-                val differentContestId = UUID.randomUUID()
-                val attachmentId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val differentContestId = UuidCreator.getTimeOrderedEpoch()
+                val attachmentId = UuidCreator.getTimeOrderedEpoch()
                 val attachment =
                     AttachmentMockBuilder.build(
                         id = attachmentId,
@@ -235,8 +235,8 @@ class AuthorizeAttachmentServiceTest :
             }
 
             test("should throw ForbiddenException when context config not found") {
-                val contestId = UUID.randomUUID()
-                val attachmentId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val attachmentId = UuidCreator.getTimeOrderedEpoch()
                 val attachment =
                     AttachmentMockBuilder.build(
                         id = attachmentId,

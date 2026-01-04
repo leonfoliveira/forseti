@@ -4,13 +4,13 @@ import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
-import java.util.UUID
 
 class DownloadAttachmentServiceTest :
     FunSpec({
@@ -29,7 +29,7 @@ class DownloadAttachmentServiceTest :
 
         context("download - byId") {
             test("should throw NotFoundException when attachment does not exist") {
-                val id = UUID.randomUUID()
+                val id = UuidCreator.getTimeOrderedEpoch()
                 every { attachmentRepository.findEntityById(id) } returns null
 
                 shouldThrow<NotFoundException> {
@@ -38,7 +38,7 @@ class DownloadAttachmentServiceTest :
             }
 
             test("should download an attachment") {
-                val id = UUID.randomUUID()
+                val id = UuidCreator.getTimeOrderedEpoch()
                 val attachment = AttachmentMockBuilder.build(id = id)
                 every { attachmentRepository.findEntityById(id) } returns attachment
                 val bytes = ByteArray(10) { it.toByte() }
@@ -53,7 +53,7 @@ class DownloadAttachmentServiceTest :
 
         context("download - byEntity") {
             test("should download an attachment") {
-                val id = UUID.randomUUID()
+                val id = UuidCreator.getTimeOrderedEpoch()
                 val attachment = AttachmentMockBuilder.build(id = id)
                 every { attachmentRepository.findEntityById(id) } returns attachment
                 val bytes = ByteArray(10) { it.toByte() }

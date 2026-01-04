@@ -15,7 +15,6 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import java.time.OffsetDateTime
-import java.util.UUID
 
 class FindSubmissionServiceTest :
     FunSpec({
@@ -35,7 +34,7 @@ class FindSubmissionServiceTest :
         }
 
         context("findById") {
-            val submissionId = UUID.randomUUID()
+            val submissionId = UuidCreator.getTimeOrderedEpoch()
 
             test("should throw NotFoundException when submission is not found") {
                 every { submissionRepository.findEntityById(submissionId) } returns null
@@ -56,7 +55,7 @@ class FindSubmissionServiceTest :
         }
 
         context("findAllByContest") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
 
             test("should throw NotFoundException when contest is not found") {
                 every { contestRepository.findEntityById(contestId) } returns null
@@ -79,7 +78,7 @@ class FindSubmissionServiceTest :
         }
 
         context("findAllByMember") {
-            val memberId = UUID.randomUUID()
+            val memberId = UuidCreator.getTimeOrderedEpoch()
 
             test("should throw NotFoundException when member is not found") {
                 every { memberRepository.findEntityById(memberId) } returns null

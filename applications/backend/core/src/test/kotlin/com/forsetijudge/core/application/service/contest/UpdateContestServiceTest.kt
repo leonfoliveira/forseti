@@ -18,6 +18,7 @@ import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.dto.input.attachment.AttachmentInputDTO
 import com.forsetijudge.core.port.dto.input.contest.UpdateContestInputDTO
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -27,7 +28,6 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
 import java.time.OffsetDateTime
-import java.util.UUID
 
 class UpdateContestServiceTest :
     FunSpec({
@@ -57,7 +57,7 @@ class UpdateContestServiceTest :
         context("update") {
             val inputDTO =
                 UpdateContestInputDTO(
-                    id = UUID.randomUUID(),
+                    id = UuidCreator.getTimeOrderedEpoch(),
                     slug = "test-contest",
                     title = "Test Contest",
                     languages = listOf(Submission.Language.PYTHON_312),
@@ -67,7 +67,7 @@ class UpdateContestServiceTest :
                     members =
                         listOf(
                             UpdateContestInputDTO.MemberDTO(
-                                id = UUID.randomUUID(),
+                                id = UuidCreator.getTimeOrderedEpoch(),
                                 type = Member.Type.CONTESTANT,
                                 name = "Test User",
                                 login = "test_user",
@@ -77,13 +77,13 @@ class UpdateContestServiceTest :
                     problems =
                         listOf(
                             UpdateContestInputDTO.ProblemDTO(
-                                id = UUID.randomUUID(),
+                                id = UuidCreator.getTimeOrderedEpoch(),
                                 letter = 'A',
                                 title = "Test Problem",
-                                description = AttachmentInputDTO(id = UUID.randomUUID()),
+                                description = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                                 timeLimit = 1000,
                                 memoryLimit = 256,
-                                testCases = AttachmentInputDTO(id = UUID.randomUUID()),
+                                testCases = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                             ),
                         ),
                 )
@@ -213,14 +213,22 @@ class UpdateContestServiceTest :
                 val inputMemberToCreate = inputDTO.members[0].copy(id = null)
                 val inputProblemToCreate = inputDTO.problems[0].copy(id = null)
 
-                val inputMemberToUpdateMinimum = inputDTO.members[0].copy(id = UUID.randomUUID(), password = null)
-                val inputProblemToUpdateMinimum = inputDTO.problems[0].copy(id = UUID.randomUUID())
-                val inputMemberToUpdateFull = inputDTO.members[0].copy(id = UUID.randomUUID(), password = "newPassword")
+                val inputMemberToUpdateMinimum =
+                    inputDTO.members[0].copy(
+                        id = UuidCreator.getTimeOrderedEpoch(),
+                        password = null,
+                    )
+                val inputProblemToUpdateMinimum = inputDTO.problems[0].copy(id = UuidCreator.getTimeOrderedEpoch())
+                val inputMemberToUpdateFull =
+                    inputDTO.members[0].copy(
+                        id = UuidCreator.getTimeOrderedEpoch(),
+                        password = "newPassword",
+                    )
                 val inputProblemToUpdateFull =
                     inputDTO.problems[0].copy(
-                        id = UUID.randomUUID(),
-                        description = AttachmentInputDTO(id = UUID.randomUUID()),
-                        testCases = AttachmentInputDTO(id = UUID.randomUUID()),
+                        id = UuidCreator.getTimeOrderedEpoch(),
+                        description = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
+                        testCases = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                     )
 
                 val memberToUpdateMinimum = MemberMockBuilder.build(id = inputMemberToUpdateMinimum.id!!)
@@ -307,7 +315,7 @@ class UpdateContestServiceTest :
 
         context("forceStart") {
             test("should throw NotFoundException when contest does not exist") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 every { contestRepository.findEntityById(contestId) } returns null
 
                 shouldThrow<NotFoundException> {
@@ -316,7 +324,7 @@ class UpdateContestServiceTest :
             }
 
             test("should start the contest successfully") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { contestRepository.save(any<Contest>()) } answers { firstArg() }
@@ -328,7 +336,7 @@ class UpdateContestServiceTest :
             }
 
             test("should throw ForbiddenException when contest has already started") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().minusHours(1))
                 every { contestRepository.findEntityById(contestId) } returns contest
 
@@ -340,7 +348,7 @@ class UpdateContestServiceTest :
 
         context("forceEnd") {
             test("should throw NotFoundException when contest does not exist") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 every { contestRepository.findEntityById(contestId) } returns null
 
                 shouldThrow<NotFoundException> {
@@ -349,7 +357,7 @@ class UpdateContestServiceTest :
             }
 
             test("should throw ForbiddenException when contest is not active") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val contest = ContestMockBuilder.build(endAt = OffsetDateTime.now().minusHours(1))
                 every { contestRepository.findEntityById(contestId) } returns contest
 
@@ -359,7 +367,7 @@ class UpdateContestServiceTest :
             }
 
             test("should end the contest successfully") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val contest =
                     ContestMockBuilder.build(
                         startAt = OffsetDateTime.now().minusHours(1),

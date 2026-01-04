@@ -25,7 +25,6 @@ import io.mockk.slot
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
-import java.util.UUID
 
 class CreateSubmissionServiceTest :
     FunSpec({
@@ -49,13 +48,13 @@ class CreateSubmissionServiceTest :
         }
 
         context("create") {
-            val memberId = UUID.randomUUID()
-            val problemId = UUID.randomUUID()
+            val memberId = UuidCreator.getTimeOrderedEpoch()
+            val problemId = UuidCreator.getTimeOrderedEpoch()
             val inputDTO =
                 CreateSubmissionInputDTO(
                     problemId = problemId,
                     language = Submission.Language.PYTHON_312,
-                    code = AttachmentInputDTO(id = UUID.randomUUID()),
+                    code = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                 )
 
             test("should throw NotFoundException when member does not exist") {

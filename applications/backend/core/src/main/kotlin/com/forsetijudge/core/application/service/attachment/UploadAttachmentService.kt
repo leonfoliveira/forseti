@@ -7,6 +7,7 @@ import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.attachment.UploadAttachmentUseCase
+import com.github.f4b6a3.uuid.UuidCreator
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -50,7 +51,7 @@ class UploadAttachmentService(
                 memberRepository.findEntityById(memberId)
                     ?: throw NotFoundException("Could not find member with id = $memberId")
             }
-        val id = UUID.randomUUID()
+        val id = UuidCreator.getTimeOrderedEpoch()
         val attachment =
             Attachment(
                 id = id,

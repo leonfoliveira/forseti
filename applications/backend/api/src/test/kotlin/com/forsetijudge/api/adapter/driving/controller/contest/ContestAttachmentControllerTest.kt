@@ -8,6 +8,7 @@ import com.forsetijudge.core.port.driving.usecase.attachment.AuthorizeAttachment
 import com.forsetijudge.core.port.driving.usecase.attachment.DownloadAttachmentUseCase
 import com.forsetijudge.core.port.driving.usecase.attachment.UploadAttachmentUseCase
 import com.forsetijudge.core.port.dto.output.AttachmentDownloadOutputDTO
+import com.github.f4b6a3.uuid.UuidCreator
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -22,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.multipart
 import org.springframework.web.multipart.MultipartFile
-import java.util.UUID
 
 @WebMvcTest(controllers = [ContestAttachmentController::class])
 @AutoConfigureMockMvc(addFilters = false)
@@ -41,7 +41,7 @@ class ContestAttachmentControllerTest(
         val basePath = "/api/v1/contests/{contestId}/attachments"
 
         test("uploadAttachment") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val file = mockk<MultipartFile>(relaxed = true)
             val attachment = AttachmentMockBuilder.build()
             val session = SessionMockBuilder.build()
@@ -69,7 +69,7 @@ class ContestAttachmentControllerTest(
         }
 
         test("downloadAttachment") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val attachment = AttachmentMockBuilder.build()
             val bytes = "test data".toByteArray()
             every { downloadAttachmentUseCase.download(attachment.id) } returns

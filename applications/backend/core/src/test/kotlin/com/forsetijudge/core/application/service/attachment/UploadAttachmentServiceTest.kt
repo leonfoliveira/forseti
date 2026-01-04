@@ -8,6 +8,7 @@ import com.forsetijudge.core.port.driven.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -15,7 +16,6 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.UUID
 
 class UploadAttachmentServiceTest :
     FunSpec({
@@ -59,7 +59,7 @@ class UploadAttachmentServiceTest :
             }
 
             test("should throw NotFoundException when contest does not exist") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val member = MemberMockBuilder.build()
                 val filename = "test.txt"
                 val contentType = "text/plain"
@@ -75,7 +75,7 @@ class UploadAttachmentServiceTest :
 
             test("should throw NotFoundException when member does not exist") {
                 val contest = ContestMockBuilder.build()
-                val memberId = UUID.randomUUID()
+                val memberId = UuidCreator.getTimeOrderedEpoch()
                 val filename = "test.txt"
                 val contentType = "text/plain"
                 val context = Attachment.Context.PROBLEM_TEST_CASES

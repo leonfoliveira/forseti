@@ -9,13 +9,13 @@ import com.forsetijudge.core.port.driven.Hasher
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.dto.input.authorization.AuthenticateInputDTO
 import com.forsetijudge.core.port.dto.input.authorization.ContestAuthenticateInputDTO
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
-import java.util.UUID
 
 class AuthenticateServiceTest :
     FunSpec({
@@ -80,7 +80,7 @@ class AuthenticateServiceTest :
         }
 
         context("authenticate to contest") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val inputDTO = ContestAuthenticateInputDTO("testLogin", "testPassword")
 
             test("should throw UnauthorizedException when member is not found") {

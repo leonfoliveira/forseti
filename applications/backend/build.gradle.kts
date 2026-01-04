@@ -56,6 +56,7 @@ subprojects {
     dependencies {
         implementation(rootProject.libs.bundles.spring)
         implementation(rootProject.libs.bundles.opentelemetry)
+        implementation(rootProject.libs.uuid.creator)
 
         testImplementation(rootProject.libs.bundles.kotest)
         testImplementation(rootProject.libs.bundles.mockk)
@@ -66,6 +67,7 @@ subprojects {
         testFixturesImplementation(rootProject.libs.bundles.kotest)
         testFixturesImplementation(rootProject.libs.bundles.mockk)
         testFixturesImplementation(rootProject.libs.bundles.spring.test)
+        testFixturesImplementation(rootProject.libs.uuid.creator)
 
         developmentOnly(rootProject.libs.spring.boot.dev.tools)
     }

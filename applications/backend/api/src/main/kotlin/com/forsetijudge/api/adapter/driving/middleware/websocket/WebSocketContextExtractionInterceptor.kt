@@ -2,6 +2,7 @@ package com.forsetijudge.api.adapter.driving.middleware.websocket
 
 import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
+import com.github.f4b6a3.uuid.UuidCreator
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
@@ -9,7 +10,6 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.support.ChannelInterceptor
 import org.springframework.messaging.support.MessageHeaderAccessor
 import org.springframework.stereotype.Component
-import java.util.UUID
 
 @Component
 class WebSocketContextExtractionInterceptor(
@@ -32,7 +32,7 @@ class WebSocketContextExtractionInterceptor(
                 ?: RequestContext()
 
         if (context.traceId == null) {
-            context.traceId = UUID.randomUUID().toString()
+            context.traceId = UuidCreator.getTimeOrderedEpoch().toString()
         }
         RequestContext.setContext(context)
 

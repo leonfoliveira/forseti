@@ -8,7 +8,6 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import java.util.UUID
 
 class FindProblemServiceTest :
     FunSpec({
@@ -17,7 +16,7 @@ class FindProblemServiceTest :
         val sut = FindProblemService(problemRepository)
 
         context("findById") {
-            val problemId = UUID.randomUUID()
+            val problemId = UuidCreator.getTimeOrderedEpoch()
 
             test("should throw NotFoundException when problem is not found") {
                 every { problemRepository.findEntityById(problemId) } returns null

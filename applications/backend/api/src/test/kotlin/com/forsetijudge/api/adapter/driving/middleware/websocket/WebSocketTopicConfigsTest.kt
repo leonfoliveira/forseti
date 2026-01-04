@@ -7,6 +7,7 @@ import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -14,7 +15,6 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.UUID
 
 class WebSocketTopicConfigsTest :
     FunSpec({
@@ -46,7 +46,7 @@ class WebSocketTopicConfigsTest :
             }
 
             context("announcements filter") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val destination = "/topic/contests/$contestId/announcements"
 
                 test("should return true when contest access is allowed") {
@@ -77,7 +77,7 @@ class WebSocketTopicConfigsTest :
             }
 
             context("clarifications filter") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val destination = "/topic/contests/$contestId/clarifications"
 
                 test("should return true when contest access is allowed") {
@@ -98,8 +98,8 @@ class WebSocketTopicConfigsTest :
             }
 
             context("clarifications children members filter") {
-                val contestId = UUID.randomUUID()
-                val memberId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val memberId = UuidCreator.getTimeOrderedEpoch()
                 val destination = "/topic/contests/$contestId/clarifications/children/members/$memberId"
 
                 test("should return true when member owns the clarification") {
@@ -154,7 +154,7 @@ class WebSocketTopicConfigsTest :
             }
 
             context("clarifications deleted filter") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val destination = "/topic/contests/$contestId/clarifications/deleted"
 
                 test("should return true when contest access is allowed") {
@@ -173,7 +173,7 @@ class WebSocketTopicConfigsTest :
             }
 
             context("leaderboard filter") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val destination = "/topic/contests/$contestId/leaderboard"
 
                 test("should return true when contest access is allowed") {
@@ -192,7 +192,7 @@ class WebSocketTopicConfigsTest :
             }
 
             context("submissions filter") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val destination = "/topic/contests/$contestId/submissions"
 
                 test("should return true when contest access is allowed") {
@@ -211,7 +211,7 @@ class WebSocketTopicConfigsTest :
             }
 
             context("submissions full filter") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val destination = "/topic/contests/$contestId/submissions/full"
 
                 test("should return true when member is ADMIN") {
@@ -293,8 +293,8 @@ class WebSocketTopicConfigsTest :
             }
 
             context("submissions full members filter") {
-                val contestId = UUID.randomUUID()
-                val memberId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val memberId = UuidCreator.getTimeOrderedEpoch()
                 val destination = "/topic/contests/$contestId/submissions/full/members/$memberId"
 
                 test("should return true when member owns the submissions") {

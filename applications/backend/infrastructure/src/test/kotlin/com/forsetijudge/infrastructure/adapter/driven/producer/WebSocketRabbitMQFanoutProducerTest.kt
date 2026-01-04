@@ -1,6 +1,7 @@
 package com.forsetijudge.infrastructure.adapter.driven.producer
 
 import com.forsetijudge.core.testcontainer.TestContainers
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldContain
@@ -14,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import java.io.Serializable
-import java.util.UUID
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -27,7 +27,7 @@ class WebSocketRabbitMQFanoutProducerTest(
         test("should send message to rabbitmq") {
             val destination = "/topic/test"
             val payload = mapOf("key" to "value") as Serializable
-            val tempQueueName = "temp-queue-${UUID.randomUUID()}"
+            val tempQueueName = "temp-queue-${UuidCreator.getTimeOrderedEpoch()}"
 
             // Create the websocket-exchange and temporary queue using Spring AMQP
             val exchange = FanoutExchange("websocket-exchange", false, false)

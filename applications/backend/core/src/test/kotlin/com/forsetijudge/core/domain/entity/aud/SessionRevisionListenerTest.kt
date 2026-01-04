@@ -2,9 +2,9 @@ package com.forsetijudge.core.domain.entity.aud
 
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.RequestContext
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import java.util.UUID
 
 class SessionRevisionListenerTest :
     FunSpec({
@@ -23,7 +23,7 @@ class SessionRevisionListenerTest :
 
         test("should set memberId and traceId in new revision") {
             val revisionEntity = SessionRevisionEntity()
-            val sessionId = UUID.randomUUID()
+            val sessionId = UuidCreator.getTimeOrderedEpoch()
             RequestContext.getContext().session =
                 SessionMockBuilder.build(
                     id = sessionId,

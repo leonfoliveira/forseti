@@ -5,6 +5,7 @@ import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.driving.usecase.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.dto.output.LeaderboardOutputDTO
+import com.github.f4b6a3.uuid.UuidCreator
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -16,7 +17,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
-import java.util.UUID
 
 @WebMvcTest(controllers = [ContestLeaderboardController::class])
 @AutoConfigureMockMvc(addFilters = false)
@@ -33,7 +33,7 @@ class ContestLeaderboardControllerTest(
         val basePath = "/api/v1/contests/{contestId}/leaderboard"
 
         test("findContestLeaderboardById") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val leaderboard = mockk<LeaderboardOutputDTO>(relaxed = true)
             every { findLeaderboardUseCase.build(contestId) } returns leaderboard
 

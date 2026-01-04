@@ -1,5 +1,6 @@
 package com.forsetijudge.core.domain.entity
 
+import com.github.f4b6a3.uuid.UuidCreator
 import jakarta.persistence.Column
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
@@ -12,7 +13,7 @@ import java.util.UUID
 @Audited(withModifiedFlag = true)
 open class BaseEntity(
     @Id
-    val id: UUID = UUID.randomUUID(),
+    val id: UUID = UuidCreator.getTimeOrderedEpoch(),
     @Column(name = "created_at", nullable = false)
     @Audited(withModifiedFlag = false)
     val createdAt: OffsetDateTime = OffsetDateTime.now(),

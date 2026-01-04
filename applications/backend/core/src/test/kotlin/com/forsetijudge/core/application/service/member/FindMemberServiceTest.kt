@@ -8,7 +8,6 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import java.util.UUID
 
 class FindMemberServiceTest :
     FunSpec({
@@ -20,7 +19,7 @@ class FindMemberServiceTest :
             )
 
         context("findById") {
-            val memberId = UUID.randomUUID()
+            val memberId = UuidCreator.getTimeOrderedEpoch()
 
             test("should throw NotFoundException when member does not exist") {
                 every { memberRepository.findEntityById(memberId) } returns null

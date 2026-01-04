@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driving.usecase.session.RefreshSessionUseCase
 import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
+import com.github.f4b6a3.uuid.UuidCreator
 import io.opentelemetry.api.trace.Span
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -35,7 +36,7 @@ abstract class RabbitMQConsumer<TPayload : Serializable>(
             if (jsonNode.has("traceId") && !jsonNode["traceId"].isNull) {
                 jsonNode["traceId"].asText()
             } else {
-                UUID.randomUUID().toString()
+                UuidCreator.getTimeOrderedEpoch().toString()
             }
         val payloadJson = jsonNode["payload"]
 

@@ -3,6 +3,7 @@ package com.forsetijudge.core.application.service.contest
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -11,7 +12,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import java.time.OffsetDateTime
-import java.util.UUID
 
 class FindContestServiceTest :
     FunSpec({
@@ -39,7 +39,7 @@ class FindContestServiceTest :
         }
 
         context("findById") {
-            val id = UUID.randomUUID()
+            val id = UuidCreator.getTimeOrderedEpoch()
 
             test("should throw NotFoundException if contest not found") {
                 every { contestRepository.findEntityById(id) } returns null

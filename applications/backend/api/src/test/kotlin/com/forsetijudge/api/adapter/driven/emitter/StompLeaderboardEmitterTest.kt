@@ -2,12 +2,12 @@ package com.forsetijudge.api.adapter.driven.emitter
 
 import com.forsetijudge.core.port.driven.WebSocketFanoutProducer
 import com.forsetijudge.core.port.dto.output.LeaderboardOutputDTO
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.UUID
 
 class StompLeaderboardEmitterTest :
     FunSpec({
@@ -22,7 +22,7 @@ class StompLeaderboardEmitterTest :
 
         test("should emit leaderboard events") {
             val leaderboard = mockk<LeaderboardOutputDTO>(relaxed = true)
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             every { leaderboard.contestId } returns contestId
 
             sut.emit(leaderboard)

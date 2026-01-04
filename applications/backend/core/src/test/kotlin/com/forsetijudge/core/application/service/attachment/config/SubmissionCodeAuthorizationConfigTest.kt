@@ -5,6 +5,7 @@ import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -12,7 +13,6 @@ import io.mockk.clearAllMocks
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.UUID
 
 class SubmissionCodeAuthorizationConfigTest :
     FunSpec({
@@ -35,7 +35,7 @@ class SubmissionCodeAuthorizationConfigTest :
 
         context("authorizeAdminUpload") {
             test("should throw ForbiddenException") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val member = MemberMockBuilder.build()
 
                 shouldThrow<ForbiddenException> {
@@ -46,7 +46,7 @@ class SubmissionCodeAuthorizationConfigTest :
 
         context("authorizeJudgeUpload") {
             test("should throw ForbiddenException") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val member = MemberMockBuilder.build()
 
                 shouldThrow<ForbiddenException> {
@@ -57,7 +57,7 @@ class SubmissionCodeAuthorizationConfigTest :
 
         context("authorizeContestantUpload") {
             test("should check if contest started and member belongs to contest") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val member = MemberMockBuilder.build()
                 justRun { authorizeContestService.checkIfStarted(contestId) }
                 justRun { authorizeContestService.checkIfMemberBelongsToContest(contestId) }
@@ -71,7 +71,7 @@ class SubmissionCodeAuthorizationConfigTest :
 
         context("authorizePublicUpload") {
             test("should throw ForbiddenException") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
 
                 shouldThrow<ForbiddenException> {
                     sut.authorizePublicUpload(contestId)
@@ -81,7 +81,7 @@ class SubmissionCodeAuthorizationConfigTest :
 
         context("authorizeAdminDownload") {
             test("should check if member belongs to contest") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val member = MemberMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
                 justRun { authorizeContestService.checkIfMemberBelongsToContest(contestId) }
@@ -94,7 +94,7 @@ class SubmissionCodeAuthorizationConfigTest :
 
         context("authorizeJudgeDownload") {
             test("should check if contest started and member belongs to contest") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val member = MemberMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
                 justRun { authorizeContestService.checkIfStarted(contestId) }
@@ -109,8 +109,8 @@ class SubmissionCodeAuthorizationConfigTest :
 
         context("authorizeContestantDownload") {
             test("should check if contest started and member belongs to contest") {
-                val contestId = UUID.randomUUID()
-                val memberId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val memberId = UuidCreator.getTimeOrderedEpoch()
                 val member = MemberMockBuilder.build(id = memberId)
                 val attachment = AttachmentMockBuilder.build(member = member)
                 justRun { authorizeContestService.checkIfStarted(contestId) }
@@ -123,9 +123,9 @@ class SubmissionCodeAuthorizationConfigTest :
             }
 
             test("should throw ForbiddenException when attachment belongs to different member") {
-                val contestId = UUID.randomUUID()
-                val member = MemberMockBuilder.build(id = UUID.randomUUID())
-                val differentMember = MemberMockBuilder.build(id = UUID.randomUUID())
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val member = MemberMockBuilder.build(id = UuidCreator.getTimeOrderedEpoch())
+                val differentMember = MemberMockBuilder.build(id = UuidCreator.getTimeOrderedEpoch())
                 val attachment = AttachmentMockBuilder.build(member = differentMember)
                 justRun { authorizeContestService.checkIfStarted(contestId) }
                 justRun { authorizeContestService.checkIfMemberBelongsToContest(contestId) }
@@ -138,7 +138,7 @@ class SubmissionCodeAuthorizationConfigTest :
 
         context("authorizePublicDownload") {
             test("should throw ForbiddenException") {
-                val contestId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 val attachment = AttachmentMockBuilder.build()
 
                 shouldThrow<ForbiddenException> {

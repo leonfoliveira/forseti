@@ -14,7 +14,6 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.UUID
 
 class JudgeSubmissionServiceTest :
     FunSpec({
@@ -36,8 +35,8 @@ class JudgeSubmissionServiceTest :
 
         context("judge") {
             test("should judge submission successfully") {
-                val contestId = UUID.randomUUID()
-                val submissionId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val submissionId = UuidCreator.getTimeOrderedEpoch()
                 val submission = SubmissionMockBuilder.build(id = submissionId)
                 val expectedAnswer = Submission.Answer.ACCEPTED
                 val execution = ExecutionMockBuilder.build(answer = expectedAnswer)
@@ -53,8 +52,8 @@ class JudgeSubmissionServiceTest :
             }
 
             test("should throw NotFoundException when submission not found") {
-                val contestId = UUID.randomUUID()
-                val submissionId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val submissionId = UuidCreator.getTimeOrderedEpoch()
 
                 every { submissionRepository.findEntityById(submissionId) } returns null
 
@@ -66,8 +65,8 @@ class JudgeSubmissionServiceTest :
             }
 
             test("should track failure metrics when docker runner fails") {
-                val contestId = UUID.randomUUID()
-                val submissionId = UUID.randomUUID()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val submissionId = UuidCreator.getTimeOrderedEpoch()
                 val submission = SubmissionMockBuilder.build(id = submissionId)
 
                 every { submissionRepository.findEntityById(submissionId) } returns submission
