@@ -2,6 +2,7 @@ package com.forsetijudge.core.domain.entity.aud
 
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.RequestContext
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 

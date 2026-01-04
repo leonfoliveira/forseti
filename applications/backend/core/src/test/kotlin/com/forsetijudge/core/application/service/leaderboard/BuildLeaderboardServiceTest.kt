@@ -8,6 +8,7 @@ import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -33,7 +34,7 @@ class BuildLeaderboardServiceTest :
 
         context("findLeaderboardByContestId") {
             test("should throw NotFoundException when contest does not exist") {
-                val contestId = java.util.UuidCreator.getTimeOrderedEpoch()
+                val contestId = UuidCreator.getTimeOrderedEpoch()
                 every { contestRepository.findEntityById(contestId) } returns null
 
                 shouldThrow<NotFoundException> {
