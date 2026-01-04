@@ -4,11 +4,11 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.dto.input.attachment.AttachmentInputDTO
 import com.forsetijudge.core.port.dto.input.contest.UpdateContestInputDTO
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import jakarta.validation.Validation
 import java.time.OffsetDateTime
-import java.util.UUID
 
 class UpdateContestInputDTOTest :
     FunSpec({
@@ -31,7 +31,7 @@ class UpdateContestInputDTOTest :
         context("validation") {
             val inputDTO =
                 UpdateContestInputDTO(
-                    id = UUID.randomUUID(),
+                    id = UuidCreator.getTimeOrderedEpoch(),
                     slug = "test-contest",
                     title = "Test Contest",
                     languages = listOf(Submission.Language.PYTHON_312),
@@ -41,7 +41,7 @@ class UpdateContestInputDTOTest :
                     members =
                         listOf(
                             UpdateContestInputDTO.MemberDTO(
-                                id = UUID.randomUUID(),
+                                id = UuidCreator.getTimeOrderedEpoch(),
                                 type = Member.Type.CONTESTANT,
                                 name = "Test User",
                                 login = "test_user",
@@ -51,13 +51,13 @@ class UpdateContestInputDTOTest :
                     problems =
                         listOf(
                             UpdateContestInputDTO.ProblemDTO(
-                                id = UUID.randomUUID(),
+                                id = UuidCreator.getTimeOrderedEpoch(),
                                 letter = 'A',
                                 title = "Test Problem",
-                                description = AttachmentInputDTO(id = UUID.randomUUID()),
+                                description = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                                 timeLimit = 1000,
                                 memoryLimit = 256,
-                                testCases = AttachmentInputDTO(id = UUID.randomUUID()),
+                                testCases = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                             ),
                         ),
                 )

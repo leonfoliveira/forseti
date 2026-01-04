@@ -8,6 +8,7 @@ import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driving.usecase.announcement.CreateAnnouncementUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.dto.input.announcement.CreateAnnouncementInputDTO
+import com.github.f4b6a3.uuid.UuidCreator
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -19,7 +20,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
-import java.util.UUID
 
 @WebMvcTest(controllers = [ContestAnnouncementController::class])
 @AutoConfigureMockMvc(addFilters = false)
@@ -37,7 +37,7 @@ class ContestAnnouncementControllerTest(
         val basePath = "/api/v1/contests/{contestId}/announcements"
 
         test("createAnnouncement") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val body =
                 CreateAnnouncementInputDTO(
                     text = "This is a test announcement",

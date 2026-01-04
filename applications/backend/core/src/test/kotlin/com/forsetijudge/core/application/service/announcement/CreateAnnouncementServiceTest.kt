@@ -9,6 +9,7 @@ import com.forsetijudge.core.port.driven.repository.AnnouncementRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.dto.input.announcement.CreateAnnouncementInputDTO
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -18,7 +19,6 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
-import java.util.UUID
 
 class CreateAnnouncementServiceTest :
     FunSpec({
@@ -39,8 +39,8 @@ class CreateAnnouncementServiceTest :
             clearAllMocks()
         }
 
-        val contestId = UUID.randomUUID()
-        val memberId = UUID.randomUUID()
+        val contestId = UuidCreator.getTimeOrderedEpoch()
+        val memberId = UuidCreator.getTimeOrderedEpoch()
 
         context("create") {
             test("should throw NotFoundException when contest does not exist") {

@@ -1,5 +1,6 @@
 package com.forsetijudge.infrastructure.adapter.dto.message
 
+import com.github.f4b6a3.uuid.UuidCreator
 import io.opentelemetry.api.trace.Span
 import java.io.Serializable
 import java.util.UUID
@@ -13,7 +14,7 @@ import java.util.UUID
  * @property payload The actual payload of the message.
  */
 data class RabbitMQMessage<TPayload : Serializable>(
-    val id: UUID = UUID.randomUUID(),
+    val id: UUID = UuidCreator.getTimeOrderedEpoch(),
     val traceId: String? = Span.current().spanContext.traceId,
     val payload: TPayload,
 ) : Serializable

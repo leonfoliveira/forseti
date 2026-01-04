@@ -15,6 +15,7 @@ import com.forsetijudge.core.port.driving.usecase.submission.UpdateSubmissionUse
 import com.forsetijudge.core.port.dto.input.attachment.AttachmentInputDTO
 import com.forsetijudge.core.port.dto.input.submission.CreateSubmissionInputDTO
 import com.forsetijudge.core.port.dto.request.UpdateSubmissionAnswerRequestDTO
+import com.github.f4b6a3.uuid.UuidCreator
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -28,7 +29,6 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
-import java.util.UUID
 
 @WebMvcTest(controllers = [ContestSubmissionController::class])
 @AutoConfigureMockMvc(addFilters = false)
@@ -57,12 +57,12 @@ class ContestSubmissionControllerTest(
         val basePath = "/api/v1/contests/{contestId}/submissions"
 
         test("createSubmission") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val body =
                 CreateSubmissionInputDTO(
-                    problemId = UUID.randomUUID(),
+                    problemId = UuidCreator.getTimeOrderedEpoch(),
                     language = Submission.Language.PYTHON_312,
-                    code = AttachmentInputDTO(id = UUID.randomUUID()),
+                    code = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                 )
             val submission = SubmissionMockBuilder.build()
             val session = SessionMockBuilder.build()
@@ -84,7 +84,7 @@ class ContestSubmissionControllerTest(
         }
 
         test("findAllContestSubmissions") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val submissions =
                 listOf(
                     SubmissionMockBuilder.build(),
@@ -102,7 +102,7 @@ class ContestSubmissionControllerTest(
         }
 
         test("findAllContestFullSubmissions") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val submissions =
                 listOf(
                     SubmissionMockBuilder.build(),
@@ -124,7 +124,7 @@ class ContestSubmissionControllerTest(
         test("findAllFullSubmissionsForMember") {
             val submissions = listOf(SubmissionMockBuilder.build(), SubmissionMockBuilder.build())
             every { findSubmissionUseCase.findAllByMember(member.id) } returns submissions
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
 
             webMvc
                 .get("$basePath/members/me", contestId) {
@@ -136,8 +136,8 @@ class ContestSubmissionControllerTest(
         }
 
         test("updateSubmissionAnswer") {
-            val contestId = UUID.randomUUID()
-            val id = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
+            val id = UuidCreator.getTimeOrderedEpoch()
             val answer = Submission.Answer.ACCEPTED
             val body = UpdateSubmissionAnswerRequestDTO(answer = answer)
 
@@ -153,8 +153,8 @@ class ContestSubmissionControllerTest(
         }
 
         test("updateSubmissionAnswerForce") {
-            val contestId = UUID.randomUUID()
-            val submissionId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
+            val submissionId = UuidCreator.getTimeOrderedEpoch()
             val answer = Submission.Answer.ACCEPTED
             val body = UpdateSubmissionAnswerRequestDTO(answer = answer)
 
@@ -171,8 +171,8 @@ class ContestSubmissionControllerTest(
         }
 
         test("rerunSubmission") {
-            val contestId = UUID.randomUUID()
-            val id = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
+            val id = UuidCreator.getTimeOrderedEpoch()
 
             webMvc
                 .post("$basePath/{id}:rerun", contestId, id) {

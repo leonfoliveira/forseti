@@ -10,7 +10,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.UUID
 
 class UpdatePasswordMemberServiceTest :
     FunSpec({
@@ -28,7 +27,7 @@ class UpdatePasswordMemberServiceTest :
         }
 
         context("update") {
-            val memberId = UUID.randomUUID()
+            val memberId = UuidCreator.getTimeOrderedEpoch()
             val password = "newPassword"
 
             test("should throw NotFoundException when member does not exist") {

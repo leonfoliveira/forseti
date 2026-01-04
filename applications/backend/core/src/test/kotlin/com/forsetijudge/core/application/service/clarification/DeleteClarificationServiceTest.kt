@@ -5,6 +5,7 @@ import com.forsetijudge.core.domain.entity.ClarificationMockBuilder
 import com.forsetijudge.core.domain.event.ClarificationDeletedEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ClarificationRepository
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -15,7 +16,6 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
-import java.util.UUID
 
 class DeleteClarificationServiceTest :
     FunSpec({
@@ -33,7 +33,7 @@ class DeleteClarificationServiceTest :
         }
 
         context("delete") {
-            val id = UUID.randomUUID()
+            val id = UuidCreator.getTimeOrderedEpoch()
 
             test("should throw NotFoundException when clarification does not exist") {
                 every { clarificationRepository.findEntityById(id) } returns null

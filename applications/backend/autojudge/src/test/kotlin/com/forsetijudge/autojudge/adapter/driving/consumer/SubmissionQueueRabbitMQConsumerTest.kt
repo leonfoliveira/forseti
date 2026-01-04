@@ -6,13 +6,13 @@ import com.forsetijudge.core.port.driving.usecase.session.RefreshSessionUseCase
 import com.forsetijudge.core.port.driving.usecase.submission.JudgeSubmissionUseCase
 import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
 import com.forsetijudge.infrastructure.adapter.dto.message.payload.SubmissionMessagePayload
+import com.github.f4b6a3.uuid.UuidCreator
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
-import java.util.UUID
 
 @SpringBootTest(classes = [SubmissionQueueRabbitMQConsumer::class, JacksonConfig::class])
 class SubmissionQueueRabbitMQConsumerTest(
@@ -26,11 +26,11 @@ class SubmissionQueueRabbitMQConsumerTest(
         test("should process payload successfully") {
             val message =
                 RabbitMQMessage(
-                    id = UUID.randomUUID(),
+                    id = UuidCreator.getTimeOrderedEpoch(),
                     payload =
                         SubmissionMessagePayload(
-                            submissionId = UUID.randomUUID(),
-                            contestId = UUID.randomUUID(),
+                            submissionId = UuidCreator.getTimeOrderedEpoch(),
+                            contestId = UuidCreator.getTimeOrderedEpoch(),
                         ),
                 )
             val jsonMessage = objectMapper.writeValueAsString(message)
@@ -43,11 +43,11 @@ class SubmissionQueueRabbitMQConsumerTest(
         test("should propagate exceptions from judge service") {
             val message =
                 RabbitMQMessage(
-                    id = UUID.randomUUID(),
+                    id = UuidCreator.getTimeOrderedEpoch(),
                     payload =
                         SubmissionMessagePayload(
-                            submissionId = UUID.randomUUID(),
-                            contestId = UUID.randomUUID(),
+                            submissionId = UuidCreator.getTimeOrderedEpoch(),
+                            contestId = UuidCreator.getTimeOrderedEpoch(),
                         ),
                 )
             val jsonMessage = objectMapper.writeValueAsString(message)

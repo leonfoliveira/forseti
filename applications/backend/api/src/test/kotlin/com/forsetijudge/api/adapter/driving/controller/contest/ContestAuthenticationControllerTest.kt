@@ -7,6 +7,7 @@ import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.port.driving.usecase.authentication.AuthenticateUseCase
 import com.forsetijudge.core.port.dto.input.authorization.ContestAuthenticateInputDTO
+import com.github.f4b6a3.uuid.UuidCreator
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -17,7 +18,6 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
-import java.util.UUID
 
 @WebMvcTest(controllers = [ContestAuthenticationController::class])
 @AutoConfigureMockMvc(addFilters = false)
@@ -37,7 +37,7 @@ class ContestAuthenticationControllerTest(
         val basePath = "/api/v1/contests/{contestId}"
 
         test("authenticateToContest") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val body = ContestAuthenticateInputDTO(login = "user", password = "password")
             val session = SessionMockBuilder.build()
             every { authenticateUseCase.authenticateToContest(contestId, body) } returns session

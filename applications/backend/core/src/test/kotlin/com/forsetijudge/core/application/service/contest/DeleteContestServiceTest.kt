@@ -9,6 +9,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -18,7 +19,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.time.OffsetDateTime
-import java.util.UUID
 
 class DeleteContestServiceTest :
     FunSpec({
@@ -38,7 +38,7 @@ class DeleteContestServiceTest :
         }
 
         context("delete") {
-            val id = UUID.randomUUID()
+            val id = UuidCreator.getTimeOrderedEpoch()
 
             test("should throw NotFoundException when contest does not exist") {
                 every { contestRepository.findEntityById(id) } returns null

@@ -11,6 +11,7 @@ import com.forsetijudge.core.port.driven.repository.ClarificationRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.dto.input.clarification.CreateClarificationInputDTO
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -21,7 +22,6 @@ import io.mockk.slot
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
-import java.util.UUID
 
 class CreateClarificationServiceTest :
     FunSpec({
@@ -43,8 +43,8 @@ class CreateClarificationServiceTest :
         }
 
         context("create") {
-            val contestId = UUID.randomUUID()
-            val memberId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
+            val memberId = UuidCreator.getTimeOrderedEpoch()
             val input =
                 CreateClarificationInputDTO(
                     text = "Clarification text",
@@ -74,7 +74,7 @@ class CreateClarificationServiceTest :
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
 
-                val inputWithParent = input.copy(parentId = UUID.randomUUID())
+                val inputWithParent = input.copy(parentId = UuidCreator.getTimeOrderedEpoch())
                 shouldThrow<ForbiddenException> {
                     sut.create(contestId, memberId, inputWithParent)
                 }.message shouldBe "Contestants cannot create clarifications with a parent"
@@ -113,7 +113,7 @@ class CreateClarificationServiceTest :
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
 
-                val inputWithProblem = input.copy(problemId = UUID.randomUUID())
+                val inputWithProblem = input.copy(problemId = UuidCreator.getTimeOrderedEpoch())
                 shouldThrow<NotFoundException> {
                     sut.create(contestId, memberId, inputWithProblem)
                 }.message shouldBe "Could not find problem with id ${inputWithProblem.problemId} in contest $contestId"
@@ -130,7 +130,7 @@ class CreateClarificationServiceTest :
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
 
-                val inputWithParent = input.copy(parentId = UUID.randomUUID())
+                val inputWithParent = input.copy(parentId = UuidCreator.getTimeOrderedEpoch())
                 every { clarificationRepository.findEntityById(inputWithParent.parentId!!) } returns null
 
                 shouldThrow<NotFoundException> {

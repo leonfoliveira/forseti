@@ -33,7 +33,7 @@ class BuildLeaderboardServiceTest :
 
         context("findLeaderboardByContestId") {
             test("should throw NotFoundException when contest does not exist") {
-                val contestId = java.util.UUID.randomUUID()
+                val contestId = java.util.UuidCreator.getTimeOrderedEpoch()
                 every { contestRepository.findEntityById(contestId) } returns null
 
                 shouldThrow<NotFoundException> {

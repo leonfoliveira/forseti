@@ -16,7 +16,6 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
-import java.util.UUID
 
 class UpdateSubmissionServiceTest :
     FunSpec({
@@ -34,7 +33,7 @@ class UpdateSubmissionServiceTest :
         }
 
         context("fail") {
-            val submissionId = UUID.randomUUID()
+            val submissionId = UuidCreator.getTimeOrderedEpoch()
 
             test("should throw NotFoundException when submission does not exist") {
                 every { submissionRepository.findEntityById(submissionId) } returns null
@@ -60,7 +59,7 @@ class UpdateSubmissionServiceTest :
         }
 
         context("rerun") {
-            val submissionId = UUID.randomUUID()
+            val submissionId = UuidCreator.getTimeOrderedEpoch()
 
             test("should throw NotFoundException when submission does not exist") {
                 every { submissionRepository.findEntityById(submissionId) } returns null
@@ -99,7 +98,7 @@ class UpdateSubmissionServiceTest :
         }
 
         context("updateAnswer") {
-            val submissionId = UUID.randomUUID()
+            val submissionId = UuidCreator.getTimeOrderedEpoch()
 
             test("should throw NotFoundException when submission does not exist") {
                 every { submissionRepository.findEntityById(submissionId) } returns null

@@ -1,5 +1,6 @@
 package com.forsetijudge.core.domain.entity
 
+import com.github.f4b6a3.uuid.UuidCreator
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -22,7 +23,7 @@ import java.util.UUID
 @Audited
 @SQLRestriction("deleted_at is null")
 class Submission(
-    id: UUID = UUID.randomUUID(),
+    id: UUID = UuidCreator.getTimeOrderedEpoch(),
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,

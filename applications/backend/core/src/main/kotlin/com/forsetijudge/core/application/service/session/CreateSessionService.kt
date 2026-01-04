@@ -5,12 +5,12 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.port.driven.repository.SessionRepository
 import com.forsetijudge.core.port.driving.usecase.session.CreateSessionUseCase
+import com.github.f4b6a3.uuid.UuidCreator
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
-import java.util.UUID
 
 @Service
 class CreateSessionService(
@@ -44,7 +44,7 @@ class CreateSessionService(
 
         val session =
             Session(
-                csrfToken = UUID.randomUUID(),
+                csrfToken = UuidCreator.getTimeOrderedEpoch(),
                 member = member,
                 expiresAt = expiresAt,
             )

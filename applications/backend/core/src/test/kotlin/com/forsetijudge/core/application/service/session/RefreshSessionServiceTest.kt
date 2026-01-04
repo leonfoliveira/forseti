@@ -11,7 +11,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.time.OffsetDateTime
-import java.util.UUID
 
 class RefreshSessionServiceTest :
     FunSpec({
@@ -29,7 +28,7 @@ class RefreshSessionServiceTest :
         }
 
         context("refresh") {
-            val memberId = UUID.randomUUID()
+            val memberId = UuidCreator.getTimeOrderedEpoch()
             val member = MemberMockBuilder.build(id = memberId)
 
             test("should create new session when no current session exists") {
@@ -64,7 +63,7 @@ class RefreshSessionServiceTest :
             }
 
             test("should create new session when current session belongs to different member") {
-                val differentMember = MemberMockBuilder.build(id = UUID.randomUUID())
+                val differentMember = MemberMockBuilder.build(id = UuidCreator.getTimeOrderedEpoch())
                 val sessionForDifferentMember =
                     SessionMockBuilder.build(
                         member = differentMember,

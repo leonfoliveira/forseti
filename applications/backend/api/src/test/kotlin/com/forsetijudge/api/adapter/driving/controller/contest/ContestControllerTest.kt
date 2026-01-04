@@ -20,6 +20,7 @@ import com.forsetijudge.core.port.driving.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.dto.input.attachment.AttachmentInputDTO
 import com.forsetijudge.core.port.dto.input.contest.CreateContestInputDTO
 import com.forsetijudge.core.port.dto.input.contest.UpdateContestInputDTO
+import com.github.f4b6a3.uuid.UuidCreator
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -35,7 +36,6 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import java.time.OffsetDateTime
-import java.util.UUID
 
 @WebMvcTest(controllers = [ContestController::class])
 @AutoConfigureMockMvc(addFilters = false)
@@ -85,10 +85,10 @@ class ContestControllerTest(
         }
 
         test("updateContest") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val body =
                 UpdateContestInputDTO(
-                    id = UUID.randomUUID(),
+                    id = UuidCreator.getTimeOrderedEpoch(),
                     slug = "updated-contest",
                     title = "Updated Contest",
                     languages = listOf(Submission.Language.PYTHON_312),
@@ -101,7 +101,7 @@ class ContestControllerTest(
                     members =
                         listOf(
                             UpdateContestInputDTO.MemberDTO(
-                                id = UUID.randomUUID(),
+                                id = UuidCreator.getTimeOrderedEpoch(),
                                 type = Member.Type.CONTESTANT,
                                 name = "Updated Member",
                                 login = "updated_member",
@@ -111,13 +111,13 @@ class ContestControllerTest(
                     problems =
                         listOf(
                             UpdateContestInputDTO.ProblemDTO(
-                                id = UUID.randomUUID(),
+                                id = UuidCreator.getTimeOrderedEpoch(),
                                 letter = 'B',
                                 title = "Problem B",
-                                description = AttachmentInputDTO(id = UUID.randomUUID()),
+                                description = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                                 timeLimit = 2000,
                                 memoryLimit = 1024,
-                                testCases = AttachmentInputDTO(id = UUID.randomUUID()),
+                                testCases = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                             ),
                         ),
                 )
@@ -162,7 +162,7 @@ class ContestControllerTest(
         }
 
         test("findContestById") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1))
             every { findContestUseCase.findById(contestId) } returns contest
 
@@ -176,7 +176,7 @@ class ContestControllerTest(
         }
 
         test("findFullContestById") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val contest =
                 ContestMockBuilder.build(
                     id = contestId,
@@ -198,7 +198,7 @@ class ContestControllerTest(
         }
 
         test("forceStartContest") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val contest = ContestMockBuilder.build(id = contestId)
             every { updateContestUseCase.forceStart(contestId) } returns contest
 
@@ -212,7 +212,7 @@ class ContestControllerTest(
         }
 
         test("forceEndContest") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val contest = ContestMockBuilder.build(id = contestId)
             every { updateContestUseCase.forceEnd(contestId) } returns contest
 
@@ -226,7 +226,7 @@ class ContestControllerTest(
         }
 
         test("deleteContest") {
-            val contestId = UUID.randomUUID()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
 
             webMvc
                 .delete("$basePath/{contestId}", contestId) {
