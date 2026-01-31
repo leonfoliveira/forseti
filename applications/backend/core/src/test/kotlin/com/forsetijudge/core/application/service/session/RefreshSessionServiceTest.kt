@@ -4,6 +4,7 @@ import com.forsetijudge.core.application.service.member.FindMemberService
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.RequestContext
+import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
