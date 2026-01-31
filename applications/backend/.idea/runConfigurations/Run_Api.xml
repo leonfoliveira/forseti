@@ -3,7 +3,7 @@
     <envs>
       <env name="SPRING_PROFILES_ACTIVE" value="development" />
     </envs>
-    <option name="MAIN_CLASS_NAME" value="live.forseti.api.ApplicationKt" />
+    <option name="MAIN_CLASS_NAME" value="com.forsetijudge.api.ApplicationKt" />
     <module name="backend.api.main" />
     <option name="VM_PARAMETERS" value="-javaagent:$PROJECT_DIR$/opentelemetry-javaagent.jar -Dotel.logs.exporter=none -Dotel.traces.exporter=none -Dotel.metrics.exporter=none" />
     <shortenClasspath name="ARGS_FILE" />
