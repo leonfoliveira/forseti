@@ -87,7 +87,7 @@ class ContestAnnouncementController(
         authorizeContestUseCase.checkIfStarted(contestId)
         authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val member = RequestContext.getContext().session!!.member
-        val announcement = createAnnouncementUseCase.create(contestId, member.id, body)
+        val announcement = createAnnouncementUseCase.execute(contestId, member.id, body)
         return ResponseEntity.ok(announcement.toResponseDTO())
     }
 }

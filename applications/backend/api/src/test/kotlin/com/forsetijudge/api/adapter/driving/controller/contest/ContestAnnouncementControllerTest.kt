@@ -45,7 +45,7 @@ class ContestAnnouncementControllerTest(
             val announcement = AnnouncementMockBuilder.build()
             val session = SessionMockBuilder.build()
             RequestContext.getContext().session = session
-            every { createAnnouncementUseCase.create(contestId, session.member.id, body) } returns announcement
+            every { createAnnouncementUseCase.execute(contestId, session.member.id, body) } returns announcement
 
             webMvc
                 .post(basePath, contestId) {

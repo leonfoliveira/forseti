@@ -13,7 +13,7 @@ interface CreateAnnouncementUseCase {
      * @param input The input data for creating the announcement.
      * @return The created announcement entity.
      */
-    fun create(
+    fun execute(
         contestId: UUID,
         memberId: UUID,
         input: CreateAnnouncementInputDTO,

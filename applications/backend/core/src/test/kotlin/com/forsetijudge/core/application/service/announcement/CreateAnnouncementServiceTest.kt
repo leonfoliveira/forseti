@@ -1,7 +1,9 @@
 package com.forsetijudge.core.application.service.announcement
 
+import com.forsetijudge.core.application.util.UseCaseValidator
 import com.forsetijudge.core.domain.entity.Announcement
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.event.AnnouncementCreatedEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -16,6 +18,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
@@ -37,6 +40,9 @@ class CreateAnnouncementServiceTest :
 
         beforeEach {
             clearAllMocks()
+            mockkObject(UseCaseValidator)
+            every { UseCaseValidator.validateMemberInContest(any(), any()) } returns Unit
+            every { UseCaseValidator.validateMemberType(any(), any()) } returns Unit
         }
 
         val contestId = UuidCreator.getTimeOrderedEpoch()
@@ -48,7 +54,7 @@ class CreateAnnouncementServiceTest :
                 every { contestRepository.findEntityById(contestId) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.create(contestId, memberId, input)
+                    sut.execute(contestId, memberId, input)
                 }.message shouldBe "Could not find contest with id $contestId"
             }
 
@@ -59,7 +65,7 @@ class CreateAnnouncementServiceTest :
                 every { memberRepository.findEntityById(memberId) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.create(contestId, memberId, input)
+                    sut.execute(contestId, memberId, input)
                 }.message shouldBe "Could not find member with id $memberId"
             }
 
@@ -71,8 +77,10 @@ class CreateAnnouncementServiceTest :
                 every { memberRepository.findEntityById(memberId) } returns member
                 every { announcementRepository.save(any<Announcement>()) } answers { firstArg() }
 
-                val announcement = sut.create(contestId, memberId, input)
+                val announcement = sut.execute(contestId, memberId, input)
 
+                verify { UseCaseValidator.validateMemberInContest(contest, member) }
+                verify { UseCaseValidator.validateMemberType(member, setOf(Member.Type.ADMIN)) }
                 announcement.text shouldBe input.text
                 announcement.contest.id shouldBe contestId
                 announcement.member.id shouldBe memberId

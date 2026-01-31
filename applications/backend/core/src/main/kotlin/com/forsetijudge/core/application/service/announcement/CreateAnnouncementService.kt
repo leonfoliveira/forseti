@@ -1,6 +1,8 @@
 package com.forsetijudge.core.application.service.announcement
 
+import com.forsetijudge.core.application.util.UseCaseValidator
 import com.forsetijudge.core.domain.entity.Announcement
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.AnnouncementCreatedEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.AnnouncementRepository
@@ -33,7 +35,7 @@ class CreateAnnouncementService(
      * @throws NotFoundException if the contest or member does not exist
      */
     @Transactional
-    override fun create(
+    override fun execute(
         contestId: UUID,
         memberId: UUID,
         input: CreateAnnouncementInputDTO,
@@ -46,6 +48,9 @@ class CreateAnnouncementService(
         val member =
             memberRepository.findEntityById(memberId)
                 ?: throw NotFoundException("Could not find member with id $memberId")
+
+        UseCaseValidator.validateMemberInContest(contest, member)
+        UseCaseValidator.validateMemberType(member, setOf(Member.Type.ADMIN))
 
         val announcement =
             Announcement(
