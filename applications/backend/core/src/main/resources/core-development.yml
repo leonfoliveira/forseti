@@ -12,7 +12,7 @@ spring:
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USER:forseti}
-    password: ${RABBITMQ_PASSWORD:forseti}
+    password: ${RABBITMQ_PASSWORD:forsetijudge}
     virtual-host: ${RABBITMQ_VHOST:/}
     exchange:
       submission-exchange: ${RABBITMQ_SUBMISSION_EXCHANGE:submission-exchange}
@@ -38,7 +38,7 @@ security:
     root-expiration: ${SESSION_ROOT_EXPIRATION:12h}
     autojudge-expiration: ${SESSION_AUTOJUDGE_EXPIRATION:12h}
   root:
-    password: ${ROOT_PASSWORD:forseti}
+    password: ${ROOT_PASSWORD:forsetijudge}
   rate-limit:
     enabled: ${RATE_LIMIT_ENABLED:true}
     cache-size: ${RATE_LIMIT_CACHE_SIZE:100000}
