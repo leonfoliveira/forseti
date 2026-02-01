@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.session
 
 import com.forsetijudge.core.application.util.UnitUtil
+import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.port.driven.repository.SessionRepository
@@ -27,11 +28,15 @@ class CreateSessionService(
     /**
      * Creates a session for a member.
      *
+     * @param contest The contest associated with the session, if any.
      * @param member The member for whom the session is created.
      * @return The created session.
      */
     @Transactional
-    override fun create(member: Member): Session {
+    override fun create(
+        contest: Contest?,
+        member: Member,
+    ): Session {
         logger.info("Creating session for member id = ${member.id}")
 
         val expiration =
@@ -45,6 +50,7 @@ class CreateSessionService(
         val session =
             Session(
                 csrfToken = UuidCreator.getTimeOrderedEpoch(),
+                contest = contest,
                 member = member,
                 expiresAt = expiresAt,
             )

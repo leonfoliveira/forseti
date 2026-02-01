@@ -36,13 +36,13 @@ class RefreshSessionServiceTest :
                 RequestContext.getContext().session = null
                 every { findMemberService.findById(memberId) } returns member
                 val newSession = SessionMockBuilder.build(member = member)
-                every { createSessionService.create(member) } returns newSession
+                every { createSessionService.create(null, member) } returns newSession
 
                 val result = sut.refresh(memberId)
 
                 result shouldBe newSession
                 verify { findMemberService.findById(memberId) }
-                verify { createSessionService.create(member) }
+                verify { createSessionService.create(null, member) }
             }
 
             test("should create new session when current session is about to expire") {
@@ -54,13 +54,13 @@ class RefreshSessionServiceTest :
                 RequestContext.getContext().session = expiringSession
                 every { findMemberService.findById(memberId) } returns member
                 val newSession = SessionMockBuilder.build(member = member)
-                every { createSessionService.create(member) } returns newSession
+                every { createSessionService.create(null, member) } returns newSession
 
                 val result = sut.refresh(memberId)
 
                 result shouldBe newSession
                 verify { findMemberService.findById(memberId) }
-                verify { createSessionService.create(member) }
+                verify { createSessionService.create(null, member) }
             }
 
             test("should create new session when current session belongs to different member") {
@@ -73,13 +73,13 @@ class RefreshSessionServiceTest :
                 RequestContext.getContext().session = sessionForDifferentMember
                 every { findMemberService.findById(memberId) } returns member
                 val newSession = SessionMockBuilder.build(member = member)
-                every { createSessionService.create(member) } returns newSession
+                every { createSessionService.create(null, member) } returns newSession
 
                 val result = sut.refresh(memberId)
 
                 result shouldBe newSession
                 verify { findMemberService.findById(memberId) }
-                verify { createSessionService.create(member) }
+                verify { createSessionService.create(null, member) }
             }
 
             test("should return current session when it is still valid and belongs to same member") {
@@ -94,7 +94,7 @@ class RefreshSessionServiceTest :
 
                 result shouldBe validSession
                 verify(exactly = 0) { findMemberService.findById(any()) }
-                verify(exactly = 0) { createSessionService.create(any()) }
+                verify(exactly = 0) { createSessionService.create(any(), any()) }
             }
         }
     })
