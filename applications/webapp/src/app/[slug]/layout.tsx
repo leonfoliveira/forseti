@@ -31,8 +31,16 @@ export default async function ContestLayout({
       contestReader.findMetadataBySlug(slug),
     ]);
 
+    const doesSessionBelongToContest =
+      session?.contest?.id === contestMetadata.id;
+
     return (
-      <StoreProvider preloadedState={{ session, contestMetadata }}>
+      <StoreProvider
+        preloadedState={{
+          session: doesSessionBelongToContest ? session : undefined,
+          contestMetadata,
+        }}
+      >
         <div className="flex flex-col min-h-screen">
           <Header />
           <div className="flex-1 flex flex-col">{children}</div>

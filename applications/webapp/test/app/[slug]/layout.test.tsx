@@ -36,8 +36,8 @@ describe("ContestLayout", () => {
     <div data-testid="test-children">Test Content</div>
   );
 
-  const mockSession = { id: "session-1" };
   const mockContestMetadata = { id: "contest-1", slug: "test-contest" };
+  const mockSession = { id: "session-1", contest: mockContestMetadata };
   const mockParams = Promise.resolve({ slug: "test-contest" });
   beforeEach(() => {
     jest.clearAllMocks();
@@ -76,6 +76,29 @@ describe("ContestLayout", () => {
 
     expect(preloadedState).toEqual({
       session: mockSession,
+      contestMetadata: mockContestMetadata,
+    });
+  });
+
+  it("should pass null session to StoreProvider if session belongs to other contest", async () => {
+    (sessionReader.getCurrent as jest.Mock).mockResolvedValueOnce({
+      id: "session-1",
+      contest: { id: "other-contest" },
+    });
+    const { getByTestId } = render(
+      await ContestLayout({
+        params: mockParams,
+        children: <TestChildren />,
+      }),
+    );
+
+    const storeProvider = getByTestId("store-provider");
+    const preloadedState = JSON.parse(
+      storeProvider.getAttribute("data-preloaded-state") || "{}",
+    );
+
+    expect(preloadedState).toEqual({
+      session: undefined,
       contestMetadata: mockContestMetadata,
     });
   });
