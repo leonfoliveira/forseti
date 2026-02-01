@@ -36,7 +36,7 @@ class RefreshSessionService(
         ) {
             logger.info("Refreshing session for member with id: $memberId")
             val member = findMemberService.findById(memberId)
-            return createSessionService.create(member)
+            return createSessionService.create(null, member)
         }
 
         logger.info("Current session with id: ${currentSession.id} is still valid")

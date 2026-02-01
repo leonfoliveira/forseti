@@ -2,6 +2,7 @@ package com.forsetijudge.core.application.service.announcement
 
 import com.forsetijudge.core.domain.entity.Announcement
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.event.AnnouncementCreatedEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -16,6 +17,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher

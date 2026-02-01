@@ -3,8 +3,10 @@ package com.forsetijudge.core.application.service.authentication
 import com.forsetijudge.core.application.service.session.CreateSessionService
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Session
+import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.port.driven.Hasher
+import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.authentication.AuthenticateUseCase
 import com.forsetijudge.core.port.dto.input.authorization.AuthenticateInputDTO
@@ -19,6 +21,7 @@ class AuthenticateService(
     private val memberRepository: MemberRepository,
     private val hasher: Hasher,
     private val createSessionService: CreateSessionService,
+    private val contestRepository: ContestRepository,
 ) : AuthenticateUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -48,7 +51,7 @@ class AuthenticateService(
             throw UnauthorizedException("Invalid login or password")
         }
 
-        val session = createSessionService.create(member)
+        val session = createSessionService.create(null, member)
         logger.info("Finished authenticating member with session id = ${session.id}")
         return session
     }
@@ -59,6 +62,7 @@ class AuthenticateService(
      * @param contestId The ID of the contest.
      * @param inputDTO The contest authentication input data.
      * @return The created session.
+     * @throws NotFoundException if the contest is not found.
      * @throws UnauthorizedException if the login or password is invalid.
      */
     @Transactional
@@ -68,6 +72,9 @@ class AuthenticateService(
     ): Session {
         logger.info("Authenticating member for contest with id = $contestId")
 
+        val contest =
+            contestRepository.findEntityById(contestId)
+                ?: throw NotFoundException("Contest with id $contestId not found")
         val member =
             memberRepository.findByLoginAndContestId(inputDTO.login, contestId)
                 ?: memberRepository.findByLoginAndContestId(inputDTO.login, null)
@@ -80,7 +87,7 @@ class AuthenticateService(
             throw UnauthorizedException("Invalid login or password")
         }
 
-        val session = createSessionService.create(member)
+        val session = createSessionService.create(contest, member)
         logger.info("Finished authenticating member for contest with session id = ${session.id}")
         return session
     }
