@@ -98,9 +98,9 @@ class ApiAdapter:
                 return session_id, csrf_token
 
         password = self.input_adapter.password("Root password: ")
-        print(f"{self.api_url}/v1/auth:sign-in-as-root")
+        print(f"{self.api_url}/v1/root:sign-in")
         response = requests.post(
-            f"{self.api_url}/v1/auth:sign-in-as-root",
+            f"{self.api_url}/v1/root:sign-in",
             verify=VERIFY_SSL,
             json={"login": "root", "password": password},
         )

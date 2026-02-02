@@ -24,7 +24,7 @@ class HttpContextExtractionInterceptor(
     companion object {
         val signInPaths =
             setOf(
-                Regex("/api/v1/auth:sign-in-as-root"),
+                Regex("/api/v1/root:sign-in"),
                 Regex("/api/v1/contests/[a-fA-F0-9-]+:sign-in"),
             )
     }
@@ -42,12 +42,18 @@ class HttpContextExtractionInterceptor(
         val sessionId = request.cookies?.find { it.name == "session_id" }?.value
         var session = extractSession(sessionId)
 
-        // Extract contestId from path if present
-        val contestIdFromPath = extractContestIdFromPath(request.requestURI)
-        if (contestIdFromPath != null) {
-            if (session?.contest?.id != contestIdFromPath) {
-                logger.info("Session contest ID does not match path contest ID")
-                session = null
+        /**
+         * If the path is associated with a specific contest, ensure the session's contest matches
+         * the contest in the path. If not, invalidate the session.
+         * If the session has no contest, it is valid for all contests.
+         */
+        if (session != null && !session.member.isSystemMember()) {
+            val contestIdFromPath = extractContestIdFromPath(request.requestURI)
+            if (contestIdFromPath != null) {
+                if (session.contest?.id != contestIdFromPath) {
+                    logger.info("Session contest ID does not match path contest ID")
+                    session = null
+                }
             }
         }
 

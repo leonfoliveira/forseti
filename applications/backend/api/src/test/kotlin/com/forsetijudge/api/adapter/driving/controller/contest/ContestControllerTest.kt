@@ -44,8 +44,6 @@ class ContestControllerTest(
     @MockkBean(relaxed = true)
     private val authorizeContestUseCase: AuthorizeContestUseCase,
     @MockkBean(relaxed = true)
-    private val createContestUseCase: CreateContestUseCase,
-    @MockkBean(relaxed = true)
     private val updateContestUseCase: UpdateContestUseCase,
     @MockkBean(relaxed = true)
     private val findContestUseCase: FindContestUseCase,
@@ -61,28 +59,6 @@ class ContestControllerTest(
         }
 
         val basePath = "/api/v1/contests"
-
-        test("createContest") {
-            val body =
-                CreateContestInputDTO(
-                    slug = "test-contest",
-                    title = "Test Contest",
-                    languages = listOf(Submission.Language.PYTHON_312),
-                    startAt = OffsetDateTime.now().plusHours(1),
-                    endAt = OffsetDateTime.now().plusHours(2),
-                )
-            val contest = ContestMockBuilder.build()
-            every { createContestUseCase.create(body) } returns contest
-
-            webMvc
-                .post(basePath) {
-                    contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(body)
-                }.andExpect {
-                    status { isOk() }
-                    content { contest.toFullResponseDTO() }
-                }
-        }
 
         test("updateContest") {
             val contestId = UuidCreator.getTimeOrderedEpoch()
@@ -130,19 +106,6 @@ class ContestControllerTest(
                 }.andExpect {
                     status { isOk() }
                     content { contest.toFullResponseDTO() }
-                }
-        }
-
-        test("findAllContestMetadata") {
-            val contests = listOf(ContestMockBuilder.build(), ContestMockBuilder.build())
-            every { findContestUseCase.findAll() } returns contests
-
-            webMvc
-                .get("$basePath/metadata") {
-                    accept = MediaType.APPLICATION_JSON
-                }.andExpect {
-                    status { isOk() }
-                    content { contests.map { it.toMetadataDTO() } }
                 }
         }
 

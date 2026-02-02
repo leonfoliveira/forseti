@@ -6,14 +6,14 @@ const problemDescription = new File(
   "description.txt",
   {
     type: "application/pdf",
-  }
+  },
 );
 const problemTestCases = new File(
   [new Blob([`1,2\n2,4\n3,6\n4,8\n5,10`])],
   "test-cases.csv",
   {
     type: "text/csv",
-  }
+  },
 );
 
 export class Actor {
@@ -22,7 +22,7 @@ export class Actor {
   private contest = {} as { id: string };
 
   async signIn(password: string) {
-    const response = await this.apiClient.request(`/v1/auth:sign-in-as-root`, {
+    const response = await this.apiClient.request(`/v1/root:sign-in`, {
       method: "POST",
       body: JSON.stringify({
         password: password,
@@ -62,7 +62,7 @@ export class Actor {
             description: {
               id: await this.uploadAttachment(
                 problemDescription,
-                "PROBLEM_DESCRIPTION"
+                "PROBLEM_DESCRIPTION",
               ),
             },
             timeLimit: 1000,
@@ -70,7 +70,7 @@ export class Actor {
             testCases: {
               id: await this.uploadAttachment(
                 problemTestCases,
-                "PROBLEM_TEST_CASES"
+                "PROBLEM_TEST_CASES",
               ),
             },
           },
@@ -96,7 +96,7 @@ export class Actor {
         method: "POST",
         body: formData,
       },
-      true
+      true,
     );
     const data = (await response.json()) as { id: string };
     return data.id;
@@ -105,7 +105,7 @@ export class Actor {
   async createSubmission(
     problemId: string,
     language: string,
-    attachmentId: string
+    attachmentId: string,
   ) {
     const response = await this.apiClient.request(
       `/v1/contests/${this.contest.id}/submissions`,
@@ -116,7 +116,7 @@ export class Actor {
           language: language,
           code: { id: attachmentId },
         }),
-      }
+      },
     );
     const data = (await response.json()) as { id: string };
     return data.id;
@@ -127,7 +127,7 @@ export class Actor {
       `/v1/contests/${this.contest.id}/submissions/full/members/me`,
       {
         method: "GET",
-      }
+      },
     );
     const data = (await response.json()) as {
       id: string;
