@@ -26,12 +26,15 @@ class DeleteClarificationService(
      * @throws NotFoundException if the clarification is not found.
      */
     @Transactional
-    override fun delete(id: UUID) {
-        logger.info("Deleting clarification with id: $id")
+    override fun delete(
+        contestId: UUID,
+        id: UUID,
+    ) {
+        logger.info("Deleting clarification with id: $id in contest: $contestId")
 
         val clarification =
-            clarificationRepository.findEntityById(id)
-                ?: throw NotFoundException("Could not find clarification with id $id")
+            clarificationRepository.findByIdAndContestId(id, contestId)
+                ?: throw NotFoundException("Could not find clarification with id $id in contest")
 
         delete(clarification)
         clarificationRepository.save(clarification)

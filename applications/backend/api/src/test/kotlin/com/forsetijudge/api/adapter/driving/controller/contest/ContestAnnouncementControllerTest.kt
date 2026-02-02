@@ -27,8 +27,6 @@ import org.springframework.test.web.servlet.post
 class ContestAnnouncementControllerTest(
     @MockkBean(relaxed = true)
     private val createAnnouncementUseCase: CreateAnnouncementUseCase,
-    @MockkBean(relaxed = true)
-    private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val webMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) : FunSpec({
@@ -55,7 +53,5 @@ class ContestAnnouncementControllerTest(
                     status { isOk() }
                     content { announcement.toResponseDTO() }
                 }
-
-            verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
         }
     })

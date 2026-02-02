@@ -67,8 +67,6 @@ class ContestClarificationController(
         @RequestBody body: CreateClarificationInputDTO,
     ): ResponseEntity<ClarificationResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/clarifications $body")
-        authorizeContestUseCase.checkIfStarted(contestId)
-        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val member = RequestContext.getContext().session!!.member
         val clarification = createClarificationUseCase.create(contestId, member.id, body)
         return ResponseEntity.ok(clarification.toResponseDTO())
@@ -108,7 +106,7 @@ class ContestClarificationController(
         @PathVariable clarificationId: UUID,
     ): ResponseEntity<Unit> {
         logger.info("[DELETE] /v1/contests/$contestId/clarifications/$clarificationId")
-        deleteClarificationUseCase.delete(clarificationId)
+        deleteClarificationUseCase.delete(contestId, clarificationId)
         return ResponseEntity.noContent().build()
     }
 }

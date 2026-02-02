@@ -26,7 +26,6 @@ import java.util.UUID
 @RestController
 @RequestMapping("/api/v1")
 class ContestAnnouncementController(
-    private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val createAnnouncementUseCase: CreateAnnouncementUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -84,8 +83,6 @@ class ContestAnnouncementController(
         @RequestBody body: CreateAnnouncementInputDTO,
     ): ResponseEntity<AnnouncementResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/announcements $body")
-        authorizeContestUseCase.checkIfStarted(contestId)
-        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val member = RequestContext.getContext().session!!.member
         val announcement = createAnnouncementUseCase.create(contestId, member.id, body)
         return ResponseEntity.ok(announcement.toResponseDTO())
