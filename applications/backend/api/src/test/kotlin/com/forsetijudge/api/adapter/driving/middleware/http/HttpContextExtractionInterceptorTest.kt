@@ -159,6 +159,21 @@ class HttpContextExtractionInterceptorTest :
             verify { findSessionUseCase.findByIdNullable(expectedSession.id) }
         }
 
+        test("should not set authorization when route contestId is different from session contestId") {
+            val request = mockk<HttpServletRequest>(relaxed = true)
+            val response = mockk<HttpServletResponse>(relaxed = true)
+            val filterChain = mockk<FilterChain>(relaxed = true)
+            val expectedSession = SessionMockBuilder.build()
+            every { request.method } returns "GET"
+            every { request.requestURI } returns "/api/v1/contests/11111111-1111-1111-1111-111111111111"
+            every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
+            every { findSessionUseCase.findByIdNullable(expectedSession.id) } returns expectedSession
+
+            sut.preHandle(request, response, filterChain)
+
+            RequestContext.getContext().session shouldBe null
+        }
+
         test("should set authorization when access token is valid") {
             val request = mockk<HttpServletRequest>(relaxed = true)
             val response = mockk<HttpServletResponse>(relaxed = true)

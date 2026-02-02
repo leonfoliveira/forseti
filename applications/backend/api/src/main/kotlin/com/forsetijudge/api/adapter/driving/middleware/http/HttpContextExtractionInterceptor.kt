@@ -40,7 +40,16 @@ class HttpContextExtractionInterceptor(
         logger.info("Started HttpContextExtractionInterceptor")
 
         val sessionId = request.cookies?.find { it.name == "session_id" }?.value
-        val session = extractSession(sessionId)
+        var session = extractSession(sessionId)
+
+        // Extract contestId from path if present
+        val contestIdFromPath = extractContestIdFromPath(request.requestURI)
+        if (contestIdFromPath != null) {
+            if (session?.contest?.id != contestIdFromPath) {
+                logger.info("Session contest ID does not match path contest ID")
+                session = null
+            }
+        }
 
         // CSRF Protection
         val isSignInPath = signInPaths.any { it.matches(request.requestURI) }
@@ -97,5 +106,24 @@ class HttpContextExtractionInterceptor(
 
         logger.info("Finished extracting session")
         return session
+    }
+
+    /**
+     * Extract contestId from the request URI if present.
+     *
+     * @param requestURI The request URI.
+     * @return The contestId as UUID if found, null otherwise.
+     */
+    private fun extractContestIdFromPath(requestURI: String): UUID? {
+        // Match pattern /contests/{contestId}/... or /api/v1/contests/{contestId}/...
+        val regex = Regex("/api/v[0-9]+/contests/([^/]+).*")
+        val matchResult = regex.find(requestURI)
+        return matchResult?.groupValues?.get(1)?.let {
+            try {
+                UUID.fromString(it)
+            } catch (e: IllegalArgumentException) {
+                null
+            }
+        }
     }
 }
