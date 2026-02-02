@@ -31,7 +31,6 @@ class UpdateContestInputDTOTest :
         context("validation") {
             val inputDTO =
                 UpdateContestInputDTO(
-                    id = UuidCreator.getTimeOrderedEpoch(),
                     slug = "test-contest",
                     title = "Test Contest",
                     languages = listOf(Submission.Language.PYTHON_312),

@@ -22,10 +22,14 @@ export interface ContestWritter {
   /**
    * Update contest details.
    *
+   * @param contestId ID of the contest to be updated
    * @param inputDTO Data for updating the contest
    * @return The updated contest details
    */
-  update(inputDTO: UpdateContestInputDTO): Promise<ContestFullResponseDTO>;
+  update(
+    contestId: string,
+    inputDTO: UpdateContestInputDTO,
+  ): Promise<ContestFullResponseDTO>;
 
   /**
    * Force start a contest immediately.

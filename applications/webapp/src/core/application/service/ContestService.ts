@@ -22,12 +22,12 @@ export class ContestService implements ContestWritter, ContestReader {
    * @param inputDTO Data for updating the contest
    * @return The updated contest details
    */
-  async update(inputDTO: UpdateContestInputDTO) {
+  async update(contestId: string, inputDTO: UpdateContestInputDTO) {
     const request = {
       ...inputDTO,
-      problems: await this.uploadFiles(inputDTO.id, inputDTO.problems),
+      problems: await this.uploadFiles(contestId, inputDTO.problems),
     };
-    return await this.contestRepository.update(request);
+    return await this.contestRepository.update(contestId, request);
   }
 
   /**

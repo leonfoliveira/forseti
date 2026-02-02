@@ -33,7 +33,6 @@ export class SettingsFormMapper {
     }));
 
     return {
-      id: contest.id,
       slug: contest.slug,
       title: contest.title,
       languages: contest.languages,
@@ -47,7 +46,6 @@ export class SettingsFormMapper {
 
   static fromFormToInputDTO(form: SettingsForm): UpdateContestInputDTO {
     return {
-      id: form.id,
       slug: form.slug,
       title: form.title,
       languages: form.languages,

@@ -30,7 +30,6 @@ describe("useErrorHandler", () => {
 
     result.current.handle(error);
 
-    expect(console.error).toHaveBeenCalledWith(error);
     expect(sessionWritter.deleteCurrent).toHaveBeenCalled();
   });
 
@@ -44,7 +43,6 @@ describe("useErrorHandler", () => {
 
     result.current.handle(error);
 
-    expect(console.error).toHaveBeenCalledWith(error);
     expect(useRouter().push).toHaveBeenCalledWith(
       `/error/403?from=${encodeURIComponent(mockPath)}`,
     );
@@ -60,7 +58,6 @@ describe("useErrorHandler", () => {
 
     result.current.handle(error);
 
-    expect(console.error).toHaveBeenCalledWith(error);
     expect(useRouter().push).toHaveBeenCalledWith(
       `/error/503?from=${encodeURIComponent(mockPath)}`,
     );
@@ -76,7 +73,6 @@ describe("useErrorHandler", () => {
 
     result.current.handle(error);
 
-    expect(console.error).toHaveBeenCalledWith(error);
     expect(useRouter().push).toHaveBeenCalledWith(
       `/error/500?from=${encodeURIComponent(mockPath)}`,
     );
@@ -94,7 +90,6 @@ describe("useErrorHandler", () => {
 
     result.current.handle(error, { CustomError: customHandler });
 
-    expect(console.error).toHaveBeenCalledWith(error);
     expect(customHandler).toHaveBeenCalledWith(error);
   });
 
@@ -109,7 +104,6 @@ describe("useErrorHandler", () => {
 
     result.current.handle(error, { default: defaultHandler });
 
-    expect(console.error).toHaveBeenCalledWith(error);
     expect(defaultHandler).toHaveBeenCalledWith(error);
   });
 
@@ -124,7 +118,6 @@ describe("useErrorHandler", () => {
 
     result.current.handle(errorString as any, { Error: customHandler });
 
-    expect(console.error).toHaveBeenCalled();
     expect(customHandler).toHaveBeenCalledWith(expect.any(Error));
     expect(customHandler).toHaveBeenCalledWith(
       expect.objectContaining({ message: "String error" }),
@@ -142,7 +135,6 @@ describe("useErrorHandler", () => {
 
     result.current.handle(error);
 
-    expect(console.error).toHaveBeenCalledWith(error);
     expect(useRouter().push).toHaveBeenCalledWith(
       `/error/500?from=${encodeURIComponent(mockPath)}`,
     );

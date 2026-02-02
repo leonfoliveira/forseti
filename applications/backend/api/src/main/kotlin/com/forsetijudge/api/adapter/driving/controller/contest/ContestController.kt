@@ -80,7 +80,7 @@ class ContestController(
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 
-    @PutMapping("/contests")
+    @PutMapping("/contests/{contestId}")
     @Private(Member.Type.ADMIN)
     @Operation(summary = "Update a contest")
     @ApiResponses(
@@ -114,11 +114,12 @@ class ContestController(
         ],
     )
     fun updateContest(
+        @PathVariable contestId: UUID,
         @RequestBody body: UpdateContestInputDTO,
     ): ResponseEntity<ContestFullResponseDTO> {
         logger.info("[PUT] /v1/contests - $body")
-        authorizeContestUseCase.checkIfMemberBelongsToContest(body.id)
-        val contest = updateContestUseCase.update(body)
+        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
+        val contest = updateContestUseCase.update(contestId, body)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 

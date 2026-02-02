@@ -41,6 +41,7 @@ class UpdateContestService(
      * - If no ID is provided, a new entity is created.
      * - Any existing entities not included in the input are deleted.
      *
+     * @param contestId The ID of the contest to be updated.
      * @param inputDTO The input data for updating the contest.
      * @return The updated contest.
      * @throws NotFoundException If the contest or any referenced entities are not found.
@@ -50,9 +51,10 @@ class UpdateContestService(
      */
     @Transactional
     override fun update(
+        contestId: UUID,
         @Valid inputDTO: UpdateContestInputDTO,
     ): Contest {
-        logger.info("Updating contest with id: ${inputDTO.id}")
+        logger.info("Updating contest with id: $contestId")
 
         // Business rule: Contest cannot have ROOT members
         if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
@@ -60,8 +62,8 @@ class UpdateContestService(
         }
         val contest =
             contestRepository
-                .findEntityById(inputDTO.id)
-                ?: throw NotFoundException("Could not find contest with id = ${inputDTO.id}")
+                .findEntityById(contestId)
+                ?: throw NotFoundException("Could not find contest with id = $contestId")
         // Business rule: No updates allowed if contest has finished
         if (contest.hasFinished()) {
             throw ForbiddenException("Contest has already finished and cannot be updated")

@@ -7,10 +7,14 @@ export interface ContestRepository {
   /**
    * Update a contest.
    *
+   * @param contestId ID of the contest to be updated
    * @param requestDTO Contest update request data
    * @returns The updated contest
    */
-  update(requestDTO: UpdateContestRequestDTO): Promise<ContestFullResponseDTO>;
+  update(
+    contestId: string,
+    requestDTO: UpdateContestRequestDTO,
+  ): Promise<ContestFullResponseDTO>;
 
   /**
    * Find all contest metadata.

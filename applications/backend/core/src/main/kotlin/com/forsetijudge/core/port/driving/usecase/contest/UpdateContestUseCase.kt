@@ -13,6 +13,7 @@ interface UpdateContestUseCase {
      * @return The updated contest entity.
      */
     fun update(
+        contestId: UUID,
         @Valid inputDTO: UpdateContestInputDTO,
     ): Contest
 

@@ -88,7 +88,6 @@ class ContestControllerTest(
             val contestId = UuidCreator.getTimeOrderedEpoch()
             val body =
                 UpdateContestInputDTO(
-                    id = UuidCreator.getTimeOrderedEpoch(),
                     slug = "updated-contest",
                     title = "Updated Contest",
                     languages = listOf(Submission.Language.PYTHON_312),
@@ -122,10 +121,10 @@ class ContestControllerTest(
                         ),
                 )
             val contest = ContestMockBuilder.build()
-            every { updateContestUseCase.update(body) } returns contest
+            every { updateContestUseCase.update(contestId, body) } returns contest
 
             webMvc
-                .put(basePath, contestId) {
+                .put("$basePath/{contestId}", contestId) {
                     contentType = MediaType.APPLICATION_JSON
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {

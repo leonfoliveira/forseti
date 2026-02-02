@@ -67,7 +67,6 @@ describe("SettingsFormMapper", () => {
       );
 
       expect(result).toEqual({
-        id: "contest-1",
         slug: "test-contest",
         title: "Test Contest",
         languages: [SubmissionLanguage.CPP_17, SubmissionLanguage.JAVA_21],
@@ -221,7 +220,6 @@ describe("SettingsFormMapper", () => {
       const result = SettingsFormMapper.fromFormToInputDTO(mockForm);
 
       expect(result).toEqual({
-        id: "contest-1",
         slug: "updated-contest",
         title: "Updated Contest",
         languages: [SubmissionLanguage.PYTHON_312],
