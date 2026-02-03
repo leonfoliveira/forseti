@@ -55,9 +55,9 @@ class UpdateContestServiceTest :
         }
 
         context("update") {
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val inputDTO =
                 UpdateContestInputDTO(
-                    id = UuidCreator.getTimeOrderedEpoch(),
                     slug = "test-contest",
                     title = "Test Contest",
                     languages = listOf(Submission.Language.PYTHON_312),
@@ -92,52 +92,52 @@ class UpdateContestServiceTest :
                 val invalidInputDTO = inputDTO.copy(members = listOf(inputDTO.members[0].copy(type = Member.Type.ROOT)))
 
                 shouldThrow<ForbiddenException> {
-                    sut.update(invalidInputDTO)
+                    sut.update(contestId, invalidInputDTO)
                 }.message shouldBe "Contest cannot have ROOT members"
             }
 
             test("should throw NotFoundException when contest does not exist") {
-                every { contestRepository.findEntityById(inputDTO.id) } returns null
+                every { contestRepository.findEntityById(contestId) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.update(inputDTO)
-                }.message shouldBe "Could not find contest with id = ${inputDTO.id}"
+                    sut.update(contestId, inputDTO)
+                }.message shouldBe "Could not find contest with id = $contestId"
             }
 
             test("should throw ForbiddenException when contest has finished") {
                 val contest = ContestMockBuilder.build(endAt = OffsetDateTime.now().minusHours(1))
-                every { contestRepository.findEntityById(inputDTO.id) } returns contest
+                every { contestRepository.findEntityById(contestId) } returns contest
 
                 shouldThrow<ForbiddenException> {
-                    sut.update(inputDTO)
+                    sut.update(contestId, inputDTO)
                 }.message shouldBe "Contest has already finished and cannot be updated"
             }
 
             test("should throw ForbiddenException when contest has started and startAt is being updated") {
                 val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().minusHours(1))
-                every { contestRepository.findEntityById(inputDTO.id) } returns contest
+                every { contestRepository.findEntityById(contestId) } returns contest
 
                 shouldThrow<ForbiddenException> {
-                    sut.update(inputDTO.copy(startAt = OffsetDateTime.now().plusHours(1)))
+                    sut.update(contestId, inputDTO.copy(startAt = OffsetDateTime.now().plusHours(1)))
                 }.message shouldBe "Contest has already started and cannot have its start time updated"
             }
 
             test("should throw BusinessException when contest startAt is in the past") {
                 val contest = ContestMockBuilder.build()
-                every { contestRepository.findEntityById(inputDTO.id) } returns contest
+                every { contestRepository.findEntityById(contestId) } returns contest
 
                 shouldThrow<BusinessException> {
-                    sut.update(inputDTO.copy(startAt = OffsetDateTime.now().minusHours(1)))
+                    sut.update(contestId, inputDTO.copy(startAt = OffsetDateTime.now().minusHours(1)))
                 }.message shouldBe "Contest start time must be in the future"
             }
 
             test("should throw ConflictException when contest with same slug already exists") {
                 val existingContest = ContestMockBuilder.build(slug = inputDTO.slug)
-                every { contestRepository.findEntityById(inputDTO.id) } returns ContestMockBuilder.build()
-                every { contestRepository.findBySlug(inputDTO.slug) } returns existingContest
+                every { contestRepository.findEntityById(contestId) } returns ContestMockBuilder.build()
+                every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns true
 
                 shouldThrow<ConflictException> {
-                    sut.update(inputDTO)
+                    sut.update(contestId, inputDTO)
                 }.message shouldBe "Contest with slug '${inputDTO.slug}' already exists"
             }
 
@@ -147,12 +147,12 @@ class UpdateContestServiceTest :
                         members = listOf(MemberMockBuilder.build(id = inputDTO.members[0].id!!)),
                         problems = listOf(ProblemMockBuilder.build(id = inputDTO.problems[0].id!!)),
                     )
-                every { contestRepository.findEntityById(inputDTO.id) } returns contest
-                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { contestRepository.findEntityById(contestId) } returns contest
+                every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns false
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].description.id) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.update(inputDTO)
+                    sut.update(contestId, inputDTO)
                 }.message shouldBe "Could not find description attachment with id: ${inputDTO.problems[0].description.id}"
             }
 
@@ -163,13 +163,13 @@ class UpdateContestServiceTest :
                         problems = listOf(ProblemMockBuilder.build(id = inputDTO.problems[0].id!!)),
                     )
                 val descriptionAttachment = AttachmentMockBuilder.build(context = Attachment.Context.SUBMISSION_CODE)
-                every { contestRepository.findEntityById(inputDTO.id) } returns contest
-                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { contestRepository.findEntityById(contestId) } returns contest
+                every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns false
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].description.id) } returns
                     descriptionAttachment
 
                 shouldThrow<ForbiddenException> {
-                    sut.update(inputDTO)
+                    sut.update(contestId, inputDTO)
                 }.message shouldBe "Attachment with id: ${descriptionAttachment.id} is not a valid problem description"
             }
 
@@ -179,14 +179,14 @@ class UpdateContestServiceTest :
                         members = listOf(MemberMockBuilder.build(id = inputDTO.members[0].id!!)),
                         problems = listOf(ProblemMockBuilder.build(id = inputDTO.problems[0].id!!)),
                     )
-                every { contestRepository.findEntityById(inputDTO.id) } returns contest
-                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { contestRepository.findEntityById(contestId) } returns contest
+                every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns false
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].description.id) } returns
                     AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_DESCRIPTION)
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].testCases.id) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.update(inputDTO)
+                    sut.update(contestId, inputDTO)
                 }.message shouldBe "Could not find testCases attachment with id: ${inputDTO.problems[0].testCases.id}"
             }
 
@@ -197,15 +197,15 @@ class UpdateContestServiceTest :
                         problems = listOf(ProblemMockBuilder.build(id = inputDTO.problems[0].id!!)),
                     )
                 val testCasesAttachment = AttachmentMockBuilder.build(context = Attachment.Context.SUBMISSION_CODE)
-                every { contestRepository.findEntityById(inputDTO.id) } returns contest
-                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { contestRepository.findEntityById(contestId) } returns contest
+                every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns false
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].description.id) } returns
                     AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_DESCRIPTION)
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].testCases.id) } returns
                     testCasesAttachment
 
                 shouldThrow<ForbiddenException> {
-                    sut.update(inputDTO)
+                    sut.update(contestId, inputDTO)
                 }.message shouldBe "Attachment with id: ${testCasesAttachment.id} is not a valid problem test cases"
             }
 
@@ -249,8 +249,8 @@ class UpdateContestServiceTest :
                         members = listOf(memberToUpdateMinimum, memberToUpdateFull, memberToDelete),
                         problems = listOf(problemToUpdateMinimum, problemToUpdateFull, problemToDelete),
                     )
-                every { contestRepository.findEntityById(inputDTO.id) } returns contest
-                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { contestRepository.findEntityById(contestId) } returns contest
+                every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns false
                 every { hasher.hash(any()) } returns "hashedPassword"
                 val descriptionAttachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_DESCRIPTION)
                 val testCasesAttachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_TEST_CASES)
@@ -264,6 +264,7 @@ class UpdateContestServiceTest :
                 every { contestRepository.save(any<Contest>()) } answers { firstArg() }
 
                 sut.update(
+                    contestId,
                     inputDTO.copy(
                         members = listOf(inputMemberToCreate, inputMemberToUpdateMinimum, inputMemberToUpdateFull),
                         problems = listOf(inputProblemToCreate, inputProblemToUpdateMinimum, inputProblemToUpdateFull),

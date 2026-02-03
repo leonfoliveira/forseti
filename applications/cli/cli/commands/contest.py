@@ -31,14 +31,14 @@ def create(slug: str, api_url: Optional[str]):
         "startAt": "2100-01-01T00:00:00.000Z",
         "endAt": "2100-01-01T01:00:00.000Z",
     }
-    contest = ApiAdapter(api_url=api_url).post("/v1/contests", json=payload)
+    contest = ApiAdapter(api_url=api_url).post("/v1/root/contests", json=payload)
     click.echo(contest.get("id"))
 
 
 @contest.command(help="List all contests.")
 @click.option("--api-url", help=API_URL_HELP, default=__api_url__)
 def ls(api_url: Optional[str]):
-    contests = ApiAdapter(api_url=api_url).get("/v1/contests/metadata")
+    contests = ApiAdapter(api_url=api_url).get("/v1/root/contests/metadata")
     headers = ["ID", "Slug", "Title", "Start At", "End At", "Status"]
     table = []
     for contest in contests:

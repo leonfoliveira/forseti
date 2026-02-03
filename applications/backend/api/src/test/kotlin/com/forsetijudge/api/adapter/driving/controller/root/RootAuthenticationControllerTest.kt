@@ -1,4 +1,4 @@
-package com.forsetijudge.api.adapter.driving.controller
+package com.forsetijudge.api.adapter.driving.controller.root
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.api.adapter.dto.request.NoLoginAuthenticateRequestDTO
@@ -20,10 +20,10 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 
-@WebMvcTest(controllers = [AuthenticationController::class])
+@WebMvcTest(controllers = [RootAuthenticationController::class])
 @AutoConfigureMockMvc(addFilters = false)
-@ContextConfiguration(classes = [AuthenticationController::class])
-class AuthenticationControllerTest(
+@ContextConfiguration(classes = [RootAuthenticationController::class])
+class RootAuthenticationControllerTest(
     @MockkBean(relaxed = true)
     private val authenticateUseCase: AuthenticateUseCase,
     @MockkBean(relaxed = true)
@@ -40,7 +40,7 @@ class AuthenticationControllerTest(
             val session = SessionMockBuilder.build()
             val authenticateInputDTO =
                 AuthenticateInputDTO(
-                    login = Member.ROOT_LOGIN,
+                    login = Member.Companion.ROOT_LOGIN,
                     password = body.password,
                 )
             every { authenticateUseCase.authenticate(authenticateInputDTO) } returns session
@@ -48,7 +48,7 @@ class AuthenticationControllerTest(
             every { csrfCookieBuilder.buildCookie(session) } returns "csrf_token=cookie_value"
 
             webMvc
-                .post("/api/v1/auth:sign-in-as-root") {
+                .post("/api/v1/root:sign-in") {
                     contentType = MediaType.APPLICATION_JSON
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {

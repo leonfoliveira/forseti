@@ -11,10 +11,11 @@ export class AxiosContestRepository implements ContestRepository {
   constructor(private readonly axiosClient: AxiosClient) {}
 
   async update(
+    contestId: string,
     requestDTO: UpdateContestRequestDTO,
   ): Promise<ContestFullResponseDTO> {
     const response = await this.axiosClient.put<ContestFullResponseDTO>(
-      this.basePath,
+      `${this.basePath}/${contestId}`,
       {
         data: requestDTO,
       },

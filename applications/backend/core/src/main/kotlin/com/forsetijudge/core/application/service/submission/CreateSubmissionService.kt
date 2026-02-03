@@ -6,6 +6,7 @@ import com.forsetijudge.core.domain.event.SubmissionCreatedEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
+import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
@@ -22,6 +23,7 @@ import java.util.UUID
 @Service
 @Validated
 class CreateSubmissionService(
+    private val contestRepository: ContestRepository,
     private val attachmentRepository: AttachmentRepository,
     private val memberRepository: MemberRepository,
     private val problemRepository: ProblemRepository,
@@ -33,6 +35,7 @@ class CreateSubmissionService(
     /**
      * Creates a new submission.
      *
+     * @param contestId ID of the contest where the submission is being made
      * @param memberId ID of the member creating the submission
      * @param inputDTO Data for creating the submission
      * @return The created submission
@@ -41,32 +44,34 @@ class CreateSubmissionService(
      */
     @Transactional
     override fun create(
+        contestId: UUID,
         memberId: UUID,
         @Valid inputDTO: CreateSubmissionInputDTO,
     ): Submission {
         logger.info("Creating submission for member with id: $memberId and problem with id: ${inputDTO.problemId}")
 
+        val contest =
+            contestRepository.findEntityById(contestId)
+                ?: throw NotFoundException("Could not find contest with id = $contestId")
         val member =
             memberRepository.findEntityById(memberId)
                 ?: throw NotFoundException("Could not find member with id = $memberId")
         val problem =
-            problemRepository.findEntityById(inputDTO.problemId)
-                ?: throw NotFoundException("Could not find problem with id = ${inputDTO.problemId}")
+            problemRepository.findByIdAndContestId(inputDTO.problemId, contestId)
+                ?: throw NotFoundException("Could not find problem with id = ${inputDTO.problemId} in contest")
         val code =
-            attachmentRepository.findEntityById(inputDTO.code.id)
-                ?: throw NotFoundException("Could not find code attachment with id = ${inputDTO.code.id}")
+            attachmentRepository.findByIdAndContestId(inputDTO.code.id, contestId)
+                ?: throw NotFoundException("Could not find code attachment with id = ${inputDTO.code.id} in contest")
+
+        if (!contest.isActive()) {
+            throw ForbiddenException("Contest is not active")
+        }
         if (code.context != Attachment.Context.SUBMISSION_CODE) {
             throw ForbiddenException("Attachment with id = ${inputDTO.code.id} is not a submission code")
         }
-        val contest = problem.contest
-
         // A contest has a set of allowed languages, so we need to check if the input language is allowed
         if (contest.languages.none { it == inputDTO.language }) {
             throw ForbiddenException("Language ${inputDTO.language} is not allowed for this contest")
-        }
-        // Business rule: Submissions can only be created if the contest is active
-        if (!contest.isActive()) {
-            throw ForbiddenException("Contest is not active")
         }
 
         val submission =

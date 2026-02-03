@@ -62,6 +62,8 @@ class Member(
     @OrderBy("createdAt ASC")
     var submissions: List<Submission> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
+    fun isSystemMember(): Boolean = contest == null
+
     enum class Type {
         /**
          * Represents a member who can create contests and has administrative privileges within all contests.
@@ -92,6 +94,10 @@ class Member(
          * Represents a member with administrative privileges within the contest, such as contest managers.
          */
         ADMIN,
+
+        ;
+
+        fun isSystemType(): Boolean = setOf(API, AUTOJUDGE).contains(this)
     }
 
     companion object {

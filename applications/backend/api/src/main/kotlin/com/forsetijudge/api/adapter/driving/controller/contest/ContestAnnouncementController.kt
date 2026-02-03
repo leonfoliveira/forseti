@@ -7,7 +7,6 @@ import com.forsetijudge.api.adapter.util.Private
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driving.usecase.announcement.CreateAnnouncementUseCase
-import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.dto.input.announcement.CreateAnnouncementInputDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -26,7 +25,6 @@ import java.util.UUID
 @RestController
 @RequestMapping("/api/v1")
 class ContestAnnouncementController(
-    private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val createAnnouncementUseCase: CreateAnnouncementUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -84,8 +82,6 @@ class ContestAnnouncementController(
         @RequestBody body: CreateAnnouncementInputDTO,
     ): ResponseEntity<AnnouncementResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/announcements $body")
-        authorizeContestUseCase.checkIfStarted(contestId)
-        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val member = RequestContext.getContext().session!!.member
         val announcement = createAnnouncementUseCase.create(contestId, member.id, body)
         return ResponseEntity.ok(announcement.toResponseDTO())

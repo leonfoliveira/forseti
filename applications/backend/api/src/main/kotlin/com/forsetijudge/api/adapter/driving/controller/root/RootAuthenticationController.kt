@@ -1,4 +1,4 @@
-package com.forsetijudge.api.adapter.driving.controller
+package com.forsetijudge.api.adapter.driving.controller.root
 
 import com.forsetijudge.api.adapter.dto.request.NoLoginAuthenticateRequestDTO
 import com.forsetijudge.api.adapter.dto.response.ErrorResponseDTO
@@ -24,14 +24,14 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1")
-class AuthenticationController(
+class RootAuthenticationController(
     val authenticateUseCase: AuthenticateUseCase,
     val sessionCookieBuilder: SessionCookieBuilder,
     val csrfCookieBuilder: CsrfCookieBuilder,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @PostMapping("/auth:sign-in-as-root")
+    @PostMapping("/root:sign-in")
     @Operation(
         summary = "Sign in as root",
         description = "Authenticates a root user.",
@@ -57,11 +57,11 @@ class AuthenticationController(
     fun authenticateRoot(
         @RequestBody body: NoLoginAuthenticateRequestDTO,
     ): ResponseEntity<SessionResponseDTO> {
-        logger.info("[POST] /v1/auth:sign-in-as-root $body")
+        logger.info("[POST] /v1/root:sign-in $body")
         val session =
             authenticateUseCase.authenticate(
                 AuthenticateInputDTO(
-                    login = Member.ROOT_LOGIN,
+                    login = Member.Companion.ROOT_LOGIN,
                     password = body.password,
                 ),
             )

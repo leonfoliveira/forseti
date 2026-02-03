@@ -34,22 +34,23 @@ class DeleteClarificationServiceTest :
 
         context("delete") {
             val id = UuidCreator.getTimeOrderedEpoch()
+            val contestId = UuidCreator.getTimeOrderedEpoch()
 
             test("should throw NotFoundException when clarification does not exist") {
-                every { clarificationRepository.findEntityById(id) } returns null
+                every { clarificationRepository.findByIdAndContestId(id, contestId) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.delete(id)
-                }.message shouldBe "Could not find clarification with id $id"
+                    sut.delete(contestId, id)
+                }.message shouldBe "Could not find clarification with id $id in contest"
             }
 
             test("should delete clarification and its children") {
                 val answer = ClarificationMockBuilder.build()
                 val clarification = ClarificationMockBuilder.build(children = listOf(answer))
-                every { clarificationRepository.findEntityById(id) } returns clarification
+                every { clarificationRepository.findByIdAndContestId(id, contestId) } returns clarification
                 every { clarificationRepository.save(any<Clarification>()) } answers { firstArg() }
 
-                sut.delete(id)
+                sut.delete(contestId, id)
 
                 clarification.deletedAt shouldNotBe null
                 clarificationRepository.save(clarification)

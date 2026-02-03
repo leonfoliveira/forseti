@@ -17,7 +17,6 @@ import java.time.OffsetDateTime
 import java.util.UUID
 
 data class UpdateContestInputDTO(
-    val id: UUID,
     @field:NotBlank
     @field:Size(max = 32)
     @field:Pattern(regexp = "^[a-zA-Z0-9-]+$", message = "Slug can only contain letter, numbers, and hyphens")

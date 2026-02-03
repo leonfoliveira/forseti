@@ -41,6 +41,7 @@ class UpdateContestService(
      * - If no ID is provided, a new entity is created.
      * - Any existing entities not included in the input are deleted.
      *
+     * @param contestId The ID of the contest to be updated.
      * @param inputDTO The input data for updating the contest.
      * @return The updated contest.
      * @throws NotFoundException If the contest or any referenced entities are not found.
@@ -50,36 +51,38 @@ class UpdateContestService(
      */
     @Transactional
     override fun update(
+        contestId: UUID,
         @Valid inputDTO: UpdateContestInputDTO,
     ): Contest {
-        logger.info("Updating contest with id: ${inputDTO.id}")
+        logger.info("Updating contest with id: $contestId")
 
-        // Business rule: Contest cannot have ROOT members
         if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
             throw ForbiddenException("Contest cannot have ROOT members")
         }
+        if (inputDTO.members.any { it.type.isSystemType() }) {
+            throw ForbiddenException("Contest cannot have system members")
+        }
+
         val contest =
             contestRepository
-                .findEntityById(inputDTO.id)
-                ?: throw NotFoundException("Could not find contest with id = ${inputDTO.id}")
-        // Business rule: No updates allowed if contest has finished
+                .findEntityById(contestId)
+                ?: throw NotFoundException("Could not find contest with id = $contestId")
+
         if (contest.hasFinished()) {
             throw ForbiddenException("Contest has already finished and cannot be updated")
         }
-        // Business rule: Start time cannot be changed if contest has started
+
         if (contest.hasStarted()) {
             if (!inputDTO.startAt.truncatedTo(ChronoUnit.SECONDS).isEqual(contest.startAt.truncatedTo(ChronoUnit.SECONDS))) {
                 throw ForbiddenException("Contest has already started and cannot have its start time updated")
             }
         } else {
-            // Validation rule: Start time must be in the future
             if (inputDTO.startAt.isBefore(OffsetDateTime.now())) {
                 throw BusinessException("Contest start time must be in the future")
             }
         }
-        val duplicatedContestBySlug = contestRepository.findBySlug(inputDTO.slug)
-        // Validation rule: Slug must be unique
-        if (duplicatedContestBySlug != null && duplicatedContestBySlug.id != contest.id) {
+
+        if (contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId)) {
             throw ConflictException("Contest with slug '${inputDTO.slug}' already exists")
         }
 
@@ -133,7 +136,7 @@ class UpdateContestService(
         val contest =
             contestRepository.findEntityById(contestId)
                 ?: throw NotFoundException("Could not find contest with id = $contestId")
-        // Business rule: Contest cannot be started if it has already started
+
         if (contest.hasStarted()) {
             throw ForbiddenException("Contest with id: $contestId has already started")
         }
@@ -156,7 +159,7 @@ class UpdateContestService(
         val contest =
             contestRepository.findEntityById(contestId)
                 ?: throw NotFoundException("Could not find contest with id = $contestId")
-        // Business rule: Only active contests can be ended
+
         if (!contest.isActive()) {
             throw ForbiddenException("Contest with id: $contestId is not active")
         }

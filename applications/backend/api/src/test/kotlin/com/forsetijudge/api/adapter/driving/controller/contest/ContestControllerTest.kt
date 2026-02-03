@@ -13,12 +13,10 @@ import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
-import com.forsetijudge.core.port.driving.usecase.contest.CreateContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.FindContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.dto.input.attachment.AttachmentInputDTO
-import com.forsetijudge.core.port.dto.input.contest.CreateContestInputDTO
 import com.forsetijudge.core.port.dto.input.contest.UpdateContestInputDTO
 import com.github.f4b6a3.uuid.UuidCreator
 import com.ninjasquad.springmockk.MockkBean
@@ -33,7 +31,6 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import java.time.OffsetDateTime
 
@@ -43,8 +40,6 @@ import java.time.OffsetDateTime
 class ContestControllerTest(
     @MockkBean(relaxed = true)
     private val authorizeContestUseCase: AuthorizeContestUseCase,
-    @MockkBean(relaxed = true)
-    private val createContestUseCase: CreateContestUseCase,
     @MockkBean(relaxed = true)
     private val updateContestUseCase: UpdateContestUseCase,
     @MockkBean(relaxed = true)
@@ -62,33 +57,10 @@ class ContestControllerTest(
 
         val basePath = "/api/v1/contests"
 
-        test("createContest") {
-            val body =
-                CreateContestInputDTO(
-                    slug = "test-contest",
-                    title = "Test Contest",
-                    languages = listOf(Submission.Language.PYTHON_312),
-                    startAt = OffsetDateTime.now().plusHours(1),
-                    endAt = OffsetDateTime.now().plusHours(2),
-                )
-            val contest = ContestMockBuilder.build()
-            every { createContestUseCase.create(body) } returns contest
-
-            webMvc
-                .post(basePath) {
-                    contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(body)
-                }.andExpect {
-                    status { isOk() }
-                    content { contest.toFullResponseDTO() }
-                }
-        }
-
         test("updateContest") {
             val contestId = UuidCreator.getTimeOrderedEpoch()
             val body =
                 UpdateContestInputDTO(
-                    id = UuidCreator.getTimeOrderedEpoch(),
                     slug = "updated-contest",
                     title = "Updated Contest",
                     languages = listOf(Submission.Language.PYTHON_312),
@@ -122,28 +94,15 @@ class ContestControllerTest(
                         ),
                 )
             val contest = ContestMockBuilder.build()
-            every { updateContestUseCase.update(body) } returns contest
+            every { updateContestUseCase.update(contestId, body) } returns contest
 
             webMvc
-                .put(basePath, contestId) {
+                .put("$basePath/{contestId}", contestId) {
                     contentType = MediaType.APPLICATION_JSON
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {
                     status { isOk() }
                     content { contest.toFullResponseDTO() }
-                }
-        }
-
-        test("findAllContestMetadata") {
-            val contests = listOf(ContestMockBuilder.build(), ContestMockBuilder.build())
-            every { findContestUseCase.findAll() } returns contests
-
-            webMvc
-                .get("$basePath/metadata") {
-                    accept = MediaType.APPLICATION_JSON
-                }.andExpect {
-                    status { isOk() }
-                    content { contests.map { it.toMetadataDTO() } }
                 }
         }
 

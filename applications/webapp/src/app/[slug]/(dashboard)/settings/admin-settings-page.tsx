@@ -138,7 +138,7 @@ export function AdminSettingsPage() {
     saveState.start();
     try {
       const inputDTO = SettingsFormMapper.fromFormToInputDTO(data);
-      const newContest = await contestWritter.update(inputDTO);
+      const newContest = await contestWritter.update(contest.id, inputDTO);
 
       if (newContest.slug !== contest.slug) {
         /* Redirect to new path if slug has changed */

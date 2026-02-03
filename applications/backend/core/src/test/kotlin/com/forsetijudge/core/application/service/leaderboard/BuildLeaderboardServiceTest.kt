@@ -6,8 +6,10 @@ import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
+import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
+import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -21,8 +23,9 @@ import java.time.OffsetDateTime
 class BuildLeaderboardServiceTest :
     FunSpec({
         val contestRepository = mockk<ContestRepository>(relaxed = true)
+        val memberRepository = mockk<MemberRepository>(relaxed = true)
 
-        val sut = BuildLeaderboardService(contestRepository)
+        val sut = BuildLeaderboardService(contestRepository, memberRepository)
 
         val now = OffsetDateTime.now()
 
@@ -38,8 +41,34 @@ class BuildLeaderboardServiceTest :
                 every { contestRepository.findEntityById(contestId) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.build(contestId)
+                    sut.build(contestId, null)
                 }.message shouldBe "Could not find contest with id = $contestId"
+            }
+
+            test("should throw ForbiddenException when contest has not started and member is not admin or root") {
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val memberId = UuidCreator.getTimeOrderedEpoch()
+                val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
+                val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
+                every { contestRepository.findEntityById(contestId) } returns contest
+                every { memberRepository.findEntityById(memberId) } returns member
+
+                shouldThrow<ForbiddenException> {
+                    sut.build(contestId, memberId)
+                }.message shouldBe "Contest has not started yet"
+            }
+
+            test("should allow access when contest has not started but member is admin") {
+                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val memberId = UuidCreator.getTimeOrderedEpoch()
+                val member = MemberMockBuilder.build(type = Member.Type.ADMIN)
+                val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1), problems = listOf(), members = listOf())
+                every { contestRepository.findEntityById(contestId) } returns contest
+                every { memberRepository.findEntityById(memberId) } returns member
+
+                val result = sut.build(contestId, memberId)
+
+                result.contestId shouldBe contest.id
             }
 
             test("should build leaderboard for contest") {
@@ -125,7 +154,7 @@ class BuildLeaderboardServiceTest :
                     )
                 every { contestRepository.findEntityById(contest.id) } returns contest
 
-                val result = sut.build(contest.id)
+                val result = sut.build(contest.id, null)
 
                 result.contestId shouldBe contest.id
                 result.slug shouldBe contest.slug

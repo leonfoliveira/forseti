@@ -59,8 +59,6 @@ class ContestClarificationControllerTest(
                     status { isOk() }
                     content { clarification.toResponseDTO() }
                 }
-
-            verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
         }
 
         test("deleteClarificationById") {
@@ -74,6 +72,6 @@ class ContestClarificationControllerTest(
                     status { isNoContent() }
                 }
 
-            verify { deleteClarificationUseCase.delete(clarificationId) }
+            verify { deleteClarificationUseCase.delete(contestId, clarificationId) }
         }
     })

@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.authentication
 
 import com.forsetijudge.core.application.service.session.CreateSessionService
+import com.forsetijudge.core.application.service.session.DeleteSessionService
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
@@ -19,12 +20,14 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 
 class AuthenticateServiceTest :
     FunSpec({
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val hasher = mockk<Hasher>(relaxed = true)
         val createSessionService = mockk<CreateSessionService>(relaxed = true)
+        val deleteSessionService = mockk<DeleteSessionService>(relaxed = true)
         val contestRepository = mockk<ContestRepository>(relaxed = true)
 
         val sut =
@@ -32,6 +35,7 @@ class AuthenticateServiceTest :
                 memberRepository = memberRepository,
                 hasher = hasher,
                 createSessionService = createSessionService,
+                deleteSessionService = deleteSessionService,
                 contestRepository = contestRepository,
             )
 
@@ -80,6 +84,7 @@ class AuthenticateServiceTest :
 
                 val result = sut.authenticate(inputDTO)
 
+                verify { deleteSessionService.deleteAllForMember(member) }
                 result shouldBe session
             }
         }
@@ -143,6 +148,7 @@ class AuthenticateServiceTest :
 
                 val result = sut.authenticateToContest(contestId, inputDTO)
 
+                verify { deleteSessionService.deleteAllForMember(member) }
                 result shouldBe session
             }
         }

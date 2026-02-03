@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.session
 
+import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driven.repository.SessionRepository
@@ -52,6 +53,26 @@ class DeleteSessionServiceTest :
                 sut.deleteCurrent()
 
                 verify(exactly = 0) { sessionRepository.save(any()) }
+            }
+        }
+
+        context("deleteAllForMember") {
+            test("should soft delete all sessions for the given member") {
+                val member =
+                    com.forsetijudge.core.domain.entity.MemberMockBuilder
+                        .build()
+                val session1 = SessionMockBuilder.build()
+                val session2 = SessionMockBuilder.build()
+                val sessions = listOf(session1, session2)
+
+                every { sessionRepository.findAllByMemberId(member.id) } returns sessions
+
+                sut.deleteAllForMember(member)
+
+                verify { sessionRepository.findAllByMemberId(member.id) }
+                session1.deletedAt shouldNotBe null
+                session2.deletedAt shouldNotBe null
+                verify { sessionRepository.saveAll(sessions) }
             }
         }
     })

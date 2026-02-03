@@ -1,71 +1,66 @@
-package com.forsetijudge.core.application.service.attachment.config
+package com.forsetijudge.core.application.service.attachment.auth
 
-import com.forsetijudge.core.application.service.attachment.AttachmentAuthorizationConfig
-import com.forsetijudge.core.application.service.contest.AuthorizeContestService
 import com.forsetijudge.core.domain.entity.Attachment
+import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import org.springframework.stereotype.Component
-import java.util.UUID
 
 @Component
-class SubmissionCodeAuthorizationConfig(
-    private val authorizeContestService: AuthorizeContestService,
-) : AttachmentAuthorizationConfig {
+class SubmissionCodeAuthorizationConfig : AttachmentAuthorizationConfig {
     override fun getContext(): Attachment.Context = Attachment.Context.SUBMISSION_CODE
 
     override fun authorizeAdminUpload(
-        contestId: UUID,
+        contest: Contest,
         member: Member,
     ) = throw ForbiddenException("Admins cannot upload submission code attachments")
 
     override fun authorizeJudgeUpload(
-        contestId: UUID,
+        contest: Contest,
         member: Member,
     ) = throw ForbiddenException("Judges cannot upload submission code attachments")
 
     override fun authorizeContestantUpload(
-        contestId: UUID,
+        contest: Contest,
         member: Member,
     ) {
-        authorizeContestService.checkIfStarted(contestId)
-        authorizeContestService.checkIfMemberBelongsToContest(contestId)
+        if (!contest.hasStarted()) {
+            throw ForbiddenException("Contestants cannot upload submission code attachments before the contest starts")
+        }
     }
 
-    override fun authorizePublicUpload(contestId: UUID): Unit =
+    override fun authorizePublicUpload(contest: Contest): Unit =
         throw ForbiddenException("Guest users cannot upload submission code attachments")
 
     override fun authorizeAdminDownload(
-        contestId: UUID,
+        contest: Contest,
         member: Member,
         attachment: Attachment,
     ) {
-        authorizeContestService.checkIfMemberBelongsToContest(contestId)
     }
 
     override fun authorizeJudgeDownload(
-        contestId: UUID,
+        contest: Contest,
         member: Member,
         attachment: Attachment,
     ) {
-        authorizeContestService.checkIfStarted(contestId)
-        authorizeContestService.checkIfMemberBelongsToContest(contestId)
+        if (!contest.hasStarted()) {
+            throw ForbiddenException("Judges cannot download submission code attachments before the contest starts")
+        }
     }
 
     override fun authorizeContestantDownload(
-        contestId: UUID,
+        contest: Contest,
         member: Member,
         attachment: Attachment,
     ) {
-        authorizeContestService.checkIfStarted(contestId)
-        authorizeContestService.checkIfMemberBelongsToContest(contestId)
         if (attachment.member?.id != member.id) {
             throw ForbiddenException("Contestants can only download their own submission code attachments")
         }
     }
 
     override fun authorizePublicDownload(
-        contestId: UUID,
+        contest: Contest,
         attachment: Attachment,
     ) = throw ForbiddenException("Guest users cannot download submission code attachments")
 }

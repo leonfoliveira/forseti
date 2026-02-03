@@ -24,11 +24,14 @@ describe("AxiosContestRepository", () => {
         data: expectedResponse,
       } as AxiosResponse);
 
-      const result = await sut.update(requestDTO);
+      const result = await sut.update(contestId, requestDTO);
 
-      expect(axiosClient.put).toHaveBeenCalledWith("/v1/contests", {
-        data: requestDTO,
-      });
+      expect(axiosClient.put).toHaveBeenCalledWith(
+        `/v1/contests/${contestId}`,
+        {
+          data: requestDTO,
+        },
+      );
       expect(result).toEqual(expectedResponse);
     });
   });

@@ -23,10 +23,13 @@ describe("ClarificationService", () => {
       inputDTO.problems[0].newDescription = undefined;
       inputDTO.problems[0].newTestCases = undefined;
 
-      await sut.update(inputDTO);
+      await sut.update(contestId, inputDTO);
 
       expect(attachmentService.upload).not.toHaveBeenCalled();
-      expect(contestRepository.update).toHaveBeenCalledWith(inputDTO);
+      expect(contestRepository.update).toHaveBeenCalledWith(
+        contestId,
+        inputDTO,
+      );
     });
 
     it("should update a contest with upload files", async () => {
@@ -34,19 +37,19 @@ describe("ClarificationService", () => {
       const attachment = MockAttachmentResponseDTO();
       attachmentService.upload.mockResolvedValue(attachment);
 
-      await sut.update(inputDTO);
+      await sut.update(contestId, inputDTO);
 
       expect(attachmentService.upload).toHaveBeenCalledWith(
-        inputDTO.id,
+        contestId,
         AttachmentContext.PROBLEM_DESCRIPTION,
         inputDTO.problems[0].newDescription,
       );
       expect(attachmentService.upload).toHaveBeenCalledWith(
-        inputDTO.id,
+        contestId,
         AttachmentContext.PROBLEM_TEST_CASES,
         inputDTO.problems[0].newTestCases,
       );
-      expect(contestRepository.update).toHaveBeenCalledWith({
+      expect(contestRepository.update).toHaveBeenCalledWith(contestId, {
         ...inputDTO,
         problems: [
           {

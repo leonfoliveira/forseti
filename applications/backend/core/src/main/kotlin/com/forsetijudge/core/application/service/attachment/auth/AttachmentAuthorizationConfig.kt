@@ -1,8 +1,8 @@
-package com.forsetijudge.core.application.service.attachment
+package com.forsetijudge.core.application.service.attachment.auth
 
 import com.forsetijudge.core.domain.entity.Attachment
+import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
-import java.util.UUID
 
 interface AttachmentAuthorizationConfig {
     /**
@@ -15,59 +15,59 @@ interface AttachmentAuthorizationConfig {
     /**
      * Authorizes the upload of an attachment in a contest by an admin member.
      *
-     * @param contestId The ID of the contest.
+     * @param contest The contest where the attachment is being uploaded.
      * @param member The admin member attempting the upload.
      * @throws ForbiddenException if the upload is not authorized.
      */
     fun authorizeAdminUpload(
-        contestId: UUID,
+        contest: Contest,
         member: Member,
     )
 
     /**
      * Authorizes the upload of an attachment in a contest by a judge member.
      *
-     * @param contestId The ID of the contest.
+     * @param contest The contest where the attachment is being uploaded.
      * @param member The judge member attempting the upload.
      * @throws ForbiddenException if the upload is not authorized.
      */
     fun authorizeJudgeUpload(
-        contestId: UUID,
+        contest: Contest,
         member: Member,
     )
 
     /**
      * Authorizes the upload of an attachment in a contest by a contestant member.
      *
-     * @param contestId The ID of the contest.
+     * @param contest The contest where the attachment is being uploaded.
      * @param member The contestant member attempting the upload.
      * @throws ForbiddenException if the upload is not authorized.
      */
     fun authorizeContestantUpload(
-        contestId: UUID,
+        contest: Contest,
         member: Member,
     )
 
     /**
      * Authorizes the upload of an attachment in a contest by a public (guest) user.
      *
-     * @param contestId The ID of the contest.
+     * @param contest The contest where the attachment is being uploaded.
      * @throws ForbiddenException if the upload is not authorized.
      */
-    fun authorizePublicUpload(contestId: UUID)
+    fun authorizePublicUpload(contest: Contest)
 
     // Download authorizations
 
     /**
      * Authorizes the download of an attachment in a contest by an admin member.
      *
-     * @param contestId The ID of the contest.
+     * @param contest The contest where the attachment is being downloaded.
      * @param member The admin member attempting the download.
      * @param attachment The attachment to be downloaded.
      * @throws ForbiddenException if the download is not authorized.
      */
     fun authorizeAdminDownload(
-        contestId: UUID,
+        contest: Contest,
         member: Member,
         attachment: Attachment,
     )
@@ -75,13 +75,13 @@ interface AttachmentAuthorizationConfig {
     /**
      * Authorizes the download of an attachment in a contest by a judge member.
      *
-     * @param contestId The ID of the contest.
+     * @param contest The contest where the attachment is being downloaded.
      * @param member The judge member attempting the download.
      * @param attachment The attachment to be downloaded.
      * @throws ForbiddenException if the download is not authorized.
      */
     fun authorizeJudgeDownload(
-        contestId: UUID,
+        contest: Contest,
         member: Member,
         attachment: Attachment,
     )
@@ -89,13 +89,13 @@ interface AttachmentAuthorizationConfig {
     /**
      * Authorizes the download of an attachment in a contest by a contestant member.
      *
-     * @param contestId The ID of the contest.
+     * @param contest The contest where the attachment is being downloaded.
      * @param member The contestant member attempting the download.
      * @param attachment The attachment to be downloaded.
      * @throws ForbiddenException if the download is not authorized.
      */
     fun authorizeContestantDownload(
-        contestId: UUID,
+        contest: Contest,
         member: Member,
         attachment: Attachment,
     )
@@ -103,12 +103,12 @@ interface AttachmentAuthorizationConfig {
     /**
      * Authorizes the download of an attachment in a contest by a public (guest) user.
      *
-     * @param contestId The ID of the contest.
+     * @param contest The contest where the attachment is being downloaded.
      * @param attachment The attachment to be downloaded.
      * @throws ForbiddenException if the download is not authorized.
      */
     fun authorizePublicDownload(
-        contestId: UUID,
+        contest: Contest,
         attachment: Attachment,
     )
 }

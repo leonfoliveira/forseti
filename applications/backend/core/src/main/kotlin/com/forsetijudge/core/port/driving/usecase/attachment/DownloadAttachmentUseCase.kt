@@ -8,10 +8,16 @@ interface DownloadAttachmentUseCase {
     /**
      * Downloads an attachment by its ID and returns the download metadata.
      *
+     * @param contestId The ID of the contest where the attachment belongs.
+     * @param memberId The ID of the member requesting the download.
      * @param id The ID of the attachment to download.
      * @return The attachment download output data including metadata.
      */
-    fun download(id: UUID): AttachmentDownloadOutputDTO
+    fun download(
+        contestId: UUID,
+        memberId: UUID?,
+        id: UUID,
+    ): AttachmentDownloadOutputDTO
 
     /**
      * Downloads the raw binary content of an attachment.

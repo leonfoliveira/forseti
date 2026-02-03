@@ -35,7 +35,7 @@ class ContestLeaderboardControllerTest(
         test("findContestLeaderboardById") {
             val contestId = UuidCreator.getTimeOrderedEpoch()
             val leaderboard = mockk<LeaderboardOutputDTO>(relaxed = true)
-            every { findLeaderboardUseCase.build(contestId) } returns leaderboard
+            every { findLeaderboardUseCase.build(contestId, null) } returns leaderboard
 
             webMvc
                 .get(basePath, contestId) {

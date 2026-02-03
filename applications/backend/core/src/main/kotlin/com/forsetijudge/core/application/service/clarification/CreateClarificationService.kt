@@ -8,6 +8,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ClarificationRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
+import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driving.usecase.clarification.CreateClarificationUseCase
 import com.forsetijudge.core.port.dto.input.clarification.CreateClarificationInputDTO
 import org.slf4j.LoggerFactory
@@ -20,6 +21,7 @@ import java.util.UUID
 class CreateClarificationService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
+    private val problemRepository: ProblemRepository,
     private val clarificationRepository: ClarificationRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : CreateClarificationUseCase {
@@ -50,24 +52,29 @@ class CreateClarificationService(
             memberRepository.findEntityById(memberId)
                 ?: throw NotFoundException("Could not find member with id $memberId")
 
-        // Business rule: Contestants cannot create clarifications with a parent
-        if (member.type == Member.Type.CONTESTANT && input.parentId != null) {
-            throw ForbiddenException("Contestants cannot create clarifications with a parent")
-        }
-        // Business rule: Judges and Admins cannot create clarifications without a parent
-        if (setOf(Member.Type.JUDGE, Member.Type.ADMIN).contains(member.type) && input.parentId == null) {
-            throw ForbiddenException("${member.type} members cannot create clarifications without a parent")
+        val isAnswer = input.parentId != null
+        if (isAnswer) {
+            if (!setOf(Member.Type.JUDGE, Member.Type.ADMIN, Member.Type.ROOT).contains(member.type)) {
+                throw ForbiddenException("Only Judges, Admins and Root can answer clarifications")
+            }
+        } else {
+            if (!setOf(Member.Type.CONTESTANT, Member.Type.ROOT).contains(member.type)) {
+                throw ForbiddenException("Only Contestants and Root can create clarifications")
+            }
+            if (!contest.isActive()) {
+                throw ForbiddenException("Clarifications can only be created during an active contest")
+            }
         }
 
         val problem =
             input.problemId?.let {
-                contest.problems.find { it.id == input.problemId }
-                    ?: throw NotFoundException("Could not find problem with id ${input.problemId} in contest $contestId")
+                problemRepository.findByIdAndContestId(input.problemId, contestId)
+                    ?: throw NotFoundException("Could not find problem with id ${input.problemId} in contest")
             }
         val parent =
             input.parentId?.let {
-                clarificationRepository.findEntityById(it)
-                    ?: throw NotFoundException("Could not find parent announcement with id $it")
+                clarificationRepository.findByIdAndContestId(it, contestId)
+                    ?: throw NotFoundException("Could not find parent clarification with id $it in contest")
             }
 
         val clarification =

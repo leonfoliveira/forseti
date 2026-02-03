@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.driven.repository
 
 import com.forsetijudge.core.domain.entity.Attachment
+import org.springframework.data.jpa.repository.Query
 import java.util.UUID
 
 /**
@@ -8,4 +9,10 @@ import java.util.UUID
  */
 interface AttachmentRepository : BaseRepository<Attachment> {
     fun findEntityById(id: UUID): Attachment?
+
+    @Query("SELECT a FROM Attachment a WHERE a.id = :id AND a.contest.id = :contestId AND a.deletedAt IS NULL")
+    fun findByIdAndContestId(
+        id: UUID,
+        contestId: UUID,
+    ): Attachment?
 }

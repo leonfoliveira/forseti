@@ -1,6 +1,9 @@
 package com.forsetijudge.core.application.service.attachment
 
+import com.forsetijudge.core.application.service.attachment.auth.AttachmentAuthorizationConfig
 import com.forsetijudge.core.domain.entity.Attachment
+import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
@@ -19,8 +22,10 @@ class UploadAttachmentService(
     private val memberRepository: MemberRepository,
     private val attachmentRepository: AttachmentRepository,
     private val attachmentBucket: AttachmentBucket,
+    configs: List<AttachmentAuthorizationConfig>,
 ) : UploadAttachmentUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
+    private val configMap = configs.associateBy { it.getContext() }
 
     /**
      * Uploads an attachment to the storage bucket and saves its metadata in the repository.
@@ -51,6 +56,25 @@ class UploadAttachmentService(
                 memberRepository.findEntityById(memberId)
                     ?: throw NotFoundException("Could not find member with id = $memberId")
             }
+
+        val config =
+            configMap[context]
+                ?: throw ForbiddenException("Cannot upload attachments with context $context")
+
+        when (member?.type) {
+            Member.Type.ROOT -> {
+                // ROOT members can upload anything
+            }
+            Member.Type.AUTOJUDGE -> {
+                // AUTOJUDGE system members can upload anything
+            }
+            Member.Type.ADMIN -> config.authorizeAdminUpload(contest, member)
+            Member.Type.JUDGE -> config.authorizeJudgeUpload(contest, member)
+            Member.Type.CONTESTANT -> config.authorizeContestantUpload(contest, member)
+            null -> config.authorizePublicUpload(contest)
+            else -> throw ForbiddenException("Member type ${member.type} is not allowed to upload attachments")
+        }
+
         val id = UuidCreator.getTimeOrderedEpoch()
         val attachment =
             Attachment(

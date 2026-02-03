@@ -10,6 +10,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ClarificationRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
+import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.dto.input.clarification.CreateClarificationInputDTO
 import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
@@ -27,6 +28,7 @@ class CreateClarificationServiceTest :
     FunSpec({
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
+        val problemRepository = mockk<ProblemRepository>(relaxed = true)
         val clarificationRepository = mockk<ClarificationRepository>(relaxed = true)
         val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
@@ -34,6 +36,7 @@ class CreateClarificationServiceTest :
             CreateClarificationService(
                 contestRepository,
                 memberRepository,
+                problemRepository,
                 clarificationRepository,
                 applicationEventPublisher,
             )
@@ -77,7 +80,7 @@ class CreateClarificationServiceTest :
                 val inputWithParent = input.copy(parentId = UuidCreator.getTimeOrderedEpoch())
                 shouldThrow<ForbiddenException> {
                     sut.create(contestId, memberId, inputWithParent)
-                }.message shouldBe "Contestants cannot create clarifications with a parent"
+                }.message shouldBe "Only Judges, Admins and Root can answer clarifications"
             }
 
             listOf(
@@ -97,8 +100,25 @@ class CreateClarificationServiceTest :
 
                     shouldThrow<ForbiddenException> {
                         sut.create(contestId, memberId, input)
-                    }.message shouldBe "$type members cannot create clarifications without a parent"
+                    }.message shouldBe "Only Contestants and Root can create clarifications"
                 }
+            }
+
+            test("should throw ForbiddenException when contestant tries to create clarification when contest is not active") {
+                val member = MemberMockBuilder.build(id = memberId, type = Member.Type.CONTESTANT)
+                val contest =
+                    ContestMockBuilder.build(
+                        id = contestId,
+                        startAt = OffsetDateTime.now().plusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(2),
+                        members = listOf(member),
+                    )
+                every { contestRepository.findEntityById(contestId) } returns contest
+                every { memberRepository.findEntityById(memberId) } returns member
+
+                shouldThrow<ForbiddenException> {
+                    sut.create(contestId, memberId, input)
+                }.message shouldBe "Clarifications can only be created during an active contest"
             }
 
             test("should throw NotFoundException when problem does not exist in contest") {
@@ -107,16 +127,18 @@ class CreateClarificationServiceTest :
                     ContestMockBuilder.build(
                         id = contestId,
                         startAt = OffsetDateTime.now().minusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(1),
                         members = listOf(member),
-                        problems = emptyList(),
                     )
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
 
                 val inputWithProblem = input.copy(problemId = UuidCreator.getTimeOrderedEpoch())
+                every { problemRepository.findByIdAndContestId(inputWithProblem.problemId!!, contestId) } returns null
+
                 shouldThrow<NotFoundException> {
                     sut.create(contestId, memberId, inputWithProblem)
-                }.message shouldBe "Could not find problem with id ${inputWithProblem.problemId} in contest $contestId"
+                }.message shouldBe "Could not find problem with id ${inputWithProblem.problemId} in contest"
             }
 
             test("should throw NotFoundException when parent clarification does not exist") {
@@ -125,17 +147,18 @@ class CreateClarificationServiceTest :
                     ContestMockBuilder.build(
                         id = contestId,
                         startAt = OffsetDateTime.now().minusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(1),
                         members = listOf(member),
                     )
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
 
                 val inputWithParent = input.copy(parentId = UuidCreator.getTimeOrderedEpoch())
-                every { clarificationRepository.findEntityById(inputWithParent.parentId!!) } returns null
+                every { clarificationRepository.findByIdAndContestId(inputWithParent.parentId!!, contestId) } returns null
 
                 shouldThrow<NotFoundException> {
                     sut.create(contestId, memberId, inputWithParent)
-                }.message shouldBe "Could not find parent announcement with id ${inputWithParent.parentId}"
+                }.message shouldBe "Could not find parent clarification with id ${inputWithParent.parentId} in contest"
             }
 
             test("should create clarification successfully") {
@@ -144,6 +167,7 @@ class CreateClarificationServiceTest :
                     ContestMockBuilder.build(
                         id = contestId,
                         startAt = OffsetDateTime.now().minusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(1),
                         members = listOf(member),
                     )
                 every { contestRepository.findEntityById(contestId) } returns contest

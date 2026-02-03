@@ -4,8 +4,10 @@ import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
+import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.dto.output.LeaderboardOutputDTO
 import org.slf4j.LoggerFactory
@@ -18,6 +20,7 @@ import java.util.UUID
 @Service
 class BuildLeaderboardService(
     private val contestRepository: ContestRepository,
+    private val memberRepository: MemberRepository,
 ) : BuildLeaderboardUseCase {
     companion object {
         private const val WRONG_SUBMISSION_PENALTY = 1200 // 20 minutes
@@ -35,15 +38,30 @@ class BuildLeaderboardService(
      * 4. Name (alphabetical order).
      *
      * @param contestId The id of the contest
+     * @param memberId The id of the member requesting the leaderboard
      * @return The leaderboard output DTO
      * @throws NotFoundException If the contest is not found
+     * @throws ForbiddenException If the contest has not started yet and the member is not an admin or root
      */
     @Transactional(readOnly = true)
-    override fun build(contestId: UUID): LeaderboardOutputDTO {
+    override fun build(
+        contestId: UUID,
+        memberId: UUID?,
+    ): LeaderboardOutputDTO {
         logger.info("Building outputDTO for contest with id: $contestId")
+
         val contest =
             contestRepository.findEntityById(contestId)
                 ?: throw NotFoundException("Could not find contest with id = $contestId")
+        val member =
+            memberId?.let {
+                memberRepository.findEntityById(it)
+                    ?: throw NotFoundException("Could not find member with id = $it")
+            }
+
+        if (!contest.hasStarted() && !setOf(Member.Type.ADMIN, Member.Type.ROOT).contains(member?.type)) {
+            throw ForbiddenException("Contest has not started yet")
+        }
 
         val classification =
             contest.members

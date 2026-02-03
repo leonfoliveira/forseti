@@ -400,7 +400,7 @@ All endpoints are prefixed with `/api`. This is important for Traefik to expose 
 
 #### Root
 
-**[POST] /v1/auth:sign-in-as-root**
+**[POST] /v1/root:sign-in**
 
 Sign in as root
 
@@ -460,7 +460,7 @@ Delete current session (logout)
 
 #### Contest
 
-**[POST] /v1/contests**
+**[POST] /v1/root/contests**
 
 Create a contest
 
@@ -501,7 +501,7 @@ Create a contest
 }
 ```
 
-**[PUT] /v1/contests**
+**[PUT] /v1/contests/{contestId}**
 
 Update a contest
 
@@ -543,7 +543,7 @@ Update a contest
 }
 ```
 
-**[GET] /v1/contests/metadata**
+**[GET] /v1/root/contests/metadata**
 
 Find all contest metadata
 

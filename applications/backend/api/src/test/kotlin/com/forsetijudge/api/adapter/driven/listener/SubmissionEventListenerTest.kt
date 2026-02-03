@@ -29,7 +29,7 @@ class SubmissionEventListenerTest :
             val submission = SubmissionMockBuilder.build()
             val event = SubmissionCreatedEvent(this, submission)
             val leaderboard = mockk<LeaderboardOutputDTO>()
-            every { buildLeaderboardService.build(submission.contest.id) } returns leaderboard
+            every { buildLeaderboardService.build(submission.contest.id, null) } returns leaderboard
 
             sut.onApplicationEvent(event)
 
@@ -41,7 +41,7 @@ class SubmissionEventListenerTest :
             val submission = SubmissionMockBuilder.build()
             val event = SubmissionUpdatedEvent(this, submission)
             val leaderboard = mockk<LeaderboardOutputDTO>()
-            every { buildLeaderboardService.build(submission.contest.id) } returns leaderboard
+            every { buildLeaderboardService.build(submission.contest.id, null) } returns leaderboard
 
             sut.onApplicationEvent(event)
 

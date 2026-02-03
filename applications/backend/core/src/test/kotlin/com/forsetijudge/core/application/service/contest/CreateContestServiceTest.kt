@@ -1,7 +1,6 @@
 package com.forsetijudge.core.application.service.contest
 
 import com.forsetijudge.core.domain.entity.Contest
-import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
@@ -39,7 +38,7 @@ class CreateContestServiceTest :
                 )
 
             test("should throw ConflictException when contest with same slug already exists") {
-                every { contestRepository.findBySlug(inputDTO.slug) } returns ContestMockBuilder.build()
+                every { contestRepository.existsBySlug(inputDTO.slug) } returns true
 
                 shouldThrow<ConflictException> {
                     sut.create(inputDTO)
@@ -47,7 +46,7 @@ class CreateContestServiceTest :
             }
 
             test("should create contest successfully") {
-                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { contestRepository.existsBySlug(inputDTO.slug) } returns false
                 every { contestRepository.save(any<Contest>()) } answers { firstArg() }
 
                 val contest = sut.create(inputDTO)
