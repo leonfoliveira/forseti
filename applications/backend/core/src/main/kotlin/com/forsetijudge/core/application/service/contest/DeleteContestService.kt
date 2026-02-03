@@ -36,10 +36,11 @@ class DeleteContestService(
         val contest =
             contestRepository.findEntityById(id)
                 ?: throw NotFoundException("Could not find contest with id = $id")
-        // Business rule: A contest that has started cannot be deleted
+
         if (contest.hasStarted()) {
             throw ForbiddenException("Contest already started")
         }
+
         contest.deletedAt = OffsetDateTime.now()
         contestRepository.save(contest)
 

@@ -94,6 +94,10 @@ class Member(
          * Represents a member with administrative privileges within the contest, such as contest managers.
          */
         ADMIN,
+
+        ;
+
+        fun isSystemType(): Boolean = setOf(API, AUTOJUDGE).contains(this)
     }
 
     companion object {

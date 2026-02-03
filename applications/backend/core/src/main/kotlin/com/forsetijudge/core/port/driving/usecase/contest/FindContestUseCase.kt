@@ -13,6 +13,20 @@ interface FindContestUseCase {
 
     /**
      * Finds a contest by its ID.
+     * This method can only be used after the contest has started or the member is ADMIN/ROOT.
+     *
+     * @param memberId The ID of the member requesting the contest.
+     * @param id The ID of the contest to find.
+     * @return The contest entity.
+     * @throws NotFoundException if the contest is not found.
+     */
+    fun findByIdPublic(
+        memberId: UUID?,
+        id: UUID,
+    ): Contest
+
+    /**
+     * Finds a contest by its ID.
      *
      * @param id The ID of the contest to find.
      * @return The contest entity.

@@ -31,8 +31,7 @@ class CreateContestService(
     ): Contest {
         logger.info("Creating contest with title: ${inputDTO.title}")
 
-        val duplicatedContestBySlug = contestRepository.findBySlug(inputDTO.slug)
-        if (duplicatedContestBySlug != null) {
+        if (contestRepository.existsBySlug(inputDTO.slug)) {
             throw ConflictException("Contest with slug '${inputDTO.slug}' already exists")
         }
 

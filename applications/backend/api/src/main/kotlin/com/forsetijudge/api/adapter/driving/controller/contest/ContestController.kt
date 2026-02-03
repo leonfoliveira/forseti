@@ -9,6 +9,7 @@ import com.forsetijudge.api.adapter.dto.response.contest.toMetadataDTO
 import com.forsetijudge.api.adapter.dto.response.contest.toPublicOutputDTO
 import com.forsetijudge.api.adapter.util.Private
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.CreateContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.DeleteContestUseCase
@@ -81,7 +82,6 @@ class ContestController(
         @RequestBody body: UpdateContestInputDTO,
     ): ResponseEntity<ContestFullResponseDTO> {
         logger.info("[PUT] /v1/contests - $body")
-        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val contest = updateContestUseCase.update(contestId, body)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
@@ -142,8 +142,8 @@ class ContestController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestPublicOutputDTO> {
         logger.info("[GET] /v1/contests/$contestId")
-        authorizeContestUseCase.checkIfStarted(contestId)
-        val contest = findContestUseCase.findById(contestId)
+        val member = RequestContext.getContext().session?.member
+        val contest = findContestUseCase.findByIdPublic(member?.id, contestId)
         return ResponseEntity.ok(contest.toPublicOutputDTO())
     }
 
@@ -189,7 +189,7 @@ class ContestController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestFullResponseDTO> {
         logger.info("[GET] /v1/contests/$contestId/full")
-        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
+        val member = RequestContext.getContext().session!!.member
         val contest = findContestUseCase.findById(contestId)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
@@ -236,7 +236,6 @@ class ContestController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestMetadataResponseDTO> {
         logger.info("[PUT] /v1/contests/$contestId:force-start")
-        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val contest = updateContestUseCase.forceStart(contestId)
         return ResponseEntity.ok().body(contest.toMetadataDTO())
     }
@@ -283,7 +282,6 @@ class ContestController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestMetadataResponseDTO> {
         logger.info("[PUT] /v1/contests/$contestId:force-end")
-        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val contest = updateContestUseCase.forceEnd(contestId)
         return ResponseEntity.ok().body(contest.toMetadataDTO())
     }
