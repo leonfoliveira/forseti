@@ -30,13 +30,13 @@ class Session(
     /**
      * The contest to which this session belongs, if any.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @Audited(withModifiedFlag = false)
     val contest: Contest?,
     /**
      * The member to which this session belongs.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
     val member: Member,
