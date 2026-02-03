@@ -8,4 +8,6 @@ import java.util.UUID
  */
 interface SessionRepository : BaseRepository<Session> {
     fun findEntityById(id: UUID): Session?
+
+    fun findAllByMemberId(memberId: UUID): List<Session>
 }

@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.authentication
 
 import com.forsetijudge.core.application.service.session.CreateSessionService
+import com.forsetijudge.core.application.service.session.DeleteSessionService
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -21,6 +22,7 @@ class AuthenticateService(
     private val memberRepository: MemberRepository,
     private val hasher: Hasher,
     private val createSessionService: CreateSessionService,
+    private val deleteSessionService: DeleteSessionService,
     private val contestRepository: ContestRepository,
 ) : AuthenticateUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -51,6 +53,7 @@ class AuthenticateService(
             throw UnauthorizedException("Invalid login or password")
         }
 
+        deleteSessionService.deleteAllForMember(member)
         val session = createSessionService.create(null, member)
         logger.info("Finished authenticating member with session id = ${session.id}")
         return session
@@ -79,6 +82,7 @@ class AuthenticateService(
             memberRepository.findByLoginAndContestId(inputDTO.login, contestId)
                 ?: memberRepository.findByLoginAndContestId(inputDTO.login, null)
                 ?: throw UnauthorizedException("Invalid login or password")
+
         if (FORBIDDEN_MEMBER_TYPES.contains(member.type)) {
             throw UnauthorizedException("Invalid login or password")
         }
@@ -87,6 +91,7 @@ class AuthenticateService(
             throw UnauthorizedException("Invalid login or password")
         }
 
+        deleteSessionService.deleteAllForMember(member)
         val session = createSessionService.create(contest, member)
         logger.info("Finished authenticating member for contest with session id = ${session.id}")
         return session

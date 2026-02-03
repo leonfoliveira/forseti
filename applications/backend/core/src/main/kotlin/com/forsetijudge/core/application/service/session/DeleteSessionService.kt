@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.session
 
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driven.repository.SessionRepository
 import com.forsetijudge.core.port.driving.usecase.session.DeleteSessionUseCase
@@ -31,5 +32,20 @@ class DeleteSessionService(
         sessionRepository.save(session)
 
         logger.info("Finished deleting session")
+    }
+
+    /**
+     * Soft deletes all sessions for the given member.
+     */
+    @Transactional
+    fun deleteAllForMember(member: Member) {
+        logger.info("Deleting all sessions for member id = ${member.id}")
+
+        val sessions = sessionRepository.findAllByMemberId(member.id)
+        val now = OffsetDateTime.now()
+        sessions.forEach { it.deletedAt = now }
+        sessionRepository.saveAll(sessions)
+
+        logger.info("Finished deleting all sessions for member id = ${member.id}")
     }
 }
