@@ -47,7 +47,7 @@ class HttpContextExtractionInterceptor(
          * the contest in the path. If not, invalidate the session.
          * If the session has no contest, it is valid for all contests.
          */
-        if (session != null && !session.member.isSystemMember()) {
+        if (session != null && session.member.contest != null) {
             val contestIdFromPath = extractContestIdFromPath(request.requestURI)
             if (contestIdFromPath != null) {
                 if (session.contest?.id != contestIdFromPath) {
