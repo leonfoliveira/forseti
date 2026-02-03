@@ -10,7 +10,7 @@ import java.util.UUID
 interface AttachmentRepository : BaseRepository<Attachment> {
     fun findEntityById(id: UUID): Attachment?
 
-    @Query("SELECT a FROM Attachment a WHERE a.id = :id AND a.contest.id = :contestId")
+    @Query("SELECT a FROM Attachment a WHERE a.id = :id AND a.contest.id = :contestId AND a.deletedAt IS NULL")
     fun findByIdAndContestId(
         id: UUID,
         contestId: UUID,

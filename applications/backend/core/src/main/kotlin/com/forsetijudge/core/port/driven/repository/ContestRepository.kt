@@ -14,7 +14,7 @@ interface ContestRepository : BaseRepository<Contest> {
 
     fun existsBySlug(slug: String): Boolean
 
-    @Query("select (count(c) > 0) from Contest c where c.slug = ?1 and c.id <> ?2")
+    @Query("SELECT (COUNT(c) > 0) FROM Contest c WHERE c.slug = ?1 AND c.id <> ?2 AND c.deletedAt IS NULL")
     fun existsBySlugAndIdNot(
         slug: String,
         id: UUID,
