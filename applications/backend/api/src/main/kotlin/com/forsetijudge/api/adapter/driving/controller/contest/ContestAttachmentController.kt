@@ -6,7 +6,6 @@ import com.forsetijudge.api.adapter.dto.response.toResponseDTO
 import com.forsetijudge.api.adapter.util.Private
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.attachment.AuthorizeAttachmentUseCase
 import com.forsetijudge.core.port.driving.usecase.attachment.DownloadAttachmentUseCase
 import com.forsetijudge.core.port.driving.usecase.attachment.UploadAttachmentUseCase
 import io.swagger.v3.oas.annotations.Operation
@@ -33,7 +32,6 @@ import java.util.UUID
 class ContestAttachmentController(
     private val uploadAttachmentUseCase: UploadAttachmentUseCase,
     private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
-    private val authorizeAttachmentUseCase: AuthorizeAttachmentUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -70,7 +68,6 @@ class ContestAttachmentController(
             "[POST] /v1/contests/$contestId/attachments " +
                 "{ context: $context, filename: ${file.originalFilename}, size: ${file.size} }",
         )
-        authorizeAttachmentUseCase.authorizeUpload(contestId, context)
         val member = RequestContext.getContext().session!!.member
         val attachment =
             uploadAttachmentUseCase.upload(
@@ -107,8 +104,8 @@ class ContestAttachmentController(
         @PathVariable attachmentId: UUID,
     ): ResponseEntity<ByteArray> {
         logger.info("[GET] /v1/contests/$contestId/attachments/$attachmentId")
-        authorizeAttachmentUseCase.authorizeDownload(contestId, attachmentId)
-        val download = downloadAttachmentUseCase.download(attachmentId)
+        val member = RequestContext.getContext().session?.member
+        val download = downloadAttachmentUseCase.download(contestId, member?.id, attachmentId)
         val headers =
             HttpHeaders().apply {
                 contentDisposition =

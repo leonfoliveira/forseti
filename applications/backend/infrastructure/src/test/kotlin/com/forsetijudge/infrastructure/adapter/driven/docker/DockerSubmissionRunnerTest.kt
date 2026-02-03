@@ -41,8 +41,8 @@ class DockerSubmissionRunnerTest(
             contest = ContestMockBuilder.build()
             contest = contestRepository.save(contest)
 
-            val root = MemberMockBuilder.build(id = Member.ROOT_ID, contest = null)
-            val autojudge = MemberMockBuilder.build(id = Member.AUTOJUDGE_ID, contest = null)
+            val root = MemberMockBuilder.build(id = Member.ROOT_ID, contest = null, type = Member.Type.ROOT)
+            val autojudge = MemberMockBuilder.build(id = Member.AUTOJUDGE_ID, contest = null, type = Member.Type.AUTOJUDGE)
             memberRepository.saveAll(listOf(root, autojudge))
 
             val member = MemberMockBuilder.build(contest = contest)

@@ -1,27 +1,18 @@
-package com.forsetijudge.core.application.service.attachment.config
+package com.forsetijudge.core.application.service.attachment.auth
 
-import com.forsetijudge.core.application.service.contest.AuthorizeContestService
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
+import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
-import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
-import io.mockk.justRun
-import io.mockk.mockk
-import io.mockk.verify
 
 class ProblemTestCasesAuthorizationConfigTest :
     FunSpec({
-        val authorizeContestService = mockk<AuthorizeContestService>(relaxed = true)
-
-        val sut =
-            ProblemTestCasesAuthorizationConfig(
-                authorizeContestService = authorizeContestService,
-            )
+        val sut = ProblemTestCasesAuthorizationConfig()
 
         beforeEach {
             clearAllMocks()
@@ -34,93 +25,89 @@ class ProblemTestCasesAuthorizationConfigTest :
         }
 
         context("authorizeAdminUpload") {
-            test("should check if member belongs to contest") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
+            test("should allow admin upload") {
+                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build()
-                justRun { authorizeContestService.checkIfMemberBelongsToContest(contestId) }
 
-                sut.authorizeAdminUpload(contestId, member)
-
-                verify(exactly = 1) { authorizeContestService.checkIfMemberBelongsToContest(contestId) }
+                // Should not throw exception
+                sut.authorizeAdminUpload(contest, member)
             }
         }
 
         context("authorizeJudgeUpload") {
             test("should throw ForbiddenException") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build()
 
                 shouldThrow<ForbiddenException> {
-                    sut.authorizeJudgeUpload(contestId, member)
+                    sut.authorizeJudgeUpload(contest, member)
                 }
             }
         }
 
         context("authorizeContestantUpload") {
             test("should throw ForbiddenException") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build()
 
                 shouldThrow<ForbiddenException> {
-                    sut.authorizeContestantUpload(contestId, member)
+                    sut.authorizeContestantUpload(contest, member)
                 }
             }
         }
 
         context("authorizePublicUpload") {
             test("should throw ForbiddenException") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val contest = ContestMockBuilder.build()
 
                 shouldThrow<ForbiddenException> {
-                    sut.authorizePublicUpload(contestId)
+                    sut.authorizePublicUpload(contest)
                 }
             }
         }
 
         context("authorizeAdminDownload") {
-            test("should check if member belongs to contest") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
+            test("should allow admin download") {
+                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
-                justRun { authorizeContestService.checkIfMemberBelongsToContest(contestId) }
 
-                sut.authorizeAdminDownload(contestId, member, attachment)
-
-                verify(exactly = 1) { authorizeContestService.checkIfMemberBelongsToContest(contestId) }
+                // Should not throw exception
+                sut.authorizeAdminDownload(contest, member, attachment)
             }
         }
 
         context("authorizeJudgeDownload") {
             test("should throw ForbiddenException") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
 
                 shouldThrow<ForbiddenException> {
-                    sut.authorizeJudgeDownload(contestId, member, attachment)
+                    sut.authorizeJudgeDownload(contest, member, attachment)
                 }
             }
         }
 
         context("authorizeContestantDownload") {
             test("should throw ForbiddenException") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
 
                 shouldThrow<ForbiddenException> {
-                    sut.authorizeContestantDownload(contestId, member, attachment)
+                    sut.authorizeContestantDownload(contest, member, attachment)
                 }
             }
         }
 
         context("authorizePublicDownload") {
             test("should throw ForbiddenException") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
+                val contest = ContestMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
 
                 shouldThrow<ForbiddenException> {
-                    sut.authorizePublicDownload(contestId, attachment)
+                    sut.authorizePublicDownload(contest, attachment)
                 }
             }
         }
