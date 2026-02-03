@@ -10,6 +10,7 @@ import com.forsetijudge.core.domain.event.SubmissionCreatedEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
+import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
@@ -29,6 +30,7 @@ import java.time.OffsetDateTime
 
 class CreateSubmissionServiceTest :
     FunSpec({
+        val contestRepository = mockk<ContestRepository>(relaxed = true)
         val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val problemRepository = mockk<ProblemRepository>(relaxed = true)
@@ -37,6 +39,7 @@ class CreateSubmissionServiceTest :
 
         val sut =
             CreateSubmissionService(
+                contestRepository,
                 attachmentRepository,
                 memberRepository,
                 problemRepository,
@@ -49,6 +52,7 @@ class CreateSubmissionServiceTest :
         }
 
         context("create") {
+            val contestId = UuidCreator.getTimeOrderedEpoch()
             val memberId = UuidCreator.getTimeOrderedEpoch()
             val problemId = UuidCreator.getTimeOrderedEpoch()
             val inputDTO =
@@ -58,59 +62,85 @@ class CreateSubmissionServiceTest :
                     code = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                 )
 
+            test("should throw NotFoundException when contest does not exist") {
+                every { contestRepository.findEntityById(contestId) } returns null
+
+                shouldThrow<NotFoundException> {
+                    sut.create(contestId, memberId, inputDTO)
+                }.message shouldBe "Could not find contest with id = $contestId"
+            }
+
             test("should throw NotFoundException when member does not exist") {
+                val contest = ContestMockBuilder.build()
+                every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.create(memberId, inputDTO)
+                    sut.create(contestId, memberId, inputDTO)
                 }.message shouldBe "Could not find member with id = $memberId"
             }
 
             test("should throw NotFoundException when problem does not exist") {
+                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build()
+                every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
-                every { problemRepository.findEntityById(problemId) } returns null
+                every { problemRepository.findByIdAndContestId(problemId, contestId) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.create(memberId, inputDTO)
-                }.message shouldBe "Could not find problem with id = $problemId"
+                    sut.create(contestId, memberId, inputDTO)
+                }.message shouldBe "Could not find problem with id = $problemId in contest"
             }
 
             test("should throw NotFoundException when code attachment does not exist") {
+                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build()
                 val problem = ProblemMockBuilder.build()
+                every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
-                every { problemRepository.findEntityById(problemId) } returns problem
-                every { attachmentRepository.findEntityById(inputDTO.code.id) } returns null
+                every { problemRepository.findByIdAndContestId(problemId, contestId) } returns problem
+                every { attachmentRepository.findByIdAndContestId(inputDTO.code.id, contestId) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.create(memberId, inputDTO)
-                }.message shouldBe "Could not find code attachment with id = ${inputDTO.code.id}"
+                    sut.create(contestId, memberId, inputDTO)
+                }.message shouldBe "Could not find code attachment with id = ${inputDTO.code.id} in contest"
             }
 
             test("should throw ForbiddenException when attachment has wrong context") {
-                val contest = ContestMockBuilder.build(languages = listOf())
-                val problem = ProblemMockBuilder.build(contest = contest)
+                val contest = ContestMockBuilder.build(
+                    languages = listOf(),
+                    startAt = OffsetDateTime.now().minusHours(1),
+                    endAt = OffsetDateTime.now().plusHours(1)
+                )
+                val member = MemberMockBuilder.build()
+                val problem = ProblemMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_TEST_CASES)
-                every { problemRepository.findEntityById(problemId) } returns problem
-                every { attachmentRepository.findEntityById(inputDTO.code.id) } returns attachment
+                every { contestRepository.findEntityById(contestId) } returns contest
+                every { memberRepository.findEntityById(memberId) } returns member
+                every { problemRepository.findByIdAndContestId(problemId, contestId) } returns problem
+                every { attachmentRepository.findByIdAndContestId(inputDTO.code.id, contestId) } returns attachment
 
                 shouldThrow<ForbiddenException> {
-                    sut.create(memberId, inputDTO)
+                    sut.create(contestId, memberId, inputDTO)
                 }.message shouldBe "Attachment with id = ${inputDTO.code.id} is not a submission code"
             }
 
             test("should throw ForbiddenException when language is not allowed for the contest") {
-                val contest = ContestMockBuilder.build(languages = listOf())
-                val member = MemberMockBuilder.build(contest = contest)
-                val problem = ProblemMockBuilder.build(contest = contest)
+                val contest = ContestMockBuilder.build(
+                    languages = listOf(),
+                    startAt = OffsetDateTime.now().minusHours(1),
+                    endAt = OffsetDateTime.now().plusHours(1)
+                )
+                val member = MemberMockBuilder.build()
+                val problem = ProblemMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
+                every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
-                every { problemRepository.findEntityById(problemId) } returns problem
-                every { attachmentRepository.findEntityById(inputDTO.code.id) } returns attachment
+                every { problemRepository.findByIdAndContestId(problemId, contestId) } returns problem
+                every { attachmentRepository.findByIdAndContestId(inputDTO.code.id, contestId) } returns attachment
 
                 shouldThrow<ForbiddenException> {
-                    sut.create(memberId, inputDTO)
+                    sut.create(contestId, memberId, inputDTO)
                 }.message shouldBe "Language ${inputDTO.language} is not allowed for this contest"
             }
 
@@ -120,15 +150,16 @@ class CreateSubmissionServiceTest :
                         languages = listOf(Submission.Language.PYTHON_312),
                         startAt = OffsetDateTime.now().plusHours(1),
                     )
-                val member = MemberMockBuilder.build(contest = contest)
-                val problem = ProblemMockBuilder.build(contest = contest)
+                val member = MemberMockBuilder.build()
+                val problem = ProblemMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
+                every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
-                every { problemRepository.findEntityById(problemId) } returns problem
-                every { attachmentRepository.findEntityById(inputDTO.code.id) } returns attachment
+                every { problemRepository.findByIdAndContestId(problemId, contestId) } returns problem
+                every { attachmentRepository.findByIdAndContestId(inputDTO.code.id, contestId) } returns attachment
 
                 shouldThrow<ForbiddenException> {
-                    sut.create(memberId, inputDTO)
+                    sut.create(contestId, memberId, inputDTO)
                 }.message shouldBe "Contest is not active"
             }
 
@@ -138,15 +169,16 @@ class CreateSubmissionServiceTest :
                         languages = listOf(Submission.Language.PYTHON_312),
                         startAt = OffsetDateTime.now().minusHours(1),
                     )
-                val member = MemberMockBuilder.build(contest = contest)
-                val problem = ProblemMockBuilder.build(contest = contest)
+                val member = MemberMockBuilder.build()
+                val problem = ProblemMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
+                every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
-                every { problemRepository.findEntityById(problemId) } returns problem
-                every { attachmentRepository.findEntityById(inputDTO.code.id) } returns attachment
+                every { problemRepository.findByIdAndContestId(problemId, contestId) } returns problem
+                every { attachmentRepository.findByIdAndContestId(inputDTO.code.id, contestId) } returns attachment
                 every { submissionRepository.save(any<Submission>()) } answers { firstArg() }
 
-                val submission = sut.create(memberId, inputDTO)
+                val submission = sut.create(contestId, memberId, inputDTO)
 
                 submission.member shouldBe member
                 submission.problem shouldBe problem

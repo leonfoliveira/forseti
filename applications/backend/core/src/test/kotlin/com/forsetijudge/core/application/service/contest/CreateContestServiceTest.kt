@@ -39,7 +39,7 @@ class CreateContestServiceTest :
                 )
 
             test("should throw ConflictException when contest with same slug already exists") {
-                every { contestRepository.findBySlug(inputDTO.slug) } returns ContestMockBuilder.build()
+                every { contestRepository.existsBySlug(inputDTO.slug) } returns true
 
                 shouldThrow<ConflictException> {
                     sut.create(inputDTO)
@@ -47,7 +47,7 @@ class CreateContestServiceTest :
             }
 
             test("should create contest successfully") {
-                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { contestRepository.existsBySlug(inputDTO.slug) } returns false
                 every { contestRepository.save(any<Contest>()) } answers { firstArg() }
 
                 val contest = sut.create(inputDTO)

@@ -17,9 +17,13 @@ interface FindSubmissionUseCase {
      * Finds all submissions for a specific contest.
      *
      * @param contestId The ID of the contest.
+     * @param memberId The ID of the member requesting the submissions.
      * @return A list of submissions for the contest.
      */
-    fun findAllByContest(contestId: UUID): List<Submission>
+    fun findAllByContest(
+        contestId: UUID,
+        memberId: UUID?,
+    ): List<Submission>
 
     /**
      * Finds all submissions by a specific member.

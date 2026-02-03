@@ -1,6 +1,8 @@
 package com.forsetijudge.core.application.service.submission
 
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -10,6 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
+import kotlin.collections.contains
 
 @Service
 class FindSubmissionService(
@@ -42,16 +45,30 @@ class FindSubmissionService(
      * Finds all submissions for a given contest.
      *
      * @param contestId ID of the contest
+     * @param memberId The ID of the member requesting the submissions.
      * @return List of submissions for the contest
      * @throws NotFoundException if the contest is not found
      */
     @Transactional(readOnly = true)
-    override fun findAllByContest(contestId: UUID): List<Submission> {
+    override fun findAllByContest(
+        contestId: UUID,
+        memberId: UUID?,
+    ): List<Submission> {
         logger.info("Finding all submissions for contest with id: $contestId")
 
         val contest =
             contestRepository.findEntityById(contestId)
                 ?: throw NotFoundException("Could not find contest with id = $contestId")
+        val member =
+            memberId?.let {
+                memberRepository.findEntityById(it)
+                    ?: throw NotFoundException("Could not find member with id = $it")
+            }
+
+        if (!contest.hasStarted() && !setOf(Member.Type.ADMIN, Member.Type.ROOT).contains(member?.type)) {
+            throw ForbiddenException("Contest has not started yet")
+        }
+
         val submissions =
             contest.problems
                 .map {

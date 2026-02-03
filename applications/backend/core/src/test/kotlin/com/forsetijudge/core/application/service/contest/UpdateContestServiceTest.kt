@@ -134,7 +134,7 @@ class UpdateContestServiceTest :
             test("should throw ConflictException when contest with same slug already exists") {
                 val existingContest = ContestMockBuilder.build(slug = inputDTO.slug)
                 every { contestRepository.findEntityById(contestId) } returns ContestMockBuilder.build()
-                every { contestRepository.findBySlug(inputDTO.slug) } returns existingContest
+                every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns true
 
                 shouldThrow<ConflictException> {
                     sut.update(contestId, inputDTO)
@@ -148,7 +148,7 @@ class UpdateContestServiceTest :
                         problems = listOf(ProblemMockBuilder.build(id = inputDTO.problems[0].id!!)),
                     )
                 every { contestRepository.findEntityById(contestId) } returns contest
-                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns false
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].description.id) } returns null
 
                 shouldThrow<NotFoundException> {
@@ -164,7 +164,7 @@ class UpdateContestServiceTest :
                     )
                 val descriptionAttachment = AttachmentMockBuilder.build(context = Attachment.Context.SUBMISSION_CODE)
                 every { contestRepository.findEntityById(contestId) } returns contest
-                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns false
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].description.id) } returns
                     descriptionAttachment
 
@@ -180,7 +180,7 @@ class UpdateContestServiceTest :
                         problems = listOf(ProblemMockBuilder.build(id = inputDTO.problems[0].id!!)),
                     )
                 every { contestRepository.findEntityById(contestId) } returns contest
-                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns false
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].description.id) } returns
                     AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_DESCRIPTION)
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].testCases.id) } returns null
@@ -198,7 +198,7 @@ class UpdateContestServiceTest :
                     )
                 val testCasesAttachment = AttachmentMockBuilder.build(context = Attachment.Context.SUBMISSION_CODE)
                 every { contestRepository.findEntityById(contestId) } returns contest
-                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns false
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].description.id) } returns
                     AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_DESCRIPTION)
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].testCases.id) } returns
@@ -250,7 +250,7 @@ class UpdateContestServiceTest :
                         problems = listOf(problemToUpdateMinimum, problemToUpdateFull, problemToDelete),
                     )
                 every { contestRepository.findEntityById(contestId) } returns contest
-                every { contestRepository.findBySlug(inputDTO.slug) } returns null
+                every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns false
                 every { hasher.hash(any()) } returns "hashedPassword"
                 val descriptionAttachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_DESCRIPTION)
                 val testCasesAttachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_TEST_CASES)

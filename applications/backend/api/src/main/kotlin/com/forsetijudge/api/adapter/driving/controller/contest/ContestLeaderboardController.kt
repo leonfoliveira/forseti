@@ -1,6 +1,7 @@
 package com.forsetijudge.api.adapter.driving.controller.contest
 
 import com.forsetijudge.api.adapter.dto.response.ErrorResponseDTO
+import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.driving.usecase.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.dto.output.LeaderboardOutputDTO
@@ -47,7 +48,8 @@ class ContestLeaderboardController(
     ): ResponseEntity<LeaderboardOutputDTO> {
         logger.info("[GET] /v1/contests/$contestId/leaderboard")
         authorizeContestUseCase.checkIfStarted(contestId)
-        val leaderboard = buildLeaderboardUseCase.build(contestId)
+        val member = RequestContext.getContext().session?.member
+        val leaderboard = buildLeaderboardUseCase.build(contestId, member?.id)
         return ResponseEntity.ok(leaderboard)
     }
 }

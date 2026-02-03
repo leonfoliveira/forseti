@@ -73,11 +73,10 @@ class ContestSubmissionController(
         @RequestBody body: CreateSubmissionInputDTO,
     ): ResponseEntity<SubmissionFullResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/submissions $body")
-        authorizeContestUseCase.checkIfStarted(contestId)
-        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         val member = RequestContext.getContext().session!!.member
         val submission =
             createSubmissionUseCase.create(
+                contestId = contestId,
                 memberId = member.id,
                 inputDTO = body,
             )
@@ -105,8 +104,8 @@ class ContestSubmissionController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<List<SubmissionPublicResponseDTO>> {
         logger.info("[GET] /v1/contests/$contestId/submissions")
-        authorizeContestUseCase.checkIfStarted(contestId)
-        val submissions = findSubmissionUseCase.findAllByContest(contestId)
+        val member = RequestContext.getContext().session?.member
+        val submissions = findSubmissionUseCase.findAllByContest(contestId, member?.id)
         return ResponseEntity.ok(submissions.map { it.toPublicResponseDTO() })
     }
 
@@ -137,9 +136,8 @@ class ContestSubmissionController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<List<SubmissionFullResponseDTO>> {
         logger.info("[GET] /v1/contests/$contestId/submissions/full")
-        authorizeContestUseCase.checkIfStarted(contestId)
-        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
-        val submissions = findSubmissionUseCase.findAllByContest(contestId)
+        val member = RequestContext.getContext().session?.member
+        val submissions = findSubmissionUseCase.findAllByContest(contestId, member?.id)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }
 
@@ -237,7 +235,6 @@ class ContestSubmissionController(
         @RequestBody body: UpdateSubmissionAnswerRequestDTO,
     ): ResponseEntity<Void> {
         logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId:update-answer-force $body")
-        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         updateSubmissionUseCase.updateAnswer(submissionId, body.answer, force = true)
         return ResponseEntity.noContent().build()
     }
@@ -270,7 +267,6 @@ class ContestSubmissionController(
         @PathVariable submissionId: UUID,
     ): ResponseEntity<Void> {
         logger.info("[POST] /v1/contests/$contestId/submissions/$submissionId:rerun")
-        authorizeContestUseCase.checkIfMemberBelongsToContest(contestId)
         updateSubmissionUseCase.rerun(submissionId)
         return ResponseEntity.noContent().build()
     }

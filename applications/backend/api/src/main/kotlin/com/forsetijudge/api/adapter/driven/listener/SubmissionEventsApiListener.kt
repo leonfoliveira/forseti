@@ -43,7 +43,7 @@ class SubmissionEventsApiListener(
 
     private fun emmitSubmissionAndLeaderboard(submission: Submission) {
         submissionEmitter.emit(submission)
-        val leaderboard = buildLeaderboardService.build(submission.contest.id)
+        val leaderboard = buildLeaderboardService.build(submission.contest.id, null)
         leaderboardEmitter.emit(leaderboard)
     }
 }

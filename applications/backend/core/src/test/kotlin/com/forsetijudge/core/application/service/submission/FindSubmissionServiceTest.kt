@@ -1,9 +1,12 @@
 package com.forsetijudge.core.application.service.submission
 
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
+import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
+import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -62,17 +65,43 @@ class FindSubmissionServiceTest :
                 every { contestRepository.findEntityById(contestId) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.findAllByContest(contestId)
+                    sut.findAllByContest(contestId, null)
                 }.message shouldBe "Could not find contest with id = $contestId"
             }
 
-            test("should return submissions") {
+            test("should throw ForbiddenException when contest has not started and member is not admin or root") {
+                val memberId = UuidCreator.getTimeOrderedEpoch()
+                val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
+                val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
+                every { contestRepository.findEntityById(contestId) } returns contest
+                every { memberRepository.findEntityById(memberId) } returns member
+
+                shouldThrow<ForbiddenException> {
+                    sut.findAllByContest(contestId, memberId)
+                }.message shouldBe "Contest has not started yet"
+            }
+
+            test("should return submissions when contest has started") {
                 val submission = SubmissionMockBuilder.build()
                 val problem = ProblemMockBuilder.build(submissions = listOf(submission))
                 val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().minusHours(1), problems = listOf(problem))
                 every { contestRepository.findEntityById(contestId) } returns contest
 
-                val result = sut.findAllByContest(contestId)
+                val result = sut.findAllByContest(contestId, null)
+
+                result shouldBe listOf(submission).sortedBy { it.createdAt }
+            }
+
+            test("should return submissions when contest has not started but member is admin") {
+                val memberId = UuidCreator.getTimeOrderedEpoch()
+                val member = MemberMockBuilder.build(type = Member.Type.ADMIN)
+                val submission = SubmissionMockBuilder.build()
+                val problem = ProblemMockBuilder.build(submissions = listOf(submission))
+                val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1), problems = listOf(problem))
+                every { contestRepository.findEntityById(contestId) } returns contest
+                every { memberRepository.findEntityById(memberId) } returns member
+
+                val result = sut.findAllByContest(contestId, memberId)
 
                 result shouldBe listOf(submission).sortedBy { it.createdAt }
             }

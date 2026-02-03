@@ -67,7 +67,7 @@ class ContestSubmissionControllerTest(
             val submission = SubmissionMockBuilder.build()
             val session = SessionMockBuilder.build()
             RequestContext.getContext().session = session
-            every { createSubmissionUseCase.create(session.member.id, body) } returns submission
+            every { createSubmissionUseCase.create(contestId, session.member.id, body) } returns submission
 
             webMvc
                 .post(basePath, contestId) {
@@ -78,9 +78,7 @@ class ContestSubmissionControllerTest(
                     content { submission.toFullResponseDTO() }
                 }
 
-            verify { authorizeContestUseCase.checkIfStarted(contestId) }
-            verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
-            verify { createSubmissionUseCase.create(session.member.id, body) }
+            verify { createSubmissionUseCase.create(contestId, session.member.id, body) }
         }
 
         test("findAllContestSubmissions") {
@@ -90,7 +88,7 @@ class ContestSubmissionControllerTest(
                     SubmissionMockBuilder.build(),
                     SubmissionMockBuilder.build(),
                 )
-            every { findSubmissionUseCase.findAllByContest(contestId) } returns submissions
+            every { findSubmissionUseCase.findAllByContest(contestId, any()) } returns submissions
 
             webMvc
                 .get(basePath, contestId) {
@@ -108,7 +106,7 @@ class ContestSubmissionControllerTest(
                     SubmissionMockBuilder.build(),
                     SubmissionMockBuilder.build(),
                 )
-            every { findSubmissionUseCase.findAllByContest(contestId) } returns submissions
+            every { findSubmissionUseCase.findAllByContest(contestId, any()) } returns submissions
 
             webMvc
                 .get("$basePath/full", contestId) {
@@ -117,8 +115,6 @@ class ContestSubmissionControllerTest(
                     status { isOk() }
                     content { submissions.map { it.toFullResponseDTO() } }
                 }
-
-            verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
         }
 
         test("findAllFullSubmissionsForMember") {
@@ -166,7 +162,6 @@ class ContestSubmissionControllerTest(
                     status { isNoContent() }
                 }
 
-            verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
             verify { updateSubmissionUseCase.updateAnswer(submissionId, answer, force = true) }
         }
 
@@ -181,7 +176,6 @@ class ContestSubmissionControllerTest(
                     status { isNoContent() }
                 }
 
-            verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
             verify { updateSubmissionUseCase.rerun(id) }
         }
     })
