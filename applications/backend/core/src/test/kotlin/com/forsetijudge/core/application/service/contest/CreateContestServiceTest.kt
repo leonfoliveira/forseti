@@ -1,7 +1,6 @@
 package com.forsetijudge.core.application.service.contest
 
 import com.forsetijudge.core.domain.entity.Contest
-import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.port.driven.repository.ContestRepository

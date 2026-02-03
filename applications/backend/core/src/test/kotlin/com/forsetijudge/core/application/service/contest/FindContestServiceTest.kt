@@ -109,11 +109,12 @@ class FindContestServiceTest :
 
             test("should throw ForbiddenException when contest has not started and member is not ADMIN/ROOT") {
                 val member = MemberMockBuilder.build(id = memberId, type = Member.Type.CONTESTANT)
-                val contest = ContestMockBuilder.build(
-                    id = contestId,
-                    startAt = OffsetDateTime.now().plusHours(1),
-                    endAt = OffsetDateTime.now().plusHours(2)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        id = contestId,
+                        startAt = OffsetDateTime.now().plusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(2),
+                    )
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
 
@@ -124,11 +125,12 @@ class FindContestServiceTest :
 
             test("should return contest when contest has started for any member") {
                 val member = MemberMockBuilder.build(id = memberId, type = Member.Type.CONTESTANT)
-                val contest = ContestMockBuilder.build(
-                    id = contestId,
-                    startAt = OffsetDateTime.now().minusHours(1),
-                    endAt = OffsetDateTime.now().plusHours(1)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        id = contestId,
+                        startAt = OffsetDateTime.now().minusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(1),
+                    )
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
 
@@ -139,11 +141,12 @@ class FindContestServiceTest :
 
             test("should return contest when contest has not started but member is ADMIN") {
                 val member = MemberMockBuilder.build(id = memberId, type = Member.Type.ADMIN)
-                val contest = ContestMockBuilder.build(
-                    id = contestId,
-                    startAt = OffsetDateTime.now().plusHours(1),
-                    endAt = OffsetDateTime.now().plusHours(2)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        id = contestId,
+                        startAt = OffsetDateTime.now().plusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(2),
+                    )
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
 
@@ -154,11 +157,12 @@ class FindContestServiceTest :
 
             test("should return contest when contest has not started but member is ROOT") {
                 val member = MemberMockBuilder.build(id = memberId, type = Member.Type.ROOT)
-                val contest = ContestMockBuilder.build(
-                    id = contestId,
-                    startAt = OffsetDateTime.now().plusHours(1),
-                    endAt = OffsetDateTime.now().plusHours(2)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        id = contestId,
+                        startAt = OffsetDateTime.now().plusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(2),
+                    )
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
 
@@ -168,11 +172,12 @@ class FindContestServiceTest :
             }
 
             test("should return contest when member is null and contest has started") {
-                val contest = ContestMockBuilder.build(
-                    id = contestId,
-                    startAt = OffsetDateTime.now().minusHours(1),
-                    endAt = OffsetDateTime.now().plusHours(1)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        id = contestId,
+                        startAt = OffsetDateTime.now().minusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(1),
+                    )
                 every { contestRepository.findEntityById(contestId) } returns contest
 
                 val result = sut.findByIdPublic(null, contestId)
@@ -181,11 +186,12 @@ class FindContestServiceTest :
             }
 
             test("should throw ForbiddenException when member is null and contest has not started") {
-                val contest = ContestMockBuilder.build(
-                    id = contestId,
-                    startAt = OffsetDateTime.now().plusHours(1),
-                    endAt = OffsetDateTime.now().plusHours(2)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        id = contestId,
+                        startAt = OffsetDateTime.now().plusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(2),
+                    )
                 every { contestRepository.findEntityById(contestId) } returns contest
 
                 shouldThrow<ForbiddenException> {

@@ -28,7 +28,7 @@ class UploadAttachmentServiceTest :
         val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
         val attachmentBucket = mockk<AttachmentBucket>(relaxed = true)
         val mockConfig = mockk<AttachmentAuthorizationConfig>(relaxed = true)
-        
+
         every { mockConfig.getContext() } returns Attachment.Context.PROBLEM_TEST_CASES
         justRun { mockConfig.authorizeAdminUpload(any(), any()) }
 

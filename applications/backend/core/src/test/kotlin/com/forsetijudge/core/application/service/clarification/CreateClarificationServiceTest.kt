@@ -4,7 +4,6 @@ import com.forsetijudge.core.domain.entity.Clarification
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
-import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.event.ClarificationCreatedEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException

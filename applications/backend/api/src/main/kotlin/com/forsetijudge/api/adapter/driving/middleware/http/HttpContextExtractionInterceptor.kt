@@ -122,7 +122,7 @@ class HttpContextExtractionInterceptor(
      */
     private fun extractContestIdFromPath(requestURI: String): UUID? {
         // Match pattern /contests/{contestId}/... or /api/v1/contests/{contestId}/...
-        val regex = Regex("/api/v[0-9]+/contests/([^/]+).*")
+        val regex = Regex("/api/v[0-9]+/contests/([a-fA-F0-9-]+).*")
         val matchResult = regex.find(requestURI)
         return matchResult?.groupValues?.get(1)?.let {
             try {

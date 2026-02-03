@@ -11,11 +11,9 @@ import com.forsetijudge.api.adapter.util.Private
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
-import com.forsetijudge.core.port.driving.usecase.contest.CreateContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.FindContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.UpdateContestUseCase
-import com.forsetijudge.core.port.dto.input.contest.CreateContestInputDTO
 import com.forsetijudge.core.port.dto.input.contest.UpdateContestInputDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -27,7 +25,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -189,7 +186,6 @@ class ContestController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestFullResponseDTO> {
         logger.info("[GET] /v1/contests/$contestId/full")
-        val member = RequestContext.getContext().session!!.member
         val contest = findContestUseCase.findById(contestId)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }

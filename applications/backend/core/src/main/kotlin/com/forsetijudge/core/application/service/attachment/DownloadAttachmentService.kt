@@ -62,10 +62,14 @@ class DownloadAttachmentService(
             Member.Type.ROOT -> {
                 // ROOT members can download anything
             }
+            Member.Type.AUTOJUDGE -> {
+                // AUTOJUDGE members can download anything
+            }
             Member.Type.ADMIN -> config.authorizeAdminDownload(contest, member, attachment)
             Member.Type.JUDGE -> config.authorizeJudgeDownload(contest, member, attachment)
             Member.Type.CONTESTANT -> config.authorizeContestantDownload(contest, member, attachment)
-            else -> config.authorizePublicDownload(contest, attachment)
+            null -> config.authorizePublicDownload(contest, attachment)
+            else -> throw ForbiddenException("Member type ${member.type} is not allowed to download attachments")
         }
 
         return AttachmentDownloadOutputDTO(

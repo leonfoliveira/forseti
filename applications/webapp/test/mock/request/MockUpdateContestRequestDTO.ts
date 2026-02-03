@@ -9,7 +9,6 @@ export function MockUpdateContestRequestDTO(
   partial: Partial<UpdateContestRequestDTO> = {},
 ): UpdateContestRequestDTO {
   return {
-    id: uuidv4(),
     slug: "test-contest",
     title: "Test Contest",
     languages: [SubmissionLanguage.CPP_17, SubmissionLanguage.JAVA_21],

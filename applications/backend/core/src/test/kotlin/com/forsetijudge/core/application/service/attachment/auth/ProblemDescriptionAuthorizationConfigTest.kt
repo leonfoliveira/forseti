@@ -81,10 +81,11 @@ class ProblemDescriptionAuthorizationConfigTest :
         context("authorizeJudgeDownload") {
             test("should allow judge download when contest has started") {
                 val now = OffsetDateTime.now()
-                val contest = ContestMockBuilder.build(
-                    startAt = now.minusHours(1),
-                    endAt = now.plusHours(1)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        startAt = now.minusHours(1),
+                        endAt = now.plusHours(1),
+                    )
                 val member = MemberMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
 
@@ -94,10 +95,11 @@ class ProblemDescriptionAuthorizationConfigTest :
 
             test("should throw ForbiddenException when contest has not started") {
                 val now = OffsetDateTime.now()
-                val contest = ContestMockBuilder.build(
-                    startAt = now.plusHours(1),
-                    endAt = now.plusHours(2)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        startAt = now.plusHours(1),
+                        endAt = now.plusHours(2),
+                    )
                 val member = MemberMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
 
@@ -110,10 +112,11 @@ class ProblemDescriptionAuthorizationConfigTest :
         context("authorizeContestantDownload") {
             test("should allow contestant download when contest has started") {
                 val now = OffsetDateTime.now()
-                val contest = ContestMockBuilder.build(
-                    startAt = now.minusHours(1),
-                    endAt = now.plusHours(1)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        startAt = now.minusHours(1),
+                        endAt = now.plusHours(1),
+                    )
                 val member = MemberMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
 
@@ -123,10 +126,11 @@ class ProblemDescriptionAuthorizationConfigTest :
 
             test("should throw ForbiddenException when contest has not started") {
                 val now = OffsetDateTime.now()
-                val contest = ContestMockBuilder.build(
-                    startAt = now.plusHours(1),
-                    endAt = now.plusHours(2)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        startAt = now.plusHours(1),
+                        endAt = now.plusHours(2),
+                    )
                 val member = MemberMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
 
@@ -139,10 +143,11 @@ class ProblemDescriptionAuthorizationConfigTest :
         context("authorizePublicDownload") {
             test("should allow public download when contest has started") {
                 val now = OffsetDateTime.now()
-                val contest = ContestMockBuilder.build(
-                    startAt = now.minusHours(1),
-                    endAt = now.plusHours(1)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        startAt = now.minusHours(1),
+                        endAt = now.plusHours(1),
+                    )
                 val attachment = AttachmentMockBuilder.build()
 
                 // Should not throw exception
@@ -151,10 +156,11 @@ class ProblemDescriptionAuthorizationConfigTest :
 
             test("should throw ForbiddenException when contest has not started") {
                 val now = OffsetDateTime.now()
-                val contest = ContestMockBuilder.build(
-                    startAt = now.plusHours(1),
-                    endAt = now.plusHours(2)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        startAt = now.plusHours(1),
+                        endAt = now.plusHours(2),
+                    )
                 val attachment = AttachmentMockBuilder.build()
 
                 shouldThrow<ForbiddenException> {

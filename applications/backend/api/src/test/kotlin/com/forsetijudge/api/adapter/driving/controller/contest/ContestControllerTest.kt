@@ -13,12 +13,10 @@ import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
-import com.forsetijudge.core.port.driving.usecase.contest.CreateContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.FindContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.dto.input.attachment.AttachmentInputDTO
-import com.forsetijudge.core.port.dto.input.contest.CreateContestInputDTO
 import com.forsetijudge.core.port.dto.input.contest.UpdateContestInputDTO
 import com.github.f4b6a3.uuid.UuidCreator
 import com.ninjasquad.springmockk.MockkBean
@@ -33,7 +31,6 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import java.time.OffsetDateTime
 

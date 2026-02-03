@@ -71,7 +71,8 @@ class UploadAttachmentService(
             Member.Type.ADMIN -> config.authorizeAdminUpload(contest, member)
             Member.Type.JUDGE -> config.authorizeJudgeUpload(contest, member)
             Member.Type.CONTESTANT -> config.authorizeContestantUpload(contest, member)
-            else -> config.authorizePublicUpload(contest)
+            null -> config.authorizePublicUpload(contest)
+            else -> throw ForbiddenException("Member type ${member.type} is not allowed to upload attachments")
         }
 
         val id = UuidCreator.getTimeOrderedEpoch()

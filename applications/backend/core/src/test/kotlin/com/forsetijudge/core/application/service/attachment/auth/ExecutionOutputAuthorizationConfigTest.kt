@@ -2,9 +2,7 @@ package com.forsetijudge.core.application.service.attachment.auth
 
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
-import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
-import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import io.kotest.assertions.throwables.shouldThrow

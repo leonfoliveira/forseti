@@ -7,7 +7,6 @@ import com.forsetijudge.api.adapter.util.Private
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driving.usecase.announcement.CreateAnnouncementUseCase
-import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.dto.input.announcement.CreateAnnouncementInputDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content

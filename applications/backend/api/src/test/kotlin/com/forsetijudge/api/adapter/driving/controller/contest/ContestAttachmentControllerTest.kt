@@ -65,10 +65,11 @@ class ContestAttachmentControllerTest(
 
         test("downloadAttachment") {
             val contestId = UuidCreator.getTimeOrderedEpoch()
-            val attachment = AttachmentMockBuilder.build(
-                filename = "test.txt",
-                contentType = "application/octet-stream"
-            )
+            val attachment =
+                AttachmentMockBuilder.build(
+                    filename = "test.txt",
+                    contentType = "application/octet-stream",
+                )
             val bytes = "test data".toByteArray()
             every { downloadAttachmentUseCase.download(contestId, any(), attachment.id) } returns
                 AttachmentDownloadOutputDTO(

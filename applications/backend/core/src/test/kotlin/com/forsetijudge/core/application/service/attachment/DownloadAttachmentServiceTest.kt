@@ -28,7 +28,7 @@ class DownloadAttachmentServiceTest :
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val mockConfig = mockk<AttachmentAuthorizationConfig>(relaxed = true)
-        
+
         every { mockConfig.getContext() } returns Attachment.Context.SUBMISSION_CODE
         justRun { mockConfig.authorizePublicDownload(any(), any()) }
 
@@ -74,7 +74,7 @@ class DownloadAttachmentServiceTest :
                 val contest = ContestMockBuilder.build(id = contestId)
                 val attachment = AttachmentMockBuilder.build(id = attachmentId, context = Attachment.Context.SUBMISSION_CODE)
                 val bytes = ByteArray(10) { it.toByte() }
-                
+
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { attachmentRepository.findEntityById(attachmentId) } returns attachment
                 every { attachmentBucket.download(attachment) } returns bytes
@@ -93,7 +93,7 @@ class DownloadAttachmentServiceTest :
                 val member = MemberMockBuilder.build(id = memberId, type = Member.Type.ROOT)
                 val attachment = AttachmentMockBuilder.build(id = attachmentId, context = Attachment.Context.SUBMISSION_CODE)
                 val bytes = ByteArray(10) { it.toByte() }
-                
+
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
                 every { attachmentRepository.findEntityById(attachmentId) } returns attachment
@@ -110,7 +110,7 @@ class DownloadAttachmentServiceTest :
                 val attachmentId = UuidCreator.getTimeOrderedEpoch()
                 val contest = ContestMockBuilder.build(id = contestId)
                 val attachment = AttachmentMockBuilder.build(id = attachmentId, context = Attachment.Context.PROBLEM_DESCRIPTION)
-                
+
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { attachmentRepository.findEntityById(attachmentId) } returns attachment
 

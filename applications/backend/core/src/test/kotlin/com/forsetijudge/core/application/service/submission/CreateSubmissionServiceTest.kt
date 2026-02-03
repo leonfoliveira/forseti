@@ -107,11 +107,12 @@ class CreateSubmissionServiceTest :
             }
 
             test("should throw ForbiddenException when attachment has wrong context") {
-                val contest = ContestMockBuilder.build(
-                    languages = listOf(),
-                    startAt = OffsetDateTime.now().minusHours(1),
-                    endAt = OffsetDateTime.now().plusHours(1)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        languages = listOf(),
+                        startAt = OffsetDateTime.now().minusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(1),
+                    )
                 val member = MemberMockBuilder.build()
                 val problem = ProblemMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_TEST_CASES)
@@ -126,11 +127,12 @@ class CreateSubmissionServiceTest :
             }
 
             test("should throw ForbiddenException when language is not allowed for the contest") {
-                val contest = ContestMockBuilder.build(
-                    languages = listOf(),
-                    startAt = OffsetDateTime.now().minusHours(1),
-                    endAt = OffsetDateTime.now().plusHours(1)
-                )
+                val contest =
+                    ContestMockBuilder.build(
+                        languages = listOf(),
+                        startAt = OffsetDateTime.now().minusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(1),
+                    )
                 val member = MemberMockBuilder.build()
                 val problem = ProblemMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
