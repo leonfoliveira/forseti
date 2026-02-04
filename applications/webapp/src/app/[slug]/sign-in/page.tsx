@@ -6,19 +6,13 @@ import { useForm } from "react-hook-form";
 
 import { SignInFormType } from "@/app/[slug]/sign-in/_form/sign-in-form";
 import { signInFormSchema } from "@/app/[slug]/sign-in/_form/sign-in-form-schema";
-import { Form } from "@/app/_lib/component/form/form";
-import { FormField } from "@/app/_lib/component/form/form-field";
+import { Card } from "@/app/_lib/component/base/display/card";
+import { Button } from "@/app/_lib/component/base/form/button";
+import { Form } from "@/app/_lib/component/base/form/form";
+import { Input } from "@/app/_lib/component/base/form/input";
+import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-  Input,
-} from "@/app/_lib/heroui-wrapper";
 import { useLoadableState } from "@/app/_lib/util/loadable-state";
 import { useToast } from "@/app/_lib/util/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
@@ -122,7 +116,7 @@ export default function SignInPage() {
       <div className="flex-1 flex justify-center items-center p-4">
         <Card className="w-full max-w-md">
           <Form onSubmit={form.handleSubmit(signIn)}>
-            <CardHeader className="pb-4 pt-6 px-6">
+            <Card.Header className="pb-4 pt-6 px-6">
               <div className="flex flex-col items-center text-center w-full">
                 <h2
                   className="text-3xl font-bold text-primary"
@@ -137,10 +131,10 @@ export default function SignInPage() {
                   <FormattedMessage {...messages.subtitle} />
                 </p>
               </div>
-            </CardHeader>
+            </Card.Header>
             <Divider className="my-2" />
-            <CardBody className="gap-4 py-6 px-6">
-              <FormField
+            <Card.Body className="gap-4 py-6 px-6">
+              <Form.Field
                 form={form}
                 name="login"
                 onChange={() => form.clearErrors()}
@@ -150,8 +144,8 @@ export default function SignInPage() {
                   size="lg"
                   data-testid="login"
                 />
-              </FormField>
-              <FormField
+              </Form.Field>
+              <Form.Field
                 form={form}
                 name="password"
                 onChange={() => form.clearErrors()}
@@ -162,10 +156,10 @@ export default function SignInPage() {
                   size="lg"
                   data-testid="password"
                 />
-              </FormField>
-            </CardBody>
+              </Form.Field>
+            </Card.Body>
             <Divider className="my-2" />
-            <CardFooter className="flex-col gap-3 py-6 px-6">
+            <Card.Footer className="flex-col gap-3 py-6 px-6">
               <Button
                 color="primary"
                 type="submit"
@@ -186,7 +180,7 @@ export default function SignInPage() {
               >
                 <FormattedMessage {...messages.enterGuestLabel} />
               </Button>
-            </CardFooter>
+            </Card.Footer>
           </Form>
         </Card>
       </div>

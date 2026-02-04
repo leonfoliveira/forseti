@@ -3,19 +3,15 @@ import React from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 
 import { SettingsForm } from "@/app/[slug]/(dashboard)/settings/_form/settings-form";
-import { FileInput } from "@/app/_lib/component/form/file-input";
-import { FormField } from "@/app/_lib/component/form/form-field";
+import { Card } from "@/app/_lib/component/base/display/card";
+import { Chip } from "@/app/_lib/component/base/display/chip";
+import { Alert } from "@/app/_lib/component/base/feedback/alert";
+import { Button } from "@/app/_lib/component/base/form/button";
+import { FileInput } from "@/app/_lib/component/base/form/file-input";
+import { Form } from "@/app/_lib/component/base/form/form";
+import { Input } from "@/app/_lib/component/base/form/input";
+import { NumberInput } from "@/app/_lib/component/base/form/number-input";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
-import {
-  Alert,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Chip,
-  Input,
-  NumberInput,
-} from "@/app/_lib/heroui-wrapper";
 import { cls } from "@/app/_lib/util/cls";
 import { useAppSelector } from "@/app/_store/store";
 import { attachmentReader } from "@/config/composition";
@@ -139,7 +135,7 @@ export function ProblemsSettings({ form, isOpen }: Props) {
           {fields.map((problem, index) => (
             <Card key={problem.id} data-testid="problem">
               {/* Problem Header */}
-              <CardHeader>
+              <Card.Header>
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <Chip
@@ -167,28 +163,27 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                     <TrashIcon className="w-4 h-4" />
                   </Button>
                 </div>
-              </CardHeader>
+              </Card.Header>
 
               {/* Problem Configuration */}
-              <CardBody>
+              <Card.Body>
                 <div className="grid grid-cols-1 gap-6">
                   {/* Title */}
-                  <FormField form={form} name={`problems.${index}.title`}>
+                  <Form.Field form={form} name={`problems.${index}.title`}>
                     <Input
                       label={<FormattedMessage {...messages.titleLabel} />}
                       description={
                         <FormattedMessage {...messages.titleDescription} />
                       }
                     />
-                  </FormField>
+                  </Form.Field>
 
                   {/* File Uploads Section */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <FormField
+                      <Form.Field
                         form={form}
                         name={`problems.${index}.newDescription`}
-                        isFile
                       >
                         <FileInput
                           label={
@@ -202,7 +197,7 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                           accept=".pdf,.txt,.md"
                           data-testid="description-input"
                         />
-                      </FormField>
+                      </Form.Field>
                       {problem.description && (
                         <Alert
                           variant="faded"
@@ -237,10 +232,9 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                     </div>
 
                     <div className="space-y-2">
-                      <FormField
+                      <Form.Field
                         form={form}
                         name={`problems.${index}.newTestCases`}
-                        isFile
                       >
                         <FileInput
                           label={
@@ -254,7 +248,7 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                           accept=".csv"
                           data-testid="test-cases-input"
                         />
-                      </FormField>
+                      </Form.Field>
                       {problem.testCases && (
                         <Alert
                           variant="faded"
@@ -297,7 +291,7 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                       />
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
+                      <Form.Field
                         form={form}
                         name={`problems.${index}.timeLimit`}
                       >
@@ -317,8 +311,8 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                             </span>
                           }
                         />
-                      </FormField>
-                      <FormField
+                      </Form.Field>
+                      <Form.Field
                         form={form}
                         name={`problems.${index}.memoryLimit`}
                       >
@@ -338,11 +332,11 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                             </span>
                           }
                         />
-                      </FormField>
+                      </Form.Field>
                     </div>
                   </div>
                 </div>
-              </CardBody>
+              </Card.Body>
             </Card>
           ))}
 

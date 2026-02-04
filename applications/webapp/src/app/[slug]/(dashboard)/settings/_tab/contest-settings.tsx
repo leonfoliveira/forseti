@@ -1,16 +1,16 @@
 import { UseFormReturn } from "react-hook-form";
 
 import { SettingsForm } from "@/app/[slug]/(dashboard)/settings/_form/settings-form";
-import { FormField } from "@/app/_lib/component/form/form-field";
+import { Alert } from "@/app/_lib/component/base/feedback/alert";
+import { Button } from "@/app/_lib/component/base/form/button";
+import { Checkbox } from "@/app/_lib/component/base/form/checkbox";
+import { DatePicker } from "@/app/_lib/component/base/form/date-picker";
+import { Form } from "@/app/_lib/component/base/form/form";
+import { Input } from "@/app/_lib/component/base/form/input";
+import { Switch } from "@/app/_lib/component/base/form/switch";
+import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
-import { Alert, Switch } from "@/app/_lib/heroui-wrapper";
-import { Button } from "@/app/_lib/heroui-wrapper";
-import { Divider } from "@/app/_lib/heroui-wrapper";
-import { DatePicker } from "@/app/_lib/heroui-wrapper";
-import { CheckboxGroup } from "@/app/_lib/heroui-wrapper";
-import { Checkbox } from "@/app/_lib/heroui-wrapper";
-import { Input } from "@/app/_lib/heroui-wrapper";
 import { cls } from "@/app/_lib/util/cls";
 import { useContestStatusWatcher } from "@/app/_lib/util/contest-status-watcher";
 import { useLoadableState } from "@/app/_lib/util/loadable-state";
@@ -216,24 +216,24 @@ export function ContestSettings({ contest, form, isOpen }: Props) {
         </h3>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <FormField form={form} name="slug">
+          <Form.Field form={form} name="slug">
             <Input
               label={<FormattedMessage {...messages.slugLabel} />}
               className="col-span-1"
               description={<FormattedMessage {...messages.slugDescription} />}
             />
-          </FormField>
-          <FormField form={form} name="title">
+          </Form.Field>
+          <Form.Field form={form} name="title">
             <Input
               label={<FormattedMessage {...messages.titleLabel} />}
               className="col-span-1 lg:col-span-2"
               description={<FormattedMessage {...messages.titleDescription} />}
             />
-          </FormField>
+          </Form.Field>
         </div>
 
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
-          <FormField form={form} name="startAt">
+          <Form.Field form={form} name="startAt">
             <DatePicker
               label={<FormattedMessage {...messages.startLabel} />}
               granularity="minute"
@@ -241,15 +241,15 @@ export function ContestSettings({ contest, form, isOpen }: Props) {
               isDisabled={contestStatus !== ContestStatus.NOT_STARTED}
               data-testid="start-at-picker"
             />
-          </FormField>
-          <FormField form={form} name="endAt">
+          </Form.Field>
+          <Form.Field form={form} name="endAt">
             <DatePicker
               label={<FormattedMessage {...messages.endLabel} />}
               granularity="minute"
               description={<FormattedMessage {...messages.endDescription} />}
               data-testid="end-at-picker"
             />
-          </FormField>
+          </Form.Field>
         </div>
       </div>
 
@@ -260,8 +260,8 @@ export function ContestSettings({ contest, form, isOpen }: Props) {
         </h3>
 
         <div className="space-y-6">
-          <FormField form={form} name="languages">
-            <CheckboxGroup
+          <Form.Field form={form} name="languages">
+            <Checkbox.Group
               orientation="horizontal"
               label={<FormattedMessage {...messages.languagesLabel} />}
               classNames={{
@@ -282,15 +282,15 @@ export function ContestSettings({ contest, form, isOpen }: Props) {
                   }
                 />
               ))}
-            </CheckboxGroup>
-          </FormField>
+            </Checkbox.Group>
+          </Form.Field>
 
-          <FormField form={form} name="settings.isAutoJudgeEnabled" isSwitch>
+          <Form.Field form={form} name="settings.isAutoJudgeEnabled">
             <Switch
               label={<FormattedMessage {...messages.isAutoJudgeEnabledLabel} />}
               data-testid="is-auto-judge-enabled"
             />
-          </FormField>
+          </Form.Field>
         </div>
       </div>
 

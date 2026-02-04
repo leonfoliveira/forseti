@@ -3,19 +3,12 @@
 import { ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
 import React from "react";
 
+import { Chip } from "@/app/_lib/component/base/display/chip";
+import { GridTable } from "@/app/_lib/component/base/table/grid-table";
 import { ProblemStatusChip } from "@/app/_lib/component/chip/problem-status-chip";
 import { FormattedDuration } from "@/app/_lib/component/format/formatted-duration";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
-import {
-  GridTable,
-  GridTableBody,
-  GridTableCell,
-  GridTableColumn,
-  GridTableHeader,
-  GridTableRow,
-} from "@/app/_lib/component/table/grid-table";
-import { Chip } from "@/app/_lib/heroui-wrapper";
 import { cls } from "@/app/_lib/util/cls";
 import { useAppSelector } from "@/app/_store/store";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
@@ -86,28 +79,28 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
               : "auto 1fr auto auto",
         }}
       >
-        <GridTableHeader>
-          <GridTableColumn>
+        <GridTable.Header>
+          <GridTable.Column>
             # <ChevronDoubleUpIcon className="ml-2 h-3" />
-          </GridTableColumn>
-          <GridTableColumn>
+          </GridTable.Column>
+          <GridTable.Column>
             <FormattedMessage {...messages.headerContestant} />
-          </GridTableColumn>
+          </GridTable.Column>
           {problems.map((problem) => (
-            <GridTableColumn key={problem.id} className="justify-center">
+            <GridTable.Column key={problem.id} className="justify-center">
               {problem.letter}
-            </GridTableColumn>
+            </GridTable.Column>
           ))}
-          <GridTableColumn className="justify-end">
+          <GridTable.Column className="justify-end">
             <FormattedMessage {...messages.headerScore} />
-          </GridTableColumn>
-          <GridTableColumn className="justify-end">
+          </GridTable.Column>
+          <GridTable.Column className="justify-end">
             <FormattedMessage {...messages.headerPenalty} />
-          </GridTableColumn>
-        </GridTableHeader>
-        <GridTableBody emptyContent={<FormattedMessage {...messages.empty} />}>
+          </GridTable.Column>
+        </GridTable.Header>
+        <GridTable.Body emptyContent={<FormattedMessage {...messages.empty} />}>
           {leaderboard.members.map((member, index) => (
-            <GridTableRow
+            <GridTable.Row
               key={member.id}
               className={cls(
                 index % 2 == 1 && "bg-content2",
@@ -115,14 +108,14 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
               )}
               data-testid="member"
             >
-              <GridTableCell data-testid="member-index">
+              <GridTable.Cell data-testid="member-index">
                 {getMedal(index)}
-              </GridTableCell>
-              <GridTableCell data-testid="member-name">
+              </GridTable.Cell>
+              <GridTable.Cell data-testid="member-name">
                 {member.name}
-              </GridTableCell>
+              </GridTable.Cell>
               {member.problems.map((problem, index) => (
-                <GridTableCell
+                <GridTable.Cell
                   key={problem.id}
                   className={cls(
                     "justify-center",
@@ -136,20 +129,23 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                     acceptedAt={problem.acceptedAt}
                     wrongSubmissions={problem.wrongSubmissions}
                   />
-                </GridTableCell>
+                </GridTable.Cell>
               ))}
-              <GridTableCell className="justify-end" data-testid="member-score">
+              <GridTable.Cell
+                className="justify-end"
+                data-testid="member-score"
+              >
                 {member.score}
-              </GridTableCell>
-              <GridTableCell
+              </GridTable.Cell>
+              <GridTable.Cell
                 className="justify-end"
                 data-testid="member-penalty"
               >
                 <FormattedDuration ms={member.penalty * 1000} />
-              </GridTableCell>
-            </GridTableRow>
+              </GridTable.Cell>
+            </GridTable.Row>
           ))}
-        </GridTableBody>
+        </GridTable.Body>
       </GridTable>
     </>
   );
