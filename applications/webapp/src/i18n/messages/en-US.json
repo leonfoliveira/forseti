@@ -293,6 +293,15 @@
             "judge-tooltip": "Judge"
           },
           "submissions": {
+            "submission-row": {
+              "download-tooltip": "Download",
+              "resubmit-tooltip": "Resubmit",
+              "judge-tooltip": "Judge"
+            },
+            "judge-submission-form": {
+              "answer-label": "Answer",
+              "judge-body": "Are you sure you want to judge this submission?"
+            },
             "create-submission-form": {
               "create-title": "Create Submission",
               "problem-label": "Problem",
