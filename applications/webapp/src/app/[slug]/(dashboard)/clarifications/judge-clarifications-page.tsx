@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications-page";
+import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page";
 import { useAppSelector } from "@/app/_store/store";
 
 export function JudgeClarificationsPage() {

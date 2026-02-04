@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 
-import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems-page";
+import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/problems-page";
 import { attachmentReader } from "@/config/composition";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";

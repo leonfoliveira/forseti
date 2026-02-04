@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import { act } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications-page";
+import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page";
 import { useToast } from "@/app/_lib/util/toast-hook";
 import { clarificationWritter } from "@/config/composition";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";

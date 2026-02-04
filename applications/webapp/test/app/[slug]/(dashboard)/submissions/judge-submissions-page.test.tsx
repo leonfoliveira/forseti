@@ -1,12 +1,15 @@
-import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions-page";
+import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
 import { JudgeSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/judge-submissions-page";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
-jest.mock("@/app/[slug]/(dashboard)/_common/submissions-page", () => ({
-  SubmissionsPage: jest.fn(),
-}));
+jest.mock(
+  "@/app/[slug]/(dashboard)/_common/submissions/submissions-page",
+  () => ({
+    SubmissionsPage: jest.fn(),
+  }),
+);
 
 describe("JudgeSubmissionsPage", () => {
   it("should render common SubmissionsPage with correct data", async () => {

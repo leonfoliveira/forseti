@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems-page";
+import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/problems-page";
 import { useAppSelector } from "@/app/_store/store";
 
 export function ContestantProblemsPage() {

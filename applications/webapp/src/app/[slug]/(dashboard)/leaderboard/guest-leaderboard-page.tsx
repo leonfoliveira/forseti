@@ -1,6 +1,6 @@
 import React from "react";
 
-import { LeaderboardPage } from "@/app/[slug]/(dashboard)/_common/leaderboard-page";
+import { LeaderboardPage } from "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-page";
 import { useAppSelector } from "@/app/_store/store";
 
 export function GuestLeaderboardPage() {

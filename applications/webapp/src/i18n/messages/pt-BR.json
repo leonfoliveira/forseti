@@ -265,6 +265,27 @@
             "start-at": "Inicia em",
             "languages": "Linguagens suportadas"
           },
+          "submissions": {
+            "submission-row": {
+              "download-tooltip": "Baixar",
+              "resubmit-tooltip": "Reenviar",
+              "judge-tooltip": "Julgar"
+            },
+            "judge-submission-form": {
+              "answer-label": "Resposta",
+              "judge-body": "Tem certeza de que deseja julgar esta submissão?"
+            },
+            "create-submission-form": {
+              "create-title": "Criar Submissão",
+              "problem-label": "Problema",
+              "problem-option": "{letter}. {title}",
+              "language-label": "Linguagem",
+              "language-description": "Selecione a linguagem de programação usada na submissão.",
+              "code-label": "Código",
+              "code-description": "Envie um arquivo de código não compilado.",
+              "submit-label": "Enviar"
+            }
+          },
           "submissions-page": {
             "page-title": "Forseti - Submissões",
             "page-description": "Visualize todas as submissões feitas durante o concurso.",
@@ -312,37 +333,57 @@
             "header-penalty": "Penalidade",
             "empty": "Nenhum competidor ainda"
           },
+          "clarifications": {
+            "empty-clarification-display": {
+              "empty": "Nenhum esclarecimento ainda"
+            },
+            "create-clarification-form": {
+              "create-title": "Criar Esclarecimento",
+              "text-label": "Texto",
+              "problem-label": "Problema (opcional)",
+              "problem-option": "{letter}. {title}",
+              "submit-label": "Enviar"
+            },
+            "clarification-card": {
+              "header-problem": "Problema {letter}",
+              "header-general": "Geral",
+              "answer-label": "Resposta",
+              "header-answer": "Re: {judge}"
+            },
+            "answer-clarification-form": {
+              "create-success": "Esclarecimento criado com sucesso",
+              "create-error": "Falha ao criar esclarecimento",
+              "answer-label": "Resposta"
+            }
+          },
           "clarifications-page": {
             "page-title": "Forseti - Esclarecimentos",
             "page-description": "Visualize e solicite esclarecimentos para problemas do concurso.",
-            "create-title": "Criar Esclarecimento",
             "create-success": "Esclarecimento criado com sucesso",
             "create-error": "Falha ao criar esclarecimento",
             "delete-success": "Esclarecimento excluído com sucesso",
             "delete-error": "Falha ao excluir esclarecimento",
-            "text-label": "Texto",
-            "problem-label": "Problema (opcional)",
-            "problem-option": "{letter}. {title}",
-            "submit-label": "Enviar",
-            "empty": "Nenhum esclarecimento ainda",
-            "header-problem": "Problema {letter}",
-            "header-general": "Geral",
-            "answer-label": "Resposta",
-            "header-answer": "Re: {judge}",
-            "delete-tooltip": "Excluir Esclarecimento",
+            "delete-title": "Excluir Esclarecimento",
             "delete-confirm-label": "Tem certeza de que deseja excluir este esclarecimento?",
-            "cancel-label": "Não, Cancelar",
+            "delete-cancel": "Não, Cancelar",
             "delete-confirm": "Sim, Excluir"
           },
-          "announcements-page": {
-            "page-title": "Forseti - Anúncios",
-            "page-description": "Visualize e crie anúncios do concurso.",
-            "create-title": "Criar Anúncio",
-            "create-success": "Anúncio criado com sucesso",
-            "create-error": "Falha ao criar anúncio",
-            "text-label": "Texto",
-            "submit-label": "Enviar",
-            "empty": "Nenhum anúncio ainda"
+          "announcements": {
+            "empty-announcement-display": {
+              "empty": "Nenhum anúncio ainda"
+            },
+            "create-announcement-form": {
+              "create-title": "Criar Anúncio",
+              "text-label": "Texto",
+              "submit-label": "Enviar"
+            },
+            "announcements-page": {
+              "page-title": "Forseti - Anúncios",
+              "page-description": "Visualize e crie anúncios do concurso.",
+              "create-success": "Anúncio criado com sucesso",
+              "create-error": "Falha ao criar anúncio",
+              "empty": "Nenhum anúncio ainda"
+            }
           },
           "_form": {
             "submission-judge-form-schema": {

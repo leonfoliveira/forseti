@@ -38,16 +38,14 @@ jobs:
         if: steps.changes.outputs.webapp == 'true'
         run: npm ci
 
-      - name: Run checks in parallel
+      - name: Run checks
         if: steps.changes.outputs.webapp == 'true'
         run: |
-          # Run lint, i18n checks, and tests in parallel
-          npm run lint &
-          npm run i18n:check && npm run i18n:verify &
-          npm run test:coverage &
-
-          # Wait for all checks to complete
-          wait
+          # Run lint, i18n checks, and tests
+          npm run lint
+          npm run i18n:check
+          npm run i18n:verify
+          npm run test:coverage
 
       - name: Build
         if: steps.changes.outputs.webapp == 'true'

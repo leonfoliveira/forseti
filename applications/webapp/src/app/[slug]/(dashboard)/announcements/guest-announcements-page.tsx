@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements-page";
+import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page";
 import { useAppSelector } from "@/app/_store/store";
 
 export function GuestAnnouncementsPage() {

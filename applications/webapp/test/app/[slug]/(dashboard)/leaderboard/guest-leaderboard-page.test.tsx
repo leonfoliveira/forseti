@@ -1,13 +1,16 @@
-import { LeaderboardPage } from "@/app/[slug]/(dashboard)/_common/leaderboard-page";
+import { LeaderboardPage } from "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-page";
 import { GuestLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/guest-leaderboard-page";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
-jest.mock("@/app/[slug]/(dashboard)/_common/leaderboard-page", () => ({
-  LeaderboardPage: jest.fn(),
-}));
+jest.mock(
+  "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-page",
+  () => ({
+    LeaderboardPage: jest.fn(),
+  }),
+);
 
 describe("GuestLeaderboardPage", () => {
   it("should render common LeaderboardPage with correct data", async () => {

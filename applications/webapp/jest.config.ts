@@ -17,7 +17,6 @@ const config: Config = {
     "!src/**/*.d.{ts,tsx}",
     "!src/app/_lib/component/base/**/*",
     "!src/app/_lib/component/icon/**/*",
-    "!src/app/_lib/heroui-wrapper.tsx",
     "!src/app/_lib/heroui.ts",
     "!src/config/**/*",
     "!src/core/domain/**/*",

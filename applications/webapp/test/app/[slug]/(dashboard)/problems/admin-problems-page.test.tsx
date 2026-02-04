@@ -1,10 +1,10 @@
-import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems-page";
+import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/problems-page";
 import { AdminProblemsPage } from "@/app/[slug]/(dashboard)/problems/admin-problems-page";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
-jest.mock("@/app/[slug]/(dashboard)/_common/problems-page", () => ({
+jest.mock("@/app/[slug]/(dashboard)/_common/problems/problems-page", () => ({
   ProblemsPage: jest.fn(),
 }));
 

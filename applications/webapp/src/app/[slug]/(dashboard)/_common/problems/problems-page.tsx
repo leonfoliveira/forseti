@@ -1,19 +1,14 @@
 "use client";
 
-import {
-  ArrowDownTrayIcon,
-  ChevronDoubleUpIcon,
-} from "@heroicons/react/24/solid";
+import { ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
 import React from "react";
 
-import { Button } from "@/app/_lib/component/base/form/button";
+import { ProblemRow } from "@/app/[slug]/(dashboard)/_common/problems/problem-row";
 import { GridTable } from "@/app/_lib/component/base/table/grid-table";
-import { ProblemStatusChip } from "@/app/_lib/component/chip/problem-status-chip";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
 import { cls } from "@/app/_lib/util/cls";
 import { useAppSelector } from "@/app/_store/store";
-import { attachmentReader } from "@/config/composition";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
@@ -86,47 +81,15 @@ export function ProblemsPage({
         </GridTable.Header>
         <GridTable.Body emptyContent={<FormattedMessage {...messages.empty} />}>
           {problems.map((problem, index) => (
-            <GridTable.Row
+            <ProblemRow
               key={problem.id}
-              className={cls(index % 2 == 1 && "bg-content2/50")}
-              data-testid="problem"
-            >
-              <GridTable.Cell data-testid="problem-letter">
-                {problem.letter}
-              </GridTable.Cell>
-              <GridTable.Cell data-testid="problem-title">
-                {problem.title}
-              </GridTable.Cell>
-              {problemStatus && (
-                <GridTable.Cell
-                  className="justify-end"
-                  data-testid="problem-status"
-                >
-                  <ProblemStatusChip
-                    size="sm"
-                    isAccepted={problemStatus[problem.id].isAccepted}
-                    acceptedAt={problemStatus[problem.id].acceptedAt}
-                    wrongSubmissions={
-                      problemStatus[problem.id].wrongSubmissions
-                    }
-                  />
-                </GridTable.Cell>
-              )}
-              <GridTable.Cell>
-                <Button
-                  isIconOnly
-                  color="primary"
-                  variant="light"
-                  size="sm"
-                  onPress={() =>
-                    attachmentReader.download(contestId, problem.description)
-                  }
-                  data-testid="problem-download"
-                >
-                  <ArrowDownTrayIcon className="h-5" />
-                </Button>
-              </GridTable.Cell>
-            </GridTable.Row>
+              problem={problem}
+              index={index}
+              problemStatus={
+                problemStatus ? problemStatus[problem.id] : undefined
+              }
+              contestId={contestId}
+            />
           ))}
         </GridTable.Body>
       </GridTable>

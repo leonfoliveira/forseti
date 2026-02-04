@@ -1,13 +1,16 @@
-import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications-page";
+import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page";
 import { ContestantClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/contestant-clarifications-page";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
-jest.mock("@/app/[slug]/(dashboard)/_common/clarifications-page", () => ({
-  ClarificationsPage: jest.fn(),
-}));
+jest.mock(
+  "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page",
+  () => ({
+    ClarificationsPage: jest.fn(),
+  }),
+);
 
 describe("ContestantClarificationsPage", () => {
   it("should render common ClarificationsPage with correct data", async () => {

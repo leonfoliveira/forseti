@@ -1,13 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import {
-  GridTable,
-  GridTableBody,
-  GridTableCell,
-  GridTableColumn,
-  GridTableHeader,
-  GridTableRow,
-} from "@/app/_lib/component/table/grid-table";
+import { GridTable } from "@/app/_lib/component/base/table/grid-table";
 
 describe("GridTable Components", () => {
   describe("GridTable", () => {
@@ -64,13 +57,13 @@ describe("GridTable Components", () => {
     });
   });
 
-  describe("GridTableHeader", () => {
+  describe("GridTable.Header", () => {
     it("should render a header row with proper role and styling", () => {
       render(
-        <GridTableHeader data-testid="grid-header">
-          <GridTableColumn>Header 1</GridTableColumn>
-          <GridTableColumn>Header 2</GridTableColumn>
-        </GridTableHeader>,
+        <GridTable.Header data-testid="grid-header">
+          <GridTable.Column>Header 1</GridTable.Column>
+          <GridTable.Column>Header 2</GridTable.Column>
+        </GridTable.Header>,
       );
 
       const header = screen.getByTestId("grid-header");
@@ -81,9 +74,11 @@ describe("GridTable Components", () => {
 
     it("should clone children with additional className", () => {
       render(
-        <GridTableHeader>
-          <GridTableColumn data-testid="header-column">Header</GridTableColumn>
-        </GridTableHeader>,
+        <GridTable.Header>
+          <GridTable.Column data-testid="header-column">
+            Header
+          </GridTable.Column>
+        </GridTable.Header>,
       );
 
       const column = screen.getByTestId("header-column");
@@ -92,12 +87,12 @@ describe("GridTable Components", () => {
 
     it("should handle non-React element children safely", () => {
       render(
-        <GridTableHeader>
-          <GridTableColumn>Valid Column</GridTableColumn>
+        <GridTable.Header>
+          <GridTable.Column>Valid Column</GridTable.Column>
           {null}
           {undefined}
           Plain text
-        </GridTableHeader>,
+        </GridTable.Header>,
       );
 
       expect(screen.getByText("Valid Column")).toBeInTheDocument();
@@ -106,14 +101,14 @@ describe("GridTable Components", () => {
 
     it("should merge custom className with cloned children", () => {
       render(
-        <GridTableHeader className="custom-header-class">
-          <GridTableColumn
+        <GridTable.Header className="custom-header-class">
+          <GridTable.Column
             className="original-class"
             data-testid="header-column"
           >
             Header
-          </GridTableColumn>
-        </GridTableHeader>,
+          </GridTable.Column>
+        </GridTable.Header>,
       );
 
       const column = screen.getByTestId("header-column");
@@ -126,12 +121,12 @@ describe("GridTable Components", () => {
     });
   });
 
-  describe("GridTableColumn", () => {
+  describe("GridTable.Column", () => {
     it("should render a column header with proper role and styling", () => {
       render(
-        <GridTableColumn data-testid="grid-column">
+        <GridTable.Column data-testid="grid-column">
           Column Header
-        </GridTableColumn>,
+        </GridTable.Column>,
       );
 
       const column = screen.getByTestId("grid-column");
@@ -150,9 +145,9 @@ describe("GridTable Components", () => {
 
     it("should accept custom className and merge it with default classes", () => {
       render(
-        <GridTableColumn className="custom-column" data-testid="grid-column">
+        <GridTable.Column className="custom-column" data-testid="grid-column">
           Column Header
-        </GridTableColumn>,
+        </GridTable.Column>,
       );
 
       const column = screen.getByTestId("grid-column");
@@ -169,16 +164,16 @@ describe("GridTable Components", () => {
     });
 
     it("should render children content", () => {
-      render(<GridTableColumn>Column Content</GridTableColumn>);
+      render(<GridTable.Column>Column Content</GridTable.Column>);
 
       expect(screen.getByText("Column Content")).toBeInTheDocument();
     });
 
     it("should forward HTML props to the div element", () => {
       render(
-        <GridTableColumn id="column-id" data-custom="column-value">
+        <GridTable.Column id="column-id" data-custom="column-value">
           Column
-        </GridTableColumn>,
+        </GridTable.Column>,
       );
 
       const column = screen.getByRole("columnheader");
@@ -187,14 +182,14 @@ describe("GridTable Components", () => {
     });
   });
 
-  describe("GridTableBody", () => {
+  describe("GridTable.Body", () => {
     it("should render a body with proper role and styling", () => {
       render(
-        <GridTableBody data-testid="grid-body">
-          <GridTableRow>
-            <GridTableCell>Cell content</GridTableCell>
-          </GridTableRow>
-        </GridTableBody>,
+        <GridTable.Body data-testid="grid-body">
+          <GridTable.Row>
+            <GridTable.Cell>Cell content</GridTable.Cell>
+          </GridTable.Row>
+        </GridTable.Body>,
       );
 
       const body = screen.getByTestId("grid-body");
@@ -206,7 +201,7 @@ describe("GridTable Components", () => {
     it("should display empty content when no children are provided", () => {
       const emptyContent = <div data-testid="empty">No data available</div>;
 
-      render(<GridTableBody emptyContent={emptyContent} />);
+      render(<GridTable.Body emptyContent={emptyContent} />);
 
       const emptyDiv = screen.getByTestId("empty");
       expect(emptyDiv).toBeInTheDocument();
@@ -216,7 +211,7 @@ describe("GridTable Components", () => {
     it("should display empty content with default styling when no children", () => {
       const emptyContent = "No data";
 
-      render(<GridTableBody emptyContent={emptyContent} />);
+      render(<GridTable.Body emptyContent={emptyContent} />);
 
       const emptyContainer = screen.getByText("No data");
       expect(emptyContainer).toHaveClass(
@@ -231,11 +226,11 @@ describe("GridTable Components", () => {
 
     it("should render children when provided", () => {
       render(
-        <GridTableBody emptyContent="Empty">
-          <GridTableRow>
-            <GridTableCell>Cell content</GridTableCell>
-          </GridTableRow>
-        </GridTableBody>,
+        <GridTable.Body emptyContent="Empty">
+          <GridTable.Row>
+            <GridTable.Cell>Cell content</GridTable.Cell>
+          </GridTable.Row>
+        </GridTable.Body>,
       );
 
       expect(screen.getByText("Cell content")).toBeInTheDocument();
@@ -244,9 +239,9 @@ describe("GridTable Components", () => {
 
     it("should accept custom className and merge it with default classes", () => {
       render(
-        <GridTableBody className="custom-body" data-testid="grid-body">
+        <GridTable.Body className="custom-body" data-testid="grid-body">
           <div>Body content</div>
-        </GridTableBody>,
+        </GridTable.Body>,
       );
 
       const body = screen.getByTestId("grid-body");
@@ -255,9 +250,9 @@ describe("GridTable Components", () => {
 
     it("should forward HTML props to the div element", () => {
       render(
-        <GridTableBody id="body-id" data-custom="body-value">
+        <GridTable.Body id="body-id" data-custom="body-value">
           <div>Body</div>
-        </GridTableBody>,
+        </GridTable.Body>,
       );
 
       const body = screen.getByRole("rowgroup");
@@ -266,13 +261,13 @@ describe("GridTable Components", () => {
     });
   });
 
-  describe("GridTableRow", () => {
+  describe("GridTable.Row", () => {
     it("should render a row with proper role and styling", () => {
       render(
-        <GridTableRow data-testid="grid-row">
-          <GridTableCell>Cell 1</GridTableCell>
-          <GridTableCell>Cell 2</GridTableCell>
-        </GridTableRow>,
+        <GridTable.Row data-testid="grid-row">
+          <GridTable.Cell>Cell 1</GridTable.Cell>
+          <GridTable.Cell>Cell 2</GridTable.Cell>
+        </GridTable.Row>,
       );
 
       const row = screen.getByTestId("grid-row");
@@ -283,11 +278,11 @@ describe("GridTable Components", () => {
 
     it("should clone children with additional className", () => {
       render(
-        <GridTableRow className="row-custom">
-          <GridTableCell className="original-cell" data-testid="row-cell">
+        <GridTable.Row className="row-custom">
+          <GridTable.Cell className="original-cell" data-testid="row-cell">
             Cell
-          </GridTableCell>
-        </GridTableRow>,
+          </GridTable.Cell>
+        </GridTable.Row>,
       );
 
       const cell = screen.getByTestId("row-cell");
@@ -296,12 +291,12 @@ describe("GridTable Components", () => {
 
     it("should handle non-React element children safely", () => {
       render(
-        <GridTableRow>
-          <GridTableCell>Valid Cell</GridTableCell>
+        <GridTable.Row>
+          <GridTable.Cell>Valid Cell</GridTable.Cell>
           {null}
           {undefined}
           Plain text
-        </GridTableRow>,
+        </GridTable.Row>,
       );
 
       expect(screen.getByText("Valid Cell")).toBeInTheDocument();
@@ -310,9 +305,9 @@ describe("GridTable Components", () => {
 
     it("should forward HTML props to the div element", () => {
       render(
-        <GridTableRow id="row-id" data-custom="row-value">
-          <GridTableCell>Cell</GridTableCell>
-        </GridTableRow>,
+        <GridTable.Row id="row-id" data-custom="row-value">
+          <GridTable.Cell>Cell</GridTable.Cell>
+        </GridTable.Row>,
       );
 
       const row = screen.getByRole("row");
@@ -321,10 +316,10 @@ describe("GridTable Components", () => {
     });
   });
 
-  describe("GridTableCell", () => {
+  describe("GridTable.Cell", () => {
     it("should render a cell with proper role and styling", () => {
       render(
-        <GridTableCell data-testid="grid-cell">Cell content</GridTableCell>,
+        <GridTable.Cell data-testid="grid-cell">Cell content</GridTable.Cell>,
       );
 
       const cell = screen.getByTestId("grid-cell");
@@ -342,9 +337,9 @@ describe("GridTable Components", () => {
 
     it("should accept custom className and merge it with default classes", () => {
       render(
-        <GridTableCell className="custom-cell" data-testid="grid-cell">
+        <GridTable.Cell className="custom-cell" data-testid="grid-cell">
           Cell content
-        </GridTableCell>,
+        </GridTable.Cell>,
       );
 
       const cell = screen.getByTestId("grid-cell");
@@ -360,16 +355,16 @@ describe("GridTable Components", () => {
     });
 
     it("should render children content", () => {
-      render(<GridTableCell>Cell Content</GridTableCell>);
+      render(<GridTable.Cell>Cell Content</GridTable.Cell>);
 
       expect(screen.getByText("Cell Content")).toBeInTheDocument();
     });
 
     it("should forward HTML props to the div element", () => {
       render(
-        <GridTableCell id="cell-id" data-custom="cell-value">
+        <GridTable.Cell id="cell-id" data-custom="cell-value">
           Cell
-        </GridTableCell>,
+        </GridTable.Cell>,
       );
 
       const cell = screen.getByRole("cell");
@@ -382,20 +377,20 @@ describe("GridTable Components", () => {
     it("should render a complete table structure", () => {
       render(
         <GridTable data-testid="complete-table">
-          <GridTableHeader>
-            <GridTableColumn>Name</GridTableColumn>
-            <GridTableColumn>Age</GridTableColumn>
-          </GridTableHeader>
-          <GridTableBody>
-            <GridTableRow>
-              <GridTableCell>John</GridTableCell>
-              <GridTableCell>25</GridTableCell>
-            </GridTableRow>
-            <GridTableRow>
-              <GridTableCell>Jane</GridTableCell>
-              <GridTableCell>30</GridTableCell>
-            </GridTableRow>
-          </GridTableBody>
+          <GridTable.Header>
+            <GridTable.Column>Name</GridTable.Column>
+            <GridTable.Column>Age</GridTable.Column>
+          </GridTable.Header>
+          <GridTable.Body>
+            <GridTable.Row>
+              <GridTable.Cell>John</GridTable.Cell>
+              <GridTable.Cell>25</GridTable.Cell>
+            </GridTable.Row>
+            <GridTable.Row>
+              <GridTable.Cell>Jane</GridTable.Cell>
+              <GridTable.Cell>30</GridTable.Cell>
+            </GridTable.Row>
+          </GridTable.Body>
         </GridTable>,
       );
 
@@ -422,11 +417,11 @@ describe("GridTable Components", () => {
     it("should render empty table with empty content", () => {
       render(
         <GridTable>
-          <GridTableHeader>
-            <GridTableColumn>Name</GridTableColumn>
-            <GridTableColumn>Age</GridTableColumn>
-          </GridTableHeader>
-          <GridTableBody emptyContent="No users found" />
+          <GridTable.Header>
+            <GridTable.Column>Name</GridTable.Column>
+            <GridTable.Column>Age</GridTable.Column>
+          </GridTable.Header>
+          <GridTable.Body emptyContent="No users found" />
         </GridTable>,
       );
 
@@ -438,14 +433,14 @@ describe("GridTable Components", () => {
     it("should apply custom styles throughout the table structure", () => {
       render(
         <GridTable className="custom-table">
-          <GridTableHeader className="custom-header">
-            <GridTableColumn className="custom-column">Name</GridTableColumn>
-          </GridTableHeader>
-          <GridTableBody className="custom-body">
-            <GridTableRow className="custom-row">
-              <GridTableCell className="custom-cell">John</GridTableCell>
-            </GridTableRow>
-          </GridTableBody>
+          <GridTable.Header className="custom-header">
+            <GridTable.Column className="custom-column">Name</GridTable.Column>
+          </GridTable.Header>
+          <GridTable.Body className="custom-body">
+            <GridTable.Row className="custom-row">
+              <GridTable.Cell className="custom-cell">John</GridTable.Cell>
+            </GridTable.Row>
+          </GridTable.Body>
         </GridTable>,
       );
 

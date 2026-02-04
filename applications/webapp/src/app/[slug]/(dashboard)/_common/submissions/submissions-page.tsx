@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  ArrowDownTrayIcon,
-  ArrowPathRoundedSquareIcon,
-  ChevronDoubleDownIcon,
-  PaperAirplaneIcon,
-} from "@heroicons/react/24/solid";
+import { ChevronDoubleDownIcon } from "@heroicons/react/24/solid";
 import { joiResolver } from "@hookform/resolvers/joi";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -15,37 +10,26 @@ import { SubmissionFormMap } from "@/app/[slug]/(dashboard)/_common/_form/submis
 import { submissionFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/submission-form-schema";
 import { SubmissionJudgeFormType } from "@/app/[slug]/(dashboard)/_common/_form/submission-judge-form";
 import { submissionJudgeFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/submission-judge-form-schema";
-import { Card } from "@/app/_lib/component/base/display/card";
-import { Button } from "@/app/_lib/component/base/form/button";
-import { FileInput } from "@/app/_lib/component/base/form/file-input";
-import { Form } from "@/app/_lib/component/base/form/form";
-import { Select } from "@/app/_lib/component/base/form/select";
+import { CreateSubmissionForm } from "@/app/[slug]/(dashboard)/_common/submissions/create-submission-form";
+import { JudgeSubmissionForm } from "@/app/[slug]/(dashboard)/_common/submissions/judge-submission-form";
+import { SubmissionRow } from "@/app/[slug]/(dashboard)/_common/submissions/submission-row";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
-import { Tooltip } from "@/app/_lib/component/base/overlay/tooltip";
 import { GridTable } from "@/app/_lib/component/base/table/grid-table";
-import { SubmissionAnswerChip } from "@/app/_lib/component/chip/submission-answer-chip";
-import { SubmissionStatusChip } from "@/app/_lib/component/chip/submission-status-chip";
-import { FormattedDateTime } from "@/app/_lib/component/format/formatted-datetime";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
-import { GavelIcon } from "@/app/_lib/component/icon/GavelIcon";
 import { Metadata } from "@/app/_lib/component/metadata";
 import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
 import { cls } from "@/app/_lib/util/cls";
-import { useIntl } from "@/app/_lib/util/intl-hook";
 import { useLoadableState } from "@/app/_lib/util/loadable-state";
 import { useModal } from "@/app/_lib/util/modal-hook";
 import { useToast } from "@/app/_lib/util/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
-import { attachmentReader, submissionWritter } from "@/config/composition";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { submissionWritter } from "@/config/composition";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
-import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { ProblemFullResponseDTO } from "@/core/port/dto/response/problem/ProblemFullResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
-import { globalMessages } from "@/i18n/global";
-import { defineMessages, Message } from "@/i18n/message";
+import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
@@ -198,7 +182,6 @@ export function SubmissionsPage({
   const resubmitState = useLoadableState();
   const judgeState = useLoadableState();
   const toast = useToast();
-  const intl = useIntl();
 
   const resubmitModal = useModal<string>();
   const judgeModal = useModal<string>();
@@ -275,72 +258,14 @@ export function SubmissionsPage({
       {/* Create Form */}
       {canCreate && !!problems && !!languages && (
         <>
-          <Card
-            className="max-w-4xl w-full mb-6 mx-auto"
-            data-testid="create-form"
-          >
-            <Card.Header>
-              <h3
-                className="text-lg font-semibold"
-                data-testid="create-form-title"
-              >
-                <FormattedMessage {...messages.createTitle} />
-              </h3>
-            </Card.Header>
-            <Divider />
-            <Card.Body>
-              <form
-                onSubmit={form.handleSubmit(createSubmission)}
-                className="grid gap-2"
-                ref={formRef}
-              >
-                <Form.Field form={form} name="problemId">
-                  <Select
-                    label={<FormattedMessage {...messages.problemLabel} />}
-                  >
-                    {problems.map((it) => (
-                      <Select.Item key={it.id}>
-                        {intl.formatMessage({
-                          ...messages.problemOption,
-                          values: it,
-                        } as Message)}
-                      </Select.Item>
-                    ))}
-                  </Select>
-                </Form.Field>
-                <Form.Field form={form} name="language">
-                  <Select
-                    label={<FormattedMessage {...messages.languageLabel} />}
-                  >
-                    {languages.map((it) => (
-                      <Select.Item key={it}>
-                        {intl.formatMessage(globalMessages.language[it])}
-                      </Select.Item>
-                    ))}
-                  </Select>
-                </Form.Field>
-                <Form.Field form={form} name="code">
-                  <FileInput
-                    label={<FormattedMessage {...messages.codeLabel} />}
-                    description={
-                      <FormattedMessage {...messages.codeDescription} />
-                    }
-                  />
-                </Form.Field>
-                <div className="flex justify-end">
-                  <Button
-                    type="submit"
-                    color="primary"
-                    isLoading={createState.isLoading}
-                    endContent={<PaperAirplaneIcon height={12} />}
-                    data-testid="create-form-submit"
-                  >
-                    <FormattedMessage {...messages.submitLabel} />
-                  </Button>
-                </div>
-              </form>
-            </Card.Body>
-          </Card>
+          <CreateSubmissionForm
+            form={form}
+            onCreate={createSubmission}
+            isLoading={createState.isLoading}
+            formRef={formRef}
+            problems={problems}
+            languages={languages}
+          />
           <Divider className="mb-5" />
         </>
       )}
@@ -381,99 +306,16 @@ export function SubmissionsPage({
         </GridTable.Header>
         <GridTable.Body emptyContent={<FormattedMessage {...messages.empty} />}>
           {submissions.toReversed().map((submission, index) => (
-            <GridTable.Row
+            <SubmissionRow
               key={submission.id}
-              className={cls(
-                index % 2 == 1 && "bg-content2",
-                session?.member.id === submission.member.id && "bg-primary-50",
-                submission.status === SubmissionStatus.FAILED && "bg-danger-50",
-              )}
-              data-testid="submission"
-            >
-              <GridTable.Cell data-testid="submission-created-at">
-                <FormattedDateTime timestamp={submission.createdAt} />
-              </GridTable.Cell>
-              <GridTable.Cell data-testid="submission-member-name">
-                {submission.member.name}
-              </GridTable.Cell>
-              <GridTable.Cell
-                className="justify-end"
-                data-testid="submission-problem-letter"
-              >
-                {submission.problem.letter}
-              </GridTable.Cell>
-              <GridTable.Cell
-                className="justify-end"
-                data-testid="submission-language"
-              >
-                <FormattedMessage
-                  {...globalMessages.language[submission.language]}
-                />
-              </GridTable.Cell>
-              <GridTable.Cell
-                className="justify-end"
-                data-testid="submission-answer"
-              >
-                <SubmissionAnswerChip size="sm" answer={submission.answer} />
-              </GridTable.Cell>
-              {canEdit && (
-                <GridTable.Cell data-testid="submission-status">
-                  <SubmissionStatusChip size="sm" status={submission.status} />
-                </GridTable.Cell>
-              )}
-              {canEdit && (
-                <GridTable.Cell data-testid="submission-actions">
-                  <Tooltip
-                    content={<FormattedMessage {...messages.downloadTooltip} />}
-                  >
-                    <Button
-                      isIconOnly
-                      color="primary"
-                      variant="light"
-                      size="sm"
-                      onPress={() =>
-                        attachmentReader.download(
-                          contestId,
-                          (submission as SubmissionFullResponseDTO).code,
-                        )
-                      }
-                      data-testid="submission-download"
-                    >
-                      <ArrowDownTrayIcon className="h-5" />
-                    </Button>
-                  </Tooltip>
-                  <Tooltip
-                    content={<FormattedMessage {...messages.resubmitTooltip} />}
-                  >
-                    <Button
-                      isIconOnly
-                      color="primary"
-                      variant="light"
-                      size="sm"
-                      disabled={submission.status === SubmissionStatus.JUDGING}
-                      onPress={() => resubmitModal.open(submission.id)}
-                      data-testid="submission-resubmit"
-                    >
-                      <ArrowPathRoundedSquareIcon className="h-5" />
-                    </Button>
-                  </Tooltip>
-                  <Tooltip
-                    content={<FormattedMessage {...messages.judgeTooltip} />}
-                  >
-                    <Button
-                      isIconOnly
-                      color="danger"
-                      variant="light"
-                      size="sm"
-                      onPress={() => judgeModal.open(submission.id)}
-                      data-testid="submission-judge"
-                    >
-                      <GavelIcon className="h-5" />
-                    </Button>
-                  </Tooltip>
-                </GridTable.Cell>
-              )}
-            </GridTable.Row>
+              submission={submission}
+              index={index}
+              isHighlighted={submission.member.id === session?.member.id}
+              canEdit={canEdit}
+              contestId={contestId}
+              onJudge={judgeModal.open}
+              onResubmit={resubmitModal.open}
+            />
           ))}
         </GridTable.Body>
       </GridTable>
@@ -497,29 +339,7 @@ export function SubmissionsPage({
           judgeSubmission(judgeModal.props, data),
         )}
         title={<FormattedMessage {...messages.judgeTitle} />}
-        body={
-          <>
-            <Form.Field form={judgeForm} name="answer">
-              <Select
-                className="mb-5"
-                label={<FormattedMessage {...messages.answerLabel} />}
-              >
-                {Object.keys(SubmissionAnswer)
-                  .filter((it) => it !== SubmissionAnswer.NO_ANSWER)
-                  .map((key) => (
-                    <Select.Item key={key}>
-                      {intl.formatMessage(
-                        globalMessages.submissionAnswer[
-                          key as SubmissionAnswer
-                        ],
-                      )}
-                    </Select.Item>
-                  ))}
-              </Select>
-            </Form.Field>
-            <FormattedMessage {...messages.judgeBody} />
-          </>
-        }
+        body={<JudgeSubmissionForm form={judgeForm} />}
         data-testid="judge-modal"
       />
     </>
