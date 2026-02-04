@@ -3,7 +3,7 @@
 import { ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
 import React from "react";
 
-import { LeaderboardMemberRow } from "@/app/[slug]/(dashboard)/_common/leaderboard/leaberboard-member-row";
+import { LeaderboardMemberRow } from "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-member-row";
 import { GridTable } from "@/app/_lib/component/base/table/grid-table";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
