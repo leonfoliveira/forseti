@@ -1,5 +1,6 @@
+import { addToast, ToastProps } from "@heroui/react";
+
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
-import { addToast, ToastProps } from "@/app/_lib/heroui-wrapper";
 import { Message } from "@/i18n/message";
 
 /**

@@ -11,21 +11,15 @@ import { settingsFormSchema } from "@/app/[slug]/(dashboard)/settings/_form/sett
 import { ContestSettings } from "@/app/[slug]/(dashboard)/settings/_tab/contest-settings";
 import { MembersSettings } from "@/app/[slug]/(dashboard)/settings/_tab/members-settings";
 import { ProblemsSettings } from "@/app/[slug]/(dashboard)/settings/_tab/problems-settings";
+import { Badge } from "@/app/_lib/component/base/display/badge";
+import { Card } from "@/app/_lib/component/base/display/card";
+import { Alert } from "@/app/_lib/component/base/feedback/alert";
+import { Button } from "@/app/_lib/component/base/form/button";
+import { Divider } from "@/app/_lib/component/base/layout/divider";
+import { Tabs } from "@/app/_lib/component/base/navigation/tabs";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
 import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
-import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-  Tab,
-  Tabs,
-} from "@/app/_lib/heroui-wrapper";
 import { useContestStatusWatcher } from "@/app/_lib/util/contest-status-watcher";
 import { useLoadableState } from "@/app/_lib/util/loadable-state";
 import { useModal } from "@/app/_lib/util/modal-hook";
@@ -202,7 +196,7 @@ export function AdminSettingsPage() {
       />
       <Card shadow="none" radius="sm">
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardHeader>
+          <Card.Header>
             <Tabs
               fullWidth
               variant="underlined"
@@ -211,7 +205,7 @@ export function AdminSettingsPage() {
               onSelectionChange={(key) => setSelectedTab(key as TabKey)}
               data-testid="settings-nav"
             >
-              <Tab
+              <Tabs.Item
                 key={TabKey.CONTEST}
                 title={
                   <Badge
@@ -225,7 +219,7 @@ export function AdminSettingsPage() {
                 }
                 data-testid="tab"
               />
-              <Tab
+              <Tabs.Item
                 key={TabKey.PROBLEMS}
                 title={
                   <Badge
@@ -239,7 +233,7 @@ export function AdminSettingsPage() {
                 }
                 data-testid="tab"
               />
-              <Tab
+              <Tabs.Item
                 key={TabKey.MEMBERS}
                 title={
                   <Badge
@@ -254,9 +248,9 @@ export function AdminSettingsPage() {
                 data-testid="tab"
               />
             </Tabs>
-          </CardHeader>
+          </Card.Header>
           <Divider />
-          <CardBody>
+          <Card.Body>
             <ContestSettings
               contest={contest}
               form={form}
@@ -270,9 +264,9 @@ export function AdminSettingsPage() {
               form={form}
               isOpen={selectedTab === TabKey.MEMBERS}
             />
-          </CardBody>
+          </Card.Body>
           <Divider />
-          <CardFooter className="flex justify-end">
+          <Card.Footer className="flex justify-end">
             <Button
               color="danger"
               variant="flat"
@@ -294,7 +288,7 @@ export function AdminSettingsPage() {
             >
               <FormattedMessage {...messages.saveLabel} />
             </Button>
-          </CardFooter>
+          </Card.Footer>
         </form>
 
         {/* Save Confirmation Modal */}

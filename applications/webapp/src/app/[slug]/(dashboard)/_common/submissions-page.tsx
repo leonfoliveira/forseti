@@ -15,33 +15,21 @@ import { SubmissionFormMap } from "@/app/[slug]/(dashboard)/_common/_form/submis
 import { submissionFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/submission-form-schema";
 import { SubmissionJudgeFormType } from "@/app/[slug]/(dashboard)/_common/_form/submission-judge-form";
 import { submissionJudgeFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/submission-judge-form-schema";
+import { Card } from "@/app/_lib/component/base/display/card";
+import { Button } from "@/app/_lib/component/base/form/button";
+import { FileInput } from "@/app/_lib/component/base/form/file-input";
+import { Form } from "@/app/_lib/component/base/form/form";
+import { Select } from "@/app/_lib/component/base/form/select";
+import { Divider } from "@/app/_lib/component/base/layout/divider";
+import { Tooltip } from "@/app/_lib/component/base/overlay/tooltip";
+import { GridTable } from "@/app/_lib/component/base/table/grid-table";
 import { SubmissionAnswerChip } from "@/app/_lib/component/chip/submission-answer-chip";
 import { SubmissionStatusChip } from "@/app/_lib/component/chip/submission-status-chip";
-import { FileInput } from "@/app/_lib/component/form/file-input";
-import { FormField } from "@/app/_lib/component/form/form-field";
 import { FormattedDateTime } from "@/app/_lib/component/format/formatted-datetime";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import { GavelIcon } from "@/app/_lib/component/icon/GavelIcon";
 import { Metadata } from "@/app/_lib/component/metadata";
 import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
-import {
-  GridTable,
-  GridTableBody,
-  GridTableCell,
-  GridTableColumn,
-  GridTableHeader,
-  GridTableRow,
-} from "@/app/_lib/component/table/grid-table";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-  Select,
-  SelectItem,
-  Tooltip,
-} from "@/app/_lib/heroui-wrapper";
 import { cls } from "@/app/_lib/util/cls";
 import { useIntl } from "@/app/_lib/util/intl-hook";
 import { useLoadableState } from "@/app/_lib/util/loadable-state";
@@ -291,54 +279,54 @@ export function SubmissionsPage({
             className="max-w-4xl w-full mb-6 mx-auto"
             data-testid="create-form"
           >
-            <CardHeader>
+            <Card.Header>
               <h3
                 className="text-lg font-semibold"
                 data-testid="create-form-title"
               >
                 <FormattedMessage {...messages.createTitle} />
               </h3>
-            </CardHeader>
+            </Card.Header>
             <Divider />
-            <CardBody>
+            <Card.Body>
               <form
                 onSubmit={form.handleSubmit(createSubmission)}
                 className="grid gap-2"
                 ref={formRef}
               >
-                <FormField form={form} name="problemId" isSelect>
+                <Form.Field form={form} name="problemId">
                   <Select
                     label={<FormattedMessage {...messages.problemLabel} />}
                   >
                     {problems.map((it) => (
-                      <SelectItem key={it.id}>
+                      <Select.Item key={it.id}>
                         {intl.formatMessage({
                           ...messages.problemOption,
                           values: it,
                         } as Message)}
-                      </SelectItem>
+                      </Select.Item>
                     ))}
                   </Select>
-                </FormField>
-                <FormField form={form} name="language" isSelect>
+                </Form.Field>
+                <Form.Field form={form} name="language">
                   <Select
                     label={<FormattedMessage {...messages.languageLabel} />}
                   >
                     {languages.map((it) => (
-                      <SelectItem key={it}>
+                      <Select.Item key={it}>
                         {intl.formatMessage(globalMessages.language[it])}
-                      </SelectItem>
+                      </Select.Item>
                     ))}
                   </Select>
-                </FormField>
-                <FormField form={form} name="code" isFile>
+                </Form.Field>
+                <Form.Field form={form} name="code">
                   <FileInput
                     label={<FormattedMessage {...messages.codeLabel} />}
                     description={
                       <FormattedMessage {...messages.codeDescription} />
                     }
                   />
-                </FormField>
+                </Form.Field>
                 <div className="flex justify-end">
                   <Button
                     type="submit"
@@ -351,7 +339,7 @@ export function SubmissionsPage({
                   </Button>
                 </div>
               </form>
-            </CardBody>
+            </Card.Body>
           </Card>
           <Divider className="mb-5" />
         </>
@@ -365,33 +353,35 @@ export function SubmissionsPage({
             : "grid-cols-[auto_1fr_repeat(3,auto)]",
         )}
       >
-        <GridTableHeader>
-          <GridTableColumn>
+        <GridTable.Header>
+          <GridTable.Column>
             <FormattedMessage {...messages.headerTimestamp} />
             <ChevronDoubleDownIcon className="ml-2 h-3" />
-          </GridTableColumn>
-          <GridTableColumn>
+          </GridTable.Column>
+          <GridTable.Column>
             <FormattedMessage {...messages.headerContestant} />
-          </GridTableColumn>
-          <GridTableColumn className="justify-end">
+          </GridTable.Column>
+          <GridTable.Column className="justify-end">
             <FormattedMessage {...messages.headerProblem} />
-          </GridTableColumn>
-          <GridTableColumn className="justify-end">
+          </GridTable.Column>
+          <GridTable.Column className="justify-end">
             <FormattedMessage {...messages.headerLanguage} />
-          </GridTableColumn>
-          <GridTableColumn className="justify-end">
+          </GridTable.Column>
+          <GridTable.Column className="justify-end">
             <FormattedMessage {...messages.headerAnswer} />
-          </GridTableColumn>
+          </GridTable.Column>
           {canEdit && (
-            <GridTableColumn>
+            <GridTable.Column>
               <FormattedMessage {...messages.headerStatus} />
-            </GridTableColumn>
+            </GridTable.Column>
           )}
-          {canEdit && <GridTableColumn>{/* Actions column */}</GridTableColumn>}
-        </GridTableHeader>
-        <GridTableBody emptyContent={<FormattedMessage {...messages.empty} />}>
+          {canEdit && (
+            <GridTable.Column>{/* Actions column */}</GridTable.Column>
+          )}
+        </GridTable.Header>
+        <GridTable.Body emptyContent={<FormattedMessage {...messages.empty} />}>
           {submissions.toReversed().map((submission, index) => (
-            <GridTableRow
+            <GridTable.Row
               key={submission.id}
               className={cls(
                 index % 2 == 1 && "bg-content2",
@@ -400,39 +390,39 @@ export function SubmissionsPage({
               )}
               data-testid="submission"
             >
-              <GridTableCell data-testid="submission-created-at">
+              <GridTable.Cell data-testid="submission-created-at">
                 <FormattedDateTime timestamp={submission.createdAt} />
-              </GridTableCell>
-              <GridTableCell data-testid="submission-member-name">
+              </GridTable.Cell>
+              <GridTable.Cell data-testid="submission-member-name">
                 {submission.member.name}
-              </GridTableCell>
-              <GridTableCell
+              </GridTable.Cell>
+              <GridTable.Cell
                 className="justify-end"
                 data-testid="submission-problem-letter"
               >
                 {submission.problem.letter}
-              </GridTableCell>
-              <GridTableCell
+              </GridTable.Cell>
+              <GridTable.Cell
                 className="justify-end"
                 data-testid="submission-language"
               >
                 <FormattedMessage
                   {...globalMessages.language[submission.language]}
                 />
-              </GridTableCell>
-              <GridTableCell
+              </GridTable.Cell>
+              <GridTable.Cell
                 className="justify-end"
                 data-testid="submission-answer"
               >
                 <SubmissionAnswerChip size="sm" answer={submission.answer} />
-              </GridTableCell>
+              </GridTable.Cell>
               {canEdit && (
-                <GridTableCell data-testid="submission-status">
+                <GridTable.Cell data-testid="submission-status">
                   <SubmissionStatusChip size="sm" status={submission.status} />
-                </GridTableCell>
+                </GridTable.Cell>
               )}
               {canEdit && (
-                <GridTableCell data-testid="submission-actions">
+                <GridTable.Cell data-testid="submission-actions">
                   <Tooltip
                     content={<FormattedMessage {...messages.downloadTooltip} />}
                   >
@@ -481,11 +471,11 @@ export function SubmissionsPage({
                       <GavelIcon className="h-5" />
                     </Button>
                   </Tooltip>
-                </GridTableCell>
+                </GridTable.Cell>
               )}
-            </GridTableRow>
+            </GridTable.Row>
           ))}
-        </GridTableBody>
+        </GridTable.Body>
       </GridTable>
 
       {/* Modals */}
@@ -509,7 +499,7 @@ export function SubmissionsPage({
         title={<FormattedMessage {...messages.judgeTitle} />}
         body={
           <>
-            <FormField form={judgeForm} name="answer" isSelect>
+            <Form.Field form={judgeForm} name="answer">
               <Select
                 className="mb-5"
                 label={<FormattedMessage {...messages.answerLabel} />}
@@ -517,16 +507,16 @@ export function SubmissionsPage({
                 {Object.keys(SubmissionAnswer)
                   .filter((it) => it !== SubmissionAnswer.NO_ANSWER)
                   .map((key) => (
-                    <SelectItem key={key}>
+                    <Select.Item key={key}>
                       {intl.formatMessage(
                         globalMessages.submissionAnswer[
                           key as SubmissionAnswer
                         ],
                       )}
-                    </SelectItem>
+                    </Select.Item>
                   ))}
               </Select>
-            </FormField>
+            </Form.Field>
             <FormattedMessage {...messages.judgeBody} />
           </>
         }

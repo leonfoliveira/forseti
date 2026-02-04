@@ -5,18 +5,14 @@ import { useForm } from "react-hook-form";
 import { AnnouncementFormType } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form";
 import { AnnouncementFormMap } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form-map";
 import { announcementFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form-schema";
-import { FormField } from "@/app/_lib/component/form/form-field";
+import { Card } from "@/app/_lib/component/base/display/card";
+import { Button } from "@/app/_lib/component/base/form/button";
+import { Form } from "@/app/_lib/component/base/form/form";
+import { Input } from "@/app/_lib/component/base/form/input";
+import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { FormattedDateTime } from "@/app/_lib/component/format/formatted-datetime";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-  Input,
-} from "@/app/_lib/heroui-wrapper";
 import { useLoadableState } from "@/app/_lib/util/loadable-state";
 import { useToast } from "@/app/_lib/util/toast-hook";
 import { announcementWritter } from "@/config/composition";
@@ -110,26 +106,26 @@ export function AnnouncementsPage({
               className="max-w-4xl w-full mb-6"
               data-testid="announcement-form"
             >
-              <CardHeader>
+              <Card.Header>
                 <h3
                   className="text-lg font-semibold"
                   data-testid="announcement-form-title"
                 >
                   <FormattedMessage {...messages.createTitle} />
                 </h3>
-              </CardHeader>
+              </Card.Header>
               <Divider />
-              <CardBody>
+              <Card.Body>
                 <form
                   onSubmit={form.handleSubmit(createAnnouncement)}
                   className="space-y-4"
                 >
-                  <FormField form={form} name="text">
+                  <Form.Field form={form} name="text">
                     <Input
                       label={<FormattedMessage {...messages.textLabel} />}
                       data-testid="announcement-form-text"
                     />
-                  </FormField>
+                  </Form.Field>
                   <div className="flex justify-end">
                     <Button
                       type="submit"
@@ -141,24 +137,24 @@ export function AnnouncementsPage({
                     </Button>
                   </div>
                 </form>
-              </CardBody>
+              </Card.Body>
             </Card>
             <Divider className="mb-5" />
           </>
         )}
         {announcements.length == 0 && (
           <Card className="max-w-4xl w-full" data-testid="empty">
-            <CardBody>
+            <Card.Body>
               <p className="text-neutral-content text-center my-10 text-foreground-400">
                 <FormattedMessage {...messages.empty} />
               </p>
-            </CardBody>
+            </Card.Body>
           </Card>
         )}
         <div className="space-y-5 max-w-4xl w-full">
           {announcements.toReversed().map((announcement) => (
             <Card key={announcement.id} data-testid="announcement">
-              <CardBody>
+              <Card.Body>
                 <div className="w-full flex justify-between">
                   <div>
                     <p
@@ -178,7 +174,7 @@ export function AnnouncementsPage({
                 <p className="mt-3" data-testid="announcement-text">
                   {announcement.text}
                 </p>
-              </CardBody>
+              </Card.Body>
             </Card>
           ))}
         </div>

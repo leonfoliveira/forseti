@@ -1,15 +1,8 @@
 import { ReactNode } from "react";
 
+import { Button } from "@/app/_lib/component/base/form/button";
+import { Modal, ModalProps } from "@/app/_lib/component/base/overlay/modal";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalProps,
-} from "@/app/_lib/heroui-wrapper";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -56,12 +49,12 @@ export function ConfirmationModal({
       }}
       {...props}
     >
-      <ModalContent>
+      <Modal.Content>
         {(onClose) => (
           <>
-            <ModalHeader data-testid="title">{title}</ModalHeader>
-            <ModalBody data-testid="body">{body}</ModalBody>
-            <ModalFooter>
+            <Modal.Header data-testid="title">{title}</Modal.Header>
+            <Modal.Body data-testid="body">{body}</Modal.Body>
+            <Modal.Footer>
               <Button
                 color="danger"
                 variant="light"
@@ -79,10 +72,10 @@ export function ConfirmationModal({
               >
                 <FormattedMessage {...messages.confirmLabel} />
               </Button>
-            </ModalFooter>
+            </Modal.Footer>
           </>
         )}
-      </ModalContent>
+      </Modal.Content>
     </Modal>
   );
 }

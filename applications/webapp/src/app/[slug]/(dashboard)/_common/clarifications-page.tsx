@@ -6,22 +6,16 @@ import { useForm } from "react-hook-form";
 import { ClarificationFormType } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form";
 import { ClarificationFormMap } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form-map";
 import { clarificationFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form-schema";
-import { FormField } from "@/app/_lib/component/form/form-field";
+import { Card } from "@/app/_lib/component/base/display/card";
+import { Button } from "@/app/_lib/component/base/form/button";
+import { Form } from "@/app/_lib/component/base/form/form";
+import { Input } from "@/app/_lib/component/base/form/input";
+import { Select } from "@/app/_lib/component/base/form/select";
+import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { FormattedDateTime } from "@/app/_lib/component/format/formatted-datetime";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
 import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Divider,
-  Input,
-  Select,
-  SelectItem,
-} from "@/app/_lib/heroui-wrapper";
 import { useIntl } from "@/app/_lib/util/intl-hook";
 import { useLoadableState } from "@/app/_lib/util/loadable-state";
 import { useModal } from "@/app/_lib/util/modal-hook";
@@ -185,41 +179,41 @@ export function ClarificationsPage({
         {canCreate && (
           <>
             <Card className="max-w-4xl w-full mb-6" data-testid="create-form">
-              <CardHeader>
+              <Card.Header>
                 <h3
                   className="text-lg font-semibold"
                   data-testid="create-form-title"
                 >
                   <FormattedMessage {...messages.createTitle} />
                 </h3>
-              </CardHeader>
+              </Card.Header>
               <Divider />
-              <CardBody>
+              <Card.Body>
                 <form
                   onSubmit={form.handleSubmit(createClarification)}
                   className="space-y-4"
                 >
-                  <FormField form={form} name="problemId" isSelect>
+                  <Form.Field form={form} name="problemId">
                     <Select
                       label={<FormattedMessage {...messages.problemLabel} />}
                       data-testid="create-form-problem"
                     >
                       {problems.map((problem) => (
-                        <SelectItem key={problem.id}>
+                        <Select.Item key={problem.id}>
                           {intl.formatMessage({
                             ...messages.problemOption,
                             values: problem,
                           } as Message)}
-                        </SelectItem>
+                        </Select.Item>
                       ))}
                     </Select>
-                  </FormField>
-                  <FormField form={form} name="text">
+                  </Form.Field>
+                  <Form.Field form={form} name="text">
                     <Input
                       label={<FormattedMessage {...messages.textLabel} />}
                       data-testid="create-form-text"
                     />
-                  </FormField>
+                  </Form.Field>
                   <div className="flex justify-end">
                     <Button
                       type="submit"
@@ -231,7 +225,7 @@ export function ClarificationsPage({
                     </Button>
                   </div>
                 </form>
-              </CardBody>
+              </Card.Body>
             </Card>
             <Divider className="mb-5" />
           </>
@@ -240,11 +234,11 @@ export function ClarificationsPage({
         {/* Empty State */}
         {clarifications.length == 0 && (
           <Card className="max-w-4xl w-full" data-testid="empty">
-            <CardBody>
+            <Card.Body>
               <p className="text-neutral-content text-center my-10 text-foreground-400">
                 <FormattedMessage {...messages.empty} />
               </p>
-            </CardBody>
+            </Card.Body>
           </Card>
         )}
 
@@ -256,7 +250,7 @@ export function ClarificationsPage({
               className="max-w-4xl w-full"
               data-testid="clarification"
             >
-              <CardBody>
+              <Card.Body>
                 <div className="w-full flex justify-between">
                   <div>
                     <p
@@ -306,22 +300,22 @@ export function ClarificationsPage({
                 <p className="mt-3" data-testid="clarification-text">
                   {clarification.text}
                 </p>
-              </CardBody>
+              </Card.Body>
               {clarification.children.length === 0 && canAnswer && (
                 <>
                   <Divider />
-                  <CardFooter>
+                  <Card.Footer>
                     <AnswerForm
                       contestId={contestId}
                       parentId={clarification.id}
                     />
-                  </CardFooter>
+                  </Card.Footer>
                 </>
               )}
               {clarification.children.length > 0 && (
                 <>
                   <Divider />
-                  <CardFooter>
+                  <Card.Footer>
                     <div className="w-full flex flex-col">
                       <div className="w-full flex justify-between">
                         <div>
@@ -350,7 +344,7 @@ export function ClarificationsPage({
                         {clarification.children[0].text}
                       </p>
                     </div>
-                  </CardFooter>
+                  </Card.Footer>
                 </>
               )}
             </Card>
@@ -409,9 +403,9 @@ function AnswerForm({
       data-testid="answer-form"
     >
       <div className="w-full flex">
-        <FormField form={form} name="text">
+        <Form.Field form={form} name="text">
           <Input data-testid="answer-form-text" />
-        </FormField>
+        </Form.Field>
         <Button
           type="submit"
           color="primary"
