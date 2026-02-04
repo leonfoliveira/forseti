@@ -1,11 +1,11 @@
-import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems-page";
+import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/problems-page";
 import { ContestantProblemsPage } from "@/app/[slug]/(dashboard)/problems/contestant-problems-page";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
-jest.mock("@/app/[slug]/(dashboard)/_common/problems-page", () => ({
+jest.mock("@/app/[slug]/(dashboard)/_common/problems/problems-page", () => ({
   ProblemsPage: jest.fn(),
 }));
 

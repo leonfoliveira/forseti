@@ -1,6 +1,6 @@
 import React from "react";
 
-import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions-page";
+import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
 import { useAppSelector } from "@/app/_store/store";
 
 export function GuestSubmissionsPage() {

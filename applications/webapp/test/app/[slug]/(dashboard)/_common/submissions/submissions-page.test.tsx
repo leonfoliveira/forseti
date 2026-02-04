@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 
-import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions-page";
+import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
 import { useToast } from "@/app/_lib/util/toast-hook";
 import { attachmentReader, submissionWritter } from "@/config/composition";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";

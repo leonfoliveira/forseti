@@ -2,7 +2,7 @@ import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements-page";
+import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page";
 import { useToast } from "@/app/_lib/util/toast-hook";
 import { announcementWritter } from "@/config/composition";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";

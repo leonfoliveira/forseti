@@ -292,6 +292,18 @@
             "resubmit-tooltip": "Resubmit",
             "judge-tooltip": "Judge"
           },
+          "submissions": {
+            "create-submission-form": {
+              "create-title": "Create Submission",
+              "problem-label": "Problem",
+              "problem-option": "{letter}. {title}",
+              "language-label": "Language",
+              "language-description": "Select the programming language used in the submission.",
+              "code-label": "Code",
+              "code-description": "Upload an uncompiled code file.",
+              "submit-label": "Submit"
+            }
+          },
           "problems-page": {
             "page-title": "Forseti - Problems",
             "page-description": "View all problems for the contest.",
@@ -306,37 +318,57 @@
             "header-penalty": "Penalty",
             "empty": "No contestants yet"
           },
+          "clarifications": {
+            "empty-clarification-display": {
+              "empty": "No clarifications yet"
+            },
+            "create-clarification-form": {
+              "create-title": "Create Clarification",
+              "text-label": "Text",
+              "problem-label": "Problem (optional)",
+              "problem-option": "{letter}. {title}",
+              "submit-label": "Submit"
+            },
+            "clarification-card": {
+              "header-problem": "Problem {letter}",
+              "header-general": "General",
+              "answer-label": "Answer",
+              "header-answer": "Re: {judge}"
+            },
+            "answer-clarification-form": {
+              "create-success": "Clarification created successfully",
+              "create-error": "Failed to create clarification",
+              "answer-label": "Answer"
+            }
+          },
           "clarifications-page": {
             "page-title": "Forseti - Clarifications",
             "page-description": "View and request clarifications for contest problems.",
-            "create-title": "Create Clarification",
             "create-success": "Clarification created successfully",
             "create-error": "Failed to create clarification",
             "delete-success": "Clarification deleted successfully",
             "delete-error": "Failed to delete clarification",
-            "text-label": "Text",
-            "problem-label": "Problem (optional)",
-            "problem-option": "{letter}. {title}",
-            "submit-label": "Submit",
-            "empty": "No clarifications yet",
-            "header-problem": "Problem {letter}",
-            "header-general": "General",
-            "answer-label": "Answer",
-            "header-answer": "Re: {judge}",
-            "delete-tooltip": "Delete Clarification",
+            "delete-title": "Delete Clarification",
             "delete-confirm-label": "Are you sure you want to delete this clarification?",
-            "cancel-label": "No, Cancel",
+            "delete-cancel": "No, Cancel",
             "delete-confirm": "Yes, Delete"
           },
-          "announcements-page": {
-            "page-title": "Forseti - Announcements",
-            "page-description": "View and create contest announcements.",
-            "create-title": "Create Announcement",
-            "create-success": "Announcement created successfully",
-            "create-error": "Failed to create announcement",
-            "text-label": "Text",
-            "submit-label": "Submit",
-            "empty": "No announcements yet"
+          "announcements": {
+            "empty-announcement-display": {
+              "empty": "No announcements yet"
+            },
+            "create-announcement-form": {
+              "create-title": "Create Announcement",
+              "text-label": "Text",
+              "submit-label": "Submit"
+            },
+            "announcements-page": {
+              "page-title": "Forseti - Announcements",
+              "page-description": "View and create contest announcements.",
+              "create-success": "Announcement created successfully",
+              "create-error": "Failed to create announcement",
+              "empty": "No announcements yet"
+            }
           },
           "_form": {
             "submission-judge-form-schema": {

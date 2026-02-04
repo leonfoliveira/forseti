@@ -4,7 +4,6 @@ import {
   ArrowDownTrayIcon,
   ArrowPathRoundedSquareIcon,
   ChevronDoubleDownIcon,
-  PaperAirplaneIcon,
 } from "@heroicons/react/24/solid";
 import { joiResolver } from "@hookform/resolvers/joi";
 import React from "react";
@@ -15,9 +14,8 @@ import { SubmissionFormMap } from "@/app/[slug]/(dashboard)/_common/_form/submis
 import { submissionFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/submission-form-schema";
 import { SubmissionJudgeFormType } from "@/app/[slug]/(dashboard)/_common/_form/submission-judge-form";
 import { submissionJudgeFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/submission-judge-form-schema";
-import { Card } from "@/app/_lib/component/base/display/card";
+import { CreateSubmissionForm } from "@/app/[slug]/(dashboard)/_common/submissions/create-submission-form";
 import { Button } from "@/app/_lib/component/base/form/button";
-import { FileInput } from "@/app/_lib/component/base/form/file-input";
 import { Form } from "@/app/_lib/component/base/form/form";
 import { Select } from "@/app/_lib/component/base/form/select";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
@@ -45,7 +43,7 @@ import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/Probl
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { globalMessages } from "@/i18n/global";
-import { defineMessages, Message } from "@/i18n/message";
+import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
@@ -275,72 +273,14 @@ export function SubmissionsPage({
       {/* Create Form */}
       {canCreate && !!problems && !!languages && (
         <>
-          <Card
-            className="max-w-4xl w-full mb-6 mx-auto"
-            data-testid="create-form"
-          >
-            <Card.Header>
-              <h3
-                className="text-lg font-semibold"
-                data-testid="create-form-title"
-              >
-                <FormattedMessage {...messages.createTitle} />
-              </h3>
-            </Card.Header>
-            <Divider />
-            <Card.Body>
-              <form
-                onSubmit={form.handleSubmit(createSubmission)}
-                className="grid gap-2"
-                ref={formRef}
-              >
-                <Form.Field form={form} name="problemId">
-                  <Select
-                    label={<FormattedMessage {...messages.problemLabel} />}
-                  >
-                    {problems.map((it) => (
-                      <Select.Item key={it.id}>
-                        {intl.formatMessage({
-                          ...messages.problemOption,
-                          values: it,
-                        } as Message)}
-                      </Select.Item>
-                    ))}
-                  </Select>
-                </Form.Field>
-                <Form.Field form={form} name="language">
-                  <Select
-                    label={<FormattedMessage {...messages.languageLabel} />}
-                  >
-                    {languages.map((it) => (
-                      <Select.Item key={it}>
-                        {intl.formatMessage(globalMessages.language[it])}
-                      </Select.Item>
-                    ))}
-                  </Select>
-                </Form.Field>
-                <Form.Field form={form} name="code">
-                  <FileInput
-                    label={<FormattedMessage {...messages.codeLabel} />}
-                    description={
-                      <FormattedMessage {...messages.codeDescription} />
-                    }
-                  />
-                </Form.Field>
-                <div className="flex justify-end">
-                  <Button
-                    type="submit"
-                    color="primary"
-                    isLoading={createState.isLoading}
-                    endContent={<PaperAirplaneIcon height={12} />}
-                    data-testid="create-form-submit"
-                  >
-                    <FormattedMessage {...messages.submitLabel} />
-                  </Button>
-                </div>
-              </form>
-            </Card.Body>
-          </Card>
+          <CreateSubmissionForm
+            form={form}
+            onCreate={createSubmission}
+            isLoading={createState.isLoading}
+            formRef={formRef}
+            problems={problems}
+            languages={languages}
+          />
           <Divider className="mb-5" />
         </>
       )}
