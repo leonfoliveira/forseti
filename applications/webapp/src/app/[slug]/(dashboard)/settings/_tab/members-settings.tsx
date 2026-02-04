@@ -3,16 +3,13 @@ import React from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 
 import { SettingsForm } from "@/app/[slug]/(dashboard)/settings/_form/settings-form";
-import { FormField } from "@/app/_lib/component/form/form-field";
-import { Label } from "@/app/_lib/component/form/label";
+import { Chip } from "@/app/_lib/component/base/display/chip";
+import { Button } from "@/app/_lib/component/base/form/button";
+import { Form } from "@/app/_lib/component/base/form/form";
+import { Input } from "@/app/_lib/component/base/form/input";
+import { Label } from "@/app/_lib/component/base/form/label";
+import { Select } from "@/app/_lib/component/base/form/select";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
-import {
-  Button,
-  Chip,
-  Input,
-  Select,
-  SelectItem,
-} from "@/app/_lib/heroui-wrapper";
 import { cls } from "@/app/_lib/util/cls";
 import { useIntl } from "@/app/_lib/util/intl-hook";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
@@ -136,7 +133,7 @@ export function MembersSettings({ form, isOpen }: Props) {
                 >
                   <TrashIcon className="w-4 h-4" />
                 </Button>
-                <FormField form={form} name={`members.${index}.type`} isSelect>
+                <Form.Field form={form} name={`members.${index}.type`}>
                   <Select
                     className="col-span-2 lg:col-span-1"
                     classNames={{ label: "lg:hidden" }}
@@ -147,15 +144,15 @@ export function MembersSettings({ form, isOpen }: Props) {
                     {Object.keys(MemberType)
                       .filter((it) => it !== MemberType.ROOT)
                       .map((it) => (
-                        <SelectItem key={it}>
+                        <Select.Item key={it}>
                           {intl.formatMessage(
                             globalMessages.memberType[it as MemberType],
                           )}
-                        </SelectItem>
+                        </Select.Item>
                       ))}
                   </Select>
-                </FormField>
-                <FormField form={form} name={`members.${index}.name`}>
+                </Form.Field>
+                <Form.Field form={form} name={`members.${index}.name`}>
                   <Input
                     className="col-span-2 lg:col-span-1"
                     classNames={{
@@ -166,8 +163,8 @@ export function MembersSettings({ form, isOpen }: Props) {
                     labelPlacement="outside-left"
                     label={<FormattedMessage {...messages.nameLabel} />}
                   />
-                </FormField>
-                <FormField form={form} name={`members.${index}.login`}>
+                </Form.Field>
+                <Form.Field form={form} name={`members.${index}.login`}>
                   <Input
                     className="col-span-2 lg:col-span-1"
                     classNames={{
@@ -178,8 +175,8 @@ export function MembersSettings({ form, isOpen }: Props) {
                     labelPlacement="outside-left"
                     label={<FormattedMessage {...messages.loginLabel} />}
                   />
-                </FormField>
-                <FormField form={form} name={`members.${index}.password`}>
+                </Form.Field>
+                <Form.Field form={form} name={`members.${index}.password`}>
                   <Input
                     className="col-span-2 lg:col-span-1"
                     classNames={{
@@ -193,7 +190,7 @@ export function MembersSettings({ form, isOpen }: Props) {
                     labelPlacement="outside-left"
                     label={<FormattedMessage {...messages.passwordLabel} />}
                   />
-                </FormField>
+                </Form.Field>
               </React.Fragment>
             ))}
           </div>

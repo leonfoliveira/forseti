@@ -6,18 +6,11 @@ import {
 } from "@heroicons/react/24/solid";
 import React from "react";
 
+import { Button } from "@/app/_lib/component/base/form/button";
+import { GridTable } from "@/app/_lib/component/base/table/grid-table";
 import { ProblemStatusChip } from "@/app/_lib/component/chip/problem-status-chip";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
-import {
-  GridTable,
-  GridTableBody,
-  GridTableCell,
-  GridTableColumn,
-  GridTableHeader,
-  GridTableRow,
-} from "@/app/_lib/component/table/grid-table";
-import { Button } from "@/app/_lib/heroui-wrapper";
 import { cls } from "@/app/_lib/util/cls";
 import { useAppSelector } from "@/app/_store/store";
 import { attachmentReader } from "@/config/composition";
@@ -81,31 +74,31 @@ export function ProblemsPage({
             : "grid-cols-[auto_1fr_auto]",
         )}
       >
-        <GridTableHeader>
-          <GridTableColumn width={60}>
+        <GridTable.Header>
+          <GridTable.Column width={60}>
             # <ChevronDoubleUpIcon className="ml-2 h-3" />
-          </GridTableColumn>
-          <GridTableColumn>
+          </GridTable.Column>
+          <GridTable.Column>
             <FormattedMessage {...messages.problemHeader} />
-          </GridTableColumn>
-          {problemStatus && <GridTableColumn> </GridTableColumn>}
-          <GridTableColumn> </GridTableColumn>
-        </GridTableHeader>
-        <GridTableBody emptyContent={<FormattedMessage {...messages.empty} />}>
+          </GridTable.Column>
+          {problemStatus && <GridTable.Column> </GridTable.Column>}
+          <GridTable.Column> </GridTable.Column>
+        </GridTable.Header>
+        <GridTable.Body emptyContent={<FormattedMessage {...messages.empty} />}>
           {problems.map((problem, index) => (
-            <GridTableRow
+            <GridTable.Row
               key={problem.id}
               className={cls(index % 2 == 1 && "bg-content2/50")}
               data-testid="problem"
             >
-              <GridTableCell data-testid="problem-letter">
+              <GridTable.Cell data-testid="problem-letter">
                 {problem.letter}
-              </GridTableCell>
-              <GridTableCell data-testid="problem-title">
+              </GridTable.Cell>
+              <GridTable.Cell data-testid="problem-title">
                 {problem.title}
-              </GridTableCell>
+              </GridTable.Cell>
               {problemStatus && (
-                <GridTableCell
+                <GridTable.Cell
                   className="justify-end"
                   data-testid="problem-status"
                 >
@@ -117,9 +110,9 @@ export function ProblemsPage({
                       problemStatus[problem.id].wrongSubmissions
                     }
                   />
-                </GridTableCell>
+                </GridTable.Cell>
               )}
-              <GridTableCell>
+              <GridTable.Cell>
                 <Button
                   isIconOnly
                   color="primary"
@@ -132,10 +125,10 @@ export function ProblemsPage({
                 >
                   <ArrowDownTrayIcon className="h-5" />
                 </Button>
-              </GridTableCell>
-            </GridTableRow>
+              </GridTable.Cell>
+            </GridTable.Row>
           ))}
-        </GridTableBody>
+        </GridTable.Body>
       </GridTable>
     </>
   );

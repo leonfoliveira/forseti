@@ -1,6 +1,6 @@
 import React from "react";
 
-import { CircularProgress } from "@/app/_lib/heroui-wrapper";
+import { CircularProgress } from "@/app/_lib/component/base/feedback/circular-progress";
 import { useIntl } from "@/app/_lib/util/intl-hook";
 import { defineMessages } from "@/i18n/message";
 

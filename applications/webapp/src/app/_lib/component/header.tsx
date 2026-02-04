@@ -3,20 +3,13 @@
 import { ChevronDownIcon, MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import { useRouter, usePathname } from "next/navigation";
 
+import { Button } from "@/app/_lib/component/base/form/button";
+import { Switch } from "@/app/_lib/component/base/form/switch";
+import { Navbar } from "@/app/_lib/component/base/navigation/navbar";
+import { Dropdown } from "@/app/_lib/component/base/overlay/dropdown";
 import { ContestStatusChip } from "@/app/_lib/component/chip/contest-status-chip";
 import { CountdownClock } from "@/app/_lib/component/countdown-clock";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
-import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  Switch,
-} from "@/app/_lib/heroui-wrapper";
 import { useContestStatusWatcher } from "@/app/_lib/util/contest-status-watcher";
 import { Theme, useTheme } from "@/app/_lib/util/theme-hook";
 import { useAppSelector } from "@/app/_store/store";
@@ -62,7 +55,7 @@ export function Header() {
       className="bg-content1 border-b border-divider"
       data-testid="header"
     >
-      <NavbarBrand className="min-w-0 flex-shrink">
+      <Navbar.Brand className="min-w-0 flex-shrink">
         <p
           className="text-lg font-semibold truncate max-w-full mr-3"
           data-testid="title"
@@ -70,8 +63,8 @@ export function Header() {
           {contestMetadata.title}
         </p>
         <ContestStatusChip status={contestStatus} data-testid="status" />
-      </NavbarBrand>
-      <NavbarContent justify="center">
+      </Navbar.Brand>
+      <Navbar.Content justify="center">
         {contestStatus !== ContestStatus.NOT_STARTED && (
           <CountdownClock
             className="font-mono text-sm"
@@ -79,8 +72,8 @@ export function Header() {
             data-testid="countdown-clock"
           />
         )}
-      </NavbarContent>
-      <NavbarContent justify="end">
+      </Navbar.Content>
+      <Navbar.Content justify="end">
         <Switch
           size="sm"
           color="default"
@@ -97,14 +90,14 @@ export function Header() {
         />
         {isAuthorized && (
           <Dropdown>
-            <DropdownTrigger data-testid="user-dropdown-trigger">
+            <Dropdown.Trigger data-testid="user-dropdown-trigger">
               <Button variant="light">
                 {session.member.name}
                 <ChevronDownIcon className="h-3" />
               </Button>
-            </DropdownTrigger>
-            <DropdownMenu disabledKeys={["member-type"]}>
-              <DropdownItem
+            </Dropdown.Trigger>
+            <Dropdown.Menu disabledKeys={["member-type"]}>
+              <Dropdown.Item
                 key="member-type"
                 isReadOnly
                 data-testid="member-type"
@@ -114,16 +107,16 @@ export function Header() {
                     {...globalMessages.memberType[session.member.type]}
                   />
                 </p>
-              </DropdownItem>
-              <DropdownItem
+              </Dropdown.Item>
+              <Dropdown.Item
                 key="sign-out"
                 color="danger"
                 onClick={handleSignOut}
                 data-testid="sign-out"
               >
                 <FormattedMessage {...messages.signOut} />
-              </DropdownItem>
-            </DropdownMenu>
+              </Dropdown.Item>
+            </Dropdown.Menu>
           </Dropdown>
         )}
         {!isAuthorized &&
@@ -139,7 +132,7 @@ export function Header() {
               <FormattedMessage {...messages.signIn} />
             </Button>
           )}
-      </NavbarContent>
+      </Navbar.Content>
     </Navbar>
   );
 }

@@ -1,7 +1,7 @@
 import React from "react";
 
+import { Chip, ChipProps } from "@/app/_lib/component/base/display/chip";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
-import { Chip, ChipProps } from "@/app/_lib/heroui-wrapper";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { globalMessages } from "@/i18n/global";
 

@@ -2,8 +2,8 @@
 
 import { usePathname, useRouter } from "next/navigation";
 
+import { Tabs } from "@/app/_lib/component/base/navigation/tabs";
 import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
-import { Tab, Tabs } from "@/app/_lib/heroui-wrapper";
 import { DashboardProvider } from "@/app/_lib/provider/dashboard-provider";
 import { useAppSelector } from "@/app/_store/store";
 import { routes } from "@/config/routes";
@@ -98,7 +98,7 @@ export default function DashboardLayout({
         data-testid="dashboard-nav"
       >
         {tabs.map((item) => (
-          <Tab
+          <Tabs.Item
             key={item.path}
             title={<FormattedMessage {...item.title} />}
             onClick={() => router.push(item.path)}
