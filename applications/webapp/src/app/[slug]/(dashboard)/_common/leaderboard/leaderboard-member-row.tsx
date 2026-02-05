@@ -1,7 +1,6 @@
 import { Chip } from "@/app/_lib/component/base/display/chip";
 import { GridTable } from "@/app/_lib/component/base/table/grid-table";
 import { ProblemStatusChip } from "@/app/_lib/component/chip/problem-status-chip";
-import { FormattedDuration } from "@/app/_lib/component/format/formatted-duration";
 import { cls } from "@/app/_lib/util/cls";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
@@ -56,7 +55,7 @@ export function LeaderboardMemberRow({ member, index, isHighlighted }: Props) {
         {member.score}
       </GridTable.Cell>
       <GridTable.Cell className="justify-end" data-testid="member-penalty">
-        <FormattedDuration ms={member.penalty * 1000} />
+        {member.penalty}
       </GridTable.Cell>
     </GridTable.Row>
   );
