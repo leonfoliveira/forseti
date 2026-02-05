@@ -14,6 +14,8 @@ export function MockProblemPublicResponseDTO(
       filename: "problem.pdf",
       contentType: "application/pdf",
     }),
+    timeLimit: 1000,
+    memoryLimit: 256,
     ...partial,
   };
 }
