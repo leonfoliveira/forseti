@@ -1,7 +1,6 @@
 import React from "react";
 
 import { Chip, ChipProps } from "@/app/_lib/component/base/display/chip";
-import { FormattedDuration } from "@/app/_lib/component/format/formatted-duration";
 import { useAppSelector } from "@/app/_store/store";
 
 type Props = ChipProps & {
@@ -26,19 +25,21 @@ export function ProblemStatusChip({
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
 
   if (isAccepted && acceptedAt) {
-    const diff =
+    const diffMs = Math.max(
+      0,
       new Date(acceptedAt).getTime() -
-      new Date(contestMetadata.startAt).getTime();
+        new Date(contestMetadata.startAt).getTime(),
+    );
     return (
       <Chip data-testid="chip-accepted" {...props} color="success">
-        <FormattedDuration ms={diff} />
-        {wrongSubmissions > 0 && ` +${wrongSubmissions}`}
+        {Math.floor(diffMs / 1000 / 60)}
+        {wrongSubmissions > 0 && ` (+${wrongSubmissions})`}
       </Chip>
     );
   } else if (wrongSubmissions > 0) {
     return (
       <Chip data-testid="chip-rejected" {...props} color="danger">
-        +{wrongSubmissions}
+        {`(+${wrongSubmissions})`}
       </Chip>
     );
   } else {

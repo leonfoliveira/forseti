@@ -17,7 +17,7 @@ describe("ProblemStatusChip", () => {
 
     const chip = screen.getByTestId("chip-accepted");
     expect(chip).toBeInTheDocument();
-    expect(chip).toHaveTextContent("00:00:00");
+    expect(chip).toHaveTextContent("0");
   });
 
   it("should render chip correctly when is accepted with wrong submissions", async () => {
@@ -32,7 +32,7 @@ describe("ProblemStatusChip", () => {
 
     const chip = screen.getByTestId("chip-accepted");
     expect(chip).toBeInTheDocument();
-    expect(chip).toHaveTextContent("00:00:00 +2");
+    expect(chip).toHaveTextContent("0 (+2)");
   });
 
   it("should render chip correctly when is not accepted with wrong submissions", async () => {
@@ -43,7 +43,7 @@ describe("ProblemStatusChip", () => {
 
     const chip = screen.getByTestId("chip-rejected");
     expect(chip).toBeInTheDocument();
-    expect(chip).toHaveTextContent("+3");
+    expect(chip).toHaveTextContent("(+3)");
   });
 
   it("should not render chip when is not accepted and no wrong submissions", async () => {
