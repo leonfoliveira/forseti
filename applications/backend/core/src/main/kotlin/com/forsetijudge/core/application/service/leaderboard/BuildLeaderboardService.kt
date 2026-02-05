@@ -23,7 +23,7 @@ class BuildLeaderboardService(
     private val memberRepository: MemberRepository,
 ) : BuildLeaderboardUseCase {
     companion object {
-        private const val WRONG_SUBMISSION_PENALTY = 1200 // 20 minutes
+        private const val WRONG_SUBMISSION_PENALTY_MINUTES = 20
     }
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -88,12 +88,13 @@ class BuildLeaderboardService(
                             .sortedByDescending { it }
 
                     for (i in aAcceptedTimes.indices) {
-                        if (aAcceptedTimes[i] != bAcceptedTimes[i]) {
-                            return@sortedWith aAcceptedTimes[i]!!.compareTo(bAcceptedTimes[i])
+                        val acceptedDiff = Duration.between(contest.startAt, aAcceptedTimes[i]).toMinutes().toInt()
+                        val bAcceptedDiff = Duration.between(contest.startAt, bAcceptedTimes[i]).toMinutes().toInt()
+                        if (acceptedDiff != bAcceptedDiff) {
+                            return@sortedWith acceptedDiff.compareTo(bAcceptedDiff)
                         }
                     }
 
-                    // The precision from the previous comparisons makes it almost impossible to reach this point, but if we do, sort by name alphabetically.
                     return@sortedWith a.name.compareTo(b.name)
                 }
 
@@ -165,14 +166,14 @@ class BuildLeaderboardService(
         // If the problem was not accepted, no penalty is counted, even if there were wrong submissions
         val acceptationPenalty =
             if (isAccepted) {
-                Duration.between(contest.startAt, firstAcceptedSubmission.createdAt).toSeconds().toInt()
+                Duration.between(contest.startAt, firstAcceptedSubmission.createdAt).toMinutes().toInt()
             } else {
                 0
             }
         // Same here, only count wrong submissions if the problem was eventually accepted
         val wrongAnswersPenalty =
             if (isAccepted) {
-                wrongSubmissionsBeforeAccepted.size * WRONG_SUBMISSION_PENALTY
+                wrongSubmissionsBeforeAccepted.size * WRONG_SUBMISSION_PENALTY_MINUTES
             } else {
                 0
             }

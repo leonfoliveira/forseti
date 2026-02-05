@@ -95,7 +95,7 @@ class BuildLeaderboardServiceTest :
                                     problem = problem1,
                                     status = Submission.Status.JUDGED,
                                     answer = Submission.Answer.WRONG_ANSWER,
-                                    createdAt = now.plusSeconds(1),
+                                    createdAt = now.plusMinutes(1),
                                 ),
                             ),
                     )
@@ -108,7 +108,7 @@ class BuildLeaderboardServiceTest :
                                     problem = problem1,
                                     status = Submission.Status.JUDGED,
                                     answer = Submission.Answer.ACCEPTED,
-                                    createdAt = now.plusSeconds(1),
+                                    createdAt = now.plusMinutes(1),
                                 ),
                             ),
                     )
@@ -122,19 +122,19 @@ class BuildLeaderboardServiceTest :
                                     problem = problem1,
                                     status = Submission.Status.JUDGED,
                                     answer = Submission.Answer.WRONG_ANSWER,
-                                    createdAt = now.plusSeconds(1),
+                                    createdAt = now.plusMinutes(1),
                                 ),
                                 SubmissionMockBuilder.build(
                                     problem = problem1,
                                     status = Submission.Status.JUDGED,
                                     answer = Submission.Answer.ACCEPTED,
-                                    createdAt = now.plusSeconds(2),
+                                    createdAt = now.plusMinutes(2),
                                 ),
                                 SubmissionMockBuilder.build(
                                     problem = problem1,
                                     status = Submission.Status.JUDGED,
                                     answer = Submission.Answer.WRONG_ANSWER,
-                                    createdAt = now.plusSeconds(3),
+                                    createdAt = now.plusMinutes(3),
                                 ),
                             ),
                     )
@@ -169,7 +169,7 @@ class BuildLeaderboardServiceTest :
                 result.members[0].problems[0].id shouldBe problem1.id
                 result.members[0].problems[0].letter shouldBe problem1.letter
                 result.members[0].problems[0].isAccepted shouldBe true
-                result.members[0].problems[0].acceptedAt shouldBe now.plusSeconds(1)
+                result.members[0].problems[0].acceptedAt shouldBe now.plusMinutes(1)
                 result.members[0].problems[0].wrongSubmissions shouldBe 0
                 result.members[0].problems[0].penalty shouldBe 1
                 result.members[0].problems[1].id shouldBe problem2.id
@@ -182,14 +182,14 @@ class BuildLeaderboardServiceTest :
                 result.members[1].id shouldBe contestantWithWrongAnswerAndAccepted.id
                 result.members[1].name shouldBe contestantWithWrongAnswerAndAccepted.name
                 result.members[1].score shouldBe 1
-                result.members[1].penalty shouldBe 1202
+                result.members[1].penalty shouldBe 22
                 result.members[1].problems.size shouldBe 2
                 result.members[1].problems[0].id shouldBe problem1.id
                 result.members[1].problems[0].letter shouldBe problem1.letter
                 result.members[1].problems[0].isAccepted shouldBe true
-                result.members[1].problems[0].acceptedAt shouldBe now.plusSeconds(2)
+                result.members[1].problems[0].acceptedAt shouldBe now.plusMinutes(2)
                 result.members[1].problems[0].wrongSubmissions shouldBe 1
-                result.members[1].problems[0].penalty shouldBe 1202
+                result.members[1].problems[0].penalty shouldBe 22
                 result.members[1].problems[1].id shouldBe problem2.id
                 result.members[1].problems[1].letter shouldBe problem2.letter
                 result.members[1].problems[1].isAccepted shouldBe false
