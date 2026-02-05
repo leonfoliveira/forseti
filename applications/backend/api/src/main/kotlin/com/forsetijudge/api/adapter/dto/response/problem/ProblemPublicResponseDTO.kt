@@ -11,6 +11,8 @@ data class ProblemPublicResponseDTO(
     val letter: Char,
     val title: String,
     val description: AttachmentResponseDTO,
+    val timeLimit: Int,
+    val memoryLimit: Int,
 ) : Serializable
 
 fun Problem.toPublicResponseDTO(): ProblemPublicResponseDTO =
@@ -19,4 +21,6 @@ fun Problem.toPublicResponseDTO(): ProblemPublicResponseDTO =
         letter = this.letter,
         title = this.title,
         description = this.description.toResponseDTO(),
+        timeLimit = this.timeLimit,
+        memoryLimit = this.memoryLimit,
     )

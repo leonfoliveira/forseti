@@ -3,9 +3,22 @@ import { ArrowDownTrayIcon } from "@heroicons/react/24/solid";
 import { Button } from "@/app/_lib/component/base/form/button";
 import { GridTable } from "@/app/_lib/component/base/table/grid-table";
 import { ProblemStatusChip } from "@/app/_lib/component/chip/problem-status-chip";
+import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
 import { cls } from "@/app/_lib/util/cls";
 import { attachmentReader } from "@/config/composition";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
+import { defineMessages } from "@/i18n/message";
+
+const messages = defineMessages({
+  timeLimit: {
+    id: "app.[slug].(dashboard)._common.problems.problem-row.time-limit",
+    defaultMessage: "{timeLimit}s",
+  },
+  memoryLimit: {
+    id: "app.[slug].(dashboard)._common.problems.problem-row.memory-limit",
+    defaultMessage: "{memoryLimit} MB",
+  },
+});
 
 type Props = {
   problem: ProblemPublicResponseDTO;
@@ -35,6 +48,18 @@ export function ProblemRow({
       </GridTable.Cell>
       <GridTable.Cell data-testid="problem-title">
         {problem.title}
+      </GridTable.Cell>
+      <GridTable.Cell data-testid="problem-time-limit">
+        <FormattedMessage
+          {...messages.timeLimit}
+          values={{ timeLimit: problem.timeLimit / 1000 }}
+        />
+      </GridTable.Cell>
+      <GridTable.Cell data-testid="problem-memory-limit">
+        <FormattedMessage
+          {...messages.memoryLimit}
+          values={{ memoryLimit: problem.memoryLimit }}
+        />
       </GridTable.Cell>
       {problemStatus && (
         <GridTable.Cell className="justify-end" data-testid="problem-status">

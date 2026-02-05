@@ -30,6 +30,14 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.problems-page.problem-header",
     defaultMessage: "Problem",
   },
+  timeLimitHeader: {
+    id: "app.[slug].(dashboard)._common.problems-page.time-limit-header",
+    defaultMessage: "Time Limit",
+  },
+  memoryLimitHeader: {
+    id: "app.[slug].(dashboard)._common.problems-page.memory-limit-header",
+    defaultMessage: "Memory Limit",
+  },
 });
 
 type Props = {
@@ -75,6 +83,12 @@ export function ProblemsPage({
           </GridTable.Column>
           <GridTable.Column>
             <FormattedMessage {...messages.problemHeader} />
+          </GridTable.Column>
+          <GridTable.Column>
+            <FormattedMessage {...messages.timeLimitHeader} />
+          </GridTable.Column>
+          <GridTable.Column>
+            <FormattedMessage {...messages.memoryLimitHeader} />
           </GridTable.Column>
           {problemStatus && <GridTable.Column> </GridTable.Column>}
           <GridTable.Column> </GridTable.Column>

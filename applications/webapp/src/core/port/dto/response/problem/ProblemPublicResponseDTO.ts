@@ -5,4 +5,6 @@ export type ProblemPublicResponseDTO = {
   letter: string;
   title: string;
   description: AttachmentResponseDTO;
+  timeLimit: number;
+  memoryLimit: number;
 };

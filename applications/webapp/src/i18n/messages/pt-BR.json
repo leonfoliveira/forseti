@@ -323,7 +323,15 @@
             "page-title": "Forseti - Problemas",
             "page-description": "Visualize todos os problemas do concurso.",
             "empty": "Nenhum problema ainda",
-            "problem-header": "Problema"
+            "problem-header": "Problema",
+            "time-limit-header": "Limite de Tempo",
+            "memory-limit-header": "Limite de Memória"
+          },
+          "problems": {
+            "problem-row": {
+              "time-limit": "{timeLimit}s",
+              "memory-limit": "{memoryLimit} MB"
+            }
           },
           "leaderboard-page": {
             "page-title": "Forseti - Placar",

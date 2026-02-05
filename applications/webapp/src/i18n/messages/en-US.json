@@ -317,7 +317,15 @@
             "page-title": "Forseti - Problems",
             "page-description": "View all problems for the contest.",
             "empty": "No problems yet",
-            "problem-header": "Problem"
+            "problem-header": "Problem",
+            "time-limit-header": "Time Limit",
+            "memory-limit-header": "Memory Limit"
+          },
+          "problems": {
+            "problem-row": {
+              "time-limit": "{timeLimit}s",
+              "memory-limit": "{memoryLimit} MB"
+            }
           },
           "leaderboard-page": {
             "page-title": "Forseti - Leaderboard",
