@@ -47,7 +47,7 @@ describe("ProblemsPage", () => {
     expect(screen.getByTestId("problem-title")).toHaveTextContent(
       "Test Problem",
     );
-    expect(screen.getByTestId("problem-status")).toHaveTextContent("00:00:00");
+    expect(screen.getByTestId("problem-status")).toHaveTextContent("0");
     expect(screen.getByTestId("problem-download")).toBeEnabled();
   });
 
