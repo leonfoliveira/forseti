@@ -102,7 +102,7 @@ export function AnnouncementsPage({
 
         {/* Items */}
         {announcements.length > 0 && (
-          <div className="space-y-5 max-w-4xl w-full">
+          <div className="w-full max-w-4xl space-y-5">
             {announcements.toReversed().map((announcement) => (
               <AnnouncementCard
                 key={announcement.id}

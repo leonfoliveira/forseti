@@ -25,16 +25,16 @@ export function WaitPage() {
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
 
   return (
-    <div className="flex-1 flex justify-center items-center">
+    <div className="flex flex-1 items-center justify-center">
       <div className="text-center">
-        <h1 className="text-5xl mb-5" data-testid="title">
+        <h1 className="mb-5 text-5xl" data-testid="title">
           {contestMetadata.title}
         </h1>
         <div>
           <p className="font-semibold" data-testid="description">
             <FormattedMessage {...messages.startAt} />
           </p>
-          <p className="text-2xl mt-2">
+          <p className="mt-2 text-2xl">
             <CountdownClock
               to={new Date(contestMetadata.startAt)}
               data-testid="clock"

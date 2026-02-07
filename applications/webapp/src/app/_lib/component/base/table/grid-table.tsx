@@ -14,7 +14,7 @@ export function GridTable({ children, className, ...props }: GridTableProps) {
   return (
     <div
       {...props}
-      className={cls(`grid bg-content1 p-8 items-center`, className)}
+      className={cls(`bg-content1 grid items-center p-8`, className)}
       role="table"
     >
       {children}
@@ -67,7 +67,7 @@ GridTable.Column = function GridTableColumn({
     <div
       {...props}
       className={cls(
-        `py-2 px-4 font-semibold text-sm h-full flex items-center`,
+        `flex h-full items-center px-4 py-2 text-sm font-semibold`,
         className,
       )}
       role="columnheader"
@@ -94,7 +94,7 @@ GridTable.Body = function GridTableBody({
   return (
     <div {...props} className={cls("contents", className)} role="rowgroup">
       {children || (
-        <div className="col-span-full flex justify-center items-center py-20 text-neutral-400">
+        <div className="col-span-full flex items-center justify-center py-20 text-neutral-400">
           {emptyContent}
         </div>
       )}
@@ -141,7 +141,7 @@ GridTable.Cell = function GridTableCell({
   return (
     <div
       {...props}
-      className={cls("h-full py-2 px-4 text-sm flex items-center", className)}
+      className={cls("flex h-full items-center px-4 py-2 text-sm", className)}
       role="cell"
     >
       {children}

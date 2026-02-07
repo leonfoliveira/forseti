@@ -64,7 +64,7 @@ export function AnswerClarificationForm({ contestId, parentId }: Props) {
       className="w-full"
       data-testid="answer-form"
     >
-      <div className="w-full flex">
+      <div className="flex w-full">
         <Form.Field form={form} name="text">
           <Input data-testid="answer-form-text" />
         </Form.Field>

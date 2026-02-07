@@ -52,12 +52,12 @@ export function Header() {
   return (
     <Navbar
       maxWidth="full"
-      className="bg-content1 border-b border-divider"
+      className="bg-content1 border-divider border-b"
       data-testid="header"
     >
       <Navbar.Brand className="min-w-0 flex-shrink">
         <p
-          className="text-lg font-semibold truncate max-w-full mr-3"
+          className="mr-3 max-w-full truncate text-lg font-semibold"
           data-testid="title"
         >
           {contestMetadata.title}

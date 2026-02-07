@@ -32,7 +32,7 @@ Checkbox.Group = function CheckboxGroup(props: CheckboxGroupProps) {
       }
       description={
         props.description && (
-          <span className="text-xs text-muted-foreground">
+          <span className="text-muted-foreground text-xs">
             {props.description}
           </span>
         )

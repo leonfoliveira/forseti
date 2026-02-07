@@ -32,7 +32,7 @@ type Props = {
 
 export function CreateAnnouncementForm({ form, onSubmit, isLoading }: Props) {
   return (
-    <Card className="max-w-4xl w-full mb-6" data-testid="announcement-form">
+    <Card className="mb-6 w-full max-w-4xl" data-testid="announcement-form">
       <Card.Header>
         <h3
           className="text-lg font-semibold"

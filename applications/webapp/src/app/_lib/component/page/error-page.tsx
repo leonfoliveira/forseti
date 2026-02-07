@@ -21,8 +21,8 @@ const messages = defineMessages({
  */
 export function ErrorPage() {
   return (
-    <div className="h-dvh flex flex-col justify-center items-center">
-      <h1 className="text-8xl font-bold font-mono" data-testid="code">
+    <div className="flex h-dvh flex-col items-center justify-center">
+      <h1 className="font-mono text-8xl font-bold" data-testid="code">
         500
       </h1>
       <h2 className="text-md mt-5" data-testid="description">

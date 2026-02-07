@@ -11,9 +11,9 @@ const messages = defineMessages({
 
 export function EmptyClarificationDisplay() {
   return (
-    <Card className="max-w-4xl w-full" data-testid="empty">
+    <Card className="w-full max-w-4xl" data-testid="empty">
       <Card.Body>
-        <p className="text-neutral-content text-center my-10 text-foreground-400">
+        <p className="text-neutral-content text-foreground-400 my-10 text-center">
           <FormattedMessage {...messages.empty} />
         </p>
       </Card.Body>

@@ -10,17 +10,17 @@ export function AnnouncementCard({ announcement }: Props) {
   return (
     <Card key={announcement.id} data-testid="announcement">
       <Card.Body>
-        <div className="w-full flex justify-between">
+        <div className="flex w-full justify-between">
           <div>
             <p
-              className="font-semibold text-sm"
+              className="text-sm font-semibold"
               data-testid="announcement-member-name"
             >
               {announcement.member.name}
             </p>
           </div>
           <p
-            className="text-xs text-default-400"
+            className="text-default-400 text-xs"
             data-testid="announcement-created-at"
           >
             <FormattedDateTime timestamp={announcement.createdAt} />

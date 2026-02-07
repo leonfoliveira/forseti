@@ -105,7 +105,7 @@ export default function DashboardLayout({
           />
         ))}
       </Tabs>
-      <div className="flex-1 w-full max-w-[1920] mx-auto xl:my-10 flex flex-col">
+      <div className="mx-auto flex w-full max-w-[1920] flex-1 flex-col xl:my-10">
         {children}
       </div>
     </DashboardProvider>

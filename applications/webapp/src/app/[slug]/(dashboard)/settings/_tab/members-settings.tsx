@@ -88,10 +88,10 @@ export function MembersSettings({ form, isOpen }: Props) {
     >
       {/* Header Section */}
       <div className="space-y-2">
-        <h3 className="text-lg font-semibold text-foreground">
+        <h3 className="text-foreground text-lg font-semibold">
           <FormattedMessage {...messages.sectionTitle} />
         </h3>
-        <p className="text-sm text-foreground/60">
+        <p className="text-foreground/60 text-sm">
           <FormattedMessage {...messages.sectionDescription} />
         </p>
       </div>
@@ -99,7 +99,7 @@ export function MembersSettings({ form, isOpen }: Props) {
       {/* Members Table or Empty State */}
       {fields.length > 0 ? (
         <div className="space-y-4">
-          <div className="grid [grid-template-columns:auto_1fr] lg:[grid-template-columns:auto_repeat(4,1fr)_auto] gap-y-3 lg:gap-x-3 grid-flow-row-dense items-center">
+          <div className="grid grid-flow-row-dense [grid-template-columns:auto_1fr] items-center gap-y-3 lg:[grid-template-columns:auto_repeat(4,1fr)_auto] lg:gap-x-3">
             <div className="hidden lg:block"></div>
             <Label className="hidden lg:block">
               <FormattedMessage {...messages.typeLabel} />
@@ -120,7 +120,7 @@ export function MembersSettings({ form, isOpen }: Props) {
                   <Chip size="sm" color="primary" variant="flat">
                     #{index + 1}
                   </Chip>
-                  <div className="h-6 w-px bg-divider ml-3 mr-1" />
+                  <div className="bg-divider mr-1 ml-3 h-6 w-px" />
                 </div>
                 <Button
                   isIconOnly
@@ -131,7 +131,7 @@ export function MembersSettings({ form, isOpen }: Props) {
                   className="lg:-col-end-1"
                   data-testid="remove-member"
                 >
-                  <TrashIcon className="w-4 h-4" />
+                  <TrashIcon className="h-4 w-4" />
                 </Button>
                 <Form.Field form={form} name={`members.${index}.type`}>
                   <Select
@@ -199,7 +199,7 @@ export function MembersSettings({ form, isOpen }: Props) {
             <Button
               color="primary"
               variant="bordered"
-              startContent={<PlusIcon className="w-5 h-5" />}
+              startContent={<PlusIcon className="h-5 w-5" />}
               onPress={() => append({} as any)}
               data-testid="add-member"
             >
@@ -213,15 +213,15 @@ export function MembersSettings({ form, isOpen }: Props) {
           className="flex flex-col items-center justify-center py-16 text-center"
           data-testid="empty"
         >
-          <h4 className="text-lg font-semibold text-foreground/80 mb-2">
+          <h4 className="text-foreground/80 mb-2 text-lg font-semibold">
             <FormattedMessage {...messages.emptyStateTitle} />
           </h4>
-          <p className="text-sm text-foreground/60 mb-6 max-w-md">
+          <p className="text-foreground/60 mb-6 max-w-md text-sm">
             <FormattedMessage {...messages.emptyStateDescription} />
           </p>
           <Button
             color="primary"
-            startContent={<PlusIcon className="w-5 h-5" />}
+            startContent={<PlusIcon className="h-5 w-5" />}
             onPress={() => append({} as any)}
             data-testid="add-first-member"
           >
