@@ -113,19 +113,19 @@ export default function SignInPage() {
         title={messages.pageTitle}
         description={messages.pageDescription}
       />
-      <div className="flex-1 flex justify-center items-center p-4">
+      <div className="flex flex-1 items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <Form onSubmit={form.handleSubmit(signIn)}>
-            <Card.Header className="pb-4 pt-6 px-6">
-              <div className="flex flex-col items-center text-center w-full">
+            <Card.Header className="px-6 pt-6 pb-4">
+              <div className="flex w-full flex-col items-center text-center">
                 <h2
-                  className="text-3xl font-bold text-primary"
+                  className="text-primary text-3xl font-bold"
                   data-testid="title"
                 >
                   <FormattedMessage {...messages.title} />
                 </h2>
                 <p
-                  className="text-default-500 text-sm mt-2"
+                  className="text-default-500 mt-2 text-sm"
                   data-testid="subtitle"
                 >
                   <FormattedMessage {...messages.subtitle} />
@@ -133,7 +133,7 @@ export default function SignInPage() {
               </div>
             </Card.Header>
             <Divider className="my-2" />
-            <Card.Body className="gap-4 py-6 px-6">
+            <Card.Body className="gap-4 px-6 py-6">
               <Form.Field
                 form={form}
                 name="login"
@@ -159,7 +159,7 @@ export default function SignInPage() {
               </Form.Field>
             </Card.Body>
             <Divider className="my-2" />
-            <Card.Footer className="flex-col gap-3 py-6 px-6">
+            <Card.Footer className="flex-col gap-3 px-6 py-6">
               <Button
                 color="primary"
                 type="submit"

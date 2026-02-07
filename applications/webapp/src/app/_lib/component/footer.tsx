@@ -15,7 +15,7 @@ const messages = defineMessages({
  */
 export function Footer() {
   return (
-    <footer className="bg-content1 text-center text-neutral-400 text-sm border-t border-divider">
+    <footer className="bg-content1 border-divider border-t text-center text-sm text-neutral-400">
       <a href="https://github.com/leonfoliveira/forseti" target="_blank">
         <FormattedMessage
           {...messages.text}

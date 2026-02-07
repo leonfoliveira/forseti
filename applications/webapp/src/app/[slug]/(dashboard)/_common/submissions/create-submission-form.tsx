@@ -70,7 +70,7 @@ export function CreateSubmissionForm({
   const intl = useIntl();
 
   return (
-    <Card className="max-w-4xl w-full mb-6 mx-auto" data-testid="create-form">
+    <Card className="mx-auto mb-6 w-full max-w-4xl" data-testid="create-form">
       <Card.Header>
         <h3 className="text-lg font-semibold" data-testid="create-form-title">
           <FormattedMessage {...messages.createTitle} />

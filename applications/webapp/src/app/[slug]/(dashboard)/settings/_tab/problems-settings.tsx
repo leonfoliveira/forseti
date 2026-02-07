@@ -121,10 +121,10 @@ export function ProblemsSettings({ form, isOpen }: Props) {
     >
       {/* Header Section */}
       <div className="space-y-2">
-        <h3 className="text-lg font-semibold text-foreground/90">
+        <h3 className="text-foreground/90 text-lg font-semibold">
           <FormattedMessage {...messages.problemsSectionTitle} />
         </h3>
-        <p className="text-sm text-foreground/60 mt-1">
+        <p className="text-foreground/60 mt-1 text-sm">
           <FormattedMessage {...messages.problemsSectionSubtitle} />
         </p>
       </div>
@@ -136,18 +136,18 @@ export function ProblemsSettings({ form, isOpen }: Props) {
             <Card key={problem.id} data-testid="problem">
               {/* Problem Header */}
               <Card.Header>
-                <div className="flex items-center justify-between mb-6">
+                <div className="mb-6 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Chip
                       color="primary"
                       variant="flat"
-                      className="font-semibold text-lg px-4 py-2"
+                      className="px-4 py-2 text-lg font-semibold"
                       data-testid="problem-index"
                     >
                       {String.fromCharCode(65 + index)}
                     </Chip>
-                    <div className="h-6 w-px bg-divider" />
-                    <span className="text-sm text-foreground/60">
+                    <div className="bg-divider h-6 w-px" />
+                    <span className="text-foreground/60 text-sm">
                       <FormattedMessage {...messages.problemHeaderSubtitle} />
                     </span>
                   </div>
@@ -160,7 +160,7 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                     onPress={() => remove(index)}
                     data-testid="remove-problem"
                   >
-                    <TrashIcon className="w-4 h-4" />
+                    <TrashIcon className="h-4 w-4" />
                   </Button>
                 </div>
               </Card.Header>
@@ -179,7 +179,7 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                   </Form.Field>
 
                   {/* File Uploads Section */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <div className="space-y-2">
                       <Form.Field
                         form={form}
@@ -285,12 +285,12 @@ export function ProblemsSettings({ form, isOpen }: Props) {
 
                   {/* Constraints Section */}
                   <div className="space-y-4">
-                    <h4 className="text-base font-semibold text-foreground/80 border-b border-divider pb-2">
+                    <h4 className="text-foreground/80 border-divider border-b pb-2 text-base font-semibold">
                       <FormattedMessage
                         {...messages.executionConstraintsTitle}
                       />
                     </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                       <Form.Field
                         form={form}
                         name={`problems.${index}.timeLimit`}
@@ -306,7 +306,7 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                           }
                           step={500}
                           endContent={
-                            <span className="text-sm text-foreground/60">
+                            <span className="text-foreground/60 text-sm">
                               ms
                             </span>
                           }
@@ -327,7 +327,7 @@ export function ProblemsSettings({ form, isOpen }: Props) {
                           }
                           step={512}
                           endContent={
-                            <span className="text-sm text-foreground/60">
+                            <span className="text-foreground/60 text-sm">
                               MB
                             </span>
                           }
@@ -344,7 +344,7 @@ export function ProblemsSettings({ form, isOpen }: Props) {
             className="self-center"
             color="primary"
             variant="bordered"
-            startContent={<PlusIcon className="w-5 h-5" />}
+            startContent={<PlusIcon className="h-5 w-5" />}
             onPress={() =>
               append({ timeLimit: "1000", memoryLimit: "1024" } as any)
             }
@@ -359,15 +359,15 @@ export function ProblemsSettings({ form, isOpen }: Props) {
           className="flex flex-col items-center justify-center py-16 text-center"
           data-testid="empty"
         >
-          <h4 className="text-lg font-semibold text-foreground/80 mb-2">
+          <h4 className="text-foreground/80 mb-2 text-lg font-semibold">
             <FormattedMessage {...messages.emptyStateTitle} />
           </h4>
-          <p className="text-sm text-foreground/60 mb-6 max-w-md">
+          <p className="text-foreground/60 mb-6 max-w-md text-sm">
             <FormattedMessage {...messages.emptyStateDescription} />
           </p>
           <Button
             color="primary"
-            startContent={<PlusIcon className="w-5 h-5" />}
+            startContent={<PlusIcon className="h-5 w-5" />}
             onPress={() =>
               append({ timeLimit: "1000", memoryLimit: "1024" } as any)
             }

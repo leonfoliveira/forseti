@@ -41,9 +41,9 @@ export default async function ContestLayout({
           contestMetadata,
         }}
       >
-        <div className="flex flex-col min-h-screen">
+        <div className="flex min-h-screen flex-col">
           <Header />
-          <div className="flex-1 flex flex-col">{children}</div>
+          <div className="flex flex-1 flex-col">{children}</div>
           <Footer />
         </div>
       </StoreProvider>

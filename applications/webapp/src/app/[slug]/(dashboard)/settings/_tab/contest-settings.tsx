@@ -211,11 +211,11 @@ export function ContestSettings({ contest, form, isOpen }: Props) {
     >
       {/* Basic Information Section */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-foreground/90 border-b border-divider pb-2">
+        <h3 className="text-foreground/90 border-divider border-b pb-2 text-lg font-semibold">
           <FormattedMessage {...messages.basicInformationSection} />
         </h3>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <Form.Field form={form} name="slug">
             <Input
               label={<FormattedMessage {...messages.slugLabel} />}
@@ -232,7 +232,7 @@ export function ContestSettings({ contest, form, isOpen }: Props) {
           </Form.Field>
         </div>
 
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <Form.Field form={form} name="startAt">
             <DatePicker
               label={<FormattedMessage {...messages.startLabel} />}
@@ -255,7 +255,7 @@ export function ContestSettings({ contest, form, isOpen }: Props) {
 
       {/* Contest Configuration Section */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-foreground/90 border-b border-divider pb-2">
+        <h3 className="text-foreground/90 border-divider border-b pb-2 text-lg font-semibold">
           <FormattedMessage {...messages.contestConfigurationSection} />
         </h3>
 
@@ -298,14 +298,14 @@ export function ContestSettings({ contest, form, isOpen }: Props) {
       <div className="space-y-6">
         <Divider />
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground/90">
+          <h3 className="text-foreground/90 text-lg font-semibold">
             <FormattedMessage {...messages.controlSection} />
           </h3>
-          <p className="text-sm text-foreground/60">
+          <p className="text-foreground/60 text-sm">
             <FormattedMessage {...messages.controlTimeSection} />
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 pt-2">
+          <div className="flex flex-col gap-4 pt-2 sm:flex-row">
             <Button
               color="warning"
               size="md"

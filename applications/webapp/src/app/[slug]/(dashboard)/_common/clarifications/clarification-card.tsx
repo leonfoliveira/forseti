@@ -44,20 +44,20 @@ export function ClarificationCard({
   return (
     <Card
       key={clarification.id}
-      className="max-w-4xl w-full"
+      className="w-full max-w-4xl"
       data-testid="clarification"
     >
       <Card.Body>
-        <div className="w-full flex justify-between">
+        <div className="flex w-full justify-between">
           <div>
             <p
-              className="font-semibold text-sm"
+              className="text-sm font-semibold"
               data-testid="clarification-member-name"
             >
               {clarification.member.name}
             </p>
             <p
-              className="text-xs text-foreground-400"
+              className="text-foreground-400 text-xs"
               data-testid="clarification-problem"
             >
               {clarification.problem ? (
@@ -74,7 +74,7 @@ export function ClarificationCard({
           </div>
           <div className="flex items-center">
             <p
-              className="text-xs text-default-400"
+              className="text-default-400 text-xs"
               data-testid="clarification-created-at"
             >
               <FormattedDateTime timestamp={clarification.createdAt} />
@@ -89,7 +89,7 @@ export function ClarificationCard({
                 className="lg:-col-end-1"
                 data-testid="delete-button"
               >
-                <TrashIcon className="w-4 h-4" />
+                <TrashIcon className="h-4 w-4" />
               </Button>
             )}
           </div>
@@ -113,11 +113,11 @@ export function ClarificationCard({
         <>
           <Divider />
           <Card.Footer>
-            <div className="w-full flex flex-col">
-              <div className="w-full flex justify-between">
+            <div className="flex w-full flex-col">
+              <div className="flex w-full justify-between">
                 <div>
                   <p
-                    className="font-semibold text-sm"
+                    className="text-sm font-semibold"
                     data-testid="answer-member-name"
                   >
                     <FormattedMessage
@@ -129,7 +129,7 @@ export function ClarificationCard({
                   </p>
                 </div>
                 <p
-                  className="text-xs text-default-400"
+                  className="text-default-400 text-xs"
                   data-testid="answer-created-at"
                 >
                   <FormattedDateTime

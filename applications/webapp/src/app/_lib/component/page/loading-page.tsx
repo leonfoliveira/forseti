@@ -18,7 +18,7 @@ export function LoadingPage() {
   const intl = useIntl();
 
   return (
-    <div className="h-dvh flex justify-center items-center">
+    <div className="flex h-dvh items-center justify-center">
       <CircularProgress
         data-testid="spinner"
         size="lg"

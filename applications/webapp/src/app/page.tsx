@@ -28,7 +28,7 @@ export default function HomePage() {
         title={messages.pageTitle}
         description={messages.pageDescription}
       />
-      <div className="h-screen flex justify-center items-center">
+      <div className="flex h-screen items-center justify-center">
         <Image
           src="/icon.png"
           alt="Logo of forseti"
