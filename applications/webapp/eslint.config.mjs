@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
 import formatjs from "eslint-plugin-formatjs";
 import importPlugin from "eslint-plugin-import";
+import prettierPlugin from "eslint-plugin-prettier";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -19,6 +20,7 @@ const eslintConfig = [
     plugins: {
       import: importPlugin,
       formatjs,
+      prettier: prettierPlugin,
     },
     rules: {
       "react-hooks/exhaustive-deps": "off",
@@ -27,6 +29,7 @@ const eslintConfig = [
       "formatjs/no-literal-string-in-jsx": "off",
       "formatjs/enforce-description": "off",
       "formatjs/enforce-id": "error",
+      "prettier/prettier": "error",
       "import/order": [
         "error",
         {
