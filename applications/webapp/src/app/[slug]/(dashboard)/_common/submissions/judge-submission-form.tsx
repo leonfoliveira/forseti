@@ -3,7 +3,7 @@ import { UseFormReturn } from "react-hook-form";
 import { SubmissionJudgeFormType } from "@/app/[slug]/(dashboard)/_common/_form/submission-judge-form";
 import { Form } from "@/app/_lib/component/base/form/form";
 import { Select } from "@/app/_lib/component/base/form/select";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { useIntl } from "@/app/_lib/util/intl-hook";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { globalMessages } from "@/i18n/global";

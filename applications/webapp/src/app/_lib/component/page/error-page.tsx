@@ -2,7 +2,7 @@ import { ArrowPathRoundedSquareIcon } from "@heroicons/react/24/solid";
 import React from "react";
 
 import { Button } from "@/app/_lib/component/base/form/button";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({

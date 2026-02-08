@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 
 import { Tabs } from "@/app/_lib/component/base/navigation/tabs";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { DashboardProvider } from "@/app/_lib/provider/dashboard-provider";
 import { useAppSelector } from "@/app/_store/store";
 import { routes } from "@/config/routes";

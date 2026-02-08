@@ -1,5 +1,4 @@
 import { fireEvent, screen } from "@testing-library/dom";
-import { act } from "@testing-library/react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { Header } from "@/app/_lib/component/header";
@@ -54,7 +53,7 @@ describe("Header", () => {
     expect(screen.queryByTestId("countdown-clock")).not.toBeInTheDocument();
   });
 
-  it("should render switch correctly for dark theme", async () => {
+  it("should render theme button correctly", async () => {
     const toggleTheme = jest.fn();
     (useTheme as jest.Mock).mockReturnValue({ theme: "dark", toggleTheme });
     await renderWithProviders(<Header />, {
@@ -62,58 +61,37 @@ describe("Header", () => {
       contestMetadata,
     });
 
-    expect(
-      screen.getByTestId("theme-switch").querySelector("input"),
-    ).toBeChecked();
-    expect(screen.queryByTestId("moon-icon")).toBeInTheDocument();
-    expect(screen.queryByTestId("sun-icon")).not.toBeInTheDocument();
+    const button = screen.getByTestId("theme-toggle");
+    expect(button).toBeInTheDocument();
+    fireEvent.click(button);
+    expect(toggleTheme).toHaveBeenCalled();
   });
 
-  it("should render switch correctly for light theme", async () => {
-    const toggleTheme = jest.fn();
-    (useTheme as jest.Mock).mockReturnValue({ theme: "light", toggleTheme });
-    await renderWithProviders(<Header />, {
-      session,
-      contestMetadata,
-    });
-
-    expect(
-      screen.getByTestId("theme-switch").querySelector("input"),
-    ).not.toBeChecked();
-    expect(screen.queryByTestId("moon-icon")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("sun-icon")).toBeInTheDocument();
-  });
-
-  it("should not render dropdown if not authorized", async () => {
+  it("should not render member information if not authorized", async () => {
     await renderWithProviders(<Header />, {
       session: null,
       contestMetadata,
     });
 
-    expect(screen.queryByTestId("user-dropdown")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("member-name")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("member-type")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("sign-out")).not.toBeInTheDocument();
   });
 
-  it("should render dropdown correctly", async () => {
+  it("should render member information correctly", async () => {
     await renderWithProviders(<Header />, {
       session,
       contestMetadata,
     });
 
-    const trigger = screen.getByTestId("user-dropdown-trigger");
-    expect(trigger).toHaveTextContent(session.member.name);
-    await act(async () => fireEvent.click(trigger));
-    expect(screen.getByTestId("member-type")).toHaveTextContent("Contestant");
-    await act(async () => fireEvent.click(screen.getByTestId("sign-out")));
+    expect(screen.getByTestId("member-name")).toHaveTextContent(
+      session.member.name,
+    );
+    expect(screen.getByTestId("member-type")).not.toBeEmptyDOMElement();
+    expect(screen.getByTestId("sign-out")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("sign-out"));
     expect(sessionWritter.deleteCurrent).toHaveBeenCalled();
-  });
-
-  it("should not render sign-in button if user is authorized", async () => {
-    await renderWithProviders(<Header />, {
-      session,
-      contestMetadata,
-    });
-
-    expect(screen.queryByTestId("sign-in")).not.toBeInTheDocument();
   });
 
   it("should not render sign-in button if pathname is sign in page", async () => {

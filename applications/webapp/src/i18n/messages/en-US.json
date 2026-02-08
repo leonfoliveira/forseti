@@ -76,10 +76,6 @@
         }
       },
       "component": {
-        "header": {
-          "sign-in": "Sign In",
-          "sign-out": "Sign Out"
-        },
         "footer": {
           "text": "Forseti {version}"
         },

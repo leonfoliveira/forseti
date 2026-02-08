@@ -8,7 +8,7 @@ import { FileInput } from "@/app/_lib/component/base/form/file-input";
 import { Form } from "@/app/_lib/component/base/form/form";
 import { Select } from "@/app/_lib/component/base/form/select";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { useIntl } from "@/app/_lib/util/intl-hook";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";

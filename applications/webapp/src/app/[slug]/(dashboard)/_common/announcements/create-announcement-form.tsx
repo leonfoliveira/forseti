@@ -6,7 +6,7 @@ import { Button } from "@/app/_lib/component/base/form/button";
 import { Form } from "@/app/_lib/component/base/form/form";
 import { Input } from "@/app/_lib/component/base/form/input";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({

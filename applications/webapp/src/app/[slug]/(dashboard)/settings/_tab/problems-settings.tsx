@@ -11,7 +11,7 @@ import { FileInput } from "@/app/_lib/component/base/form/file-input";
 import { Form } from "@/app/_lib/component/base/form/form";
 import { Input } from "@/app/_lib/component/base/form/input";
 import { NumberInput } from "@/app/_lib/component/base/form/number-input";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { cls } from "@/app/_lib/util/cls";
 import { useAppSelector } from "@/app/_store/store";
 import { attachmentReader } from "@/config/composition";

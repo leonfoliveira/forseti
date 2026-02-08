@@ -4,8 +4,8 @@ import { AnswerClarificationForm } from "@/app/[slug]/(dashboard)/_common/clarif
 import { Card } from "@/app/_lib/component/base/display/card";
 import { Button } from "@/app/_lib/component/base/form/button";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
-import { FormattedDateTime } from "@/app/_lib/component/format/formatted-datetime";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { defineMessages } from "@/i18n/message";
 

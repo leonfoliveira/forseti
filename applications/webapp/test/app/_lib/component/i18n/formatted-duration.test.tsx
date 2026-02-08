@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/dom";
 
-import { FormattedDuration } from "@/app/_lib/component/format/formatted-duration";
+import { FormattedDuration } from "@/app/_lib/component/i18n/formatted-duration";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("FormattedDuration", () => {

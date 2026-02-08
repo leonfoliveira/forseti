@@ -3,7 +3,7 @@ import { ArrowDownTrayIcon } from "@heroicons/react/24/solid";
 import { Button } from "@/app/_lib/component/base/form/button";
 import { GridTable } from "@/app/_lib/component/base/table/grid-table";
 import { ProblemStatusChip } from "@/app/_lib/component/chip/problem-status-chip";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { cls } from "@/app/_lib/util/cls";
 import { attachmentReader } from "@/config/composition";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";

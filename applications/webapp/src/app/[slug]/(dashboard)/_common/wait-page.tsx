@@ -1,7 +1,7 @@
 import React from "react";
 
 import { CountdownClock } from "@/app/_lib/component/countdown-clock";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { useAppSelector } from "@/app/_store/store";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";

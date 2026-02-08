@@ -1,0 +1,22 @@
+{
+  "style": "new-york",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/app/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "rtl": false,
+  "aliases": {
+    "components": "@/app/_lib/component",
+    "utils": "@/app/_lib/util",
+    "ui": "@/app/_lib/component/shadcn",
+    "lib": "@/app/_lib",
+    "hooks": "@/app/_lib/hook"
+  },
+  "registries": {}
+}

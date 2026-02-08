@@ -17,7 +17,7 @@ import { Alert } from "@/app/_lib/component/base/feedback/alert";
 import { Button } from "@/app/_lib/component/base/form/button";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { Tabs } from "@/app/_lib/component/base/navigation/tabs";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
 import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
 import { useContestStatusWatcher } from "@/app/_lib/util/contest-status-watcher";

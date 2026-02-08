@@ -9,7 +9,7 @@ import { ClarificationCard } from "@/app/[slug]/(dashboard)/_common/clarificatio
 import { CreateClarificationForm } from "@/app/[slug]/(dashboard)/_common/clarifications/create-clarification-form";
 import { EmptyClarificationDisplay } from "@/app/[slug]/(dashboard)/_common/clarifications/empty-clarification-display";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
 import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
 import { useLoadableState } from "@/app/_lib/util/loadable-state";

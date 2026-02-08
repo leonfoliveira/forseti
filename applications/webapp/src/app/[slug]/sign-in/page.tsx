@@ -1,18 +1,27 @@
 "use client";
 
 import { joiResolver } from "@hookform/resolvers/joi";
-import React from "react";
 import { useForm } from "react-hook-form";
 
 import { SignInFormType } from "@/app/[slug]/sign-in/_form/sign-in-form";
 import { signInFormSchema } from "@/app/[slug]/sign-in/_form/sign-in-form-schema";
-import { Card } from "@/app/_lib/component/base/display/card";
-import { Button } from "@/app/_lib/component/base/form/button";
 import { Form } from "@/app/_lib/component/base/form/form";
-import { Input } from "@/app/_lib/component/base/form/input";
-import { Divider } from "@/app/_lib/component/base/layout/divider";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { AsyncButton } from "@/app/_lib/component/form/async-button";
+import { ControlledField } from "@/app/_lib/component/form/controlled-field";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
+import { Button } from "@/app/_lib/component/shadcn/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/app/_lib/component/shadcn/card";
+import { FieldSet } from "@/app/_lib/component/shadcn/field";
+import { Input } from "@/app/_lib/component/shadcn/input";
+import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useLoadableState } from "@/app/_lib/util/loadable-state";
 import { useToast } from "@/app/_lib/util/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
@@ -78,6 +87,10 @@ export default function SignInPage() {
 
   const form = useForm<SignInFormType>({
     resolver: joiResolver(signInFormSchema),
+    defaultValues: {
+      login: "",
+      password: "",
+    },
   });
 
   async function signIn(data: SignInFormType) {
@@ -113,76 +126,57 @@ export default function SignInPage() {
         title={messages.pageTitle}
         description={messages.pageDescription}
       />
-      <div className="flex flex-1 items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <Form onSubmit={form.handleSubmit(signIn)}>
-            <Card.Header className="px-6 pt-6 pb-4">
-              <div className="flex w-full flex-col items-center text-center">
-                <h2
-                  className="text-primary text-3xl font-bold"
-                  data-testid="title"
-                >
+      <div className="bg-muted flex flex-1 flex-col items-center justify-center">
+        <Form onSubmit={form.handleSubmit(signIn)} className="w-full max-w-md">
+          <FieldSet disabled={signInState.isLoading}>
+            <Card>
+              <CardHeader>
+                <CardTitle data-testid="title">
                   <FormattedMessage {...messages.title} />
-                </h2>
-                <p
-                  className="text-default-500 mt-2 text-sm"
-                  data-testid="subtitle"
-                >
+                </CardTitle>
+                <CardDescription data-testid="subtitle">
                   <FormattedMessage {...messages.subtitle} />
-                </p>
-              </div>
-            </Card.Header>
-            <Divider className="my-2" />
-            <Card.Body className="gap-4 px-6 py-6">
-              <Form.Field
-                form={form}
-                name="login"
-                onChange={() => form.clearErrors()}
-              >
-                <Input
-                  label={<FormattedMessage {...messages.loginLabel} />}
-                  size="lg"
-                  data-testid="login"
+                </CardDescription>
+              </CardHeader>
+              <Separator />
+              <CardContent className="flex flex-col gap-6">
+                <ControlledField
+                  form={form}
+                  name="login"
+                  onChange={() => form.clearErrors()}
+                  label={messages.loginLabel}
+                  field={<Input data-testid="login" />}
                 />
-              </Form.Field>
-              <Form.Field
-                form={form}
-                name="password"
-                onChange={() => form.clearErrors()}
-              >
-                <Input
-                  label={<FormattedMessage {...messages.passwordLabel} />}
-                  type="password"
-                  size="lg"
-                  data-testid="password"
+                <ControlledField
+                  form={form}
+                  name="password"
+                  onChange={() => form.clearErrors()}
+                  label={messages.passwordLabel}
+                  field={<Input type="password" data-testid="password" />}
                 />
-              </Form.Field>
-            </Card.Body>
-            <Divider className="my-2" />
-            <Card.Footer className="flex-col gap-3 px-6 py-6">
-              <Button
-                color="primary"
-                type="submit"
-                isLoading={signInState.isLoading}
-                size="lg"
-                fullWidth
-                data-testid="sign-in"
-              >
-                <FormattedMessage {...messages.signIn} />
-              </Button>
-              <Button
-                color="primary"
-                variant="bordered"
-                size="lg"
-                fullWidth
-                onPress={enterAsGuest}
-                data-testid="enter-guest"
-              >
-                <FormattedMessage {...messages.enterGuestLabel} />
-              </Button>
-            </Card.Footer>
-          </Form>
-        </Card>
+              </CardContent>
+              <Separator />
+              <CardFooter className="flex flex-col gap-2">
+                <AsyncButton
+                  type="submit"
+                  className="w-full"
+                  data-testid="sign-in"
+                  isLoading={signInState.isLoading}
+                >
+                  <FormattedMessage {...messages.signIn} />
+                </AsyncButton>
+                <Button
+                  className="w-full"
+                  onClick={enterAsGuest}
+                  variant="outline"
+                  data-testid="enter-guest"
+                >
+                  <FormattedMessage {...messages.enterGuestLabel} />
+                </Button>
+              </CardFooter>
+            </Card>
+          </FieldSet>
+        </Form>
       </div>
     </>
   );

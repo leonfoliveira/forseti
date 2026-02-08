@@ -7,7 +7,7 @@ import { Form } from "@/app/_lib/component/base/form/form";
 import { Input } from "@/app/_lib/component/base/form/input";
 import { Select } from "@/app/_lib/component/base/form/select";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { useIntl } from "@/app/_lib/util/intl-hook";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages, Message } from "@/i18n/message";

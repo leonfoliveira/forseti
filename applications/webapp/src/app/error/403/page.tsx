@@ -1,6 +1,6 @@
 "use client";
 
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({

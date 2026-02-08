@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/dom";
 
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("FormattedMessage", () => {

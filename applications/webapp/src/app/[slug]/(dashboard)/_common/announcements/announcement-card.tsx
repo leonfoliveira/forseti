@@ -1,5 +1,5 @@
 import { Card } from "@/app/_lib/component/base/display/card";
-import { FormattedDateTime } from "@/app/_lib/component/format/formatted-datetime";
+import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 
 type Props = {

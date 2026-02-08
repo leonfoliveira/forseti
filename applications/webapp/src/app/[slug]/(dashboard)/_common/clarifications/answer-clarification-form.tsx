@@ -7,7 +7,7 @@ import { clarificationFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/
 import { Button } from "@/app/_lib/component/base/form/button";
 import { Form } from "@/app/_lib/component/base/form/form";
 import { Input } from "@/app/_lib/component/base/form/input";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { useLoadableState } from "@/app/_lib/util/loadable-state";
 import { useToast } from "@/app/_lib/util/toast-hook";
 import { clarificationWritter } from "@/config/composition";

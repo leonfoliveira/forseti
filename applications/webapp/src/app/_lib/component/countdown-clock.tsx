@@ -1,7 +1,8 @@
+import { Clock } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
-import { FormattedDuration } from "@/app/_lib/component/format/formatted-duration";
-import { cls } from "@/app/_lib/util/cls";
+import { FormattedDuration } from "@/app/_lib/component/i18n/formatted-duration";
+import { cn } from "@/app/_lib/util/cn";
 
 type Props = React.HtmlHTMLAttributes<HTMLSpanElement> & {
   to: Date;
@@ -33,14 +34,23 @@ export function CountdownClock({ to, onZero, ...props }: Props) {
     };
   }, [to]);
 
+  const isAboutToEnd = ms !== undefined && ms / 1000 / 60 < 20;
+
   return ms !== undefined ? (
-    <span
-      data-testid="clock"
-      {...props}
-      className={cls(ms / 1000 / 60 < 20 && "text-error", props.className)}
-    >
-      <FormattedDuration ms={ms} />
-    </span>
+    <>
+      <Clock
+        size={16}
+        data-icon="inline-start"
+        className={cn("mr-2", isAboutToEnd && "text-destructive")}
+      />
+      <span
+        data-testid="clock"
+        {...props}
+        className={cn(isAboutToEnd && "text-destructive", props.className)}
+      >
+        <FormattedDuration ms={ms} />
+      </span>
+    </>
   ) : (
     <span />
   );

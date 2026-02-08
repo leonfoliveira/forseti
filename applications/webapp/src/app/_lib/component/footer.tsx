@@ -1,4 +1,4 @@
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { serverConfig } from "@/config/config";
 import { defineMessages } from "@/i18n/message";
 
@@ -15,15 +15,15 @@ const messages = defineMessages({
  */
 export function Footer() {
   return (
-    <footer className="bg-content1 border-divider border-t text-center text-sm text-neutral-400">
-      <a href="https://github.com/leonfoliveira/forseti" target="_blank">
+    <footer className="bg-card border-divider border-t py-1 text-center text-xs text-neutral-400">
+      <p data-testid="footer-text">
         <FormattedMessage
           {...messages.text}
           values={{
             version: serverConfig.version,
           }}
         />
-      </a>
+      </p>
     </footer>
   );
 }

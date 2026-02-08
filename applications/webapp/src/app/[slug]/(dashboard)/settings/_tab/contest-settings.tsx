@@ -9,7 +9,7 @@ import { Form } from "@/app/_lib/component/base/form/form";
 import { Input } from "@/app/_lib/component/base/form/input";
 import { Switch } from "@/app/_lib/component/base/form/switch";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
 import { cls } from "@/app/_lib/util/cls";
 import { useContestStatusWatcher } from "@/app/_lib/util/contest-status-watcher";

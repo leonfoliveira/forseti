@@ -15,7 +15,7 @@ import { JudgeSubmissionForm } from "@/app/[slug]/(dashboard)/_common/submission
 import { SubmissionRow } from "@/app/[slug]/(dashboard)/_common/submissions/submission-row";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { GridTable } from "@/app/_lib/component/base/table/grid-table";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
 import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
 import { cls } from "@/app/_lib/util/cls";

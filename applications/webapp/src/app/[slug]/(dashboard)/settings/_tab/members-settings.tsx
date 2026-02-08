@@ -9,7 +9,7 @@ import { Form } from "@/app/_lib/component/base/form/form";
 import { Input } from "@/app/_lib/component/base/form/input";
 import { Label } from "@/app/_lib/component/base/form/label";
 import { Select } from "@/app/_lib/component/base/form/select";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { cls } from "@/app/_lib/util/cls";
 import { useIntl } from "@/app/_lib/util/intl-hook";
 import { MemberType } from "@/core/domain/enumerate/MemberType";

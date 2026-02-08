@@ -5,7 +5,7 @@ import React from "react";
 
 import { LeaderboardMemberRow } from "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-member-row";
 import { GridTable } from "@/app/_lib/component/base/table/grid-table";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
 import { useAppSelector } from "@/app/_store/store";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";

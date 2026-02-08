@@ -74,7 +74,7 @@ describe("CountdownClock", () => {
     });
     const clock = screen.getByTestId("clock");
     await waitFor(() => {
-      expect(clock).toHaveClass("text-error");
+      expect(clock).toHaveClass("text-destructive");
       expect(clock).toHaveTextContent("00:19:59");
     });
   });
@@ -88,7 +88,7 @@ describe("CountdownClock", () => {
     });
     const clock = screen.getByTestId("clock");
     await waitFor(() => {
-      expect(clock).not.toHaveClass("text-error");
+      expect(clock).not.toHaveClass("text-destructive");
       expect(clock).toHaveTextContent("00:20:00");
     });
   });

@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/dom";
 
-import { FormattedDateTime } from "@/app/_lib/component/format/formatted-datetime";
+import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("FormattedDateTime", () => {
