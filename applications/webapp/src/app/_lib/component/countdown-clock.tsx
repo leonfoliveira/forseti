@@ -38,18 +38,22 @@ export function CountdownClock({ to, onZero, ...props }: Props) {
 
   return ms !== undefined ? (
     <>
-      <Clock
-        size={16}
-        data-icon="inline-start"
-        className={cn("mr-2", isAboutToEnd && "text-destructive")}
-      />
-      <span
+      <div
         data-testid="clock"
         {...props}
-        className={cn(isAboutToEnd && "text-destructive", props.className)}
+        className={cn(
+          "flex items-center gap-1",
+          isAboutToEnd && "text-destructive",
+          props.className,
+        )}
       >
+        <Clock
+          size={16}
+          data-icon="inline-start"
+          className={cn("inline", isAboutToEnd && "text-destructive")}
+        />
         <FormattedDuration ms={ms} />
-      </span>
+      </div>
     </>
   ) : (
     <span />

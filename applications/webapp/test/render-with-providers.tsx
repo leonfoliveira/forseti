@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import React from "react";
 import { Provider } from "react-redux";
 
+import { TooltipProvider } from "@/app/_lib/component/shadcn/tooltip";
 import { AppStore, makeStore, RootState } from "@/app/_store/store";
 import messages from "@/i18n/messages/en-US.json";
 
@@ -16,7 +17,9 @@ function Wrapper({ children, store }: WrapperProps) {
   return (
     <NextIntlClientProvider locale={"en-US"} messages={messages} timeZone="UTC">
       <HeroUIProvider>
-        <Provider store={store}>{children}</Provider>
+        <TooltipProvider>
+          <Provider store={store}>{children}</Provider>
+        </TooltipProvider>
       </HeroUIProvider>
     </NextIntlClientProvider>
   );

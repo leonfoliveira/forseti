@@ -3,6 +3,7 @@
 import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import { Roboto } from "next/font/google";
 
+import { TooltipProvider } from "@/app/_lib/component/shadcn/tooltip";
 import { cls } from "@/app/_lib/util/cls";
 import { useTheme } from "@/app/_lib/util/theme-hook";
 
@@ -24,7 +25,7 @@ export function Html({ children }: { children: React.ReactNode }) {
       <body className={roboto.className}>
         <HeroUIProvider>
           <ToastProvider />
-          {children}
+          <TooltipProvider>{children}</TooltipProvider>
         </HeroUIProvider>
       </body>
     </html>

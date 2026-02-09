@@ -1,4 +1,3 @@
-import { Play } from "lucide-react";
 import React from "react";
 
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
@@ -21,8 +20,7 @@ export function ContestStatusBadge({ status, ...props }: Props) {
   switch (status) {
     case ContestStatus.IN_PROGRESS:
       return (
-        <Badge data-testid="badge-in-progress" {...props} variant="outline">
-          <Play data-icon="inline-start" />
+        <Badge data-testid="badge-in-progress" {...props} variant="success">
           {text}
         </Badge>
       );

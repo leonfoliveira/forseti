@@ -27,6 +27,19 @@ describe("Header", () => {
     expect(screen.getByTestId("status")).toBeInTheDocument();
   });
 
+  it("should render countdown when contest has not started", async () => {
+    await renderWithProviders(<Header />, {
+      session,
+      contestMetadata: {
+        ...contestMetadata,
+        startAt: new Date(Date.now() + 1000 * 60 * 5).toISOString(),
+        endAt: new Date(Date.now() + 1000 * 60 * 60).toISOString(),
+      },
+    });
+
+    expect(screen.getByTestId("countdown-clock")).toBeInTheDocument();
+  });
+
   it("should render countdown when contest has started", async () => {
     await renderWithProviders(<Header />, {
       session,
@@ -40,13 +53,13 @@ describe("Header", () => {
     expect(screen.getByTestId("countdown-clock")).toBeInTheDocument();
   });
 
-  it("should not render countdown when contest has not started", async () => {
+  it("should not render countdown when contest has ended", async () => {
     await renderWithProviders(<Header />, {
       session,
       contestMetadata: {
         ...contestMetadata,
-        startAt: new Date(Date.now() + 1000 * 60 * 60).toISOString(),
-        endAt: new Date(Date.now() + 1000 * 60 * 120).toISOString(),
+        startAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+        endAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
       },
     });
 

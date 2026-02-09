@@ -76,6 +76,11 @@
         }
       },
       "component": {
+        "header": {
+          "toggleThemeTooltip": "Toggle theme",
+          "signInTooltip": "Sign in",
+          "signOutTooltip": "Sign out"
+        },
         "footer": {
           "text": "Forseti {version}"
         },

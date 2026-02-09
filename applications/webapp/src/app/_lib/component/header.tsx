@@ -9,6 +9,11 @@ import { ContestStatusBadge } from "@/app/_lib/component/display/badge/contest-s
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/app/_lib/component/shadcn/tooltip";
 import { useContestStatusWatcher } from "@/app/_lib/util/contest-status-watcher";
 import { useTheme } from "@/app/_lib/util/theme-hook";
 import { useAppSelector } from "@/app/_store/store";
@@ -16,6 +21,22 @@ import { sessionWritter } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { globalMessages } from "@/i18n/global";
+import { defineMessages } from "@/i18n/message";
+
+const messages = defineMessages({
+  toggleThemeTooltip: {
+    id: "app._lib.component.header.toggleThemeTooltip",
+    defaultMessage: "Toggle theme",
+  },
+  signInTooltip: {
+    id: "app._lib.component.header.signInTooltip",
+    defaultMessage: "Sign in",
+  },
+  signOutTooltip: {
+    id: "app._lib.component.header.signOutTooltip",
+    defaultMessage: "Sign out",
+  },
+});
 
 /**
  * Header component displayed at the top of the web application.
@@ -49,32 +70,45 @@ export function Header() {
         </div>
         <div className="-mt-1 flex flex-col items-start justify-center">
           <p className="truncate text-lg font-semibold">Forseti</p>
-          <div className="flex gap-2">
-            <p className="text-sm" data-testid="title">
-              {contestMetadata.title}
-            </p>
-            <ContestStatusBadge status={contestStatus} data-testid="status" />
-          </div>
+          <p className="text-sm" data-testid="title">
+            {contestMetadata.title}
+          </p>
         </div>
       </div>
       <div className="flex items-center justify-center">
-        {contestStatus !== ContestStatus.NOT_STARTED && (
-          <CountdownClock
-            className="font-mono text-sm"
-            to={new Date(contestMetadata.endAt)}
-            data-testid="countdown-clock"
-          />
-        )}
+        <div className="flex flex-col items-center justify-center gap-1">
+          <ContestStatusBadge status={contestStatus} data-testid="status" />
+          {contestStatus !== ContestStatus.ENDED && (
+            <CountdownClock
+              className="font-mono text-sm"
+              to={
+                new Date(
+                  contestStatus === ContestStatus.NOT_STARTED
+                    ? contestMetadata.startAt
+                    : contestMetadata.endAt,
+                )
+              }
+              data-testid="countdown-clock"
+            />
+          )}
+        </div>
       </div>
       <div className="flex items-center justify-end gap-4">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={toggleTheme}
-          data-testid="theme-toggle"
-        >
-          <SunMoon size={16} />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={toggleTheme}
+              data-testid="theme-toggle"
+            >
+              <SunMoon size={16} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <FormattedMessage {...messages.toggleThemeTooltip} />
+          </TooltipContent>
+        </Tooltip>
         {isAuthorized && (
           <>
             <Separator orientation="vertical" className="!h-8" />
@@ -91,27 +125,41 @@ export function Header() {
                 />
               </p>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleSignOut}
-              data-testid="sign-out"
-            >
-              <LogOut size={16} />
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleSignOut}
+                  data-testid="sign-out"
+                >
+                  <LogOut size={16} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <FormattedMessage {...messages.signOutTooltip} />
+              </TooltipContent>
+            </Tooltip>
           </>
         )}
         {!isAuthorized && !isSignInPage && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              router.push(routes.CONTEST_SIGN_IN(contestMetadata.slug))
-            }
-            data-testid="sign-in"
-          >
-            <LogIn size={16} />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  router.push(routes.CONTEST_SIGN_IN(contestMetadata.slug))
+                }
+                data-testid="sign-in"
+              >
+                <LogIn size={16} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <FormattedMessage {...messages.signInTooltip} />
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
     </div>
