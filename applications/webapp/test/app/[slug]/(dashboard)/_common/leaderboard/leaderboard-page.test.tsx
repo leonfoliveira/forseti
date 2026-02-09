@@ -20,10 +20,10 @@ describe("LeaderboardPage", () => {
     );
 
     expect(document.title).toBe("Forseti - Leaderboard");
-    expect(screen.getByTestId("member-index")).toHaveTextContent("1");
+    expect(screen.getByTestId("member-rank")).toHaveTextContent("1");
     expect(screen.getByTestId("member-name")).toHaveTextContent("Test User");
-    expect(screen.getByTestId("member-problem")).toHaveTextContent("60 (+1)");
     expect(screen.getByTestId("member-score")).toHaveTextContent("100");
     expect(screen.getByTestId("member-penalty")).toHaveTextContent("60");
+    expect(screen.getByTestId("member-problem")).toHaveTextContent("60 (+1)");
   });
 });

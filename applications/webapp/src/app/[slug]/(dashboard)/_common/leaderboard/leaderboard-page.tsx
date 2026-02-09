@@ -1,12 +1,21 @@
 "use client";
 
-import { ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
+import { ArrowDown01, Award } from "lucide-react";
 import React from "react";
 
-import { LeaderboardMemberRow } from "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-member-row";
-import { GridTable } from "@/app/_lib/component/base/table/grid-table";
+import { ProblemStatusBadge } from "@/app/_lib/component/display/badge/problem-status-badge";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
-import { Metadata } from "@/app/_lib/component/metadata";
+import { Page } from "@/app/_lib/component/page/page";
+import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/app/_lib/component/shadcn/table";
+import { cn } from "@/app/_lib/util/cn";
 import { useAppSelector } from "@/app/_store/store";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
@@ -50,50 +59,89 @@ type Props = {
 export function LeaderboardPage({ problems, leaderboard }: Props) {
   const session = useAppSelector((state) => state.session);
 
+  function getMedal(index: number) {
+    if (index >= 12) {
+      return index + 1;
+    }
+    const color = ["text-yellow-400", "text-gray-300", "text-yellow-600"][
+      Math.floor(index / 4)
+    ];
+    return (
+      <>
+        <Award className={cn("inline h-5", color)} strokeWidth={3} />
+        {index + 1}
+      </>
+    );
+  }
+
   return (
-    <>
-      <Metadata
-        title={messages.pageTitle}
-        description={messages.pageDescription}
-      />
-      <GridTable
-        style={{
-          gridTemplateColumns:
-            problems.length > 0
-              ? `auto 1fr repeat(${problems.length}, 1fr) auto auto`
-              : "auto 1fr auto auto",
-        }}
-      >
-        <GridTable.Header>
-          <GridTable.Column>
-            # <ChevronDoubleUpIcon className="ml-2 h-3" />
-          </GridTable.Column>
-          <GridTable.Column>
-            <FormattedMessage {...messages.headerContestant} />
-          </GridTable.Column>
-          {problems.map((problem) => (
-            <GridTable.Column key={problem.id} className="justify-center">
-              {problem.letter}
-            </GridTable.Column>
-          ))}
-          <GridTable.Column className="justify-end">
-            <FormattedMessage {...messages.headerScore} />
-          </GridTable.Column>
-          <GridTable.Column className="justify-end">
-            <FormattedMessage {...messages.headerPenalty} />
-          </GridTable.Column>
-        </GridTable.Header>
-        <GridTable.Body emptyContent={<FormattedMessage {...messages.empty} />}>
-          {leaderboard.members.map((member, index) => (
-            <LeaderboardMemberRow
-              key={member.id}
-              member={member}
-              index={index}
-              isHighlighted={member.id === session?.member.id}
-            />
-          ))}
-        </GridTable.Body>
-      </GridTable>
-    </>
+    <Page title={messages.pageTitle} description={messages.pageDescription}>
+      <Card>
+        <CardContent>
+          <Table>
+            <TableHeader className="bg-content2">
+              <TableRow>
+                <TableHead>
+                  <p>
+                    <ArrowDown01
+                      className="inline h-5"
+                      data-icon="inline-start"
+                    />
+                  </p>
+                </TableHead>
+                <TableHead>
+                  <FormattedMessage {...messages.headerContestant} />
+                </TableHead>
+                <TableHead>
+                  <FormattedMessage {...messages.headerScore} />
+                </TableHead>
+                <TableHead>
+                  <FormattedMessage {...messages.headerPenalty} />
+                </TableHead>
+                {problems.map((problem) => (
+                  <TableHead key={problem.id} className="text-center">
+                    {problem.letter}
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {leaderboard.members.map((member, index) => (
+                <TableRow
+                  key={member.id}
+                  className={cn(
+                    member.id === session?.member.id && "bg-primary-50",
+                  )}
+                >
+                  <TableCell data-testid="member-rank">
+                    {getMedal(index)}
+                  </TableCell>
+                  <TableCell data-testid="member-name">{member.name}</TableCell>
+                  <TableCell data-testid="member-score">
+                    {member.score}
+                  </TableCell>
+                  <TableCell data-testid="member-penalty">
+                    {member.penalty}
+                  </TableCell>
+                  {member.problems.map((problem) => (
+                    <TableCell
+                      key={problem.id}
+                      className="text-center"
+                      data-testid="member-problem"
+                    >
+                      <ProblemStatusBadge
+                        isAccepted={problem.isAccepted}
+                        acceptedAt={problem.acceptedAt}
+                        wrongSubmissions={problem.wrongSubmissions}
+                      />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </Page>
   );
 }
