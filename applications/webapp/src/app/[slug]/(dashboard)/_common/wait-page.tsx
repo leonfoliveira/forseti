@@ -1,7 +1,8 @@
-import React from "react";
+import Image from "next/image";
 
 import { CountdownClock } from "@/app/_lib/component/countdown-clock";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
+import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useAppSelector } from "@/app/_store/store";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
@@ -25,34 +26,35 @@ export function WaitPage() {
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
 
   return (
-    <div className="flex flex-1 items-center justify-center">
+    <div className="flex flex-1 flex-col items-center justify-center gap-5">
+      <Image src="/icon.png" alt="Logo of forseti" width={100} height={100} />
+      <h1 className="text-4xl" data-testid="title">
+        {contestMetadata.title}
+      </h1>
+      <Separator className="my-3 max-w-lg" />
       <div className="text-center">
-        <h1 className="mb-5 text-5xl" data-testid="title">
-          {contestMetadata.title}
-        </h1>
-        <div>
-          <p className="font-semibold" data-testid="description">
-            <FormattedMessage {...messages.startAt} />
-          </p>
-          <p className="mt-2 text-2xl">
-            <CountdownClock
-              to={new Date(contestMetadata.startAt)}
-              data-testid="clock"
-            />
-          </p>
+        <p className="font-semibold" data-testid="description">
+          <FormattedMessage {...messages.startAt} />
+        </p>
+        <div className="flex justify-center text-lg">
+          <CountdownClock
+            to={new Date(contestMetadata.startAt)}
+            onZero={window.location.reload}
+            data-testid="clock"
+          />
         </div>
-        <div className="mt-10">
-          <p className="font-semibold" data-testid="languages">
-            <FormattedMessage {...messages.languages} />
-          </p>
-          <ul>
-            {contestMetadata.languages.map((it) => (
-              <li key={it} data-testid="language-item">
-                <FormattedMessage {...globalMessages.language[it]} />
-              </li>
-            ))}
-          </ul>
-        </div>
+      </div>
+      <div className="text-center">
+        <p className="font-semibold" data-testid="languages">
+          <FormattedMessage {...messages.languages} />
+        </p>
+        <ul className="text-md">
+          {contestMetadata.languages.map((it) => (
+            <li key={it} data-testid="language-item">
+              <FormattedMessage {...globalMessages.language[it]} />
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
