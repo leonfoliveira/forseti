@@ -1,18 +1,19 @@
-import { joiResolver } from "@hookform/resolvers/joi";
+import { Megaphone, Plus } from "lucide-react";
 import React from "react";
-import { useForm } from "react-hook-form";
 
-import { AnnouncementFormType } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form";
-import { AnnouncementFormMap } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form-map";
-import { announcementFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form-schema";
-import { AnnouncementCard } from "@/app/[slug]/(dashboard)/_common/announcements/announcement-card";
-import { CreateAnnouncementForm } from "@/app/[slug]/(dashboard)/_common/announcements/create-announcement-form";
-import { EmptyAnnouncementDisplay } from "@/app/[slug]/(dashboard)/_common/announcements/empty-announcement-display";
+import { AnnouncementsPageCard } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page-card";
+import { AnnouncementsPageForm } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page-form";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
-import { useLoadableState } from "@/app/_lib/util/loadable-state";
-import { useToast } from "@/app/_lib/util/toast-hook";
-import { announcementWritter } from "@/config/composition";
+import { Button } from "@/app/_lib/component/shadcn/button";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/app/_lib/component/shadcn/empty";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -33,9 +34,13 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.announcements.announcements-page.create-error",
     defaultMessage: "Failed to create announcement",
   },
-  empty: {
-    id: "app.[slug].(dashboard)._common.announcements.announcements-page.empty",
+  emptyTitle: {
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page.emptyTitle",
     defaultMessage: "No announcements yet",
+  },
+  emptyDescription: {
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page.emptyDescription",
+    defaultMessage: "Announcements will appear here once created.",
   },
 });
 
@@ -53,30 +58,7 @@ export function AnnouncementsPage({
   announcements,
   canCreate = false,
 }: Props) {
-  const createAnnouncementState = useLoadableState();
-  const toast = useToast();
-
-  const form = useForm<AnnouncementFormType>({
-    resolver: joiResolver(announcementFormSchema),
-    defaultValues: AnnouncementFormMap.getDefault(),
-  });
-
-  async function createAnnouncement(data: AnnouncementFormType) {
-    createAnnouncementState.start();
-    try {
-      await announcementWritter.create(
-        contestId,
-        AnnouncementFormMap.toInputDTO(data),
-      );
-      createAnnouncementState.finish();
-      form.reset();
-      toast.success(messages.createSuccess);
-    } catch (error) {
-      createAnnouncementState.fail(error, {
-        default: () => toast.error(messages.createError),
-      });
-    }
-  }
+  const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 
   return (
     <>
@@ -86,25 +68,48 @@ export function AnnouncementsPage({
       />
       <div className="flex flex-col items-center">
         {/* Create Form */}
-        {canCreate && (
+        {canCreate && isCreateFormOpen && (
           <>
-            <CreateAnnouncementForm
-              form={form}
-              onSubmit={createAnnouncement}
-              isLoading={createAnnouncementState.isLoading}
+            <AnnouncementsPageForm
+              contestId={contestId}
+              onClose={() => setIsCreateFormOpen(false)}
             />
-            <Divider className="mb-5" />
           </>
         )}
+        {canCreate && !isCreateFormOpen && (
+          <Button
+            className="mb-5"
+            onClick={() => setIsCreateFormOpen(true)}
+            data-testid="open-create-form-button"
+          >
+            <Plus size={16} />
+            New Announcement
+          </Button>
+        )}
+        {canCreate && <Divider className="my-5 w-full max-w-4xl" />}
 
         {/* Empty State */}
-        {announcements.length == 0 && <EmptyAnnouncementDisplay />}
+        {announcements.length == 0 && (
+          <Empty data-testid="empty">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <Megaphone size={48} />
+              </EmptyMedia>
+              <EmptyTitle>
+                <FormattedMessage {...messages.emptyTitle} />
+              </EmptyTitle>
+            </EmptyHeader>
+            <EmptyDescription>
+              <FormattedMessage {...messages.emptyDescription} />
+            </EmptyDescription>
+          </Empty>
+        )}
 
         {/* Items */}
         {announcements.length > 0 && (
           <div className="w-full max-w-4xl space-y-5">
             {announcements.toReversed().map((announcement) => (
-              <AnnouncementCard
+              <AnnouncementsPageCard
                 key={announcement.id}
                 announcement={announcement}
               />

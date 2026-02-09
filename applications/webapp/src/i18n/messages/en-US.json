@@ -374,16 +374,20 @@
               "empty": "No announcements yet"
             },
             "create-announcement-form": {
-              "create-title": "Create Announcement",
-              "text-label": "Text",
-              "submit-label": "Submit"
+              "create-title": "Create announcement",
+              "create-description": "Write and broadcast a new announcement to all participants.",
+              "text-label": "Message",
+              "broadcast-label": "Broadcast",
+              "create-success": "Announcement created successfully",
+              "create-error": "Failed to create announcement"
             },
             "announcements-page": {
               "page-title": "Forseti - Announcements",
               "page-description": "View and create contest announcements.",
               "create-success": "Announcement created successfully",
               "create-error": "Failed to create announcement",
-              "empty": "No announcements yet"
+              "emptyTitle": "No announcements yet",
+              "emptyDescription": "Announcements will appear here once created."
             }
           },
           "_form": {
