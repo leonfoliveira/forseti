@@ -1,5 +1,5 @@
 export type ClarificationFormType = {
-  problemId?: string;
+  problemId: string;
   parentId?: string;
   text: string;
 };

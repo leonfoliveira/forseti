@@ -5,7 +5,7 @@ import { AnnouncementsPageCard } from "@/app/[slug]/(dashboard)/_common/announce
 import { AnnouncementsPageForm } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page-form";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
-import { Metadata } from "@/app/_lib/component/metadata";
+import { Page } from "@/app/_lib/component/page/page";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import {
   Empty,
@@ -25,6 +25,10 @@ const messages = defineMessages({
   pageDescription: {
     id: "app.[slug].(dashboard)._common.announcements.announcements-page.page-description",
     defaultMessage: "View and create contest announcements.",
+  },
+  newLabel: {
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page.new-label",
+    defaultMessage: "New Announcement",
   },
   createSuccess: {
     id: "app.[slug].(dashboard)._common.announcements.announcements-page.create-success",
@@ -61,20 +65,14 @@ export function AnnouncementsPage({
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 
   return (
-    <>
-      <Metadata
-        title={messages.pageTitle}
-        description={messages.pageDescription}
-      />
+    <Page title={messages.pageTitle} description={messages.pageDescription}>
       <div className="flex flex-col items-center">
         {/* Create Form */}
         {canCreate && isCreateFormOpen && (
-          <>
-            <AnnouncementsPageForm
-              contestId={contestId}
-              onClose={() => setIsCreateFormOpen(false)}
-            />
-          </>
+          <AnnouncementsPageForm
+            contestId={contestId}
+            onClose={() => setIsCreateFormOpen(false)}
+          />
         )}
         {canCreate && !isCreateFormOpen && (
           <Button
@@ -83,7 +81,7 @@ export function AnnouncementsPage({
             data-testid="open-create-form-button"
           >
             <Plus size={16} />
-            New Announcement
+            <FormattedMessage {...messages.newLabel} />
           </Button>
         )}
         {canCreate && <Divider className="my-5 w-full max-w-4xl" />}
@@ -117,6 +115,6 @@ export function AnnouncementsPage({
           </div>
         )}
       </div>
-    </>
+    </Page>
   );
 }

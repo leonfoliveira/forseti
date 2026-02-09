@@ -39,6 +39,10 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.announcements.create-announcement-form.text-label",
     defaultMessage: "Message",
   },
+  cancelLabel: {
+    id: "app.[slug].(dashboard)._common.announcements.create-announcement-form.cancel-label",
+    defaultMessage: "Cancel",
+  },
   broadcastLabel: {
     id: "app.[slug].(dashboard)._common.announcements.create-announcement-form.broadcast-label",
     defaultMessage: "Broadcast",
@@ -112,7 +116,7 @@ export function AnnouncementsPageForm({ contestId, onClose }: Props) {
                 onClick={onClose}
                 data-testid="announcement-form-cancel"
               >
-                Cancel
+                <FormattedMessage {...messages.cancelLabel} />
               </Button>
               <AsyncButton
                 type="submit"

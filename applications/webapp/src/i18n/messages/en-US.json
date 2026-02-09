@@ -338,56 +338,57 @@
             "empty-clarification-display": {
               "empty": "No clarifications yet"
             },
-            "create-clarification-form": {
+            "clarifications-page-form": {
               "create-title": "Create Clarification",
-              "text-label": "Text",
-              "problem-label": "Problem (optional)",
+              "create-description": "Submit a new clarification request for a contest problem or a general question.",
+              "text-label": "Message",
+              "problem-label": "Problem",
               "problem-option": "{letter}. {title}",
-              "submit-label": "Submit"
-            },
-            "clarification-card": {
-              "header-problem": "Problem {letter}",
-              "header-general": "General",
-              "answer-label": "Answer",
-              "header-answer": "Re: {judge}"
-            },
-            "answer-clarification-form": {
+              "problem-none": "None (General question)",
+              "cancel-label": "Cancel",
+              "submit-label": "Submit",
               "create-success": "Clarification created successfully",
-              "create-error": "Failed to create clarification",
-              "answer-label": "Answer"
+              "create-error": "Failed to create clarification"
+            },
+            "clarifications-page-card": {
+              "header-problem": "Problem {letter}",
+              "message-label": "Message",
+              "answer-label": "Answer",
+              "create-success": "Clarification answered successfully",
+              "create-error": "Failed to answer clarification",
+              "delete-alert-title": "Are you absolutely sure?",
+              "delete-alert-description": "This action cannot be undone. This will permanently delete the clarification.",
+              "delete-alert-cancel": "Cancel",
+              "delete-alert-continue": "Continue",
+              "delete-success": "Clarification deleted successfully",
+              "delete-error": "Failed to delete clarification"
             }
           },
           "clarifications-page": {
             "page-title": "Forseti - Clarifications",
             "page-description": "View and request clarifications for contest problems.",
-            "create-success": "Clarification created successfully",
-            "create-error": "Failed to create clarification",
-            "delete-success": "Clarification deleted successfully",
-            "delete-error": "Failed to delete clarification",
-            "delete-title": "Delete Clarification",
-            "delete-confirm-label": "Are you sure you want to delete this clarification?",
-            "delete-cancel": "No, Cancel",
-            "delete-confirm": "Yes, Delete"
+            "new-label": "New Clarification",
+            "emptyTitle": "No clarifications yet",
+            "emptyDescription": "Clarifications will appear here once requested."
           },
           "announcements": {
-            "empty-announcement-display": {
-              "empty": "No announcements yet"
+            "announcements-page": {
+              "page-title": "Forseti - Announcements",
+              "page-description": "View and create contest announcements.",
+              "new-label": "New Announcement",
+              "create-success": "Announcement created successfully",
+              "create-error": "Failed to create announcement",
+              "emptyTitle": "No announcements yet",
+              "emptyDescription": "Announcements will appear here once created."
             },
             "create-announcement-form": {
               "create-title": "Create announcement",
               "create-description": "Write and broadcast a new announcement to all participants.",
               "text-label": "Message",
+              "cancel-label": "Cancel",
               "broadcast-label": "Broadcast",
               "create-success": "Announcement created successfully",
               "create-error": "Failed to create announcement"
-            },
-            "announcements-page": {
-              "page-title": "Forseti - Announcements",
-              "page-description": "View and create contest announcements.",
-              "create-success": "Announcement created successfully",
-              "create-error": "Failed to create announcement",
-              "emptyTitle": "No announcements yet",
-              "emptyDescription": "Announcements will appear here once created."
             }
           },
           "_form": {
@@ -401,6 +402,7 @@
               "code-too-large": "Code file must be at most 10MB"
             },
             "clarification-form-schema": {
+              "problem-required": "Required",
               "text-required": "Required",
               "text-long": "Cannot exceed 255 characters"
             },

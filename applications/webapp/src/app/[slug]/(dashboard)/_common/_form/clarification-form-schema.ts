@@ -3,6 +3,10 @@ import Joi from "joi";
 import { defineMessages } from "@/i18n/message";
 
 export const messages = defineMessages({
+  problemRequired: {
+    id: "app.[slug].(dashboard)._common._form.clarification-form-schema.problem-required",
+    defaultMessage: "Required",
+  },
   textRequired: {
     id: "app.[slug].(dashboard)._common._form.clarification-form-schema.text-required",
     defaultMessage: "Required",
@@ -14,7 +18,10 @@ export const messages = defineMessages({
 });
 
 export const clarificationFormSchema = Joi.object({
-  problemId: Joi.string().allow("").optional(),
+  problemId: Joi.string().required().messages({
+    "any.required": messages.problemRequired.id,
+    "string.empty": messages.problemRequired.id,
+  }),
   parentId: Joi.string().allow("").optional(),
   text: Joi.string().required().max(255).messages({
     "any.required": messages.textRequired.id,

@@ -11,33 +11,30 @@ type Props = {
 export function AnnouncementsPageCard({ announcement }: Props) {
   return (
     <Card
-      key={announcement.id}
       className="border-l-warning border-l-4"
       data-testid="announcement-card"
     >
       <CardContent>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
           <Megaphone size={24} />
           <div>
-            <div className="">
-              <p
-                className="text-sm font-semibold"
-                data-testid="announcement-member-name"
-              >
-                {announcement.member.name}
-              </p>
-              <p
-                className="text-default-400 text-xs"
-                data-testid="announcement-created-at"
-              >
-                <FormattedDateTime timestamp={announcement.createdAt} />
-              </p>
-            </div>
-            <p className="mt-3" data-testid="announcement-text">
-              {announcement.text}
+            <p
+              className="text-sm font-semibold"
+              data-testid="announcement-member-name"
+            >
+              {announcement.member.name}
+            </p>
+            <p
+              className="text-default-400 text-xs"
+              data-testid="announcement-created-at"
+            >
+              <FormattedDateTime timestamp={announcement.createdAt} />
             </p>
           </div>
         </div>
+        <p className="mt-3" data-testid="announcement-text">
+          {announcement.text}
+        </p>
       </CardContent>
     </Card>
   );

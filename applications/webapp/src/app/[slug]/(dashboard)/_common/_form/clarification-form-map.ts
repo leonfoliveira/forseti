@@ -7,7 +7,7 @@ export class ClarificationFormMap {
   ): CreateClarificationRequestDTO {
     return {
       parentId: !!data.parentId ? data.parentId : undefined,
-      problemId: !!data.problemId ? data.problemId : undefined,
+      problemId: data.problemId === "__none__" ? undefined : data.problemId,
       text: data.text,
     };
   }
@@ -15,7 +15,7 @@ export class ClarificationFormMap {
   static getDefault(): ClarificationFormType {
     return {
       parentId: undefined,
-      problemId: undefined,
+      problemId: "",
       text: "",
     };
   }
