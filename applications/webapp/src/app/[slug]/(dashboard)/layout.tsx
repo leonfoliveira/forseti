@@ -2,8 +2,8 @@
 
 import { usePathname, useRouter } from "next/navigation";
 
-import { Tabs } from "@/app/_lib/component/base/navigation/tabs";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
+import { Tabs, TabsList, TabsTrigger } from "@/app/_lib/component/shadcn/tabs";
 import { DashboardProvider } from "@/app/_lib/provider/dashboard-provider";
 import { useAppSelector } from "@/app/_store/store";
 import { routes } from "@/config/routes";
@@ -91,19 +91,21 @@ export default function DashboardLayout({
   return (
     <DashboardProvider>
       <Tabs
-        variant="underlined"
-        color="primary"
-        className="bg-content1"
-        selectedKey={pathname}
-        data-testid="dashboard-nav"
+        className="bg-card border-divider border-b"
+        value={pathname}
+        onValueChange={(path) => router.push(path)}
       >
-        {tabs.map((item) => (
-          <Tabs.Item
-            key={item.path}
-            title={<FormattedMessage {...item.title} />}
-            onClick={() => router.push(item.path)}
-          />
-        ))}
+        <TabsList variant="line">
+          {tabs.map((item) => (
+            <TabsTrigger
+              key={item.path}
+              value={item.path}
+              data-testid={`tab-${item.path}`}
+            >
+              <FormattedMessage {...item.title} />
+            </TabsTrigger>
+          ))}
+        </TabsList>
       </Tabs>
       <div className="mx-auto flex w-full max-w-[1920px] flex-1 flex-col xl:my-10">
         {children}
