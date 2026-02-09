@@ -320,13 +320,11 @@
             "empty": "No problems yet",
             "problem-header": "Problem",
             "time-limit-header": "Time Limit",
-            "memory-limit-header": "Memory Limit"
-          },
-          "problems": {
-            "problem-row": {
-              "time-limit": "{timeLimit}s",
-              "memory-limit": "{memoryLimit} MB"
-            }
+            "memory-limit-header": "Memory Limit",
+            "status-header": "Status",
+            "accepted": "Accepted",
+            "attempts": "{attempts} Attempts",
+            "not-attempted": "Not attempted"
           },
           "leaderboard-page": {
             "page-title": "Forseti - Leaderboard",

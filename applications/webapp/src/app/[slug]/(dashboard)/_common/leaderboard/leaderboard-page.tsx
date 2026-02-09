@@ -84,7 +84,8 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                 <TableHead>
                   <p>
                     <ArrowDown01
-                      className="inline h-5"
+                      size={16}
+                      className="inline"
                       data-icon="inline-start"
                     />
                   </p>

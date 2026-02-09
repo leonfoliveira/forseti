@@ -22,7 +22,7 @@ describe("ProblemsPage", () => {
       "Test Problem",
     );
     expect(screen.queryByTestId("problem-status")).not.toBeInTheDocument();
-    expect(screen.getByTestId("problem-download")).toBeEnabled();
+    expect(screen.getByTestId("problem-actions")).toBeEnabled();
   });
 
   it("should render variant with status", async () => {
@@ -47,8 +47,8 @@ describe("ProblemsPage", () => {
     expect(screen.getByTestId("problem-title")).toHaveTextContent(
       "Test Problem",
     );
-    expect(screen.getByTestId("problem-status")).toHaveTextContent("0");
-    expect(screen.getByTestId("problem-download")).toBeEnabled();
+    expect(screen.getByTestId("problem-status")).toHaveTextContent("Accepted");
+    expect(screen.getByTestId("problem-actions")).toBeEnabled();
   });
 
   it("should handle download problem description", async () => {

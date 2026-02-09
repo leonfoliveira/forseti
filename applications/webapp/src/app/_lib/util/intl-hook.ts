@@ -15,5 +15,6 @@ export function useIntl() {
       message: Omit<Message, "defaultMessage"> & { defaultMessage?: string },
     ) => t.rich(message.id, message.values),
     formatDateTime: format.dateTime,
+    formatNumber: format.number,
   };
 }

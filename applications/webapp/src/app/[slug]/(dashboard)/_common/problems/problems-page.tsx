@@ -1,14 +1,24 @@
 "use client";
 
-import { ChevronDoubleUpIcon } from "@heroicons/react/24/solid";
+import { ArrowDownAZ, CircleCheck, Clock, Download } from "lucide-react";
 import React from "react";
 
-import { ProblemRow } from "@/app/[slug]/(dashboard)/_common/problems/problem-row";
-import { GridTable } from "@/app/_lib/component/base/table/grid-table";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
-import { Metadata } from "@/app/_lib/component/metadata";
-import { cls } from "@/app/_lib/util/cls";
+import { FormattedNumber } from "@/app/_lib/component/i18n/formatted-number";
+import { Page } from "@/app/_lib/component/page/page";
+import { Badge } from "@/app/_lib/component/shadcn/badge";
+import { Button } from "@/app/_lib/component/shadcn/button";
+import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/app/_lib/component/shadcn/table";
 import { useAppSelector } from "@/app/_store/store";
+import { attachmentReader } from "@/config/composition";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
@@ -38,6 +48,22 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.problems-page.memory-limit-header",
     defaultMessage: "Memory Limit",
   },
+  statusHeader: {
+    id: "app.[slug].(dashboard)._common.problems-page.status-header",
+    defaultMessage: "Status",
+  },
+  accepted: {
+    id: "app.[slug].(dashboard)._common.problems-page.accepted",
+    defaultMessage: "Accepted",
+  },
+  attempts: {
+    id: "app.[slug].(dashboard)._common.problems-page.attempts",
+    defaultMessage: "{attempts} Attempts",
+  },
+  notAttempted: {
+    id: "app.[slug].(dashboard)._common.problems-page.not-attempted",
+    defaultMessage: "Not attempted",
+  },
 });
 
 type Props = {
@@ -63,50 +89,112 @@ export function ProblemsPage({
       LeaderboardResponseDTO["members"][number]["problems"][number]
     >,
   );
+  const hasStatus = contestantClassificationProblems !== undefined;
+
+  function getStatus(problemId: string) {
+    const status = problemStatus?.[problemId];
+    if (!status) return undefined;
+    if (status.isAccepted)
+      return (
+        <p className="text-success text-xs">
+          <CircleCheck size={14} className="mr-1 inline" />
+          <FormattedMessage {...messages.accepted} />
+        </p>
+      );
+    if (status.wrongSubmissions > 0)
+      return (
+        <p className="text-warning text-xs">
+          <Clock size={14} className="mr-1 inline" />
+          <FormattedMessage
+            {...messages.attempts}
+            values={{ attempts: status.wrongSubmissions }}
+          />
+        </p>
+      );
+    return (
+      <Badge variant="secondary">
+        <FormattedMessage {...messages.notAttempted} />
+      </Badge>
+    );
+  }
 
   return (
-    <>
-      <Metadata
-        title={messages.pageTitle}
-        description={messages.pageDescription}
-      />
-      <GridTable
-        className={cls(
-          problemStatus
-            ? "grid-cols-[auto_1fr_auto_auto]"
-            : "grid-cols-[auto_1fr_auto]",
-        )}
-      >
-        <GridTable.Header>
-          <GridTable.Column width={60}>
-            # <ChevronDoubleUpIcon className="ml-2 h-3" />
-          </GridTable.Column>
-          <GridTable.Column>
-            <FormattedMessage {...messages.problemHeader} />
-          </GridTable.Column>
-          <GridTable.Column>
-            <FormattedMessage {...messages.timeLimitHeader} />
-          </GridTable.Column>
-          <GridTable.Column>
-            <FormattedMessage {...messages.memoryLimitHeader} />
-          </GridTable.Column>
-          {problemStatus && <GridTable.Column> </GridTable.Column>}
-          <GridTable.Column> </GridTable.Column>
-        </GridTable.Header>
-        <GridTable.Body emptyContent={<FormattedMessage {...messages.empty} />}>
-          {problems.map((problem, index) => (
-            <ProblemRow
-              key={problem.id}
-              problem={problem}
-              index={index}
-              problemStatus={
-                problemStatus ? problemStatus[problem.id] : undefined
-              }
-              contestId={contestId}
-            />
-          ))}
-        </GridTable.Body>
-      </GridTable>
-    </>
+    <Page title={messages.pageTitle} description={messages.pageDescription}>
+      <Card>
+        <CardContent>
+          <Table>
+            <TableHeader className="bg-content2">
+              <TableRow>
+                <TableHead>
+                  <ArrowDownAZ size={16} />
+                </TableHead>
+                <TableHead>
+                  <FormattedMessage {...messages.problemHeader} />
+                </TableHead>
+                <TableHead>
+                  <FormattedMessage {...messages.timeLimitHeader} />
+                </TableHead>
+                <TableHead>
+                  <FormattedMessage {...messages.memoryLimitHeader} />
+                </TableHead>
+                {hasStatus && (
+                  <TableHead className="text-center">
+                    <FormattedMessage {...messages.statusHeader} />
+                  </TableHead>
+                )}
+                <TableHead className="text-right" />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {problems.map((problem) => (
+                <TableRow key={problem.id}>
+                  <TableCell className="font-bold" data-testid="problem-letter">
+                    {problem.letter}
+                  </TableCell>
+                  <TableCell data-testid="problem-title">
+                    {problem.title}
+                  </TableCell>
+                  <TableCell data-testid="problem-time-limit">
+                    <FormattedNumber
+                      value={problem.timeLimit / 1000}
+                      suffix="s"
+                    />
+                  </TableCell>
+                  <TableCell data-testid="problem-memory-limit">
+                    <FormattedNumber value={problem.memoryLimit} suffix=" MB" />
+                  </TableCell>
+                  {hasStatus && (
+                    <TableCell
+                      className="text-center"
+                      data-testid="problem-status"
+                    >
+                      {getStatus(problem.id)}
+                    </TableCell>
+                  )}
+                  <TableCell
+                    className="text-right"
+                    data-testid="problem-actions"
+                  >
+                    <Button
+                      size="xs"
+                      variant="default"
+                      onClick={() =>
+                        attachmentReader.download(
+                          contestId,
+                          problem.description,
+                        )
+                      }
+                      data-testid="problem-download"
+                    >
+                      <Download size={16} /> PDF
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </Page>
   );
 }
