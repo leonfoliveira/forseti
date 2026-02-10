@@ -4,11 +4,11 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { useForm } from "react-hook-form";
 
 import { SignInForm, SignInFormType } from "@/app/[slug]/sign-in/sign-in-form";
-import { Form } from "@/app/_lib/component/base/form/form";
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
+import { Form } from "@/app/_lib/component/form/form";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
-import { Metadata } from "@/app/_lib/component/metadata";
+import { Page } from "@/app/_lib/component/page/page";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import {
   Card,
@@ -117,11 +117,7 @@ export default function SignInPage() {
   }
 
   return (
-    <>
-      <Metadata
-        title={messages.pageTitle}
-        description={messages.pageDescription}
-      />
+    <Page title={messages.pageTitle} description={messages.pageDescription}>
       <div className="flex flex-1 flex-col items-center justify-center">
         <Form onSubmit={form.handleSubmit(signIn)} className="w-full max-w-md">
           <FieldSet disabled={signInState.isLoading}>
@@ -174,6 +170,6 @@ export default function SignInPage() {
           </FieldSet>
         </Form>
       </div>
-    </>
+    </Page>
   );
 }

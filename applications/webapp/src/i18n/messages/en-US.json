@@ -85,18 +85,9 @@
           "text": "Forseti {version}"
         },
         "page": {
-          "loading-page": {
-            "label": "Loading"
-          },
           "error-page": {
-            "description": "An unexpected error has occurred.",
-            "reload": "Reload the page"
-          }
-        },
-        "modal": {
-          "confirmation-modal": {
-            "cancel-label": "Cancel",
-            "confirm-label": "Confirm"
+            "description": "An unexpected error has occurred on the server.",
+            "reload": "Try again"
           }
         },
         "format": {
@@ -140,22 +131,6 @@
           "tab-settings": "Settings"
         },
         "settings": {
-          "admin-settings-page": {
-            "page-title": "Forseti - Settings",
-            "page-description": "Configure the settings for the contest.",
-            "tab-contest": "Contest",
-            "tab-problems": "Problems",
-            "tab-members": "Members",
-            "reset-label": "Reset Changes",
-            "save-label": "Save Changes",
-            "save-modal-title": "Save Changes",
-            "save-modal-body": "Are you sure you want to save these changes?",
-            "save-modal-alert-title": "Attention",
-            "save-modal-alert-body": "This action will modify contest data while the contest is in progress. This could affect participants and their submissions. Please proceed with caution.",
-            "save-success": "Changes saved successfully",
-            "save-error": "Failed to save changes",
-            "save-slug-in-use": "This slug is already in use"
-          },
           "_tab": {
             "problems-settings": {
               "section-title": "Contest Problems",
@@ -330,6 +305,12 @@
             "announcement-form-schema": {
               "text-required": "Required",
               "text-long": "Cannot exceed 255 characters"
+            }
+          },
+          "settings": {
+            "settings-page": {
+              "title": "Forseti - Settings",
+              "description": "Manage your contest settings and preferences."
             }
           },
           "problems-page": {

@@ -1,11 +1,11 @@
 "use client";
 
-import { ArrowPathRoundedSquareIcon } from "@heroicons/react/24/solid";
+import { RefreshCw } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-import { Button } from "@/app/_lib/component/base/form/button";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
+import { Button } from "@/app/_lib/component/shadcn/button";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -40,13 +40,8 @@ function Error503Content() {
         <FormattedMessage {...messages.description} />
       </h2>
       {previousPath && (
-        <Button
-          color="primary"
-          className="mt-10"
-          onPress={handleRetry}
-          data-testid="reload"
-        >
-          <ArrowPathRoundedSquareIcon width={20} />
+        <Button className="mt-10" onClick={handleRetry} data-testid="reload">
+          <RefreshCw />
           <FormattedMessage {...messages.reload} />
         </Button>
       )}

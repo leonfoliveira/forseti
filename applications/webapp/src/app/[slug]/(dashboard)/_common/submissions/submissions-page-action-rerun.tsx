@@ -1,4 +1,4 @@
-import { RefreshCcw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { useState } from "react";
 
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
@@ -85,7 +85,7 @@ export function SubmissionsPageActionRerun({ submission }: Props) {
         }}
         data-testid="submissions-page-action-rerun"
       >
-        <RefreshCcw />
+        <RefreshCw />
         <FormattedMessage {...messages.resubmitLabel} />
       </DropdownMenuItem>
 

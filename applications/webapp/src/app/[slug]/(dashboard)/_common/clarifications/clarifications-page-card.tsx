@@ -12,9 +12,9 @@ import {
   ClarificationAnswerForm,
   ClarificationAnswerFormType,
 } from "@/app/[slug]/(dashboard)/_common/clarifications/clarification-answer-form";
-import { Form } from "@/app/_lib/component/base/form/form";
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
+import { Form } from "@/app/_lib/component/form/form";
 import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import {
@@ -234,33 +234,28 @@ export function ClarificationsPageCard({
       {!!answer || canAnswer ? (
         <CardFooter>
           {!!answer && (
-            <Card
-              className="border-l-success border-l-4"
-              data-testid="clarification-answer-card"
-            >
-              <CardContent>
-                <div className="flex items-center gap-4">
-                  <MessageCircleReply size={24} />
-                  <div>
-                    <p
-                      className="text-sm font-semibold"
-                      data-testid="clarification-answer-member-name"
-                    >
-                      {answer.member.name}
-                    </p>
-                    <p
-                      className="text-default-400 text-xs"
-                      data-testid="clarification-answer-created-at"
-                    >
-                      <FormattedDateTime timestamp={answer.createdAt} />
-                    </p>
-                  </div>
+            <div className="ml-5">
+              <div className="flex items-center gap-4">
+                <MessageCircleReply size={24} />
+                <div>
+                  <p
+                    className="text-sm font-semibold"
+                    data-testid="clarification-answer-member-name"
+                  >
+                    {answer.member.name}
+                  </p>
+                  <p
+                    className="text-default-400 text-xs"
+                    data-testid="clarification-answer-created-at"
+                  >
+                    <FormattedDateTime timestamp={answer.createdAt} />
+                  </p>
                 </div>
-                <p className="mt-3" data-testid="clarification-answer-text">
-                  {answer.text}
-                </p>
-              </CardContent>
-            </Card>
+              </div>
+              <p className="mt-3" data-testid="clarification-answer-text">
+                {answer.text}
+              </p>
+            </div>
           )}
           {!answer && (
             <div className="flex-1" data-testid="clarification-answer-form">

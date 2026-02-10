@@ -6,9 +6,9 @@ import {
   ClarificationForm,
   ClarificationFormType,
 } from "@/app/[slug]/(dashboard)/_common/clarifications/clarification-form";
-import { Form } from "@/app/_lib/component/base/form/form";
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
+import { Form } from "@/app/_lib/component/form/form";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import {

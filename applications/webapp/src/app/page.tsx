@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React from "react";
 
-import { Metadata } from "@/app/_lib/component/metadata";
+import { Page } from "@/app/_lib/component/page/page";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -23,11 +23,7 @@ const messages = defineMessages({
  */
 export default function HomePage() {
   return (
-    <>
-      <Metadata
-        title={messages.pageTitle}
-        description={messages.pageDescription}
-      />
+    <Page title={messages.pageTitle} description={messages.pageDescription}>
       <div className="flex h-screen items-center justify-center">
         <Image
           src="/icon.png"
@@ -37,6 +33,6 @@ export default function HomePage() {
           data-testid="logo-image"
         />
       </div>
-    </>
+    </Page>
   );
 }

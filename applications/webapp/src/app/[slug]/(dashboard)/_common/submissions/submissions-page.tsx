@@ -7,7 +7,6 @@ import { SubmissionsPageActionDownload } from "@/app/[slug]/(dashboard)/_common/
 import { SubmissionsPageActionJudge } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-judge";
 import { SubmissionsPageActionRerun } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-rerun";
 import { SubmissionsPageForm } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-form";
-import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { SubmissionAnswerBadge } from "@/app/_lib/component/display/badge/submission-answer-chip";
 import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
@@ -35,6 +34,7 @@ import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/S
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
+import { Separator } from "@/app/_lib/component/shadcn/separator";
 
 const messages = defineMessages({
   pageTitle: {
@@ -131,7 +131,7 @@ export function SubmissionsPage({
             <FormattedMessage {...messages.newLabel} />
           </Button>
         )}
-        {canCreate && <Divider className="my-5 w-full max-w-4xl" />}
+        {canCreate && <Separator />}
 
         <Card className="w-full">
           <CardContent>

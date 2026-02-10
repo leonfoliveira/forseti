@@ -1,6 +1,6 @@
 import { act, screen, waitFor } from "@testing-library/react";
 
-import { CountdownClock } from "@/app/_lib/component/countdown-clock";
+import { CountdownClock } from "@/app/_lib/component/display/countdown-clock";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("CountdownClock", () => {

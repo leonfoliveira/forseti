@@ -4,7 +4,7 @@ import { LogOut, LogIn, SunMoon } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
-import { CountdownClock } from "@/app/_lib/component/countdown-clock";
+import { CountdownClock } from "@/app/_lib/component/display/countdown-clock";
 import { ContestStatusBadge } from "@/app/_lib/component/display/badge/contest-status-badge";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";

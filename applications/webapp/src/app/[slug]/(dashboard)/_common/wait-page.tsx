@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { CountdownClock } from "@/app/_lib/component/countdown-clock";
+import { CountdownClock } from "@/app/_lib/component/display/countdown-clock";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useAppSelector } from "@/app/_store/store";

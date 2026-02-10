@@ -6,10 +6,9 @@ import {
   AnnouncementForm,
   AnnouncementFormType,
 } from "@/app/[slug]/(dashboard)/_common/announcements/announcement-form";
-import { Form } from "@/app/_lib/component/base/form/form";
-import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
+import { Form } from "@/app/_lib/component/form/form";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import {
@@ -20,6 +19,7 @@ import {
   CardTitle,
 } from "@/app/_lib/component/shadcn/card";
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
+import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Textarea } from "@/app/_lib/component/shadcn/textarea";
 import { useLoadableState } from "@/app/_lib/util/loadable-state";
 import { useToast } from "@/app/_lib/util/toast-hook";
@@ -100,7 +100,7 @@ export function AnnouncementsPageForm({ contestId, onClose }: Props) {
           <FormattedMessage {...messages.createDescription} />
         </CardDescription>
       </CardHeader>
-      <Divider />
+      <Separator />
       <CardContent>
         <Form onSubmit={form.handleSubmit(createAnnouncement)}>
           <FieldSet disabled={createAnnouncementState.isLoading}>

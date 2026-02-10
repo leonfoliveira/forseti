@@ -4,7 +4,7 @@ import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import { Roboto } from "next/font/google";
 
 import { TooltipProvider } from "@/app/_lib/component/shadcn/tooltip";
-import { cls } from "@/app/_lib/util/cls";
+import { cn } from "@/app/_lib/util/cn";
 import { useTheme } from "@/app/_lib/util/theme-hook";
 
 const roboto = Roboto({
@@ -21,7 +21,7 @@ export function Html({ children }: { children: React.ReactNode }) {
   const { theme } = useTheme();
 
   return (
-    <html className={cls("bg-content3", theme)}>
+    <html className={cn("bg-content3", theme)}>
       <body className={roboto.className}>
         <HeroUIProvider>
           <ToastProvider />
