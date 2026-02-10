@@ -109,6 +109,12 @@
     },
     "[slug]": {
       "sign-in": {
+        "_form": {
+          "sign-in-form-schema": {
+            "login-required": "Required",
+            "password-required": "Required"
+          }
+        },
         "page": {
           "wrong-login-password": "Wrong login or password",
           "sign-in-error": "Error signing in",
@@ -121,12 +127,6 @@
           "password-label": "Password",
           "sign-in-label": "Sign in",
           "enter-guest-label": "Enter as Guest"
-        },
-        "_form": {
-          "sign-in-form-schema": {
-            "login-required": "Required",
-            "password-required": "Required"
-          }
         }
       },
       "(dashboard)": {
@@ -308,6 +308,26 @@
               "download-label": "Download"
             }
           },
+          "_form": {
+            "submission-judge-form-schema": {
+              "answer-required": "Required"
+            },
+            "submission-form-schema": {
+              "problem-required": "Required",
+              "language-required": "Required",
+              "code-required": "Required",
+              "code-too-large": "Code file must be at most 10MB"
+            },
+            "clarification-form-schema": {
+              "problem-required": "Required",
+              "text-required": "Required",
+              "text-long": "Cannot exceed 255 characters"
+            },
+            "announcement-form-schema": {
+              "text-required": "Required",
+              "text-long": "Cannot exceed 255 characters"
+            }
+          },
           "problems-page": {
             "page-title": "Forseti - Problems",
             "page-description": "View all problems for the contest.",
@@ -328,10 +348,14 @@
             "header-penalty": "Penalty",
             "empty": "No contestants yet"
           },
+          "clarifications-page": {
+            "page-title": "Forseti - Clarifications",
+            "page-description": "View and request clarifications for contest problems.",
+            "new-label": "New Clarification",
+            "emptyTitle": "No clarifications yet",
+            "emptyDescription": "Clarifications will appear here once requested."
+          },
           "clarifications": {
-            "empty-clarification-display": {
-              "empty": "No clarifications yet"
-            },
             "clarifications-page-form": {
               "create-title": "Create Clarification",
               "create-description": "Submit a new clarification request for a contest problem or a general question.",
@@ -358,13 +382,6 @@
               "delete-error": "Failed to delete clarification"
             }
           },
-          "clarifications-page": {
-            "page-title": "Forseti - Clarifications",
-            "page-description": "View and request clarifications for contest problems.",
-            "new-label": "New Clarification",
-            "emptyTitle": "No clarifications yet",
-            "emptyDescription": "Clarifications will appear here once requested."
-          },
           "announcements": {
             "announcements-page": {
               "page-title": "Forseti - Announcements",
@@ -383,26 +400,6 @@
               "broadcast-label": "Broadcast",
               "create-success": "Announcement created successfully",
               "create-error": "Failed to create announcement"
-            }
-          },
-          "_form": {
-            "submission-judge-form-schema": {
-              "answer-required": "Required"
-            },
-            "submission-form-schema": {
-              "problem-required": "Required",
-              "language-required": "Required",
-              "code-required": "Required",
-              "code-too-large": "Code file must be at most 10MB"
-            },
-            "clarification-form-schema": {
-              "problem-required": "Required",
-              "text-required": "Required",
-              "text-long": "Cannot exceed 255 characters"
-            },
-            "announcement-form-schema": {
-              "text-required": "Required",
-              "text-long": "Cannot exceed 255 characters"
             }
           }
         }

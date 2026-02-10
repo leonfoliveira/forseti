@@ -3,8 +3,10 @@ import { RefreshCcw } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { SubmissionJudgeFormType } from "@/app/[slug]/(dashboard)/_common/_form/submission-judge-form";
-import { submissionJudgeFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/submission-judge-form-schema";
+import {
+  SubmissionJudgeForm,
+  SubmissionJudgeFormType,
+} from "@/app/[slug]/(dashboard)/_common/submissions/submission-judge-form";
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { Form } from "@/app/_lib/component/form/form";
@@ -83,8 +85,8 @@ export function SubmissionsPageActionJudge({ submission }: Props) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const judgeForm = useForm<SubmissionJudgeFormType>({
-    resolver: joiResolver(submissionJudgeFormSchema),
-    defaultValues: { answer: undefined },
+    resolver: joiResolver(SubmissionJudgeForm.schema),
+    defaultValues: SubmissionJudgeForm.getDefault(),
   });
 
   async function judgeSubmission(data: SubmissionJudgeFormType) {

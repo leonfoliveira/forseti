@@ -3,9 +3,10 @@ import { Send } from "lucide-react";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 
-import { SubmissionFormType } from "@/app/[slug]/(dashboard)/_common/_form/submission-form";
-import { SubmissionFormMap } from "@/app/[slug]/(dashboard)/_common/_form/submission-form-map";
-import { submissionFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/submission-form-schema";
+import {
+  SubmissionForm,
+  SubmissionFormType,
+} from "@/app/[slug]/(dashboard)/_common/submissions/submission-form";
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { Form } from "@/app/_lib/component/form/form";
@@ -92,8 +93,8 @@ export function SubmissionsPageForm({ onClose, problems }: Props) {
   const toast = useToast();
 
   const form = useForm<SubmissionFormType>({
-    resolver: joiResolver(submissionFormSchema),
-    defaultValues: SubmissionFormMap.getDefault(),
+    resolver: joiResolver(SubmissionForm.schema),
+    defaultValues: SubmissionForm.getDefault(),
   });
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -102,7 +103,7 @@ export function SubmissionsPageForm({ onClose, problems }: Props) {
     try {
       await submissionWritter.create(
         contestMetadata.id,
-        SubmissionFormMap.toInputDTO(data),
+        SubmissionForm.toInputDTO(data),
       );
       form.reset();
       formRef.current?.reset();

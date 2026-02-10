@@ -2,9 +2,10 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { Send } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-import { ClarificationFormType } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form";
-import { ClarificationFormMap } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form-map";
-import { clarificationFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form-schema";
+import {
+  ClarificationForm,
+  ClarificationFormType,
+} from "@/app/[slug]/(dashboard)/_common/clarifications/clarification-form";
 import { Form } from "@/app/_lib/component/base/form/form";
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
@@ -93,8 +94,8 @@ export function ClarificationsPageForm({
   const createClarificationState = useLoadableState();
 
   const form = useForm<ClarificationFormType>({
-    resolver: joiResolver(clarificationFormSchema),
-    defaultValues: ClarificationFormMap.getDefault(),
+    resolver: joiResolver(ClarificationForm.schema),
+    defaultValues: ClarificationForm.getDefault(),
   });
 
   async function createClarification(data: ClarificationFormType) {
@@ -102,7 +103,7 @@ export function ClarificationsPageForm({
     try {
       await clarificationWritter.create(
         contestId,
-        ClarificationFormMap.toInputDTO(data),
+        ClarificationForm.toInputDTO(data),
       );
       createClarificationState.finish();
       form.reset();

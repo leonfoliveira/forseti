@@ -8,9 +8,10 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { ClarificationFormType } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form";
-import { ClarificationFormMap } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form-map";
-import { clarificationFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form-schema";
+import {
+  ClarificationForm,
+  ClarificationFormType,
+} from "@/app/[slug]/(dashboard)/_common/clarifications/clarification-form";
 import { Form } from "@/app/_lib/component/base/form/form";
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
@@ -107,8 +108,8 @@ export function ClarificationsPageCard({
   const toast = useToast();
 
   const form = useForm<ClarificationFormType>({
-    resolver: joiResolver(clarificationFormSchema),
-    defaultValues: ClarificationFormMap.getDefault(),
+    resolver: joiResolver(ClarificationForm.schema),
+    defaultValues: ClarificationForm.getDefault(),
   });
 
   const answer =
@@ -118,7 +119,7 @@ export function ClarificationsPageCard({
     answerClarificationState.start();
     try {
       await clarificationWritter.create(contestId, {
-        ...ClarificationFormMap.toInputDTO(data),
+        ...ClarificationForm.toInputDTO(data),
         parentId: clarification.id,
       });
       answerClarificationState.finish();

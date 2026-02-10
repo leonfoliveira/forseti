@@ -2,9 +2,10 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { Send } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-import { AnnouncementFormType } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form";
-import { AnnouncementFormMap } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form-map";
-import { announcementFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form-schema";
+import {
+  AnnouncementForm,
+  AnnouncementFormType,
+} from "@/app/[slug]/(dashboard)/_common/announcements/announcement-form";
 import { Form } from "@/app/_lib/component/base/form/form";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
@@ -67,8 +68,8 @@ export function AnnouncementsPageForm({ contestId, onClose }: Props) {
   const toast = useToast();
 
   const form = useForm<AnnouncementFormType>({
-    resolver: joiResolver(announcementFormSchema),
-    defaultValues: AnnouncementFormMap.getDefault(),
+    resolver: joiResolver(AnnouncementForm.schema),
+    defaultValues: AnnouncementForm.getDefault(),
   });
 
   async function createAnnouncement(data: AnnouncementFormType) {
@@ -76,7 +77,7 @@ export function AnnouncementsPageForm({ contestId, onClose }: Props) {
     try {
       await announcementWritter.create(
         contestId,
-        AnnouncementFormMap.toInputDTO(data),
+        AnnouncementForm.toInputDTO(data),
       );
       createAnnouncementState.finish();
       form.reset();
