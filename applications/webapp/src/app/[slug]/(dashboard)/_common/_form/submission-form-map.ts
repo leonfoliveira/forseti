@@ -3,6 +3,7 @@ import { CreateSubmissionInputDTO } from "@/core/port/driving/usecase/submission
 
 export class SubmissionFormMap {
   static toInputDTO(data: SubmissionFormType): CreateSubmissionInputDTO {
+    console.log(data);
     return {
       problemId: data.problemId,
       language: data.language,
@@ -12,9 +13,9 @@ export class SubmissionFormMap {
 
   static getDefault(): SubmissionFormType {
     return {
-      problemId: undefined,
-      language: undefined,
-      code: undefined,
+      problemId: "",
+      language: "",
+      code: "",
     } as unknown as SubmissionFormType;
   }
 }

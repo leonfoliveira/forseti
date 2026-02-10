@@ -263,55 +263,49 @@
           "submissions-page": {
             "page-title": "Forseti - Submissions",
             "page-description": "View all submissions made during the contest.",
-            "create-title": "Create Submission",
-            "problem-label": "Problem",
-            "problem-option": "{letter}. {title}",
-            "language-label": "Language",
-            "language-description": "Select the programming language used in the submission.",
-            "code-label": "Code",
-            "code-description": "Upload an uncompiled code file.",
-            "submit-label": "Submit",
-            "create-success": "Submission created successfully.",
-            "create-error": "Error creating submission.",
+            "only-mine-label": "Only mine",
             "header-timestamp": "Timestamp",
             "header-contestant": "Contestant",
             "header-problem": "Problem",
             "header-language": "Language",
             "header-answer": "Answer",
-            "header-status": "Status",
-            "empty": "No submissions yet",
-            "resubmit-title": "Resubmit Submission",
-            "resubmit-body": "Are you sure you want to resubmit this submission?",
-            "resubmit-success": "Submission resubmitted successfully.",
-            "resubmit-error": "Error resubmitting submission.",
-            "judge-title": "Judge Submission",
-            "answer-label": "Answer",
-            "judge-body": "Are you sure you want to judge this submission?",
-            "judge-success": "Submission judged successfully.",
-            "judge-error": "Error judging submission.",
-            "download-tooltip": "Download",
-            "resubmit-tooltip": "Resubmit",
-            "judge-tooltip": "Judge"
+            "actions-label": "Actions",
+            "new-label": "New Submission"
           },
           "submissions": {
-            "submission-row": {
-              "download-tooltip": "Download",
-              "resubmit-tooltip": "Resubmit",
-              "judge-tooltip": "Judge"
-            },
-            "judge-submission-form": {
-              "answer-label": "Answer",
-              "judge-body": "Are you sure you want to judge this submission?"
-            },
-            "create-submission-form": {
+            "submissions-page-form": {
               "create-title": "Create Submission",
+              "create-description": "Fill out the form below to create a new submission.",
               "problem-label": "Problem",
               "problem-option": "{letter}. {title}",
               "language-label": "Language",
-              "language-description": "Select the programming language used in the submission.",
-              "code-label": "Code",
-              "code-description": "Upload an uncompiled code file.",
-              "submit-label": "Submit"
+              "source-label": "Code",
+              "cancel-label": "Cancel",
+              "submit-label": "Submit",
+              "create-success": "Submission created successfully",
+              "create-error": "Failed to create submission"
+            },
+            "submissions-page-action-rerun": {
+              "resubmit-label": "Resubmit",
+              "title": "Are you sure you want to resubmit?",
+              "description": "This will send the submission to the judge queue again and may take some time to complete.",
+              "cancel": "Cancel",
+              "confirm": "Confirm",
+              "resubmit-success": "Submission resubmitted successfully",
+              "resubmit-error": "Failed to resubmit submission"
+            },
+            "submissions-page-action-judge": {
+              "judge-label": "Judge",
+              "title": "Are you sure you want to judge?",
+              "description": "This will override any existing answer.",
+              "cancel": "Cancel",
+              "confirm": "Confirm",
+              "judge-success": "Submission judged successfully",
+              "judge-error": "Failed to judge submission",
+              "answer-label": "Answer"
+            },
+            "submissions-page-action-download": {
+              "download-label": "Download"
             }
           },
           "problems-page": {

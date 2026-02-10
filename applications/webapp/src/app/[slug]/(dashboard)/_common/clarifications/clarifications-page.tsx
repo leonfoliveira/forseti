@@ -6,6 +6,7 @@ import { ClarificationsPageForm } from "@/app/[slug]/(dashboard)/_common/clarifi
 import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Metadata } from "@/app/_lib/component/metadata";
+import { Page } from "@/app/_lib/component/page/page";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import {
   Empty,
@@ -14,6 +15,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/app/_lib/component/shadcn/empty";
+import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
@@ -62,11 +64,7 @@ export function ClarificationsPage({
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 
   return (
-    <>
-      <Metadata
-        title={messages.pageTitle}
-        description={messages.pageDescription}
-      />
+    <Page title={messages.pageTitle} description={messages.pageDescription}>
       <div className="flex flex-col items-center">
         {/* Create Form */}
         {canCreate && isCreateFormOpen && (
@@ -86,7 +84,7 @@ export function ClarificationsPage({
             <FormattedMessage {...messages.newLabel} />
           </Button>
         )}
-        {canCreate && <Divider className="my-5 w-full max-w-4xl" />}
+        {canCreate && <Separator className="my-5 w-full max-w-4xl" />}
 
         {/* Empty State */}
         {clarifications.length == 0 && (
@@ -119,6 +117,6 @@ export function ClarificationsPage({
           </div>
         )}
       </div>
-    </>
+    </Page>
   );
 }

@@ -16,13 +16,14 @@ import {
 } from "@/app/_lib/component/shadcn/field";
 import { useIntl } from "@/app/_lib/util/intl-hook";
 import { Message } from "@/i18n/message";
+import { Input } from "@/app/_lib/component/shadcn/input";
 
 type Props<TFieldValues extends FieldValues> = {
   form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
   label: Message;
   field: React.ReactElement & { props: object };
-  onChange?: (...args: any[]) => void;
+  onChange?: (e: React.ChangeEvent) => void;
 };
 
 export function ControlledField<TFieldValues extends FieldValues>({
@@ -42,17 +43,27 @@ export function ControlledField<TFieldValues extends FieldValues>({
         const error = fieldState.error?.message;
         const errorMessage = error ? intl.formatMessage({ id: error }) : "";
 
-        const newField = React.cloneElement(field, {
+        const props = {
           ...fieldProps,
-          ...field.props,
-          ...{
-            id: name,
-            onChange: (...args: any[]) => {
-              fieldProps.onChange(...args);
-              onChange?.(...args);
-            },
+          id: name,
+          onChange: (e: any) => {
+            onChange?.(e);
+            fieldProps.onChange(e);
           },
-        });
+        };
+
+        const isFileInput =
+          field.type === Input && (field.props as any).type === "file";
+
+        if (isFileInput) {
+          delete (props as any).value;
+          props.onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            onChange?.(e);
+            fieldProps.onChange(e.target.files);
+          };
+        }
+
+        const newField = React.cloneElement(field, props);
 
         return (
           <Field>

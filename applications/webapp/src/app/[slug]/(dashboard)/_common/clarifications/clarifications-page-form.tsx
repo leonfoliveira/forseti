@@ -6,7 +6,6 @@ import { ClarificationFormType } from "@/app/[slug]/(dashboard)/_common/_form/cl
 import { ClarificationFormMap } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form-map";
 import { clarificationFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form-schema";
 import { Form } from "@/app/_lib/component/base/form/form";
-import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
@@ -27,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/_lib/component/shadcn/select";
+import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Textarea } from "@/app/_lib/component/shadcn/textarea";
 import { useLoadableState } from "@/app/_lib/util/loadable-state";
 import { useToast } from "@/app/_lib/util/toast-hook";
@@ -124,7 +124,7 @@ export function ClarificationsPageForm({
           <FormattedMessage {...messages.createDescription} />
         </CardDescription>
       </CardHeader>
-      <Divider />
+      <Separator />
       <CardContent>
         <Form onSubmit={form.handleSubmit(createClarification)}>
           <FieldSet disabled={createClarificationState.isLoading}>

@@ -8,14 +8,6 @@ import { MockClarificationResponseDTO } from "@/test/mock/response/clarification
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
-jest.mock("@/app/_lib/component/shadcn/select", () => ({
-  Select: (props: any) => (
-    <select {...props}>
-      <option value="__none__">None (General question)</option>
-    </select>
-  ),
-}));
-
 describe("ClarificationsPageForm", () => {
   const problems = [MockProblemPublicResponseDTO()];
 

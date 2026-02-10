@@ -20,7 +20,7 @@ const contestStatus = defineMessages({
   },
 });
 
-const language = defineMessages({
+const submissionLanguage = defineMessages({
   [SubmissionLanguage.CPP_17]: {
     id: "i18n.global.formatted-language.cpp_17",
     defaultMessage: "C++ 17",
@@ -102,7 +102,7 @@ const submissionStatus = defineMessages({
 
 export const globalMessages = {
   contestStatus,
-  language,
+  submissionLanguage,
   memberType,
   submissionAnswer,
   submissionStatus,

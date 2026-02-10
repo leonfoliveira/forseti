@@ -1,34 +1,40 @@
 "use client";
 
-import { ChevronDoubleDownIcon } from "@heroicons/react/24/solid";
-import { joiResolver } from "@hookform/resolvers/joi";
-import React from "react";
-import { useForm } from "react-hook-form";
+import { ArrowUp10, Funnel, Plus } from "lucide-react";
+import React, { useState } from "react";
 
-import { SubmissionFormType } from "@/app/[slug]/(dashboard)/_common/_form/submission-form";
-import { SubmissionFormMap } from "@/app/[slug]/(dashboard)/_common/_form/submission-form-map";
-import { submissionFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/submission-form-schema";
-import { SubmissionJudgeFormType } from "@/app/[slug]/(dashboard)/_common/_form/submission-judge-form";
-import { submissionJudgeFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/submission-judge-form-schema";
-import { CreateSubmissionForm } from "@/app/[slug]/(dashboard)/_common/submissions/create-submission-form";
-import { JudgeSubmissionForm } from "@/app/[slug]/(dashboard)/_common/submissions/judge-submission-form";
-import { SubmissionRow } from "@/app/[slug]/(dashboard)/_common/submissions/submission-row";
+import { SubmissionsPageActionDownload } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-download";
+import { SubmissionsPageActionJudge } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-judge";
+import { SubmissionsPageActionRerun } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-rerun";
+import { SubmissionsPageForm } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-form";
 import { Divider } from "@/app/_lib/component/base/layout/divider";
-import { GridTable } from "@/app/_lib/component/base/table/grid-table";
+import { SubmissionAnswerBadge } from "@/app/_lib/component/display/badge/submission-answer-chip";
+import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
-import { Metadata } from "@/app/_lib/component/metadata";
-import { ConfirmationModal } from "@/app/_lib/component/modal/confirmation-modal";
-import { cls } from "@/app/_lib/util/cls";
-import { useLoadableState } from "@/app/_lib/util/loadable-state";
-import { useModal } from "@/app/_lib/util/modal-hook";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { Page } from "@/app/_lib/component/page/page";
+import { Button } from "@/app/_lib/component/shadcn/button";
+import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/app/_lib/component/shadcn/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/app/_lib/component/shadcn/table";
+import { Toggle } from "@/app/_lib/component/shadcn/toggle";
 import { useAppSelector } from "@/app/_store/store";
-import { submissionWritter } from "@/config/composition";
-import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
-import { ProblemFullResponseDTO } from "@/core/port/dto/response/problem/ProblemFullResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -40,45 +46,9 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.submissions-page.page-description",
     defaultMessage: "View all submissions made during the contest.",
   },
-  createTitle: {
-    id: "app.[slug].(dashboard)._common.submissions-page.create-title",
-    defaultMessage: "Create Submission",
-  },
-  problemLabel: {
-    id: "app.[slug].(dashboard)._common.submissions-page.problem-label",
-    defaultMessage: "Problem",
-  },
-  problemOption: {
-    id: "app.[slug].(dashboard)._common.submissions-page.problem-option",
-    defaultMessage: "{letter}. {title}",
-  },
-  languageLabel: {
-    id: "app.[slug].(dashboard)._common.submissions-page.language-label",
-    defaultMessage: "Language",
-  },
-  languageDescription: {
-    id: "app.[slug].(dashboard)._common.submissions-page.language-description",
-    defaultMessage: "Select the programming language used in the submission.",
-  },
-  codeLabel: {
-    id: "app.[slug].(dashboard)._common.submissions-page.code-label",
-    defaultMessage: "Code",
-  },
-  codeDescription: {
-    id: "app.[slug].(dashboard)._common.submissions-page.code-description",
-    defaultMessage: "Upload an uncompiled code file.",
-  },
-  submitLabel: {
-    id: "app.[slug].(dashboard)._common.submissions-page.submit-label",
-    defaultMessage: "Submit",
-  },
-  createSuccess: {
-    id: "app.[slug].(dashboard)._common.submissions-page.create-success",
-    defaultMessage: "Submission created successfully.",
-  },
-  createError: {
-    id: "app.[slug].(dashboard)._common.submissions-page.create-error",
-    defaultMessage: "Error creating submission.",
+  onlyMineLabel: {
+    id: "app.[slug].(dashboard)._common.submissions-page.only-mine-label",
+    defaultMessage: "Only mine",
   },
   headerTimestamp: {
     id: "app.[slug].(dashboard)._common.submissions-page.header-timestamp",
@@ -100,68 +70,20 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.submissions-page.header-answer",
     defaultMessage: "Answer",
   },
-  headerStatus: {
-    id: "app.[slug].(dashboard)._common.submissions-page.header-status",
-    defaultMessage: "Status",
+  actionsLabel: {
+    id: "app.[slug].(dashboard)._common.submissions-page.actions-label",
+    defaultMessage: "Actions",
   },
-  empty: {
-    id: "app.[slug].(dashboard)._common.submissions-page.empty",
-    defaultMessage: "No submissions yet",
-  },
-  resubmitTitle: {
-    id: "app.[slug].(dashboard)._common.submissions-page.resubmit-title",
-    defaultMessage: "Resubmit Submission",
-  },
-  resubmitBody: {
-    id: "app.[slug].(dashboard)._common.submissions-page.resubmit-body",
-    defaultMessage: "Are you sure you want to resubmit this submission?",
-  },
-  resubmitSuccess: {
-    id: "app.[slug].(dashboard)._common.submissions-page.resubmit-success",
-    defaultMessage: "Submission resubmitted successfully.",
-  },
-  resubmitError: {
-    id: "app.[slug].(dashboard)._common.submissions-page.resubmit-error",
-    defaultMessage: "Error resubmitting submission.",
-  },
-  judgeTitle: {
-    id: "app.[slug].(dashboard)._common.submissions-page.judge-title",
-    defaultMessage: "Judge Submission",
-  },
-  answerLabel: {
-    id: "app.[slug].(dashboard)._common.submissions-page.answer-label",
-    defaultMessage: "Answer",
-  },
-  judgeBody: {
-    id: "app.[slug].(dashboard)._common.submissions-page.judge-body",
-    defaultMessage: "Are you sure you want to judge this submission?",
-  },
-  judgeSuccess: {
-    id: "app.[slug].(dashboard)._common.submissions-page.judge-success",
-    defaultMessage: "Submission judged successfully.",
-  },
-  judgeError: {
-    id: "app.[slug].(dashboard)._common.submissions-page.judge-error",
-    defaultMessage: "Error judging submission.",
-  },
-  downloadTooltip: {
-    id: "app.[slug].(dashboard)._common.submissions-page.download-tooltip",
-    defaultMessage: "Download",
-  },
-  resubmitTooltip: {
-    id: "app.[slug].(dashboard)._common.submissions-page.resubmit-tooltip",
-    defaultMessage: "Resubmit",
-  },
-  judgeTooltip: {
-    id: "app.[slug].(dashboard)._common.submissions-page.judge-tooltip",
-    defaultMessage: "Judge",
+  newLabel: {
+    id: "app.[slug].(dashboard)._common.submissions-page.new-label",
+    defaultMessage: "New Submission",
   },
 });
 
 type Props = {
   submissions: SubmissionPublicResponseDTO[] | SubmissionFullResponseDTO[];
-  problems?: ProblemPublicResponseDTO[] | ProblemFullResponseDTO[];
-  languages?: SubmissionLanguage[];
+  memberSubmissions?: SubmissionFullResponseDTO[];
+  problems: ProblemPublicResponseDTO[];
   canCreate?: boolean;
   canEdit?: boolean;
 };
@@ -171,177 +93,174 @@ type Props = {
  */
 export function SubmissionsPage({
   submissions,
+  memberSubmissions,
   problems,
-  languages,
   canCreate,
   canEdit,
 }: Props) {
-  const session = useAppSelector((state) => state.session);
   const contestId = useAppSelector((state) => state.contestMetadata.id);
-  const createState = useLoadableState();
-  const resubmitState = useLoadableState();
-  const judgeState = useLoadableState();
-  const toast = useToast();
+  const [isOnlyMine, setIsOnlyMine] = useState(false);
+  const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 
-  const resubmitModal = useModal<string>();
-  const judgeModal = useModal<string>();
-  const form = useForm<SubmissionFormType>({
-    resolver: joiResolver(submissionFormSchema),
-    defaultValues: SubmissionFormMap.getDefault(),
-  });
-  const judgeForm = useForm<SubmissionJudgeFormType>({
-    resolver: joiResolver(submissionJudgeFormSchema),
-    defaultValues: { answer: undefined },
-  });
-  const formRef = React.useRef<HTMLFormElement>(null);
+  const memberSubmissionsMap = new Map(
+    memberSubmissions?.map((s) => [s.id, s]) ?? [],
+  );
+  const mergedSubmissions = submissions.map(
+    (s) => memberSubmissionsMap.get(s.id) ?? s,
+  );
 
-  async function createSubmission(data: SubmissionFormType) {
-    createState.start();
-    try {
-      await submissionWritter.create(
-        contestId,
-        SubmissionFormMap.toInputDTO(data),
-      );
-      form.reset();
-      formRef.current?.reset();
-      toast.success(messages.createSuccess);
-      createState.finish();
-    } catch (error) {
-      createState.fail(error, {
-        default: () => toast.error(messages.createError),
-      });
-    }
-  }
-
-  async function resubmitSubmission(submissionId: string) {
-    resubmitState.start();
-    try {
-      await submissionWritter.rerun(contestId, submissionId);
-      toast.success(messages.resubmitSuccess);
-      resubmitModal.close();
-      resubmitState.finish();
-    } catch (error) {
-      resubmitState.fail(error, {
-        default: () => toast.error(messages.resubmitError),
-      });
-    }
-  }
-
-  async function judgeSubmission(
-    submissionId: string,
-    data: SubmissionJudgeFormType,
-  ) {
-    judgeState.start();
-    try {
-      await submissionWritter.updateAnswer(
-        contestId,
-        submissionId,
-        data.answer,
-      );
-      toast.success(messages.judgeSuccess);
-      judgeForm.reset();
-      judgeModal.close();
-      judgeState.finish();
-    } catch (error) {
-      judgeState.fail(error, {
-        default: () => toast.error(messages.judgeError),
-      });
-    }
-  }
+  const hasMemberSubmissions = memberSubmissions !== undefined;
+  const hasAnyAction = canEdit || hasMemberSubmissions;
 
   return (
-    <>
-      <Metadata
-        title={messages.pageTitle}
-        description={messages.pageDescription}
-      />
-      {/* Create Form */}
-      {canCreate && !!problems && !!languages && (
-        <>
-          <CreateSubmissionForm
-            form={form}
-            onCreate={createSubmission}
-            isLoading={createState.isLoading}
-            formRef={formRef}
+    <Page title={messages.pageTitle} description={messages.pageDescription}>
+      <div className="flex flex-col items-center">
+        {/* Create Form */}
+        {canCreate && isCreateFormOpen && (
+          <SubmissionsPageForm
+            onClose={() => setIsCreateFormOpen(false)}
             problems={problems}
-            languages={languages}
           />
-          <Divider className="mb-5" />
-        </>
-      )}
-
-      {/* Submission Table */}
-      <GridTable
-        className={cls(
-          canEdit
-            ? "grid-cols-[auto_1fr_repeat(5,auto)]"
-            : "grid-cols-[auto_1fr_repeat(3,auto)]",
         )}
-      >
-        <GridTable.Header>
-          <GridTable.Column>
-            <FormattedMessage {...messages.headerTimestamp} />
-            <ChevronDoubleDownIcon className="ml-2 h-3" />
-          </GridTable.Column>
-          <GridTable.Column>
-            <FormattedMessage {...messages.headerContestant} />
-          </GridTable.Column>
-          <GridTable.Column className="justify-end">
-            <FormattedMessage {...messages.headerProblem} />
-          </GridTable.Column>
-          <GridTable.Column className="justify-end">
-            <FormattedMessage {...messages.headerLanguage} />
-          </GridTable.Column>
-          <GridTable.Column className="justify-end">
-            <FormattedMessage {...messages.headerAnswer} />
-          </GridTable.Column>
-          {canEdit && (
-            <GridTable.Column>
-              <FormattedMessage {...messages.headerStatus} />
-            </GridTable.Column>
-          )}
-          {canEdit && (
-            <GridTable.Column>{/* Actions column */}</GridTable.Column>
-          )}
-        </GridTable.Header>
-        <GridTable.Body emptyContent={<FormattedMessage {...messages.empty} />}>
-          {submissions.toReversed().map((submission, index) => (
-            <SubmissionRow
-              key={submission.id}
-              submission={submission}
-              index={index}
-              isHighlighted={submission.member.id === session?.member.id}
-              canEdit={canEdit}
-              contestId={contestId}
-              onJudge={judgeModal.open}
-              onResubmit={resubmitModal.open}
-            />
-          ))}
-        </GridTable.Body>
-      </GridTable>
 
-      {/* Modals */}
-      <ConfirmationModal
-        isOpen={resubmitModal.isOpen}
-        isLoading={resubmitState.isLoading}
-        onClose={resubmitModal.close}
-        onConfirm={() => resubmitSubmission(resubmitModal.props)}
-        title={<FormattedMessage {...messages.resubmitTitle} />}
-        body={<FormattedMessage {...messages.resubmitBody} />}
-        data-testid="resubmit-modal"
-      />
-
-      <ConfirmationModal
-        isOpen={judgeModal.isOpen}
-        isLoading={judgeState.isLoading}
-        onClose={judgeModal.close}
-        onConfirm={judgeForm.handleSubmit((data) =>
-          judgeSubmission(judgeModal.props, data),
+        {canCreate && !isCreateFormOpen && (
+          <Button
+            className="mb-5"
+            onClick={() => setIsCreateFormOpen(true)}
+            data-testid="open-create-form-button"
+          >
+            <Plus size={16} />
+            <FormattedMessage {...messages.newLabel} />
+          </Button>
         )}
-        title={<FormattedMessage {...messages.judgeTitle} />}
-        body={<JudgeSubmissionForm form={judgeForm} />}
-        data-testid="judge-modal"
-      />
-    </>
+        {canCreate && <Divider className="my-5 w-full max-w-4xl" />}
+
+        <Card className="w-full">
+          <CardContent>
+            {memberSubmissions !== undefined && (
+              <div className="mb-4 flex justify-end">
+                <Toggle
+                  variant="outline"
+                  pressed={isOnlyMine}
+                  onPressedChange={setIsOnlyMine}
+                  data-testid="only-mine-toggle"
+                >
+                  <Funnel />
+                  <FormattedMessage {...messages.onlyMineLabel} />
+                </Toggle>
+              </div>
+            )}
+            <Table>
+              <TableHeader className="bg-content2">
+                <TableRow>
+                  <TableHead>
+                    <FormattedMessage {...messages.headerTimestamp} />
+                    <ArrowUp10 size={16} className="ml-1 inline" />
+                  </TableHead>
+                  <TableHead>
+                    <FormattedMessage {...messages.headerContestant} />
+                  </TableHead>
+                  <TableHead>
+                    <FormattedMessage {...messages.headerProblem} />
+                  </TableHead>
+                  <TableHead>
+                    <FormattedMessage {...messages.headerLanguage} />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <FormattedMessage {...messages.headerAnswer} />
+                  </TableHead>
+                  {hasAnyAction && <TableHead></TableHead>}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {(isOnlyMine && memberSubmissions !== undefined
+                  ? memberSubmissions.toReversed()
+                  : mergedSubmissions.toReversed()
+                ).map((submission) => (
+                  <TableRow key={submission.id}>
+                    <TableCell data-testid="submission-timestamp">
+                      <FormattedDateTime timestamp={submission.createdAt} />
+                    </TableCell>
+                    <TableCell data-testid="submission-member">
+                      {submission.member.name}
+                    </TableCell>
+                    <TableCell data-testid="submission-problem">
+                      {submission.problem.letter}
+                    </TableCell>
+                    <TableCell data-testid="submission-language">
+                      <FormattedMessage
+                        {...globalMessages.submissionLanguage[
+                          submission.language
+                        ]}
+                      />
+                    </TableCell>
+                    <TableCell
+                      className="text-right"
+                      data-testid="submission-answer"
+                    >
+                      <SubmissionAnswerBadge answer={submission.answer} />
+                    </TableCell>
+                    {hasAnyAction && (
+                      <TableCell data-testid="submission-actions">
+                        <div className="flex justify-end gap-2">
+                          {((submission as SubmissionFullResponseDTO).code ||
+                            canEdit) && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  size="xs"
+                                  variant="outline"
+                                  data-testid="submission-actions-button"
+                                >
+                                  ...
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent
+                                className="w-40"
+                                align="start"
+                              >
+                                <DropdownMenuGroup>
+                                  <DropdownMenuLabel>
+                                    <FormattedMessage
+                                      {...messages.actionsLabel}
+                                    />
+                                  </DropdownMenuLabel>
+                                  {(submission as SubmissionFullResponseDTO)
+                                    .code && (
+                                    <SubmissionsPageActionDownload
+                                      submission={
+                                        submission as SubmissionFullResponseDTO
+                                      }
+                                    />
+                                  )}
+                                  {canEdit && (
+                                    <>
+                                      <SubmissionsPageActionRerun
+                                        submission={
+                                          submission as SubmissionFullResponseDTO
+                                        }
+                                      />
+                                      <SubmissionsPageActionJudge
+                                        submission={
+                                          submission as SubmissionFullResponseDTO
+                                        }
+                                      />
+                                    </>
+                                  )}
+                                </DropdownMenuGroup>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
+                        </div>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+    </Page>
   );
 }

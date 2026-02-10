@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Badge } from "@/app/_lib/component/shadcn/badge";
+import { cn } from "@/app/_lib/util/cn";
 import { useAppSelector } from "@/app/_store/store";
 
 type Props = React.ComponentProps<typeof Badge> & {
@@ -31,15 +32,25 @@ export function ProblemStatusBadge({
         new Date(contestMetadata.startAt).getTime(),
     );
     return (
-      <Badge data-testid="badge-accepted" {...props} color="success">
+      <Badge
+        data-testid="badge-accepted"
+        variant="ghost"
+        {...props}
+        className={cn("text-success")}
+      >
         {Math.floor(diffMs / 1000 / 60)}
         {wrongSubmissions > 0 && ` (+${wrongSubmissions})`}
       </Badge>
     );
   } else if (wrongSubmissions > 0) {
     return (
-      <Badge data-testid="badge-rejected" {...props} color="danger">
-        {`(+${wrongSubmissions})`}
+      <Badge
+        data-testid="badge-rejected"
+        variant="ghost"
+        {...props}
+        className={cn("text-danger")}
+      >
+        {`+${wrongSubmissions}`}
       </Badge>
     );
   } else {

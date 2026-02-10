@@ -63,12 +63,17 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
     if (index >= 12) {
       return index + 1;
     }
-    const color = ["text-yellow-400", "text-gray-300", "text-yellow-600"][
-      Math.floor(index / 4)
-    ];
+    const color = [
+      "text-yellow-400 fill-yellow-400",
+      "text-gray-300 fill-gray-300",
+      "text-yellow-600 fill-yellow-600",
+    ][Math.floor(index / 4)];
     return (
       <>
-        <Award className={cn("inline h-5", color)} strokeWidth={3} />
+        <Award
+          className={cn("fill-foreground inline h-5", color)}
+          strokeWidth={3}
+        />
         {index + 1}
       </>
     );
@@ -82,13 +87,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
             <TableHeader className="bg-content2">
               <TableRow>
                 <TableHead>
-                  <p>
-                    <ArrowDown01
-                      size={16}
-                      className="inline"
-                      data-icon="inline-start"
-                    />
-                  </p>
+                  <ArrowDown01 size={16} />
                 </TableHead>
                 <TableHead>
                   <FormattedMessage {...messages.headerContestant} />

@@ -16,7 +16,6 @@ describe("useErrorHandler", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    console.error = jest.fn();
     (usePathname as jest.Mock).mockReturnValue(mockPath);
   });
 

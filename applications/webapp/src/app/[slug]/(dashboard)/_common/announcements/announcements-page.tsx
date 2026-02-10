@@ -3,7 +3,6 @@ import React from "react";
 
 import { AnnouncementsPageCard } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page-card";
 import { AnnouncementsPageForm } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page-form";
-import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
 import { Button } from "@/app/_lib/component/shadcn/button";
@@ -14,6 +13,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/app/_lib/component/shadcn/empty";
+import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -84,7 +84,7 @@ export function AnnouncementsPage({
             <FormattedMessage {...messages.newLabel} />
           </Button>
         )}
-        {canCreate && <Divider className="my-5 w-full max-w-4xl" />}
+        {canCreate && <Separator className="my-5 w-full max-w-4xl" />}
 
         {/* Empty State */}
         {announcements.length == 0 && (
