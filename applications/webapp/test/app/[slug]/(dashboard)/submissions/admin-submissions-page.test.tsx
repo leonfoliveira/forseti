@@ -1,6 +1,5 @@
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
 import { AdminSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/admin-submissions-page";
-import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";

@@ -14,9 +14,9 @@ import {
   FieldDescription,
   FieldLabel,
 } from "@/app/_lib/component/shadcn/field";
+import { Input } from "@/app/_lib/component/shadcn/input";
 import { useIntl } from "@/app/_lib/util/intl-hook";
 import { Message } from "@/i18n/message";
-import { Input } from "@/app/_lib/component/shadcn/input";
 
 type Props<TFieldValues extends FieldValues> = {
   form: UseFormReturn<TFieldValues>;

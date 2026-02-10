@@ -14,10 +14,10 @@ import {
   EmptyTitle,
 } from "@/app/_lib/component/shadcn/empty";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
+import { useAppSelector } from "@/app/_store/store";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
-import { useAppSelector } from "@/app/_store/store";
 
 const messages = defineMessages({
   pageTitle: {

@@ -30,7 +30,6 @@ import {
   TableRow,
 } from "@/app/_lib/component/shadcn/table";
 import { Toggle } from "@/app/_lib/component/shadcn/toggle";
-import { useAppSelector } from "@/app/_store/store";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
@@ -98,7 +97,6 @@ export function SubmissionsPage({
   canCreate,
   canEdit,
 }: Props) {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
   const [isOnlyMine, setIsOnlyMine] = useState(false);
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 
