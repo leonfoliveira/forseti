@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 
-import { ClarificationFormMap } from "@/app/[slug]/(dashboard)/_common/_form/clarification-form-map";
+import { ClarificationAnswerForm } from "@/app/[slug]/(dashboard)/_common/clarifications/clarification-answer-form";
 import { ClarificationsPageCard } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page-card";
 import { useToast } from "@/app/_lib/util/toast-hook";
 import { clarificationWritter } from "@/config/composition";
@@ -160,7 +160,12 @@ describe("ClarificationsPageCard", () => {
       });
 
       expect(clarificationWritter.create).toHaveBeenCalledWith("test-contest", {
-        ...ClarificationFormMap.toInputDTO({ text: "This is an answer" }),
+        ...ClarificationAnswerForm.toInputDTO(
+          {
+            text: "This is an answer",
+          },
+          clarification.id,
+        ),
         parentId: clarification.id,
       });
       expect(useToast().success).toHaveBeenCalled();
@@ -192,7 +197,12 @@ describe("ClarificationsPageCard", () => {
       });
 
       expect(clarificationWritter.create).toHaveBeenCalledWith("test-contest", {
-        ...ClarificationFormMap.toInputDTO({ text: "This is an answer" }),
+        ...ClarificationAnswerForm.toInputDTO(
+          {
+            text: "This is an answer",
+          },
+          clarification.id,
+        ),
         parentId: clarification.id,
       });
       expect(useToast().error).toHaveBeenCalled();

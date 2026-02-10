@@ -9,9 +9,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import {
-  ClarificationForm,
-  ClarificationFormType,
-} from "@/app/[slug]/(dashboard)/_common/clarifications/clarification-form";
+  ClarificationAnswerForm,
+  ClarificationAnswerFormType,
+} from "@/app/[slug]/(dashboard)/_common/clarifications/clarification-answer-form";
 import { Form } from "@/app/_lib/component/base/form/form";
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
@@ -107,19 +107,19 @@ export function ClarificationsPageCard({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const toast = useToast();
 
-  const form = useForm<ClarificationFormType>({
-    resolver: joiResolver(ClarificationForm.schema),
-    defaultValues: ClarificationForm.getDefault(),
+  const form = useForm<ClarificationAnswerFormType>({
+    resolver: joiResolver(ClarificationAnswerForm.schema),
+    defaultValues: ClarificationAnswerForm.getDefault(),
   });
 
   const answer =
     clarification.children.length > 0 ? clarification.children[0] : undefined;
 
-  async function answerClarification(data: ClarificationFormType) {
+  async function answerClarification(data: ClarificationAnswerFormType) {
     answerClarificationState.start();
     try {
       await clarificationWritter.create(contestId, {
-        ...ClarificationForm.toInputDTO(data),
+        ...ClarificationAnswerForm.toInputDTO(data, clarification.id),
         parentId: clarification.id,
       });
       answerClarificationState.finish();

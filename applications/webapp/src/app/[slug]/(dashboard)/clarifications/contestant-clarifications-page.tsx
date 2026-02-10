@@ -6,7 +6,6 @@ import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarificati
 import { useAppSelector } from "@/app/_store/store";
 
 export function ContestantClarificationsPage() {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
   const problems = useAppSelector(
     (state) => state.contestantDashboard.contest.problems,
   );
@@ -16,7 +15,6 @@ export function ContestantClarificationsPage() {
 
   return (
     <ClarificationsPage
-      contestId={contestId}
       problems={problems}
       clarifications={clarifications}
       canCreate

@@ -1,21 +1,21 @@
 import { fireEvent, screen } from "@testing-library/dom";
-import { v4 as uuidv4 } from "uuid";
 
 import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
+import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("AnnouncementsPage", () => {
-  const contestId = uuidv4();
+  const contestMetadata = MockContestMetadataResponseDTO();
   const announcements = [
     MockAnnouncementResponseDTO(),
     MockAnnouncementResponseDTO(),
   ];
 
   it("should render variant with no announcement", async () => {
-    await renderWithProviders(
-      <AnnouncementsPage contestId={contestId} announcements={[]} />,
-    );
+    await renderWithProviders(<AnnouncementsPage announcements={[]} />, {
+      contestMetadata,
+    });
 
     expect(document.title).toBe("Forseti - Announcements");
     expect(screen.getByTestId("empty")).toBeInTheDocument();
@@ -24,7 +24,8 @@ describe("AnnouncementsPage", () => {
 
   it("should render variant with announcements", async () => {
     await renderWithProviders(
-      <AnnouncementsPage contestId={contestId} announcements={announcements} />,
+      <AnnouncementsPage announcements={announcements} />,
+      { contestMetadata },
     );
 
     expect(document.title).toBe("Forseti - Announcements");
@@ -34,11 +35,8 @@ describe("AnnouncementsPage", () => {
 
   it("should render variant with create", async () => {
     await renderWithProviders(
-      <AnnouncementsPage
-        contestId={contestId}
-        announcements={announcements}
-        canCreate
-      />,
+      <AnnouncementsPage announcements={announcements} canCreate />,
+      { contestMetadata },
     );
 
     const createButton = screen.getByTestId("open-create-form-button");

@@ -6,16 +6,9 @@ import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcement
 import { useAppSelector } from "@/app/_store/store";
 
 export function JudgeAnnouncementsPage() {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
   const announcements = useAppSelector(
     (state) => state.judgeDashboard.contest.announcements,
   );
 
-  return (
-    <AnnouncementsPage
-      contestId={contestId}
-      announcements={announcements}
-      canCreate
-    />
-  );
+  return <AnnouncementsPage announcements={announcements} canCreate />;
 }

@@ -1,13 +1,13 @@
 import { fireEvent, screen } from "@testing-library/dom";
-import { v4 as uuidv4 } from "uuid";
 
 import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
+import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("ClarificationsPage", () => {
-  const contestId = uuidv4();
+  const contestMetadata = MockContestMetadataResponseDTO();
   const problems = [
     MockProblemPublicResponseDTO(),
     MockProblemPublicResponseDTO(),
@@ -22,11 +22,8 @@ describe("ClarificationsPage", () => {
 
   it("should render variant with no clarification", async () => {
     await renderWithProviders(
-      <ClarificationsPage
-        contestId={contestId}
-        problems={problems}
-        clarifications={[]}
-      />,
+      <ClarificationsPage problems={problems} clarifications={[]} />,
+      { contestMetadata },
     );
 
     expect(screen.queryAllByTestId("clarification-card").length).toBe(0);
@@ -36,10 +33,10 @@ describe("ClarificationsPage", () => {
   it("should render list of clarifications", async () => {
     await renderWithProviders(
       <ClarificationsPage
-        contestId={contestId}
         problems={problems}
         clarifications={clarifications}
       />,
+      { contestMetadata },
     );
 
     expect(screen.queryAllByTestId("clarification-card").length).toBe(2);
@@ -49,11 +46,11 @@ describe("ClarificationsPage", () => {
   it("should render form when canCreate is true and open form", async () => {
     await renderWithProviders(
       <ClarificationsPage
-        contestId={contestId}
         problems={problems}
         clarifications={clarifications}
         canCreate
       />,
+      { contestMetadata },
     );
 
     expect(screen.getByTestId("open-create-form-button")).toBeInTheDocument();

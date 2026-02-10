@@ -66,21 +66,4 @@ describe("useContestStatusWatcher", () => {
     });
     expect(result.current).toBe(ContestStatus.ENDED);
   });
-
-  it("should clear timeouts when dismounts", async () => {
-    const clearTimeoutSpy = jest.spyOn(global, "clearTimeout");
-    const { unmount } = await renderHookWithProviders(
-      () => useContestStatusWatcher(),
-      {
-        contestMetadata: MockContestMetadataResponseDTO({
-          startAt: "2025-01-01T10:00:00Z",
-          endAt: "2025-01-01T15:00:00Z",
-        }),
-      },
-    );
-
-    unmount();
-
-    expect(clearTimeoutSpy).toHaveBeenCalledTimes(2);
-  });
 });

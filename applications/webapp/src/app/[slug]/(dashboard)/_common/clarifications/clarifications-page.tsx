@@ -3,9 +3,7 @@ import React from "react";
 
 import { ClarificationsPageCard } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page-card";
 import { ClarificationsPageForm } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page-form";
-import { Divider } from "@/app/_lib/component/base/layout/divider";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
-import { Metadata } from "@/app/_lib/component/metadata";
 import { Page } from "@/app/_lib/component/page/page";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import {
@@ -19,6 +17,7 @@ import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
+import { useAppSelector } from "@/app/_store/store";
 
 const messages = defineMessages({
   pageTitle: {
@@ -44,7 +43,6 @@ const messages = defineMessages({
 });
 
 type Props = {
-  contestId: string;
   problems: ProblemPublicResponseDTO[];
   clarifications: ClarificationResponseDTO[];
   canCreate?: boolean;
@@ -55,12 +53,12 @@ type Props = {
  * Displays the clarifications page where users can view, request, and answer clarifications for contest problems.
  **/
 export function ClarificationsPage({
-  contestId,
   problems,
   clarifications,
   canCreate = false,
   canAnswer = false,
 }: Props) {
+  const contestId = useAppSelector((state) => state.contestMetadata.id);
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 
   return (

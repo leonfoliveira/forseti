@@ -5,7 +5,6 @@ import { defineMessages } from "@/i18n/message";
 
 export type ClarificationFormType = {
   problemId: string;
-  parentId?: string;
   text: string;
 };
 
@@ -30,7 +29,6 @@ export class ClarificationForm {
       "any.required": this.messages.problemRequired.id,
       "string.empty": this.messages.problemRequired.id,
     }),
-    parentId: Joi.string().allow("").optional(),
     text: Joi.string().required().max(255).messages({
       "any.required": this.messages.textRequired.id,
       "string.empty": this.messages.textRequired.id,
@@ -42,7 +40,7 @@ export class ClarificationForm {
     data: ClarificationFormType,
   ): CreateClarificationRequestDTO {
     return {
-      parentId: !!data.parentId ? data.parentId : undefined,
+      parentId: undefined,
       problemId: data.problemId === "__none__" ? undefined : data.problemId,
       text: data.text,
     };
@@ -50,7 +48,6 @@ export class ClarificationForm {
 
   static getDefault(): ClarificationFormType {
     return {
-      parentId: undefined,
       problemId: "",
       text: "",
     };

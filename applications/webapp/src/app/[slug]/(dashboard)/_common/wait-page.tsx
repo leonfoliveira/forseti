@@ -51,7 +51,7 @@ export function WaitPage() {
         <ul className="text-md">
           {contestMetadata.languages.map((it) => (
             <li key={it} data-testid="language-item">
-              <FormattedMessage {...globalMessages.language[it]} />
+              <FormattedMessage {...globalMessages.submissionLanguage[it]} />
             </li>
           ))}
         </ul>

@@ -20,7 +20,6 @@ describe("AdminSubmissionsPage", () => {
       MockProblemPublicResponseDTO(),
       MockProblemPublicResponseDTO(),
     ];
-    const languages = [SubmissionLanguage.CPP_17, SubmissionLanguage.JAVA_21];
     const submissions = [
       MockSubmissionPublicResponseDTO(),
       MockSubmissionPublicResponseDTO(),
@@ -28,7 +27,7 @@ describe("AdminSubmissionsPage", () => {
     await renderWithProviders(<AdminSubmissionsPage />, {
       contestMetadata,
       adminDashboard: {
-        contest: { problems, languages },
+        contest: { problems },
         submissions,
       },
     } as any);
@@ -37,7 +36,6 @@ describe("AdminSubmissionsPage", () => {
       expect.objectContaining({
         submissions,
         problems,
-        languages,
         canEdit: true,
       }),
       undefined,

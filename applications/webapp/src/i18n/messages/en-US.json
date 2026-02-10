@@ -323,6 +323,10 @@
               "text-required": "Required",
               "text-long": "Cannot exceed 255 characters"
             },
+            "clarification-answer-form-schema": {
+              "text-required": "Required",
+              "text-long": "Cannot exceed 255 characters"
+            },
             "announcement-form-schema": {
               "text-required": "Required",
               "text-long": "Cannot exceed 255 characters"

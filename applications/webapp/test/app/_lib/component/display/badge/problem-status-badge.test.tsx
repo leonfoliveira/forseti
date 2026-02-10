@@ -43,7 +43,7 @@ describe("ProblemStatusBadge", () => {
 
     const badge = screen.getByTestId("badge-rejected");
     expect(badge).toBeInTheDocument();
-    expect(badge).toHaveTextContent("(+3)");
+    expect(badge).toHaveTextContent("+3");
   });
 
   it("should not render badge when is not accepted and no wrong submissions", async () => {

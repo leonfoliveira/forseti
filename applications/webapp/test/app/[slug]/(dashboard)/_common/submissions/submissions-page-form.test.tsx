@@ -1,6 +1,6 @@
 import { act, fireEvent, screen } from "@testing-library/react";
 
-import { SubmissionFormMap } from "@/app/[slug]/(dashboard)/_common/_form/submission-form-map";
+import { SubmissionForm } from "@/app/[slug]/(dashboard)/_common/submissions/submission-form";
 import { SubmissionsPageForm } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-form";
 import { useToast } from "@/app/_lib/util/toast-hook";
 import { submissionWritter } from "@/config/composition";
@@ -43,7 +43,7 @@ describe("SubmissionsPageForm", () => {
 
     expect(submissionWritter.create).toHaveBeenCalledWith(
       contestMetadata.id,
-      SubmissionFormMap.toInputDTO({
+      SubmissionForm.toInputDTO({
         problemId,
         language: SubmissionLanguage.JAVA_21,
         code: [code],

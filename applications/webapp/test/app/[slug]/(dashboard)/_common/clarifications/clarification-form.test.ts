@@ -12,21 +12,19 @@ describe("ClarificationForm", () => {
       expect(error).toBeUndefined();
     });
 
-    it("should validate when parentId is provided", () => {
+    it("should validate with special problemId __none__", () => {
       const validData = {
-        problemId: "problem-1",
-        parentId: "parent-clarification-id",
-        text: "This is a response to a clarification",
+        problemId: "__none__",
+        text: "This is a general clarification request",
       };
 
       const { error } = ClarificationForm.schema.validate(validData);
       expect(error).toBeUndefined();
     });
 
-    it("should validate when parentId is empty string", () => {
+    it("should validate with numeric problemId", () => {
       const validData = {
-        problemId: "problem-1",
-        parentId: "",
+        problemId: "123",
         text: "This is a clarification request",
       };
 
@@ -116,26 +114,9 @@ describe("ClarificationForm", () => {
   });
 
   describe("toInputDTO", () => {
-    it("should convert form data to input DTO with all fields", () => {
+    it("should convert form data to input DTO", () => {
       const formData = {
         problemId: "problem-1",
-        parentId: "parent-id",
-        text: "This is a clarification request",
-      };
-
-      const dto = ClarificationForm.toInputDTO(formData);
-
-      expect(dto).toEqual({
-        problemId: "problem-1",
-        parentId: "parent-id",
-        text: "This is a clarification request",
-      });
-    });
-
-    it("should convert form data to input DTO without parentId when empty", () => {
-      const formData = {
-        problemId: "problem-1",
-        parentId: "",
         text: "This is a clarification request",
       };
 
@@ -148,16 +129,16 @@ describe("ClarificationForm", () => {
       });
     });
 
-    it("should convert form data to input DTO without parentId when undefined", () => {
+    it("should convert form data with empty problemId to undefined", () => {
       const formData = {
-        problemId: "problem-1",
+        problemId: "",
         text: "This is a clarification request",
       };
 
       const dto = ClarificationForm.toInputDTO(formData);
 
       expect(dto).toEqual({
-        problemId: "problem-1",
+        problemId: "",
         parentId: undefined,
         text: "This is a clarification request",
       });
@@ -177,6 +158,17 @@ describe("ClarificationForm", () => {
         text: "General clarification request",
       });
     });
+
+    it("should always set parentId to undefined for new clarifications", () => {
+      const formData = {
+        problemId: "problem-1",
+        text: "New clarification",
+      };
+
+      const dto = ClarificationForm.toInputDTO(formData);
+
+      expect(dto.parentId).toBeUndefined();
+    });
   });
 
   describe("getDefault", () => {
@@ -184,7 +176,6 @@ describe("ClarificationForm", () => {
       const defaultValues = ClarificationForm.getDefault();
 
       expect(defaultValues).toEqual({
-        parentId: undefined,
         problemId: "",
         text: "",
       });

@@ -14,6 +14,7 @@ import {
   EmptyTitle,
 } from "@/app/_lib/component/shadcn/empty";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
+import { useAppSelector } from "@/app/_store/store";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -49,7 +50,6 @@ const messages = defineMessages({
 });
 
 type Props = {
-  contestId: string;
   announcements: AnnouncementResponseDTO[];
   canCreate?: boolean;
 };
@@ -57,11 +57,8 @@ type Props = {
 /**
  * Displays the announcements page where users can view and create announcements.
  **/
-export function AnnouncementsPage({
-  contestId,
-  announcements,
-  canCreate = false,
-}: Props) {
+export function AnnouncementsPage({ announcements, canCreate = false }: Props) {
+  const contestId = useAppSelector((state) => state.contestMetadata.id);
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 
   return (
