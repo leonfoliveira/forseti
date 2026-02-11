@@ -28,21 +28,22 @@ jest.mock("next/image", () => ({
   ),
 }));
 
-// Mock the Metadata component
-jest.mock("@/app/_lib/component/metadata", () => ({
-  Metadata: ({
+jest.mock("@/app/_lib/component/page/page", () => ({
+  Page: ({
     title,
     description,
+    children,
   }: {
     title: { id: string; defaultMessage: string };
     description: { id: string; defaultMessage: string };
+    children: React.ReactNode;
   }) => (
     <div
       data-testid="metadata"
       data-title={title.id}
       data-description={description.id}
     >
-      Metadata Component
+      {children}
     </div>
   ),
 }));
