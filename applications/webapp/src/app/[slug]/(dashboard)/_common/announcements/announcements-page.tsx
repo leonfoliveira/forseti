@@ -40,11 +40,11 @@ const messages = defineMessages({
     defaultMessage: "Failed to create announcement",
   },
   emptyTitle: {
-    id: "app.[slug].(dashboard)._common.announcements.announcements-page.emptyTitle",
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page.empty-title",
     defaultMessage: "No announcements yet",
   },
   emptyDescription: {
-    id: "app.[slug].(dashboard)._common.announcements.announcements-page.emptyDescription",
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page.empty-description",
     defaultMessage: "Announcements will appear here once created.",
   },
 });

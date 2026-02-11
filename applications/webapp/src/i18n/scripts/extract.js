@@ -101,8 +101,8 @@ async function processMessages(sourceDir, outputFilePath) {
 }
 
 // Set your source directory (e.g., the 'src' folder) and output file path.
-const sourceDirectory = process.argv[2];
-const outputFile = process.argv[3];
+const sourceDirectory = process.argv[2] || "src";
+const outputFile = process.argv[3] || "./src/i18n/messages/en-US.json";
 
 // Run the script.
 processMessages(sourceDirectory, outputFile);

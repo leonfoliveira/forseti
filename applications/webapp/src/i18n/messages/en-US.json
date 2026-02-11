@@ -40,18 +40,26 @@
     },
     "error": {
       "403": {
-        "description": "You do not have permission to access this page."
+        "page": {
+          "description": "You do not have permission to access this page."
+        }
       },
       "404": {
-        "description": "The page you are looking for could not be found."
+        "page": {
+          "description": "The page you are looking for could not be found."
+        }
       },
       "500": {
-        "description": "An unexpected error has occurred on the server.",
-        "reload": "Try again"
+        "page": {
+          "description": "An unexpected error has occurred on the server.",
+          "reload": "Try again"
+        }
       },
       "503": {
-        "description": "The service is temporarily unavailable. Please try again later.",
-        "reload": "Try again"
+        "page": {
+          "description": "The service is temporarily unavailable. Please try again later.",
+          "reload": "Try again"
+        }
       }
     },
     "_lib": {
@@ -82,21 +90,23 @@
             "reload": "Try again"
           }
         },
-        "header": {
-          "toggleThemeTooltip": "Toggle theme",
-          "signInTooltip": "Sign in",
-          "signOutTooltip": "Sign out"
+        "layout": {
+          "header": {
+            "toggle-theme-tooltip": "Toggle theme",
+            "sign-in-tooltip": "Sign in",
+            "sign-out-tooltip": "Sign out"
+          },
+          "footer": {
+            "text": "Forseti {version}"
+          }
         },
-        "footer": {
-          "text": "Forseti {version}"
-        },
-        "format": {
+        "i18n": {
           "formatted-duration": {
             "duration": "{hours}:{minutes}:{seconds}",
             "duration-with-days": "{days}d {hours}:{minutes}:{seconds}"
           }
         },
-        "display": {
+        "feedback": {
           "confirmation-dialog": {
             "cancel-button": "Cancel",
             "confirm-button": "Confirm"
@@ -106,11 +116,9 @@
     },
     "[slug]": {
       "sign-in": {
-        "_form": {
-          "sign-in-form-schema": {
-            "login-required": "Required",
-            "password-required": "Required"
-          }
+        "sign-in-form": {
+          "login-required": "Required",
+          "password-required": "Required"
         },
         "page": {
           "wrong-login-password": "Wrong login or password",
@@ -136,75 +144,131 @@
           "tab-announcements": "Announcements",
           "tab-settings": "Settings"
         },
-        "settings": {
-          "_tab": {
-            "problems-settings": {
-              "section-title": "Contest Problems",
-              "section-subtitle": "Configure the problems for this contest. Each problem requires a title, description, and test cases.",
-              "title-label": "Title",
-              "title-description": "A clear, descriptive name for the problem",
-              "description-label": "Description",
-              "description-file-description": "Upload a PDF or text file with the problem statement",
-              "time-limit-label": "Time Limit",
-              "time-limit-description": "Maximum execution time per test case",
-              "memory-limit-label": "Memory Limit",
-              "memory-limit-description": "Maximum memory usage per test case",
-              "test-cases-label": "Test Cases",
-              "test-cases-description": "Upload a CSV file with input/output test cases",
-              "current-file-label": "Current: {filename}",
-              "new-label": "New Problem",
-              "problem-header-subtitle": "Configure problem details and constraints",
-              "execution-constraints-title": "Execution Constraints",
-              "empty-state-title": "No Problems Added Yet",
-              "empty-state-description": "Start by adding your first problem. Each problem should include a clear title, description, test cases, and execution constraints.",
-              "add-first-problem-label": "Add First Problem"
-            },
-            "members-settings": {
-              "section-title": "Contest Members",
-              "section-description": "Manage participants and their access levels for this contest.",
-              "type-label": "Type",
-              "name-label": "Name",
-              "login-label": "Login",
-              "password-label": "Password",
+        "_common": {
+          "wait-page": {
+            "start-at": "Starts in",
+            "languages": "Supported languages"
+          },
+          "submissions": {
+            "submissions-page": {
+              "page-title": "Forseti - Submissions",
+              "page-description": "View all submissions made during the contest.",
+              "only-mine-label": "Only mine",
+              "header-timestamp": "Timestamp",
+              "header-contestant": "Contestant",
+              "header-problem": "Problem",
+              "header-language": "Language",
+              "header-answer": "Answer",
               "actions-label": "Actions",
-              "new-member-label": "Add Member",
-              "empty-state-title": "No Members Added Yet",
-              "empty-state-description": "Start by adding contest participants. You can assign different roles and access levels.",
-              "add-first-member-label": "Add First Member"
+              "new-label": "New Submission"
             },
-            "contest": {
-              "basic-information-section": "Basic Information",
-              "slug-label": "Slug",
-              "slug-description": "Unique identifier for the contest URL",
-              "title-label": "Title",
-              "title-description": "Display name for the contest",
-              "contest-configuration-section": "Configuration",
-              "languages-label": "Languages",
-              "languages-description": "Make sure the sandboxes for the selected languages are installed",
-              "start-label": "Start",
-              "start-description": "Start time of the contest",
-              "end-label": "End",
-              "end-description": "End time of the contest",
-              "is-auto-judge-enabled-label": "Enable Auto Judge",
-              "force-start-label": "Force Start Now",
-              "force-end-label": "Force End Now",
-              "control-section": "Control",
-              "control-time-section": "Use these actions to override the scheduled contest timing",
-              "current-status": "Current Status: {status}",
-              "force-start-body": "Are you sure you want to force start the contest?",
-              "force-start-alert-title": "Attention",
-              "force-start-alert-body": "The contest will start accepting submissions and this action cannot be undone. However, you will still be able to edit the contest settings afterwards.",
-              "force-end-body": "Are you sure you want to force end the contest?",
-              "force-end-alert-title": "Attention",
-              "force-end-alert-body": "The contest will stop accepting submissions and this action cannot be undone. You will not be able to edit the contest settings afterwards.",
-              "force-start-success": "Contest has started.",
-              "force-start-error": "Failed to start contest.",
-              "force-end-success": "Contest has ended.",
-              "force-end-error": "Failed to end contest."
+            "submissions-page-form": {
+              "create-title": "Create Submission",
+              "create-description": "Fill out the form below to create a new submission.",
+              "problem-label": "Problem",
+              "problem-option": "{letter}. {title}",
+              "language-label": "Language",
+              "code-label": "Code",
+              "cancel-label": "Cancel",
+              "submit-label": "Submit",
+              "create-success": "Submission created successfully",
+              "create-error": "Failed to create submission"
+            },
+            "submissions-page-action-rerun": {
+              "resubmit-label": "Resubmit",
+              "title": "Are you sure you want to resubmit?",
+              "description": "This will send the submission to the judge queue again and may take some time to complete.",
+              "cancel": "Cancel",
+              "confirm": "Confirm",
+              "resubmit-success": "Submission resubmitted successfully",
+              "resubmit-error": "Failed to resubmit submission"
+            },
+            "submissions-page-action-judge": {
+              "judge-label": "Judge",
+              "title": "Are you sure you want to judge?",
+              "description": "This will override any existing answer.",
+              "cancel": "Cancel",
+              "confirm": "Confirm",
+              "judge-success": "Submission judged successfully",
+              "judge-error": "Failed to judge submission",
+              "answer-label": "Answer"
+            },
+            "submissions-page-action-download": {
+              "download-label": "Download"
+            },
+            "submission-judge-form": {
+              "answer-required": "Required"
+            },
+            "submission-form": {
+              "problem-required": "Required",
+              "language-required": "Required",
+              "code-required": "Required",
+              "code-too-large": "Code file must be at most 10MB"
             }
           },
-          "_form": {
-            "settings-form-schema": {
+          "settings": {
+            "settings-page": {
+              "title": "Forseti - Settings",
+              "description": "Manage your contest settings and preferences.",
+              "contest-tab": "Contest",
+              "problems-tab": "Problems",
+              "members-tab": "Members",
+              "reset-label": "Reset",
+              "save-label": "Save",
+              "save-success": "Settings saved successfully.",
+              "save-error": "Failed to save settings.",
+              "confirm-dialog-title": "Confirm Changes",
+              "confirm-dialog-description": "Are you sure you want to save these changes?",
+              "confirm-dialog-in-progress-alert-title": "Contest In Progress",
+              "confirm-dialog-in-progress-alert-description": "This contest is currently in progress. Changing the settings may affect the contest experience for participants. Please review your changes carefully before confirming.",
+              "confirm-dialog-cancel": "Cancel",
+              "confirm-dialog-confirm": "Yes, Save Changes"
+            },
+            "settings-page-problems-tab": {
+              "title-label": "Title",
+              "title-description": "The title of the problem.",
+              "description-label": "Description (PDF)",
+              "description-description": "The problem description file in PDF format.",
+              "time-limit-label": "Time Limit (ms)",
+              "time-limit-description": "The maximum time allowed for the problem.",
+              "memory-limit-label": "Memory Limit (MB)",
+              "memory-limit-description": "The maximum memory allowed for the problem.",
+              "test-cases-label": "Test Cases (CSV)",
+              "test-cases-description": "The test cases file in CSV format with two columns: input and expected output.",
+              "new-problem-label": "New Problem"
+            },
+            "settings-page-members-tab": {
+              "title-label": "Name",
+              "type-label": "Type",
+              "login-label": "Login",
+              "password-label": "Password",
+              "new-member-label": "New Member"
+            },
+            "settings-page-contest-tab": {
+              "slug-label": "Slug",
+              "slug-description": "The slug is used in the URL and must be unique.",
+              "title-label": "Title",
+              "title-description": "The title of the contest.",
+              "start-at-label": "Start At",
+              "start-at-description": "The start time of the contest.",
+              "end-at-label": "End At",
+              "end-at-description": "The end time of the contest.",
+              "languages-label": "Languages",
+              "languages-description": "The programming languages allowed in the contest.",
+              "is-auto-judge-enabled-label": "Auto Judge",
+              "is-auto-judge-enabled-description": "Whether to enable auto judging of submissions.",
+              "force-start-label": "Force Start",
+              "force-start-confirmation-title": "Are you sure you want to force the contest to start immediately?",
+              "force-start-confirmation-description": "This action cannot be undone.",
+              "force-start-success": "Contest has been force started.",
+              "force-start-error": "Failed to force start the contest.",
+              "force-end-label": "Force End",
+              "force-end-confirmation-title": "Are you sure you want to force the contest to end immediately?",
+              "force-end-confirmation-description": "This action cannot be undone.",
+              "force-end-success": "Contest has been force ended.",
+              "force-end-error": "Failed to force end the contest."
+            },
+            "settings-form": {
               "slug-required": "Slug is required",
               "slug-too-long": "Slug must be at most 32 characters long",
               "slug-pattern": "Slug must only contain alphanumeric characters and hyphens",
@@ -234,176 +298,39 @@
               "member-password-required": "Password is required",
               "member-password-too-long": "Password must be at most 32 characters long"
             }
-          }
-        },
-        "_common": {
-          "wait-page": {
-            "start-at": "Starts in",
-            "languages": "Supported languages"
           },
-          "submissions-page": {
-            "page-title": "Forseti - Submissions",
-            "page-description": "View all submissions made during the contest.",
-            "only-mine-label": "Only mine",
-            "header-timestamp": "Timestamp",
-            "header-contestant": "Contestant",
-            "header-problem": "Problem",
-            "header-language": "Language",
-            "header-answer": "Answer",
-            "actions-label": "Actions",
-            "new-label": "New Submission"
-          },
-          "submissions": {
-            "submissions-page-form": {
-              "create-title": "Create Submission",
-              "create-description": "Fill out the form below to create a new submission.",
-              "problem-label": "Problem",
-              "problem-option": "{letter}. {title}",
-              "language-label": "Language",
-              "source-label": "Code",
-              "cancel-label": "Cancel",
-              "submit-label": "Submit",
-              "create-success": "Submission created successfully",
-              "create-error": "Failed to create submission"
-            },
-            "submissions-page-action-rerun": {
-              "resubmit-label": "Resubmit",
-              "title": "Are you sure you want to resubmit?",
-              "description": "This will send the submission to the judge queue again and may take some time to complete.",
-              "cancel": "Cancel",
-              "confirm": "Confirm",
-              "resubmit-success": "Submission resubmitted successfully",
-              "resubmit-error": "Failed to resubmit submission"
-            },
-            "submissions-page-action-judge": {
-              "judge-label": "Judge",
-              "title": "Are you sure you want to judge?",
-              "description": "This will override any existing answer.",
-              "cancel": "Cancel",
-              "confirm": "Confirm",
-              "judge-success": "Submission judged successfully",
-              "judge-error": "Failed to judge submission",
-              "answer-label": "Answer"
-            },
-            "submissions-page-action-download": {
-              "download-label": "Download"
+          "problems": {
+            "problems-page": {
+              "page-title": "Forseti - Problems",
+              "page-description": "View all problems for the contest.",
+              "empty": "No problems yet",
+              "problem-header": "Problem",
+              "time-limit-header": "Time Limit",
+              "memory-limit-header": "Memory Limit",
+              "status-header": "Status",
+              "accepted": "Accepted",
+              "attempts": "{attempts} Attempts",
+              "not-attempted": "Not attempted"
             }
           },
-          "_form": {
-            "submission-judge-form-schema": {
-              "answer-required": "Required"
-            },
-            "submission-form-schema": {
-              "problem-required": "Required",
-              "language-required": "Required",
-              "code-required": "Required",
-              "code-too-large": "Code file must be at most 10MB"
-            },
-            "clarification-form-schema": {
-              "problem-required": "Required",
-              "text-required": "Required",
-              "text-long": "Cannot exceed 255 characters"
-            },
-            "clarification-answer-form-schema": {
-              "text-required": "Required",
-              "text-long": "Cannot exceed 255 characters"
-            },
-            "announcement-form-schema": {
-              "text-required": "Required",
-              "text-long": "Cannot exceed 255 characters"
+          "leaderboard": {
+            "leaderboard-page": {
+              "page-title": "Forseti - Leaderboard",
+              "page-description": "View contest leaderboard and rankings.",
+              "header-contestant": "Contestant",
+              "header-score": "Score",
+              "header-penalty": "Penalty",
+              "empty": "No contestants yet"
             }
-          },
-          "settings": {
-            "settings-page": {
-              "title": "Forseti - Settings",
-              "description": "Manage your contest settings and preferences.",
-              "contest-tab": "Contest",
-              "problems-tab": "Problems",
-              "members-tab": "Members",
-              "reset-label": "Reset",
-              "save-label": "Save",
-              "save-success": "Settings saved successfully.",
-              "save-error": "Failed to save settings.",
-              "confirm-dialog-title": "Confirm Changes",
-              "confirm-dialog-description": "Are you sure you want to save these changes?",
-              "confirm-dialog-in-progress-alert-title": "Contest In Progress",
-              "confirm-dialog-in-progress-alert-description": "This contest is currently in progress. Changing the settings may affect the contest experience for participants. Please review your changes carefully before confirming.",
-              "confirm-dialog-cancel": "Cancel",
-              "confirm-dialog-confirm": "Yes, Save Changes",
-              "settings-page-problems-tab": {
-                "title-label": "Title",
-                "title-description": "The title of the problem.",
-                "description-label": "Description (PDF)",
-                "description-description": "The problem description file in PDF format.",
-                "time-limit-label": "Time Limit (ms)",
-                "time-limit-description": "The maximum time allowed for the problem.",
-                "memory-limit-label": "Memory Limit (MB)",
-                "memory-limit-description": "The maximum memory allowed for the problem.",
-                "test-cases-label": "Test Cases (CSV)",
-                "test-cases-description": "The test cases file in CSV format with two columns: input and expected output.",
-                "new-problem-label": "New Problem"
-              },
-              "settings-page-members-tab": {
-                "title-label": "Name",
-                "type-label": "Type",
-                "login-label": "Login",
-                "password-label": "Password",
-                "new-member-label": "New Member"
-              },
-              "settings-page-contest-tab": {
-                "slug-label": "Slug",
-                "slug-description": "The slug is used in the URL and must be unique.",
-                "title-label": "Title",
-                "title-description": "The title of the contest.",
-                "start-at-label": "Start At",
-                "start-at-description": "The start time of the contest.",
-                "end-at-label": "End At",
-                "end-at-description": "The end time of the contest.",
-                "languages-label": "Languages",
-                "languages-description": "The programming languages allowed in the contest.",
-                "is-auto-judge-enabled-label": "Auto Judge",
-                "is-auto-judge-enabled-description": "Whether to enable auto judging of submissions.",
-                "force-start-label": "Force Start",
-                "force-start-confirmation": "Are you sure you want to force the contest to start immediately?",
-                "force-start-confirmation-description": "This action cannot be undone.",
-                "force-start-success": "Contest has been force started.",
-                "force-start-error": "Failed to force start the contest.",
-                "force-end-label": "Force End",
-                "force-end-confirmation": "Are you sure you want to force the contest to end immediately?",
-                "force-end-confirmation-description": "This action cannot be undone.",
-                "force-end-success": "Contest has been force ended.",
-                "force-end-error": "Failed to force end the contest."
-              }
-            }
-          },
-          "problems-page": {
-            "page-title": "Forseti - Problems",
-            "page-description": "View all problems for the contest.",
-            "empty": "No problems yet",
-            "problem-header": "Problem",
-            "time-limit-header": "Time Limit",
-            "memory-limit-header": "Memory Limit",
-            "status-header": "Status",
-            "accepted": "Accepted",
-            "attempts": "{attempts} Attempts",
-            "not-attempted": "Not attempted"
-          },
-          "leaderboard-page": {
-            "page-title": "Forseti - Leaderboard",
-            "page-description": "View contest leaderboard and rankings.",
-            "header-contestant": "Contestant",
-            "header-score": "Score",
-            "header-penalty": "Penalty",
-            "empty": "No contestants yet"
-          },
-          "clarifications-page": {
-            "page-title": "Forseti - Clarifications",
-            "page-description": "View and request clarifications for contest problems.",
-            "new-label": "New Clarification",
-            "emptyTitle": "No clarifications yet",
-            "emptyDescription": "Clarifications will appear here once requested."
           },
           "clarifications": {
+            "clarifications-page": {
+              "page-title": "Forseti - Clarifications",
+              "page-description": "View and request clarifications for contest problems.",
+              "new-label": "New Clarification",
+              "empty-title": "No clarifications yet",
+              "empty-description": "Clarifications will appear here once requested."
+            },
             "clarifications-page-form": {
               "create-title": "Create Clarification",
               "create-description": "Submit a new clarification request for a contest problem or a general question.",
@@ -428,6 +355,15 @@
               "delete-alert-continue": "Continue",
               "delete-success": "Clarification deleted successfully",
               "delete-error": "Failed to delete clarification"
+            },
+            "clarification-form": {
+              "problem-required": "Required",
+              "text-required": "Required",
+              "text-long": "Cannot exceed 255 characters"
+            },
+            "clarification-answer-form": {
+              "text-required": "Required",
+              "text-long": "Cannot exceed 255 characters"
             }
           },
           "announcements": {
@@ -437,10 +373,10 @@
               "new-label": "New Announcement",
               "create-success": "Announcement created successfully",
               "create-error": "Failed to create announcement",
-              "emptyTitle": "No announcements yet",
-              "emptyDescription": "Announcements will appear here once created."
+              "empty-title": "No announcements yet",
+              "empty-description": "Announcements will appear here once created."
             },
-            "create-announcement-form": {
+            "announcements-page-form": {
               "create-title": "Create announcement",
               "create-description": "Write and broadcast a new announcement to all participants.",
               "text-label": "Message",
@@ -448,6 +384,10 @@
               "broadcast-label": "Broadcast",
               "create-success": "Announcement created successfully",
               "create-error": "Failed to create announcement"
+            },
+            "announcement-form": {
+              "text-required": "Required",
+              "text-long": "Cannot exceed 255 characters"
             }
           }
         }

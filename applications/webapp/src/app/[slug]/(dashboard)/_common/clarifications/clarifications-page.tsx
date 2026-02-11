@@ -21,23 +21,23 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
-    id: "app.[slug].(dashboard)._common.clarifications-page.page-title",
+    id: "app.[slug].(dashboard)._common.clarifications.clarifications-page.page-title",
     defaultMessage: "Forseti - Clarifications",
   },
   pageDescription: {
-    id: "app.[slug].(dashboard)._common.clarifications-page.page-description",
+    id: "app.[slug].(dashboard)._common.clarifications.clarifications-page.page-description",
     defaultMessage: "View and request clarifications for contest problems.",
   },
   newLabel: {
-    id: "app.[slug].(dashboard)._common.clarifications-page.new-label",
+    id: "app.[slug].(dashboard)._common.clarifications.clarifications-page.new-label",
     defaultMessage: "New Clarification",
   },
   emptyTitle: {
-    id: "app.[slug].(dashboard)._common.clarifications-page.emptyTitle",
+    id: "app.[slug].(dashboard)._common.clarifications.clarifications-page.empty-title",
     defaultMessage: "No clarifications yet",
   },
   emptyDescription: {
-    id: "app.[slug].(dashboard)._common.clarifications-page.emptyDescription",
+    id: "app.[slug].(dashboard)._common.clarifications.clarifications-page.empty-description",
     defaultMessage: "Clarifications will appear here once requested.",
   },
 });

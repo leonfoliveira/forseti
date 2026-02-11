@@ -30,23 +30,23 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   titleLabel: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-members-tab.title-label",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-members-tab.title-label",
     defaultMessage: "Name",
   },
   typeLabel: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-members-tab.type-label",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-members-tab.type-label",
     defaultMessage: "Type",
   },
   loginLabel: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-members-tab.login-label",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-members-tab.login-label",
     defaultMessage: "Login",
   },
   passwordLabel: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-members-tab.password-label",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-members-tab.password-label",
     defaultMessage: "Password",
   },
   newMemberLabel: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-members-tab.new-member-label",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-members-tab.new-member-label",
     defaultMessage: "New Member",
   },
 });

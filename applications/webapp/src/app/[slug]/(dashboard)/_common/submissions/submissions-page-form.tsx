@@ -61,7 +61,7 @@ const messages = defineMessages({
     defaultMessage: "Language",
   },
   codeLabel: {
-    id: "app.[slug].(dashboard)._common.submissions.submissions-page-form.source-label",
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page-form.code-label",
     defaultMessage: "Code",
   },
   cancelLabel: {

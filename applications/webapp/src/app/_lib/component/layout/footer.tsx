@@ -4,7 +4,7 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   text: {
-    id: "app._lib.component.footer.text",
+    id: "app._lib.component.layout.footer.text",
     defaultMessage: "Forseti {version}",
   },
 });

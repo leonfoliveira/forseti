@@ -10,11 +10,11 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   description: {
-    id: "app.error.500.description",
+    id: "app.error.500.page.description",
     defaultMessage: "An unexpected error has occurred on the server.",
   },
   reload: {
-    id: "app.error.500.reload",
+    id: "app.error.500.page.reload",
     defaultMessage: "Try again",
   },
 });

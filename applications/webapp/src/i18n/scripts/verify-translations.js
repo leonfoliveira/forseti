@@ -2,7 +2,7 @@ const fs = require("fs");
 
 const glob = require("glob");
 
-const sourceDir = process.argv[2];
+const sourceDir = process.argv[2] || "src/i18n/messages/";
 const files = glob.sync(`${sourceDir}/*.json`);
 
 const fileKeys = {};
@@ -25,7 +25,7 @@ function readKeys(filename, obj, curr = []) {
 /**
  * Verify that all translation files have the same keys as the base file (en-US).
  */
-function verify() {
+function verifyTranslations() {
   for (const file of files) {
     const obj = JSON.parse(fs.readFileSync(file, "utf-8"));
     const fileName = file.split("/").pop().replace(".json", "");
@@ -34,20 +34,18 @@ function verify() {
   }
 
   const base = fileKeys["en-US"];
-  let isValid = true;
   for (const file in fileKeys) {
     if (fileKeys[file].size !== base.size) {
       const missingKeys = [...base].filter((key) => !fileKeys[file].has(key));
       if (missingKeys.length > 0) {
+        console.error(`❌ ${file} is missing keys compared to en-US:`);
         console.table(missingKeys);
-        isValid = false;
+        process.exit(1);
       }
     }
   }
 
-  if (!isValid) {
-    process.exit(1);
-  }
+  console.log("✅ All translation files have the same keys as en-US!");
 }
 
-verify();
+verifyTranslations();

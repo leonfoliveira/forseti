@@ -10,7 +10,7 @@ export type SubmissionJudgeFormType = {
 export class SubmissionJudgeForm {
   static messages = defineMessages({
     answerRequired: {
-      id: "app.[slug].(dashboard)._common._form.submission-judge-form-schema.answer-required",
+      id: "app.[slug].(dashboard)._common.submissions.submission-judge-form.answer-required",
       defaultMessage: "Required",
     },
   });

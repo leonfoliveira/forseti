@@ -25,43 +25,43 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
-    id: "app.[slug].(dashboard)._common.problems-page.page-title",
+    id: "app.[slug].(dashboard)._common.problems.problems-page.page-title",
     defaultMessage: "Forseti - Problems",
   },
   pageDescription: {
-    id: "app.[slug].(dashboard)._common.problems-page.page-description",
+    id: "app.[slug].(dashboard)._common.problems.problems-page.page-description",
     defaultMessage: "View all problems for the contest.",
   },
   empty: {
-    id: "app.[slug].(dashboard)._common.problems-page.empty",
+    id: "app.[slug].(dashboard)._common.problems.problems-page.empty",
     defaultMessage: "No problems yet",
   },
   problemHeader: {
-    id: "app.[slug].(dashboard)._common.problems-page.problem-header",
+    id: "app.[slug].(dashboard)._common.problems.problems-page.problem-header",
     defaultMessage: "Problem",
   },
   timeLimitHeader: {
-    id: "app.[slug].(dashboard)._common.problems-page.time-limit-header",
+    id: "app.[slug].(dashboard)._common.problems.problems-page.time-limit-header",
     defaultMessage: "Time Limit",
   },
   memoryLimitHeader: {
-    id: "app.[slug].(dashboard)._common.problems-page.memory-limit-header",
+    id: "app.[slug].(dashboard)._common.problems.problems-page.memory-limit-header",
     defaultMessage: "Memory Limit",
   },
   statusHeader: {
-    id: "app.[slug].(dashboard)._common.problems-page.status-header",
+    id: "app.[slug].(dashboard)._common.problems.problems-page.status-header",
     defaultMessage: "Status",
   },
   accepted: {
-    id: "app.[slug].(dashboard)._common.problems-page.accepted",
+    id: "app.[slug].(dashboard)._common.problems.problems-page.accepted",
     defaultMessage: "Accepted",
   },
   attempts: {
-    id: "app.[slug].(dashboard)._common.problems-page.attempts",
+    id: "app.[slug].(dashboard)._common.problems.problems-page.attempts",
     defaultMessage: "{attempts} Attempts",
   },
   notAttempted: {
-    id: "app.[slug].(dashboard)._common.problems-page.not-attempted",
+    id: "app.[slug].(dashboard)._common.problems.problems-page.not-attempted",
     defaultMessage: "Not attempted",
   },
 });

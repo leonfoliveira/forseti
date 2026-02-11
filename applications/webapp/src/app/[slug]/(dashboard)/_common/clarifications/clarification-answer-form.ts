@@ -10,11 +10,11 @@ export type ClarificationAnswerFormType = {
 export class ClarificationAnswerForm {
   static messages = defineMessages({
     textRequired: {
-      id: "app.[slug].(dashboard)._common._form.clarification-answer-form-schema.text-required",
+      id: "app.[slug].(dashboard)._common.clarifications.clarification-answer-form.text-required",
       defaultMessage: "Required",
     },
     textLong: {
-      id: "app.[slug].(dashboard)._common._form.clarification-answer-form-schema.text-long",
+      id: "app.[slug].(dashboard)._common.clarifications.clarification-answer-form.text-long",
       defaultMessage: "Cannot exceed 255 characters",
     },
   });

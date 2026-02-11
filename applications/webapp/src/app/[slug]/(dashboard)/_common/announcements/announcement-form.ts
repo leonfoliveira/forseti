@@ -10,11 +10,11 @@ export type AnnouncementFormType = {
 export class AnnouncementForm {
   static messages = defineMessages({
     textRequired: {
-      id: "app.[slug].(dashboard)._common._form.announcement-form-schema.text-required",
+      id: "app.[slug].(dashboard)._common.announcements.announcement-form.text-required",
       defaultMessage: "Required",
     },
     textLong: {
-      id: "app.[slug].(dashboard)._common._form.announcement-form-schema.text-long",
+      id: "app.[slug].(dashboard)._common.announcements.announcement-form.text-long",
       defaultMessage: "Cannot exceed 255 characters",
     },
   });

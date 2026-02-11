@@ -5,7 +5,7 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   description: {
-    id: "app.error.403.description",
+    id: "app.error.403.page.description",
     defaultMessage: "You do not have permission to access this page.",
   },
 });

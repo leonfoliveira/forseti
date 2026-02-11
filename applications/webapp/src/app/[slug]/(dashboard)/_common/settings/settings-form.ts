@@ -44,116 +44,116 @@ export type SettingsFormType = {
 export class SettingsForm {
   static messages = defineMessages({
     slugRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.slug-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.slug-required",
       defaultMessage: "Slug is required",
     },
     slugTooLong: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.slug-too-long",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.slug-too-long",
       defaultMessage: "Slug must be at most 32 characters long",
     },
     slugPattern: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.slug-pattern",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.slug-pattern",
       defaultMessage:
         "Slug must only contain alphanumeric characters and hyphens",
     },
     titleRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.title-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.title-required",
       defaultMessage: "Title is required",
     },
     titleTooLong: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.title-too-long",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.title-too-long",
       defaultMessage: "Title must be at most 255 characters long",
     },
     languagesRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.languages-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.languages-required",
       defaultMessage: "At least one language is required",
     },
     startRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.start-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.start-required",
       defaultMessage: "Start date is required",
     },
     startFuture: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.start-future",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.start-future",
       defaultMessage: "Start date must be in the future",
     },
     endRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.end-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.end-required",
       defaultMessage: "End date is required",
     },
     endAfterStart: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.end-after-start",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.end-after-start",
       defaultMessage: "End date must be after start date",
     },
     problemTitleRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.problem-title-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-title-required",
       defaultMessage: "Title is required",
     },
     problemTitleTooLong: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.problem-title-too-long",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-title-too-long",
       defaultMessage: "Title must be at most 255 characters long",
     },
     problemDescriptionRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.problem-description-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-description-required",
       defaultMessage: "Description is required",
     },
     problemDescriptionSize: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.problem-description-size",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-description-size",
       defaultMessage: "Description file must be at most 10MB",
     },
     problemTimeLimitRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.problem-time-limit-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-time-limit-required",
       defaultMessage: "Time limit is required",
     },
     problemTimeLimitPositive: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.problem-time-limit-positive",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-time-limit-positive",
       defaultMessage: "Time limit must be a positive number",
     },
     problemMemoryLimitRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.problem-memory-limit-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-memory-limit-required",
       defaultMessage: "Memory limit is required",
     },
     problemMemoryLimitPositive: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.problem-memory-limit-positive",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-memory-limit-positive",
       defaultMessage: "Memory limit must be a positive number",
     },
     problemTestCasesRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.problem-test-cases-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-test-cases-required",
       defaultMessage: "Test cases are required",
     },
     problemTestCasesSize: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.problem-test-cases-size",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-test-cases-size",
       defaultMessage: "Test cases file must be at most 10MB",
     },
     problemTestCasesFormat: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.problem-test-cases-format",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-test-cases-format",
       defaultMessage: "Test cases file must be in CSV format",
     },
     memberTypeRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.member-type-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.member-type-required",
       defaultMessage: "Type is required",
     },
     memberNameRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.member-name-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.member-name-required",
       defaultMessage: "Name is required",
     },
     memberNameTooLong: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.member-name-too-long",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.member-name-too-long",
       defaultMessage: "Name must be at most 64 characters long",
     },
     memberLoginRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.member-login-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.member-login-required",
       defaultMessage: "Login is required",
     },
     memberLoginTooLong: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.member-login-too-long",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.member-login-too-long",
       defaultMessage: "Login must be at most 32 characters long",
     },
     memberPasswordRequired: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.member-password-required",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.member-password-required",
       defaultMessage: "Password is required",
     },
     memberPasswordTooLong: {
-      id: "app.[slug].(dashboard).settings._form.settings-form-schema.member-password-too-long",
+      id: "app.[slug].(dashboard)._common.settings.settings-form.member-password-too-long",
       defaultMessage: "Password must be at most 32 characters long",
     },
   });

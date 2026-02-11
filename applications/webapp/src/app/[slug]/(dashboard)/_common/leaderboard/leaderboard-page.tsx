@@ -23,27 +23,27 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
-    id: "app.[slug].(dashboard)._common.leaderboard-page.page-title",
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.page-title",
     defaultMessage: "Forseti - Leaderboard",
   },
   pageDescription: {
-    id: "app.[slug].(dashboard)._common.leaderboard-page.page-description",
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.page-description",
     defaultMessage: "View contest leaderboard and rankings.",
   },
   headerContestant: {
-    id: "app.[slug].(dashboard)._common.leaderboard-page.header-contestant",
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.header-contestant",
     defaultMessage: "Contestant",
   },
   headerScore: {
-    id: "app.[slug].(dashboard)._common.leaderboard-page.header-score",
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.header-score",
     defaultMessage: "Score",
   },
   headerPenalty: {
-    id: "app.[slug].(dashboard)._common.leaderboard-page.header-penalty",
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.header-penalty",
     defaultMessage: "Penalty",
   },
   empty: {
-    id: "app.[slug].(dashboard)._common.leaderboard-page.empty",
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.empty",
     defaultMessage: "No contestants yet",
   },
 });

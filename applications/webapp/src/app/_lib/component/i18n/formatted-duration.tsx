@@ -3,11 +3,11 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   duration: {
-    id: "app._lib.component.format.formatted-duration.duration",
+    id: "app._lib.component.i18n.formatted-duration.duration",
     defaultMessage: "{hours}:{minutes}:{seconds}",
   },
   durationWithDays: {
-    id: "app._lib.component.format.formatted-duration.duration-with-days",
+    id: "app._lib.component.i18n.formatted-duration.duration-with-days",
     defaultMessage: "{days}d {hours}:{minutes}:{seconds}",
   },
 });

@@ -13,19 +13,19 @@ export type SubmissionFormType = {
 export class SubmissionForm {
   static messages = defineMessages({
     problemRequired: {
-      id: "app.[slug].(dashboard)._common._form.submission-form-schema.problem-required",
+      id: "app.[slug].(dashboard)._common.submissions.submission-form.problem-required",
       defaultMessage: "Required",
     },
     languageRequired: {
-      id: "app.[slug].(dashboard)._common._form.submission-form-schema.language-required",
+      id: "app.[slug].(dashboard)._common.submissions.submission-form.language-required",
       defaultMessage: "Required",
     },
     codeRequired: {
-      id: "app.[slug].(dashboard)._common._form.submission-form-schema.code-required",
+      id: "app.[slug].(dashboard)._common.submissions.submission-form.code-required",
       defaultMessage: "Required",
     },
     codeTooLarge: {
-      id: "app.[slug].(dashboard)._common._form.submission-form-schema.code-too-large",
+      id: "app.[slug].(dashboard)._common.submissions.submission-form.code-too-large",
       defaultMessage: "Code file must be at most 10MB",
     },
   });

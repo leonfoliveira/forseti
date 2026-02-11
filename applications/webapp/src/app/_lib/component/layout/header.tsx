@@ -25,15 +25,15 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   toggleThemeTooltip: {
-    id: "app._lib.component.header.toggleThemeTooltip",
+    id: "app._lib.component.layout.header.toggle-theme-tooltip",
     defaultMessage: "Toggle theme",
   },
   signInTooltip: {
-    id: "app._lib.component.header.signInTooltip",
+    id: "app._lib.component.layout.header.sign-in-tooltip",
     defaultMessage: "Sign in",
   },
   signOutTooltip: {
-    id: "app._lib.component.header.signOutTooltip",
+    id: "app._lib.component.layout.header.sign-out-tooltip",
     defaultMessage: "Sign out",
   },
 });

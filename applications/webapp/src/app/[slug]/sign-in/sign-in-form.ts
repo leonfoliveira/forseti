@@ -10,11 +10,11 @@ export type SignInFormType = {
 export class SignInForm {
   static messages = defineMessages({
     loginRequired: {
-      id: "app.[slug].sign-in._form.sign-in-form-schema.login-required",
+      id: "app.[slug].sign-in.sign-in-form.login-required",
       defaultMessage: "Required",
     },
     passwordRequired: {
-      id: "app.[slug].sign-in._form.sign-in-form-schema.password-required",
+      id: "app.[slug].sign-in.sign-in-form.password-required",
       defaultMessage: "Required",
     },
   });

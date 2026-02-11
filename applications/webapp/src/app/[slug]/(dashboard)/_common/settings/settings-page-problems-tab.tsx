@@ -20,48 +20,48 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   titleLabel: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-problems-tab.title-label",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.title-label",
     defaultMessage: "Title",
   },
   titleDescription: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-problems-tab.title-description",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.title-description",
     defaultMessage: "The title of the problem.",
   },
   descriptionLabel: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-problems-tab.description-label",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.description-label",
     defaultMessage: "Description (PDF)",
   },
   descriptionDescription: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-problems-tab.description-description",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.description-description",
     defaultMessage: "The problem description file in PDF format.",
   },
   timeLimitLabel: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-problems-tab.time-limit-label",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.time-limit-label",
     defaultMessage: "Time Limit (ms)",
   },
   timeLimitDescription: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-problems-tab.time-limit-description",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.time-limit-description",
     defaultMessage: "The maximum time allowed for the problem.",
   },
   memoryLimitLabel: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-problems-tab.memory-limit-label",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.memory-limit-label",
     defaultMessage: "Memory Limit (MB)",
   },
   memoryLimitDescription: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-problems-tab.memory-limit-description",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.memory-limit-description",
     defaultMessage: "The maximum memory allowed for the problem.",
   },
   testCasesLabel: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-problems-tab.test-cases-label",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.test-cases-label",
     defaultMessage: "Test Cases (CSV)",
   },
   testCasesDescription: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-problems-tab.test-cases-description",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.test-cases-description",
     defaultMessage:
       "The test cases file in CSV format with two columns: input and expected output.",
   },
   newProblemLabel: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page.settings-page-problems-tab.new-problem-label",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.new-problem-label",
     defaultMessage: "New Problem",
   },
 });

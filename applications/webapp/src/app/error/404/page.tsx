@@ -5,7 +5,7 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   description: {
-    id: "app.error.404.description",
+    id: "app.error.404.page.description",
     defaultMessage: "The page you are looking for could not be found.",
   },
 });

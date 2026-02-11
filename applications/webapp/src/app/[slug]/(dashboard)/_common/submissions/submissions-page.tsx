@@ -38,43 +38,43 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
-    id: "app.[slug].(dashboard)._common.submissions-page.page-title",
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page.page-title",
     defaultMessage: "Forseti - Submissions",
   },
   pageDescription: {
-    id: "app.[slug].(dashboard)._common.submissions-page.page-description",
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page.page-description",
     defaultMessage: "View all submissions made during the contest.",
   },
   onlyMineLabel: {
-    id: "app.[slug].(dashboard)._common.submissions-page.only-mine-label",
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page.only-mine-label",
     defaultMessage: "Only mine",
   },
   headerTimestamp: {
-    id: "app.[slug].(dashboard)._common.submissions-page.header-timestamp",
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-timestamp",
     defaultMessage: "Timestamp",
   },
   headerContestant: {
-    id: "app.[slug].(dashboard)._common.submissions-page.header-contestant",
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-contestant",
     defaultMessage: "Contestant",
   },
   headerProblem: {
-    id: "app.[slug].(dashboard)._common.submissions-page.header-problem",
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-problem",
     defaultMessage: "Problem",
   },
   headerLanguage: {
-    id: "app.[slug].(dashboard)._common.submissions-page.header-language",
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-language",
     defaultMessage: "Language",
   },
   headerAnswer: {
-    id: "app.[slug].(dashboard)._common.submissions-page.header-answer",
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-answer",
     defaultMessage: "Answer",
   },
   actionsLabel: {
-    id: "app.[slug].(dashboard)._common.submissions-page.actions-label",
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page.actions-label",
     defaultMessage: "Actions",
   },
   newLabel: {
-    id: "app.[slug].(dashboard)._common.submissions-page.new-label",
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page.new-label",
     defaultMessage: "New Submission",
   },
 });

@@ -10,12 +10,12 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   description: {
-    id: "app.error.503.description",
+    id: "app.error.503.page.description",
     defaultMessage:
       "The service is temporarily unavailable. Please try again later.",
   },
   reload: {
-    id: "app.error.503.reload",
+    id: "app.error.503.page.reload",
     defaultMessage: "Try again",
   },
 });

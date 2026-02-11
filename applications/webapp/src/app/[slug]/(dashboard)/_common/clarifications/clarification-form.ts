@@ -11,15 +11,15 @@ export type ClarificationFormType = {
 export class ClarificationForm {
   static messages = defineMessages({
     problemRequired: {
-      id: "app.[slug].(dashboard)._common._form.clarification-form-schema.problem-required",
+      id: "app.[slug].(dashboard)._common.clarifications.clarification-form.problem-required",
       defaultMessage: "Required",
     },
     textRequired: {
-      id: "app.[slug].(dashboard)._common._form.clarification-form-schema.text-required",
+      id: "app.[slug].(dashboard)._common.clarifications.clarification-form.text-required",
       defaultMessage: "Required",
     },
     textLong: {
-      id: "app.[slug].(dashboard)._common._form.clarification-form-schema.text-long",
+      id: "app.[slug].(dashboard)._common.clarifications.clarification-form.text-long",
       defaultMessage: "Cannot exceed 255 characters",
     },
   });

@@ -16,11 +16,11 @@ import { defineMessages, Message } from "@/i18n/message";
 
 const messages = defineMessages({
   cancelButton: {
-    id: "app._lib.component.display.confirmation-dialog.cancel-button",
+    id: "app._lib.component.feedback.confirmation-dialog.cancel-button",
     defaultMessage: "Cancel",
   },
   confirmButton: {
-    id: "app._lib.component.display.confirmation-dialog.confirm-button",
+    id: "app._lib.component.feedback.confirmation-dialog.confirm-button",
     defaultMessage: "Confirm",
   },
 });

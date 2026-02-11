@@ -28,32 +28,32 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   createTitle: {
-    id: "app.[slug].(dashboard)._common.announcements.create-announcement-form.create-title",
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page-form.create-title",
     defaultMessage: "Create announcement",
   },
   createDescription: {
-    id: "app.[slug].(dashboard)._common.announcements.create-announcement-form.create-description",
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page-form.create-description",
     defaultMessage:
       "Write and broadcast a new announcement to all participants.",
   },
   textLabel: {
-    id: "app.[slug].(dashboard)._common.announcements.create-announcement-form.text-label",
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page-form.text-label",
     defaultMessage: "Message",
   },
   cancelLabel: {
-    id: "app.[slug].(dashboard)._common.announcements.create-announcement-form.cancel-label",
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page-form.cancel-label",
     defaultMessage: "Cancel",
   },
   broadcastLabel: {
-    id: "app.[slug].(dashboard)._common.announcements.create-announcement-form.broadcast-label",
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page-form.broadcast-label",
     defaultMessage: "Broadcast",
   },
   createSuccess: {
-    id: "app.[slug].(dashboard)._common.announcements.create-announcement-form.create-success",
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page-form.create-success",
     defaultMessage: "Announcement created successfully",
   },
   createError: {
-    id: "app.[slug].(dashboard)._common.announcements.create-announcement-form.create-error",
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page-form.create-error",
     defaultMessage: "Failed to create announcement",
   },
 });

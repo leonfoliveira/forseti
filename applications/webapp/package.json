@@ -11,9 +11,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "i18n:extract": "node ./src/i18n/scripts/extract.js ./src ./src/i18n/messages/en-US.json",
+    "i18n:extract": "node ./src/i18n/scripts/extract.js",
     "i18n:check": "node ./src/i18n/scripts/extract.js ./src /tmp/en-US.json && diff -u ./src/i18n/messages/en-US.json /tmp/en-US.json",
-    "i18n:verify": "node ./src/i18n/scripts/verify.js ./src/i18n/messages/"
+    "i18n:verify": "node ./src/i18n/scripts/verify-ids.js && node ./src/i18n/scripts/verify-translations.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "6.7.2",
