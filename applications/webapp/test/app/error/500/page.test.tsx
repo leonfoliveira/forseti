@@ -1,8 +1,7 @@
-import { fireEvent, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { useSearchParams } from "next/navigation";
 
 import Error500Page from "@/app/error/500/page";
-import { useRouter } from "@/test/jest.setup";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 // Mock Suspense fallback
