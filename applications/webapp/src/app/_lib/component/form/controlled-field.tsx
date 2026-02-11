@@ -9,73 +9,120 @@ import {
 } from "react-hook-form";
 
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
+import { Checkbox } from "@/app/_lib/component/shadcn/checkbox";
 import {
   Field,
+  FieldContent,
   FieldDescription,
+  FieldError,
   FieldLabel,
 } from "@/app/_lib/component/shadcn/field";
 import { Input } from "@/app/_lib/component/shadcn/input";
-import { useIntl } from "@/app/_lib/util/intl-hook";
+import { Switch } from "@/app/_lib/component/shadcn/switch";
 import { Message } from "@/i18n/message";
 
 type Props<TFieldValues extends FieldValues> = {
   form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
-  label: Message;
+  label?: Message;
   field: React.ReactElement & { props: object };
-  onChange?: (e: React.ChangeEvent) => void;
-};
+  description?: Message;
+} & React.ComponentProps<typeof Field>;
 
 export function ControlledField<TFieldValues extends FieldValues>({
   form,
   name,
   label,
   field,
-  onChange,
+  description,
+  ...props
 }: Props<TFieldValues>) {
-  const intl = useIntl();
-
   return (
     <Controller
       control={form.control}
       name={name}
       render={({ field: fieldProps, fieldState }) => {
         const error = fieldState.error?.message;
-        const errorMessage = error ? intl.formatMessage({ id: error }) : "";
 
-        const props = {
+        const newProps = {
           ...fieldProps,
           id: name,
           onChange: (e: any) => {
-            onChange?.(e);
             fieldProps.onChange(e);
           },
         };
 
         const isFileInput =
           field.type === Input && (field.props as any).type === "file";
+        const isCheckbox = field.type === Checkbox || field.type === Switch;
 
         if (isFileInput) {
-          delete (props as any).value;
-          props.onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            onChange?.(e);
+          delete (newProps as any).value;
+          newProps.onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             fieldProps.onChange(e.target.files);
           };
         }
 
-        const newField = React.cloneElement(field, props);
+        if (isCheckbox) {
+          (newProps as any).checked = fieldProps.value;
+          (newProps as any).onCheckedChange = (checked: boolean) => {
+            fieldProps.onChange(checked);
+          };
+        }
+
+        const newField = React.cloneElement(field, newProps);
+
+        if (isCheckbox) {
+          return (
+            <Field
+              {...props}
+              {...(isCheckbox ? { orientation: "horizontal" } : {})}
+            >
+              {newField}
+              <FieldContent>
+                {label && (
+                  <FieldLabel htmlFor={name}>
+                    {<FormattedMessage {...label} />}
+                  </FieldLabel>
+                )}
+                {description && (
+                  <FieldDescription>
+                    <FormattedMessage {...description} />
+                  </FieldDescription>
+                )}
+                {error && (
+                  <FieldError>
+                    <FormattedMessage id={error} defaultMessage="" />
+                  </FieldError>
+                )}
+              </FieldContent>
+            </Field>
+          );
+        }
 
         return (
-          <Field>
-            <FieldLabel htmlFor={name}>
-              <FormattedMessage {...label} />
-            </FieldLabel>
-            {newField}
-            {errorMessage && (
-              <FieldDescription className="text-destructive">
-                {errorMessage}
-              </FieldDescription>
+          <Field
+            {...props}
+            {...(isCheckbox ? { orientation: "horizontal" } : {})}
+          >
+            {label && (
+              <FieldLabel htmlFor={name}>
+                <FormattedMessage {...label} />
+              </FieldLabel>
             )}
+            {newField}
+            <FieldContent>
+              {description && (
+                <FieldDescription>
+                  <FormattedMessage {...description} />
+                </FieldDescription>
+              )}
+              {error && (
+                <FieldError>
+                  <FormattedMessage id={error} defaultMessage="" />
+                </FieldError>
+              )}
+            </FieldContent>
           </Field>
         );
       }}

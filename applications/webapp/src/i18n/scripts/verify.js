@@ -39,7 +39,6 @@ function verify() {
     if (fileKeys[file].size !== base.size) {
       const missingKeys = [...base].filter((key) => !fileKeys[file].has(key));
       if (missingKeys.length > 0) {
-        console.log(`Missing keys for ${file}:`);
         console.table(missingKeys);
         isValid = false;
       }

@@ -8,8 +8,8 @@ export type SettingsForm = {
   slug: string;
   title: string;
   languages: SubmissionLanguage[];
-  startAt: ZonedDateTime;
-  endAt: ZonedDateTime;
+  startAt: string;
+  endAt: string;
   settings: {
     isAutoJudgeEnabled: boolean;
   };

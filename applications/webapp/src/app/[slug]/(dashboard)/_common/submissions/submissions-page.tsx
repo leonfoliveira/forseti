@@ -20,6 +20,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/app/_lib/component/shadcn/dropdown-menu";
+import { Separator } from "@/app/_lib/component/shadcn/separator";
 import {
   Table,
   TableBody,
@@ -34,7 +35,6 @@ import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/S
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
-import { Separator } from "@/app/_lib/component/shadcn/separator";
 
 const messages = defineMessages({
   pageTitle: {

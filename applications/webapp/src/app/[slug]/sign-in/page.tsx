@@ -131,7 +131,7 @@ export default function SignInPage() {
                 </CardDescription>
               </CardHeader>
               <Separator />
-              <CardContent className="flex flex-col gap-6">
+              <CardContent className="flex flex-col gap-4">
                 <ControlledField
                   form={form}
                   name="login"

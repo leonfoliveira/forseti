@@ -76,6 +76,12 @@
         }
       },
       "component": {
+        "page": {
+          "error-page": {
+            "description": "An unexpected error has occurred on the server.",
+            "reload": "Try again"
+          }
+        },
         "header": {
           "toggleThemeTooltip": "Toggle theme",
           "signInTooltip": "Sign in",
@@ -84,16 +90,16 @@
         "footer": {
           "text": "Forseti {version}"
         },
-        "page": {
-          "error-page": {
-            "description": "An unexpected error has occurred on the server.",
-            "reload": "Try again"
-          }
-        },
         "format": {
           "formatted-duration": {
             "duration": "{hours}:{minutes}:{seconds}",
             "duration-with-days": "{days}d {hours}:{minutes}:{seconds}"
+          }
+        },
+        "display": {
+          "confirmation-dialog": {
+            "cancel-button": "Cancel",
+            "confirm-button": "Confirm"
           }
         }
       }
@@ -310,7 +316,64 @@
           "settings": {
             "settings-page": {
               "title": "Forseti - Settings",
-              "description": "Manage your contest settings and preferences."
+              "description": "Manage your contest settings and preferences.",
+              "contest-tab": "Contest",
+              "problems-tab": "Problems",
+              "members-tab": "Members",
+              "reset-label": "Reset",
+              "save-label": "Save",
+              "save-success": "Settings saved successfully.",
+              "save-error": "Failed to save settings.",
+              "confirm-dialog-title": "Confirm Changes",
+              "confirm-dialog-description": "Are you sure you want to save these changes?",
+              "confirm-dialog-in-progress-alert-title": "Contest In Progress",
+              "confirm-dialog-in-progress-alert-description": "This contest is currently in progress. Changing the settings may affect the contest experience for participants. Please review your changes carefully before confirming.",
+              "confirm-dialog-cancel": "Cancel",
+              "confirm-dialog-confirm": "Yes, Save Changes",
+              "settings-page-problems-tab": {
+                "title-label": "Title",
+                "title-description": "The title of the problem.",
+                "description-label": "Description (PDF)",
+                "description-description": "The problem description file in PDF format.",
+                "time-limit-label": "Time Limit (ms)",
+                "time-limit-description": "The maximum time allowed for the problem.",
+                "memory-limit-label": "Memory Limit (MB)",
+                "memory-limit-description": "The maximum memory allowed for the problem.",
+                "test-cases-label": "Test Cases (CSV)",
+                "test-cases-description": "The test cases file in CSV format with two columns: input and expected output.",
+                "new-problem-label": "New Problem"
+              },
+              "settings-page-members-tab": {
+                "title-label": "Name",
+                "type-label": "Type",
+                "login-label": "Login",
+                "password-label": "Password",
+                "new-member-label": "New Member"
+              },
+              "settings-page-contest-tab": {
+                "slug-label": "Slug",
+                "slug-description": "The slug is used in the URL and must be unique.",
+                "title-label": "Title",
+                "title-description": "The title of the contest.",
+                "start-at-label": "Start At",
+                "start-at-description": "The start time of the contest.",
+                "end-at-label": "End At",
+                "end-at-description": "The end time of the contest.",
+                "languages-label": "Languages",
+                "languages-description": "The programming languages allowed in the contest.",
+                "is-auto-judge-enabled-label": "Auto Judge",
+                "is-auto-judge-enabled-description": "Whether to enable auto judging of submissions.",
+                "force-start-label": "Force Start",
+                "force-start-confirmation": "Are you sure you want to force the contest to start immediately?",
+                "force-start-confirmation-description": "This action cannot be undone.",
+                "force-start-success": "Contest has been force started.",
+                "force-start-error": "Failed to force start the contest.",
+                "force-end-label": "Force End",
+                "force-end-confirmation": "Are you sure you want to force the contest to end immediately?",
+                "force-end-confirmation-description": "This action cannot be undone.",
+                "force-end-success": "Contest has been force ended.",
+                "force-end-error": "Failed to force end the contest."
+              }
             }
           },
           "problems-page": {

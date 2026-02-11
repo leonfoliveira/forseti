@@ -1,7 +1,6 @@
-import { parseAbsoluteToLocal } from "@internationalized/date";
-import { now, getLocalTimeZone, ZonedDateTime } from "@internationalized/date";
 import Joi from "joi";
 
+import { DateTimeUtil } from "@/app/_lib/util/datetime-util";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
@@ -11,13 +10,17 @@ import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/Contest
 import { defineMessages } from "@/i18n/message";
 
 export type SettingsFormType = {
-  slug: string;
-  title: string;
-  languages: SubmissionLanguage[];
-  startAt: ZonedDateTime;
-  endAt: ZonedDateTime;
-  settings: {
-    isAutoJudgeEnabled: boolean;
+  contest: {
+    slug: string;
+    title: string;
+    languages: {
+      [key in SubmissionLanguage]: boolean;
+    };
+    startAt: string;
+    endAt: string;
+    settings: {
+      isAutoJudgeEnabled: boolean;
+    };
   };
   problems: {
     _id?: string;
@@ -157,68 +160,100 @@ export class SettingsForm {
 
   static schema = (contestStatus: ContestStatus) =>
     Joi.object({
-      slug: Joi.string()
-        .min(1)
-        .max(32)
-        .pattern(/^[a-zA-Z0-9-]+$/)
-        .required()
-        .messages({
-          "any.required": this.messages.slugRequired.id,
-          "string.empty": this.messages.slugRequired.id,
-          "string.min": this.messages.slugRequired.id,
-          "string.max": this.messages.slugTooLong.id,
-          "string.pattern.base": this.messages.slugPattern.id,
+      contest: Joi.object({
+        slug: Joi.string()
+          .min(1)
+          .max(32)
+          .pattern(/^[a-zA-Z0-9-]+$/)
+          .required()
+          .messages({
+            "any.required": this.messages.slugRequired.id,
+            "string.empty": this.messages.slugRequired.id,
+            "string.min": this.messages.slugRequired.id,
+            "string.max": this.messages.slugTooLong.id,
+            "string.pattern.base": this.messages.slugPattern.id,
+          }),
+        title: Joi.string().min(1).max(255).required().messages({
+          "any.required": this.messages.titleRequired.id,
+          "string.empty": this.messages.titleRequired.id,
+          "string.min": this.messages.titleRequired.id,
+          "string.max": this.messages.titleTooLong.id,
         }),
-      title: Joi.string().min(1).max(255).required().messages({
-        "any.required": this.messages.titleRequired.id,
-        "string.empty": this.messages.titleRequired.id,
-        "string.min": this.messages.titleRequired.id,
-        "string.max": this.messages.titleTooLong.id,
-      }),
-      languages: Joi.array().min(1).required().messages({
-        "any.required": this.messages.languagesRequired.id,
-        "array.min": this.messages.languagesRequired.id,
-      }),
-      startAt: Joi.custom((value: ZonedDateTime, helpers) => {
-        try {
-          // Skip future validation if contest is not in NOT_STARTED status
-          if (contestStatus !== ContestStatus.NOT_STARTED) {
+        languages: Joi.object()
+          .pattern(Joi.string(), Joi.boolean())
+          .custom(
+            (value: { [key in SubmissionLanguage]: boolean }, helpers) => {
+              const hasSelectedLanguage = Object.values(value).some(
+                (selected) => selected === true,
+              );
+              if (!hasSelectedLanguage) {
+                return helpers.error("languages.required");
+              }
+              return value;
+            },
+          )
+          .required()
+          .messages({
+            "any.required": this.messages.languagesRequired.id,
+            "languages.required": this.messages.languagesRequired.id,
+          }),
+        startAt: Joi.string()
+          .pattern(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
+          .custom((value: string, helpers) => {
+            try {
+              // Skip future validation if contest is not in NOT_STARTED status
+              if (contestStatus !== ContestStatus.NOT_STARTED) {
+                return value;
+              }
+
+              const startDate = new Date(value);
+              const currentTime = new Date();
+              if (startDate <= currentTime) {
+                return helpers.error("datetime-local.future");
+              }
+            } catch {
+              return helpers.error("datetime-local.invalid");
+            }
+
             return value;
-          }
+          })
+          .required()
+          .messages({
+            "any.required": this.messages.startRequired.id,
+            "string.pattern.base": this.messages.startRequired.id,
+            "datetime-local.invalid": this.messages.startRequired.id,
+            "datetime-local.future": this.messages.startFuture.id,
+          }),
+        endAt: Joi.string()
+          .pattern(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
+          .custom((value: string, helpers) => {
+            try {
+              const endDate = new Date(value);
+              const startValue = helpers.state.ancestors[0].startAt as string;
 
-          const currentTime = now(getLocalTimeZone());
-          if (value.compare(currentTime) <= 0) {
-            return helpers.error("calendar-date-time.future");
-          }
-        } catch {
-          return helpers.error("calendar-date-time.invalid");
-        }
+              if (startValue) {
+                const startDate = new Date(startValue);
+                if (endDate <= startDate) {
+                  return helpers.error("datetime-local.after-start");
+                }
+              }
 
-        return value;
-      })
-        .required()
-        .messages({
-          "any.required": this.messages.startRequired.id,
-          "calendar-date-time.invalid": this.messages.startRequired.id,
-          "calendar-date-time.future": this.messages.startFuture.id,
-        }),
-      endAt: Joi.when("startAt", {
-        is: Joi.exist(),
-        then: Joi.custom((value: ZonedDateTime, helpers) => {
-          const startValue = helpers.state.ancestors[0]
-            .startAt as ZonedDateTime;
-          if (startValue && value.compare(startValue) <= 0) {
-            return helpers.error("calendar-date-time.after-start");
-          }
-          return value;
-        }),
-      })
-        .required()
-        .messages({
-          "any.required": this.messages.endRequired.id,
-          "calendar-date-time.invalid": this.messages.endRequired.id,
-          "calendar-date-time.after-start": this.messages.endAfterStart.id,
-        }),
+              return value;
+            } catch {
+              return helpers.error("datetime-local.invalid");
+            }
+          })
+          .required()
+          .messages({
+            "any.required": this.messages.endRequired.id,
+            "string.pattern.base": this.messages.endRequired.id,
+            "datetime-local.invalid": this.messages.endRequired.id,
+            "datetime-local.after-start": this.messages.endAfterStart.id,
+          }),
+        settings: Joi.object({
+          isAutoJudgeEnabled: Joi.boolean().required(),
+        }).required(),
+      }).required(),
       problems: Joi.array()
         .items(
           Joi.object({
@@ -246,11 +281,11 @@ export class SettingsForm {
               "file.required": this.messages.problemDescriptionRequired.id,
               "file.too-large": this.messages.problemDescriptionSize.id,
             }),
-            timeLimit: Joi.number().min(1).required().messages({
+            timeLimit: Joi.number().greater(0).required().messages({
               "any.required": this.messages.problemTimeLimitRequired.id,
               "number.min": this.messages.problemTimeLimitPositive.id,
             }),
-            memoryLimit: Joi.number().min(1).required().messages({
+            memoryLimit: Joi.number().greater(0).required().messages({
               "any.required": this.messages.problemMemoryLimitRequired.id,
               "number.min": this.messages.problemMemoryLimitPositive.id,
             }),
@@ -344,13 +379,23 @@ export class SettingsForm {
       password: undefined,
     }));
 
+    const languages = Object.values(SubmissionLanguage).reduce(
+      (acc, lang) => {
+        acc[lang] = contest.languages.includes(lang);
+        return acc;
+      },
+      {} as Record<SubmissionLanguage, boolean>,
+    );
+
     return {
-      slug: contest.slug,
-      title: contest.title,
-      languages: contest.languages,
-      startAt: parseAbsoluteToLocal(contest.startAt),
-      endAt: parseAbsoluteToLocal(contest.endAt),
-      settings: contest.settings,
+      contest: {
+        slug: contest.slug,
+        title: contest.title,
+        languages,
+        startAt: DateTimeUtil.toDatetimeLocal(contest.startAt),
+        endAt: DateTimeUtil.toDatetimeLocal(contest.endAt),
+        settings: contest.settings,
+      },
       members,
       problems,
     };
@@ -358,12 +403,14 @@ export class SettingsForm {
 
   static toInputDTO(form: SettingsFormType): UpdateContestInputDTO {
     return {
-      slug: form.slug,
-      title: form.title,
-      languages: form.languages,
-      startAt: form.startAt.toDate().toISOString(),
-      endAt: form.endAt.toDate().toISOString(),
-      settings: form.settings,
+      slug: form.contest.slug,
+      title: form.contest.title,
+      languages: Object.keys(form.contest.languages).filter(
+        (language) => form.contest.languages[language as SubmissionLanguage],
+      ) as SubmissionLanguage[],
+      startAt: DateTimeUtil.fromDatetimeLocal(form.contest.startAt),
+      endAt: DateTimeUtil.fromDatetimeLocal(form.contest.endAt),
+      settings: form.contest.settings,
       members: form.members.map((member) => ({
         id: member._id,
         type: member.type,

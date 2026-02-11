@@ -1,7 +1,7 @@
 "use client";
 
 import { RefreshCw } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
@@ -20,13 +20,12 @@ const messages = defineMessages({
 });
 
 function Error500Content() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const previousPath = searchParams.get("from");
 
   function handleRetry() {
     if (previousPath) {
-      router.push(previousPath);
+      window.location.href = previousPath;
     }
   }
 

@@ -4,7 +4,7 @@ import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import React from "react";
 
-import { Html } from "@/app/_lib/component/html";
+import { Html } from "@/app/_lib/component/layout/html";
 import { buildClientConfig, serverConfig } from "@/config/config";
 
 /**

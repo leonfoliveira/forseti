@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/dom";
 
-import { Footer } from "@/app/_lib/component/footer";
+import { Footer } from "@/app/_lib/component/layout/footer";
 import { serverConfig } from "@/config/config";
 import { renderWithProviders } from "@/test/render-with-providers";
 

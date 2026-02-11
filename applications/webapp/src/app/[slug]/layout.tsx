@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import React from "react";
 
-import { Footer } from "@/app/_lib/component/footer";
-import { Header } from "@/app/_lib/component/header";
+import { Footer } from "@/app/_lib/component/layout/footer";
+import { Header } from "@/app/_lib/component/layout/header";
 import { StoreProvider } from "@/app/_store/store-provider";
 import { sessionReader, contestReader } from "@/config/composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";

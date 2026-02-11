@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/dom";
 import { usePathname, useRouter } from "next/navigation";
 
-import { Header } from "@/app/_lib/component/header";
+import { Header } from "@/app/_lib/component/layout/header";
 import { useTheme } from "@/app/_lib/util/theme-hook";
 import { sessionWritter } from "@/config/composition";
 import { routes } from "@/config/routes";

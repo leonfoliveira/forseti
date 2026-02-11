@@ -234,7 +234,7 @@ export function ClarificationsPageCard({
       {!!answer || canAnswer ? (
         <CardFooter>
           {!!answer && (
-            <div className="ml-5">
+            <div className="ml-5" data-testid="clarification-answer-card">
               <div className="flex items-center gap-4">
                 <MessageCircleReply size={24} />
                 <div>
