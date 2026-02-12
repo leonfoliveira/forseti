@@ -7,7 +7,7 @@ import React from "react";
 export function LoadingPage() {
   return (
     <div className="flex h-dvh items-center justify-center">
-      <Loader className="animate-spin" size={48} />
+      <Loader className="animate-spin" size={48} data-testid="loader" />
     </div>
   );
 }

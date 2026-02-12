@@ -52,7 +52,7 @@ describe("ClarificationForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["problemId"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.clarification-form-schema.problem-required",
+        "app.[slug].(dashboard)._common.clarifications.clarification-form.problem-required",
       );
     });
 
@@ -66,7 +66,7 @@ describe("ClarificationForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["problemId"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.clarification-form-schema.problem-required",
+        "app.[slug].(dashboard)._common.clarifications.clarification-form.problem-required",
       );
     });
 
@@ -79,7 +79,7 @@ describe("ClarificationForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["text"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.clarification-form-schema.text-required",
+        "app.[slug].(dashboard)._common.clarifications.clarification-form.text-required",
       );
     });
 
@@ -93,7 +93,7 @@ describe("ClarificationForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["text"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.clarification-form-schema.text-required",
+        "app.[slug].(dashboard)._common.clarifications.clarification-form.text-required",
       );
     });
 
@@ -108,7 +108,7 @@ describe("ClarificationForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["text"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.clarification-form-schema.text-long",
+        "app.[slug].(dashboard)._common.clarifications.clarification-form.text-long",
       );
     });
   });
@@ -189,13 +189,13 @@ describe("ClarificationForm", () => {
       expect(ClarificationForm.messages.textLong).toBeDefined();
 
       expect(ClarificationForm.messages.problemRequired.id).toBe(
-        "app.[slug].(dashboard)._common._form.clarification-form-schema.problem-required",
+        "app.[slug].(dashboard)._common.clarifications.clarification-form.problem-required",
       );
       expect(ClarificationForm.messages.textRequired.id).toBe(
-        "app.[slug].(dashboard)._common._form.clarification-form-schema.text-required",
+        "app.[slug].(dashboard)._common.clarifications.clarification-form.text-required",
       );
       expect(ClarificationForm.messages.textLong.id).toBe(
-        "app.[slug].(dashboard)._common._form.clarification-form-schema.text-long",
+        "app.[slug].(dashboard)._common.clarifications.clarification-form.text-long",
       );
     });
   });

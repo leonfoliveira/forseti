@@ -51,7 +51,7 @@ describe("SignInForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["login"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].sign-in._form.sign-in-form-schema.login-required",
+        "app.[slug].sign-in.sign-in-form.login-required",
       );
     });
 
@@ -65,7 +65,7 @@ describe("SignInForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["login"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].sign-in._form.sign-in-form-schema.login-required",
+        "app.[slug].sign-in.sign-in-form.login-required",
       );
     });
 
@@ -78,7 +78,7 @@ describe("SignInForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["password"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].sign-in._form.sign-in-form-schema.password-required",
+        "app.[slug].sign-in.sign-in-form.password-required",
       );
     });
 
@@ -92,7 +92,7 @@ describe("SignInForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["password"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].sign-in._form.sign-in-form-schema.password-required",
+        "app.[slug].sign-in.sign-in-form.password-required",
       );
     });
 
@@ -124,10 +124,10 @@ describe("SignInForm", () => {
 
       const messages = error?.details.map((detail) => detail.message);
       expect(messages).toContain(
-        "app.[slug].sign-in._form.sign-in-form-schema.login-required",
+        "app.[slug].sign-in.sign-in-form.login-required",
       );
       expect(messages).toContain(
-        "app.[slug].sign-in._form.sign-in-form-schema.password-required",
+        "app.[slug].sign-in.sign-in-form.password-required",
       );
     });
   });
@@ -149,10 +149,10 @@ describe("SignInForm", () => {
       expect(SignInForm.messages.passwordRequired).toBeDefined();
 
       expect(SignInForm.messages.loginRequired.id).toBe(
-        "app.[slug].sign-in._form.sign-in-form-schema.login-required",
+        "app.[slug].sign-in.sign-in-form.login-required",
       );
       expect(SignInForm.messages.passwordRequired.id).toBe(
-        "app.[slug].sign-in._form.sign-in-form-schema.password-required",
+        "app.[slug].sign-in.sign-in-form.password-required",
       );
     });
   });

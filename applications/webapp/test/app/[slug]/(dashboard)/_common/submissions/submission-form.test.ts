@@ -62,7 +62,7 @@ describe("SubmissionForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["problemId"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.submission-form-schema.problem-required",
+        "app.[slug].(dashboard)._common.submissions.submission-form.problem-required",
       );
     });
 
@@ -77,7 +77,7 @@ describe("SubmissionForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["problemId"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.submission-form-schema.problem-required",
+        "app.[slug].(dashboard)._common.submissions.submission-form.problem-required",
       );
     });
 
@@ -91,7 +91,7 @@ describe("SubmissionForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["language"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.submission-form-schema.language-required",
+        "app.[slug].(dashboard)._common.submissions.submission-form.language-required",
       );
     });
 
@@ -106,7 +106,7 @@ describe("SubmissionForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["language"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.submission-form-schema.language-required",
+        "app.[slug].(dashboard)._common.submissions.submission-form.language-required",
       );
     });
 
@@ -120,7 +120,7 @@ describe("SubmissionForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["code"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.submission-form-schema.code-required",
+        "app.[slug].(dashboard)._common.submissions.submission-form.code-required",
       );
     });
 
@@ -135,7 +135,7 @@ describe("SubmissionForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["code"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.submission-form-schema.code-required",
+        "app.[slug].(dashboard)._common.submissions.submission-form.code-required",
       );
     });
 
@@ -151,7 +151,7 @@ describe("SubmissionForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["code"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.submission-form-schema.code-too-large",
+        "app.[slug].(dashboard)._common.submissions.submission-form.code-too-large",
       );
     });
   });
@@ -209,16 +209,16 @@ describe("SubmissionForm", () => {
       expect(SubmissionForm.messages.codeTooLarge).toBeDefined();
 
       expect(SubmissionForm.messages.problemRequired.id).toBe(
-        "app.[slug].(dashboard)._common._form.submission-form-schema.problem-required",
+        "app.[slug].(dashboard)._common.submissions.submission-form.problem-required",
       );
       expect(SubmissionForm.messages.languageRequired.id).toBe(
-        "app.[slug].(dashboard)._common._form.submission-form-schema.language-required",
+        "app.[slug].(dashboard)._common.submissions.submission-form.language-required",
       );
       expect(SubmissionForm.messages.codeRequired.id).toBe(
-        "app.[slug].(dashboard)._common._form.submission-form-schema.code-required",
+        "app.[slug].(dashboard)._common.submissions.submission-form.code-required",
       );
       expect(SubmissionForm.messages.codeTooLarge.id).toBe(
-        "app.[slug].(dashboard)._common._form.submission-form-schema.code-too-large",
+        "app.[slug].(dashboard)._common.submissions.submission-form.code-too-large",
       );
     });
   });

@@ -55,7 +55,7 @@ describe("AnnouncementForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["text"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.announcement-form-schema.text-required",
+        "app.[slug].(dashboard)._common.announcements.announcement-form.text-required",
       );
     });
 
@@ -68,7 +68,7 @@ describe("AnnouncementForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["text"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.announcement-form-schema.text-required",
+        "app.[slug].(dashboard)._common.announcements.announcement-form.text-required",
       );
     });
 
@@ -82,7 +82,7 @@ describe("AnnouncementForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["text"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.announcement-form-schema.text-long",
+        "app.[slug].(dashboard)._common.announcements.announcement-form.text-long",
       );
     });
 
@@ -95,7 +95,7 @@ describe("AnnouncementForm", () => {
       const { error } = AnnouncementForm.schema.validate(invalidData);
       expect(error).toBeDefined();
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.announcement-form-schema.text-long",
+        "app.[slug].(dashboard)._common.announcements.announcement-form.text-long",
       );
     });
   });
@@ -154,10 +154,10 @@ describe("AnnouncementForm", () => {
       expect(AnnouncementForm.messages.textLong).toBeDefined();
 
       expect(AnnouncementForm.messages.textRequired.id).toBe(
-        "app.[slug].(dashboard)._common._form.announcement-form-schema.text-required",
+        "app.[slug].(dashboard)._common.announcements.announcement-form.text-required",
       );
       expect(AnnouncementForm.messages.textLong.id).toBe(
-        "app.[slug].(dashboard)._common._form.announcement-form-schema.text-long",
+        "app.[slug].(dashboard)._common.announcements.announcement-form.text-long",
       );
     });
   });

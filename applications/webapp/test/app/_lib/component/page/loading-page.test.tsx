@@ -7,6 +7,6 @@ describe("LoadingPage", () => {
   it("should render content correctly", async () => {
     await renderWithProviders(<LoadingPage />);
 
-    expect(screen.getByTestId("spinner")).toBeInTheDocument();
+    expect(screen.getByTestId("loader")).toBeInTheDocument();
   });
 });

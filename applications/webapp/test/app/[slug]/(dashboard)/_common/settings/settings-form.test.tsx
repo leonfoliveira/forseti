@@ -116,7 +116,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["contest", "slug"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.slug-required",
+          "app.[slug].(dashboard)._common.settings.settings-form.slug-required",
         );
       });
 
@@ -135,7 +135,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["contest", "slug"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.slug-too-long",
+          "app.[slug].(dashboard)._common.settings.settings-form.slug-too-long",
         );
       });
 
@@ -154,7 +154,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["contest", "slug"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.slug-pattern",
+          "app.[slug].(dashboard)._common.settings.settings-form.slug-pattern",
         );
       });
 
@@ -173,7 +173,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["contest", "title"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.title-required",
+          "app.[slug].(dashboard)._common.settings.settings-form.title-required",
         );
       });
 
@@ -192,7 +192,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["contest", "title"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.title-too-long",
+          "app.[slug].(dashboard)._common.settings.settings-form.title-too-long",
         );
       });
 
@@ -215,7 +215,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["contest", "languages"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.languages-required",
+          "app.[slug].(dashboard)._common.settings.settings-form.languages-required",
         );
       });
 
@@ -234,7 +234,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["contest", "startAt"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.start-future",
+          "app.[slug].(dashboard)._common.settings.settings-form.start-future",
         );
       });
 
@@ -270,7 +270,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["contest", "endAt"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.end-after-start",
+          "app.[slug].(dashboard)._common.settings.settings-form.end-after-start",
         );
       });
     });
@@ -355,7 +355,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["problems", 0, "title"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.problem-title-required",
+          "app.[slug].(dashboard)._common.settings.settings-form.problem-title-required",
         );
       });
 
@@ -376,7 +376,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["problems", 0, "title"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.problem-title-too-long",
+          "app.[slug].(dashboard)._common.settings.settings-form.problem-title-too-long",
         );
       });
 
@@ -444,7 +444,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["members", 0, "type"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.member-type-required",
+          "app.[slug].(dashboard)._common.settings.settings-form.member-type-required",
         );
       });
 
@@ -465,7 +465,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["members", 0, "name"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.member-name-required",
+          "app.[slug].(dashboard)._common.settings.settings-form.member-name-required",
         );
       });
 
@@ -486,7 +486,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["members", 0, "name"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.member-name-too-long",
+          "app.[slug].(dashboard)._common.settings.settings-form.member-name-too-long",
         );
       });
 
@@ -507,7 +507,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["members", 0, "login"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.member-login-required",
+          "app.[slug].(dashboard)._common.settings.settings-form.member-login-required",
         );
       });
 
@@ -528,7 +528,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["members", 0, "login"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.member-login-too-long",
+          "app.[slug].(dashboard)._common.settings.settings-form.member-login-too-long",
         );
       });
 
@@ -549,7 +549,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["members", 0, "password"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.member-password-required",
+          "app.[slug].(dashboard)._common.settings.settings-form.member-password-required",
         );
       });
 
@@ -590,7 +590,7 @@ describe("SettingsForm", () => {
         expect(error).toBeDefined();
         expect(error?.details[0].path).toEqual(["members", 0, "password"]);
         expect(error?.details[0].message).toBe(
-          "app.[slug].(dashboard).settings._form.settings-form-schema.member-password-too-long",
+          "app.[slug].(dashboard)._common.settings.settings-form.member-password-too-long",
         );
       });
     });
@@ -831,16 +831,16 @@ describe("SettingsForm", () => {
 
     it("should have correct message IDs", () => {
       expect(SettingsForm.messages.slugRequired.id).toBe(
-        "app.[slug].(dashboard).settings._form.settings-form-schema.slug-required",
+        "app.[slug].(dashboard)._common.settings.settings-form.slug-required",
       );
       expect(SettingsForm.messages.titleRequired.id).toBe(
-        "app.[slug].(dashboard).settings._form.settings-form-schema.title-required",
+        "app.[slug].(dashboard)._common.settings.settings-form.title-required",
       );
       expect(SettingsForm.messages.languagesRequired.id).toBe(
-        "app.[slug].(dashboard).settings._form.settings-form-schema.languages-required",
+        "app.[slug].(dashboard)._common.settings.settings-form.languages-required",
       );
       expect(SettingsForm.messages.memberPasswordRequired.id).toBe(
-        "app.[slug].(dashboard).settings._form.settings-form-schema.member-password-required",
+        "app.[slug].(dashboard)._common.settings.settings-form.member-password-required",
       );
     });
   });

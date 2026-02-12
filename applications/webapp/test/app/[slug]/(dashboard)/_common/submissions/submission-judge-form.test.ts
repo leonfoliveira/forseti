@@ -36,7 +36,7 @@ describe("SubmissionJudgeForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["answer"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.submission-judge-form-schema.answer-required",
+        "app.[slug].(dashboard)._common.submissions.submission-judge-form.answer-required",
       );
     });
 
@@ -49,7 +49,7 @@ describe("SubmissionJudgeForm", () => {
       expect(error).toBeDefined();
       expect(error?.details[0].path).toEqual(["answer"]);
       expect(error?.details[0].message).toBe(
-        "app.[slug].(dashboard)._common._form.submission-judge-form-schema.answer-required",
+        "app.[slug].(dashboard)._common.submissions.submission-judge-form.answer-required",
       );
     });
   });
@@ -68,7 +68,7 @@ describe("SubmissionJudgeForm", () => {
     it("should have all required message definitions", () => {
       expect(SubmissionJudgeForm.messages.answerRequired).toBeDefined();
       expect(SubmissionJudgeForm.messages.answerRequired.id).toBe(
-        "app.[slug].(dashboard)._common._form.submission-judge-form-schema.answer-required",
+        "app.[slug].(dashboard)._common.submissions.submission-judge-form.answer-required",
       );
     });
   });
