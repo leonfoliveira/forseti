@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { Message } from "@/i18n/message";
 import { renderHookWithProviders } from "@/test/render-with-providers";
 
@@ -13,7 +13,7 @@ jest.mock("sonner", () => ({
     error: jest.fn(),
   },
 }));
-jest.unmock("@/app/_lib/util/toast-hook");
+jest.unmock("@/app/_lib/hook/toast-hook");
 
 describe("useToast", () => {
   const testMessage: Message = {

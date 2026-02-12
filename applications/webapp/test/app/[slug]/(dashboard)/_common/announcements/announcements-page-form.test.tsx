@@ -2,7 +2,7 @@ import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 
 import { AnnouncementsPageForm } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page-form";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { announcementWritter } from "@/config/composition";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";

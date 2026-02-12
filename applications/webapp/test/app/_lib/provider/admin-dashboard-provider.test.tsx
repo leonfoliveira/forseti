@@ -4,7 +4,7 @@ import { act } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { AdminDashboardProvider } from "@/app/_lib/provider/admin-dashboard-provider";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import {
   announcementListener,
   clarificationListener,

@@ -13,8 +13,8 @@ import {
   AlertDialogTitle,
 } from "@/app/_lib/component/shadcn/alert-dialog";
 import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
-import { useLoadableState } from "@/app/_lib/util/loadable-state";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
 import { submissionWritter } from "@/config/composition";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";

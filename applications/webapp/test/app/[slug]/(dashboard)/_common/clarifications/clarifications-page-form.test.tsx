@@ -2,7 +2,7 @@ import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 
 import { ClarificationsPageForm } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page-form";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { clarificationWritter } from "@/config/composition";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";

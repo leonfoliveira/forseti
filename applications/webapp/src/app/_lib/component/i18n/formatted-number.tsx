@@ -1,6 +1,6 @@
 import { NumberFormatOptions } from "next-intl";
 
-import { useIntl } from "@/app/_lib/util/intl-hook";
+import { useIntl } from "@/app/_lib/hook/intl-hook";
 
 type Props = {
   value: number;

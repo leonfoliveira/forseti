@@ -1,4 +1,4 @@
-import { useErrorHandler } from "@/app/_lib/util/error-handler-hook";
+import { useErrorHandler } from "@/app/_lib/hook/error-handler-hook";
 import { sessionWritter } from "@/config/composition";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { ServiceUnavailableException } from "@/core/domain/exception/ServiceUnavailableException";

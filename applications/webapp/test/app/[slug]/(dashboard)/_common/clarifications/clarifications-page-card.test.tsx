@@ -3,7 +3,7 @@ import { act } from "@testing-library/react";
 
 import { ClarificationAnswerForm } from "@/app/[slug]/(dashboard)/_common/clarifications/clarification-answer-form";
 import { ClarificationsPageCard } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page-card";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { clarificationWritter } from "@/config/composition";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";

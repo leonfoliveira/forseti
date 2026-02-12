@@ -62,7 +62,7 @@ const toast = {
   warning: jest.fn(),
   error: jest.fn(),
 };
-jest.mock("@/app/_lib/util/toast-hook", () => ({
+jest.mock("@/app/_lib/hook/toast-hook", () => ({
   useToast: () => toast,
 }));
 

@@ -6,7 +6,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
 } from "@/app/_lib/component/shadcn/dropdown-menu";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { submissionWritter } from "@/config/composition";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";

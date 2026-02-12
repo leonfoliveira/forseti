@@ -5,7 +5,7 @@ import { Roboto } from "next/font/google";
 import { Toaster } from "@/app/_lib/component/shadcn/sonner";
 import { TooltipProvider } from "@/app/_lib/component/shadcn/tooltip";
 import { cn } from "@/app/_lib/util/cn";
-import { useTheme } from "@/app/_lib/util/theme-hook";
+import { useTheme } from "@/app/_lib/hook/theme-hook";
 
 const roboto = Roboto({
   variable: "--font-roboto",

@@ -1,5 +1,5 @@
+import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
 import { DashboardProvider } from "@/app/_lib/provider/dashboard-provider";
-import { useContestStatusWatcher } from "@/app/_lib/util/contest-status-watcher";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { MockSession } from "@/test/mock/response/session/MockSession";
@@ -31,7 +31,7 @@ jest.mock("@/app/_lib/provider/judge-dashboard-provider", () => ({
   ),
 }));
 
-jest.mock("@/app/_lib/util/contest-status-watcher");
+jest.mock("@/app/_lib/hook/contest-status-watcher-hook");
 jest.mock("@/app/[slug]/(dashboard)/_common/wait-page", () => ({
   WaitPage: () => <div data-testid="wait-page">Wait Page</div>,
 }));

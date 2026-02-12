@@ -14,8 +14,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/app/_lib/component/shadcn/tooltip";
-import { useContestStatusWatcher } from "@/app/_lib/util/contest-status-watcher";
-import { useTheme } from "@/app/_lib/util/theme-hook";
+import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
+import { useTheme } from "@/app/_lib/hook/theme-hook";
 import { useAppSelector } from "@/app/_store/store";
 import { sessionWritter } from "@/config/composition";
 import { routes } from "@/config/routes";

@@ -2,9 +2,9 @@ import React, { useEffect } from "react";
 
 import { ErrorPage } from "@/app/_lib/component/page/error-page";
 import { LoadingPage } from "@/app/_lib/component/page/loading-page";
-import { useIntl } from "@/app/_lib/util/intl-hook";
-import { useLoadableState } from "@/app/_lib/util/loadable-state";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useIntl } from "@/app/_lib/hook/intl-hook";
+import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import {

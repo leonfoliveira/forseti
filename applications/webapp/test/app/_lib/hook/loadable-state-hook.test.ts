@@ -1,12 +1,12 @@
 import { act } from "@testing-library/react";
 
-import { useLoadableState } from "@/app/_lib/util/loadable-state";
+import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderHookWithProviders } from "@/test/render-with-providers";
 
 // Mock the error handler hook
-jest.mock("@/app/_lib/util/error-handler-hook", () => ({
+jest.mock("@/app/_lib/hook/error-handler-hook", () => ({
   useErrorHandler: () => ({
     handle: jest.fn(),
   }),

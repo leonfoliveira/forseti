@@ -29,8 +29,8 @@ import {
 } from "@/app/_lib/component/shadcn/select";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Textarea } from "@/app/_lib/component/shadcn/textarea";
-import { useLoadableState } from "@/app/_lib/util/loadable-state";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { clarificationWritter } from "@/config/composition";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";

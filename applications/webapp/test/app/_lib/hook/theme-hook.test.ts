@@ -16,7 +16,7 @@ jest.mock("@/config/composition", () => ({
 }));
 
 // Import after mocking to avoid initialization issues
-const { Theme, useTheme } = require("@/app/_lib/util/theme-hook");
+const { Theme, useTheme } = require("@/app/_lib/hook/theme-hook");
 
 // Mock document.documentElement
 const mockDocumentElement = {

@@ -2,15 +2,15 @@ import { fireEvent, screen } from "@testing-library/dom";
 import { usePathname, useRouter } from "next/navigation";
 
 import { Header } from "@/app/_lib/component/layout/header";
-import { useTheme } from "@/app/_lib/util/theme-hook";
+import { useTheme } from "@/app/_lib/hook/theme-hook";
 import { sessionWritter } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
-jest.mock("@/app/_lib/util/theme-hook", () => ({
-  ...jest.requireActual("@/app/_lib/util/theme-hook"),
+jest.mock("@/app/_lib/hook/theme-hook", () => ({
+  ...jest.requireActual("@/app/_lib/hook/theme-hook"),
   useTheme: jest.fn(() => ({ theme: "light", toggleTheme: jest.fn() })),
 }));
 

@@ -2,7 +2,7 @@ import { act, fireEvent, screen } from "@testing-library/react";
 
 import { SubmissionForm } from "@/app/[slug]/(dashboard)/_common/submissions/submission-form";
 import { SubmissionsPageForm } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-form";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { submissionWritter } from "@/config/composition";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";

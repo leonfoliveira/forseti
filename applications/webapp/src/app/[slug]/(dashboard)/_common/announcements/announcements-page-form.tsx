@@ -21,8 +21,8 @@ import {
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Textarea } from "@/app/_lib/component/shadcn/textarea";
-import { useLoadableState } from "@/app/_lib/util/loadable-state";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { announcementWritter } from "@/config/composition";
 import { defineMessages } from "@/i18n/message";
 

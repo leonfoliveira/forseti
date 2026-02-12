@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import React, { act } from "react";
 
 import SignInPage from "@/app/[slug]/sign-in/page";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { authenticationWritter, sessionWritter } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";

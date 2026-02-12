@@ -5,7 +5,7 @@ import { act } from "react";
 
 import { SettingsForm } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
 import { SettingsPage } from "@/app/[slug]/(dashboard)/_common/settings/settings-page";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { contestWritter, leaderboardReader } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/AdminDashboardResponseDTO";

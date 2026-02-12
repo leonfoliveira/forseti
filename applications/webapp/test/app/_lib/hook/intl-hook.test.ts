@@ -1,4 +1,4 @@
-import { useIntl } from "@/app/_lib/util/intl-hook";
+import { useIntl } from "@/app/_lib/hook/intl-hook";
 import { Message } from "@/i18n/message";
 import { renderHookWithProviders } from "@/test/render-with-providers";
 

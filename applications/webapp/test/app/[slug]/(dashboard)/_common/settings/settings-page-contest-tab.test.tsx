@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
 import { SettingsPageContestTab } from "@/app/[slug]/(dashboard)/_common/settings/settings-page-contest-tab";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { contestWritter } from "@/config/composition";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/AdminDashboardResponseDTO";

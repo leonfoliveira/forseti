@@ -1,6 +1,6 @@
 import { act } from "react";
 
-import { useContestStatusWatcher } from "@/app/_lib/util/contest-status-watcher";
+import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderHookWithProviders } from "@/test/render-with-providers";
