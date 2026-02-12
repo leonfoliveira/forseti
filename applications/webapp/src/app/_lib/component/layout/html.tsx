@@ -1,8 +1,8 @@
 "use client";
 
-import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import { Roboto } from "next/font/google";
 
+import { Toaster } from "@/app/_lib/component/shadcn/sonner";
 import { TooltipProvider } from "@/app/_lib/component/shadcn/tooltip";
 import { cn } from "@/app/_lib/util/cn";
 import { useTheme } from "@/app/_lib/util/theme-hook";
@@ -23,10 +23,8 @@ export function Html({ children }: { children: React.ReactNode }) {
   return (
     <html className={cn("bg-content3", theme)}>
       <body className={roboto.className}>
-        <HeroUIProvider>
-          <ToastProvider />
-          <TooltipProvider>{children}</TooltipProvider>
-        </HeroUIProvider>
+        <TooltipProvider>{children}</TooltipProvider>
+        <Toaster />
       </body>
     </html>
   );

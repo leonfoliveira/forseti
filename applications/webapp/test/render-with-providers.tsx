@@ -1,4 +1,3 @@
-import { HeroUIProvider } from "@heroui/react";
 import { act, render, renderHook } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import React from "react";
@@ -16,11 +15,9 @@ interface WrapperProps {
 function Wrapper({ children, store }: WrapperProps) {
   return (
     <NextIntlClientProvider locale={"en-US"} messages={messages} timeZone="UTC">
-      <HeroUIProvider>
-        <TooltipProvider>
-          <Provider store={store}>{children}</Provider>
-        </TooltipProvider>
-      </HeroUIProvider>
+      <TooltipProvider>
+        <Provider store={store}>{children}</Provider>
+      </TooltipProvider>
     </NextIntlClientProvider>
   );
 }

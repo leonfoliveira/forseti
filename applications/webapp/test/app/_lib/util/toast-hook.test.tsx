@@ -1,12 +1,17 @@
-import { addToast } from "@heroui/react";
+import { toast } from "sonner";
 
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { useToast } from "@/app/_lib/util/toast-hook";
 import { Message } from "@/i18n/message";
 import { renderHookWithProviders } from "@/test/render-with-providers";
 
-jest.mock("@heroui/react", () => ({
-  ...jest.requireActual("@heroui/react"),
-  addToast: jest.fn(),
+jest.mock("sonner", () => ({
+  toast: {
+    info: jest.fn(),
+    success: jest.fn(),
+    warning: jest.fn(),
+    error: jest.fn(),
+  },
 }));
 jest.unmock("@/app/_lib/util/toast-hook");
 
@@ -22,11 +27,12 @@ describe("useToast", () => {
 
     result.current.info(testMessage);
 
-    expect(addToast).toHaveBeenCalledWith({
-      color: "primary",
-      title: expect.anything(),
-      shouldShowTimeoutProgress: true,
-    });
+    expect(toast.info).toHaveBeenCalledWith(
+      <FormattedMessage {...testMessage} />,
+      {
+        position: "bottom-center",
+      },
+    );
   });
 
   it("should show success toast with success color", async () => {
@@ -34,11 +40,12 @@ describe("useToast", () => {
 
     result.current.success(testMessage);
 
-    expect(addToast).toHaveBeenCalledWith({
-      color: "success",
-      title: expect.anything(),
-      shouldShowTimeoutProgress: true,
-    });
+    expect(toast.success).toHaveBeenCalledWith(
+      <FormattedMessage {...testMessage} />,
+      {
+        position: "bottom-center",
+      },
+    );
   });
 
   it("should show warning toast with warning color", async () => {
@@ -46,11 +53,12 @@ describe("useToast", () => {
 
     result.current.warning(testMessage);
 
-    expect(addToast).toHaveBeenCalledWith({
-      color: "warning",
-      title: expect.anything(),
-      shouldShowTimeoutProgress: true,
-    });
+    expect(toast.warning).toHaveBeenCalledWith(
+      <FormattedMessage {...testMessage} />,
+      {
+        position: "bottom-center",
+      },
+    );
   });
 
   it("should show error toast with danger color", async () => {
@@ -58,10 +66,11 @@ describe("useToast", () => {
 
     result.current.error(testMessage);
 
-    expect(addToast).toHaveBeenCalledWith({
-      color: "danger",
-      title: expect.anything(),
-      shouldShowTimeoutProgress: true,
-    });
+    expect(toast.error).toHaveBeenCalledWith(
+      <FormattedMessage {...testMessage} />,
+      {
+        position: "bottom-center",
+      },
+    );
   });
 });
