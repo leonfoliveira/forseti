@@ -27,10 +27,10 @@ import { Card, CardFooter } from "@/app/_lib/component/shadcn/card";
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/app/_lib/component/shadcn/tabs";
-import { cn } from "@/app/_lib/util/cn";
 import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
+import { cn } from "@/app/_lib/util/cn";
 import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
 import { contestMetadataSlice } from "@/app/_store/slices/contest-metadata-slice";
 import { useAppDispatch } from "@/app/_store/store";
@@ -173,97 +173,105 @@ export function SettingsPage({ contest }: Props) {
 
   return (
     <Page title={messages.title} description={messages.description}>
-      <Tabs
-        value={selectedTab}
-        onValueChange={(value) => setSelectedTab(value as TabKey)}
-        className="border-placeholder mt-3 items-center"
-      >
-        <TabsList className="bg-card border-placeholder border">
-          <TabsTrigger
-            value="contest"
-            data-testid="settings-contest-tab-trigger"
-          >
-            <p className={cn(hasContestValidationError && "text-destructive")}>
-              <FormattedMessage {...messages.contestTab} />
-            </p>
-          </TabsTrigger>
-          <TabsTrigger
-            value="problems"
-            data-testid="settings-problems-tab-trigger"
-          >
-            <p className={cn(hasProblemsValidationError && "text-destructive")}>
-              <FormattedMessage {...messages.problemsTab} />
-            </p>
-          </TabsTrigger>
-          <TabsTrigger
-            value="members"
-            data-testid="settings-members-tab-trigger"
-          >
-            <p className={cn(hasMembersValidationError && "text-destructive")}>
-              <FormattedMessage {...messages.membersTab} />
-            </p>
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-
-      <Form onSubmit={form.handleSubmit(() => setIsConfirmDialogOpen(true))}>
-        <FieldSet
-          disabled={
-            updateContestState.isLoading ||
-            contestStatus === ContestStatus.ENDED
-          }
+      <div className="py-5">
+        <Tabs
+          value={selectedTab}
+          onValueChange={(value) => setSelectedTab(value as TabKey)}
+          className="border-placeholder items-center"
         >
-          <Card className="mx-auto mt-5 w-full max-w-4xl">
-            {selectedTab === TabKey.CONTEST && (
-              <SettingsPageContestTab contest={contest} form={form} />
-            )}
+          <TabsList className="bg-card border-placeholder border">
+            <TabsTrigger
+              value="contest"
+              data-testid="settings-contest-tab-trigger"
+            >
+              <p
+                className={cn(hasContestValidationError && "text-destructive")}
+              >
+                <FormattedMessage {...messages.contestTab} />
+              </p>
+            </TabsTrigger>
+            <TabsTrigger
+              value="problems"
+              data-testid="settings-problems-tab-trigger"
+            >
+              <p
+                className={cn(hasProblemsValidationError && "text-destructive")}
+              >
+                <FormattedMessage {...messages.problemsTab} />
+              </p>
+            </TabsTrigger>
+            <TabsTrigger
+              value="members"
+              data-testid="settings-members-tab-trigger"
+            >
+              <p
+                className={cn(hasMembersValidationError && "text-destructive")}
+              >
+                <FormattedMessage {...messages.membersTab} />
+              </p>
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
 
-            {selectedTab === TabKey.PROBLEMS && (
-              <SettingsPageProblemsTab contest={contest} form={form} />
-            )}
+        <Form onSubmit={form.handleSubmit(() => setIsConfirmDialogOpen(true))}>
+          <FieldSet
+            disabled={
+              updateContestState.isLoading ||
+              contestStatus === ContestStatus.ENDED
+            }
+          >
+            <Card className="mx-auto mt-5 w-full max-w-4xl">
+              {selectedTab === TabKey.CONTEST && (
+                <SettingsPageContestTab contest={contest} form={form} />
+              )}
 
-            {selectedTab === TabKey.MEMBERS && (
-              <SettingsPageMembersTab form={form} />
-            )}
+              {selectedTab === TabKey.PROBLEMS && (
+                <SettingsPageProblemsTab contest={contest} form={form} />
+              )}
 
-            <Separator />
-            <CardFooter className="justify-end gap-3">
-              <Button type="button" variant="outline" onClick={reset}>
-                <FormattedMessage {...messages.resetLabel} />
-              </Button>
-              <Button type="submit" data-testid="save-settings-button">
-                <FormattedMessage {...messages.saveLabel} />
-              </Button>
+              {selectedTab === TabKey.MEMBERS && (
+                <SettingsPageMembersTab form={form} />
+              )}
 
-              <ConfirmationDialog
-                isOpen={isConfirmDialogOpen}
-                title={messages.confirmDialogTitle}
-                description={messages.confirmDialogDescription}
-                content={
-                  contestStatus !== ContestStatus.NOT_STARTED && (
-                    <Alert variant="destructive" className="mt-2">
-                      <AlertCircle />
-                      <AlertTitle>
-                        <FormattedMessage
-                          {...messages.confirmDialogInProgressAlertTitle}
-                        />
-                      </AlertTitle>
-                      <AlertDescription>
-                        <FormattedMessage
-                          {...messages.confirmDialogInProgressAlertDescription}
-                        />
-                      </AlertDescription>
-                    </Alert>
-                  )
-                }
-                onCancel={() => setIsConfirmDialogOpen(false)}
-                onConfirm={form.handleSubmit(updateSettings)}
-                isLoading={updateContestState.isLoading}
-              />
-            </CardFooter>
-          </Card>
-        </FieldSet>
-      </Form>
+              <Separator />
+              <CardFooter className="justify-end gap-3">
+                <Button type="button" variant="outline" onClick={reset}>
+                  <FormattedMessage {...messages.resetLabel} />
+                </Button>
+                <Button type="submit" data-testid="save-settings-button">
+                  <FormattedMessage {...messages.saveLabel} />
+                </Button>
+
+                <ConfirmationDialog
+                  isOpen={isConfirmDialogOpen}
+                  title={messages.confirmDialogTitle}
+                  description={messages.confirmDialogDescription}
+                  content={
+                    contestStatus !== ContestStatus.NOT_STARTED && (
+                      <Alert variant="destructive" className="mt-2">
+                        <AlertCircle />
+                        <AlertTitle>
+                          <FormattedMessage
+                            {...messages.confirmDialogInProgressAlertTitle}
+                          />
+                        </AlertTitle>
+                        <AlertDescription>
+                          <FormattedMessage
+                            {...messages.confirmDialogInProgressAlertDescription}
+                          />
+                        </AlertDescription>
+                      </Alert>
+                    )
+                  }
+                  onCancel={() => setIsConfirmDialogOpen(false)}
+                  onConfirm={form.handleSubmit(updateSettings)}
+                  isLoading={updateContestState.isLoading}
+                />
+              </CardFooter>
+            </Card>
+          </FieldSet>
+        </Form>
+      </div>
     </Page>
   );
 }

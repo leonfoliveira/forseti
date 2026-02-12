@@ -74,7 +74,7 @@ describe("Header", () => {
       contestMetadata,
     });
 
-    const button = screen.getByTestId("theme-toggle");
+    const button = screen.getAllByTestId("theme-toggle")[0];
     expect(button).toBeInTheDocument();
     fireEvent.click(button);
     expect(toggleTheme).toHaveBeenCalled();
@@ -97,13 +97,13 @@ describe("Header", () => {
       contestMetadata,
     });
 
-    expect(screen.getByTestId("member-name")).toHaveTextContent(
+    expect(screen.getAllByTestId("member-name")[0]).toHaveTextContent(
       session.member.name,
     );
-    expect(screen.getByTestId("member-type")).not.toBeEmptyDOMElement();
-    expect(screen.getByTestId("sign-out")).toBeInTheDocument();
+    expect(screen.getAllByTestId("member-type")[0]).not.toBeEmptyDOMElement();
+    expect(screen.getAllByTestId("sign-out")[0]).toBeInTheDocument();
 
-    fireEvent.click(screen.getByTestId("sign-out"));
+    fireEvent.click(screen.getAllByTestId("sign-out")[0]);
     expect(sessionWritter.deleteCurrent).toHaveBeenCalled();
   });
 
@@ -128,7 +128,7 @@ describe("Header", () => {
       contestMetadata,
     });
 
-    const button = screen.getByTestId("sign-in");
+    const button = screen.getAllByTestId("sign-in")[0];
     expect(button).toBeInTheDocument();
     fireEvent.click(button);
     expect(useRouter().push).toHaveBeenCalledWith(

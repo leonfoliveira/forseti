@@ -81,7 +81,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
 
   return (
     <Page title={messages.pageTitle} description={messages.pageDescription}>
-      <Card>
+      <Card className="my-5">
         <CardContent>
           <Table>
             <TableHeader className="bg-content2">

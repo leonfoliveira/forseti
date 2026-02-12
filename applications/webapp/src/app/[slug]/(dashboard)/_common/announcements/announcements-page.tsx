@@ -63,7 +63,7 @@ export function AnnouncementsPage({ announcements, canCreate = false }: Props) {
 
   return (
     <Page title={messages.pageTitle} description={messages.pageDescription}>
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center py-5">
         {/* Create Form */}
         {canCreate && isCreateFormOpen && (
           <AnnouncementsPageForm
@@ -73,7 +73,6 @@ export function AnnouncementsPage({ announcements, canCreate = false }: Props) {
         )}
         {canCreate && !isCreateFormOpen && (
           <Button
-            className="mb-5"
             onClick={() => setIsCreateFormOpen(true)}
             data-testid="open-create-form-button"
           >

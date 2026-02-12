@@ -95,17 +95,20 @@ export default function DashboardLayout({
         value={pathname}
         onValueChange={(path) => router.push(path)}
       >
-        <TabsList variant="line">
-          {tabs.map((item) => (
-            <TabsTrigger
-              key={item.path}
-              value={item.path}
-              data-testid={`tab-${item.path}`}
-            >
-              <FormattedMessage {...item.title} />
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <div className="scrollbar-hide overflow-x-auto">
+          <TabsList variant="line" className="min-w-max">
+            {tabs.map((item) => (
+              <TabsTrigger
+                key={item.path}
+                value={item.path}
+                data-testid={`tab-${item.path}`}
+                className="whitespace-nowrap"
+              >
+                <FormattedMessage {...item.title} />
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
       </Tabs>
       <div className="mx-auto flex w-full max-w-[1920px] flex-1 flex-col xl:my-10">
         {children}

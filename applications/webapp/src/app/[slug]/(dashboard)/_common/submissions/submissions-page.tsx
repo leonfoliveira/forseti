@@ -112,7 +112,7 @@ export function SubmissionsPage({
 
   return (
     <Page title={messages.pageTitle} description={messages.pageDescription}>
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center py-5">
         {/* Create Form */}
         {canCreate && isCreateFormOpen && (
           <SubmissionsPageForm
@@ -123,7 +123,6 @@ export function SubmissionsPage({
 
         {canCreate && !isCreateFormOpen && (
           <Button
-            className="mb-5"
             onClick={() => setIsCreateFormOpen(true)}
             data-testid="open-create-form-button"
           >
@@ -131,7 +130,7 @@ export function SubmissionsPage({
             <FormattedMessage {...messages.newLabel} />
           </Button>
         )}
-        {canCreate && <Separator />}
+        {canCreate && <Separator className="my-5 w-full max-w-4xl" />}
 
         <Card className="w-full">
           <CardContent>
