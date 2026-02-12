@@ -9,7 +9,6 @@ import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { Form } from "@/app/_lib/component/form/form";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
-import { Button } from "@/app/_lib/component/shadcn/button";
 import {
   Card,
   CardContent,
@@ -74,6 +73,10 @@ const messages = defineMessages({
     id: "app.[slug].sign-in.page.enter-guest-label",
     defaultMessage: "Enter as Guest",
   },
+  enterGuestError: {
+    id: "app.[slug].sign-in.page.enter-guest-error",
+    defaultMessage: "Error entering as guest",
+  },
 });
 
 /**
@@ -81,6 +84,7 @@ const messages = defineMessages({
  */
 export default function SignInPage() {
   const signInState = useLoadableState();
+  const enterAsGuestState = useLoadableState();
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const toast = useToast();
 
@@ -112,15 +116,24 @@ export default function SignInPage() {
   }
 
   async function enterAsGuest() {
-    await sessionWritter.deleteCurrent();
-    window.location.href = routes.CONTEST(contestMetadata.slug);
+    enterAsGuestState.start();
+    try {
+      await sessionWritter.deleteCurrent();
+      window.location.href = routes.CONTEST(contestMetadata.slug);
+    } catch (error) {
+      enterAsGuestState.fail(error, {
+        default: () => toast.error(messages.enterGuestError),
+      });
+    }
   }
 
   return (
     <Page title={messages.pageTitle} description={messages.pageDescription}>
       <div className="flex flex-1 flex-col items-center justify-center">
         <Form onSubmit={form.handleSubmit(signIn)} className="w-full max-w-md">
-          <FieldSet disabled={signInState.isLoading}>
+          <FieldSet
+            disabled={signInState.isLoading || enterAsGuestState.isLoading}
+          >
             <Card>
               <CardHeader>
                 <CardTitle data-testid="title">
@@ -152,19 +165,21 @@ export default function SignInPage() {
                 <AsyncButton
                   type="submit"
                   className="w-full"
-                  data-testid="sign-in"
                   isLoading={signInState.isLoading}
+                  data-testid="sign-in"
                 >
                   <FormattedMessage {...messages.signIn} />
                 </AsyncButton>
-                <Button
+                <AsyncButton
                   className="w-full"
+                  type="button"
                   onClick={enterAsGuest}
                   variant="outline"
+                  isLoading={enterAsGuestState.isLoading}
                   data-testid="enter-guest"
                 >
                   <FormattedMessage {...messages.enterGuestLabel} />
-                </Button>
+                </AsyncButton>
               </CardFooter>
             </Card>
           </FieldSet>

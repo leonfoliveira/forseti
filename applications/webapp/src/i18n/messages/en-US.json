@@ -131,7 +131,8 @@
           "login-label": "Login",
           "password-label": "Password",
           "sign-in-label": "Sign in",
-          "enter-guest-label": "Enter as Guest"
+          "enter-guest-label": "Enter as Guest",
+          "enter-guest-error": "Error entering as guest"
         }
       },
       "(dashboard)": {

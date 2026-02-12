@@ -124,4 +124,20 @@ describe("SignInPage", () => {
 
     expect(sessionWritter.deleteCurrent).toHaveBeenCalled();
   });
+
+  it("should handle error when entering as guest", async () => {
+    (sessionWritter.deleteCurrent as jest.Mock).mockRejectedValue(
+      new Error("An error occurred"),
+    );
+
+    await renderWithProviders(<SignInPage />, {
+      contestMetadata: mockContestMetadata,
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("enter-guest"));
+    });
+
+    expect(useToast().error).toHaveBeenCalled();
+  });
 });
