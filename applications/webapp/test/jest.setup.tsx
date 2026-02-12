@@ -66,19 +66,6 @@ jest.mock("@/app/_lib/hook/toast-hook", () => ({
   useToast: () => toast,
 }));
 
-jest.mock("@/app/_lib/component/shadcn/select", () => ({
-  Select: ({ children, ...props }: any) => (
-    <select {...props}>{children}</select>
-  ),
-  SelectTrigger: () => null,
-  SelectValue: () => null,
-  SelectContent: ({ children }: any) => children,
-  SelectGroup: ({ children }: any) => children,
-  SelectItem: ({ children, ...props }: any) => (
-    <option {...props}>{children}</option>
-  ),
-}));
-
 jest.mock("@/app/_lib/component/shadcn/dropdown-menu", () => ({
   DropdownMenu: ({ children }: any) => children,
   DropdownMenuTrigger: ({ children }: any) => children,

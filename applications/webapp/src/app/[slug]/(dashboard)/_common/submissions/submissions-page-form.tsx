@@ -22,13 +22,9 @@ import {
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import { Input } from "@/app/_lib/component/shadcn/input";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/_lib/component/shadcn/select";
+  NativeSelect,
+  NativeSelectOption,
+} from "@/app/_lib/component/shadcn/native-select";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
@@ -135,23 +131,16 @@ export function SubmissionsPageForm({ onClose, problems }: Props) {
               name="problemId"
               label={messages.problemLabel}
               field={
-                <Select data-testid="submission-form-problem">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {problems.map((problem) => (
-                        <SelectItem key={problem.id} value={problem.id}>
-                          <FormattedMessage
-                            {...messages.problemOption}
-                            values={problem}
-                          />
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                <NativeSelect data-testid="submission-form-problem">
+                  {problems.map((problem) => (
+                    <NativeSelectOption key={problem.id} value={problem.id}>
+                      <FormattedMessage
+                        {...messages.problemOption}
+                        values={problem}
+                      />
+                    </NativeSelectOption>
+                  ))}
+                </NativeSelect>
               }
             />
             <ControlledField
@@ -159,24 +148,17 @@ export function SubmissionsPageForm({ onClose, problems }: Props) {
               name="language"
               label={messages.languageLabel}
               field={
-                <Select data-testid="submission-form-language">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {contestMetadata.languages.map((language) => (
-                        <SelectItem key={language} value={language}>
-                          <FormattedMessage
-                            {...globalMessages.submissionLanguage[
-                              language as SubmissionLanguage
-                            ]}
-                          />
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                <NativeSelect data-testid="submission-form-language">
+                  {contestMetadata.languages.map((language) => (
+                    <NativeSelectOption key={language} value={language}>
+                      <FormattedMessage
+                        {...globalMessages.submissionLanguage[
+                          language as SubmissionLanguage
+                        ]}
+                      />
+                    </NativeSelectOption>
+                  ))}
+                </NativeSelect>
               }
             />
             <ControlledField

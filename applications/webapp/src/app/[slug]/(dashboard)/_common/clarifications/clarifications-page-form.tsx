@@ -20,13 +20,9 @@ import {
 } from "@/app/_lib/component/shadcn/card";
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/_lib/component/shadcn/select";
+  NativeSelect,
+  NativeSelectOption,
+} from "@/app/_lib/component/shadcn/native-select";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Textarea } from "@/app/_lib/component/shadcn/textarea";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
@@ -134,26 +130,19 @@ export function ClarificationsPageForm({
               name="problemId"
               label={messages.problemLabel}
               field={
-                <Select data-testid="clarification-form-problem">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="__none__">
-                        <FormattedMessage {...messages.problemNone} />
-                      </SelectItem>
-                      {problems.map((problem) => (
-                        <SelectItem key={problem.id} value={problem.id}>
-                          <FormattedMessage
-                            {...messages.problemOption}
-                            values={problem}
-                          />
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                <NativeSelect data-testid="clarification-form-problem">
+                  <NativeSelectOption value="__none__">
+                    <FormattedMessage {...messages.problemNone} />
+                  </NativeSelectOption>
+                  {problems.map((problem) => (
+                    <NativeSelectOption key={problem.id} value={problem.id}>
+                      <FormattedMessage
+                        {...messages.problemOption}
+                        values={problem}
+                      />
+                    </NativeSelectOption>
+                  ))}
+                </NativeSelect>
               }
             />
             <ControlledField

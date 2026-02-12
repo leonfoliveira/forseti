@@ -220,7 +220,7 @@ export function SettingsPage({ contest }: Props) {
               contestStatus === ContestStatus.ENDED
             }
           >
-            <Card className="mx-auto mt-5 w-full max-w-4xl">
+            <Card className="mt-5 w-full">
               {selectedTab === TabKey.CONTEST && (
                 <SettingsPageContestTab contest={contest} form={form} />
               )}

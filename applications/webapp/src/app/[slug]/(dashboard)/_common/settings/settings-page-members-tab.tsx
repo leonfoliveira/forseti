@@ -8,13 +8,9 @@ import { Button } from "@/app/_lib/component/shadcn/button";
 import { CardContent } from "@/app/_lib/component/shadcn/card";
 import { Input } from "@/app/_lib/component/shadcn/input";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/_lib/component/shadcn/select";
+  NativeSelect,
+  NativeSelectOption,
+} from "@/app/_lib/component/shadcn/native-select";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import {
   Table,
@@ -89,6 +85,7 @@ export function SettingsPageMembersTab({ form }: Props) {
             <TableRow key={field.id}>
               <TableCell>
                 <ControlledField
+                  className="gap-0"
                   form={form}
                   name={`members.${index}.name`}
                   field={<Input data-testid="member-name" />}
@@ -96,34 +93,27 @@ export function SettingsPageMembersTab({ form }: Props) {
               </TableCell>
               <TableCell>
                 <ControlledField
+                  className="gap-0"
                   form={form}
                   name={`members.${index}.type`}
                   field={
-                    <Select data-testid="member-type">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {Object.keys(MemberType)
-                            .filter((type) => type !== MemberType.ROOT)
-                            .map((type) => (
-                              <SelectItem key={type} value={type}>
-                                <FormattedMessage
-                                  {...globalMessages.memberType[
-                                    type as MemberType
-                                  ]}
-                                />
-                              </SelectItem>
-                            ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                    <NativeSelect data-testid="member-type">
+                      {Object.keys(MemberType)
+                        .filter((type) => type !== MemberType.ROOT)
+                        .map((type) => (
+                          <NativeSelectOption key={type} value={type}>
+                            <FormattedMessage
+                              {...globalMessages.memberType[type as MemberType]}
+                            />
+                          </NativeSelectOption>
+                        ))}
+                    </NativeSelect>
                   }
                 />
               </TableCell>
               <TableCell>
                 <ControlledField
+                  className="gap-0"
                   form={form}
                   name={`members.${index}.login`}
                   field={<Input data-testid="member-login" />}
@@ -131,6 +121,7 @@ export function SettingsPageMembersTab({ form }: Props) {
               </TableCell>
               <TableCell>
                 <ControlledField
+                  className="gap-0"
                   form={form}
                   name={`members.${index}.password`}
                   field={

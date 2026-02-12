@@ -23,13 +23,9 @@ import {
 import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/_lib/component/shadcn/select";
+  NativeSelect,
+  NativeSelectOption,
+} from "@/app/_lib/component/shadcn/native-select";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
@@ -140,28 +136,21 @@ export function SubmissionsPageActionJudge({ submission }: Props) {
                   name="answer"
                   label={messages.answerLabel}
                   field={
-                    <Select data-testid="submission-judge-form-answer">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {Object.keys(SubmissionAnswer)
-                            .filter(
-                              (answer) => answer !== SubmissionAnswer.NO_ANSWER,
-                            )
-                            .map((answer) => (
-                              <SelectItem key={answer} value={answer}>
-                                <FormattedMessage
-                                  {...globalMessages.submissionAnswer[
-                                    answer as SubmissionAnswer
-                                  ]}
-                                />
-                              </SelectItem>
-                            ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                    <NativeSelect data-testid="submission-judge-form-answer">
+                      {Object.keys(SubmissionAnswer)
+                        .filter(
+                          (answer) => answer !== SubmissionAnswer.NO_ANSWER,
+                        )
+                        .map((answer) => (
+                          <NativeSelectOption key={answer} value={answer}>
+                            <FormattedMessage
+                              {...globalMessages.submissionAnswer[
+                                answer as SubmissionAnswer
+                              ]}
+                            />
+                          </NativeSelectOption>
+                        ))}
+                    </NativeSelect>
                   }
                 />
               </FieldSet>
