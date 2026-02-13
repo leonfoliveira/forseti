@@ -66,8 +66,8 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.problems.problems-page.not-attempted",
     defaultMessage: "Not attempted",
   },
-  descriptionError: {
-    id: "app.[slug].(dashboard)._common.problems.problems-page.description-error",
+  descriptionDownloadError: {
+    id: "app.[slug].(dashboard)._common.problems.problems-page.description-download-error",
     defaultMessage: "Failed to download problem description",
   },
 });
@@ -132,7 +132,7 @@ export function ProblemsPage({
       await attachmentReader.download(contestId, problem.description);
     } catch (error) {
       errorHandler.handle(error as Error, {
-        default: () => toast.error(messages.descriptionError),
+        default: () => toast.error(messages.descriptionDownloadError),
       });
     }
   }

@@ -16,7 +16,7 @@ const messages = defineMessages({
   },
   downloadError: {
     id: "app.[slug].(dashboard)._common.submissions.submissions-page-action-download.download-error",
-    defaultMessage: "Failed to download submission. Please try again.",
+    defaultMessage: "Failed to download submission.",
   },
 });
 

@@ -69,7 +69,7 @@ const messages = defineMessages({
   },
   downloadAttachmentError: {
     id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.download-attachment-error",
-    defaultMessage: "Failed to download attachment. Please try again later.",
+    defaultMessage: "Failed to download attachment.",
   },
 });
 

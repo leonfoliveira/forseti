@@ -57,7 +57,7 @@
       },
       "503": {
         "page": {
-          "description": "O serviço está temporariamente indisponível. Por favor, tente novamente mais tarde.",
+          "description": "O serviço está temporariamente indisponível.",
           "reload": "Tentar novamente"
         }
       }
@@ -159,8 +159,8 @@
               "header-contestant": "Competidor",
               "header-problem": "Problema",
               "header-language": "Linguagem",
+              "header-status": "Status",
               "header-answer": "Resposta",
-              "actions-label": "Ações",
               "new-label": "Nova Submissão"
             },
             "submissions-page-form": {
@@ -198,7 +198,8 @@
               "answer-label": "Resposta"
             },
             "submissions-page-action-download": {
-              "download-label": "Baixar"
+              "download-label": "Baixar",
+              "download-error": "Falha ao baixar submissão."
             },
             "submission-judge-form": {
               "answer-required": "Obrigatório"
@@ -239,7 +240,8 @@
               "memory-limit-description": "A memória máxima permitida para o problema.",
               "test-cases-label": "Casos de Teste (CSV)",
               "test-cases-description": "O arquivo de casos de teste em formato CSV com duas colunas: entrada e saída esperada.",
-              "new-problem-label": "Novo Problema"
+              "new-problem-label": "Novo Problema",
+              "download-attachment-error": "Falha ao baixar arquivo."
             },
             "settings-page-members-tab": {
               "title-label": "Nome",
@@ -314,7 +316,8 @@
               "status-header": "Status",
               "accepted": "Aceito",
               "attempts": "{attempts} Tentativas",
-              "not-attempted": "Não tentado"
+              "not-attempted": "Não tentado",
+              "description-download-error": "Falha ao carregar descrição do problema."
             }
           },
           "leaderboard": {

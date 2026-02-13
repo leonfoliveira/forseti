@@ -199,7 +199,7 @@
             },
             "submissions-page-action-download": {
               "download-label": "Download",
-              "download-error": "Failed to download submission. Please try again."
+              "download-error": "Failed to download submission."
             },
             "submission-judge-form": {
               "answer-required": "Required"
@@ -241,7 +241,7 @@
               "test-cases-label": "Test Cases (CSV)",
               "test-cases-description": "The test cases file in CSV format with two columns: input and expected output.",
               "new-problem-label": "New Problem",
-              "download-attachment-error": "Failed to download attachment. Please try again later."
+              "download-attachment-error": "Failed to download attachment."
             },
             "settings-page-members-tab": {
               "title-label": "Name",
@@ -317,7 +317,7 @@
               "accepted": "Accepted",
               "attempts": "{attempts} Attempts",
               "not-attempted": "Not attempted",
-              "description-error": "Failed to download problem description"
+              "description-download-error": "Failed to download problem description"
             }
           },
           "leaderboard": {
