@@ -14,7 +14,9 @@ import {
   EmptyTitle,
 } from "@/app/_lib/component/shadcn/empty";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
+import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
 import { useAppSelector } from "@/app/_store/store";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
@@ -59,20 +61,24 @@ export function ClarificationsPage({
   canAnswer = false,
 }: Props) {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const contestStatus = useContestStatusWatcher();
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
+
+  const shouldSeeCreationComponents =
+    canCreate && contestStatus === ContestStatus.IN_PROGRESS;
 
   return (
     <Page title={messages.pageTitle} description={messages.pageDescription}>
       <div className="flex flex-col items-center py-5">
         {/* Create Form */}
-        {canCreate && isCreateFormOpen && (
+        {shouldSeeCreationComponents && isCreateFormOpen && (
           <ClarificationsPageForm
             contestId={contestId}
             onClose={() => setIsCreateFormOpen(false)}
             problems={problems}
           />
         )}
-        {canCreate && !isCreateFormOpen && (
+        {shouldSeeCreationComponents && !isCreateFormOpen && (
           <Button
             onClick={() => setIsCreateFormOpen(true)}
             data-testid="open-create-form-button"
@@ -81,7 +87,9 @@ export function ClarificationsPage({
             <FormattedMessage {...messages.newLabel} />
           </Button>
         )}
-        {canCreate && <Separator className="my-5 w-full max-w-4xl" />}
+        {shouldSeeCreationComponents && (
+          <Separator className="my-5 w-full max-w-4xl" />
+        )}
 
         {/* Empty State */}
         {clarifications.length == 0 && (

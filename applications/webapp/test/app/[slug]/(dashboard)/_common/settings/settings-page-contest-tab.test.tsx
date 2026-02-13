@@ -8,6 +8,7 @@ import { useToast } from "@/app/_lib/hook/toast-hook";
 import { contestWritter } from "@/config/composition";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/AdminDashboardResponseDTO";
+import { MockDate } from "@/test/mock/mock-date";
 import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import {
@@ -66,8 +67,8 @@ describe("SettingsPageContestTab", () => {
 
   it("should handle force start successfully", async () => {
     const contestMetadata = MockContestMetadataResponseDTO({
-      startAt: new Date(new Date().getTime() + 60 * 60 * 1000).toISOString(),
-      endAt: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString(),
+      startAt: MockDate.future().toISOString(),
+      endAt: MockDate.future(2).toISOString(),
     });
     const newContestMetadata = MockContestMetadataResponseDTO();
     (contestWritter.forceStart as jest.Mock).mockResolvedValue(
@@ -101,8 +102,8 @@ describe("SettingsPageContestTab", () => {
 
   it("should handle force start error", async () => {
     const contestMetadata = MockContestMetadataResponseDTO({
-      startAt: new Date(new Date().getTime() + 60 * 60 * 1000).toISOString(),
-      endAt: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString(),
+      startAt: MockDate.future().toISOString(),
+      endAt: MockDate.future(2).toISOString(),
     });
     (contestWritter.forceStart as jest.Mock).mockRejectedValue(
       new Error("Force start failed"),
@@ -130,10 +131,8 @@ describe("SettingsPageContestTab", () => {
 
   it("should handle force end successfully", async () => {
     const contestMetadata = MockContestMetadataResponseDTO({
-      startAt: new Date(
-        new Date().getTime() - 2 * 60 * 60 * 1000,
-      ).toISOString(),
-      endAt: new Date(new Date().getTime() + 60 * 60 * 1000).toISOString(),
+      startAt: MockDate.past().toISOString(),
+      endAt: MockDate.future().toISOString(),
     });
     const newContestMetadata = MockContestMetadataResponseDTO();
     (contestWritter.forceEnd as jest.Mock).mockResolvedValue(
@@ -167,10 +166,8 @@ describe("SettingsPageContestTab", () => {
 
   it("should handle force end error", async () => {
     const contestMetadata = MockContestMetadataResponseDTO({
-      startAt: new Date(
-        new Date().getTime() - 2 * 60 * 60 * 1000,
-      ).toISOString(),
-      endAt: new Date(new Date().getTime() + 60 * 60 * 1000).toISOString(),
+      startAt: MockDate.past().toISOString(),
+      endAt: MockDate.future().toISOString(),
     });
     (contestWritter.forceEnd as jest.Mock).mockRejectedValue(
       new Error("Force end failed"),

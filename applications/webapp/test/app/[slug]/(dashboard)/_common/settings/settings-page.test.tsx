@@ -9,6 +9,7 @@ import { useToast } from "@/app/_lib/hook/toast-hook";
 import { contestWritter, leaderboardReader } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/AdminDashboardResponseDTO";
+import { MockDate } from "@/test/mock/mock-date";
 import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
@@ -37,8 +38,8 @@ jest.mock(
 
 describe("SettingsPage", () => {
   const contestMetadata = MockContestMetadataResponseDTO({
-    startAt: new Date(new Date().getTime() + 60 * 60 * 1000).toISOString(),
-    endAt: new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString(),
+    startAt: MockDate.future().toISOString(),
+    endAt: MockDate.future(2).toISOString(),
   });
   const contest = MockContestFullResponseDTO();
 

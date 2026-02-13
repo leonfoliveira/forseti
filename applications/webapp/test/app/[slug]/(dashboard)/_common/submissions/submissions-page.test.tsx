@@ -1,6 +1,7 @@
 import { fireEvent, screen } from "@testing-library/dom";
 
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
+import { MockDate } from "@/test/mock/mock-date";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
@@ -8,7 +9,10 @@ import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPage", () => {
-  const contestMetadata = MockContestMetadataResponseDTO();
+  const contestMetadata = MockContestMetadataResponseDTO({
+    startAt: MockDate.past().toISOString(),
+    endAt: MockDate.future().toISOString(),
+  });
   const problems = [
     MockProblemPublicResponseDTO(),
     MockProblemPublicResponseDTO(),
@@ -99,6 +103,28 @@ describe("SubmissionsPage", () => {
       expect(screen.getAllByTestId("submission-member")).toHaveLength(2);
       fireEvent.click(screen.getByTestId("only-mine-toggle"));
       expect(screen.getAllByTestId("submission-member")).toHaveLength(1);
+    });
+
+    it("should not render create form when contest ended", async () => {
+      const endedContestMetadata = MockContestMetadataResponseDTO({
+        startAt: MockDate.past(2).toISOString(),
+        endAt: MockDate.past().toISOString(),
+      });
+
+      await renderWithProviders(
+        <SubmissionsPage
+          submissions={submissions}
+          memberSubmissions={memberSubmissions}
+          problems={problems}
+          canCreate={true}
+          canEdit={false}
+        />,
+        { contestMetadata: endedContestMetadata },
+      );
+
+      expect(
+        screen.queryByTestId("open-create-form-button"),
+      ).not.toBeInTheDocument();
     });
   });
 });

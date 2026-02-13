@@ -22,7 +22,9 @@ import {
   TableRow,
 } from "@/app/_lib/component/shadcn/table";
 import { Toggle } from "@/app/_lib/component/shadcn/toggle";
+import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
 import { cn } from "@/app/_lib/util/cn";
+import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
@@ -90,6 +92,7 @@ export function SubmissionsPage({
   canCreate,
   canEdit,
 }: Props) {
+  const contestStatus = useContestStatusWatcher();
   const [isOnlyMine, setIsOnlyMine] = useState(false);
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 
@@ -102,19 +105,21 @@ export function SubmissionsPage({
 
   const hasMemberSubmissions = memberSubmissions !== undefined;
   const hasAnyAction = canEdit || hasMemberSubmissions;
+  const shouldSeeCreationComponents =
+    canCreate && contestStatus === ContestStatus.IN_PROGRESS;
 
   return (
     <Page title={messages.pageTitle} description={messages.pageDescription}>
       <div className="flex flex-col items-center py-5">
         {/* Create Form */}
-        {canCreate && isCreateFormOpen && (
+        {shouldSeeCreationComponents && isCreateFormOpen && (
           <SubmissionsPageForm
             onClose={() => setIsCreateFormOpen(false)}
             problems={problems}
           />
         )}
 
-        {canCreate && !isCreateFormOpen && (
+        {shouldSeeCreationComponents && !isCreateFormOpen && (
           <Button
             onClick={() => setIsCreateFormOpen(true)}
             data-testid="open-create-form-button"
@@ -123,7 +128,9 @@ export function SubmissionsPage({
             <FormattedMessage {...messages.newLabel} />
           </Button>
         )}
-        {canCreate && <Separator className="my-5 w-full max-w-4xl" />}
+        {shouldSeeCreationComponents && (
+          <Separator className="my-5 w-full max-w-4xl" />
+        )}
 
         <Card className="w-full">
           <CardContent>
