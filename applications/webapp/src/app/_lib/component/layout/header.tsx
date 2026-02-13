@@ -15,7 +15,7 @@ import {
   TooltipTrigger,
 } from "@/app/_lib/component/shadcn/tooltip";
 import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
-import { useTheme } from "@/app/_lib/hook/theme-hook";
+import { Theme, useTheme } from "@/app/_lib/provider/theme-provider";
 import { useAppSelector } from "@/app/_store/store";
 import { sessionWritter } from "@/config/composition";
 import { routes } from "@/config/routes";
@@ -48,7 +48,7 @@ export function Header() {
   const contestStatus = useContestStatusWatcher();
   const pathname = usePathname();
   const router = useRouter();
-  const { toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
 
   async function handleSignOut() {
     await sessionWritter.deleteCurrent();
@@ -67,13 +67,12 @@ export function Header() {
       {/* Mobile layout: Logo and actions in same row */}
       <div className="flex items-center justify-between sm:justify-start">
         <div className="flex gap-2">
-          <div className="flex items-center justify-center">
+          <div className="mr-2 flex items-center justify-center">
             <Image
-              src="/icon.png"
+              src={theme === Theme.DARK ? "/icon-dark.png" : "/icon-light.png"}
               alt="Logo of forseti"
-              width={40}
-              height={40}
-              className="sm:h-[50px] sm:w-[50px]"
+              width={30}
+              height={30}
             />
           </div>
           <div className="-mt-1 flex flex-col items-start justify-center">

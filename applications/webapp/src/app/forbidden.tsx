@@ -14,7 +14,7 @@ export default function ForbiddenPage() {
 
   useEffect(() => {
     const fromPath = pathname;
-    router.push(`${routes.FORBIDDEN}?from=${encodeURIComponent(fromPath)}`);
+    router.replace(`${routes.FORBIDDEN}?from=${encodeURIComponent(fromPath)}`);
   }, [router, pathname]);
 
   return null;

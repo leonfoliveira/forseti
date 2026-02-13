@@ -5,6 +5,7 @@ import Image from "next/image";
 import { CountdownClock } from "@/app/_lib/component/display/countdown-clock";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
+import { Theme, useTheme } from "@/app/_lib/provider/theme-provider";
 import { useAppSelector } from "@/app/_store/store";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
@@ -26,13 +27,32 @@ const messages = defineMessages({
  */
 export function WaitPage() {
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
+  const { theme } = useTheme();
+
+  const handleReload = () => {
+    window.location.reload();
+  };
 
   return (
     <div
       className="flex flex-1 flex-col items-center justify-center gap-5"
       data-testid="wait-page"
     >
-      <Image src="/icon.png" alt="Logo of forseti" width={100} height={100} />
+      {theme === Theme.DARK ? (
+        <Image
+          src={"/icon-dark.png"}
+          alt="Logo of forseti"
+          width={100}
+          height={100}
+        />
+      ) : (
+        <Image
+          src={"/icon-light.png"}
+          alt="Logo of forseti"
+          width={100}
+          height={100}
+        />
+      )}
       <h1 className="text-4xl" data-testid="title">
         {contestMetadata.title}
       </h1>
@@ -44,7 +64,7 @@ export function WaitPage() {
         <div className="flex justify-center text-lg">
           <CountdownClock
             to={new Date(contestMetadata.startAt)}
-            onZero={window.location.reload}
+            onZero={handleReload}
             data-testid="clock"
           />
         </div>
@@ -53,7 +73,7 @@ export function WaitPage() {
         <p className="font-semibold" data-testid="languages">
           <FormattedMessage {...messages.languages} />
         </p>
-        <ul className="text-md">
+        <ul className="mt-1 text-sm">
           {contestMetadata.languages.map((it) => (
             <li key={it} data-testid="language-item">
               <FormattedMessage {...globalMessages.submissionLanguage[it]} />

@@ -14,7 +14,7 @@ export default function NotFoundPage() {
 
   useEffect(() => {
     const fromPath = pathname;
-    router.push(`${routes.NOT_FOUND}?from=${encodeURIComponent(fromPath)}`);
+    router.replace(`${routes.NOT_FOUND}?from=${encodeURIComponent(fromPath)}`);
   }, [router, pathname]);
 
   return null;

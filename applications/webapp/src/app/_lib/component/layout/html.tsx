@@ -4,8 +4,7 @@ import { Roboto } from "next/font/google";
 
 import { Toaster } from "@/app/_lib/component/shadcn/sonner";
 import { TooltipProvider } from "@/app/_lib/component/shadcn/tooltip";
-import { useTheme } from "@/app/_lib/hook/theme-hook";
-import { cn } from "@/app/_lib/util/cn";
+import { ThemeProvider } from "@/app/_lib/provider/theme-provider";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -18,13 +17,13 @@ const roboto = Roboto({
  * Adds necessary providers.
  */
 export function Html({ children }: { children: React.ReactNode }) {
-  const { theme } = useTheme();
-
   return (
-    <html className={cn("bg-content3", theme)}>
+    <html className="bg-content3">
       <body className={roboto.className}>
-        <TooltipProvider>{children}</TooltipProvider>
-        <Toaster />
+        <ThemeProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );
