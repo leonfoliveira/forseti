@@ -17,6 +17,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/_lib/component/shadcn/table";
+import { useErrorHandler } from "@/app/_lib/hook/error-handler-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
 import { attachmentReader } from "@/config/composition";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
@@ -64,6 +66,10 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.problems.problems-page.not-attempted",
     defaultMessage: "Not attempted",
   },
+  descriptionError: {
+    id: "app.[slug].(dashboard)._common.problems.problems-page.description-error",
+    defaultMessage: "Failed to download problem description",
+  },
 });
 
 type Props = {
@@ -79,6 +85,9 @@ export function ProblemsPage({
   contestantClassificationProblems,
 }: Props) {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const errorHandler = useErrorHandler();
+  const toast = useToast();
+
   const problemStatus = contestantClassificationProblems?.reduce(
     (acc, problem) => {
       acc[problem.id] = problem;
@@ -116,6 +125,16 @@ export function ProblemsPage({
         <FormattedMessage {...messages.notAttempted} />
       </Badge>
     );
+  }
+
+  async function downloadDescription(problem: ProblemPublicResponseDTO) {
+    try {
+      await attachmentReader.download(contestId, problem.description);
+    } catch (error) {
+      errorHandler.handle(error as Error, {
+        default: () => toast.error(messages.descriptionError),
+      });
+    }
   }
 
   return (
@@ -178,12 +197,7 @@ export function ProblemsPage({
                     <Button
                       size="xs"
                       variant="default"
-                      onClick={() =>
-                        attachmentReader.download(
-                          contestId,
-                          problem.description,
-                        )
-                      }
+                      onClick={() => downloadDescription(problem)}
                       data-testid="problem-download"
                     >
                       <Download size={16} /> PDF

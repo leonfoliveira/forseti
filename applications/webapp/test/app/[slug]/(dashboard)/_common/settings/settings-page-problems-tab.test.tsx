@@ -1,8 +1,10 @@
 import { fireEvent, screen } from "@testing-library/dom";
+import { act } from "@testing-library/react";
 import { useForm } from "react-hook-form";
 
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
 import { SettingsPageProblemsTab } from "@/app/[slug]/(dashboard)/_common/settings/settings-page-problems-tab";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { attachmentReader } from "@/config/composition";
 import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachment";
 import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
@@ -106,5 +108,38 @@ describe("SettingsPageProblemsTab", () => {
       contest.id,
       testCasesAttachment,
     );
+  });
+
+  it("handles download errors gracefully", async () => {
+    const descriptionAttachment = MockAttachmentResponseDTO();
+    (attachmentReader.download as jest.Mock).mockRejectedValueOnce(
+      new Error("Download failed"),
+    );
+
+    const { result } = await renderHookWithProviders(() =>
+      useForm<SettingsFormType>({
+        defaultValues: {
+          problems: [
+            {
+              description: descriptionAttachment,
+            },
+          ],
+        },
+      }),
+    );
+
+    await renderWithProviders(
+      <SettingsPageProblemsTab contest={contest} form={result.current} />,
+    );
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("problem-description-download"));
+    });
+
+    expect(attachmentReader.download).toHaveBeenCalledWith(
+      contest.id,
+      descriptionAttachment,
+    );
+    expect(useToast().error).toHaveBeenCalled();
   });
 });

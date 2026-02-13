@@ -2,6 +2,7 @@ import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 
 import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/problems-page";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { attachmentReader } from "@/config/composition";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
@@ -63,5 +64,21 @@ describe("ProblemsPage", () => {
       contestMetadata.id,
       problems[0].description,
     );
+  });
+
+  it("should handle download problem description error", async () => {
+    (attachmentReader.download as jest.Mock).mockRejectedValueOnce(
+      new Error("Download failed"),
+    );
+
+    await renderWithProviders(<ProblemsPage problems={problems} />, {
+      contestMetadata,
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("problem-download"));
+    });
+
+    expect(useToast().error).toHaveBeenCalled();
   });
 });

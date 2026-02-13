@@ -14,7 +14,10 @@ import {
   ItemContent,
   ItemMedia,
 } from "@/app/_lib/component/shadcn/item";
+import { useErrorHandler } from "@/app/_lib/hook/error-handler-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { attachmentReader } from "@/config/composition";
+import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -64,6 +67,10 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.new-problem-label",
     defaultMessage: "New Problem",
   },
+  downloadAttachmentError: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.download-attachment-error",
+    defaultMessage: "Failed to download attachment. Please try again later.",
+  },
 });
 
 type Props = {
@@ -72,10 +79,23 @@ type Props = {
 };
 
 export function SettingsPageProblemsTab({ contest, form }: Props) {
+  const errorHandler = useErrorHandler();
+  const toast = useToast();
+
   const { fields, append, remove, move } = useFieldArray({
     control: form.control,
     name: "problems",
   });
+
+  async function downloadAttachment(attachment: AttachmentResponseDTO) {
+    try {
+      await attachmentReader.download(contest.id, attachment);
+    } catch (error) {
+      errorHandler.handle(error as Error, {
+        default: () => toast.error(messages.downloadAttachmentError),
+      });
+    }
+  }
 
   return (
     <CardContent
@@ -149,9 +169,7 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
                     variant="secondary"
                     className="mt-2 w-full justify-start"
                     title={field.description.filename}
-                    onClick={() =>
-                      attachmentReader.download(contest.id, field.description)
-                    }
+                    onClick={() => downloadAttachment(field.description)}
                     data-testid="problem-description-download"
                   >
                     <Download />
@@ -183,9 +201,7 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
                     variant="secondary"
                     className="mt-2 w-full justify-start"
                     title={field.testCases.filename}
-                    onClick={() =>
-                      attachmentReader.download(contest.id, field.testCases)
-                    }
+                    onClick={() => downloadAttachment(field.testCases)}
                     data-testid="problem-test-cases-download"
                   >
                     <Download />
