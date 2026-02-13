@@ -10,17 +10,12 @@ import java.util.UUID
 interface MemberRepository : BaseRepository<Member> {
     fun findEntityById(id: UUID): Member?
 
-    /**
-     * Finds a member by their login and optionally by contest ID.
-     * If contestId is null, it will look for members without a contest association.
-     *
-     * @param login The login of the member to find.
-     * @param contestId The ID of the contest to filter by, or null to find members without a contest.
-     * @return The member matching the login and contest criteria, or null
-     */
-    @Query("SELECT m FROM Member m WHERE m.login = :login AND (:contestId IS NULL AND m.contest IS NULL OR m.contest.id = :contestId)")
+    @Query("select m from Member m where m.login = ?1 and m.contest.id = ?2")
     fun findByLoginAndContestId(
         login: String,
-        contestId: UUID?,
+        id: UUID,
     ): Member?
+
+    @Query("select m from Member m where m.login = ?1 and m.contest is null")
+    fun findByLoginAndContestNull(login: String): Member?
 }
