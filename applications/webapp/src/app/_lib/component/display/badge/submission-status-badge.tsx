@@ -20,19 +20,19 @@ export function SubmissionStatusBadge({ status, ...props }: Props) {
   switch (status) {
     case SubmissionStatus.JUDGED:
       return (
-        <Badge data-testid="badge-judged" {...props} color="success">
+        <Badge data-testid="badge-judged" {...props} variant="success">
           {text}
         </Badge>
       );
     case SubmissionStatus.FAILED:
       return (
-        <Badge data-testid="badge-failed" {...props} color="danger">
+        <Badge data-testid="badge-failed" {...props} variant="destructive">
           {text}
         </Badge>
       );
     case SubmissionStatus.JUDGING:
       return (
-        <Badge data-testid="badge-judging" {...props} color="default">
+        <Badge data-testid="badge-judging" {...props} variant="default">
           {text}
         </Badge>
       );
