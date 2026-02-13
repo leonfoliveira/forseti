@@ -13,7 +13,7 @@ import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/M
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPageActionRerun", () => {
-  it("should handle resubmitSubmission succesfully", async () => {
+  it("should handle resubmitSubmission successfully", async () => {
     const contestMetadata = MockContestMetadataResponseDTO();
     const submission = MockSubmissionFullResponseDTO();
     const onClose = jest.fn();
