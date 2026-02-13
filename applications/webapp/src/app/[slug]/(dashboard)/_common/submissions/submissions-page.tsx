@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { SubmissionsPageActionsMenu } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-actions-menu";
 import { SubmissionsPageForm } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-form";
 import { SubmissionAnswerBadge } from "@/app/_lib/component/display/badge/submission-answer-chip";
+import { SubmissionStatusBadge } from "@/app/_lib/component/display/badge/submission-status-badge";
 import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
@@ -56,6 +57,10 @@ const messages = defineMessages({
   headerLanguage: {
     id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-language",
     defaultMessage: "Language",
+  },
+  headerStatus: {
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-status",
+    defaultMessage: "Status",
   },
   headerAnswer: {
     id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-answer",
@@ -152,6 +157,9 @@ export function SubmissionsPage({
                     <FormattedMessage {...messages.headerLanguage} />
                   </TableHead>
                   <TableHead className="text-right">
+                    <FormattedMessage {...messages.headerStatus} />
+                  </TableHead>
+                  <TableHead className="text-right">
                     <FormattedMessage {...messages.headerAnswer} />
                   </TableHead>
                   {hasAnyAction && <TableHead></TableHead>}
@@ -178,6 +186,12 @@ export function SubmissionsPage({
                           submission.language
                         ]}
                       />
+                    </TableCell>
+                    <TableCell
+                      className="text-right"
+                      data-testid="submission-status"
+                    >
+                      <SubmissionStatusBadge status={submission.status} />
                     </TableCell>
                     <TableCell
                       className="text-right"

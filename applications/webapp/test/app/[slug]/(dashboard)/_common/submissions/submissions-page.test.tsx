@@ -46,6 +46,9 @@ describe("SubmissionsPage", () => {
       expect(screen.getByTestId("submission-language")).toHaveTextContent(
         "C++ 17",
       );
+      expect(screen.getByTestId("submission-status")).toHaveTextContent(
+        "Judged",
+      );
       expect(screen.getByTestId("submission-answer")).toHaveTextContent(
         "Accepted",
       );

@@ -159,6 +159,7 @@
               "header-contestant": "Contestant",
               "header-problem": "Problem",
               "header-language": "Language",
+              "header-status": "Status",
               "header-answer": "Answer",
               "new-label": "New Submission"
             },
@@ -197,7 +198,8 @@
               "answer-label": "Answer"
             },
             "submissions-page-action-download": {
-              "download-label": "Download"
+              "download-label": "Download",
+              "download-error": "Failed to download submission. Please try again."
             },
             "submission-judge-form": {
               "answer-required": "Required"
@@ -238,7 +240,8 @@
               "memory-limit-description": "The maximum memory allowed for the problem.",
               "test-cases-label": "Test Cases (CSV)",
               "test-cases-description": "The test cases file in CSV format with two columns: input and expected output.",
-              "new-problem-label": "New Problem"
+              "new-problem-label": "New Problem",
+              "download-attachment-error": "Failed to download attachment. Please try again later."
             },
             "settings-page-members-tab": {
               "title-label": "Name",
@@ -313,7 +316,8 @@
               "status-header": "Status",
               "accepted": "Accepted",
               "attempts": "{attempts} Attempts",
-              "not-attempted": "Not attempted"
+              "not-attempted": "Not attempted",
+              "description-error": "Failed to download problem description"
             }
           },
           "leaderboard": {

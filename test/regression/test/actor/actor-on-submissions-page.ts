@@ -146,11 +146,13 @@ export class ActorOnSubmissionsPage extends Actor {
     const memberCell = newSubmissionRow.getByTestId("submission-member");
     const problemCell = newSubmissionRow.getByTestId("submission-problem");
     const languageCell = newSubmissionRow.getByTestId("submission-language");
+    const statusCell = newSubmissionRow.getByTestId("submission-status");
     const answerCell = newSubmissionRow.getByTestId("submission-answer");
 
     await expect(memberCell).toHaveText(submission.member.name);
     await expect(problemCell).toHaveText(submission.problem.letter);
     await expect(languageCell).toHaveText(submission.language);
+    await expect(statusCell).toHaveText(submission.status);
     await expect(answerCell).toHaveText(submission.answer);
   }
 }

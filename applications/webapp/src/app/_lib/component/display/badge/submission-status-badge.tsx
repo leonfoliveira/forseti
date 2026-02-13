@@ -32,7 +32,7 @@ export function SubmissionStatusBadge({ status, ...props }: Props) {
       );
     case SubmissionStatus.JUDGING:
       return (
-        <Badge data-testid="badge-judging" {...props} variant="default">
+        <Badge data-testid="badge-judging" {...props} variant="secondary">
           {text}
         </Badge>
       );

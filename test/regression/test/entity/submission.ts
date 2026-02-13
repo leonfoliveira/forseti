@@ -6,6 +6,7 @@ export type Submission = {
   problem: Problem;
   language: SubmissionLanguage;
   code: string;
+  status: SubmissionStatus;
   answer: SubmissionAnswer;
 };
 
@@ -13,6 +14,12 @@ export enum SubmissionLanguage {
   PYTHON_312 = "Python 3.12",
   CPP_17 = "C++ 17",
   JAVA_21 = "Java 21",
+}
+
+export enum SubmissionStatus {
+  JUDGED = "Judged",
+  FAILED = "Failed",
+  JUDGING = "Judging",
 }
 
 export enum SubmissionAnswer {
