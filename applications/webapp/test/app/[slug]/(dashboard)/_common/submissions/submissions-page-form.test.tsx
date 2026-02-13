@@ -50,6 +50,7 @@ describe("SubmissionsPageForm", () => {
       }),
     );
     expect(useToast().success).toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
   });
 
   it("should show error toast when creation fails", async () => {

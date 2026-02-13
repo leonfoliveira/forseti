@@ -12,21 +12,12 @@ import {
   ClarificationAnswerForm,
   ClarificationAnswerFormType,
 } from "@/app/[slug]/(dashboard)/_common/clarifications/clarification-answer-form";
+import { ConfirmationDialog } from "@/app/_lib/component/feedback/confirmation-dialog";
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { Form } from "@/app/_lib/component/form/form";
 import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/app/_lib/component/shadcn/alert-dialog";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import {
@@ -156,11 +147,10 @@ export function ClarificationsPageCard({
           <MessageCircleQuestion size={24} />
           <div className="w-full">
             <div className="flex justify-between">
-              <p
-                className="text-sm font-semibold"
-                data-testid="clarification-member-name"
-              >
-                {clarification.member.name}
+              <p className="text-sm font-semibold">
+                <span data-testid="clarification-member-name">
+                  {clarification.member.name}
+                </span>
                 {clarification.problem && (
                   <Badge
                     className="ml-2"
@@ -175,47 +165,25 @@ export function ClarificationsPageCard({
                 )}
               </p>
               {canAnswer && (
-                <AlertDialog
-                  open={isDeleteDialogOpen}
-                  onOpenChange={setIsDeleteDialogOpen}
-                >
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      size="xs"
-                      variant="destructive"
-                      data-testid="clarification-delete-button"
-                    >
-                      <Trash />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        <FormattedMessage {...messages.deleteAlertTitle} />
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        <FormattedMessage
-                          {...messages.deleteAlertDescription}
-                        />
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel
-                        disabled={deleteClarificationState.isLoading}
-                      >
-                        <FormattedMessage {...messages.deleteAlertCancel} />
-                      </AlertDialogCancel>
-                      <AsyncButton
-                        variant="destructive"
-                        onClick={deleteClarification}
-                        isLoading={deleteClarificationState.isLoading}
-                        data-testid="clarification-delete-confirm-button"
-                      >
-                        <FormattedMessage {...messages.deleteAlertContinue} />
-                      </AsyncButton>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <>
+                  <Button
+                    size="xs"
+                    variant="destructive"
+                    data-testid="clarification-delete-button"
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                  >
+                    <Trash />
+                  </Button>
+
+                  <ConfirmationDialog
+                    isOpen={isDeleteDialogOpen}
+                    title={messages.deleteAlertTitle}
+                    description={messages.deleteAlertDescription}
+                    onCancel={() => setIsDeleteDialogOpen(false)}
+                    onConfirm={deleteClarification}
+                    isLoading={deleteClarificationState.isLoading}
+                  />
+                </>
               )}
             </div>
             <p
@@ -265,7 +233,7 @@ export function ClarificationsPageCard({
                     <ControlledField
                       form={form}
                       name="text"
-                      label={messages.messageLabel}
+                      label={messages.answerLabel}
                       field={
                         <Textarea data-testid="clarification-answer-textarea" />
                       }

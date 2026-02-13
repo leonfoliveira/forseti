@@ -1,17 +1,8 @@
 import { RefreshCw } from "lucide-react";
 import { useState } from "react";
 
-import { AsyncButton } from "@/app/_lib/component/form/async-button";
+import { ConfirmationDialog } from "@/app/_lib/component/feedback/confirmation-dialog";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/app/_lib/component/shadcn/alert-dialog";
 import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
@@ -54,9 +45,10 @@ const messages = defineMessages({
 
 type Props = {
   submission: SubmissionFullResponseDTO;
+  onClose: () => void;
 };
 
-export function SubmissionsPageActionRerun({ submission }: Props) {
+export function SubmissionsPageActionRerun({ submission, onClose }: Props) {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
   const resubmitState = useLoadableState();
   const toast = useToast();
@@ -69,6 +61,7 @@ export function SubmissionsPageActionRerun({ submission }: Props) {
       toast.success(messages.resubmitSuccess);
       setIsDialogOpen(false);
       resubmitState.finish();
+      onClose();
     } catch (error) {
       resubmitState.fail(error, {
         default: () => toast.error(messages.resubmitError),
@@ -89,30 +82,14 @@ export function SubmissionsPageActionRerun({ submission }: Props) {
         <FormattedMessage {...messages.resubmitLabel} />
       </DropdownMenuItem>
 
-      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              <FormattedMessage {...messages.title} />
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              <FormattedMessage {...messages.description} />
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={resubmitState.isLoading}>
-              <FormattedMessage {...messages.cancel} />
-            </AlertDialogCancel>
-            <AsyncButton
-              onClick={() => resubmitSubmission(submission.id)}
-              isLoading={resubmitState.isLoading}
-              data-testid="dialog-confirm-button"
-            >
-              <FormattedMessage {...messages.confirm} />
-            </AsyncButton>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmationDialog
+        isOpen={isDialogOpen}
+        title={messages.title}
+        description={messages.description}
+        onCancel={() => setIsDialogOpen(false)}
+        onConfirm={() => resubmitSubmission(submission.id)}
+        isLoading={resubmitState.isLoading}
+      />
     </>
   );
 }

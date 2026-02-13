@@ -131,7 +131,8 @@
           "login-label": "Login",
           "password-label": "Senha",
           "sign-in-label": "Entrar",
-          "enter-guest-label": "Entrar como Convidado"
+          "enter-guest-label": "Entrar como Convidado",
+          "enter-guest-error": "Erro ao entrar como convidado"
         }
       },
       "(dashboard)": {
@@ -173,6 +174,9 @@
               "submit-label": "Enviar",
               "create-success": "Submissão criada com sucesso",
               "create-error": "Falha ao criar submissão"
+            },
+            "submissions-page-actions-menu": {
+              "actions-label": "Ações"
             },
             "submissions-page-action-rerun": {
               "resubmit-label": "Reenviar",

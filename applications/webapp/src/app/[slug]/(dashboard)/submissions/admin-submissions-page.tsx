@@ -12,11 +12,6 @@ export function AdminSubmissionsPage() {
   );
 
   return (
-    <SubmissionsPage
-      submissions={submissions}
-      problems={problems}
-      canEdit
-      canCreate
-    />
+    <SubmissionsPage submissions={submissions} problems={problems} canEdit />
   );
 }

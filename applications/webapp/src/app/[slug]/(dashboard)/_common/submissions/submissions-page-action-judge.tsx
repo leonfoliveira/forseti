@@ -7,19 +7,10 @@ import {
   SubmissionJudgeForm,
   SubmissionJudgeFormType,
 } from "@/app/[slug]/(dashboard)/_common/submissions/submission-judge-form";
-import { AsyncButton } from "@/app/_lib/component/form/async-button";
+import { ConfirmationDialog } from "@/app/_lib/component/feedback/confirmation-dialog";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { Form } from "@/app/_lib/component/form/form";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/app/_lib/component/shadcn/alert-dialog";
 import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import {
@@ -72,9 +63,10 @@ const messages = defineMessages({
 
 type Props = {
   submission: SubmissionFullResponseDTO;
+  onClose: () => void;
 };
 
-export function SubmissionsPageActionJudge({ submission }: Props) {
+export function SubmissionsPageActionJudge({ submission, onClose }: Props) {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
   const judgeState = useLoadableState();
   const toast = useToast();
@@ -97,6 +89,7 @@ export function SubmissionsPageActionJudge({ submission }: Props) {
       judgeForm.reset();
       setIsDialogOpen(false);
       judgeState.finish();
+      onClose();
     } catch (error) {
       judgeState.fail(error, {
         default: () => toast.error(messages.judgeError),
@@ -117,60 +110,44 @@ export function SubmissionsPageActionJudge({ submission }: Props) {
         <FormattedMessage {...messages.judgeLabel} />
       </DropdownMenuItem>
 
-      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              <FormattedMessage {...messages.title} />
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              <FormattedMessage {...messages.description} />
-            </AlertDialogDescription>
-            <Form
-              onSubmit={judgeForm.handleSubmit(judgeSubmission)}
-              className="my-3 w-full"
-            >
-              <FieldSet disabled={judgeState.isLoading}>
-                <ControlledField
-                  form={judgeForm}
-                  name="answer"
-                  label={messages.answerLabel}
-                  field={
-                    <NativeSelect data-testid="submission-judge-form-answer">
-                      {Object.keys(SubmissionAnswer)
-                        .filter(
-                          (answer) => answer !== SubmissionAnswer.NO_ANSWER,
-                        )
-                        .map((answer) => (
-                          <NativeSelectOption key={answer} value={answer}>
-                            <FormattedMessage
-                              {...globalMessages.submissionAnswer[
-                                answer as SubmissionAnswer
-                              ]}
-                            />
-                          </NativeSelectOption>
-                        ))}
-                    </NativeSelect>
-                  }
-                />
-              </FieldSet>
-            </Form>
-          </AlertDialogHeader>
-
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={judgeState.isLoading}>
-              <FormattedMessage {...messages.cancel} />
-            </AlertDialogCancel>
-            <AsyncButton
-              onClick={() => judgeSubmission(judgeForm.getValues())}
-              isLoading={judgeState.isLoading}
-              data-testid="dialog-confirm-button"
-            >
-              <FormattedMessage {...messages.confirm} />
-            </AsyncButton>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmationDialog
+        isOpen={isDialogOpen}
+        title={messages.title}
+        description={messages.description}
+        content={
+          <Form
+            onSubmit={judgeForm.handleSubmit(judgeSubmission)}
+            className="my-3 w-full"
+          >
+            <FieldSet disabled={judgeState.isLoading}>
+              <ControlledField
+                form={judgeForm}
+                name="answer"
+                label={messages.answerLabel}
+                field={
+                  <NativeSelect data-testid="submission-judge-form-answer">
+                    <NativeSelectOption value="" disabled />
+                    {Object.keys(SubmissionAnswer)
+                      .filter((answer) => answer !== SubmissionAnswer.NO_ANSWER)
+                      .map((answer) => (
+                        <NativeSelectOption key={answer} value={answer}>
+                          <FormattedMessage
+                            {...globalMessages.submissionAnswer[
+                              answer as SubmissionAnswer
+                            ]}
+                          />
+                        </NativeSelectOption>
+                      ))}
+                  </NativeSelect>
+                }
+              />
+            </FieldSet>
+          </Form>
+        }
+        onCancel={() => setIsDialogOpen(false)}
+        onConfirm={judgeForm.handleSubmit(judgeSubmission)}
+        isLoading={judgeState.isLoading}
+      />
     </>
   );
 }

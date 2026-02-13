@@ -87,7 +87,6 @@ class ApiAdapter:
         if (session_id := self._get_cached_value(self.SESSION_ID_KEYRING_KEY)) and (
             csrf_token := self._get_cached_value(self.CSRF_TOKEN_KEYRING_KEY)
         ):
-            print(f"{self.api_url}/v1/sessions/me")
             response = requests.get(
                 f"{self.api_url}/v1/sessions/me",
                 verify=VERIFY_SSL,
@@ -98,7 +97,6 @@ class ApiAdapter:
                 return session_id, csrf_token
 
         password = self.input_adapter.password("Root password: ")
-        print(f"{self.api_url}/v1/root:sign-in")
         response = requests.post(
             f"{self.api_url}/v1/root:sign-in",
             verify=VERIFY_SSL,

@@ -105,6 +105,7 @@ export function SubmissionsPageForm({ onClose, problems }: Props) {
       formRef.current?.reset();
       toast.success(messages.createSuccess);
       createSubmissionState.finish();
+      onClose();
     } catch (error) {
       createSubmissionState.fail(error, {
         default: () => toast.error(messages.createError),
@@ -113,7 +114,7 @@ export function SubmissionsPageForm({ onClose, problems }: Props) {
   }
 
   return (
-    <Card className="w-full max-w-4xl" data-testid="submissions-form">
+    <Card className="w-full max-w-4xl" data-testid="submission-form">
       <CardHeader>
         <CardTitle>
           <FormattedMessage {...messages.createTitle} />
@@ -132,6 +133,7 @@ export function SubmissionsPageForm({ onClose, problems }: Props) {
               label={messages.problemLabel}
               field={
                 <NativeSelect data-testid="submission-form-problem">
+                  <NativeSelectOption value="" disabled />
                   {problems.map((problem) => (
                     <NativeSelectOption key={problem.id} value={problem.id}>
                       <FormattedMessage
@@ -149,6 +151,7 @@ export function SubmissionsPageForm({ onClose, problems }: Props) {
               label={messages.languageLabel}
               field={
                 <NativeSelect data-testid="submission-form-language">
+                  <NativeSelectOption value="" disabled />
                   {contestMetadata.languages.map((language) => (
                     <NativeSelectOption key={language} value={language}>
                       <FormattedMessage

@@ -2,8 +2,8 @@ import { screen } from "@testing-library/dom";
 import { mock } from "jest-mock-extended";
 import { act } from "react";
 
-import { GuestDashboardProvider } from "@/app/_lib/provider/guest-dashboard-provider";
 import { useToast } from "@/app/_lib/hook/toast-hook";
+import { GuestDashboardProvider } from "@/app/_lib/provider/guest-dashboard-provider";
 import {
   announcementListener,
   clarificationListener,

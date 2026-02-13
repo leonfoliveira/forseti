@@ -160,7 +160,6 @@
               "header-problem": "Problem",
               "header-language": "Language",
               "header-answer": "Answer",
-              "actions-label": "Actions",
               "new-label": "New Submission"
             },
             "submissions-page-form": {
@@ -174,6 +173,9 @@
               "submit-label": "Submit",
               "create-success": "Submission created successfully",
               "create-error": "Failed to create submission"
+            },
+            "submissions-page-actions-menu": {
+              "actions-label": "Actions"
             },
             "submissions-page-action-rerun": {
               "resubmit-label": "Resubmit",
@@ -335,7 +337,7 @@
             "clarifications-page-form": {
               "create-title": "Create Clarification",
               "create-description": "Submit a new clarification request for a contest problem or a general question.",
-              "text-label": "Message",
+              "text-label": "Question",
               "problem-label": "Problem",
               "problem-option": "{letter}. {title}",
               "problem-none": "None (General question)",

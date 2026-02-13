@@ -48,7 +48,7 @@ export class ClarificationForm {
 
   static getDefault(): ClarificationFormType {
     return {
-      problemId: "",
+      problemId: "__none__",
       text: "",
     };
   }

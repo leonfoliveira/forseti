@@ -82,7 +82,7 @@ export function SettingsPageMembersTab({ form }: Props) {
         </TableHeader>
         <TableBody>
           {fields.map((field, index) => (
-            <TableRow key={field.id}>
+            <TableRow key={field.id} data-testid="member-row">
               <TableCell>
                 <ControlledField
                   className="gap-0"

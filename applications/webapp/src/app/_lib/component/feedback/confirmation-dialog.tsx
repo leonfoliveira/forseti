@@ -47,7 +47,11 @@ export function ConfirmationDialog({
   isLoading,
 }: Props) {
   return (
-    <AlertDialog open={isOpen} onOpenChange={onCancel}>
+    <AlertDialog
+      open={isOpen}
+      onOpenChange={onCancel}
+      data-testid="confirmation-dialog"
+    >
       <AlertDialogContent>
         <AlertDialogHeader>
           {icon && <AlertDialogMedia>{icon}</AlertDialogMedia>}

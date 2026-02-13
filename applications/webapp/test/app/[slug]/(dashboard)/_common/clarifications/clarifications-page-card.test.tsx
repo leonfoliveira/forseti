@@ -225,7 +225,7 @@ describe("ClarificationsPageCard", () => {
       fireEvent.click(screen.getByTestId("clarification-delete-button"));
       await act(async () => {
         fireEvent.click(
-          screen.getByTestId("clarification-delete-confirm-button"),
+          screen.getByTestId("confirmation-dialog-confirm-button"),
         );
       });
 
@@ -255,7 +255,7 @@ describe("ClarificationsPageCard", () => {
       fireEvent.click(screen.getByTestId("clarification-delete-button"));
       await act(async () => {
         fireEvent.click(
-          screen.getByTestId("clarification-delete-confirm-button"),
+          screen.getByTestId("confirmation-dialog-confirm-button"),
         );
       });
 

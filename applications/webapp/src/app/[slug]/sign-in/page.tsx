@@ -130,7 +130,11 @@ export default function SignInPage() {
   return (
     <Page title={messages.pageTitle} description={messages.pageDescription}>
       <div className="flex flex-1 flex-col items-center justify-center">
-        <Form onSubmit={form.handleSubmit(signIn)} className="w-full max-w-md">
+        <Form
+          onSubmit={form.handleSubmit(signIn)}
+          className="w-full max-w-md"
+          data-testid="sign-in-form"
+        >
           <FieldSet
             disabled={signInState.isLoading || enterAsGuestState.isLoading}
           >

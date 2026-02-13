@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 
 import { CountdownClock } from "@/app/_lib/component/display/countdown-clock";
@@ -26,7 +28,10 @@ export function WaitPage() {
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-5">
+    <div
+      className="flex flex-1 flex-col items-center justify-center gap-5"
+      data-testid="wait-page"
+    >
       <Image src="/icon.png" alt="Logo of forseti" width={100} height={100} />
       <h1 className="text-4xl" data-testid="title">
         {contestMetadata.title}

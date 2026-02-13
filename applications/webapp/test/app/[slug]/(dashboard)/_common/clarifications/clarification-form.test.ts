@@ -176,7 +176,7 @@ describe("ClarificationForm", () => {
       const defaultValues = ClarificationForm.getDefault();
 
       expect(defaultValues).toEqual({
-        problemId: "",
+        problemId: "__none__",
         text: "",
       });
     });

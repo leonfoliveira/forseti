@@ -94,6 +94,7 @@ export default function DashboardLayout({
         className="bg-card border-divider border-b"
         value={pathname}
         onValueChange={(path) => router.push(path)}
+        data-testid="dashboard-tabs"
       >
         <div className="scrollbar-hide overflow-x-auto">
           <TabsList variant="line" className="min-w-max">

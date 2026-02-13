@@ -16,10 +16,14 @@ describe("SubmissionsPageActionJudge", () => {
   it("should handle updateAnswer succesfully", async () => {
     const contestMetadata = MockContestMetadataResponseDTO();
     const submission = MockSubmissionFullResponseDTO();
+    const onClose = jest.fn();
     await renderWithProviders(
       <DropdownMenu open>
         <DropdownMenuContent>
-          <SubmissionsPageActionJudge submission={submission} />
+          <SubmissionsPageActionJudge
+            submission={submission}
+            onClose={onClose}
+          />
         </DropdownMenuContent>
       </DropdownMenu>,
       { contestMetadata },
@@ -30,7 +34,7 @@ describe("SubmissionsPageActionJudge", () => {
       target: { value: "ACCEPTED" },
     });
     await act(async () => {
-      fireEvent.click(screen.getByTestId("dialog-confirm-button"));
+      fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
     expect(submissionWritter.updateAnswer).toHaveBeenCalledWith(
@@ -39,18 +43,23 @@ describe("SubmissionsPageActionJudge", () => {
       "ACCEPTED",
     );
     expect(useToast().success).toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
   });
 
   it("should handle updateAnswer failure", async () => {
     const contestMetadata = MockContestMetadataResponseDTO();
     const submission = MockSubmissionFullResponseDTO();
+    const onClose = jest.fn();
     (submissionWritter.updateAnswer as jest.Mock).mockRejectedValueOnce(
       new Error("Failed"),
     );
     await renderWithProviders(
       <DropdownMenu open>
         <DropdownMenuContent>
-          <SubmissionsPageActionJudge submission={submission} />
+          <SubmissionsPageActionJudge
+            submission={submission}
+            onClose={onClose}
+          />
         </DropdownMenuContent>
       </DropdownMenu>,
       { contestMetadata },
@@ -61,7 +70,7 @@ describe("SubmissionsPageActionJudge", () => {
       target: { value: "WRONG_ANSWER" },
     });
     await act(async () => {
-      fireEvent.click(screen.getByTestId("dialog-confirm-button"));
+      fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
     expect(submissionWritter.updateAnswer).toHaveBeenCalledWith(
@@ -70,5 +79,6 @@ describe("SubmissionsPageActionJudge", () => {
       "WRONG_ANSWER",
     );
     expect(useToast().error).toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
   });
 });

@@ -83,7 +83,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
     <Page title={messages.pageTitle} description={messages.pageDescription}>
       <Card className="my-5">
         <CardContent>
-          <Table>
+          <Table data-testid="leaderboard-table">
             <TableHeader className="bg-content2">
               <TableRow>
                 <TableHead>
@@ -112,6 +112,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                   className={cn(
                     member.id === session?.member.id && "bg-primary-50",
                   )}
+                  data-testid="leaderboard-member-row"
                 >
                   <TableCell data-testid="member-rank">
                     {getMedal(index)}

@@ -3,9 +3,7 @@
 import { ArrowUp10, Funnel, Plus } from "lucide-react";
 import React, { useState } from "react";
 
-import { SubmissionsPageActionDownload } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-download";
-import { SubmissionsPageActionJudge } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-judge";
-import { SubmissionsPageActionRerun } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-rerun";
+import { SubmissionsPageActionsMenu } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-actions-menu";
 import { SubmissionsPageForm } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-form";
 import { SubmissionAnswerBadge } from "@/app/_lib/component/display/badge/submission-answer-chip";
 import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
@@ -13,13 +11,6 @@ import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/app/_lib/component/shadcn/dropdown-menu";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import {
   Table,
@@ -30,6 +21,7 @@ import {
   TableRow,
 } from "@/app/_lib/component/shadcn/table";
 import { Toggle } from "@/app/_lib/component/shadcn/toggle";
+import { cn } from "@/app/_lib/util/cn";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
@@ -68,10 +60,6 @@ const messages = defineMessages({
   headerAnswer: {
     id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-answer",
     defaultMessage: "Answer",
-  },
-  actionsLabel: {
-    id: "app.[slug].(dashboard)._common.submissions.submissions-page.actions-label",
-    defaultMessage: "Actions",
   },
   newLabel: {
     id: "app.[slug].(dashboard)._common.submissions.submissions-page.new-label",
@@ -142,12 +130,12 @@ export function SubmissionsPage({
                   onPressedChange={setIsOnlyMine}
                   data-testid="only-mine-toggle"
                 >
-                  <Funnel />
+                  <Funnel className={cn(isOnlyMine && "fill-black")} />
                   <FormattedMessage {...messages.onlyMineLabel} />
                 </Toggle>
               </div>
             )}
-            <Table>
+            <Table data-testid="submissions-table">
               <TableHeader className="bg-content2">
                 <TableRow>
                   <TableHead>
@@ -174,7 +162,7 @@ export function SubmissionsPage({
                   ? memberSubmissions.toReversed()
                   : mergedSubmissions.toReversed()
                 ).map((submission) => (
-                  <TableRow key={submission.id}>
+                  <TableRow key={submission.id} data-testid="submission-row">
                     <TableCell data-testid="submission-timestamp">
                       <FormattedDateTime timestamp={submission.createdAt} />
                     </TableCell>
@@ -199,56 +187,10 @@ export function SubmissionsPage({
                     </TableCell>
                     {hasAnyAction && (
                       <TableCell data-testid="submission-actions">
-                        <div className="flex justify-end gap-2">
-                          {((submission as SubmissionFullResponseDTO).code ||
-                            canEdit) && (
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  size="xs"
-                                  variant="outline"
-                                  data-testid="submission-actions-button"
-                                >
-                                  ...
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent
-                                className="w-40"
-                                align="start"
-                              >
-                                <DropdownMenuGroup>
-                                  <DropdownMenuLabel>
-                                    <FormattedMessage
-                                      {...messages.actionsLabel}
-                                    />
-                                  </DropdownMenuLabel>
-                                  {(submission as SubmissionFullResponseDTO)
-                                    .code && (
-                                    <SubmissionsPageActionDownload
-                                      submission={
-                                        submission as SubmissionFullResponseDTO
-                                      }
-                                    />
-                                  )}
-                                  {canEdit && (
-                                    <>
-                                      <SubmissionsPageActionRerun
-                                        submission={
-                                          submission as SubmissionFullResponseDTO
-                                        }
-                                      />
-                                      <SubmissionsPageActionJudge
-                                        submission={
-                                          submission as SubmissionFullResponseDTO
-                                        }
-                                      />
-                                    </>
-                                  )}
-                                </DropdownMenuGroup>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          )}
-                        </div>
+                        <SubmissionsPageActionsMenu
+                          submission={submission as SubmissionFullResponseDTO}
+                          canEdit={canEdit}
+                        />
                       </TableCell>
                     )}
                   </TableRow>

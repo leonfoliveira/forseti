@@ -4,9 +4,11 @@ import * as pty from "node-pty";
 
 import { config } from "@/test/config";
 
-export class CLI {
+export class CLIAdapter {
   static async run(args: string[]): Promise<string> {
     return new Promise((resolve, reject) => {
+      console.log(`Running CLI command: ${config.CLI_PATH} ${args.join(" ")}`);
+
       // Use pty to create a pseudo-terminal
       const ptyProcess = pty.spawn(config.CLI_PATH, args, {
         name: "xterm-color",
@@ -45,10 +47,20 @@ export class CLI {
           // Clean up the output by removing ANSI escape codes and extra whitespace
           const cleanOutput = output
             // eslint-disable-next-line no-control-regex
-            .replace(/\x1b\[[0-9;]*m/g, "") // Remove ANSI color codes
+            .replace(/\x1b\[[0-9;?]*[a-zA-Z]/g, "") // Remove ALL ANSI escape sequences
+            // eslint-disable-next-line no-control-regex
+            .replace(/\x1b\[[0-9]*[nA-Z]/g, "") // Remove cursor positioning sequences
+            // eslint-disable-next-line no-control-regex
+            .replace(/\x00/g, "") // Remove null characters
+            .replace(/Root password:.*?[\r\n]/g, "") // Remove password prompt line
+            .replace(/\*+/g, "") // Remove all asterisks (password masking)
             .replace(/\r\n/g, "\n") // Normalize line endings
             .replace(/\r/g, "\n") // Convert remaining \r to \n
+            .replace(/\n+/g, "\n") // Remove multiple consecutive newlines
+            .replace(/^\s*\n/g, "") // Remove leading empty lines
             .trim();
+
+          console.log(`CLI command output: ${cleanOutput}`);
           resolve(cleanOutput);
         } else {
           reject(

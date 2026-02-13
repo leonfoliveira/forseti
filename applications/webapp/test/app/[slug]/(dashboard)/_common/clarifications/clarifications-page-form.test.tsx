@@ -71,6 +71,7 @@ describe("ClarificationsPageForm", () => {
       problemId: undefined,
     });
     expect(useToast().success).toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
   });
 
   it("should show error toast when clarification creation fails", async () => {

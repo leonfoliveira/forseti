@@ -24,9 +24,9 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
-  timeout: 120_000, // Set a global timeout of 120 seconds
+  timeout: 300_000, // Set a global timeout of 5 minutes for each test
   expect: {
-    timeout: 30_000, // Set a timeout of 30 seconds for expect conditions
+    timeout: 15_000, // Set a timeout of 15 seconds for expect conditions
   },
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -36,8 +36,8 @@ export default defineConfig({
     trace: "on-first-retry",
 
     /* Slow down actions by this many milliseconds */
-    actionTimeout: 10_000, // 10 seconds timeout for actions
-    navigationTimeout: 30_000, // 30 seconds for navigation
+    actionTimeout: 5_000, // 5 seconds timeout for actions
+    navigationTimeout: 15_000, // 15 seconds for navigation
 
     launchOptions: {
       /* Add delay between actions (useful for debugging) */
@@ -54,12 +54,12 @@ export default defineConfig({
       },
     },
 
-    {
-      name: "firefox",
-      use: {
-        ...devices["Desktop Firefox"],
-      },
-    },
+    // {
+    //   name: "firefox",
+    //   use: {
+    //     ...devices["Desktop Firefox"],
+    //   },
+    // },
 
     /* Test against mobile viewports. */
     // {

@@ -101,7 +101,10 @@ export function AnnouncementsPage({ announcements, canCreate = false }: Props) {
 
         {/* Items */}
         {announcements.length > 0 && (
-          <div className="w-full max-w-4xl space-y-5">
+          <div
+            className="w-full max-w-4xl space-y-5"
+            data-testid="announcements-list"
+          >
             {announcements.toReversed().map((announcement) => (
               <AnnouncementsPageCard
                 key={announcement.id}

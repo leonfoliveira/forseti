@@ -16,10 +16,14 @@ describe("SubmissionsPageActionRerun", () => {
   it("should handle resubmitSubmission succesfully", async () => {
     const contestMetadata = MockContestMetadataResponseDTO();
     const submission = MockSubmissionFullResponseDTO();
+    const onClose = jest.fn();
     await renderWithProviders(
       <DropdownMenu open>
         <DropdownMenuContent>
-          <SubmissionsPageActionRerun submission={submission} />
+          <SubmissionsPageActionRerun
+            submission={submission}
+            onClose={onClose}
+          />
         </DropdownMenuContent>
       </DropdownMenu>,
       { contestMetadata },
@@ -27,7 +31,7 @@ describe("SubmissionsPageActionRerun", () => {
 
     fireEvent.click(screen.getByTestId("submissions-page-action-rerun"));
     await act(async () => {
-      fireEvent.click(screen.getByTestId("dialog-confirm-button"));
+      fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
     expect(submissionWritter.rerun).toHaveBeenCalledWith(
@@ -35,5 +39,6 @@ describe("SubmissionsPageActionRerun", () => {
       submission.id,
     );
     expect(useToast().success).toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
   });
 });

@@ -28,7 +28,7 @@ describe("SubmissionsPage", () => {
         { contestMetadata },
       );
 
-      expect(screen.queryByTestId("submissions-form")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("submission-form")).not.toBeInTheDocument();
       expect(
         screen.queryByTestId("open-create-form-button"),
       ).not.toBeInTheDocument();
@@ -76,9 +76,9 @@ describe("SubmissionsPage", () => {
         { contestMetadata },
       );
 
-      expect(screen.queryByTestId("submissions-form")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("submission-form")).not.toBeInTheDocument();
       fireEvent.click(screen.getByTestId("open-create-form-button"));
-      expect(screen.getByTestId("submissions-form")).toBeInTheDocument();
+      expect(screen.getByTestId("submission-form")).toBeInTheDocument();
     });
 
     it("should toggle only mine", async () => {
@@ -96,61 +96,6 @@ describe("SubmissionsPage", () => {
       expect(screen.getAllByTestId("submission-member")).toHaveLength(2);
       fireEvent.click(screen.getByTestId("only-mine-toggle"));
       expect(screen.getAllByTestId("submission-member")).toHaveLength(1);
-    });
-
-    it("should display download action", async () => {
-      await renderWithProviders(
-        <SubmissionsPage
-          submissions={submissions}
-          memberSubmissions={memberSubmissions}
-          problems={problems}
-          canCreate={true}
-          canEdit={false}
-        />,
-        { contestMetadata },
-      );
-
-      expect(
-        screen.queryByTestId("submission-actions-button"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId("submissions-page-action-download"),
-      ).toBeInTheDocument();
-      expect(
-        screen.queryByTestId("submissions-page-action-rerun"),
-      ).not.toBeInTheDocument();
-      expect(
-        screen.queryByTestId("submissions-page-action-judge"),
-      ).not.toBeInTheDocument();
-    });
-  });
-
-  describe("variant - can edit", () => {
-    const submissions = [MockSubmissionPublicResponseDTO()];
-
-    it("should display edit actions", async () => {
-      await renderWithProviders(
-        <SubmissionsPage
-          submissions={submissions}
-          problems={problems}
-          canCreate={false}
-          canEdit={true}
-        />,
-        { contestMetadata },
-      );
-
-      expect(
-        screen.queryByTestId("submission-actions-button"),
-      ).toBeInTheDocument();
-      expect(
-        screen.queryByTestId("submissions-page-action-download"),
-      ).not.toBeInTheDocument();
-      expect(
-        screen.getByTestId("submissions-page-action-rerun"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByTestId("submissions-page-action-judge"),
-      ).toBeInTheDocument();
     });
   });
 });

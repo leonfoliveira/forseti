@@ -83,7 +83,7 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
       data-testid="settings-problems-tab"
     >
       {fields.map((field, index) => (
-        <Item key={field.id} variant="outline">
+        <Item key={field.id} variant="outline" data-testid="problem-item">
           <ItemMedia>
             <Badge className="font-md text-lg" data-testid="problem-letter">
               {String.fromCharCode(65 + index)}
@@ -165,7 +165,7 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
               <div>
                 <ControlledField
                   form={form}
-                  name={`problems.${index}.testCases`}
+                  name={`problems.${index}.newTestCases`}
                   label={messages.testCasesLabel}
                   field={
                     <Input

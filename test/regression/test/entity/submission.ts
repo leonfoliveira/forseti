@@ -1,13 +1,13 @@
+import { Member } from "@/test/entity/member";
 import { Problem } from "@/test/entity/problem";
 
-export class Submission {
-  constructor(
-    public readonly problem: Problem,
-    public readonly language: SubmissionLanguage,
-    public readonly code: string,
-    public readonly answer: SubmissionAnswer,
-  ) {}
-}
+export type Submission = {
+  member: Member;
+  problem: Problem;
+  language: SubmissionLanguage;
+  code: string;
+  answer: SubmissionAnswer;
+};
 
 export enum SubmissionLanguage {
   PYTHON_312 = "Python 3.12",

@@ -43,7 +43,7 @@ const messages = defineMessages({
   },
   textLabel: {
     id: "app.[slug].(dashboard)._common.clarifications.clarifications-page-form.text-label",
-    defaultMessage: "Message",
+    defaultMessage: "Question",
   },
   problemLabel: {
     id: "app.[slug].(dashboard)._common.clarifications.clarifications-page-form.problem-label",
@@ -104,6 +104,7 @@ export function ClarificationsPageForm({
       createClarificationState.finish();
       form.reset();
       toast.success(messages.createSuccess);
+      onClose();
     } catch (error) {
       createClarificationState.fail(error, {
         default: () => toast.error(messages.createError),

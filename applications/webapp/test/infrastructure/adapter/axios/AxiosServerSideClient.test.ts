@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 import { BusinessException } from "@/core/domain/exception/BusinessException";
 import { ConflictException } from "@/core/domain/exception/ConflictException";
@@ -16,10 +16,12 @@ jest.mock("axios", () => ({
 
 jest.mock("next/headers", () => ({
   cookies: jest.fn(),
+  headers: jest.fn(),
 }));
 
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 const mockedCookies = cookies as jest.MockedFunction<typeof cookies>;
+const mockedHeaders = headers as jest.MockedFunction<typeof headers>;
 
 describe("AxiosServerSideClient", () => {
   const baseUrl = "https://example.com";
@@ -30,6 +32,10 @@ describe("AxiosServerSideClient", () => {
     set: jest.fn(),
   };
 
+  const mockHeaderStore = {
+    get: jest.fn(),
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -37,6 +43,10 @@ describe("AxiosServerSideClient", () => {
     mockedCookies.mockResolvedValue(mockCookieStore as any);
     mockCookieStore.get.mockReturnValue(undefined);
     mockCookieStore.set.mockReturnValue(undefined);
+
+    // Setup header store mock
+    mockedHeaders.mockResolvedValue(mockHeaderStore as any);
+    mockHeaderStore.get.mockReturnValue(undefined);
   });
 
   describe("basic HTTP methods", () => {
@@ -220,9 +230,9 @@ describe("AxiosServerSideClient", () => {
     });
 
     it("should forward x-csrf-token header from client to API", async () => {
-      mockCookieStore.get.mockImplementation((headerName: string) => {
+      mockHeaderStore.get.mockImplementation((headerName: string) => {
         if (headerName === "x-csrf-token") {
-          return { value: "test-csrf-token" };
+          return "test-csrf-token";
         }
         return undefined;
       });
@@ -240,9 +250,9 @@ describe("AxiosServerSideClient", () => {
     });
 
     it("should forward x-forwarded-for header from client to API", async () => {
-      mockCookieStore.get.mockImplementation((headerName: string) => {
+      mockHeaderStore.get.mockImplementation((headerName: string) => {
         if (headerName === "x-forwarded-for") {
-          return { value: "192.168.1.1" };
+          return "192.168.1.1";
         }
         return undefined;
       });
@@ -260,9 +270,9 @@ describe("AxiosServerSideClient", () => {
     });
 
     it("should forward user-agent header from client to API", async () => {
-      mockCookieStore.get.mockImplementation((headerName: string) => {
+      mockHeaderStore.get.mockImplementation((headerName: string) => {
         if (headerName === "user-agent") {
-          return { value: "Mozilla/5.0" };
+          return "Mozilla/5.0";
         }
         return undefined;
       });
@@ -280,15 +290,15 @@ describe("AxiosServerSideClient", () => {
     });
 
     it("should forward multiple headers simultaneously", async () => {
-      mockCookieStore.get.mockImplementation((headerName: string) => {
+      mockHeaderStore.get.mockImplementation((headerName: string) => {
         if (headerName === "x-csrf-token") {
-          return { value: "test-csrf-token" };
+          return "test-csrf-token";
         }
         if (headerName === "x-forwarded-for") {
-          return { value: "192.168.1.1" };
+          return "192.168.1.1";
         }
         if (headerName === "user-agent") {
-          return { value: "Mozilla/5.0" };
+          return "Mozilla/5.0";
         }
         return undefined;
       });
@@ -308,12 +318,12 @@ describe("AxiosServerSideClient", () => {
     });
 
     it("should only forward headers in HEADERS_TO_FORWARD_FROM_CLIENT_TO_API", async () => {
-      mockCookieStore.get.mockImplementation((headerName: string) => {
+      mockHeaderStore.get.mockImplementation((headerName: string) => {
         if (headerName === "x-csrf-token") {
-          return { value: "test-csrf-token" };
+          return "test-csrf-token";
         }
         if (headerName === "authorization") {
-          return { value: "Bearer token" };
+          return "Bearer token";
         }
         return undefined;
       });
@@ -326,9 +336,9 @@ describe("AxiosServerSideClient", () => {
     });
 
     it("should merge forwarded headers with existing request headers", async () => {
-      mockCookieStore.get.mockImplementation((headerName: string) => {
+      mockHeaderStore.get.mockImplementation((headerName: string) => {
         if (headerName === "x-csrf-token") {
-          return { value: "forwarded-csrf-token" };
+          return "forwarded-csrf-token";
         }
         return undefined;
       });
@@ -492,8 +502,12 @@ describe("AxiosServerSideClient", () => {
         if (name === "session_id") {
           return { value: "client-session-id" };
         }
+        return undefined;
+      });
+
+      mockHeaderStore.get.mockImplementation((name: string) => {
         if (name === "x-csrf-token") {
-          return { value: "client-csrf-token" };
+          return "client-csrf-token";
         }
         return undefined;
       });

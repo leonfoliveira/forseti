@@ -102,7 +102,10 @@ export function ClarificationsPage({
 
         {/* Items */}
         {clarifications.length > 0 && (
-          <div className="w-full max-w-4xl space-y-5">
+          <div
+            className="w-full max-w-4xl space-y-5"
+            data-testid="clarifications-list"
+          >
             {clarifications.toReversed().map((clarification) => (
               <ClarificationsPageCard
                 key={clarification.id}

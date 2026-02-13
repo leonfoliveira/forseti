@@ -122,7 +122,7 @@ export function ProblemsPage({
     <Page title={messages.pageTitle} description={messages.pageDescription}>
       <Card className="my-5">
         <CardContent>
-          <Table>
+          <Table data-testid="problems-table">
             <TableHeader className="bg-content2">
               <TableRow>
                 <TableHead>
@@ -147,7 +147,7 @@ export function ProblemsPage({
             </TableHeader>
             <TableBody>
               {problems.map((problem) => (
-                <TableRow key={problem.id}>
+                <TableRow key={problem.id} data-testid="problem-row">
                   <TableCell className="font-bold" data-testid="problem-letter">
                     {problem.letter}
                   </TableCell>

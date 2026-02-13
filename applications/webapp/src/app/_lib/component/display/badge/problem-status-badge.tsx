@@ -1,7 +1,6 @@
 import React from "react";
 
 import { Badge } from "@/app/_lib/component/shadcn/badge";
-import { cn } from "@/app/_lib/util/cn";
 import { useAppSelector } from "@/app/_store/store";
 
 type Props = React.ComponentProps<typeof Badge> & {

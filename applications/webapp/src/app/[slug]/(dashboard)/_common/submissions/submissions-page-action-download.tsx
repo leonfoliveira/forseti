@@ -16,19 +16,23 @@ const messages = defineMessages({
 
 type Props = {
   submission: SubmissionFullResponseDTO;
+  onClose: () => void;
 };
 
-export function SubmissionsPageActionDownload({ submission }: Props) {
+export function SubmissionsPageActionDownload({ submission, onClose }: Props) {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
+
+  async function downloadSubmission() {
+    await attachmentReader.download(contestId, submission.code);
+    onClose();
+  }
 
   return (
     <DropdownMenuItem
-      onClick={() =>
-        attachmentReader.download(
-          contestId,
-          (submission as SubmissionFullResponseDTO).code,
-        )
-      }
+      onClick={(e) => {
+        e.preventDefault();
+        downloadSubmission();
+      }}
       data-testid="submissions-page-action-download"
     >
       <Download />
