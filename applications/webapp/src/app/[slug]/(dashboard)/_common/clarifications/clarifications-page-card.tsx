@@ -1,9 +1,9 @@
 import { joiResolver } from "@hookform/resolvers/joi";
 import {
-  MessageCircleQuestion,
-  MessageCircleReply,
-  Send,
-  Trash,
+  MessageCircleQuestionIcon,
+  MessageCircleReplyIcon,
+  SendIcon,
+  TrashIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -144,7 +144,7 @@ export function ClarificationsPageCard({
     >
       <CardContent>
         <div className="flex items-center gap-4">
-          <MessageCircleQuestion size={24} />
+          <MessageCircleQuestionIcon size={24} />
           <div className="w-full">
             <div className="flex justify-between">
               <p className="text-sm font-semibold">
@@ -172,7 +172,7 @@ export function ClarificationsPageCard({
                     data-testid="clarification-delete-button"
                     onClick={() => setIsDeleteDialogOpen(true)}
                   >
-                    <Trash />
+                    <TrashIcon />
                   </Button>
 
                   <ConfirmationDialog
@@ -204,7 +204,7 @@ export function ClarificationsPageCard({
           {!!answer && (
             <div className="ml-5" data-testid="clarification-answer-card">
               <div className="flex items-center gap-4">
-                <MessageCircleReply size={24} />
+                <MessageCircleReplyIcon size={24} />
                 <div>
                   <p
                     className="text-sm font-semibold"
@@ -240,11 +240,11 @@ export function ClarificationsPageCard({
                     />
                     <AsyncButton
                       type="submit"
+                      icon={<SendIcon size={16} />}
                       isLoading={answerClarificationState.isLoading}
                       data-testid="clarification-answer-submit-button"
                     >
                       <FormattedMessage {...messages.answerLabel} />
-                      <Send size={16} />
                     </AsyncButton>
                   </div>
                 </FieldSet>

@@ -1,5 +1,5 @@
 import { joiResolver } from "@hookform/resolvers/joi";
-import { RefreshCw } from "lucide-react";
+import { GavelIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -106,7 +106,7 @@ export function SubmissionsPageActionJudge({ submission, onClose }: Props) {
         }}
         data-testid="submissions-page-action-judge"
       >
-        <RefreshCw />
+        <GavelIcon />
         <FormattedMessage {...messages.judgeLabel} />
       </DropdownMenuItem>
 

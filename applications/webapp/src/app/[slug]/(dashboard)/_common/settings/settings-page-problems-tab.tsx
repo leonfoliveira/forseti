@@ -1,4 +1,10 @@
-import { ChevronDown, ChevronUp, Download, Plus, Trash } from "lucide-react";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  DownloadIcon,
+  PlusIcon,
+  TrashIcon,
+} from "lucide-react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
@@ -172,7 +178,7 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
                     onClick={() => downloadAttachment(field.description)}
                     data-testid="problem-description-download"
                   >
-                    <Download />
+                    <DownloadIcon />
                     <span className="truncate underline">
                       {field.description.filename}
                     </span>
@@ -204,7 +210,7 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
                     onClick={() => downloadAttachment(field.testCases)}
                     data-testid="problem-test-cases-download"
                   >
-                    <Download />
+                    <DownloadIcon />
                     <span className="truncate underline">
                       {field.testCases.filename}
                     </span>
@@ -223,7 +229,7 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
                 onClick={() => move(index, index - 1)}
                 data-testid="move-problem-up-button"
               >
-                <ChevronUp />
+                <ChevronUpIcon />
               </Button>
               <Button
                 type="button"
@@ -233,7 +239,7 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
                 onClick={() => move(index, index + 1)}
                 data-testid="move-problem-down-button"
               >
-                <ChevronDown />
+                <ChevronDownIcon />
               </Button>
               <Button
                 type="button"
@@ -243,7 +249,7 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
                 onClick={() => remove(index)}
                 data-testid="remove-problem-button"
               >
-                <Trash />
+                <TrashIcon />
               </Button>
             </div>
           </ItemActions>
@@ -260,7 +266,7 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
         }
         data-testid="add-problem-button"
       >
-        <Plus />
+        <PlusIcon />
         <FormattedMessage {...messages.newProblemLabel} />
       </Button>
     </CardContent>

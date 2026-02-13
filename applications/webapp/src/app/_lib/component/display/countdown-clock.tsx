@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock } from "lucide-react";
+import { ClockIcon } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
 import { FormattedDuration } from "@/app/_lib/component/i18n/formatted-duration";
@@ -49,7 +49,7 @@ export function CountdownClock({ to, onZero, ...props }: Props) {
           props.className,
         )}
       >
-        <Clock
+        <ClockIcon
           size={16}
           data-icon="inline-start"
           className={cn("inline", isAboutToEnd && "text-destructive")}

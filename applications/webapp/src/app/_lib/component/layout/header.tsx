@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, LogIn, SunMoon } from "lucide-react";
+import { LogOutIcon, LogInIcon, SunMoonIcon } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -97,7 +97,7 @@ export function Header() {
                 data-testid="theme-toggle"
                 className="h-8 w-8"
               >
-                <SunMoon size={14} />
+                <SunMoonIcon size={14} />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -114,7 +114,7 @@ export function Header() {
                   data-testid="sign-out"
                   className="h-8 w-8"
                 >
-                  <LogOut size={14} />
+                  <LogOutIcon size={14} />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -134,7 +134,7 @@ export function Header() {
                   data-testid="sign-in"
                   className="h-8 px-2"
                 >
-                  <LogIn size={14} />
+                  <LogInIcon size={14} />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -175,7 +175,7 @@ export function Header() {
               onClick={toggleTheme}
               data-testid="theme-toggle"
             >
-              <SunMoon size={16} />
+              <SunMoonIcon size={16} />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
@@ -206,7 +206,7 @@ export function Header() {
                   onClick={handleSignOut}
                   data-testid="sign-out"
                 >
-                  <LogOut size={16} />
+                  <LogOutIcon size={16} />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -226,7 +226,7 @@ export function Header() {
                 }
                 data-testid="sign-in"
               >
-                <LogIn size={16} />
+                <LogInIcon size={16} />
               </Button>
             </TooltipTrigger>
             <TooltipContent>

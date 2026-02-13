@@ -1,4 +1,4 @@
-import { RefreshCw } from "lucide-react";
+import { RefreshCwIcon } from "lucide-react";
 import { useState } from "react";
 
 import { ConfirmationDialog } from "@/app/_lib/component/feedback/confirmation-dialog";
@@ -78,7 +78,7 @@ export function SubmissionsPageActionRerun({ submission, onClose }: Props) {
         }}
         data-testid="submissions-page-action-rerun"
       >
-        <RefreshCw />
+        <RefreshCwIcon />
         <FormattedMessage {...messages.resubmitLabel} />
       </DropdownMenuItem>
 

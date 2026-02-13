@@ -1,5 +1,4 @@
-import { RefreshCw } from "lucide-react";
-import React from "react";
+import { RefreshCwIcon } from "lucide-react";
 
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";
@@ -33,7 +32,7 @@ export function ErrorPage() {
         onClick={() => window.location.reload()}
         data-testid="reload"
       >
-        <RefreshCw />
+        <RefreshCwIcon />
         <FormattedMessage {...messages.reload} />
       </Button>
     </div>

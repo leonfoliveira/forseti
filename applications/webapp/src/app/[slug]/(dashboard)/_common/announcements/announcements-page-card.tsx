@@ -1,4 +1,4 @@
-import { Megaphone } from "lucide-react";
+import { MegaphoneIcon } from "lucide-react";
 
 import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
 import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
@@ -16,7 +16,7 @@ export function AnnouncementsPageCard({ announcement }: Props) {
     >
       <CardContent>
         <div className="flex items-center gap-4">
-          <Megaphone size={24} />
+          <MegaphoneIcon size={24} />
           <div>
             <p
               className="text-sm font-semibold"

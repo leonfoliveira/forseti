@@ -1,5 +1,4 @@
-import { Loader } from "lucide-react";
-import React from "react";
+import { LoaderIcon } from "lucide-react";
 
 /**
  * Displays a loading spinner centered on the page.
@@ -7,7 +6,7 @@ import React from "react";
 export function LoadingPage() {
   return (
     <div className="flex h-dvh items-center justify-center">
-      <Loader className="animate-spin" size={48} data-testid="loader" />
+      <LoaderIcon className="animate-spin" size={48} data-testid="loader" />
     </div>
   );
 }

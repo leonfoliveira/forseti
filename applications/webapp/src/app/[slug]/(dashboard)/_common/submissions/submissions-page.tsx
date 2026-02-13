@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp10, Funnel, Plus } from "lucide-react";
+import { ArrowUp10Icon, FunnelIcon, PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 
 import { SubmissionsPageActionsMenu } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-actions-menu";
@@ -124,7 +124,7 @@ export function SubmissionsPage({
             onClick={() => setIsCreateFormOpen(true)}
             data-testid="open-create-form-button"
           >
-            <Plus size={16} />
+            <PlusIcon size={16} />
             <FormattedMessage {...messages.newLabel} />
           </Button>
         )}
@@ -142,7 +142,7 @@ export function SubmissionsPage({
                   onPressedChange={setIsOnlyMine}
                   data-testid="only-mine-toggle"
                 >
-                  <Funnel className={cn(isOnlyMine && "fill-black")} />
+                  <FunnelIcon className={cn(isOnlyMine && "fill-black")} />
                   <FormattedMessage {...messages.onlyMineLabel} />
                 </Toggle>
               </div>
@@ -152,7 +152,7 @@ export function SubmissionsPage({
                 <TableRow>
                   <TableHead>
                     <FormattedMessage {...messages.headerTimestamp} />
-                    <ArrowUp10 size={16} className="ml-1 inline" />
+                    <ArrowUp10Icon size={16} className="ml-1 inline" />
                   </TableHead>
                   <TableHead>
                     <FormattedMessage {...messages.headerContestant} />

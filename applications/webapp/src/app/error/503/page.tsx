@@ -1,6 +1,6 @@
 "use client";
 
-import { RefreshCw } from "lucide-react";
+import { RefreshCwIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
@@ -40,7 +40,7 @@ function Error503Content() {
       </h2>
       {previousPath && (
         <Button className="mt-10" onClick={handleRetry} data-testid="reload">
-          <RefreshCw />
+          <RefreshCwIcon />
           <FormattedMessage {...messages.reload} />
         </Button>
       )}

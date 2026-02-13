@@ -1,5 +1,5 @@
 import { joiResolver } from "@hookform/resolvers/joi";
-import { Send } from "lucide-react";
+import { SendIcon } from "lucide-react";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 
@@ -181,11 +181,11 @@ export function SubmissionsPageForm({ onClose, problems }: Props) {
               </Button>
               <AsyncButton
                 type="submit"
+                icon={<SendIcon size={16} />}
                 isLoading={createSubmissionState.isLoading}
                 data-testid="submission-form-submit"
               >
                 <FormattedMessage {...messages.submitLabel} />
-                <Send size={16} />
               </AsyncButton>
             </div>
           </FieldSet>

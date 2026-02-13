@@ -1,7 +1,11 @@
 "use client";
 
-import { ArrowDownAZ, CircleCheck, Clock, Download } from "lucide-react";
-import React from "react";
+import {
+  ArrowDownAZIcon,
+  CircleCheckIcon,
+  ClockIcon,
+  DownloadIcon,
+} from "lucide-react";
 
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { FormattedNumber } from "@/app/_lib/component/i18n/formatted-number";
@@ -106,14 +110,14 @@ export function ProblemsPage({
     if (status.isAccepted)
       return (
         <p className="text-success text-xs">
-          <CircleCheck size={14} className="mr-1 inline" />
+          <CircleCheckIcon size={14} className="mr-1 inline" />
           <FormattedMessage {...messages.accepted} />
         </p>
       );
     if (status.wrongSubmissions > 0)
       return (
         <p className="text-warning text-xs">
-          <Clock size={14} className="mr-1 inline" />
+          <ClockIcon size={14} className="mr-1 inline" />
           <FormattedMessage
             {...messages.attempts}
             values={{ attempts: status.wrongSubmissions }}
@@ -145,7 +149,7 @@ export function ProblemsPage({
             <TableHeader className="bg-content2">
               <TableRow>
                 <TableHead>
-                  <ArrowDownAZ size={16} />
+                  <ArrowDownAZIcon size={16} />
                 </TableHead>
                 <TableHead>
                   <FormattedMessage {...messages.problemHeader} />
@@ -200,7 +204,7 @@ export function ProblemsPage({
                       onClick={() => downloadDescription(problem)}
                       data-testid="problem-download"
                     >
-                      <Download size={16} /> PDF
+                      <DownloadIcon size={16} /> PDF
                     </Button>
                   </TableCell>
                 </TableRow>

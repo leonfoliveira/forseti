@@ -1,6 +1,6 @@
 /* eslint-disable formatjs/enforce-default-message */
 
-import { TriangleAlert } from "lucide-react";
+import { TriangleAlertIcon } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
@@ -289,7 +289,7 @@ export function SettingsPageContestTab({ contest, form }: Props) {
             </Button>
             <ConfirmationDialog
               isOpen={forceStartConfirmationDialog.isOpen}
-              icon={<TriangleAlert />}
+              icon={<TriangleAlertIcon />}
               title={messages.forceStartConfirmationTitle}
               description={messages.forceStartConfirmationDescription}
               onCancel={forceStartConfirmationDialog.close}
@@ -311,7 +311,7 @@ export function SettingsPageContestTab({ contest, form }: Props) {
             </Button>
             <ConfirmationDialog
               isOpen={forceEndConfirmationDialog.isOpen}
-              icon={<TriangleAlert />}
+              icon={<TriangleAlertIcon />}
               title={messages.forceEndConfirmationTitle}
               description={messages.forceEndConfirmationDescription}
               onCancel={forceEndConfirmationDialog.close}

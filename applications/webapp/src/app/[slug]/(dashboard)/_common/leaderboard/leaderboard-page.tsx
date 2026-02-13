@@ -1,7 +1,6 @@
 "use client";
 
-import { ArrowDown01, Award } from "lucide-react";
-import React from "react";
+import { ArrowDown01Icon, AwardIcon } from "lucide-react";
 
 import { ProblemStatusBadge } from "@/app/_lib/component/display/badge/problem-status-badge";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
@@ -70,7 +69,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
     ][Math.floor(index / 4)];
     return (
       <>
-        <Award
+        <AwardIcon
           className={cn("fill-foreground inline h-5", color)}
           strokeWidth={3}
         />
@@ -87,7 +86,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
             <TableHeader className="bg-content2">
               <TableRow>
                 <TableHead>
-                  <ArrowDown01 size={16} />
+                  <ArrowDown01Icon size={16} />
                 </TableHead>
                 <TableHead>
                   <FormattedMessage {...messages.headerContestant} />

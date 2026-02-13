@@ -1,4 +1,4 @@
-import { Megaphone, Plus } from "lucide-react";
+import { MegaphoneIcon, PlusIcon } from "lucide-react";
 import React from "react";
 
 import { AnnouncementsPageCard } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page-card";
@@ -76,7 +76,7 @@ export function AnnouncementsPage({ announcements, canCreate = false }: Props) {
             onClick={() => setIsCreateFormOpen(true)}
             data-testid="open-create-form-button"
           >
-            <Plus size={16} />
+            <PlusIcon size={16} />
             <FormattedMessage {...messages.newLabel} />
           </Button>
         )}
@@ -87,7 +87,7 @@ export function AnnouncementsPage({ announcements, canCreate = false }: Props) {
           <Empty data-testid="empty">
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <Megaphone size={48} />
+                <MegaphoneIcon size={48} />
               </EmptyMedia>
               <EmptyTitle>
                 <FormattedMessage {...messages.emptyTitle} />

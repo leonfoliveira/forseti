@@ -1,4 +1,4 @@
-import { Download } from "lucide-react";
+import { DownloadIcon } from "lucide-react";
 
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
@@ -49,7 +49,7 @@ export function SubmissionsPageActionDownload({ submission, onClose }: Props) {
       }}
       data-testid="submissions-page-action-download"
     >
-      <Download />
+      <DownloadIcon />
       <FormattedMessage {...messages.downloadLabel} />
     </DropdownMenuItem>
   );

@@ -1,4 +1,4 @@
-import { Plus, Trash } from "lucide-react";
+import { PlusIcon, TrashIcon } from "lucide-react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
@@ -141,7 +141,7 @@ export function SettingsPageMembersTab({ form }: Props) {
                   onClick={() => remove(index)}
                   data-testid="remove-member-button"
                 >
-                  <Trash />
+                  <TrashIcon />
                 </Button>
               </TableCell>
             </TableRow>
@@ -161,7 +161,7 @@ export function SettingsPageMembersTab({ form }: Props) {
         }
         data-testid="add-member-button"
       >
-        <Plus />
+        <PlusIcon />
         <FormattedMessage {...messages.newMemberLabel} />
       </Button>
     </CardContent>

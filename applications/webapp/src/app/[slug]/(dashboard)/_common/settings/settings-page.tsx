@@ -1,7 +1,7 @@
 "use client";
 
 import { joiResolver } from "@hookform/resolvers/joi";
-import { AlertCircle } from "lucide-react";
+import { AlertCircleIcon, SaveIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -240,6 +240,7 @@ export function SettingsPage({ contest }: Props) {
                 </Button>
                 <Button type="submit" data-testid="save-settings-button">
                   <FormattedMessage {...messages.saveLabel} />
+                  <SaveIcon />
                 </Button>
 
                 <ConfirmationDialog
@@ -249,7 +250,7 @@ export function SettingsPage({ contest }: Props) {
                   content={
                     contestStatus !== ContestStatus.NOT_STARTED && (
                       <Alert variant="destructive" className="mt-2">
-                        <AlertCircle />
+                        <AlertCircleIcon />
                         <AlertTitle>
                           <FormattedMessage
                             {...messages.confirmDialogInProgressAlertTitle}

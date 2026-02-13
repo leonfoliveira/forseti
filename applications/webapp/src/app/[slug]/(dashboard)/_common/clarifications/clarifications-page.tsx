@@ -1,4 +1,4 @@
-import { MessageCircleQuestion, Plus } from "lucide-react";
+import { MessageCircleQuestionIcon, PlusIcon } from "lucide-react";
 import React from "react";
 
 import { ClarificationsPageCard } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page-card";
@@ -83,7 +83,7 @@ export function ClarificationsPage({
             onClick={() => setIsCreateFormOpen(true)}
             data-testid="open-create-form-button"
           >
-            <Plus size={16} />
+            <PlusIcon size={16} />
             <FormattedMessage {...messages.newLabel} />
           </Button>
         )}
@@ -96,7 +96,7 @@ export function ClarificationsPage({
           <Empty data-testid="empty">
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <MessageCircleQuestion size={48} />
+                <MessageCircleQuestionIcon size={48} />
               </EmptyMedia>
               <EmptyTitle>
                 <FormattedMessage {...messages.emptyTitle} />
