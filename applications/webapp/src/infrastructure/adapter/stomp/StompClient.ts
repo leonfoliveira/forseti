@@ -36,11 +36,16 @@ export class StompClient implements ListenerClient {
 
   /**
    * Subscribe to a STOMP topic.
+   * If the client is not connected, the subscription will not be made.
    *
    * @param topic The topic to subscribe to.
    * @param callback Callback function to handle received messages.
    */
   async subscribe<TData>(topic: string, callback: (data: TData) => void) {
+    if (!this.client.connected) {
+      return;
+    }
+
     this.client.subscribe(topic, (message) => {
       const data = JSON.parse(message.body) as TData;
       callback(data);

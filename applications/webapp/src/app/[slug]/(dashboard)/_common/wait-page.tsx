@@ -74,7 +74,7 @@ export function WaitPage() {
           <FormattedMessage {...messages.languages} />
         </p>
         <ul className="mt-1 text-sm">
-          {contestMetadata.languages.map((it) => (
+          {contestMetadata.languages.toSorted().map((it) => (
             <li key={it} data-testid="language-item">
               <FormattedMessage {...globalMessages.submissionLanguage[it]} />
             </li>

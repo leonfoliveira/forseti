@@ -14,8 +14,7 @@ export class StompClientFactory implements ListenerClientFactory {
    * @returns A new instance of ListenerClient.
    */
   public create(): ListenerClient {
-    const socket = new SockJS(this.wsUrl);
-    const client = Stomp.over(socket);
+    const client = Stomp.over(() => new SockJS(this.wsUrl));
     client.debug = () => {};
     return new StompClient(client);
   }
