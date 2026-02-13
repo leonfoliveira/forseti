@@ -44,9 +44,6 @@ class SubmissionCodeAuthorizationConfig : AttachmentAuthorizationConfig {
         member: Member,
         attachment: Attachment,
     ) {
-        if (!contest.hasStarted()) {
-            throw ForbiddenException("Judges cannot download submission code attachments before the contest starts")
-        }
     }
 
     override fun authorizeContestantDownload(

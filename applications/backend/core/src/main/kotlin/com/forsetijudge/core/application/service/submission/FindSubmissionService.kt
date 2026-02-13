@@ -65,7 +65,7 @@ class FindSubmissionService(
                     ?: throw NotFoundException("Could not find member with id = $it")
             }
 
-        if (!contest.hasStarted() && !setOf(Member.Type.ADMIN, Member.Type.ROOT).contains(member?.type)) {
+        if (!contest.hasStarted() && !setOf(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE).contains(member?.type)) {
             throw ForbiddenException("Contest has not started yet")
         }
 

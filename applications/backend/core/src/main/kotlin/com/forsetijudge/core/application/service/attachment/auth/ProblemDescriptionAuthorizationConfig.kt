@@ -41,9 +41,6 @@ class ProblemDescriptionAuthorizationConfig : AttachmentAuthorizationConfig {
         member: Member,
         attachment: Attachment,
     ) {
-        if (!contest.hasStarted()) {
-            throw ForbiddenException("Judges cannot download problem description attachments before the contest starts")
-        }
     }
 
     override fun authorizeContestantDownload(
