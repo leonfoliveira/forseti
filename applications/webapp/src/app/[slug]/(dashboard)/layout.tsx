@@ -96,7 +96,7 @@ export default function DashboardLayout({
         onValueChange={(path) => router.push(path)}
         data-testid="dashboard-tabs"
       >
-        <div className="scrollbar-hide overflow-x-auto">
+        <div className="scrollbar-hide overflow-x-auto overflow-y-hidden">
           <TabsList variant="line" className="min-w-max">
             {tabs.map((item) => (
               <TabsTrigger
