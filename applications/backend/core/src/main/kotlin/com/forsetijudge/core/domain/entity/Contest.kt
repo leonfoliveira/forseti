@@ -119,13 +119,12 @@ class Contest(
      */
     fun isFrozen(): Boolean {
         val now = OffsetDateTime.now()
-        val freezeTime = freezeAt()
+        val lastFreezeTime =
+            listOfNotNull(autoFreezeAt, manualFreezeAt)
+                .filter { it.isBefore(now) }
+                .maxOrNull()
 
-        if (freezeTime == null) {
-            return false
-        }
-
-        if (freezeTime.isAfter(now)) {
+        if (lastFreezeTime == null) {
             return false
         }
 

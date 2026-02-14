@@ -26,10 +26,12 @@ class StompSubmissionEmitter(
 
         val contest = submission.contest
 
-        webSocketFanoutProducer.produce(
-            "/topic/contests/${contest.id}/submissions",
-            submission.toPublicResponseDTO(),
-        )
+        if (!contest.isFrozen()) {
+            webSocketFanoutProducer.produce(
+                "/topic/contests/${contest.id}/submissions",
+                submission.toPublicResponseDTO(),
+            )
+        }
         webSocketFanoutProducer.produce(
             "/topic/contests/${contest.id}/submissions/full",
             submission.toFullResponseDTO(),
