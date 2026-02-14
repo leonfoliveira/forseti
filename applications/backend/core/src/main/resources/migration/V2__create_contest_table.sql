@@ -8,6 +8,9 @@ create table contest (
     languages text[] not null,
     start_at timestamp not null,
     end_at timestamp not null,
+    auto_freeze_at timestamp,
+    manual_freeze_at timestamp,
+    unfreeze_at timestamp,
     settings jsonb not null
 );
 
@@ -31,6 +34,12 @@ create table contest_aud (
     start_at_mod boolean not null default false,
     end_at timestamp not null,
     end_at_mod boolean not null default false,
+    auto_freeze_at timestamp,
+    auto_freeze_at_mod boolean not null default false,
+    manual_freeze_at timestamp,
+    manual_freeze_at_mod boolean not null default false,
+    unfreeze_at timestamp,
+    unfreeze_at_mod boolean not null default false,
     settings jsonb not null,
     settings_mod boolean not null default false,
     primary key (rev, id),
