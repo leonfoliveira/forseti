@@ -107,9 +107,34 @@ class Contest(
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
     fun hasStarted(): Boolean = !startAt.isAfter(OffsetDateTime.now())
 
+    fun hasFinished(): Boolean = !endAt.isAfter(OffsetDateTime.now())
+
     fun isActive(): Boolean = hasStarted() && !hasFinished()
 
-    fun hasFinished(): Boolean = !endAt.isAfter(OffsetDateTime.now())
+    fun freezeAt(): OffsetDateTime? = listOfNotNull(autoFreezeAt, manualFreezeAt).maxOrNull()
+
+    /**
+     * Determines if the contest is currently in a frozen state based on the freeze and unfreeze times.
+     * The contest is considered frozen if the current time is after the freeze time and before the unfreeze time (if set).
+     */
+    fun isFrozen(): Boolean {
+        val now = OffsetDateTime.now()
+        val freezeTime = freezeAt()
+
+        if (freezeTime == null) {
+            return false
+        }
+
+        if (freezeTime.isAfter(now)) {
+            return false
+        }
+
+        if (unfreezeAt == null) {
+            return true
+        }
+
+        return unfreezeAt!!.isAfter(now)
+    }
 
     data class Settings(
         var isAutoJudgeEnabled: Boolean = true,
