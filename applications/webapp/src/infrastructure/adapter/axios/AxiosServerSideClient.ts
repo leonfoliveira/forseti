@@ -52,7 +52,10 @@ export class AxiosServerSideClient extends AxiosClient {
 
     if (cookiesValues.length > 0) {
       requestConfig.headers = requestConfig.headers || {};
-      requestConfig.headers["Cookie"] = cookiesValues.join("; ");
+      const currentCookieHeader = requestConfig.headers["Cookie"];
+      requestConfig.headers["Cookie"] = [currentCookieHeader, ...cookiesValues]
+        .filter(Boolean)
+        .join("; ");
     }
   }
 
