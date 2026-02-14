@@ -38,7 +38,9 @@ function verifyTranslations() {
     if (fileKeys[file].size !== base.size) {
       const missingKeys = [...base].filter((key) => !fileKeys[file].has(key));
       if (missingKeys.length > 0) {
-        console.error(`❌ ${file} is missing keys compared to en-US:`);
+        console.error(
+          `❌ ${sourceDir}${file}.json is missing keys compared to en-US:`,
+        );
         console.table(missingKeys);
         process.exit(1);
       }

@@ -21,7 +21,7 @@ export function useErrorHandlerRoot(slug: string) {
 
   async function handleUnauthorized() {
     await clearCookies("session_id", "csrf_token");
-    window.location.href = routes.CONTEST_SIGN_IN(slug);
+    window.location.href = `${routes.CONTEST_SIGN_IN(slug)}?expired=true`;
   }
 
   async function handle(

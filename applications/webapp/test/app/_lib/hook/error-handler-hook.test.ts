@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "@/test/jest.setup";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderHookWithProviders } from "@/test/render-with-providers";
 
-jest.mock("@/app/_lib/action/clear-cookie");
+jest.mock("@/app/_lib/action/clear-cookies-server-action");
 
 describe("useErrorHandler", () => {
   const mockSlug = "test-contest";

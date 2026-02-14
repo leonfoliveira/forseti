@@ -1,5 +1,5 @@
 import { fireEvent, screen } from "@testing-library/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { act } from "react";
 
 import SignInPage from "@/app/[slug]/sign-in/page";
@@ -31,6 +31,17 @@ describe("SignInPage", () => {
     expect(screen.getByTestId("password")).toBeInTheDocument();
     expect(screen.getByTestId("sign-in")).toBeInTheDocument();
     expect(screen.getByTestId("enter-guest")).toBeInTheDocument();
+  });
+
+  it("should show expired session warning if session has expired", async () => {
+    (useSearchParams as jest.Mock).mockReturnValueOnce({
+      get: jest.fn().mockReturnValue("true"),
+    });
+    await renderWithProviders(<SignInPage />, {
+      contestMetadata: mockContestMetadata,
+    });
+
+    expect(useToast().warning).toHaveBeenCalled();
   });
 
   it("should sign-in successfully", async () => {
