@@ -20,6 +20,7 @@ import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
+import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { defineMessages } from "@/i18n/message";
@@ -92,6 +93,11 @@ export function JudgeDashboardProvider({
           contestMetadata.id,
           receiveLeaderboard,
         ),
+        leaderboardListener.subscribeForLeaderboardPartial(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveLeaderboardPartial,
+        ),
         submissionListener.subscribeForContestFull(
           listenerClientRef.current,
           contestMetadata.id,
@@ -144,6 +150,12 @@ export function JudgeDashboardProvider({
 
   function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
     dispatch(judgeDashboardSlice.actions.setLeaderboard(leaderboard));
+  }
+
+  function receiveLeaderboardPartial(
+    leaderboard: LeaderboardPartialResponseDTO,
+  ) {
+    dispatch(judgeDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
   function receiveSubmission(submission: SubmissionFullResponseDTO) {
