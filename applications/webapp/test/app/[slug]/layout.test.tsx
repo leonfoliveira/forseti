@@ -44,7 +44,6 @@ describe("ContestLayout", () => {
 
   const mockContestMetadata = { id: "contest-1", slug: "test-contest" };
   const mockSession = { id: "session-1", contest: mockContestMetadata };
-  const slug = "test-contest";
 
   it("renders loading state initially", () => {
     render(
