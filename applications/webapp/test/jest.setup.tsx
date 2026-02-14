@@ -40,6 +40,7 @@ jest.mock("@/config/composition");
 
 const router = {
   push: jest.fn(),
+  replace: jest.fn(),
 };
 export const useRouter = jest.fn(() => router);
 export const usePathname = jest.fn(() => "/");

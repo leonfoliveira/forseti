@@ -11,7 +11,7 @@ describe("NotFoundPage", () => {
   it("should call router.push with correct error route and from parameter", async () => {
     await renderWithProviders(<NotFoundPage />);
 
-    expect(useRouter().push).toHaveBeenCalledWith(
+    expect(useRouter().replace).toHaveBeenCalledWith(
       `/error/404?from=${encodeURIComponent("/test/current/path")}`,
     );
   });

@@ -11,7 +11,7 @@ describe("ForbiddenPage", () => {
   it("should call router.push with correct error route and from parameter", async () => {
     await renderWithProviders(<ForbiddenPage />);
 
-    expect(useRouter().push).toHaveBeenCalledWith(
+    expect(useRouter().replace).toHaveBeenCalledWith(
       `/error/403?from=${encodeURIComponent("/test/current/path")}`,
     );
   });
