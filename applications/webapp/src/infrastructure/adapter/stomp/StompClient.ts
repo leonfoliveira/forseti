@@ -6,8 +6,6 @@ import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 export class StompClient implements ListenerClient {
   constructor(private readonly client: CompatClient) {}
 
-  private originalOnDisconnect?: () => void;
-
   /**
    * Connect to the STOMP server.
    */
@@ -30,13 +28,12 @@ export class StompClient implements ListenerClient {
         resolve();
       };
 
-      this.originalOnDisconnect = () => {
-        console.debug("Disconnected from stomp server");
+      this.client.onDisconnect = () => {
+        console.debug("Connection lost to stomp server");
         if (onDisconnect) {
           onDisconnect();
         }
       };
-      this.client.onDisconnect = this.originalOnDisconnect;
 
       this.client.onStompError = (error) => {
         clearTimeout(connectTimeout);
@@ -90,8 +87,6 @@ export class StompClient implements ListenerClient {
   async disconnect() {
     return new Promise<void>((resolve) => {
       this.client.onDisconnect = () => {
-        // TODO: This is a workaround to ensure the onDisconnect callback is called when disconnecting.
-        this.originalOnDisconnect?.();
         console.debug("Disconnected from stomp server");
         resolve();
       };
