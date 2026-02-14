@@ -10,6 +10,7 @@ import { SubmissionStatusBadge } from "@/app/_lib/component/display/badge/submis
 import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
+import { Alert, AlertDescription } from "@/app/_lib/component/shadcn/alert";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
@@ -71,6 +72,11 @@ const messages = defineMessages({
   newLabel: {
     id: "app.[slug].(dashboard)._common.submissions.submissions-page.new-label",
     defaultMessage: "New Submission",
+  },
+  guidanceText: {
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page.guidance-text",
+    defaultMessage:
+      "View all contest submissions here. Submissions are judged automatically and results appear in real-time. You can see the status (judging/judged/failed) and answer (accepted/wrong answer/compilation error/runtime error/time limit exceeded/memory limit exceeded) for each submission.",
   },
 });
 
@@ -147,8 +153,8 @@ export function SubmissionsPage({
                 </Toggle>
               </div>
             )}
-            <Table data-testid="submissions-table">
-              <TableHeader className="bg-neutral-100 dark:bg-neutral-800">
+            <Table className="border-b-1" data-testid="submissions-table">
+              <TableHeader className="bg-muted">
                 <TableRow>
                   <TableHead>
                     <FormattedMessage {...messages.headerTimestamp} />
@@ -218,6 +224,12 @@ export function SubmissionsPage({
                 ))}
               </TableBody>
             </Table>
+
+            <Alert className="bg-muted mt-5 py-2">
+              <AlertDescription className="text-xs">
+                <FormattedMessage {...messages.guidanceText} />
+              </AlertDescription>
+            </Alert>
           </CardContent>
         </Card>
       </div>

@@ -58,12 +58,9 @@ export function SettingsPageMembersTab({ form }: Props) {
   });
 
   return (
-    <CardContent
-      className="flex flex-col gap-4"
-      data-testid="settings-members-tab"
-    >
+    <div className="flex flex-col gap-4" data-testid="settings-members-tab">
       <Table>
-        <TableHeader className="bg-neutral-100 dark:bg-neutral-800">
+        <TableHeader className="bg-muted">
           <TableRow>
             <TableHead>
               <FormattedMessage {...messages.titleLabel} />
@@ -164,6 +161,6 @@ export function SettingsPageMembersTab({ form }: Props) {
         <PlusIcon />
         <FormattedMessage {...messages.newMemberLabel} />
       </Button>
-    </CardContent>
+    </div>
   );
 }

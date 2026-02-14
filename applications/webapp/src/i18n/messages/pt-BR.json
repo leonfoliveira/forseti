@@ -36,7 +36,12 @@
   "app": {
     "page": {
       "page-title": "Forseti",
-      "page-description": "Aplicação Forseti."
+      "page-description": "Aplicação Forseti.",
+      "welcome-title": "Bem-vindo ao Forseti Judge",
+      "contest-access-info": "Para acessar um concurso, use o formato correto de URL do concurso:",
+      "url-format": "/'{slug-do-concurso'}",
+      "url-format-description": "Substitua '{slug-do-concurso'} pelo identificador específico do seu concurso.",
+      "contact-admin": "Se você não tem uma URL de concurso, entre em contato com o administrador do concurso."
     },
     "error": {
       "403": {
@@ -161,7 +166,8 @@
               "header-language": "Linguagem",
               "header-status": "Status",
               "header-answer": "Resposta",
-              "new-label": "Nova Submissão"
+              "new-label": "Nova Submissão",
+              "guidance-text": "Visualize todas as submissões do concurso aqui. Use o filtro 'Apenas minhas' para ver suas submissões. Clique em 'Nova Submissão' para enviar seu código. As submissões são julgadas automaticamente e os resultados aparecem em tempo real. Você pode ver o status (julgando/completado) e a resposta (aceito/errado/erro) de cada submissão."
             },
             "submissions-page-form": {
               "create-title": "Criar Submissão",
@@ -317,7 +323,8 @@
               "accepted": "Aceito",
               "attempts": "{attempts} Tentativas",
               "not-attempted": "Não tentado",
-              "description-download-error": "Falha ao carregar descrição do problema."
+              "description-download-error": "Falha ao carregar descrição do problema.",
+              "guidance-text": "Aqui você pode visualizar todos os problemas do concurso. Clique no botão PDF para baixar os enunciados dos problemas. Os limites de tempo e memória são exibidos para cada problema."
             }
           },
           "leaderboard": {
@@ -327,7 +334,8 @@
               "header-contestant": "Competidor",
               "header-score": "Pontuação",
               "header-penalty": "Penalidade",
-              "empty": "Nenhum competidor ainda"
+              "empty": "Nenhum competidor ainda",
+              "rules-explanation": "As classificações são determinadas por: 1) Total de problemas resolvidos (mais é melhor); 2) Tempo total de penalidade (menos é melhor); 3) Tempo das submissões aceitas (mais cedo é melhor); 4) Nome (ordem alfabética). A penalidade inclui o tempo de submissão mais 20 minutos para cada resposta errada antes da aceitação."
             }
           },
           "clarifications": {
@@ -336,7 +344,8 @@
               "page-description": "Visualize e solicite esclarecimentos para problemas do concurso.",
               "new-label": "Novo Esclarecimento",
               "empty-title": "Nenhum esclarecimento ainda",
-              "empty-description": "Os esclarecimentos aparecerão aqui uma vez solicitados."
+              "empty-description": "Os esclarecimentos aparecerão aqui uma vez solicitados.",
+              "guidance-text": "Use esta página para fazer perguntas sobre problemas do concurso e visualizar respostas oficiais dos juízes. Clique em 'Novo Esclarecimento' para enviar uma pergunta. Todos os esclarecimentos e respostas são visíveis para todos os competidores para garantir a imparcialidade. Faça perguntas específicas sobre enunciados de problemas, formatos de entrada/saída ou casos extremos."
             },
             "clarifications-page-form": {
               "create-title": "Criar Esclarecimento",
@@ -381,7 +390,8 @@
               "create-success": "Anúncio criado com sucesso",
               "create-error": "Falha ao criar anúncio",
               "empty-title": "Nenhum anúncio ainda",
-              "empty-description": "Os anúncios aparecerão aqui uma vez criados."
+              "empty-description": "Os anúncios aparecerão aqui uma vez criados.",
+              "guidance-text": "Esta página exibe anúncios importantes do concurso de juízes e organizadores. Os anúncios podem incluir atualizações do concurso, esclarecimentos que afetam todos os competidores, mudanças de cronograma ou outras informações importantes. Verifique esta página regularmente durante o concurso para atualizações."
             },
             "announcements-page-form": {
               "create-title": "Criar anúncio",

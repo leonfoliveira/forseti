@@ -5,6 +5,7 @@ import { ClarificationsPageCard } from "@/app/[slug]/(dashboard)/_common/clarifi
 import { ClarificationsPageForm } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page-form";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
+import { Alert, AlertDescription } from "@/app/_lib/component/shadcn/alert";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import {
   Empty,
@@ -41,6 +42,11 @@ const messages = defineMessages({
   emptyDescription: {
     id: "app.[slug].(dashboard)._common.clarifications.clarifications-page.empty-description",
     defaultMessage: "Clarifications will appear here once requested.",
+  },
+  guidanceText: {
+    id: "app.[slug].(dashboard)._common.clarifications.clarifications-page.guidance-text",
+    defaultMessage:
+      "Use this page to ask questions about contest problems and view official responses from judges. All clarifications and answers are visible to all contestants to ensure fairness. Ask specific questions about problem statements, input/output formats, or edge cases.",
   },
 });
 
@@ -124,6 +130,12 @@ export function ClarificationsPage({
             ))}
           </div>
         )}
+
+        <Alert className="bg-card mt-5 w-full max-w-4xl py-2">
+          <AlertDescription className="text-xs">
+            <FormattedMessage {...messages.guidanceText} />
+          </AlertDescription>
+        </Alert>
       </div>
     </Page>
   );

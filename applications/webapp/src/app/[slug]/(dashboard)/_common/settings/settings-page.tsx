@@ -23,7 +23,11 @@ import {
   AlertTitle,
 } from "@/app/_lib/component/shadcn/alert";
 import { Button } from "@/app/_lib/component/shadcn/button";
-import { Card, CardFooter } from "@/app/_lib/component/shadcn/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+} from "@/app/_lib/component/shadcn/card";
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/app/_lib/component/shadcn/tabs";
@@ -60,6 +64,11 @@ const messages = defineMessages({
   membersTab: {
     id: "app.[slug].(dashboard)._common.settings.settings-page.members-tab",
     defaultMessage: "Members",
+  },
+  inProgressAlertDescription: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page.in-progress-alert-description",
+    defaultMessage:
+      "This contest is currently in progress. Changing the settings may affect the contest experience for participants.",
   },
   resetLabel: {
     id: "app.[slug].(dashboard)._common.settings.settings-page.reset-label",
@@ -221,17 +230,30 @@ export function SettingsPage({ contest }: Props) {
             }
           >
             <Card className="mt-5 w-full">
-              {selectedTab === TabKey.CONTEST && (
-                <SettingsPageContestTab contest={contest} form={form} />
-              )}
+              <CardContent>
+                {contestStatus === ContestStatus.IN_PROGRESS && (
+                  <Alert className="mb-5 bg-red-50 dark:bg-red-100">
+                    <AlertCircleIcon className="stroke-red-500 dark:stroke-red-600" />
+                    <AlertDescription className="text-red-600 dark:text-red-700">
+                      <FormattedMessage
+                        {...messages.inProgressAlertDescription}
+                      />
+                    </AlertDescription>
+                  </Alert>
+                )}
 
-              {selectedTab === TabKey.PROBLEMS && (
-                <SettingsPageProblemsTab contest={contest} form={form} />
-              )}
+                {selectedTab === TabKey.CONTEST && (
+                  <SettingsPageContestTab contest={contest} form={form} />
+                )}
 
-              {selectedTab === TabKey.MEMBERS && (
-                <SettingsPageMembersTab form={form} />
-              )}
+                {selectedTab === TabKey.PROBLEMS && (
+                  <SettingsPageProblemsTab contest={contest} form={form} />
+                )}
+
+                {selectedTab === TabKey.MEMBERS && (
+                  <SettingsPageMembersTab form={form} />
+                )}
+              </CardContent>
 
               <Separator />
               <CardFooter className="justify-end gap-3">

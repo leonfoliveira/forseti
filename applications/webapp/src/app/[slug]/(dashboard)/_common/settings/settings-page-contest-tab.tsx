@@ -11,7 +11,6 @@ import {
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";
-import { CardContent } from "@/app/_lib/component/shadcn/card";
 import { Checkbox } from "@/app/_lib/component/shadcn/checkbox";
 import {
   FieldDescription,
@@ -175,10 +174,7 @@ export function SettingsPageContestTab({ contest, form }: Props) {
   }
 
   return (
-    <CardContent
-      className="flex flex-col gap-4"
-      data-testid="settings-contest-tab"
-    >
+    <div className="flex flex-col gap-4" data-testid="settings-contest-tab">
       <div className="grid grid-cols-2 gap-4">
         <ControlledField
           form={form}
@@ -321,6 +317,6 @@ export function SettingsPageContestTab({ contest, form }: Props) {
           </>
         )}
       </div>
-    </CardContent>
+    </div>
   );
 }

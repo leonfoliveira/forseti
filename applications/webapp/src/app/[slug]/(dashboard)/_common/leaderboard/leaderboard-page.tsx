@@ -5,6 +5,7 @@ import { ArrowDown01Icon, AwardIcon } from "lucide-react";
 import { ProblemStatusBadge } from "@/app/_lib/component/display/badge/problem-status-badge";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
+import { Alert, AlertDescription } from "@/app/_lib/component/shadcn/alert";
 import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
 import {
   Table,
@@ -45,6 +46,11 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.empty",
     defaultMessage: "No contestants yet",
   },
+  rulesExplanation: {
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.rules-explanation",
+    defaultMessage:
+      "Rankings are determined by: 1) Total problems solved (more is better); 2) Total penalty time (less is better); 3) Time of accepted submissions (earlier is better); 4) Name (alphabetical). Penalty includes submission time plus 20 minutes for each wrong answer before acceptance.",
+  },
 });
 
 type Props = {
@@ -82,8 +88,8 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
     <Page title={messages.pageTitle} description={messages.pageDescription}>
       <Card className="my-5">
         <CardContent>
-          <Table data-testid="leaderboard-table">
-            <TableHeader className="bg-neutral-100 dark:bg-neutral-800">
+          <Table data-testid="leaderboard-table" className="border-b-1">
+            <TableHeader className="bg-muted">
               <TableRow>
                 <TableHead>
                   <ArrowDown01Icon size={16} />
@@ -140,6 +146,11 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
               ))}
             </TableBody>
           </Table>
+          <Alert className="bg-muted mt-7 py-2">
+            <AlertDescription className="text-xs">
+              <FormattedMessage {...messages.rulesExplanation} />
+            </AlertDescription>
+          </Alert>
         </CardContent>
       </Card>
     </Page>

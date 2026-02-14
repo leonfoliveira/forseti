@@ -10,6 +10,7 @@ import {
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { FormattedNumber } from "@/app/_lib/component/i18n/formatted-number";
 import { Page } from "@/app/_lib/component/page/page";
+import { Alert, AlertDescription } from "@/app/_lib/component/shadcn/alert";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
@@ -73,6 +74,11 @@ const messages = defineMessages({
   descriptionDownloadError: {
     id: "app.[slug].(dashboard)._common.problems.problems-page.description-download-error",
     defaultMessage: "Failed to download problem description",
+  },
+  guidanceText: {
+    id: "app.[slug].(dashboard)._common.problems.problems-page.guidance-text",
+    defaultMessage:
+      "Here you can view all contest problems. Click the PDF button to download problem statements. Time and memory limits are displayed for each problem.",
   },
 });
 
@@ -145,8 +151,8 @@ export function ProblemsPage({
     <Page title={messages.pageTitle} description={messages.pageDescription}>
       <Card className="my-5">
         <CardContent>
-          <Table data-testid="problems-table">
-            <TableHeader className="bg-neutral-100 dark:bg-neutral-800">
+          <Table data-testid="problems-table" className="border-b-1">
+            <TableHeader className="bg-muted">
               <TableRow>
                 <TableHead>
                   <ArrowDownAZIcon size={16} />
@@ -211,6 +217,12 @@ export function ProblemsPage({
               ))}
             </TableBody>
           </Table>
+
+          <Alert className="bg-muted mt-7 py-2">
+            <AlertDescription className="text-xs">
+              <FormattedMessage {...messages.guidanceText} />
+            </AlertDescription>
+          </Alert>
         </CardContent>
       </Card>
     </Page>

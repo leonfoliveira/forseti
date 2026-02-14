@@ -104,10 +104,7 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
   }
 
   return (
-    <CardContent
-      className="flex flex-col gap-4"
-      data-testid="settings-problems-tab"
-    >
+    <div className="flex flex-col gap-4" data-testid="settings-problems-tab">
       {fields.map((field, index) => (
         <Item key={field.id} variant="outline" data-testid="problem-item">
           <ItemMedia>
@@ -269,6 +266,6 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
         <PlusIcon />
         <FormattedMessage {...messages.newProblemLabel} />
       </Button>
-    </CardContent>
+    </div>
   );
 }

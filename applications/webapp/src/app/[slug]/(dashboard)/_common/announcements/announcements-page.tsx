@@ -5,6 +5,7 @@ import { AnnouncementsPageCard } from "@/app/[slug]/(dashboard)/_common/announce
 import { AnnouncementsPageForm } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page-form";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
+import { Alert, AlertDescription } from "@/app/_lib/component/shadcn/alert";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import {
   Empty,
@@ -46,6 +47,11 @@ const messages = defineMessages({
   emptyDescription: {
     id: "app.[slug].(dashboard)._common.announcements.announcements-page.empty-description",
     defaultMessage: "Announcements will appear here once created.",
+  },
+  guidanceText: {
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page.guidance-text",
+    defaultMessage:
+      "This page displays important contest announcements from judges and organizers. Announcements may include contest updates, clarifications that affect all contestants, schedule changes, or other important information.",
   },
 });
 
@@ -113,6 +119,12 @@ export function AnnouncementsPage({ announcements, canCreate = false }: Props) {
             ))}
           </div>
         )}
+
+        <Alert className="bg-card mt-5 w-full max-w-4xl py-2">
+          <AlertDescription className="text-xs">
+            <FormattedMessage {...messages.guidanceText} />
+          </AlertDescription>
+        </Alert>
       </div>
     </Page>
   );

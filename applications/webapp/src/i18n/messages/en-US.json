@@ -166,7 +166,8 @@
               "header-language": "Language",
               "header-status": "Status",
               "header-answer": "Answer",
-              "new-label": "New Submission"
+              "new-label": "New Submission",
+              "guidance-text": "View all contest submissions here. Submissions are judged automatically and results appear in real-time. You can see the status (judging/judged/failed) and answer (accepted/wrong answer/compilation error/runtime error/time limit exceeded/memory limit exceeded) for each submission."
             },
             "submissions-page-form": {
               "create-title": "Create Submission",
@@ -223,6 +224,7 @@
               "contest-tab": "Contest",
               "problems-tab": "Problems",
               "members-tab": "Members",
+              "in-progress-alert-description": "This contest is currently in progress. Changing the settings may affect the contest experience for participants.",
               "reset-label": "Reset",
               "save-label": "Save",
               "save-success": "Settings saved successfully.",
@@ -322,7 +324,8 @@
               "accepted": "Accepted",
               "attempts": "{attempts} Attempts",
               "not-attempted": "Not attempted",
-              "description-download-error": "Failed to download problem description"
+              "description-download-error": "Failed to download problem description",
+              "guidance-text": "Here you can view all contest problems. Click the PDF button to download problem statements. Time and memory limits are displayed for each problem."
             }
           },
           "leaderboard": {
@@ -332,7 +335,8 @@
               "header-contestant": "Contestant",
               "header-score": "Score",
               "header-penalty": "Penalty",
-              "empty": "No contestants yet"
+              "empty": "No contestants yet",
+              "rules-explanation": "Rankings are determined by: 1) Total problems solved (more is better); 2) Total penalty time (less is better); 3) Time of accepted submissions (earlier is better); 4) Name (alphabetical). Penalty includes submission time plus 20 minutes for each wrong answer before acceptance."
             }
           },
           "clarifications": {
@@ -341,7 +345,8 @@
               "page-description": "View and request clarifications for contest problems.",
               "new-label": "New Clarification",
               "empty-title": "No clarifications yet",
-              "empty-description": "Clarifications will appear here once requested."
+              "empty-description": "Clarifications will appear here once requested.",
+              "guidance-text": "Use this page to ask questions about contest problems and view official responses from judges. All clarifications and answers are visible to all contestants to ensure fairness. Ask specific questions about problem statements, input/output formats, or edge cases."
             },
             "clarifications-page-form": {
               "create-title": "Create Clarification",
@@ -386,7 +391,8 @@
               "create-success": "Announcement created successfully",
               "create-error": "Failed to create announcement",
               "empty-title": "No announcements yet",
-              "empty-description": "Announcements will appear here once created."
+              "empty-description": "Announcements will appear here once created.",
+              "guidance-text": "This page displays important contest announcements from judges and organizers. Announcements may include contest updates, clarifications that affect all contestants, schedule changes, or other important information."
             },
             "announcements-page-form": {
               "create-title": "Create announcement",
