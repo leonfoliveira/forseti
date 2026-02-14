@@ -16,18 +16,39 @@ export class StompClient implements ListenerClient {
         return resolve();
       }
 
+      const connectTimeout = setTimeout(() => {
+        reject(
+          new ServerException("STOMP connection timeout after 10 seconds"),
+        );
+      }, 10000);
+
       this.client.onConnect = () => {
+        clearTimeout(connectTimeout);
         console.debug("Connected to stomp server");
         resolve();
       };
 
       this.client.onStompError = (error) => {
-        console.error("STOMP error: ", error);
+        clearTimeout(connectTimeout);
+        console.error("STOMP error details:", {
+          command: error.command,
+          headers: error.headers,
+          body: error.body,
+          binaryBody: error.binaryBody,
+          isBinaryBody: error.isBinaryBody,
+        });
         reject(
           new ServerException(
-            error.headers["message"] || "Unknown STOMP error",
+            error.headers["message"] ||
+              `STOMP Error: ${error.command || "Unknown command"}`,
           ),
         );
+      };
+
+      this.client.onWebSocketError = (event) => {
+        clearTimeout(connectTimeout);
+        console.error("WebSocket error:", event);
+        reject(new ServerException("WebSocket connection failed"));
       };
 
       this.client.activate();

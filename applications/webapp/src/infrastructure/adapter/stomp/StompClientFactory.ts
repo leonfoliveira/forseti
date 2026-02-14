@@ -15,7 +15,14 @@ export class StompClientFactory implements ListenerClientFactory {
    */
   public create(): ListenerClient {
     const client = Stomp.over(() => new SockJS(this.wsUrl));
-    client.debug = () => {};
+
+    client.heartbeatIncoming = 4000;
+    client.heartbeatOutgoing = 4000;
+    client.reconnectDelay = 5000;
+    client.connectHeaders = {
+      "accept-version": "1.0,1.1,1.2",
+    };
+
     return new StompClient(client);
   }
 }

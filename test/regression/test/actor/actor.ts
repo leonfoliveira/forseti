@@ -38,6 +38,8 @@ export class Actor {
 
     await signInButton.click();
     await expect(this.page).toHaveURL(`/${contest.slug}/leaderboard`);
+
+    await this.page.waitForTimeout(1500);
   }
 
   async signOut(contest: Contest) {
@@ -100,12 +102,18 @@ export class Actor {
   }
 
   private async navigate(contest: Contest, tab: string) {
+    // Wait for any pending WebSocket operations to complete
+    await this.page.waitForTimeout(500);
+
     const dashboardPage = this.page.getByTestId("dashboard-tabs");
     const tabButton = dashboardPage.getByTestId(`tab-/${contest.slug}/${tab}`);
     await tabButton.scrollIntoViewIfNeeded();
 
     await tabButton.click();
     await expect(this.page).toHaveURL(`/${contest.slug}/${tab}`);
+
+    // Allow time for WebSocket connections to establish
+    await this.page.waitForTimeout(1000);
   }
 
   async checkWaitPage(contest: Contest) {
