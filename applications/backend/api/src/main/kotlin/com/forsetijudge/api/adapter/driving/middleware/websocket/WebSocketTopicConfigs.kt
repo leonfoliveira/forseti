@@ -5,10 +5,8 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driving.usecase.contest.FindContestUseCase
 import org.springframework.stereotype.Component
-import java.lang.RuntimeException
 import java.util.UUID
 
 @Component
@@ -56,6 +54,12 @@ class WebSocketTopicConfigs(
                 checkIfStarted(contest)
             },
             Regex("/topic/contests/[a-fA-F0-9-]+/leaderboard") to { destination ->
+                val contestId = UUID.fromString(destination.split("/")[3])
+
+                val contest = findContestUseCase.findById(contestId)
+                checkIfStarted(contest)
+            },
+            Regex("/topic/contests/[a-fA-F0-9-]+/leaderboard/partial") to { destination ->
                 val contestId = UUID.fromString(destination.split("/")[3])
 
                 val contest = findContestUseCase.findById(contestId)

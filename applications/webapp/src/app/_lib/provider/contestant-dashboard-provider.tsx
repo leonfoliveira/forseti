@@ -21,6 +21,7 @@ import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
+import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
@@ -96,6 +97,11 @@ export function ContestantDashboardProvider({
           contestMetadata.id,
           receiveLeaderboard,
         ),
+        leaderboardListener.subscribeForLeaderboardPartial(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveLeaderboardPartial,
+        ),
         submissionListener.subscribeForContest(
           listenerClientRef.current,
           contestMetadata.id,
@@ -162,6 +168,12 @@ export function ContestantDashboardProvider({
 
   function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
     dispatch(contestantDashboardSlice.actions.setLeaderboard(leaderboard));
+  }
+
+  function receiveLeaderboardPartial(
+    leaderboard: LeaderboardPartialResponseDTO,
+  ) {
+    dispatch(contestantDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
   function receiveSubmission(submission: SubmissionPublicResponseDTO) {

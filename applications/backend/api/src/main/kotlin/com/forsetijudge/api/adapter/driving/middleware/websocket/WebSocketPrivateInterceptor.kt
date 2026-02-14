@@ -1,7 +1,6 @@
 package com.forsetijudge.api.adapter.driving.middleware.websocket
 
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.model.RequestContext
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.Message

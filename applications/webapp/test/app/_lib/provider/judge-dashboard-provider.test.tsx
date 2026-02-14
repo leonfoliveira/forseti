@@ -20,6 +20,7 @@ import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/M
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockContestPublicResponseDTO } from "@/test/mock/response/contest/MockContestPublicResponseDTO";
+import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardPartialResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
@@ -137,6 +138,30 @@ describe("JudgeDashboardProvider", () => {
       ).mock.calls[0][2](otherLeaderboard);
     });
     expect(store.getState().judgeDashboard.leaderboard).toBe(otherLeaderboard);
+  });
+
+  it("should handle leaderboard partial updates", async () => {
+    const leaderboardPartial = MockLeaderboardPartialResponseDTO({
+      memberId: leaderboard.members[0].id,
+      problemId: leaderboard.members[0].problems[0].id,
+      isAccepted: !leaderboard.members[0].problems[0].isAccepted,
+    });
+    const { store } = await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (
+        leaderboardListener.subscribeForLeaderboardPartial as jest.Mock
+      ).mock.calls[0][2](leaderboardPartial);
+    });
+    expect(
+      store.getState().judgeDashboard.leaderboard.members[0].problems[0]
+        .isAccepted,
+    ).toBe(leaderboardPartial.isAccepted);
   });
 
   it("should handle submissions updates", async () => {

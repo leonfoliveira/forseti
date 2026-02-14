@@ -10,6 +10,8 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
+import com.forsetijudge.core.port.driven.repository.ProblemRepository
+import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -24,8 +26,10 @@ class BuildLeaderboardServiceTest :
     FunSpec({
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
+        val problemRepository = mockk<ProblemRepository>(relaxed = true)
+        val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
 
-        val sut = BuildLeaderboardService(contestRepository, memberRepository)
+        val sut = BuildLeaderboardService(contestRepository, memberRepository, problemRepository, submissionRepository)
 
         val now = OffsetDateTime.now()
 
@@ -35,7 +39,7 @@ class BuildLeaderboardServiceTest :
             every { OffsetDateTime.now() } returns now
         }
 
-        context("findLeaderboardByContestId") {
+        context("build") {
             test("should throw NotFoundException when contest does not exist") {
                 val contestId = UuidCreator.getTimeOrderedEpoch()
                 every { contestRepository.findEntityById(contestId) } returns null
@@ -232,6 +236,36 @@ class BuildLeaderboardServiceTest :
                 result.members[3].problems[1].acceptedAt shouldBe null
                 result.members[3].problems[1].wrongSubmissions shouldBe 0
                 result.members[3].problems[1].penalty shouldBe 0
+            }
+        }
+
+        context("buildPartial") {
+            test("should build partial leaderboard for submission") {
+                val problem = ProblemMockBuilder.build()
+                val member = MemberMockBuilder.build(submissions = listOf())
+                val submission =
+                    SubmissionMockBuilder.build(
+                        member = member,
+                        problem = problem,
+                        status = Submission.Status.JUDGED,
+                        answer = Submission.Answer.ACCEPTED,
+                        createdAt = problem.contest.startAt.plusMinutes(1),
+                    )
+
+                every { problemRepository.findEntityById(problem.id) } returns problem
+                every { submissionRepository.findByMemberIdAndProblemIdAndStatus(member.id, problem.id, Submission.Status.JUDGED) } returns
+                    listOf(
+                        submission,
+                    )
+
+                val result = sut.buildPartial(member.id, problem.id)
+
+                result.memberId shouldBe member.id
+                result.problemId shouldBe problem.id
+                result.letter shouldBe problem.letter
+                result.isAccepted shouldBe true
+                result.wrongSubmissions shouldBe 0
+                result.penalty shouldBe 1
             }
         }
     })

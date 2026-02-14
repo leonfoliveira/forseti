@@ -2,10 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import { findClarification } from "@/app/_store/util/clarification-finder";
 import { mergeEntity } from "@/app/_store/util/entity-util";
+import { mergeLeaderboard } from "@/app/_store/util/leaderboard-merger";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { ContestantDashboardResponseDTO } from "@/core/port/dto/response/dashboard/ContestantDashboardResponseDTO";
+import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
@@ -31,6 +33,12 @@ export const contestantDashboardSlice = createSlice({
     },
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
       state.leaderboard = action.payload;
+    },
+    mergeLeaderboard(
+      state,
+      action: { payload: LeaderboardPartialResponseDTO },
+    ) {
+      state.leaderboard = mergeLeaderboard(state.leaderboard, action.payload);
     },
     mergeSubmission(state, action: { payload: SubmissionPublicResponseDTO }) {
       state.submissions = mergeEntity(state.submissions, action.payload);

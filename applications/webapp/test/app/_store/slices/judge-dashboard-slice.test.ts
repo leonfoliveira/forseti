@@ -6,6 +6,7 @@ import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/S
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
 import { MockContestPublicResponseDTO } from "@/test/mock/response/contest/MockContestPublicResponseDTO";
+import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardPartialResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 
@@ -54,6 +55,23 @@ describe("judgeDashboardSlice", () => {
     );
 
     expect(state.leaderboard).toEqual(newLeaderboard);
+  });
+
+  it("should merge a partial leaderboard", () => {
+    const partialLeaderboard = MockLeaderboardPartialResponseDTO({
+      memberId: stateWithData.leaderboard.members[0].id,
+      problemId: stateWithData.leaderboard.members[0].problems[0].id,
+      isAccepted: !stateWithData.leaderboard.members[0].problems[0].isAccepted,
+    });
+
+    const state = judgeDashboardSlice.reducer(
+      stateWithData,
+      judgeDashboardSlice.actions.mergeLeaderboard(partialLeaderboard),
+    );
+
+    expect(state.leaderboard.members[0].problems[0].isAccepted).toBe(
+      partialLeaderboard.isAccepted,
+    );
   });
 
   it("should merge a new submission", () => {

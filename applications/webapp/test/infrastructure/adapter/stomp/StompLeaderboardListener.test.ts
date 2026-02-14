@@ -22,4 +22,18 @@ describe("StompLeaderboardListener", () => {
       );
     });
   });
+
+  describe("subscribeForLeaderboardPartial", () => {
+    it("should subscribe to the contest partial leaderboard", async () => {
+      const client = mock<ListenerClient>();
+      const callback = jest.fn();
+
+      await sut.subscribeForLeaderboardPartial(client, contestId, callback);
+
+      expect(client.subscribe).toHaveBeenCalledWith(
+        `/topic/contests/${contestId}/leaderboard/partial`,
+        callback,
+      );
+    });
+  });
 });

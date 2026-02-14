@@ -8,8 +8,11 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
+import com.forsetijudge.core.port.driven.repository.ProblemRepository
+import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.dto.output.LeaderboardOutputDTO
+import com.forsetijudge.core.port.dto.output.LeaderboardPartialOutputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,6 +24,8 @@ import java.util.UUID
 class BuildLeaderboardService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
+    private val problemRepository: ProblemRepository,
+    private val submissionRepository: SubmissionRepository,
 ) : BuildLeaderboardUseCase {
     companion object {
         private const val WRONG_SUBMISSION_PENALTY_MINUTES = 20
@@ -104,6 +109,34 @@ class BuildLeaderboardService(
             startAt = contest.startAt,
             members = classification,
             issuedAt = OffsetDateTime.now(),
+        )
+    }
+
+    /**
+     * Finds the cell of the leaderboard for a specific submission member and problem.
+     *
+     * @param memberUUID The ID of the member to get the leaderboard cell for.
+     * @param problemUUID The ID of the problem to get the leaderboard cell for.
+     * @return The partial leaderboard data for the submission.
+     */
+    override fun buildPartial(
+        memberUUID: UUID,
+        problemUUID: UUID,
+    ): LeaderboardPartialOutputDTO {
+        val problem =
+            problemRepository.findEntityById(problemUUID)
+                ?: throw NotFoundException("Could not find problem with id = $problemUUID")
+        val submissions = submissionRepository.findByMemberIdAndProblemIdAndStatus(memberUUID, problemUUID, Submission.Status.JUDGED)
+
+        val problemDTO = buildProblemDTO(problem.contest, problem, submissions)
+        return LeaderboardPartialOutputDTO(
+            memberId = memberUUID,
+            problemId = problemUUID,
+            letter = problem.letter,
+            isAccepted = problemDTO.isAccepted,
+            acceptedAt = problemDTO.acceptedAt,
+            wrongSubmissions = problemDTO.wrongSubmissions,
+            penalty = problemDTO.penalty,
         )
     }
 

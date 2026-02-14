@@ -19,6 +19,7 @@ import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
+import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
@@ -83,6 +84,11 @@ export function GuestDashboardProvider({
           contestMetadata.id,
           receiveLeaderboard,
         ),
+        leaderboardListener.subscribeForLeaderboardPartial(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveLeaderboardPartial,
+        ),
         submissionListener.subscribeForContest(
           listenerClientRef.current,
           contestMetadata.id,
@@ -135,6 +141,12 @@ export function GuestDashboardProvider({
 
   function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
     dispatch(guestDashboardSlice.actions.setLeaderboard(leaderboard));
+  }
+
+  function receiveLeaderboardPartial(
+    leaderboard: LeaderboardPartialResponseDTO,
+  ) {
+    dispatch(guestDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
   function receiveSubmission(submission: SubmissionPublicResponseDTO) {

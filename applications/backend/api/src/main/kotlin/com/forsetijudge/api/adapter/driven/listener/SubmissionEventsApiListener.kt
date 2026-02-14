@@ -1,6 +1,6 @@
 package com.forsetijudge.api.adapter.driven.listener
 
-import com.forsetijudge.api.adapter.driven.emitter.StompLeaderboardEmitter
+import com.forsetijudge.api.adapter.driven.emitter.StompLeaderboardPartialEmitter
 import com.forsetijudge.api.adapter.driven.emitter.StompSubmissionEmitter
 import com.forsetijudge.core.application.service.leaderboard.BuildLeaderboardService
 import com.forsetijudge.core.domain.entity.Submission
@@ -14,7 +14,7 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class SubmissionEventsApiListener(
     private val submissionEmitter: StompSubmissionEmitter,
-    private val leaderboardEmitter: StompLeaderboardEmitter,
+    private val leaderboardPartialEmitter: StompLeaderboardPartialEmitter,
     private val buildLeaderboardService: BuildLeaderboardService,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -43,7 +43,7 @@ class SubmissionEventsApiListener(
 
     private fun emmitSubmissionAndLeaderboard(submission: Submission) {
         submissionEmitter.emit(submission)
-        val leaderboard = buildLeaderboardService.build(submission.contest.id, null)
-        leaderboardEmitter.emit(leaderboard)
+        val leaderboardPartial = buildLeaderboardService.buildPartial(submission.member.id, submission.problem.id)
+        leaderboardPartialEmitter.emit(submission.contest, leaderboardPartial)
     }
 }

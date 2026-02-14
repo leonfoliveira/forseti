@@ -42,6 +42,7 @@ class WebSocketTopicConfigsTest :
                         "/topic/contests/[a-fA-F0-9-]+/clarifications/children/members/[a-fA-F0-9-]+",
                         "/topic/contests/[a-fA-F0-9-]+/clarifications/deleted",
                         "/topic/contests/[a-fA-F0-9-]+/leaderboard",
+                        "/topic/contests/[a-fA-F0-9-]+/leaderboard/partial",
                         "/topic/contests/[a-fA-F0-9-]+/submissions",
                         "/topic/contests/[a-fA-F0-9-]+/submissions/full",
                         "/topic/contests/[a-fA-F0-9-]+/submissions/full/members/[a-fA-F0-9-]+",
@@ -285,6 +286,37 @@ class WebSocketTopicConfigsTest :
 
                 test("should throw ForbiddenException when contest has not started") {
                     val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard"
+                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(notStartedDestination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(notStartedDestination)
+                    }
+                }
+            }
+
+            context("leaderboard partial filter") {
+                val destination = "/topic/contests/${startedContest.id}/leaderboard/partial"
+
+                test("should allow access when contest has started") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when contest has not started") {
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard/partial"
                     every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
 
                     val filter =
