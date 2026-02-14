@@ -9,7 +9,7 @@ export class StompClient implements ListenerClient {
   /**
    * Connect to the STOMP server.
    */
-  async connect() {
+  async connect(onDisconnect?: () => void) {
     return new Promise<void>((resolve, reject) => {
       if (this.client.connected) {
         console.debug("Already connected to stomp server");
@@ -26,6 +26,13 @@ export class StompClient implements ListenerClient {
         clearTimeout(connectTimeout);
         console.debug("Connected to stomp server");
         resolve();
+      };
+
+      this.client.onDisconnect = () => {
+        console.debug("Connection lost to stomp server");
+        if (onDisconnect) {
+          onDisconnect();
+        }
       };
 
       this.client.onStompError = (error) => {
@@ -83,6 +90,7 @@ export class StompClient implements ListenerClient {
         console.debug("Disconnected from stomp server");
         resolve();
       };
+      resolve();
 
       this.client.deactivate();
     });

@@ -89,7 +89,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <DashboardProvider>
+    <>
       <Tabs
         className="bg-card border-divider border-b"
         value={pathname}
@@ -111,9 +111,11 @@ export default function DashboardLayout({
           </TabsList>
         </div>
       </Tabs>
-      <div className="mx-auto flex w-full max-w-[1920px] flex-1 flex-col">
-        {children}
-      </div>
-    </DashboardProvider>
+      <DashboardProvider>
+        <div className="mx-auto flex w-full max-w-[1920px] flex-1 flex-col">
+          {children}
+        </div>
+      </DashboardProvider>
+    </>
   );
 }

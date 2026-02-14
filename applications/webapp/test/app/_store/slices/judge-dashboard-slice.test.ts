@@ -1,4 +1,5 @@
 import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
+import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
@@ -14,6 +15,35 @@ describe("judgeDashboardSlice", () => {
     leaderboard: MockLeaderboardResponseDTO(),
     submissions: [MockSubmissionFullResponseDTO()],
   } as any;
+
+  it("should have the correct initial state", () => {
+    const state = judgeDashboardSlice.reducer(undefined, {
+      type: "@@INIT",
+    });
+    expect(state).toEqual({ listenerStatus: ListenerStatus.DISCONNECTED });
+  });
+
+  it("should set initial state", () => {
+    const state = judgeDashboardSlice.reducer(
+      undefined,
+      judgeDashboardSlice.actions.set(stateWithData),
+    );
+
+    expect(state).toEqual({
+      ...stateWithData,
+      listenerStatus: ListenerStatus.CONNECTED,
+    });
+  });
+
+  it("should set the listener status", () => {
+    const state = judgeDashboardSlice.reducer(
+      undefined,
+      judgeDashboardSlice.actions.setListenerStatus(
+        ListenerStatus.LOST_CONNECTION,
+      ),
+    );
+    expect(state.listenerStatus).toBe(ListenerStatus.LOST_CONNECTION);
+  });
 
   it("should set the leaderboard", () => {
     const newLeaderboard = MockLeaderboardResponseDTO();

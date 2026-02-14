@@ -2,21 +2,31 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import { findClarification } from "@/app/_store/util/clarification-finder";
 import { mergeEntity } from "@/app/_store/util/entity-util";
+import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { GuestDashboardResponseDTO } from "@/core/port/dto/response/dashboard/GuestDashboardResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 
+export type GuestDashboardState = GuestDashboardResponseDTO & {
+  listenerStatus: ListenerStatus;
+};
+
 /**
  * Redux slice for the guest dashboard data.
  */
 export const guestDashboardSlice = createSlice({
   name: "guestDashboard",
-  initialState: null as unknown as GuestDashboardResponseDTO,
+  initialState: {
+    listenerStatus: ListenerStatus.DISCONNECTED,
+  } as unknown as GuestDashboardState,
   reducers: {
     set(state, action: { payload: GuestDashboardResponseDTO }) {
-      return action.payload;
+      return { ...action.payload, listenerStatus: ListenerStatus.CONNECTED };
+    },
+    setListenerStatus(state, action: { payload: ListenerStatus }) {
+      state.listenerStatus = action.payload;
     },
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
       state.leaderboard = action.payload;

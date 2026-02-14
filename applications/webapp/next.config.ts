@@ -6,6 +6,14 @@ const nextConfig: NextConfig = {
   experimental: {
     authInterrupts: true,
   },
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? {
+            exclude: ["error"],
+          }
+        : false,
+  },
 };
 
 const withNextIntl = createNextIntlPlugin();
