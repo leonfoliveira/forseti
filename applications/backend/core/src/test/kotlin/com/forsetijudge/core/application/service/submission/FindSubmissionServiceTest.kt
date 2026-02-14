@@ -106,6 +106,47 @@ class FindSubmissionServiceTest :
             }
         }
 
+        context("findAllByContestSinceLastFreeze") {
+            val contestId = UuidCreator.getTimeOrderedEpoch()
+
+            test("should throw NotFoundException when contest is not found") {
+                every { contestRepository.findEntityById(contestId) } returns null
+
+                shouldThrow<NotFoundException> {
+                    sut.findAllByContestSinceLastFreeze(contestId)
+                }.message shouldBe "Could not find contest with id = $contestId"
+            }
+
+            test("should return empty list when no freeze time is found for contest") {
+                val contest =
+                    ContestMockBuilder.build(
+                        autoFreezeAt = null,
+                        manualFreezeAt = null,
+                    )
+                every { contestRepository.findEntityById(contestId) } returns contest
+
+                val result = sut.findAllByContestSinceLastFreeze(contestId)
+
+                result shouldBe listOf()
+            }
+
+            test("should return submissions since last freeze when contest is found") {
+                val contest =
+                    ContestMockBuilder.build(
+                        autoFreezeAt = OffsetDateTime.now().minusHours(1),
+                    )
+                every { contestRepository.findEntityById(contestId) } returns contest
+                val submission1 = SubmissionMockBuilder.build(createdAt = OffsetDateTime.now().minusHours(2))
+                val submission2 = SubmissionMockBuilder.build(createdAt = OffsetDateTime.now().minusHours(1))
+                every { submissionRepository.findAllByCreatedAtGreaterThanEqual(contest.autoFreezeAt!!) } returns
+                    listOf(submission1, submission2)
+
+                val result = sut.findAllByContestSinceLastFreeze(contestId)
+
+                result shouldBe listOf(submission1, submission2).sortedBy { it.createdAt }
+            }
+        }
+
         context("findAllByMember") {
             val memberId = UuidCreator.getTimeOrderedEpoch()
 

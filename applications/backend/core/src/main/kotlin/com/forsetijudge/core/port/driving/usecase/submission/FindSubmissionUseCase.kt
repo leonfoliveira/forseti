@@ -26,6 +26,14 @@ interface FindSubmissionUseCase {
     ): List<Submission>
 
     /**
+     * Finds all submissions for a specific contest that were made since the last leaderboard freeze.
+     *
+     * @param contestId The ID of the contest.
+     * @return A list of submissions for the contest since the last freeze.
+     */
+    fun findAllByContestSinceLastFreeze(contestId: UUID): List<Submission>
+
+    /**
      * Finds all submissions by a specific member.
      *
      * @param memberId The ID of the member.

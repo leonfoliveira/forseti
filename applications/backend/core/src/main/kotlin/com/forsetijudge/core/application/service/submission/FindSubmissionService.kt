@@ -80,6 +80,32 @@ class FindSubmissionService(
     }
 
     /**
+     * Finds all submissions for a specific contest that were made since the last leaderboard freeze.
+     *
+     * @param contestId The ID of the contest.
+     * @return A list of submissions for the contest since the last freeze.
+     */
+    @Transactional(readOnly = true)
+    override fun findAllByContestSinceLastFreeze(contestId: UUID): List<Submission> {
+        logger.info("Finding all submissions for contest with id: $contestId since last freeze")
+
+        val contest =
+            contestRepository.findEntityById(contestId)
+                ?: throw NotFoundException("Could not find contest with id = $contestId")
+        val lastFreezeTime = contest.lastFreezeTime()
+
+        if (lastFreezeTime == null) {
+            logger.info("No freeze time found for contest")
+            return listOf()
+        }
+
+        val submissions = submissionRepository.findAllByCreatedAtGreaterThanEqual(lastFreezeTime)
+
+        logger.info("Found ${submissions.size} submissions since last freeze")
+        return submissions.sortedBy { it.createdAt }
+    }
+
+    /**
      * Finds all submissions for a given member.
      *
      * @param memberId ID of the member

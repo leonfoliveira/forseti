@@ -253,7 +253,13 @@ class BuildLeaderboardServiceTest :
                     )
 
                 every { problemRepository.findEntityById(problem.id) } returns problem
-                every { submissionRepository.findByMemberIdAndProblemIdAndStatus(member.id, problem.id, Submission.Status.JUDGED) } returns
+                every {
+                    submissionRepository.findAllByMemberIdAndProblemIdAndStatus(
+                        member.id,
+                        problem.id,
+                        Submission.Status.JUDGED,
+                    )
+                } returns
                     listOf(
                         submission,
                     )

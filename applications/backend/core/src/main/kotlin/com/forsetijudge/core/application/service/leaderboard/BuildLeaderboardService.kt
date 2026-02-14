@@ -126,7 +126,7 @@ class BuildLeaderboardService(
         val problem =
             problemRepository.findEntityById(problemUUID)
                 ?: throw NotFoundException("Could not find problem with id = $problemUUID")
-        val submissions = submissionRepository.findByMemberIdAndProblemIdAndStatus(memberUUID, problemUUID, Submission.Status.JUDGED)
+        val submissions = submissionRepository.findAllByMemberIdAndProblemIdAndStatus(memberUUID, problemUUID, Submission.Status.JUDGED)
 
         val problemDTO = buildProblemDTO(problem.contest, problem, submissions)
         return LeaderboardPartialOutputDTO(

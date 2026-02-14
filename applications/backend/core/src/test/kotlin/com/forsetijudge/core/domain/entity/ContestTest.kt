@@ -62,6 +62,24 @@ class ContestTest :
         }
 
         listOf(
+            Triple(pastDate, futureDate, pastDate),
+            Triple(futureDate, pastDate, pastDate),
+            Triple(null, pastDate, pastDate),
+            Triple(pastDate, null, pastDate),
+            Triple(null, null, null),
+        ).forEach { (autoFreezeAt, manualFreezeAt, expected) ->
+            test("lastFreezeTime with autoFreezeAt = $autoFreezeAt and manualFreezeAt = $manualFreezeAt should return $expected") {
+                val contest =
+                    ContestMockBuilder.build(
+                        autoFreezeAt = autoFreezeAt,
+                        manualFreezeAt = manualFreezeAt,
+                    )
+
+                contest.lastFreezeTime() shouldBe expected
+            }
+        }
+
+        listOf(
             Triple(null, null, false),
             Triple(futureDate, null, false),
             Triple(pastDate, null, true),
