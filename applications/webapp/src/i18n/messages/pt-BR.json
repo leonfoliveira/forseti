@@ -112,6 +112,9 @@
           }
         },
         "feedback": {
+          "disconnection-alert": {
+            "listener-disconnected": "Conexão com o servidor perdida. Atualizações em tempo real não estão disponíveis. Tentando reconectar..."
+          },
           "confirmation-dialog": {
             "cancel-button": "Cancelar",
             "confirm-button": "Confirmar"

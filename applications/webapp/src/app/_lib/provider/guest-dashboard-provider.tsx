@@ -47,79 +47,74 @@ export function GuestDashboardProvider({
   const dispatch = useAppDispatch();
   const toast = useToast();
   const listenerClientRef = React.useRef<ListenerClient | null>(null);
-  const reconnectIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
+  const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     state.start();
 
-    function stopReconnection() {
-      console.debug("Stopping reconnection attempts");
-      if (reconnectIntervalRef.current) {
-        clearInterval(reconnectIntervalRef.current);
-        reconnectIntervalRef.current = null;
+    async function reconnect() {
+      try {
+        console.debug("Attempting to reconnect...");
+        await init();
+      } catch {
+        console.debug("Reconnection attempt failed");
+        reconnectTimeoutRef.current = setTimeout(() => {
+          reconnect();
+        }, 1000);
       }
     }
 
-    function startReconnection() {
-      console.debug("Starting reconnection attempts");
-      stopReconnection();
-      reconnectIntervalRef.current = setInterval(() => {
-        fetch();
-      }, 1000);
+    async function init() {
+      const data = await dashboardReader.getGuest(contestMetadata.id);
+
+      listenerClientRef.current = listenerClientFactory.create();
+      await listenerClientRef.current.connect(() => {
+        console.debug("Listener connection lost");
+        dispatch(
+          guestDashboardSlice.actions.setListenerStatus(
+            ListenerStatus.LOST_CONNECTION,
+          ),
+        );
+        reconnect();
+      });
+      await Promise.all([
+        leaderboardListener.subscribeForLeaderboard(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveLeaderboard,
+        ),
+        submissionListener.subscribeForContest(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveSubmission,
+        ),
+        announcementListener.subscribeForContest(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveAnnouncement,
+        ),
+        clarificationListener.subscribeForContest(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveClarification,
+        ),
+        clarificationListener.subscribeForContestDeleted(
+          listenerClientRef.current,
+          contestMetadata.id,
+          deleteClarification,
+        ),
+      ]);
+
+      console.debug("Successfully fetched dashboard data and set up listeners");
+      dispatch(guestDashboardSlice.actions.set(data));
+      dispatch(
+        guestDashboardSlice.actions.setListenerStatus(ListenerStatus.CONNECTED),
+      );
     }
 
     async function fetch() {
       try {
-        const data = await dashboardReader.getGuest(contestMetadata.id);
-
-        listenerClientRef.current = listenerClientFactory.create();
-        await listenerClientRef.current.connect(() => {
-          console.debug("Listener connection lost");
-          dispatch(
-            guestDashboardSlice.actions.setListenerStatus(
-              ListenerStatus.LOST_CONNECTION,
-            ),
-          );
-          startReconnection();
-        });
-        await Promise.all([
-          leaderboardListener.subscribeForLeaderboard(
-            listenerClientRef.current,
-            contestMetadata.id,
-            receiveLeaderboard,
-          ),
-          submissionListener.subscribeForContest(
-            listenerClientRef.current,
-            contestMetadata.id,
-            receiveSubmission,
-          ),
-          announcementListener.subscribeForContest(
-            listenerClientRef.current,
-            contestMetadata.id,
-            receiveAnnouncement,
-          ),
-          clarificationListener.subscribeForContest(
-            listenerClientRef.current,
-            contestMetadata.id,
-            receiveClarification,
-          ),
-          clarificationListener.subscribeForContestDeleted(
-            listenerClientRef.current,
-            contestMetadata.id,
-            deleteClarification,
-          ),
-        ]);
-
-        console.debug(
-          "Successfully fetched dashboard data and set up listeners",
-        );
-        dispatch(guestDashboardSlice.actions.set(data));
-        dispatch(
-          guestDashboardSlice.actions.setListenerStatus(
-            ListenerStatus.CONNECTED,
-          ),
-        );
-        stopReconnection();
+        await init();
         state.finish();
       } catch (error) {
         await state.fail(error as Error);
@@ -129,7 +124,9 @@ export function GuestDashboardProvider({
     fetch();
 
     return () => {
-      stopReconnection();
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
       if (listenerClientRef.current) {
         listenerClientRef.current.disconnect();
       }

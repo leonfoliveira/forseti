@@ -56,79 +56,74 @@ export function AdminDashboardProvider({
   const dispatch = useAppDispatch();
   const toast = useToast();
   const listenerClientRef = React.useRef<ListenerClient | null>(null);
-  const reconnectIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
+  const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     state.start();
 
-    function stopReconnection() {
-      console.debug("Stopping reconnection attempts");
-      if (reconnectIntervalRef.current) {
-        clearInterval(reconnectIntervalRef.current);
-        reconnectIntervalRef.current = null;
+    async function reconnect() {
+      try {
+        console.debug("Attempting to reconnect...");
+        await init();
+      } catch {
+        console.debug("Reconnection attempt failed");
+        reconnectTimeoutRef.current = setTimeout(() => {
+          reconnect();
+        }, 5000);
       }
     }
 
-    function startReconnection() {
-      console.debug("Starting reconnection attempts");
-      stopReconnection();
-      reconnectIntervalRef.current = setInterval(() => {
-        fetch();
-      }, 1000);
+    async function init() {
+      const data = await dashboardReader.getAdmin(contestMetadata.id);
+
+      listenerClientRef.current = listenerClientFactory.create();
+      await listenerClientRef.current.connect(() => {
+        console.debug("Listener connection lost");
+        dispatch(
+          adminDashboardSlice.actions.setListenerStatus(
+            ListenerStatus.LOST_CONNECTION,
+          ),
+        );
+        reconnect();
+      });
+      await Promise.all([
+        leaderboardListener.subscribeForLeaderboard(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveLeaderboard,
+        ),
+        submissionListener.subscribeForContestFull(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveSubmission,
+        ),
+        announcementListener.subscribeForContest(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveAnnouncement,
+        ),
+        clarificationListener.subscribeForContest(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveClarification,
+        ),
+        clarificationListener.subscribeForContestDeleted(
+          listenerClientRef.current,
+          contestMetadata.id,
+          deleteClarification,
+        ),
+      ]);
+
+      console.debug("Successfully fetched dashboard data and set up listeners");
+      dispatch(adminDashboardSlice.actions.set(data));
+      dispatch(
+        adminDashboardSlice.actions.setListenerStatus(ListenerStatus.CONNECTED),
+      );
     }
 
     async function fetch() {
       try {
-        const data = await dashboardReader.getAdmin(contestMetadata.id);
-
-        listenerClientRef.current = listenerClientFactory.create();
-        await listenerClientRef.current.connect(() => {
-          console.debug("Listener connection lost");
-          dispatch(
-            adminDashboardSlice.actions.setListenerStatus(
-              ListenerStatus.LOST_CONNECTION,
-            ),
-          );
-          startReconnection();
-        });
-        await Promise.all([
-          leaderboardListener.subscribeForLeaderboard(
-            listenerClientRef.current,
-            contestMetadata.id,
-            receiveLeaderboard,
-          ),
-          submissionListener.subscribeForContestFull(
-            listenerClientRef.current,
-            contestMetadata.id,
-            receiveSubmission,
-          ),
-          announcementListener.subscribeForContest(
-            listenerClientRef.current,
-            contestMetadata.id,
-            receiveAnnouncement,
-          ),
-          clarificationListener.subscribeForContest(
-            listenerClientRef.current,
-            contestMetadata.id,
-            receiveClarification,
-          ),
-          clarificationListener.subscribeForContestDeleted(
-            listenerClientRef.current,
-            contestMetadata.id,
-            deleteClarification,
-          ),
-        ]);
-
-        console.debug(
-          "Successfully fetched dashboard data and set up listeners",
-        );
-        dispatch(adminDashboardSlice.actions.set(data));
-        dispatch(
-          adminDashboardSlice.actions.setListenerStatus(
-            ListenerStatus.CONNECTED,
-          ),
-        );
-        stopReconnection();
+        await init();
         state.finish();
       } catch (error) {
         await state.fail(error as Error);
@@ -138,7 +133,9 @@ export function AdminDashboardProvider({
     fetch();
 
     return () => {
-      stopReconnection();
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
       if (listenerClientRef.current) {
         listenerClientRef.current.disconnect();
       }
