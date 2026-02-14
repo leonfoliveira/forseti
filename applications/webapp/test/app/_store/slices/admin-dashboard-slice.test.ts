@@ -1,4 +1,5 @@
 import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
+import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
@@ -19,7 +20,29 @@ describe("adminDashboardSlice", () => {
     const state = adminDashboardSlice.reducer(undefined, {
       type: "@@INIT",
     });
-    expect(state).toBe(null);
+    expect(state).toEqual({ listenerStatus: ListenerStatus.DISCONNECTED });
+  });
+
+  it("should set initial state", () => {
+    const state = adminDashboardSlice.reducer(
+      undefined,
+      adminDashboardSlice.actions.set(stateWithData),
+    );
+
+    expect(state).toEqual({
+      ...stateWithData,
+      listenerStatus: ListenerStatus.CONNECTED,
+    });
+  });
+
+  it("should set the listener status", () => {
+    const state = adminDashboardSlice.reducer(
+      undefined,
+      adminDashboardSlice.actions.setListenerStatus(
+        ListenerStatus.LOST_CONNECTION,
+      ),
+    );
+    expect(state.listenerStatus).toBe(ListenerStatus.LOST_CONNECTION);
   });
 
   it("should set the contest", () => {

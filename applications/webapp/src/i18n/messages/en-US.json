@@ -112,6 +112,9 @@
           }
         },
         "feedback": {
+          "disconnection-alert": {
+            "listener-disconnected": "Connection to server lost. Live updates are unavailable. Attempting to reconnect..."
+          },
           "confirmation-dialog": {
             "cancel-button": "Cancel",
             "confirm-button": "Confirm"

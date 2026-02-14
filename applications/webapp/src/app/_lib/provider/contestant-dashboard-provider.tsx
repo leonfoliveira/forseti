@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 
+import { DisconnectionAlert } from "@/app/_lib/component/feedback/disconnection-alert";
 import { ErrorPage } from "@/app/_lib/component/page/error-page";
 import { LoadingPage } from "@/app/_lib/component/page/loading-page";
 import { useIntl } from "@/app/_lib/hook/intl-hook";
@@ -15,6 +16,7 @@ import {
   listenerClientFactory,
   submissionListener,
 } from "@/config/composition";
+import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
@@ -50,21 +52,49 @@ export function ContestantDashboardProvider({
 }) {
   const session = useAppSelector((state) => state.session);
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
+  const listenerStatus = useAppSelector(
+    (state) => state.contestantDashboard.listenerStatus,
+  );
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
   const toast = useToast();
   const intl = useIntl();
   const listenerClientRef = React.useRef<ListenerClient | null>(null);
+  const reconnectIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     state.start();
+
+    function stopReconnection() {
+      console.debug("Stopping reconnection attempts");
+      if (reconnectIntervalRef.current) {
+        clearInterval(reconnectIntervalRef.current);
+        reconnectIntervalRef.current = null;
+      }
+    }
+
+    function startReconnection() {
+      console.debug("Starting reconnection attempts");
+      stopReconnection();
+      reconnectIntervalRef.current = setInterval(() => {
+        fetch();
+      }, 1000);
+    }
 
     async function fetch() {
       try {
         const data = await dashboardReader.getContestant(contestMetadata.id);
 
         listenerClientRef.current = listenerClientFactory.create();
-        await listenerClientRef.current.connect();
+        await listenerClientRef.current.connect(() => {
+          console.debug("Listener connection lost");
+          dispatch(
+            contestantDashboardSlice.actions.setListenerStatus(
+              ListenerStatus.LOST_CONNECTION,
+            ),
+          );
+          startReconnection();
+        });
         await Promise.all([
           leaderboardListener.subscribeForLeaderboard(
             listenerClientRef.current,
@@ -105,7 +135,16 @@ export function ContestantDashboardProvider({
           ),
         ]);
 
+        console.debug(
+          "Successfully fetched dashboard data and set up listeners",
+        );
         dispatch(contestantDashboardSlice.actions.set(data));
+        dispatch(
+          contestantDashboardSlice.actions.setListenerStatus(
+            ListenerStatus.CONNECTED,
+          ),
+        );
+        stopReconnection();
         state.finish();
       } catch (error) {
         await state.fail(error as Error);
@@ -115,6 +154,7 @@ export function ContestantDashboardProvider({
     fetch();
 
     return () => {
+      stopReconnection();
       if (listenerClientRef.current) {
         listenerClientRef.current.disconnect();
       }
@@ -201,5 +241,12 @@ export function ContestantDashboardProvider({
     return <ErrorPage />;
   }
 
-  return children;
+  return (
+    <>
+      {listenerStatus === ListenerStatus.LOST_CONNECTION && (
+        <DisconnectionAlert />
+      )}
+      {children}
+    </>
+  );
 }

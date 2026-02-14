@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import { findClarification } from "@/app/_store/util/clarification-finder";
 import { mergeEntity } from "@/app/_store/util/entity-util";
+import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
@@ -9,15 +10,24 @@ import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/Ad
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 
+export type AdminDashboardState = AdminDashboardResponseDTO & {
+  listenerStatus: ListenerStatus;
+};
+
 /**
  * Redux slice for the admin dashboard data.
  */
 export const adminDashboardSlice = createSlice({
   name: "adminDashboard",
-  initialState: null as unknown as AdminDashboardResponseDTO,
+  initialState: {
+    listenerStatus: ListenerStatus.DISCONNECTED,
+  } as unknown as AdminDashboardState,
   reducers: {
     set(state, action: { payload: AdminDashboardResponseDTO }) {
-      return action.payload;
+      return { ...action.payload, listenerStatus: ListenerStatus.CONNECTED };
+    },
+    setListenerStatus(state, action: { payload: ListenerStatus }) {
+      state.listenerStatus = action.payload;
     },
     setContest(state, action: { payload: ContestFullResponseDTO }) {
       state.contest = action.payload;

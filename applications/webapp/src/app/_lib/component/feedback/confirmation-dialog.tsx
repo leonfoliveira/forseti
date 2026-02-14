@@ -54,17 +54,24 @@ export function ConfirmationDialog({
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          {icon && <AlertDialogMedia>{icon}</AlertDialogMedia>}
-          <AlertDialogTitle>
+          {icon && (
+            <AlertDialogMedia data-testid="confirmation-dialog-icon">
+              {icon}
+            </AlertDialogMedia>
+          )}
+          <AlertDialogTitle data-testid="confirmation-dialog-title">
             <FormattedMessage {...title} />
           </AlertDialogTitle>
-          <AlertDialogDescription>
+          <AlertDialogDescription data-testid="confirmation-dialog-description">
             <FormattedMessage {...description} />
           </AlertDialogDescription>
           {content}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>
+          <AlertDialogCancel
+            disabled={isLoading}
+            data-testid="confirmation-dialog-cancel-button"
+          >
             <FormattedMessage {...messages.cancelButton} />
           </AlertDialogCancel>
           <AsyncButton

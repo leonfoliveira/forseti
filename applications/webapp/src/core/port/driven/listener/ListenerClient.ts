@@ -2,7 +2,7 @@ export interface ListenerClient {
   /**
    * Connects to the listener service.
    */
-  connect: () => Promise<void>;
+  connect: (onDisconnect?: () => void) => Promise<void>;
 
   /**
    * Subscribes to a specific topic with a callback to handle incoming data.

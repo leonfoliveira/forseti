@@ -12,6 +12,7 @@ import {
   listenerClientFactory,
   submissionListener,
 } from "@/config/composition";
+import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
@@ -29,6 +30,9 @@ jest.mock("@/app/_lib/component/page/loading-page", () => ({
 }));
 jest.mock("@/app/_lib/component/page/error-page", () => ({
   ErrorPage: () => <span data-testid="error-page" />,
+}));
+jest.mock("@/app/_lib/component/feedback/disconnection-alert", () => ({
+  DisconnectionAlert: () => <span data-testid="disconnection-alert" />,
 }));
 
 describe("ContestantDashboardProvider", () => {
@@ -116,6 +120,7 @@ describe("ContestantDashboardProvider", () => {
       leaderboard,
       submissions,
       memberSubmissions,
+      listenerStatus: ListenerStatus.CONNECTED,
     });
 
     expect(screen.queryByTestId("error-page")).not.toBeInTheDocument();
@@ -133,7 +138,7 @@ describe("ContestantDashboardProvider", () => {
     );
 
     const state = store.getState().contestantDashboard;
-    expect(state).toBeNull();
+    expect(state).toEqual({ listenerStatus: ListenerStatus.DISCONNECTED });
 
     expect(screen.queryByTestId("error-page")).toBeInTheDocument();
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
