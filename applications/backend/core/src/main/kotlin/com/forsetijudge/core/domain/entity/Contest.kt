@@ -55,6 +55,21 @@ class Contest(
     @Column(name = "end_at", nullable = false)
     var endAt: OffsetDateTime,
     /**
+     * The time when the leaderboard will be automatically frozen.
+     */
+    @Column(name = "auto_freeze_at")
+    var autoFreezeAt: OffsetDateTime? = null,
+    /**
+     * The time when the leaderboard will be manually frozen, which can be set by the contest administrators.
+     */
+    @Column(name = "manual_freeze_at")
+    var manualFreezeAt: OffsetDateTime? = null,
+    /**
+     * The time when the leaderboard will be automatically unfrozen.
+     */
+    @Column(name = "unfreeze_at")
+    var unfreezeAt: OffsetDateTime? = null,
+    /**
      * Settings to control various aspects of the contest.
      */
     @Column(name = "settings", nullable = false, columnDefinition = "jsonb")
