@@ -1,10 +1,16 @@
-import { render } from "@testing-library/react";
-import { notFound } from "next/navigation";
+import { render, screen } from "@testing-library/react";
 import React from "react";
 
 import ContestLayout from "@/app/[slug]/layout";
 import { sessionReader, contestReader } from "@/config/composition";
-import { NotFoundException } from "@/core/domain/exception/NotFoundException";
+
+jest.mock("@/app/_lib/component/page/loading-page", () => ({
+  LoadingPage: () => <span data-testid="loading-page" />,
+}));
+
+jest.mock("@/app/_lib/component/page/error-page", () => ({
+  ErrorPage: () => <span data-testid="error-page" />,
+}));
 
 jest.mock("@/app/_lib/component/layout/footer", () => ({
   Footer: () => <div data-testid="footer">Footer Component</div>,
@@ -38,156 +44,49 @@ describe("ContestLayout", () => {
 
   const mockContestMetadata = { id: "contest-1", slug: "test-contest" };
   const mockSession = { id: "session-1", contest: mockContestMetadata };
-  const mockParams = Promise.resolve({ slug: "test-contest" });
-  beforeEach(() => {
-    jest.clearAllMocks();
-    (sessionReader.getCurrent as jest.Mock).mockResolvedValue(mockSession);
-    (contestReader.findMetadataBySlug as jest.Mock).mockResolvedValue(
+  const slug = "test-contest";
+
+  it("renders loading state initially", () => {
+    render(
+      <ContestLayout>
+        <TestChildren />
+      </ContestLayout>,
+    );
+    expect(screen.getByTestId("loading-page")).toBeInTheDocument();
+  });
+
+  it("renders error page on fetch failure", async () => {
+    const error = new Error("Failed to fetch data");
+    (sessionReader.getCurrent as jest.Mock).mockRejectedValueOnce(error);
+
+    render(
+      <ContestLayout>
+        <TestChildren />
+      </ContestLayout>,
+    );
+
+    const errorPage = await screen.findByTestId("error-page");
+    expect(errorPage).toBeInTheDocument();
+  });
+
+  it("renders header, footer, and children on successful data fetch", async () => {
+    (sessionReader.getCurrent as jest.Mock).mockResolvedValueOnce(mockSession);
+    (contestReader.findMetadataBySlug as jest.Mock).mockResolvedValueOnce(
       mockContestMetadata,
     );
-  });
 
-  it("should render layout with header, content, and footer when data loads successfully", async () => {
-    const { getByTestId } = render(
-      await ContestLayout({
-        params: mockParams,
-        children: <TestChildren />,
-      }),
+    render(
+      <ContestLayout>
+        <TestChildren />
+      </ContestLayout>,
     );
 
-    expect(getByTestId("store-provider")).toBeInTheDocument();
-    expect(getByTestId("header")).toBeInTheDocument();
-    expect(getByTestId("test-children")).toBeInTheDocument();
-    expect(getByTestId("footer")).toBeInTheDocument();
-  });
+    const header = await screen.findByTestId("header");
+    const footer = await screen.findByTestId("footer");
+    const children = await screen.findByTestId("test-children");
 
-  it("should pass correct preloaded state to StoreProvider", async () => {
-    const { getByTestId } = render(
-      await ContestLayout({
-        params: mockParams,
-        children: <TestChildren />,
-      }),
-    );
-
-    const storeProvider = getByTestId("store-provider");
-    const preloadedState = JSON.parse(
-      storeProvider.getAttribute("data-preloaded-state") || "{}",
-    );
-
-    expect(preloadedState).toEqual({
-      session: mockSession,
-      contestMetadata: mockContestMetadata,
-    });
-  });
-
-  it("should pass null session to StoreProvider if session belongs to other contest", async () => {
-    (sessionReader.getCurrent as jest.Mock).mockResolvedValueOnce({
-      id: "session-1",
-      contest: { id: "other-contest" },
-    });
-    const { getByTestId } = render(
-      await ContestLayout({
-        params: mockParams,
-        children: <TestChildren />,
-      }),
-    );
-
-    const storeProvider = getByTestId("store-provider");
-    const preloadedState = JSON.parse(
-      storeProvider.getAttribute("data-preloaded-state") || "{}",
-    );
-
-    expect(preloadedState).toEqual({
-      session: undefined,
-      contestMetadata: mockContestMetadata,
-    });
-  });
-
-  it("should call sessionReader", async () => {
-    await ContestLayout({
-      params: mockParams,
-      children: <TestChildren />,
-    });
-
-    expect(sessionReader.getCurrent).toHaveBeenCalled();
-  });
-
-  it("should call contestReader with slug from params", async () => {
-    await ContestLayout({
-      params: mockParams,
-      children: <TestChildren />,
-    });
-
-    expect(contestReader.findMetadataBySlug).toHaveBeenCalledWith(
-      "test-contest",
-    );
-  });
-
-  it("should have correct layout structure with CSS classes", async () => {
-    const { container } = render(
-      await ContestLayout({
-        params: mockParams,
-        children: <TestChildren />,
-      }),
-    );
-
-    const mainContainer = container.querySelector(
-      ".flex.flex-col.min-h-screen",
-    );
-    expect(mainContainer).toBeInTheDocument();
-
-    const contentContainer = container.querySelector(".flex-1.flex.flex-col");
-    expect(contentContainer).toBeInTheDocument();
-  });
-
-  it("should call notFound when NotFoundException is thrown", async () => {
-    (contestReader.findMetadataBySlug as jest.Mock).mockRejectedValue(
-      new NotFoundException("Contest not found"),
-    );
-
-    await ContestLayout({
-      params: mockParams,
-      children: <TestChildren />,
-    });
-
-    expect(notFound).toHaveBeenCalled();
-  });
-
-  it("should rethrow non-NotFoundException errors", async () => {
-    const genericError = new Error("Generic error");
-    (contestReader.findMetadataBySlug as jest.Mock).mockRejectedValue(
-      genericError,
-    );
-
-    await expect(
-      ContestLayout({
-        params: mockParams,
-        children: <TestChildren />,
-      }),
-    ).rejects.toThrow("Generic error");
-
-    expect(notFound).not.toHaveBeenCalled();
-  });
-
-  it("should be an async function (server component)", () => {
-    expect(ContestLayout.constructor.name).toBe("AsyncFunction");
-  });
-
-  it("should have dynamic rendering enabled", () => {
-    // This test verifies that the component exports dynamic = "force-dynamic"
-    const layoutModule = require("@/app/[slug]/layout");
-    expect(layoutModule.dynamic).toBe("force-dynamic");
-  });
-
-  it("should handle session service errors gracefully", async () => {
-    const authError = new Error("Session service error");
-    (sessionReader.getCurrent as jest.Mock).mockRejectedValue(authError);
-
-    await expect(
-      ContestLayout({
-        params: mockParams,
-        children: <TestChildren />,
-      }),
-    ).rejects.toThrow("Session service error");
+    expect(header).toBeInTheDocument();
+    expect(footer).toBeInTheDocument();
+    expect(children).toBeInTheDocument();
   });
 });

@@ -13,8 +13,8 @@ export type UseLoadableStateReturnType<TData> = LoadableState<TData> & {
   finish: (dataOrCallback?: TData | ((currentData: TData) => TData)) => void;
   fail: (
     error: unknown,
-    handlers?: Record<string, (error: Error) => void>,
-  ) => void;
+    handlers?: Record<string, (error: Error) => unknown | Promise<unknown>>,
+  ) => Promise<void>;
 };
 
 /**
@@ -22,13 +22,21 @@ export type UseLoadableStateReturnType<TData> = LoadableState<TData> & {
  */
 export function useLoadableState<TData>(
   initialState: Partial<LoadableState<TData>> = {},
+) {
+  const errorHandler = useErrorHandler();
+
+  return useLoadableStateRoot<TData>(errorHandler, initialState);
+}
+
+export function useLoadableStateRoot<TData>(
+  errorHandler: ReturnType<typeof useErrorHandler>,
+  initialState: Partial<LoadableState<TData>> = {},
 ): UseLoadableStateReturnType<TData> {
   const defaultState = {
     isLoading: false,
     data: undefined,
     error: undefined,
   };
-  const errorHandler = useErrorHandler();
 
   const [state, setState] = useState<LoadableState<TData>>({
     ...defaultState,
@@ -53,12 +61,12 @@ export function useLoadableState<TData>(
     }
   }
 
-  function fail(
+  async function fail(
     error: unknown,
     customHandlers: Record<string, (error: Error) => void> = {},
   ) {
     const _error = error instanceof Error ? error : new Error(String(error));
-    errorHandler.handle(_error, customHandlers);
+    await errorHandler.handle(_error, customHandlers);
     setState({ isLoading: false, data: undefined, error: _error });
   }
 

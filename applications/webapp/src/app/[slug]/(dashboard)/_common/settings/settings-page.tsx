@@ -170,7 +170,7 @@ export function SettingsPage({ contest }: Props) {
       }
       updateContestState.finish();
     } catch (error) {
-      updateContestState.fail(error, {
+      await updateContestState.fail(error, {
         default: () => toast.error(messages.saveError),
       });
     }

@@ -107,7 +107,7 @@ export function SubmissionsPageForm({ onClose, problems }: Props) {
       createSubmissionState.finish();
       onClose();
     } catch (error) {
-      createSubmissionState.fail(error, {
+      await createSubmissionState.fail(error, {
         default: () => toast.error(messages.createError),
       });
     }

@@ -141,7 +141,7 @@ export function ProblemsPage({
     try {
       await attachmentReader.download(contestId, problem.description);
     } catch (error) {
-      errorHandler.handle(error as Error, {
+      await errorHandler.handle(error as Error, {
         default: () => toast.error(messages.descriptionDownloadError),
       });
     }

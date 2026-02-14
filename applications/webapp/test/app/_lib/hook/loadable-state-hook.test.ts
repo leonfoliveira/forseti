@@ -104,8 +104,8 @@ describe("useLoadableState", () => {
       result.current.start();
     });
 
-    act(() => {
-      result.current.fail(testError);
+    await act(async () => {
+      await result.current.fail(testError);
     });
 
     expect(result.current.isLoading).toBe(false);
@@ -120,8 +120,8 @@ describe("useLoadableState", () => {
       preloadedState,
     );
 
-    act(() => {
-      result.current.fail(errorString);
+    await act(async () => {
+      await result.current.fail(errorString);
     });
 
     expect(result.current.isLoading).toBe(false);
@@ -140,8 +140,8 @@ describe("useLoadableState", () => {
       preloadedState,
     );
 
-    act(() => {
-      result.current.fail(testError, customHandlers);
+    await act(async () => {
+      await result.current.fail(testError, customHandlers);
     });
 
     // Verify the state is updated correctly

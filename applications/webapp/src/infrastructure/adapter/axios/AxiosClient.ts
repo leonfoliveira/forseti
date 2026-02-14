@@ -92,38 +92,59 @@ export abstract class AxiosClient {
     try {
       await this.proxyRequest(requestConfig);
 
+      console.debug("Making request to:", {
+        method: requestConfig.method,
+        url: requestConfig.url || `${this.baseUrl}${path}`,
+        headers: requestConfig.headers,
+        body: requestConfig.data,
+      });
+
       const response = await axios.request<TBody>({
         ...requestConfig,
         url: requestConfig.url || `${this.baseUrl}${path}`,
         withCredentials: true,
       });
 
-      await this.proxyResponse(response);
+      console.debug("Received response:", {
+        status: response.status,
+        body: response.data,
+        headers: response.headers,
+      });
 
       return response;
     } catch (error) {
       if (error instanceof AxiosError) {
-        const status = error.response?.status;
-        const message =
-          (error.response?.data && typeof error.response.data === "string"
-            ? error.response.data
-            : error.response?.data?.message) || error.message;
+        const response = error.response;
 
-        switch (status) {
-          case 400:
-            throw new BusinessException(message);
-          case 401:
-            throw new UnauthorizedException(message);
-          case 403:
-            throw new ForbiddenException(message);
-          case 404:
-            throw new NotFoundException(message);
-          case 409:
-            throw new ConflictException(message);
-          case 503:
-            throw new ServiceUnavailableException(message);
-          default:
-            throw new ServerException(message);
+        if (response) {
+          console.debug("Received response:", {
+            status: response.status,
+            body: response.data,
+            headers: response.headers,
+          });
+
+          const status = response.status;
+          const message =
+            (response.data && typeof response.data === "string"
+              ? response.data
+              : response.data?.message) || error.message;
+
+          switch (status) {
+            case 400:
+              throw new BusinessException(message);
+            case 401:
+              throw new UnauthorizedException(message);
+            case 403:
+              throw new ForbiddenException(message);
+            case 404:
+              throw new NotFoundException(message);
+            case 409:
+              throw new ConflictException(message);
+            case 503:
+              throw new ServiceUnavailableException(message);
+            default:
+              throw new ServerException(message);
+          }
         }
       }
       throw error;
@@ -137,14 +158,5 @@ export abstract class AxiosClient {
    */
   protected abstract proxyRequest(
     requestConfig: AxiosRequestConfig,
-  ): Promise<void>;
-
-  /**
-   * Modifies the response after it is received.
-   *
-   * @param response Axios response.
-   */
-  protected abstract proxyResponse<TBody>(
-    response: AxiosResponse<TBody>,
   ): Promise<void>;
 }

@@ -96,7 +96,7 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
     try {
       await attachmentReader.download(contest.id, attachment);
     } catch (error) {
-      errorHandler.handle(error as Error, {
+      await errorHandler.handle(error as Error, {
         default: () => toast.error(messages.downloadAttachmentError),
       });
     }

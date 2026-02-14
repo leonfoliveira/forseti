@@ -92,7 +92,7 @@ export function JudgeDashboardProvider({
         dispatch(judgeDashboardSlice.actions.set(data));
         state.finish();
       } catch (error) {
-        state.fail(error);
+        await state.fail(error);
       }
     }
 

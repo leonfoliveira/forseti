@@ -166,8 +166,7 @@ export function SettingsPageContestTab({ contest, form }: Props) {
       forceState.finish();
       toast.success(successMessage);
     } catch (error) {
-      console.error(error);
-      forceState.fail(error, {
+      await forceState.fail(error, {
         default: () => toast.error(errorMessage),
       });
     }

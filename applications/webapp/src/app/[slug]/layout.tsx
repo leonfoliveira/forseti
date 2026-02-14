@@ -1,67 +1,79 @@
-import { notFound, redirect } from "next/navigation";
-import React from "react";
+"use client";
+
+import { useParams } from "next/navigation";
+import React, { useEffect } from "react";
 
 import { Footer } from "@/app/_lib/component/layout/footer";
 import { Header } from "@/app/_lib/component/layout/header";
+import { ErrorPage } from "@/app/_lib/component/page/error-page";
+import { LoadingPage } from "@/app/_lib/component/page/loading-page";
+import { useErrorHandlerRoot } from "@/app/_lib/hook/error-handler-hook";
+import { useLoadableStateRoot } from "@/app/_lib/hook/loadable-state-hook";
 import { StoreProvider } from "@/app/_store/store-provider";
-import {
-  sessionReader,
-  contestReader,
-  sessionWritter,
-} from "@/config/composition";
-import { routes } from "@/config/routes";
-import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-
-export const dynamic = "force-dynamic";
+import { sessionReader, contestReader } from "@/config/composition";
+import { ContestMetadataResponseDTO } from "@/core/port/dto/response/contest/ContestMetadataResponseDTO";
+import { SessionResponseDTO } from "@/core/port/dto/response/session/SessionResponseDTO";
 
 /**
  * Layout component for contest pages.
  * Fetches session and contest metadata based on the slug parameter.
  * Renders the header, footer, and children components within a store provider.
- *
- * ! This component runs on the server side.
  */
-export default async function ContestLayout({
-  params,
+export default function ContestLayout({
   children,
 }: {
-  params: Promise<{ slug: string }>;
   children: React.ReactNode;
 }) {
-  const { slug } = await params;
+  const { slug } = useParams() as { slug: string };
+  const errorHandler = useErrorHandlerRoot(slug);
+  const initState = useLoadableStateRoot<{
+    session: SessionResponseDTO | null;
+    contestMetadata: ContestMetadataResponseDTO;
+  }>(errorHandler, { isLoading: true });
 
-  try {
-    const [session, contestMetadata] = await Promise.all([
-      sessionReader.getCurrent(),
-      contestReader.findMetadataBySlug(slug),
-    ]);
-
-    const doesSessionBelongToContest =
-      session?.contest?.id === contestMetadata.id;
-
-    return (
-      <StoreProvider
-        preloadedState={{
-          session: doesSessionBelongToContest ? session : undefined,
-          contestMetadata,
-        }}
-      >
-        <div className="bg-muted flex min-h-screen flex-col">
-          <Header />
-          <div className="flex flex-1 flex-col">{children}</div>
-          <Footer />
-        </div>
-      </StoreProvider>
-    );
-  } catch (error) {
-    if (error instanceof NotFoundException) {
-      return notFound();
-    } else if (error instanceof UnauthorizedException) {
-      await sessionWritter.deleteCurrent();
-      redirect(routes.CONTEST_SIGN_IN(slug));
+  useEffect(() => {
+    async function fetchData() {
+      initState.start();
+      try {
+        const [session, contestMetadata] = await Promise.all([
+          sessionReader.getCurrent(),
+          contestReader.findMetadataBySlug(slug),
+        ]);
+        initState.finish({ session, contestMetadata });
+      } catch (error) {
+        await initState.fail(error);
+      }
     }
-    console.error("Error while fetching contest data: ", error);
-    throw error;
+
+    fetchData();
+  }, [slug]);
+
+  if (initState.isLoading) {
+    return <LoadingPage />;
   }
+
+  if (initState.error) {
+    return <ErrorPage />;
+  }
+
+  const doesSessionBelongToContest =
+    initState.data?.session?.contest?.id ===
+    initState.data?.contestMetadata?.id;
+
+  return (
+    <StoreProvider
+      preloadedState={{
+        session: doesSessionBelongToContest
+          ? initState.data?.session
+          : undefined,
+        contestMetadata: initState.data?.contestMetadata,
+      }}
+    >
+      <div className="bg-muted flex min-h-screen flex-col">
+        <Header />
+        <div className="flex flex-1 flex-col">{children}</div>
+        <Footer />
+      </div>
+    </StoreProvider>
+  );
 }

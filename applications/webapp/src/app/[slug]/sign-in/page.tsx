@@ -99,7 +99,7 @@ export default function SignInPage() {
       await authenticationWritter.authenticate(contestMetadata.id, data);
       window.location.href = routes.CONTEST(contestMetadata.slug);
     } catch (error) {
-      signInState.fail(error, {
+      await signInState.fail(error, {
         [UnauthorizedException.name]: () => {
           form.setError("login", {
             type: "manual",
@@ -121,7 +121,7 @@ export default function SignInPage() {
       await sessionWritter.deleteCurrent();
       window.location.href = routes.CONTEST(contestMetadata.slug);
     } catch (error) {
-      enterAsGuestState.fail(error, {
+      await enterAsGuestState.fail(error, {
         default: () => toast.error(messages.enterGuestError),
       });
     }

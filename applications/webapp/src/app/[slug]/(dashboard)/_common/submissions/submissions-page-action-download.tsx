@@ -35,7 +35,7 @@ export function SubmissionsPageActionDownload({ submission, onClose }: Props) {
       await attachmentReader.download(contestId, submission.code);
       onClose();
     } catch (error) {
-      errorHandler.handle(error as Error, {
+      await errorHandler.handle(error as Error, {
         default: () => toast.error(messages.downloadError),
       });
     }

@@ -108,7 +108,7 @@ export function ContestantDashboardProvider({
         dispatch(contestantDashboardSlice.actions.set(data));
         state.finish();
       } catch (error) {
-        state.fail(error as Error);
+        await state.fail(error as Error);
       }
     }
 

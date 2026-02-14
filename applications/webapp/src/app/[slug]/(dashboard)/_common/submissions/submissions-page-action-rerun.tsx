@@ -63,7 +63,7 @@ export function SubmissionsPageActionRerun({ submission, onClose }: Props) {
       resubmitState.finish();
       onClose();
     } catch (error) {
-      resubmitState.fail(error, {
+      await resubmitState.fail(error, {
         default: () => toast.error(messages.resubmitError),
       });
     }
