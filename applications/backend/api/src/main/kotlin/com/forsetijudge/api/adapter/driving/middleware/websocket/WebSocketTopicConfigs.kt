@@ -61,6 +61,12 @@ class WebSocketTopicConfigs(
                 val contest = findContestUseCase.findById(contestId)
                 checkIfStarted(contest)
             },
+            Regex("/topic/contests/[a-fA-F0-9-]+/leaderboard/partial") to { destination ->
+                val contestId = UUID.fromString(destination.split("/")[3])
+
+                val contest = findContestUseCase.findById(contestId)
+                checkIfStarted(contest)
+            },
             Regex("/topic/contests/[a-fA-F0-9-]+/submissions") to { destination ->
                 val contestId = UUID.fromString(destination.split("/")[3])
 
