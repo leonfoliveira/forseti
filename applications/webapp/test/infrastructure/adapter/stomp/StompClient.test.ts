@@ -67,7 +67,7 @@ describe("StompClient", () => {
       client.onStompError(error);
 
       await expect(promise).rejects.toThrow(
-        new ServerException("Unknown STOMP error"),
+        new ServerException("STOMP Error: Unknown command"),
       );
     });
   });
