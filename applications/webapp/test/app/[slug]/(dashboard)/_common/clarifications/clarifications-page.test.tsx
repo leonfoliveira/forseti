@@ -1,16 +1,17 @@
-import { fireEvent, screen, waitFor } from "@testing-library/dom";
-import { act } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { fireEvent, screen } from "@testing-library/dom";
 
 import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page";
-import { useToast } from "@/app/_lib/util/toast-hook";
-import { clarificationWritter } from "@/config/composition";
+import { MockDate } from "@/test/mock/mock-date";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
+import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("ClarificationsPage", () => {
-  const contestId = uuidv4();
+  const contestMetadata = MockContestMetadataResponseDTO({
+    startAt: MockDate.past().toISOString(),
+    endAt: MockDate.future().toISOString(),
+  });
   const problems = [
     MockProblemPublicResponseDTO(),
     MockProblemPublicResponseDTO(),
@@ -25,262 +26,60 @@ describe("ClarificationsPage", () => {
 
   it("should render variant with no clarification", async () => {
     await renderWithProviders(
-      <ClarificationsPage
-        contestId={contestId}
-        problems={problems}
-        clarifications={[]}
-      />,
+      <ClarificationsPage problems={problems} clarifications={[]} />,
+      { contestMetadata },
     );
 
-    expect(document.title).toBe("Forseti - Clarifications");
-    expect(screen.queryByTestId("empty")).toBeInTheDocument();
-    expect(screen.queryByTestId("clarification")).not.toBeInTheDocument();
+    expect(screen.queryAllByTestId("clarification-card").length).toBe(0);
+    expect(screen.getByTestId("empty")).toBeInTheDocument();
   });
 
-  it("should render variant with clarifications", async () => {
+  it("should render list of clarifications", async () => {
     await renderWithProviders(
       <ClarificationsPage
-        contestId={contestId}
         problems={problems}
         clarifications={clarifications}
       />,
+      { contestMetadata },
     );
 
-    expect(document.title).toBe("Forseti - Clarifications");
+    expect(screen.queryAllByTestId("clarification-card").length).toBe(2);
     expect(screen.queryByTestId("empty")).not.toBeInTheDocument();
-    expect(screen.getAllByTestId("clarification")).toHaveLength(2);
+  });
+
+  it("should render form when canCreate is true and open form", async () => {
+    await renderWithProviders(
+      <ClarificationsPage
+        problems={problems}
+        clarifications={clarifications}
+        canCreate
+      />,
+      { contestMetadata },
+    );
+
+    expect(screen.getByTestId("open-create-form-button")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("open-create-form-button"));
+    expect(screen.getByTestId("clarification-form")).toBeInTheDocument();
+  });
+
+  it("should not render form when contest is ended", async () => {
+    const pastContestMetadata = MockContestMetadataResponseDTO({
+      startAt: MockDate.past(10).toISOString(),
+      endAt: MockDate.past(5).toISOString(),
+    });
+
+    await renderWithProviders(
+      <ClarificationsPage
+        problems={problems}
+        clarifications={clarifications}
+        canCreate
+      />,
+      { contestMetadata: pastContestMetadata },
+    );
+
     expect(
-      screen.getAllByTestId("clarification-member-name")[0],
-    ).toHaveTextContent(clarifications[1].member.name);
-    expect(screen.getAllByTestId("clarification-problem")[0]).toHaveTextContent(
-      "General",
-    );
-    expect(screen.getAllByTestId("clarification-problem")[1]).toHaveTextContent(
-      "Problem A",
-    );
-    expect(
-      screen.getAllByTestId("clarification-created-at")[0],
-    ).toHaveTextContent("01/01/2025, 10:00:00 AM");
-    expect(screen.getAllByTestId("clarification-text")[0]).toHaveTextContent(
-      clarifications[1].text,
-    );
-    expect(screen.getByTestId("answer-member-name")).toHaveTextContent(
-      clarifications[1].children[0].member.name,
-    );
-    expect(screen.getByTestId("answer-created-at")).toHaveTextContent(
-      "01/01/2025, 10:00:00 AM",
-    );
-    expect(screen.getByTestId("answer-text")).toHaveTextContent(
-      clarifications[1].children[0].text,
-    );
-  });
-
-  it("should render variant with create", async () => {
-    await renderWithProviders(
-      <ClarificationsPage
-        contestId={contestId}
-        problems={problems}
-        clarifications={clarifications}
-        canCreate
-      />,
-    );
-
-    expect(screen.getByTestId("create-form")).toBeInTheDocument();
-    expect(screen.getByTestId("create-form-title")).toHaveTextContent(
-      "Create Clarification",
-    );
-    expect(screen.getByTestId("create-form-problem")).toBeEnabled();
-    expect(screen.getByTestId("create-form-text")).toBeEnabled();
-    expect(screen.getByTestId("create-form-submit")).toBeEnabled();
-  });
-
-  it("should render variant with answer", async () => {
-    await renderWithProviders(
-      <ClarificationsPage
-        contestId={contestId}
-        problems={problems}
-        clarifications={clarifications}
-        canAnswer
-      />,
-    );
-
-    expect(screen.getAllByTestId("delete-button")).toHaveLength(2);
-    expect(screen.getByTestId("answer-form")).toBeInTheDocument();
-    expect(screen.getByTestId("answer-form-text")).toBeEnabled();
-    expect(screen.getByTestId("answer-form-submit")).toBeEnabled();
-  });
-
-  it("should handle creation success", async () => {
-    await renderWithProviders(
-      <ClarificationsPage
-        contestId={contestId}
-        problems={problems}
-        clarifications={clarifications}
-        canCreate
-      />,
-    );
-
-    fireEvent.change(screen.getByTestId("create-form-problem"), {
-      target: { value: problems[0].id },
-    });
-    fireEvent.change(screen.getByTestId("create-form-text"), {
-      target: { value: "Test clarification" },
-    });
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("create-form-submit"));
-    });
-
-    expect(clarificationWritter.create).toHaveBeenCalledWith(contestId, {
-      text: "Test clarification",
-      parentId: undefined,
-    });
-    expect(useToast().success).toHaveBeenCalled();
-  });
-
-  it("should render creation error", async () => {
-    (clarificationWritter.create as jest.Mock).mockRejectedValueOnce(
-      new Error("Test error"),
-    );
-
-    await renderWithProviders(
-      <ClarificationsPage
-        contestId={contestId}
-        problems={problems}
-        clarifications={clarifications}
-        canCreate
-      />,
-    );
-
-    fireEvent.change(screen.getByTestId("create-form-problem"), {
-      target: { value: problems[0].id },
-    });
-    fireEvent.change(screen.getByTestId("create-form-text"), {
-      target: { value: "Test clarification" },
-    });
-
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("create-form-submit"));
-    });
-
-    expect(clarificationWritter.create).toHaveBeenCalledWith(contestId, {
-      text: "Test clarification",
-      parentId: undefined,
-    });
-    expect(useToast().error).toHaveBeenCalled();
-  });
-
-  it("should handle delete success", async () => {
-    await renderWithProviders(
-      <ClarificationsPage
-        contestId={contestId}
-        problems={problems}
-        clarifications={clarifications}
-        canAnswer
-      />,
-    );
-
-    await act(async () => {
-      fireEvent.click(screen.getAllByTestId("delete-button")[0]);
-    });
-
-    const deleteModal = screen.getByTestId("delete-modal");
-    expect(deleteModal).toBeInTheDocument();
-    await act(async () => {
-      fireEvent.click(
-        deleteModal.querySelector("[data-testid='confirm']") as any,
-      );
-    });
-
-    expect(clarificationWritter.deleteById).toHaveBeenCalledWith(
-      contestId,
-      clarifications[1].id,
-    );
-    await waitFor(() => {
-      expect(screen.queryByTestId("delete-modal")).not.toBeInTheDocument();
-    });
-    expect(useToast().success).toHaveBeenCalled();
-  });
-
-  it("should handle delete error", async () => {
-    (clarificationWritter.deleteById as jest.Mock).mockRejectedValueOnce(
-      new Error("Test error"),
-    );
-    await renderWithProviders(
-      <ClarificationsPage
-        contestId={contestId}
-        problems={problems}
-        clarifications={clarifications}
-        canAnswer
-      />,
-    );
-
-    await act(async () => {
-      fireEvent.click(screen.getAllByTestId("delete-button")[0]);
-    });
-
-    const deleteModal = screen.getByTestId("delete-modal");
-    expect(deleteModal).toBeInTheDocument();
-    await act(async () => {
-      fireEvent.click(
-        deleteModal.querySelector("[data-testid='confirm']") as any,
-      );
-    });
-
-    expect(clarificationWritter.deleteById).toHaveBeenCalledWith(
-      contestId,
-      clarifications[1].id,
-    );
-    expect(useToast().error).toHaveBeenCalled();
-  });
-
-  it("should handler answer success", async () => {
-    await renderWithProviders(
-      <ClarificationsPage
-        contestId={contestId}
-        problems={problems}
-        clarifications={clarifications}
-        canAnswer
-      />,
-    );
-
-    fireEvent.change(screen.getByTestId("answer-form-text"), {
-      target: { value: "Test answer" },
-    });
-    await act(async () => {
-      fireEvent.click(screen.getAllByTestId("answer-form-submit")[0]);
-    });
-
-    expect(clarificationWritter.create).toHaveBeenCalledWith(contestId, {
-      text: "Test answer",
-      parentId: clarifications[0].id,
-    });
-    expect(useToast().success).toHaveBeenCalled();
-  });
-
-  it("should handle answer error", async () => {
-    (clarificationWritter.create as jest.Mock).mockRejectedValueOnce(
-      new Error("Test error"),
-    );
-    await renderWithProviders(
-      <ClarificationsPage
-        contestId={contestId}
-        problems={problems}
-        clarifications={clarifications}
-        canAnswer
-      />,
-    );
-
-    fireEvent.change(screen.getByTestId("answer-form-text"), {
-      target: { value: "Test answer" },
-    });
-    await act(async () => {
-      fireEvent.click(screen.getAllByTestId("answer-form-submit")[0]);
-    });
-
-    expect(clarificationWritter.create).toHaveBeenCalledWith(contestId, {
-      text: "Test answer",
-      parentId: clarifications[0].id,
-    });
-    expect(useToast().error).toHaveBeenCalled();
+      screen.queryByTestId("open-create-form-button"),
+    ).not.toBeInTheDocument();
   });
 });

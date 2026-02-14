@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import React, { act } from "react";
 
 import SignInPage from "@/app/[slug]/sign-in/page";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { authenticationWritter, sessionWritter } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
@@ -123,5 +123,21 @@ describe("SignInPage", () => {
     });
 
     expect(sessionWritter.deleteCurrent).toHaveBeenCalled();
+  });
+
+  it("should handle error when entering as guest", async () => {
+    (sessionWritter.deleteCurrent as jest.Mock).mockRejectedValue(
+      new Error("An error occurred"),
+    );
+
+    await renderWithProviders(<SignInPage />, {
+      contestMetadata: mockContestMetadata,
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("enter-guest"));
+    });
+
+    expect(useToast().error).toHaveBeenCalled();
   });
 });

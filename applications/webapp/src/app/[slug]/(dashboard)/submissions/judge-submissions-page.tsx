@@ -7,6 +7,11 @@ export function JudgeSubmissionsPage() {
   const submissions = useAppSelector(
     (state) => state.judgeDashboard.submissions,
   );
+  const problems = useAppSelector(
+    (state) => state.judgeDashboard.contest.problems,
+  );
 
-  return <SubmissionsPage submissions={submissions} canEdit />;
+  return (
+    <SubmissionsPage submissions={submissions} problems={problems} canEdit />
+  );
 }

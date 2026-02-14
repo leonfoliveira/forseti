@@ -1,6 +1,5 @@
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
 import { ContestantSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/contestant-submissions-page";
-import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
@@ -20,7 +19,6 @@ describe("ContestantSubmissionsPage", () => {
       MockProblemPublicResponseDTO(),
       MockProblemPublicResponseDTO(),
     ];
-    const languages = [SubmissionLanguage.CPP_17, SubmissionLanguage.JAVA_21];
     const submissions = [
       MockSubmissionPublicResponseDTO(),
       MockSubmissionPublicResponseDTO(),
@@ -28,7 +26,7 @@ describe("ContestantSubmissionsPage", () => {
     await renderWithProviders(<ContestantSubmissionsPage />, {
       contestMetadata,
       contestantDashboard: {
-        contest: { problems, languages },
+        contest: { problems },
         submissions,
       },
     } as any);
@@ -37,7 +35,6 @@ describe("ContestantSubmissionsPage", () => {
       expect.objectContaining({
         submissions,
         problems,
-        languages,
         canCreate: true,
       }),
       undefined,

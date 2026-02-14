@@ -11,7 +11,7 @@ describe("ServerErrorPage", () => {
   it("should call router.push with correct error route and from parameter", async () => {
     await renderWithProviders(<ServerErrorPage />);
 
-    expect(useRouter().push).toHaveBeenCalledWith(
+    expect(useRouter().replace).toHaveBeenCalledWith(
       `/error/500?from=${encodeURIComponent("/test/current/path")}`,
     );
   });

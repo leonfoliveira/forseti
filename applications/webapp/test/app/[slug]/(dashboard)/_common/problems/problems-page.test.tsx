@@ -2,6 +2,7 @@ import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 
 import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/problems-page";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { attachmentReader } from "@/config/composition";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
@@ -22,7 +23,7 @@ describe("ProblemsPage", () => {
       "Test Problem",
     );
     expect(screen.queryByTestId("problem-status")).not.toBeInTheDocument();
-    expect(screen.getByTestId("problem-download")).toBeEnabled();
+    expect(screen.getByTestId("problem-actions")).toBeEnabled();
   });
 
   it("should render variant with status", async () => {
@@ -47,8 +48,8 @@ describe("ProblemsPage", () => {
     expect(screen.getByTestId("problem-title")).toHaveTextContent(
       "Test Problem",
     );
-    expect(screen.getByTestId("problem-status")).toHaveTextContent("0");
-    expect(screen.getByTestId("problem-download")).toBeEnabled();
+    expect(screen.getByTestId("problem-status")).toHaveTextContent("Accepted");
+    expect(screen.getByTestId("problem-actions")).toBeEnabled();
   });
 
   it("should handle download problem description", async () => {
@@ -63,5 +64,21 @@ describe("ProblemsPage", () => {
       contestMetadata.id,
       problems[0].description,
     );
+  });
+
+  it("should handle download problem description error", async () => {
+    (attachmentReader.download as jest.Mock).mockRejectedValueOnce(
+      new Error("Download failed"),
+    );
+
+    await renderWithProviders(<ProblemsPage problems={problems} />, {
+      contestMetadata,
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("problem-download"));
+    });
+
+    expect(useToast().error).toHaveBeenCalled();
   });
 });

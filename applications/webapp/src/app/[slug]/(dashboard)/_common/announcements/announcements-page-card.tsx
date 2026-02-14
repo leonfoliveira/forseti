@@ -1,0 +1,41 @@
+import { MegaphoneIcon } from "lucide-react";
+
+import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
+import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
+import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
+
+type Props = {
+  announcement: AnnouncementResponseDTO;
+};
+
+export function AnnouncementsPageCard({ announcement }: Props) {
+  return (
+    <Card
+      className="border-l-4 border-l-yellow-400"
+      data-testid="announcement-card"
+    >
+      <CardContent>
+        <div className="flex items-center gap-4">
+          <MegaphoneIcon size={24} />
+          <div>
+            <p
+              className="text-sm font-semibold"
+              data-testid="announcement-member-name"
+            >
+              {announcement.member.name}
+            </p>
+            <p
+              className="text-default-400 text-xs"
+              data-testid="announcement-created-at"
+            >
+              <FormattedDateTime timestamp={announcement.createdAt} />
+            </p>
+          </div>
+        </div>
+        <p className="mt-3" data-testid="announcement-text">
+          {announcement.text}
+        </p>
+      </CardContent>
+    </Card>
+  );
+}

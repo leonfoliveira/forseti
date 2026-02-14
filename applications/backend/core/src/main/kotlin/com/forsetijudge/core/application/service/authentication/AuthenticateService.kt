@@ -43,7 +43,7 @@ class AuthenticateService(
         logger.info("Authenticating")
 
         val member =
-            memberRepository.findByLoginAndContestId(inputDTO.login, null)
+            memberRepository.findByLoginAndContestNull(inputDTO.login)
                 ?: throw UnauthorizedException("Invalid login or password")
         if (FORBIDDEN_MEMBER_TYPES.contains(member.type)) {
             throw UnauthorizedException("Invalid login or password")
@@ -80,7 +80,7 @@ class AuthenticateService(
                 ?: throw NotFoundException("Contest with id $contestId not found")
         val member =
             memberRepository.findByLoginAndContestId(inputDTO.login, contestId)
-                ?: memberRepository.findByLoginAndContestId(inputDTO.login, null)
+                ?: memberRepository.findByLoginAndContestNull(inputDTO.login)
                 ?: throw UnauthorizedException("Invalid login or password")
 
         if (FORBIDDEN_MEMBER_TYPES.contains(member.type)) {

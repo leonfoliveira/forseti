@@ -77,6 +77,7 @@ describe("StompClient", () => {
       const topic = "/topic/test";
       const callback = jest.fn();
       const message = { body: JSON.stringify({ key: "value" }) };
+      (client as any).connected = true;
 
       sut.subscribe(topic, callback);
 
@@ -97,6 +98,7 @@ describe("StompClient", () => {
     it("should disconnect from the STOMP server", async () => {
       client.onDisconnect = jest.fn() as any;
 
+      await sut.connect();
       const promise = sut.disconnect();
       client.onDisconnect();
 

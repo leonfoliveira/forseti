@@ -8,7 +8,6 @@ import com.forsetijudge.api.adapter.dto.response.contest.toMetadataDTO
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
-import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.CreateContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.FindContestUseCase
 import com.forsetijudge.core.port.dto.input.contest.CreateContestInputDTO
@@ -29,8 +28,6 @@ import java.time.OffsetDateTime
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = [RootContestController::class, JacksonConfig::class, GlobalExceptionHandler::class])
 class RootContestControllerTest(
-    @MockkBean(relaxed = true)
-    private val authorizeContestUseCase: AuthorizeContestUseCase,
     @MockkBean(relaxed = true)
     private val createContestUseCase: CreateContestUseCase,
     @MockkBean(relaxed = true)

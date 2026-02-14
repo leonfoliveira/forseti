@@ -1,5 +1,4 @@
-import { fireEvent, screen } from "@testing-library/dom";
-import { useRouter } from "next/navigation";
+import { screen } from "@testing-library/dom";
 
 import DashboardLayout from "@/app/[slug]/(dashboard)/layout";
 import { routes } from "@/config/routes";
@@ -20,7 +19,7 @@ describe("DashboardLayout", () => {
     ["Submissions", routes.CONTEST_SUBMISSIONS],
     ["Clarifications", routes.CONTEST_CLARIFICATIONS],
     ["Announcements", routes.CONTEST_ANNOUNCEMENTS],
-  ])("should render tab and children", async (title, path) => {
+  ])("should render %s tab and children", async (title, path) => {
     await renderWithProviders(
       <DashboardLayout>
         <span data-testid="child" />
@@ -28,12 +27,11 @@ describe("DashboardLayout", () => {
       { contestMetadata: MockContestMetadataResponseDTO() },
     );
 
-    const tab = screen.getByText(title);
+    const tab = screen.getByTestId(`tab-${path("test-contest")}`);
     expect(tab).toBeInTheDocument();
-    fireEvent.click(tab);
-    expect(useRouter().push).toHaveBeenCalledWith(path("test-contest"));
+    expect(tab).toHaveTextContent(title);
 
-    expect(screen.getByTestId("child"));
+    expect(screen.getByTestId("child")).toBeInTheDocument();
   });
 
   it("should render settings tab for admin", async () => {
@@ -49,11 +47,32 @@ describe("DashboardLayout", () => {
       },
     );
 
-    const tab = screen.getByText("Settings");
-    expect(tab).toBeInTheDocument();
-    fireEvent.click(tab);
-    expect(useRouter().push).toHaveBeenCalledWith(
-      routes.CONTEST_SETTINGS("test-contest"),
+    const tab = screen.getByTestId(
+      `tab-${routes.CONTEST_SETTINGS("test-contest")}`,
     );
+    expect(tab).toBeInTheDocument();
+    expect(tab).toHaveTextContent("Settings");
+  });
+
+  it("should not render settings tab for non-admin users", async () => {
+    await renderWithProviders(
+      <DashboardLayout>
+        <span data-testid="child" />
+      </DashboardLayout>,
+      {
+        session: MockSession({
+          member: {
+            ...MockMemberPublicResponseDTO(),
+            type: MemberType.CONTESTANT,
+          },
+        }),
+        contestMetadata: MockContestMetadataResponseDTO(),
+      },
+    );
+
+    const settingsTab = screen.queryByTestId(
+      `tab-${routes.CONTEST_SETTINGS("test-contest")}`,
+    );
+    expect(settingsTab).not.toBeInTheDocument();
   });
 });

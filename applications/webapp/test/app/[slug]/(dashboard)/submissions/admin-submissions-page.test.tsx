@@ -1,6 +1,5 @@
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
 import { AdminSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/admin-submissions-page";
-import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
@@ -20,7 +19,6 @@ describe("AdminSubmissionsPage", () => {
       MockProblemPublicResponseDTO(),
       MockProblemPublicResponseDTO(),
     ];
-    const languages = [SubmissionLanguage.CPP_17, SubmissionLanguage.JAVA_21];
     const submissions = [
       MockSubmissionPublicResponseDTO(),
       MockSubmissionPublicResponseDTO(),
@@ -28,7 +26,7 @@ describe("AdminSubmissionsPage", () => {
     await renderWithProviders(<AdminSubmissionsPage />, {
       contestMetadata,
       adminDashboard: {
-        contest: { problems, languages },
+        contest: { problems },
         submissions,
       },
     } as any);
@@ -37,7 +35,6 @@ describe("AdminSubmissionsPage", () => {
       expect.objectContaining({
         submissions,
         problems,
-        languages,
         canEdit: true,
       }),
       undefined,

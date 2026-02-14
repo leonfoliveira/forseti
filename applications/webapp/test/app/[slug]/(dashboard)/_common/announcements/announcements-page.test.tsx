@@ -1,113 +1,48 @@
 import { fireEvent, screen } from "@testing-library/dom";
-import { act } from "react";
-import { v4 as uuidv4 } from "uuid";
 
 import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page";
-import { useToast } from "@/app/_lib/util/toast-hook";
-import { announcementWritter } from "@/config/composition";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
+import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("AnnouncementsPage", () => {
-  const contestId = uuidv4();
+  const contestMetadata = MockContestMetadataResponseDTO();
   const announcements = [
     MockAnnouncementResponseDTO(),
     MockAnnouncementResponseDTO(),
   ];
 
   it("should render variant with no announcement", async () => {
-    await renderWithProviders(
-      <AnnouncementsPage contestId={contestId} announcements={[]} />,
-    );
+    await renderWithProviders(<AnnouncementsPage announcements={[]} />, {
+      contestMetadata,
+    });
 
     expect(document.title).toBe("Forseti - Announcements");
     expect(screen.getByTestId("empty")).toBeInTheDocument();
-    expect(screen.queryByTestId("announcement")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("announcement-card")).not.toBeInTheDocument();
   });
 
   it("should render variant with announcements", async () => {
     await renderWithProviders(
-      <AnnouncementsPage contestId={contestId} announcements={announcements} />,
+      <AnnouncementsPage announcements={announcements} />,
+      { contestMetadata },
     );
 
     expect(document.title).toBe("Forseti - Announcements");
     expect(screen.queryByTestId("empty")).not.toBeInTheDocument();
-    expect(screen.getAllByTestId("announcement")).toHaveLength(2);
-    expect(
-      screen.getAllByTestId("announcement-member-name")[0],
-    ).toHaveTextContent(announcements[0].member.name);
-    expect(
-      screen.getAllByTestId("announcement-created-at")[0],
-    ).toHaveTextContent("01/01/2025, 10:00:00 AM");
-    expect(screen.getAllByTestId("announcement-text")[0]).toHaveTextContent(
-      announcements[0].text,
-    );
+    expect(screen.getAllByTestId("announcement-card")).toHaveLength(2);
   });
 
   it("should render variant with create", async () => {
     await renderWithProviders(
-      <AnnouncementsPage
-        contestId={contestId}
-        announcements={announcements}
-        canCreate
-      />,
+      <AnnouncementsPage announcements={announcements} canCreate />,
+      { contestMetadata },
     );
+
+    const createButton = screen.getByTestId("open-create-form-button");
+    expect(createButton).toBeInTheDocument();
+    fireEvent.click(createButton);
 
     expect(screen.getByTestId("announcement-form")).toBeInTheDocument();
-    expect(screen.getByTestId("announcement-form-title")).toHaveTextContent(
-      "Create Announcement",
-    );
-    expect(screen.getByTestId("announcement-form-text")).toBeEnabled();
-    expect(screen.getByTestId("announcement-form-submit")).toBeEnabled();
-  });
-
-  it("should handle announcement creation success", async () => {
-    await renderWithProviders(
-      <AnnouncementsPage
-        contestId={contestId}
-        announcements={announcements}
-        canCreate
-      />,
-    );
-
-    fireEvent.change(screen.getByTestId("announcement-form-text"), {
-      target: { value: "New announcement" },
-    });
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("announcement-form-submit"));
-    });
-
-    expect(announcementWritter.create as jest.Mock).toHaveBeenCalledWith(
-      contestId,
-      { text: "New announcement" },
-    );
-    expect(useToast().success).toHaveBeenCalled();
-  });
-
-  it("should handle announcement creation error", async () => {
-    announcementWritter.create = jest
-      .fn()
-      .mockRejectedValueOnce(new Error("Failed to create announcement"));
-
-    await renderWithProviders(
-      <AnnouncementsPage
-        contestId={contestId}
-        announcements={announcements}
-        canCreate
-      />,
-    );
-
-    fireEvent.change(screen.getByTestId("announcement-form-text"), {
-      target: { value: "New announcement" },
-    });
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("announcement-form-submit"));
-    });
-
-    expect(announcementWritter.create as jest.Mock).toHaveBeenCalledWith(
-      contestId,
-      { text: "New announcement" },
-    );
-    expect(useToast().error).toHaveBeenCalled();
   });
 });

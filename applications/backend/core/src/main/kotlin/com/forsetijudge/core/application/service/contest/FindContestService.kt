@@ -56,7 +56,7 @@ class FindContestService(
             contestRepository.findEntityById(id)
                 ?: throw NotFoundException("Could not find contest with id = $id")
 
-        if (!contest.hasStarted() && !setOf(Member.Type.ADMIN, Member.Type.ROOT).contains(member?.type)) {
+        if (!contest.hasStarted() && !setOf(Member.Type.ADMIN, Member.Type.ROOT, Member.Type.JUDGE).contains(member?.type)) {
             throw ForbiddenException("Contest has not started yet")
         }
 

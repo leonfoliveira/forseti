@@ -1,7 +1,6 @@
 import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page";
 import { AdminClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/admin-clarifications-page";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -14,7 +13,6 @@ jest.mock(
 
 describe("AdminClarificationsPage", () => {
   it("should render common ClarificationsPage with correct data", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
     const problems = [
       MockProblemPublicResponseDTO(),
       MockProblemPublicResponseDTO(),
@@ -24,7 +22,6 @@ describe("AdminClarificationsPage", () => {
       MockClarificationResponseDTO(),
     ];
     await renderWithProviders(<AdminClarificationsPage />, {
-      contestMetadata,
       adminDashboard: {
         contest: { problems, clarifications },
       },
@@ -32,7 +29,6 @@ describe("AdminClarificationsPage", () => {
 
     expect(ClarificationsPage).toHaveBeenCalledWith(
       expect.objectContaining({
-        contestId: contestMetadata.id,
         problems,
         clarifications,
         canAnswer: true,

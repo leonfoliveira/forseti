@@ -6,7 +6,6 @@ import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarificati
 import { useAppSelector } from "@/app/_store/store";
 
 export function GuestClarificationsPage() {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
   const problems = useAppSelector(
     (state) => state.guestDashboard.contest.problems,
   );
@@ -15,10 +14,6 @@ export function GuestClarificationsPage() {
   );
 
   return (
-    <ClarificationsPage
-      contestId={contestId}
-      problems={problems}
-      clarifications={clarifications}
-    />
+    <ClarificationsPage problems={problems} clarifications={clarifications} />
   );
 }

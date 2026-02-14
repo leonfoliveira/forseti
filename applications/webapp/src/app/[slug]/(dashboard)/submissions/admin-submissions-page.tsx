@@ -10,16 +10,8 @@ export function AdminSubmissionsPage() {
   const problems = useAppSelector(
     (state) => state.adminDashboard.contest.problems,
   );
-  const languages = useAppSelector(
-    (state) => state.adminDashboard.contest.languages,
-  );
 
   return (
-    <SubmissionsPage
-      submissions={submissions}
-      problems={problems}
-      languages={languages}
-      canEdit
-    />
+    <SubmissionsPage submissions={submissions} problems={problems} canEdit />
   );
 }

@@ -8,7 +8,6 @@ import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.driving.usecase.submission.CreateSubmissionUseCase
 import com.forsetijudge.core.port.driving.usecase.submission.FindSubmissionUseCase
 import com.forsetijudge.core.port.driving.usecase.submission.UpdateSubmissionUseCase
@@ -34,8 +33,6 @@ import org.springframework.test.web.servlet.put
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = [ContestSubmissionController::class])
 class ContestSubmissionControllerTest(
-    @MockkBean(relaxed = true)
-    private val authorizeContestUseCase: AuthorizeContestUseCase,
     @MockkBean(relaxed = true)
     private val createSubmissionUseCase: CreateSubmissionUseCase,
     @MockkBean(relaxed = true)

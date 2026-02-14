@@ -40,6 +40,7 @@ jest.mock("@/config/composition");
 
 const router = {
   push: jest.fn(),
+  replace: jest.fn(),
 };
 export const useRouter = jest.fn(() => router);
 export const usePathname = jest.fn(() => "/");
@@ -62,6 +63,17 @@ const toast = {
   warning: jest.fn(),
   error: jest.fn(),
 };
-jest.mock("@/app/_lib/util/toast-hook", () => ({
+jest.mock("@/app/_lib/hook/toast-hook", () => ({
   useToast: () => toast,
+}));
+
+jest.mock("@/app/_lib/component/shadcn/dropdown-menu", () => ({
+  DropdownMenu: ({ children }: any) => children,
+  DropdownMenuTrigger: ({ children }: any) => children,
+  DropdownMenuContent: ({ children }: any) => children,
+  DropdownMenuGroup: ({ children }: any) => children,
+  DropdownMenuLabel: ({ children }: any) => children,
+  DropdownMenuItem: ({ children, ...props }: any) => (
+    <div {...props}>{children}</div>
+  ),
 }));

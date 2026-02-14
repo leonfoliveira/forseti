@@ -1,18 +1,21 @@
-import { joiResolver } from "@hookform/resolvers/joi";
+import { MegaphoneIcon, PlusIcon } from "lucide-react";
 import React from "react";
-import { useForm } from "react-hook-form";
 
-import { AnnouncementFormType } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form";
-import { AnnouncementFormMap } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form-map";
-import { announcementFormSchema } from "@/app/[slug]/(dashboard)/_common/_form/announcement-form-schema";
-import { AnnouncementCard } from "@/app/[slug]/(dashboard)/_common/announcements/announcement-card";
-import { CreateAnnouncementForm } from "@/app/[slug]/(dashboard)/_common/announcements/create-announcement-form";
-import { EmptyAnnouncementDisplay } from "@/app/[slug]/(dashboard)/_common/announcements/empty-announcement-display";
-import { Divider } from "@/app/_lib/component/base/layout/divider";
-import { Metadata } from "@/app/_lib/component/metadata";
-import { useLoadableState } from "@/app/_lib/util/loadable-state";
-import { useToast } from "@/app/_lib/util/toast-hook";
-import { announcementWritter } from "@/config/composition";
+import { AnnouncementsPageCard } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page-card";
+import { AnnouncementsPageForm } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page-form";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
+import { Page } from "@/app/_lib/component/page/page";
+import { Alert, AlertDescription } from "@/app/_lib/component/shadcn/alert";
+import { Button } from "@/app/_lib/component/shadcn/button";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/app/_lib/component/shadcn/empty";
+import { Separator } from "@/app/_lib/component/shadcn/separator";
+import { useAppSelector } from "@/app/_store/store";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -25,6 +28,10 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.announcements.announcements-page.page-description",
     defaultMessage: "View and create contest announcements.",
   },
+  newLabel: {
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page.new-label",
+    defaultMessage: "New Announcement",
+  },
   createSuccess: {
     id: "app.[slug].(dashboard)._common.announcements.announcements-page.create-success",
     defaultMessage: "Announcement created successfully",
@@ -33,14 +40,22 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.announcements.announcements-page.create-error",
     defaultMessage: "Failed to create announcement",
   },
-  empty: {
-    id: "app.[slug].(dashboard)._common.announcements.announcements-page.empty",
+  emptyTitle: {
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page.empty-title",
     defaultMessage: "No announcements yet",
+  },
+  emptyDescription: {
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page.empty-description",
+    defaultMessage: "Announcements will appear here once created.",
+  },
+  guidanceText: {
+    id: "app.[slug].(dashboard)._common.announcements.announcements-page.guidance-text",
+    defaultMessage:
+      "This page displays important contest announcements from judges and organizers. Announcements may include contest updates, clarifications that affect all contestants, schedule changes, or other important information.",
   },
 });
 
 type Props = {
-  contestId: string;
   announcements: AnnouncementResponseDTO[];
   canCreate?: boolean;
 };
@@ -48,70 +63,69 @@ type Props = {
 /**
  * Displays the announcements page where users can view and create announcements.
  **/
-export function AnnouncementsPage({
-  contestId,
-  announcements,
-  canCreate = false,
-}: Props) {
-  const createAnnouncementState = useLoadableState();
-  const toast = useToast();
-
-  const form = useForm<AnnouncementFormType>({
-    resolver: joiResolver(announcementFormSchema),
-    defaultValues: AnnouncementFormMap.getDefault(),
-  });
-
-  async function createAnnouncement(data: AnnouncementFormType) {
-    createAnnouncementState.start();
-    try {
-      await announcementWritter.create(
-        contestId,
-        AnnouncementFormMap.toInputDTO(data),
-      );
-      createAnnouncementState.finish();
-      form.reset();
-      toast.success(messages.createSuccess);
-    } catch (error) {
-      createAnnouncementState.fail(error, {
-        default: () => toast.error(messages.createError),
-      });
-    }
-  }
+export function AnnouncementsPage({ announcements, canCreate = false }: Props) {
+  const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 
   return (
-    <>
-      <Metadata
-        title={messages.pageTitle}
-        description={messages.pageDescription}
-      />
-      <div className="flex flex-col items-center">
+    <Page title={messages.pageTitle} description={messages.pageDescription}>
+      <div className="flex flex-col items-center py-5">
         {/* Create Form */}
-        {canCreate && (
-          <>
-            <CreateAnnouncementForm
-              form={form}
-              onSubmit={createAnnouncement}
-              isLoading={createAnnouncementState.isLoading}
-            />
-            <Divider className="mb-5" />
-          </>
+        {canCreate && isCreateFormOpen && (
+          <AnnouncementsPageForm
+            contestId={contestId}
+            onClose={() => setIsCreateFormOpen(false)}
+          />
         )}
+        {canCreate && !isCreateFormOpen && (
+          <Button
+            onClick={() => setIsCreateFormOpen(true)}
+            data-testid="open-create-form-button"
+          >
+            <PlusIcon size={16} />
+            <FormattedMessage {...messages.newLabel} />
+          </Button>
+        )}
+        {canCreate && <Separator className="my-5 w-full max-w-4xl" />}
 
         {/* Empty State */}
-        {announcements.length == 0 && <EmptyAnnouncementDisplay />}
+        {announcements.length == 0 && (
+          <Empty data-testid="empty">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <MegaphoneIcon size={48} />
+              </EmptyMedia>
+              <EmptyTitle>
+                <FormattedMessage {...messages.emptyTitle} />
+              </EmptyTitle>
+            </EmptyHeader>
+            <EmptyDescription>
+              <FormattedMessage {...messages.emptyDescription} />
+            </EmptyDescription>
+          </Empty>
+        )}
 
         {/* Items */}
         {announcements.length > 0 && (
-          <div className="w-full max-w-4xl space-y-5">
+          <div
+            className="w-full max-w-4xl space-y-5"
+            data-testid="announcements-list"
+          >
             {announcements.toReversed().map((announcement) => (
-              <AnnouncementCard
+              <AnnouncementsPageCard
                 key={announcement.id}
                 announcement={announcement}
               />
             ))}
           </div>
         )}
+
+        <Alert className="bg-card mt-5 w-full max-w-4xl py-2">
+          <AlertDescription className="text-xs">
+            <FormattedMessage {...messages.guidanceText} />
+          </AlertDescription>
+        </Alert>
       </div>
-    </>
+    </Page>
   );
 }

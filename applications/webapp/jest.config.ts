@@ -15,9 +15,7 @@ const config: Config = {
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
     "!src/**/*.d.{ts,tsx}",
-    "!src/app/_lib/component/base/**/*",
-    "!src/app/_lib/component/icon/**/*",
-    "!src/app/_lib/heroui.ts",
+    "!src/app/_lib/component/shadcn/**/*",
     "!src/config/**/*",
     "!src/core/domain/**/*",
     "!src/core/port/**/*",

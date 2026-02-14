@@ -81,6 +81,7 @@ export class AxiosServerSideClient extends AxiosClient {
     const setCookieHeader = response.headers["set-cookie"];
     if (setCookieHeader) {
       const { cookies } = await import("next/headers");
+
       const cookiesFn = await cookies();
       setCookieHeader.forEach((cookieString: string) => {
         const cookieParts = cookieString.split(";");
@@ -106,12 +107,12 @@ export class AxiosServerSideClient extends AxiosClient {
   private async forwardHeadersFromClientToApi(
     requestConfig: AxiosRequestConfig,
   ): Promise<void> {
-    const { cookies } = await import("next/headers");
-    const cookiesFn = await cookies();
+    const { headers } = await import("next/headers");
+    const headersFn = await headers();
     requestConfig.headers = requestConfig.headers || {};
     AxiosServerSideClient.HEADERS_TO_FORWARD_FROM_CLIENT_TO_API.forEach(
       (headerName) => {
-        const headerValue = cookiesFn.get(headerName)?.value;
+        const headerValue = headersFn.get(headerName);
         if (headerValue) {
           requestConfig.headers![headerName] = headerValue;
         }

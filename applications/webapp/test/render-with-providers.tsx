@@ -1,9 +1,9 @@
-import { HeroUIProvider } from "@heroui/react";
 import { act, render, renderHook } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import React from "react";
 import { Provider } from "react-redux";
 
+import { TooltipProvider } from "@/app/_lib/component/shadcn/tooltip";
 import { AppStore, makeStore, RootState } from "@/app/_store/store";
 import messages from "@/i18n/messages/en-US.json";
 
@@ -15,9 +15,9 @@ interface WrapperProps {
 function Wrapper({ children, store }: WrapperProps) {
   return (
     <NextIntlClientProvider locale={"en-US"} messages={messages} timeZone="UTC">
-      <HeroUIProvider>
+      <TooltipProvider>
         <Provider store={store}>{children}</Provider>
-      </HeroUIProvider>
+      </TooltipProvider>
     </NextIntlClientProvider>
   );
 }

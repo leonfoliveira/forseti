@@ -6,23 +6,31 @@ import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.port.driving.usecase.contest.FindContestUseCase
+import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
+import java.time.OffsetDateTime
 
 class WebSocketTopicConfigsTest :
     FunSpec({
-        val authorizeContestUseCase = mockk<AuthorizeContestUseCase>(relaxed = true)
-        val sut = WebSocketTopicConfigs(authorizeContestUseCase)
+        val findContestUseCase = mockk<FindContestUseCase>()
+        val sut = WebSocketTopicConfigs(findContestUseCase)
+
+        val startedContest = ContestMockBuilder.build(startAt = OffsetDateTime.now().minusHours(1))
+        val notStartedContest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
+        val member = MemberMockBuilder.build(contest = startedContest)
+        val adminMember = MemberMockBuilder.build(contest = startedContest, type = Member.Type.ADMIN)
+        val judgeMember = MemberMockBuilder.build(contest = startedContest, type = Member.Type.JUDGE)
+        val otherMember = MemberMockBuilder.build()
 
         beforeEach {
-            RequestContext.clearContext()
+            val session = SessionMockBuilder.build(member = member)
+            RequestContext.getContext().session = session
         }
 
         context("privateFilters") {
@@ -37,318 +45,12 @@ class WebSocketTopicConfigsTest :
                         "/topic/contests/[a-fA-F0-9-]+/submissions",
                         "/topic/contests/[a-fA-F0-9-]+/submissions/full",
                         "/topic/contests/[a-fA-F0-9-]+/submissions/full/members/[a-fA-F0-9-]+",
+                        ".*",
                     )
 
                 sut.privateFilters.keys.size shouldBe expectedPatterns.size
                 expectedPatterns.forEach { pattern ->
                     sut.privateFilters.keys.any { it.pattern == pattern } shouldBe true
-                }
-            }
-
-            context("announcements filter") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
-                val destination = "/topic/contests/$contestId/announcements"
-
-                test("should return true when contest access is allowed") {
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first { it.key.pattern.contains("announcements") }
-                            .value
-                    val result = filter(destination)
-
-                    result shouldBe true
-                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
-                }
-
-                test("should throw exception when contest access is forbidden") {
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } throws ForbiddenException("Access denied")
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first { it.key.pattern.contains("announcements") }
-                            .value
-
-                    shouldThrow<ForbiddenException> {
-                        filter(destination)
-                    }
-                }
-            }
-
-            context("clarifications filter") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
-                val destination = "/topic/contests/$contestId/clarifications"
-
-                test("should return true when contest access is allowed") {
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("clarifications") &&
-                                    !it.key.pattern.contains("children") &&
-                                    !it.key.pattern.contains("deleted")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe true
-                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
-                }
-            }
-
-            context("clarifications children members filter") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
-                val memberId = UuidCreator.getTimeOrderedEpoch()
-                val destination = "/topic/contests/$contestId/clarifications/children/members/$memberId"
-
-                test("should return true when member owns the clarification") {
-                    every { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) } returns Unit
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-                    RequestContext.getContext().session =
-                        SessionMockBuilder.build(
-                            member = MemberMockBuilder.build(id = memberId, contest = ContestMockBuilder.build(id = contestId)),
-                        )
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("clarifications/children/members")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe true
-                    verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
-                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
-                }
-
-                test("should return false when member does not own the clarification") {
-                    every { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) } returns Unit
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-                    RequestContext.getContext().session = SessionMockBuilder.build()
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("clarifications/children/members")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe false
-                }
-
-                test("should return false when member is null") {
-                    every { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) } returns Unit
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-                    RequestContext.getContext().session = null
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("clarifications/children/members")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe false
-                }
-            }
-
-            context("clarifications deleted filter") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
-                val destination = "/topic/contests/$contestId/clarifications/deleted"
-
-                test("should return true when contest access is allowed") {
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("clarifications/deleted")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe true
-                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
-                }
-            }
-
-            context("leaderboard filter") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
-                val destination = "/topic/contests/$contestId/leaderboard"
-
-                test("should return true when contest access is allowed") {
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("leaderboard")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe true
-                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
-                }
-            }
-
-            context("submissions filter") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
-                val destination = "/topic/contests/$contestId/submissions"
-
-                test("should return true when contest access is allowed") {
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("submissions") && !it.key.pattern.contains("full")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe true
-                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
-                }
-            }
-
-            context("submissions full filter") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
-                val destination = "/topic/contests/$contestId/submissions/full"
-
-                test("should return true when member is ADMIN") {
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-                    RequestContext.getContext().session =
-                        SessionMockBuilder.build(
-                            member =
-                                MemberMockBuilder.build(
-                                    type = Member.Type.ADMIN,
-                                    contest = ContestMockBuilder.build(id = contestId),
-                                ),
-                        )
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("submissions/full") && !it.key.pattern.contains("members")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe true
-                }
-
-                test("should return true when member is JUDGE") {
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-                    RequestContext.getContext().session =
-                        SessionMockBuilder.build(
-                            member =
-                                MemberMockBuilder.build(
-                                    type = Member.Type.JUDGE,
-                                    contest = ContestMockBuilder.build(id = contestId),
-                                ),
-                        )
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("submissions/full") && !it.key.pattern.contains("members")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe true
-                }
-
-                test("should return false when member is CONTESTANT") {
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-                    RequestContext.getContext().session =
-                        SessionMockBuilder.build(
-                            member =
-                                MemberMockBuilder.build(
-                                    type = Member.Type.CONTESTANT,
-                                    contest = ContestMockBuilder.build(id = contestId),
-                                ),
-                        )
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("submissions/full") && !it.key.pattern.contains("members")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe false
-                }
-
-                test("should return false when member is null") {
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-                    RequestContext.getContext().session = null
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("submissions/full") && !it.key.pattern.contains("members")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe false
-                }
-            }
-
-            context("submissions full members filter") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
-                val memberId = UuidCreator.getTimeOrderedEpoch()
-                val destination = "/topic/contests/$contestId/submissions/full/members/$memberId"
-
-                test("should return true when member owns the submissions") {
-                    every { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) } returns Unit
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-                    RequestContext.getContext().session =
-                        SessionMockBuilder.build(
-                            member =
-                                MemberMockBuilder.build(
-                                    id = memberId,
-                                    contest = ContestMockBuilder.build(id = contestId),
-                                ),
-                        )
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("submissions/full/members")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe true
-                    verify { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) }
-                    verify { authorizeContestUseCase.checkIfStarted(contestId) }
-                }
-
-                test("should return false when member does not own the submissions") {
-                    every { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) } returns Unit
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-                    RequestContext.getContext().session = SessionMockBuilder.build()
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("submissions/full/members")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe false
-                }
-
-                test("should return false when member is null") {
-                    every { authorizeContestUseCase.checkIfMemberBelongsToContest(contestId) } returns Unit
-                    every { authorizeContestUseCase.checkIfStarted(contestId) } returns Unit
-                    RequestContext.getContext().session = null
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first {
-                                it.key.pattern.contains("submissions/full/members")
-                            }.value
-                    val result = filter(destination)
-
-                    result shouldBe false
                 }
             }
 
@@ -365,10 +67,11 @@ class WebSocketTopicConfigsTest :
 
                     patterns.forEach { destination ->
                         val matchingFilter =
-                            sut.privateFilters.entries.find {
+                            sut.privateFilters.entries.first {
                                 it.key.matches(destination)
                             }
                         matchingFilter shouldNotBe null
+                        matchingFilter.key.pattern shouldNotBe ".*"
                     }
                 }
 
@@ -382,11 +85,385 @@ class WebSocketTopicConfigsTest :
                         )
 
                     invalidDestinations.forEach { destination ->
-                        val matchingFilters =
-                            sut.privateFilters.entries.filter {
+                        val matchingFilter =
+                            sut.privateFilters.entries.first {
                                 it.key.matches(destination)
                             }
-                        matchingFilters.size shouldBe 0
+                        matchingFilter shouldNotBe null
+                        matchingFilter.key.pattern shouldBe ".*"
+                    }
+                }
+            }
+
+            context("announcements filter") {
+                val destination = "/topic/contests/${startedContest.id}/announcements"
+
+                test("should allow access when contest has started") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when contest has not started and user is not privileged") {
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/announcements"
+                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(notStartedDestination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(notStartedDestination)
+                    }
+                }
+
+                test("should allow access when contest has not started but user is admin") {
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/announcements"
+                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
+
+                    val session = SessionMockBuilder.build(member = adminMember)
+                    RequestContext.getContext().session = session
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(notStartedDestination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+            }
+
+            context("clarifications filter") {
+                val destination = "/topic/contests/${startedContest.id}/clarifications"
+
+                test("should allow access when contest has started") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when contest has not started") {
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/clarifications"
+                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(notStartedDestination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(notStartedDestination)
+                    }
+                }
+            }
+
+            context("clarifications children members filter") {
+                val destination = "/topic/contests/${startedContest.id}/clarifications/children/members/${member.id}"
+
+                test("should allow access when contest has started and user is the same member") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should deny access when user is different member") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val session = SessionMockBuilder.build(member = otherMember)
+                    RequestContext.getContext().session = session
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when user is not authenticated") {
+                    RequestContext.clearContext()
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when user belongs to different contest") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val session = SessionMockBuilder.build(member = otherMember)
+                    RequestContext.getContext().session = session
+
+                    shouldThrow<ForbiddenException> {
+                        val filter =
+                            sut.privateFilters.entries
+                                .first { it.key.matches(destination) }
+                                .value
+                        filter(destination)
+                    }
+                }
+            }
+
+            context("clarifications deleted filter") {
+                val destination = "/topic/contests/${startedContest.id}/clarifications/deleted"
+
+                test("should allow access when contest has started") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when contest has not started") {
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/clarifications/deleted"
+                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(notStartedDestination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(notStartedDestination)
+                    }
+                }
+            }
+
+            context("leaderboard filter") {
+                val destination = "/topic/contests/${startedContest.id}/leaderboard"
+
+                test("should allow access when contest has started") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when contest has not started") {
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard"
+                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(notStartedDestination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(notStartedDestination)
+                    }
+                }
+            }
+
+            context("submissions filter") {
+                val destination = "/topic/contests/${startedContest.id}/submissions"
+
+                test("should allow access when contest has started") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when contest has not started") {
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/submissions"
+                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(notStartedDestination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(notStartedDestination)
+                    }
+                }
+            }
+
+            context("submissions full filter") {
+                val destination = "/topic/contests/${startedContest.id}/submissions/full"
+
+                test("should allow access for admin members when contest has started") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val session = SessionMockBuilder.build(member = adminMember)
+                    RequestContext.getContext().session = session
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should allow access for judge members when contest has started") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val session = SessionMockBuilder.build(member = judgeMember)
+                    RequestContext.getContext().session = session
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should deny access for contestant members") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when contest has not started") {
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/submissions/full"
+                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(notStartedDestination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(notStartedDestination)
+                    }
+                }
+            }
+
+            context("submissions full members filter") {
+                val destination = "/topic/contests/${startedContest.id}/submissions/full/members/${member.id}"
+
+                test("should allow access when contest has started and user is the same member") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should deny access when user is different member") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val session = SessionMockBuilder.build(member = otherMember)
+                    RequestContext.getContext().session = session
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when user is not authenticated") {
+                    RequestContext.clearContext()
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when user belongs to different contest") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val session = SessionMockBuilder.build(member = otherMember)
+                    RequestContext.getContext().session = session
+
+                    shouldThrow<ForbiddenException> {
+                        val filter =
+                            sut.privateFilters.entries
+                                .first { it.key.matches(destination) }
+                                .value
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when contest has not started") {
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/submissions/full/members/${member.id}"
+                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(notStartedDestination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(notStartedDestination)
                     }
                 }
             }

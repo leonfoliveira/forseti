@@ -34,84 +34,97 @@
     }
   },
   "app": {
+    "page": {
+      "page-title": "Forseti",
+      "page-description": "Aplicação Forseti.",
+      "welcome-title": "Bem-vindo ao Forseti Judge",
+      "contest-access-info": "Para acessar um concurso, use o formato correto de URL do concurso:",
+      "url-format": "/'{slug-do-concurso'}",
+      "url-format-description": "Substitua '{slug-do-concurso'} pelo identificador específico do seu concurso.",
+      "contact-admin": "Se você não tem uma URL de concurso, entre em contato com o administrador do concurso."
+    },
+    "error": {
+      "403": {
+        "page": {
+          "description": "Você não tem permissão para acessar esta página."
+        }
+      },
+      "404": {
+        "page": {
+          "description": "A página que você está procurando não foi encontrada."
+        }
+      },
+      "500": {
+        "page": {
+          "description": "Ocorreu um erro inesperado no servidor.",
+          "reload": "Tentar novamente"
+        }
+      },
+      "503": {
+        "page": {
+          "description": "O serviço está temporariamente indisponível.",
+          "reload": "Tentar novamente"
+        }
+      }
+    },
     "_lib": {
       "provider": {
         "judge-dashboard-provider": {
-          "load-error": "Erro ao carregar dados do concurso",
           "submission-failed": "Nova submissão falhada",
           "announcement": "Novo anúncio: {text}",
           "new-clarification": "Nova pergunta"
         },
         "guest-dashboard-provider": {
-          "load-error": "Erro ao carregar dados do concurso",
           "announcement": "Novo anúncio: {text}"
         },
         "contestant-dashboard-provider": {
-          "load-error": "Erro ao carregar dados do concurso",
           "problem-answer": "Problema {letter}: {answer}",
           "announcement": "Novo anúncio: {text}",
           "clarification-answer": "Nova resposta para uma pergunta"
         },
         "admin-dashboard-provider": {
-          "load-error": "Erro ao carregar dados do concurso",
           "submission-failed": "Nova submissão falhada",
           "announcement": "Novo anúncio: {text}",
           "new-clarification": "Nova pergunta"
         }
       },
       "component": {
-        "header": {
-          "sign-in": "Entrar",
-          "sign-out": "Sair"
-        },
-        "footer": {
-          "text": "Judge {version}"
-        },
         "page": {
-          "loading-page": {
-            "label": "Carregando"
-          },
           "error-page": {
-            "description": "Ocorreu um erro inesperado.",
+            "description": "Ocorreu um erro inesperado no servidor.",
             "reload": "Recarregar a página"
           }
         },
-        "modal": {
-          "confirmation-modal": {
-            "cancel-label": "Cancelar",
-            "confirm-label": "Confirmar"
+        "layout": {
+          "header": {
+            "toggle-theme-tooltip": "Alternar tema",
+            "sign-in-tooltip": "Entrar",
+            "sign-out-tooltip": "Sair"
+          },
+          "footer": {
+            "text": "Forseti {version}"
           }
         },
-        "format": {
+        "i18n": {
           "formatted-duration": {
             "duration": "{hours}:{minutes}:{seconds}",
             "duration-with-days": "{days}d {hours}:{minutes}:{seconds}"
           }
+        },
+        "feedback": {
+          "confirmation-dialog": {
+            "cancel-button": "Cancelar",
+            "confirm-button": "Confirmar"
+          }
         }
-      }
-    },
-    "page": {
-      "page-title": "Forseti",
-      "page-description": "Aplicação Forseti."
-    },
-    "error": {
-      "403": {
-        "description": "Você não tem permissão para acessar esta página."
-      },
-      "404": {
-        "description": "A página que você está procurando não foi encontrada."
-      },
-      "500": {
-        "description": "Ocorreu um erro interno no servidor.",
-        "reload": "Tentar novamente"
-      },
-      "503": {
-        "description": "O serviço está temporariamente indisponível. Por favor, tente novamente mais tarde.",
-        "reload": "Tentar novamente"
       }
     },
     "[slug]": {
       "sign-in": {
+        "sign-in-form": {
+          "login-required": "Obrigatório",
+          "password-required": "Obrigatório"
+        },
         "page": {
           "wrong-login-password": "Login ou senha incorretos",
           "sign-in-error": "Erro ao fazer login",
@@ -123,13 +136,8 @@
           "login-label": "Login",
           "password-label": "Senha",
           "sign-in-label": "Entrar",
-          "enter-guest-label": "Entrar como Convidado"
-        },
-        "_form": {
-          "sign-in-form-schema": {
-            "login-required": "Obrigatório",
-            "password-required": "Obrigatório"
-          }
+          "enter-guest-label": "Entrar como Convidado",
+          "enter-guest-error": "Erro ao entrar como convidado"
         }
       },
       "(dashboard)": {
@@ -142,93 +150,138 @@
           "tab-announcements": "Anúncios",
           "tab-settings": "Configurações"
         },
-        "settings": {
-          "admin-settings-page": {
-            "page-title": "Forseti - Configurações",
-            "page-description": "Configure as configurações do concurso.",
-            "tab-contest": "Concurso",
-            "tab-problems": "Problemas",
-            "tab-members": "Membros",
-            "reset-label": "Desfazer Alterações",
-            "save-label": "Salvar Alterações",
-            "save-modal-title": "Salvar Alterações",
-            "save-modal-body": "Tem certeza de que deseja salvar essas alterações?",
-            "save-modal-alert-title": "Atenção",
-            "save-modal-alert-body": "Esta ação modificará os dados do concurso enquanto o concurso está em andamento. Isso pode afetar os participantes e suas submissões. Proceda com cautela.",
-            "save-modal-cancel": "Não, cancelar",
-            "save-modal-confirm": "Sim, salvar alterações",
-            "save-success": "Alterações salvas com sucesso",
-            "save-error": "Falha ao salvar alterações",
-            "save-slug-in-use": "Este slug já está em uso"
+        "_common": {
+          "wait-page": {
+            "start-at": "Inicia em",
+            "languages": "Linguagens suportadas"
           },
-          "_tab": {
-            "contest": {
-              "basic-information-section": "Informações Básicas",
-              "slug-label": "Slug",
-              "slug-description": "Identificador único para a URL do concurso",
-              "title-label": "Título",
-              "title-description": "Nome de exibição do concurso",
-              "contest-configuration-section": "Configuração do Concurso",
-              "languages-label": "Linguagens",
-              "start-label": "Início",
-              "start-description": "Horário de início do concurso",
-              "end-label": "Fim",
-              "end-description": "Horário de fim do concurso",
-              "languages-description": "Certifique-se de que os sandboxes para as linguagens selecionadas estão instalados",
-              "is-auto-judge-enabled-label": "Juiz Automático Habilitado",
-              "force-start-label": "Forçar Início Agora",
-              "force-end-label": "Forçar Fim Agora",
-              "control-section": "Controle do Concurso",
-              "control-time-section": "Use essas ações para substituir o cronograma do concurso",
-              "current-status": "Status Atual: {status}",
-              "force-start-body": "Tem certeza de que deseja forçar o início do concurso?",
-              "force-start-alert-title": "Atenção",
-              "force-start-alert-body": "O concurso começará a aceitar submissões e esta ação não pode ser desfeita. No entanto, você ainda poderá editar as configurações do concurso posteriormente.",
-              "force-end-body": "Tem certeza de que deseja forçar o fim do concurso?",
-              "force-end-alert-title": "Atenção",
-              "force-end-alert-body": "O concurso parará de aceitar submissões e esta ação não pode ser desfeita. Você não poderá editar as configurações do concurso posteriormente.",
-              "force-start-success": "Concurso iniciado.",
-              "force-start-error": "Falha ao iniciar concurso.",
-              "force-end-success": "Concurso finalizado.",
-              "force-end-error": "Falha ao finalizar concurso."
+          "submissions": {
+            "submissions-page": {
+              "page-title": "Forseti - Submissões",
+              "page-description": "Visualize todas as submissões feitas durante o concurso.",
+              "only-mine-label": "Apenas minhas",
+              "header-timestamp": "Horário",
+              "header-contestant": "Competidor",
+              "header-problem": "Problema",
+              "header-language": "Linguagem",
+              "header-status": "Status",
+              "header-answer": "Resposta",
+              "new-label": "Nova Submissão",
+              "guidance-text": "Visualize todas as submissões do concurso aqui. Use o filtro 'Apenas minhas' para ver suas submissões. Clique em 'Nova Submissão' para enviar seu código. As submissões são julgadas automaticamente e os resultados aparecem em tempo real. Você pode ver o status (julgando/completado) e a resposta (aceito/errado/erro) de cada submissão."
             },
-            "problems-settings": {
-              "section-title": "Problemas do Concurso",
-              "section-subtitle": "Configure os problemas para este concurso. Cada problema requer um título, descrição e casos de teste.",
-              "title-label": "Título",
-              "title-description": "Um nome claro e descritivo para o problema",
-              "description-label": "Descrição",
-              "description-file-description": "Envie um arquivo PDF ou texto com o enunciado do problema",
-              "time-limit-label": "Limite de Tempo",
-              "time-limit-description": "Tempo máximo de execução por caso de teste",
-              "memory-limit-label": "Limite de Memória",
-              "memory-limit-description": "Uso máximo de memória por caso de teste",
-              "test-cases-label": "Casos de Teste",
-              "test-cases-description": "Envie um arquivo CSV com casos de teste de entrada/saída",
-              "current-file-label": "Atual: {filename}",
-              "new-label": "Novo Problema",
-              "problem-header-subtitle": "Configure detalhes e restrições do problema",
-              "execution-constraints-title": "Restrições de Execução",
-              "empty-state-title": "Nenhum Problema Adicionado Ainda",
-              "empty-state-description": "Comece adicionando seu primeiro problema. Cada problema deve incluir um título claro, descrição, casos de teste e restrições de execução.",
-              "add-first-problem-label": "Adicionar Primeiro Problema"
+            "submissions-page-form": {
+              "create-title": "Criar Submissão",
+              "create-description": "Preencha o formulário abaixo para criar uma nova submissão.",
+              "problem-label": "Problema",
+              "problem-option": "{letter}. {title}",
+              "language-label": "Linguagem",
+              "code-label": "Código",
+              "cancel-label": "Cancelar",
+              "submit-label": "Enviar",
+              "create-success": "Submissão criada com sucesso",
+              "create-error": "Falha ao criar submissão"
             },
-            "members-settings": {
-              "section-title": "Membros do Concurso",
-              "section-description": "Gerencie participantes e seus níveis de acesso para este concurso.",
-              "type-label": "Tipo",
-              "name-label": "Nome",
-              "login-label": "Login",
-              "password-label": "Senha",
-              "actions-label": "Ações",
-              "new-member-label": "Adicionar Membro",
-              "empty-state-title": "Nenhum Membro Adicionado Ainda",
-              "empty-state-description": "Comece adicionando participantes do concurso. Você pode atribuir diferentes funções e níveis de acesso.",
-              "add-first-member-label": "Adicionar Primeiro Membro"
+            "submissions-page-actions-menu": {
+              "actions-label": "Ações"
+            },
+            "submissions-page-action-rerun": {
+              "resubmit-label": "Reenviar",
+              "title": "Tem certeza de que deseja reenviar?",
+              "description": "Isso enviará a submissão para a fila do juiz novamente e pode levar algum tempo para ser concluída.",
+              "cancel": "Cancelar",
+              "confirm": "Confirmar",
+              "resubmit-success": "Submissão reenviada com sucesso",
+              "resubmit-error": "Falha ao reenviar submissão"
+            },
+            "submissions-page-action-judge": {
+              "judge-label": "Julgar",
+              "title": "Tem certeza de que deseja julgar?",
+              "description": "Isso substituirá qualquer resposta existente.",
+              "cancel": "Cancelar",
+              "confirm": "Confirmar",
+              "judge-success": "Submissão julgada com sucesso",
+              "judge-error": "Falha ao julgar submissão",
+              "answer-label": "Resposta"
+            },
+            "submissions-page-action-download": {
+              "download-label": "Baixar",
+              "download-error": "Falha ao baixar submissão."
+            },
+            "submission-judge-form": {
+              "answer-required": "Obrigatório"
+            },
+            "submission-form": {
+              "problem-required": "Obrigatório",
+              "language-required": "Obrigatório",
+              "code-required": "Obrigatório",
+              "code-too-large": "Arquivo de código deve ter no máximo 10MB"
             }
           },
-          "_form": {
-            "settings-form-schema": {
+          "settings": {
+            "settings-page": {
+              "title": "Forseti - Configurações",
+              "description": "Gerencie as configurações e preferências do seu concurso.",
+              "contest-tab": "Concurso",
+              "problems-tab": "Problemas",
+              "members-tab": "Membros",
+              "in-progress-alert-description": "Este concurso está atualmente em andamento. Alterar as configurações pode afetar a experiência do concurso para os participantes.",
+              "reset-label": "Redefinir",
+              "save-label": "Salvar",
+              "save-success": "Configurações salvas com sucesso.",
+              "save-error": "Falha ao salvar configurações.",
+              "confirm-dialog-title": "Confirmar Alterações",
+              "confirm-dialog-description": "Tem certeza de que deseja salvar essas alterações?",
+              "confirm-dialog-in-progress-alert-title": "Concurso em Andamento",
+              "confirm-dialog-in-progress-alert-description": "Este concurso está atualmente em andamento. Alterar as configurações pode afetar a experiência do concurso para os participantes. Por favor, revise suas alterações cuidadosamente antes de confirmar.",
+              "confirm-dialog-cancel": "Cancelar",
+              "confirm-dialog-confirm": "Sim, Salvar Alterações"
+            },
+            "settings-page-problems-tab": {
+              "title-label": "Título",
+              "title-description": "O título do problema.",
+              "description-label": "Descrição (PDF)",
+              "description-description": "O arquivo de descrição do problema em formato PDF.",
+              "time-limit-label": "Limite de Tempo (ms)",
+              "time-limit-description": "O tempo máximo permitido para o problema.",
+              "memory-limit-label": "Limite de Memória (MB)",
+              "memory-limit-description": "A memória máxima permitida para o problema.",
+              "test-cases-label": "Casos de Teste (CSV)",
+              "test-cases-description": "O arquivo de casos de teste em formato CSV com duas colunas: entrada e saída esperada.",
+              "new-problem-label": "Novo Problema",
+              "download-attachment-error": "Falha ao baixar arquivo."
+            },
+            "settings-page-members-tab": {
+              "title-label": "Nome",
+              "type-label": "Tipo",
+              "login-label": "Login",
+              "password-label": "Senha",
+              "new-member-label": "Novo Membro"
+            },
+            "settings-page-contest-tab": {
+              "slug-label": "Slug",
+              "slug-description": "O slug é usado na URL e deve ser único.",
+              "title-label": "Título",
+              "title-description": "O título do concurso.",
+              "start-at-label": "Início em",
+              "start-at-description": "O horário de início do concurso.",
+              "end-at-label": "Fim em",
+              "end-at-description": "O horário de fim do concurso.",
+              "languages-label": "Linguagens",
+              "languages-description": "As linguagens de programação permitidas no concurso.",
+              "is-auto-judge-enabled-label": "Juiz Automático",
+              "is-auto-judge-enabled-description": "Se deve habilitar o julgamento automático de submissões.",
+              "force-start-label": "Forçar Início",
+              "force-start-confirmation-title": "Tem certeza de que deseja forçar o início do concurso imediatamente?",
+              "force-start-confirmation-description": "Esta ação não pode ser desfeita.",
+              "force-start-success": "Concurso foi forçado a iniciar.",
+              "force-start-error": "Falha ao forçar início do concurso.",
+              "force-end-label": "Forçar Fim",
+              "force-end-confirmation-title": "Tem certeza de que deseja forçar o fim do concurso imediatamente?",
+              "force-end-confirmation-description": "Esta ação não pode ser desfeita.",
+              "force-end-success": "Concurso foi forçado a terminar.",
+              "force-end-error": "Falha ao forçar fim do concurso."
+            },
+            "settings-form": {
               "slug-required": "Slug é obrigatório",
               "slug-too-long": "Slug deve ter no máximo 32 caracteres",
               "slug-pattern": "Slug deve conter apenas caracteres alfanuméricos e hífens",
@@ -258,156 +311,99 @@
               "member-password-required": "Senha é obrigatória",
               "member-password-too-long": "Senha deve ter no máximo 32 caracteres"
             }
-          }
-        },
-        "_common": {
-          "wait-page": {
-            "start-at": "Inicia em",
-            "languages": "Linguagens suportadas"
-          },
-          "submissions": {
-            "submission-row": {
-              "download-tooltip": "Baixar",
-              "resubmit-tooltip": "Reenviar",
-              "judge-tooltip": "Julgar"
-            },
-            "judge-submission-form": {
-              "answer-label": "Resposta",
-              "judge-body": "Tem certeza de que deseja julgar esta submissão?"
-            },
-            "create-submission-form": {
-              "create-title": "Criar Submissão",
-              "problem-label": "Problema",
-              "problem-option": "{letter}. {title}",
-              "language-label": "Linguagem",
-              "language-description": "Selecione a linguagem de programação usada na submissão.",
-              "code-label": "Código",
-              "code-description": "Envie um arquivo de código não compilado.",
-              "submit-label": "Enviar"
-            }
-          },
-          "submissions-page": {
-            "page-title": "Forseti - Submissões",
-            "page-description": "Visualize todas as submissões feitas durante o concurso.",
-            "create-title": "Criar Submissão",
-            "problem-label": "Problema",
-            "problem-option": "{letter}. {title}",
-            "language-label": "Linguagem",
-            "language-description": "Selecione a linguagem de programação usada na submissão.",
-            "code-label": "Código",
-            "code-description": "Envie um arquivo de código não compilado.",
-            "submit-label": "Enviar",
-            "create-success": "Submissão criada com sucesso.",
-            "create-error": "Erro ao criar submissão.",
-            "header-timestamp": "Horário",
-            "header-contestant": "Competidor",
-            "header-problem": "Problema",
-            "header-language": "Linguagem",
-            "header-answer": "Resposta",
-            "header-status": "Status",
-            "empty": "Nenhuma submissão ainda",
-            "resubmit-title": "Reenviar Submissão",
-            "resubmit-body": "Tem certeza de que deseja reenviar esta submissão?",
-            "resubmit-success": "Submissão reenviada com sucesso.",
-            "resubmit-error": "Erro ao reenviar submissão.",
-            "judge-title": "Julgar Submissão",
-            "answer-label": "Resposta",
-            "judge-body": "Tem certeza de que deseja julgar esta submissão?",
-            "judge-success": "Submissão julgada com sucesso.",
-            "judge-error": "Erro ao julgar submissão.",
-            "download-tooltip": "Baixar",
-            "resubmit-tooltip": "Reenviar",
-            "judge-tooltip": "Julgar"
-          },
-          "problems-page": {
-            "page-title": "Forseti - Problemas",
-            "page-description": "Visualize todos os problemas do concurso.",
-            "empty": "Nenhum problema ainda",
-            "problem-header": "Problema",
-            "time-limit-header": "Limite de Tempo",
-            "memory-limit-header": "Limite de Memória"
           },
           "problems": {
-            "problem-row": {
-              "time-limit": "{timeLimit}s",
-              "memory-limit": "{memoryLimit} MB"
+            "problems-page": {
+              "page-title": "Forseti - Problemas",
+              "page-description": "Visualize todos os problemas do concurso.",
+              "empty": "Nenhum problema ainda",
+              "problem-header": "Problema",
+              "time-limit-header": "Limite de Tempo",
+              "memory-limit-header": "Limite de Memória",
+              "status-header": "Status",
+              "accepted": "Aceito",
+              "attempts": "{attempts} Tentativas",
+              "not-attempted": "Não tentado",
+              "description-download-error": "Falha ao carregar descrição do problema.",
+              "guidance-text": "Aqui você pode visualizar todos os problemas do concurso. Clique no botão PDF para baixar os enunciados dos problemas. Os limites de tempo e memória são exibidos para cada problema."
             }
           },
-          "leaderboard-page": {
-            "page-title": "Forseti - Placar",
-            "page-description": "Visualize o placar e classificações do concurso.",
-            "header-contestant": "Competidor",
-            "header-score": "Pontuação",
-            "header-penalty": "Penalidade",
-            "empty": "Nenhum competidor ainda"
+          "leaderboard": {
+            "leaderboard-page": {
+              "page-title": "Forseti - Placar",
+              "page-description": "Visualize o placar e classificações do concurso.",
+              "header-contestant": "Competidor",
+              "header-score": "Pontuação",
+              "header-penalty": "Penalidade",
+              "empty": "Nenhum competidor ainda",
+              "rules-explanation": "As classificações são determinadas por: 1) Total de problemas resolvidos (mais é melhor); 2) Tempo total de penalidade (menos é melhor); 3) Tempo das submissões aceitas (mais cedo é melhor); 4) Nome (ordem alfabética). A penalidade inclui o tempo de submissão mais 20 minutos para cada resposta errada antes da aceitação."
+            }
           },
           "clarifications": {
-            "empty-clarification-display": {
-              "empty": "Nenhum esclarecimento ainda"
+            "clarifications-page": {
+              "page-title": "Forseti - Esclarecimentos",
+              "page-description": "Visualize e solicite esclarecimentos para problemas do concurso.",
+              "new-label": "Novo Esclarecimento",
+              "empty-title": "Nenhum esclarecimento ainda",
+              "empty-description": "Os esclarecimentos aparecerão aqui uma vez solicitados.",
+              "guidance-text": "Use esta página para fazer perguntas sobre problemas do concurso e visualizar respostas oficiais dos juízes. Clique em 'Novo Esclarecimento' para enviar uma pergunta. Todos os esclarecimentos e respostas são visíveis para todos os competidores para garantir a imparcialidade. Faça perguntas específicas sobre enunciados de problemas, formatos de entrada/saída ou casos extremos."
             },
-            "create-clarification-form": {
+            "clarifications-page-form": {
               "create-title": "Criar Esclarecimento",
-              "text-label": "Texto",
-              "problem-label": "Problema (opcional)",
+              "create-description": "Envie uma nova solicitação de esclarecimento para um problema do concurso ou uma pergunta geral.",
+              "text-label": "Mensagem",
+              "problem-label": "Problema",
               "problem-option": "{letter}. {title}",
-              "submit-label": "Enviar"
-            },
-            "clarification-card": {
-              "header-problem": "Problema {letter}",
-              "header-general": "Geral",
-              "answer-label": "Resposta",
-              "header-answer": "Re: {judge}"
-            },
-            "answer-clarification-form": {
+              "problem-none": "Nenhum (Pergunta geral)",
+              "cancel-label": "Cancelar",
+              "submit-label": "Enviar",
               "create-success": "Esclarecimento criado com sucesso",
-              "create-error": "Falha ao criar esclarecimento",
-              "answer-label": "Resposta"
-            }
-          },
-          "clarifications-page": {
-            "page-title": "Forseti - Esclarecimentos",
-            "page-description": "Visualize e solicite esclarecimentos para problemas do concurso.",
-            "create-success": "Esclarecimento criado com sucesso",
-            "create-error": "Falha ao criar esclarecimento",
-            "delete-success": "Esclarecimento excluído com sucesso",
-            "delete-error": "Falha ao excluir esclarecimento",
-            "delete-title": "Excluir Esclarecimento",
-            "delete-confirm-label": "Tem certeza de que deseja excluir este esclarecimento?",
-            "delete-cancel": "Não, Cancelar",
-            "delete-confirm": "Sim, Excluir"
-          },
-          "announcements": {
-            "empty-announcement-display": {
-              "empty": "Nenhum anúncio ainda"
+              "create-error": "Falha ao criar esclarecimento"
             },
-            "create-announcement-form": {
-              "create-title": "Criar Anúncio",
-              "text-label": "Texto",
-              "submit-label": "Enviar"
+            "clarifications-page-card": {
+              "header-problem": "Problema {letter}",
+              "message-label": "Mensagem",
+              "answer-label": "Resposta",
+              "create-success": "Esclarecimento respondido com sucesso",
+              "create-error": "Falha ao responder esclarecimento",
+              "delete-alert-title": "Você tem certeza absoluta?",
+              "delete-alert-description": "Esta ação não pode ser desfeita. Isso excluirá permanentemente o esclarecimento.",
+              "delete-alert-cancel": "Cancelar",
+              "delete-alert-continue": "Continuar",
+              "delete-success": "Esclarecimento excluído com sucesso",
+              "delete-error": "Falha ao excluir esclarecimento"
             },
-            "announcements-page": {
-              "page-title": "Forseti - Anúncios",
-              "page-description": "Visualize e crie anúncios do concurso.",
-              "create-success": "Anúncio criado com sucesso",
-              "create-error": "Falha ao criar anúncio",
-              "empty": "Nenhum anúncio ainda"
-            }
-          },
-          "_form": {
-            "submission-judge-form-schema": {
-              "answer-required": "Obrigatório"
-            },
-            "submission-form-schema": {
+            "clarification-form": {
               "problem-required": "Obrigatório",
-              "language-required": "Obrigatório",
-              "code-required": "Obrigatório",
-              "code-too-large": "Arquivo de código deve ter no máximo 10MB"
-            },
-            "clarification-form-schema": {
               "text-required": "Obrigatório",
               "text-long": "Não pode exceder 255 caracteres"
             },
-            "announcement-form-schema": {
+            "clarification-answer-form": {
+              "text-required": "Obrigatório",
+              "text-long": "Não pode exceder 255 caracteres"
+            }
+          },
+          "announcements": {
+            "announcements-page": {
+              "page-title": "Forseti - Anúncios",
+              "page-description": "Visualize e crie anúncios do concurso.",
+              "new-label": "Novo Anúncio",
+              "create-success": "Anúncio criado com sucesso",
+              "create-error": "Falha ao criar anúncio",
+              "empty-title": "Nenhum anúncio ainda",
+              "empty-description": "Os anúncios aparecerão aqui uma vez criados.",
+              "guidance-text": "Esta página exibe anúncios importantes do concurso de juízes e organizadores. Os anúncios podem incluir atualizações do concurso, esclarecimentos que afetam todos os competidores, mudanças de cronograma ou outras informações importantes. Verifique esta página regularmente durante o concurso para atualizações."
+            },
+            "announcements-page-form": {
+              "create-title": "Criar anúncio",
+              "create-description": "Escreva e transmita um novo anúncio para todos os participantes.",
+              "text-label": "Mensagem",
+              "cancel-label": "Cancelar",
+              "broadcast-label": "Transmitir",
+              "create-success": "Anúncio criado com sucesso",
+              "create-error": "Falha ao criar anúncio"
+            },
+            "announcement-form": {
               "text-required": "Obrigatório",
               "text-long": "Não pode exceder 255 caracteres"
             }

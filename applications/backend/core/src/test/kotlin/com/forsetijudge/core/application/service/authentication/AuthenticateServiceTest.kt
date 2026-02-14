@@ -47,7 +47,7 @@ class AuthenticateServiceTest :
             val inputDTO = AuthenticateInputDTO("testLogin", "testPassword")
 
             test("should throw UnauthorizedException when member is not found") {
-                every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns null
+                every { memberRepository.findByLoginAndContestNull(inputDTO.login) } returns null
 
                 shouldThrow<UnauthorizedException> {
                     sut.authenticate(inputDTO)
@@ -57,7 +57,7 @@ class AuthenticateServiceTest :
             listOf(Member.Type.API, Member.Type.AUTOJUDGE).forEach {
                 test("should throw UnauthorizedException when member type is $it") {
                     val member = MemberMockBuilder.build(type = it)
-                    every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns member
+                    every { memberRepository.findByLoginAndContestNull(inputDTO.login) } returns member
 
                     shouldThrow<UnauthorizedException> {
                         sut.authenticate(inputDTO)
@@ -67,7 +67,7 @@ class AuthenticateServiceTest :
 
             test("should throw UnauthorizedException when password does not match") {
                 val member = MemberMockBuilder.build()
-                every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns member
+                every { memberRepository.findByLoginAndContestNull(inputDTO.login) } returns member
                 every { hasher.verify(inputDTO.password, member.password) } returns false
 
                 shouldThrow<UnauthorizedException> {
@@ -77,7 +77,7 @@ class AuthenticateServiceTest :
 
             test("should return Session when authentication is successful") {
                 val member = MemberMockBuilder.build(login = "root")
-                every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns member
+                every { memberRepository.findByLoginAndContestNull(inputDTO.login) } returns member
                 every { hasher.verify(inputDTO.password, member.password) } returns true
                 val session = SessionMockBuilder.build()
                 every { createSessionService.create(null, member) } returns session
@@ -105,7 +105,7 @@ class AuthenticateServiceTest :
                 val contest = ContestMockBuilder.build(id = contestId)
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns null
-                every { memberRepository.findByLoginAndContestId(inputDTO.login, null) } returns null
+                every { memberRepository.findByLoginAndContestNull(inputDTO.login) } returns null
 
                 shouldThrow<UnauthorizedException> {
                     sut.authenticateToContest(contestId, inputDTO)
@@ -142,6 +142,22 @@ class AuthenticateServiceTest :
                 val member = MemberMockBuilder.build(login = inputDTO.login)
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns member
+                every { hasher.verify(inputDTO.password, member.password) } returns true
+                val session = SessionMockBuilder.build()
+                every { createSessionService.create(contest, member) } returns session
+
+                val result = sut.authenticateToContest(contestId, inputDTO)
+
+                verify { deleteSessionService.deleteAllForMember(member) }
+                result shouldBe session
+            }
+
+            test("should return Session when authentication is successful for global member") {
+                val contest = ContestMockBuilder.build(id = contestId)
+                val member = MemberMockBuilder.build(login = inputDTO.login)
+                every { contestRepository.findEntityById(contestId) } returns contest
+                every { memberRepository.findByLoginAndContestId(inputDTO.login, contestId) } returns null
+                every { memberRepository.findByLoginAndContestNull(inputDTO.login) } returns member
                 every { hasher.verify(inputDTO.password, member.password) } returns true
                 val session = SessionMockBuilder.build()
                 every { createSessionService.create(contest, member) } returns session

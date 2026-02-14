@@ -6,11 +6,11 @@ import ContestLayout from "@/app/[slug]/layout";
 import { sessionReader, contestReader } from "@/config/composition";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 
-jest.mock("@/app/_lib/component/footer", () => ({
+jest.mock("@/app/_lib/component/layout/footer", () => ({
   Footer: () => <div data-testid="footer">Footer Component</div>,
 }));
 
-jest.mock("@/app/_lib/component/header", () => ({
+jest.mock("@/app/_lib/component/layout/header", () => ({
   Header: () => <div data-testid="header">Header Component</div>,
 }));
 

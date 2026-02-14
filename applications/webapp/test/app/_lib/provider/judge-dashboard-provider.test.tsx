@@ -3,8 +3,8 @@ import { mock } from "jest-mock-extended";
 import { act } from "react";
 import { v4 as uuidv4 } from "uuid";
 
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { JudgeDashboardProvider } from "@/app/_lib/provider/judge-dashboard-provider";
-import { useToast } from "@/app/_lib/util/toast-hook";
 import {
   announcementListener,
   clarificationListener,

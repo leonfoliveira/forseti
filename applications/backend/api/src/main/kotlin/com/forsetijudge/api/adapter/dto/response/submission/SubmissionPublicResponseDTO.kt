@@ -14,6 +14,7 @@ data class SubmissionPublicResponseDTO(
     val member: MemberPublicResponseDTO,
     val problem: ProblemPublicResponseDTO,
     val language: Submission.Language,
+    val status: Submission.Status,
     val answer: Submission.Answer,
     val createdAt: OffsetDateTime,
 ) : Serializable
@@ -24,6 +25,7 @@ fun Submission.toPublicResponseDTO(): SubmissionPublicResponseDTO =
         member = member.toPublicResponseDTO(),
         problem = problem.toPublicResponseDTO(),
         language = language,
+        status = status,
         answer = answer,
         createdAt = createdAt,
     )

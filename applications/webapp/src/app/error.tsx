@@ -14,7 +14,7 @@ export default function ServerErrorPage() {
 
   useEffect(() => {
     const fromPath = pathname;
-    router.push(
+    router.replace(
       `${routes.INTERNAL_SERVER_ERROR}?from=${encodeURIComponent(fromPath)}`,
     );
   }, [router, pathname]);

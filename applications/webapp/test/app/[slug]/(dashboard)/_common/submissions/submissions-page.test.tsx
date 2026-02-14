@@ -1,342 +1,130 @@
 import { fireEvent, screen } from "@testing-library/dom";
-import { act } from "@testing-library/react";
 
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
-import { useToast } from "@/app/_lib/util/toast-hook";
-import { attachmentReader, submissionWritter } from "@/config/composition";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
+import { MockDate } from "@/test/mock/mock-date";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockProblemFullResponseDTO } from "@/test/mock/response/problem/MockProblemFullResponseDTO";
-import { MockSession } from "@/test/mock/response/session/MockSession";
+import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
+import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPage", () => {
-  const submissions = [
-    MockSubmissionFullResponseDTO(),
-    MockSubmissionFullResponseDTO(),
+  const contestMetadata = MockContestMetadataResponseDTO({
+    startAt: MockDate.past().toISOString(),
+    endAt: MockDate.future().toISOString(),
+  });
+  const problems = [
+    MockProblemPublicResponseDTO(),
+    MockProblemPublicResponseDTO(),
   ];
-  const problems = [MockProblemFullResponseDTO(), MockProblemFullResponseDTO()];
-  const languages = [SubmissionLanguage.CPP_17, SubmissionLanguage.JAVA_21];
-  const contestMetadata = MockContestMetadataResponseDTO();
 
-  it("should render create variant", async () => {
-    await renderWithProviders(
-      <SubmissionsPage
-        submissions={submissions}
-        problems={problems}
-        languages={languages}
-        canCreate
-      />,
-      {
-        session: MockSession(),
-        contestMetadata,
-      },
-    );
+  describe("variant - cannot create or edit", () => {
+    const submissions = [MockSubmissionPublicResponseDTO()];
 
-    expect(document.title).toBe("Forseti - Submissions");
-    expect(screen.getByTestId("create-form-title")).toHaveTextContent(
-      "Create Submission",
-    );
-    expect(screen.getByLabelText("Problem")).toBeEnabled();
-    expect(screen.getByLabelText("Code")).toBeEnabled();
-    expect(screen.getByLabelText("Code")).toBeEnabled();
-    expect(screen.getByTestId("create-form-submit")).toBeEnabled();
-
-    expect(screen.getAllByTestId("submission")).toHaveLength(2);
-    expect(
-      screen.getAllByTestId("submission-member-name")[0],
-    ).toHaveTextContent("Test User");
-    expect(
-      screen.getAllByTestId("submission-problem-letter")[0],
-    ).toHaveTextContent("A");
-    expect(screen.getAllByTestId("submission-language")[0]).toHaveTextContent(
-      "C++ 17",
-    );
-    expect(screen.getAllByTestId("submission-answer")[0]).toHaveTextContent(
-      "Accepted",
-    );
-    expect(screen.queryByTestId("submission-status")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("submission-actions")).not.toBeInTheDocument();
-  });
-
-  it("should render edit variant", async () => {
-    await renderWithProviders(
-      <SubmissionsPage
-        submissions={submissions}
-        problems={problems}
-        languages={languages}
-        canEdit
-      />,
-      {
-        session: MockSession(),
-        contestMetadata,
-      },
-    );
-
-    expect(screen.queryByTestId("create-form")).not.toBeInTheDocument();
-    expect(screen.getAllByTestId("submission-status")[0]).toHaveTextContent(
-      "Judged",
-    );
-    expect(screen.getAllByTestId("submission-download")[0]).toBeEnabled();
-    expect(screen.getAllByTestId("submission-resubmit")[0]).toBeEnabled();
-    expect(screen.getAllByTestId("submission-judge")[0]).toBeEnabled();
-  });
-
-  it("should handle create success", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    await renderWithProviders(
-      <SubmissionsPage
-        submissions={submissions}
-        problems={problems}
-        languages={languages}
-        canCreate
-      />,
-      {
-        session: MockSession(),
-        contestMetadata,
-      },
-    );
-
-    fireEvent.change(screen.getByLabelText("Problem"), {
-      target: { value: problems[0].id },
-    });
-    fireEvent.change(screen.getByLabelText("Language"), {
-      target: { value: languages[0] },
-    });
-    const code = new File(["code"], "hello.cpp", { type: "text/plain" });
-    fireEvent.change(screen.getByLabelText("Code"), {
-      target: {
-        files: [code],
-      },
-    });
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("create-form-submit"));
-    });
-
-    expect(submissionWritter.create).toHaveBeenCalledWith(contestMetadata.id, {
-      problemId: problems[0].id,
-      language: languages[0],
-      code,
-    });
-    expect(useToast().success).toHaveBeenCalled();
-  });
-
-  it("should handle create error", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    (submissionWritter.create as jest.Mock).mockRejectedValueOnce(
-      new Error("Failed to create"),
-    );
-    await renderWithProviders(
-      <SubmissionsPage
-        submissions={submissions}
-        problems={problems}
-        languages={languages}
-        canCreate
-      />,
-      {
-        session: MockSession(),
-        contestMetadata,
-      },
-    );
-
-    fireEvent.change(screen.getByLabelText("Problem"), {
-      target: { value: problems[0].id },
-    });
-    fireEvent.change(screen.getByLabelText("Language"), {
-      target: { value: languages[0] },
-    });
-    const code = new File(["code"], "hello.cpp", { type: "text/plain" });
-    fireEvent.change(screen.getByLabelText("Code"), {
-      target: {
-        files: [code],
-      },
-    });
-    await act(async () => {
-      fireEvent.click(screen.getByTestId("create-form-submit"));
-    });
-
-    expect(submissionWritter.create).toHaveBeenCalledWith(contestMetadata.id, {
-      problemId: problems[0].id,
-      language: languages[0],
-      code,
-    });
-    expect(useToast().error).toHaveBeenCalled();
-  });
-
-  it("should handle download", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    await renderWithProviders(
-      <SubmissionsPage
-        submissions={submissions}
-        problems={problems}
-        languages={languages}
-        canEdit
-      />,
-      {
-        session: MockSession(),
-        contestMetadata,
-      },
-    );
-
-    await act(async () => {
-      fireEvent.click(screen.getAllByTestId("submission-download")[0]);
-    });
-
-    expect(attachmentReader.download).toHaveBeenCalledWith(
-      contestMetadata.id,
-      submissions[1].code,
-    );
-  });
-
-  it("should handle resubmit success", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    await renderWithProviders(
-      <SubmissionsPage
-        submissions={submissions}
-        problems={problems}
-        languages={languages}
-        canEdit
-      />,
-      {
-        session: MockSession(),
-        contestMetadata,
-      },
-    );
-
-    await act(async () => {
-      fireEvent.click(screen.getAllByTestId("submission-resubmit")[0]);
-    });
-
-    const resubmitModal = screen.getByTestId("resubmit-modal");
-    expect(resubmitModal).toBeInTheDocument();
-    await act(async () => {
-      fireEvent.click(
-        resubmitModal.querySelector("[data-testid='confirm']") as any,
+    it("should render submissions table without actions", async () => {
+      await renderWithProviders(
+        <SubmissionsPage
+          submissions={submissions}
+          problems={problems}
+          canCreate={false}
+          canEdit={false}
+        />,
+        { contestMetadata },
       );
-    });
 
-    expect(submissionWritter.rerun).toHaveBeenCalledWith(
-      contestMetadata.id,
-      submissions[1].id,
-    );
-    expect(useToast().success).toHaveBeenCalled();
+      expect(screen.queryByTestId("submission-form")).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("open-create-form-button"),
+      ).not.toBeInTheDocument();
+      expect(screen.queryByTestId("only-mine-toggle")).not.toBeInTheDocument();
+
+      expect(screen.getByTestId("submission-timestamp")).toHaveTextContent(
+        "01/01/2025, 10:00:00 AM",
+      );
+      expect(screen.getByTestId("submission-member")).toHaveTextContent(
+        submissions[0].member.name,
+      );
+      expect(screen.getByTestId("submission-problem")).toHaveTextContent(
+        submissions[0].problem.letter,
+      );
+      expect(screen.getByTestId("submission-language")).toHaveTextContent(
+        "C++ 17",
+      );
+      expect(screen.getByTestId("submission-status")).toHaveTextContent(
+        "Judged",
+      );
+      expect(screen.getByTestId("submission-answer")).toHaveTextContent(
+        "Accepted",
+      );
+      expect(
+        screen.queryByTestId("submission-actions-button"),
+      ).not.toBeInTheDocument();
+    });
   });
 
-  it("should handle resubmit error", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    (submissionWritter.rerun as jest.Mock).mockRejectedValueOnce(
-      new Error("Failed to resubmit"),
-    );
-    await renderWithProviders(
-      <SubmissionsPage
-        submissions={submissions}
-        problems={problems}
-        languages={languages}
-        canEdit
-      />,
-      {
-        session: MockSession(),
-        contestMetadata,
-      },
-    );
+  describe("variant - can create", () => {
+    const submissions = [
+      MockSubmissionPublicResponseDTO(),
+      MockSubmissionPublicResponseDTO(),
+    ];
+    const memberSubmissions = [
+      MockSubmissionFullResponseDTO({ id: submissions[0].id }),
+    ];
 
-    await act(async () => {
-      fireEvent.click(screen.getAllByTestId("submission-resubmit")[0]);
-    });
-
-    const resubmitModal = screen.getByTestId("resubmit-modal");
-    expect(resubmitModal).toBeInTheDocument();
-    await act(async () => {
-      fireEvent.click(
-        resubmitModal.querySelector("[data-testid='confirm']") as any,
+    it("should render create form", async () => {
+      await renderWithProviders(
+        <SubmissionsPage
+          submissions={submissions}
+          memberSubmissions={memberSubmissions}
+          problems={problems}
+          canCreate={true}
+          canEdit={false}
+        />,
+        { contestMetadata },
       );
+
+      expect(screen.queryByTestId("submission-form")).not.toBeInTheDocument();
+      fireEvent.click(screen.getByTestId("open-create-form-button"));
+      expect(screen.getByTestId("submission-form")).toBeInTheDocument();
     });
 
-    expect(submissionWritter.rerun).toHaveBeenCalledWith(
-      contestMetadata.id,
-      submissions[1].id,
-    );
-    expect(useToast().error).toHaveBeenCalled();
-  });
-
-  it("should handle judge success", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    await renderWithProviders(
-      <SubmissionsPage
-        submissions={submissions}
-        problems={problems}
-        languages={languages}
-        canEdit
-      />,
-      {
-        session: MockSession(),
-        contestMetadata,
-      },
-    );
-
-    await act(async () => {
-      fireEvent.click(screen.getAllByTestId("submission-judge")[0]);
-    });
-
-    const judgeModal = screen.getByTestId("judge-modal");
-    expect(judgeModal).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText("Answer"), {
-      target: { value: SubmissionAnswer.ACCEPTED },
-    });
-    await act(async () => {
-      fireEvent.click(
-        judgeModal.querySelector("[data-testid='confirm']") as any,
+    it("should toggle only mine", async () => {
+      await renderWithProviders(
+        <SubmissionsPage
+          submissions={submissions}
+          memberSubmissions={memberSubmissions}
+          problems={problems}
+          canCreate={true}
+          canEdit={false}
+        />,
+        { contestMetadata },
       );
+
+      expect(screen.getAllByTestId("submission-member")).toHaveLength(2);
+      fireEvent.click(screen.getByTestId("only-mine-toggle"));
+      expect(screen.getAllByTestId("submission-member")).toHaveLength(1);
     });
 
-    expect(submissionWritter.updateAnswer).toHaveBeenCalledWith(
-      contestMetadata.id,
-      submissions[1].id,
-      SubmissionAnswer.ACCEPTED,
-    );
-    expect(useToast().success).toHaveBeenCalled();
-  });
+    it("should not render create form when contest ended", async () => {
+      const endedContestMetadata = MockContestMetadataResponseDTO({
+        startAt: MockDate.past(2).toISOString(),
+        endAt: MockDate.past().toISOString(),
+      });
 
-  it("should handle judge error", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    (submissionWritter.updateAnswer as jest.Mock).mockRejectedValueOnce(
-      new Error("Failed to judge"),
-    );
-    await renderWithProviders(
-      <SubmissionsPage
-        submissions={submissions}
-        problems={problems}
-        languages={languages}
-        canEdit
-      />,
-      {
-        session: MockSession(),
-        contestMetadata,
-      },
-    );
-
-    await act(async () => {
-      fireEvent.click(screen.getAllByTestId("submission-judge")[0]);
-    });
-
-    const judgeModal = screen.getByTestId("judge-modal");
-    expect(judgeModal).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText("Answer"), {
-      target: { value: SubmissionAnswer.ACCEPTED },
-    });
-    await act(async () => {
-      fireEvent.click(
-        judgeModal.querySelector("[data-testid='confirm']") as any,
+      await renderWithProviders(
+        <SubmissionsPage
+          submissions={submissions}
+          memberSubmissions={memberSubmissions}
+          problems={problems}
+          canCreate={true}
+          canEdit={false}
+        />,
+        { contestMetadata: endedContestMetadata },
       );
-    });
 
-    expect(submissionWritter.updateAnswer).toHaveBeenCalledWith(
-      contestMetadata.id,
-      submissions[1].id,
-      SubmissionAnswer.ACCEPTED,
-    );
-    expect(useToast().error).toHaveBeenCalled();
+      expect(
+        screen.queryByTestId("open-create-form-button"),
+      ).not.toBeInTheDocument();
+    });
   });
 });

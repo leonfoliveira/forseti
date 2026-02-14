@@ -12,7 +12,6 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
-import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.FindContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.UpdateContestUseCase
@@ -38,8 +37,6 @@ import java.time.OffsetDateTime
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = [ContestController::class, JacksonConfig::class, GlobalExceptionHandler::class])
 class ContestControllerTest(
-    @MockkBean(relaxed = true)
-    private val authorizeContestUseCase: AuthorizeContestUseCase,
     @MockkBean(relaxed = true)
     private val updateContestUseCase: UpdateContestUseCase,
     @MockkBean(relaxed = true)

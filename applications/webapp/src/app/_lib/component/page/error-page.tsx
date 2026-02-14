@@ -1,18 +1,17 @@
-import { ArrowPathRoundedSquareIcon } from "@heroicons/react/24/solid";
-import React from "react";
+import { RefreshCwIcon } from "lucide-react";
 
-import { Button } from "@/app/_lib/component/base/form/button";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
+import { Button } from "@/app/_lib/component/shadcn/button";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   description: {
     id: "app._lib.component.page.error-page.description",
-    defaultMessage: "An unexpected error has occurred.",
+    defaultMessage: "An unexpected error has occurred on the server.",
   },
   reload: {
     id: "app._lib.component.page.error-page.reload",
-    defaultMessage: "Reload the page",
+    defaultMessage: "Try again",
   },
 });
 
@@ -29,12 +28,11 @@ export function ErrorPage() {
         <FormattedMessage {...messages.description} />
       </h2>
       <Button
-        color="primary"
         className="mt-10"
-        onPress={() => window.location.reload()}
+        onClick={() => window.location.reload()}
         data-testid="reload"
       >
-        <ArrowPathRoundedSquareIcon width={20} />
+        <RefreshCwIcon />
         <FormattedMessage {...messages.reload} />
       </Button>
     </div>

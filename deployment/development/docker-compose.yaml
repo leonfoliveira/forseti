@@ -19,10 +19,13 @@ services:
       - dev-forseti-network
     ports:
       - 5432:5432
+    profiles:
+      - infra
     volumes:
       - dev-postgres_data:/var/lib/postgresql/data
 
   minio:
+    command: server /data --console-address ":9001"
     container_name: dev-forseti-minio
     environment:
       MINIO_ROOT_USER: forseti
@@ -41,7 +44,8 @@ services:
     ports:
       - 9000:9000
       - 9001:9001
-    command: server /data --console-address ":9001"
+    profiles:
+      - infra
     volumes:
       - dev-minio_data:/data
 
@@ -66,6 +70,8 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    profiles:
+      - infra
     volumes:
       - dev-rabbitmq_data:/var/lib/rabbitmq
       - ./volumes/rabbitmq/entrypoint.sh:/entrypoint.sh:ro
@@ -85,6 +91,8 @@ services:
     image: flyway/flyway:11.9.2-alpine
     networks:
       - dev-forseti-network
+    profiles:
+      - backend
     volumes:
       - ../../applications/backend/core/src/main/resources/migration:/flyway/sql
 
@@ -145,6 +153,8 @@ services:
       - dev-forseti-network
     ports:
       - 8080:8080
+    profiles:
+      - backend
 
   autojudge:
     container_name: dev-forseti-autojudge
@@ -205,6 +215,8 @@ services:
       - dev-forseti-network
     ports:
       - 8081:8081
+    profiles:
+      - backend
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp:/tmp
@@ -236,6 +248,8 @@ services:
       - dev-forseti-network
     ports:
       - 3000:3000
+    profiles:
+      - webapp
 
 networks:
   dev-forseti-network:

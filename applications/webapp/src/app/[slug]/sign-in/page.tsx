@@ -1,20 +1,27 @@
 "use client";
 
 import { joiResolver } from "@hookform/resolvers/joi";
-import React from "react";
 import { useForm } from "react-hook-form";
 
-import { SignInFormType } from "@/app/[slug]/sign-in/_form/sign-in-form";
-import { signInFormSchema } from "@/app/[slug]/sign-in/_form/sign-in-form-schema";
-import { Card } from "@/app/_lib/component/base/display/card";
-import { Button } from "@/app/_lib/component/base/form/button";
-import { Form } from "@/app/_lib/component/base/form/form";
-import { Input } from "@/app/_lib/component/base/form/input";
-import { Divider } from "@/app/_lib/component/base/layout/divider";
-import { FormattedMessage } from "@/app/_lib/component/format/formatted-message";
-import { Metadata } from "@/app/_lib/component/metadata";
-import { useLoadableState } from "@/app/_lib/util/loadable-state";
-import { useToast } from "@/app/_lib/util/toast-hook";
+import { SignInForm, SignInFormType } from "@/app/[slug]/sign-in/sign-in-form";
+import { AsyncButton } from "@/app/_lib/component/form/async-button";
+import { ControlledField } from "@/app/_lib/component/form/controlled-field";
+import { Form } from "@/app/_lib/component/form/form";
+import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
+import { Page } from "@/app/_lib/component/page/page";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/app/_lib/component/shadcn/card";
+import { FieldSet } from "@/app/_lib/component/shadcn/field";
+import { Input } from "@/app/_lib/component/shadcn/input";
+import { Separator } from "@/app/_lib/component/shadcn/separator";
+import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
 import { authenticationWritter, sessionWritter } from "@/config/composition";
 import { routes } from "@/config/routes";
@@ -66,6 +73,10 @@ const messages = defineMessages({
     id: "app.[slug].sign-in.page.enter-guest-label",
     defaultMessage: "Enter as Guest",
   },
+  enterGuestError: {
+    id: "app.[slug].sign-in.page.enter-guest-error",
+    defaultMessage: "Error entering as guest",
+  },
 });
 
 /**
@@ -73,11 +84,13 @@ const messages = defineMessages({
  */
 export default function SignInPage() {
   const signInState = useLoadableState();
+  const enterAsGuestState = useLoadableState();
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const toast = useToast();
 
   const form = useForm<SignInFormType>({
-    resolver: joiResolver(signInFormSchema),
+    resolver: joiResolver(SignInForm.schema),
+    defaultValues: SignInForm.getDefault(),
   });
 
   async function signIn(data: SignInFormType) {
@@ -103,87 +116,79 @@ export default function SignInPage() {
   }
 
   async function enterAsGuest() {
-    await sessionWritter.deleteCurrent();
-    window.location.href = routes.CONTEST(contestMetadata.slug);
+    enterAsGuestState.start();
+    try {
+      await sessionWritter.deleteCurrent();
+      window.location.href = routes.CONTEST(contestMetadata.slug);
+    } catch (error) {
+      enterAsGuestState.fail(error, {
+        default: () => toast.error(messages.enterGuestError),
+      });
+    }
   }
 
   return (
-    <>
-      <Metadata
-        title={messages.pageTitle}
-        description={messages.pageDescription}
-      />
-      <div className="flex flex-1 items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <Form onSubmit={form.handleSubmit(signIn)}>
-            <Card.Header className="px-6 pt-6 pb-4">
-              <div className="flex w-full flex-col items-center text-center">
-                <h2
-                  className="text-primary text-3xl font-bold"
-                  data-testid="title"
-                >
+    <Page title={messages.pageTitle} description={messages.pageDescription}>
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <Form
+          onSubmit={form.handleSubmit(signIn)}
+          className="w-full max-w-md"
+          data-testid="sign-in-form"
+        >
+          <FieldSet
+            disabled={signInState.isLoading || enterAsGuestState.isLoading}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle data-testid="title">
                   <FormattedMessage {...messages.title} />
-                </h2>
-                <p
-                  className="text-default-500 mt-2 text-sm"
-                  data-testid="subtitle"
-                >
+                </CardTitle>
+                <CardDescription data-testid="subtitle">
                   <FormattedMessage {...messages.subtitle} />
-                </p>
-              </div>
-            </Card.Header>
-            <Divider className="my-2" />
-            <Card.Body className="gap-4 px-6 py-6">
-              <Form.Field
-                form={form}
-                name="login"
-                onChange={() => form.clearErrors()}
-              >
-                <Input
-                  label={<FormattedMessage {...messages.loginLabel} />}
-                  size="lg"
-                  data-testid="login"
+                </CardDescription>
+              </CardHeader>
+              <Separator />
+              <CardContent className="flex flex-col gap-4">
+                <ControlledField
+                  form={form}
+                  name="login"
+                  onChange={() => form.clearErrors()}
+                  label={messages.loginLabel}
+                  field={<Input data-testid="login" />}
                 />
-              </Form.Field>
-              <Form.Field
-                form={form}
-                name="password"
-                onChange={() => form.clearErrors()}
-              >
-                <Input
-                  label={<FormattedMessage {...messages.passwordLabel} />}
-                  type="password"
-                  size="lg"
-                  data-testid="password"
+                <ControlledField
+                  form={form}
+                  name="password"
+                  onChange={() => form.clearErrors()}
+                  label={messages.passwordLabel}
+                  field={<Input type="password" data-testid="password" />}
                 />
-              </Form.Field>
-            </Card.Body>
-            <Divider className="my-2" />
-            <Card.Footer className="flex-col gap-3 px-6 py-6">
-              <Button
-                color="primary"
-                type="submit"
-                isLoading={signInState.isLoading}
-                size="lg"
-                fullWidth
-                data-testid="sign-in"
-              >
-                <FormattedMessage {...messages.signIn} />
-              </Button>
-              <Button
-                color="primary"
-                variant="bordered"
-                size="lg"
-                fullWidth
-                onPress={enterAsGuest}
-                data-testid="enter-guest"
-              >
-                <FormattedMessage {...messages.enterGuestLabel} />
-              </Button>
-            </Card.Footer>
-          </Form>
-        </Card>
+              </CardContent>
+              <Separator />
+              <CardFooter className="flex flex-col gap-2">
+                <AsyncButton
+                  type="submit"
+                  className="w-full"
+                  isLoading={signInState.isLoading}
+                  data-testid="sign-in"
+                >
+                  <FormattedMessage {...messages.signIn} />
+                </AsyncButton>
+                <AsyncButton
+                  className="w-full"
+                  type="button"
+                  onClick={enterAsGuest}
+                  variant="outline"
+                  isLoading={enterAsGuestState.isLoading}
+                  data-testid="enter-guest"
+                >
+                  <FormattedMessage {...messages.enterGuestLabel} />
+                </AsyncButton>
+              </CardFooter>
+            </Card>
+          </FieldSet>
+        </Form>
       </div>
-    </>
+    </Page>
   );
 }

@@ -7,18 +7,18 @@ export function ContestantSubmissionsPage() {
   const submissions = useAppSelector(
     (state) => state.contestantDashboard.submissions,
   );
+  const memberSubmissions = useAppSelector(
+    (state) => state.contestantDashboard.memberSubmissions,
+  );
   const problems = useAppSelector(
     (state) => state.contestantDashboard.contest.problems,
-  );
-  const languages = useAppSelector(
-    (state) => state.contestantDashboard.contest.languages,
   );
 
   return (
     <SubmissionsPage
       submissions={submissions}
+      memberSubmissions={memberSubmissions}
       problems={problems}
-      languages={languages}
       canCreate
     />
   );

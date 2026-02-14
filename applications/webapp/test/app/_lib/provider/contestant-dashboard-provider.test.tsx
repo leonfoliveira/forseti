@@ -2,8 +2,8 @@ import { screen } from "@testing-library/dom";
 import { mock } from "jest-mock-extended";
 import { act } from "react";
 
+import { useToast } from "@/app/_lib/hook/toast-hook";
 import { ContestantDashboardProvider } from "@/app/_lib/provider/contestant-dashboard-provider";
-import { useToast } from "@/app/_lib/util/toast-hook";
 import {
   announcementListener,
   clarificationListener,

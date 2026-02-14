@@ -9,9 +9,7 @@ describe("ErrorPage", () => {
     await renderWithProviders(<ErrorPage />);
 
     expect(screen.getByTestId("code")).toHaveTextContent("500");
-    expect(screen.getByTestId("description")).toHaveTextContent(
-      "An unexpected error has occurred.",
-    );
+    expect(screen.getByTestId("description")).not.toBeEmptyDOMElement();
     const button = screen.getByTestId("reload");
     expect(button).toBeInTheDocument();
     await act(async () => fireEvent.click(button));

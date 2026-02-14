@@ -1,11 +1,17 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import React from "react";
 
-import { Footer } from "@/app/_lib/component/footer";
-import { Header } from "@/app/_lib/component/header";
+import { Footer } from "@/app/_lib/component/layout/footer";
+import { Header } from "@/app/_lib/component/layout/header";
 import { StoreProvider } from "@/app/_store/store-provider";
-import { sessionReader, contestReader } from "@/config/composition";
+import {
+  sessionReader,
+  contestReader,
+  sessionWritter,
+} from "@/config/composition";
+import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
+import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +47,7 @@ export default async function ContestLayout({
           contestMetadata,
         }}
       >
-        <div className="flex min-h-screen flex-col">
+        <div className="bg-muted flex min-h-screen flex-col">
           <Header />
           <div className="flex flex-1 flex-col">{children}</div>
           <Footer />
@@ -51,6 +57,9 @@ export default async function ContestLayout({
   } catch (error) {
     if (error instanceof NotFoundException) {
       return notFound();
+    } else if (error instanceof UnauthorizedException) {
+      await sessionWritter.deleteCurrent();
+      redirect(routes.CONTEST_SIGN_IN(slug));
     }
     console.error("Error while fetching contest data: ", error);
     throw error;
