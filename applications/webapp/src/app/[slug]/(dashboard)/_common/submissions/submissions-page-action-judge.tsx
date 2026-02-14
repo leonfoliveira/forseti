@@ -91,7 +91,7 @@ export function SubmissionsPageActionJudge({ submission, onClose }: Props) {
       judgeState.finish();
       onClose();
     } catch (error) {
-      judgeState.fail(error, {
+      await judgeState.fail(error, {
         default: () => toast.error(messages.judgeError),
       });
     }

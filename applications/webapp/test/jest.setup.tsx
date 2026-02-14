@@ -43,6 +43,7 @@ const router = {
   replace: jest.fn(),
 };
 export const useRouter = jest.fn(() => router);
+export const useParams = jest.fn(() => ({ slug: "test-slug" }));
 export const usePathname = jest.fn(() => "/");
 export const useSearchParams = jest.fn(() => ({
   get: jest.fn().mockReturnValue("bar"),
@@ -51,6 +52,7 @@ export const redirect = jest.fn();
 jest.mock("next/navigation", () => ({
   usePathname,
   useRouter,
+  useParams,
   useSearchParams,
   forbidden: jest.fn(),
   notFound: jest.fn(),

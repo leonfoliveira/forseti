@@ -137,7 +137,8 @@
           "password-label": "Password",
           "sign-in-label": "Sign in",
           "enter-guest-label": "Enter as Guest",
-          "enter-guest-error": "Error entering as guest"
+          "enter-guest-error": "Error entering as guest",
+          "expired-session": "Your session has expired."
         }
       },
       "(dashboard)": {

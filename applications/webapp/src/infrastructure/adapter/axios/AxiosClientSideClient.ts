@@ -1,4 +1,4 @@
-import { AxiosRequestConfig, AxiosResponse } from "axios";
+import { AxiosRequestConfig } from "axios";
 
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 
@@ -23,16 +23,6 @@ export class AxiosClientSideClient extends AxiosClient {
   ): Promise<void> {
     this.injectCsrfToken(requestConfig);
   }
-
-  /**
-   * Modifies the response after it is received.
-   *
-   * @param response Axios response.
-   */
-  protected async proxyResponse<TBody>(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _: AxiosResponse<TBody>,
-  ): Promise<void> {}
 
   /**
    * Injects the CSRF token into the request headers.

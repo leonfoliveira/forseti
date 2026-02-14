@@ -106,7 +106,7 @@ export function ClarificationsPageForm({
       toast.success(messages.createSuccess);
       onClose();
     } catch (error) {
-      createClarificationState.fail(error, {
+      await createClarificationState.fail(error, {
         default: () => toast.error(messages.createError),
       });
     }

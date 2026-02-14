@@ -137,7 +137,8 @@
           "password-label": "Senha",
           "sign-in-label": "Entrar",
           "enter-guest-label": "Entrar como Convidado",
-          "enter-guest-error": "Erro ao entrar como convidado"
+          "enter-guest-error": "Erro ao entrar como convidado",
+          "expired-session": "Sua sessão expirou."
         }
       },
       "(dashboard)": {

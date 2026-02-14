@@ -117,7 +117,7 @@ export function ClarificationsPageCard({
       form.reset();
       toast.success(messages.createSuccess);
     } catch (error) {
-      answerClarificationState.fail(error, {
+      await answerClarificationState.fail(error, {
         default: () => toast.error(messages.createError),
       });
     }
@@ -131,7 +131,7 @@ export function ClarificationsPageCard({
       setIsDeleteDialogOpen(false);
       toast.success(messages.deleteSuccess);
     } catch (error) {
-      deleteClarificationState.fail(error, {
+      await deleteClarificationState.fail(error, {
         default: () => toast.error(messages.deleteError),
       });
     }

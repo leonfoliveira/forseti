@@ -176,20 +176,6 @@ describe("AxiosClient (Abstract Base Class)", () => {
         headers: { "X-Custom-Header": "test-value" },
       });
     });
-
-    it("should call proxyResponse after receiving the response", async () => {
-      const originalResponse = {
-        data: "original data",
-        headers: {},
-      };
-
-      sut.setResponseModifications({ data: "modified data" });
-      mockedAxios.request.mockResolvedValue(originalResponse);
-
-      const response = await sut.get("/test");
-
-      expect(response.data).toBe("modified data");
-    });
   });
 
   describe("error handling", () => {
@@ -273,7 +259,7 @@ describe("AxiosClient (Abstract Base Class)", () => {
       error.response = undefined;
       mockedAxios.request.mockRejectedValueOnce(error);
 
-      await expect(sut.get("/test")).rejects.toThrow(ServerException);
+      await expect(sut.get("/test")).rejects.toThrow(AxiosError);
 
       // Reset and test the message
       mockedAxios.request.mockReset();

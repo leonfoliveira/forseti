@@ -1,6 +1,8 @@
 "use client";
 
 import { joiResolver } from "@hookform/resolvers/joi";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import { SignInForm, SignInFormType } from "@/app/[slug]/sign-in/sign-in-form";
@@ -77,6 +79,10 @@ const messages = defineMessages({
     id: "app.[slug].sign-in.page.enter-guest-error",
     defaultMessage: "Error entering as guest",
   },
+  expiredSession: {
+    id: "app.[slug].sign-in.page.expired-session",
+    defaultMessage: "Your session has expired.",
+  },
 });
 
 /**
@@ -86,12 +92,21 @@ export default function SignInPage() {
   const signInState = useLoadableState();
   const enterAsGuestState = useLoadableState();
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
+  const searchParams = useSearchParams();
   const toast = useToast();
+
+  const hasExpired = searchParams.get("expired");
 
   const form = useForm<SignInFormType>({
     resolver: joiResolver(SignInForm.schema),
     defaultValues: SignInForm.getDefault(),
   });
+
+  useEffect(() => {
+    if (hasExpired === "true") {
+      toast.warning(messages.expiredSession);
+    }
+  }, [hasExpired]);
 
   async function signIn(data: SignInFormType) {
     signInState.start();
@@ -99,7 +114,7 @@ export default function SignInPage() {
       await authenticationWritter.authenticate(contestMetadata.id, data);
       window.location.href = routes.CONTEST(contestMetadata.slug);
     } catch (error) {
-      signInState.fail(error, {
+      await signInState.fail(error, {
         [UnauthorizedException.name]: () => {
           form.setError("login", {
             type: "manual",
@@ -121,7 +136,7 @@ export default function SignInPage() {
       await sessionWritter.deleteCurrent();
       window.location.href = routes.CONTEST(contestMetadata.slug);
     } catch (error) {
-      enterAsGuestState.fail(error, {
+      await enterAsGuestState.fail(error, {
         default: () => toast.error(messages.enterGuestError),
       });
     }

@@ -84,7 +84,7 @@ export function AnnouncementsPageForm({ contestId, onClose }: Props) {
       toast.success(messages.createSuccess);
       onClose();
     } catch (error) {
-      createAnnouncementState.fail(error, {
+      await createAnnouncementState.fail(error, {
         default: () => toast.error(messages.createError),
       });
     }

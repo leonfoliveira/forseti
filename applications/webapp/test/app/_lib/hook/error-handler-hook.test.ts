@@ -1,11 +1,13 @@
+import { clearCookies } from "@/app/_lib/action/clear-cookies-server-action";
 import { useErrorHandler } from "@/app/_lib/hook/error-handler-hook";
-import { sessionWritter } from "@/config/composition";
 import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { ServiceUnavailableException } from "@/core/domain/exception/ServiceUnavailableException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { usePathname, useRouter } from "@/test/jest.setup";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { renderHookWithProviders } from "@/test/render-with-providers";
+
+jest.mock("@/app/_lib/action/clear-cookies-server-action");
 
 describe("useErrorHandler", () => {
   const mockSlug = "test-contest";
@@ -29,7 +31,7 @@ describe("useErrorHandler", () => {
 
     result.current.handle(error);
 
-    expect(sessionWritter.deleteCurrent).toHaveBeenCalled();
+    expect(clearCookies).toHaveBeenCalledWith("session_id", "csrf_token");
   });
 
   it("should handle ForbiddenException by redirecting with from parameter", async () => {

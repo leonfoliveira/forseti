@@ -1,4 +1,4 @@
-import { AxiosRequestConfig, AxiosResponse } from "axios";
+import { AxiosRequestConfig } from "axios";
 
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 
@@ -7,10 +7,6 @@ export class AxiosServerSideClient extends AxiosClient {
    * Cookies and headers to be forwarded between client and API when this code runs in server-side.
    */
   static readonly COOKIES_TO_FORWARD_FROM_CLIENT_TO_API = ["session_id"];
-  static readonly COOKIES_TO_FORWARD_FROM_API_TO_CLIENT = [
-    "session_id",
-    "csrf_token",
-  ];
   static readonly HEADERS_TO_FORWARD_FROM_CLIENT_TO_API = [
     "x-csrf-token",
     "x-forwarded-for",
@@ -34,17 +30,6 @@ export class AxiosServerSideClient extends AxiosClient {
   }
 
   /**
-   * Modifies the response after it is received.
-   *
-   * @param response Axios response.
-   */
-  protected async proxyResponse<TBody>(
-    response: AxiosResponse<TBody>,
-  ): Promise<void> {
-    await this.forwardCookiesFromApiToClient(response);
-  }
-
-  /**
    * Forwards cookies from client to API in server-side environment.
    *
    * @param requestConfig Axios request configuration.
@@ -54,48 +39,23 @@ export class AxiosServerSideClient extends AxiosClient {
   ): Promise<void> {
     const { cookies } = await import("next/headers");
     const cookiesFn = await cookies();
-    AxiosServerSideClient.COOKIES_TO_FORWARD_FROM_CLIENT_TO_API.forEach(
-      (cookieName) => {
-        const cookieValue = cookiesFn.get(cookieName)?.value;
-        if (cookieValue) {
-          requestConfig.headers = requestConfig.headers || {};
-          requestConfig.headers["Cookie"] = [
-            ...(requestConfig.headers["Cookie"]
-              ? [requestConfig.headers["Cookie"] as string]
-              : []),
-            `${cookieName}=${cookieValue}`,
-          ].join("; ");
-        }
-      },
-    );
-  }
 
-  /**
-   * Forwards cookies from API response to client in server-side environment.
-   *
-   * @param response Axios response.
-   */
-  private async forwardCookiesFromApiToClient(
-    response: AxiosResponse,
-  ): Promise<void> {
-    const setCookieHeader = response.headers["set-cookie"];
-    if (setCookieHeader) {
-      const { cookies } = await import("next/headers");
+    const cookiesValues =
+      AxiosServerSideClient.COOKIES_TO_FORWARD_FROM_CLIENT_TO_API.map(
+        (cookieName) => {
+          const cookieValue = cookiesFn.get(cookieName)?.value;
+          return cookieValue ? `${cookieName}=${cookieValue}` : null;
+        },
+      ).filter((cookie) => cookie !== null);
 
-      const cookiesFn = await cookies();
-      setCookieHeader.forEach((cookieString: string) => {
-        const cookieParts = cookieString.split(";");
-        const [nameValuePair] = cookieParts;
-        const [cookieName, cookieValue] = nameValuePair.split("=");
+    console.debug("Forwarding cookies from client to API:", cookiesValues);
 
-        if (
-          AxiosServerSideClient.COOKIES_TO_FORWARD_FROM_API_TO_CLIENT.includes(
-            cookieName.trim(),
-          )
-        ) {
-          cookiesFn.set(cookieName.trim(), cookieValue.trim());
-        }
-      });
+    if (cookiesValues.length > 0) {
+      requestConfig.headers = requestConfig.headers || {};
+      const currentCookieHeader = requestConfig.headers["Cookie"];
+      requestConfig.headers["Cookie"] = [currentCookieHeader, ...cookiesValues]
+        .filter(Boolean)
+        .join("; ");
     }
   }
 
@@ -109,14 +69,24 @@ export class AxiosServerSideClient extends AxiosClient {
   ): Promise<void> {
     const { headers } = await import("next/headers");
     const headersFn = await headers();
-    requestConfig.headers = requestConfig.headers || {};
-    AxiosServerSideClient.HEADERS_TO_FORWARD_FROM_CLIENT_TO_API.forEach(
-      (headerName) => {
-        const headerValue = headersFn.get(headerName);
-        if (headerValue) {
-          requestConfig.headers![headerName] = headerValue;
-        }
-      },
-    );
+
+    const headersToForward =
+      AxiosServerSideClient.HEADERS_TO_FORWARD_FROM_CLIENT_TO_API.reduce(
+        (acc, headerName) => {
+          const headerValue = headersFn.get(headerName);
+          if (headerValue) {
+            acc[headerName] = headerValue;
+          }
+          return acc;
+        },
+        {} as Record<string, string>,
+      );
+
+    console.debug("Forwarding headers from client to API:", headersToForward);
+
+    requestConfig.headers = {
+      ...(requestConfig.headers || {}),
+      ...headersToForward,
+    };
   }
 }
