@@ -1,11 +1,5 @@
 import { expect, Page } from "@playwright/test";
 
-import { ActorOnAnnouncementsPage } from "@/test/actor/actor-on-announcements-page";
-import { ActorOnClarificationsPage } from "@/test/actor/actor-on-clarifications-page";
-import { ActorOnLeaderboardPage } from "@/test/actor/actor-on-leaderboard-page";
-import { ActorOnProblemsPage } from "@/test/actor/actor-on-problems-page";
-import { ActorOnSettingsPage } from "@/test/actor/actor-on-settings-page";
-import { ActorOnSubmissionsPage } from "@/test/actor/actor-on-submissions-page";
 import { config } from "@/test/config";
 import { Contest, ContestStatus } from "@/test/entity/contest";
 import { Member } from "@/test/entity/member";
@@ -44,6 +38,8 @@ export class Actor {
 
     await signInButton.click();
     await expect(this.page).toHaveURL(`/${contest.slug}/leaderboard`);
+
+    await this.page.waitForTimeout(1500);
   }
 
   async signOut(contest: Contest) {
@@ -57,51 +53,67 @@ export class Actor {
     await expect(this.page).toHaveURL(`/${contest.slug}/sign-in`);
   }
 
-  async navigateToLeaderboard(
-    contest: Contest,
-  ): Promise<ActorOnLeaderboardPage> {
+  async navigateToLeaderboard(contest: Contest) {
     await this.navigate(contest, "leaderboard");
+    const {
+      ActorOnLeaderboardPage,
+    } = require("@/test/actor/actor-on-leaderboard-page");
     return new ActorOnLeaderboardPage(this.page, this.member);
   }
 
-  async navigateToProblems(contest: Contest): Promise<ActorOnProblemsPage> {
+  async navigateToProblems(contest: Contest) {
     await this.navigate(contest, "problems");
+    const {
+      ActorOnProblemsPage,
+    } = require("@/test/actor/actor-on-problems-page");
     return new ActorOnProblemsPage(this.page, this.member);
   }
 
-  async navigateToSubmissions(
-    contest: Contest,
-  ): Promise<ActorOnSubmissionsPage> {
+  async navigateToSubmissions(contest: Contest) {
     await this.navigate(contest, "submissions");
+    const {
+      ActorOnSubmissionsPage,
+    } = require("@/test/actor/actor-on-submissions-page");
     return new ActorOnSubmissionsPage(this.page, this.member);
   }
 
-  async navigateToClarifications(
-    contest: Contest,
-  ): Promise<ActorOnClarificationsPage> {
+  async navigateToClarifications(contest: Contest) {
     await this.navigate(contest, "clarifications");
+    const {
+      ActorOnClarificationsPage,
+    } = require("@/test/actor/actor-on-clarifications-page");
     return new ActorOnClarificationsPage(this.page, this.member);
   }
 
-  async navigateToAnnouncements(
-    contest: Contest,
-  ): Promise<ActorOnAnnouncementsPage> {
+  async navigateToAnnouncements(contest: Contest) {
     await this.navigate(contest, "announcements");
+    const {
+      ActorOnAnnouncementsPage,
+    } = require("@/test/actor/actor-on-announcements-page");
     return new ActorOnAnnouncementsPage(this.page, this.member);
   }
 
-  async navigateToSettings(contest: Contest): Promise<ActorOnSettingsPage> {
+  async navigateToSettings(contest: Contest) {
     await this.navigate(contest, "settings");
+    const {
+      ActorOnSettingsPage,
+    } = require("@/test/actor/actor-on-settings-page");
     return new ActorOnSettingsPage(this.page, this.member);
   }
 
   private async navigate(contest: Contest, tab: string) {
+    // Wait for any pending WebSocket operations to complete
+    await this.page.waitForTimeout(500);
+
     const dashboardPage = this.page.getByTestId("dashboard-tabs");
     const tabButton = dashboardPage.getByTestId(`tab-/${contest.slug}/${tab}`);
     await tabButton.scrollIntoViewIfNeeded();
 
     await tabButton.click();
     await expect(this.page).toHaveURL(`/${contest.slug}/${tab}`);
+
+    // Allow time for WebSocket connections to establish
+    await this.page.waitForTimeout(1000);
   }
 
   async checkWaitPage(contest: Contest) {

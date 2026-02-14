@@ -10,6 +10,7 @@ import {
   Submission,
   SubmissionAnswer,
   SubmissionLanguage,
+  SubmissionStatus,
 } from "@/test/entity/submission";
 import { DateUtil } from "@/test/util/date-util";
 
@@ -90,6 +91,7 @@ test("Default contest behaviour", async ({ page }) => {
     problem: problem,
     language: SubmissionLanguage.PYTHON_312,
     code: "code_time_limit_exceeded.py",
+    status: SubmissionStatus.JUDGED,
     answer: SubmissionAnswer.TIME_LIMIT_EXCEEDED,
   };
   const reSubmission: Submission = {
@@ -97,6 +99,7 @@ test("Default contest behaviour", async ({ page }) => {
     problem: problem,
     language: SubmissionLanguage.PYTHON_312,
     code: "code_runtime_error.py",
+    status: SubmissionStatus.JUDGED,
     answer: SubmissionAnswer.RUNTIME_ERROR,
   };
   const meSubmission: Submission = {
@@ -104,6 +107,7 @@ test("Default contest behaviour", async ({ page }) => {
     problem: problem,
     language: SubmissionLanguage.PYTHON_312,
     code: "code_memory_limit_exceeded.py",
+    status: SubmissionStatus.JUDGED,
     answer: SubmissionAnswer.MEMORY_LIMIT_EXCEEDED,
   };
   const waSubmission: Submission = {
@@ -111,6 +115,7 @@ test("Default contest behaviour", async ({ page }) => {
     problem: problem,
     language: SubmissionLanguage.PYTHON_312,
     code: "code_wrong_answer.py",
+    status: SubmissionStatus.JUDGED,
     answer: SubmissionAnswer.WRONG_ANSWER,
   };
   const acSubmission: Submission = {
@@ -118,6 +123,7 @@ test("Default contest behaviour", async ({ page }) => {
     problem: problem,
     language: SubmissionLanguage.PYTHON_312,
     code: "code_accepted.py",
+    status: SubmissionStatus.JUDGED,
     answer: SubmissionAnswer.ACCEPTED,
   };
 
