@@ -12,7 +12,6 @@ import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
 import { Button } from "@/app/_lib/component/shadcn/button";
-import { CardContent } from "@/app/_lib/component/shadcn/card";
 import { Input } from "@/app/_lib/component/shadcn/input";
 import {
   Item,

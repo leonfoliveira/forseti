@@ -224,6 +224,7 @@
               "contest-tab": "Concurso",
               "problems-tab": "Problemas",
               "members-tab": "Membros",
+              "in-progress-alert-description": "Este concurso está atualmente em andamento. Alterar as configurações pode afetar a experiência do concurso para os participantes.",
               "reset-label": "Redefinir",
               "save-label": "Salvar",
               "save-success": "Configurações salvas com sucesso.",

@@ -5,7 +5,6 @@ import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/sett
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";
-import { CardContent } from "@/app/_lib/component/shadcn/card";
 import { Input } from "@/app/_lib/component/shadcn/input";
 import {
   NativeSelect,
