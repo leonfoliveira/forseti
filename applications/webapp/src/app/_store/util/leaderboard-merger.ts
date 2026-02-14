@@ -1,3 +1,4 @@
+import { DateTimeUtil } from "@/app/_lib/util/datetime-util";
 import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
@@ -60,9 +61,24 @@ export function mergeLeaderboard(
 
     const minLength = Math.min(aAcceptedTimes.length, bAcceptedTimes.length);
     for (let i = 0; i < minLength; i++) {
-      const cmp = aAcceptedTimes[i].acceptedAt!.localeCompare(
-        bAcceptedTimes[i].acceptedAt!,
+      const acceptedDiff = Math.floor(
+        DateTimeUtil.diffMs(
+          leaderboard.startAt,
+          aAcceptedTimes[i].acceptedAt!,
+        ) /
+          1000 /
+          60,
       );
+      const acceptedDiffB = Math.floor(
+        DateTimeUtil.diffMs(
+          leaderboard.startAt,
+          bAcceptedTimes[i].acceptedAt!,
+        ) /
+          1000 /
+          60,
+      );
+
+      const cmp = acceptedDiff - acceptedDiffB;
       if (cmp !== 0) {
         return cmp;
       }
@@ -71,5 +87,5 @@ export function mergeLeaderboard(
     return a.name.localeCompare(b.name);
   });
 
-  return leaderboard;
+  return { ...leaderboard };
 }

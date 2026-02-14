@@ -10,9 +10,10 @@ import java.util.UUID
 interface SubmissionRepository : BaseRepository<Submission> {
     fun findEntityById(id: UUID): Submission?
 
-    @Query("select s from Submission s where s.member.id = ?1 and s.problem.id = ?2")
-    fun findByMemberIdAndProblemId(
+    @Query("select s from Submission s where s.member.id = ?1 and s.problem.id = ?2 and s.status = ?3")
+    fun findByMemberIdAndProblemIdAndStatus(
         memberId: UUID,
         problemId: UUID,
+        status: Submission.Status,
     ): List<Submission>
 }

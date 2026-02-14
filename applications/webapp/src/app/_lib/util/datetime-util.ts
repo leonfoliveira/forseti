@@ -24,4 +24,10 @@ export class DateTimeUtil {
     const date = new Date(datetimeLocal);
     return date.toISOString();
   }
+
+  static diffMs(start: string, end: string): number {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    return endDate.getTime() - startDate.getTime();
+  }
 }

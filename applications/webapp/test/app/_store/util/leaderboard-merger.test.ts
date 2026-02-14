@@ -344,6 +344,64 @@ describe("mergeLeaderboard", () => {
       expect(result.members[1].id).toBe(member1Id); // Later acceptance time
     });
 
+    it("should treat acceptance times within the same minute as equal", () => {
+      const member1Id = uuidv4();
+      const member2Id = uuidv4();
+      const problemId = uuidv4();
+
+      const leaderboard = MockLeaderboardResponseDTO({
+        members: [
+          {
+            id: member1Id,
+            name: "User B", // Alphabetically second
+            score: 1,
+            penalty: 60,
+            problems: [
+              {
+                id: problemId,
+                letter: "A",
+                isAccepted: true,
+                acceptedAt: "2025-01-01T11:00:45Z", // Same minute, different seconds
+                wrongSubmissions: 1,
+                penalty: 60,
+              },
+            ],
+          },
+          {
+            id: member2Id,
+            name: "User A", // Alphabetically first
+            score: 1,
+            penalty: 60,
+            problems: [
+              {
+                id: uuidv4(),
+                letter: "A",
+                isAccepted: true,
+                acceptedAt: "2025-01-01T11:00:15Z", // Same minute, different seconds
+                wrongSubmissions: 1,
+                penalty: 60,
+              },
+            ],
+          },
+        ],
+      });
+
+      const partial = MockLeaderboardPartialResponseDTO({
+        memberId: member1Id,
+        problemId,
+        isAccepted: true,
+        acceptedAt: "2025-01-01T11:00:45Z",
+        wrongSubmissions: 1,
+        penalty: 60,
+      });
+
+      const result = mergeLeaderboard(leaderboard, partial);
+
+      // Should fall back to name sorting since acceptance times are in same minute
+      expect(result.members[0].name).toBe("User A"); // Alphabetically first
+      expect(result.members[1].name).toBe("User B"); // Alphabetically second
+    });
+
     it("should sort by name when all other criteria are equal", () => {
       const member1Id = uuidv4();
       const member2Id = uuidv4();
