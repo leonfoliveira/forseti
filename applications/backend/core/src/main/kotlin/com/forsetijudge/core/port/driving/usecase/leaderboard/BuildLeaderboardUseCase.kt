@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.driving.usecase.leaderboard
 
 import com.forsetijudge.core.port.dto.output.LeaderboardOutputDTO
+import com.forsetijudge.core.port.dto.output.LeaderboardPartialOutputDTO
 import java.util.UUID
 
 interface BuildLeaderboardUseCase {
@@ -16,4 +17,16 @@ interface BuildLeaderboardUseCase {
         contestId: UUID,
         memberId: UUID?,
     ): LeaderboardOutputDTO
+
+    /**
+     * Finds the cell of the leaderboard for a specific submission member and problem.
+     *
+     * @param memberUUID The ID of the member to get the leaderboard cell for.
+     * @param problemUUID The ID of the problem to get the leaderboard cell for.
+     * @return The partial leaderboard data for the submission.
+     */
+    fun buildPartial(
+        memberUUID: UUID,
+        problemUUID: UUID,
+    ): LeaderboardPartialOutputDTO
 }
