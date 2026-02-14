@@ -139,7 +139,7 @@ export function ClarificationsPageCard({
 
   return (
     <Card
-      className="border-l-primary-300 border-l-4"
+      className="border-l-4 border-l-blue-400"
       data-testid="clarification-card"
     >
       <CardContent>

@@ -11,7 +11,7 @@ type Props = {
 export function AnnouncementsPageCard({ announcement }: Props) {
   return (
     <Card
-      className="border-l-warning border-l-4"
+      className="border-l-4 border-l-yellow-400"
       data-testid="announcement-card"
     >
       <CardContent>
