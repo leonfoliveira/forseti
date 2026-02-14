@@ -35,7 +35,7 @@ export class ActorOnAnnouncementsPage extends Actor {
   }
 
   async createAnnouncement(announcement: Announcement) {
-    const announcementsCardBefore = this.page.getByTestId("announcements-card");
+    const announcementsCardBefore = this.page.getByTestId("announcement-card");
     const announcementsCardBeforeCount = await announcementsCardBefore.count();
 
     const openCreateFormButton = this.page.getByTestId(
