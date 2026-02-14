@@ -47,11 +47,7 @@ class WebSocketPrivateInterceptor(
             return message
         }
 
-        // If a private configuration is present, check if the user can access the destination
-        if (!privateFilter(destination)) {
-            logger.info("User is NOT allowed to access destination")
-            throw ForbiddenException()
-        }
+        privateFilter(destination)
 
         logger.info("User is allowed to access destination")
         return message

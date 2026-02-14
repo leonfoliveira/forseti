@@ -2,7 +2,6 @@ package com.forsetijudge.api.adapter.driving.middleware.websocket
 
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -16,8 +15,7 @@ import org.springframework.messaging.support.MessageHeaderAccessor
 
 class WebSocketContextExtractionInterceptorTest :
     FunSpec({
-        val authorizeContestUseCase = mockk<AuthorizeContestUseCase>(relaxed = true)
-        val sut = WebSocketContextExtractionInterceptor(authorizeContestUseCase)
+        val sut = WebSocketContextExtractionInterceptor()
 
         beforeEach {
             RequestContext.clearContext()

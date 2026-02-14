@@ -98,7 +98,7 @@ class WebSocketPrivateInterceptorTest :
             every { webSocketTopicConfigs.privateFilters } returns
                 mapOf(
                     Regex("/topic/contests/[a-fA-F0-9-]+/submissions/full") to { destination: String ->
-                        false
+                        throw ForbiddenException()
                     },
                 )
 

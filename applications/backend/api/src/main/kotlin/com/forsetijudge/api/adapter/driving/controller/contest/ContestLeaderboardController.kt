@@ -2,7 +2,6 @@ package com.forsetijudge.api.adapter.driving.controller.contest
 
 import com.forsetijudge.api.adapter.dto.response.ErrorResponseDTO
 import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.driving.usecase.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.dto.output.LeaderboardOutputDTO
 import io.swagger.v3.oas.annotations.Operation
@@ -21,7 +20,6 @@ import java.util.UUID
 @RestController
 @RequestMapping("/api/v1")
 class ContestLeaderboardController(
-    val authorizeContestUseCase: AuthorizeContestUseCase,
     val buildLeaderboardUseCase: BuildLeaderboardUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -47,7 +45,6 @@ class ContestLeaderboardController(
         @PathVariable contestId: UUID,
     ): ResponseEntity<LeaderboardOutputDTO> {
         logger.info("[GET] /v1/contests/$contestId/leaderboard")
-        authorizeContestUseCase.checkIfStarted(contestId)
         val member = RequestContext.getContext().session?.member
         val leaderboard = buildLeaderboardUseCase.build(contestId, member?.id)
         return ResponseEntity.ok(leaderboard)

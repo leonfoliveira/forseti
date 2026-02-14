@@ -2,7 +2,6 @@ package com.forsetijudge.api.adapter.driving.controller.contest
 
 import com.forsetijudge.api.adapter.driving.advice.GlobalExceptionHandler
 import com.forsetijudge.core.config.JacksonConfig
-import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.driving.usecase.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.dto.output.LeaderboardOutputDTO
 import com.github.f4b6a3.uuid.UuidCreator
@@ -22,8 +21,6 @@ import org.springframework.test.web.servlet.get
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = [ContestLeaderboardController::class, JacksonConfig::class, GlobalExceptionHandler::class])
 class ContestLeaderboardControllerTest(
-    @MockkBean(relaxed = true)
-    private val authorizeContestUseCase: AuthorizeContestUseCase,
     @MockkBean(relaxed = true)
     private val findLeaderboardUseCase: BuildLeaderboardUseCase,
     private val webMvc: MockMvc,

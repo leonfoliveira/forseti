@@ -8,7 +8,6 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driving.usecase.clarification.CreateClarificationUseCase
 import com.forsetijudge.core.port.driving.usecase.clarification.DeleteClarificationUseCase
-import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.dto.input.clarification.CreateClarificationInputDTO
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
@@ -28,7 +27,6 @@ import java.util.UUID
 @RestController
 @RequestMapping("/api/v1")
 class ContestClarificationController(
-    val authorizeContestUseCase: AuthorizeContestUseCase,
     val createClarificationUseCase: CreateClarificationUseCase,
     val deleteClarificationUseCase: DeleteClarificationUseCase,
 ) {

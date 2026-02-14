@@ -7,7 +7,6 @@ import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driving.usecase.clarification.CreateClarificationUseCase
 import com.forsetijudge.core.port.driving.usecase.clarification.DeleteClarificationUseCase
-import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.dto.input.clarification.CreateClarificationInputDTO
 import com.github.f4b6a3.uuid.UuidCreator
 import com.ninjasquad.springmockk.MockkBean
@@ -27,8 +26,6 @@ import org.springframework.test.web.servlet.post
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = [ContestClarificationController::class])
 class ContestClarificationControllerTest(
-    @MockkBean(relaxed = true)
-    private val authorizeContestUseCase: AuthorizeContestUseCase,
     @MockkBean(relaxed = true)
     private val createClarificationUseCase: CreateClarificationUseCase,
     @MockkBean(relaxed = true)

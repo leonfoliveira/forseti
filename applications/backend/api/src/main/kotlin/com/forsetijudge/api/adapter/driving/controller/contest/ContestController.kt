@@ -10,7 +10,6 @@ import com.forsetijudge.api.adapter.dto.response.contest.toPublicOutputDTO
 import com.forsetijudge.api.adapter.util.Private
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.contest.AuthorizeContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.FindContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.UpdateContestUseCase
@@ -34,7 +33,6 @@ import java.util.UUID
 @RestController
 @RequestMapping("/api/v1")
 class ContestController(
-    private val authorizeContestUseCase: AuthorizeContestUseCase,
     private val updateContestUseCase: UpdateContestUseCase,
     private val findContestUseCase: FindContestUseCase,
     private val deleteContestUseCase: DeleteContestUseCase,
