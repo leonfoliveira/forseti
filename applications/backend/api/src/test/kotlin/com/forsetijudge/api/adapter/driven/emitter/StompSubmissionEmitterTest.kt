@@ -10,6 +10,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.mockk
 import io.mockk.verify
+import java.io.Serializable
 import java.time.OffsetDateTime
 
 class StompSubmissionEmitterTest :
@@ -75,6 +76,35 @@ class StompSubmissionEmitterTest :
                 webSocketFanoutProducer.produce(
                     "/topic/contests/${submission.contest.id}/submissions/full/members/${submission.member.id}",
                     submission.toFullResponseDTO(),
+                )
+            }
+        }
+
+        test("should not emmit any batch if submissions list is empty") {
+            sut.emitBatch(emptyList())
+
+            verify(exactly = 0) {
+                webSocketFanoutProducer.produce(
+                    any(),
+                    any(),
+                )
+            }
+        }
+
+        test("should emmit batch of submissions") {
+            val contest = ContestMockBuilder.build()
+            val submissions =
+                listOf(
+                    SubmissionMockBuilder.build(problem = ProblemMockBuilder.build(contest = contest)),
+                    SubmissionMockBuilder.build(),
+                )
+
+            sut.emitBatch(submissions)
+
+            verify {
+                webSocketFanoutProducer.produce(
+                    "/topic/contests/${contest.id}/submissions/batch",
+                    submissions.map { it.toPublicResponseDTO() } as Serializable,
                 )
             }
         }

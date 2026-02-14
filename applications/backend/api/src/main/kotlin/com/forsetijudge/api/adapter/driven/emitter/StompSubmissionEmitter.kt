@@ -6,6 +6,7 @@ import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.driven.WebSocketFanoutProducer
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import java.io.Serializable
 
 @Component
 class StompSubmissionEmitter(
@@ -39,6 +40,21 @@ class StompSubmissionEmitter(
         webSocketFanoutProducer.produce(
             "/topic/contests/${contest.id}/submissions/full/members/${submission.member.id}",
             submission.toFullResponseDTO(),
+        )
+    }
+
+    fun emitBatch(submissions: List<Submission>) {
+        if (submissions.isEmpty()) return
+
+        val contestId = submissions.first().contest.id
+
+        logger.info(
+            "Emitting batch of ${submissions.size} submissions for contest: $contestId",
+        )
+
+        webSocketFanoutProducer.produce(
+            "/topic/contests/$contestId/submissions/batch",
+            submissions.map { it.toPublicResponseDTO() } as Serializable,
         )
     }
 }
