@@ -35,7 +35,7 @@ export function ProblemStatusBadge({
         data-testid="badge-accepted"
         variant="ghost"
         {...props}
-        className="text-green-600"
+        className="text-green-700 dark:text-green-300"
       >
         {Math.floor(diffMs / 1000 / 60)}
         {wrongSubmissions > 0 && ` (+${wrongSubmissions})`}

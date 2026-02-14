@@ -109,14 +109,14 @@ export function ProblemsPage({
     if (!status) return undefined;
     if (status.isAccepted)
       return (
-        <p className="text-success text-xs">
+        <p className="text-xs text-green-700 dark:text-green-300">
           <CircleCheckIcon size={14} className="mr-1 inline" />
           <FormattedMessage {...messages.accepted} />
         </p>
       );
     if (status.wrongSubmissions > 0)
       return (
-        <p className="text-warning text-xs">
+        <p className="text-xs text-yellow-700 dark:text-yellow-300">
           <ClockIcon size={14} className="mr-1 inline" />
           <FormattedMessage
             {...messages.attempts}
