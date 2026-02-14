@@ -146,7 +146,7 @@ export function ProblemsPage({
       <Card className="my-5">
         <CardContent>
           <Table data-testid="problems-table">
-            <TableHeader className="bg-content2">
+            <TableHeader className="bg-neutral-100 dark:bg-neutral-800">
               <TableRow>
                 <TableHead>
                   <ArrowDownAZIcon size={16} />

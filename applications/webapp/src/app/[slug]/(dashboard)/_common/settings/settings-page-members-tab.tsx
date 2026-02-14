@@ -63,7 +63,7 @@ export function SettingsPageMembersTab({ form }: Props) {
       data-testid="settings-members-tab"
     >
       <Table>
-        <TableHeader className="bg-content2">
+        <TableHeader className="bg-neutral-100 dark:bg-neutral-800">
           <TableRow>
             <TableHead>
               <FormattedMessage {...messages.titleLabel} />

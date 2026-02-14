@@ -36,7 +36,12 @@
   "app": {
     "page": {
       "page-title": "Forseti",
-      "page-description": "Forseti application."
+      "page-description": "Forseti application.",
+      "welcome-title": "Welcome to Forseti Judge",
+      "contest-access-info": "To access a contest, please use the correct contest URL format:",
+      "url-format": "/'{contest-slug'}",
+      "url-format-description": "Replace '{contest-slug'} with your specific contest identifier.",
+      "contact-admin": "If you don't have a contest URL, please contact your contest administrator."
     },
     "error": {
       "403": {

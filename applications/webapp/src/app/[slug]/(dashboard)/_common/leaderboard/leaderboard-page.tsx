@@ -83,7 +83,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
       <Card className="my-5">
         <CardContent>
           <Table data-testid="leaderboard-table">
-            <TableHeader className="bg-content2">
+            <TableHeader className="bg-neutral-100 dark:bg-neutral-800">
               <TableRow>
                 <TableHead>
                   <ArrowDown01Icon size={16} />

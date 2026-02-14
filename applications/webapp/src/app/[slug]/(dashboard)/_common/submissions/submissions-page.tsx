@@ -148,7 +148,7 @@ export function SubmissionsPage({
               </div>
             )}
             <Table data-testid="submissions-table">
-              <TableHeader className="bg-content2">
+              <TableHeader className="bg-neutral-100 dark:bg-neutral-800">
                 <TableRow>
                   <TableHead>
                     <FormattedMessage {...messages.headerTimestamp} />
