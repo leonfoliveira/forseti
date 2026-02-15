@@ -9,4 +9,5 @@ export type ClarificationResponseDTO = {
   parentId?: string;
   text: string;
   children: ClarificationResponseDTO[];
+  version: number;
 };

@@ -7,4 +7,5 @@ export type ContestMetadataResponseDTO = {
   languages: SubmissionLanguage[];
   startAt: string;
   endAt: string;
+  version: number;
 };

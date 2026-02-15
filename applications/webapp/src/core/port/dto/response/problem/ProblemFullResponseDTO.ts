@@ -8,4 +8,5 @@ export type ProblemFullResponseDTO = {
   timeLimit: number;
   memoryLimit: number;
   testCases: AttachmentResponseDTO;
+  version: number;
 };

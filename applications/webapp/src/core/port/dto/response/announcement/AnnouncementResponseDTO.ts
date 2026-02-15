@@ -5,4 +5,5 @@ export type AnnouncementResponseDTO = {
   createdAt: string;
   member: MemberPublicResponseDTO;
   text: string;
+  version: number;
 };

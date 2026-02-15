@@ -19,4 +19,5 @@ export type ContestFullResponseDTO = {
   clarifications: ClarificationResponseDTO[];
   members: MemberFullResponseDTO[];
   problems: ProblemFullResponseDTO[];
+  version: number;
 };

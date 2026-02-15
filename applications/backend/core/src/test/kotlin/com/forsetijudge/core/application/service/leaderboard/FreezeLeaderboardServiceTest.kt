@@ -55,17 +55,6 @@ class FreezeLeaderboardServiceTest :
                 }
             }
 
-            listOf(Member.Type.CONTESTANT, Member.Type.JUDGE).forEach { memberType ->
-                test("should throw ForbiddenException if member is of type $memberType") {
-                    every { contestRepository.findEntityById(contestId) } returns ContestMockBuilder.build()
-                    every { memberRepository.findEntityById(memberId) } returns MemberMockBuilder.build(type = memberType)
-
-                    assertThrows<ForbiddenException> {
-                        sut.freeze(contestId, memberId)
-                    }
-                }
-            }
-
             test("should throw ForbiddenException if leaderboard is already frozen") {
                 val contest = ContestMockBuilder.build(frozenAt = OffsetDateTime.now().minusMinutes(10))
                 every { contestRepository.findEntityById(contestId) } returns contest

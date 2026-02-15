@@ -15,4 +15,5 @@ export type ContestPublicResponseDTO = {
   clarifications: ClarificationResponseDTO[];
   problems: ProblemPublicResponseDTO[];
   members: MemberPublicResponseDTO[];
+  version: number;
 };
