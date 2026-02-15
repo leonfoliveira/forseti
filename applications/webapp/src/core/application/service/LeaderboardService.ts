@@ -1,8 +1,11 @@
 import { LeaderboardRepository } from "@/core/port/driven/repository/LeaderboardRepository";
 import { LeaderboardReader } from "@/core/port/driving/usecase/leaderboard/LeaderboardReader";
+import { LeaderboardWritter } from "@/core/port/driving/usecase/leaderboard/LeaderboardWritter";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
-export class LeaderboardService implements LeaderboardReader {
+export class LeaderboardService
+  implements LeaderboardReader, LeaderboardWritter
+{
   constructor(private readonly leaderboardRepository: LeaderboardRepository) {}
 
   /**
@@ -13,5 +16,23 @@ export class LeaderboardService implements LeaderboardReader {
    */
   build(contestId: string): Promise<LeaderboardResponseDTO> {
     return this.leaderboardRepository.build(contestId);
+  }
+
+  /**
+   * Freeze the leaderboard of a contest.
+   *
+   * @param contestId ID of the contest
+   */
+  freeze(contestId: string): Promise<void> {
+    return this.leaderboardRepository.freeze(contestId);
+  }
+
+  /**
+   * Unfreeze the leaderboard of a contest.
+   *
+   * @param contestId ID of the contest
+   */
+  unfreeze(contestId: string): Promise<void> {
+    return this.leaderboardRepository.unfreeze(contestId);
   }
 }
