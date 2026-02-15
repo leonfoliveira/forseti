@@ -22,15 +22,13 @@ import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderbo
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
+import { guestDashboardSlice } from "@/app/_store/slices/guest-dashboard-slice";
 
 jest.mock("@/app/_lib/component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading-page" />,
 }));
 jest.mock("@/app/_lib/component/page/error-page", () => ({
   ErrorPage: () => <span data-testid="error-page" />,
-}));
-jest.mock("@/app/_lib/component/feedback/disconnection-alert", () => ({
-  DisconnectionAlert: () => <span data-testid="disconnection-alert" />,
 }));
 
 describe("GuestDashboardProvider", () => {
@@ -275,5 +273,39 @@ describe("GuestDashboardProvider", () => {
     expect(store.getState().guestDashboard.contest.clarifications).toHaveLength(
       0,
     );
+  });
+
+  it("should show freeze banner if leaderboard is frozen", async () => {
+    const { store } = await renderWithProviders(
+      <GuestDashboardProvider>
+        <div data-testid="child" />
+      </GuestDashboardProvider>,
+      { contestMetadata },
+    );
+
+    act(() => {
+      store.dispatch(guestDashboardSlice.actions.setLeaderboardIsFrozen(true));
+    });
+
+    expect(screen.getByTestId("freeze-banner")).toBeInTheDocument();
+  });
+
+  it("should show disconnection banner if listener status is LOST_CONNECTION", async () => {
+    const { store } = await renderWithProviders(
+      <GuestDashboardProvider>
+        <div data-testid="child" />
+      </GuestDashboardProvider>,
+      { contestMetadata },
+    );
+
+    act(() => {
+      store.dispatch(
+        guestDashboardSlice.actions.setListenerStatus(
+          ListenerStatus.LOST_CONNECTION,
+        ),
+      );
+    });
+
+    expect(screen.getByTestId("disconnection-banner")).toBeInTheDocument();
   });
 });

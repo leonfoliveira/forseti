@@ -9,6 +9,9 @@ import { useAppSelector } from "@/app/_store/store";
  */
 export function AdminSettingsPage() {
   const contest = useAppSelector((state) => state.adminDashboard.contest);
+  const leaderboard = useAppSelector(
+    (state) => state.adminDashboard.leaderboard,
+  );
 
-  return <SettingsPage contest={contest} />;
+  return <SettingsPage contest={contest} leaderboard={leaderboard} />;
 }

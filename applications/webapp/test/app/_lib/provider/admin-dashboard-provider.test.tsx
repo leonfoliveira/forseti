@@ -25,15 +25,13 @@ import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/Moc
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
+import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
 
 jest.mock("@/app/_lib/component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading-page" />,
 }));
 jest.mock("@/app/_lib/component/page/error-page", () => ({
   ErrorPage: () => <span data-testid="error-page" />,
-}));
-jest.mock("@/app/_lib/component/feedback/disconnection-alert", () => ({
-  DisconnectionAlert: () => <span data-testid="disconnection-alert" />,
 }));
 
 describe("AdminDashboardProvider", () => {
@@ -339,5 +337,39 @@ describe("AdminDashboardProvider", () => {
     expect(store.getState().adminDashboard.contest.clarifications).toHaveLength(
       0,
     );
+  });
+
+  it("should show freeze banner if leaderboard is frozen", async () => {
+    const { store } = await renderWithProviders(
+      <AdminDashboardProvider>
+        <div data-testid="child" />
+      </AdminDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      store.dispatch(adminDashboardSlice.actions.setLeaderboardIsFrozen(true));
+    });
+
+    expect(screen.getByTestId("freeze-banner")).toBeInTheDocument();
+  });
+
+  it("should show disconnection banner if listener status is LOST_CONNECTION", async () => {
+    const { store } = await renderWithProviders(
+      <AdminDashboardProvider>
+        <div data-testid="child" />
+      </AdminDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      store.dispatch(
+        adminDashboardSlice.actions.setListenerStatus(
+          ListenerStatus.LOST_CONNECTION,
+        ),
+      );
+    });
+
+    expect(screen.getByTestId("disconnection-banner")).toBeInTheDocument();
   });
 });

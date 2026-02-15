@@ -27,6 +27,7 @@ import {
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
+import { FieldSet } from "@/app/_lib/component/shadcn/field";
 
 const messages = defineMessages({
   titleLabel: {
@@ -57,125 +58,130 @@ const messages = defineMessages({
 
 type Props = {
   form: UseFormReturn<SettingsFormType>;
+  isDisabled?: boolean;
 };
 
-export function SettingsPageMembersTab({ form }: Props) {
+export function SettingsPageMembersTab({ form, isDisabled }: Props) {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "members",
   });
 
   return (
-    <div className="flex flex-col gap-4" data-testid="settings-members-tab">
-      <Table>
-        <TableHeader className="bg-muted">
-          <TableRow>
-            <TableHead>
-              <FormattedMessage {...messages.titleLabel} />
-            </TableHead>
-            <TableHead>
-              <FormattedMessage {...messages.typeLabel} />
-            </TableHead>
-            <TableHead>
-              <FormattedMessage {...messages.loginLabel} />
-            </TableHead>
-            <TableHead>
-              <FormattedMessage {...messages.passwordLabel} />
-            </TableHead>
-            <TableHead />
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {fields.map((field, index) => (
-            <TableRow key={field.id} data-testid="member-row">
-              <TableCell>
-                <ControlledField
-                  className="gap-0"
-                  form={form}
-                  name={`members.${index}.name`}
-                  field={<Input data-testid="member-name" />}
-                />
-              </TableCell>
-              <TableCell>
-                <ControlledField
-                  className="gap-0"
-                  form={form}
-                  name={`members.${index}.type`}
-                  field={
-                    <NativeSelect data-testid="member-type">
-                      {Object.keys(MemberType)
-                        .filter((type) => type !== MemberType.ROOT)
-                        .map((type) => (
-                          <NativeSelectOption key={type} value={type}>
-                            <FormattedMessage
-                              {...globalMessages.memberType[type as MemberType]}
-                            />
-                          </NativeSelectOption>
-                        ))}
-                    </NativeSelect>
-                  }
-                />
-              </TableCell>
-              <TableCell>
-                <ControlledField
-                  className="gap-0"
-                  form={form}
-                  name={`members.${index}.login`}
-                  field={<Input data-testid="member-login" />}
-                />
-              </TableCell>
-              <TableCell>
-                <ControlledField
-                  className="gap-0"
-                  form={form}
-                  name={`members.${index}.password`}
-                  field={
-                    <Input
-                      type="password"
-                      placeholder={field._id ? "********" : ""}
-                      data-testid="member-password"
-                    />
-                  }
-                />
-              </TableCell>
-              <TableCell className="text-right">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      type="button"
-                      size="xs"
-                      variant="destructive"
-                      onClick={() => remove(index)}
-                      data-testid="remove-member-button"
-                    >
-                      <TrashIcon />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <FormattedMessage {...messages.removeTooltip} />
-                  </TooltipContent>
-                </Tooltip>
-              </TableCell>
+    <FieldSet disabled={isDisabled}>
+      <div className="flex flex-col gap-4" data-testid="settings-members-tab">
+        <Table>
+          <TableHeader className="bg-muted">
+            <TableRow>
+              <TableHead>
+                <FormattedMessage {...messages.titleLabel} />
+              </TableHead>
+              <TableHead>
+                <FormattedMessage {...messages.typeLabel} />
+              </TableHead>
+              <TableHead>
+                <FormattedMessage {...messages.loginLabel} />
+              </TableHead>
+              <TableHead>
+                <FormattedMessage {...messages.passwordLabel} />
+              </TableHead>
+              <TableHead />
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <Separator />
-      <Button
-        type="button"
-        onClick={() =>
-          append({
-            name: "",
-            type: MemberType.CONTESTANT,
-            login: "",
-            password: "",
-          })
-        }
-        data-testid="add-member-button"
-      >
-        <PlusIcon />
-        <FormattedMessage {...messages.newMemberLabel} />
-      </Button>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {fields.map((field, index) => (
+              <TableRow key={field.id} data-testid="member-row">
+                <TableCell>
+                  <ControlledField
+                    className="gap-0"
+                    form={form}
+                    name={`members.${index}.name`}
+                    field={<Input data-testid="member-name" />}
+                  />
+                </TableCell>
+                <TableCell>
+                  <ControlledField
+                    className="gap-0"
+                    form={form}
+                    name={`members.${index}.type`}
+                    field={
+                      <NativeSelect data-testid="member-type">
+                        {Object.keys(MemberType)
+                          .filter((type) => type !== MemberType.ROOT)
+                          .map((type) => (
+                            <NativeSelectOption key={type} value={type}>
+                              <FormattedMessage
+                                {...globalMessages.memberType[
+                                  type as MemberType
+                                ]}
+                              />
+                            </NativeSelectOption>
+                          ))}
+                      </NativeSelect>
+                    }
+                  />
+                </TableCell>
+                <TableCell>
+                  <ControlledField
+                    className="gap-0"
+                    form={form}
+                    name={`members.${index}.login`}
+                    field={<Input data-testid="member-login" />}
+                  />
+                </TableCell>
+                <TableCell>
+                  <ControlledField
+                    className="gap-0"
+                    form={form}
+                    name={`members.${index}.password`}
+                    field={
+                      <Input
+                        type="password"
+                        placeholder={field._id ? "********" : ""}
+                        data-testid="member-password"
+                      />
+                    }
+                  />
+                </TableCell>
+                <TableCell className="text-right">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        size="xs"
+                        variant="destructive"
+                        onClick={() => remove(index)}
+                        data-testid="remove-member-button"
+                      >
+                        <TrashIcon />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <FormattedMessage {...messages.removeTooltip} />
+                    </TooltipContent>
+                  </Tooltip>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <Separator />
+        <Button
+          type="button"
+          onClick={() =>
+            append({
+              name: "",
+              type: MemberType.CONTESTANT,
+              login: "",
+              password: "",
+            })
+          }
+          data-testid="add-member-button"
+        >
+          <PlusIcon />
+          <FormattedMessage {...messages.newMemberLabel} />
+        </Button>
+      </div>
+    </FieldSet>
   );
 }

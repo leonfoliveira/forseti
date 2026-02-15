@@ -1,6 +1,6 @@
 /* eslint-disable formatjs/enforce-default-message */
 
-import { TriangleAlertIcon } from "lucide-react";
+import { AlertCircleIcon, TriangleAlertIcon } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
@@ -16,6 +16,7 @@ import {
   FieldDescription,
   FieldError,
   FieldLabel,
+  FieldSet,
 } from "@/app/_lib/component/shadcn/field";
 import { Input } from "@/app/_lib/component/shadcn/input";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
@@ -23,14 +24,14 @@ import { Switch } from "@/app/_lib/component/shadcn/switch";
 import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { DateTimeUtil } from "@/app/_lib/util/datetime-util";
 import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
 import { contestMetadataSlice } from "@/app/_store/slices/contest-metadata-slice";
 import { useAppDispatch } from "@/app/_store/store";
-import { contestWritter } from "@/config/composition";
+import { contestWritter, leaderboardWritter } from "@/config/composition";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
+import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
@@ -92,6 +93,48 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.is-auto-judge-enabled-description",
     defaultMessage: "Whether to enable auto judging of submissions.",
   },
+  freezeLabel: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.freeze-label",
+    defaultMessage: "Freeze",
+  },
+  unfreezeLabel: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.unfreeze-label",
+    defaultMessage: "Unfreeze",
+  },
+  freezeSuccess: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.freeze-success",
+    defaultMessage: "Leaderboard frozen successfully.",
+  },
+  unfreezeSuccess: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.unfreeze-success",
+    defaultMessage: "Leaderboard unfrozen successfully.",
+  },
+  freezeError: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.freeze-error",
+    defaultMessage: "Failed to freeze the leaderboard.",
+  },
+  unfreezeError: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.unfreeze-error",
+    defaultMessage: "Failed to unfreeze the leaderboard.",
+  },
+  freezeConfirmationTitle: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.freeze-confirmation-title",
+    defaultMessage: "Confirm Freeze",
+  },
+  freezeConfirmationDescription: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.freeze-confirmation-description",
+    defaultMessage:
+      "Are you sure you want to freeze the leaderboard? This will prevent any further updates until it is unfrozen.",
+  },
+  unfreezeConfirmationTitle: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.unfreeze-confirmation-title",
+    defaultMessage: "Confirm Unfreeze",
+  },
+  unfreezeConfirmationDescription: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.unfreeze-confirmation-description",
+    defaultMessage:
+      "Are you sure you want to unfreeze the leaderboard? This will allow updates to be reflected again.",
+  },
   forceStartLabel: {
     id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.force-start-label",
     defaultMessage: "Force Start",
@@ -138,24 +181,52 @@ const messages = defineMessages({
 
 type Props = {
   contest: ContestFullResponseDTO;
+  leaderboard: LeaderboardResponseDTO;
   form: UseFormReturn<SettingsFormType>;
+  isDisabled?: boolean;
 };
 
-export function SettingsPageContestTab({ contest, form }: Props) {
+export function SettingsPageContestTab({
+  contest,
+  leaderboard,
+  form,
+  isDisabled,
+}: Props) {
   const forceState = useLoadableState();
+  const freezeToggleState = useLoadableState();
   const contestStatus = useContestStatusWatcher();
   const dispatch = useAppDispatch();
   const toast = useToast();
 
-  const shouldBlockAutoFreezeAt = contest.autoFreezeAt
-    ? DateTimeUtil.isLessOrEqual(contest.autoFreezeAt, contest.startAt)
-    : false;
-
-  const forceStartConfirmationDialog = useConfirmationDialog();
-  const forceEndConfirmationDialog = useConfirmationDialog();
+  const freezeConfirmationDialog = useConfirmationDialog();
+  const forceConfirmationDialog = useConfirmationDialog();
 
   const languageError = form.formState.errors.contest?.languages?.message;
   const languageGroups = ["CPP", "JAVA", "PYTHON"];
+
+  async function toggleFreeze() {
+    const method = leaderboard.isFrozen
+      ? leaderboardWritter.unfreeze.bind(leaderboardWritter)
+      : leaderboardWritter.freeze.bind(leaderboardWritter);
+    const successMessage = leaderboard.isFrozen
+      ? messages.unfreezeSuccess
+      : messages.freezeSuccess;
+    const errorMessage = leaderboard.isFrozen
+      ? messages.unfreezeError
+      : messages.freezeError;
+
+    freezeToggleState.start();
+    try {
+      await method(contest.id);
+      toast.success(successMessage);
+      freezeConfirmationDialog.close();
+      freezeToggleState.finish();
+    } catch (error) {
+      await freezeToggleState.fail(error, {
+        default: () => toast.error(errorMessage),
+      });
+    }
+  }
 
   async function force(mode: "start" | "end") {
     const method =
@@ -177,8 +248,9 @@ export function SettingsPageContestTab({ contest, form }: Props) {
         }),
       );
       dispatch(contestMetadataSlice.actions.set(newContestMetadata));
-      forceState.finish();
       toast.success(successMessage);
+      forceConfirmationDialog.close();
+      forceState.finish();
     } catch (error) {
       await forceState.fail(error, {
         default: () => toast.error(errorMessage),
@@ -187,163 +259,190 @@ export function SettingsPageContestTab({ contest, form }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-4" data-testid="settings-contest-tab">
-      <div className="grid grid-cols-2 gap-6">
-        <ControlledField
-          form={form}
-          name="contest.slug"
-          label={messages.slugLabel}
-          field={<Input data-testid="contest-slug" />}
-          description={messages.slugDescription}
-        />
-
-        <ControlledField
-          form={form}
-          name="contest.title"
-          label={messages.titleLabel}
-          field={<Input data-testid="contest-title" />}
-          description={messages.titleDescription}
-        />
-
-        <ControlledField
-          form={form}
-          name="contest.startAt"
-          label={messages.startAtLabel}
-          field={
-            <Input
-              type="datetime-local"
-              disabled={contestStatus !== ContestStatus.NOT_STARTED}
-              data-testid="contest-start-at"
+    <>
+      <FieldSet disabled={isDisabled}>
+        <div className="flex flex-col gap-4" data-testid="settings-contest-tab">
+          <div className="grid grid-cols-2 gap-6">
+            <ControlledField
+              form={form}
+              name="contest.slug"
+              label={messages.slugLabel}
+              field={<Input data-testid="contest-slug" />}
+              description={messages.slugDescription}
             />
-          }
-          description={messages.startAtDescription}
-        />
 
-        <ControlledField
-          form={form}
-          name="contest.endAt"
-          label={messages.endAtLabel}
-          field={<Input type="datetime-local" data-testid="contest-end-at" />}
-          description={messages.endAtDescription}
-        />
-
-        <ControlledField
-          form={form}
-          name="contest.autoFreezeAt"
-          label={messages.autoFreezeAtLabel}
-          field={
-            <Input
-              type="datetime-local"
-              disabled={shouldBlockAutoFreezeAt}
-              data-testid="contest-auto-freeze-at"
+            <ControlledField
+              form={form}
+              name="contest.title"
+              label={messages.titleLabel}
+              field={<Input data-testid="contest-title" />}
+              description={messages.titleDescription}
             />
-          }
-          description={messages.autoFreezeAtDescription}
-        />
-      </div>
+
+            <ControlledField
+              form={form}
+              name="contest.startAt"
+              label={messages.startAtLabel}
+              field={
+                <Input
+                  type="datetime-local"
+                  disabled={contestStatus !== ContestStatus.NOT_STARTED}
+                  data-testid="contest-start-at"
+                />
+              }
+              description={messages.startAtDescription}
+            />
+
+            <ControlledField
+              form={form}
+              name="contest.endAt"
+              label={messages.endAtLabel}
+              field={
+                <Input type="datetime-local" data-testid="contest-end-at" />
+              }
+              description={messages.endAtDescription}
+            />
+
+            <ControlledField
+              form={form}
+              name="contest.autoFreezeAt"
+              label={messages.autoFreezeAtLabel}
+              field={
+                <Input
+                  type="datetime-local"
+                  data-testid="contest-auto-freeze-at"
+                />
+              }
+              description={messages.autoFreezeAtDescription}
+            />
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
+              <FieldLabel>
+                <FormattedMessage {...messages.languagesLabel} />
+              </FieldLabel>
+              <FieldDescription>
+                <FormattedMessage {...messages.languagesDescription} />
+              </FieldDescription>
+              {languageError && (
+                <FieldError>
+                  <FormattedMessage id={languageError} defaultMessage="" />
+                </FieldError>
+              )}
+            </div>
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {languageGroups.map((group) => (
+                <div key={group}>
+                  {Object.keys(SubmissionLanguage)
+                    .filter((lang) => lang.startsWith(group))
+                    .map((lang) => (
+                      <ControlledField
+                        key={lang}
+                        form={form}
+                        name={`contest.languages.${lang}` as any}
+                        label={
+                          globalMessages.submissionLanguage[
+                            lang as SubmissionLanguage
+                          ]
+                        }
+                        field={
+                          <Checkbox
+                            value={lang}
+                            data-testid={`contest-language-${lang}`}
+                          />
+                        }
+                      />
+                    ))}
+                </div>
+              ))}
+            </div>
+
+            <Separator className="mt-3" />
+
+            <div className="mt-3">
+              <ControlledField
+                className="col-span-2"
+                form={form}
+                name="contest.settings.isAutoJudgeEnabled"
+                label={messages.isAutoJudgeEnabledLabel}
+                field={<Switch data-testid="contest-is-auto-judge-enabled" />}
+                description={messages.isAutoJudgeEnabledDescription}
+              />
+            </div>
+          </div>
+        </div>
+      </FieldSet>
+
+      <Separator className="my-5" />
 
       <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-2">
-          <FieldLabel>
-            <FormattedMessage {...messages.languagesLabel} />
-          </FieldLabel>
-          <FieldDescription>
-            <FormattedMessage {...messages.languagesDescription} />
-          </FieldDescription>
-          {languageError && (
-            <FieldError>
-              <FormattedMessage id={languageError} defaultMessage="" />
-            </FieldError>
-          )}
-        </div>
-        <div className="mt-2 grid grid-cols-3 gap-2">
-          {languageGroups.map((group) => (
-            <div key={group}>
-              {Object.keys(SubmissionLanguage)
-                .filter((lang) => lang.startsWith(group))
-                .map((lang) => (
-                  <ControlledField
-                    key={lang}
-                    form={form}
-                    name={`contest.languages.${lang}` as any}
-                    label={
-                      globalMessages.submissionLanguage[
-                        lang as SubmissionLanguage
-                      ]
-                    }
-                    field={
-                      <Checkbox
-                        value={lang}
-                        data-testid={`contest-language-${lang}`}
-                      />
-                    }
-                  />
-                ))}
-            </div>
-          ))}
-        </div>
-
-        <Separator className="mt-3" />
-
-        <div className="mt-3">
-          <ControlledField
-            className="col-span-2"
-            form={form}
-            name="contest.settings.isAutoJudgeEnabled"
-            label={messages.isAutoJudgeEnabledLabel}
-            field={<Switch data-testid="contest-is-auto-judge-enabled" />}
-            description={messages.isAutoJudgeEnabledDescription}
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={freezeConfirmationDialog.open}
+          data-testid="freeze-toggle-button"
+          disabled={isDisabled && !leaderboard.isFrozen}
+        >
+          <FormattedMessage
+            {...(leaderboard.isFrozen
+              ? messages.unfreezeLabel
+              : messages.freezeLabel)}
           />
-        </div>
+        </Button>
 
-        {contestStatus !== ContestStatus.ENDED && (
-          <Separator className="my-3" />
-        )}
-
-        {contestStatus === ContestStatus.NOT_STARTED && (
-          <>
-            <Button
-              type="button"
-              variant="secondary"
-              data-testid="contest-force-start"
-              onClick={forceStartConfirmationDialog.open}
-            >
-              <FormattedMessage {...messages.forceStartLabel} />
-            </Button>
-            <ConfirmationDialog
-              isOpen={forceStartConfirmationDialog.isOpen}
-              icon={<TriangleAlertIcon />}
-              title={messages.forceStartConfirmationTitle}
-              description={messages.forceStartConfirmationDescription}
-              onCancel={forceStartConfirmationDialog.close}
-              onConfirm={() => force("start")}
-              isLoading={forceState.isLoading}
-            />
-          </>
-        )}
-
-        {contestStatus === ContestStatus.IN_PROGRESS && (
-          <>
-            <Button
-              type="button"
-              variant="secondary"
-              data-testid="contest-force-end"
-              onClick={forceEndConfirmationDialog.open}
-            >
-              <FormattedMessage {...messages.forceEndLabel} />
-            </Button>
-            <ConfirmationDialog
-              isOpen={forceEndConfirmationDialog.isOpen}
-              icon={<TriangleAlertIcon />}
-              title={messages.forceEndConfirmationTitle}
-              description={messages.forceEndConfirmationDescription}
-              onCancel={forceEndConfirmationDialog.close}
-              onConfirm={() => force("end")}
-              isLoading={forceState.isLoading}
-            />
-          </>
-        )}
+        <Button
+          type="button"
+          variant="secondary"
+          data-testid="force-toggle-button"
+          onClick={forceConfirmationDialog.open}
+          disabled={isDisabled || forceState.isLoading}
+        >
+          <FormattedMessage
+            {...(contestStatus === ContestStatus.NOT_STARTED
+              ? messages.forceStartLabel
+              : messages.forceEndLabel)}
+          />
+        </Button>
       </div>
-    </div>
+
+      <ConfirmationDialog
+        isOpen={freezeConfirmationDialog.isOpen}
+        icon={<AlertCircleIcon />}
+        title={
+          leaderboard.isFrozen
+            ? messages.unfreezeConfirmationTitle
+            : messages.freezeConfirmationTitle
+        }
+        description={
+          leaderboard.isFrozen
+            ? messages.unfreezeConfirmationDescription
+            : messages.freezeConfirmationDescription
+        }
+        onCancel={freezeConfirmationDialog.close}
+        onConfirm={toggleFreeze}
+        isLoading={freezeToggleState.isLoading}
+      />
+
+      <ConfirmationDialog
+        isOpen={forceConfirmationDialog.isOpen}
+        icon={<TriangleAlertIcon />}
+        title={
+          contestStatus === ContestStatus.NOT_STARTED
+            ? messages.forceStartConfirmationTitle
+            : messages.forceEndConfirmationTitle
+        }
+        description={
+          contestStatus === ContestStatus.NOT_STARTED
+            ? messages.forceStartConfirmationDescription
+            : messages.forceEndConfirmationDescription
+        }
+        onCancel={forceConfirmationDialog.close}
+        onConfirm={() =>
+          force(contestStatus === ContestStatus.NOT_STARTED ? "start" : "end")
+        }
+        isLoading={forceState.isLoading}
+      />
+    </>
   );
 }

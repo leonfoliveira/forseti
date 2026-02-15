@@ -43,6 +43,7 @@ import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
 import { defineMessages } from "@/i18n/message";
+import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
 const messages = defineMessages({
   title: {
@@ -115,6 +116,7 @@ const messages = defineMessages({
 
 type Props = {
   contest: ContestFullResponseDTO;
+  leaderboard: LeaderboardResponseDTO;
 };
 
 enum TabKey {
@@ -123,7 +125,7 @@ enum TabKey {
   MEMBERS = "members",
 }
 
-export function SettingsPage({ contest }: Props) {
+export function SettingsPage({ contest, leaderboard }: Props) {
   const contestStatus = useContestStatusWatcher();
   const updateContestState = useLoadableState();
   const toast = useToast();
@@ -182,6 +184,9 @@ export function SettingsPage({ contest }: Props) {
   const hasProblemsValidationError = !!form.formState.errors.problems;
   const hasMembersValidationError = !!form.formState.errors.members;
 
+  const isDisabled =
+    updateContestState.isLoading || contestStatus === ContestStatus.ENDED;
+
   return (
     <Page title={messages.title} description={messages.description}>
       <div className="py-5">
@@ -225,76 +230,78 @@ export function SettingsPage({ contest }: Props) {
         </Tabs>
 
         <Form onSubmit={form.handleSubmit(() => setIsConfirmDialogOpen(true))}>
-          <FieldSet
-            disabled={
-              updateContestState.isLoading ||
-              contestStatus === ContestStatus.ENDED
-            }
-          >
-            <Card className="mt-5 w-full">
-              <CardContent>
-                {contestStatus === ContestStatus.IN_PROGRESS && (
-                  <Alert className="mb-5 bg-red-50 dark:bg-red-100">
-                    <AlertCircleIcon className="stroke-red-500 dark:stroke-red-600" />
-                    <AlertDescription className="text-red-600 dark:text-red-700">
-                      <FormattedMessage
-                        {...messages.inProgressAlertDescription}
-                      />
-                    </AlertDescription>
-                  </Alert>
-                )}
+          <Card className="mt-5 w-full">
+            <CardContent>
+              {contestStatus === ContestStatus.IN_PROGRESS && (
+                <Alert className="mb-5 bg-red-50 dark:bg-red-100">
+                  <AlertCircleIcon className="stroke-red-500 dark:stroke-red-600" />
+                  <AlertDescription className="text-red-600 dark:text-red-700">
+                    <FormattedMessage
+                      {...messages.inProgressAlertDescription}
+                    />
+                  </AlertDescription>
+                </Alert>
+              )}
 
-                {selectedTab === TabKey.CONTEST && (
-                  <SettingsPageContestTab contest={contest} form={form} />
-                )}
-
-                {selectedTab === TabKey.PROBLEMS && (
-                  <SettingsPageProblemsTab contest={contest} form={form} />
-                )}
-
-                {selectedTab === TabKey.MEMBERS && (
-                  <SettingsPageMembersTab form={form} />
-                )}
-              </CardContent>
-
-              <Separator />
-              <CardFooter className="justify-end gap-3">
-                <Button type="button" variant="outline" onClick={reset}>
-                  <FormattedMessage {...messages.resetLabel} />
-                </Button>
-                <Button type="submit" data-testid="save-settings-button">
-                  <FormattedMessage {...messages.saveLabel} />
-                  <SaveIcon />
-                </Button>
-
-                <ConfirmationDialog
-                  isOpen={isConfirmDialogOpen}
-                  title={messages.confirmDialogTitle}
-                  description={messages.confirmDialogDescription}
-                  content={
-                    contestStatus !== ContestStatus.NOT_STARTED && (
-                      <Alert variant="destructive" className="mt-2">
-                        <AlertCircleIcon />
-                        <AlertTitle>
-                          <FormattedMessage
-                            {...messages.confirmDialogInProgressAlertTitle}
-                          />
-                        </AlertTitle>
-                        <AlertDescription>
-                          <FormattedMessage
-                            {...messages.confirmDialogInProgressAlertDescription}
-                          />
-                        </AlertDescription>
-                      </Alert>
-                    )
-                  }
-                  onCancel={() => setIsConfirmDialogOpen(false)}
-                  onConfirm={form.handleSubmit(updateSettings)}
-                  isLoading={updateContestState.isLoading}
+              {selectedTab === TabKey.CONTEST && (
+                <SettingsPageContestTab
+                  contest={contest}
+                  leaderboard={leaderboard}
+                  form={form}
+                  isDisabled={isDisabled}
                 />
-              </CardFooter>
-            </Card>
-          </FieldSet>
+              )}
+
+              {selectedTab === TabKey.PROBLEMS && (
+                <SettingsPageProblemsTab
+                  contest={contest}
+                  form={form}
+                  isDisabled={isDisabled}
+                />
+              )}
+
+              {selectedTab === TabKey.MEMBERS && (
+                <SettingsPageMembersTab form={form} isDisabled={isDisabled} />
+              )}
+            </CardContent>
+
+            <Separator />
+            <CardFooter className="justify-end gap-3">
+              <Button type="button" variant="outline" onClick={reset}>
+                <FormattedMessage {...messages.resetLabel} />
+              </Button>
+              <Button type="submit" data-testid="save-settings-button">
+                <FormattedMessage {...messages.saveLabel} />
+                <SaveIcon />
+              </Button>
+
+              <ConfirmationDialog
+                isOpen={isConfirmDialogOpen}
+                title={messages.confirmDialogTitle}
+                description={messages.confirmDialogDescription}
+                content={
+                  contestStatus !== ContestStatus.NOT_STARTED && (
+                    <Alert variant="destructive" className="mt-2">
+                      <AlertCircleIcon />
+                      <AlertTitle>
+                        <FormattedMessage
+                          {...messages.confirmDialogInProgressAlertTitle}
+                        />
+                      </AlertTitle>
+                      <AlertDescription>
+                        <FormattedMessage
+                          {...messages.confirmDialogInProgressAlertDescription}
+                        />
+                      </AlertDescription>
+                    </Alert>
+                  )
+                }
+                onCancel={() => setIsConfirmDialogOpen(false)}
+                onConfirm={form.handleSubmit(updateSettings)}
+                isLoading={updateContestState.isLoading}
+              />
+            </CardFooter>
+          </Card>
         </Form>
       </div>
     </Page>

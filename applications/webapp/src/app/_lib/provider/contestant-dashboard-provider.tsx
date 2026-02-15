@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 
-import { DisconnectionAlert } from "@/app/_lib/component/feedback/disconnection-alert";
+import { DisconnectionBanner } from "@/app/_lib/component/feedback/disconnection-banner";
+import { FreezeBanner } from "@/app/_lib/component/feedback/freeze-banner";
 import { ErrorPage } from "@/app/_lib/component/page/error-page";
 import { LoadingPage } from "@/app/_lib/component/page/loading-page";
 import { useIntl } from "@/app/_lib/hook/intl-hook";
@@ -63,6 +64,9 @@ export function ContestantDashboardProvider({
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const listenerStatus = useAppSelector(
     (state) => state.contestantDashboard.listenerStatus,
+  );
+  const isFrozen = useAppSelector(
+    (state) => state.contestantDashboard.leaderboard?.isFrozen,
   );
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
@@ -290,8 +294,9 @@ export function ContestantDashboardProvider({
 
   return (
     <>
+      {isFrozen && <FreezeBanner />}
       {listenerStatus === ListenerStatus.LOST_CONNECTION && (
-        <DisconnectionAlert />
+        <DisconnectionBanner />
       )}
       {children}
     </>

@@ -11,7 +11,5 @@ export function AdminLeaderboardPage() {
     (state) => state.adminDashboard.leaderboard,
   );
 
-  return (
-    <LeaderboardPage problems={problems} leaderboard={leaderboard} canEdit />
-  );
+  return <LeaderboardPage problems={problems} leaderboard={leaderboard} />;
 }

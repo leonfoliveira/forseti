@@ -30,6 +30,7 @@ import { attachmentReader } from "@/config/composition";
 import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
 import { defineMessages } from "@/i18n/message";
+import { FieldSet } from "@/app/_lib/component/shadcn/field";
 
 const messages = defineMessages({
   titleLabel: {
@@ -98,9 +99,10 @@ const messages = defineMessages({
 type Props = {
   contest: ContestFullResponseDTO;
   form: UseFormReturn<SettingsFormType>;
+  isDisabled?: boolean;
 };
 
-export function SettingsPageProblemsTab({ contest, form }: Props) {
+export function SettingsPageProblemsTab({ contest, form, isDisabled }: Props) {
   const errorHandler = useErrorHandler();
   const toast = useToast();
 
@@ -120,189 +122,191 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-4" data-testid="settings-problems-tab">
-      {fields.map((field, index) => (
-        <Item key={field.id} variant="outline" data-testid="problem-item">
-          <ItemMedia>
-            <Badge className="font-md text-lg" data-testid="problem-letter">
-              {String.fromCharCode(65 + index)}
-            </Badge>
-          </ItemMedia>
-          <ItemContent>
-            <div className="grid grid-cols-2 gap-3">
-              <ControlledField
-                className="col-span-2"
-                form={form}
-                name={`problems.${index}.title`}
-                label={messages.titleLabel}
-                field={<Input data-testid="problem-title" />}
-                description={messages.titleDescription}
-              />
-
-              <ControlledField
-                form={form}
-                name={`problems.${index}.timeLimit`}
-                label={messages.timeLimitLabel}
-                field={
-                  <Input
-                    type="number"
-                    step="500"
-                    data-testid="problem-time-limit"
-                  />
-                }
-                description={messages.timeLimitDescription}
-              />
-
-              <ControlledField
-                form={form}
-                name={`problems.${index}.memoryLimit`}
-                label={messages.memoryLimitLabel}
-                field={
-                  <Input
-                    type="number"
-                    step="500"
-                    data-testid="problem-memory-limit"
-                  />
-                }
-                description={messages.memoryLimitDescription}
-              />
-
-              <div>
+    <FieldSet disabled={isDisabled}>
+      <div className="flex flex-col gap-4" data-testid="settings-problems-tab">
+        {fields.map((field, index) => (
+          <Item key={field.id} variant="outline" data-testid="problem-item">
+            <ItemMedia>
+              <Badge className="font-md text-lg" data-testid="problem-letter">
+                {String.fromCharCode(65 + index)}
+              </Badge>
+            </ItemMedia>
+            <ItemContent>
+              <div className="grid grid-cols-2 gap-3">
                 <ControlledField
+                  className="col-span-2"
                   form={form}
-                  name={`problems.${index}.newDescription`}
-                  label={messages.descriptionLabel}
-                  field={
-                    <Input
-                      type="file"
-                      accept="application/pdf"
-                      data-testid="problem-description"
-                    />
-                  }
-                  description={messages.descriptionDescription}
+                  name={`problems.${index}.title`}
+                  label={messages.titleLabel}
+                  field={<Input data-testid="problem-title" />}
+                  description={messages.titleDescription}
                 />
 
-                {field.description && (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="mt-2 w-full justify-start"
-                    title={field.description.filename}
-                    onClick={() => downloadAttachment(field.description)}
-                    data-testid="problem-description-download"
-                  >
-                    <DownloadIcon />
-                    <span className="truncate underline">
-                      {field.description.filename}
-                    </span>
-                  </Button>
-                )}
-              </div>
-
-              <div>
                 <ControlledField
                   form={form}
-                  name={`problems.${index}.newTestCases`}
-                  label={messages.testCasesLabel}
+                  name={`problems.${index}.timeLimit`}
+                  label={messages.timeLimitLabel}
                   field={
                     <Input
-                      type="file"
-                      accept="text/csv"
-                      data-testid="problem-test-cases"
+                      type="number"
+                      step="500"
+                      data-testid="problem-time-limit"
                     />
                   }
-                  description={messages.testCasesDescription}
+                  description={messages.timeLimitDescription}
                 />
 
-                {field.testCases && (
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="mt-2 w-full justify-start"
-                    title={field.testCases.filename}
-                    onClick={() => downloadAttachment(field.testCases)}
-                    data-testid="problem-test-cases-download"
-                  >
-                    <DownloadIcon />
-                    <span className="truncate underline">
-                      {field.testCases.filename}
-                    </span>
-                  </Button>
-                )}
+                <ControlledField
+                  form={form}
+                  name={`problems.${index}.memoryLimit`}
+                  label={messages.memoryLimitLabel}
+                  field={
+                    <Input
+                      type="number"
+                      step="500"
+                      data-testid="problem-memory-limit"
+                    />
+                  }
+                  description={messages.memoryLimitDescription}
+                />
+
+                <div>
+                  <ControlledField
+                    form={form}
+                    name={`problems.${index}.newDescription`}
+                    label={messages.descriptionLabel}
+                    field={
+                      <Input
+                        type="file"
+                        accept="application/pdf"
+                        data-testid="problem-description"
+                      />
+                    }
+                    description={messages.descriptionDescription}
+                  />
+
+                  {field.description && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="mt-2 w-full justify-start"
+                      title={field.description.filename}
+                      onClick={() => downloadAttachment(field.description)}
+                      data-testid="problem-description-download"
+                    >
+                      <DownloadIcon />
+                      <span className="truncate underline">
+                        {field.description.filename}
+                      </span>
+                    </Button>
+                  )}
+                </div>
+
+                <div>
+                  <ControlledField
+                    form={form}
+                    name={`problems.${index}.newTestCases`}
+                    label={messages.testCasesLabel}
+                    field={
+                      <Input
+                        type="file"
+                        accept="text/csv"
+                        data-testid="problem-test-cases"
+                      />
+                    }
+                    description={messages.testCasesDescription}
+                  />
+
+                  {field.testCases && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="mt-2 w-full justify-start"
+                      title={field.testCases.filename}
+                      onClick={() => downloadAttachment(field.testCases)}
+                      data-testid="problem-test-cases-download"
+                    >
+                      <DownloadIcon />
+                      <span className="truncate underline">
+                        {field.testCases.filename}
+                      </span>
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
-          </ItemContent>
-          <ItemActions>
-            <div className="flex flex-col gap-2">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    disabled={index === 0}
-                    onClick={() => move(index, index - 1)}
-                    data-testid="move-problem-up-button"
-                  >
-                    <ChevronUpIcon />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <FormattedMessage {...messages.moveUpTooltip} />
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    disabled={index === fields.length - 1}
-                    onClick={() => move(index, index + 1)}
-                    data-testid="move-problem-down-button"
-                  >
-                    <ChevronDownIcon />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <FormattedMessage {...messages.moveDownTooltip} />
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    type="button"
-                    className="mt-5"
-                    size="sm"
-                    variant="destructive"
-                    onClick={() => remove(index)}
-                    data-testid="remove-problem-button"
-                  >
-                    <TrashIcon />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <FormattedMessage {...messages.removeTooltip} />
-                </TooltipContent>
-              </Tooltip>
-            </div>
-          </ItemActions>
-        </Item>
-      ))}
-      <Button
-        type="button"
-        onClick={() =>
-          append({
-            title: "",
-            timeLimit: "1000",
-            memoryLimit: "1024",
-          } as any)
-        }
-        data-testid="add-problem-button"
-      >
-        <PlusIcon />
-        <FormattedMessage {...messages.newProblemLabel} />
-      </Button>
-    </div>
+            </ItemContent>
+            <ItemActions>
+              <div className="flex flex-col gap-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={index === 0}
+                      onClick={() => move(index, index - 1)}
+                      data-testid="move-problem-up-button"
+                    >
+                      <ChevronUpIcon />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <FormattedMessage {...messages.moveUpTooltip} />
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={index === fields.length - 1}
+                      onClick={() => move(index, index + 1)}
+                      data-testid="move-problem-down-button"
+                    >
+                      <ChevronDownIcon />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <FormattedMessage {...messages.moveDownTooltip} />
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      className="mt-5"
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => remove(index)}
+                      data-testid="remove-problem-button"
+                    >
+                      <TrashIcon />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <FormattedMessage {...messages.removeTooltip} />
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            </ItemActions>
+          </Item>
+        ))}
+        <Button
+          type="button"
+          onClick={() =>
+            append({
+              title: "",
+              timeLimit: "1000",
+              memoryLimit: "1024",
+            } as any)
+          }
+          data-testid="add-problem-button"
+        >
+          <PlusIcon />
+          <FormattedMessage {...messages.newProblemLabel} />
+        </Button>
+      </div>
+    </FieldSet>
   );
 }

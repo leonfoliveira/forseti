@@ -41,22 +41,6 @@ describe("LeaderboardPage", () => {
     expect(screen.getByTestId("freeze-toggle-button")).toBeInTheDocument();
   });
 
-  it("should display frozen indicator when contest is frozen", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    const session = MockSession();
-    const frozenLeaderboard = MockLeaderboardResponseDTO({ isFrozen: true });
-    await renderWithProviders(
-      <LeaderboardPage
-        problems={problems}
-        leaderboard={frozenLeaderboard}
-        canEdit
-      />,
-      { session, contestMetadata },
-    );
-
-    expect(screen.getByTestId("frozen-indicator")).toBeInTheDocument();
-  });
-
   it("should handle contest freeze successfully", async () => {
     const contestMetadata = MockContestMetadataResponseDTO();
     const session = MockSession();
