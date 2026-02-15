@@ -1,5 +1,6 @@
 package com.forsetijudge.infrastructure.adapter.driven.scheduler
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.domain.exception.BusinessException
 import com.forsetijudge.infrastructure.adapter.driving.job.QuartzJob
 import com.forsetijudge.infrastructure.adapter.dto.job.QuartzMessage
@@ -16,6 +17,7 @@ import java.util.Date
 @Component
 class QuartzJobScheduler(
     private val scheduler: Scheduler,
+    private val objectMapper: ObjectMapper,
 ) {
     private val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)
 
@@ -42,6 +44,9 @@ class QuartzJobScheduler(
                 .newJob(jobClass)
                 .withIdentity(message.id)
                 .usingJobData("id", message.id)
+                .usingJobData("traceId", message.traceId)
+                .usingJobData("payload", objectMapper.writeValueAsString(message.payload))
+                .usingJobData("retries", message.retries)
                 .storeDurably()
                 .build()
 
