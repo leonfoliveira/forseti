@@ -44,7 +44,7 @@ export default function ContestLayout({
         initState.finish({ session, contestMetadata });
       } catch (error) {
         await initState.fail(error, {
-          [NotFoundException.name]: redirect(routes.NOT_FOUND),
+          [NotFoundException.name]: () => redirect(routes.NOT_FOUND),
         });
       }
     }
