@@ -1,7 +1,9 @@
 import React from "react";
 
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
-import { useAppSelector } from "@/app/_store/store";
+import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
+import { useAppDispatch, useAppSelector } from "@/app/_store/store";
+import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 
 export function ContestantSubmissionsPage() {
   const submissions = useAppSelector(
@@ -13,6 +15,7 @@ export function ContestantSubmissionsPage() {
   const problems = useAppSelector(
     (state) => state.contestantDashboard.contest.problems,
   );
+  const dispatch = useAppDispatch();
 
   return (
     <SubmissionsPage
@@ -20,6 +23,9 @@ export function ContestantSubmissionsPage() {
       memberSubmissions={memberSubmissions}
       problems={problems}
       canCreate
+      onCreate={(submission: SubmissionFullResponseDTO) => {
+        dispatch(contestantDashboardSlice.actions.mergeSubmission(submission));
+      }}
     />
   );
 }

@@ -18,7 +18,6 @@ describe("ClarificationsPageCard", () => {
         <ClarificationsPageCard
           clarification={clarification}
           contestId="test-contest"
-          canAnswer={false}
         />,
       );
 
@@ -48,7 +47,6 @@ describe("ClarificationsPageCard", () => {
         <ClarificationsPageCard
           clarification={clarification}
           contestId="test-contest"
-          canAnswer={false}
         />,
       );
 
@@ -83,7 +81,6 @@ describe("ClarificationsPageCard", () => {
         <ClarificationsPageCard
           clarification={clarification}
           contestId="test-contest"
-          canAnswer={false}
         />,
       );
 
@@ -108,7 +105,9 @@ describe("ClarificationsPageCard", () => {
         <ClarificationsPageCard
           clarification={clarification}
           contestId="test-contest"
-          canAnswer={true}
+          canAnswer
+          onAnswer={() => {}}
+          onDelete={() => {}}
         />,
       );
 
@@ -125,7 +124,9 @@ describe("ClarificationsPageCard", () => {
         <ClarificationsPageCard
           clarification={clarification}
           contestId="test-contest"
-          canAnswer={true}
+          canAnswer
+          onAnswer={() => {}}
+          onDelete={() => {}}
         />,
       );
 
@@ -135,15 +136,19 @@ describe("ClarificationsPageCard", () => {
     });
 
     it("should create answer when form is submitted", async () => {
+      const newClarification = MockClarificationResponseDTO();
       (clarificationWritter.create as jest.Mock).mockResolvedValueOnce(
-        MockClarificationResponseDTO(),
+        newClarification,
       );
       const clarification = MockClarificationResponseDTO();
+      const onAnswer = jest.fn();
       await renderWithProviders(
         <ClarificationsPageCard
           clarification={clarification}
           contestId="test-contest"
           canAnswer
+          onAnswer={onAnswer}
+          onDelete={() => {}}
         />,
       );
 
@@ -169,6 +174,7 @@ describe("ClarificationsPageCard", () => {
         parentId: clarification.id,
       });
       expect(useToast().success).toHaveBeenCalled();
+      expect(onAnswer).toHaveBeenCalledWith(newClarification);
     });
 
     it("should show error toast when creating answer fails", async () => {
@@ -181,6 +187,8 @@ describe("ClarificationsPageCard", () => {
           clarification={clarification}
           contestId="test-contest"
           canAnswer
+          onAnswer={() => {}}
+          onDelete={() => {}}
         />,
       );
 
@@ -211,11 +219,14 @@ describe("ClarificationsPageCard", () => {
     it("should render delete button and delete clarification when delete button is clicked", async () => {
       (clarificationWritter.deleteById as jest.Mock).mockResolvedValueOnce({});
       const clarification = MockClarificationResponseDTO();
+      const onDelete = jest.fn();
       await renderWithProviders(
         <ClarificationsPageCard
           clarification={clarification}
           contestId="test-contest"
           canAnswer
+          onAnswer={() => {}}
+          onDelete={onDelete}
         />,
       );
 
@@ -234,6 +245,7 @@ describe("ClarificationsPageCard", () => {
         clarification.id,
       );
       expect(useToast().success).toHaveBeenCalled();
+      expect(onDelete).toHaveBeenCalledWith(clarification.id);
     });
 
     it("should show error toast when deleting clarification fails", async () => {
@@ -246,6 +258,8 @@ describe("ClarificationsPageCard", () => {
           clarification={clarification}
           contestId="test-contest"
           canAnswer
+          onAnswer={() => {}}
+          onDelete={() => {}}
         />,
       );
 

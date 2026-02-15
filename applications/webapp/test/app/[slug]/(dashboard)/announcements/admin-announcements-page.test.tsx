@@ -26,6 +26,7 @@ describe("AdminAnnouncementsPage", () => {
       expect.objectContaining({
         announcements,
         canCreate: true,
+        onCreate: expect.any(Function),
       }),
       undefined,
     );

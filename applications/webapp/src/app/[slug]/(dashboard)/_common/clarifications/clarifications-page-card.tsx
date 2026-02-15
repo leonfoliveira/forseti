@@ -94,13 +94,25 @@ const messages = defineMessages({
 type Props = {
   contestId: string;
   clarification: ClarificationResponseDTO;
-  canAnswer?: boolean;
-};
+} & (
+  | {
+      canAnswer: true;
+      onAnswer: (data: ClarificationAnswerFormType) => void;
+      onDelete: (clarificationId: string) => void;
+    }
+  | {
+      canAnswer?: false;
+      onAnswer?: (data: ClarificationAnswerFormType) => void;
+      onDelete?: (clarificationId: string) => void;
+    }
+);
 
 export function ClarificationsPageCard({
   contestId,
   clarification,
   canAnswer,
+  onAnswer,
+  onDelete,
 }: Props) {
   const answerClarificationState = useLoadableState();
   const deleteClarificationState = useLoadableState();
@@ -118,10 +130,12 @@ export function ClarificationsPageCard({
   async function answerClarification(data: ClarificationAnswerFormType) {
     answerClarificationState.start();
     try {
-      await clarificationWritter.create(contestId, {
+      const newClarification = await clarificationWritter.create(contestId, {
         ...ClarificationAnswerForm.toInputDTO(data, clarification.id),
         parentId: clarification.id,
       });
+
+      onAnswer?.(newClarification);
       answerClarificationState.finish();
       form.reset();
       toast.success(messages.createSuccess);
@@ -136,6 +150,8 @@ export function ClarificationsPageCard({
     deleteClarificationState.start();
     try {
       await clarificationWritter.deleteById(contestId, clarification.id);
+
+      onDelete?.(clarification.id);
       deleteClarificationState.finish();
       setIsDeleteDialogOpen(false);
       toast.success(messages.deleteSuccess);

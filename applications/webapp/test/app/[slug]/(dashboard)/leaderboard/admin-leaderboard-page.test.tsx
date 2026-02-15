@@ -32,7 +32,6 @@ describe("AdminLeaderboardPage", () => {
       expect.objectContaining({
         problems,
         leaderboard,
-        canEdit: true,
       }),
       undefined,
     );

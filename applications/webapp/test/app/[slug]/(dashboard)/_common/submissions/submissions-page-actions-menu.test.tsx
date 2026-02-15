@@ -32,7 +32,11 @@ describe("SubmissionsPageActionsMenu", () => {
     const submission = MockSubmissionFullResponseDTO();
     const contestMetadata = MockContestMetadataResponseDTO();
     await renderWithProviders(
-      <SubmissionsPageActionsMenu submission={submission} canEdit />,
+      <SubmissionsPageActionsMenu
+        submission={submission}
+        canEdit
+        onEdit={() => {}}
+      />,
       { contestMetadata },
     );
 

@@ -23,6 +23,7 @@ describe("AdminSettingsPage", () => {
       expect.objectContaining({
         contest,
         leaderboard,
+        onToggleFreeze: expect.any(Function),
       }),
       undefined,
     );

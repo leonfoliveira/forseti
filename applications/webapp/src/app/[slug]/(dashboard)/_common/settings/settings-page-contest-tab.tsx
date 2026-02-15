@@ -183,6 +183,7 @@ type Props = {
   contest: ContestFullResponseDTO;
   leaderboard: LeaderboardResponseDTO;
   form: UseFormReturn<SettingsFormType>;
+  onToggleFreeze: (isFrozen: boolean) => void;
   isDisabled?: boolean;
 };
 
@@ -190,6 +191,7 @@ export function SettingsPageContestTab({
   contest,
   leaderboard,
   form,
+  onToggleFreeze,
   isDisabled,
 }: Props) {
   const forceState = useLoadableState();
@@ -218,6 +220,8 @@ export function SettingsPageContestTab({
     freezeToggleState.start();
     try {
       await method(contest.id);
+
+      onToggleFreeze(!leaderboard.isFrozen);
       toast.success(successMessage);
       freezeConfirmationDialog.close();
       freezeToggleState.finish();

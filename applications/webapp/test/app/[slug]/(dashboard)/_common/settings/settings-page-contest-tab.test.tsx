@@ -32,6 +32,7 @@ describe("SettingsPageContestTab", () => {
         contest={contest}
         leaderboard={leaderboard}
         form={result.current}
+        onToggleFreeze={() => {}}
       />,
       { contestMetadata },
     );
@@ -93,6 +94,7 @@ describe("SettingsPageContestTab", () => {
         contest={contest}
         leaderboard={leaderboard}
         form={result.current}
+        onToggleFreeze={() => {}}
       />,
       {
         contestMetadata,
@@ -131,6 +133,7 @@ describe("SettingsPageContestTab", () => {
         contest={contest}
         leaderboard={leaderboard}
         form={result.current}
+        onToggleFreeze={() => {}}
       />,
       {
         contestMetadata,
@@ -165,6 +168,7 @@ describe("SettingsPageContestTab", () => {
         contest={contest}
         leaderboard={leaderboard}
         form={result.current}
+        onToggleFreeze={() => {}}
       />,
       {
         contestMetadata,
@@ -203,6 +207,7 @@ describe("SettingsPageContestTab", () => {
         contest={contest}
         leaderboard={leaderboard}
         form={result.current}
+        onToggleFreeze={() => {}}
       />,
       {
         contestMetadata,
@@ -228,12 +233,13 @@ describe("SettingsPageContestTab", () => {
     const { result } = await renderHookWithProviders(() =>
       useForm<SettingsFormType>(),
     );
-
+    const onFreezeToggle = jest.fn();
     await renderWithProviders(
       <SettingsPageContestTab
         contest={contest}
         leaderboard={leaderboard}
         form={result.current}
+        onToggleFreeze={onFreezeToggle}
       />,
       {
         contestMetadata,
@@ -248,6 +254,7 @@ describe("SettingsPageContestTab", () => {
 
     expect(leaderboardWritter.freeze).toHaveBeenCalledWith(contest.id);
     expect(useToast().success).toHaveBeenCalled();
+    expect(onFreezeToggle).toHaveBeenCalledWith(true);
   });
 
   it("should handle freeze error", async () => {
@@ -268,6 +275,7 @@ describe("SettingsPageContestTab", () => {
         contest={contest}
         leaderboard={leaderboard}
         form={result.current}
+        onToggleFreeze={() => {}}
       />,
       {
         contestMetadata,
@@ -299,6 +307,7 @@ describe("SettingsPageContestTab", () => {
         contest={contest}
         leaderboard={leaderboard}
         form={result.current}
+        onToggleFreeze={() => {}}
       />,
       {
         contestMetadata,
@@ -319,12 +328,13 @@ describe("SettingsPageContestTab", () => {
     const { result } = await renderHookWithProviders(() =>
       useForm<SettingsFormType>(),
     );
-
+    const onFreezeToggle = jest.fn();
     await renderWithProviders(
       <SettingsPageContestTab
         contest={contest}
         leaderboard={leaderboard}
         form={result.current}
+        onToggleFreeze={onFreezeToggle}
       />,
       {
         contestMetadata,
@@ -339,6 +349,7 @@ describe("SettingsPageContestTab", () => {
 
     expect(leaderboardWritter.unfreeze).toHaveBeenCalledWith(contest.id);
     expect(useToast().success).toHaveBeenCalled();
+    expect(onFreezeToggle).toHaveBeenCalledWith(false);
   });
 
   it("should handle unfreeze error", async () => {
@@ -359,6 +370,7 @@ describe("SettingsPageContestTab", () => {
         contest={contest}
         leaderboard={leaderboard}
         form={result.current}
+        onToggleFreeze={() => {}}
       />,
       {
         contestMetadata,

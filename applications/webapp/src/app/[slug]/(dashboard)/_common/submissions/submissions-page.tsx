@@ -84,9 +84,26 @@ type Props = {
   submissions: SubmissionPublicResponseDTO[] | SubmissionFullResponseDTO[];
   memberSubmissions?: SubmissionFullResponseDTO[];
   problems: ProblemPublicResponseDTO[];
-  canCreate?: boolean;
-  canEdit?: boolean;
-};
+} & (
+  | {
+      canCreate: true;
+      onCreate: (submission: SubmissionFullResponseDTO) => void;
+    }
+  | {
+      canCreate?: false;
+      onCreate?: (submission: SubmissionFullResponseDTO) => void;
+    }
+) &
+  (
+    | {
+        canEdit: true;
+        onEdit: (submission: SubmissionFullResponseDTO) => void;
+      }
+    | {
+        canEdit?: false;
+        onEdit?: (submission: SubmissionFullResponseDTO) => void;
+      }
+  );
 
 /**
  * A generic submissions page component for displaying contest submissions.
@@ -96,7 +113,9 @@ export function SubmissionsPage({
   memberSubmissions,
   problems,
   canCreate,
+  onCreate,
   canEdit,
+  onEdit,
 }: Props) {
   const contestStatus = useContestStatusWatcher();
   const [isOnlyMine, setIsOnlyMine] = useState(false);
@@ -122,6 +141,7 @@ export function SubmissionsPage({
           <SubmissionsPageForm
             onClose={() => setIsCreateFormOpen(false)}
             problems={problems}
+            onCreate={onCreate}
           />
         )}
 
@@ -217,6 +237,7 @@ export function SubmissionsPage({
                         <SubmissionsPageActionsMenu
                           submission={submission as SubmissionFullResponseDTO}
                           canEdit={canEdit}
+                          onEdit={onEdit as any}
                         />
                       </TableCell>
                     )}

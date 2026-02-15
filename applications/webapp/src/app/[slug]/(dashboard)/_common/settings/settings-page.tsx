@@ -117,6 +117,7 @@ const messages = defineMessages({
 type Props = {
   contest: ContestFullResponseDTO;
   leaderboard: LeaderboardResponseDTO;
+  onToggleFreeze: (isFrozen: boolean) => void;
 };
 
 enum TabKey {
@@ -125,7 +126,7 @@ enum TabKey {
   MEMBERS = "members",
 }
 
-export function SettingsPage({ contest, leaderboard }: Props) {
+export function SettingsPage({ contest, leaderboard, onToggleFreeze }: Props) {
   const contestStatus = useContestStatusWatcher();
   const updateContestState = useLoadableState();
   const toast = useToast();
@@ -248,6 +249,7 @@ export function SettingsPage({ contest, leaderboard }: Props) {
                   contest={contest}
                   leaderboard={leaderboard}
                   form={form}
+                  onToggleFreeze={onToggleFreeze}
                   isDisabled={isDisabled}
                 />
               )}

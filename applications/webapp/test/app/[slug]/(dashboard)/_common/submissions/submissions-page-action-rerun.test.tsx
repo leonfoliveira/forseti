@@ -8,6 +8,8 @@ import {
 } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { submissionWritter } from "@/config/composition";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -17,12 +19,14 @@ describe("SubmissionsPageActionRerun", () => {
     const contestMetadata = MockContestMetadataResponseDTO();
     const submission = MockSubmissionFullResponseDTO();
     const onClose = jest.fn();
+    const onRerun = jest.fn();
     await renderWithProviders(
       <DropdownMenu open>
         <DropdownMenuContent>
           <SubmissionsPageActionRerun
             submission={submission}
             onClose={onClose}
+            onRerun={onRerun}
           />
         </DropdownMenuContent>
       </DropdownMenu>,
@@ -40,5 +44,10 @@ describe("SubmissionsPageActionRerun", () => {
     );
     expect(useToast().success).toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
+    expect(onRerun).toHaveBeenCalledWith({
+      ...submission,
+      status: SubmissionStatus.JUDGING,
+      answer: SubmissionAnswer.NO_ANSWER,
+    });
   });
 });

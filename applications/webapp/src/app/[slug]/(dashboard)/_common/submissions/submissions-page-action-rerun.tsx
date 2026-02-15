@@ -10,6 +10,8 @@ import { useAppSelector } from "@/app/_store/store";
 import { submissionWritter } from "@/config/composition";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { defineMessages } from "@/i18n/message";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
 const messages = defineMessages({
   resubmitLabel: {
@@ -46,9 +48,14 @@ const messages = defineMessages({
 type Props = {
   submission: SubmissionFullResponseDTO;
   onClose: () => void;
+  onRerun: (submission: SubmissionFullResponseDTO) => void;
 };
 
-export function SubmissionsPageActionRerun({ submission, onClose }: Props) {
+export function SubmissionsPageActionRerun({
+  submission,
+  onClose,
+  onRerun,
+}: Props) {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
   const resubmitState = useLoadableState();
   const toast = useToast();
@@ -58,6 +65,12 @@ export function SubmissionsPageActionRerun({ submission, onClose }: Props) {
     resubmitState.start();
     try {
       await submissionWritter.rerun(contestId, submissionId);
+
+      onRerun({
+        ...submission,
+        status: SubmissionStatus.JUDGING,
+        answer: SubmissionAnswer.NO_ANSWER,
+      });
       toast.success(messages.resubmitSuccess);
       setIsDialogOpen(false);
       resubmitState.finish();

@@ -9,9 +9,14 @@ import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("AnnouncementsPageForm", () => {
   it("should render form fields and submit button", async () => {
+    const onCreate = jest.fn();
     const onClose = jest.fn();
     await renderWithProviders(
-      <AnnouncementsPageForm contestId="test-contest" onClose={onClose} />,
+      <AnnouncementsPageForm
+        contestId="test-contest"
+        onClose={onClose}
+        onCreate={onCreate}
+      />,
     );
 
     expect(screen.getByTestId("announcement-form")).toBeInTheDocument();
@@ -22,8 +27,13 @@ describe("AnnouncementsPageForm", () => {
 
   it("should call onClose when cancel button is clicked", async () => {
     const onClose = jest.fn();
+    const onCreate = jest.fn();
     await renderWithProviders(
-      <AnnouncementsPageForm contestId="test-contest" onClose={onClose} />,
+      <AnnouncementsPageForm
+        contestId="test-contest"
+        onClose={onClose}
+        onCreate={onCreate}
+      />,
     );
 
     screen.getByTestId("announcement-form-cancel").click();
@@ -31,13 +41,19 @@ describe("AnnouncementsPageForm", () => {
   });
 
   it("should create announcement when submit button is clicked", async () => {
+    const newAnnouncement = MockAnnouncementResponseDTO();
     (announcementWritter.create as jest.Mock).mockResolvedValueOnce(
-      MockAnnouncementResponseDTO(),
+      newAnnouncement,
     );
 
     const onClose = jest.fn();
+    const onCreate = jest.fn();
     await renderWithProviders(
-      <AnnouncementsPageForm contestId="test-contest" onClose={onClose} />,
+      <AnnouncementsPageForm
+        contestId="test-contest"
+        onClose={onClose}
+        onCreate={onCreate}
+      />,
     );
 
     fireEvent.change(screen.getByTestId("announcement-form-text"), {
@@ -52,6 +68,7 @@ describe("AnnouncementsPageForm", () => {
     });
     expect(useToast().success).toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
+    expect(onCreate).toHaveBeenCalledWith(newAnnouncement);
   });
 
   it("should show error toast when announcement creation fails", async () => {
@@ -60,8 +77,13 @@ describe("AnnouncementsPageForm", () => {
     );
 
     const onClose = jest.fn();
+    const onCreate = jest.fn();
     await renderWithProviders(
-      <AnnouncementsPageForm contestId="test-contest" onClose={onClose} />,
+      <AnnouncementsPageForm
+        contestId="test-contest"
+        onClose={onClose}
+        onCreate={onCreate}
+      />,
     );
 
     fireEvent.change(screen.getByTestId("announcement-form-text"), {

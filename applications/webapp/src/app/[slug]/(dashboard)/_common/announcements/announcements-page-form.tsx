@@ -24,6 +24,7 @@ import { Textarea } from "@/app/_lib/component/shadcn/textarea";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { announcementWritter } from "@/config/composition";
+import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -60,10 +61,11 @@ const messages = defineMessages({
 
 type Props = {
   contestId: string;
+  onCreate: (announcement: AnnouncementResponseDTO) => void;
   onClose: () => void;
 };
 
-export function AnnouncementsPageForm({ contestId, onClose }: Props) {
+export function AnnouncementsPageForm({ contestId, onCreate, onClose }: Props) {
   const createAnnouncementState = useLoadableState();
   const toast = useToast();
 
@@ -75,14 +77,16 @@ export function AnnouncementsPageForm({ contestId, onClose }: Props) {
   async function createAnnouncement(data: AnnouncementFormType) {
     createAnnouncementState.start();
     try {
-      await announcementWritter.create(
+      const newAnnouncement = await announcementWritter.create(
         contestId,
         AnnouncementForm.toInputDTO(data),
       );
-      createAnnouncementState.finish();
-      form.reset();
+
+      onCreate(newAnnouncement);
       toast.success(messages.createSuccess);
+      createAnnouncementState.finish();
       onClose();
+      form.reset();
     } catch (error) {
       await createAnnouncementState.fail(error, {
         default: () => toast.error(messages.createError),
