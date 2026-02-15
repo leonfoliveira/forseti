@@ -380,7 +380,10 @@ export function SettingsPageContestTab({
 
       <Separator className="my-5" />
 
-      <div className="flex flex-col gap-3">
+      <div
+        className="flex flex-col gap-3"
+        data-testid="contest-management-actions"
+      >
         <Button
           type="button"
           variant="secondary"

@@ -111,9 +111,13 @@ export class ActorOnSettingsPage extends Actor {
   }
 
   async freeze() {
-    const settingsContestTab = this.page.getByTestId("settings-contest-tab");
+    const contestManagementActions = this.page.getByTestId(
+      "contest-management-actions",
+    );
 
-    const freezeButton = settingsContestTab.getByTestId("freeze-toggle-button");
+    const freezeButton = contestManagementActions.getByTestId(
+      "freeze-toggle-button",
+    );
     await freezeButton.scrollIntoViewIfNeeded();
     await expect(freezeButton).toHaveText("Freeze");
     await freezeButton.click();
@@ -125,9 +129,11 @@ export class ActorOnSettingsPage extends Actor {
   }
 
   async unfreeze() {
-    const settingsContestTab = this.page.getByTestId("settings-contest-tab");
+    const contestManagementActions = this.page.getByTestId(
+      "contest-management-actions",
+    );
 
-    const unfreezeButton = settingsContestTab.getByTestId(
+    const unfreezeButton = contestManagementActions.getByTestId(
       "freeze-toggle-button",
     );
     await unfreezeButton.scrollIntoViewIfNeeded();
@@ -140,9 +146,11 @@ export class ActorOnSettingsPage extends Actor {
   }
 
   async forceStart() {
-    const settingsContestTab = this.page.getByTestId("settings-contest-tab");
+    const contestManagementActions = this.page.getByTestId(
+      "contest-management-actions",
+    );
 
-    const forceStartButton = settingsContestTab.getByTestId(
+    const forceStartButton = contestManagementActions.getByTestId(
       "force-toggle-button",
     );
     await forceStartButton.scrollIntoViewIfNeeded();
@@ -152,9 +160,11 @@ export class ActorOnSettingsPage extends Actor {
   }
 
   async forceEnd() {
-    const settingsContestTab = this.page.getByTestId("settings-contest-tab");
+    const contestManagementActions = this.page.getByTestId(
+      "contest-management-actions",
+    );
 
-    const forceEndButton = settingsContestTab.getByTestId(
+    const forceEndButton = contestManagementActions.getByTestId(
       "force-toggle-button",
     );
     await forceEndButton.scrollIntoViewIfNeeded();
