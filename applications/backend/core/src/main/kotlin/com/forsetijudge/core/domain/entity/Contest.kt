@@ -122,12 +122,17 @@ class Contest(
      */
     fun isFrozen(): Boolean {
         val now = OffsetDateTime.now()
+        val freezeTime = lastFreezeTime()
 
-        if (lastFreezeTime() == null) {
+        if (freezeTime == null) {
             return false
         }
 
         if (unfreezeAt == null) {
+            return true
+        }
+
+        if (unfreezeAt!!.isBefore(freezeTime)) {
             return true
         }
 

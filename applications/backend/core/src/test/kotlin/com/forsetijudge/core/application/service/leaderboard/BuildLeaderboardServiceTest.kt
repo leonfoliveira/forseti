@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.leaderboard
 
+import com.forsetijudge.core.application.util.AuthorizationUtil
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
@@ -19,7 +20,9 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.verify
 import java.time.OffsetDateTime
 
 class BuildLeaderboardServiceTest :
@@ -37,6 +40,8 @@ class BuildLeaderboardServiceTest :
             clearAllMocks()
             mockkStatic(OffsetDateTime::class)
             every { OffsetDateTime.now() } returns now
+            mockkObject(AuthorizationUtil)
+            every { AuthorizationUtil.checkContestStarted(any(), any()) } returns Unit
         }
 
         context("build") {
@@ -49,30 +54,17 @@ class BuildLeaderboardServiceTest :
                 }.message shouldBe "Could not find contest with id = $contestId"
             }
 
-            test("should throw ForbiddenException when contest has not started and member is not admin or root") {
+            test("should call AuthorizationUtil with correct params") {
                 val contestId = UuidCreator.getTimeOrderedEpoch()
                 val memberId = UuidCreator.getTimeOrderedEpoch()
-                val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
-                val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
+                val member = MemberMockBuilder.build()
+                val contest = ContestMockBuilder.build()
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
 
-                shouldThrow<ForbiddenException> {
-                    sut.build(contestId, memberId)
-                }.message shouldBe "Contest has not started yet"
-            }
+                sut.build(contestId, memberId)
 
-            test("should allow access when contest has not started but member is admin") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
-                val memberId = UuidCreator.getTimeOrderedEpoch()
-                val member = MemberMockBuilder.build(type = Member.Type.ADMIN)
-                val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1), problems = listOf(), members = listOf())
-                every { contestRepository.findEntityById(contestId) } returns contest
-                every { memberRepository.findEntityById(memberId) } returns member
-
-                val result = sut.build(contestId, memberId)
-
-                result.contestId shouldBe contest.id
+                verify { AuthorizationUtil.checkContestStarted(contest, member) }
             }
 
             test("should build leaderboard for contest") {

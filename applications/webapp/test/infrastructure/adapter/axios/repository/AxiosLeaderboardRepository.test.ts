@@ -33,8 +33,8 @@ describe("AxiosLeaderboardRepository", () => {
     it("should freeze the contest leaderboard", async () => {
       await sut.freeze(contestId);
 
-      expect(axiosClient.post).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/leaderboard/freeze`,
+      expect(axiosClient.put).toHaveBeenCalledWith(
+        `/v1/contests/${contestId}/leaderboard:freeze`,
       );
     });
   });
@@ -43,8 +43,8 @@ describe("AxiosLeaderboardRepository", () => {
     it("should unfreeze the contest leaderboard", async () => {
       await sut.unfreeze(contestId);
 
-      expect(axiosClient.post).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/leaderboard/unfreeze`,
+      expect(axiosClient.put).toHaveBeenCalledWith(
+        `/v1/contests/${contestId}/leaderboard:unfreeze`,
       );
     });
   });

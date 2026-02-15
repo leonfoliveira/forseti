@@ -11,6 +11,7 @@ import com.forsetijudge.core.port.driving.usecase.leaderboard.FreezeLeaderboardU
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -28,6 +29,7 @@ class FreezeLeaderboardService(
      * @param contestId The ID of the contest for which the leaderboard should be frozen.
      * @param memberId The ID of the member who is performing the freeze action.
      */
+    @Transactional
     override fun freeze(
         contestId: UUID,
         memberId: UUID,
@@ -61,6 +63,7 @@ class FreezeLeaderboardService(
      * @param contestId The ID of the contest for which the leaderboard should be frozen.
      * @param memberId The ID of the member who is performing the freeze action.
      */
+    @Transactional
     override fun unfreeze(
         contestId: UUID,
         memberId: UUID,

@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.leaderboard
 
+import com.forsetijudge.core.application.util.AuthorizationUtil
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Problem
@@ -64,9 +65,7 @@ class BuildLeaderboardService(
                     ?: throw NotFoundException("Could not find member with id = $it")
             }
 
-        if (!contest.hasStarted() && !setOf(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE).contains(member?.type)) {
-            throw ForbiddenException("Contest has not started yet")
-        }
+        AuthorizationUtil.checkContestStarted(contest, member)
 
         val classification =
             contest.members

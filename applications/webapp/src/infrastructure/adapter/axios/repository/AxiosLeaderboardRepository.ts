@@ -16,10 +16,10 @@ export class AxiosLeaderboardRepository implements LeaderboardRepository {
   }
 
   async freeze(contestId: string): Promise<void> {
-    await this.axiosClient.post(`${this.basePath(contestId)}/freeze`);
+    await this.axiosClient.put(`${this.basePath(contestId)}:freeze`);
   }
 
   async unfreeze(contestId: string): Promise<void> {
-    await this.axiosClient.post(`${this.basePath(contestId)}/unfreeze`);
+    await this.axiosClient.put(`${this.basePath(contestId)}:unfreeze`);
   }
 }

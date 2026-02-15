@@ -18,6 +18,7 @@ import { ContestReader } from "@/core/port/driving/usecase/contest/ContestReader
 import { ContestWritter } from "@/core/port/driving/usecase/contest/ContestWritter";
 import { DashboardReader } from "@/core/port/driving/usecase/dashboard/DashboardReader";
 import { LeaderboardReader } from "@/core/port/driving/usecase/leaderboard/LeaderboardReader";
+import { LeaderboardWritter } from "@/core/port/driving/usecase/leaderboard/LeaderboardWritter";
 import { SessionReader } from "@/core/port/driving/usecase/session/SessionReader";
 import { SessionWritter } from "@/core/port/driving/usecase/session/SessionWritter";
 import { StorageReader } from "@/core/port/driving/usecase/storage/StorageReader";
@@ -100,6 +101,7 @@ export function build(): Composition {
   const contestWritter: ContestWritter = contestService;
   const dashboardReader: DashboardReader = dashboardService;
   const leaderboardReader: LeaderboardReader = leaderboardService;
+  const leaderboardWritter: LeaderboardWritter = leaderboardService;
   const sessionReader: SessionReader = sessionService;
   const sessionWritter: SessionWritter = sessionService;
   // Storage use cases have no server-side implementations
@@ -122,6 +124,7 @@ export function build(): Composition {
     contestWritter,
     dashboardReader,
     leaderboardReader,
+    leaderboardWritter,
     sessionReader,
     sessionWritter,
     storageReader,

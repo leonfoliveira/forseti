@@ -1,6 +1,7 @@
 package com.forsetijudge.api.adapter.driven.listener
 
 import com.forsetijudge.api.adapter.driven.emitter.StompLeaderboardEmitter
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.LeaderboardFreezeEvent
 import com.forsetijudge.core.domain.event.LeaderboardUnfreezeEvent
 import com.forsetijudge.core.port.driving.usecase.leaderboard.BuildLeaderboardUseCase
@@ -27,7 +28,7 @@ class LeaderboardEventsApiListener(
     @TransactionalEventListener(LeaderboardUnfreezeEvent::class, phase = TransactionPhase.AFTER_COMMIT)
     fun onApplicationEvent(event: LeaderboardUnfreezeEvent) {
         logger.info("Handling leaderboard unfreeze event for contest: ${event.contest.id}")
-        val leaderboard = buildLeaderboardUseCase.build(event.contest.id, null)
+        val leaderboard = buildLeaderboardUseCase.build(event.contest.id, Member.API_ID)
         val submissions = findSubmissionUseCase.findAllByContestSinceLastFreeze(event.contest.id)
         leaderboardEmitter.emitUnfreeze(leaderboard, submissions)
     }

@@ -20,6 +20,7 @@ export const contestReader = composition.contestReader;
 export const contestWritter = composition.contestWritter;
 export const dashboardReader = composition.dashboardReader;
 export const leaderboardReader = composition.leaderboardReader;
+export const leaderboardWritter = composition.leaderboardWritter;
 export const sessionReader = composition.sessionReader;
 export const sessionWritter = composition.sessionWritter;
 export const storageReader = composition.storageReader;

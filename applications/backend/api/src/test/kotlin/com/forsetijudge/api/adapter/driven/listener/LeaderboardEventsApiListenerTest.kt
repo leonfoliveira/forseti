@@ -2,6 +2,7 @@ package com.forsetijudge.api.adapter.driven.listener
 
 import com.forsetijudge.api.adapter.driven.emitter.StompLeaderboardEmitter
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.event.LeaderboardFreezeEvent
 import com.forsetijudge.core.domain.event.LeaderboardUnfreezeEvent
@@ -40,7 +41,7 @@ class LeaderboardEventsApiListenerTest :
             val event = LeaderboardUnfreezeEvent(this, contest)
             val leaderboard = mockk<LeaderboardOutputDTO>()
             val submissions = listOf(SubmissionMockBuilder.build())
-            every { buildLeaderboardUseCase.build(contest.id, null) } returns leaderboard
+            every { buildLeaderboardUseCase.build(contest.id, Member.API_ID) } returns leaderboard
             every { findSubmissionUseCase.findAllByContestSinceLastFreeze(contest.id) } returns submissions
 
             sut.onApplicationEvent(event)
