@@ -28,6 +28,11 @@ import {
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Textarea } from "@/app/_lib/component/shadcn/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/app/_lib/component/shadcn/tooltip";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { clarificationWritter } from "@/config/composition";
@@ -79,6 +84,10 @@ const messages = defineMessages({
   deleteError: {
     id: "app.[slug].(dashboard)._common.clarifications.clarifications-page-card.delete-error",
     defaultMessage: "Failed to delete clarification",
+  },
+  deleteTooltip: {
+    id: "app.[slug].(dashboard)._common.clarifications.clarifications-page-card.delete-tooltip",
+    defaultMessage: "Delete",
   },
 });
 
@@ -166,14 +175,21 @@ export function ClarificationsPageCard({
               </p>
               {canAnswer && (
                 <>
-                  <Button
-                    size="xs"
-                    variant="destructive"
-                    data-testid="clarification-delete-button"
-                    onClick={() => setIsDeleteDialogOpen(true)}
-                  >
-                    <TrashIcon />
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="xs"
+                        variant="destructive"
+                        data-testid="clarification-delete-button"
+                        onClick={() => setIsDeleteDialogOpen(true)}
+                      >
+                        <TrashIcon />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <FormattedMessage {...messages.deleteTooltip} />
+                    </TooltipContent>
+                  </Tooltip>
 
                   <ConfirmationDialog
                     isOpen={isDeleteDialogOpen}

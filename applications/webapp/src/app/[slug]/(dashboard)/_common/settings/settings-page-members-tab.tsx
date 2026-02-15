@@ -19,6 +19,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/_lib/component/shadcn/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/app/_lib/component/shadcn/tooltip";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
@@ -43,6 +48,10 @@ const messages = defineMessages({
   newMemberLabel: {
     id: "app.[slug].(dashboard)._common.settings.settings-page-members-tab.new-member-label",
     defaultMessage: "New Member",
+  },
+  removeTooltip: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-members-tab.remove-member-tooltip",
+    defaultMessage: "Remove",
   },
 });
 
@@ -130,15 +139,22 @@ export function SettingsPageMembersTab({ form }: Props) {
                 />
               </TableCell>
               <TableCell className="text-right">
-                <Button
-                  type="button"
-                  size="xs"
-                  variant="destructive"
-                  onClick={() => remove(index)}
-                  data-testid="remove-member-button"
-                >
-                  <TrashIcon />
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      size="xs"
+                      variant="destructive"
+                      onClick={() => remove(index)}
+                      data-testid="remove-member-button"
+                    >
+                      <TrashIcon />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <FormattedMessage {...messages.removeTooltip} />
+                  </TooltipContent>
+                </Tooltip>
               </TableCell>
             </TableRow>
           ))}

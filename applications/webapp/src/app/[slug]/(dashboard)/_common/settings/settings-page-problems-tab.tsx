@@ -19,6 +19,11 @@ import {
   ItemContent,
   ItemMedia,
 } from "@/app/_lib/component/shadcn/item";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/app/_lib/component/shadcn/tooltip";
 import { useErrorHandler } from "@/app/_lib/hook/error-handler-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { attachmentReader } from "@/config/composition";
@@ -75,6 +80,18 @@ const messages = defineMessages({
   downloadAttachmentError: {
     id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.download-attachment-error",
     defaultMessage: "Failed to download attachment.",
+  },
+  moveUpTooltip: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.move-up-tooltip",
+    defaultMessage: "Move Up",
+  },
+  moveDownTooltip: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.move-down-tooltip",
+    defaultMessage: "Move Down",
+  },
+  removeTooltip: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.remove-problem-tooltip",
+    defaultMessage: "Remove",
   },
 });
 
@@ -217,36 +234,57 @@ export function SettingsPageProblemsTab({ contest, form }: Props) {
           </ItemContent>
           <ItemActions>
             <div className="flex flex-col gap-2">
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                disabled={index === 0}
-                onClick={() => move(index, index - 1)}
-                data-testid="move-problem-up-button"
-              >
-                <ChevronUpIcon />
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                disabled={index === fields.length - 1}
-                onClick={() => move(index, index + 1)}
-                data-testid="move-problem-down-button"
-              >
-                <ChevronDownIcon />
-              </Button>
-              <Button
-                type="button"
-                className="mt-5"
-                size="sm"
-                variant="destructive"
-                onClick={() => remove(index)}
-                data-testid="remove-problem-button"
-              >
-                <TrashIcon />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={index === 0}
+                    onClick={() => move(index, index - 1)}
+                    data-testid="move-problem-up-button"
+                  >
+                    <ChevronUpIcon />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <FormattedMessage {...messages.moveUpTooltip} />
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={index === fields.length - 1}
+                    onClick={() => move(index, index + 1)}
+                    data-testid="move-problem-down-button"
+                  >
+                    <ChevronDownIcon />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <FormattedMessage {...messages.moveDownTooltip} />
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    className="mt-5"
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => remove(index)}
+                    data-testid="remove-problem-button"
+                  >
+                    <TrashIcon />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <FormattedMessage {...messages.removeTooltip} />
+                </TooltipContent>
+              </Tooltip>
             </div>
           </ItemActions>
         </Item>

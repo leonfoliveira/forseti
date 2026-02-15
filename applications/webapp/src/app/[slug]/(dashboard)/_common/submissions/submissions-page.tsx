@@ -225,7 +225,7 @@ export function SubmissionsPage({
               </TableBody>
             </Table>
 
-            <Alert className="bg-muted mt-5 py-2">
+            <Alert className="bg-muted mt-7 py-2">
               <AlertDescription className="text-xs">
                 <FormattedMessage {...messages.guidanceText} />
               </AlertDescription>
