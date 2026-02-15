@@ -44,6 +44,7 @@ export class StompClient implements ListenerClient {
           binaryBody: error.binaryBody,
           isBinaryBody: error.isBinaryBody,
         });
+        this.client.deactivate();
         reject(
           new ServerException(
             error.headers["message"] ||
@@ -55,6 +56,7 @@ export class StompClient implements ListenerClient {
       this.client.onWebSocketError = (event) => {
         clearTimeout(connectTimeout);
         console.error("WebSocket error:", event);
+        this.client.deactivate();
         reject(new ServerException("WebSocket connection failed"));
       };
 
