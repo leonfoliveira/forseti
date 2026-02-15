@@ -17,6 +17,7 @@ data class SubmissionPublicResponseDTO(
     val status: Submission.Status,
     val answer: Submission.Answer,
     val createdAt: OffsetDateTime,
+    val version: Long,
 ) : Serializable
 
 fun Submission.toPublicResponseDTO(): SubmissionPublicResponseDTO =
@@ -28,4 +29,5 @@ fun Submission.toPublicResponseDTO(): SubmissionPublicResponseDTO =
         status = status,
         answer = answer,
         createdAt = createdAt,
+        version = version,
     )

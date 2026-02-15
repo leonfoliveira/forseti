@@ -21,6 +21,7 @@ class Attachment(
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
+    version: Long = 1L,
     /**
      * The contest to which this attachment belongs.
      */
@@ -54,7 +55,7 @@ class Attachment(
     @Enumerated(EnumType.STRING)
     @Audited(withModifiedFlag = false)
     val context: Context,
-) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     enum class Context {
         PROBLEM_DESCRIPTION,
         PROBLEM_TEST_CASES,

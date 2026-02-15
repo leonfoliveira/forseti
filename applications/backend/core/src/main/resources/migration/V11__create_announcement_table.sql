@@ -6,6 +6,7 @@ create table announcement (
     contest_id uuid not null,
     member_id uuid not null,
     text text not null,
+    version bigint not null default 1,
     constraint fk_contest_id foreign key (contest_id) references contest (id),
     constraint fk_member_id foreign key (member_id) references member (id)
 );
@@ -24,6 +25,7 @@ create table announcement_aud (
     member_id uuid not null,
     text text not null,
     text_mod boolean not null default false,
+    version bigint not null,
     primary key (rev, id),
     constraint fk_contest_id foreign key (contest_id) references contest (id),
     constraint fk_member_id foreign key (member_id) references member (id),

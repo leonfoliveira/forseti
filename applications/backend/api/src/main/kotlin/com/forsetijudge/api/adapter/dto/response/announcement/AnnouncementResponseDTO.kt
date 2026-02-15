@@ -12,6 +12,7 @@ data class AnnouncementResponseDTO(
     val createdAt: OffsetDateTime,
     val member: MemberPublicResponseDTO,
     val text: String,
+    val version: Long,
 ) : Serializable
 
 fun Announcement.toResponseDTO(): AnnouncementResponseDTO =
@@ -20,4 +21,5 @@ fun Announcement.toResponseDTO(): AnnouncementResponseDTO =
         createdAt = this.createdAt,
         member = this.member.toPublicResponseDTO(),
         text = this.text,
+        version = this.version,
     )

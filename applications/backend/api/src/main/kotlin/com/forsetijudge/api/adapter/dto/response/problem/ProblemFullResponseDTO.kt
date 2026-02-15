@@ -14,6 +14,7 @@ data class ProblemFullResponseDTO(
     val timeLimit: Int,
     val memoryLimit: Int,
     val testCases: AttachmentResponseDTO,
+    val version: Long,
 ) : Serializable
 
 fun Problem.toFullResponseDTO(): ProblemFullResponseDTO =
@@ -25,4 +26,5 @@ fun Problem.toFullResponseDTO(): ProblemFullResponseDTO =
         timeLimit = timeLimit,
         memoryLimit = memoryLimit,
         testCases = testCases.toResponseDTO(),
+        version = version,
     )

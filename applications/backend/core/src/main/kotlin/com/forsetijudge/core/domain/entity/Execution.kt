@@ -25,6 +25,7 @@ class Execution(
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
+    version: Long = 1L,
     /**
      * The submission to which this execution belongs.
      */
@@ -65,4 +66,4 @@ class Execution(
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
     val output: Attachment,
-) : BaseEntity(id, createdAt, updatedAt, deletedAt)
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)

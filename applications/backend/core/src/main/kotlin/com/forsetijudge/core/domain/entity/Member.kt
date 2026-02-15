@@ -26,6 +26,7 @@ class Member(
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
+    version: Long = 1L,
     /**
      * The contest to which this member belongs.
      */
@@ -61,7 +62,7 @@ class Member(
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var submissions: List<Submission> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     fun isSystemMember(): Boolean = contest == null
 
     enum class Type {

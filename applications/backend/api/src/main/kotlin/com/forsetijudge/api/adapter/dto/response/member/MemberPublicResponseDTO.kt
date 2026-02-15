@@ -8,6 +8,7 @@ data class MemberPublicResponseDTO(
     val id: UUID,
     val type: Member.Type,
     val name: String,
+    val version: Long,
 ) : Serializable
 
 fun Member.toPublicResponseDTO(): MemberPublicResponseDTO =
@@ -15,4 +16,5 @@ fun Member.toPublicResponseDTO(): MemberPublicResponseDTO =
         id = id,
         type = type,
         name = name,
+        version = version,
     )

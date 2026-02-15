@@ -27,6 +27,7 @@ class ContestFullResponseDTO(
     val problems: List<ProblemFullResponseDTO>,
     val clarifications: List<ClarificationResponseDTO>,
     val announcements: List<AnnouncementResponseDTO>,
+    val version: Long,
 ) : Serializable
 
 fun Contest.toFullResponseDTO(): ContestFullResponseDTO =
@@ -43,4 +44,5 @@ fun Contest.toFullResponseDTO(): ContestFullResponseDTO =
         problems = this.problems.map { it.toFullResponseDTO() },
         clarifications = this.clarifications.map { it.toResponseDTO() },
         announcements = this.announcements.map { it.toResponseDTO() },
+        version = this.version,
     )

@@ -13,6 +13,7 @@ class ContestMetadataResponseDTO(
     val languages: List<Submission.Language>,
     val startAt: OffsetDateTime,
     val endAt: OffsetDateTime,
+    val version: Long,
 ) : Serializable
 
 fun Contest.toMetadataDTO(): ContestMetadataResponseDTO =
@@ -23,4 +24,5 @@ fun Contest.toMetadataDTO(): ContestMetadataResponseDTO =
         languages = this.languages,
         startAt = this.startAt,
         endAt = this.endAt,
+        version = this.version,
     )

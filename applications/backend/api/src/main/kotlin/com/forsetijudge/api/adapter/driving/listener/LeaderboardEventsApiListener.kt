@@ -1,4 +1,4 @@
-package com.forsetijudge.api.adapter.driven.listener
+package com.forsetijudge.api.adapter.driving.listener
 
 import com.forsetijudge.api.adapter.driven.emitter.StompLeaderboardEmitter
 import com.forsetijudge.core.domain.entity.Member

@@ -21,6 +21,7 @@ class Session(
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
+    version: Long = 1L,
     /**
      * The CSRF token associated with this session.
      */
@@ -46,7 +47,7 @@ class Session(
     @Column(name = "expires_at", nullable = false)
     @Audited(withModifiedFlag = false)
     val expiresAt: OffsetDateTime,
-) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     /**
      * Checks if the session is about to expire within the given threshold in minutes.
      *

@@ -9,6 +9,7 @@ data class MemberFullResponseDTO(
     val type: Member.Type,
     val name: String,
     val login: String,
+    val version: Long,
 ) : Serializable
 
 fun Member.toFullResponseDTO(): MemberFullResponseDTO =
@@ -17,4 +18,5 @@ fun Member.toFullResponseDTO(): MemberFullResponseDTO =
         type = type,
         name = name,
         login = login,
+        version = version,
     )

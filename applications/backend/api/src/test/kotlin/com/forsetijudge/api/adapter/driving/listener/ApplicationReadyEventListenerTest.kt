@@ -1,5 +1,6 @@
-package com.forsetijudge.api.adapter.driven.listener
+package com.forsetijudge.api.adapter.driving.listener
 
+import com.forsetijudge.api.adapter.driving.listener.ApplicationReadyEventApiListener
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.member.UpdatePasswordMemberUseCase
 import io.kotest.core.spec.style.FunSpec

@@ -9,6 +9,7 @@ create table execution (
     last_test_case integer,
     input_id uuid not null,
     output_id uuid not null,
+    version bigint not null default 1,
     constraint fk_submission_id foreign key (submission_id) references submission (id),
     constraint fk_input_id foreign key (input_id) references attachment (id),
     constraint fk_output_id foreign key (output_id) references attachment (id)
@@ -30,6 +31,7 @@ create table execution_aud (
     last_test_case integer,
     input_id uuid not null,
     output_id uuid not null,
+    version bigint not null,
     primary key (rev, id),
     constraint fk_submission_id foreign key (submission_id) references submission (id),
     constraint fk_input_id foreign key (input_id) references attachment (id),

@@ -5,6 +5,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
 import jakarta.persistence.PreUpdate
+import jakarta.persistence.Version
 import org.hibernate.envers.Audited
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -22,6 +23,10 @@ open class BaseEntity(
     var updatedAt: OffsetDateTime = OffsetDateTime.now(),
     @Column(name = "deleted_at")
     var deletedAt: OffsetDateTime? = null,
+    @Version
+    @Audited(withModifiedFlag = false)
+    @Column(name = "version", nullable = false)
+    var version: Long = 1L,
 ) {
     @PreUpdate
     protected fun onUpdate() {

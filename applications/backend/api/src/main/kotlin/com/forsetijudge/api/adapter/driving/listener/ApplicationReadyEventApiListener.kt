@@ -1,4 +1,4 @@
-package com.forsetijudge.api.adapter.driven.listener
+package com.forsetijudge.api.adapter.driving.listener
 
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.member.UpdatePasswordMemberUseCase

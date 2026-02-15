@@ -7,6 +7,7 @@ create table session (
     contest_id uuid,
     member_id uuid not null,
     expires_at timestamp not null,
+    version bigint not null default 1,
     constraint fk_contest_id foreign key (contest_id) references contest (id),
     constraint fk_member_id foreign key (member_id) references member (id)
 );
@@ -25,6 +26,7 @@ create table session_aud (
     contest_id uuid,
     member_id uuid not null,
     expires_at timestamp not null,
+    version bigint not null,
     primary key (rev, id),
     constraint fk_contest_id_aud foreign key (contest_id) references contest (id),
     constraint fk_member_id_aud foreign key (member_id) references member (id),

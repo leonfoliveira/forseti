@@ -24,6 +24,7 @@ class Clarification(
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
+    version: Long = 1L,
     /**
      * The contest to which this clarification belongs.
      */
@@ -65,4 +66,4 @@ class Clarification(
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var children: List<Clarification> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deletedAt)
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)

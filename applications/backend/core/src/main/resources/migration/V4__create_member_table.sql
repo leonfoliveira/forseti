@@ -8,6 +8,7 @@ create table member (
     name text not null,
     login text not null,
     password text not null,
+    version bigint not null default 1,
     constraint fk_contest_id foreign key (contest_id) references contest (id)
 );
 
@@ -32,6 +33,7 @@ create table member_aud (
     login_mod boolean not null default false,
     password text not null,
     password_mod boolean not null default false,
+    version bigint not null,
     primary key (rev, id),
     constraint fk_contest_id foreign key (contest_id) references contest (id),
     constraint fk_rev foreign key (rev) references revinfo (rev)

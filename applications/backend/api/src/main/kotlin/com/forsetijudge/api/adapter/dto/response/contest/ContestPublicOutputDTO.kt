@@ -25,6 +25,7 @@ data class ContestPublicOutputDTO(
     val problems: List<ProblemPublicResponseDTO>,
     val clarifications: List<ClarificationResponseDTO>,
     val announcements: List<AnnouncementResponseDTO>,
+    val version: Long,
 ) : Serializable
 
 fun Contest.toPublicOutputDTO(): ContestPublicOutputDTO =
@@ -39,4 +40,5 @@ fun Contest.toPublicOutputDTO(): ContestPublicOutputDTO =
         problems = this.problems.map { it.toPublicResponseDTO() },
         clarifications = this.clarifications.map { it.toResponseDTO() },
         announcements = this.announcements.map { it.toResponseDTO() },
+        version = this.version,
     )

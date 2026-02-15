@@ -11,7 +11,8 @@ create table contest (
     auto_freeze_at timestamp,
     frozen_at timestamp,
     unfreeze_at timestamp,
-    settings jsonb not null
+    settings jsonb not null,
+    version bigint not null default 1
 );
 
 create index idx_contest_slug on contest (slug);
@@ -40,6 +41,7 @@ create table contest_aud (
     frozen_at_mod boolean not null default false,
     settings jsonb not null,
     settings_mod boolean not null default false,
+    version bigint not null,
     primary key (rev, id),
     constraint fk_rev foreign key (rev) references revinfo (rev)
 );

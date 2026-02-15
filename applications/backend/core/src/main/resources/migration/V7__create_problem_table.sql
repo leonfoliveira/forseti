@@ -10,6 +10,7 @@ create table problem (
     time_limit int not null,
     memory_limit int not null,
     test_cases_id uuid not null,
+    version bigint not null default 1,
     constraint fk_contest_id foreign key (contest_id) references contest (id),
     constraint fk_description_id foreign key (description_id) references attachment (id),
     constraint fk_test_cases_id foreign key (test_cases_id) references attachment (id)
@@ -38,6 +39,7 @@ create table problem_aud (
     memory_limit_mod boolean not null default false,
     test_cases_id uuid not null,
     test_cases_id_mod boolean not null default false,
+    version bigint not null,
     primary key (rev, id),
     constraint fk_contest_id foreign key (contest_id) references contest (id),
     constraint fk_description_id foreign key (description_id) references attachment (id),

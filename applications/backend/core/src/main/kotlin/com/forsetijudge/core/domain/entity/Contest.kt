@@ -27,6 +27,7 @@ class Contest(
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
+    version: Long = 1L,
     /**
      * A unique identifier for the contest, typically a slug that is used in URLs.
      */
@@ -99,7 +100,7 @@ class Contest(
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var announcements: List<Announcement> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     fun hasStarted(): Boolean = !startAt.isAfter(OffsetDateTime.now())
 
     fun hasFinished(): Boolean = !endAt.isAfter(OffsetDateTime.now())
