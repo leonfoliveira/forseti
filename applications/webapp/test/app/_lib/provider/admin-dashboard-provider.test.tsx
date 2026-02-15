@@ -181,6 +181,7 @@ describe("AdminDashboardProvider", () => {
       });
     });
     expect(store.getState().adminDashboard.leaderboard.isFrozen).toBe(true);
+    expect(useToast().info).toHaveBeenCalled();
   });
 
   it("should handle leaderboard unfreeze updates", async () => {
@@ -201,6 +202,7 @@ describe("AdminDashboardProvider", () => {
       });
     });
     expect(store.getState().adminDashboard.leaderboard).toBe(otherLeaderboard);
+    expect(useToast().info).toHaveBeenCalled();
   });
 
   it("should handle submissions updates", async () => {

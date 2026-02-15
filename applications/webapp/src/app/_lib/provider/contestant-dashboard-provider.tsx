@@ -41,6 +41,14 @@ const messages = defineMessages({
     id: "app._lib.provider.contestant-dashboard-provider.clarification-answer",
     defaultMessage: "New answer for a clarification",
   },
+  frozen: {
+    id: "app._lib.provider.contestant-dashboard-provider.frozen",
+    defaultMessage: "Leaderboard has been frozen",
+  },
+  unfrozen: {
+    id: "app._lib.provider.contestant-dashboard-provider.unfrozen",
+    defaultMessage: "Leaderboard has been unfrozen",
+  },
 });
 
 /**
@@ -188,6 +196,7 @@ export function ContestantDashboardProvider({
 
   function receiveLeaderboardFreeze() {
     dispatch(contestantDashboardSlice.actions.setLeaderboardIsFrozen(true));
+    toast.info(messages.frozen);
   }
 
   function receiveLeaderboardUnfreeze(data: {
@@ -200,6 +209,7 @@ export function ContestantDashboardProvider({
         data.frozenSubmissions,
       ),
     );
+    toast.info(messages.unfrozen);
   }
 
   function receiveSubmission(submission: SubmissionPublicResponseDTO) {

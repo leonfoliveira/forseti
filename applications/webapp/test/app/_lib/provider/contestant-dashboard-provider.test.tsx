@@ -204,6 +204,7 @@ describe("ContestantDashboardProvider", () => {
     expect(store.getState().contestantDashboard.leaderboard.isFrozen).toBe(
       true,
     );
+    expect(useToast().info).toHaveBeenCalled();
   });
 
   it("should handle leaderboard unfreeze updates", async () => {
@@ -227,6 +228,7 @@ describe("ContestantDashboardProvider", () => {
     expect(store.getState().contestantDashboard.submissions).toContain(
       frozenSubmissions[0],
     );
+    expect(useToast().info).toHaveBeenCalled();
   });
 
   it("should handle submissions updates", async () => {

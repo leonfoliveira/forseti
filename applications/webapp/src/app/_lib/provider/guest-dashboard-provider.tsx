@@ -32,6 +32,14 @@ const messages = defineMessages({
     id: "app._lib.provider.guest-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
+  frozen: {
+    id: "app._lib.provider.guest-dashboard-provider.frozen",
+    defaultMessage: "Leaderboard has been frozen",
+  },
+  unfrozen: {
+    id: "app._lib.provider.guest-dashboard-provider.unfrozen",
+    defaultMessage: "Leaderboard has been unfrozen",
+  },
 });
 
 export function GuestDashboardProvider({
@@ -161,6 +169,7 @@ export function GuestDashboardProvider({
 
   function receiveLeaderboardFreeze() {
     dispatch(guestDashboardSlice.actions.setLeaderboardIsFrozen(true));
+    toast.info(messages.frozen);
   }
 
   function receiveLeaderboardUnfreeze(data: {
@@ -171,6 +180,7 @@ export function GuestDashboardProvider({
     dispatch(
       guestDashboardSlice.actions.mergeSubmissionBatch(data.frozenSubmissions),
     );
+    toast.info(messages.unfrozen);
   }
 
   function receiveSubmission(submission: SubmissionPublicResponseDTO) {

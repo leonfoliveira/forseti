@@ -39,6 +39,14 @@ const messages = defineMessages({
     id: "app._lib.provider.judge-dashboard-provider.new-clarification",
     defaultMessage: "New clarification",
   },
+  frozen: {
+    id: "app._lib.provider.judge-dashboard-provider.frozen",
+    defaultMessage: "Leaderboard has been frozen",
+  },
+  unfrozen: {
+    id: "app._lib.provider.judge-dashboard-provider.unfrozen",
+    defaultMessage: "Leaderboard has been unfrozen",
+  },
 });
 
 /**
@@ -171,6 +179,7 @@ export function JudgeDashboardProvider({
 
   function receiveLeaderboardFreeze() {
     dispatch(judgeDashboardSlice.actions.setLeaderboardIsFrozen(true));
+    toast.info(messages.frozen);
   }
 
   function receiveLeaderboardUnfreeze(data: {
@@ -178,6 +187,7 @@ export function JudgeDashboardProvider({
     frozenSubmissions: SubmissionPublicResponseDTO[];
   }) {
     dispatch(judgeDashboardSlice.actions.setLeaderboard(data.leaderboard));
+    toast.info(messages.unfrozen);
   }
 
   function receiveSubmission(submission: SubmissionFullResponseDTO) {

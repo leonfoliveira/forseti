@@ -26,8 +26,10 @@ class SubmissionEventsApiListener(
      */
     @TransactionalEventListener(SubmissionCreatedEvent::class, phase = TransactionPhase.AFTER_COMMIT)
     fun onApplicationEvent(event: SubmissionCreatedEvent) {
-        logger.info("Handling submission created event: ${event.submission}")
-        emmitSubmissionAndLeaderboard(event.submission)
+        val submission = event.submission
+        logger.info("Handling submission created event: $submission")
+        submissionEmitter.emit(submission)
+        emmitLeaderboardPartial(submission)
     }
 
     /**
@@ -37,12 +39,13 @@ class SubmissionEventsApiListener(
      */
     @TransactionalEventListener(SubmissionUpdatedEvent::class, phase = TransactionPhase.AFTER_COMMIT)
     fun onApplicationEvent(event: SubmissionUpdatedEvent) {
-        logger.info("Handling submission updated event: ${event.submission}")
-        emmitSubmissionAndLeaderboard(event.submission)
+        val submission = event.submission
+        logger.info("Handling submission updated event: $submission")
+        submissionEmitter.emitNonFrozen(submission)
+        emmitLeaderboardPartial(submission)
     }
 
-    private fun emmitSubmissionAndLeaderboard(submission: Submission) {
-        submissionEmitter.emit(submission)
+    private fun emmitLeaderboardPartial(submission: Submission) {
         val leaderboardPartial = buildLeaderboardUseCase.buildPartial(submission.member.id, submission.problem.id)
         leaderboardPartialEmitter.emit(submission.contest, leaderboardPartial)
     }

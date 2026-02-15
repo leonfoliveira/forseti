@@ -174,6 +174,7 @@ describe("GuestDashboardProvider", () => {
       ).mock.calls[0][2]();
     });
     expect(store.getState().guestDashboard.leaderboard.isFrozen).toBe(true);
+    expect(useToast().info).toHaveBeenCalled();
   });
 
   it("should handle leaderboard unfreeze updates", async () => {
@@ -195,6 +196,7 @@ describe("GuestDashboardProvider", () => {
     expect(store.getState().guestDashboard.submissions).toContain(
       frozenSubmissions[0],
     );
+    expect(useToast().info).toHaveBeenCalled();
   });
 
   it("should handle submissions updates", async () => {

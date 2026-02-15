@@ -45,7 +45,7 @@ class SubmissionEventListenerTest :
 
             sut.onApplicationEvent(event)
 
-            verify { submissionEmitter.emit(submission) }
+            verify { submissionEmitter.emitNonFrozen(submission) }
             verify { leaderboardPartialEmitter.emit(submission.contest, leaderboardPartial) }
         }
     })
