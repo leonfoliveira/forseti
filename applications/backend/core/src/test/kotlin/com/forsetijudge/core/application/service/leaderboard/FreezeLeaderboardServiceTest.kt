@@ -3,6 +3,7 @@ package com.forsetijudge.core.application.service.leaderboard
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
+import com.forsetijudge.core.domain.event.LeaderboardFreezeEvent
 import com.forsetijudge.core.domain.event.LeaderboardUnfreezeEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -85,6 +86,9 @@ class FreezeLeaderboardServiceTest :
 
                 verify { contestRepository.save(contest) }
                 contest.manualFreezeAt shouldNotBe null
+                val eventSlot = slot<LeaderboardFreezeEvent>()
+                verify { applicationEventPublisher.publishEvent(capture(eventSlot)) }
+                eventSlot.captured.contest shouldBe contest
             }
         }
 

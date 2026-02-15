@@ -8,6 +8,7 @@ export type UpdateContestRequestDTO = {
   languages: SubmissionLanguage[];
   startAt: string;
   endAt: string;
+  autoFreezeAt?: string;
   settings: {
     isAutoJudgeEnabled: boolean;
   };

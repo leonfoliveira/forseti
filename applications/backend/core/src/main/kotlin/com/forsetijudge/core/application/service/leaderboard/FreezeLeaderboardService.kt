@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.leaderboard
 
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.event.LeaderboardFreezeEvent
 import com.forsetijudge.core.domain.event.LeaderboardUnfreezeEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -50,6 +51,7 @@ class FreezeLeaderboardService(
         contest.manualFreezeAt = OffsetDateTime.now()
 
         contestRepository.save(contest)
+        applicationEventPublisher.publishEvent(LeaderboardFreezeEvent(this, contest))
         logger.info("Leaderboard for contest with id $contestId frozen successfully")
     }
 

@@ -79,33 +79,4 @@ class StompSubmissionEmitterTest :
                 )
             }
         }
-
-        test("should not emmit any batch if submissions list is empty") {
-            sut.emitBatch(emptyList())
-
-            verify(exactly = 0) {
-                webSocketFanoutProducer.produce(
-                    any(),
-                    any(),
-                )
-            }
-        }
-
-        test("should emmit batch of submissions") {
-            val contest = ContestMockBuilder.build()
-            val submissions =
-                listOf(
-                    SubmissionMockBuilder.build(problem = ProblemMockBuilder.build(contest = contest)),
-                    SubmissionMockBuilder.build(),
-                )
-
-            sut.emitBatch(submissions)
-
-            verify {
-                webSocketFanoutProducer.produce(
-                    "/topic/contests/${contest.id}/submissions/batch",
-                    submissions.map { it.toPublicResponseDTO() } as Serializable,
-                )
-            }
-        }
     })

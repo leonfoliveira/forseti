@@ -105,6 +105,7 @@ class BuildLeaderboardService(
 
         return LeaderboardOutputDTO(
             contestId = contest.id,
+            isFrozen = contest.isFrozen(),
             slug = contest.slug,
             startAt = contest.startAt,
             members = classification,

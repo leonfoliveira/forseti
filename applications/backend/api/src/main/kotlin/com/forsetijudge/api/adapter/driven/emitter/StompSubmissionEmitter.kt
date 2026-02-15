@@ -42,19 +42,4 @@ class StompSubmissionEmitter(
             submission.toFullResponseDTO(),
         )
     }
-
-    fun emitBatch(submissions: List<Submission>) {
-        if (submissions.isEmpty()) return
-
-        val contestId = submissions.first().contest.id
-
-        logger.info(
-            "Emitting batch of ${submissions.size} submissions for contest: $contestId",
-        )
-
-        webSocketFanoutProducer.produce(
-            "/topic/contests/$contestId/submissions/batch",
-            submissions.map { it.toPublicResponseDTO() } as Serializable,
-        )
-    }
 }
