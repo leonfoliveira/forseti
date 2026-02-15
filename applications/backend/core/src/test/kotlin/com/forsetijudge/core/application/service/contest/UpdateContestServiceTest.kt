@@ -131,8 +131,57 @@ class UpdateContestServiceTest :
                 }.message shouldBe "Contest start time must be in the future"
             }
 
+            test("should throw BusinessException when autoFreezeAt is before startAt") {
+                val contest = ContestMockBuilder.build()
+                every { contestRepository.findEntityById(contestId) } returns contest
+
+                shouldThrow<BusinessException> {
+                    sut.update(
+                        contestId,
+                        inputDTO.copy(
+                            autoFreezeAt = OffsetDateTime.now().plusMinutes(30),
+                            startAt = OffsetDateTime.now().plusHours(1),
+                        ),
+                    )
+                }.message shouldBe "Contest autoFreezeAt must be between startAt and endAt"
+            }
+
+            test("should throw BusinessException when autoFreezeAt is after endAt") {
+                val contest = ContestMockBuilder.build()
+                every { contestRepository.findEntityById(contestId) } returns contest
+
+                shouldThrow<BusinessException> {
+                    sut.update(
+                        contestId,
+                        inputDTO.copy(
+                            autoFreezeAt = OffsetDateTime.now().plusHours(3),
+                            endAt = OffsetDateTime.now().plusHours(2),
+                        ),
+                    )
+                }.message shouldBe "Contest autoFreezeAt must be between startAt and endAt"
+            }
+
+            test("should throw BusinessException when autoFreezeAt is in the past") {
+                val contest =
+                    ContestMockBuilder.build(
+                        autoFreezeAt = null,
+                        startAt = OffsetDateTime.now().minusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(1),
+                    )
+                every { contestRepository.findEntityById(contestId) } returns contest
+
+                shouldThrow<BusinessException> {
+                    sut.update(
+                        contestId,
+                        inputDTO.copy(
+                            autoFreezeAt = OffsetDateTime.now().minusMinutes(30),
+                            startAt = contest.startAt,
+                        ),
+                    )
+                }.message shouldBe "Contest autoFreezeAt must be in the future"
+            }
+
             test("should throw ConflictException when contest with same slug already exists") {
-                val existingContest = ContestMockBuilder.build(slug = inputDTO.slug)
                 every { contestRepository.findEntityById(contestId) } returns ContestMockBuilder.build()
                 every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns true
 

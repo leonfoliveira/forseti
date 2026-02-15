@@ -82,6 +82,20 @@ class UpdateContestService(
             }
         }
 
+        if (inputDTO.autoFreezeAt != null) {
+            if (inputDTO.autoFreezeAt.isBefore(inputDTO.startAt) || inputDTO.autoFreezeAt.isAfter(inputDTO.endAt)) {
+                throw BusinessException("Contest autoFreezeAt must be between startAt and endAt")
+            }
+
+            if (contest.autoFreezeAt == null ||
+                !inputDTO.autoFreezeAt.truncatedTo(ChronoUnit.SECONDS).isEqual(contest.autoFreezeAt!!.truncatedTo(ChronoUnit.SECONDS))
+            ) {
+                if (inputDTO.autoFreezeAt.isBefore(OffsetDateTime.now())) {
+                    throw BusinessException("Contest autoFreezeAt must be in the future")
+                }
+            }
+        }
+
         if (contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId)) {
             throw ConflictException("Contest with slug '${inputDTO.slug}' already exists")
         }
@@ -91,6 +105,7 @@ class UpdateContestService(
         contest.languages = inputDTO.languages
         contest.startAt = inputDTO.startAt
         contest.endAt = inputDTO.endAt
+        contest.autoFreezeAt = inputDTO.autoFreezeAt
         contest.settings =
             Contest.Settings(
                 isAutoJudgeEnabled = inputDTO.settings.isAutoJudgeEnabled,
