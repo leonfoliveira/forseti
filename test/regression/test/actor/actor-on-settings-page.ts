@@ -110,13 +110,43 @@ export class ActorOnSettingsPage extends Actor {
     await this.confirmDialog();
   }
 
+  async freeze() {
+    const settingsContestTab = this.page.getByTestId("settings-contest-tab");
+
+    const freezeButton = settingsContestTab.getByTestId("freeze-toggle-button");
+    await freezeButton.scrollIntoViewIfNeeded();
+    await expect(freezeButton).toHaveText("Freeze");
+    await freezeButton.click();
+    await this.confirmDialog();
+
+    const freezeBanner = this.page.getByTestId("freeze-banner");
+    await freezeBanner.scrollIntoViewIfNeeded();
+    await expect(freezeBanner).toBeVisible();
+  }
+
+  async unfreeze() {
+    const settingsContestTab = this.page.getByTestId("settings-contest-tab");
+
+    const unfreezeButton = settingsContestTab.getByTestId(
+      "freeze-toggle-button",
+    );
+    await unfreezeButton.scrollIntoViewIfNeeded();
+    await expect(unfreezeButton).toHaveText("Unfreeze");
+    await unfreezeButton.click();
+    await this.confirmDialog();
+
+    const freezeBanner = this.page.getByTestId("freeze-banner");
+    await expect(freezeBanner).not.toBeVisible();
+  }
+
   async forceStart() {
     const settingsContestTab = this.page.getByTestId("settings-contest-tab");
 
     const forceStartButton = settingsContestTab.getByTestId(
-      "contest-force-start",
+      "force-toggle-button",
     );
     await forceStartButton.scrollIntoViewIfNeeded();
+    await expect(forceStartButton).toHaveText("Force Start");
     await forceStartButton.click();
     await this.confirmDialog();
   }
@@ -124,8 +154,11 @@ export class ActorOnSettingsPage extends Actor {
   async forceEnd() {
     const settingsContestTab = this.page.getByTestId("settings-contest-tab");
 
-    const forceEndButton = settingsContestTab.getByTestId("contest-force-end");
+    const forceEndButton = settingsContestTab.getByTestId(
+      "force-toggle-button",
+    );
     await forceEndButton.scrollIntoViewIfNeeded();
+    await expect(forceEndButton).toHaveText("Force End");
     await forceEndButton.click();
     await this.confirmDialog();
   }
