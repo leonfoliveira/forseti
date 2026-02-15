@@ -23,6 +23,7 @@ import { Switch } from "@/app/_lib/component/shadcn/switch";
 import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
+import { DateTimeUtil } from "@/app/_lib/util/datetime-util";
 import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
 import { contestMetadataSlice } from "@/app/_store/slices/contest-metadata-slice";
 import { useAppDispatch } from "@/app/_store/store";
@@ -65,6 +66,15 @@ const messages = defineMessages({
   endAtDescription: {
     id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.end-at-description",
     defaultMessage: "The end time of the contest.",
+  },
+  autoFreezeAtLabel: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.auto-freeze-at-label",
+    defaultMessage: "Auto Freeze At",
+  },
+  autoFreezeAtDescription: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.auto-freeze-at-description",
+    defaultMessage:
+      "The time when the scoreboard will be automatically frozen.",
   },
   languagesLabel: {
     id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.languages-label",
@@ -137,6 +147,10 @@ export function SettingsPageContestTab({ contest, form }: Props) {
   const dispatch = useAppDispatch();
   const toast = useToast();
 
+  const shouldBlockAutoFreezeAt = contest.autoFreezeAt
+    ? DateTimeUtil.isLessOrEqual(contest.autoFreezeAt, contest.startAt)
+    : false;
+
   const forceStartConfirmationDialog = useConfirmationDialog();
   const forceEndConfirmationDialog = useConfirmationDialog();
 
@@ -174,7 +188,7 @@ export function SettingsPageContestTab({ contest, form }: Props) {
 
   return (
     <div className="flex flex-col gap-4" data-testid="settings-contest-tab">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-6">
         <ControlledField
           form={form}
           name="contest.slug"
@@ -211,6 +225,20 @@ export function SettingsPageContestTab({ contest, form }: Props) {
           label={messages.endAtLabel}
           field={<Input type="datetime-local" data-testid="contest-end-at" />}
           description={messages.endAtDescription}
+        />
+
+        <ControlledField
+          form={form}
+          name="contest.autoFreezeAt"
+          label={messages.autoFreezeAtLabel}
+          field={
+            <Input
+              type="datetime-local"
+              disabled={shouldBlockAutoFreezeAt}
+              data-testid="contest-auto-freeze-at"
+            />
+          }
+          description={messages.autoFreezeAtDescription}
         />
       </div>
 

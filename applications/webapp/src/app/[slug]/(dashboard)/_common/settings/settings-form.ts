@@ -276,11 +276,16 @@ export class SettingsForm {
             "datetime-local.after-start": this.messages.endAfterStart.id,
           }),
         autoFreezeAt: Joi.string()
-          .pattern(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
+          .allow("")
           .custom((value: string, helpers) => {
             try {
-              if (value === originalAutoFreeze) {
-                return value; // Skip validation if auto freeze date is unchanged
+              if (value === "" || value === originalAutoFreeze) {
+                return value;
+              }
+
+              const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+              if (!pattern.test(value)) {
+                return helpers.error("datetime-local.invalid");
               }
 
               const autoFreezeDate = new Date(value);
@@ -467,8 +472,10 @@ export class SettingsForm {
         languages,
         startAt: DateTimeUtil.toDatetimeLocal(contest.startAt),
         endAt: DateTimeUtil.toDatetimeLocal(contest.endAt),
+        autoFreezeAt: contest.autoFreezeAt
+          ? DateTimeUtil.toDatetimeLocal(contest.autoFreezeAt)
+          : "",
         settings: contest.settings,
-        autoFreezeAt: contest.autoFreezeAt,
       },
       members,
       problems,
@@ -484,7 +491,10 @@ export class SettingsForm {
       ) as SubmissionLanguage[],
       startAt: DateTimeUtil.fromDatetimeLocal(form.contest.startAt),
       endAt: DateTimeUtil.fromDatetimeLocal(form.contest.endAt),
-      autoFreezeAt: form.contest.autoFreezeAt,
+      autoFreezeAt:
+        form.contest.autoFreezeAt && form.contest.autoFreezeAt.length > 0
+          ? DateTimeUtil.fromDatetimeLocal(form.contest.autoFreezeAt)
+          : undefined,
       settings: form.contest.settings,
       members: form.members.map((member) => ({
         id: member._id,

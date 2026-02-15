@@ -312,6 +312,23 @@ describe("SettingsForm", () => {
           expect(error).toBeUndefined();
         });
 
+        it("should validate when autoFreezeAt is empty string", () => {
+          const dataWithEmptyAutoFreeze = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T10:00",
+              endAt: "2026-12-31T18:00",
+              autoFreezeAt: "", // Empty string should be allowed
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+          ).validate(dataWithEmptyAutoFreeze);
+          expect(error).toBeUndefined();
+        });
+
         it("should fail validation when autoFreezeAt has invalid format", () => {
           const invalidData = {
             ...validFormData,

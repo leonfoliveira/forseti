@@ -270,6 +270,8 @@
               "start-at-description": "The start time of the contest.",
               "end-at-label": "End At",
               "end-at-description": "The end time of the contest.",
+              "auto-freeze-at-label": "Auto Freeze At",
+              "auto-freeze-at-description": "The time when the scoreboard will be automatically frozen.",
               "languages-label": "Languages",
               "languages-description": "The programming languages allowed in the contest.",
               "is-auto-judge-enabled-label": "Auto Judge",

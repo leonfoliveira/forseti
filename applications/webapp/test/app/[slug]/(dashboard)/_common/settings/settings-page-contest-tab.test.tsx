@@ -5,9 +5,9 @@ import { useForm } from "react-hook-form";
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
 import { SettingsPageContestTab } from "@/app/[slug]/(dashboard)/_common/settings/settings-page-contest-tab";
 import { useToast } from "@/app/_lib/hook/toast-hook";
+import { AdminDashboardState } from "@/app/_store/slices/admin-dashboard-slice";
 import { contestWritter } from "@/config/composition";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
-import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/AdminDashboardResponseDTO";
 import { MockDate } from "@/test/mock/mock-date";
 import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
@@ -42,6 +42,9 @@ describe("SettingsPageContestTab", () => {
     fireEvent.change(screen.getByTestId("contest-end-at"), {
       target: { value: "2024-01-01T12:00" },
     });
+    fireEvent.change(screen.getByTestId("contest-auto-freeze-at"), {
+      target: { value: "2024-01-01T11:00" },
+    });
     fireEvent.click(screen.getByTestId("contest-language-PYTHON_312"));
     fireEvent.click(screen.getByTestId("contest-is-auto-judge-enabled"));
 
@@ -51,6 +54,7 @@ describe("SettingsPageContestTab", () => {
         title: "New Contest Title",
         startAt: "2024-01-01T10:00",
         endAt: "2024-01-01T12:00",
+        autoFreezeAt: "2024-01-01T11:00",
         languages: Object.keys(SubmissionLanguage).reduce(
           (acc, lang) => {
             acc[lang] = lang === "PYTHON_312" ? true : undefined;
@@ -82,7 +86,7 @@ describe("SettingsPageContestTab", () => {
       <SettingsPageContestTab contest={contest} form={result.current} />,
       {
         contestMetadata,
-        adminDashboard: {} as unknown as AdminDashboardResponseDTO,
+        adminDashboard: {} as unknown as AdminDashboardState,
       },
     );
 
@@ -116,7 +120,7 @@ describe("SettingsPageContestTab", () => {
       <SettingsPageContestTab contest={contest} form={result.current} />,
       {
         contestMetadata,
-        adminDashboard: {} as unknown as AdminDashboardResponseDTO,
+        adminDashboard: {} as unknown as AdminDashboardState,
       },
     );
 
@@ -146,7 +150,7 @@ describe("SettingsPageContestTab", () => {
       <SettingsPageContestTab contest={contest} form={result.current} />,
       {
         contestMetadata,
-        adminDashboard: {} as unknown as AdminDashboardResponseDTO,
+        adminDashboard: {} as unknown as AdminDashboardState,
       },
     );
 
@@ -180,7 +184,7 @@ describe("SettingsPageContestTab", () => {
       <SettingsPageContestTab contest={contest} form={result.current} />,
       {
         contestMetadata,
-        adminDashboard: {} as unknown as AdminDashboardResponseDTO,
+        adminDashboard: {} as unknown as AdminDashboardState,
       },
     );
 
