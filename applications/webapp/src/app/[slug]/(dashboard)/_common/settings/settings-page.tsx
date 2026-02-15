@@ -134,7 +134,9 @@ export function SettingsPage({ contest }: Props) {
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
   const form = useForm<SettingsFormType>({
-    resolver: joiResolver(SettingsForm.schema(contestStatus)),
+    resolver: joiResolver(
+      SettingsForm.schema(contestStatus, contest.autoFreezeAt),
+    ),
     defaultValues: SettingsForm.fromResponseDTO(contest),
   });
 

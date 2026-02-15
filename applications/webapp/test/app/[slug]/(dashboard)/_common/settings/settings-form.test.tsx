@@ -31,6 +31,7 @@ describe("SettingsForm", () => {
       },
       startAt: "2026-12-31T10:00",
       endAt: "2026-12-31T18:00",
+      autoFreezeAt: "2026-12-31T12:00",
       settings: {
         isAutoJudgeEnabled: true,
       },
@@ -54,7 +55,7 @@ describe("SettingsForm", () => {
         password: "password123",
       },
     ],
-  };
+  } as unknown as SettingsFormType;
 
   const validExistingFormData = {
     contest: {
@@ -90,7 +91,7 @@ describe("SettingsForm", () => {
         password: "",
       },
     ],
-  };
+  } as unknown as SettingsFormType;
 
   describe("schema validation", () => {
     describe("contest validation", () => {
@@ -272,6 +273,280 @@ describe("SettingsForm", () => {
         expect(error?.details[0].message).toBe(
           "app.[slug].(dashboard)._common.settings.settings-form.end-after-start",
         );
+      });
+
+      describe("autoFreezeAt validation", () => {
+        it("should validate when autoFreezeAt is valid", () => {
+          const validData = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T10:00",
+              endAt: "2026-12-31T18:00",
+              autoFreezeAt: "2026-12-31T14:00",
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+          ).validate(validData);
+          expect(error).toBeUndefined();
+        });
+
+        it("should validate when autoFreezeAt is not provided", () => {
+          const dataWithoutAutoFreeze = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T10:00",
+              endAt: "2026-12-31T18:00",
+              // autoFreezeAt is optional, so omitting it
+            },
+          };
+          delete dataWithoutAutoFreeze.contest.autoFreezeAt;
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+          ).validate(dataWithoutAutoFreeze);
+          expect(error).toBeUndefined();
+        });
+
+        it("should fail validation when autoFreezeAt has invalid format", () => {
+          const invalidData = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T10:00",
+              endAt: "2026-12-31T18:00",
+              autoFreezeAt: "invalid-date-format",
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+          ).validate(invalidData);
+          expect(error).toBeDefined();
+          expect(error?.details[0].path).toEqual(["contest", "autoFreezeAt"]);
+          expect(error?.details[0].message).toBe(
+            "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-invalid",
+          );
+        });
+
+        it("should fail validation when autoFreezeAt is before start date", () => {
+          const invalidData = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T14:00",
+              endAt: "2026-12-31T18:00",
+              autoFreezeAt: "2026-12-31T10:00", // Before start
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+          ).validate(invalidData);
+          expect(error).toBeDefined();
+          expect(error?.details[0].path).toEqual(["contest", "autoFreezeAt"]);
+          expect(error?.details[0].message).toBe(
+            "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-after-start",
+          );
+        });
+
+        it("should fail validation when autoFreezeAt equals start date", () => {
+          const invalidData = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T14:00",
+              endAt: "2026-12-31T18:00",
+              autoFreezeAt: "2026-12-31T14:00", // Same as start
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+          ).validate(invalidData);
+          expect(error).toBeDefined();
+          expect(error?.details[0].path).toEqual(["contest", "autoFreezeAt"]);
+          expect(error?.details[0].message).toBe(
+            "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-after-start",
+          );
+        });
+
+        it("should fail validation when autoFreezeAt is after end date", () => {
+          const invalidData = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T10:00",
+              endAt: "2026-12-31T14:00",
+              autoFreezeAt: "2026-12-31T18:00", // After end
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+          ).validate(invalidData);
+          expect(error).toBeDefined();
+          expect(error?.details[0].path).toEqual(["contest", "autoFreezeAt"]);
+          expect(error?.details[0].message).toBe(
+            "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-before-end",
+          );
+        });
+
+        it("should fail validation when autoFreezeAt equals end date", () => {
+          const invalidData = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T10:00",
+              endAt: "2026-12-31T14:00",
+              autoFreezeAt: "2026-12-31T14:00", // Same as end
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+          ).validate(invalidData);
+          expect(error).toBeDefined();
+          expect(error?.details[0].path).toEqual(["contest", "autoFreezeAt"]);
+          expect(error?.details[0].message).toBe(
+            "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-before-end",
+          );
+        });
+
+        it("should validate when autoFreezeAt is exactly between start and end", () => {
+          const validData = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T10:00",
+              endAt: "2026-12-31T16:00",
+              autoFreezeAt: "2026-12-31T13:00", // Exactly in the middle
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+          ).validate(validData);
+          expect(error).toBeUndefined();
+        });
+
+        it("should validate when autoFreezeAt is one minute after start", () => {
+          const validData = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T10:00",
+              endAt: "2026-12-31T16:00",
+              autoFreezeAt: "2026-12-31T10:01", // One minute after start
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+          ).validate(validData);
+          expect(error).toBeUndefined();
+        });
+
+        it("should validate when autoFreezeAt is one minute before end", () => {
+          const validData = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T10:00",
+              endAt: "2026-12-31T16:00",
+              autoFreezeAt: "2026-12-31T15:59", // One minute before end
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+          ).validate(validData);
+          expect(error).toBeUndefined();
+        });
+
+        it("should skip validation when autoFreezeAt is unchanged from original", () => {
+          const originalAutoFreeze = "2026-12-31T08:00"; // This would normally fail validation (before start)
+          const dataWithUnchangedAutoFreeze = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T10:00",
+              endAt: "2026-12-31T18:00",
+              autoFreezeAt: originalAutoFreeze,
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+            originalAutoFreeze,
+          ).validate(dataWithUnchangedAutoFreeze);
+          expect(error).toBeUndefined();
+        });
+
+        it("should validate normally when autoFreezeAt is changed from original", () => {
+          const originalAutoFreeze = "2026-12-31T14:00";
+          const invalidData = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T10:00",
+              endAt: "2026-12-31T18:00",
+              autoFreezeAt: "2026-12-31T08:00", // Changed to invalid value
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+            originalAutoFreeze,
+          ).validate(invalidData);
+          expect(error).toBeDefined();
+          expect(error?.details[0].path).toEqual(["contest", "autoFreezeAt"]);
+          expect(error?.details[0].message).toBe(
+            "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-after-start",
+          );
+        });
+
+        it("should handle edge case with different date formats", () => {
+          const invalidData = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T10:00",
+              endAt: "2026-12-31T18:00",
+              autoFreezeAt: "2026-12-31 14:00", // Wrong format (space instead of T)
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+          ).validate(invalidData);
+          expect(error).toBeDefined();
+          expect(error?.details[0].path).toEqual(["contest", "autoFreezeAt"]);
+          expect(error?.details[0].message).toBe(
+            "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-invalid",
+          );
+        });
+
+        it("should handle edge case with missing seconds in format", () => {
+          // The pattern requires HH:MM format without seconds
+          const validData = {
+            ...validFormData,
+            contest: {
+              ...validFormData.contest,
+              startAt: "2026-12-31T10:00",
+              endAt: "2026-12-31T18:00",
+              autoFreezeAt: "2026-12-31T14:30", // Valid format without seconds
+            },
+          };
+
+          const { error } = SettingsForm.schema(
+            ContestStatus.NOT_STARTED,
+          ).validate(validData);
+          expect(error).toBeUndefined();
+        });
       });
     });
 
