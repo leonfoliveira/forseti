@@ -105,6 +105,10 @@ export class SettingsForm {
       id: "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-before-end",
       defaultMessage: "Auto freeze date must be before end date",
     },
+    autoFreezeFuture: {
+      id: "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-future",
+      defaultMessage: "Auto freeze date must be in the future",
+    },
     problemTitleRequired: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.problem-title-required",
       defaultMessage: "Title is required",
@@ -282,6 +286,7 @@ export class SettingsForm {
               const autoFreezeDate = new Date(value);
               const startValue = helpers.state.ancestors[0].startAt as string;
               const endValue = helpers.state.ancestors[0].endAt as string;
+              const now = new Date();
 
               if (startValue) {
                 const startDate = new Date(startValue);
@@ -299,6 +304,10 @@ export class SettingsForm {
                 }
               }
 
+              if (autoFreezeDate <= now) {
+                return helpers.error("datetime-local.future");
+              }
+
               return value;
             } catch {
               return helpers.error("datetime-local.invalid");
@@ -306,6 +315,7 @@ export class SettingsForm {
           })
           .messages({
             "string.pattern.base": this.messages.autoFreezeInvalid.id,
+            "datetime-local.future": this.messages.autoFreezeFuture.id,
             "datetime-local.invalid": this.messages.autoFreezeInvalid.id,
             "datetime-local.auto-freeze-after-start":
               this.messages.autoFreezeAfterStart.id,

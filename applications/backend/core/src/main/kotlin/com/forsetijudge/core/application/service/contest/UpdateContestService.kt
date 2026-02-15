@@ -83,7 +83,7 @@ class UpdateContestService(
         }
 
         if (inputDTO.autoFreezeAt != null) {
-            if (inputDTO.autoFreezeAt.isBefore(inputDTO.startAt) || inputDTO.autoFreezeAt.isAfter(inputDTO.endAt)) {
+            if (!(inputDTO.autoFreezeAt.isAfter(inputDTO.startAt) && inputDTO.autoFreezeAt.isBefore(inputDTO.endAt))) {
                 throw BusinessException("Contest autoFreezeAt must be between startAt and endAt")
             }
 
