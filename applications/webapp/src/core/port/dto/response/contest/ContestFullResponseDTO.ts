@@ -11,6 +11,7 @@ export type ContestFullResponseDTO = {
   languages: SubmissionLanguage[];
   startAt: string;
   endAt: string;
+  autoFreezeAt?: string;
   settings: {
     isAutoJudgeEnabled: boolean;
   };

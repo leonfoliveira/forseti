@@ -1,5 +1,6 @@
 export type LeaderboardResponseDTO = {
   contestId: string;
+  isFrozen: boolean;
   slug: string;
   startAt: string;
   issuedAt: string;

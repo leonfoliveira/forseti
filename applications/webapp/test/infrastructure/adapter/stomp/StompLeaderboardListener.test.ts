@@ -36,4 +36,32 @@ describe("StompLeaderboardListener", () => {
       );
     });
   });
+
+  describe("subscribeForLeaderboardFreeze", () => {
+    it("should subscribe to the contest leaderboard freeze", async () => {
+      const client = mock<ListenerClient>();
+      const callback = jest.fn();
+
+      await sut.subscribeForLeaderboardFreeze(client, contestId, callback);
+
+      expect(client.subscribe).toHaveBeenCalledWith(
+        `/topic/contests/${contestId}/leaderboard/freeze`,
+        callback,
+      );
+    });
+  });
+
+  describe("subscribeForLeaderboardUnfreeze", () => {
+    it("should subscribe to the contest leaderboard unfreeze", async () => {
+      const client = mock<ListenerClient>();
+      const callback = jest.fn();
+
+      await sut.subscribeForLeaderboardUnfreeze(client, contestId, callback);
+
+      expect(client.subscribe).toHaveBeenCalledWith(
+        `/topic/contests/${contestId}/leaderboard/unfreeze`,
+        callback,
+      );
+    });
+  });
 });
