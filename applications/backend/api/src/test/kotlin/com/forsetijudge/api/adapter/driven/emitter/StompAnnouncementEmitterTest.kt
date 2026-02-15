@@ -2,7 +2,7 @@ package com.forsetijudge.api.adapter.driven.emitter
 
 import com.forsetijudge.api.adapter.dto.response.announcement.toResponseDTO
 import com.forsetijudge.core.domain.entity.AnnouncementMockBuilder
-import com.forsetijudge.core.port.driven.WebSocketFanoutProducer
+import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.mockk

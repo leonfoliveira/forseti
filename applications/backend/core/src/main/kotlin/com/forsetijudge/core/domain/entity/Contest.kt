@@ -60,15 +60,10 @@ class Contest(
     @Column(name = "auto_freeze_at")
     var autoFreezeAt: OffsetDateTime? = null,
     /**
-     * The time when the leaderboard will be manually frozen, which can be set by the contest administrators.
+     * The time when the leaderboard has been frozen.
      */
-    @Column(name = "manual_freeze_at")
-    var manualFreezeAt: OffsetDateTime? = null,
-    /**
-     * The time when the leaderboard will be automatically unfrozen.
-     */
-    @Column(name = "unfreeze_at")
-    var unfreezeAt: OffsetDateTime? = null,
+    @Column(name = "frozen_at")
+    var frozenAt: OffsetDateTime? = null,
     /**
      * Settings to control various aspects of the contest.
      */
@@ -111,33 +106,8 @@ class Contest(
 
     fun isActive(): Boolean = hasStarted() && !hasFinished()
 
-    fun freezeAt(): OffsetDateTime? = listOfNotNull(autoFreezeAt, manualFreezeAt).maxOrNull()
-
-    fun lastFreezeTime(): OffsetDateTime? =
-        listOfNotNull(autoFreezeAt, manualFreezeAt).filter { it.isBefore(OffsetDateTime.now()) }.maxOrNull()
-
-    /**
-     * Determines if the contest is currently in a frozen state based on the freeze and unfreeze times.
-     * The contest is considered frozen if the current time is after the freeze time and before the unfreeze time (if set).
-     */
-    fun isFrozen(): Boolean {
-        val now = OffsetDateTime.now()
-        val freezeTime = lastFreezeTime()
-
-        if (freezeTime == null) {
-            return false
-        }
-
-        if (unfreezeAt == null) {
-            return true
-        }
-
-        if (unfreezeAt!!.isBefore(freezeTime)) {
-            return true
-        }
-
-        return unfreezeAt!!.isAfter(now)
-    }
+    val isFrozen: Boolean
+        get() = frozenAt != null
 
     data class Settings(
         var isAutoJudgeEnabled: Boolean = true,

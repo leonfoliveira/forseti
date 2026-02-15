@@ -65,7 +65,9 @@ class BuildLeaderboardService(
                     ?: throw NotFoundException("Could not find member with id = $it")
             }
 
-        AuthorizationUtil.checkContestStarted(contest, member)
+        AuthorizationUtil
+            .start(contest, member)
+            .checkContestStarted()
 
         val classification =
             contest.members
@@ -104,7 +106,7 @@ class BuildLeaderboardService(
 
         return LeaderboardOutputDTO(
             contestId = contest.id,
-            isFrozen = contest.isFrozen(),
+            isFrozen = contest.isFrozen,
             slug = contest.slug,
             startAt = contest.startAt,
             members = classification,

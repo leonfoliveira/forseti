@@ -2,6 +2,7 @@ package com.forsetijudge.core.application.service.contest
 
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.event.ContestCreatedEvent
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.dto.input.contest.CreateContestInputDTO
@@ -12,15 +13,18 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 
 class CreateContestServiceTest :
     FunSpec({
         val contestRepository = mockk<ContestRepository>(relaxed = true)
+        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
         val sut =
             CreateContestService(
                 contestRepository = contestRepository,
+                applicationEventPublisher = applicationEventPublisher,
             )
 
         beforeEach {
@@ -57,6 +61,13 @@ class CreateContestServiceTest :
                 contest.startAt shouldBe inputDTO.startAt
                 contest.endAt shouldBe inputDTO.endAt
                 verify { contestRepository.save(contest) }
+                verify {
+                    applicationEventPublisher.publishEvent(
+                        match {
+                            it is ContestCreatedEvent && it.contest == contest
+                        },
+                    )
+                }
             }
         }
     })

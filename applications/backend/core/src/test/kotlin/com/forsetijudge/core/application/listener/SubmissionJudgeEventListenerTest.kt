@@ -6,7 +6,7 @@ import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.event.SubmissionCreatedEvent
 import com.forsetijudge.core.domain.event.SubmissionRerunEvent
-import com.forsetijudge.core.port.driven.SubmissionQueueProducer
+import com.forsetijudge.core.port.driven.producer.SubmissionQueueProducer
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.mockk

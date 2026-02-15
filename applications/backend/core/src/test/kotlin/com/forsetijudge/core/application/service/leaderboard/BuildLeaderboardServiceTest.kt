@@ -34,6 +34,7 @@ class BuildLeaderboardServiceTest :
 
         val sut = BuildLeaderboardService(contestRepository, memberRepository, problemRepository, submissionRepository)
 
+        val authorizer = mockk<AuthorizationUtil.Authorizer>()
         val now = OffsetDateTime.now()
 
         beforeEach {
@@ -41,7 +42,7 @@ class BuildLeaderboardServiceTest :
             mockkStatic(OffsetDateTime::class)
             every { OffsetDateTime.now() } returns now
             mockkObject(AuthorizationUtil)
-            every { AuthorizationUtil.checkContestStarted(any(), any()) } returns Unit
+            every { AuthorizationUtil.start(any(), any()) } returns authorizer
         }
 
         context("build") {
@@ -64,7 +65,8 @@ class BuildLeaderboardServiceTest :
 
                 sut.build(contestId, memberId)
 
-                verify { AuthorizationUtil.checkContestStarted(contest, member) }
+                verify { AuthorizationUtil.start(contest, member) }
+                verify { authorizer.checkContestStarted() }
             }
 
             test("should build leaderboard for contest") {

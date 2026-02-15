@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.leaderboard
 
+import com.forsetijudge.core.application.util.AuthorizationUtil
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.LeaderboardFreezeEvent
 import com.forsetijudge.core.domain.event.LeaderboardUnfreezeEvent
@@ -43,14 +44,15 @@ class FreezeLeaderboardService(
             memberRepository.findEntityById(memberId)
                 ?: throw NotFoundException("Could not find member with id $memberId")
 
-        if (!setOf(Member.Type.ROOT, Member.Type.ADMIN).contains(member.type)) {
-            throw ForbiddenException("Only ROOT and ADMIN members can freeze the leaderboard")
-        }
-        if (contest.isFrozen()) {
+        AuthorizationUtil
+            .start(contest, member)
+            .checkMemberType(Member.Type.API, Member.Type.ROOT, Member.Type.ADMIN)
+
+        if (contest.isFrozen) {
             throw ForbiddenException("The leaderboard for this contest is already frozen")
         }
 
-        contest.manualFreezeAt = OffsetDateTime.now()
+        contest.frozenAt = OffsetDateTime.now()
 
         contestRepository.save(contest)
         applicationEventPublisher.publishEvent(LeaderboardFreezeEvent(this, contest))
@@ -80,11 +82,11 @@ class FreezeLeaderboardService(
         if (!setOf(Member.Type.ROOT, Member.Type.ADMIN).contains(member.type)) {
             throw ForbiddenException("Only ROOT and ADMIN members can unfreeze the leaderboard")
         }
-        if (!contest.isFrozen()) {
+        if (!contest.isFrozen) {
             throw ForbiddenException("The leaderboard for this contest is not frozen")
         }
 
-        contest.unfreezeAt = OffsetDateTime.now()
+        contest.frozenAt = null
 
         contestRepository.save(contest)
         applicationEventPublisher.publishEvent(LeaderboardUnfreezeEvent(this, contest))

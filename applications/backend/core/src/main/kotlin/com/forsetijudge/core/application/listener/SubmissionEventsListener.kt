@@ -3,7 +3,7 @@ package com.forsetijudge.core.application.listener
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionCreatedEvent
 import com.forsetijudge.core.domain.event.SubmissionRerunEvent
-import com.forsetijudge.core.port.driven.SubmissionQueueProducer
+import com.forsetijudge.core.port.driven.producer.SubmissionQueueProducer
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase

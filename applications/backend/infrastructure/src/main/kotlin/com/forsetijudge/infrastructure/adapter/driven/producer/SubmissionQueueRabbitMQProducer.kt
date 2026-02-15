@@ -1,7 +1,7 @@
 package com.forsetijudge.infrastructure.adapter.driven.producer
 
 import com.forsetijudge.core.domain.entity.Submission
-import com.forsetijudge.core.port.driven.SubmissionQueueProducer
+import com.forsetijudge.core.port.driven.producer.SubmissionQueueProducer
 import com.forsetijudge.infrastructure.adapter.dto.message.payload.SubmissionMessagePayload
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

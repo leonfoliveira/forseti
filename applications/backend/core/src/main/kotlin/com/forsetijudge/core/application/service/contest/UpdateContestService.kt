@@ -5,6 +5,7 @@ import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Problem
+import com.forsetijudge.core.domain.event.ContestUpdatedEvent
 import com.forsetijudge.core.domain.exception.BusinessException
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.domain.exception.ForbiddenException
@@ -16,6 +17,7 @@ import com.forsetijudge.core.port.driving.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.dto.input.contest.UpdateContestInputDTO
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
@@ -31,6 +33,7 @@ class UpdateContestService(
     private val hasher: Hasher,
     private val deleteContestService: DeleteContestService,
     private val testCasesValidator: TestCasesValidator,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) : UpdateContestUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -133,6 +136,7 @@ class UpdateContestService(
         contest.members = createdMembers + updatedMembers
         contest.problems = createdProblems + updatedProblems
         contestRepository.save(contest)
+        applicationEventPublisher.publishEvent(ContestUpdatedEvent(this, contest))
 
         logger.info("Finished updating contest with id: ${contest.id}")
         return contest

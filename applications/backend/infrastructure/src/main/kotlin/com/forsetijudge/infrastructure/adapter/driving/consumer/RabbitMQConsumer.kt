@@ -1,10 +1,9 @@
 package com.forsetijudge.infrastructure.adapter.driving.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.forsetijudge.core.application.util.IdUtil
 import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driving.usecase.session.RefreshSessionUseCase
-import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
-import com.github.f4b6a3.uuid.UuidCreator
 import io.opentelemetry.api.trace.Span
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -32,21 +31,19 @@ abstract class RabbitMQConsumer<TPayload : Serializable>(
 
         val jsonNode = objectMapper.readTree(jsonMessage)
         val id = UUID.fromString(jsonNode["id"].asText())
-        val traceId =
-            if (jsonNode.has("traceId") && !jsonNode["traceId"].isNull) {
-                jsonNode["traceId"].asText()
-            } else {
-                UuidCreator.getTimeOrderedEpoch().toString()
-            }
         val payloadJson = jsonNode["payload"]
 
         val payload = objectMapper.treeToValue(payloadJson, getPayloadType())
-        val message = RabbitMQMessage(id, traceId, payload)
+
+        val currentSpan = Span.current()
+        currentSpan.setAttribute("trace.id", IdUtil.getTraceId())
 
         initRequestContext()
 
         try {
-            handlePayload(message.payload)
+            logger.info("Handling message with id: {}", id)
+            handlePayload(payload)
+            logger.info("Finished handling message")
         } catch (ex: Exception) {
             logger.error("Error thrown from consumer {}: {}", this.javaClass.simpleName, ex.message)
             throw ex

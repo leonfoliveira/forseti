@@ -9,6 +9,7 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.event.ContestUpdatedEvent
 import com.forsetijudge.core.domain.exception.BusinessException
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.domain.exception.ForbiddenException
@@ -27,6 +28,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 
 class UpdateContestServiceTest :
@@ -36,6 +38,7 @@ class UpdateContestServiceTest :
         val hasher = mockk<Hasher>(relaxed = true)
         val deleteContestService = mockk<DeleteContestService>(relaxed = true)
         val testCasesValidator = mockk<TestCasesValidator>(relaxed = true)
+        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
         val sut =
             UpdateContestService(
@@ -44,6 +47,7 @@ class UpdateContestServiceTest :
                 hasher,
                 deleteContestService,
                 testCasesValidator,
+                applicationEventPublisher,
             )
 
         val now = OffsetDateTime.now()
@@ -360,6 +364,13 @@ class UpdateContestServiceTest :
 
                 verify { testCasesValidator.validate(testCasesAttachment) }
                 verify { contestRepository.save(contest) }
+                verify {
+                    applicationEventPublisher.publishEvent(
+                        match {
+                            it is ContestUpdatedEvent && it.contest == contest
+                        },
+                    )
+                }
             }
         }
 

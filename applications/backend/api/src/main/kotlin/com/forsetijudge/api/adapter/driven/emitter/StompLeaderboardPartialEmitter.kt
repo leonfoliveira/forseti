@@ -1,7 +1,7 @@
 package com.forsetijudge.api.adapter.driven.emitter
 
 import com.forsetijudge.core.domain.entity.Contest
-import com.forsetijudge.core.port.driven.WebSocketFanoutProducer
+import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
 import com.forsetijudge.core.port.dto.output.LeaderboardPartialOutputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component

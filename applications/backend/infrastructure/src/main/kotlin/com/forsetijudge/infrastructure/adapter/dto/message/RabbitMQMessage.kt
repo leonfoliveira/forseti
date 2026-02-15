@@ -15,6 +15,6 @@ import java.util.UUID
  */
 data class RabbitMQMessage<TPayload : Serializable>(
     val id: UUID = UuidCreator.getTimeOrderedEpoch(),
-    val traceId: String? = Span.current().spanContext.traceId,
+    val traceId: String = Span.current().spanContext.traceId,
     val payload: TPayload,
 ) : Serializable

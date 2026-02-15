@@ -85,7 +85,7 @@ class FreezeLeaderboardServiceTest :
                 sut.freeze(contestId, memberId)
 
                 verify { contestRepository.save(contest) }
-                contest.manualFreezeAt shouldNotBe null
+                contest.frozenAt shouldNotBe null
                 val eventSlot = slot<LeaderboardFreezeEvent>()
                 verify { applicationEventPublisher.publishEvent(capture(eventSlot)) }
                 eventSlot.captured.contest shouldBe contest
@@ -140,7 +140,7 @@ class FreezeLeaderboardServiceTest :
                 sut.unfreeze(contestId, memberId)
 
                 verify { contestRepository.save(contest) }
-                contest.unfreezeAt shouldNotBe null
+                contest.frozenAt shouldBe null
                 val eventSlot = slot<LeaderboardUnfreezeEvent>()
                 verify { applicationEventPublisher.publishEvent(capture(eventSlot)) }
                 eventSlot.captured.contest shouldBe contest

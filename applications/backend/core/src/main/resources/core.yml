@@ -1,6 +1,16 @@
 spring:
   application:
     version: ${VERSION:latest}
+  quartz:
+    job-store-type: jdbc
+    properties:
+      org:
+        quartz:
+          jobStore:
+            isClustered: true
+            clusterCheckinInterval: 20000
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            tablePrefix: QRTZ_
 jpa:
   jpa:
     show-sql: false

@@ -1,4 +1,4 @@
-package com.forsetijudge.core.port.driven
+package com.forsetijudge.core.port.driven.producer
 
 import java.io.Serializable
 

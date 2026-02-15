@@ -16,7 +16,7 @@ class AuthorizationUtilTest :
                 val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().minusHours(1))
 
                 shouldNotThrow<ForbiddenException> {
-                    AuthorizationUtil.checkContestStarted(contest, null)
+                    AuthorizationUtil.start(contest, null).checkContestStarted()
                 }
             }
 
@@ -28,7 +28,7 @@ class AuthorizationUtilTest :
                     val member = MemberMockBuilder.build(type = memberType)
 
                     shouldThrow<ForbiddenException> {
-                        AuthorizationUtil.checkContestStarted(contest, member)
+                        AuthorizationUtil.start(contest, member).checkContestStarted()
                     }
                 }
             }
@@ -43,7 +43,7 @@ class AuthorizationUtilTest :
                     val member = MemberMockBuilder.build(type = memberType)
 
                     shouldNotThrow<ForbiddenException> {
-                        AuthorizationUtil.checkContestStarted(contest, member)
+                        AuthorizationUtil.start(contest, member).checkContestStarted()
                     }
                 }
             }
@@ -53,7 +53,7 @@ class AuthorizationUtilTest :
                 val member = MemberMockBuilder.build(contest = null)
 
                 shouldNotThrow<ForbiddenException> {
-                    AuthorizationUtil.checkContestStarted(contest, member)
+                    AuthorizationUtil.start(contest, member).checkContestStarted()
                 }
             }
 
@@ -61,31 +61,35 @@ class AuthorizationUtilTest :
                 val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
 
                 shouldThrow<ForbiddenException> {
-                    AuthorizationUtil.checkContestStarted(contest, null)
+                    AuthorizationUtil.start(contest, null).checkContestStarted()
                 }
             }
         }
 
         context("checkMemberType") {
             test("should not throw if the member type is allowed") {
+                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
 
                 shouldNotThrow<ForbiddenException> {
-                    AuthorizationUtil.checkMemberType(member, Member.Type.CONTESTANT)
+                    AuthorizationUtil.start(contest, member).checkMemberType(Member.Type.CONTESTANT)
                 }
             }
 
             test("should throw if the member type is not allowed") {
+                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
 
                 shouldThrow<ForbiddenException> {
-                    AuthorizationUtil.checkMemberType(member, Member.Type.ADMIN)
+                    AuthorizationUtil.start(contest, member).checkMemberType(Member.Type.ADMIN)
                 }
             }
 
             test("should throw if the member is null") {
+                val contest = ContestMockBuilder.build()
+
                 shouldThrow<ForbiddenException> {
-                    AuthorizationUtil.checkMemberType(null, Member.Type.ADMIN)
+                    AuthorizationUtil.start(contest, null).checkMemberType(Member.Type.ADMIN)
                 }
             }
         }

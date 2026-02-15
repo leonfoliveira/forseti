@@ -2,6 +2,7 @@ package com.forsetijudge.core.application.service.contest
 
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Problem
+import com.forsetijudge.core.domain.event.ContestDeletedEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
@@ -9,6 +10,7 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driving.usecase.contest.DeleteContestUseCase
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
@@ -19,6 +21,7 @@ class DeleteContestService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
     private val problemRepository: ProblemRepository,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) : DeleteContestUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -43,6 +46,7 @@ class DeleteContestService(
 
         contest.deletedAt = OffsetDateTime.now()
         contestRepository.save(contest)
+        applicationEventPublisher.publishEvent(ContestDeletedEvent(this, contest))
 
         logger.info("Finished deleting contest with id: $id")
     }

@@ -1,12 +1,14 @@
 package com.forsetijudge.core.application.service.contest
 
 import com.forsetijudge.core.domain.entity.Contest
+import com.forsetijudge.core.domain.event.ContestCreatedEvent
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driving.usecase.contest.CreateContestUseCase
 import com.forsetijudge.core.port.dto.input.contest.CreateContestInputDTO
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
@@ -15,6 +17,7 @@ import org.springframework.validation.annotation.Validated
 @Validated
 class CreateContestService(
     private val contestRepository: ContestRepository,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) : CreateContestUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -44,6 +47,7 @@ class CreateContestService(
                 endAt = inputDTO.endAt,
             )
         contestRepository.save(contest)
+        applicationEventPublisher.publishEvent(ContestCreatedEvent(this, contest))
 
         logger.info("Contest created with id: ${contest.id}")
         return contest

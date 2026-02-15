@@ -92,14 +92,13 @@ class FindSubmissionService(
         val contest =
             contestRepository.findEntityById(contestId)
                 ?: throw NotFoundException("Could not find contest with id = $contestId")
-        val lastFreezeTime = contest.lastFreezeTime()
 
-        if (lastFreezeTime == null) {
+        if (contest.frozenAt == null) {
             logger.info("No freeze time found for contest")
             return listOf()
         }
 
-        val submissions = submissionRepository.findAllByCreatedAtGreaterThanEqual(lastFreezeTime)
+        val submissions = submissionRepository.findAllByCreatedAtGreaterThanEqual(contest.frozenAt!!)
 
         logger.info("Found ${submissions.size} submissions since last freeze")
         return submissions.sortedBy { it.createdAt }

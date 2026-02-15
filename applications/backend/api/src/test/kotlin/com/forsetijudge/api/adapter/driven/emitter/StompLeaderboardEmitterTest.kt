@@ -3,7 +3,7 @@ package com.forsetijudge.api.adapter.driven.emitter
 import com.forsetijudge.api.adapter.dto.response.submission.toPublicResponseDTO
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
-import com.forsetijudge.core.port.driven.WebSocketFanoutProducer
+import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
 import com.forsetijudge.core.port.dto.output.LeaderboardOutputDTO
 import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.core.spec.style.FunSpec

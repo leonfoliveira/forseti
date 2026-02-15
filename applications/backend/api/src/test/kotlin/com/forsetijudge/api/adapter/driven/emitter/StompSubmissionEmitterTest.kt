@@ -5,12 +5,11 @@ import com.forsetijudge.api.adapter.dto.response.submission.toPublicResponseDTO
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
-import com.forsetijudge.core.port.driven.WebSocketFanoutProducer
+import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.mockk
 import io.mockk.verify
-import java.io.Serializable
 import java.time.OffsetDateTime
 
 class StompSubmissionEmitterTest :
@@ -52,13 +51,11 @@ class StompSubmissionEmitterTest :
         test("should not emmit public submission event if contest is frozen") {
             val contest =
                 ContestMockBuilder.build(
-                    autoFreezeAt = OffsetDateTime.now().minusMinutes(2),
-                    manualFreezeAt = null,
-                    unfreezeAt = null,
+                    frozenAt = OffsetDateTime.now().minusMinutes(2),
                 )
             val submission = SubmissionMockBuilder.build(problem = ProblemMockBuilder.build(contest = contest))
 
-            sut.emit(submission)
+            sut.emitNonFrozen(submission)
 
             verify(exactly = 0) {
                 webSocketFanoutProducer.produce(
