@@ -17,7 +17,7 @@ interface FeignApiClient : ApiClient {
      * @param submissionId The ID of the submission.
      * @param body The request body containing the new answer for the submission.
      */
-    @PutMapping("/v1/contests/{contestId}/submissions/{submissionId}:update-answer")
+    @PutMapping("/api/v1/contests/{contestId}/submissions/{submissionId}:update-answer")
     override fun updateSubmissionAnswer(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
