@@ -16,7 +16,7 @@ object ContestMockBuilder {
         startAt: OffsetDateTime = OffsetDateTime.now().plusHours(1),
         endAt: OffsetDateTime = OffsetDateTime.now().plusHours(2),
         autoFreezeAt: OffsetDateTime? = OffsetDateTime.now().plusMinutes(30),
-        frozenAt: OffsetDateTime? = OffsetDateTime.now().minusMinutes(40),
+        frozenAt: OffsetDateTime? = null,
         settings: Contest.Settings = Contest.Settings(isAutoJudgeEnabled = true),
         members: List<Member> = emptyList(),
         problems: List<Problem> = emptyList(),

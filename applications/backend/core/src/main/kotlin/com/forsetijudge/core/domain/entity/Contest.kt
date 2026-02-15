@@ -107,7 +107,7 @@ class Contest(
     fun isActive(): Boolean = hasStarted() && !hasFinished()
 
     val isFrozen: Boolean
-        get() = frozenAt != null
+        get() = frozenAt != null && !frozenAt!!.isAfter(OffsetDateTime.now())
 
     data class Settings(
         var isAutoJudgeEnabled: Boolean = true,

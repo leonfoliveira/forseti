@@ -44,57 +44,12 @@ class ContestTest :
         }
 
         listOf(
-            Triple(pastDate, futureDate, futureDate),
-            Triple(futureDate, pastDate, futureDate),
-            Triple(null, pastDate, pastDate),
-            Triple(pastDate, null, pastDate),
-            Triple(null, null, null),
-        ).forEach { (autoFreezeAt, manualFreezeAt, expected) ->
-            test("freezeAt with autoFreezeAt = $autoFreezeAt and manualFreezeAt = $manualFreezeAt should return $expected") {
-                val contest =
-                    ContestMockBuilder.build(
-                        autoFreezeAt = autoFreezeAt,
-                        manualFreezeAt = manualFreezeAt,
-                    )
-
-                contest.freezeAt() shouldBe expected
-            }
-        }
-
-        listOf(
-            Triple(pastDate, futureDate, pastDate),
-            Triple(futureDate, pastDate, pastDate),
-            Triple(null, pastDate, pastDate),
-            Triple(pastDate, null, pastDate),
-            Triple(null, null, null),
-        ).forEach { (autoFreezeAt, manualFreezeAt, expected) ->
-            test("lastFreezeTime with autoFreezeAt = $autoFreezeAt and manualFreezeAt = $manualFreezeAt should return $expected") {
-                val contest =
-                    ContestMockBuilder.build(
-                        autoFreezeAt = autoFreezeAt,
-                        manualFreezeAt = manualFreezeAt,
-                    )
-
-                contest.lastFreezeTime() shouldBe expected
-            }
-        }
-
-        listOf(
-            Triple(null, null, false),
-            Triple(futureDate, null, false),
-            Triple(pastDate, null, true),
-            Triple(pastDate, futureDate, true),
-            Triple(pastDate, pastDate, false),
-        ).forEach { (freezeAt, unfreezeAt, expected) ->
-            test("isFrozen with freezeAt = $freezeAt and unfreezeAt = $unfreezeAt should return $expected") {
-                val contest =
-                    ContestMockBuilder.build(
-                        autoFreezeAt = freezeAt,
-                        manualFreezeAt = null,
-                        unfreezeAt = unfreezeAt,
-                    )
-
-                contest.isFrozen() shouldBe expected
+            Pair(ContestMockBuilder.build(), false),
+            Pair(ContestMockBuilder.build(frozenAt = OffsetDateTime.now().minusHours(1)), true),
+            Pair(ContestMockBuilder.build(frozenAt = OffsetDateTime.now().plusHours(1)), false),
+        ).forEach { (contest, expected) ->
+            test("isFrozen with frozenAt = ${contest.frozenAt} should return $expected") {
+                contest.isFrozen shouldBe expected
             }
         }
     })

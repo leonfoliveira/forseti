@@ -67,7 +67,7 @@ class FreezeLeaderboardServiceTest :
             }
 
             test("should throw ForbiddenException if leaderboard is already frozen") {
-                val contest = ContestMockBuilder.build(manualFreezeAt = OffsetDateTime.now().minusMinutes(1))
+                val contest = ContestMockBuilder.build(frozenAt = OffsetDateTime.now().minusMinutes(10))
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns MemberMockBuilder.build(type = Member.Type.ADMIN)
 
@@ -77,7 +77,7 @@ class FreezeLeaderboardServiceTest :
             }
 
             test("should freeze the leaderboard successfully") {
-                val contest = ContestMockBuilder.build(manualFreezeAt = null)
+                val contest = ContestMockBuilder.build(frozenAt = null)
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns MemberMockBuilder.build(type = Member.Type.ADMIN)
                 every { contestRepository.save(any()) } returnsArgument 0
@@ -122,7 +122,7 @@ class FreezeLeaderboardServiceTest :
             }
 
             test("should throw ForbiddenException if leaderboard is not frozen") {
-                val contest = ContestMockBuilder.build(manualFreezeAt = null)
+                val contest = ContestMockBuilder.build(frozenAt = null)
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns MemberMockBuilder.build(type = Member.Type.ADMIN)
 
@@ -132,7 +132,7 @@ class FreezeLeaderboardServiceTest :
             }
 
             test("should unfreeze the leaderboard successfully") {
-                val contest = ContestMockBuilder.build(manualFreezeAt = OffsetDateTime.now().minusMinutes(1))
+                val contest = ContestMockBuilder.build(frozenAt = OffsetDateTime.now().minusMinutes(10))
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns MemberMockBuilder.build(type = Member.Type.ADMIN)
                 every { contestRepository.save(any()) } returnsArgument 0

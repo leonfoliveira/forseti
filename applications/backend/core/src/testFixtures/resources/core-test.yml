@@ -27,6 +27,19 @@ spring:
       submission-failed-queue: submission-failed-queue
     routing-key:
       submission-routing-key: submission-routing-key
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
+    properties:
+      org:
+        quartz:
+          jobStore:
+            isClustered: true
+            clusterCheckinInterval: 20000
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            tablePrefix: QRTZ_
+    max-retries: 0
 jpa:
   jpa:
     show-sql: false

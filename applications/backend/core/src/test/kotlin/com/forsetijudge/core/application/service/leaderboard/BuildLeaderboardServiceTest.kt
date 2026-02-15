@@ -34,7 +34,7 @@ class BuildLeaderboardServiceTest :
 
         val sut = BuildLeaderboardService(contestRepository, memberRepository, problemRepository, submissionRepository)
 
-        val authorizer = mockk<AuthorizationUtil.Authorizer>()
+        val authorizer = mockk<AuthorizationUtil.Authorizer>(relaxed = true)
         val now = OffsetDateTime.now()
 
         beforeEach {
