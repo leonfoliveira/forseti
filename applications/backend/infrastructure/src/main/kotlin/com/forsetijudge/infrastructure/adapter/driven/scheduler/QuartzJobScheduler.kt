@@ -31,7 +31,7 @@ class QuartzJobScheduler(
         jobClass: Class<QuartzJob<TPayload>>,
         at: OffsetDateTime,
     ) {
-        logger.info("Scheduling a ${jobClass.name} job with id ${message.id} to run at $at")
+        logger.info("Scheduling a ${jobClass.simpleName} job with id ${message.id} to run at $at")
 
         if (!at.isAfter(OffsetDateTime.now())) {
             throw BusinessException("Cannot schedule a job in the past")
