@@ -188,6 +188,47 @@ describe("ContestantDashboardProvider", () => {
     ).toBe(leaderboardPartial.isAccepted);
   });
 
+  it("should handle leaderboard freeze updates", async () => {
+    const { store } = await renderWithProviders(
+      <ContestantDashboardProvider>
+        <div data-testid="child" />
+      </ContestantDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (
+        leaderboardListener.subscribeForLeaderboardFreeze as jest.Mock
+      ).mock.calls[0][2]();
+    });
+    expect(store.getState().contestantDashboard.leaderboard.isFrozen).toBe(
+      true,
+    );
+  });
+
+  it("should handle leaderboard unfreeze updates", async () => {
+    const otherLeaderboard = MockLeaderboardResponseDTO();
+    const frozenSubmissions = [MockSubmissionPublicResponseDTO()];
+    const { store } = await renderWithProviders(
+      <ContestantDashboardProvider>
+        <div data-testid="child" />
+      </ContestantDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (
+        leaderboardListener.subscribeForLeaderboardUnfreeze as jest.Mock
+      ).mock.calls[0][2]({ leaderboard: otherLeaderboard, frozenSubmissions });
+    });
+    expect(store.getState().contestantDashboard.leaderboard).toBe(
+      otherLeaderboard,
+    );
+    expect(store.getState().contestantDashboard.submissions).toContain(
+      frozenSubmissions[0],
+    );
+  });
+
   it("should handle submissions updates", async () => {
     const otherSubmission = MockSubmissionPublicResponseDTO();
     const { store } = await renderWithProviders(

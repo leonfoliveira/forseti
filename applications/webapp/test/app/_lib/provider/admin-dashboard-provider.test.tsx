@@ -164,6 +164,45 @@ describe("AdminDashboardProvider", () => {
     ).toBe(leaderboardPartial.isAccepted);
   });
 
+  it("should handle leaderboard freeze updates", async () => {
+    const { store } = await renderWithProviders(
+      <AdminDashboardProvider>
+        <div data-testid="child" />
+      </AdminDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (
+        leaderboardListener.subscribeForLeaderboardFreeze as jest.Mock
+      ).mock.calls[0][2]({
+        leaderboard: MockLeaderboardResponseDTO(),
+        frozenSubmissions: [],
+      });
+    });
+    expect(store.getState().adminDashboard.leaderboard.isFrozen).toBe(true);
+  });
+
+  it("should handle leaderboard unfreeze updates", async () => {
+    const otherLeaderboard = MockLeaderboardResponseDTO();
+    const { store } = await renderWithProviders(
+      <AdminDashboardProvider>
+        <div data-testid="child" />
+      </AdminDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (
+        leaderboardListener.subscribeForLeaderboardUnfreeze as jest.Mock
+      ).mock.calls[0][2]({
+        leaderboard: otherLeaderboard,
+        frozenSubmissions: [],
+      });
+    });
+    expect(store.getState().adminDashboard.leaderboard).toBe(otherLeaderboard);
+  });
+
   it("should handle submissions updates", async () => {
     const otherSubmission = MockSubmissionFullResponseDTO();
     const { store } = await renderWithProviders(

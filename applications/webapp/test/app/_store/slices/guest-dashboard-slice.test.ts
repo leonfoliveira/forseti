@@ -74,6 +74,15 @@ describe("guestDashboardSlice", () => {
     );
   });
 
+  it("should set the leaderboard as frozen", () => {
+    const state = guestDashboardSlice.reducer(
+      stateWithData,
+      guestDashboardSlice.actions.setLeaderboardIsFrozen(true),
+    );
+
+    expect(state.leaderboard.isFrozen).toBe(true);
+  });
+
   it("should merge a new submission", () => {
     const newSubmission = MockSubmissionPublicResponseDTO();
 
@@ -100,6 +109,23 @@ describe("guestDashboardSlice", () => {
 
     expect(state.submissions).toHaveLength(1);
     expect(state.submissions[0]).toEqual(updatedSubmission);
+  });
+
+  it("should merge a batch of submissions", () => {
+    const newSubmissions = [
+      MockSubmissionPublicResponseDTO(),
+      MockSubmissionPublicResponseDTO(),
+    ];
+
+    const state = guestDashboardSlice.reducer(
+      stateWithData,
+      guestDashboardSlice.actions.mergeSubmissionBatch(newSubmissions),
+    );
+
+    expect(state.submissions).toHaveLength(3);
+    expect(state.submissions).toEqual(
+      expect.arrayContaining([...stateWithData.submissions, ...newSubmissions]),
+    );
   });
 
   it("should merge a new announcement", () => {

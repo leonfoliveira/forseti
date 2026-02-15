@@ -23,6 +23,7 @@ import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification
 import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -98,6 +99,16 @@ export function JudgeDashboardProvider({
           contestMetadata.id,
           receiveLeaderboardPartial,
         ),
+        leaderboardListener.subscribeForLeaderboardFreeze(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveLeaderboardFreeze,
+        ),
+        leaderboardListener.subscribeForLeaderboardUnfreeze(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveLeaderboardUnfreeze,
+        ),
         submissionListener.subscribeForContestFull(
           listenerClientRef.current,
           contestMetadata.id,
@@ -156,6 +167,17 @@ export function JudgeDashboardProvider({
     leaderboard: LeaderboardPartialResponseDTO,
   ) {
     dispatch(judgeDashboardSlice.actions.mergeLeaderboard(leaderboard));
+  }
+
+  function receiveLeaderboardFreeze() {
+    dispatch(judgeDashboardSlice.actions.setLeaderboardIsFrozen(true));
+  }
+
+  function receiveLeaderboardUnfreeze(data: {
+    leaderboard: LeaderboardResponseDTO;
+    frozenSubmissions: SubmissionPublicResponseDTO[];
+  }) {
+    dispatch(judgeDashboardSlice.actions.setLeaderboard(data.leaderboard));
   }
 
   function receiveSubmission(submission: SubmissionFullResponseDTO) {

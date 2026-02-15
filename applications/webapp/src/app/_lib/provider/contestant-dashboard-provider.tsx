@@ -102,6 +102,16 @@ export function ContestantDashboardProvider({
           contestMetadata.id,
           receiveLeaderboardPartial,
         ),
+        leaderboardListener.subscribeForLeaderboardFreeze(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveLeaderboardFreeze,
+        ),
+        leaderboardListener.subscribeForLeaderboardUnfreeze(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveLeaderboardUnfreeze,
+        ),
         submissionListener.subscribeForContest(
           listenerClientRef.current,
           contestMetadata.id,
@@ -174,6 +184,22 @@ export function ContestantDashboardProvider({
     leaderboard: LeaderboardPartialResponseDTO,
   ) {
     dispatch(contestantDashboardSlice.actions.mergeLeaderboard(leaderboard));
+  }
+
+  function receiveLeaderboardFreeze() {
+    dispatch(contestantDashboardSlice.actions.setLeaderboardIsFrozen(true));
+  }
+
+  function receiveLeaderboardUnfreeze(data: {
+    leaderboard: LeaderboardResponseDTO;
+    frozenSubmissions: SubmissionPublicResponseDTO[];
+  }) {
+    dispatch(contestantDashboardSlice.actions.setLeaderboard(data.leaderboard));
+    dispatch(
+      contestantDashboardSlice.actions.mergeSubmissionBatch(
+        data.frozenSubmissions,
+      ),
+    );
   }
 
   function receiveSubmission(submission: SubmissionPublicResponseDTO) {

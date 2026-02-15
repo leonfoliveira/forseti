@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import { findClarification } from "@/app/_store/util/clarification-finder";
-import { mergeEntity } from "@/app/_store/util/entity-util";
+import { mergeEntity, mergeEntityBatch } from "@/app/_store/util/entity-util";
 import { mergeLeaderboard } from "@/app/_store/util/leaderboard-merger";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
@@ -38,6 +38,9 @@ export const judgeDashboardSlice = createSlice({
       action: { payload: LeaderboardPartialResponseDTO },
     ) {
       state.leaderboard = mergeLeaderboard(state.leaderboard, action.payload);
+    },
+    setLeaderboardIsFrozen(state, action: { payload: boolean }) {
+      state.leaderboard.isFrozen = action.payload;
     },
     mergeSubmission(state, action: { payload: SubmissionFullResponseDTO }) {
       state.submissions = mergeEntity(state.submissions, action.payload);

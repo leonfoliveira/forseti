@@ -160,6 +160,43 @@ describe("GuestDashboardProvider", () => {
     ).toBe(leaderboardPartial.isAccepted);
   });
 
+  it("should handle leaderboard freeze updates", async () => {
+    const { store } = await renderWithProviders(
+      <GuestDashboardProvider>
+        <div data-testid="child" />
+      </GuestDashboardProvider>,
+      { contestMetadata },
+    );
+
+    act(() => {
+      (
+        leaderboardListener.subscribeForLeaderboardFreeze as jest.Mock
+      ).mock.calls[0][2]();
+    });
+    expect(store.getState().guestDashboard.leaderboard.isFrozen).toBe(true);
+  });
+
+  it("should handle leaderboard unfreeze updates", async () => {
+    const otherLeaderboard = MockLeaderboardResponseDTO();
+    const frozenSubmissions = [MockSubmissionPublicResponseDTO()];
+    const { store } = await renderWithProviders(
+      <GuestDashboardProvider>
+        <div data-testid="child" />
+      </GuestDashboardProvider>,
+      { contestMetadata },
+    );
+
+    act(() => {
+      (
+        leaderboardListener.subscribeForLeaderboardUnfreeze as jest.Mock
+      ).mock.calls[0][2]({ leaderboard: otherLeaderboard, frozenSubmissions });
+    });
+    expect(store.getState().guestDashboard.leaderboard).toBe(otherLeaderboard);
+    expect(store.getState().guestDashboard.submissions).toContain(
+      frozenSubmissions[0],
+    );
+  });
+
   it("should handle submissions updates", async () => {
     const otherSubmission = MockSubmissionPublicResponseDTO();
     const { store } = await renderWithProviders(

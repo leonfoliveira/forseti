@@ -85,6 +85,15 @@ describe("adminDashboardSlice", () => {
     );
   });
 
+  it("should set the leaderboard as frozen", () => {
+    const state = adminDashboardSlice.reducer(
+      stateWithData,
+      adminDashboardSlice.actions.setLeaderboardIsFrozen(true),
+    );
+
+    expect(state.leaderboard.isFrozen).toBe(true);
+  });
+
   it("should merge a new submission", () => {
     const newSubmission = MockSubmissionFullResponseDTO();
 
