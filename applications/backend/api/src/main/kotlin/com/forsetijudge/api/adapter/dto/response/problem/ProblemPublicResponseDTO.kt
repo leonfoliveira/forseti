@@ -9,6 +9,7 @@ import java.util.UUID
 data class ProblemPublicResponseDTO(
     val id: UUID,
     val letter: Char,
+    val color: String,
     val title: String,
     val description: AttachmentResponseDTO,
     val timeLimit: Int,
@@ -20,6 +21,7 @@ fun Problem.toPublicResponseDTO(): ProblemPublicResponseDTO =
     ProblemPublicResponseDTO(
         id = this.id,
         letter = this.letter,
+        color = this.color,
         title = this.title,
         description = this.description.toResponseDTO(),
         timeLimit = this.timeLimit,

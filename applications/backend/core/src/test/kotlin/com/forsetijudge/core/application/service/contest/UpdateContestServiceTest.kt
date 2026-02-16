@@ -93,6 +93,7 @@ class UpdateContestServiceTest :
                             UpdateContestInputDTO.ProblemDTO(
                                 id = UuidCreator.getTimeOrderedEpoch(),
                                 letter = 'A',
+                                color = "#ffffff",
                                 title = "Test Problem",
                                 description = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                                 timeLimit = 1000,

@@ -252,6 +252,7 @@ class UpdateContestService(
         val problem =
             Problem(
                 letter = problemDTO.letter,
+                color = problemDTO.color.lowercase(),
                 title = problemDTO.title,
                 description = description,
                 timeLimit = problemDTO.timeLimit,

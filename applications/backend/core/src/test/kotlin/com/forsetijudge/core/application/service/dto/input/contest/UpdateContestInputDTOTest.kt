@@ -52,6 +52,7 @@ class UpdateContestInputDTOTest :
                             UpdateContestInputDTO.ProblemDTO(
                                 id = UuidCreator.getTimeOrderedEpoch(),
                                 letter = 'A',
+                                color = "#ffffff",
                                 title = "Test Problem",
                                 description = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                                 timeLimit = 1000,
@@ -79,6 +80,10 @@ class UpdateContestInputDTOTest :
                 inputDTO.copy(members = listOf(inputDTO.members[0].copy(id = null, password = ""))),
                 inputDTO.copy(members = listOf(inputDTO.members[0].copy(password = "a".repeat(33)))),
                 inputDTO.copy(members = listOf(inputDTO.members[0].copy(login = "login"), inputDTO.members[0].copy(login = "login"))),
+                inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(color = ""))),
+                inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(color = "ffffff"))),
+                inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(color = "#fff"))),
+                inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(color = "any"))),
                 inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(title = ""))),
                 inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(title = "a".repeat(256)))),
                 inputDTO.copy(problems = listOf(inputDTO.problems[0].copy(timeLimit = 0))),
