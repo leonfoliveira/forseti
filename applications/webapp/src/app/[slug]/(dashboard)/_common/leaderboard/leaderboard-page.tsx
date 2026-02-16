@@ -116,7 +116,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                 <TableRow
                   key={member.id}
                   className={cn(
-                    member.id === session?.member.id && "bg-primary-50",
+                    member.id === session?.member.id && "bg-muted/50",
                   )}
                   data-testid="leaderboard-member-row"
                 >
