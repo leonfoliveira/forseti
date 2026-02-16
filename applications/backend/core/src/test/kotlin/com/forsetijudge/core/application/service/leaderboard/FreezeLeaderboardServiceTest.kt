@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.leaderboard
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
@@ -13,8 +14,10 @@ import com.github.f4b6a3.uuid.UuidCreator
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.slot
 import io.mockk.verify
 import org.junit.jupiter.api.assertThrows
@@ -36,6 +39,15 @@ class FreezeLeaderboardServiceTest :
 
         val contestId = UuidCreator.getTimeOrderedEpoch()
         val memberId = UuidCreator.getTimeOrderedEpoch()
+
+        val contestAuthorizer = mockk<ContestAuthorizer>(relaxed = true)
+
+        beforeEach {
+            clearAllMocks()
+            mockkConstructor(ContestAuthorizer::class)
+            every { anyConstructed<ContestAuthorizer>().checkContestStarted() } returns contestAuthorizer
+            every { anyConstructed<ContestAuthorizer>().checkMemberType() } returns contestAuthorizer
+        }
 
         context("freeze") {
             test("should throw NotFoundException if contest does not exist") {

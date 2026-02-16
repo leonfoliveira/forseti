@@ -1,8 +1,8 @@
 package com.forsetijudge.core.application.service.contest
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -56,8 +56,9 @@ class FindContestService(
             contestRepository.findEntityById(id)
                 ?: throw NotFoundException("Could not find contest with id = $id")
 
-        if (!contest.hasStarted() && !setOf(Member.Type.ADMIN, Member.Type.ROOT, Member.Type.JUDGE).contains(member?.type)) {
-            throw ForbiddenException("Contest has not started yet")
+        if (!contest.hasStarted()) {
+            ContestAuthorizer(contest, member)
+                .checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
         }
 
         logger.info("Found contest by id for public access")

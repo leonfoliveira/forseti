@@ -1,9 +1,8 @@
 package com.forsetijudge.core.application.service.contest
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.domain.entity.MemberMockBuilder
-import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -14,6 +13,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
 import java.time.OffsetDateTime
 
@@ -25,11 +25,15 @@ class FindContestServiceTest :
         val sut = FindContestService(contestRepository, memberRepository)
 
         val now = OffsetDateTime.now()
+        val contestAuthorizer = mockk<ContestAuthorizer>(relaxed = true)
 
         beforeEach {
             clearAllMocks()
             mockkStatic(OffsetDateTime::class)
             every { OffsetDateTime.now() } returns now
+            mockkConstructor(ContestAuthorizer::class)
+            every { anyConstructed<ContestAuthorizer>().checkContestStarted() } returns contestAuthorizer
+            every { anyConstructed<ContestAuthorizer>().checkMemberType(*anyVararg<Member.Type>()) } returns contestAuthorizer
         }
 
         context("findAll") {
@@ -105,98 +109,6 @@ class FindContestServiceTest :
                 shouldThrow<NotFoundException> {
                     sut.findByIdPublic(memberId, contestId)
                 }.message shouldBe "Could not find member with id = $memberId"
-            }
-
-            test("should throw ForbiddenException when contest has not started and member is not ADMIN/ROOT") {
-                val member = MemberMockBuilder.build(id = memberId, type = Member.Type.CONTESTANT)
-                val contest =
-                    ContestMockBuilder.build(
-                        id = contestId,
-                        startAt = OffsetDateTime.now().plusHours(1),
-                        endAt = OffsetDateTime.now().plusHours(2),
-                    )
-                every { contestRepository.findEntityById(contestId) } returns contest
-                every { memberRepository.findEntityById(memberId) } returns member
-
-                shouldThrow<ForbiddenException> {
-                    sut.findByIdPublic(memberId, contestId)
-                }.message shouldBe "Contest has not started yet"
-            }
-
-            test("should return contest when contest has started for any member") {
-                val member = MemberMockBuilder.build(id = memberId, type = Member.Type.CONTESTANT)
-                val contest =
-                    ContestMockBuilder.build(
-                        id = contestId,
-                        startAt = OffsetDateTime.now().minusHours(1),
-                        endAt = OffsetDateTime.now().plusHours(1),
-                    )
-                every { contestRepository.findEntityById(contestId) } returns contest
-                every { memberRepository.findEntityById(memberId) } returns member
-
-                val result = sut.findByIdPublic(memberId, contestId)
-
-                result shouldBe contest
-            }
-
-            test("should return contest when contest has not started but member is ADMIN") {
-                val member = MemberMockBuilder.build(id = memberId, type = Member.Type.ADMIN)
-                val contest =
-                    ContestMockBuilder.build(
-                        id = contestId,
-                        startAt = OffsetDateTime.now().plusHours(1),
-                        endAt = OffsetDateTime.now().plusHours(2),
-                    )
-                every { contestRepository.findEntityById(contestId) } returns contest
-                every { memberRepository.findEntityById(memberId) } returns member
-
-                val result = sut.findByIdPublic(memberId, contestId)
-
-                result shouldBe contest
-            }
-
-            test("should return contest when contest has not started but member is ROOT") {
-                val member = MemberMockBuilder.build(id = memberId, type = Member.Type.ROOT)
-                val contest =
-                    ContestMockBuilder.build(
-                        id = contestId,
-                        startAt = OffsetDateTime.now().plusHours(1),
-                        endAt = OffsetDateTime.now().plusHours(2),
-                    )
-                every { contestRepository.findEntityById(contestId) } returns contest
-                every { memberRepository.findEntityById(memberId) } returns member
-
-                val result = sut.findByIdPublic(memberId, contestId)
-
-                result shouldBe contest
-            }
-
-            test("should return contest when member is null and contest has started") {
-                val contest =
-                    ContestMockBuilder.build(
-                        id = contestId,
-                        startAt = OffsetDateTime.now().minusHours(1),
-                        endAt = OffsetDateTime.now().plusHours(1),
-                    )
-                every { contestRepository.findEntityById(contestId) } returns contest
-
-                val result = sut.findByIdPublic(null, contestId)
-
-                result shouldBe contest
-            }
-
-            test("should throw ForbiddenException when member is null and contest has not started") {
-                val contest =
-                    ContestMockBuilder.build(
-                        id = contestId,
-                        startAt = OffsetDateTime.now().plusHours(1),
-                        endAt = OffsetDateTime.now().plusHours(2),
-                    )
-                every { contestRepository.findEntityById(contestId) } returns contest
-
-                shouldThrow<ForbiddenException> {
-                    sut.findByIdPublic(null, contestId)
-                }.message shouldBe "Contest has not started yet"
             }
         }
     })

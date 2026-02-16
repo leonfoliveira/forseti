@@ -1,8 +1,8 @@
 package com.forsetijudge.core.application.service.submission
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
-import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -65,9 +65,8 @@ class FindSubmissionService(
                     ?: throw NotFoundException("Could not find member with id = $it")
             }
 
-        if (!contest.hasStarted() && !setOf(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE).contains(member?.type)) {
-            throw ForbiddenException("Contest has not started yet")
-        }
+        ContestAuthorizer(contest, member)
+            .checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
 
         val submissions =
             contest.problems

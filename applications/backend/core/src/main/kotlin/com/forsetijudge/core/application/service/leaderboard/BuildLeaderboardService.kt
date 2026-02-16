@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.service.leaderboard
 
-import com.forsetijudge.core.application.util.AuthorizationUtil
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Problem
@@ -65,8 +65,7 @@ class BuildLeaderboardService(
                     ?: throw NotFoundException("Could not find member with id = $it")
             }
 
-        AuthorizationUtil
-            .start(contest, member)
+        ContestAuthorizer(contest, member)
             .checkContestStarted()
 
         val classification =
@@ -117,23 +116,23 @@ class BuildLeaderboardService(
     /**
      * Finds the cell of the leaderboard for a specific submission member and problem.
      *
-     * @param memberUUID The ID of the member to get the leaderboard cell for.
-     * @param problemUUID The ID of the problem to get the leaderboard cell for.
+     * @param memberId The ID of the member to get the leaderboard cell for.
+     * @param problemId The ID of the problem to get the leaderboard cell for.
      * @return The partial leaderboard data for the submission.
      */
     override fun buildPartial(
-        memberUUID: UUID,
-        problemUUID: UUID,
+        memberId: UUID,
+        problemId: UUID,
     ): LeaderboardPartialOutputDTO {
         val problem =
-            problemRepository.findEntityById(problemUUID)
-                ?: throw NotFoundException("Could not find problem with id = $problemUUID")
-        val submissions = submissionRepository.findAllByMemberIdAndProblemIdAndStatus(memberUUID, problemUUID, Submission.Status.JUDGED)
+            problemRepository.findEntityById(problemId)
+                ?: throw NotFoundException("Could not find problem with id = $problemId")
+        val submissions = submissionRepository.findAllByMemberIdAndProblemIdAndStatus(memberId, problemId, Submission.Status.JUDGED)
 
         val problemDTO = buildProblemDTO(problem.contest, problem, submissions)
         return LeaderboardPartialOutputDTO(
-            memberId = memberUUID,
-            problemId = problemUUID,
+            memberId = memberId,
+            problemId = problemId,
             letter = problem.letter,
             isAccepted = problemDTO.isAccepted,
             acceptedAt = problemDTO.acceptedAt,

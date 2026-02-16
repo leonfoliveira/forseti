@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.service.leaderboard
 
-import com.forsetijudge.core.application.util.AuthorizationUtil
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.LeaderboardFreezeEvent
 import com.forsetijudge.core.domain.event.LeaderboardUnfreezeEvent
@@ -44,8 +44,7 @@ class FreezeLeaderboardService(
             memberRepository.findEntityById(memberId)
                 ?: throw NotFoundException("Could not find member with id $memberId")
 
-        AuthorizationUtil
-            .start(contest, member)
+        ContestAuthorizer(contest, member)
             .checkMemberType(Member.Type.API, Member.Type.ROOT, Member.Type.ADMIN)
 
         if (contest.isFrozen) {
@@ -79,9 +78,9 @@ class FreezeLeaderboardService(
             memberRepository.findEntityById(memberId)
                 ?: throw NotFoundException("Could not find member with id $memberId")
 
-        if (!setOf(Member.Type.ROOT, Member.Type.ADMIN).contains(member.type)) {
-            throw ForbiddenException("Only ROOT and ADMIN members can unfreeze the leaderboard")
-        }
+        ContestAuthorizer(contest, member)
+            .checkMemberType(Member.Type.API, Member.Type.ROOT, Member.Type.ADMIN)
+
         if (!contest.isFrozen) {
             throw ForbiddenException("The leaderboard for this contest is not frozen")
         }

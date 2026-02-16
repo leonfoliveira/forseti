@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.service.leaderboard
 
-import com.forsetijudge.core.application.util.AuthorizationUtil
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
@@ -19,9 +19,8 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
+import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
-import io.mockk.verify
 import java.time.OffsetDateTime
 
 class BuildLeaderboardServiceTest :
@@ -33,15 +32,16 @@ class BuildLeaderboardServiceTest :
 
         val sut = BuildLeaderboardService(contestRepository, memberRepository, problemRepository, submissionRepository)
 
-        val authorizer = mockk<AuthorizationUtil.Authorizer>(relaxed = true)
         val now = OffsetDateTime.now()
+        val contestAuthorizer = mockk<ContestAuthorizer>(relaxed = true)
 
         beforeEach {
             clearAllMocks()
             mockkStatic(OffsetDateTime::class)
             every { OffsetDateTime.now() } returns now
-            mockkObject(AuthorizationUtil)
-            every { AuthorizationUtil.start(any(), any()) } returns authorizer
+            mockkConstructor(ContestAuthorizer::class)
+            every { anyConstructed<ContestAuthorizer>().checkContestStarted() } returns contestAuthorizer
+            every { anyConstructed<ContestAuthorizer>().checkMemberType() } returns contestAuthorizer
         }
 
         context("build") {
@@ -63,9 +63,6 @@ class BuildLeaderboardServiceTest :
                 every { memberRepository.findEntityById(memberId) } returns member
 
                 sut.build(contestId, memberId)
-
-                verify { AuthorizationUtil.start(contest, member) }
-                verify { authorizer.checkContestStarted() }
             }
 
             test("should build leaderboard for contest") {

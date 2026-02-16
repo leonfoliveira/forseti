@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.contest
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.TestCasesValidator
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
@@ -17,6 +18,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.Hasher
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
+import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.dto.input.attachment.AttachmentInputDTO
 import com.forsetijudge.core.port.dto.input.contest.UpdateContestInputDTO
 import com.github.f4b6a3.uuid.UuidCreator
@@ -26,6 +28,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
@@ -35,6 +38,7 @@ class UpdateContestServiceTest :
     FunSpec({
         val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
         val contestRepository = mockk<ContestRepository>(relaxed = true)
+        val memberRepository = mockk<MemberRepository>(relaxed = true)
         val hasher = mockk<Hasher>(relaxed = true)
         val deleteContestService = mockk<DeleteContestService>(relaxed = true)
         val testCasesValidator = mockk<TestCasesValidator>(relaxed = true)
@@ -44,6 +48,7 @@ class UpdateContestServiceTest :
             UpdateContestService(
                 attachmentRepository,
                 contestRepository,
+                memberRepository,
                 hasher,
                 deleteContestService,
                 testCasesValidator,
@@ -51,15 +56,20 @@ class UpdateContestServiceTest :
             )
 
         val now = OffsetDateTime.now()
+        val contestAuthorizer = mockk<ContestAuthorizer>(relaxed = true)
 
         beforeEach {
             clearAllMocks()
             mockkStatic(OffsetDateTime::class)
             every { OffsetDateTime.now() } returns now
+            mockkConstructor(ContestAuthorizer::class)
+            every { anyConstructed<ContestAuthorizer>().checkContestStarted() } returns contestAuthorizer
+            every { anyConstructed<ContestAuthorizer>().checkMemberType(*anyVararg<Member.Type>()) } returns contestAuthorizer
         }
 
         context("update") {
             val contestId = UuidCreator.getTimeOrderedEpoch()
+            val memberId = UuidCreator.getTimeOrderedEpoch()
             val inputDTO =
                 UpdateContestInputDTO(
                     slug = "test-contest",
@@ -96,7 +106,7 @@ class UpdateContestServiceTest :
                 val invalidInputDTO = inputDTO.copy(members = listOf(inputDTO.members[0].copy(type = Member.Type.ROOT)))
 
                 shouldThrow<ForbiddenException> {
-                    sut.update(contestId, invalidInputDTO)
+                    sut.update(contestId, memberId, invalidInputDTO)
                 }.message shouldBe "Contest cannot have ROOT members"
             }
 
@@ -104,7 +114,7 @@ class UpdateContestServiceTest :
                 every { contestRepository.findEntityById(contestId) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.update(contestId, inputDTO)
+                    sut.update(contestId, memberId, inputDTO)
                 }.message shouldBe "Could not find contest with id = $contestId"
             }
 
@@ -113,7 +123,7 @@ class UpdateContestServiceTest :
                 every { contestRepository.findEntityById(contestId) } returns contest
 
                 shouldThrow<ForbiddenException> {
-                    sut.update(contestId, inputDTO)
+                    sut.update(contestId, memberId, inputDTO)
                 }.message shouldBe "Contest has already finished and cannot be updated"
             }
 
@@ -122,7 +132,7 @@ class UpdateContestServiceTest :
                 every { contestRepository.findEntityById(contestId) } returns contest
 
                 shouldThrow<ForbiddenException> {
-                    sut.update(contestId, inputDTO.copy(startAt = OffsetDateTime.now().plusHours(1)))
+                    sut.update(contestId, memberId, inputDTO.copy(startAt = OffsetDateTime.now().plusHours(1)))
                 }.message shouldBe "Contest has already started and cannot have its start time updated"
             }
 
@@ -131,7 +141,7 @@ class UpdateContestServiceTest :
                 every { contestRepository.findEntityById(contestId) } returns contest
 
                 shouldThrow<BusinessException> {
-                    sut.update(contestId, inputDTO.copy(startAt = OffsetDateTime.now().minusHours(1)))
+                    sut.update(contestId, memberId, inputDTO.copy(startAt = OffsetDateTime.now().minusHours(1)))
                 }.message shouldBe "Contest start time must be in the future"
             }
 
@@ -142,6 +152,7 @@ class UpdateContestServiceTest :
                 shouldThrow<BusinessException> {
                     sut.update(
                         contestId,
+                        memberId,
                         inputDTO.copy(
                             autoFreezeAt = OffsetDateTime.now().plusMinutes(30),
                             startAt = OffsetDateTime.now().plusHours(1),
@@ -157,6 +168,7 @@ class UpdateContestServiceTest :
                 shouldThrow<BusinessException> {
                     sut.update(
                         contestId,
+                        memberId,
                         inputDTO.copy(
                             autoFreezeAt = OffsetDateTime.now().plusHours(3),
                             endAt = OffsetDateTime.now().plusHours(2),
@@ -177,6 +189,7 @@ class UpdateContestServiceTest :
                 shouldThrow<BusinessException> {
                     sut.update(
                         contestId,
+                        memberId,
                         inputDTO.copy(
                             autoFreezeAt = OffsetDateTime.now().minusMinutes(30),
                             startAt = contest.startAt,
@@ -190,7 +203,7 @@ class UpdateContestServiceTest :
                 every { contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId) } returns true
 
                 shouldThrow<ConflictException> {
-                    sut.update(contestId, inputDTO)
+                    sut.update(contestId, memberId, inputDTO)
                 }.message shouldBe "Contest with slug '${inputDTO.slug}' already exists"
             }
 
@@ -205,7 +218,7 @@ class UpdateContestServiceTest :
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].description.id) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.update(contestId, inputDTO)
+                    sut.update(contestId, memberId, inputDTO)
                 }.message shouldBe "Could not find description attachment with id: ${inputDTO.problems[0].description.id}"
             }
 
@@ -222,7 +235,7 @@ class UpdateContestServiceTest :
                     descriptionAttachment
 
                 shouldThrow<ForbiddenException> {
-                    sut.update(contestId, inputDTO)
+                    sut.update(contestId, memberId, inputDTO)
                 }.message shouldBe "Attachment with id: ${descriptionAttachment.id} is not a valid problem description"
             }
 
@@ -239,7 +252,7 @@ class UpdateContestServiceTest :
                 every { attachmentRepository.findEntityById(inputDTO.problems[0].testCases.id) } returns null
 
                 shouldThrow<NotFoundException> {
-                    sut.update(contestId, inputDTO)
+                    sut.update(contestId, memberId, inputDTO)
                 }.message shouldBe "Could not find testCases attachment with id: ${inputDTO.problems[0].testCases.id}"
             }
 
@@ -258,7 +271,7 @@ class UpdateContestServiceTest :
                     testCasesAttachment
 
                 shouldThrow<ForbiddenException> {
-                    sut.update(contestId, inputDTO)
+                    sut.update(contestId, memberId, inputDTO)
                 }.message shouldBe "Attachment with id: ${testCasesAttachment.id} is not a valid problem test cases"
             }
 
@@ -318,6 +331,7 @@ class UpdateContestServiceTest :
 
                 sut.update(
                     contestId,
+                    memberId,
                     inputDTO.copy(
                         members = listOf(inputMemberToCreate, inputMemberToUpdateMinimum, inputMemberToUpdateFull),
                         problems = listOf(inputProblemToCreate, inputProblemToUpdateMinimum, inputProblemToUpdateFull),

@@ -9,11 +9,14 @@ interface UpdateContestUseCase {
     /**
      * Updates a contest with the provided input data.
      *
+     * @param contestId The ID of the contest to update.
+     * @param memberId The ID of the member performing the update.
      * @param inputDTO The input data containing the contest updates.
      * @return The updated contest entity.
      */
     fun update(
         contestId: UUID,
+        memberId: UUID,
         @Valid inputDTO: UpdateContestInputDTO,
     ): Contest
 

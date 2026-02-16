@@ -11,7 +11,9 @@ import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
+import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.model.RequestContext
 import com.forsetijudge.core.port.driving.usecase.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.FindContestUseCase
 import com.forsetijudge.core.port.driving.usecase.contest.UpdateContestUseCase
@@ -53,6 +55,11 @@ class ContestControllerTest(
         }
 
         val basePath = "/api/v1/contests"
+        val session = SessionMockBuilder.build()
+
+        beforeEach {
+            RequestContext.getContext().session = session
+        }
 
         test("updateContest") {
             val contestId = UuidCreator.getTimeOrderedEpoch()
@@ -91,7 +98,7 @@ class ContestControllerTest(
                         ),
                 )
             val contest = ContestMockBuilder.build()
-            every { updateContestUseCase.update(contestId, body) } returns contest
+            every { updateContestUseCase.update(contestId, session.member.id, body) } returns contest
 
             webMvc
                 .put("$basePath/{contestId}", contestId) {

@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.attachment.auth
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
@@ -24,9 +25,7 @@ class SubmissionCodeAuthorizationConfig : AttachmentAuthorizationConfig {
         contest: Contest,
         member: Member,
     ) {
-        if (!contest.hasStarted()) {
-            throw ForbiddenException("Contestants cannot upload submission code attachments before the contest starts")
-        }
+        ContestAuthorizer(contest, member).checkContestStarted()
     }
 
     override fun authorizePublicUpload(contest: Contest): Unit =

@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.clarification
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Clarification
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.ClarificationCreatedEvent
@@ -54,16 +55,12 @@ class CreateClarificationService(
 
         val isAnswer = input.parentId != null
         if (isAnswer) {
-            if (!setOf(Member.Type.JUDGE, Member.Type.ADMIN, Member.Type.ROOT).contains(member.type)) {
-                throw ForbiddenException("Only Judges, Admins and Root can answer clarifications")
-            }
+            ContestAuthorizer(contest, member)
+                .checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
         } else {
-            if (!setOf(Member.Type.CONTESTANT, Member.Type.ROOT).contains(member.type)) {
-                throw ForbiddenException("Only Contestants and Root can create clarifications")
-            }
-            if (!contest.isActive()) {
-                throw ForbiddenException("Clarifications can only be created during an active contest")
-            }
+            ContestAuthorizer(contest, member)
+                .checkMemberType(Member.Type.CONTESTANT)
+                .checkContestStarted()
         }
 
         val problem =

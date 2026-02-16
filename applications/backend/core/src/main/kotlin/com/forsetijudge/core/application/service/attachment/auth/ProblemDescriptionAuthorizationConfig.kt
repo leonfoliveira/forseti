@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.attachment.auth
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
@@ -48,17 +49,13 @@ class ProblemDescriptionAuthorizationConfig : AttachmentAuthorizationConfig {
         member: Member,
         attachment: Attachment,
     ) {
-        if (!contest.hasStarted()) {
-            throw ForbiddenException("Contestants cannot download problem description attachments before the contest starts")
-        }
+        ContestAuthorizer(contest, member).checkContestStarted()
     }
 
     override fun authorizePublicDownload(
         contest: Contest,
         attachment: Attachment,
     ) {
-        if (!contest.hasStarted()) {
-            throw ForbiddenException("Guests cannot download problem description attachments before the contest starts")
-        }
+        ContestAuthorizer(contest).checkContestStarted()
     }
 }
