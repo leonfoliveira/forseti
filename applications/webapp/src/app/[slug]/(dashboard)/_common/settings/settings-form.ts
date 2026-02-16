@@ -25,6 +25,7 @@ export type SettingsFormType = {
   };
   problems: {
     _id?: string;
+    color: string;
     title: string;
     description: AttachmentResponseDTO;
     newDescription?: File[];
@@ -108,6 +109,14 @@ export class SettingsForm {
     autoFreezeFuture: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-future",
       defaultMessage: "Auto freeze date must be in the future",
+    },
+    problemColorRequired: {
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-color-required",
+      defaultMessage: "Color is required",
+    },
+    problemColorInvalid: {
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-color-invalid",
+      defaultMessage: "Color must be a valid hex code",
     },
     problemTitleRequired: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.problem-title-required",
@@ -336,6 +345,14 @@ export class SettingsForm {
         .items(
           Joi.object({
             _id: Joi.string(),
+            color: Joi.string()
+              .pattern(/^#[A-Fa-f0-9]{6}$/)
+              .required()
+              .messages({
+                "any.required": this.messages.problemColorRequired.id,
+                "string.empty": this.messages.problemColorRequired.id,
+                "string.pattern.base": this.messages.problemColorInvalid.id,
+              }),
             title: Joi.string().min(1).max(255).required().messages({
               "any.required": this.messages.problemTitleRequired.id,
               "string.empty": this.messages.problemTitleRequired.id,
@@ -436,9 +453,10 @@ export class SettingsForm {
 
   static fromResponseDTO(contest: ContestFullResponseDTO): SettingsFormType {
     const problems = contest.problems
+      .sort((a, b) => a.letter.localeCompare(b.letter))
       .map((problem) => ({
         _id: problem.id,
-        letter: problem.letter,
+        color: problem.color,
         title: problem.title,
         description: problem.description,
         newDescription: [],
@@ -446,8 +464,7 @@ export class SettingsForm {
         memoryLimit: problem.memoryLimit.toString(),
         testCases: problem.testCases,
         newTestCases: [],
-      }))
-      .sort((a, b) => a.letter.localeCompare(b.letter));
+      }));
 
     const members = contest.members.map((member) => ({
       _id: member.id,
@@ -509,6 +526,7 @@ export class SettingsForm {
       problems: form.problems.map((problem, idx) => ({
         id: problem._id,
         letter: String.fromCharCode(65 + idx),
+        color: problem.color,
         title: problem.title,
         description: problem.description,
         newDescription: this.parseFiles(problem.newDescription),

@@ -331,6 +331,8 @@
               "auto-freeze-after-start": "Auto freeze date must be after start date",
               "auto-freeze-before-end": "Auto freeze date must be before end date",
               "auto-freeze-future": "Auto freeze date must be in the future",
+              "problem-color-required": "Color is required",
+              "problem-color-invalid": "Color must be a valid hex code",
               "problem-title-required": "Title is required",
               "problem-title-too-long": "Title must be at most 255 characters long",
               "problem-description-required": "Description is required",

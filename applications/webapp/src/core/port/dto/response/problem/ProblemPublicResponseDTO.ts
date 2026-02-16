@@ -3,6 +3,7 @@ import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/Attac
 export type ProblemPublicResponseDTO = {
   id: string;
   letter: string;
+  color: string;
   title: string;
   description: AttachmentResponseDTO;
   timeLimit: number;
