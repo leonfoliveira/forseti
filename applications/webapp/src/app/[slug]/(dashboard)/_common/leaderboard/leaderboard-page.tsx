@@ -2,6 +2,7 @@
 
 import { ArrowDown01Icon, AwardIcon } from "lucide-react";
 
+import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/problem-letter-badge";
 import { ProblemStatusBadge } from "@/app/_lib/component/display/badge/problem-status-badge";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
@@ -20,9 +21,6 @@ import { useAppSelector } from "@/app/_store/store";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
-import { Badge } from "@/app/_lib/component/shadcn/badge";
-import { ColorUtil } from "@/app/_lib/util/color-util";
-import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/problem-letter-badge";
 
 const messages = defineMessages({
   pageTitle: {
