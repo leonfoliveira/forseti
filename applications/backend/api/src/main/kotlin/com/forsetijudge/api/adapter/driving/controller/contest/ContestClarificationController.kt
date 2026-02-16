@@ -105,7 +105,7 @@ class ContestClarificationController(
     ): ResponseEntity<Unit> {
         logger.info("[DELETE] /v1/contests/$contestId/clarifications/$clarificationId")
         val member = RequestContext.getContext().session!!.member
-        deleteClarificationUseCase.delete(contestId, clarificationId, member.id)
+        deleteClarificationUseCase.delete(contestId, member.id, clarificationId)
         return ResponseEntity.noContent().build()
     }
 }
