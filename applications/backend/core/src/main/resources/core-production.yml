@@ -66,3 +66,6 @@ security:
       requests-per-minute: ${RATE_LIMIT_AUTH_RPM:5}
       requests-per-hour: ${RATE_LIMIT_AUTH_RPH:20}
       burst-capacity: ${RATE_LIMIT_AUTH_BURST:2}
+external:
+  api:
+    url: ${API_URL:http://api:8080}

@@ -452,7 +452,7 @@ export class SettingsForm {
   }
 
   static fromResponseDTO(contest: ContestFullResponseDTO): SettingsFormType {
-    const problems = contest.problems
+    const problems = [...contest.problems]
       .sort((a, b) => a.letter.localeCompare(b.letter))
       .map((problem) => ({
         _id: problem.id,

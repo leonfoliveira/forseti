@@ -7,6 +7,7 @@ import { LoadingPage } from "@/app/_lib/component/page/loading-page";
 import { useIntl } from "@/app/_lib/hook/intl-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
+import { balloonSlice } from "@/app/_store/slices/balloon-slice";
 import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import {
@@ -239,6 +240,9 @@ export function ContestantDashboardProvider({
     switch (submission.answer) {
       case SubmissionAnswer.ACCEPTED: {
         toast.success(text);
+        dispatch(
+          balloonSlice.actions.addBallon({ color: submission.problem.color }),
+        );
         break;
       }
       case SubmissionAnswer.WRONG_ANSWER: {

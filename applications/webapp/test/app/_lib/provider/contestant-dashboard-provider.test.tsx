@@ -244,6 +244,7 @@ describe("ContestantDashboardProvider", () => {
       otherSubmission,
     );
     expect(useToast().success).toHaveBeenCalled();
+    expect(store.getState().balloonSlice).toHaveLength(1);
   });
 
   it("should handle member submission updates with wrong answer", async () => {
