@@ -4,6 +4,7 @@ import { SubmissionsPageActionsMenu } from "@/app/[slug]/(dashboard)/_common/sub
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 
 describe("SubmissionsPageActionsMenu", () => {
   it("should display download action only", async () => {
@@ -52,5 +53,24 @@ describe("SubmissionsPageActionsMenu", () => {
     expect(
       screen.getByTestId("submissions-page-action-judge"),
     ).toBeInTheDocument();
+  });
+
+  it("should not display rerun action when submission is judging", async () => {
+    const submission = MockSubmissionFullResponseDTO({
+      status: SubmissionStatus.JUDGING,
+    });
+    const contestMetadata = MockContestMetadataResponseDTO();
+    await renderWithProviders(
+      <SubmissionsPageActionsMenu
+        submission={submission}
+        canEdit
+        onEdit={() => {}}
+      />,
+      { contestMetadata },
+    );
+
+    expect(
+      screen.queryByTestId("submissions-page-action-rerun"),
+    ).not.toBeInTheDocument();
   });
 });

@@ -12,6 +12,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/app/_lib/component/shadcn/dropdown-menu";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -69,11 +70,13 @@ export function SubmissionsPageActionsMenu({
             )}
             {canEdit && (
               <>
-                <SubmissionsPageActionRerun
-                  submission={submission}
-                  onClose={close}
-                  onRerun={onEdit}
-                />
+                {submission.status != SubmissionStatus.JUDGING && (
+                  <SubmissionsPageActionRerun
+                    submission={submission}
+                    onClose={close}
+                    onRerun={onEdit}
+                  />
+                )}
                 <SubmissionsPageActionJudge
                   submission={submission}
                   onClose={close}
