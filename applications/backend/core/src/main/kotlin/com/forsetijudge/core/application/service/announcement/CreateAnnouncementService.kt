@@ -49,7 +49,7 @@ class CreateAnnouncementService(
             memberRepository.findEntityById(memberId)
                 ?: throw NotFoundException("Could not find member with id $memberId")
 
-        ContestAuthorizer(contest, member).checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
+        ContestAuthorizer(contest, member).checkMemberType(Member.Type.ROOT, Member.Type.ADMIN)
 
         val announcement =
             Announcement(

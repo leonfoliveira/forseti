@@ -734,7 +734,7 @@ Sign in to a contest
 
 Create an announcement
 
-**Authorization:** Admin, Judge
+**Authorization:** Admin
 
 **Request Body**
 
