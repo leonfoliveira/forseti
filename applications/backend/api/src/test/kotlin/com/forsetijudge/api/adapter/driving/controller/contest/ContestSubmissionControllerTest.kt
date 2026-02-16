@@ -103,7 +103,7 @@ class ContestSubmissionControllerTest(
                     SubmissionMockBuilder.build(),
                     SubmissionMockBuilder.build(),
                 )
-            every { findSubmissionUseCase.findAllByContest(contestId, any()) } returns submissions
+            every { findSubmissionUseCase.findAllByContestFull(contestId, any()) } returns submissions
 
             webMvc
                 .get("$basePath/full", contestId) {

@@ -162,7 +162,7 @@ services:
       context: ../../applications/backend
       dockerfile: autojudge.Dockerfile
     environment:
-      API_URL: http://api:8080/api
+      API_URL: http://api:8080
       DB_PASSWORD: forsetijudge
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti

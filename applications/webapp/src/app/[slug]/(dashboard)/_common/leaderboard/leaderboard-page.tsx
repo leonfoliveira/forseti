@@ -2,6 +2,7 @@
 
 import { ArrowDown01Icon, AwardIcon } from "lucide-react";
 
+import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/problem-letter-badge";
 import { ProblemStatusBadge } from "@/app/_lib/component/display/badge/problem-status-badge";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
@@ -105,7 +106,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                 </TableHead>
                 {problems.map((problem) => (
                   <TableHead key={problem.id} className="text-center">
-                    {problem.letter}
+                    <ProblemLetterBadge problem={problem} />
                   </TableHead>
                 ))}
               </TableRow>
@@ -115,7 +116,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                 <TableRow
                   key={member.id}
                   className={cn(
-                    member.id === session?.member.id && "bg-primary-50",
+                    member.id === session?.member.id && "bg-muted/50",
                   )}
                   data-testid="leaderboard-member-row"
                 >

@@ -39,6 +39,11 @@ class Problem(
     @Column(nullable = false)
     var letter: Char,
     /**
+     * A hexadecimal color code representing the problem's color.
+     */
+    @Column(nullable = false)
+    var color: String,
+    /**
      * The title of the problem, which is displayed to participants.
      */
     @Column(nullable = false)

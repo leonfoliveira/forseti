@@ -22,6 +22,7 @@ export type UpdateContestRequestDTO = {
   problems: {
     id?: string;
     letter: string;
+    color: string;
     title: string;
     description: AttachmentResponseDTO;
     timeLimit: number;

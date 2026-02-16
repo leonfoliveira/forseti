@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Tabs, TabsList, TabsTrigger } from "@/app/_lib/component/shadcn/tabs";
+import { BalloonProvider } from "@/app/_lib/provider/balloon-provider";
 import { DashboardProvider } from "@/app/_lib/provider/dashboard-provider";
 import { useAppSelector } from "@/app/_store/store";
 import { routes } from "@/config/routes";
@@ -116,6 +117,7 @@ export default function DashboardLayout({
           {children}
         </div>
       </DashboardProvider>
+      <BalloonProvider />
     </>
   );
 }

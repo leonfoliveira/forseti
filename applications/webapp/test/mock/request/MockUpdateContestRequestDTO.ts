@@ -30,6 +30,7 @@ export function MockUpdateContestRequestDTO(
       {
         id: uuidv4(),
         letter: "A",
+        color: "#ffffff",
         title: "Test Problem",
         description: MockAttachmentResponseDTO({
           filename: "problem.pdf",

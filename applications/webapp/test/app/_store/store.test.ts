@@ -6,6 +6,7 @@ describe("makeStore", () => {
   it("should initialize state for all slices", () => {
     const store = makeStore();
     const state = store.getState();
+    expect(state).toHaveProperty("balloon");
     expect(state).toHaveProperty("session");
     expect(state).toHaveProperty("contestMetadata");
     expect(state).toHaveProperty("contestantDashboard");

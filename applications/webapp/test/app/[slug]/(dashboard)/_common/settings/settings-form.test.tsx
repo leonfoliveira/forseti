@@ -39,6 +39,7 @@ describe("SettingsForm", () => {
     },
     problems: [
       {
+        color: "#ffffff",
         title: "Problem A",
         description: mockAttachment,
         newDescription: [mockDescriptionFile],
@@ -76,6 +77,7 @@ describe("SettingsForm", () => {
     problems: [
       {
         _id: "problem-1",
+        color: "#ffffff",
         title: "Problem A",
         description: mockAttachment,
         timeLimit: 1000,
@@ -938,11 +940,13 @@ describe("SettingsForm", () => {
         {
           id: "problem-1",
           letter: "A",
+          color: "#ffffff",
           title: "Problem A",
           description: mockAttachment,
           timeLimit: 1000,
           memoryLimit: 256000,
           testCases: mockAttachment,
+          version: 1,
         },
       ],
       members: [
@@ -951,8 +955,10 @@ describe("SettingsForm", () => {
           type: MemberType.CONTESTANT,
           name: "John Doe",
           login: "johndoe",
+          version: 1,
         },
       ],
+      version: 1,
     });
 
     it("should convert contest response to form data", () => {
@@ -974,7 +980,7 @@ describe("SettingsForm", () => {
       expect(formData.problems).toHaveLength(1);
       expect(formData.problems[0]).toEqual({
         _id: "problem-1",
-        letter: "A",
+        color: "#ffffff",
         title: "Problem A",
         description: mockAttachment,
         newDescription: [],

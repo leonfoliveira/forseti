@@ -93,6 +93,7 @@ class UpdateContestServiceTest :
                             UpdateContestInputDTO.ProblemDTO(
                                 id = UuidCreator.getTimeOrderedEpoch(),
                                 letter = 'A',
+                                color = "#FFFFFF",
                                 title = "Test Problem",
                                 description = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                                 timeLimit = 1000,
@@ -363,6 +364,7 @@ class UpdateContestServiceTest :
                 contest.problems.size shouldBe 3
                 contest.problems[1].id shouldBe inputProblemToUpdateMinimum.id
                 contest.problems[1].letter shouldBe inputProblemToUpdateMinimum.letter
+                contest.problems[1].color shouldBe inputProblemToUpdateMinimum.color.lowercase()
                 contest.problems[1].title shouldBe inputProblemToUpdateMinimum.title
                 contest.problems[1].description shouldBe problemToUpdateMinimum.description
                 contest.problems[1].timeLimit shouldBe problemToUpdateMinimum.timeLimit
@@ -370,6 +372,7 @@ class UpdateContestServiceTest :
                 contest.problems[1].testCases shouldBe problemToUpdateMinimum.testCases
                 contest.problems[2].id shouldBe inputProblemToUpdateFull.id
                 contest.problems[2].letter shouldBe inputProblemToUpdateFull.letter
+                contest.problems[2].color shouldBe inputProblemToUpdateFull.color.lowercase()
                 contest.problems[2].title shouldBe inputProblemToUpdateFull.title
                 contest.problems[2].description shouldBe descriptionAttachment
                 contest.problems[2].timeLimit shouldBe inputProblemToUpdateFull.timeLimit

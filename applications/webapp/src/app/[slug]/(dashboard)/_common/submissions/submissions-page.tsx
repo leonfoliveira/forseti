@@ -5,6 +5,7 @@ import React, { useState } from "react";
 
 import { SubmissionsPageActionsMenu } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-actions-menu";
 import { SubmissionsPageForm } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-form";
+import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/problem-letter-badge";
 import { SubmissionAnswerBadge } from "@/app/_lib/component/display/badge/submission-answer-chip";
 import { SubmissionStatusBadge } from "@/app/_lib/component/display/badge/submission-status-badge";
 import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
@@ -211,7 +212,7 @@ export function SubmissionsPage({
                       {submission.member.name}
                     </TableCell>
                     <TableCell data-testid="submission-problem">
-                      {submission.problem.letter}
+                      <ProblemLetterBadge problem={submission.problem} />
                     </TableCell>
                     <TableCell data-testid="submission-language">
                       <FormattedMessage

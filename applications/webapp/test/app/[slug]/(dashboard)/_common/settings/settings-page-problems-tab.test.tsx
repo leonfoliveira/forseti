@@ -85,6 +85,7 @@ describe("SettingsPageProblemsTab", () => {
         defaultValues: {
           problems: [
             {
+              color: "#ffffff",
               description: descriptionAttachment,
               testCases: testCasesAttachment,
             },
@@ -121,6 +122,7 @@ describe("SettingsPageProblemsTab", () => {
         defaultValues: {
           problems: [
             {
+              color: "#ffffff",
               description: descriptionAttachment,
             },
           ],

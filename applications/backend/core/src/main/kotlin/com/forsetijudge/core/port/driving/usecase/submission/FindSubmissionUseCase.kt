@@ -26,6 +26,18 @@ interface FindSubmissionUseCase {
     ): List<Submission>
 
     /**
+     * Finds all submissions for a specific contest with member restriction.
+     *
+     * @param contestId The ID of the contest.
+     * @param memberId The ID of the member requesting the submissions.
+     * @return A list of submissions for the contest.
+     */
+    fun findAllByContestFull(
+        contestId: UUID,
+        memberId: UUID?,
+    ): List<Submission>
+
+    /**
      * Finds all submissions for a specific contest that were made since the last leaderboard freeze.
      *
      * @param contestId The ID of the contest.

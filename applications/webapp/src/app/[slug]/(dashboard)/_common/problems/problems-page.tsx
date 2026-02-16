@@ -7,6 +7,7 @@ import {
   DownloadIcon,
 } from "lucide-react";
 
+import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/problem-letter-badge";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { FormattedNumber } from "@/app/_lib/component/i18n/formatted-number";
 import { Page } from "@/app/_lib/component/page/page";
@@ -178,7 +179,7 @@ export function ProblemsPage({
               {problems.map((problem) => (
                 <TableRow key={problem.id} data-testid="problem-row">
                   <TableCell className="font-bold" data-testid="problem-letter">
-                    {problem.letter}
+                    <ProblemLetterBadge problem={problem} />
                   </TableCell>
                   <TableCell data-testid="problem-title">
                     {problem.title}

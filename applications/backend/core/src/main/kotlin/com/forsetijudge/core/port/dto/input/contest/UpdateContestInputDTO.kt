@@ -81,6 +81,7 @@ data class UpdateContestInputDTO(
     data class ProblemDTO(
         val id: UUID? = null,
         val letter: Char,
+        val color: String,
         @field:NotBlank
         @field:Size(max = 255)
         val title: String,
@@ -90,5 +91,10 @@ data class UpdateContestInputDTO(
         @field:Min(1)
         val memoryLimit: Int,
         val testCases: AttachmentInputDTO,
-    )
+    ) {
+        @get:JsonIgnore
+        @get:AssertTrue(message = "color must be a valid hexadecimal color code")
+        val isColorHexadecimal: Boolean
+            get() = color.matches(Regex("^#[A-Fa-f0-9]{6}$"))
+    }
 }

@@ -8,6 +8,7 @@ import {
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
+import { ColorPicker } from "@/app/_lib/component/form/color-picker";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
@@ -27,6 +28,7 @@ import {
 } from "@/app/_lib/component/shadcn/tooltip";
 import { useErrorHandler } from "@/app/_lib/hook/error-handler-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
+import { ColorUtil } from "@/app/_lib/util/color-util";
 import { attachmentReader } from "@/config/composition";
 import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
@@ -126,10 +128,29 @@ export function SettingsPageProblemsTab({ contest, form, isDisabled }: Props) {
       <div className="flex flex-col gap-4" data-testid="settings-problems-tab">
         {fields.map((field, index) => (
           <Item key={field.id} variant="outline" data-testid="problem-item">
-            <ItemMedia>
-              <Badge className="font-md text-lg" data-testid="problem-letter">
-                {String.fromCharCode(65 + index)}
+            <ItemMedia className="flex flex-col">
+              <Badge
+                className="font-md text-lg"
+                style={{
+                  backgroundColor: form.watch(`problems.${index}.color`),
+                }}
+                data-testid="problem-letter"
+              >
+                <span
+                  style={{
+                    color: ColorUtil.getForegroundColor(
+                      form.watch(`problems.${index}.color`),
+                    ),
+                  }}
+                >
+                  {String.fromCharCode(65 + index)}
+                </span>
               </Badge>
+              <ControlledField
+                form={form}
+                name={`problems.${index}.color`}
+                field={<ColorPicker data-testid="problem-color" />}
+              />
             </ItemMedia>
             <ItemContent>
               <div className="grid grid-cols-2 gap-3">
@@ -297,9 +318,10 @@ export function SettingsPageProblemsTab({ contest, form, isDisabled }: Props) {
           onClick={() =>
             append({
               title: "",
+              color: ColorUtil.getRandom(),
               timeLimit: "1000",
               memoryLimit: "1024",
-            } as any)
+            } as SettingsFormType["problems"][number])
           }
           data-testid="add-problem-button"
         >

@@ -121,3 +121,22 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Balloon animation */
+@keyframes balloon-sway {
+  0% { 
+    transform: translateX(0) rotate(0deg) scale(1); 
+  }
+  25% { 
+    transform: translateX(-15px) rotate(-3deg) scale(1.05); 
+  }
+  50% { 
+    transform: translateX(10px) rotate(2deg) scale(1.1); 
+  }
+  75% { 
+    transform: translateX(-8px) rotate(-2deg) scale(1.05); 
+  }
+  100% { 
+    transform: translateX(5px) rotate(1deg) scale(1); 
+  }
+}

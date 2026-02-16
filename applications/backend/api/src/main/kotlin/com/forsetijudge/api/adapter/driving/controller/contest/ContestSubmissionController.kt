@@ -135,7 +135,7 @@ class ContestSubmissionController(
     ): ResponseEntity<List<SubmissionFullResponseDTO>> {
         logger.info("[GET] /v1/contests/$contestId/submissions/full")
         val member = RequestContext.getContext().session?.member
-        val submissions = findSubmissionUseCase.findAllByContest(contestId, member?.id)
+        val submissions = findSubmissionUseCase.findAllByContestFull(contestId, member?.id)
         return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
     }
 

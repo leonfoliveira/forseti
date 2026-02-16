@@ -3,6 +3,7 @@ import { useDispatch, useSelector, useStore } from "react-redux";
 import { combineReducers } from "redux";
 
 import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
+import { balloonSlice } from "@/app/_store/slices/balloon-slice";
 import { contestMetadataSlice } from "@/app/_store/slices/contest-metadata-slice";
 import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
 import { guestDashboardSlice } from "@/app/_store/slices/guest-dashboard-slice";
@@ -10,6 +11,7 @@ import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
 import { sessionSlice } from "@/app/_store/slices/session-slice";
 
 const rootReducer = combineReducers({
+  balloon: balloonSlice.reducer,
   session: sessionSlice.reducer,
   contestMetadata: contestMetadataSlice.reducer,
   contestantDashboard: contestantDashboardSlice.reducer,
