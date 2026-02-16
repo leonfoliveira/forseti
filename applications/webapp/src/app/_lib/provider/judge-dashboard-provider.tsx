@@ -169,10 +169,12 @@ export function JudgeDashboardProvider({
   function receiveLeaderboardPartial(
     leaderboard: LeaderboardPartialResponseDTO,
   ) {
+    console.debug("Received leaderboard partial update:", leaderboard);
     dispatch(judgeDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
   function receiveLeaderboardFreeze() {
+    console.debug("Received leaderboard freeze");
     dispatch(judgeDashboardSlice.actions.setLeaderboardIsFrozen(true));
     toast.info(messages.frozen);
   }
@@ -181,11 +183,13 @@ export function JudgeDashboardProvider({
     leaderboard: LeaderboardResponseDTO;
     frozenSubmissions: SubmissionPublicResponseDTO[];
   }) {
+    console.debug("Received leaderboard unfreeze:", data);
     dispatch(judgeDashboardSlice.actions.setLeaderboard(data.leaderboard));
     toast.info(messages.unfrozen);
   }
 
   function receiveSubmission(submission: SubmissionFullResponseDTO) {
+    console.debug("Received submission:", submission);
     dispatch(judgeDashboardSlice.actions.mergeSubmission(submission));
 
     if (submission.status === SubmissionStatus.FAILED) {
@@ -194,6 +198,7 @@ export function JudgeDashboardProvider({
   }
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
+    console.debug("Received announcement:", announcement);
     dispatch(judgeDashboardSlice.actions.mergeAnnouncement(announcement));
 
     if (announcement.member.id !== session?.member.id) {
@@ -205,6 +210,7 @@ export function JudgeDashboardProvider({
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
+    console.debug("Received clarification:", clarification);
     dispatch(judgeDashboardSlice.actions.mergeClarification(clarification));
     if (!clarification.parentId) {
       toast.info(messages.newClarification);
@@ -212,6 +218,7 @@ export function JudgeDashboardProvider({
   }
 
   function deleteClarification({ id }: { id: string }) {
+    console.debug("Received clarification deletion:", id);
     dispatch(judgeDashboardSlice.actions.deleteClarification(id));
   }
 

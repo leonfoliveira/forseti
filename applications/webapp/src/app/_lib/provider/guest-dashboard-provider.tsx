@@ -159,10 +159,12 @@ export function GuestDashboardProvider({
   function receiveLeaderboardPartial(
     leaderboard: LeaderboardPartialResponseDTO,
   ) {
+    console.debug("Received leaderboard partial update:", leaderboard);
     dispatch(guestDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
   function receiveLeaderboardFreeze() {
+    console.debug("Received leaderboard freeze");
     dispatch(guestDashboardSlice.actions.setLeaderboardIsFrozen(true));
     toast.info(messages.frozen);
   }
@@ -171,6 +173,7 @@ export function GuestDashboardProvider({
     leaderboard: LeaderboardResponseDTO;
     frozenSubmissions: SubmissionPublicResponseDTO[];
   }) {
+    console.debug("Received leaderboard unfreeze:", data);
     dispatch(guestDashboardSlice.actions.setLeaderboard(data.leaderboard));
     dispatch(
       guestDashboardSlice.actions.mergeSubmissionBatch(data.frozenSubmissions),
@@ -179,10 +182,12 @@ export function GuestDashboardProvider({
   }
 
   function receiveSubmission(submission: SubmissionPublicResponseDTO) {
+    console.debug("Received submission:", submission);
     dispatch(guestDashboardSlice.actions.mergeSubmission(submission));
   }
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
+    console.debug("Received announcement:", announcement);
     dispatch(guestDashboardSlice.actions.mergeAnnouncement(announcement));
     toast.warning({
       ...messages.announcement,
@@ -191,10 +196,12 @@ export function GuestDashboardProvider({
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
+    console.debug("Received clarification:", clarification);
     dispatch(guestDashboardSlice.actions.mergeClarification(clarification));
   }
 
   function deleteClarification({ id }: { id: string }) {
+    console.debug("Received clarification deletion:", id);
     dispatch(guestDashboardSlice.actions.deleteClarification(id));
   }
 

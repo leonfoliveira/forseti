@@ -186,6 +186,7 @@ export function ContestantDashboardProvider({
   function receiveLeaderboardPartial(
     leaderboard: LeaderboardPartialResponseDTO,
   ) {
+    console.debug("Received leaderboard partial update:", leaderboard);
     dispatch(contestantDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
@@ -198,6 +199,7 @@ export function ContestantDashboardProvider({
     leaderboard: LeaderboardResponseDTO;
     frozenSubmissions: SubmissionPublicResponseDTO[];
   }) {
+    console.debug("Received leaderboard unfreeze:", data);
     dispatch(contestantDashboardSlice.actions.setLeaderboard(data.leaderboard));
     dispatch(
       contestantDashboardSlice.actions.mergeSubmissionBatch(
@@ -208,10 +210,12 @@ export function ContestantDashboardProvider({
   }
 
   function receiveSubmission(submission: SubmissionPublicResponseDTO) {
+    console.debug("Received submission:", submission);
     dispatch(contestantDashboardSlice.actions.mergeSubmission(submission));
   }
 
   function receiveMemberSubmission(submission: SubmissionPublicResponseDTO) {
+    console.debug("Received member submission:", submission);
     if (submission.answer === SubmissionAnswer.NO_ANSWER) {
       return;
     }
@@ -255,6 +259,7 @@ export function ContestantDashboardProvider({
   }
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
+    console.debug("Received announcement:", announcement);
     dispatch(contestantDashboardSlice.actions.mergeAnnouncement(announcement));
     toast.warning({
       ...messages.announcement,
@@ -263,16 +268,19 @@ export function ContestantDashboardProvider({
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
+    console.debug("Received clarification:", clarification);
     dispatch(
       contestantDashboardSlice.actions.mergeClarification(clarification),
     );
   }
 
   function receiveClarificationAnswer() {
+    console.debug("Received clarification answer");
     toast.info(messages.clarificationAnswer);
   }
 
   function deleteClarification({ id }: { id: string }) {
+    console.debug("Received clarification deletion:", id);
     dispatch(contestantDashboardSlice.actions.deleteClarification(id));
   }
 
