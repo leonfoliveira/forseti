@@ -1,11 +1,11 @@
-import { BallonType, balloonSlice } from "@/app/_store/slices/balloon-slice";
+import { BalloonType, balloonSlice } from "@/app/_store/slices/balloon-slice";
 
 describe("balloonSlice", () => {
   it("should add a balloon", () => {
-    const initialState = [] as BallonType[];
+    const initialState = [] as BalloonType[];
     const newState = balloonSlice.reducer(
       initialState,
-      balloonSlice.actions.addBallon({ color: "#ffffff" }),
+      balloonSlice.actions.addBalloon({ color: "#ffffff" }),
     );
     expect(newState).toHaveLength(1);
     expect(newState[0].color).toBe("#ffffff");
@@ -13,10 +13,10 @@ describe("balloonSlice", () => {
   });
 
   it("should remove a balloon", () => {
-    const initialState = [{ id: "1", color: "#ffffff" }] as BallonType[];
+    const initialState = [{ id: "1", color: "#ffffff" }] as BalloonType[];
     const newState = balloonSlice.reducer(
       initialState,
-      balloonSlice.actions.removeBallon({ id: "1" }),
+      balloonSlice.actions.removeBalloon({ id: "1" }),
     );
     expect(newState).toHaveLength(0);
   });

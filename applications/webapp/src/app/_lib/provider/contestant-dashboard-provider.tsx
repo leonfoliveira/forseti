@@ -241,7 +241,7 @@ export function ContestantDashboardProvider({
       case SubmissionAnswer.ACCEPTED: {
         toast.success(text);
         dispatch(
-          balloonSlice.actions.addBallon({ color: submission.problem.color }),
+          balloonSlice.actions.addBalloon({ color: submission.problem.color }),
         );
         break;
       }

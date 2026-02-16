@@ -22,7 +22,7 @@ afterEach(() => {
   jest.clearAllTimers();
 });
 
-describe("Ballon Component", () => {
+describe("Balloon Component", () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });

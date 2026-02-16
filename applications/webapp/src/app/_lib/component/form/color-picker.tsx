@@ -1,5 +1,5 @@
 import { PaletteIcon } from "lucide-react";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 import { Button } from "@/app/_lib/component/shadcn/button";
 
@@ -27,6 +27,14 @@ export function ColorPicker({ onChange, ...props }: Props) {
       }
     }, 50);
   };
+
+  useEffect(() => {
+    return () => {
+      if (changeTimeoutRef.current) {
+        clearTimeout(changeTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="relative inline-block">

@@ -13,7 +13,7 @@ export function BalloonProvider() {
           key={balloon.id}
           color={balloon.color}
           onTopReached={() =>
-            dispatch(balloonSlice.actions.removeBallon({ id: balloon.id }))
+            dispatch(balloonSlice.actions.removeBalloon({ id: balloon.id }))
           }
         />
       ))}

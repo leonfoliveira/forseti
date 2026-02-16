@@ -372,7 +372,7 @@ class UpdateContestServiceTest :
                 contest.problems[1].testCases shouldBe problemToUpdateMinimum.testCases
                 contest.problems[2].id shouldBe inputProblemToUpdateFull.id
                 contest.problems[2].letter shouldBe inputProblemToUpdateFull.letter
-                contest.problems[1].color shouldBe inputProblemToUpdateMinimum.color.lowercase()
+                contest.problems[2].color shouldBe inputProblemToUpdateFull.color.lowercase()
                 contest.problems[2].title shouldBe inputProblemToUpdateFull.title
                 contest.problems[2].description shouldBe descriptionAttachment
                 contest.problems[2].timeLimit shouldBe inputProblemToUpdateFull.timeLimit
