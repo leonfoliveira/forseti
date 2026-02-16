@@ -131,7 +131,7 @@ class FindSubmissionServiceTest :
                 every { contestRepository.findEntityById(contestId) } returns contest
                 val submission1 = SubmissionMockBuilder.build(createdAt = OffsetDateTime.now().minusHours(2))
                 val submission2 = SubmissionMockBuilder.build(createdAt = OffsetDateTime.now().minusHours(1))
-                every { submissionRepository.findAllByCreatedAtGreaterThanEqual(contest.frozenAt!!) } returns
+                every { submissionRepository.findByContestIdAndCreatedAtGreaterThanEqual(contest.id, contest.frozenAt!!) } returns
                     listOf(submission1, submission2)
 
                 val result = sut.findAllByContestSinceLastFreeze(contestId)

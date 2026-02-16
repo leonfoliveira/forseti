@@ -97,7 +97,7 @@ class FindSubmissionService(
             return listOf()
         }
 
-        val submissions = submissionRepository.findAllByCreatedAtGreaterThanEqual(contest.frozenAt!!)
+        val submissions = submissionRepository.findByContestIdAndCreatedAtGreaterThanEqual(contest.id, contest.frozenAt!!)
 
         logger.info("Found ${submissions.size} submissions since last freeze")
         return submissions.sortedBy { it.createdAt }

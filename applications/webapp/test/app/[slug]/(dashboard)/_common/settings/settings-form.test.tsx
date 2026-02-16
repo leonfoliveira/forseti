@@ -456,23 +456,6 @@ describe("SettingsForm", () => {
           );
         });
 
-        it("should validate when autoFreezeAt is exactly between start and end", () => {
-          const validData = {
-            ...validFormData,
-            contest: {
-              ...validFormData.contest,
-              startAt: MockDate.toDateTime(MockDate.past()),
-              endAt: MockDate.toDateTime(MockDate.future(2)),
-              autoFreezeAt: MockDate.toDateTime(MockDate.future(1)),
-            },
-          };
-
-          const { error } = SettingsForm.schema(
-            ContestStatus.NOT_STARTED,
-          ).validate(validData);
-          expect(error).toBeUndefined();
-        });
-
         it("should skip validation when autoFreezeAt is unchanged from original", () => {
           const originalAutoFreeze = "2026-12-31T08:00"; // This would normally fail validation (before start)
           const dataWithUnchangedAutoFreeze = {

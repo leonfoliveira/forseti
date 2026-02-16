@@ -18,6 +18,9 @@ interface SubmissionRepository : BaseRepository<Submission> {
         status: Submission.Status,
     ): List<Submission>
 
-    @Query("select s from Submission s where s.createdAt >= ?1")
-    fun findAllByCreatedAtGreaterThanEqual(createdAt: OffsetDateTime): List<Submission>
+    @Query("select s from Submission s where s.problem.contest.id = ?1 and s.createdAt >= ?2")
+    fun findByContestIdAndCreatedAtGreaterThanEqual(
+        contestId: UUID,
+        createdAt: OffsetDateTime,
+    ): List<Submission>
 }
