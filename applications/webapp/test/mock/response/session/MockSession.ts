@@ -12,6 +12,7 @@ export function MockSession(
     contest: MockContestMetadataResponseDTO(),
     member: MockMemberPublicResponseDTO(),
     expiresAt: "2025-01-01T00:00:00Z",
+    version: 1,
     ...partial,
   };
 }

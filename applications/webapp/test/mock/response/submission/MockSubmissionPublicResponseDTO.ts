@@ -18,6 +18,7 @@ export function MockSubmissionPublicResponseDTO(
     status: SubmissionStatus.JUDGED,
     answer: SubmissionAnswer.ACCEPTED,
     createdAt: "2025-01-01T10:00:00Z",
+    version: 1,
     ...partial,
   };
 }

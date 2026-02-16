@@ -24,6 +24,7 @@ export function MockContestFullResponseDTO(
     clarifications: [MockClarificationResponseDTO()],
     members: [MockMemberFullResponseDTO()],
     problems: [MockProblemFullResponseDTO()],
+    version: 1,
     ...partial,
   };
 }

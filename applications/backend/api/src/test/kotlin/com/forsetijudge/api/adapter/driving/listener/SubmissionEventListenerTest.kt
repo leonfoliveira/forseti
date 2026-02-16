@@ -2,7 +2,6 @@ package com.forsetijudge.api.adapter.driving.listener
 
 import com.forsetijudge.api.adapter.driven.emitter.StompLeaderboardPartialEmitter
 import com.forsetijudge.api.adapter.driven.emitter.StompSubmissionEmitter
-import com.forsetijudge.api.adapter.driving.listener.SubmissionEventsApiListener
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.event.SubmissionCreatedEvent
 import com.forsetijudge.core.domain.event.SubmissionUpdatedEvent

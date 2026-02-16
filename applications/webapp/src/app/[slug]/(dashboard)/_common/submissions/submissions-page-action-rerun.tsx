@@ -8,10 +8,10 @@ import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
 import { submissionWritter } from "@/config/composition";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { defineMessages } from "@/i18n/message";
-import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
 const messages = defineMessages({
   resubmitLabel: {

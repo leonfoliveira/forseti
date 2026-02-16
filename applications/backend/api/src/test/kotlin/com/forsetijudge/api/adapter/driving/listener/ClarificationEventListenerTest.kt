@@ -1,7 +1,6 @@
 package com.forsetijudge.api.adapter.driving.listener
 
 import com.forsetijudge.api.adapter.driven.emitter.StompClarificationEmitter
-import com.forsetijudge.api.adapter.driving.listener.ClarificationEventsApiListener
 import com.forsetijudge.core.domain.entity.ClarificationMockBuilder
 import com.forsetijudge.core.domain.event.ClarificationCreatedEvent
 import com.forsetijudge.core.domain.event.ClarificationDeletedEvent

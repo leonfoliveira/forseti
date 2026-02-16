@@ -5,19 +5,6 @@ import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission
 
 export interface LeaderboardListener {
   /**
-   * Subscribe to leaderboard updates for a contest.
-   *
-   * @param client The listener client used to subscribe to the leaderboard.
-   * @param contestId ID of the contest
-   * @param cb Callback function to handle incoming leaderboard updates.
-   */
-  subscribeForLeaderboard: (
-    client: ListenerClient,
-    contestId: string,
-    cb: (leaderboard: LeaderboardResponseDTO) => void,
-  ) => Promise<void>;
-
-  /**
    * Subscribe to partial leaderboard updates for a contest.
    * A partial leaderboard update contains only a member / problem cell.
    *

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import { findClarification } from "@/app/_store/util/clarification-finder";
-import { mergeEntity, mergeEntityBatch } from "@/app/_store/util/entity-util";
+import { mergeEntity } from "@/app/_store/util/entity-util";
 import { mergeLeaderboard } from "@/app/_store/util/leaderboard-merger";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";

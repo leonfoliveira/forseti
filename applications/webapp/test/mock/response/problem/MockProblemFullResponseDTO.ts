@@ -20,6 +20,7 @@ export function MockProblemFullResponseDTO(
       filename: "testcases.csv",
       contentType: "text/csv",
     }),
+    version: 1,
     ...partial,
   };
 }

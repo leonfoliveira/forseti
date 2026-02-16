@@ -1,6 +1,5 @@
 package com.forsetijudge.api.adapter.driving.listener
 
-import com.forsetijudge.api.adapter.driving.listener.ContestEventsApiListener
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.event.ContestCreatedEvent
 import com.forsetijudge.core.domain.event.ContestDeletedEvent

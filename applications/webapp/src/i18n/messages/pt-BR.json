@@ -72,20 +72,28 @@
         "judge-dashboard-provider": {
           "submission-failed": "Nova submissão falhada",
           "announcement": "Novo anúncio: {text}",
-          "new-clarification": "Nova pergunta"
+          "new-clarification": "Nova pergunta",
+          "frozen": "Placar foi congelado",
+          "unfrozen": "Placar foi descongelado"
         },
         "guest-dashboard-provider": {
-          "announcement": "Novo anúncio: {text}"
+          "announcement": "Novo anúncio: {text}",
+          "frozen": "Placar foi congelado",
+          "unfrozen": "Placar foi descongelado"
         },
         "contestant-dashboard-provider": {
           "problem-answer": "Problema {letter}: {answer}",
           "announcement": "Novo anúncio: {text}",
-          "clarification-answer": "Nova resposta para uma pergunta"
+          "clarification-answer": "Nova resposta para uma pergunta",
+          "frozen": "Placar foi congelado",
+          "unfrozen": "Placar foi descongelado"
         },
         "admin-dashboard-provider": {
           "submission-failed": "Nova submissão falhada",
           "announcement": "Novo anúncio: {text}",
-          "new-clarification": "Nova pergunta"
+          "new-clarification": "Nova pergunta",
+          "frozen": "Placar foi congelado",
+          "unfrozen": "Placar foi descongelado"
         }
       },
       "component": {
@@ -112,7 +120,10 @@
           }
         },
         "feedback": {
-          "disconnection-alert": {
+          "freeze-banner": {
+            "frozen-label": "Congelado"
+          },
+          "disconnection-banner": {
             "listener-disconnected": "Conexão com o servidor perdida. Atualizações em tempo real não estão disponíveis. Tentando reconectar..."
           },
           "confirmation-dialog": {
@@ -252,14 +263,18 @@
               "test-cases-label": "Casos de Teste (CSV)",
               "test-cases-description": "O arquivo de casos de teste em formato CSV com duas colunas: entrada e saída esperada.",
               "new-problem-label": "Novo Problema",
-              "download-attachment-error": "Falha ao baixar arquivo."
+              "download-attachment-error": "Falha ao baixar arquivo.",
+              "move-up-tooltip": "Mover para Cima",
+              "move-down-tooltip": "Mover para Baixo",
+              "remove-tooltip": "Remover"
             },
             "settings-page-members-tab": {
               "title-label": "Nome",
               "type-label": "Tipo",
               "login-label": "Login",
               "password-label": "Senha",
-              "new-member-label": "Novo Membro"
+              "new-member-label": "Novo Membro",
+              "remove-tooltip": "Remover"
             },
             "settings-page-contest-tab": {
               "slug-label": "Slug",
@@ -270,10 +285,22 @@
               "start-at-description": "O horário de início do concurso.",
               "end-at-label": "Fim em",
               "end-at-description": "O horário de fim do concurso.",
+              "auto-freeze-at-label": "Congelar Automaticamente em",
+              "auto-freeze-at-description": "O horário em que o placar será congelado automaticamente.",
               "languages-label": "Linguagens",
               "languages-description": "As linguagens de programação permitidas no concurso.",
               "is-auto-judge-enabled-label": "Juiz Automático",
               "is-auto-judge-enabled-description": "Se deve habilitar o julgamento automático de submissões.",
+              "freeze-label": "Congelar",
+              "unfreeze-label": "Descongelar",
+              "freeze-success": "Placar congelado com sucesso.",
+              "unfreeze-success": "Placar descongelado com sucesso.",
+              "freeze-error": "Falha ao congelar o placar.",
+              "unfreeze-error": "Falha ao descongelar o placar.",
+              "freeze-confirmation-title": "Confirmar Congelamento",
+              "freeze-confirmation-description": "Tem certeza de que deseja congelar o placar? Isso impedirá atualizações até que seja descongelado.",
+              "unfreeze-confirmation-title": "Confirmar Descongelamento",
+              "unfreeze-confirmation-description": "Tem certeza de que deseja descongelar o placar? Isso permitirá que as atualizações sejam refletidas novamente.",
               "force-start-label": "Forçar Início",
               "force-start-confirmation-title": "Tem certeza de que deseja forçar o início do concurso imediatamente?",
               "force-start-confirmation-description": "Esta ação não pode ser desfeita.",
@@ -292,10 +319,16 @@
               "title-required": "Título é obrigatório",
               "title-too-long": "Título deve ter no máximo 255 caracteres",
               "languages-required": "Pelo menos uma linguagem é obrigatória",
+              "start-invalid": "Data de início é inválida",
               "start-required": "Data de início é obrigatória",
               "start-future": "Data de início deve ser no futuro",
+              "end-invalid": "Data de fim é inválida",
               "end-required": "Data de fim é obrigatória",
               "end-after-start": "Data de fim deve ser após a data de início",
+              "auto-freeze-invalid": "Data de congelamento automático é inválida",
+              "auto-freeze-after-start": "Data de congelamento automático deve ser após a data de início",
+              "auto-freeze-before-end": "Data de congelamento automático deve ser antes da data de fim",
+              "auto-freeze-future": "Data de congelamento automático deve ser no futuro",
               "problem-title-required": "Título é obrigatório",
               "problem-title-too-long": "Título deve ter no máximo 255 caracteres",
               "problem-description-required": "Descrição é obrigatória",
@@ -375,7 +408,8 @@
               "delete-alert-cancel": "Cancelar",
               "delete-alert-continue": "Continuar",
               "delete-success": "Esclarecimento excluído com sucesso",
-              "delete-error": "Falha ao excluir esclarecimento"
+              "delete-error": "Falha ao excluir esclarecimento",
+              "delete-tooltip": "Excluir"
             },
             "clarification-form": {
               "problem-required": "Obrigatório",

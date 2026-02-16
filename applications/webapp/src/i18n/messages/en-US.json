@@ -266,7 +266,7 @@
               "download-attachment-error": "Failed to download attachment.",
               "move-up-tooltip": "Move Up",
               "move-down-tooltip": "Move Down",
-              "remove-problem-tooltip": "Remove"
+              "remove-tooltip": "Remove"
             },
             "settings-page-members-tab": {
               "title-label": "Name",
@@ -274,7 +274,7 @@
               "login-label": "Login",
               "password-label": "Password",
               "new-member-label": "New Member",
-              "remove-member-tooltip": "Remove"
+              "remove-tooltip": "Remove"
             },
             "settings-page-contest-tab": {
               "slug-label": "Slug",

@@ -1,7 +1,6 @@
 package com.forsetijudge.api.adapter.driving.listener
 
 import com.forsetijudge.api.adapter.driven.emitter.StompLeaderboardEmitter
-import com.forsetijudge.api.adapter.driving.listener.LeaderboardEventsApiListener
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder

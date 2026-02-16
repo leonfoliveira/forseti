@@ -9,20 +9,6 @@ describe("StompLeaderboardListener", () => {
 
   const contestId = uuidv4();
 
-  describe("subscribeForLeaderboard", () => {
-    it("should subscribe to the contest leaderboard", async () => {
-      const client = mock<ListenerClient>();
-      const callback = jest.fn();
-
-      await sut.subscribeForLeaderboard(client, contestId, callback);
-
-      expect(client.subscribe).toHaveBeenCalledWith(
-        `/topic/contests/${contestId}/leaderboard`,
-        callback,
-      );
-    });
-  });
-
   describe("subscribeForLeaderboardPartial", () => {
     it("should subscribe to the contest partial leaderboard", async () => {
       const client = mock<ListenerClient>();

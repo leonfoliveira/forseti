@@ -2,7 +2,6 @@ package com.forsetijudge.api.adapter.driving.middleware.websocket
 
 import com.forsetijudge.core.application.util.IdUtil
 import com.forsetijudge.core.domain.model.RequestContext
-import com.github.f4b6a3.uuid.UuidCreator
 import io.opentelemetry.api.trace.Span
 import org.slf4j.LoggerFactory
 import org.slf4j.MDC

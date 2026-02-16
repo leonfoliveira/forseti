@@ -1,9 +1,6 @@
-import { fireEvent, screen } from "@testing-library/dom";
-import { act } from "@testing-library/react";
+import { screen } from "@testing-library/dom";
 
 import { LeaderboardPage } from "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-page";
-import { useToast } from "@/app/_lib/hook/toast-hook";
-import { leaderboardWritter } from "@/config/composition";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";

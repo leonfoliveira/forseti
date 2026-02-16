@@ -8,10 +8,10 @@ import {
 } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { submissionWritter } from "@/config/composition";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 
 describe("SubmissionsPageActionJudge", () => {
   it("should handle updateAnswer succesfully", async () => {

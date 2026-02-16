@@ -16,6 +16,7 @@ export function MockProblemPublicResponseDTO(
     }),
     timeLimit: 1000,
     memoryLimit: 256,
+    version: 1,
     ...partial,
   };
 }

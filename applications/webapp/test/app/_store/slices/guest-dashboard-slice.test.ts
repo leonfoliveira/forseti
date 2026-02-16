@@ -100,6 +100,7 @@ describe("guestDashboardSlice", () => {
       ...stateWithData.submissions[0],
       status: SubmissionStatus.JUDGED,
       answer: SubmissionAnswer.WRONG_ANSWER,
+      version: 2,
     };
 
     const state = guestDashboardSlice.reducer(

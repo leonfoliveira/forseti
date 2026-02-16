@@ -11,6 +11,7 @@ export function MockAnnouncementResponseDTO(
     createdAt: "2025-01-01T10:00:00Z",
     member: MockMemberPublicResponseDTO(),
     text: "Test announcement text",
+    version: 1,
     ...partial,
   };
 }

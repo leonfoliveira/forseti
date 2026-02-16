@@ -10,6 +10,7 @@ export function MockMemberPublicResponseDTO(
     id: uuidv4(),
     type: MemberType.CONTESTANT,
     name: "Test User",
+    version: 1,
     ...partial,
   };
 }

@@ -1,7 +1,6 @@
 package com.forsetijudge.api.adapter.driving.listener
 
 import com.forsetijudge.api.adapter.driven.emitter.StompAnnouncementEmitter
-import com.forsetijudge.api.adapter.driving.listener.AnnouncementEventsApiListener
 import com.forsetijudge.core.domain.entity.AnnouncementMockBuilder
 import com.forsetijudge.core.domain.event.AnnouncementCreatedEvent
 import io.kotest.core.spec.style.FunSpec

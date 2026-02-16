@@ -28,7 +28,6 @@ import {
   CardContent,
   CardFooter,
 } from "@/app/_lib/component/shadcn/card";
-import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/app/_lib/component/shadcn/tabs";
 import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
@@ -42,8 +41,8 @@ import { contestWritter, leaderboardReader } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
-import { defineMessages } from "@/i18n/message";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   title: {

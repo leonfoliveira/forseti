@@ -12,6 +12,7 @@ import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
 import { Button } from "@/app/_lib/component/shadcn/button";
+import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import { Input } from "@/app/_lib/component/shadcn/input";
 import {
   Item,
@@ -30,7 +31,6 @@ import { attachmentReader } from "@/config/composition";
 import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
 import { defineMessages } from "@/i18n/message";
-import { FieldSet } from "@/app/_lib/component/shadcn/field";
 
 const messages = defineMessages({
   titleLabel: {
@@ -91,7 +91,7 @@ const messages = defineMessages({
     defaultMessage: "Move Down",
   },
   removeTooltip: {
-    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.remove-problem-tooltip",
+    id: "app.[slug].(dashboard)._common.settings.settings-page-problems-tab.remove-tooltip",
     defaultMessage: "Remove",
   },
 });
