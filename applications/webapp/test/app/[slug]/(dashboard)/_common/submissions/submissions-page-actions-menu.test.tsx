@@ -1,10 +1,10 @@
 import { screen } from "@testing-library/dom";
 
 import { SubmissionsPageActionsMenu } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-actions-menu";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 
 describe("SubmissionsPageActionsMenu", () => {
   it("should display download action only", async () => {
