@@ -89,6 +89,7 @@ class ContestControllerTest(
                             UpdateContestInputDTO.ProblemDTO(
                                 id = UuidCreator.getTimeOrderedEpoch(),
                                 letter = 'B',
+                                color = "#ffffff",
                                 title = "Problem B",
                                 description = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
                                 timeLimit = 2000,
