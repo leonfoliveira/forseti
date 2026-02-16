@@ -9,7 +9,7 @@ jest.mock("@/app/_lib/component/display/balloon", () => ({
 describe("BalloonProvider", () => {
   it("renders balloons from the store", async () => {
     await renderWithProviders(<BalloonProvider />, {
-      balloonSlice: [
+      balloon: [
         { id: "1", color: "#ffffff" },
         { id: "2", color: "#000000" },
       ],
