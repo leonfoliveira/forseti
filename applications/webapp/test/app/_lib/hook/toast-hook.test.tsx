@@ -31,6 +31,7 @@ describe("useToast", () => {
       <FormattedMessage {...testMessage} />,
       {
         position: "bottom-center",
+        className: "!bg-blue-600 !text-white",
       },
     );
   });
@@ -44,6 +45,7 @@ describe("useToast", () => {
       <FormattedMessage {...testMessage} />,
       {
         position: "bottom-center",
+        className: "!bg-green-600 !text-white",
       },
     );
   });
@@ -57,6 +59,7 @@ describe("useToast", () => {
       <FormattedMessage {...testMessage} />,
       {
         position: "bottom-center",
+        className: "!bg-yellow-600 !text-white",
       },
     );
   });
@@ -70,6 +73,7 @@ describe("useToast", () => {
       <FormattedMessage {...testMessage} />,
       {
         position: "bottom-center",
+        className: "!bg-red-600 !text-white",
       },
     );
   });
