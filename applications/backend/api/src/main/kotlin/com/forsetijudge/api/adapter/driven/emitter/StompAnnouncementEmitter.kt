@@ -2,7 +2,7 @@ package com.forsetijudge.api.adapter.driven.emitter
 
 import com.forsetijudge.api.adapter.dto.response.announcement.toResponseDTO
 import com.forsetijudge.core.domain.entity.Announcement
-import com.forsetijudge.core.port.driven.WebSocketFanoutProducer
+import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 

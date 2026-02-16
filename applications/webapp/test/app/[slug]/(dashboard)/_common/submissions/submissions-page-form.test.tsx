@@ -7,15 +7,25 @@ import { submissionWritter } from "@/config/composition";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
+import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPageForm", () => {
   it("should create submission successfully", async () => {
+    const newSubmission = MockSubmissionFullResponseDTO();
+    (submissionWritter.create as jest.Mock).mockResolvedValueOnce(
+      newSubmission,
+    );
     const contestMetadata = MockContestMetadataResponseDTO();
     const problems = [MockProblemPublicResponseDTO()];
     const onClose = jest.fn();
+    const onCreate = jest.fn();
     await renderWithProviders(
-      <SubmissionsPageForm onClose={onClose} problems={problems} />,
+      <SubmissionsPageForm
+        onClose={onClose}
+        onCreate={onCreate}
+        problems={problems}
+      />,
       { contestMetadata },
     );
 
@@ -51,6 +61,7 @@ describe("SubmissionsPageForm", () => {
     );
     expect(useToast().success).toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
+    expect(onCreate).toHaveBeenCalledWith(newSubmission);
   });
 
   it("should show error toast when creation fails", async () => {
@@ -58,7 +69,11 @@ describe("SubmissionsPageForm", () => {
     const problems = [MockProblemPublicResponseDTO()];
     const onClose = jest.fn();
     await renderWithProviders(
-      <SubmissionsPageForm onClose={onClose} problems={problems} />,
+      <SubmissionsPageForm
+        onClose={onClose}
+        problems={problems}
+        onCreate={() => {}}
+      />,
       { contestMetadata },
     );
 

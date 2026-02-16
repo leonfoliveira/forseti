@@ -1,12 +1,12 @@
 package com.forsetijudge.core.application.service.leaderboard
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
-import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -19,6 +19,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
 import java.time.OffsetDateTime
 
@@ -32,11 +33,15 @@ class BuildLeaderboardServiceTest :
         val sut = BuildLeaderboardService(contestRepository, memberRepository, problemRepository, submissionRepository)
 
         val now = OffsetDateTime.now()
+        val contestAuthorizer = mockk<ContestAuthorizer>(relaxed = true)
 
         beforeEach {
             clearAllMocks()
             mockkStatic(OffsetDateTime::class)
             every { OffsetDateTime.now() } returns now
+            mockkConstructor(ContestAuthorizer::class)
+            every { anyConstructed<ContestAuthorizer>().checkContestStarted() } returns contestAuthorizer
+            every { anyConstructed<ContestAuthorizer>().checkMemberType() } returns contestAuthorizer
         }
 
         context("build") {
@@ -49,30 +54,15 @@ class BuildLeaderboardServiceTest :
                 }.message shouldBe "Could not find contest with id = $contestId"
             }
 
-            test("should throw ForbiddenException when contest has not started and member is not admin or root") {
+            test("should call AuthorizationUtil with correct params") {
                 val contestId = UuidCreator.getTimeOrderedEpoch()
                 val memberId = UuidCreator.getTimeOrderedEpoch()
-                val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
-                val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
+                val member = MemberMockBuilder.build()
+                val contest = ContestMockBuilder.build()
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(memberId) } returns member
 
-                shouldThrow<ForbiddenException> {
-                    sut.build(contestId, memberId)
-                }.message shouldBe "Contest has not started yet"
-            }
-
-            test("should allow access when contest has not started but member is admin") {
-                val contestId = UuidCreator.getTimeOrderedEpoch()
-                val memberId = UuidCreator.getTimeOrderedEpoch()
-                val member = MemberMockBuilder.build(type = Member.Type.ADMIN)
-                val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1), problems = listOf(), members = listOf())
-                every { contestRepository.findEntityById(contestId) } returns contest
-                every { memberRepository.findEntityById(memberId) } returns member
-
-                val result = sut.build(contestId, memberId)
-
-                result.contestId shouldBe contest.id
+                sut.build(contestId, memberId)
             }
 
             test("should build leaderboard for contest") {
@@ -253,7 +243,13 @@ class BuildLeaderboardServiceTest :
                     )
 
                 every { problemRepository.findEntityById(problem.id) } returns problem
-                every { submissionRepository.findByMemberIdAndProblemIdAndStatus(member.id, problem.id, Submission.Status.JUDGED) } returns
+                every {
+                    submissionRepository.findAllByMemberIdAndProblemIdAndStatus(
+                        member.id,
+                        problem.id,
+                        Submission.Status.JUDGED,
+                    )
+                } returns
                     listOf(
                         submission,
                     )

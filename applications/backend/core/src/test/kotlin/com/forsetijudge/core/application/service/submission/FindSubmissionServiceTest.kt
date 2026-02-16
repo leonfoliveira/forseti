@@ -1,11 +1,11 @@
 package com.forsetijudge.core.application.service.submission
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
-import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -17,6 +17,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import java.time.OffsetDateTime
 
 class FindSubmissionServiceTest :
@@ -32,8 +33,13 @@ class FindSubmissionServiceTest :
                 submissionRepository = submissionRepository,
             )
 
+        val contestAuthorizer = mockk<ContestAuthorizer>(relaxed = true)
+
         beforeEach {
             clearAllMocks()
+            mockkConstructor(ContestAuthorizer::class)
+            every { anyConstructed<ContestAuthorizer>().checkContestStarted() } returns contestAuthorizer
+            every { anyConstructed<ContestAuthorizer>().checkMemberType(*anyVararg<Member.Type>()) } returns contestAuthorizer
         }
 
         context("findById") {
@@ -68,18 +74,6 @@ class FindSubmissionServiceTest :
                 }.message shouldBe "Could not find contest with id = $contestId"
             }
 
-            test("should throw ForbiddenException when contest has not started and member is not admin or root") {
-                val memberId = UuidCreator.getTimeOrderedEpoch()
-                val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
-                val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
-                every { contestRepository.findEntityById(contestId) } returns contest
-                every { memberRepository.findEntityById(memberId) } returns member
-
-                shouldThrow<ForbiddenException> {
-                    sut.findAllByContest(contestId, memberId)
-                }.message shouldBe "Contest has not started yet"
-            }
-
             test("should return submissions when contest has started") {
                 val submission = SubmissionMockBuilder.build()
                 val problem = ProblemMockBuilder.build(submissions = listOf(submission))
@@ -103,6 +97,46 @@ class FindSubmissionServiceTest :
                 val result = sut.findAllByContest(contestId, memberId)
 
                 result shouldBe listOf(submission).sortedBy { it.createdAt }
+            }
+        }
+
+        context("findAllByContestSinceLastFreeze") {
+            val contestId = UuidCreator.getTimeOrderedEpoch()
+
+            test("should throw NotFoundException when contest is not found") {
+                every { contestRepository.findEntityById(contestId) } returns null
+
+                shouldThrow<NotFoundException> {
+                    sut.findAllByContestSinceLastFreeze(contestId)
+                }.message shouldBe "Could not find contest with id = $contestId"
+            }
+
+            test("should return empty list when no freeze time is found for contest") {
+                val contest =
+                    ContestMockBuilder.build(
+                        frozenAt = null,
+                    )
+                every { contestRepository.findEntityById(contestId) } returns contest
+
+                val result = sut.findAllByContestSinceLastFreeze(contestId)
+
+                result shouldBe listOf()
+            }
+
+            test("should return submissions since last freeze when contest is found") {
+                val contest =
+                    ContestMockBuilder.build(
+                        frozenAt = OffsetDateTime.now().minusHours(1),
+                    )
+                every { contestRepository.findEntityById(contestId) } returns contest
+                val submission1 = SubmissionMockBuilder.build(createdAt = OffsetDateTime.now().minusHours(2))
+                val submission2 = SubmissionMockBuilder.build(createdAt = OffsetDateTime.now().minusHours(1))
+                every { submissionRepository.findByContestIdAndCreatedAtGreaterThanEqual(contest.id, contest.frozenAt!!) } returns
+                    listOf(submission1, submission2)
+
+                val result = sut.findAllByContestSinceLastFreeze(contestId)
+
+                result shouldBe listOf(submission1, submission2).sortedBy { it.createdAt }
             }
         }
 

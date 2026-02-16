@@ -61,6 +61,8 @@ class ContestClarificationControllerTest(
         test("deleteClarificationById") {
             val contestId = UuidCreator.getTimeOrderedEpoch()
             val clarificationId = UuidCreator.getTimeOrderedEpoch()
+            val session = SessionMockBuilder.build()
+            RequestContext.getContext().session = session
 
             webMvc
                 .delete("$basePath/{clarificationId}", contestId, clarificationId) {
@@ -69,6 +71,6 @@ class ContestClarificationControllerTest(
                     status { isNoContent() }
                 }
 
-            verify { deleteClarificationUseCase.delete(contestId, clarificationId) }
+            verify { deleteClarificationUseCase.delete(contestId, session.member.id, clarificationId) }
         }
     })

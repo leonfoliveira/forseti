@@ -64,9 +64,14 @@ const messages = defineMessages({
 type Props = {
   submission: SubmissionFullResponseDTO;
   onClose: () => void;
+  onJudge: (submission: SubmissionFullResponseDTO) => void;
 };
 
-export function SubmissionsPageActionJudge({ submission, onClose }: Props) {
+export function SubmissionsPageActionJudge({
+  submission,
+  onClose,
+  onJudge,
+}: Props) {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
   const judgeState = useLoadableState();
   const toast = useToast();
@@ -85,6 +90,8 @@ export function SubmissionsPageActionJudge({ submission, onClose }: Props) {
         submission.id,
         data.answer,
       );
+
+      onJudge({ ...submission, answer: data.answer });
       toast.success(messages.judgeSuccess);
       judgeForm.reset();
       setIsDialogOpen(false);

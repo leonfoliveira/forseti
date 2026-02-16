@@ -6,4 +6,8 @@ export class MockDate {
   static future(hoursAhead: number = 1): Date {
     return new Date(new Date().getTime() + hoursAhead * 60 * 60 * 1000);
   }
+
+  static toDateTime(date: Date): string {
+    return date.toISOString().slice(0, 16);
+  }
 }

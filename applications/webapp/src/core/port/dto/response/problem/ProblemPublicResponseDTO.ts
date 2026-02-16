@@ -7,4 +7,5 @@ export type ProblemPublicResponseDTO = {
   description: AttachmentResponseDTO;
   timeLimit: number;
   memoryLimit: number;
+  version: number;
 };

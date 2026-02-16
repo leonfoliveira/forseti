@@ -55,7 +55,28 @@ type Props = {
   clarifications: ClarificationResponseDTO[];
   canCreate?: boolean;
   canAnswer?: boolean;
-};
+} & (
+  | {
+      canCreate: true;
+      onCreate: (clarification: ClarificationResponseDTO) => void;
+    }
+  | {
+      canCreate?: false;
+      onCreate?: (clarification: ClarificationResponseDTO) => void;
+    }
+) &
+  (
+    | {
+        canAnswer: true;
+        onAnswer: (data: ClarificationResponseDTO) => void;
+        onDelete: (clarificationId: string) => void;
+      }
+    | {
+        canAnswer?: false;
+        onAnswer?: (data: ClarificationResponseDTO) => void;
+        onDelete?: (clarificationId: string) => void;
+      }
+  );
 
 /**
  * Displays the clarifications page where users can view, request, and answer clarifications for contest problems.
@@ -63,8 +84,11 @@ type Props = {
 export function ClarificationsPage({
   problems,
   clarifications,
-  canCreate = false,
-  canAnswer = false,
+  canCreate,
+  onCreate,
+  canAnswer,
+  onAnswer,
+  onDelete,
 }: Props) {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
   const contestStatus = useContestStatusWatcher();
@@ -81,6 +105,7 @@ export function ClarificationsPage({
           <ClarificationsPageForm
             contestId={contestId}
             onClose={() => setIsCreateFormOpen(false)}
+            onCreate={onCreate}
             problems={problems}
           />
         )}
@@ -126,6 +151,8 @@ export function ClarificationsPage({
                 contestId={contestId}
                 clarification={clarification}
                 canAnswer={canAnswer}
+                onAnswer={onAnswer as any}
+                onDelete={onDelete as any}
               />
             ))}
           </div>

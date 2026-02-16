@@ -29,6 +29,7 @@ data class UpdateContestInputDTO(
     val startAt: OffsetDateTime,
     @field:Future
     val endAt: OffsetDateTime,
+    val autoFreezeAt: OffsetDateTime? = null,
     @field:Valid
     val settings: SettingsDTO,
     @field:Valid

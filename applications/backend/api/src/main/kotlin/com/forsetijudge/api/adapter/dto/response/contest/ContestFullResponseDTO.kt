@@ -21,11 +21,13 @@ class ContestFullResponseDTO(
     val languages: List<Submission.Language>,
     val startAt: OffsetDateTime,
     val endAt: OffsetDateTime,
+    val autoFreezeAt: OffsetDateTime?,
     val settings: Contest.Settings,
     val members: List<MemberFullResponseDTO>,
     val problems: List<ProblemFullResponseDTO>,
     val clarifications: List<ClarificationResponseDTO>,
     val announcements: List<AnnouncementResponseDTO>,
+    val version: Long,
 ) : Serializable
 
 fun Contest.toFullResponseDTO(): ContestFullResponseDTO =
@@ -36,9 +38,11 @@ fun Contest.toFullResponseDTO(): ContestFullResponseDTO =
         languages = this.languages,
         startAt = this.startAt,
         endAt = this.endAt,
+        autoFreezeAt = this.autoFreezeAt,
         settings = this.settings,
         members = this.members.map { it.toFullResponseDTO() },
         problems = this.problems.map { it.toFullResponseDTO() },
         clarifications = this.clarifications.map { it.toResponseDTO() },
         announcements = this.announcements.map { it.toResponseDTO() },
+        version = this.version,
     )

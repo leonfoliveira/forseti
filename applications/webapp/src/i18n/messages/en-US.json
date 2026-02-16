@@ -72,20 +72,28 @@
         "judge-dashboard-provider": {
           "submission-failed": "New failed submission",
           "announcement": "New announcement: {text}",
-          "new-clarification": "New clarification"
+          "new-clarification": "New clarification",
+          "frozen": "Leaderboard has been frozen",
+          "unfrozen": "Leaderboard has been unfrozen"
         },
         "guest-dashboard-provider": {
-          "announcement": "New announcement: {text}"
+          "announcement": "New announcement: {text}",
+          "frozen": "Leaderboard has been frozen",
+          "unfrozen": "Leaderboard has been unfrozen"
         },
         "contestant-dashboard-provider": {
           "problem-answer": "Problem {letter}: {answer}",
           "announcement": "New announcement: {text}",
-          "clarification-answer": "New answer for a clarification"
+          "clarification-answer": "New answer for a clarification",
+          "frozen": "Leaderboard has been frozen",
+          "unfrozen": "Leaderboard has been unfrozen"
         },
         "admin-dashboard-provider": {
           "submission-failed": "New failed submission",
           "announcement": "New announcement: {text}",
-          "new-clarification": "New clarification"
+          "new-clarification": "New clarification",
+          "frozen": "Leaderboard has been frozen",
+          "unfrozen": "Leaderboard has been unfrozen"
         }
       },
       "component": {
@@ -112,7 +120,10 @@
           }
         },
         "feedback": {
-          "disconnection-alert": {
+          "freeze-banner": {
+            "frozen-label": "Frozen"
+          },
+          "disconnection-banner": {
             "listener-disconnected": "Connection to server lost. Live updates are unavailable. Attempting to reconnect..."
           },
           "confirmation-dialog": {
@@ -252,14 +263,18 @@
               "test-cases-label": "Test Cases (CSV)",
               "test-cases-description": "The test cases file in CSV format with two columns: input and expected output.",
               "new-problem-label": "New Problem",
-              "download-attachment-error": "Failed to download attachment."
+              "download-attachment-error": "Failed to download attachment.",
+              "move-up-tooltip": "Move Up",
+              "move-down-tooltip": "Move Down",
+              "remove-tooltip": "Remove"
             },
             "settings-page-members-tab": {
               "title-label": "Name",
               "type-label": "Type",
               "login-label": "Login",
               "password-label": "Password",
-              "new-member-label": "New Member"
+              "new-member-label": "New Member",
+              "remove-tooltip": "Remove"
             },
             "settings-page-contest-tab": {
               "slug-label": "Slug",
@@ -270,10 +285,22 @@
               "start-at-description": "The start time of the contest.",
               "end-at-label": "End At",
               "end-at-description": "The end time of the contest.",
+              "auto-freeze-at-label": "Auto Freeze At",
+              "auto-freeze-at-description": "The time when the scoreboard will be automatically frozen.",
               "languages-label": "Languages",
               "languages-description": "The programming languages allowed in the contest.",
               "is-auto-judge-enabled-label": "Auto Judge",
               "is-auto-judge-enabled-description": "Whether to enable auto judging of submissions.",
+              "freeze-label": "Freeze",
+              "unfreeze-label": "Unfreeze",
+              "freeze-success": "Leaderboard frozen successfully.",
+              "unfreeze-success": "Leaderboard unfrozen successfully.",
+              "freeze-error": "Failed to freeze the leaderboard.",
+              "unfreeze-error": "Failed to unfreeze the leaderboard.",
+              "freeze-confirmation-title": "Confirm Freeze",
+              "freeze-confirmation-description": "Are you sure you want to freeze the leaderboard? This will prevent any further updates until it is unfrozen.",
+              "unfreeze-confirmation-title": "Confirm Unfreeze",
+              "unfreeze-confirmation-description": "Are you sure you want to unfreeze the leaderboard? This will allow updates to be reflected again.",
               "force-start-label": "Force Start",
               "force-start-confirmation-title": "Are you sure you want to force the contest to start immediately?",
               "force-start-confirmation-description": "This action cannot be undone.",
@@ -292,10 +319,16 @@
               "title-required": "Title is required",
               "title-too-long": "Title must be at most 255 characters long",
               "languages-required": "At least one language is required",
+              "start-invalid": "Start date is invalid",
               "start-required": "Start date is required",
               "start-future": "Start date must be in the future",
+              "end-invalid": "End date is invalid",
               "end-required": "End date is required",
               "end-after-start": "End date must be after start date",
+              "auto-freeze-invalid": "Auto freeze date is invalid",
+              "auto-freeze-after-start": "Auto freeze date must be after start date",
+              "auto-freeze-before-end": "Auto freeze date must be before end date",
+              "auto-freeze-future": "Auto freeze date must be in the future",
               "problem-title-required": "Title is required",
               "problem-title-too-long": "Title must be at most 255 characters long",
               "problem-description-required": "Description is required",
@@ -375,7 +408,8 @@
               "delete-alert-cancel": "Cancel",
               "delete-alert-continue": "Continue",
               "delete-success": "Clarification deleted successfully",
-              "delete-error": "Failed to delete clarification"
+              "delete-error": "Failed to delete clarification",
+              "delete-tooltip": "Delete"
             },
             "clarification-form": {
               "problem-required": "Required",

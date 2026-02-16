@@ -15,6 +15,7 @@ export function MockClarificationResponseDTO(
     parentId: uuidv4(),
     text: "Test clarification text",
     children: [],
+    version: 1,
     ...partial,
   };
 }

@@ -9,6 +9,7 @@ export function MockAttachmentResponseDTO(
     id: uuidv4(),
     filename: "test.txt",
     contentType: "text/plain",
+    version: 1,
     ...partial,
   };
 }

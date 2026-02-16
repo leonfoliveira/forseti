@@ -1,10 +1,12 @@
 package com.forsetijudge.core.application.service.contest
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.TestCasesValidator
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Problem
+import com.forsetijudge.core.domain.event.ContestUpdatedEvent
 import com.forsetijudge.core.domain.exception.BusinessException
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.domain.exception.ForbiddenException
@@ -12,10 +14,12 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.Hasher
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
+import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.dto.input.contest.UpdateContestInputDTO
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
@@ -28,9 +32,11 @@ import java.util.UUID
 class UpdateContestService(
     private val attachmentRepository: AttachmentRepository,
     private val contestRepository: ContestRepository,
+    private val memberRepository: MemberRepository,
     private val hasher: Hasher,
     private val deleteContestService: DeleteContestService,
     private val testCasesValidator: TestCasesValidator,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) : UpdateContestUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -41,7 +47,8 @@ class UpdateContestService(
      * - If no ID is provided, a new entity is created.
      * - Any existing entities not included in the input are deleted.
      *
-     * @param contestId The ID of the contest to be updated.
+     * @param contestId The ID of the contest to update.
+     * @param memberId The ID of the member performing the update.
      * @param inputDTO The input data for updating the contest.
      * @return The updated contest.
      * @throws NotFoundException If the contest or any referenced entities are not found.
@@ -52,24 +59,30 @@ class UpdateContestService(
     @Transactional
     override fun update(
         contestId: UUID,
+        memberId: UUID,
         @Valid inputDTO: UpdateContestInputDTO,
     ): Contest {
         logger.info("Updating contest with id: $contestId")
+
+        val contest =
+            contestRepository
+                .findEntityById(contestId)
+                ?: throw NotFoundException("Could not find contest with id = $contestId")
+        val member =
+            memberRepository.findEntityById(memberId)
+                ?: throw NotFoundException("Could not find member with id = $memberId")
+
+        ContestAuthorizer(contest, member).checkMemberType(Member.Type.ROOT, Member.Type.ADMIN)
+
+        if (contest.hasFinished()) {
+            throw ForbiddenException("Contest has already finished and cannot be updated")
+        }
 
         if (inputDTO.members.any { it.type == Member.Type.ROOT }) {
             throw ForbiddenException("Contest cannot have ROOT members")
         }
         if (inputDTO.members.any { it.type.isSystemType() }) {
             throw ForbiddenException("Contest cannot have system members")
-        }
-
-        val contest =
-            contestRepository
-                .findEntityById(contestId)
-                ?: throw NotFoundException("Could not find contest with id = $contestId")
-
-        if (contest.hasFinished()) {
-            throw ForbiddenException("Contest has already finished and cannot be updated")
         }
 
         if (contest.hasStarted()) {
@@ -82,6 +95,20 @@ class UpdateContestService(
             }
         }
 
+        if (inputDTO.autoFreezeAt != null) {
+            if (!(inputDTO.autoFreezeAt.isAfter(inputDTO.startAt) && inputDTO.autoFreezeAt.isBefore(inputDTO.endAt))) {
+                throw BusinessException("Contest autoFreezeAt must be between startAt and endAt")
+            }
+
+            if (contest.autoFreezeAt == null ||
+                !inputDTO.autoFreezeAt.truncatedTo(ChronoUnit.SECONDS).isEqual(contest.autoFreezeAt!!.truncatedTo(ChronoUnit.SECONDS))
+            ) {
+                if (inputDTO.autoFreezeAt.isBefore(OffsetDateTime.now())) {
+                    throw BusinessException("Contest autoFreezeAt must be in the future")
+                }
+            }
+        }
+
         if (contestRepository.existsBySlugAndIdNot(inputDTO.slug, contestId)) {
             throw ConflictException("Contest with slug '${inputDTO.slug}' already exists")
         }
@@ -91,6 +118,7 @@ class UpdateContestService(
         contest.languages = inputDTO.languages
         contest.startAt = inputDTO.startAt
         contest.endAt = inputDTO.endAt
+        contest.autoFreezeAt = inputDTO.autoFreezeAt
         contest.settings =
             Contest.Settings(
                 isAutoJudgeEnabled = inputDTO.settings.isAutoJudgeEnabled,
@@ -118,6 +146,7 @@ class UpdateContestService(
         contest.members = createdMembers + updatedMembers
         contest.problems = createdProblems + updatedProblems
         contestRepository.save(contest)
+        applicationEventPublisher.publishEvent(ContestUpdatedEvent(this, contest))
 
         logger.info("Finished updating contest with id: ${contest.id}")
         return contest

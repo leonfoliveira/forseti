@@ -28,4 +28,24 @@ describe("AxiosLeaderboardRepository", () => {
       expect(result).toEqual(expectedResponse);
     });
   });
+
+  describe("freeze", () => {
+    it("should freeze the contest leaderboard", async () => {
+      await sut.freeze(contestId);
+
+      expect(axiosClient.put).toHaveBeenCalledWith(
+        `/v1/contests/${contestId}/leaderboard:freeze`,
+      );
+    });
+  });
+
+  describe("unfreeze", () => {
+    it("should unfreeze the contest leaderboard", async () => {
+      await sut.unfreeze(contestId);
+
+      expect(axiosClient.put).toHaveBeenCalledWith(
+        `/v1/contests/${contestId}/leaderboard:unfreeze`,
+      );
+    });
+  });
 });

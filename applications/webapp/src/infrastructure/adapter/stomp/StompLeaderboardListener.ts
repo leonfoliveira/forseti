@@ -2,23 +2,9 @@ import { LeaderboardListener } from "@/core/port/driven/listener/LeaderboardList
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 
 export class StompLeaderboardListener implements LeaderboardListener {
-  /**
-   * Subscribe to leaderboard updates for a contest using STOMP websocket protocol.
-   *
-   * @param client The STOMP client used for subscribing.
-   * @param contestId ID of the contest to subscribe to.
-   * @param cb Callback function to handle received leaderboard submissions.
-   */
-  async subscribeForLeaderboard(
-    client: ListenerClient,
-    contestId: string,
-    cb: (submission: LeaderboardResponseDTO) => void,
-  ): Promise<void> {
-    await client.subscribe(`/topic/contests/${contestId}/leaderboard`, cb);
-  }
-
   /**
    * Subscribe to partial leaderboard updates for a contest.
    * A partial leaderboard update contains only a member / problem cell.
@@ -34,6 +20,31 @@ export class StompLeaderboardListener implements LeaderboardListener {
   ): Promise<void> {
     await client.subscribe(
       `/topic/contests/${contestId}/leaderboard/partial`,
+      cb,
+    );
+  }
+
+  async subscribeForLeaderboardFreeze(
+    client: ListenerClient,
+    contestId: string,
+    cb: () => void,
+  ): Promise<void> {
+    await client.subscribe(
+      `/topic/contests/${contestId}/leaderboard/freeze`,
+      cb,
+    );
+  }
+
+  async subscribeForLeaderboardUnfreeze(
+    client: ListenerClient,
+    contestId: string,
+    cb: (data: {
+      leaderboard: LeaderboardResponseDTO;
+      frozenSubmissions: SubmissionPublicResponseDTO[];
+    }) => void,
+  ): Promise<void> {
+    await client.subscribe(
+      `/topic/contests/${contestId}/leaderboard/unfreeze`,
       cb,
     );
   }

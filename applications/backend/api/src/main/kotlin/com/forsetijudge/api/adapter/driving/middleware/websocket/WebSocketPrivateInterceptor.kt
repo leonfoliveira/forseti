@@ -5,6 +5,7 @@ import com.forsetijudge.core.domain.model.RequestContext
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
+import org.springframework.messaging.simp.stomp.StompCommand
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.support.ChannelInterceptor
 import org.springframework.messaging.support.MessageHeaderAccessor
@@ -24,6 +25,12 @@ class WebSocketPrivateInterceptor(
         channel: MessageChannel,
     ): Message<*>? {
         val accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) ?: return message
+
+        // Only intercept SUBSCRIBE commands, other commands are not relevant for access control
+        if (accessor.command != StompCommand.SUBSCRIBE) {
+            return message
+        }
+
         val destination = accessor.destination ?: return message
         logger.info("Started PrivateWebSocketInterceptor for destination: $destination")
         val session = RequestContext.getContext().session
@@ -38,7 +45,7 @@ class WebSocketPrivateInterceptor(
             webSocketTopicConfigs.privateFilters.entries
                 .find {
                     it.key.matches(destination)
-                }?.value
+                }
 
         // If no private configuration is present, the topic is public
         if (privateFilter == null) {
@@ -46,7 +53,8 @@ class WebSocketPrivateInterceptor(
             return message
         }
 
-        privateFilter(destination)
+        logger.info("Applying private filter: ${privateFilter.key}")
+        privateFilter.value(destination)
 
         logger.info("User is allowed to access destination")
         return message

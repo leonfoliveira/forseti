@@ -1,6 +1,6 @@
 package com.forsetijudge.infrastructure.adapter.driven.producer
 
-import com.forsetijudge.core.port.driven.WebSocketFanoutProducer
+import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
 import com.forsetijudge.infrastructure.adapter.dto.message.payload.WebSocketFanoutMessagePayload
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

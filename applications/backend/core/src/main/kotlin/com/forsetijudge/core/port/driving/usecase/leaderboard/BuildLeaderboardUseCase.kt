@@ -21,12 +21,12 @@ interface BuildLeaderboardUseCase {
     /**
      * Finds the cell of the leaderboard for a specific submission member and problem.
      *
-     * @param memberUUID The ID of the member to get the leaderboard cell for.
-     * @param problemUUID The ID of the problem to get the leaderboard cell for.
+     * @param memberId The ID of the member to get the leaderboard cell for.
+     * @param problemId The ID of the problem to get the leaderboard cell for.
      * @return The partial leaderboard data for the submission.
      */
     fun buildPartial(
-        memberUUID: UUID,
-        problemUUID: UUID,
+        memberId: UUID,
+        problemId: UUID,
     ): LeaderboardPartialOutputDTO
 }

@@ -1,7 +1,7 @@
 package com.forsetijudge.api.adapter.driven.emitter
 
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
-import com.forsetijudge.core.port.driven.WebSocketFanoutProducer
+import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
 import com.forsetijudge.core.port.dto.output.LeaderboardPartialOutputDTO
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks

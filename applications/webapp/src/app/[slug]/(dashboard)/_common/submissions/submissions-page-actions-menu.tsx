@@ -24,10 +24,22 @@ const messages = defineMessages({
 
 type Props = {
   submission: SubmissionFullResponseDTO;
-  canEdit?: boolean;
-};
+} & (
+  | {
+      canEdit: true;
+      onEdit: (submission: SubmissionFullResponseDTO) => void;
+    }
+  | {
+      canEdit?: false;
+      onEdit?: (submission: SubmissionFullResponseDTO) => void;
+    }
+);
 
-export function SubmissionsPageActionsMenu({ submission, canEdit }: Props) {
+export function SubmissionsPageActionsMenu({
+  submission,
+  canEdit,
+  onEdit,
+}: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
   const close = () => setIsOpen(false);
@@ -60,10 +72,12 @@ export function SubmissionsPageActionsMenu({ submission, canEdit }: Props) {
                 <SubmissionsPageActionRerun
                   submission={submission}
                   onClose={close}
+                  onRerun={onEdit}
                 />
                 <SubmissionsPageActionJudge
                   submission={submission}
                   onClose={close}
+                  onJudge={onEdit}
                 />
               </>
             )}

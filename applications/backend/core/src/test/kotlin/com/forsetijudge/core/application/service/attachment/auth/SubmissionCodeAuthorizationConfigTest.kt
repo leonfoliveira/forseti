@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.attachment.auth
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
@@ -10,14 +11,22 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkConstructor
 import java.time.OffsetDateTime
 
 class SubmissionCodeAuthorizationConfigTest :
     FunSpec({
         val sut = SubmissionCodeAuthorizationConfig()
 
+        val contestAuthorizer = mockk<ContestAuthorizer>(relaxed = true)
+
         beforeEach {
             clearAllMocks()
+            mockkConstructor(ContestAuthorizer::class)
+            every { anyConstructed<ContestAuthorizer>().checkContestStarted() } returns contestAuthorizer
+            every { anyConstructed<ContestAuthorizer>().checkMemberType() } returns contestAuthorizer
         }
 
         context("getContext") {
@@ -60,20 +69,6 @@ class SubmissionCodeAuthorizationConfigTest :
 
                 // Should not throw exception
                 sut.authorizeContestantUpload(contest, member)
-            }
-
-            test("should throw ForbiddenException when contest has not started") {
-                val now = OffsetDateTime.now()
-                val contest =
-                    ContestMockBuilder.build(
-                        startAt = now.plusHours(1),
-                        endAt = now.plusHours(2),
-                    )
-                val member = MemberMockBuilder.build()
-
-                shouldThrow<ForbiddenException> {
-                    sut.authorizeContestantUpload(contest, member)
-                }
             }
         }
 

@@ -11,6 +11,7 @@ export function MockMemberFullResponseDTO(
     type: MemberType.CONTESTANT,
     name: "Test User",
     login: "testuser",
+    version: 1,
     ...partial,
   };
 }

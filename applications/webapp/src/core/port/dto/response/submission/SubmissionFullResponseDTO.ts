@@ -14,4 +14,5 @@ export type SubmissionFullResponseDTO = {
   answer: SubmissionAnswer;
   code: AttachmentResponseDTO;
   createdAt: string;
+  version: number;
 };

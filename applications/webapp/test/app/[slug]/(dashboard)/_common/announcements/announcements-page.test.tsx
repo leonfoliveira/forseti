@@ -35,7 +35,11 @@ describe("AnnouncementsPage", () => {
 
   it("should render variant with create", async () => {
     await renderWithProviders(
-      <AnnouncementsPage announcements={announcements} canCreate />,
+      <AnnouncementsPage
+        announcements={announcements}
+        canCreate
+        onCreate={() => {}}
+      />,
       { contestMetadata },
     );
 

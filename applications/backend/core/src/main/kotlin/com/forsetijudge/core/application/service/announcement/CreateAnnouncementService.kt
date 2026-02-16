@@ -1,6 +1,8 @@
 package com.forsetijudge.core.application.service.announcement
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Announcement
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.AnnouncementCreatedEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.AnnouncementRepository
@@ -46,6 +48,8 @@ class CreateAnnouncementService(
         val member =
             memberRepository.findEntityById(memberId)
                 ?: throw NotFoundException("Could not find member with id $memberId")
+
+        ContestAuthorizer(contest, member).checkMemberType(Member.Type.ROOT, Member.Type.ADMIN)
 
         val announcement =
             Announcement(

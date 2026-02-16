@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.announcement
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Announcement
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
@@ -16,6 +17,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.slot
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
@@ -37,6 +39,8 @@ class CreateAnnouncementServiceTest :
 
         beforeEach {
             clearAllMocks()
+            mockkConstructor(ContestAuthorizer::class)
+            every { anyConstructed<ContestAuthorizer>().checkMemberType(any(), *anyVararg()) } returns mockk()
         }
 
         val contestId = UuidCreator.getTimeOrderedEpoch()

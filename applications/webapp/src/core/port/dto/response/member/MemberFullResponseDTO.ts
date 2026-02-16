@@ -5,4 +5,5 @@ export type MemberFullResponseDTO = {
   type: MemberType;
   name: string;
   login: string;
+  version: number;
 };

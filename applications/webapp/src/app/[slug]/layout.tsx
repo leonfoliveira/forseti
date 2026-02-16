@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 import React, { useEffect } from "react";
 
 import { Footer } from "@/app/_lib/component/layout/footer";
@@ -11,6 +11,8 @@ import { useErrorHandlerRoot } from "@/app/_lib/hook/error-handler-hook";
 import { useLoadableStateRoot } from "@/app/_lib/hook/loadable-state-hook";
 import { StoreProvider } from "@/app/_store/store-provider";
 import { sessionReader, contestReader } from "@/config/composition";
+import { routes } from "@/config/routes";
+import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { ContestMetadataResponseDTO } from "@/core/port/dto/response/contest/ContestMetadataResponseDTO";
 import { SessionResponseDTO } from "@/core/port/dto/response/session/SessionResponseDTO";
 
@@ -41,7 +43,9 @@ export default function ContestLayout({
         ]);
         initState.finish({ session, contestMetadata });
       } catch (error) {
-        await initState.fail(error);
+        await initState.fail(error, {
+          [NotFoundException.name]: () => redirect(routes.NOT_FOUND),
+        });
       }
     }
 

@@ -74,6 +74,15 @@ describe("judgeDashboardSlice", () => {
     );
   });
 
+  it("should set the leaderboard as frozen", () => {
+    const state = judgeDashboardSlice.reducer(
+      stateWithData,
+      judgeDashboardSlice.actions.setLeaderboardIsFrozen(true),
+    );
+
+    expect(state.leaderboard.isFrozen).toBe(true);
+  });
+
   it("should merge a new submission", () => {
     const newSubmission = MockSubmissionFullResponseDTO();
 
@@ -91,6 +100,7 @@ describe("judgeDashboardSlice", () => {
       ...stateWithData.submissions[0],
       status: SubmissionStatus.JUDGED,
       answer: SubmissionAnswer.WRONG_ANSWER,
+      version: 2,
     };
 
     const state = judgeDashboardSlice.reducer(

@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { JudgeDashboardProvider } from "@/app/_lib/provider/judge-dashboard-provider";
+import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
 import {
   announcementListener,
   clarificationListener,
@@ -31,9 +32,6 @@ jest.mock("@/app/_lib/component/page/loading-page", () => ({
 }));
 jest.mock("@/app/_lib/component/page/error-page", () => ({
   ErrorPage: () => <span data-testid="error-page" />,
-}));
-jest.mock("@/app/_lib/component/feedback/disconnection-alert", () => ({
-  DisconnectionAlert: () => <span data-testid="disconnection-alert" />,
 }));
 
 describe("JudgeDashboardProvider", () => {
@@ -66,11 +64,6 @@ describe("JudgeDashboardProvider", () => {
 
     expect(dashboardReader.getJudge).toHaveBeenCalledWith(contestMetadata.id);
 
-    expect(leaderboardListener.subscribeForLeaderboard).toHaveBeenCalledWith(
-      listenerClient,
-      contestMetadata.id,
-      expect.any(Function),
-    );
     expect(submissionListener.subscribeForContestFull).toHaveBeenCalledWith(
       listenerClient,
       contestMetadata.id,
@@ -123,23 +116,6 @@ describe("JudgeDashboardProvider", () => {
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
   });
 
-  it("should handle leaderboard updates", async () => {
-    const otherLeaderboard = MockLeaderboardResponseDTO();
-    const { store } = await renderWithProviders(
-      <JudgeDashboardProvider>
-        <div data-testid="child" />
-      </JudgeDashboardProvider>,
-      { session, contestMetadata },
-    );
-
-    act(() => {
-      (
-        leaderboardListener.subscribeForLeaderboard as jest.Mock
-      ).mock.calls[0][2](otherLeaderboard);
-    });
-    expect(store.getState().judgeDashboard.leaderboard).toBe(otherLeaderboard);
-  });
-
   it("should handle leaderboard partial updates", async () => {
     const leaderboardPartial = MockLeaderboardPartialResponseDTO({
       memberId: leaderboard.members[0].id,
@@ -162,6 +138,47 @@ describe("JudgeDashboardProvider", () => {
       store.getState().judgeDashboard.leaderboard.members[0].problems[0]
         .isAccepted,
     ).toBe(leaderboardPartial.isAccepted);
+  });
+
+  it("should handle leaderboard freeze updates", async () => {
+    const { store } = await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (
+        leaderboardListener.subscribeForLeaderboardFreeze as jest.Mock
+      ).mock.calls[0][2]({
+        leaderboard: MockLeaderboardResponseDTO(),
+        frozenSubmissions: [],
+      });
+    });
+    expect(store.getState().judgeDashboard.leaderboard.isFrozen).toBe(true);
+    expect(useToast().info).toHaveBeenCalled();
+  });
+
+  it("should handle leaderboard unfreeze updates", async () => {
+    const otherLeaderboard = MockLeaderboardResponseDTO();
+    const { store } = await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (
+        leaderboardListener.subscribeForLeaderboardUnfreeze as jest.Mock
+      ).mock.calls[0][2]({
+        leaderboard: otherLeaderboard,
+        frozenSubmissions: [],
+      });
+    });
+    expect(store.getState().judgeDashboard.leaderboard).toBe(otherLeaderboard);
+    expect(useToast().info).toHaveBeenCalled();
   });
 
   it("should handle submissions updates", async () => {
@@ -298,5 +315,39 @@ describe("JudgeDashboardProvider", () => {
     expect(store.getState().judgeDashboard.contest.clarifications).toHaveLength(
       0,
     );
+  });
+
+  it("should show freeze banner if leaderboard is frozen", async () => {
+    const { store } = await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      store.dispatch(judgeDashboardSlice.actions.setLeaderboardIsFrozen(true));
+    });
+
+    expect(screen.getByTestId("freeze-banner")).toBeInTheDocument();
+  });
+
+  it("should show disconnection banner if listener status is LOST_CONNECTION", async () => {
+    const { store } = await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      store.dispatch(
+        judgeDashboardSlice.actions.setListenerStatus(
+          ListenerStatus.LOST_CONNECTION,
+        ),
+      );
+    });
+
+    expect(screen.getByTestId("disconnection-banner")).toBeInTheDocument();
   });
 });

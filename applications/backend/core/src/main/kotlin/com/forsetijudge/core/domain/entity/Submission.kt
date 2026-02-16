@@ -27,6 +27,7 @@ class Submission(
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
+    version: Long = 1L,
     /**
      * The member who made this submission.
      */
@@ -74,7 +75,7 @@ class Submission(
     @OneToMany(mappedBy = "submission", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     val executions: List<Execution> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     val contest get() = problem.contest
 
     enum class Language {

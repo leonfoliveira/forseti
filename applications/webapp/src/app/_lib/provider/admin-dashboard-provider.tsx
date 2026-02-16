@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 
-import { DisconnectionAlert } from "@/app/_lib/component/feedback/disconnection-alert";
+import { DisconnectionBanner } from "@/app/_lib/component/feedback/disconnection-banner";
+import { FreezeBanner } from "@/app/_lib/component/feedback/freeze-banner";
 import { ErrorPage } from "@/app/_lib/component/page/error-page";
 import { LoadingPage } from "@/app/_lib/component/page/loading-page";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
@@ -23,6 +24,7 @@ import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification
 import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -38,6 +40,14 @@ const messages = defineMessages({
     id: "app._lib.provider.admin-dashboard-provider.new-clarification",
     defaultMessage: "New clarification",
   },
+  frozen: {
+    id: "app._lib.provider.admin-dashboard-provider.frozen",
+    defaultMessage: "Leaderboard has been frozen",
+  },
+  unfrozen: {
+    id: "app._lib.provider.admin-dashboard-provider.unfrozen",
+    defaultMessage: "Leaderboard has been unfrozen",
+  },
 });
 
 /**
@@ -52,6 +62,9 @@ export function AdminDashboardProvider({
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const listenerStatus = useAppSelector(
     (state) => state.adminDashboard.listenerStatus,
+  );
+  const isFrozen = useAppSelector(
+    (state) => state.adminDashboard.leaderboard?.isFrozen,
   );
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
@@ -88,15 +101,20 @@ export function AdminDashboardProvider({
         reconnect();
       });
       await Promise.all([
-        leaderboardListener.subscribeForLeaderboard(
-          listenerClientRef.current,
-          contestMetadata.id,
-          receiveLeaderboard,
-        ),
         leaderboardListener.subscribeForLeaderboardPartial(
           listenerClientRef.current,
           contestMetadata.id,
           receiveLeaderboardPartial,
+        ),
+        leaderboardListener.subscribeForLeaderboardFreeze(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveLeaderboardFreeze,
+        ),
+        leaderboardListener.subscribeForLeaderboardUnfreeze(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveLeaderboardUnfreeze,
         ),
         submissionListener.subscribeForContestFull(
           listenerClientRef.current,
@@ -148,17 +166,30 @@ export function AdminDashboardProvider({
     };
   }, [session, contestMetadata.id]);
 
-  function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
-    dispatch(adminDashboardSlice.actions.setLeaderboard(leaderboard));
-  }
-
   function receiveLeaderboardPartial(
     leaderboard: LeaderboardPartialResponseDTO,
   ) {
+    console.debug("Received leaderboard partial update:", leaderboard);
     dispatch(adminDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
+  function receiveLeaderboardFreeze() {
+    console.debug("Received leaderboard freeze");
+    dispatch(adminDashboardSlice.actions.setLeaderboardIsFrozen(true));
+    toast.info(messages.frozen);
+  }
+
+  function receiveLeaderboardUnfreeze(data: {
+    leaderboard: LeaderboardResponseDTO;
+    frozenSubmissions: SubmissionPublicResponseDTO[];
+  }) {
+    console.debug("Received leaderboard unfreeze:", data);
+    dispatch(adminDashboardSlice.actions.setLeaderboard(data.leaderboard));
+    toast.info(messages.unfrozen);
+  }
+
   function receiveSubmission(submission: SubmissionFullResponseDTO) {
+    console.debug("Received submission:", submission);
     dispatch(adminDashboardSlice.actions.mergeSubmission(submission));
 
     if (submission.status === SubmissionStatus.FAILED) {
@@ -167,6 +198,7 @@ export function AdminDashboardProvider({
   }
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
+    console.debug("Received announcement:", announcement);
     dispatch(adminDashboardSlice.actions.mergeAnnouncement(announcement));
 
     if (announcement.member.id !== session?.member.id) {
@@ -178,6 +210,7 @@ export function AdminDashboardProvider({
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
+    console.debug("Received clarification:", clarification);
     dispatch(adminDashboardSlice.actions.mergeClarification(clarification));
     if (!clarification.parentId) {
       toast.info(messages.newClarification);
@@ -185,6 +218,7 @@ export function AdminDashboardProvider({
   }
 
   function deleteClarification({ id }: { id: string }) {
+    console.debug("Received clarification deletion:", id);
     dispatch(adminDashboardSlice.actions.deleteClarification(id));
   }
 
@@ -197,8 +231,9 @@ export function AdminDashboardProvider({
 
   return (
     <>
+      {isFrozen && <FreezeBanner />}
       {listenerStatus === ListenerStatus.LOST_CONNECTION && (
-        <DisconnectionAlert />
+        <DisconnectionBanner />
       )}
       {children}
     </>

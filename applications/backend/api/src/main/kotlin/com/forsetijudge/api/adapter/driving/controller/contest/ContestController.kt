@@ -77,7 +77,8 @@ class ContestController(
         @RequestBody body: UpdateContestInputDTO,
     ): ResponseEntity<ContestFullResponseDTO> {
         logger.info("[PUT] /v1/contests - $body")
-        val contest = updateContestUseCase.update(contestId, body)
+        val member = RequestContext.getContext().session!!.member
+        val contest = updateContestUseCase.update(contestId, member.id, body)
         return ResponseEntity.ok(contest.toFullResponseDTO())
     }
 

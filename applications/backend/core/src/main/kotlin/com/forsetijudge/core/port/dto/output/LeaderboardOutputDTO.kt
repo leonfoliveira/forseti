@@ -6,6 +6,7 @@ import java.util.UUID
 
 data class LeaderboardOutputDTO(
     val contestId: UUID,
+    val isFrozen: Boolean,
     val slug: String,
     val startAt: OffsetDateTime,
     val members: List<MemberDTO>,

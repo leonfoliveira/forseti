@@ -156,6 +156,7 @@ Represents a competitive programming contest.
 | problems       | Problem[]       | List of problems in the contest                      | []            |
 | clarifications | Clarification[] | List of clarifications made in the contest           | []            |
 | announcements  | Announcement[]  | List of announcements made in the contest            | []            |
+| version        | int             | Version number for optimistic locking                | 1             |
 
 ##### Settings
 
@@ -187,6 +188,7 @@ Represents a user or participant in the platform or a specific contest.
 | login       | string       | Login identifier                        |               |
 | password    | string       | Hashed password for authentication      |               |
 | submissions | Submission[] | List of submissions made by this member | []            |
+| version     | int          | Version number for optimistic locking   | 1             |
 
 ##### Type
 
@@ -216,6 +218,7 @@ Represents a programming problem in a contest.
 | memoryLimit | int          | Memory limit in megabytes                         |               |
 | testCases   | Attachment   | Test cases attachment for judging                 |               |
 | submissions | Submission[] | List of submissions made for this problem         | []            |
+| version     | int          | Version number for optimistic locking             | 1             |
 
 #### Submission
 
@@ -234,6 +237,7 @@ Represents a code submission for a problem.
 | answer     | Answer      | Judging result                         | NO_ANSWER     |
 | code       | Attachment  | Code attachment                        |               |
 | executions | Execution[] | List of executions for this submission | []            |
+| version    | int         | Version number for optimistic locking  | 1             |
 
 ##### Status
 
@@ -279,6 +283,7 @@ Represents a single execution of a submission against test cases.
 | lastTestCase   | int?       | Index of the last test case executed | null          |
 | input          | Attachment | Input attachment for the execution   |               |
 | output         | Attachment | Output attachment from the execution |               |
+| version        | int        | Version number for optimistic locking | 1            |
 
 #### Clarification
 
@@ -296,6 +301,7 @@ Represents a question and answer thread about a contest or problem.
 | parent    | Clarification?  | Parent clarification (if this is a response)  | null          |
 | text      | string          | Text content of the question or answer        |               |
 | children  | Clarification[] | List of responses to this clarification       | []            |
+| version   | int             | Version number for optimistic locking         | 1             |
 
 #### Announcement
 
@@ -310,6 +316,7 @@ Represents an official announcement in a contest.
 | contest   | Contest    | Contest to which this announcement belongs |               |
 | member    | Member     | Member who made the announcement           |               |
 | text      | string     | Text content of the announcement           |               |
+| version   | int        | Version number for optimistic locking      | 1             |
 
 #### Attachment
 
@@ -326,6 +333,7 @@ Represents a file attachment stored in object storage.
 | filename    | string     | Original filename                           |               |
 | contentType | string     | MIME type of the file                       |               |
 | context     | Context    | Purpose of the attachment                   |               |
+| version     | int        | Version number for optimistic locking       | 1             |
 
 ##### Context
 
@@ -349,6 +357,7 @@ Represents an authentication session for a member.
 | csrfToken | string     | CSRF token for the session           |               |
 | member    | Member     | Member to which this session belongs |               |
 | expiresAt | timestamp  | Timestamp when the session expires   |               |
+| version   | int        | Version number for optimistic locking | 1             |
 
 ## API
 
@@ -446,7 +455,8 @@ Get current session
     "type": "Member.Type",
     "name": "string"
   },
-  "expiresAt": "timestamp"
+  "expiresAt": "timestamp",
+  "version": 1
 }
 ```
 
@@ -477,7 +487,8 @@ Create a contest
   "endAt": "timestamp",
   "settings": {
     "isAutoJudgeEnabled": "boolean"
-  }
+  },
+  "version": 1
 }
 ```
 
@@ -491,13 +502,15 @@ Create a contest
   "languages": ["Language"],
   "startAt": "timestamp",
   "endAt": "timestamp",
+  "autoFreezeAt": "timestamp",
   "settings": {
     "isAutoJudgeEnabled": "boolean"
   },
   "members": [],
   "problems": [],
   "clarifications": [],
-  "announcements": []
+  "announcements": [],
+  "version": 1
 }
 ```
 
@@ -517,9 +530,15 @@ Update a contest
   "languages": ["Language"],
   "startAt": "timestamp",
   "endAt": "timestamp",
+  "autoFreezeAt": "timestamp",
   "settings": {
     "isAutoJudgeEnabled": "boolean"
-  }
+  },
+  "members": [],
+  "problems": [],
+  "clarifications": [],
+  "announcements": [],
+  "version": 1
 }
 ```
 
@@ -558,7 +577,8 @@ Find all contest metadata
     "slug": "string",
     "title": "string",
     "startAt": "timestamp",
-    "endAt": "timestamp"
+    "endAt": "timestamp",
+    "version": 1
   }
 ]
 ```
@@ -577,7 +597,8 @@ Find contest metadata by slug
   "slug": "string",
   "title": "string",
   "startAt": "timestamp",
-  "endAt": "timestamp"
+  "endAt": "timestamp",
+  "version": 1
 }
 ```
 
@@ -599,7 +620,8 @@ Find contest by id
   "endAt": "timestamp",
   "problems": [],
   "clarifications": [],
-  "announcements": []
+  "announcements": [],
+  "version": 1
 }
 ```
 
@@ -625,7 +647,8 @@ Find full contest by id (includes all members)
   "members": [],
   "problems": [],
   "clarifications": [],
-  "announcements": []
+  "announcements": [],
+  "version": 1
 }
 ```
 
@@ -643,7 +666,8 @@ Force start a contest
   "slug": "string",
   "title": "string",
   "startAt": "timestamp",
-  "endAt": "timestamp"
+  "endAt": "timestamp",
+  "version": 1
 }
 ```
 
@@ -661,7 +685,8 @@ Force end a contest
   "slug": "string",
   "title": "string",
   "startAt": "timestamp",
-  "endAt": "timestamp"
+  "endAt": "timestamp",
+  "version": 1
 }
 ```
 
@@ -698,7 +723,8 @@ Sign in to a contest
     "type": "Member.Type",
     "name": "string"
   },
-  "expiresAt": "timestamp"
+  "expiresAt": "timestamp",
+  "version": 1
 }
 ```
 
@@ -708,7 +734,7 @@ Sign in to a contest
 
 Create an announcement
 
-**Authorization:** Admin, Judge
+**Authorization:** Admin
 
 **Request Body**
 
@@ -729,7 +755,8 @@ Create an announcement
     "type": "Member.Type",
     "name": "string"
   },
-  "text": "string"
+  "text": "string",
+  "version": 1
 }
 ```
 
@@ -756,7 +783,8 @@ Upload an attachment
   "id": "uuid",
   "filename": "string",
   "contentType": "string",
-  "context": "Attachment.Context"
+  "context": "Attachment.Context",
+  "version": 1
 }
 ```
 
@@ -806,7 +834,8 @@ Create a clarification
     "id": "uuid"
   },
   "text": "string",
-  "children": []
+  "children": [],
+  "version": 1
 }
 ```
 
@@ -830,19 +859,47 @@ Find contest leaderboard by id
 
 ```json
 {
-  "rows": [
+  "contestId": "uuid",
+  "isFrozen": "boolean",
+  "slug": "string",
+  "startAt": "timestamp",
+  "members": [
     {
-      "member": {
-        "id": "uuid",
-        "name": "string"
-      },
-      "solved": "int",
-      "penalty": "int",
-      "problems": []
+      "id": "uuid",
+      "name": "string",
+      "score": 1,
+      "penalty": 1,
+      "problems": [
+        {
+          "id": "uuid",
+          "letter": "char",
+          "isAccepted": "boolean",
+          "acceptedAt": "timestamp",
+          "wrongSubmissions": 1,
+          "penalty": 1
+        }
+      ]
     }
-  ]
+  ],
+  "issuedAt": "timestamp"
 }
 ```
+
+**[PUT] /v1/contests/{contestId}/leaderboard:freeze**
+
+Freeze the contest leaderboard
+
+**Authorization:** Admin
+
+**Response:** 204 No Content
+
+**[PUT] /v1/contests/{contestId}/leaderboard:unfreeze**
+
+Unfreeze the contest leaderboard
+
+**Authorization:** Admin
+
+**Response:** 204 No Content
 
 #### Submissions
 
@@ -885,7 +942,8 @@ Create a submission
     "id": "uuid",
     "filename": "string"
   },
-  "executions": []
+  "executions": [],
+  "version": 1
 }
 ```
 
@@ -911,7 +969,8 @@ Find all contest submissions
       "letter": "char"
     },
     "language": "Language",
-    "answer": "Submission.Answer"
+    "answer": "Submission.Answer",
+    "version": 1
   }
 ]
 ```
@@ -946,7 +1005,8 @@ Find all contest full submissions
       "id": "uuid",
       "filename": "string"
     },
-    "executions": []
+    "executions": [],
+    "version": 1
   }
 ]
 ```
@@ -981,7 +1041,8 @@ Find all full submissions for current member
       "id": "uuid",
       "filename": "string"
     },
-    "executions": []
+    "executions": [],
+    "version": 1
   }
 ]
 ```
@@ -1037,7 +1098,8 @@ Broadcasts new announcements created in the contest
     "type": "Member.Type",
     "name": "string"
   },
-  "text": "string"
+  "text": "string",
+  "version": 1
 }
 ```
 
@@ -1065,7 +1127,8 @@ Broadcasts new clarifications (questions) created in the contest
     "id": "uuid"
   },
   "text": "string",
-  "children": []
+  "children": [],
+  "version": 1
 }
 ```
 
@@ -1087,36 +1150,42 @@ Broadcasts when a clarification is deleted
 }
 ```
 
-**/topic/contests/{contestId}/leaderboard**
+**/topic/contests/{contestId}/leaderboard/partial**
 
-Broadcasts updated leaderboard data whenever submissions are judged
+Broadcasts an update for a leaderboard row
 
 **Message Format:**
 
 ```json
 {
+  "memberId": "uuid",
+  "problemId": "uuid",
+  "letter": "char",
+  "isAccepted": "boolean",
+  "acceptedAt": "timestamp",
+  "wrongSubmissions": "int",
+  "penalty": "int"
+}
+```
+
+**/topic/contests/{contestId}/leaderboard/freeze**
+
+Broadcasts an update that the leaderboard is frozen
+
+```json
+{
   "contestId": "uuid",
-  "slug": "string",
-  "startAt": "timestamp",
-  "issuedAt": "timestamp",
-  "members": [
-    {
-      "id": "uuid",
-      "name": "string",
-      "score": "int",
-      "penalty": "int",
-      "problems": [
-        {
-          "id": "uuid",
-          "letter": "char",
-          "isAccepted": "boolean",
-          "acceptedAt": "timestamp",
-          "wrongSubmissions": "int",
-          "penalty": "int"
-        }
-      ]
-    }
-  ]
+}
+```
+
+**/topic/contests/{contestId}/leaderboard/unfreeze**
+
+Broadcasts an update that the leaderboard is unfrozen with the update leaderboard and submissions created during the frozen period
+
+```json
+{
+  "leaderboard": {},
+  "frozenSubmissions": []
 }
 ```
 
@@ -1139,7 +1208,8 @@ Broadcasts public submission updates (visible to all contest participants)
     "letter": "char"
   },
   "language": "Language",
-  "answer": "Submission.Answer"
+  "answer": "Submission.Answer",
+  "version": 1
 }
 ```
 
@@ -1170,7 +1240,8 @@ Broadcasts full submission updates (for judges and admins with detailed executio
     "id": "uuid",
     "filename": "string"
   },
-  "executions": []
+  "executions": [],
+  "version": 1
 }
 ```
 
@@ -1219,5 +1290,3 @@ Executes a submission in a sandbox environment, evaluates the results, and sends
   "submissionId": "uuid"
 }
 ```
-
-</details>

@@ -1,8 +1,10 @@
 package com.forsetijudge.core.application.service.submission
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
@@ -23,6 +25,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkConstructor
 import io.mockk.slot
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
@@ -47,8 +50,13 @@ class CreateSubmissionServiceTest :
                 applicationEventPublisher,
             )
 
+        val contestAuthorizer = mockk<ContestAuthorizer>(relaxed = true)
+
         beforeEach {
             clearAllMocks()
+            mockkConstructor(ContestAuthorizer::class)
+            every { anyConstructed<ContestAuthorizer>().checkContestStarted() } returns contestAuthorizer
+            every { anyConstructed<ContestAuthorizer>().checkMemberType(*anyVararg<Member.Type>()) } returns contestAuthorizer
         }
 
         context("create") {
@@ -144,25 +152,6 @@ class CreateSubmissionServiceTest :
                 shouldThrow<ForbiddenException> {
                     sut.create(contestId, memberId, inputDTO)
                 }.message shouldBe "Language ${inputDTO.language} is not allowed for this contest"
-            }
-
-            test("should throw ForbiddenException when contest is not active") {
-                val contest =
-                    ContestMockBuilder.build(
-                        languages = listOf(Submission.Language.PYTHON_312),
-                        startAt = OffsetDateTime.now().plusHours(1),
-                    )
-                val member = MemberMockBuilder.build()
-                val problem = ProblemMockBuilder.build()
-                val attachment = AttachmentMockBuilder.build()
-                every { contestRepository.findEntityById(contestId) } returns contest
-                every { memberRepository.findEntityById(memberId) } returns member
-                every { problemRepository.findByIdAndContestId(problemId, contestId) } returns problem
-                every { attachmentRepository.findByIdAndContestId(inputDTO.code.id, contestId) } returns attachment
-
-                shouldThrow<ForbiddenException> {
-                    sut.create(contestId, memberId, inputDTO)
-                }.message shouldBe "Contest is not active"
             }
 
             test("should create submission and publish events") {

@@ -77,7 +77,8 @@ describe("SubmissionsPage", () => {
           submissions={submissions}
           memberSubmissions={memberSubmissions}
           problems={problems}
-          canCreate={true}
+          canCreate
+          onCreate={() => {}}
           canEdit={false}
         />,
         { contestMetadata },
@@ -95,6 +96,7 @@ describe("SubmissionsPage", () => {
           memberSubmissions={memberSubmissions}
           problems={problems}
           canCreate={true}
+          onCreate={() => {}}
           canEdit={false}
         />,
         { contestMetadata },
@@ -116,7 +118,8 @@ describe("SubmissionsPage", () => {
           submissions={submissions}
           memberSubmissions={memberSubmissions}
           problems={problems}
-          canCreate={true}
+          canCreate
+          onCreate={() => {}}
           canEdit={false}
         />,
         { contestMetadata: endedContestMetadata },

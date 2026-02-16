@@ -20,4 +20,18 @@ describe("LeaderboardService", () => {
       expect(result).toEqual(expectedResult);
     });
   });
+
+  describe("freeze", () => {
+    it("should call LeaderboardRepository.freeze with the correct parameters", async () => {
+      await sut.freeze(contestId);
+      expect(LeaderboardRepository.freeze).toHaveBeenCalledWith(contestId);
+    });
+  });
+
+  describe("unfreeze", () => {
+    it("should call LeaderboardRepository.unfreeze with the correct parameters", async () => {
+      await sut.unfreeze(contestId);
+      expect(LeaderboardRepository.unfreeze).toHaveBeenCalledWith(contestId);
+    });
+  });
 });

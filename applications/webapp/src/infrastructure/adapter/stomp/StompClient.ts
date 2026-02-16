@@ -75,6 +75,7 @@ export class StompClient implements ListenerClient {
     }
 
     this.client.subscribe(topic, (message) => {
+      console.debug(`Received message on topic ${topic}:`, message);
       const data = JSON.parse(message.body) as TData;
       callback(data);
     });

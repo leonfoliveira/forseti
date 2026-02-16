@@ -57,13 +57,25 @@ const messages = defineMessages({
 
 type Props = {
   announcements: AnnouncementResponseDTO[];
-  canCreate?: boolean;
-};
+} & (
+  | {
+      canCreate: true;
+      onCreate: (announcement: AnnouncementResponseDTO) => void;
+    }
+  | {
+      canCreate?: false;
+      onCreate?: (announcement: AnnouncementResponseDTO) => void;
+    }
+);
 
 /**
  * Displays the announcements page where users can view and create announcements.
  **/
-export function AnnouncementsPage({ announcements, canCreate = false }: Props) {
+export function AnnouncementsPage({
+  announcements,
+  canCreate = false,
+  onCreate,
+}: Props) {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 
@@ -71,10 +83,11 @@ export function AnnouncementsPage({ announcements, canCreate = false }: Props) {
     <Page title={messages.pageTitle} description={messages.pageDescription}>
       <div className="flex flex-col items-center py-5">
         {/* Create Form */}
-        {canCreate && isCreateFormOpen && (
+        {canCreate && onCreate && isCreateFormOpen && (
           <AnnouncementsPageForm
             contestId={contestId}
             onClose={() => setIsCreateFormOpen(false)}
+            onCreate={onCreate}
           />
         )}
         {canCreate && !isCreateFormOpen && (

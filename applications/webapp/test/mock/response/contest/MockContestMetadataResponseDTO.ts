@@ -13,6 +13,7 @@ export function MockContestMetadataResponseDTO(
     languages: [SubmissionLanguage.CPP_17, SubmissionLanguage.JAVA_21],
     startAt: "2025-01-01T10:00:00Z",
     endAt: "2025-01-01T15:00:00Z",
+    version: 1,
     ...partial,
   };
 }

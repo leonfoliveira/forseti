@@ -13,6 +13,7 @@ data class ProblemPublicResponseDTO(
     val description: AttachmentResponseDTO,
     val timeLimit: Int,
     val memoryLimit: Int,
+    val version: Long,
 ) : Serializable
 
 fun Problem.toPublicResponseDTO(): ProblemPublicResponseDTO =
@@ -23,4 +24,5 @@ fun Problem.toPublicResponseDTO(): ProblemPublicResponseDTO =
         description = this.description.toResponseDTO(),
         timeLimit = this.timeLimit,
         memoryLimit = this.memoryLimit,
+        version = this.version,
     )

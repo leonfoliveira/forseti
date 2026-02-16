@@ -32,6 +32,7 @@ import { useAppSelector } from "@/app/_store/store";
 import { submissionWritter } from "@/config/composition";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
+import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
@@ -81,9 +82,10 @@ const messages = defineMessages({
 type Props = {
   onClose: () => void;
   problems: ProblemPublicResponseDTO[];
+  onCreate: (submission: SubmissionFullResponseDTO) => void;
 };
 
-export function SubmissionsPageForm({ onClose, problems }: Props) {
+export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const createSubmissionState = useLoadableState();
   const toast = useToast();
@@ -97,10 +99,12 @@ export function SubmissionsPageForm({ onClose, problems }: Props) {
   async function createSubmission(data: SubmissionFormType) {
     createSubmissionState.start();
     try {
-      await submissionWritter.create(
+      const newSubmission = await submissionWritter.create(
         contestMetadata.id,
         SubmissionForm.toInputDTO(data),
       );
+
+      onCreate(newSubmission);
       form.reset();
       formRef.current?.reset();
       toast.success(messages.createSuccess);

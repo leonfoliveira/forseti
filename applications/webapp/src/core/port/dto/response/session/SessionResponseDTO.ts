@@ -6,4 +6,5 @@ export type SessionResponseDTO = {
   contest?: ContestMetadataResponseDTO;
   member: MemberPublicResponseDTO;
   expiresAt: string;
+  version: number;
 };

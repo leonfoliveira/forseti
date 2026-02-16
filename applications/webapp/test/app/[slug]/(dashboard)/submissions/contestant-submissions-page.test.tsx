@@ -36,6 +36,7 @@ describe("ContestantSubmissionsPage", () => {
         submissions,
         problems,
         canCreate: true,
+        onCreate: expect.any(Function),
       }),
       undefined,
     );

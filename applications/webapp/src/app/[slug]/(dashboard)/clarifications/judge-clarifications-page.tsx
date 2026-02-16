@@ -3,7 +3,9 @@
 import React from "react";
 
 import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page";
-import { useAppSelector } from "@/app/_store/store";
+import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
+import { useAppDispatch, useAppSelector } from "@/app/_store/store";
+import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 
 export function JudgeClarificationsPage() {
   const problems = useAppSelector(
@@ -12,12 +14,21 @@ export function JudgeClarificationsPage() {
   const clarifications = useAppSelector(
     (state) => state.judgeDashboard.contest.clarifications,
   );
+  const dispatch = useAppDispatch();
 
   return (
     <ClarificationsPage
       problems={problems}
       clarifications={clarifications}
       canAnswer
+      onAnswer={(clarification: ClarificationResponseDTO) => {
+        dispatch(judgeDashboardSlice.actions.mergeClarification(clarification));
+      }}
+      onDelete={(clarificationId: string) => {
+        dispatch(
+          judgeDashboardSlice.actions.deleteClarification(clarificationId),
+        );
+      }}
     />
   );
 }

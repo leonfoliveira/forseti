@@ -4,6 +4,7 @@ import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
+import com.forsetijudge.core.domain.event.ContestDeletedEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
@@ -18,6 +19,7 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 
 class DeleteContestServiceTest :
@@ -25,12 +27,14 @@ class DeleteContestServiceTest :
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val problemRepository = mockk<ProblemRepository>(relaxed = true)
+        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
         val sut =
             DeleteContestService(
-                contestRepository = contestRepository,
-                memberRepository = memberRepository,
-                problemRepository = problemRepository,
+                contestRepository,
+                memberRepository,
+                problemRepository,
+                applicationEventPublisher,
             )
 
         beforeEach {
@@ -66,6 +70,13 @@ class DeleteContestServiceTest :
 
                 contest.deletedAt shouldNotBe null
                 verify { contestRepository.save(contest) }
+                verify {
+                    applicationEventPublisher.publishEvent(
+                        match {
+                            it is ContestDeletedEvent && it.contest == contest
+                        },
+                    )
+                }
             }
         }
 

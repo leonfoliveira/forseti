@@ -17,6 +17,7 @@ data class ClarificationResponseDTO(
     val parentId: UUID? = null,
     val text: String,
     val children: List<ClarificationResponseDTO>,
+    val version: Long,
 ) : Serializable
 
 fun Clarification.toResponseDTO(): ClarificationResponseDTO =
@@ -28,4 +29,5 @@ fun Clarification.toResponseDTO(): ClarificationResponseDTO =
         parentId = this.parent?.id,
         text = this.text,
         children = this.children.map { it.toResponseDTO() },
+        version = this.version,
     )

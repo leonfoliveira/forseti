@@ -8,6 +8,7 @@ data class AttachmentResponseDTO(
     val id: UUID,
     val filename: String,
     val contentType: String,
+    val version: Long,
 ) : Serializable
 
 fun Attachment.toResponseDTO(): AttachmentResponseDTO =
@@ -15,4 +16,5 @@ fun Attachment.toResponseDTO(): AttachmentResponseDTO =
         id = this.id,
         filename = this.filename,
         contentType = this.contentType,
+        version = this.version,
     )

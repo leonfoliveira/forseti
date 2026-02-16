@@ -20,6 +20,7 @@ data class SubmissionFullResponseDTO(
     val answer: Submission.Answer,
     val code: AttachmentResponseDTO,
     val createdAt: OffsetDateTime,
+    val version: Long,
 ) : Serializable
 
 fun Submission.toFullResponseDTO(): SubmissionFullResponseDTO =
@@ -32,4 +33,5 @@ fun Submission.toFullResponseDTO(): SubmissionFullResponseDTO =
         answer = answer,
         code = code.toResponseDTO(),
         createdAt = createdAt,
+        version = version,
     )

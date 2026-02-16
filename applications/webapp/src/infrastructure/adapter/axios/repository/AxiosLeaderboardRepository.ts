@@ -14,4 +14,12 @@ export class AxiosLeaderboardRepository implements LeaderboardRepository {
     );
     return result.data;
   }
+
+  async freeze(contestId: string): Promise<void> {
+    await this.axiosClient.put(`${this.basePath(contestId)}:freeze`);
+  }
+
+  async unfreeze(contestId: string): Promise<void> {
+    await this.axiosClient.put(`${this.basePath(contestId)}:unfreeze`);
+  }
 }

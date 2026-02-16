@@ -77,6 +77,15 @@ describe("contestantDashboardSlice", () => {
     );
   });
 
+  it("should set the leaderboard as frozen", () => {
+    const state = contestantDashboardSlice.reducer(
+      stateWithData,
+      contestantDashboardSlice.actions.setLeaderboardIsFrozen(true),
+    );
+
+    expect(state.leaderboard.isFrozen).toBe(true);
+  });
+
   it("should merge a new submission", () => {
     const newSubmission = MockSubmissionPublicResponseDTO();
 
@@ -94,6 +103,7 @@ describe("contestantDashboardSlice", () => {
       ...stateWithData.submissions[0],
       status: SubmissionStatus.JUDGED,
       answer: SubmissionAnswer.WRONG_ANSWER,
+      version: 2,
     };
 
     const state = contestantDashboardSlice.reducer(
@@ -103,6 +113,23 @@ describe("contestantDashboardSlice", () => {
 
     expect(state.submissions).toHaveLength(1);
     expect(state.submissions[0]).toEqual(updatedSubmission);
+  });
+
+  it("should merge a batch of new submissions", () => {
+    const newSubmissions = [
+      MockSubmissionPublicResponseDTO(),
+      MockSubmissionPublicResponseDTO(),
+    ];
+
+    const state = contestantDashboardSlice.reducer(
+      stateWithData,
+      contestantDashboardSlice.actions.mergeSubmissionBatch(newSubmissions),
+    );
+
+    expect(state.submissions).toHaveLength(3);
+    expect(state.submissions).toEqual(
+      expect.arrayContaining([...stateWithData.submissions, ...newSubmissions]),
+    );
   });
 
   it("should merge a new member submission", () => {

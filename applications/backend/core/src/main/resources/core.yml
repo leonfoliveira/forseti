@@ -1,18 +1,27 @@
 spring:
   application:
     version: ${VERSION:latest}
-jpa:
+  quartz:
+    job-store-type: jdbc
+    properties:
+      org:
+        quartz:
+          jobStore:
+            isClustered: true
+            clusterCheckinInterval: 20000
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            tablePrefix: QRTZ_
   jpa:
     show-sql: false
-  hibernate:
-    ddl-auto: validate
-  properties:
-    hibernate:
-      dialect: org.hibernate.dialect.PostgreSQLDialect
-      jdbc:
-        time_zone: UTC
-  flyway:
-    enabled: false
+    properties:
+      hibernate:
+        ddl-auto: validate
+        jdbc:
+          time_zone: UTC
+      org:
+        hibernate:
+          envers:
+            do_not_audit_optimistic_locking_field: false
 external:
   api:
     url: ${API_URL:http://localhost:8080}

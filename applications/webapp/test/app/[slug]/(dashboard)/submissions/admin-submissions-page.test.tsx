@@ -36,6 +36,7 @@ describe("AdminSubmissionsPage", () => {
         submissions,
         problems,
         canEdit: true,
+        onEdit: expect.any(Function),
       }),
       undefined,
     );

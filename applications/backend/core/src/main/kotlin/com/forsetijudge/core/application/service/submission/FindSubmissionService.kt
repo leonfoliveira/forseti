@@ -1,8 +1,8 @@
 package com.forsetijudge.core.application.service.submission
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
-import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -65,9 +65,8 @@ class FindSubmissionService(
                     ?: throw NotFoundException("Could not find member with id = $it")
             }
 
-        if (!contest.hasStarted() && !setOf(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE).contains(member?.type)) {
-            throw ForbiddenException("Contest has not started yet")
-        }
+        ContestAuthorizer(contest, member)
+            .checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
 
         val submissions =
             contest.problems
@@ -76,6 +75,31 @@ class FindSubmissionService(
                 }.flatten()
 
         logger.info("Found ${submissions.size} submissions")
+        return submissions.sortedBy { it.createdAt }
+    }
+
+    /**
+     * Finds all submissions for a specific contest that were made since the last leaderboard freeze.
+     *
+     * @param contestId The ID of the contest.
+     * @return A list of submissions for the contest since the last freeze.
+     */
+    @Transactional(readOnly = true)
+    override fun findAllByContestSinceLastFreeze(contestId: UUID): List<Submission> {
+        logger.info("Finding all submissions for contest with id: $contestId since last freeze")
+
+        val contest =
+            contestRepository.findEntityById(contestId)
+                ?: throw NotFoundException("Could not find contest with id = $contestId")
+
+        if (contest.frozenAt == null) {
+            logger.info("No freeze time found for contest")
+            return listOf()
+        }
+
+        val submissions = submissionRepository.findByContestIdAndCreatedAtGreaterThanEqual(contest.id, contest.frozenAt!!)
+
+        logger.info("Found ${submissions.size} submissions since last freeze")
         return submissions.sortedBy { it.createdAt }
     }
 

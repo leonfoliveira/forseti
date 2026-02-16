@@ -25,7 +25,6 @@ describe("JudgeAnnouncementsPage", () => {
     expect(AnnouncementsPage).toHaveBeenCalledWith(
       expect.objectContaining({
         announcements,
-        canCreate: true,
       }),
       undefined,
     );

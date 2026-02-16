@@ -41,9 +41,11 @@ class WebSocketTopicConfigsTest :
                         "/topic/contests/[a-fA-F0-9-]+/clarifications",
                         "/topic/contests/[a-fA-F0-9-]+/clarifications/children/members/[a-fA-F0-9-]+",
                         "/topic/contests/[a-fA-F0-9-]+/clarifications/deleted",
-                        "/topic/contests/[a-fA-F0-9-]+/leaderboard",
+                        "/topic/contests/[a-fA-F0-9-]+/leaderboard/freeze",
+                        "/topic/contests/[a-fA-F0-9-]+/leaderboard/unfreeze",
                         "/topic/contests/[a-fA-F0-9-]+/leaderboard/partial",
                         "/topic/contests/[a-fA-F0-9-]+/submissions",
+                        "/topic/contests/[a-fA-F0-9-]+/submissions/batch",
                         "/topic/contests/[a-fA-F0-9-]+/submissions/full",
                         "/topic/contests/[a-fA-F0-9-]+/submissions/full/members/[a-fA-F0-9-]+",
                         ".*",
@@ -62,7 +64,6 @@ class WebSocketTopicConfigsTest :
                         listOf(
                             "/topic/contests/$contestId/announcements",
                             "/topic/contests/$contestId/clarifications",
-                            "/topic/contests/$contestId/leaderboard",
                             "/topic/contests/$contestId/submissions",
                         )
 
@@ -268,8 +269,8 @@ class WebSocketTopicConfigsTest :
                 }
             }
 
-            context("leaderboard filter") {
-                val destination = "/topic/contests/${startedContest.id}/leaderboard"
+            context("leaderboard freeze filter") {
+                val destination = "/topic/contests/${startedContest.id}/leaderboard/freeze"
 
                 test("should allow access when contest has started") {
                     every { findContestUseCase.findById(startedContest.id) } returns startedContest
@@ -285,7 +286,38 @@ class WebSocketTopicConfigsTest :
                 }
 
                 test("should throw ForbiddenException when contest has not started") {
-                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard"
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard/freeze"
+                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(notStartedDestination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(notStartedDestination)
+                    }
+                }
+            }
+
+            context("leaderboard unfreeze filter") {
+                val destination = "/topic/contests/${startedContest.id}/leaderboard/unfreeze"
+
+                test("should allow access when contest has started") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when contest has not started") {
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard/unfreeze"
                     every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
 
                     val filter =
@@ -348,6 +380,37 @@ class WebSocketTopicConfigsTest :
 
                 test("should throw ForbiddenException when contest has not started") {
                     val notStartedDestination = "/topic/contests/${notStartedContest.id}/submissions"
+                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(notStartedDestination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(notStartedDestination)
+                    }
+                }
+            }
+
+            context("submissions batch filter") {
+                val destination = "/topic/contests/${startedContest.id}/submissions/batch"
+
+                test("should allow access when contest has started") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when contest has not started") {
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/submissions/batch"
                     every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
 
                     val filter =

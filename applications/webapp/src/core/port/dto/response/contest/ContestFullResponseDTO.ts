@@ -11,6 +11,7 @@ export type ContestFullResponseDTO = {
   languages: SubmissionLanguage[];
   startAt: string;
   endAt: string;
+  autoFreezeAt?: string;
   settings: {
     isAutoJudgeEnabled: boolean;
   };
@@ -18,4 +19,5 @@ export type ContestFullResponseDTO = {
   clarifications: ClarificationResponseDTO[];
   members: MemberFullResponseDTO[];
   problems: ProblemFullResponseDTO[];
+  version: number;
 };

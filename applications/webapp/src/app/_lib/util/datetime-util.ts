@@ -30,4 +30,10 @@ export class DateTimeUtil {
     const endDate = new Date(end);
     return endDate.getTime() - startDate.getTime();
   }
+
+  static isLessOrEqual(isoString1: string, isoString2: string): boolean {
+    const date1 = new Date(isoString1);
+    const date2 = new Date(isoString2);
+    return date1.getTime() <= date2.getTime();
+  }
 }

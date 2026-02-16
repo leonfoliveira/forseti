@@ -27,6 +27,7 @@ class Contest(
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
+    version: Long = 1L,
     /**
      * A unique identifier for the contest, typically a slug that is used in URLs.
      */
@@ -54,6 +55,16 @@ class Contest(
      */
     @Column(name = "end_at", nullable = false)
     var endAt: OffsetDateTime,
+    /**
+     * The time when the leaderboard will be automatically frozen.
+     */
+    @Column(name = "auto_freeze_at")
+    var autoFreezeAt: OffsetDateTime? = null,
+    /**
+     * The time when the leaderboard has been frozen.
+     */
+    @Column(name = "frozen_at")
+    var frozenAt: OffsetDateTime? = null,
     /**
      * Settings to control various aspects of the contest.
      */
@@ -89,12 +100,15 @@ class Contest(
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var announcements: List<Announcement> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deletedAt) {
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     fun hasStarted(): Boolean = !startAt.isAfter(OffsetDateTime.now())
+
+    fun hasFinished(): Boolean = !endAt.isAfter(OffsetDateTime.now())
 
     fun isActive(): Boolean = hasStarted() && !hasFinished()
 
-    fun hasFinished(): Boolean = !endAt.isAfter(OffsetDateTime.now())
+    val isFrozen: Boolean
+        get() = frozenAt != null && !frozenAt!!.isAfter(OffsetDateTime.now())
 
     data class Settings(
         var isAutoJudgeEnabled: Boolean = true,

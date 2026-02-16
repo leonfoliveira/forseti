@@ -25,6 +25,7 @@ class Problem(
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
+    version: Long = 1L,
     /**
      * The contest to which this problem belongs.
      */
@@ -73,4 +74,4 @@ class Problem(
     @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var submissions: List<Submission> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deletedAt)
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)

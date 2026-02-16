@@ -8,6 +8,7 @@ import {
 } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { submissionWritter } from "@/config/composition";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -17,12 +18,14 @@ describe("SubmissionsPageActionJudge", () => {
     const contestMetadata = MockContestMetadataResponseDTO();
     const submission = MockSubmissionFullResponseDTO();
     const onClose = jest.fn();
+    const onJudge = jest.fn();
     await renderWithProviders(
       <DropdownMenu open>
         <DropdownMenuContent>
           <SubmissionsPageActionJudge
             submission={submission}
             onClose={onClose}
+            onJudge={onJudge}
           />
         </DropdownMenuContent>
       </DropdownMenu>,
@@ -44,6 +47,10 @@ describe("SubmissionsPageActionJudge", () => {
     );
     expect(useToast().success).toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
+    expect(onJudge).toHaveBeenCalledWith({
+      ...submission,
+      answer: SubmissionAnswer.ACCEPTED,
+    });
   });
 
   it("should handle updateAnswer failure", async () => {
@@ -59,6 +66,7 @@ describe("SubmissionsPageActionJudge", () => {
           <SubmissionsPageActionJudge
             submission={submission}
             onClose={onClose}
+            onJudge={jest.fn()}
           />
         </DropdownMenuContent>
       </DropdownMenu>,

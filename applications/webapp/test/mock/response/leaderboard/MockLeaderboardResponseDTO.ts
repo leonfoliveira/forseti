@@ -7,6 +7,7 @@ export function MockLeaderboardResponseDTO(
 ): LeaderboardResponseDTO {
   return {
     contestId: uuidv4(),
+    isFrozen: false,
     slug: "test-contest",
     startAt: "2025-01-01T10:00:00Z",
     issuedAt: "2025-01-01T15:00:00Z",

@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 
-import { DisconnectionAlert } from "@/app/_lib/component/feedback/disconnection-alert";
+import { DisconnectionBanner } from "@/app/_lib/component/feedback/disconnection-banner";
+import { FreezeBanner } from "@/app/_lib/component/feedback/freeze-banner";
 import { ErrorPage } from "@/app/_lib/component/page/error-page";
 import { LoadingPage } from "@/app/_lib/component/page/loading-page";
 import { useIntl } from "@/app/_lib/hook/intl-hook";
@@ -41,6 +42,14 @@ const messages = defineMessages({
     id: "app._lib.provider.contestant-dashboard-provider.clarification-answer",
     defaultMessage: "New answer for a clarification",
   },
+  frozen: {
+    id: "app._lib.provider.contestant-dashboard-provider.frozen",
+    defaultMessage: "Leaderboard has been frozen",
+  },
+  unfrozen: {
+    id: "app._lib.provider.contestant-dashboard-provider.unfrozen",
+    defaultMessage: "Leaderboard has been unfrozen",
+  },
 });
 
 /**
@@ -55,6 +64,9 @@ export function ContestantDashboardProvider({
   const contestMetadata = useAppSelector((state) => state.contestMetadata);
   const listenerStatus = useAppSelector(
     (state) => state.contestantDashboard.listenerStatus,
+  );
+  const isFrozen = useAppSelector(
+    (state) => state.contestantDashboard.leaderboard?.isFrozen,
   );
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
@@ -92,15 +104,20 @@ export function ContestantDashboardProvider({
         reconnect();
       });
       await Promise.all([
-        leaderboardListener.subscribeForLeaderboard(
-          listenerClientRef.current,
-          contestMetadata.id,
-          receiveLeaderboard,
-        ),
         leaderboardListener.subscribeForLeaderboardPartial(
           listenerClientRef.current,
           contestMetadata.id,
           receiveLeaderboardPartial,
+        ),
+        leaderboardListener.subscribeForLeaderboardFreeze(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveLeaderboardFreeze,
+        ),
+        leaderboardListener.subscribeForLeaderboardUnfreeze(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveLeaderboardUnfreeze,
         ),
         submissionListener.subscribeForContest(
           listenerClientRef.current,
@@ -166,21 +183,39 @@ export function ContestantDashboardProvider({
     };
   }, [session, contestMetadata.id]);
 
-  function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
-    dispatch(contestantDashboardSlice.actions.setLeaderboard(leaderboard));
-  }
-
   function receiveLeaderboardPartial(
     leaderboard: LeaderboardPartialResponseDTO,
   ) {
+    console.debug("Received leaderboard partial update:", leaderboard);
     dispatch(contestantDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
+  function receiveLeaderboardFreeze() {
+    dispatch(contestantDashboardSlice.actions.setLeaderboardIsFrozen(true));
+    toast.info(messages.frozen);
+  }
+
+  function receiveLeaderboardUnfreeze(data: {
+    leaderboard: LeaderboardResponseDTO;
+    frozenSubmissions: SubmissionPublicResponseDTO[];
+  }) {
+    console.debug("Received leaderboard unfreeze:", data);
+    dispatch(contestantDashboardSlice.actions.setLeaderboard(data.leaderboard));
+    dispatch(
+      contestantDashboardSlice.actions.mergeSubmissionBatch(
+        data.frozenSubmissions,
+      ),
+    );
+    toast.info(messages.unfrozen);
+  }
+
   function receiveSubmission(submission: SubmissionPublicResponseDTO) {
+    console.debug("Received submission:", submission);
     dispatch(contestantDashboardSlice.actions.mergeSubmission(submission));
   }
 
   function receiveMemberSubmission(submission: SubmissionPublicResponseDTO) {
+    console.debug("Received member submission:", submission);
     if (submission.answer === SubmissionAnswer.NO_ANSWER) {
       return;
     }
@@ -224,6 +259,7 @@ export function ContestantDashboardProvider({
   }
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
+    console.debug("Received announcement:", announcement);
     dispatch(contestantDashboardSlice.actions.mergeAnnouncement(announcement));
     toast.warning({
       ...messages.announcement,
@@ -232,16 +268,19 @@ export function ContestantDashboardProvider({
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
+    console.debug("Received clarification:", clarification);
     dispatch(
       contestantDashboardSlice.actions.mergeClarification(clarification),
     );
   }
 
   function receiveClarificationAnswer() {
+    console.debug("Received clarification answer");
     toast.info(messages.clarificationAnswer);
   }
 
   function deleteClarification({ id }: { id: string }) {
+    console.debug("Received clarification deletion:", id);
     dispatch(contestantDashboardSlice.actions.deleteClarification(id));
   }
 
@@ -254,8 +293,9 @@ export function ContestantDashboardProvider({
 
   return (
     <>
+      {isFrozen && <FreezeBanner />}
       {listenerStatus === ListenerStatus.LOST_CONNECTION && (
-        <DisconnectionAlert />
+        <DisconnectionBanner />
       )}
       {children}
     </>

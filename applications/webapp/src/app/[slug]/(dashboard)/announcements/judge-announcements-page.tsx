@@ -10,5 +10,5 @@ export function JudgeAnnouncementsPage() {
     (state) => state.judgeDashboard.contest.announcements,
   );
 
-  return <AnnouncementsPage announcements={announcements} canCreate />;
+  return <AnnouncementsPage announcements={announcements} />;
 }

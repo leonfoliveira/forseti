@@ -21,6 +21,7 @@ class Announcement(
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
+    version: Long = 1L,
     /**
      * The contest to which this announcement belongs.
      */
@@ -40,4 +41,4 @@ class Announcement(
      */
     @Column(nullable = false)
     var text: String,
-) : BaseEntity(id, createdAt, updatedAt, deletedAt)
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)

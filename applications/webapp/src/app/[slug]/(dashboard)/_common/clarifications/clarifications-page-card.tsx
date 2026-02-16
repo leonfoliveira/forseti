@@ -28,6 +28,11 @@ import {
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Textarea } from "@/app/_lib/component/shadcn/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/app/_lib/component/shadcn/tooltip";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { clarificationWritter } from "@/config/composition";
@@ -80,18 +85,34 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.clarifications.clarifications-page-card.delete-error",
     defaultMessage: "Failed to delete clarification",
   },
+  deleteTooltip: {
+    id: "app.[slug].(dashboard)._common.clarifications.clarifications-page-card.delete-tooltip",
+    defaultMessage: "Delete",
+  },
 });
 
 type Props = {
   contestId: string;
   clarification: ClarificationResponseDTO;
-  canAnswer?: boolean;
-};
+} & (
+  | {
+      canAnswer: true;
+      onAnswer: (data: ClarificationAnswerFormType) => void;
+      onDelete: (clarificationId: string) => void;
+    }
+  | {
+      canAnswer?: false;
+      onAnswer?: (data: ClarificationAnswerFormType) => void;
+      onDelete?: (clarificationId: string) => void;
+    }
+);
 
 export function ClarificationsPageCard({
   contestId,
   clarification,
   canAnswer,
+  onAnswer,
+  onDelete,
 }: Props) {
   const answerClarificationState = useLoadableState();
   const deleteClarificationState = useLoadableState();
@@ -109,10 +130,12 @@ export function ClarificationsPageCard({
   async function answerClarification(data: ClarificationAnswerFormType) {
     answerClarificationState.start();
     try {
-      await clarificationWritter.create(contestId, {
+      const newClarification = await clarificationWritter.create(contestId, {
         ...ClarificationAnswerForm.toInputDTO(data, clarification.id),
         parentId: clarification.id,
       });
+
+      onAnswer?.(newClarification);
       answerClarificationState.finish();
       form.reset();
       toast.success(messages.createSuccess);
@@ -127,6 +150,8 @@ export function ClarificationsPageCard({
     deleteClarificationState.start();
     try {
       await clarificationWritter.deleteById(contestId, clarification.id);
+
+      onDelete?.(clarification.id);
       deleteClarificationState.finish();
       setIsDeleteDialogOpen(false);
       toast.success(messages.deleteSuccess);
@@ -166,14 +191,21 @@ export function ClarificationsPageCard({
               </p>
               {canAnswer && (
                 <>
-                  <Button
-                    size="xs"
-                    variant="destructive"
-                    data-testid="clarification-delete-button"
-                    onClick={() => setIsDeleteDialogOpen(true)}
-                  >
-                    <TrashIcon />
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="xs"
+                        variant="destructive"
+                        data-testid="clarification-delete-button"
+                        onClick={() => setIsDeleteDialogOpen(true)}
+                      >
+                        <TrashIcon />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <FormattedMessage {...messages.deleteTooltip} />
+                    </TooltipContent>
+                  </Tooltip>
 
                   <ConfirmationDialog
                     isOpen={isDeleteDialogOpen}

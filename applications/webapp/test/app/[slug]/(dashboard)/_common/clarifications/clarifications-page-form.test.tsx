@@ -17,6 +17,7 @@ describe("ClarificationsPageForm", () => {
       <ClarificationsPageForm
         contestId="test-contest"
         onClose={onClose}
+        onCreate={() => {}}
         problems={problems}
       />,
     );
@@ -33,6 +34,7 @@ describe("ClarificationsPageForm", () => {
       <ClarificationsPageForm
         contestId="test-contest"
         onClose={onClose}
+        onCreate={() => {}}
         problems={problems}
       />,
     );
@@ -42,15 +44,18 @@ describe("ClarificationsPageForm", () => {
   });
 
   it("should create clarification when submit button is clicked", async () => {
+    const newClarification = MockClarificationResponseDTO();
     (clarificationWritter.create as jest.Mock).mockResolvedValueOnce(
-      MockClarificationResponseDTO(),
+      newClarification,
     );
 
     const onClose = jest.fn();
+    const onCreate = jest.fn();
     await renderWithProviders(
       <ClarificationsPageForm
         contestId="test-contest"
         onClose={onClose}
+        onCreate={onCreate}
         problems={problems}
       />,
     );
@@ -72,6 +77,7 @@ describe("ClarificationsPageForm", () => {
     });
     expect(useToast().success).toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
+    expect(onCreate).toHaveBeenCalledWith(newClarification);
   });
 
   it("should show error toast when clarification creation fails", async () => {
@@ -85,6 +91,7 @@ describe("ClarificationsPageForm", () => {
         contestId="test-contest"
         onClose={onClose}
         problems={problems}
+        onCreate={() => {}}
       />,
     );
 

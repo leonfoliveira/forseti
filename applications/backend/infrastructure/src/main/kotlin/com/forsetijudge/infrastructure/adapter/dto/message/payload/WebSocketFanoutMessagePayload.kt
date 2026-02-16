@@ -12,3 +12,8 @@ data class WebSocketFanoutMessagePayload(
     val destination: String,
     val payload: Serializable,
 ) : Serializable
+
+data class WebSocketFanoutMessageBatchPayload(
+    val destination: String,
+    val payload: List<Serializable>,
+) : Serializable

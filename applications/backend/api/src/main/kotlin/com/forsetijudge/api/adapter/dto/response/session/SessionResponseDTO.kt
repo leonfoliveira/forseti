@@ -14,6 +14,7 @@ data class SessionResponseDTO(
     val contest: ContestMetadataResponseDTO?,
     val member: MemberPublicResponseDTO,
     val expiresAt: OffsetDateTime,
+    val version: Long,
 ) : Serializable
 
 fun Session.toResponseDTO() =
@@ -22,4 +23,5 @@ fun Session.toResponseDTO() =
         contest = contest?.toMetadataDTO(),
         member = member.toPublicResponseDTO(),
         expiresAt = expiresAt,
+        version = version,
     )

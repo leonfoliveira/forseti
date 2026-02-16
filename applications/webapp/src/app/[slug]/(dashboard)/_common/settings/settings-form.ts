@@ -18,6 +18,7 @@ export type SettingsFormType = {
     };
     startAt: string;
     endAt: string;
+    autoFreezeAt?: string;
     settings: {
       isAutoJudgeEnabled: boolean;
     };
@@ -68,6 +69,10 @@ export class SettingsForm {
       id: "app.[slug].(dashboard)._common.settings.settings-form.languages-required",
       defaultMessage: "At least one language is required",
     },
+    startInvalid: {
+      id: "app.[slug].(dashboard)._common.settings.settings-form.start-invalid",
+      defaultMessage: "Start date is invalid",
+    },
     startRequired: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.start-required",
       defaultMessage: "Start date is required",
@@ -76,6 +81,10 @@ export class SettingsForm {
       id: "app.[slug].(dashboard)._common.settings.settings-form.start-future",
       defaultMessage: "Start date must be in the future",
     },
+    endInvalid: {
+      id: "app.[slug].(dashboard)._common.settings.settings-form.end-invalid",
+      defaultMessage: "End date is invalid",
+    },
     endRequired: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.end-required",
       defaultMessage: "End date is required",
@@ -83,6 +92,22 @@ export class SettingsForm {
     endAfterStart: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.end-after-start",
       defaultMessage: "End date must be after start date",
+    },
+    autoFreezeInvalid: {
+      id: "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-invalid",
+      defaultMessage: "Auto freeze date is invalid",
+    },
+    autoFreezeAfterStart: {
+      id: "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-after-start",
+      defaultMessage: "Auto freeze date must be after start date",
+    },
+    autoFreezeBeforeEnd: {
+      id: "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-before-end",
+      defaultMessage: "Auto freeze date must be before end date",
+    },
+    autoFreezeFuture: {
+      id: "app.[slug].(dashboard)._common.settings.settings-form.auto-freeze-future",
+      defaultMessage: "Auto freeze date must be in the future",
     },
     problemTitleRequired: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.problem-title-required",
@@ -158,7 +183,7 @@ export class SettingsForm {
     },
   });
 
-  static schema = (contestStatus: ContestStatus) =>
+  static schema = (contestStatus: ContestStatus, originalAutoFreeze?: string) =>
     Joi.object({
       contest: Joi.object({
         slug: Joi.string()
@@ -220,8 +245,8 @@ export class SettingsForm {
           .required()
           .messages({
             "any.required": this.messages.startRequired.id,
-            "string.pattern.base": this.messages.startRequired.id,
-            "datetime-local.invalid": this.messages.startRequired.id,
+            "string.pattern.base": this.messages.startInvalid.id,
+            "datetime-local.invalid": this.messages.startInvalid.id,
             "datetime-local.future": this.messages.startFuture.id,
           }),
         endAt: Joi.string()
@@ -246,10 +271,63 @@ export class SettingsForm {
           .required()
           .messages({
             "any.required": this.messages.endRequired.id,
-            "string.pattern.base": this.messages.endRequired.id,
-            "datetime-local.invalid": this.messages.endRequired.id,
+            "string.pattern.base": this.messages.endInvalid.id,
+            "datetime-local.invalid": this.messages.endInvalid.id,
             "datetime-local.after-start": this.messages.endAfterStart.id,
           }),
+        autoFreezeAt: Joi.string()
+          .allow("")
+          .custom((value: string, helpers) => {
+            try {
+              if (value === "" || value === originalAutoFreeze) {
+                return value;
+              }
+
+              const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+              if (!pattern.test(value)) {
+                return helpers.error("datetime-local.invalid");
+              }
+
+              const autoFreezeDate = new Date(value);
+              const startValue = helpers.state.ancestors[0].startAt as string;
+              const endValue = helpers.state.ancestors[0].endAt as string;
+              const now = new Date();
+
+              if (startValue) {
+                const startDate = new Date(startValue);
+                if (autoFreezeDate <= startDate) {
+                  return helpers.error(
+                    "datetime-local.auto-freeze-after-start",
+                  );
+                }
+              }
+
+              if (endValue) {
+                const endDate = new Date(endValue);
+                if (autoFreezeDate >= endDate) {
+                  return helpers.error("datetime-local.auto-freeze-before-end");
+                }
+              }
+
+              if (autoFreezeDate <= now) {
+                return helpers.error("datetime-local.future");
+              }
+
+              return value;
+            } catch {
+              return helpers.error("datetime-local.invalid");
+            }
+          })
+          .messages({
+            "string.pattern.base": this.messages.autoFreezeInvalid.id,
+            "datetime-local.future": this.messages.autoFreezeFuture.id,
+            "datetime-local.invalid": this.messages.autoFreezeInvalid.id,
+            "datetime-local.auto-freeze-after-start":
+              this.messages.autoFreezeAfterStart.id,
+            "datetime-local.auto-freeze-before-end":
+              this.messages.autoFreezeBeforeEnd.id,
+          })
+          .optional(),
         settings: Joi.object({
           isAutoJudgeEnabled: Joi.boolean().required(),
         }).required(),
@@ -394,6 +472,9 @@ export class SettingsForm {
         languages,
         startAt: DateTimeUtil.toDatetimeLocal(contest.startAt),
         endAt: DateTimeUtil.toDatetimeLocal(contest.endAt),
+        autoFreezeAt: contest.autoFreezeAt
+          ? DateTimeUtil.toDatetimeLocal(contest.autoFreezeAt)
+          : "",
         settings: contest.settings,
       },
       members,
@@ -410,6 +491,10 @@ export class SettingsForm {
       ) as SubmissionLanguage[],
       startAt: DateTimeUtil.fromDatetimeLocal(form.contest.startAt),
       endAt: DateTimeUtil.fromDatetimeLocal(form.contest.endAt),
+      autoFreezeAt:
+        form.contest.autoFreezeAt && form.contest.autoFreezeAt.length > 0
+          ? DateTimeUtil.fromDatetimeLocal(form.contest.autoFreezeAt)
+          : undefined,
       settings: form.contest.settings,
       members: form.members.map((member) => ({
         id: member._id,

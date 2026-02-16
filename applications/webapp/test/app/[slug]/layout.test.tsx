@@ -1,8 +1,12 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { redirect } from "next/navigation";
 import React from "react";
 
 import ContestLayout from "@/app/[slug]/layout";
 import { sessionReader, contestReader } from "@/config/composition";
+import { routes } from "@/config/routes";
+import { NotFoundException } from "@/core/domain/exception/NotFoundException";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/_lib/component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading-page" />,
@@ -45,20 +49,24 @@ describe("ContestLayout", () => {
   const mockContestMetadata = { id: "contest-1", slug: "test-contest" };
   const mockSession = { id: "session-1", contest: mockContestMetadata };
 
-  it("renders loading state initially", () => {
-    render(
+  it("redirects to 404 page on NotFoundException", async () => {
+    const error = new NotFoundException("Contest not found");
+    (sessionReader.getCurrent as jest.Mock).mockRejectedValueOnce(error);
+
+    await renderWithProviders(
       <ContestLayout>
         <TestChildren />
       </ContestLayout>,
     );
-    expect(screen.getByTestId("loading-page")).toBeInTheDocument();
+
+    expect(redirect).toHaveBeenCalledWith(routes.NOT_FOUND);
   });
 
   it("renders error page on fetch failure", async () => {
     const error = new Error("Failed to fetch data");
     (sessionReader.getCurrent as jest.Mock).mockRejectedValueOnce(error);
 
-    render(
+    await renderWithProviders(
       <ContestLayout>
         <TestChildren />
       </ContestLayout>,
@@ -74,7 +82,7 @@ describe("ContestLayout", () => {
       mockContestMetadata,
     );
 
-    render(
+    await renderWithProviders(
       <ContestLayout>
         <TestChildren />
       </ContestLayout>,

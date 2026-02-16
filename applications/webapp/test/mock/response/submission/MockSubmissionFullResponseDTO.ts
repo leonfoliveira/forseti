@@ -23,6 +23,7 @@ export function MockSubmissionFullResponseDTO(
       contentType: "text/plain",
     }),
     createdAt: "2025-01-01T10:00:00Z",
+    version: 1,
     ...partial,
   };
 }

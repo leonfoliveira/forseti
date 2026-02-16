@@ -12,4 +12,5 @@ export type SubmissionPublicResponseDTO = {
   status: SubmissionStatus;
   answer: SubmissionAnswer;
   createdAt: string;
+  version: number;
 };

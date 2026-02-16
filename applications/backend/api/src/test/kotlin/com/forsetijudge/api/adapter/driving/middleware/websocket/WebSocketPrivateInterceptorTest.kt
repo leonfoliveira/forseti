@@ -14,6 +14,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
+import org.springframework.messaging.simp.stomp.StompCommand
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.support.MessageHeaderAccessor
 
@@ -51,12 +52,26 @@ class WebSocketPrivateInterceptorTest :
             result shouldBe message
         }
 
+        test("should return message without modification if command is not SUBSCRIBE") {
+            val message = mockk<Message<*>>()
+            val channel = mockk<MessageChannel>()
+            val accessor = mockk<StompHeaderAccessor>(relaxed = true)
+            every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
+            every { accessor.destination } returns "/topic/contests/1/submissions/full"
+            every { accessor.command } returns StompCommand.CONNECTED
+
+            val result = sut.preSend(message, channel)
+
+            result shouldBe message
+        }
+
         test("should return message without modification if user is ROOT") {
             val message = mockk<Message<*>>()
             val channel = mockk<MessageChannel>()
             val accessor = mockk<StompHeaderAccessor>(relaxed = true)
             every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
             every { accessor.destination } returns "/topic/contests/1/submissions/full"
+            every { accessor.command } returns StompCommand.SUBSCRIBE
             RequestContext.getContext().session =
                 SessionMockBuilder.build(
                     member =
@@ -76,6 +91,7 @@ class WebSocketPrivateInterceptorTest :
             val accessor = mockk<StompHeaderAccessor>(relaxed = true)
             every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
             every { accessor.destination } returns "/topic/contests/1/submissions/invalid"
+            every { accessor.command } returns StompCommand.SUBSCRIBE
 
             val result = sut.preSend(message, channel)
 
@@ -88,6 +104,7 @@ class WebSocketPrivateInterceptorTest :
             val accessor = mockk<StompHeaderAccessor>(relaxed = true)
             every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
             every { accessor.destination } returns "/topic/contests/1/submissions/full"
+            every { accessor.command } returns StompCommand.SUBSCRIBE
             RequestContext.getContext().session =
                 SessionMockBuilder.build(
                     member =
@@ -113,6 +130,7 @@ class WebSocketPrivateInterceptorTest :
             val accessor = mockk<StompHeaderAccessor>(relaxed = true)
             every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
             every { accessor.destination } returns "/topic/contests/1/submissions/full"
+            every { accessor.command } returns StompCommand.SUBSCRIBE
             RequestContext.getContext().session =
                 SessionMockBuilder.build(
                     member =

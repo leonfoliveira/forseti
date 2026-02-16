@@ -23,4 +23,23 @@ describe("DateTimeUtil", () => {
 
     expect(DateTimeUtil.fromDatetimeLocal(datetimeLocal)).toBe(expected);
   });
+
+  it("should calculate difference in milliseconds correctly", () => {
+    const start = "2026-02-09T19:58:00.000Z";
+    const end = "2026-02-09T20:00:00.000Z";
+
+    const expectedDiff = 2 * 60 * 1000; // 2 minutes in milliseconds
+
+    expect(DateTimeUtil.diffMs(start, end)).toBe(expectedDiff);
+  });
+
+  it("should compare two ISO datetime strings correctly", () => {
+    const isoString1 = "2026-02-09T19:58:00.000Z";
+    const isoString2 = "2026-02-09T20:00:00.000Z";
+    const isoString3 = "2026-02-09T19:58:00.000Z";
+
+    expect(DateTimeUtil.isLessOrEqual(isoString1, isoString2)).toBe(true);
+    expect(DateTimeUtil.isLessOrEqual(isoString1, isoString3)).toBe(true);
+    expect(DateTimeUtil.isLessOrEqual(isoString2, isoString1)).toBe(false);
+  });
 });

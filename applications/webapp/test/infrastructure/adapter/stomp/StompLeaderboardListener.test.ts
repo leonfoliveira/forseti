@@ -9,20 +9,6 @@ describe("StompLeaderboardListener", () => {
 
   const contestId = uuidv4();
 
-  describe("subscribeForLeaderboard", () => {
-    it("should subscribe to the contest leaderboard", async () => {
-      const client = mock<ListenerClient>();
-      const callback = jest.fn();
-
-      await sut.subscribeForLeaderboard(client, contestId, callback);
-
-      expect(client.subscribe).toHaveBeenCalledWith(
-        `/topic/contests/${contestId}/leaderboard`,
-        callback,
-      );
-    });
-  });
-
   describe("subscribeForLeaderboardPartial", () => {
     it("should subscribe to the contest partial leaderboard", async () => {
       const client = mock<ListenerClient>();
@@ -32,6 +18,34 @@ describe("StompLeaderboardListener", () => {
 
       expect(client.subscribe).toHaveBeenCalledWith(
         `/topic/contests/${contestId}/leaderboard/partial`,
+        callback,
+      );
+    });
+  });
+
+  describe("subscribeForLeaderboardFreeze", () => {
+    it("should subscribe to the contest leaderboard freeze", async () => {
+      const client = mock<ListenerClient>();
+      const callback = jest.fn();
+
+      await sut.subscribeForLeaderboardFreeze(client, contestId, callback);
+
+      expect(client.subscribe).toHaveBeenCalledWith(
+        `/topic/contests/${contestId}/leaderboard/freeze`,
+        callback,
+      );
+    });
+  });
+
+  describe("subscribeForLeaderboardUnfreeze", () => {
+    it("should subscribe to the contest leaderboard unfreeze", async () => {
+      const client = mock<ListenerClient>();
+      const callback = jest.fn();
+
+      await sut.subscribeForLeaderboardUnfreeze(client, contestId, callback);
+
+      expect(client.subscribe).toHaveBeenCalledWith(
+        `/topic/contests/${contestId}/leaderboard/unfreeze`,
         callback,
       );
     });

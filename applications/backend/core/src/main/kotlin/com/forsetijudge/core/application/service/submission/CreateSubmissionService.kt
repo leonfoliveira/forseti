@@ -1,6 +1,8 @@
 package com.forsetijudge.core.application.service.submission
 
+import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Attachment
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionCreatedEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
@@ -56,6 +58,11 @@ class CreateSubmissionService(
         val member =
             memberRepository.findEntityById(memberId)
                 ?: throw NotFoundException("Could not find member with id = $memberId")
+
+        ContestAuthorizer(contest, member)
+            .checkMemberType(Member.Type.CONTESTANT)
+            .checkContestStarted()
+
         val problem =
             problemRepository.findByIdAndContestId(inputDTO.problemId, contestId)
                 ?: throw NotFoundException("Could not find problem with id = ${inputDTO.problemId} in contest")
@@ -63,9 +70,6 @@ class CreateSubmissionService(
             attachmentRepository.findByIdAndContestId(inputDTO.code.id, contestId)
                 ?: throw NotFoundException("Could not find code attachment with id = ${inputDTO.code.id} in contest")
 
-        if (!contest.isActive()) {
-            throw ForbiddenException("Contest is not active")
-        }
         if (code.context != Attachment.Context.SUBMISSION_CODE) {
             throw ForbiddenException("Attachment with id = ${inputDTO.code.id} is not a submission code")
         }

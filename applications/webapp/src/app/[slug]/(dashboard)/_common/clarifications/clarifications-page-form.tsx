@@ -28,6 +28,7 @@ import { Textarea } from "@/app/_lib/component/shadcn/textarea";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { clarificationWritter } from "@/config/composition";
+import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -78,12 +79,14 @@ const messages = defineMessages({
 type Props = {
   contestId: string;
   onClose: () => void;
+  onCreate: (clarification: ClarificationResponseDTO) => void;
   problems: ProblemPublicResponseDTO[];
 };
 
 export function ClarificationsPageForm({
   contestId,
   onClose,
+  onCreate,
   problems,
 }: Props) {
   const toast = useToast();
@@ -97,10 +100,12 @@ export function ClarificationsPageForm({
   async function createClarification(data: ClarificationFormType) {
     createClarificationState.start();
     try {
-      await clarificationWritter.create(
+      const newClarification = await clarificationWritter.create(
         contestId,
         ClarificationForm.toInputDTO(data),
       );
+
+      onCreate(newClarification);
       createClarificationState.finish();
       form.reset();
       toast.success(messages.createSuccess);
