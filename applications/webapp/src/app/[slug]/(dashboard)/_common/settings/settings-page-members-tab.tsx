@@ -156,6 +156,7 @@ export function SettingsPageMembersTab({ form, isDisabled }: Props) {
                     name={`members.${index}.type`}
                     field={
                       <NativeSelect data-testid="member-type">
+                        <NativeSelectOption value="" />
                         {Object.keys(MemberType)
                           .filter((type) => type !== MemberType.ROOT)
                           .map((type) => (
@@ -221,7 +222,7 @@ export function SettingsPageMembersTab({ form, isDisabled }: Props) {
           onClick={() =>
             append({
               name: "",
-              type: MemberType.CONTESTANT,
+              type: "" as MemberType,
               login: "",
               password: "",
             })
