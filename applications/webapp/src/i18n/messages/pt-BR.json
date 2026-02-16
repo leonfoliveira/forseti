@@ -331,6 +331,8 @@
               "auto-freeze-after-start": "Data de congelamento automático deve ser após a data de início",
               "auto-freeze-before-end": "Data de congelamento automático deve ser antes da data de fim",
               "auto-freeze-future": "Data de congelamento automático deve ser no futuro",
+              "problem-color-required": "Cor é obrigatória",
+              "problem-color-invalid": "Cor deve ser um código hexadecimal válido",
               "problem-title-required": "Título é obrigatório",
               "problem-title-too-long": "Título deve ter no máximo 255 caracteres",
               "problem-description-required": "Descrição é obrigatória",
