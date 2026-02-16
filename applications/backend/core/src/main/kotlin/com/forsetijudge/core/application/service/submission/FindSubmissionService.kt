@@ -65,8 +65,7 @@ class FindSubmissionService(
                     ?: throw NotFoundException("Could not find member with id = $it")
             }
 
-        ContestAuthorizer(contest, member)
-            .checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
+        ContestAuthorizer(contest, member).checkContestStarted()
 
         val submissions =
             contest.problems
@@ -75,6 +74,42 @@ class FindSubmissionService(
                 }.flatten()
 
         logger.info("Found ${submissions.size} submissions")
+        return submissions.sortedBy { it.createdAt }
+    }
+
+    /**
+     * Finds all submissions for a given contest.
+     *
+     * @param contestId ID of the contest
+     * @param memberId The ID of the member requesting the submissions.
+     * @return List of submissions for the contest
+     * @throws NotFoundException if the contest is not found
+     */
+    @Transactional(readOnly = true)
+    override fun findAllByContestFull(
+        contestId: UUID,
+        memberId: UUID?,
+    ): List<Submission> {
+        logger.info("Finding all full submissions for contest with id: $contestId")
+
+        val contest =
+            contestRepository.findEntityById(contestId)
+                ?: throw NotFoundException("Could not find contest with id = $contestId")
+        val member =
+            memberId?.let {
+                memberRepository.findEntityById(it)
+                    ?: throw NotFoundException("Could not find member with id = $it")
+            }
+
+        ContestAuthorizer(contest, member).checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
+
+        val submissions =
+            contest.problems
+                .map {
+                    it.submissions
+                }.flatten()
+
+        logger.info("Found ${submissions.size} full submissions")
         return submissions.sortedBy { it.createdAt }
     }
 
