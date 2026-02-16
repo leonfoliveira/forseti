@@ -20,6 +20,9 @@ import { useAppSelector } from "@/app/_store/store";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
+import { Badge } from "@/app/_lib/component/shadcn/badge";
+import { ColorUtil } from "@/app/_lib/util/color-util";
+import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/problem-letter-badge";
 
 const messages = defineMessages({
   pageTitle: {
@@ -105,7 +108,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                 </TableHead>
                 {problems.map((problem) => (
                   <TableHead key={problem.id} className="text-center">
-                    {problem.letter}
+                    <ProblemLetterBadge problem={problem} />
                   </TableHead>
                 ))}
               </TableRow>

@@ -29,6 +29,7 @@ import { attachmentReader } from "@/config/composition";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
+import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/problem-letter-badge";
 
 const messages = defineMessages({
   pageTitle: {
@@ -178,7 +179,7 @@ export function ProblemsPage({
               {problems.map((problem) => (
                 <TableRow key={problem.id} data-testid="problem-row">
                   <TableCell className="font-bold" data-testid="problem-letter">
-                    {problem.letter}
+                    <ProblemLetterBadge problem={problem} />
                   </TableCell>
                   <TableCell data-testid="problem-title">
                     {problem.title}
