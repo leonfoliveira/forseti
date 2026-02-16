@@ -269,6 +269,8 @@
               "remove-tooltip": "Remove"
             },
             "settings-page-members-tab": {
+              "load-csv-label": "Load from CSV",
+              "load-csv-error": "Failed to load members from CSV.",
               "title-label": "Name",
               "type-label": "Type",
               "login-label": "Login",

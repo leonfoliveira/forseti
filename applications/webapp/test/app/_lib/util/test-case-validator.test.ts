@@ -1,6 +1,5 @@
 import { TestCaseValidator } from "@/app/_lib/util/test-case-validator";
 
-// Mock Papa.parse
 jest.mock("papaparse", () => ({
   parse: jest.fn(),
 }));
