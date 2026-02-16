@@ -11,6 +11,7 @@ import org.quartz.JobExecutionException
 import org.quartz.PersistJobDataAfterExecution
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.quartz.QuartzJobBean
@@ -40,6 +41,11 @@ abstract class QuartzJob<TPayload : Serializable>(
      * @param context The JobExecutionContext provided by the Quartz scheduler, containing information about the job execution environment.
      */
     override fun executeInternal(context: JobExecutionContext) {
+        val traceId = IdUtil.getTraceId()
+        val currentSpan = Span.current()
+        currentSpan.setAttribute("trace_id", traceId)
+        MDC.put("trace_id", traceId)
+
         logger.info("Starting job ${this::class.java.simpleName}")
 
         val dataMap = context.mergedJobDataMap
@@ -50,9 +56,6 @@ abstract class QuartzJob<TPayload : Serializable>(
         logger.info("Job id: {}, payload: {}, retries: {}", id, payloadJson, retries)
 
         val payload = objectMapper.readValue(payloadJson, getPayloadType())
-
-        val currentSpan = Span.current()
-        currentSpan.setAttribute("trace.id", IdUtil.getTraceId())
 
         initRequestContext()
 

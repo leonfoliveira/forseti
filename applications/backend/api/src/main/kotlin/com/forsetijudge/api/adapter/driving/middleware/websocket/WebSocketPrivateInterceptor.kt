@@ -26,6 +26,7 @@ class WebSocketPrivateInterceptor(
     ): Message<*>? {
         val accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) ?: return message
 
+        // Only intercept SUBSCRIBE commands, other commands are not relevant for access control
         if (accessor.command != StompCommand.SUBSCRIBE) {
             return message
         }

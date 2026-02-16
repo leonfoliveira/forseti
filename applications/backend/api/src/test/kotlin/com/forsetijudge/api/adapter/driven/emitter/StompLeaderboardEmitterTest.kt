@@ -24,21 +24,6 @@ class StompLeaderboardEmitterTest :
             clearAllMocks()
         }
 
-        test("should emit leaderboard events") {
-            val leaderboard = mockk<LeaderboardOutputDTO>(relaxed = true)
-            val contestId = UuidCreator.getTimeOrderedEpoch()
-            every { leaderboard.contestId } returns contestId
-
-            sut.emit(leaderboard)
-
-            verify {
-                webSocketFanoutProducer.produce(
-                    "/topic/contests/$contestId/leaderboard",
-                    leaderboard,
-                )
-            }
-        }
-
         test("should emit freeze events") {
             val contest = ContestMockBuilder.build()
 

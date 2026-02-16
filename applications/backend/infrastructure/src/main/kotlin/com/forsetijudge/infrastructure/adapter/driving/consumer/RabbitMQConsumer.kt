@@ -7,6 +7,7 @@ import com.forsetijudge.core.port.driving.usecase.session.RefreshSessionUseCase
 import io.opentelemetry.api.trace.Span
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.Serializable
 import java.util.UUID
@@ -27,6 +28,11 @@ abstract class RabbitMQConsumer<TPayload : Serializable>(
      * It also loads the traceId into the RequestContext to keep track of the entire information flow.
      */
     open fun receiveMessage(jsonMessage: String) {
+        val traceId = IdUtil.getTraceId()
+        val currentSpan = Span.current()
+        currentSpan.setAttribute("trace_id", traceId)
+        MDC.put("trace_id", traceId)
+
         logger.info("Received message: {}", jsonMessage)
 
         val jsonNode = objectMapper.readTree(jsonMessage)
@@ -34,9 +40,6 @@ abstract class RabbitMQConsumer<TPayload : Serializable>(
         val payloadJson = jsonNode["payload"]
 
         val payload = objectMapper.treeToValue(payloadJson, getPayloadType())
-
-        val currentSpan = Span.current()
-        currentSpan.setAttribute("trace.id", IdUtil.getTraceId())
 
         initRequestContext()
 

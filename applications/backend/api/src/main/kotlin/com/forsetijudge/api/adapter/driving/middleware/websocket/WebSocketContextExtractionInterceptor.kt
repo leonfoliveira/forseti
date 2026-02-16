@@ -1,8 +1,11 @@
 package com.forsetijudge.api.adapter.driving.middleware.websocket
 
+import com.forsetijudge.core.application.util.IdUtil
 import com.forsetijudge.core.domain.model.RequestContext
 import com.github.f4b6a3.uuid.UuidCreator
+import io.opentelemetry.api.trace.Span
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor
@@ -21,6 +24,11 @@ class WebSocketContextExtractionInterceptor : ChannelInterceptor {
         message: Message<*>,
         channel: MessageChannel,
     ): Message<*>? {
+        val traceId = IdUtil.getTraceId()
+        val currentSpan = Span.current()
+        currentSpan.setAttribute("trace_id", traceId)
+        MDC.put("trace_id", traceId)
+
         logger.info("Started WebSocketAuthExtractionInterceptor")
 
         val accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java)
@@ -28,9 +36,7 @@ class WebSocketContextExtractionInterceptor : ChannelInterceptor {
             accessor?.sessionAttributes?.get("context") as? RequestContext
                 ?: RequestContext()
 
-        if (context.traceId == null) {
-            context.traceId = UuidCreator.getTimeOrderedEpoch().toString()
-        }
+        context.traceId = traceId
         RequestContext.setContext(context)
 
         logger.info("Extracted context from WebSocket attributes: $context")
