@@ -269,6 +269,8 @@
               "remove-tooltip": "Remover"
             },
             "settings-page-members-tab": {
+              "load-csv-label": "Carregar CSV",
+              "load-csv-error": "Falha ao carregar membros do CSV.",
               "title-label": "Nome",
               "type-label": "Tipo",
               "login-label": "Login",

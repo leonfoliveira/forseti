@@ -1,7 +1,9 @@
-import { PlusIcon, TrashIcon } from "lucide-react";
+import { PlusIcon, TrashIcon, UploadIcon } from "lucide-react";
+import { useRef } from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
+import { AsyncButton } from "@/app/_lib/component/form/async-button";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";
@@ -25,11 +27,22 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/app/_lib/component/shadcn/tooltip";
+import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
+import { useToast } from "@/app/_lib/hook/toast-hook";
+import { MemberLoader } from "@/app/_lib/util/member-loader";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
+  loadCsvLabel: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-members-tab.load-csv-label",
+    defaultMessage: "Load from CSV",
+  },
+  loadCsvError: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-members-tab.load-csv-error",
+    defaultMessage: "Failed to load members from CSV.",
+  },
   titleLabel: {
     id: "app.[slug].(dashboard)._common.settings.settings-page-members-tab.title-label",
     defaultMessage: "Name",
@@ -62,14 +75,55 @@ type Props = {
 };
 
 export function SettingsPageMembersTab({ form, isDisabled }: Props) {
-  const { fields, append, remove } = useFieldArray({
+  const loadCsvState = useLoadableState();
+  const memberFileInputRef = useRef<HTMLInputElement>(null);
+  const toast = useToast();
+
+  const { fields, append, remove, replace } = useFieldArray({
     control: form.control,
     name: "members",
   });
 
+  async function loadCsv(file: File) {
+    loadCsvState.start();
+    try {
+      const members = await MemberLoader.loadFromCsv(file);
+      replace(members);
+      if (memberFileInputRef.current) {
+        memberFileInputRef.current.value = "";
+      }
+      loadCsvState.finish();
+    } catch (error) {
+      await loadCsvState.fail(error, {
+        default: () => toast.error(messages.loadCsvError),
+      });
+    }
+  }
+
   return (
     <FieldSet disabled={isDisabled}>
       <div className="flex flex-col gap-4" data-testid="settings-members-tab">
+        <div className="flex justify-end">
+          <Input
+            className="hidden"
+            ref={memberFileInputRef}
+            type="file"
+            accept=".csv"
+            onChange={(e) =>
+              e.target.files?.[0] && loadCsv(e.target.files?.[0] as File)
+            }
+            data-testid="member-file-input"
+          />
+          <AsyncButton
+            type="button"
+            variant="outline"
+            onClick={() => memberFileInputRef.current?.click()}
+            isLoading={loadCsvState.isLoading}
+          >
+            <FormattedMessage {...messages.loadCsvLabel} />
+            <UploadIcon />
+          </AsyncButton>
+        </div>
         <Table>
           <TableHeader className="bg-muted">
             <TableRow>
@@ -106,6 +160,7 @@ export function SettingsPageMembersTab({ form, isDisabled }: Props) {
                     name={`members.${index}.type`}
                     field={
                       <NativeSelect data-testid="member-type">
+                        <NativeSelectOption value="" />
                         {Object.keys(MemberType)
                           .filter((type) => type !== MemberType.ROOT)
                           .map((type) => (
@@ -171,7 +226,7 @@ export function SettingsPageMembersTab({ form, isDisabled }: Props) {
           onClick={() =>
             append({
               name: "",
-              type: MemberType.CONTESTANT,
+              type: "" as MemberType,
               login: "",
               password: "",
             })
