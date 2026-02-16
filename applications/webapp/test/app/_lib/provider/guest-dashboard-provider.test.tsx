@@ -4,6 +4,7 @@ import { act } from "react";
 
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { GuestDashboardProvider } from "@/app/_lib/provider/guest-dashboard-provider";
+import { guestDashboardSlice } from "@/app/_store/slices/guest-dashboard-slice";
 import {
   announcementListener,
   clarificationListener,
@@ -22,7 +23,6 @@ import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderbo
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { guestDashboardSlice } from "@/app/_store/slices/guest-dashboard-slice";
 
 jest.mock("@/app/_lib/component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading-page" />,
@@ -60,11 +60,6 @@ describe("GuestDashboardProvider", () => {
 
     expect(dashboardReader.getGuest).toHaveBeenCalledWith(contestMetadata.id);
 
-    expect(leaderboardListener.subscribeForLeaderboard).toHaveBeenCalledWith(
-      listenerClient,
-      contestMetadata.id,
-      expect.any(Function),
-    );
     expect(submissionListener.subscribeForContest).toHaveBeenCalledWith(
       listenerClient,
       contestMetadata.id,
@@ -115,23 +110,6 @@ describe("GuestDashboardProvider", () => {
 
     expect(screen.queryByTestId("error-page")).toBeInTheDocument();
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
-  });
-
-  it("should handle leaderboard updates", async () => {
-    const otherLeaderboard = MockLeaderboardResponseDTO();
-    const { store } = await renderWithProviders(
-      <GuestDashboardProvider>
-        <div data-testid="child" />
-      </GuestDashboardProvider>,
-      { contestMetadata },
-    );
-
-    act(() => {
-      (
-        leaderboardListener.subscribeForLeaderboard as jest.Mock
-      ).mock.calls[0][2](otherLeaderboard);
-    });
-    expect(store.getState().guestDashboard.leaderboard).toBe(otherLeaderboard);
   });
 
   it("should handle leaderboard partial updates", async () => {

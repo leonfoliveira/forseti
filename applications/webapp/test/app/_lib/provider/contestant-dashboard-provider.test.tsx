@@ -4,6 +4,7 @@ import { act } from "react";
 
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { ContestantDashboardProvider } from "@/app/_lib/provider/contestant-dashboard-provider";
+import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
 import {
   announcementListener,
   clarificationListener,
@@ -25,7 +26,6 @@ import { MockSession } from "@/test/mock/response/session/MockSession";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
 
 jest.mock("@/app/_lib/component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading-page" />,
@@ -71,11 +71,6 @@ describe("ContestantDashboardProvider", () => {
       contestMetadata.id,
     );
 
-    expect(leaderboardListener.subscribeForLeaderboard).toHaveBeenCalledWith(
-      listenerClient,
-      contestMetadata.id,
-      expect.any(Function),
-    );
     expect(submissionListener.subscribeForContest).toHaveBeenCalledWith(
       listenerClient,
       contestMetadata.id,
@@ -141,25 +136,6 @@ describe("ContestantDashboardProvider", () => {
 
     expect(screen.queryByTestId("error-page")).toBeInTheDocument();
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
-  });
-
-  it("should handle leaderboard updates", async () => {
-    const otherLeaderboard = MockLeaderboardResponseDTO();
-    const { store } = await renderWithProviders(
-      <ContestantDashboardProvider>
-        <div data-testid="child" />
-      </ContestantDashboardProvider>,
-      { session, contestMetadata },
-    );
-
-    act(() => {
-      (
-        leaderboardListener.subscribeForLeaderboard as jest.Mock
-      ).mock.calls[0][2](otherLeaderboard);
-    });
-    expect(store.getState().contestantDashboard.leaderboard).toBe(
-      otherLeaderboard,
-    );
   });
 
   it("should handle leaderboard partial updates", async () => {

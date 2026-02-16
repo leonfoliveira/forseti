@@ -101,11 +101,6 @@ export function JudgeDashboardProvider({
         reconnect();
       });
       await Promise.all([
-        leaderboardListener.subscribeForLeaderboard(
-          listenerClientRef.current,
-          contestMetadata.id,
-          receiveLeaderboard,
-        ),
         leaderboardListener.subscribeForLeaderboardPartial(
           listenerClientRef.current,
           contestMetadata.id,
@@ -170,10 +165,6 @@ export function JudgeDashboardProvider({
       }
     };
   }, [session, contestMetadata.id]);
-
-  function receiveLeaderboard(leaderboard: LeaderboardResponseDTO) {
-    dispatch(judgeDashboardSlice.actions.setLeaderboard(leaderboard));
-  }
 
   function receiveLeaderboardPartial(
     leaderboard: LeaderboardPartialResponseDTO,

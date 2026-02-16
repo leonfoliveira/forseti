@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { JudgeDashboardProvider } from "@/app/_lib/provider/judge-dashboard-provider";
+import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
 import {
   announcementListener,
   clarificationListener,
@@ -25,7 +26,6 @@ import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/Moc
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
 
 jest.mock("@/app/_lib/component/page/loading-page", () => ({
   LoadingPage: () => <span data-testid="loading-page" />,
@@ -64,11 +64,6 @@ describe("JudgeDashboardProvider", () => {
 
     expect(dashboardReader.getJudge).toHaveBeenCalledWith(contestMetadata.id);
 
-    expect(leaderboardListener.subscribeForLeaderboard).toHaveBeenCalledWith(
-      listenerClient,
-      contestMetadata.id,
-      expect.any(Function),
-    );
     expect(submissionListener.subscribeForContestFull).toHaveBeenCalledWith(
       listenerClient,
       contestMetadata.id,
@@ -119,23 +114,6 @@ describe("JudgeDashboardProvider", () => {
 
     expect(screen.queryByTestId("error-page")).toBeInTheDocument();
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
-  });
-
-  it("should handle leaderboard updates", async () => {
-    const otherLeaderboard = MockLeaderboardResponseDTO();
-    const { store } = await renderWithProviders(
-      <JudgeDashboardProvider>
-        <div data-testid="child" />
-      </JudgeDashboardProvider>,
-      { session, contestMetadata },
-    );
-
-    act(() => {
-      (
-        leaderboardListener.subscribeForLeaderboard as jest.Mock
-      ).mock.calls[0][2](otherLeaderboard);
-    });
-    expect(store.getState().judgeDashboard.leaderboard).toBe(otherLeaderboard);
   });
 
   it("should handle leaderboard partial updates", async () => {
