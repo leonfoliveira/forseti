@@ -89,7 +89,9 @@ export function SettingsPageMembersTab({ form, isDisabled }: Props) {
     try {
       const members = await MemberLoader.loadFromCsv(file);
       replace(members);
-      memberFileInputRef.current!.value = "";
+      if (memberFileInputRef.current) {
+        memberFileInputRef.current.value = "";
+      }
       loadCsvState.finish();
     } catch (error) {
       await loadCsvState.fail(error, {
@@ -107,7 +109,9 @@ export function SettingsPageMembersTab({ form, isDisabled }: Props) {
             ref={memberFileInputRef}
             type="file"
             accept=".csv"
-            onChange={(e) => loadCsv(e.target.files?.[0] as File)}
+            onChange={(e) =>
+              e.target.files?.[0] && loadCsv(e.target.files?.[0] as File)
+            }
             data-testid="member-file-input"
           />
           <AsyncButton
