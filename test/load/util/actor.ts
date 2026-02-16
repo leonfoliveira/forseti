@@ -58,6 +58,7 @@ export class Actor {
         problems: [
           {
             letter: "A",
+            color: "#ffffff",
             title: "Test Problem",
             description: {
               id: await this.uploadAttachment(
