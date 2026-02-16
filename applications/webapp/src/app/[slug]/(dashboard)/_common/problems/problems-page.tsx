@@ -7,6 +7,7 @@ import {
   DownloadIcon,
 } from "lucide-react";
 
+import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/problem-letter-badge";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { FormattedNumber } from "@/app/_lib/component/i18n/formatted-number";
 import { Page } from "@/app/_lib/component/page/page";
@@ -29,7 +30,6 @@ import { attachmentReader } from "@/config/composition";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
-import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/problem-letter-badge";
 
 const messages = defineMessages({
   pageTitle: {
