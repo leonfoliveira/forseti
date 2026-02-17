@@ -224,7 +224,7 @@
               "description": "List of all executions for this submission.",
               "timestamp-header": "Timestamp",
               "status-header": "Status",
-              "test-cases-header": "Test Cases",
+              "test-cases": "Test Cases",
               "input-header": "Input",
               "output-header": "Output"
             },

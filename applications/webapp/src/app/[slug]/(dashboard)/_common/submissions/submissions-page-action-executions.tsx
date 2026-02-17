@@ -48,7 +48,7 @@ const messages = defineMessages({
     defaultMessage: "Status",
   },
   testCases: {
-    id: "app.[slug].(dashboard)._common.submissions.submissions-page-action-executions.test-cases-header",
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page-action-executions.test-cases",
     defaultMessage: "Test Cases",
   },
   inputHeader: {
