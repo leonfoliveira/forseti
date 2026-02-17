@@ -57,6 +57,35 @@ export class ActorOnSubmissionsPage extends Actor {
     expect(await download.path()).toBeTruthy();
   }
 
+  async checkExecutions(index: number, answer: SubmissionAnswer) {
+    const submissionsTable = this.page.getByTestId("submissions-table");
+
+    const submissionRows = submissionsTable.getByTestId("submission-row");
+    const submissionRow = submissionRows.nth(index);
+    await submissionRow.scrollIntoViewIfNeeded();
+
+    const actionsButton = submissionRow.getByTestId(
+      "submission-actions-button",
+    );
+    await actionsButton.click();
+
+    const executionsActionButton = this.page.getByTestId(
+      "submissions-page-action-executions",
+    );
+    await executionsActionButton.click();
+
+    const executionsTable = this.page.getByTestId(
+      "submission-executions-table",
+    );
+    await expect(executionsTable).toBeVisible();
+    await expect(
+      executionsTable.getByTestId("submission-execution-status"),
+    ).toHaveText(answer);
+
+    await this.page.keyboard.press("Escape");
+    await expect(executionsTable).not.toBeVisible();
+  }
+
   async rerunSubmission(index: number, answer: SubmissionAnswer) {
     const submissionsTable = this.page.getByTestId("submissions-table");
 

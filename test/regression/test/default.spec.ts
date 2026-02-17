@@ -211,6 +211,7 @@ test("Default contest behaviour", async ({ page }) => {
     tleSubmission,
   ]);
   await judgeActorOnSubmissions.downloadSubmission(0);
+  await judgeActorOnSubmissions.checkExecutions(0, SubmissionAnswer.ACCEPTED);
   await judgeActorOnSubmissions.judgeSubmission(
     0,
     SubmissionAnswer.WRONG_ANSWER,
