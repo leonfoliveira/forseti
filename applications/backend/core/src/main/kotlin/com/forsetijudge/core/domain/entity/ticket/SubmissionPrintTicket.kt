@@ -20,7 +20,7 @@ class SubmissionPrintTicket(
     version: Long = 1L,
     contest: Contest,
     member: Member,
-    staff: Member?,
+    staff: Member? = null,
     type: Type = Type.SUBMISSION_PRINT,
     status: Status = Status.OPEN,
     properties: Properties,

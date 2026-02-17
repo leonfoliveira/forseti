@@ -52,7 +52,7 @@ open class Ticket<TProperties : Serializable>(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "staff_id")
     @JoinColumn
-    val staff: Member?,
+    val staff: Member? = null,
     /**
      * The type of the ticket.
      */

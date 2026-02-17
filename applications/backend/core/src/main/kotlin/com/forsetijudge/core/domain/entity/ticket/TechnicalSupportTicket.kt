@@ -20,7 +20,7 @@ class TechnicalSupportTicket(
     version: Long = 1L,
     contest: Contest,
     member: Member,
-    staff: Member?,
+    staff: Member? = null,
     type: Type = Type.TECHNICAL_SUPPORT,
     status: Status = Status.OPEN,
     properties: Properties,

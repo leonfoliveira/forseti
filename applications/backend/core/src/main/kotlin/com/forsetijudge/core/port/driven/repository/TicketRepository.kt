@@ -10,6 +10,12 @@ import java.util.UUID
 interface TicketRepository : BaseRepository<Ticket<*>> {
     fun findEntityById(id: UUID): Ticket<*>?
 
+    @Query("SELECT t FROM Ticket t WHERE t.id = :id AND t.contest.id = :contestId")
+    fun findByIdAndContestId(
+        id: UUID,
+        contestId: UUID,
+    ): Ticket<*>?
+
     @Query("SELECT t FROM Ticket t WHERE t.contest.id = :contestId AND t.member.id = :memberId")
     fun findAllByContestIdAndMemberId(
         contestId: UUID,

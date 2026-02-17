@@ -6,10 +6,10 @@ import org.jetbrains.annotations.NotNull
 import java.util.UUID
 
 data class CreateSubmissionInputDTO(
-    @NotNull
+    @field:NotNull
     val problemId: UUID,
-    @NotNull
+    @field:NotNull
     val language: Submission.Language,
-    @NotNull
+    @field:NotNull
     val code: AttachmentInputDTO,
 )
