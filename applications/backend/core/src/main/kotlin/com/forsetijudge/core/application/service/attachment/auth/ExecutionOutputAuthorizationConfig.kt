@@ -13,17 +13,22 @@ class ExecutionOutputAuthorizationConfig : AttachmentAuthorizationConfig {
     override fun authorizeAdminUpload(
         contest: Contest,
         member: Member,
-    ): Unit = throw ForbiddenException("Admin cannot upload execution outputs")
+    ) = throw ForbiddenException("Admin cannot upload execution outputs")
+
+    override fun authorizeStaffUpload(
+        contest: Contest,
+        member: Member,
+    ) = throw ForbiddenException("Staff cannot upload execution outputs")
 
     override fun authorizeJudgeUpload(
         contest: Contest,
         member: Member,
-    ): Unit = throw ForbiddenException("Judge cannot upload execution outputs")
+    ) = throw ForbiddenException("Judge cannot upload execution outputs")
 
     override fun authorizeContestantUpload(
         contest: Contest,
         member: Member,
-    ): Unit = throw ForbiddenException("Contestant cannot upload execution outputs")
+    ) = throw ForbiddenException("Contestant cannot upload execution outputs")
 
     override fun authorizePublicUpload(contest: Contest): Unit = throw ForbiddenException("Public cannot upload execution outputs")
 
@@ -32,23 +37,31 @@ class ExecutionOutputAuthorizationConfig : AttachmentAuthorizationConfig {
         member: Member,
         attachment: Attachment,
     ) {
+        // Admin can download execution outputs
     }
+
+    override fun authorizeStaffDownload(
+        contest: Contest,
+        member: Member,
+        attachment: Attachment,
+    ) = throw ForbiddenException("Staff cannot download execution outputs")
 
     override fun authorizeJudgeDownload(
         contest: Contest,
         member: Member,
         attachment: Attachment,
     ) {
+        // Judge can download execution outputs
     }
 
     override fun authorizeContestantDownload(
         contest: Contest,
         member: Member,
         attachment: Attachment,
-    ): Unit = throw ForbiddenException("Contestant cannot download execution outputs")
+    ) = throw ForbiddenException("Contestant cannot download execution outputs")
 
     override fun authorizePublicDownload(
         contest: Contest,
         attachment: Attachment,
-    ): Unit = throw ForbiddenException("Public cannot download execution outputs")
+    ) = throw ForbiddenException("Public cannot download execution outputs")
 }

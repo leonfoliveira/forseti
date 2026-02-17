@@ -17,14 +17,16 @@ class ContestAuthorizer(
 ) {
     /**
      * Checks if the contest has started.
-     * If the contest has not started yet, only ROOT, ADMIN and JUDGE members can access it.
+     * If the contest has not started yet, only ROOT, ADMIN, STAFF and JUDGE members can access it.
      *
      * @param contest The contest to check.
      * @param member The member who is trying to access the contest. Can be null if the member is not authenticated.
      * @throws ForbiddenException if the contest has not started yet and the member is not ROOT, ADMIN or JUDGE.
      */
     fun checkContestStarted(): ContestAuthorizer {
-        if (setOf(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE).contains(member?.type) || member?.isSystemMember() == true) {
+        if (setOf(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF, Member.Type.JUDGE).contains(member?.type) ||
+            member?.isSystemMember() == true
+        ) {
             return this
         }
 

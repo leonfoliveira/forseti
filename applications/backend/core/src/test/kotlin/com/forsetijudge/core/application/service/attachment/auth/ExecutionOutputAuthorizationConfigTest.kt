@@ -5,6 +5,7 @@ import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
+import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -26,6 +27,14 @@ class ExecutionOutputAuthorizationConfigTest :
 
                 shouldThrow<ForbiddenException> {
                     sut.authorizeAdminUpload(contest, adminMember)
+                }
+            }
+
+            test("should allow staff upload to throw forbidden exception") {
+                val staffMember = MemberMockBuilder.build()
+
+                shouldThrow<ForbiddenException> {
+                    sut.authorizeStaffUpload(contest, staffMember)
                 }
             }
 
@@ -56,15 +65,25 @@ class ExecutionOutputAuthorizationConfigTest :
             test("should allow admin download") {
                 val adminMember = MemberMockBuilder.build()
 
-                // Should not throw an exception
-                sut.authorizeAdminDownload(contest, adminMember, attachment)
+                shouldNotThrow<ForbiddenException> {
+                    sut.authorizeAdminDownload(contest, adminMember, attachment)
+                }
+            }
+
+            test("should allow staff download to throw forbidden exception") {
+                val staffMember = MemberMockBuilder.build()
+
+                shouldThrow<ForbiddenException> {
+                    sut.authorizeStaffDownload(contest, staffMember, attachment)
+                }
             }
 
             test("should allow judge download") {
                 val judgeMember = MemberMockBuilder.build()
 
-                // Should not throw an exception
-                sut.authorizeJudgeDownload(contest, judgeMember, attachment)
+                shouldNotThrow<ForbiddenException> {
+                    sut.authorizeJudgeDownload(contest, judgeMember, attachment)
+                }
             }
 
             test("should disallow contestant download") {

@@ -6,6 +6,7 @@ import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
+import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -39,8 +40,20 @@ class ProblemDescriptionAuthorizationConfigTest :
                 val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build()
 
-                // Should not throw exception
-                sut.authorizeAdminUpload(contest, member)
+                shouldNotThrow<ForbiddenException> {
+                    sut.authorizeAdminUpload(contest, member)
+                }
+            }
+        }
+
+        context("authorizeStaffUpload") {
+            test("should throw ForbiddenException") {
+                val contest = ContestMockBuilder.build()
+                val member = MemberMockBuilder.build()
+
+                shouldThrow<ForbiddenException> {
+                    sut.authorizeStaffUpload(contest, member)
+                }
             }
         }
 
@@ -82,8 +95,21 @@ class ProblemDescriptionAuthorizationConfigTest :
                 val member = MemberMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
 
-                // Should not throw exception
-                sut.authorizeAdminDownload(contest, member, attachment)
+                shouldNotThrow<ForbiddenException> {
+                    sut.authorizeAdminDownload(contest, member, attachment)
+                }
+            }
+        }
+
+        context("authorizeStaffDownload") {
+            test("should allow staff download") {
+                val contest = ContestMockBuilder.build()
+                val member = MemberMockBuilder.build()
+                val attachment = AttachmentMockBuilder.build()
+
+                shouldNotThrow<ForbiddenException> {
+                    sut.authorizeStaffDownload(contest, member, attachment)
+                }
             }
         }
 
@@ -94,8 +120,9 @@ class ProblemDescriptionAuthorizationConfigTest :
                 val member = MemberMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
 
-                // Should not throw exception
-                sut.authorizeJudgeDownload(contest, member, attachment)
+                shouldNotThrow<ForbiddenException> {
+                    sut.authorizeJudgeDownload(contest, member, attachment)
+                }
             }
         }
 
@@ -110,8 +137,9 @@ class ProblemDescriptionAuthorizationConfigTest :
                 val member = MemberMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
 
-                // Should not throw exception
-                sut.authorizeContestantDownload(contest, member, attachment)
+                shouldNotThrow<ForbiddenException> {
+                    sut.authorizeContestantDownload(contest, member, attachment)
+                }
             }
         }
 
@@ -125,8 +153,9 @@ class ProblemDescriptionAuthorizationConfigTest :
                     )
                 val attachment = AttachmentMockBuilder.build()
 
-                // Should not throw exception
-                sut.authorizePublicDownload(contest, attachment)
+                shouldNotThrow<ForbiddenException> {
+                    sut.authorizePublicDownload(contest, attachment)
+                }
             }
         }
     })

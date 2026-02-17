@@ -16,6 +16,11 @@ class SubmissionCodeAuthorizationConfig : AttachmentAuthorizationConfig {
         member: Member,
     ) = throw ForbiddenException("Admins cannot upload submission code attachments")
 
+    override fun authorizeStaffUpload(
+        contest: Contest,
+        member: Member,
+    ) = throw ForbiddenException("Staff cannot upload submission code attachments")
+
     override fun authorizeJudgeUpload(
         contest: Contest,
         member: Member,
@@ -36,6 +41,7 @@ class SubmissionCodeAuthorizationConfig : AttachmentAuthorizationConfig {
         member: Member,
         attachment: Attachment,
     ) {
+        // Admin can download submission code attachments
     }
 
     override fun authorizeJudgeDownload(
@@ -43,7 +49,14 @@ class SubmissionCodeAuthorizationConfig : AttachmentAuthorizationConfig {
         member: Member,
         attachment: Attachment,
     ) {
+        // Judge can download submission code attachments
     }
+
+    override fun authorizeStaffDownload(
+        contest: Contest,
+        member: Member,
+        attachment: Attachment,
+    ) = throw ForbiddenException("Staff cannot download submission code attachments")
 
     override fun authorizeContestantDownload(
         contest: Contest,

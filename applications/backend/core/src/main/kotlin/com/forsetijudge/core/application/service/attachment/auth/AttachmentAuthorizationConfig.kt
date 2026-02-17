@@ -25,6 +25,18 @@ interface AttachmentAuthorizationConfig {
     )
 
     /**
+     * Authorizes the upload of an attachment in a contest by a staff member.
+     *
+     * @param contest The contest where the attachment is being uploaded.
+     * @param member The staff member attempting the upload.
+     * @throws ForbiddenException if the upload is not authorized.
+     */
+    fun authorizeStaffUpload(
+        contest: Contest,
+        member: Member,
+    )
+
+    /**
      * Authorizes the upload of an attachment in a contest by a judge member.
      *
      * @param contest The contest where the attachment is being uploaded.
@@ -67,6 +79,20 @@ interface AttachmentAuthorizationConfig {
      * @throws ForbiddenException if the download is not authorized.
      */
     fun authorizeAdminDownload(
+        contest: Contest,
+        member: Member,
+        attachment: Attachment,
+    )
+
+    /**
+     * Authorizes the download of an attachment in a contest by a staff member.
+     *
+     * @param contest The contest where the attachment is being downloaded.
+     * @param member The staff member attempting the download.
+     * @param attachment The attachment to be downloaded.
+     * @throws ForbiddenException if the download is not authorized.
+     */
+    fun authorizeStaffDownload(
         contest: Contest,
         member: Member,
         attachment: Attachment,
