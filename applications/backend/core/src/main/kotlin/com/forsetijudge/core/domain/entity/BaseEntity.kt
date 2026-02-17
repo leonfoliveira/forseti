@@ -14,19 +14,19 @@ import java.util.UUID
 @Audited(withModifiedFlag = true)
 open class BaseEntity(
     @Id
-    val id: UUID = UuidCreator.getTimeOrderedEpoch(),
+    open val id: UUID = UuidCreator.getTimeOrderedEpoch(),
     @Column(name = "created_at", nullable = false)
     @Audited(withModifiedFlag = false)
-    val createdAt: OffsetDateTime = OffsetDateTime.now(),
+    open val createdAt: OffsetDateTime = OffsetDateTime.now(),
     @Column(name = "updated_at", nullable = false)
     @Audited(withModifiedFlag = false)
-    var updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    open var updatedAt: OffsetDateTime = OffsetDateTime.now(),
     @Column(name = "deleted_at")
-    var deletedAt: OffsetDateTime? = null,
+    open var deletedAt: OffsetDateTime? = null,
     @Version
     @Audited(withModifiedFlag = false)
     @Column(name = "version", nullable = false)
-    var version: Long = 1L,
+    open var version: Long = 1L,
 ) {
     @PreUpdate
     protected fun onUpdate() {

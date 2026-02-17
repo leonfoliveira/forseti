@@ -16,13 +16,16 @@ import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.ticket.CreateTicketUseCase
 import com.forsetijudge.core.port.dto.input.ticket.CreateTicketInputDTO
+import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.annotation.Validated
 import java.util.UUID
 
 @Service
+@Validated
 class CreateTicketService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
@@ -45,7 +48,7 @@ class CreateTicketService(
     override fun create(
         contestId: UUID,
         memberId: UUID,
-        inputDTO: CreateTicketInputDTO,
+        @Valid inputDTO: CreateTicketInputDTO,
     ): Ticket<*> {
         logger.info("Creating ticket for contestId: $contestId, memberId: $memberId, type: ${inputDTO.type}")
 
@@ -80,11 +83,11 @@ class CreateTicketService(
             .checkContestStarted()
             .checkMemberType(Member.Type.CONTESTANT)
 
-        val properties = objectMapper.convertValue(inputDTO.properties, SubmissionPrintTicket.Properties::class.java)
+        val typedProperties = objectMapper.convertValue(inputDTO.properties, SubmissionPrintTicket.Properties::class.java)
 
         val submission =
-            submissionRepository.findEntityById(properties.submissionId)
-                ?: throw NotFoundException("Could not find submission with id: ${properties.submissionId}")
+            submissionRepository.findEntityById(typedProperties.submissionId)
+                ?: throw NotFoundException("Could not find submission with id: ${typedProperties.submissionId}")
 
         if (submission.contest != contest) {
             throw NotFoundException("Submission does not belong to this contest")
@@ -92,7 +95,7 @@ class CreateTicketService(
         if (submission.member != member) {
             throw NotFoundException("Submission does not belong to this member")
         }
-        if (submission.code.id != properties.attachment.id) {
+        if (submission.code.id != typedProperties.attachmentId) {
             throw NotFoundException("Attachment does not belong to this submission")
         }
 
@@ -100,7 +103,7 @@ class CreateTicketService(
             contest = contest,
             member = member,
             type = inputDTO.type,
-            properties = properties,
+            properties = Ticket.getRawProperties(objectMapper, typedProperties),
         )
     }
 
@@ -115,13 +118,13 @@ class CreateTicketService(
             .checkContestStarted()
             .checkAnyMember()
 
-        val properties = objectMapper.convertValue(inputDTO.properties, TechnicalSupportTicket.Properties::class.java)
+        val typedProperties = objectMapper.convertValue(inputDTO.properties, TechnicalSupportTicket.Properties::class.java)
 
         return TechnicalSupportTicket(
             contest = contest,
             member = member,
             type = inputDTO.type,
-            properties = properties,
+            properties = Ticket.getRawProperties(objectMapper, typedProperties),
         )
     }
 
@@ -136,13 +139,13 @@ class CreateTicketService(
             .checkContestStarted()
             .checkAnyMember()
 
-        val properties = objectMapper.convertValue(inputDTO.properties, NonTechnicalSupportTicket.Properties::class.java)
+        val typedProperties = objectMapper.convertValue(inputDTO.properties, NonTechnicalSupportTicket.Properties::class.java)
 
         return NonTechnicalSupportTicket(
             contest = contest,
             member = member,
             type = inputDTO.type,
-            properties = properties,
+            properties = Ticket.getRawProperties(objectMapper, typedProperties),
         )
     }
 }

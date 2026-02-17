@@ -16,8 +16,8 @@ object TicketMockBuilder {
         staff: Member? = null,
         type: Ticket.Type = Ticket.Type.SUBMISSION_PRINT,
         status: Ticket.Status = Ticket.Status.OPEN,
-        properties: TProperties = emptyMap<String, Any>() as TProperties,
-    ) = Ticket(
+        properties: Map<String, Any> = emptyMap(),
+    ) = Ticket<TProperties>(
         id = id,
         createdAt = createdAt,
         updatedAt = updatedAt,

@@ -49,7 +49,7 @@ class UpdateTicketService(
             memberRepository.findEntityById(staffId)
                 ?: throw NotFoundException("Could not find member with id: $staffId")
         val ticket =
-            ticketRepository.findByIdAndContestId(contestId, ticketId)
+            ticketRepository.findByIdAndContestId(ticketId, contestId)
                 ?: throw NotFoundException("Could not find ticket with id: $ticketId in this contest")
 
         ContestAuthorizer(contest, staff).checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF)

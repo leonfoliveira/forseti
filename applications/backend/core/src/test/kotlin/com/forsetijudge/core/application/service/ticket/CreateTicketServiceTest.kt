@@ -68,13 +68,7 @@ class CreateTicketServiceTest :
             val properties =
                 mapOf(
                     "submissionId" to submissionId.toString(),
-                    "attachment" to
-                        mapOf(
-                            "id" to attachmentId.toString(),
-                            "filename" to "solution.py",
-                            "contentType" to "text/x-python",
-                            "version" to 1L,
-                        ),
+                    "attachmentId" to attachmentId.toString(),
                 )
 
             val inputDTO =
@@ -185,8 +179,8 @@ class CreateTicketServiceTest :
                 result.member shouldBe member
                 result.type shouldBe Ticket.Type.SUBMISSION_PRINT
                 result.status shouldBe Ticket.Status.OPEN
-                result.properties.submissionId shouldBe submissionId
-                result.properties.attachment.id shouldBe attachmentId
+                result.properties["submissionId"] shouldBe submissionId.toString()
+                result.properties["attachmentId"] shouldBe attachmentId.toString()
                 verify { anyConstructed<ContestAuthorizer>().checkContestStarted() }
                 verify { contestAuthorizer.checkMemberType(Member.Type.CONTESTANT) }
                 verify { ticketRepository.save(any<SubmissionPrintTicket>()) }
@@ -233,7 +227,7 @@ class CreateTicketServiceTest :
                 result.member shouldBe member
                 result.type shouldBe Ticket.Type.TECHNICAL_SUPPORT
                 result.status shouldBe Ticket.Status.OPEN
-                result.properties.description shouldBe "My submission is not being judged"
+                result.properties["description"] shouldBe "My submission is not being judged"
                 verify { anyConstructed<ContestAuthorizer>().checkContestStarted() }
                 verify { contestAuthorizer.checkAnyMember() }
                 verify { ticketRepository.save(any<TechnicalSupportTicket>()) }
@@ -280,7 +274,7 @@ class CreateTicketServiceTest :
                 result.member shouldBe member
                 result.type shouldBe Ticket.Type.NON_TECHNICAL_SUPPORT
                 result.status shouldBe Ticket.Status.OPEN
-                result.properties.description shouldBe "I need a bathroom break"
+                result.properties["description"] shouldBe "I need a bathroom break"
                 verify { anyConstructed<ContestAuthorizer>().checkContestStarted() }
                 verify { contestAuthorizer.checkAnyMember() }
                 verify { ticketRepository.save(any<NonTechnicalSupportTicket>()) }

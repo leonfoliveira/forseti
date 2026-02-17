@@ -16,7 +16,7 @@ data class TicketResponseDTO(
     val staff: MemberPublicResponseDTO? = null,
     val type: Ticket.Type,
     val status: Ticket.Status,
-    val properties: Serializable,
+    val properties: Map<String, Any>,
 ) : Serializable
 
 fun Ticket<*>.toResponseDTO() =

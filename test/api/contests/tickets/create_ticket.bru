@@ -1,0 +1,35 @@
+meta {
+  name: create_ticket
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+body:json {
+  {
+    "type": "TECHNICAL_SUPPORT",
+    "properties": {
+      "description": "{{$randomWords}}"
+    }
+  }
+}
+
+script:post-response {
+  const ticketId = res.body.id
+  
+  bru.setVar("ticket_id", ticketId)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

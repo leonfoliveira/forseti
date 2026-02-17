@@ -71,7 +71,7 @@ class UpdateTicketServiceTest :
                 val staff = MemberMockBuilder.build(id = staffId, type = Member.Type.STAFF)
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(staffId) } returns staff
-                every { ticketRepository.findByIdAndContestId(contestId, ticketId) } returns null
+                every { ticketRepository.findByIdAndContestId(ticketId, contestId) } returns null
 
                 shouldThrow<NotFoundException> { sut.updateStatus(contestId, ticketId, staffId, newStatus) }
             }
@@ -82,14 +82,14 @@ class UpdateTicketServiceTest :
                 val ticket = TicketMockBuilder.build<Serializable>(id = ticketId, contest = contest, status = Ticket.Status.OPEN)
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(staffId) } returns staff
-                every { ticketRepository.findByIdAndContestId(contestId, ticketId) } returns ticket
-                every { ticketRepository.save(ticket) } returns ticket
+                every { ticketRepository.findByIdAndContestId(ticketId, contestId) } returns ticket
+                every { ticketRepository.save(any<Ticket<*>>()) } returns ticket
 
                 val result = sut.updateStatus(contestId, ticketId, staffId, Ticket.Status.IN_PROGRESS)
 
                 result.status shouldBe Ticket.Status.IN_PROGRESS
-                verify { anyConstructed<ContestAuthorizer>().checkMemberType(Member.Type.STAFF) }
-                verify { ticketRepository.save(ticket) }
+                verify { anyConstructed<ContestAuthorizer>().checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF) }
+                verify { ticketRepository.save(ticket as Ticket<*>) }
                 verify { applicationEventPublisher.publishEvent(ofType<TicketUpdatedEvent>()) }
             }
 
@@ -99,14 +99,14 @@ class UpdateTicketServiceTest :
                 val ticket = TicketMockBuilder.build<Serializable>(id = ticketId, contest = contest, status = Ticket.Status.IN_PROGRESS)
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(staffId) } returns staff
-                every { ticketRepository.findByIdAndContestId(contestId, ticketId) } returns ticket
-                every { ticketRepository.save(ticket) } returns ticket
+                every { ticketRepository.findByIdAndContestId(ticketId, contestId) } returns ticket
+                every { ticketRepository.save(any<Ticket<*>>()) } returns ticket
 
                 val result = sut.updateStatus(contestId, ticketId, staffId, Ticket.Status.RESOLVED)
 
                 result.status shouldBe Ticket.Status.RESOLVED
-                verify { anyConstructed<ContestAuthorizer>().checkMemberType(Member.Type.STAFF) }
-                verify { ticketRepository.save(ticket) }
+                verify { anyConstructed<ContestAuthorizer>().checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF) }
+                verify { ticketRepository.save(ticket as Ticket<*>) }
                 verify { applicationEventPublisher.publishEvent(ofType<TicketUpdatedEvent>()) }
             }
 
@@ -116,14 +116,14 @@ class UpdateTicketServiceTest :
                 val ticket = TicketMockBuilder.build<Serializable>(id = ticketId, contest = contest, status = Ticket.Status.OPEN)
                 every { contestRepository.findEntityById(contestId) } returns contest
                 every { memberRepository.findEntityById(staffId) } returns staff
-                every { ticketRepository.findByIdAndContestId(contestId, ticketId) } returns ticket
-                every { ticketRepository.save(ticket) } returns ticket
+                every { ticketRepository.findByIdAndContestId(ticketId, contestId) } returns ticket
+                every { ticketRepository.save(any<Ticket<*>>()) } returns ticket
 
                 val result = sut.updateStatus(contestId, ticketId, staffId, Ticket.Status.REJECTED)
 
                 result.status shouldBe Ticket.Status.REJECTED
-                verify { anyConstructed<ContestAuthorizer>().checkMemberType(Member.Type.STAFF) }
-                verify { ticketRepository.save(ticket) }
+                verify { anyConstructed<ContestAuthorizer>().checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF) }
+                verify { ticketRepository.save(ticket as Ticket<*>) }
                 verify { applicationEventPublisher.publishEvent(ofType<TicketUpdatedEvent>()) }
             }
         }

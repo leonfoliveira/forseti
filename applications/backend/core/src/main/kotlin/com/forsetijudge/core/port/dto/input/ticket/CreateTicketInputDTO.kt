@@ -18,7 +18,6 @@ data class CreateTicketInputDTO(
         get() {
             if (type != Ticket.Type.SUBMISSION_PRINT) return true
 
-            // Validate submissionId exists and is a valid UUID string
             val submissionId = properties["submissionId"] as? String ?: return false
             try {
                 UUID.fromString(submissionId)
@@ -26,24 +25,14 @@ data class CreateTicketInputDTO(
                 return false
             }
 
-            // Validate attachment exists and has required fields
-            val attachment = properties["attachment"] as? Map<*, *> ?: return false
-            val attachmentId = attachment["id"] as? String ?: return false
-            val filename = attachment["filename"] as? String ?: return false
-            val contentType = attachment["contentType"] as? String ?: return false
-            val version = attachment["version"] ?: return false
-
-            // Validate attachment.id is a valid UUID
+            val attachmentId = properties["attachmentId"] as? String ?: return false
             try {
                 UUID.fromString(attachmentId)
             } catch (e: IllegalArgumentException) {
                 return false
             }
 
-            // Validate version is a number
-            if (version !is Number) return false
-
-            return filename.isNotBlank() && contentType.isNotBlank()
+            return true
         }
 
     @get:JsonIgnore

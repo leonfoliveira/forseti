@@ -6,11 +6,13 @@ import com.forsetijudge.core.domain.entity.Ticket
 import com.github.f4b6a3.uuid.UuidCreator
 import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity
+import org.hibernate.envers.Audited
 import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
 @Entity
+@Audited
 @DiscriminatorValue("TECHNICAL_SUPPORT")
 class TechnicalSupportTicket(
     id: UUID = UuidCreator.getTimeOrderedEpoch(),
@@ -23,7 +25,7 @@ class TechnicalSupportTicket(
     staff: Member? = null,
     type: Type = Type.TECHNICAL_SUPPORT,
     status: Status = Status.OPEN,
-    properties: Properties,
+    properties: Map<String, Any>,
 ) : Ticket<TechnicalSupportTicket.Properties>(
         id,
         createdAt,

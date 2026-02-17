@@ -1,0 +1,26 @@
+meta {
+  name: update_status
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{base_url}}/{{ticket_id}}:update-status
+  body: json
+  auth: inherit
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+body:json {
+  {
+    "status": "IN_PROGRESS"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

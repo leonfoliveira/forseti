@@ -1,5 +1,7 @@
 package com.forsetijudge.core.domain.entity
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.f4b6a3.uuid.UuidCreator
 import jakarta.persistence.Column
 import jakarta.persistence.DiscriminatorColumn
@@ -38,33 +40,32 @@ open class Ticket<TProperties : Serializable>(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
-    val contest: Contest,
+    open val contest: Contest,
     /**
      * The member who made this ticket.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
-    val member: Member,
+    open val member: Member,
     /**
      * The staff who is responsible for handling this ticket. It is null if the ticket has not been handled yet.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "staff_id")
-    @JoinColumn
-    val staff: Member? = null,
+    open val staff: Member? = null,
     /**
      * The type of the ticket.
      */
-    @Column(name = "type", nullable = false)
+    @Column(name = "type", nullable = false, insertable = false, updatable = false)
     @Enumerated(EnumType.STRING)
-    var type: Type,
+    open var type: Type,
     /**
      * The status of the ticket.
      */
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    var status: Status = Status.OPEN,
+    open var status: Status = Status.OPEN,
     /**
      * The properties of the ticket, which is a JSON object containing additional information about the ticket.
      * The structure of the properties depends on the type of the ticket.
@@ -72,7 +73,7 @@ open class Ticket<TProperties : Serializable>(
     @Column(name = "properties", nullable = false, columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     @Audited(withModifiedFlag = false)
-    var properties: TProperties,
+    open var properties: Map<String, Any>,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     enum class Type {
         SUBMISSION_PRINT,
@@ -85,5 +86,19 @@ open class Ticket<TProperties : Serializable>(
         IN_PROGRESS,
         RESOLVED,
         REJECTED,
+    }
+
+    companion object {
+        private val rawPropertiesTypeReference = object : TypeReference<Map<String, Any>>() {}
+
+        fun getRawProperties(
+            objectMapper: ObjectMapper,
+            typedProperties: Serializable,
+        ): Map<String, Any> = objectMapper.convertValue(typedProperties, rawPropertiesTypeReference)
+    }
+
+    fun getTypedProperties(objectMapper: ObjectMapper): TProperties {
+        val typeRef = object : TypeReference<TProperties>() {}
+        return objectMapper.convertValue(properties, typeRef)
     }
 }
