@@ -63,7 +63,7 @@ describe("AxiosTicketRepository", () => {
       const result = await sut.updateStatus(contestId, ticketId, newStatus);
 
       expect(axiosClient.put).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/tickets/${ticketId}/status`,
+        `/v1/contests/${contestId}/tickets/${ticketId}:update-status`,
         {
           data: {
             status: newStatus,

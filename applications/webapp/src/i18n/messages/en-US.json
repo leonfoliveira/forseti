@@ -40,8 +40,7 @@
       "formatted-ticket-status": {
         "open": "Open",
         "in_progress": "In Progress",
-        "resolved": "Resolved",
-        "rejected": "Rejected"
+        "resolved": "Resolved"
       }
     }
   },
@@ -86,7 +85,7 @@
           "frozen": "Leaderboard has been frozen",
           "unfrozen": "Leaderboard has been unfrozen",
           "new-ticket": "New ticket",
-          "ticket-updated": "Your ticket has been updated: {status}"
+          "ticket-updated": "Your ticket has been updated to ''{status}''"
         },
         "judge-dashboard-provider": {
           "submission-failed": "New failed submission",
@@ -94,7 +93,7 @@
           "new-clarification": "New clarification",
           "frozen": "Leaderboard has been frozen",
           "unfrozen": "Leaderboard has been unfrozen",
-          "ticket-updated": "Your ticket has been updated: {status}"
+          "ticket-updated": "Your ticket has been updated to ''{status}''"
         },
         "guest-dashboard-provider": {
           "announcement": "New announcement: {text}",
@@ -107,14 +106,14 @@
           "clarification-answer": "New answer for a clarification",
           "frozen": "Leaderboard has been frozen",
           "unfrozen": "Leaderboard has been unfrozen",
-          "ticket-updated": "Your ticket has been updated: {status}"
+          "ticket-updated": "Your ticket has been updated to ''{status}''"
         },
         "admin-dashboard-provider": {
           "submission-failed": "New failed submission",
           "announcement": "New announcement: {text}",
           "frozen": "Leaderboard has been frozen",
           "unfrozen": "Leaderboard has been unfrozen",
-          "ticket-updated": "Your ticket has been updated: {status}"
+          "ticket-updated": "Your ticket has been updated to ''{status}''"
         }
       },
       "component": {
@@ -190,6 +189,24 @@
           "wait-page": {
             "start-at": "Starts in",
             "languages": "Supported languages"
+          },
+          "tickets": {
+            "tickets-page-form": {
+              "create-title": "Create Ticket",
+              "create-description": "Fill out the form below to create a new ticket.",
+              "create-success": "Ticket created successfully",
+              "create-error": "Failed to create ticket",
+              "type-label": "Type",
+              "description-label": "Description",
+              "cancel-label": "Cancel",
+              "submit-label": "Submit"
+            },
+            "ticket-form": {
+              "type-required": "Type is required",
+              "type-invalid": "Invalid ticket type",
+              "description-required": "Description is required",
+              "description-too-long": "Description must have less than 512 characters"
+            }
           },
           "submissions": {
             "submissions-page": {
@@ -481,6 +498,16 @@
               "text-long": "Cannot exceed 255 characters"
             }
           }
+        },
+        "tickets": {
+          "page-title": "Forseti - Tickets",
+          "page-description": "View and manage tickets for the contest.",
+          "new-label": "New Ticket",
+          "move-label": "Move",
+          "print-submission-text": "Print my submission",
+          "print-label": "Print",
+          "print-error": "Failed to download attachment",
+          "update-status-error": "Failed to update ticket status"
         }
       }
     }

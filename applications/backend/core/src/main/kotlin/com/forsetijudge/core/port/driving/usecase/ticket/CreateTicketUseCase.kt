@@ -2,6 +2,7 @@ package com.forsetijudge.core.port.driving.usecase.ticket
 
 import com.forsetijudge.core.domain.entity.Ticket
 import com.forsetijudge.core.port.dto.input.ticket.CreateTicketInputDTO
+import jakarta.validation.Valid
 import java.util.UUID
 
 interface CreateTicketUseCase {
@@ -16,6 +17,6 @@ interface CreateTicketUseCase {
     fun create(
         contestId: UUID,
         memberId: UUID,
-        inputDTO: CreateTicketInputDTO,
+        @Valid inputDTO: CreateTicketInputDTO,
     ): Ticket<*>
 }

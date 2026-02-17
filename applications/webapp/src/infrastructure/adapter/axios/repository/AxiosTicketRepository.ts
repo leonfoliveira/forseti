@@ -28,7 +28,7 @@ export class AxiosTicketRepository implements TicketRepository {
     status: TicketStatus,
   ): Promise<TicketResponseDTO> {
     const response = await this.axiosClient.put<TicketResponseDTO>(
-      `${this.basePath(contestId)}/${ticketId}/status`,
+      `${this.basePath(contestId)}/${ticketId}:update-status`,
       {
         data: {
           status,

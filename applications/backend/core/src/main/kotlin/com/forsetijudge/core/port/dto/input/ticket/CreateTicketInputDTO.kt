@@ -42,7 +42,7 @@ data class CreateTicketInputDTO(
             if (type != Ticket.Type.TECHNICAL_SUPPORT) return true
 
             val description = properties["description"] as? String ?: return false
-            return description.isNotBlank()
+            return description.length in 1..512
         }
 
     @get:JsonIgnore
@@ -52,6 +52,6 @@ data class CreateTicketInputDTO(
             if (type != Ticket.Type.NON_TECHNICAL_SUPPORT) return true
 
             val description = properties["description"] as? String ?: return false
-            return description.isNotBlank()
+            return description.length in 1..512
         }
 }

@@ -134,10 +134,6 @@ const ticketStatus = defineMessages({
     id: "i18n.global.formatted-ticket-status.resolved",
     defaultMessage: "Resolved",
   },
-  [TicketStatus.REJECTED]: {
-    id: "i18n.global.formatted-ticket-status.rejected",
-    defaultMessage: "Rejected",
-  },
 });
 
 export const globalMessages = {

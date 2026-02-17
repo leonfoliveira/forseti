@@ -18,6 +18,7 @@ import { SessionWritter } from "@/core/port/driving/usecase/session/SessionWritt
 import { StorageReader } from "@/core/port/driving/usecase/storage/StorageReader";
 import { StorageWritter } from "@/core/port/driving/usecase/storage/StorageWritter";
 import { SubmissionWritter } from "@/core/port/driving/usecase/submission/SubmissionWritter";
+import { TicketWritter } from "@/core/port/driving/usecase/ticket/TicketWritter";
 import { StompClientFactory } from "@/infrastructure/adapter/stomp/StompClientFactory";
 
 export type Composition = {

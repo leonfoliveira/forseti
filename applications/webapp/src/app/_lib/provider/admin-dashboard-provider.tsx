@@ -50,7 +50,7 @@ const messages = defineMessages({
   },
   ticketUpdated: {
     id: "app._lib.provider.admin-dashboard-provider.ticket-updated",
-    defaultMessage: "Your ticket has been updated: {status}",
+    defaultMessage: "Your ticket has been updated to ''{status}''",
   },
 });
 

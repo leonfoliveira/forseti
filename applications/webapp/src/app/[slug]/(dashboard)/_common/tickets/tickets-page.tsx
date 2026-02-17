@@ -1,16 +1,17 @@
+import { PlusIcon } from "lucide-react";
+import { useState } from "react";
+
+import { TicketsPageForm } from "@/app/[slug]/(dashboard)/_common/tickets/tickets-page-form";
 import { TicketsPageItem } from "@/app/[slug]/(dashboard)/_common/tickets/tickets-page-item";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
+import { Button } from "@/app/_lib/component/shadcn/button";
 import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
-import {
-  Item,
-  ItemContent,
-  ItemDescription,
-} from "@/app/_lib/component/shadcn/item";
+import { Separator } from "@/app/_lib/component/shadcn/separator";
+import { TicketStatus } from "@/core/domain/enumerate/TicketStatus";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
-import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 
 const messages = defineMessages({
   pageTitle: {
@@ -20,6 +21,10 @@ const messages = defineMessages({
   pageDescription: {
     id: "app.[slug].(dashboard).tickets.page-description",
     defaultMessage: "View and manage tickets for the contest.",
+  },
+  newLabel: {
+    id: "app.[slug].(dashboard).tickets.new-label",
+    defaultMessage: "New Ticket",
   },
 });
 
@@ -53,17 +58,68 @@ export function TicketsPage({
   canEdit,
   onEdit,
 }: Props) {
+  const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
+
+  const getColumnByStatus = (status: TicketStatus) => {
+    return (
+      <div
+        className="flex flex-col gap-5"
+        data-testid={`ticket-column-${status.toLowerCase()}`}
+      >
+        <h2 className="text-lg font-semibold">
+          <FormattedMessage {...globalMessages.ticketStatus[status]} />
+        </h2>
+        {tickets
+          .filter((ticket) => ticket.status === status)
+          .map((ticket) => (
+            <TicketsPageItem
+              key={ticket.id}
+              ticket={ticket}
+              canEdit={canEdit}
+              onEdit={onEdit}
+            />
+          ))}
+      </div>
+    );
+  };
+
   return (
     <Page title={messages.pageTitle} description={messages.pageDescription}>
       <div className="flex flex-col items-center py-5">
+        {canCreate && isCreateFormOpen && (
+          <TicketsPageForm
+            onCreate={(ticket) => {
+              onCreate?.(ticket);
+              setIsCreateFormOpen(false);
+            }}
+            onClose={() => setIsCreateFormOpen(false)}
+          />
+        )}
+
+        {canCreate && !isCreateFormOpen && (
+          <Button
+            onClick={() => setIsCreateFormOpen(true)}
+            data-testid="open-create-form-button"
+          >
+            <PlusIcon size={16} />
+            <FormattedMessage {...messages.newLabel} />
+          </Button>
+        )}
+        {canCreate && <Separator className="my-5 w-full max-w-4xl" />}
+
         <Card className="w-full">
           <CardContent>
-            <div className="grid grid-cols-3">
-              <div>
-                <TicketsPageItem ticket={MockTicketResponseDTO()} />
-              </div>
-              <div></div>
-              <div></div>
+            <div
+              className="grid [grid-template-columns:1fr] gap-3 lg:[grid-template-columns:1fr_auto_1fr_auto_1fr]"
+              data-testid="tickets-kanban"
+            >
+              {getColumnByStatus(TicketStatus.OPEN)}
+              <Separator orientation="vertical" className="hidden lg:block" />
+              <Separator orientation="horizontal" className="lg:hidden" />
+              {getColumnByStatus(TicketStatus.IN_PROGRESS)}
+              <Separator orientation="vertical" className="hidden lg:block" />
+              <Separator orientation="horizontal" className="lg:hidden" />
+              {getColumnByStatus(TicketStatus.RESOLVED)}
             </div>
           </CardContent>
         </Card>
