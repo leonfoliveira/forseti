@@ -9,6 +9,7 @@ import { MockContestPublicResponseDTO } from "@/test/mock/response/contest/MockC
 import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardPartialResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
+import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 
 describe("staffDashboardSlice", () => {
   const stateWithData = {
@@ -181,5 +182,17 @@ describe("staffDashboardSlice", () => {
     );
 
     expect(state.contest.clarifications).toHaveLength(0);
+  });
+
+  it("should merge a new ticket", () => {
+    const ticket = MockTicketResponseDTO();
+
+    const state = staffDashboardSlice.reducer(
+      stateWithData,
+      staffDashboardSlice.actions.mergeTicket(ticket),
+    );
+
+    expect(state.tickets).toHaveLength(1);
+    expect(state.tickets).toContainEqual(ticket);
   });
 });

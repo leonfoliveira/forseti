@@ -9,6 +9,7 @@ import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockCon
 import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardPartialResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
+import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 
 describe("adminDashboardSlice", () => {
   const stateWithData = {
@@ -175,5 +176,17 @@ describe("adminDashboardSlice", () => {
     );
 
     expect(state.contest.clarifications).toHaveLength(0);
+  });
+
+  it("should merge a new ticket", () => {
+    const ticket = MockTicketResponseDTO();
+
+    const state = adminDashboardSlice.reducer(
+      stateWithData,
+      adminDashboardSlice.actions.mergeTicket(ticket),
+    );
+
+    expect(state.tickets).toHaveLength(1);
+    expect(state.tickets).toContainEqual(ticket);
   });
 });

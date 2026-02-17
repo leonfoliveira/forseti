@@ -10,6 +10,7 @@ import { StaffDashboardResponseDTO } from "@/core/port/dto/response/dashboard/St
 import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 
 export type StaffDashboardState = StaffDashboardResponseDTO & {
   listenerStatus: ListenerStatus;
@@ -77,6 +78,9 @@ export const staffDashboardSlice = createSlice({
       state.contest.clarifications = state.contest.clarifications.filter(
         (clarification) => clarification.id !== action.payload,
       );
+    },
+    mergeTicket(state, action: { payload: TicketResponseDTO }) {
+      state.tickets = mergeEntity(state.tickets, action.payload);
     },
   },
 });
