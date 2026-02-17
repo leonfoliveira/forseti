@@ -63,9 +63,13 @@ const messages = defineMessages({
 
 type Props = {
   executions: ExecutionResponseDTO[];
+  onClose: () => void;
 };
 
-export function SubmissionsPageActionExecutions({ executions }: Props) {
+export function SubmissionsPageActionExecutions({
+  executions,
+  onClose,
+}: Props) {
   const contestId = useAppSelector((state) => state.contestMetadata.id);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -82,7 +86,15 @@ export function SubmissionsPageActionExecutions({ executions }: Props) {
         <FormattedMessage {...messages.executionsLabel} />
       </DropdownMenuItem>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(isOpen) => {
+          setIsDialogOpen(isOpen);
+          if (!isOpen) {
+            onClose();
+          }
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>

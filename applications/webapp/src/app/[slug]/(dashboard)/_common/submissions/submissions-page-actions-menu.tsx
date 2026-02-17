@@ -79,6 +79,7 @@ export function SubmissionsPageActionsMenu({
                     (submission as SubmissionFullWithExecutionResponseDTO)
                       .executions
                   }
+                  onClose={close}
                 />
                 {submission.status != SubmissionStatus.JUDGING && (
                   <SubmissionsPageActionRerun
