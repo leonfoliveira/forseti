@@ -3,7 +3,7 @@ package com.forsetijudge.core.port.dto.input.ticket
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.forsetijudge.core.domain.entity.Ticket
 import jakarta.validation.constraints.AssertTrue
-import org.jetbrains.annotations.NotNull
+import jakarta.validation.constraints.NotNull
 import java.util.UUID
 
 data class CreateTicketInputDTO(

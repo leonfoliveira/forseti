@@ -10,6 +10,7 @@ import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.ticket.FindTicketUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -20,6 +21,14 @@ class FindTicketService(
 ) : FindTicketUseCase {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * Finds all tickets for a given contest.
+     *
+     * @param contestId The ID of the contest to find tickets for.
+     * @param memberId The ID of the member requesting the tickets
+     * @return A list of tickets for the specified contest.
+     */
+    @Transactional(readOnly = true)
     override fun findAllByContestId(
         contestId: UUID,
         memberId: UUID,
@@ -40,6 +49,14 @@ class FindTicketService(
         return tickets
     }
 
+    /**
+     * Finds all tickets for a given member.
+     *
+     * @param contestId The ID of the contest to find tickets for.
+     * @param memberId The ID of the member to find tickets for.
+     * @return A list of tickets for the specified member.
+     */
+    @Transactional(readOnly = true)
     override fun findAllByContestIdAndMemberId(
         contestId: UUID,
         memberId: UUID,

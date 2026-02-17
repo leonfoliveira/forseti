@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.driving.usecase.ticket.UpdateTicketUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -32,6 +33,7 @@ class UpdateTicketService(
      * @param status The new status to set for the ticket.
      * @return The updated Ticket entity.
      */
+    @Transactional
     override fun updateStatus(
         contestId: UUID,
         ticketId: UUID,
@@ -50,7 +52,7 @@ class UpdateTicketService(
             ticketRepository.findByIdAndContestId(contestId, ticketId)
                 ?: throw NotFoundException("Could not find ticket with id: $ticketId in this contest")
 
-        ContestAuthorizer(contest, staff).checkMemberType(Member.Type.STAFF)
+        ContestAuthorizer(contest, staff).checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF)
 
         ticket.status = status
         applicationEventPublisher.publishEvent(TicketUpdatedEvent(this, ticket))

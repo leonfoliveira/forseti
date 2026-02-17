@@ -94,4 +94,23 @@ class ContestAuthorizerTest :
                 }
             }
         }
+
+        context("checkAnyMember") {
+            test("should not throw if the member is not null") {
+                val contest = ContestMockBuilder.build()
+                val member = MemberMockBuilder.build()
+
+                shouldNotThrow<ForbiddenException> {
+                    ContestAuthorizer(contest, member).checkAnyMember()
+                }
+            }
+
+            test("should throw if the member is null") {
+                val contest = ContestMockBuilder.build()
+
+                shouldThrow<ForbiddenException> {
+                    ContestAuthorizer(contest, null).checkAnyMember()
+                }
+            }
+        }
     })

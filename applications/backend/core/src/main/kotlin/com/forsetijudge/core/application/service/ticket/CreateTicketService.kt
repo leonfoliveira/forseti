@@ -19,6 +19,7 @@ import com.forsetijudge.core.port.dto.input.ticket.CreateTicketInputDTO
 import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 
 @Service
@@ -40,6 +41,7 @@ class CreateTicketService(
      * @param inputDTO The input data transfer object containing the type and properties of the ticket.
      * @return The created Ticket entity.
      */
+    @Transactional
     override fun create(
         contestId: UUID,
         memberId: UUID,
@@ -111,7 +113,7 @@ class CreateTicketService(
 
         ContestAuthorizer(contest, member)
             .checkContestStarted()
-            .checkMemberType(Member.Type.CONTESTANT, Member.Type.STAFF)
+            .checkAnyMember()
 
         val properties = objectMapper.convertValue(inputDTO.properties, TechnicalSupportTicket.Properties::class.java)
 
@@ -132,7 +134,7 @@ class CreateTicketService(
 
         ContestAuthorizer(contest, member)
             .checkContestStarted()
-            .checkMemberType(Member.Type.CONTESTANT, Member.Type.STAFF)
+            .checkAnyMember()
 
         val properties = objectMapper.convertValue(inputDTO.properties, NonTechnicalSupportTicket.Properties::class.java)
 

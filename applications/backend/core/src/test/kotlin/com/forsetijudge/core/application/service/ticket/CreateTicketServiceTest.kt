@@ -28,7 +28,6 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkConstructor
-import io.mockk.slot
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
 
@@ -236,7 +235,7 @@ class CreateTicketServiceTest :
                 result.status shouldBe Ticket.Status.OPEN
                 result.properties.description shouldBe "My submission is not being judged"
                 verify { anyConstructed<ContestAuthorizer>().checkContestStarted() }
-                verify { contestAuthorizer.checkMemberType(Member.Type.CONTESTANT, Member.Type.STAFF) }
+                verify { contestAuthorizer.checkAnyMember() }
                 verify { ticketRepository.save(any<TechnicalSupportTicket>()) }
                 verify { applicationEventPublisher.publishEvent(ofType<TicketCreatedEvent>()) }
             }
@@ -283,7 +282,7 @@ class CreateTicketServiceTest :
                 result.status shouldBe Ticket.Status.OPEN
                 result.properties.description shouldBe "I need a bathroom break"
                 verify { anyConstructed<ContestAuthorizer>().checkContestStarted() }
-                verify { contestAuthorizer.checkMemberType(Member.Type.CONTESTANT, Member.Type.STAFF) }
+                verify { contestAuthorizer.checkAnyMember() }
                 verify { ticketRepository.save(any<NonTechnicalSupportTicket>()) }
                 verify { applicationEventPublisher.publishEvent(ofType<TicketCreatedEvent>()) }
             }
