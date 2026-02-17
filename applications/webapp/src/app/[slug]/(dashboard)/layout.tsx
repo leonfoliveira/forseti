@@ -32,9 +32,9 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard).layout.tab-announcements",
     defaultMessage: "Announcements",
   },
-  tabTasks: {
-    id: "app.[slug].(dashboard).layout.tab-tasks",
-    defaultMessage: "Tasks",
+  tabTickets: {
+    id: "app.[slug].(dashboard).layout.tab-tickets",
+    defaultMessage: "Tickets",
   },
   tabSettings: {
     id: "app.[slug].(dashboard).layout.tab-settings",
@@ -81,7 +81,7 @@ export default function DashboardLayout({
 
   if (!!session?.member) {
     tabs.push({
-      title: messages.tabTasks,
+      title: messages.tabTickets,
       path: routes.CONTEST_TICKETS(slug),
     });
   }
