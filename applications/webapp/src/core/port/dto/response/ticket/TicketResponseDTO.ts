@@ -9,7 +9,6 @@ export type TicketResponseDTO = {
   member: MemberPublicResponseDTO;
   staff?: MemberPublicResponseDTO;
   status: string;
-  properties: Record<string, any>;
 } & (
   | {
       type: TicketType.SUBMISSION_PRINT;

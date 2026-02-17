@@ -1,6 +1,6 @@
 import { TicketType } from "@/core/domain/enumerate/TicketType";
 
-export type CreateTicketDTO =
+export type CreateTicketRequestDTO =
   | {
       type: TicketType.SUBMISSION_PRINT;
       properties: {

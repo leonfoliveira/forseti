@@ -26,3 +26,5 @@ export const sessionWritter = composition.sessionWritter;
 export const storageReader = composition.storageReader;
 export const storageWritter = composition.storageWritter;
 export const submissionWritter = composition.submissionWritter;
+export const ticketReader = composition.ticketReader;
+export const ticketWritter = composition.ticketWritter;

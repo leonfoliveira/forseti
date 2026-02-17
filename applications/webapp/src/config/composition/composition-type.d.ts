@@ -43,4 +43,6 @@ export type Composition = {
   storageReader: StorageReader;
   storageWritter: StorageWritter;
   submissionWritter: SubmissionWritter;
+  ticketReader: TicketReader;
+  ticketWritter: TicketWritter;
 };

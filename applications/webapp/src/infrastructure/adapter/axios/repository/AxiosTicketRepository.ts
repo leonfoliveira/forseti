@@ -1,6 +1,6 @@
 import { TicketStatus } from "@/core/domain/enumerate/TicketStatus";
 import { TicketRepository } from "@/core/port/driven/repository/TicketRepository";
-import { CreateTicketDTO } from "@/core/port/dto/request/CreateTicketDTO";
+import { CreateTicketRequestDTO } from "@/core/port/dto/request/CreateTicketRequestDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 
@@ -11,7 +11,7 @@ export class AxiosTicketRepository implements TicketRepository {
 
   async create(
     contestId: string,
-    inputDTO: CreateTicketDTO,
+    inputDTO: CreateTicketRequestDTO,
   ): Promise<TicketResponseDTO> {
     const response = await this.axiosClient.post<TicketResponseDTO>(
       this.basePath(contestId),

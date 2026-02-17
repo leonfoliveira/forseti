@@ -10,6 +10,7 @@ import { LeaderboardService } from "@/core/application/service/LeaderboardServic
 import { SessionService } from "@/core/application/service/SessionService";
 import { StorageService } from "@/core/application/service/StorageService";
 import { SubmissionService } from "@/core/application/service/SubmissionService";
+import { TicketService } from "@/core/application/service/TicketService";
 import { AnnouncementWritter } from "@/core/port/driving/usecase/announcement/AnnouncementWritter";
 import { AttachmentReader } from "@/core/port/driving/usecase/attachment/AttachmentReader";
 import { AttachmentWritter } from "@/core/port/driving/usecase/attachment/AttachmentWritter";
@@ -25,6 +26,8 @@ import { SessionWritter } from "@/core/port/driving/usecase/session/SessionWritt
 import { StorageReader } from "@/core/port/driving/usecase/storage/StorageReader";
 import { StorageWritter } from "@/core/port/driving/usecase/storage/StorageWritter";
 import { SubmissionWritter } from "@/core/port/driving/usecase/submission/SubmissionWritter";
+import { TicketReader } from "@/core/port/driving/usecase/ticket/TicketReader";
+import { TicketWritter } from "@/core/port/driving/usecase/ticket/TicketWritter";
 import { AxiosClientSideClient } from "@/infrastructure/adapter/axios/AxiosClientSideClient";
 import { AxiosAnnouncementRepository } from "@/infrastructure/adapter/axios/repository/AxiosAnnouncementRepository";
 import { AxiosAttachmentRepository } from "@/infrastructure/adapter/axios/repository/AxiosAttachmentRepository";
@@ -34,6 +37,7 @@ import { AxiosContestRepository } from "@/infrastructure/adapter/axios/repositor
 import { AxiosLeaderboardRepository } from "@/infrastructure/adapter/axios/repository/AxiosLeaderboardRepository";
 import { AxiosSessionRepository } from "@/infrastructure/adapter/axios/repository/AxiosSessionRepository";
 import { AxiosSubmissionRepository } from "@/infrastructure/adapter/axios/repository/AxiosSubmissionRepository";
+import { AxiosTicketRepository } from "@/infrastructure/adapter/axios/repository/AxiosTicketRepository";
 import { LocalStorageRepository } from "@/infrastructure/adapter/localstorage/LocalStorageRepository";
 import { StompAnnouncementListener } from "@/infrastructure/adapter/stomp/StompAnnouncementListener";
 import { StompClarificationListener } from "@/infrastructure/adapter/stomp/StompClarificationListener";
@@ -71,6 +75,7 @@ export function build(): Composition {
   const sessionRepository = new AxiosSessionRepository(axiosClient);
   const storageRepository = new LocalStorageRepository();
   const submissionRepository = new AxiosSubmissionRepository(axiosClient);
+  const ticketRepository = new AxiosTicketRepository(axiosClient);
 
   // Services
   const announcementService = new AnnouncementService(announcementRepository);
@@ -97,6 +102,7 @@ export function build(): Composition {
     submissionRepository,
     attachmentService,
   );
+  const ticketService = new TicketService(ticketRepository);
 
   // UseCases
   const announcementWritter: AnnouncementWritter = announcementService;
@@ -114,6 +120,8 @@ export function build(): Composition {
   const storageReader: StorageReader = storageService;
   const storageWritter: StorageWritter = storageService;
   const submissionWritter: SubmissionWritter = submissionService;
+  const ticketReader: TicketReader = ticketService;
+  const ticketWritter: TicketWritter = ticketService;
 
   return {
     listenerClientFactory,
@@ -136,5 +144,7 @@ export function build(): Composition {
     storageReader,
     storageWritter,
     submissionWritter,
+    ticketReader,
+    ticketWritter,
   };
 }
