@@ -14,6 +14,7 @@ create table ticket (
     constraint fk_member_id foreign key (member_id) references member (id)
 );
 
+create index idx_ticket_member_id on ticket (member_id);
 create index idx_ticket_contest_id on ticket (contest_id);
 
 create table ticket_aud (
