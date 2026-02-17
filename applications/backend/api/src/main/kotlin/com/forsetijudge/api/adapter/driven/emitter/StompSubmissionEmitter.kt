@@ -1,6 +1,7 @@
 package com.forsetijudge.api.adapter.driven.emitter
 
 import com.forsetijudge.api.adapter.dto.response.submission.toFullResponseDTO
+import com.forsetijudge.api.adapter.dto.response.submission.toFullWithExecutionResponseDTO
 import com.forsetijudge.api.adapter.dto.response.submission.toPublicResponseDTO
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
@@ -32,7 +33,7 @@ class StompSubmissionEmitter(
         )
         webSocketFanoutProducer.produce(
             "/topic/contests/${contest.id}/submissions/full",
-            submission.toFullResponseDTO(),
+            submission.toFullWithExecutionResponseDTO(),
         )
         webSocketFanoutProducer.produce(
             "/topic/contests/${contest.id}/submissions/full/members/${submission.member.id}",
@@ -61,7 +62,7 @@ class StompSubmissionEmitter(
         }
         webSocketFanoutProducer.produce(
             "/topic/contests/${contest.id}/submissions/full",
-            submission.toFullResponseDTO(),
+            submission.toFullWithExecutionResponseDTO(),
         )
         webSocketFanoutProducer.produce(
             "/topic/contests/${contest.id}/submissions/full/members/${submission.member.id}",
