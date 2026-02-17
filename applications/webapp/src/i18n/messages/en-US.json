@@ -14,6 +14,7 @@
       "formatted-member-type": {
         "root": "Root",
         "admin": "Admin",
+        "staff": "Staff",
         "contestant": "Contestant",
         "judge": "Judge"
       },
@@ -69,6 +70,11 @@
     },
     "_lib": {
       "provider": {
+        "staff-dashboard-provider": {
+          "announcement": "New announcement: {text}",
+          "frozen": "Leaderboard has been frozen",
+          "unfrozen": "Leaderboard has been unfrozen"
+        },
         "judge-dashboard-provider": {
           "submission-failed": "New failed submission",
           "announcement": "New announcement: {text}",

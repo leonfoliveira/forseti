@@ -44,6 +44,10 @@ const memberType = defineMessages({
     id: "i18n.global.formatted-member-type.admin",
     defaultMessage: "Admin",
   },
+  [MemberType.STAFF]: {
+    id: "i18n.global.formatted-member-type.staff",
+    defaultMessage: "Staff",
+  },
   [MemberType.CONTESTANT]: {
     id: "i18n.global.formatted-member-type.contestant",
     defaultMessage: "Contestant",

@@ -4,6 +4,7 @@ import { AdminLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/admin
 import { ContestantLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/contestant-leaderboard-page";
 import { GuestLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/guest-leaderboard-page";
 import { JudgeLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/judge-leaderboard-page";
+import { StaffLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/staff-leaderboard-page";
 import { useAppSelector } from "@/app/_store/store";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 
@@ -14,6 +15,8 @@ export default function DashboardLeaderboardPage() {
     case MemberType.ROOT:
     case MemberType.ADMIN:
       return <AdminLeaderboardPage />;
+    case MemberType.STAFF:
+      return <StaffLeaderboardPage />;
     case MemberType.JUDGE:
       return <JudgeLeaderboardPage />;
     case MemberType.CONTESTANT:

@@ -14,6 +14,7 @@
       "formatted-member-type": {
         "root": "Root",
         "admin": "Administrador",
+        "staff": "Staff",
         "contestant": "Competidor",
         "judge": "Juiz"
       },
@@ -69,6 +70,11 @@
     },
     "_lib": {
       "provider": {
+        "staff-dashboard-provider": {
+          "announcement": "Novo anúncio: {text}",
+          "frozen": "Placar foi congelado",
+          "unfrozen": "Placar foi descongelado"
+        },
         "judge-dashboard-provider": {
           "submission-failed": "Nova submissão falhada",
           "announcement": "Novo anúncio: {text}",

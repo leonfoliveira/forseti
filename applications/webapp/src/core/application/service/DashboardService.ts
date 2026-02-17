@@ -6,6 +6,7 @@ import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/Ad
 import { ContestantDashboardResponseDTO } from "@/core/port/dto/response/dashboard/ContestantDashboardResponseDTO";
 import { GuestDashboardResponseDTO } from "@/core/port/dto/response/dashboard/GuestDashboardResponseDTO";
 import { JudgeDashboardResponseDTO } from "@/core/port/dto/response/dashboard/JudgeDashboardResponseDTO";
+import { StaffDashboardResponseDTO } from "@/core/port/dto/response/dashboard/StaffDashboardResponseDTO";
 
 export class DashboardService implements DashboardReader {
   constructor(
@@ -25,6 +26,26 @@ export class DashboardService implements DashboardReader {
       this.contestRepository.findFullById(contestId),
       this.leaderboardRepository.build(contestId),
       this.submissionRepository.findAllFullForContest(contestId),
+    ]);
+
+    return {
+      contest,
+      leaderboard,
+      submissions,
+    };
+  }
+
+  /**
+   * Get the staff dashboard for a contest.
+   *
+   * @param contestId ID of the contest
+   * @return The staff dashboard data
+   */
+  async getStaff(contestId: string): Promise<StaffDashboardResponseDTO> {
+    const [contest, leaderboard, submissions] = await Promise.all([
+      this.contestRepository.findById(contestId),
+      this.leaderboardRepository.build(contestId),
+      this.submissionRepository.findAllForContest(contestId),
     ]);
 
     return {

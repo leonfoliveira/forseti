@@ -13,5 +13,6 @@ describe("makeStore", () => {
     expect(state).toHaveProperty("guestDashboard");
     expect(state).toHaveProperty("judgeDashboard");
     expect(state).toHaveProperty("adminDashboard");
+    expect(state).toHaveProperty("staffDashboard");
   });
 });

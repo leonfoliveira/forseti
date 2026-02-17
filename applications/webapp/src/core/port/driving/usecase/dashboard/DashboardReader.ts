@@ -2,6 +2,7 @@ import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/Ad
 import { ContestantDashboardResponseDTO } from "@/core/port/dto/response/dashboard/ContestantDashboardResponseDTO";
 import { GuestDashboardResponseDTO } from "@/core/port/dto/response/dashboard/GuestDashboardResponseDTO";
 import { JudgeDashboardResponseDTO } from "@/core/port/dto/response/dashboard/JudgeDashboardResponseDTO";
+import { StaffDashboardResponseDTO } from "@/core/port/dto/response/dashboard/StaffDashboardResponseDTO";
 
 export interface DashboardReader {
   /**
@@ -11,6 +12,14 @@ export interface DashboardReader {
    * @return The admin dashboard data
    */
   getAdmin(contestId: string): Promise<AdminDashboardResponseDTO>;
+
+  /**
+   * Get the staff dashboard for a contest.
+   *
+   * @param contestId ID of the contest
+   * @return The staff dashboard data
+   */
+  getStaff(contestId: string): Promise<StaffDashboardResponseDTO>;
 
   /**
    * Get the contestant dashboard for a contest.
