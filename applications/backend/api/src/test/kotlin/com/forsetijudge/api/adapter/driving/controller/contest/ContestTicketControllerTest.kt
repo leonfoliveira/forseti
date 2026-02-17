@@ -122,7 +122,7 @@ class ContestTicketControllerTest(
             every { findTicketUseCase.findAllByContestIdAndMemberId(contestId, session.member.id) } returns listOf(ticket)
 
             webMvc
-                .get("$basePath/me", contestId) {
+                .get("$basePath/members/me", contestId) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
                     status { isOk() }

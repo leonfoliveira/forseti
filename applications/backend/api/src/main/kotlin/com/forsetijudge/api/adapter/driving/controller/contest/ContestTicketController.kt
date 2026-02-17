@@ -150,7 +150,7 @@ class ContestTicketController(
         return ResponseEntity.ok(tickets.map { it.toResponseDTO() })
     }
 
-    @GetMapping("/contests/{contestId}/tickets/me")
+    @GetMapping("/contests/{contestId}/tickets/members/me")
     @Private
     @Operation(summary = "Get all tickets for the signed-in member in a contest")
     @ApiResponses(
@@ -181,7 +181,7 @@ class ContestTicketController(
     fun findAllBySignedInMember(
         @PathVariable contestId: UUID,
     ): ResponseEntity<List<TicketResponseDTO>> {
-        logger.info("[GET] /v1/contests/$contestId/tickets/me")
+        logger.info("[GET] /v1/contests/$contestId/tickets/members/me")
         val member = RequestContext.getContext().session!!.member
         val tickets = findTicketUseCase.findAllByContestIdAndMemberId(contestId, member.id)
         return ResponseEntity.ok(tickets.map { it.toResponseDTO() })
