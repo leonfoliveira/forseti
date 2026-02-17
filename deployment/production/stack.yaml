@@ -63,8 +63,8 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.http.middlewares.api-ratelimit.ratelimit.average=20
-        - traefik.http.middlewares.api-ratelimit.ratelimit.burst=40
+        - traefik.http.middlewares.api-ratelimit.ratelimit.average=100
+        - traefik.http.middlewares.api-ratelimit.ratelimit.burst=300
         - traefik.http.middlewares.api-addprefix.addprefix.prefix=/api
         - traefik.http.middlewares.ws-addprefix.addprefix.prefix=/ws
         - traefik.http.routers.api.rule=Host(`api.forsetijudge.com`)
@@ -826,7 +826,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.http.middlewares.webapp-ratelimit.ratelimit.average=100
-        - traefik.http.middlewares.webapp-ratelimit.ratelimit.burst=200
+        - traefik.http.middlewares.webapp-ratelimit.ratelimit.burst=300
         - traefik.http.routers.webapp.rule=Host(`forsetijudge.com`)
         - traefik.http.routers.webapp.entrypoints=websecure
         - traefik.http.routers.webapp.tls=true
