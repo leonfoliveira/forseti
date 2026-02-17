@@ -35,7 +35,11 @@ class TestInstallCommand:
     def test_install(self, runner, command_adapter, os, spinner):
         """Test successful installation."""
         os.path.join.side_effect = lambda *args: "/".join(args)
+        os.path.exists.return_value = True
+        os.makedirs.return_value = None
         command_adapter.get_cli_path.return_value = "/cli/path"
+        # Mock command responses - return empty lists for successful commands
+        command_adapter.run.return_value = []
 
         result = runner.invoke(install)
 
@@ -52,7 +56,14 @@ class TestInstallCommand:
     def test_install_custom_sandboxes(self, runner, command_adapter, os, spinner):
         """Test installation with custom sandboxes."""
         os.path.join.side_effect = lambda *args: "/".join(args)
+        os.path.exists.return_value = True
+        os.makedirs.return_value = None
         command_adapter.get_cli_path.return_value = "/cli/path"
+        def mock_run(cmd):
+            if cmd == ["mkcert", "-CAROOT"]:
+                return ["/root/ca/path"]
+            return []
+        command_adapter.run.side_effect = mock_run
 
         result = runner.invoke(
             install, ["--sandboxes", "cpp17", "--sandboxes", "java21"])
@@ -63,7 +74,14 @@ class TestInstallCommand:
     def test_install_custom_stack(self, runner, command_adapter, os, spinner):
         """Test installation with custom stack file."""
         os.path.join.side_effect = lambda *args: "/".join(args)
+        os.path.exists.return_value = True
+        os.makedirs.return_value = None
         command_adapter.get_cli_path.return_value = "/cli/path"
+        def mock_run(cmd):
+            if cmd == ["mkcert", "-CAROOT"]:
+                return ["/root/ca/path"]
+            return []
+        command_adapter.run.side_effect = mock_run
 
         result = runner.invoke(install, ["--stack", "/custom/stack.yaml"])
 
@@ -120,7 +138,11 @@ class TestInstallCommand:
         assert "Installation completed successfully." in result.output
         command_adapter.run.assert_any_call(["mkcert", "-install"])
         command_adapter.run.assert_any_call(["mkcert", "-cert-file", "/cli/path/certs/cert.pem",
-                                            "-key-file", "/cli/path/certs/key.pem", "*.forsetijudge.com", "localhost", "127.0.0.1", "::1"])
+                                            "-key-file", "/cli/path/certs/key.pem", 
+                                            "*.forsetijudge.com", "localhost", "127.0.0.1", "::1"])
+        command_adapter.run.assert_any_call(["sh", "-c", 
+                                             "cp $(mkcert -CAROOT)/rootCA.pem /cli/path/certs/rootCA.pem"])
+
 
     def test_install_build_sandboxes_failure(self, runner, command_adapter, os, spinner):
         """Test installation when sandbox building fails."""
