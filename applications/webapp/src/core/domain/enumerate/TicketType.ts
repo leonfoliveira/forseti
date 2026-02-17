@@ -1,0 +1,5 @@
+export enum TicketType {
+  SUBMISSION_PRINT,
+  TECHNICAL_SUPPORT,
+  NON_TECHNICAL_SUPPORT,
+}
