@@ -218,6 +218,16 @@
               "judge-error": "Falha ao julgar submissão",
               "answer-label": "Resposta"
             },
+            "submissions-page-action-executions": {
+              "executions-label": "Execuções",
+              "title": "Histórico de Execuções",
+              "description": "Lista de todas as execuções para esta submissão.",
+              "timestamp-header": "Horário",
+              "status-header": "Status",
+              "test-cases-header": "Casos de Teste",
+              "input-header": "Entrada",
+              "output-header": "Saída"
+            },
             "submissions-page-action-download": {
               "download-label": "Baixar",
               "download-error": "Falha ao baixar submissão."

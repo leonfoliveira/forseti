@@ -22,7 +22,7 @@ import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
 import { submissionWritter } from "@/config/composition";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
@@ -62,9 +62,9 @@ const messages = defineMessages({
 });
 
 type Props = {
-  submission: SubmissionFullResponseDTO;
+  submission: SubmissionFullWithExecutionResponseDTO;
   onClose: () => void;
-  onJudge: (submission: SubmissionFullResponseDTO) => void;
+  onJudge: (submission: SubmissionFullWithExecutionResponseDTO) => void;
 };
 
 export function SubmissionsPageActionJudge({

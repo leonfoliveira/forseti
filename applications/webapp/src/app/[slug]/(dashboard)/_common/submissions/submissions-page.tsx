@@ -237,7 +237,11 @@ export function SubmissionsPage({
                     {hasAnyAction && (
                       <TableCell data-testid="submission-actions">
                         <SubmissionsPageActionsMenu
-                          submission={submission as SubmissionFullResponseDTO}
+                          submission={
+                            submission as
+                              | SubmissionFullResponseDTO
+                              | SubmissionFullWithExecutionResponseDTO
+                          }
                           canEdit={canEdit}
                           onEdit={onEdit as any}
                         />

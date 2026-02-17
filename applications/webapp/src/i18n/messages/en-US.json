@@ -218,6 +218,16 @@
               "judge-error": "Failed to judge submission",
               "answer-label": "Answer"
             },
+            "submissions-page-action-executions": {
+              "executions-label": "Executions",
+              "title": "Executions History",
+              "description": "List of all executions for this submission.",
+              "timestamp-header": "Timestamp",
+              "status-header": "Status",
+              "test-cases-header": "Test Cases",
+              "input-header": "Input",
+              "output-header": "Output"
+            },
             "submissions-page-action-download": {
               "download-label": "Download",
               "download-error": "Failed to download submission."

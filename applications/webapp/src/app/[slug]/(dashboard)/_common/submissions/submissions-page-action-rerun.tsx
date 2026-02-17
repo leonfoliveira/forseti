@@ -10,7 +10,7 @@ import { useAppSelector } from "@/app/_store/store";
 import { submissionWritter } from "@/config/composition";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -46,9 +46,9 @@ const messages = defineMessages({
 });
 
 type Props = {
-  submission: SubmissionFullResponseDTO;
+  submission: SubmissionFullWithExecutionResponseDTO;
   onClose: () => void;
-  onRerun: (submission: SubmissionFullResponseDTO) => void;
+  onRerun: (submission: SubmissionFullWithExecutionResponseDTO) => void;
 };
 
 export function SubmissionsPageActionRerun({
