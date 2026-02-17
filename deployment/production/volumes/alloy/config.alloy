@@ -448,6 +448,89 @@ otelcol.exporter.otlp "default" {
 }
 
 /*
+// Faro
+*/
+
+faro.receiver "default" {
+  server {
+    listen_address = "0.0.0.0"
+    listen_port    = 12347
+    cors_allowed_origins = ["http://localhost:3000", "https://forsetijudge.com"]
+  }
+
+  output {
+    logs   = [loki.process.faro.receiver]
+    traces = [otelcol.exporter.otlp.default.input]
+  }
+}
+
+loki.process "faro" {
+  stage.regex {
+    expression = "kind=(?P<kind>\\S+)"
+  }
+
+  stage.regex {
+    expression = "type=(?P<type>\\S+)"
+  }
+
+  stage.regex {
+    expression = "app_name=(?P<app_name>\\S+)"
+  }
+
+  stage.regex {
+    expression = "app_version=(?P<app_version>\\S+)"
+  }
+
+  stage.regex {
+    expression = "app_environment=(?P<app_environment>\\S+)"
+  }
+
+  stage.regex {
+    expression = "sdk_name=(?P<sdk_name>\\S+)"
+  }
+
+  stage.regex {
+    expression = "sdk_version=(?P<sdk_version>\\S+)"
+  }
+
+  stage.regex {
+    expression = "session_id=(?P<session_id>\\S+)"
+  }
+
+  stage.regex {
+    expression = "browser_name=(?P<browser_name>\\S+)"
+  }
+
+  stage.regex {
+    expression = "page_url=(?P<page_url>\\S+)"
+  }
+
+  stage.static_labels {
+    values = {
+      service_name = "forseti-webapp",
+      detected_level = "info",
+    }
+  }
+
+  stage.labels {
+    values = {
+      kind            = "",
+      type            = "",
+      app_name        = "",
+      app_version     = "",
+      app_environment = "",
+      sdk_name        = "",
+      sdk_version     = "",
+      session_id      = "",
+      browser_name    = "",
+      page_url        = "",
+    }
+  }
+
+  forward_to = [loki.write.default.receiver]
+}
+
+/*
 // General Configuration
 */
 

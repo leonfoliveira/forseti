@@ -16,6 +16,8 @@
     "i18n:verify": "node ./src/i18n/scripts/verify-ids.js && node ./src/i18n/scripts/verify-translations.js"
   },
   "dependencies": {
+    "@grafana/faro-web-sdk": "2.2.4",
+    "@grafana/faro-web-tracing": "2.2.4",
     "@hookform/resolvers": "5.0.1",
     "@reduxjs/toolkit": "2.8.2",
     "@stomp/stompjs": "7.1.1",
