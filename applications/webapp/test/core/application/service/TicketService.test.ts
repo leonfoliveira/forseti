@@ -43,36 +43,4 @@ describe("TicketService", () => {
       );
     });
   });
-
-  describe("findAllByContestId", () => {
-    it("should find all tickets by contest id", async () => {
-      const contestId = "contest-id";
-      const expectedResponse = [MockTicketResponseDTO()];
-      ticketRepository.findAllByContestId.mockResolvedValue(expectedResponse);
-
-      const result = await sut.findAllByContestId(contestId);
-
-      expect(result).toEqual(expectedResponse);
-      expect(ticketRepository.findAllByContestId).toHaveBeenCalledWith(
-        contestId,
-      );
-    });
-  });
-
-  describe("findAllBySignedInMember", () => {
-    it("should find all tickets by signed in member", async () => {
-      const contestId = "contest-id";
-      const expectedResponse = [MockTicketResponseDTO()];
-      ticketRepository.findAllBySignedInMember.mockResolvedValue(
-        expectedResponse,
-      );
-
-      const result = await sut.findAllBySignedInMember(contestId);
-
-      expect(result).toEqual(expectedResponse);
-      expect(ticketRepository.findAllBySignedInMember).toHaveBeenCalledWith(
-        contestId,
-      );
-    });
-  });
 });

@@ -4,22 +4,26 @@ import { DashboardService } from "@/core/application/service/DashboardService";
 import { ContestRepository } from "@/core/port/driven/repository/ContestRepository";
 import { LeaderboardRepository } from "@/core/port/driven/repository/LeaderboardRepository";
 import { SubmissionRepository } from "@/core/port/driven/repository/SubmissionRepository";
+import { TicketRepository } from "@/core/port/driven/repository/TicketRepository";
 import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
 import { MockContestPublicResponseDTO } from "@/test/mock/response/contest/MockContestPublicResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
+import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 
 describe("DashboardService", () => {
   const contestRepository = mock<ContestRepository>();
   const leaderboardRepository = mock<LeaderboardRepository>();
   const submissionRepository = mock<SubmissionRepository>();
+  const ticketRepository = mock<TicketRepository>();
 
   const sut = new DashboardService(
     contestRepository,
     leaderboardRepository,
     submissionRepository,
+    ticketRepository,
   );
 
   describe("getAdmin", () => {
@@ -27,13 +31,14 @@ describe("DashboardService", () => {
       const contest = MockContestFullResponseDTO();
       const leaderboard = MockLeaderboardResponseDTO();
       const submissions = [MockSubmissionFullWithExecutionResponseDTO()];
+      const tickets = [MockTicketResponseDTO()];
 
       contestRepository.findFullById.mockResolvedValueOnce(contest);
       leaderboardRepository.build.mockResolvedValueOnce(leaderboard);
       submissionRepository.findAllFullForContest.mockResolvedValueOnce(
         submissions,
       );
-
+      ticketRepository.findAllByContest.mockResolvedValueOnce(tickets);
       const result = await sut.getAdmin("contest-id");
 
       expect(contestRepository.findFullById).toHaveBeenCalledWith("contest-id");
@@ -46,6 +51,7 @@ describe("DashboardService", () => {
         contest,
         leaderboard,
         submissions,
+        tickets,
       });
     });
   });
@@ -55,10 +61,12 @@ describe("DashboardService", () => {
       const contest = MockContestPublicResponseDTO();
       const leaderboard = MockLeaderboardResponseDTO();
       const submissions = [MockSubmissionPublicResponseDTO()];
+      const tickets = [MockTicketResponseDTO()];
 
       contestRepository.findById.mockResolvedValueOnce(contest);
       leaderboardRepository.build.mockResolvedValueOnce(leaderboard);
       submissionRepository.findAllForContest.mockResolvedValueOnce(submissions);
+      ticketRepository.findAllByContest.mockResolvedValueOnce(tickets);
 
       const result = await sut.getStaff("contest-id");
 
@@ -72,6 +80,7 @@ describe("DashboardService", () => {
         contest,
         leaderboard,
         submissions,
+        tickets,
       });
     });
   });
@@ -82,12 +91,16 @@ describe("DashboardService", () => {
       const leaderboard = MockLeaderboardResponseDTO();
       const submissions = [MockSubmissionPublicResponseDTO()];
       const memberSubmissions = [MockSubmissionFullResponseDTO()];
+      const memberTickets = [MockTicketResponseDTO()];
 
       contestRepository.findById.mockResolvedValueOnce(contest);
       leaderboardRepository.build.mockResolvedValueOnce(leaderboard);
       submissionRepository.findAllForContest.mockResolvedValueOnce(submissions);
       submissionRepository.findAllFullForMember.mockResolvedValueOnce(
         memberSubmissions,
+      );
+      ticketRepository.findAllBySignedInMember.mockResolvedValueOnce(
+        memberTickets,
       );
 
       const result = await sut.getContestant("contest-id");
@@ -106,6 +119,7 @@ describe("DashboardService", () => {
         leaderboard,
         submissions,
         memberSubmissions,
+        memberTickets,
       });
     });
   });
@@ -141,11 +155,15 @@ describe("DashboardService", () => {
       const contest = MockContestFullResponseDTO();
       const leaderboard = MockLeaderboardResponseDTO();
       const submissions = [MockSubmissionFullWithExecutionResponseDTO()];
+      const memberTickets = [MockTicketResponseDTO()];
 
       contestRepository.findById.mockResolvedValueOnce(contest);
       leaderboardRepository.build.mockResolvedValueOnce(leaderboard);
       submissionRepository.findAllFullForContest.mockResolvedValueOnce(
         submissions,
+      );
+      ticketRepository.findAllBySignedInMember.mockResolvedValueOnce(
+        memberTickets,
       );
 
       const result = await sut.getJudge("contest-id");
@@ -160,6 +178,7 @@ describe("DashboardService", () => {
         contest,
         leaderboard,
         submissions,
+        memberTickets,
       });
     });
   });

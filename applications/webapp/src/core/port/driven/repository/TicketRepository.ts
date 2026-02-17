@@ -35,7 +35,7 @@ export interface TicketRepository {
    * @param contestId ID of the contest for which to find tickets.
    * @return An array of ticket response DTOs associated with the contest.
    */
-  findAllByContestId(contestId: string): Promise<TicketResponseDTO[]>;
+  findAllByContest(contestId: string): Promise<TicketResponseDTO[]>;
 
   /**
    * Finds all tickets associated with a member in a contest.

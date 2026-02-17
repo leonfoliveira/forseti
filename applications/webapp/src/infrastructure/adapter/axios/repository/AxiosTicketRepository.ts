@@ -38,7 +38,7 @@ export class AxiosTicketRepository implements TicketRepository {
     return response.data;
   }
 
-  async findAllByContestId(contestId: string): Promise<TicketResponseDTO[]> {
+  async findAllByContest(contestId: string): Promise<TicketResponseDTO[]> {
     const response = await this.axiosClient.get<TicketResponseDTO[]>(
       this.basePath(contestId),
     );

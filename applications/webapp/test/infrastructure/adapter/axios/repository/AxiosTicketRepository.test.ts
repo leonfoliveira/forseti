@@ -98,7 +98,7 @@ describe("AxiosTicketRepository", () => {
         data: expectedResponse,
       } as AxiosResponse);
 
-      const result = await sut.findAllByContestId(contestId);
+      const result = await sut.findAllByContest(contestId);
 
       expect(axiosClient.get).toHaveBeenCalledWith(
         `/v1/contests/${contestId}/tickets`,

@@ -26,7 +26,6 @@ import { SessionWritter } from "@/core/port/driving/usecase/session/SessionWritt
 import { StorageReader } from "@/core/port/driving/usecase/storage/StorageReader";
 import { StorageWritter } from "@/core/port/driving/usecase/storage/StorageWritter";
 import { SubmissionWritter } from "@/core/port/driving/usecase/submission/SubmissionWritter";
-import { TicketReader } from "@/core/port/driving/usecase/ticket/TicketReader";
 import { TicketWritter } from "@/core/port/driving/usecase/ticket/TicketWritter";
 import { AxiosClientSideClient } from "@/infrastructure/adapter/axios/AxiosClientSideClient";
 import { AxiosAnnouncementRepository } from "@/infrastructure/adapter/axios/repository/AxiosAnnouncementRepository";
@@ -94,6 +93,7 @@ export function build(): Composition {
     contestRepository,
     leaderboardRepository,
     submissionRepository,
+    ticketRepository,
   );
   const leaderboardService = new LeaderboardService(leaderboardRepository);
   const sessionService = new SessionService(sessionRepository);
@@ -120,7 +120,6 @@ export function build(): Composition {
   const storageReader: StorageReader = storageService;
   const storageWritter: StorageWritter = storageService;
   const submissionWritter: SubmissionWritter = submissionService;
-  const ticketReader: TicketReader = ticketService;
   const ticketWritter: TicketWritter = ticketService;
 
   return {
@@ -144,7 +143,6 @@ export function build(): Composition {
     storageReader,
     storageWritter,
     submissionWritter,
-    ticketReader,
     ticketWritter,
   };
 }
