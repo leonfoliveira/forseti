@@ -6,6 +6,7 @@ import com.forsetijudge.core.domain.entity.Ticket
 import com.github.f4b6a3.uuid.UuidCreator
 import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity
+import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -42,7 +43,7 @@ class SubmissionPrintTicket(
     data class Properties(
         val submissionId: UUID,
         val attachment: Attachment,
-    ) {
+    ) : Serializable {
         data class Attachment(
             val id: UUID,
             val filename: String,

@@ -16,6 +16,7 @@ import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
 import org.hibernate.type.SqlTypes
+import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -25,7 +26,7 @@ import java.util.UUID
 @DiscriminatorColumn(name = "type")
 @Audited
 @SQLRestriction("deleted_at is null")
-open class Ticket<TProperties>(
+open class Ticket<TProperties : Serializable>(
     id: UUID = UuidCreator.getTimeOrderedEpoch(),
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
