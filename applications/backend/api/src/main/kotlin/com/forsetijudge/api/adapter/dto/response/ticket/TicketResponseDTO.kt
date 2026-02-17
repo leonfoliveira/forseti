@@ -17,7 +17,7 @@ data class TicketResponseDTO(
     val type: Ticket.Type,
     val status: Ticket.Status,
     val properties: Serializable,
-)
+) : Serializable
 
 fun Ticket<*>.toResponseDTO() =
     TicketResponseDTO(

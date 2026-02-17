@@ -77,12 +77,6 @@ class WebSocketTopicConfigs(
                 val contest = findContestUseCase.findById(contestId)
                 checkIfStarted(contest)
             },
-            Regex("/topic/contests/[a-fA-F0-9-]+/submissions/batch") to { destination ->
-                val contestId = UUID.fromString(destination.split("/")[3])
-
-                val contest = findContestUseCase.findById(contestId)
-                checkIfStarted(contest)
-            },
             Regex("/topic/contests/[a-fA-F0-9-]+/submissions/full") to { destination ->
                 val contestId = UUID.fromString(destination.split("/")[3])
 
@@ -105,6 +99,25 @@ class WebSocketTopicConfigs(
                 val member = RequestContext.getContext().session?.member
                 if (memberId != member?.id) {
                     throw ForbiddenException("User does not have access to this submission")
+                }
+            },
+            Regex("/topic/contests/[a-fA-F0-9-]+/tickets") to { destination ->
+                val contestId = UUID.fromString(destination.split("/")[3])
+
+                val contest = findContestUseCase.findById(contestId)
+                checkIfStarted(contest)
+            },
+            Regex("/topic/contests/[a-fA-F0-9-]+/tickets/members/[a-fA-F0-9-]+") to { destination ->
+                val contestId = UUID.fromString(destination.split("/")[3])
+                val memberId = UUID.fromString(destination.split("/")[6])
+
+                val contest = findContestUseCase.findById(contestId)
+                checkIfMemberBelongsToContest(contest)
+                checkIfStarted(contest)
+
+                val member = RequestContext.getContext().session?.member
+                if (memberId != member?.id) {
+                    throw ForbiddenException("User does not have access to this ticket")
                 }
             },
             Regex(".*") to { _ ->
