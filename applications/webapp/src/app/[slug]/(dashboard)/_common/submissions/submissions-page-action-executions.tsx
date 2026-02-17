@@ -138,7 +138,7 @@ export function SubmissionsPageActionExecutions({
                     <SubmissionAnswerBadge answer={execution.answer} />
                   </TableCell>
                   <TableCell data-testid="submission-execution-test-cases">
-                    {execution.lastTestCase ? execution.lastTestCase + 1 : 0}/
+                    {execution.lastTestCase != null ? execution.lastTestCase + 1 : 0}/
                     {execution.totalTestCases}
                   </TableCell>
                   <TableCell className="text-right">
