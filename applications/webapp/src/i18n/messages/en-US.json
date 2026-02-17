@@ -31,6 +31,17 @@
         "judging": "Judging",
         "failed": "Failed",
         "judged": "Judged"
+      },
+      "formatted-ticket-type": {
+        "submission_print": "Submission Print",
+        "non_technical_support": "Non-Technical Support",
+        "technical_support": "Technical Support"
+      },
+      "formatted-ticket-status": {
+        "open": "Open",
+        "in_progress": "In Progress",
+        "resolved": "Resolved",
+        "rejected": "Rejected"
       }
     }
   },
@@ -73,14 +84,17 @@
         "staff-dashboard-provider": {
           "announcement": "New announcement: {text}",
           "frozen": "Leaderboard has been frozen",
-          "unfrozen": "Leaderboard has been unfrozen"
+          "unfrozen": "Leaderboard has been unfrozen",
+          "new-ticket": "New ticket",
+          "ticket-updated": "Your ticket has been updated: {status}"
         },
         "judge-dashboard-provider": {
           "submission-failed": "New failed submission",
           "announcement": "New announcement: {text}",
           "new-clarification": "New clarification",
           "frozen": "Leaderboard has been frozen",
-          "unfrozen": "Leaderboard has been unfrozen"
+          "unfrozen": "Leaderboard has been unfrozen",
+          "ticket-updated": "Your ticket has been updated: {status}"
         },
         "guest-dashboard-provider": {
           "announcement": "New announcement: {text}",
@@ -92,14 +106,15 @@
           "announcement": "New announcement: {text}",
           "clarification-answer": "New answer for a clarification",
           "frozen": "Leaderboard has been frozen",
-          "unfrozen": "Leaderboard has been unfrozen"
+          "unfrozen": "Leaderboard has been unfrozen",
+          "ticket-updated": "Your ticket has been updated: {status}"
         },
         "admin-dashboard-provider": {
           "submission-failed": "New failed submission",
           "announcement": "New announcement: {text}",
-          "new-clarification": "New clarification",
           "frozen": "Leaderboard has been frozen",
-          "unfrozen": "Leaderboard has been unfrozen"
+          "unfrozen": "Leaderboard has been unfrozen",
+          "ticket-updated": "Your ticket has been updated: {status}"
         }
       },
       "component": {
@@ -169,6 +184,7 @@
           "tab-submissions": "Submissions",
           "tab-clarifications": "Clarifications",
           "tab-announcements": "Announcements",
+          "tab-tasks": "Tasks",
           "tab-settings": "Settings"
         },
         "_common": {

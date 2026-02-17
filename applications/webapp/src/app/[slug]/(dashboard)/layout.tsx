@@ -36,6 +36,10 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard).layout.tab-announcements",
     defaultMessage: "Announcements",
   },
+  tabTasks: {
+    id: "app.[slug].(dashboard).layout.tab-tasks",
+    defaultMessage: "Tasks",
+  },
   tabSettings: {
     id: "app.[slug].(dashboard).layout.tab-settings",
     defaultMessage: "Settings",
@@ -78,6 +82,13 @@ export default function DashboardLayout({
       path: routes.CONTEST_ANNOUNCEMENTS(slug),
     },
   ];
+
+  if (!!session?.member) {
+    tabs.push({
+      title: messages.tabTimeline,
+      path: routes.CONTEST_TICKETS(slug),
+    });
+  }
 
   if (
     session &&
