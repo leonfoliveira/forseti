@@ -1,3 +1,5 @@
+"use client";
+
 import { forbidden } from "next/navigation";
 
 import { AdminTicketsPage } from "@/app/[slug]/(dashboard)/tickets/admin-tickets-page";

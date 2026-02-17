@@ -20,10 +20,6 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard).layout.tab-problems",
     defaultMessage: "Problems",
   },
-  tabTimeline: {
-    id: "app.[slug].(dashboard).layout.tab-timeline",
-    defaultMessage: "Timeline",
-  },
   tabSubmissions: {
     id: "app.[slug].(dashboard).layout.tab-submissions",
     defaultMessage: "Submissions",
@@ -85,7 +81,7 @@ export default function DashboardLayout({
 
   if (!!session?.member) {
     tabs.push({
-      title: messages.tabTimeline,
+      title: messages.tabTasks,
       path: routes.CONTEST_TICKETS(slug),
     });
   }
