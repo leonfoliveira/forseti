@@ -1,3 +1,4 @@
+import { TicketStatus } from "@/core/domain/enumerate/TicketStatus";
 import { TicketType } from "@/core/domain/enumerate/TicketType";
 import { MemberPublicResponseDTO } from "@/core/port/dto/response/member/MemberPublicResponseDTO";
 
@@ -8,7 +9,7 @@ export type TicketResponseDTO = {
   version: number;
   member: MemberPublicResponseDTO;
   staff?: MemberPublicResponseDTO;
-  status: string;
+  status: TicketStatus;
 } & (
   | {
       type: TicketType.SUBMISSION_PRINT;

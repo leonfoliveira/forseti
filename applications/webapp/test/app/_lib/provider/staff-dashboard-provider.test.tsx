@@ -1,6 +1,7 @@
 import { screen } from "@testing-library/dom";
 import { mock } from "jest-mock-extended";
 import { act } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { StaffDashboardProvider } from "@/app/_lib/provider/staff-dashboard-provider";
@@ -12,6 +13,7 @@ import {
   leaderboardListener,
   listenerClientFactory,
   submissionListener,
+  ticketListener,
 } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
@@ -21,7 +23,9 @@ import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/Moc
 import { MockContestPublicResponseDTO } from "@/test/mock/response/contest/MockContestPublicResponseDTO";
 import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardPartialResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
+import { MockSession } from "@/test/mock/response/session/MockSession";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
+import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/_lib/component/page/loading-page", () => ({
@@ -32,6 +36,7 @@ jest.mock("@/app/_lib/component/page/error-page", () => ({
 }));
 
 describe("StaffDashboardProvider", () => {
+  const session = MockSession();
   const contestMetadata = MockContestMetadataResponseDTO();
   const contest = MockContestPublicResponseDTO();
   const leaderboard = MockLeaderboardResponseDTO();
@@ -39,6 +44,7 @@ describe("StaffDashboardProvider", () => {
     MockSubmissionPublicResponseDTO(),
     MockSubmissionPublicResponseDTO(),
   ];
+  const tickets = [MockTicketResponseDTO()];
   const listenerClient = mock<ListenerClient>();
 
   beforeEach(() => {
@@ -46,6 +52,7 @@ describe("StaffDashboardProvider", () => {
       contest,
       leaderboard,
       submissions,
+      tickets,
     });
     (listenerClientFactory.create as jest.Mock).mockReturnValue(listenerClient);
   });
@@ -55,7 +62,7 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { contestMetadata },
+      { session, contestMetadata },
     );
 
     expect(dashboardReader.getStaff).toHaveBeenCalledWith(contestMetadata.id);
@@ -82,12 +89,39 @@ describe("StaffDashboardProvider", () => {
       contestMetadata.id,
       expect.any(Function),
     );
+    expect(
+      leaderboardListener.subscribeForLeaderboardPartial,
+    ).toHaveBeenCalledWith(
+      listenerClient,
+      contestMetadata.id,
+      expect.any(Function),
+    );
+    expect(
+      leaderboardListener.subscribeForLeaderboardFreeze,
+    ).toHaveBeenCalledWith(
+      listenerClient,
+      contestMetadata.id,
+      expect.any(Function),
+    );
+    expect(
+      leaderboardListener.subscribeForLeaderboardUnfreeze,
+    ).toHaveBeenCalledWith(
+      listenerClient,
+      contestMetadata.id,
+      expect.any(Function),
+    );
+    expect(ticketListener.subscribeForContest).toHaveBeenCalledWith(
+      listenerClient,
+      contestMetadata.id,
+      expect.any(Function),
+    );
 
     const state = store.getState().staffDashboard;
     expect(state).toEqual({
       contest,
       leaderboard,
       submissions,
+      tickets,
       listenerStatus: ListenerStatus.CONNECTED,
     });
 
@@ -102,7 +136,7 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { contestMetadata },
+      { session, contestMetadata },
     );
 
     const state = store.getState().staffDashboard;
@@ -122,7 +156,7 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -141,7 +175,7 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -160,7 +194,7 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -181,7 +215,7 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -200,7 +234,7 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -222,7 +256,7 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -240,7 +274,7 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -253,12 +287,71 @@ describe("StaffDashboardProvider", () => {
     );
   });
 
+  it("should handle ticket updates", async () => {
+    const otherTicket = MockTicketResponseDTO({
+      id: uuidv4(),
+    });
+    const { store } = await renderWithProviders(
+      <StaffDashboardProvider>
+        <div data-testid="child" />
+      </StaffDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (ticketListener.subscribeForContest as jest.Mock).mock.calls[0][2](
+        otherTicket,
+      );
+    });
+
+    expect(store.getState().staffDashboard.tickets).toContain(otherTicket);
+  });
+
+  it("should show a toast for new tickets", async () => {
+    const otherTicket = MockTicketResponseDTO({
+      version: 1,
+    });
+    await renderWithProviders(
+      <StaffDashboardProvider>
+        <div data-testid="child" />
+      </StaffDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (ticketListener.subscribeForContest as jest.Mock).mock.calls[0][2](
+        otherTicket,
+      );
+    });
+    expect(useToast().info).toHaveBeenCalled();
+  });
+
+  it("should show a toast for ticket updates owned by member", async () => {
+    const otherTicket = MockTicketResponseDTO({
+      member: session.member,
+      version: 2,
+    });
+    await renderWithProviders(
+      <StaffDashboardProvider>
+        <div data-testid="child" />
+      </StaffDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (ticketListener.subscribeForContest as jest.Mock).mock.calls[0][2](
+        otherTicket,
+      );
+    });
+    expect(useToast().info).toHaveBeenCalled();
+  });
+
   it("should show freeze banner if leaderboard is frozen", async () => {
     const { store } = await renderWithProviders(
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {
@@ -273,7 +366,7 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { contestMetadata },
+      { session, contestMetadata },
     );
 
     act(() => {

@@ -4,6 +4,7 @@ import { DisconnectionBanner } from "@/app/_lib/component/feedback/disconnection
 import { FreezeBanner } from "@/app/_lib/component/feedback/freeze-banner";
 import { ErrorPage } from "@/app/_lib/component/page/error-page";
 import { LoadingPage } from "@/app/_lib/component/page/loading-page";
+import { useIntl } from "@/app/_lib/hook/intl-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { staffDashboardSlice } from "@/app/_store/slices/staff-dashboard-slice";
@@ -15,6 +16,7 @@ import {
   leaderboardListener,
   listenerClientFactory,
   submissionListener,
+  ticketListener,
 } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
@@ -23,6 +25,8 @@ import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification
 import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
+import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
 /**
@@ -40,6 +44,14 @@ const messages = defineMessages({
   unfrozen: {
     id: "app._lib.provider.staff-dashboard-provider.unfrozen",
     defaultMessage: "Leaderboard has been unfrozen",
+  },
+  newTicket: {
+    id: "app._lib.provider.staff-dashboard-provider.new-ticket",
+    defaultMessage: "New ticket",
+  },
+  ticketUpdated: {
+    id: "app._lib.provider.staff-dashboard-provider.ticket-updated",
+    defaultMessage: "Your ticket has been updated: {status}",
   },
 });
 
@@ -59,6 +71,7 @@ export function StaffDashboardProvider({
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const intl = useIntl();
   const listenerClientRef = React.useRef<ListenerClient | null>(null);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -125,6 +138,11 @@ export function StaffDashboardProvider({
           listenerClientRef.current,
           contestMetadata.id,
           deleteClarification,
+        ),
+        ticketListener.subscribeForContest(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveTicket,
         ),
       ]);
 
@@ -203,6 +221,26 @@ export function StaffDashboardProvider({
   function deleteClarification({ id }: { id: string }) {
     console.debug("Received clarification deletion:", id);
     dispatch(staffDashboardSlice.actions.deleteClarification(id));
+  }
+
+  function receiveTicket(ticket: TicketResponseDTO) {
+    console.debug("Received ticket:", ticket);
+    dispatch(staffDashboardSlice.actions.mergeTicket(ticket));
+
+    if (ticket.member.id !== session?.member.id && ticket.version === 1) {
+      toast.info(messages.newTicket);
+    }
+
+    if (ticket.member.id === session?.member.id && ticket.version > 1) {
+      toast.info({
+        ...messages.ticketUpdated,
+        values: {
+          status: intl.formatMessage(
+            globalMessages.ticketStatus[ticket.status],
+          ),
+        },
+      });
+    }
   }
 
   if (state.isLoading) {

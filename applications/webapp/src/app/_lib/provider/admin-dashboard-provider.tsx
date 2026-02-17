@@ -4,6 +4,7 @@ import { DisconnectionBanner } from "@/app/_lib/component/feedback/disconnection
 import { FreezeBanner } from "@/app/_lib/component/feedback/freeze-banner";
 import { ErrorPage } from "@/app/_lib/component/page/error-page";
 import { LoadingPage } from "@/app/_lib/component/page/loading-page";
+import { useIntl } from "@/app/_lib/hook/intl-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
@@ -15,6 +16,7 @@ import {
   leaderboardListener,
   listenerClientFactory,
   submissionListener,
+  ticketListener,
 } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
@@ -25,6 +27,8 @@ import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderbo
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
+import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -36,10 +40,6 @@ const messages = defineMessages({
     id: "app._lib.provider.admin-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
-  newClarification: {
-    id: "app._lib.provider.admin-dashboard-provider.new-clarification",
-    defaultMessage: "New clarification",
-  },
   frozen: {
     id: "app._lib.provider.admin-dashboard-provider.frozen",
     defaultMessage: "Leaderboard has been frozen",
@@ -47,6 +47,10 @@ const messages = defineMessages({
   unfrozen: {
     id: "app._lib.provider.admin-dashboard-provider.unfrozen",
     defaultMessage: "Leaderboard has been unfrozen",
+  },
+  ticketUpdated: {
+    id: "app._lib.provider.admin-dashboard-provider.ticket-updated",
+    defaultMessage: "Your ticket has been updated: {status}",
   },
 });
 
@@ -69,6 +73,7 @@ export function AdminDashboardProvider({
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const intl = useIntl();
   const listenerClientRef = React.useRef<ListenerClient | null>(null);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -135,6 +140,11 @@ export function AdminDashboardProvider({
           listenerClientRef.current,
           contestMetadata.id,
           deleteClarification,
+        ),
+        ticketListener.subscribeForContest(
+          listenerClientRef.current,
+          contestMetadata.id,
+          receiveTicket,
         ),
       ]);
 
@@ -214,14 +224,27 @@ export function AdminDashboardProvider({
   function receiveClarification(clarification: ClarificationResponseDTO) {
     console.debug("Received clarification:", clarification);
     dispatch(adminDashboardSlice.actions.mergeClarification(clarification));
-    if (!clarification.parentId) {
-      toast.info(messages.newClarification);
-    }
   }
 
   function deleteClarification({ id }: { id: string }) {
     console.debug("Received clarification deletion:", id);
     dispatch(adminDashboardSlice.actions.deleteClarification(id));
+  }
+
+  function receiveTicket(ticket: TicketResponseDTO) {
+    console.debug("Received ticket:", ticket);
+    dispatch(adminDashboardSlice.actions.mergeTicket(ticket));
+
+    if (ticket.member.id === session?.member.id && ticket.version > 1) {
+      toast.info({
+        ...messages.ticketUpdated,
+        values: {
+          status: intl.formatMessage(
+            globalMessages.ticketStatus[ticket.status],
+          ),
+        },
+      });
+    }
   }
 
   if (state.isLoading) {

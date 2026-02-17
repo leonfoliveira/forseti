@@ -19,6 +19,7 @@ describe("contestantDashboardSlice", () => {
     leaderboard: MockLeaderboardResponseDTO(),
     submissions: [MockSubmissionPublicResponseDTO()],
     memberSubmissions: [MockSubmissionFullResponseDTO()],
+    memberTickets: [MockTicketResponseDTO()],
   } as any;
 
   it("should have the correct initial state", () => {
@@ -226,7 +227,7 @@ describe("contestantDashboardSlice", () => {
       contestantDashboardSlice.actions.mergeMemberTicket(ticket),
     );
 
-    expect(state.memberTickets).toHaveLength(1);
+    expect(state.memberTickets).toHaveLength(2);
     expect(state.memberTickets).toContainEqual(ticket);
   });
 });

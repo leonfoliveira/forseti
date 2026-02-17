@@ -2,6 +2,7 @@ import { AnnouncementListener } from "@/core/port/driven/listener/AnnouncementLi
 import { ClarificationListener } from "@/core/port/driven/listener/ClarificationListener";
 import { LeaderboardListener } from "@/core/port/driven/listener/LeaderboardListener";
 import { SubmissionListener } from "@/core/port/driven/listener/SubmissionListener";
+import { TicketListener } from "@/core/port/driven/listener/TicketListener";
 import { AnnouncementWritter } from "@/core/port/driving/usecase/announcement/AnnouncementWritter";
 import { AttachmentReader } from "@/core/port/driving/usecase/attachment/AttachmentReader";
 import { AttachmentWritter } from "@/core/port/driving/usecase/attachment/AttachmentWritter";
@@ -26,6 +27,7 @@ export type Composition = {
   clarificationListener: ClarificationListener;
   leaderboardListener: LeaderboardListener;
   submissionListener: SubmissionListener;
+  ticketListener: TicketListener;
 
   // UseCases
   announcementWritter: AnnouncementWritter;

@@ -13,6 +13,7 @@ import {
   leaderboardListener,
   listenerClientFactory,
   submissionListener,
+  ticketListener,
 } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
@@ -25,6 +26,7 @@ import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderbo
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
+import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/_lib/component/page/loading-page", () => ({
@@ -43,6 +45,7 @@ describe("AdminDashboardProvider", () => {
     MockSubmissionFullWithExecutionResponseDTO(),
     MockSubmissionFullWithExecutionResponseDTO(),
   ];
+  const tickets = [MockTicketResponseDTO()];
   const listenerClient = mock<ListenerClient>();
 
   beforeEach(() => {
@@ -50,6 +53,7 @@ describe("AdminDashboardProvider", () => {
       contest,
       leaderboard,
       submissions,
+      tickets,
     });
     (listenerClientFactory.create as jest.Mock).mockReturnValue(listenerClient);
   });
@@ -86,12 +90,39 @@ describe("AdminDashboardProvider", () => {
       contestMetadata.id,
       expect.any(Function),
     );
+    expect(
+      leaderboardListener.subscribeForLeaderboardPartial,
+    ).toHaveBeenCalledWith(
+      listenerClient,
+      contestMetadata.id,
+      expect.any(Function),
+    );
+    expect(
+      leaderboardListener.subscribeForLeaderboardFreeze,
+    ).toHaveBeenCalledWith(
+      listenerClient,
+      contestMetadata.id,
+      expect.any(Function),
+    );
+    expect(
+      leaderboardListener.subscribeForLeaderboardUnfreeze,
+    ).toHaveBeenCalledWith(
+      listenerClient,
+      contestMetadata.id,
+      expect.any(Function),
+    );
+    expect(ticketListener.subscribeForContest).toHaveBeenCalledWith(
+      listenerClient,
+      contestMetadata.id,
+      expect.any(Function),
+    );
 
     const state = store.getState().adminDashboard;
     expect(state).toEqual({
       contest,
       leaderboard,
       submissions,
+      tickets,
       listenerStatus: ListenerStatus.CONNECTED,
     });
 
@@ -280,25 +311,6 @@ describe("AdminDashboardProvider", () => {
     ).toContain(otherClarification);
   });
 
-  it("should show toast for clarifications without parent", async () => {
-    const otherClarification = MockClarificationResponseDTO({
-      parentId: undefined,
-    });
-    await renderWithProviders(
-      <AdminDashboardProvider>
-        <div data-testid="child" />
-      </AdminDashboardProvider>,
-      { session, contestMetadata },
-    );
-
-    act(() => {
-      (clarificationListener.subscribeForContest as jest.Mock).mock.calls[0][2](
-        otherClarification,
-      );
-    });
-    expect(useToast().info).toHaveBeenCalled();
-  });
-
   it("should handle deleted clarifications", async () => {
     const { store } = await renderWithProviders(
       <AdminDashboardProvider>
@@ -315,6 +327,46 @@ describe("AdminDashboardProvider", () => {
     expect(store.getState().adminDashboard.contest.clarifications).toHaveLength(
       0,
     );
+  });
+
+  it("should handle ticket updates", async () => {
+    const otherTicket = MockTicketResponseDTO({
+      id: uuidv4(),
+    });
+    const { store } = await renderWithProviders(
+      <AdminDashboardProvider>
+        <div data-testid="child" />
+      </AdminDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (ticketListener.subscribeForContest as jest.Mock).mock.calls[0][2](
+        otherTicket,
+      );
+    });
+
+    expect(store.getState().adminDashboard.tickets).toContain(otherTicket);
+  });
+
+  it("should show a toast for ticket updates owned by member", async () => {
+    const otherTicket = MockTicketResponseDTO({
+      member: session.member,
+      version: 2,
+    });
+    await renderWithProviders(
+      <AdminDashboardProvider>
+        <div data-testid="child" />
+      </AdminDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (ticketListener.subscribeForContest as jest.Mock).mock.calls[0][2](
+        otherTicket,
+      );
+    });
+    expect(useToast().info).toHaveBeenCalled();
   });
 
   it("should show freeze banner if leaderboard is frozen", async () => {

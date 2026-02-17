@@ -11,6 +11,7 @@ export const announcementListener = composition.announcementListener;
 export const clarificationListener = composition.clarificationListener;
 export const leaderboardListener = composition.leaderboardListener;
 export const submissionListener = composition.submissionListener;
+export const ticketListener = composition.ticketListener;
 export const announcementWritter = composition.announcementWritter;
 export const attachmentReader = composition.attachmentReader;
 export const attachmentWritter = composition.attachmentWritter;

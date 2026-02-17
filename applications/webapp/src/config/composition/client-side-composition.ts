@@ -43,6 +43,7 @@ import { StompClarificationListener } from "@/infrastructure/adapter/stomp/Stomp
 import { StompClientFactory } from "@/infrastructure/adapter/stomp/StompClientFactory";
 import { StompLeaderboardListener } from "@/infrastructure/adapter/stomp/StompLeaderboardListener";
 import { StompSubmissionListener } from "@/infrastructure/adapter/stomp/StompSubmissionListener";
+import { StompTicketListener } from "@/infrastructure/adapter/stomp/StompTicketListener";
 
 /**
  * Instantiate all client-side composition dependencies
@@ -59,6 +60,7 @@ export function build(): Composition {
   const clarificationListener = new StompClarificationListener();
   const leaderboardListener = new StompLeaderboardListener();
   const submissionListener = new StompSubmissionListener();
+  const ticketListener = new StompTicketListener();
 
   // Repositories
   const axiosClient = new AxiosClientSideClient(clientConfig.apiPublicUrl);
@@ -128,6 +130,7 @@ export function build(): Composition {
     clarificationListener,
     leaderboardListener,
     submissionListener,
+    ticketListener,
     announcementWritter,
     attachmentReader,
     attachmentWritter,
