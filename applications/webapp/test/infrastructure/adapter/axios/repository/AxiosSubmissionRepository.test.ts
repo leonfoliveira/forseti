@@ -6,6 +6,7 @@ import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 import { AxiosSubmissionRepository } from "@/infrastructure/adapter/axios/repository/AxiosSubmissionRepository";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
+import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
 
 describe("AxiosSubmissionRepository", () => {
@@ -57,8 +58,8 @@ describe("AxiosSubmissionRepository", () => {
   describe("findAllContestFullSubmissions", () => {
     it("should return an array of full submissions for the contest", async () => {
       const expectedResponse = [
-        MockSubmissionFullResponseDTO(),
-        MockSubmissionFullResponseDTO(),
+        MockSubmissionFullWithExecutionResponseDTO(),
+        MockSubmissionFullWithExecutionResponseDTO(),
       ];
       axiosClient.get.mockResolvedValueOnce({
         data: expectedResponse,

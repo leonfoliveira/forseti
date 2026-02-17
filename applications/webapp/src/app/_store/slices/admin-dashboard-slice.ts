@@ -10,7 +10,7 @@ import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/Contest
 import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/AdminDashboardResponseDTO";
 import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 
 export type AdminDashboardState = AdminDashboardResponseDTO & {
   listenerStatus: ListenerStatus;
@@ -46,7 +46,10 @@ export const adminDashboardSlice = createSlice({
     ) {
       state.leaderboard = mergeLeaderboard(state.leaderboard, action.payload);
     },
-    mergeSubmission(state, action: { payload: SubmissionFullResponseDTO }) {
+    mergeSubmission(
+      state,
+      action: { payload: SubmissionFullWithExecutionResponseDTO },
+    ) {
       state.submissions = mergeEntity(state.submissions, action.payload);
     },
     mergeAnnouncement(state, action: { payload: AnnouncementResponseDTO }) {

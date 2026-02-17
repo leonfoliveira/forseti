@@ -2,6 +2,7 @@ import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionRepository } from "@/core/port/driven/repository/SubmissionRepository";
 import { CreateSubmissionRequestDTO } from "@/core/port/dto/request/CreateSubmissionRequestDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 
@@ -35,10 +36,10 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
 
   async findAllFullForContest(
     contestId: string,
-  ): Promise<SubmissionFullResponseDTO[]> {
-    const response = await this.axiosClient.get<SubmissionFullResponseDTO[]>(
-      `${this.basePath(contestId)}/full`,
-    );
+  ): Promise<SubmissionFullWithExecutionResponseDTO[]> {
+    const response = await this.axiosClient.get<
+      SubmissionFullWithExecutionResponseDTO[]
+    >(`${this.basePath(contestId)}/full`);
     return response.data;
   }
 

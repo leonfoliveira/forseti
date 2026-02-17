@@ -24,7 +24,7 @@ import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/Moc
 import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardPartialResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
-import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
+import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/_lib/component/page/loading-page", () => ({
@@ -40,8 +40,8 @@ describe("AdminDashboardProvider", () => {
   const contest = MockContestFullResponseDTO();
   const leaderboard = MockLeaderboardResponseDTO();
   const submissions = [
-    MockSubmissionFullResponseDTO(),
-    MockSubmissionFullResponseDTO(),
+    MockSubmissionFullWithExecutionResponseDTO(),
+    MockSubmissionFullWithExecutionResponseDTO(),
   ];
   const listenerClient = mock<ListenerClient>();
 
@@ -182,7 +182,7 @@ describe("AdminDashboardProvider", () => {
   });
 
   it("should handle submissions updates", async () => {
-    const otherSubmission = MockSubmissionFullResponseDTO();
+    const otherSubmission = MockSubmissionFullWithExecutionResponseDTO();
     const { store } = await renderWithProviders(
       <AdminDashboardProvider>
         <div data-testid="child" />
@@ -201,7 +201,7 @@ describe("AdminDashboardProvider", () => {
   });
 
   it("should show a toast for failed submissions", async () => {
-    const otherSubmission = MockSubmissionFullResponseDTO({
+    const otherSubmission = MockSubmissionFullWithExecutionResponseDTO({
       status: SubmissionStatus.FAILED,
     });
     await renderWithProviders(
