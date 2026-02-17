@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { SubmissionsPageActionDownload } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-download";
+import { SubmissionsPageActionExecutions } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-executions";
 import { SubmissionsPageActionJudge } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-judge";
 import { SubmissionsPageActionRerun } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-rerun";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
@@ -14,6 +15,7 @@ import {
 } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -24,15 +26,17 @@ const messages = defineMessages({
 });
 
 type Props = {
-  submission: SubmissionFullResponseDTO;
+  submission:
+    | SubmissionFullResponseDTO
+    | SubmissionFullWithExecutionResponseDTO;
 } & (
   | {
       canEdit: true;
-      onEdit: (submission: SubmissionFullResponseDTO) => void;
+      onEdit: (submission: SubmissionFullWithExecutionResponseDTO) => void;
     }
   | {
       canEdit?: false;
-      onEdit?: (submission: SubmissionFullResponseDTO) => void;
+      onEdit?: (submission: SubmissionFullWithExecutionResponseDTO) => void;
     }
 );
 
@@ -70,15 +74,26 @@ export function SubmissionsPageActionsMenu({
             )}
             {canEdit && (
               <>
+                <SubmissionsPageActionExecutions
+                  executions={
+                    (submission as SubmissionFullWithExecutionResponseDTO)
+                      .executions
+                  }
+                  onClose={close}
+                />
                 {submission.status != SubmissionStatus.JUDGING && (
                   <SubmissionsPageActionRerun
-                    submission={submission}
+                    submission={
+                      submission as SubmissionFullWithExecutionResponseDTO
+                    }
                     onClose={close}
                     onRerun={onEdit}
                   />
                 )}
                 <SubmissionsPageActionJudge
-                  submission={submission}
+                  submission={
+                    submission as SubmissionFullWithExecutionResponseDTO
+                  }
                   onClose={close}
                   onJudge={onEdit}
                 />

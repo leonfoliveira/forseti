@@ -9,7 +9,7 @@ import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification
 import { JudgeDashboardResponseDTO } from "@/core/port/dto/response/dashboard/JudgeDashboardResponseDTO";
 import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 
 export type JudgeDashboardState = JudgeDashboardResponseDTO & {
   listenerStatus: ListenerStatus;
@@ -42,7 +42,10 @@ export const judgeDashboardSlice = createSlice({
     setLeaderboardIsFrozen(state, action: { payload: boolean }) {
       state.leaderboard.isFrozen = action.payload;
     },
-    mergeSubmission(state, action: { payload: SubmissionFullResponseDTO }) {
+    mergeSubmission(
+      state,
+      action: { payload: SubmissionFullWithExecutionResponseDTO },
+    ) {
       state.submissions = mergeEntity(state.submissions, action.payload);
     },
     mergeAnnouncement(state, action: { payload: AnnouncementResponseDTO }) {

@@ -29,6 +29,7 @@ import { cn } from "@/app/_lib/util/cn";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
@@ -98,11 +99,11 @@ type Props = {
   (
     | {
         canEdit: true;
-        onEdit: (submission: SubmissionFullResponseDTO) => void;
+        onEdit: (submission: SubmissionFullWithExecutionResponseDTO) => void;
       }
     | {
         canEdit?: false;
-        onEdit?: (submission: SubmissionFullResponseDTO) => void;
+        onEdit?: (submission: SubmissionFullWithExecutionResponseDTO) => void;
       }
   );
 
@@ -236,7 +237,11 @@ export function SubmissionsPage({
                     {hasAnyAction && (
                       <TableCell data-testid="submission-actions">
                         <SubmissionsPageActionsMenu
-                          submission={submission as SubmissionFullResponseDTO}
+                          submission={
+                            submission as
+                              | SubmissionFullResponseDTO
+                              | SubmissionFullWithExecutionResponseDTO
+                          }
                           canEdit={canEdit}
                           onEdit={onEdit as any}
                         />

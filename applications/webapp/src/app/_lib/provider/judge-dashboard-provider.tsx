@@ -23,7 +23,7 @@ import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/A
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -188,7 +188,9 @@ export function JudgeDashboardProvider({
     toast.info(messages.unfrozen);
   }
 
-  function receiveSubmission(submission: SubmissionFullResponseDTO) {
+  function receiveSubmission(
+    submission: SubmissionFullWithExecutionResponseDTO,
+  ) {
     console.debug("Received submission:", submission);
     dispatch(judgeDashboardSlice.actions.mergeSubmission(submission));
 

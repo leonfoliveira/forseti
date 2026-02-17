@@ -2,8 +2,10 @@ package com.forsetijudge.api.adapter.driving.controller.contest
 
 import com.forsetijudge.api.adapter.dto.response.ErrorResponseDTO
 import com.forsetijudge.api.adapter.dto.response.submission.SubmissionFullResponseDTO
+import com.forsetijudge.api.adapter.dto.response.submission.SubmissionFullWithExecutionResponseDTO
 import com.forsetijudge.api.adapter.dto.response.submission.SubmissionPublicResponseDTO
 import com.forsetijudge.api.adapter.dto.response.submission.toFullResponseDTO
+import com.forsetijudge.api.adapter.dto.response.submission.toFullWithExecutionResponseDTO
 import com.forsetijudge.api.adapter.dto.response.submission.toPublicResponseDTO
 import com.forsetijudge.api.adapter.util.Private
 import com.forsetijudge.core.domain.entity.Member
@@ -132,11 +134,11 @@ class ContestSubmissionController(
     )
     fun findAllFull(
         @PathVariable contestId: UUID,
-    ): ResponseEntity<List<SubmissionFullResponseDTO>> {
+    ): ResponseEntity<List<SubmissionFullWithExecutionResponseDTO>> {
         logger.info("[GET] /v1/contests/$contestId/submissions/full")
         val member = RequestContext.getContext().session?.member
         val submissions = findSubmissionUseCase.findAllByContestFull(contestId, member?.id)
-        return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
+        return ResponseEntity.ok(submissions.map { it.toFullWithExecutionResponseDTO() })
     }
 
     @GetMapping("/contests/{contestId}/submissions/members/me")

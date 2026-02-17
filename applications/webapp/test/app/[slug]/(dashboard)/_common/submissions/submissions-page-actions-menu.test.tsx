@@ -4,6 +4,7 @@ import { SubmissionsPageActionsMenu } from "@/app/[slug]/(dashboard)/_common/sub
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
+import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPageActionsMenu", () => {
@@ -22,6 +23,9 @@ describe("SubmissionsPageActionsMenu", () => {
       screen.getByTestId("submissions-page-action-download"),
     ).toBeInTheDocument();
     expect(
+      screen.queryByTestId("submissions-page-action-executions"),
+    ).not.toBeInTheDocument();
+    expect(
       screen.queryByTestId("submissions-page-action-rerun"),
     ).not.toBeInTheDocument();
     expect(
@@ -30,7 +34,7 @@ describe("SubmissionsPageActionsMenu", () => {
   });
 
   it("should display all actions", async () => {
-    const submission = MockSubmissionFullResponseDTO();
+    const submission = MockSubmissionFullWithExecutionResponseDTO();
     const contestMetadata = MockContestMetadataResponseDTO();
     await renderWithProviders(
       <SubmissionsPageActionsMenu
@@ -48,6 +52,9 @@ describe("SubmissionsPageActionsMenu", () => {
       screen.getByTestId("submissions-page-action-download"),
     ).toBeInTheDocument();
     expect(
+      screen.queryByTestId("submissions-page-action-executions"),
+    ).toBeInTheDocument();
+    expect(
       screen.getByTestId("submissions-page-action-rerun"),
     ).toBeInTheDocument();
     expect(
@@ -56,7 +63,7 @@ describe("SubmissionsPageActionsMenu", () => {
   });
 
   it("should not display rerun action when submission is judging", async () => {
-    const submission = MockSubmissionFullResponseDTO({
+    const submission = MockSubmissionFullWithExecutionResponseDTO({
       status: SubmissionStatus.JUDGING,
     });
     const contestMetadata = MockContestMetadataResponseDTO();

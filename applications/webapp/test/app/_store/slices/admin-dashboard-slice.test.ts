@@ -2,19 +2,19 @@ import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
 import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
 import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardPartialResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
-import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
+import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
 
 describe("adminDashboardSlice", () => {
   const stateWithData = {
     contest: MockContestFullResponseDTO(),
     leaderboard: MockLeaderboardResponseDTO(),
-    submissions: [MockSubmissionFullResponseDTO()],
+    submissions: [MockSubmissionFullWithExecutionResponseDTO()],
   } as any;
 
   it("should have the correct initial state", () => {
@@ -95,7 +95,7 @@ describe("adminDashboardSlice", () => {
   });
 
   it("should merge a new submission", () => {
-    const newSubmission = MockSubmissionFullResponseDTO();
+    const newSubmission = MockSubmissionFullWithExecutionResponseDTO();
 
     const state = adminDashboardSlice.reducer(
       stateWithData,
@@ -107,7 +107,7 @@ describe("adminDashboardSlice", () => {
   });
 
   it("should update an existing submission when merging", () => {
-    const updatedSubmission: SubmissionFullResponseDTO = {
+    const updatedSubmission: SubmissionFullWithExecutionResponseDTO = {
       ...stateWithData.submissions[0],
       status: SubmissionStatus.JUDGED,
       answer: SubmissionAnswer.WRONG_ANSWER,

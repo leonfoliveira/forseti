@@ -1,6 +1,7 @@
 package com.forsetijudge.api.adapter.driven.emitter
 
 import com.forsetijudge.api.adapter.dto.response.submission.toFullResponseDTO
+import com.forsetijudge.api.adapter.dto.response.submission.toFullWithExecutionResponseDTO
 import com.forsetijudge.api.adapter.dto.response.submission.toPublicResponseDTO
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
@@ -37,7 +38,7 @@ class StompSubmissionEmitterTest :
             verify {
                 webSocketFanoutProducer.produce(
                     "/topic/contests/${submission.contest.id}/submissions/full",
-                    submission.toFullResponseDTO(),
+                    submission.toFullWithExecutionResponseDTO(),
                 )
             }
             verify {
@@ -66,7 +67,7 @@ class StompSubmissionEmitterTest :
             verify {
                 webSocketFanoutProducer.produce(
                     "/topic/contests/${submission.contest.id}/submissions/full",
-                    submission.toFullResponseDTO(),
+                    submission.toFullWithExecutionResponseDTO(),
                 )
             }
             verify {

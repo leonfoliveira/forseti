@@ -1,5 +1,6 @@
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 
 export interface SubmissionListener {
@@ -26,7 +27,7 @@ export interface SubmissionListener {
   subscribeForContestFull: (
     client: ListenerClient,
     contestId: string,
-    cb: (submission: SubmissionFullResponseDTO) => void,
+    cb: (submission: SubmissionFullWithExecutionResponseDTO) => void,
   ) => Promise<void>;
 
   /**

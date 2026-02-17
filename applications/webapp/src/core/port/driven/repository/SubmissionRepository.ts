@@ -1,6 +1,7 @@
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { CreateSubmissionRequestDTO } from "@/core/port/dto/request/CreateSubmissionRequestDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
 
 export interface SubmissionRepository {
@@ -32,7 +33,7 @@ export interface SubmissionRepository {
    */
   findAllFullForContest(
     contestId: string,
-  ): Promise<SubmissionFullResponseDTO[]>;
+  ): Promise<SubmissionFullWithExecutionResponseDTO[]>;
 
   /**
    * Find all full submissions for a specific contest for the current member.
