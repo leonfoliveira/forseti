@@ -32,21 +32,27 @@ class ApiAdapter:
 
     def get(self, path: str, **kwargs) -> Union[dict, list]:
         session_id, csrf_token = self._authenticate()
+        url = f"{self.api_url}{path}"
         response = requests.get(
-            f"{self.api_url}{path}",
+            url,
             **kwargs,
             verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
             headers={self.CSRF_TOKEN_HEADER: csrf_token},
         )
         if response.status_code != 200:
-            raise click.ClickException(response.text)
+            raise click.ClickException(
+                "Error requesting [GET] {}: {} - {}".format(
+                    url, response.status_code, response.text
+                )
+            )
         return response.json()
 
     def post(self, path: str, json=None, **kwargs) -> Union[dict, list]:
         session_id, csrf_token = self._authenticate()
+        url = f"{self.api_url}{path}"
         response = requests.post(
-            f"{self.api_url}{path}",
+            url,
             json=json,
             **kwargs,
             verify=VERIFY_SSL,
@@ -54,13 +60,18 @@ class ApiAdapter:
             headers={self.CSRF_TOKEN_HEADER: csrf_token},
         )
         if response.status_code != 200:
-            raise click.ClickException(response.text)
+            raise click.ClickException(
+                "Error requesting [POST] {}: {} - {}".format(
+                    url, response.status_code, response.text
+                )
+            )
         return response.json()
 
     def put(self, path: str, json=None, **kwargs) -> Union[dict, list]:
         session_id, csrf_token = self._authenticate()
+        url = f"{self.api_url}{path}"
         response = requests.put(
-            f"{self.api_url}{path}",
+            url,
             json=json,
             **kwargs,
             verify=VERIFY_SSL,
@@ -68,20 +79,29 @@ class ApiAdapter:
             headers={self.CSRF_TOKEN_HEADER: csrf_token},
         )
         if response.status_code != 200:
-            raise click.ClickException(response.text)
+            raise click.ClickException(
+                "Error requesting [PUT] {}: {} - {}".format(
+                    url, response.status_code, response.text
+                )
+            )
         return response.json()
 
     def delete(self, path: str, **kwargs) -> None:
         session_id, csrf_token = self._authenticate()
+        url = f"{self.api_url}{path}"
         response = requests.delete(
-            f"{self.api_url}{path}",
+            url,
             **kwargs,
             verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
             headers={self.CSRF_TOKEN_HEADER: csrf_token},
         )
         if response.status_code != 204:
-            raise click.ClickException(response.text)
+            raise click.ClickException(
+                "Error requesting [DELETE] {}: {} - {}".format(
+                    url, response.status_code, response.text
+                )
+            )
 
     def _authenticate(self):
         if (session_id := self._get_cached_value(self.SESSION_ID_KEYRING_KEY)) and (
@@ -97,13 +117,18 @@ class ApiAdapter:
                 return session_id, csrf_token
 
         password = self.input_adapter.password("Root password: ")
+        url = f"{self.api_url}/v1/root:sign-in"
         response = requests.post(
-            f"{self.api_url}/v1/root:sign-in",
+            url,
             verify=VERIFY_SSL,
-            json={"login": "root", "password": password},
+            json={"password": password},
         )
         if response.status_code != 200:
-            raise click.ClickException(response.text)
+            raise click.ClickException(
+                "Error requesting [POST] {}: {} - {}".format(
+                    url, response.status_code, response.text
+                )
+            )
         cookies = response.headers["Set-Cookie"]
         session_id = re.search(r"(?<=session_id=)[^;]+", cookies).group(0)
         csrf_token = re.search(r"(?<=csrf_token=)[^;]+", cookies).group(0)

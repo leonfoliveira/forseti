@@ -4,6 +4,7 @@ import { Roboto } from "next/font/google";
 
 import { Toaster } from "@/app/_lib/component/shadcn/sonner";
 import { TooltipProvider } from "@/app/_lib/component/shadcn/tooltip";
+import FrontendObservability from "@/app/_lib/frontend-observability";
 import { ThemeProvider } from "@/app/_lib/provider/theme-provider";
 import { cn } from "@/app/_lib/util/cn";
 
@@ -21,6 +22,7 @@ export function Html({ children }: { children: React.ReactNode }) {
   return (
     <html>
       <body className={cn(roboto.className, "bg-card")}>
+        <FrontendObservability />
         <ThemeProvider>
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster />

@@ -33,14 +33,12 @@ def install(sandboxes: List[str], stack: Optional[str], domain: str):
     try:
         command_adapter.run(["mkcert", "-install"])
     except click.ClickException:
-        raise click.ClickException(
-            "mkcert is not installed or not found in PATH.")
+        raise click.ClickException("mkcert is not installed or not found in PATH.")
 
     try:
         command_adapter.run(["docker", "--version"])
     except click.ClickException:
-        raise click.ClickException(
-            "Docker is not installed or not found in PATH.")
+        raise click.ClickException("Docker is not installed or not found in PATH.")
 
     _install_certificates(command_adapter, domain)
     _build_sandboxes(command_adapter, sandboxes)
@@ -73,6 +71,15 @@ def _install_certificates(command_adapter: CommandAdapter, domain: str):
                 "::1",
             ],
         )
+
+        command_adapter.run(
+            [
+                "sh",
+                "-c",
+                f"cp $(mkcert -CAROOT)/rootCA.pem {certs_path}/rootCA.pem",
+            ],
+        )
+
         spinner.complete()
     except Exception as e:
         spinner.fail()
@@ -87,8 +94,7 @@ def _build_sandboxes(command_adapter: CommandAdapter, sandboxes: List[str]):
 
     try:
         for sandbox in sandboxes:
-            sandbox_path = os.path.join(
-                cli_path, "sandboxes", f"{sandbox}.Dockerfile")
+            sandbox_path = os.path.join(cli_path, "sandboxes", f"{sandbox}.Dockerfile")
             command_adapter.run(
                 [
                     "docker",

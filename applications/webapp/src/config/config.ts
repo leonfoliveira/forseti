@@ -7,11 +7,13 @@ export function isClientSide(): boolean {
 }
 
 export const serverConfig = {
+  env: process.env.NODE_ENV || "development",
   version: process.env.NEXT_PUBLIC_VERSION || "latest",
   locale: process.env.LOCALE || "en-US",
   apiInternalUrl: process.env.API_INTERNAL_URL || "http://localhost:8080/api",
   apiPublicUrl: process.env.API_PUBLIC_URL || "http://localhost:8080/api",
   wsPublicUrl: process.env.WS_PUBLIC_URL || "http://localhost:8080/ws",
+  alloyPublicUrl: process.env.ALLOY_PUBLIC_URL || "https://localhost:12347",
 };
 
 /**
@@ -21,15 +23,21 @@ export const serverConfig = {
  */
 
 export type ClientConfig = {
+  env: string;
+  version: string;
   apiPublicUrl: string;
   wsPublicUrl: string;
+  alloyPublicUrl: string;
 };
 export const clientConfig =
   ((globalThis as any).__CLIENT_CONFIG__ as ClientConfig) || serverConfig;
 
 export function buildClientConfig(): ClientConfig {
   return {
+    env: serverConfig.env,
+    version: serverConfig.version,
     apiPublicUrl: serverConfig.apiPublicUrl,
     wsPublicUrl: serverConfig.wsPublicUrl,
+    alloyPublicUrl: serverConfig.alloyPublicUrl,
   };
 }

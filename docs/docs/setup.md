@@ -215,12 +215,34 @@ This command:
 
 After completing the installation on the master machine, each client machine in the local network requires additional configuration to access the platform:
 
-**1. Install mkcert CA Certificate**
+**1. Install CA Certificate**
 
-The self-signed TLS certificates generated during installation need to be trusted by client browsers. Install the mkcert Certificate Authority (CA) on each client machine:
+The self-signed TLS certificates generated during installation need to be trusted by client browsers. Install the Certificate Authority (CA) on each client machine:
 
-- Locate the CA certificate in the `certs/` directory on the master machine
-- Copy and install it on each client following mkcert's installation procedures for the respective operating system
+- Locate the rootCA.pem in the `certs/` directory on the master machine
+- Copy it to the client machine
+
+**Windows**
+
+Rename `rootCA.pem` to `rootCA.crt`, then double-click the file and follow the prompts to install it into the "Trusted Root Certification Authorities" store.
+
+**Ubuntu/Debian**
+
+Use the following command to install the CA certificate:
+
+```shell
+sudo cp rootCA.pem /usr/local/share/ca-certificates/forseti-ca.crt
+sudo update-ca-certificates
+```
+
+**MacOS**
+
+Use the following command to add the CA certificate to the system keychain:
+
+```shell
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain rootCA.pem
+```
+
 
 **2. Configure Hosts File**
 
@@ -230,6 +252,7 @@ Add the following entries to the hosts file on each client machine to resolve th
 <master-ip>  forsetijudge.com
 <master-ip>  api.forsetijudge.com
 <master-ip>  ws.forsetijudge.com
+<master-ip>  alloy.forsetijudge.com
 <master-ip>  grafana.forsetijudge.com
 ```
 
