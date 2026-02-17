@@ -13,7 +13,6 @@ export const serverConfig = {
   apiInternalUrl: process.env.API_INTERNAL_URL || "http://localhost:8080/api",
   apiPublicUrl: process.env.API_PUBLIC_URL || "http://localhost:8080/api",
   wsPublicUrl: process.env.WS_PUBLIC_URL || "http://localhost:8080/ws",
-  alloyInternalUrl: process.env.ALLOY_INTERNAL_URL || "http://localhost:12347",
   alloyPublicUrl: process.env.ALLOY_PUBLIC_URL || "https://localhost:12347",
 };
 

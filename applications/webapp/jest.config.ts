@@ -16,7 +16,7 @@ const config: Config = {
     "src/**/*.{ts,tsx}",
     "!src/**/*.d.{ts,tsx}",
     "!src/app/_lib/component/shadcn/**/*",
-    "!src/app/_lib/component/frontend-observability.tsx",
+    "!src/app/_lib/frontend-observability.tsx",
     "!src/config/**/*",
     "!src/core/domain/**/*",
     "!src/core/port/**/*",

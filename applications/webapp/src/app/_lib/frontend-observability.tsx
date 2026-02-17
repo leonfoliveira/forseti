@@ -6,25 +6,22 @@ import {
   initializeFaro,
 } from "@grafana/faro-web-sdk";
 import { TracingInstrumentation } from "@grafana/faro-web-tracing";
+import { useEffect } from "react";
 
-import { clientConfig, isClientSide, serverConfig } from "@/config/config";
+import { clientConfig } from "@/config/config";
 
 export default function FrontendObservability() {
-  if (faro.api) {
-    return null;
-  }
+  useEffect(() => {
+    if (faro.api) {
+      return;
+    }
 
-  if (clientConfig.env !== "production") {
-    return null;
-  }
+    if (clientConfig.env !== "production") {
+      return;
+    }
 
-  const url = isClientSide()
-    ? clientConfig.alloyPublicUrl
-    : serverConfig.alloyInternalUrl;
-
-  try {
     initializeFaro({
-      url: `${url}/collect`,
+      url: `${clientConfig.alloyPublicUrl}/collect`,
       app: {
         name: "webapp-client",
         version: clientConfig.version,
@@ -36,8 +33,7 @@ export default function FrontendObservability() {
         new TracingInstrumentation(),
       ],
     });
-  } catch {
-    return null;
-  }
+  }, []);
+
   return null;
 }

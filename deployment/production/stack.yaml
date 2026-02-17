@@ -847,7 +847,6 @@ services:
       update_config:
         order: start-first
     environment:
-      ALLOY_INTERNAL_URL: http://alloy:12345
       ALLOY_PUBLIC_URL: https://alloy.forsetijudge.com
       API_INTERNAL_URL: http://api:8080/api
       API_PUBLIC_URL: https://api.forsetijudge.com
