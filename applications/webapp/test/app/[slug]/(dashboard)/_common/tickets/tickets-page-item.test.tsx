@@ -49,7 +49,7 @@ describe("TicketsPageItem", () => {
     await renderWithProviders(<TicketsPageItem ticket={ticket} />);
 
     expect(screen.getByTestId("ticket-description")).toHaveTextContent(
-      "Print my submission",
+      "Please, print my submission",
     );
   });
 
