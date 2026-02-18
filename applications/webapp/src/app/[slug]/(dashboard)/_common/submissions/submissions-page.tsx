@@ -31,6 +31,7 @@ import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/Probl
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
@@ -105,6 +106,16 @@ type Props = {
         canEdit?: false;
         onEdit?: (submission: SubmissionFullWithExecutionResponseDTO) => void;
       }
+  ) &
+  (
+    | {
+        canPrint: true;
+        onPrint: (ticket: TicketResponseDTO) => void;
+      }
+    | {
+        canPrint?: false;
+        onPrint?: (ticket: TicketResponseDTO) => void;
+      }
   );
 
 /**
@@ -118,6 +129,8 @@ export function SubmissionsPage({
   onCreate,
   canEdit,
   onEdit,
+  canPrint,
+  onPrint,
 }: Props) {
   const contestStatus = useContestStatusWatcher();
   const [isOnlyMine, setIsOnlyMine] = useState(false);
@@ -244,6 +257,8 @@ export function SubmissionsPage({
                           }
                           canEdit={canEdit}
                           onEdit={onEdit as any}
+                          canPrint={canPrint}
+                          onPrint={onPrint as any}
                         />
                       </TableCell>
                     )}

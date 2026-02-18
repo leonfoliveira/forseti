@@ -2,7 +2,9 @@ import { screen } from "@testing-library/dom";
 
 import { SubmissionsPageActionsMenu } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-actions-menu";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
+import { MemberFullResponseDTO } from "@/core/port/dto/response/member/MemberFullResponseDTO";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockSession } from "@/test/mock/response/session/MockSession";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -79,5 +81,31 @@ describe("SubmissionsPageActionsMenu", () => {
     expect(
       screen.queryByTestId("submissions-page-action-rerun"),
     ).not.toBeInTheDocument();
+  });
+
+  it("should display print action only for submission owner", async () => {
+    const session = MockSession();
+    const submission = MockSubmissionFullResponseDTO({
+      member: session.member as unknown as MemberFullResponseDTO,
+    });
+    const contestMetadata = MockContestMetadataResponseDTO();
+    await renderWithProviders(
+      <SubmissionsPageActionsMenu
+        submission={submission}
+        canPrint
+        onPrint={() => {}}
+      />,
+      { session, contestMetadata },
+    );
+
+    expect(
+      screen.queryByTestId("submission-actions-button"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("submissions-page-action-download"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("submissions-page-action-print"),
+    ).toBeInTheDocument();
   });
 });

@@ -37,6 +37,8 @@ describe("ContestantSubmissionsPage", () => {
         problems,
         canCreate: true,
         onCreate: expect.any(Function),
+        canPrint: true,
+        onPrint: expect.any(Function),
       }),
       undefined,
     );
