@@ -12,6 +12,7 @@ import {
   SubmissionLanguage,
   SubmissionStatus,
 } from "@/test/entity/submission";
+import { Ticket, TicketStatus, TicketType } from "@/test/entity/ticket";
 import { DateUtil } from "@/test/util/date-util";
 
 /**
@@ -53,6 +54,12 @@ test("Default contest behaviour", async ({ page }) => {
     login: "admin",
     password: "forsetijudge",
   };
+  const staffMember: Member = {
+    type: MemberType.STAFF,
+    name: "Staff",
+    login: "staff",
+    password: "forsetijudge",
+  };
   const judgeMember: Member = {
     type: MemberType.JUDGE,
     name: "Judge",
@@ -68,6 +75,7 @@ test("Default contest behaviour", async ({ page }) => {
 
   const rootActor = new Actor(page, rootMember);
   const adminActor = new Actor(page, adminMember);
+  const staffActor = new Actor(page, staffMember);
   const judgeActor = new Actor(page, judgeMember);
   const contestantActor = new Actor(page, contestantMember);
 
@@ -138,6 +146,21 @@ test("Default contest behaviour", async ({ page }) => {
     text: "New announcement",
   };
 
+  const tickets: Ticket[] = [
+    {
+      member: contestantMember,
+      type: TicketType.SUBMISSION_PRINT,
+      status: TicketStatus.OPEN,
+      description: "Please, print my submission",
+    },
+    {
+      member: contestantMember,
+      type: TicketType.TECHNICAL_SUPPORT,
+      status: TicketStatus.OPEN,
+      description: "I have a problem with the judge system",
+    },
+  ];
+
   // Step 1: Use CLI to create a contest
   await rootActor.createContest(contest);
 
@@ -146,6 +169,7 @@ test("Default contest behaviour", async ({ page }) => {
   const rootOnSettingsPage = await rootActor.navigateToSettings(contest);
   await rootOnSettingsPage.openTab("members");
   await rootOnSettingsPage.fillMemberForm(adminMember);
+  await rootOnSettingsPage.fillMemberForm(staffMember);
   await rootOnSettingsPage.fillMemberForm(judgeMember);
   await rootOnSettingsPage.fillMemberForm(contestantMember);
   await rootOnSettingsPage.saveSettings();
@@ -174,7 +198,7 @@ test("Default contest behaviour", async ({ page }) => {
   contest.status = ContestStatus.IN_PROGRESS;
   await adminActor.signOut(contest);
 
-  // Step 5: Sign in as contestant, check problems, create submissions, check leaderboard, create clarification, check announcements
+  // Step 5: Sign in as contestant, check problems, create submissions, request print, check leaderboard, create clarification, check announcements, check tickets, create a ticket
   await contestantActor.signIn(contest);
   await contestantActor.checkHeader(contest);
   const contestantActonOnProblems =
@@ -187,6 +211,7 @@ test("Default contest behaviour", async ({ page }) => {
   await contestantActonOnSubmissions.createSubmission(meSubmission);
   await contestantActonOnSubmissions.createSubmission(waSubmission);
   await contestantActonOnSubmissions.createSubmission(acSubmission);
+  await contestantActonOnSubmissions.requestPrint(0);
   const contestantActonOnLeaderboard =
     await contestantActonOnSubmissions.navigateToLeaderboard(contest);
   await contestantActonOnLeaderboard.checkLeaderboard(leaderboard);
@@ -196,7 +221,11 @@ test("Default contest behaviour", async ({ page }) => {
   const contestantActonOnAnnouncements =
     await contestantActonOnClarifications.navigateToAnnouncements(contest);
   await contestantActonOnAnnouncements.checkAnnouncements([announcement]);
-  await contestantActonOnAnnouncements.signOut(contest);
+  const contestantActonOnTickets =
+    await contestantActonOnAnnouncements.navigateToTickets(contest);
+  await contestantActonOnTickets.checkTickets([tickets[0]]);
+  await contestantActonOnTickets.createTicket(tickets[1]);
+  await contestantActonOnTickets.signOut(contest);
 
   // Step 6: Sign in as judge, check submissions, judge a submission, rerun a submission, answer a clarification, delete a clarification
   await judgeActor.signIn(contest);
@@ -223,7 +252,19 @@ test("Default contest behaviour", async ({ page }) => {
   await judgeActorOnClarifications.deleteClarification(0);
   await judgeActorOnClarifications.signOut(contest);
 
-  // Step 7: Sign in as admin, force end the contest
+  // Step 7: Sign in as staff, check tickets, move a ticket
+  await staffActor.signIn(contest);
+  await staffActor.checkHeader(contest);
+  const staffActorOnTickets = await staffActor.navigateToTickets(contest);
+  await staffActorOnTickets.checkTickets(tickets);
+  await staffActorOnTickets.moveTicket(
+    0,
+    TicketStatus.OPEN,
+    TicketStatus.IN_PROGRESS,
+  );
+  await staffActorOnTickets.signOut(contest);
+
+  // Step 8: Sign in as admin, force end the contest
   await adminActor.signIn(contest);
   const adminActorOnSettings2 = await adminActor.navigateToSettings(contest);
   await adminActorOnSettings2.freeze();
