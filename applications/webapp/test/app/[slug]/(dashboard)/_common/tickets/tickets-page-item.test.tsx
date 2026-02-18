@@ -22,6 +22,15 @@ describe("TicketsPageItem", () => {
     expect(screen.getByTestId("ticket-description")).toHaveTextContent(
       (ticket.properties as { description: string }).description,
     );
+    expect(screen.getByTestId("ticket-created-at")).toHaveTextContent(
+      "01/01/2025, 10:00:00 AM",
+    );
+    expect(screen.queryByTestId("ticket-staff-name")).toHaveTextContent(
+      ticket.staff?.name || "",
+    );
+    expect(screen.queryByTestId("ticket-updated-at")).toHaveTextContent(
+      "01/01/2025, 10:00:00 AM",
+    );
 
     expect(
       screen.queryByTestId("print-attachment-button"),

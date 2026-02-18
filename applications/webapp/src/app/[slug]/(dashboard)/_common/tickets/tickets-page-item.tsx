@@ -1,7 +1,8 @@
-import { ArrowRightLeftIcon, PrinterIcon } from "lucide-react";
+import { ArrowRightLeftIcon, DotIcon, PrinterIcon } from "lucide-react";
 
 import { TicketTypeBadge } from "@/app/_lib/component/display/badge/ticket-type-badge";
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
+import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import {
   DropdownMenu,
@@ -101,16 +102,23 @@ export function TicketsPageItem({ ticket, canEdit, onEdit }: Props) {
       <ItemContent className="space-y-4">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-1">
-            <ItemTitle data-testid="ticket-member-name">
-              {ticket.member.name}
+            <ItemTitle className="gap-0">
+              <span data-testid="ticket-member-name">{ticket.member.name}</span>
+              <DotIcon className="w-4" />
+              <span
+                data-testid="ticket-member-type"
+                className="text-muted-foreground text-xs"
+              >
+                <FormattedMessage
+                  {...globalMessages.memberType[ticket.member.type]}
+                />
+              </span>
             </ItemTitle>
             <div
-              className="text-muted-foreground flex items-center gap-2 text-sm"
-              data-testid="ticket-member-type"
+              className="text-muted-foreground flex items-center gap-2 text-xs"
+              data-testid="ticket-created-at"
             >
-              <FormattedMessage
-                {...globalMessages.memberType[ticket.member.type]}
-              />
+              <FormattedDateTime timestamp={ticket.createdAt} />
             </div>
           </div>
           <TicketTypeBadge type={ticket.type} />
@@ -139,54 +147,77 @@ export function TicketsPageItem({ ticket, canEdit, onEdit }: Props) {
           )}
         </ItemDescription>
 
-        {canEdit && (
-          <ItemFooter className="border-border/50 flex items-center justify-end gap-2 border-t pt-2">
-            {ticket.type === TicketType.SUBMISSION_PRINT && (
-              <AsyncButton
-                variant="outline"
-                size="sm"
-                onClick={() => printAttachment(ticket.properties.attachmentId)}
-                isLoading={printAttachmentState.isLoading}
-                data-testid="print-attachment-button"
-              >
-                <PrinterIcon className="h-4 w-4" />
-                <FormattedMessage {...messages.printLabel} />
-              </AsyncButton>
+        {(canEdit || ticket.staff) && (
+          <ItemFooter className="border-border/50 flex items-center justify-between gap-2 border-t pt-2">
+            {ticket.staff && (
+              <div className="flex flex-col gap-1">
+                <p
+                  className="text-muted-foreground text-xs font-medium"
+                  data-testid="ticket-staff-name"
+                >
+                  {ticket.staff.name}
+                </p>
+                <p
+                  className="text-muted-foreground text-xs"
+                  data-testid="ticket-updated-at"
+                >
+                  <FormattedDateTime timestamp={ticket.updatedAt} />
+                </p>
+              </div>
             )}
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+            <div className="flex justify-end gap-2">
+              {canEdit && ticket.type === TicketType.SUBMISSION_PRINT && (
                 <AsyncButton
                   variant="outline"
                   size="sm"
-                  className="justify-self-end"
-                  isLoading={updateStatusState.isLoading}
-                  data-testid="move-ticket-button"
+                  onClick={() =>
+                    printAttachment(ticket.properties.attachmentId)
+                  }
+                  isLoading={printAttachmentState.isLoading}
+                  data-testid="print-attachment-button"
                 >
-                  <ArrowRightLeftIcon className="h-4 w-4" />
-                  <FormattedMessage {...messages.moveLabel} />
+                  <PrinterIcon className="h-4 w-4" />
+                  <FormattedMessage {...messages.printLabel} />
                 </AsyncButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuGroup>
-                  {Object.keys(TicketStatus)
-                    .filter((status) => status !== ticket.status)
-                    .map((status) => (
-                      <DropdownMenuItem
-                        key={status}
-                        onClick={() => updateStatus(status as TicketStatus)}
-                        data-testid={`move-ticket-button-${status.toLowerCase()}`}
-                      >
-                        <FormattedMessage
-                          {...globalMessages.ticketStatus[
-                            status as TicketStatus
-                          ]}
-                        />
-                      </DropdownMenuItem>
-                    ))}
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              )}
+
+              {canEdit && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <AsyncButton
+                      variant="outline"
+                      size="sm"
+                      className="justify-self-end"
+                      isLoading={updateStatusState.isLoading}
+                      data-testid="move-ticket-button"
+                    >
+                      <ArrowRightLeftIcon className="h-4 w-4" />
+                      <FormattedMessage {...messages.moveLabel} />
+                    </AsyncButton>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuGroup>
+                      {Object.keys(TicketStatus)
+                        .filter((status) => status !== ticket.status)
+                        .map((status) => (
+                          <DropdownMenuItem
+                            key={status}
+                            onClick={() => updateStatus(status as TicketStatus)}
+                            data-testid={`move-ticket-button-${status.toLowerCase()}`}
+                          >
+                            <FormattedMessage
+                              {...globalMessages.ticketStatus[
+                                status as TicketStatus
+                              ]}
+                            />
+                          </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
           </ItemFooter>
         )}
       </ItemContent>
