@@ -56,10 +56,7 @@ class FindContestService(
             contestRepository.findEntityById(id)
                 ?: throw NotFoundException("Could not find contest with id = $id")
 
-        if (!contest.hasStarted()) {
-            ContestAuthorizer(contest, member)
-                .checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
-        }
+        ContestAuthorizer(contest, member).checkContestStarted()
 
         logger.info("Found contest by id for public access")
         return contest

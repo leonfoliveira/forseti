@@ -4,6 +4,7 @@ import { DisconnectionBanner } from "@/app/_lib/component/feedback/disconnection
 import { FreezeBanner } from "@/app/_lib/component/feedback/freeze-banner";
 import { ErrorPage } from "@/app/_lib/component/page/error-page";
 import { LoadingPage } from "@/app/_lib/component/page/loading-page";
+import { useIntl } from "@/app/_lib/hook/intl-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
@@ -15,6 +16,7 @@ import {
   leaderboardListener,
   listenerClientFactory,
   submissionListener,
+  ticketListener,
 } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
@@ -25,6 +27,8 @@ import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderbo
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
+import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -48,6 +52,10 @@ const messages = defineMessages({
     id: "app._lib.provider.judge-dashboard-provider.unfrozen",
     defaultMessage: "Leaderboard has been unfrozen",
   },
+  ticketUpdated: {
+    id: "app._lib.provider.judge-dashboard-provider.ticket-updated",
+    defaultMessage: "Your ticket has been updated to ''{status}''",
+  },
 });
 
 /**
@@ -69,6 +77,7 @@ export function JudgeDashboardProvider({
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const intl = useIntl();
   const listenerClientRef = React.useRef<ListenerClient | null>(null);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -135,6 +144,12 @@ export function JudgeDashboardProvider({
           listenerClientRef.current,
           contestMetadata.id,
           deleteClarification,
+        ),
+        ticketListener.subscribeForMember(
+          listenerClientRef.current,
+          contestMetadata.id,
+          session!.member.id,
+          receiveMemberTicket,
         ),
       ]);
 
@@ -222,6 +237,22 @@ export function JudgeDashboardProvider({
   function deleteClarification({ id }: { id: string }) {
     console.debug("Received clarification deletion:", id);
     dispatch(judgeDashboardSlice.actions.deleteClarification(id));
+  }
+
+  function receiveMemberTicket(memberTicket: TicketResponseDTO) {
+    console.debug("Received member ticket:", memberTicket);
+    dispatch(judgeDashboardSlice.actions.mergeMemberTicket(memberTicket));
+
+    if (memberTicket.version > 1) {
+      toast.info({
+        ...messages.ticketUpdated,
+        values: {
+          status: intl.formatMessage(
+            globalMessages.ticketStatus[memberTicket.status],
+          ),
+        },
+      });
+    }
   }
 
   if (state.isLoading) {

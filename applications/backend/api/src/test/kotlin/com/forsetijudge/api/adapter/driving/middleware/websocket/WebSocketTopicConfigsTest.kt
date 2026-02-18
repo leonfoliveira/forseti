@@ -45,9 +45,10 @@ class WebSocketTopicConfigsTest :
                         "/topic/contests/[a-fA-F0-9-]+/leaderboard/unfreeze",
                         "/topic/contests/[a-fA-F0-9-]+/leaderboard/partial",
                         "/topic/contests/[a-fA-F0-9-]+/submissions",
-                        "/topic/contests/[a-fA-F0-9-]+/submissions/batch",
                         "/topic/contests/[a-fA-F0-9-]+/submissions/full",
                         "/topic/contests/[a-fA-F0-9-]+/submissions/full/members/[a-fA-F0-9-]+",
+                        "/topic/contests/[a-fA-F0-9-]+/tickets",
+                        "/topic/contests/[a-fA-F0-9-]+/tickets/members/[a-fA-F0-9-]+",
                         ".*",
                     )
 
@@ -393,37 +394,6 @@ class WebSocketTopicConfigsTest :
                 }
             }
 
-            context("submissions batch filter") {
-                val destination = "/topic/contests/${startedContest.id}/submissions/batch"
-
-                test("should allow access when contest has started") {
-                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first { it.key.matches(destination) }
-                            .value
-
-                    shouldNotThrow<ForbiddenException> {
-                        filter(destination)
-                    }
-                }
-
-                test("should throw ForbiddenException when contest has not started") {
-                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/submissions/batch"
-                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
-
-                    val filter =
-                        sut.privateFilters.entries
-                            .first { it.key.matches(notStartedDestination) }
-                            .value
-
-                    shouldThrow<ForbiddenException> {
-                        filter(notStartedDestination)
-                    }
-                }
-            }
-
             context("submissions full filter") {
                 val destination = "/topic/contests/${startedContest.id}/submissions/full"
 
@@ -550,6 +520,113 @@ class WebSocketTopicConfigsTest :
 
                 test("should throw ForbiddenException when contest has not started") {
                     val notStartedDestination = "/topic/contests/${notStartedContest.id}/submissions/full/members/${member.id}"
+                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(notStartedDestination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(notStartedDestination)
+                    }
+                }
+            }
+
+            context("tickets filter") {
+                val destination = "/topic/contests/${startedContest.id}/tickets"
+
+                test("should allow access when contest has started") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when contest has not started") {
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/tickets"
+                    every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(notStartedDestination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(notStartedDestination)
+                    }
+                }
+            }
+
+            context("tickets members filter") {
+                val destination = "/topic/contests/${startedContest.id}/tickets/members/${member.id}"
+
+                test("should allow access when contest has started and user is the same member") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldNotThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should deny access when user is different member") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val session = SessionMockBuilder.build(member = otherMember)
+                    RequestContext.getContext().session = session
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when user is not authenticated") {
+                    RequestContext.clearContext()
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val filter =
+                        sut.privateFilters.entries
+                            .first { it.key.matches(destination) }
+                            .value
+
+                    shouldThrow<ForbiddenException> {
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when user belongs to different contest") {
+                    every { findContestUseCase.findById(startedContest.id) } returns startedContest
+
+                    val session = SessionMockBuilder.build(member = otherMember)
+                    RequestContext.getContext().session = session
+
+                    shouldThrow<ForbiddenException> {
+                        val filter =
+                            sut.privateFilters.entries
+                                .first { it.key.matches(destination) }
+                                .value
+                        filter(destination)
+                    }
+                }
+
+                test("should throw ForbiddenException when contest has not started") {
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/tickets/members/${member.id}"
                     every { findContestUseCase.findById(notStartedContest.id) } returns notStartedContest
 
                     val filter =

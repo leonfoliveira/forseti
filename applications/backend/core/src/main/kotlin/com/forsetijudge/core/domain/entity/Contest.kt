@@ -100,6 +100,13 @@ class Contest(
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var announcements: List<Announcement> = mutableListOf(),
+    /**
+     * Tickets related to the contest, which can include support requests or other issues raised by participants.
+     */
+    @Audited(withModifiedFlag = false)
+    @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], targetEntity = Ticket::class)
+    @OrderBy("createdAt ASC")
+    var tickets: List<Ticket<*>> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     fun hasStarted(): Boolean = !startAt.isAfter(OffsetDateTime.now())
 

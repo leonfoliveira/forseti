@@ -17,6 +17,7 @@ import {
   leaderboardListener,
   listenerClientFactory,
   submissionListener,
+  ticketListener,
 } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
@@ -27,6 +28,7 @@ import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderbo
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
@@ -50,6 +52,10 @@ const messages = defineMessages({
   unfrozen: {
     id: "app._lib.provider.contestant-dashboard-provider.unfrozen",
     defaultMessage: "Leaderboard has been unfrozen",
+  },
+  ticketUpdated: {
+    id: "app._lib.provider.contestant-dashboard-provider.ticket-updated",
+    defaultMessage: "Your ticket has been updated to ''{status}''",
   },
 });
 
@@ -151,6 +157,12 @@ export function ContestantDashboardProvider({
           listenerClientRef.current,
           contestMetadata.id,
           deleteClarification,
+        ),
+        ticketListener.subscribeForMember(
+          listenerClientRef.current,
+          contestMetadata.id,
+          session!.member.id,
+          receiveMemberTicket,
         ),
       ]);
 
@@ -286,6 +298,22 @@ export function ContestantDashboardProvider({
   function deleteClarification({ id }: { id: string }) {
     console.debug("Received clarification deletion:", id);
     dispatch(contestantDashboardSlice.actions.deleteClarification(id));
+  }
+
+  function receiveMemberTicket(memberTicket: TicketResponseDTO) {
+    console.debug("Received member ticket:", memberTicket);
+    dispatch(contestantDashboardSlice.actions.mergeMemberTicket(memberTicket));
+
+    if (memberTicket.version > 1) {
+      toast.info({
+        ...messages.ticketUpdated,
+        values: {
+          status: intl.formatMessage(
+            globalMessages.ticketStatus[memberTicket.status],
+          ),
+        },
+      });
+    }
   }
 
   if (state.isLoading) {

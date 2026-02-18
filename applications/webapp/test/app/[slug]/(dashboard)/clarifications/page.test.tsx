@@ -11,6 +11,12 @@ jest.mock(
   }),
 );
 jest.mock(
+  "@/app/[slug]/(dashboard)/clarifications/staff-clarifications-page",
+  () => ({
+    StaffClarificationsPage: () => <span data-testid="staff-page" />,
+  }),
+);
+jest.mock(
   "@/app/[slug]/(dashboard)/clarifications/contestant-clarifications-page",
   () => ({
     ContestantClarificationsPage: () => <span data-testid="contestant-page" />,
@@ -33,6 +39,7 @@ describe("DashboardClarificationsPage", () => {
   it.each([
     [MemberType.ROOT, "admin-page"],
     [MemberType.ADMIN, "admin-page"],
+    [MemberType.STAFF, "staff-page"],
     [MemberType.JUDGE, "judge-page"],
     [MemberType.CONTESTANT, "contestant-page"],
     [null, "guest-page"],

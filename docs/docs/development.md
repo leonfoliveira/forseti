@@ -156,7 +156,7 @@ Represents a competitive programming contest.
 | problems       | Problem[]       | List of problems in the contest                      | []            |
 | clarifications | Clarification[] | List of clarifications made in the contest           | []            |
 | announcements  | Announcement[]  | List of announcements made in the contest            | []            |
-| version        | int             | Version number for optimistic locking                | 1             |
+| version        | long            | Version number for optimistic locking                | 1             |
 
 ##### Settings
 
@@ -188,7 +188,7 @@ Represents a user or participant in the platform or a specific contest.
 | login       | string       | Login identifier                        |               |
 | password    | string       | Hashed password for authentication      |               |
 | submissions | Submission[] | List of submissions made by this member | []            |
-| version     | int          | Version number for optimistic locking   | 1             |
+| version     | long         | Version number for optimistic locking   | 1             |
 
 ##### Type
 
@@ -218,7 +218,7 @@ Represents a programming problem in a contest.
 | memoryLimit | int          | Memory limit in megabytes                         |               |
 | testCases   | Attachment   | Test cases attachment for judging                 |               |
 | submissions | Submission[] | List of submissions made for this problem         | []            |
-| version     | int          | Version number for optimistic locking             | 1             |
+| version     | long         | Version number for optimistic locking             | 1             |
 
 #### Submission
 
@@ -237,7 +237,7 @@ Represents a code submission for a problem.
 | answer     | Answer      | Judging result                         | NO_ANSWER     |
 | code       | Attachment  | Code attachment                        |               |
 | executions | Execution[] | List of executions for this submission | []            |
-| version    | int         | Version number for optimistic locking  | 1             |
+| version    | long        | Version number for optimistic locking  | 1             |
 
 ##### Status
 
@@ -283,7 +283,7 @@ Represents a single execution of a submission against test cases.
 | lastTestCase   | int?       | Index of the last test case executed | null          |
 | input          | Attachment | Input attachment for the execution   |               |
 | output         | Attachment | Output attachment from the execution |               |
-| version        | int        | Version number for optimistic locking | 1            |
+| version        | long       | Version number for optimistic locking | 1            |
 
 #### Clarification
 
@@ -301,7 +301,7 @@ Represents a question and answer thread about a contest or problem.
 | parent    | Clarification?  | Parent clarification (if this is a response)  | null          |
 | text      | string          | Text content of the question or answer        |               |
 | children  | Clarification[] | List of responses to this clarification       | []            |
-| version   | int             | Version number for optimistic locking         | 1             |
+| version   | long            | Version number for optimistic locking         | 1             |
 
 #### Announcement
 
@@ -316,7 +316,42 @@ Represents an official announcement in a contest.
 | contest   | Contest    | Contest to which this announcement belongs |               |
 | member    | Member     | Member who made the announcement           |               |
 | text      | string     | Text content of the announcement           |               |
-| version   | int        | Version number for optimistic locking      | 1             |
+| version   | long       | Version number for optimistic locking      | 1             |
+
+#### Ticket
+
+Represents a support ticket for a contest.
+
+| attribute   | type       | description                             | default       |
+| ----------- | ---------- | --------------------------------------- | ------------- |
+| id          | uuid       | Unique identifier                       | random_uuid() |
+| createdAt   | timestamp  | Timestamp of creation                   | now()         |
+| updatedAt   | timestamp  | Timestamp of last update                | now()         |
+| deletedAt   | timestamp? | Timestamp of deletion (soft delete)     | null          |
+| contest     | Contest    | Contest to which this ticket belongs    |               |
+| member      | Member     | Member who created the ticket           |               |
+| staff       | Member?    | Staff member assigned to the ticket     | null          |
+| type        | Type       | Type of the ticket                      |               |
+| status      | Status     | Current status of the ticket            | OPEN          |
+| properties  | JSONB      | Additional properties for the ticket    | {}            |
+| version     | long       | Version number for optimistic locking   | 1             |
+
+##### Type
+
+| value                 | description                  |
+| --------------------- | ---------------------------- |
+| SUBMISSION_PRINT      | Submission print ticket      |
+| NON_TECHNICAL_SUPPORT | Non-technical support ticket |
+| TECHNICAL_SUPPORT     | Technical support ticket     |
+
+##### Status
+
+| value       | description                  |
+| ----------- | ---------------------------- |
+| OPEN        | Ticket is open and active    |
+| IN_PROGRESS | Ticket is in progress        |
+| RESOLVED    | Ticket has been resolved     |
+| REJECTED    | Ticket has been rejected     |
 
 #### Attachment
 
@@ -333,7 +368,7 @@ Represents a file attachment stored in object storage.
 | filename    | string     | Original filename                           |               |
 | contentType | string     | MIME type of the file                       |               |
 | context     | Context    | Purpose of the attachment                   |               |
-| version     | int        | Version number for optimistic locking       | 1             |
+| version     | long       | Version number for optimistic locking       | 1             |
 
 ##### Context
 
@@ -357,7 +392,7 @@ Represents an authentication session for a member.
 | csrfToken | string     | CSRF token for the session           |               |
 | member    | Member     | Member to which this session belongs |               |
 | expiresAt | timestamp  | Timestamp when the session expires   |               |
-| version   | int        | Version number for optimistic locking | 1             |
+| version   | long       | Version number for optimistic locking | 1             |
 
 ## API
 
@@ -1078,6 +1113,140 @@ Rerun a submission
 **Authorization:** Judge, Root, Admin
 
 **Response:** 204 No Content
+
+#### Tickets
+
+**[POST] /v1/contests/{contestId}/tickets**
+
+Create a ticket
+
+**Authorization:** Any authenticated user
+
+**Request Body**
+
+```json
+{
+  "type": "Ticket.Type",
+  "properties": {}
+}
+```
+
+**Response Body**
+```json
+{
+  "id": "uuid",
+  "createdAt": "timestamp",
+  "member": {
+    "id": "uuid",
+    "type": "Member.Type",
+    "name": "string"
+  },
+  "staff": null,
+  "type": "Ticket.Type",
+  "status": "Ticket.Status",
+  "properties": {},
+  "version": 1
+}
+```
+
+**[PUT] /v1/contests/{contestId}/tickets/{ticketId}:update-status**
+
+Update a ticket status
+
+**Authorization:** Root, Admin, Staff
+
+**Request Body**
+
+```json
+{
+  "status": "Ticket.Status"
+}
+```
+
+**Response Body**
+
+```json
+{
+  "id": "uuid",
+  "createdAt": "timestamp",
+  "member": {
+    "id": "uuid",
+    "type": "Member.Type",
+    "name": "string"
+  },
+  "staff": {
+    "id": "uuid",
+    "type": "Member.Type",
+    "name": "string"
+  },
+  "type": "Ticket.Type",
+  "status": "Ticket.Status",
+  "properties": {},
+  "version": 1
+}
+```
+
+**[GET] /v1/contests/{contestId}/tickets**
+
+Find all tickets for a contest
+
+**Authorization:** Root, Admin, Staff
+
+**Response Body**
+
+```json
+[
+  {
+    "id": "uuid",
+    "createdAt": "timestamp",
+    "member": {
+      "id": "uuid",
+      "type": "Member.Type",
+      "name": "string"
+    },
+    "staff": {
+      "id": "uuid",
+      "type": "Member.Type",
+      "name": "string"
+    },
+    "type": "Ticket.Type",
+    "status": "Ticket.Status",
+    "properties": {},
+    "version": 1
+  }
+]
+```
+
+**[GET] /v1/contests/{contestId}/tickets/members/me**
+
+Find all tickets created by current member
+
+**Authorization:** Any authenticated user
+
+**Response Body**
+
+```json
+[
+  {
+    "id": "uuid",
+    "createdAt": "timestamp",
+    "member": {
+      "id": "uuid",
+      "type": "Member.Type",
+      "name": "string"
+    },
+    "staff": {
+      "id": "uuid",
+      "type": "Member.Type",
+      "name": "string"
+    },
+    "type": "Ticket.Type",
+    "status": "Ticket.Status",
+    "properties": {},
+    "version": 1
+  }
+]
+```
 
 ### WebSocket Topics
 

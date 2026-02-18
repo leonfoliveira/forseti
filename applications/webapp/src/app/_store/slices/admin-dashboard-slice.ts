@@ -11,6 +11,7 @@ import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/Ad
 import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
+import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 
 export type AdminDashboardState = AdminDashboardResponseDTO & {
   listenerStatus: ListenerStatus;
@@ -78,6 +79,9 @@ export const adminDashboardSlice = createSlice({
       state.contest.clarifications = state.contest.clarifications.filter(
         (clarification) => clarification.id !== action.payload,
       );
+    },
+    mergeTicket(state, action: { payload: TicketResponseDTO }) {
+      state.tickets = mergeEntity(state.tickets, action.payload);
     },
   },
 });

@@ -9,6 +9,7 @@ import { DashboardService } from "@/core/application/service/DashboardService";
 import { LeaderboardService } from "@/core/application/service/LeaderboardService";
 import { SessionService } from "@/core/application/service/SessionService";
 import { SubmissionService } from "@/core/application/service/SubmissionService";
+import { TicketService } from "@/core/application/service/TicketService";
 import { AnnouncementWritter } from "@/core/port/driving/usecase/announcement/AnnouncementWritter";
 import { AttachmentReader } from "@/core/port/driving/usecase/attachment/AttachmentReader";
 import { AttachmentWritter } from "@/core/port/driving/usecase/attachment/AttachmentWritter";
@@ -24,6 +25,7 @@ import { SessionWritter } from "@/core/port/driving/usecase/session/SessionWritt
 import { StorageReader } from "@/core/port/driving/usecase/storage/StorageReader";
 import { StorageWritter } from "@/core/port/driving/usecase/storage/StorageWritter";
 import { SubmissionWritter } from "@/core/port/driving/usecase/submission/SubmissionWritter";
+import { TicketWritter } from "@/core/port/driving/usecase/ticket/TicketWritter";
 import { AxiosServerSideClient } from "@/infrastructure/adapter/axios/AxiosServerSideClient";
 import { AxiosAnnouncementRepository } from "@/infrastructure/adapter/axios/repository/AxiosAnnouncementRepository";
 import { AxiosAttachmentRepository } from "@/infrastructure/adapter/axios/repository/AxiosAttachmentRepository";
@@ -33,11 +35,13 @@ import { AxiosContestRepository } from "@/infrastructure/adapter/axios/repositor
 import { AxiosLeaderboardRepository } from "@/infrastructure/adapter/axios/repository/AxiosLeaderboardRepository";
 import { AxiosSessionRepository } from "@/infrastructure/adapter/axios/repository/AxiosSessionRepository";
 import { AxiosSubmissionRepository } from "@/infrastructure/adapter/axios/repository/AxiosSubmissionRepository";
+import { AxiosTicketRepository } from "@/infrastructure/adapter/axios/repository/AxiosTicketRepository";
 import { StompAnnouncementListener } from "@/infrastructure/adapter/stomp/StompAnnouncementListener";
 import { StompClarificationListener } from "@/infrastructure/adapter/stomp/StompClarificationListener";
 import { StompClientFactory } from "@/infrastructure/adapter/stomp/StompClientFactory";
 import { StompLeaderboardListener } from "@/infrastructure/adapter/stomp/StompLeaderboardListener";
 import { StompSubmissionListener } from "@/infrastructure/adapter/stomp/StompSubmissionListener";
+import { StompTicketListener } from "@/infrastructure/adapter/stomp/StompTicketListener";
 
 /**
  * Instantiate all server-side composition dependencies
@@ -51,6 +55,7 @@ export function build(): Composition {
   const clarificationListener = null as unknown as StompClarificationListener;
   const leaderboardListener = null as unknown as StompLeaderboardListener;
   const submissionListener = null as unknown as StompSubmissionListener;
+  const ticketListener = null as unknown as StompTicketListener;
 
   // Repositories
   const axiosClient = new AxiosServerSideClient(serverConfig.apiInternalUrl);
@@ -65,6 +70,7 @@ export function build(): Composition {
   const leaderboardRepository = new AxiosLeaderboardRepository(axiosClient);
   const sessionRepository = new AxiosSessionRepository(axiosClient);
   const submissionRepository = new AxiosSubmissionRepository(axiosClient);
+  const ticketRepository = new AxiosTicketRepository(axiosClient);
 
   // Services
   const announcementService = new AnnouncementService(announcementRepository);
@@ -83,6 +89,7 @@ export function build(): Composition {
     contestRepository,
     leaderboardRepository,
     submissionRepository,
+    ticketRepository,
   );
   const leaderboardService = new LeaderboardService(leaderboardRepository);
   const sessionService = new SessionService(sessionRepository);
@@ -90,6 +97,7 @@ export function build(): Composition {
     submissionRepository,
     attachmentService,
   );
+  const ticketService = new TicketService(ticketRepository);
 
   // UseCases
   const announcementWritter: AnnouncementWritter = announcementService;
@@ -108,6 +116,7 @@ export function build(): Composition {
   const storageReader: StorageReader = null as unknown as StorageReader;
   const storageWritter: StorageWritter = null as unknown as StorageWritter;
   const submissionWritter: SubmissionWritter = submissionService;
+  const ticketWritter: TicketWritter = ticketService;
 
   return {
     listenerClientFactory,
@@ -115,6 +124,7 @@ export function build(): Composition {
     clarificationListener,
     leaderboardListener,
     submissionListener,
+    ticketListener,
     announcementWritter,
     attachmentReader,
     attachmentWritter,
@@ -130,5 +140,6 @@ export function build(): Composition {
     storageReader,
     storageWritter,
     submissionWritter,
+    ticketWritter,
   };
 }

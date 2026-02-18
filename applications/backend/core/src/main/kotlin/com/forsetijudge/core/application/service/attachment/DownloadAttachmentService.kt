@@ -66,6 +66,7 @@ class DownloadAttachmentService(
                 // AUTOJUDGE members can download anything
             }
             Member.Type.ADMIN -> config.authorizeAdminDownload(contest, member, attachment)
+            Member.Type.STAFF -> config.authorizeStaffDownload(contest, member, attachment)
             Member.Type.JUDGE -> config.authorizeJudgeDownload(contest, member, attachment)
             Member.Type.CONTESTANT -> config.authorizeContestantDownload(contest, member, attachment)
             null -> config.authorizePublicDownload(contest, attachment)

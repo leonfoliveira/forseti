@@ -11,13 +11,13 @@ import { submissionWritter } from "@/config/composition";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
+import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPageActionRerun", () => {
   it("should handle resubmitSubmission successfully", async () => {
     const contestMetadata = MockContestMetadataResponseDTO();
-    const submission = MockSubmissionFullResponseDTO();
+    const submission = MockSubmissionFullWithExecutionResponseDTO();
     const onClose = jest.fn();
     const onRerun = jest.fn();
     await renderWithProviders(

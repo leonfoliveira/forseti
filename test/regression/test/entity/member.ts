@@ -8,6 +8,7 @@ export type Member = {
 export enum MemberType {
   ROOT = "Root",
   ADMIN = "Admin",
+  STAFF = "Staff",
   JUDGE = "Judge",
   CONTESTANT = "Contestant",
 }

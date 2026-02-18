@@ -23,7 +23,7 @@ describe("DashboardSettingsPage", () => {
     },
   );
 
-  it.each([MemberType.JUDGE, MemberType.CONTESTANT, null])(
+  it.each([MemberType.STAFF, MemberType.JUDGE, MemberType.CONTESTANT, null])(
     "should vall forbidden for member type %s",
     async (memberType) => {
       await renderWithProviders(<DashboardSettingsPage />, {

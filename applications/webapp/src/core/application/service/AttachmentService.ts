@@ -50,4 +50,26 @@ export class AttachmentService implements AttachmentReader, AttachmentWritter {
 
     return file;
   }
+
+  async print(
+    contestId: string,
+    attachment: AttachmentResponseDTO,
+  ): Promise<void> {
+    const file = await this.attachmentRepository.download(
+      contestId,
+      attachment,
+    );
+
+    const url = URL.createObjectURL(file);
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = url;
+    document.body.appendChild(iframe);
+    iframe.onload = () => {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+      document.body.removeChild(iframe);
+      URL.revokeObjectURL(url);
+    };
+  }
 }

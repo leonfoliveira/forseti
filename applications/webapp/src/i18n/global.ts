@@ -3,6 +3,8 @@ import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
+import { TicketStatus } from "@/core/domain/enumerate/TicketStatus";
+import { TicketType } from "@/core/domain/enumerate/TicketType";
 import { defineMessages } from "@/i18n/message";
 
 const contestStatus = defineMessages({
@@ -43,6 +45,10 @@ const memberType = defineMessages({
   [MemberType.ADMIN]: {
     id: "i18n.global.formatted-member-type.admin",
     defaultMessage: "Admin",
+  },
+  [MemberType.STAFF]: {
+    id: "i18n.global.formatted-member-type.staff",
+    defaultMessage: "Staff",
   },
   [MemberType.CONTESTANT]: {
     id: "i18n.global.formatted-member-type.contestant",
@@ -100,10 +106,42 @@ const submissionStatus = defineMessages({
   },
 });
 
+const ticketType = defineMessages({
+  [TicketType.SUBMISSION_PRINT]: {
+    id: "i18n.global.formatted-ticket-type.submission_print",
+    defaultMessage: "Submission Print",
+  },
+  [TicketType.NON_TECHNICAL_SUPPORT]: {
+    id: "i18n.global.formatted-ticket-type.non_technical_support",
+    defaultMessage: "Non-Technical Support",
+  },
+  [TicketType.TECHNICAL_SUPPORT]: {
+    id: "i18n.global.formatted-ticket-type.technical_support",
+    defaultMessage: "Technical Support",
+  },
+});
+
+const ticketStatus = defineMessages({
+  [TicketStatus.OPEN]: {
+    id: "i18n.global.formatted-ticket-status.open",
+    defaultMessage: "Open",
+  },
+  [TicketStatus.IN_PROGRESS]: {
+    id: "i18n.global.formatted-ticket-status.in_progress",
+    defaultMessage: "In Progress",
+  },
+  [TicketStatus.RESOLVED]: {
+    id: "i18n.global.formatted-ticket-status.resolved",
+    defaultMessage: "Resolved",
+  },
+});
+
 export const globalMessages = {
   contestStatus,
   submissionLanguage,
   memberType,
   submissionAnswer,
   submissionStatus,
+  ticketType,
+  ticketStatus,
 };

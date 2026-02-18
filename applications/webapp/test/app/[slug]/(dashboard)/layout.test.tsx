@@ -75,4 +75,26 @@ describe("DashboardLayout", () => {
     );
     expect(settingsTab).not.toBeInTheDocument();
   });
+
+  it("should render tasks tab for signed in users", async () => {
+    await renderWithProviders(
+      <DashboardLayout>
+        <span data-testid="child" />
+      </DashboardLayout>,
+      {
+        session: MockSession({
+          member: {
+            ...MockMemberPublicResponseDTO(),
+            type: MemberType.CONTESTANT,
+          },
+        }),
+        contestMetadata: MockContestMetadataResponseDTO(),
+      },
+    );
+
+    const tasksTab = screen.getByTestId(
+      `tab-${routes.CONTEST_TICKETS("test-contest")}`,
+    );
+    expect(tasksTab).toBeInTheDocument();
+  });
 });

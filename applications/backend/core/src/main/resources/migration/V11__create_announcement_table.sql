@@ -11,7 +11,7 @@ create table announcement (
     constraint fk_member_id foreign key (member_id) references member (id)
 );
 
-create index idx_announcement_member_id on announcement (member_id);
+create index idx_announcement_contest_id on announcement (contest_id);
 
 create table announcement_aud (
     rev bigint not null,

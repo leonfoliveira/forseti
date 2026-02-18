@@ -14,6 +14,7 @@
       "formatted-member-type": {
         "root": "Root",
         "admin": "Admin",
+        "staff": "Staff",
         "contestant": "Contestant",
         "judge": "Judge"
       },
@@ -30,6 +31,16 @@
         "judging": "Judging",
         "failed": "Failed",
         "judged": "Judged"
+      },
+      "formatted-ticket-type": {
+        "submission_print": "Submission Print",
+        "non_technical_support": "Non-Technical Support",
+        "technical_support": "Technical Support"
+      },
+      "formatted-ticket-status": {
+        "open": "Open",
+        "in_progress": "In Progress",
+        "resolved": "Resolved"
       }
     }
   },
@@ -69,12 +80,20 @@
     },
     "_lib": {
       "provider": {
+        "staff-dashboard-provider": {
+          "announcement": "New announcement: {text}",
+          "frozen": "Leaderboard has been frozen",
+          "unfrozen": "Leaderboard has been unfrozen",
+          "new-ticket": "New ticket",
+          "ticket-updated": "Your ticket has been updated to ''{status}''"
+        },
         "judge-dashboard-provider": {
           "submission-failed": "New failed submission",
           "announcement": "New announcement: {text}",
           "new-clarification": "New clarification",
           "frozen": "Leaderboard has been frozen",
-          "unfrozen": "Leaderboard has been unfrozen"
+          "unfrozen": "Leaderboard has been unfrozen",
+          "ticket-updated": "Your ticket has been updated to ''{status}''"
         },
         "guest-dashboard-provider": {
           "announcement": "New announcement: {text}",
@@ -86,14 +105,15 @@
           "announcement": "New announcement: {text}",
           "clarification-answer": "New answer for a clarification",
           "frozen": "Leaderboard has been frozen",
-          "unfrozen": "Leaderboard has been unfrozen"
+          "unfrozen": "Leaderboard has been unfrozen",
+          "ticket-updated": "Your ticket has been updated to ''{status}''"
         },
         "admin-dashboard-provider": {
           "submission-failed": "New failed submission",
           "announcement": "New announcement: {text}",
-          "new-clarification": "New clarification",
           "frozen": "Leaderboard has been frozen",
-          "unfrozen": "Leaderboard has been unfrozen"
+          "unfrozen": "Leaderboard has been unfrozen",
+          "ticket-updated": "Your ticket has been updated to ''{status}''"
         }
       },
       "component": {
@@ -159,16 +179,46 @@
         "layout": {
           "tab-leaderboard": "Leaderboard",
           "tab-problems": "Problems",
-          "tab-timeline": "Timeline",
           "tab-submissions": "Submissions",
           "tab-clarifications": "Clarifications",
           "tab-announcements": "Announcements",
+          "tab-tickets": "Tickets",
           "tab-settings": "Settings"
         },
         "_common": {
           "wait-page": {
             "start-at": "Starts in",
             "languages": "Supported languages"
+          },
+          "tickets": {
+            "tickets-page": {
+              "page-title": "Forseti - Tickets",
+              "page-description": "View and manage tickets for the contest.",
+              "new-label": "New Ticket"
+            },
+            "tickets-page-item": {
+              "move-label": "Move",
+              "print-submission-text": "Please, print my submission",
+              "print-label": "Print",
+              "print-error": "Failed to download attachment",
+              "update-status-error": "Failed to update ticket status"
+            },
+            "tickets-page-form": {
+              "create-title": "Create Ticket",
+              "create-description": "Fill out the form below to create a new ticket.",
+              "create-success": "Ticket created successfully",
+              "create-error": "Failed to create ticket",
+              "type-label": "Type",
+              "description-label": "Description",
+              "cancel-label": "Cancel",
+              "submit-label": "Submit"
+            },
+            "ticket-form": {
+              "type-required": "Type is required",
+              "type-invalid": "Invalid ticket type",
+              "description-required": "Description is required",
+              "description-too-long": "Description must have less than 512 characters"
+            }
           },
           "submissions": {
             "submissions-page": {
@@ -207,6 +257,13 @@
               "confirm": "Confirm",
               "resubmit-success": "Submission resubmitted successfully",
               "resubmit-error": "Failed to resubmit submission"
+            },
+            "submissions-page-action-print": {
+              "print-label": "Request print",
+              "print-success": "Print requested successfully",
+              "print-error": "Failed to request print",
+              "confirm-title": "Are you sure you want to request a print of this submission code?",
+              "confirm-description": "This will create a ticket for the contest staff to print your submission code. It may take some time for the ticket to be fulfilled."
             },
             "submissions-page-action-judge": {
               "judge-label": "Judge",

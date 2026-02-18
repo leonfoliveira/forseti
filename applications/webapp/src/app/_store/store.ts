@@ -9,6 +9,7 @@ import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboa
 import { guestDashboardSlice } from "@/app/_store/slices/guest-dashboard-slice";
 import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
 import { sessionSlice } from "@/app/_store/slices/session-slice";
+import { staffDashboardSlice } from "@/app/_store/slices/staff-dashboard-slice";
 
 const rootReducer = combineReducers({
   balloon: balloonSlice.reducer,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   guestDashboard: guestDashboardSlice.reducer,
   judgeDashboard: judgeDashboardSlice.reducer,
   adminDashboard: adminDashboardSlice.reducer,
+  staffDashboard: staffDashboardSlice.reducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

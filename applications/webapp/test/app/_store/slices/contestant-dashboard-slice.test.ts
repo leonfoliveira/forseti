@@ -11,6 +11,7 @@ import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderbo
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
+import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 
 describe("contestantDashboardSlice", () => {
   const stateWithData = {
@@ -18,6 +19,7 @@ describe("contestantDashboardSlice", () => {
     leaderboard: MockLeaderboardResponseDTO(),
     submissions: [MockSubmissionPublicResponseDTO()],
     memberSubmissions: [MockSubmissionFullResponseDTO()],
+    memberTickets: [MockTicketResponseDTO()],
   } as any;
 
   it("should have the correct initial state", () => {
@@ -215,5 +217,17 @@ describe("contestantDashboardSlice", () => {
     );
 
     expect(state.contest.clarifications).toHaveLength(0);
+  });
+
+  it("should merge a new ticket", () => {
+    const ticket = MockTicketResponseDTO();
+
+    const state = contestantDashboardSlice.reducer(
+      stateWithData,
+      contestantDashboardSlice.actions.mergeMemberTicket(ticket),
+    );
+
+    expect(state.memberTickets).toHaveLength(2);
+    expect(state.memberTickets).toContainEqual(ticket);
   });
 });

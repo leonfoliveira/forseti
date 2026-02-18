@@ -2,6 +2,7 @@ import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-
 import { DashboardProvider } from "@/app/_lib/provider/dashboard-provider";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { MockMemberPublicResponseDTO } from "@/test/mock/response/member/MockMemberPublicResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -31,6 +32,12 @@ jest.mock("@/app/_lib/provider/judge-dashboard-provider", () => ({
   ),
 }));
 
+jest.mock("@/app/_lib/provider/staff-dashboard-provider", () => ({
+  StaffDashboardProvider: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="staff-dashboard-provider">{children}</div>
+  ),
+}));
+
 jest.mock("@/app/_lib/hook/contest-status-watcher-hook");
 jest.mock("@/app/[slug]/(dashboard)/_common/wait-page", () => ({
   WaitPage: () => <div data-testid="wait-page">Wait Page</div>,
@@ -53,11 +60,11 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: MockSession({
-            member: {
+            member: MockMemberPublicResponseDTO({
               id: "test-id",
               name: "Test User",
               type: MemberType.ROOT,
-            },
+            }),
           }),
         },
       );
@@ -77,16 +84,40 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: MockSession({
-            member: {
+            member: MockMemberPublicResponseDTO({
               id: "test-id",
               name: "Test User",
               type: MemberType.ADMIN,
-            },
+            }),
           }),
         },
       );
 
       expect(getByTestId("admin-dashboard-provider")).toBeInTheDocument();
+      expect(getByTestId("test-content")).toBeInTheDocument();
+    });
+  });
+
+  describe("when user is STAFF", () => {
+    it("should render StaffDashboardProvider", async () => {
+      mockUseContestStatusWatcher.mockReturnValue(ContestStatus.IN_PROGRESS);
+
+      const { getByTestId } = await renderWithProviders(
+        <DashboardProvider>
+          <TestComponent />
+        </DashboardProvider>,
+        {
+          session: MockSession({
+            member: MockMemberPublicResponseDTO({
+              id: "test-id",
+              name: "Test User",
+              type: MemberType.STAFF,
+            }),
+          }),
+        },
+      );
+
+      expect(getByTestId("staff-dashboard-provider")).toBeInTheDocument();
       expect(getByTestId("test-content")).toBeInTheDocument();
     });
   });
@@ -101,11 +132,11 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: MockSession({
-            member: {
+            member: MockMemberPublicResponseDTO({
               id: "test-id",
               name: "Test User",
               type: MemberType.JUDGE,
-            },
+            }),
           }),
         },
       );
@@ -125,11 +156,11 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: MockSession({
-            member: {
+            member: MockMemberPublicResponseDTO({
               id: "test-id",
               name: "Test User",
               type: MemberType.CONTESTANT,
-            },
+            }),
           }),
         },
       );
@@ -147,11 +178,11 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: MockSession({
-            member: {
+            member: MockMemberPublicResponseDTO({
               id: "test-id",
               name: "Test User",
               type: MemberType.CONTESTANT,
-            },
+            }),
           }),
         },
       );
@@ -169,11 +200,11 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: MockSession({
-            member: {
+            member: MockMemberPublicResponseDTO({
               id: "test-id",
               name: "Test User",
               type: MemberType.CONTESTANT,
-            },
+            }),
           }),
         },
       );

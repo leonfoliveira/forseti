@@ -20,10 +20,6 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard).layout.tab-problems",
     defaultMessage: "Problems",
   },
-  tabTimeline: {
-    id: "app.[slug].(dashboard).layout.tab-timeline",
-    defaultMessage: "Timeline",
-  },
   tabSubmissions: {
     id: "app.[slug].(dashboard).layout.tab-submissions",
     defaultMessage: "Submissions",
@@ -35,6 +31,10 @@ const messages = defineMessages({
   tabAnnouncements: {
     id: "app.[slug].(dashboard).layout.tab-announcements",
     defaultMessage: "Announcements",
+  },
+  tabTickets: {
+    id: "app.[slug].(dashboard).layout.tab-tickets",
+    defaultMessage: "Tickets",
   },
   tabSettings: {
     id: "app.[slug].(dashboard).layout.tab-settings",
@@ -79,6 +79,13 @@ export default function DashboardLayout({
     },
   ];
 
+  if (!!session?.member) {
+    tabs.push({
+      title: messages.tabTickets,
+      path: routes.CONTEST_TICKETS(slug),
+    });
+  }
+
   if (
     session &&
     [MemberType.ROOT, MemberType.ADMIN].includes(session.member.type)
@@ -90,7 +97,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <>
+    <DashboardProvider>
       <Tabs
         className="bg-card border-divider border-b"
         value={pathname}
@@ -112,12 +119,10 @@ export default function DashboardLayout({
           </TabsList>
         </div>
       </Tabs>
-      <DashboardProvider>
-        <div className="mx-auto flex w-full max-w-[1920px] flex-1 flex-col">
-          {children}
-        </div>
-      </DashboardProvider>
+      <div className="mx-auto flex w-full max-w-[1920px] flex-1 flex-col">
+        {children}
+      </div>
       <BalloonProvider />
-    </>
+    </DashboardProvider>
   );
 }

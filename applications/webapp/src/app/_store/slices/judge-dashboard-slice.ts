@@ -10,6 +10,7 @@ import { JudgeDashboardResponseDTO } from "@/core/port/dto/response/dashboard/Ju
 import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
+import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 
 export type JudgeDashboardState = JudgeDashboardResponseDTO & {
   listenerStatus: ListenerStatus;
@@ -74,6 +75,9 @@ export const judgeDashboardSlice = createSlice({
       state.contest.clarifications = state.contest.clarifications.filter(
         (clarification) => clarification.id !== action.payload,
       );
+    },
+    mergeMemberTicket(state, action: { payload: TicketResponseDTO }) {
+      state.memberTickets = mergeEntity(state.memberTickets, action.payload);
     },
   },
 });

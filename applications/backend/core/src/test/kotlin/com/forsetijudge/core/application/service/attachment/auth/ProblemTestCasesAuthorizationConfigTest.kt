@@ -5,6 +5,7 @@ import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
+import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -29,8 +30,20 @@ class ProblemTestCasesAuthorizationConfigTest :
                 val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build()
 
-                // Should not throw exception
-                sut.authorizeAdminUpload(contest, member)
+                shouldNotThrow<ForbiddenException> {
+                    sut.authorizeAdminUpload(contest, member)
+                }
+            }
+        }
+
+        context("authorizeStaffUpload") {
+            test("should throw ForbiddenException") {
+                val contest = ContestMockBuilder.build()
+                val member = MemberMockBuilder.build()
+
+                shouldThrow<ForbiddenException> {
+                    sut.authorizeStaffUpload(contest, member)
+                }
             }
         }
 
@@ -72,8 +85,21 @@ class ProblemTestCasesAuthorizationConfigTest :
                 val member = MemberMockBuilder.build()
                 val attachment = AttachmentMockBuilder.build()
 
-                // Should not throw exception
-                sut.authorizeAdminDownload(contest, member, attachment)
+                shouldNotThrow<ForbiddenException> {
+                    sut.authorizeAdminDownload(contest, member, attachment)
+                }
+            }
+        }
+
+        context("authorizeStaffDownload") {
+            test("should throw ForbiddenException") {
+                val contest = ContestMockBuilder.build()
+                val member = MemberMockBuilder.build()
+                val attachment = AttachmentMockBuilder.build()
+
+                shouldThrow<ForbiddenException> {
+                    sut.authorizeStaffDownload(contest, member, attachment)
+                }
             }
         }
 

@@ -9,4 +9,12 @@ export interface AttachmentReader {
    * @return The downloaded file
    */
   download(contestId: string, attachment: AttachmentResponseDTO): Promise<File>;
+
+  /**
+   * Print a file associated with an attachment.
+   *
+   * @param contestId ID of the contest
+   * @param attachment The attachment to print
+   */
+  print(contestId: string, attachment: AttachmentResponseDTO): Promise<void>;
 }

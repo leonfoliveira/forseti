@@ -1,3 +1,8 @@
+import { AnnouncementListener } from "@/core/port/driven/listener/AnnouncementListener";
+import { ClarificationListener } from "@/core/port/driven/listener/ClarificationListener";
+import { LeaderboardListener } from "@/core/port/driven/listener/LeaderboardListener";
+import { SubmissionListener } from "@/core/port/driven/listener/SubmissionListener";
+import { TicketListener } from "@/core/port/driven/listener/TicketListener";
 import { AnnouncementWritter } from "@/core/port/driving/usecase/announcement/AnnouncementWritter";
 import { AttachmentReader } from "@/core/port/driving/usecase/attachment/AttachmentReader";
 import { AttachmentWritter } from "@/core/port/driving/usecase/attachment/AttachmentWritter";
@@ -13,19 +18,17 @@ import { SessionWritter } from "@/core/port/driving/usecase/session/SessionWritt
 import { StorageReader } from "@/core/port/driving/usecase/storage/StorageReader";
 import { StorageWritter } from "@/core/port/driving/usecase/storage/StorageWritter";
 import { SubmissionWritter } from "@/core/port/driving/usecase/submission/SubmissionWritter";
-import { StompAnnouncementListener } from "@/infrastructure/adapter/stomp/StompAnnouncementListener";
-import { StompClarificationListener } from "@/infrastructure/adapter/stomp/StompClarificationListener";
+import { TicketWritter } from "@/core/port/driving/usecase/ticket/TicketWritter";
 import { StompClientFactory } from "@/infrastructure/adapter/stomp/StompClientFactory";
-import { StompLeaderboardListener } from "@/infrastructure/adapter/stomp/StompLeaderboardListener";
-import { StompSubmissionListener } from "@/infrastructure/adapter/stomp/StompSubmissionListener";
 
 export type Composition = {
   // Listeners
   listenerClientFactory: StompClientFactory;
-  announcementListener: StompAnnouncementListener;
-  clarificationListener: StompClarificationListener;
-  leaderboardListener: StompLeaderboardListener;
-  submissionListener: StompSubmissionListener;
+  announcementListener: AnnouncementListener;
+  clarificationListener: ClarificationListener;
+  leaderboardListener: LeaderboardListener;
+  submissionListener: SubmissionListener;
+  ticketListener: TicketListener;
 
   // UseCases
   announcementWritter: AnnouncementWritter;
@@ -43,4 +46,5 @@ export type Composition = {
   storageReader: StorageReader;
   storageWritter: StorageWritter;
   submissionWritter: SubmissionWritter;
+  ticketWritter: TicketWritter;
 };

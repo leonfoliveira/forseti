@@ -57,6 +57,25 @@ export class ActorOnSubmissionsPage extends Actor {
     expect(await download.path()).toBeTruthy();
   }
 
+  async requestPrint(index: number) {
+    const submissionsTable = this.page.getByTestId("submissions-table");
+
+    const submissionRows = submissionsTable.getByTestId("submission-row");
+    const submissionRow = submissionRows.nth(index);
+    await submissionRow.scrollIntoViewIfNeeded();
+
+    const actionsButton = submissionRow.getByTestId(
+      "submission-actions-button",
+    );
+    await actionsButton.click();
+
+    const printActionButton = this.page.getByTestId(
+      "submissions-page-action-print",
+    );
+    await printActionButton.click();
+    await this.confirmDialog();
+  }
+
   async checkExecutions(index: number, answer: SubmissionAnswer) {
     const submissionsTable = this.page.getByTestId("submissions-table");
 

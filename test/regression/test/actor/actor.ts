@@ -93,6 +93,14 @@ export class Actor {
     return new ActorOnAnnouncementsPage(this.page, this.member);
   }
 
+  async navigateToTickets(contest: Contest) {
+    await this.navigate(contest, "tickets");
+    const {
+      ActorOnTicketsPage,
+    } = require("@/test/actor/actor-on-tickets-page");
+    return new ActorOnTicketsPage(this.page, this.member);
+  }
+
   async navigateToSettings(contest: Contest) {
     await this.navigate(contest, "settings");
     const {

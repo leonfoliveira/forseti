@@ -4,6 +4,7 @@ import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/su
 import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 
 export function ContestantSubmissionsPage() {
   const submissions = useAppSelector(
@@ -25,6 +26,10 @@ export function ContestantSubmissionsPage() {
       canCreate
       onCreate={(submission: SubmissionFullResponseDTO) => {
         dispatch(contestantDashboardSlice.actions.mergeSubmission(submission));
+      }}
+      canPrint
+      onPrint={(ticket: TicketResponseDTO) => {
+        dispatch(contestantDashboardSlice.actions.mergeMemberTicket(ticket));
       }}
     />
   );

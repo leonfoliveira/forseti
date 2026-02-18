@@ -14,6 +14,7 @@
       "formatted-member-type": {
         "root": "Root",
         "admin": "Administrador",
+        "staff": "Staff",
         "contestant": "Competidor",
         "judge": "Juiz"
       },
@@ -30,6 +31,16 @@
         "judging": "Julgando",
         "failed": "Falhado",
         "judged": "Julgado"
+      },
+      "formatted-ticket-type": {
+        "submission_print": "Impressão de Submissão",
+        "non_technical_support": "Suporte Não Técnico",
+        "technical_support": "Suporte Técnico"
+      },
+      "formatted-ticket-status": {
+        "open": "Aberto",
+        "in_progress": "Em Andamento",
+        "resolved": "Resolvido"
       }
     }
   },
@@ -69,12 +80,20 @@
     },
     "_lib": {
       "provider": {
+        "staff-dashboard-provider": {
+          "announcement": "Novo anúncio: {text}",
+          "frozen": "Placar foi congelado",
+          "unfrozen": "Placar foi descongelado",
+          "new-ticket": "Novo ticket",
+          "ticket-updated": "Seu ticket foi atualizado para ''{status}''"
+        },
         "judge-dashboard-provider": {
           "submission-failed": "Nova submissão falhada",
           "announcement": "Novo anúncio: {text}",
           "new-clarification": "Nova pergunta",
           "frozen": "Placar foi congelado",
-          "unfrozen": "Placar foi descongelado"
+          "unfrozen": "Placar foi descongelado",
+          "ticket-updated": "Seu ticket foi atualizado para ''{status}''"
         },
         "guest-dashboard-provider": {
           "announcement": "Novo anúncio: {text}",
@@ -86,14 +105,16 @@
           "announcement": "Novo anúncio: {text}",
           "clarification-answer": "Nova resposta para uma pergunta",
           "frozen": "Placar foi congelado",
-          "unfrozen": "Placar foi descongelado"
+          "unfrozen": "Placar foi descongelado",
+          "ticket-updated": "Seu ticket foi atualizado para ''{status}''"
         },
         "admin-dashboard-provider": {
           "submission-failed": "Nova submissão falhada",
           "announcement": "Novo anúncio: {text}",
           "new-clarification": "Nova pergunta",
           "frozen": "Placar foi congelado",
-          "unfrozen": "Placar foi descongelado"
+          "unfrozen": "Placar foi descongelado",
+          "ticket-updated": "Seu ticket foi atualizado para ''{status}''"
         }
       },
       "component": {
@@ -159,16 +180,46 @@
         "layout": {
           "tab-leaderboard": "Placar",
           "tab-problems": "Problemas",
-          "tab-timeline": "Timeline",
           "tab-submissions": "Submissões",
           "tab-clarifications": "Esclarecimentos",
           "tab-announcements": "Anúncios",
+          "tab-tickets": "Tickets",
           "tab-settings": "Configurações"
         },
         "_common": {
           "wait-page": {
             "start-at": "Inicia em",
             "languages": "Linguagens suportadas"
+          },
+          "tickets": {
+            "tickets-page": {
+              "page-title": "Forseti - Tickets",
+              "page-description": "Visualize e gerencie tickets do concurso.",
+              "new-label": "Novo Ticket"
+            },
+            "tickets-page-item": {
+              "move-label": "Mover",
+              "print-submission-text": "Por favor, imprima minha submissão",
+              "print-label": "Imprimir",
+              "print-error": "Falha ao baixar arquivo",
+              "update-status-error": "Falha ao atualizar status do ticket"
+            },
+            "tickets-page-form": {
+              "create-title": "Criar Ticket",
+              "create-description": "Preencha o formulário abaixo para criar um novo ticket.",
+              "create-success": "Ticket criado com sucesso",
+              "create-error": "Falha ao criar ticket",
+              "type-label": "Tipo",
+              "description-label": "Descrição",
+              "cancel-label": "Cancelar",
+              "submit-label": "Enviar"
+            },
+            "ticket-form": {
+              "type-required": "Tipo é obrigatório",
+              "type-invalid": "Tipo de ticket inválido",
+              "description-required": "Descrição é obrigatória",
+              "description-too-long": "Descrição deve ter menos de 512 caracteres"
+            }
           },
           "submissions": {
             "submissions-page": {
@@ -207,6 +258,13 @@
               "confirm": "Confirmar",
               "resubmit-success": "Submissão reenviada com sucesso",
               "resubmit-error": "Falha ao reenviar submissão"
+            },
+            "submissions-page-action-print": {
+              "print-label": "Solicitar impressão",
+              "print-success": "Impressão solicitada com sucesso",
+              "print-error": "Falha ao solicitar impressão",
+              "confirm-title": "Tem certeza de que deseja solicitar uma impressão deste código de submissão?",
+              "confirm-description": "Isso criará um ticket para a equipe do concurso imprimir seu código de submissão. Pode levar algum tempo para o ticket ser atendido."
             },
             "submissions-page-action-judge": {
               "judge-label": "Julgar",

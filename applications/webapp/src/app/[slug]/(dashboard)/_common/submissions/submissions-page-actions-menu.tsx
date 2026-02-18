@@ -3,6 +3,7 @@ import { useState } from "react";
 import { SubmissionsPageActionDownload } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-download";
 import { SubmissionsPageActionExecutions } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-executions";
 import { SubmissionsPageActionJudge } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-judge";
+import { SubmissionsPageActionPrint } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-print";
 import { SubmissionsPageActionRerun } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-rerun";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";
@@ -13,9 +14,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/app/_lib/component/shadcn/dropdown-menu";
+import { useAppSelector } from "@/app/_store/store";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
 import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
+import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -38,14 +41,27 @@ type Props = {
       canEdit?: false;
       onEdit?: (submission: SubmissionFullWithExecutionResponseDTO) => void;
     }
-);
+) &
+  (
+    | {
+        canPrint: true;
+        onPrint: (ticket: TicketResponseDTO) => void;
+      }
+    | {
+        canPrint?: false;
+        onPrint?: (ticket: TicketResponseDTO) => void;
+      }
+  );
 
 export function SubmissionsPageActionsMenu({
   submission,
   canEdit,
   onEdit,
+  canPrint,
+  onPrint,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
+  const session = useAppSelector((state) => state.session);
 
   const close = () => setIsOpen(false);
 
@@ -70,6 +86,13 @@ export function SubmissionsPageActionsMenu({
               <SubmissionsPageActionDownload
                 submission={submission}
                 onClose={close}
+              />
+            )}
+            {canPrint && submission.member.id === session?.member.id && (
+              <SubmissionsPageActionPrint
+                submission={submission}
+                onClose={close}
+                onRequest={onPrint}
               />
             )}
             {canEdit && (

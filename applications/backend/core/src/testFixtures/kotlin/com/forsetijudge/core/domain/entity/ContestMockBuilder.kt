@@ -22,6 +22,7 @@ object ContestMockBuilder {
         problems: List<Problem> = emptyList(),
         clarifications: List<Clarification> = emptyList(),
         announcements: List<Announcement> = emptyList(),
+        tickets: List<Ticket<*>> = emptyList(),
     ) = Contest(
         id = id,
         createdAt = createdAt,
@@ -39,5 +40,6 @@ object ContestMockBuilder {
         problems = problems,
         clarifications = clarifications,
         announcements = announcements,
+        tickets = tickets,
     )
 }

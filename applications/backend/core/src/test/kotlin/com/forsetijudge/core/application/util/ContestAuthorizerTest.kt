@@ -9,7 +9,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import java.time.OffsetDateTime
 
-class AuthorizationUtilTest :
+class ContestAuthorizerTest :
     FunSpec({
         context("checkContestStarted") {
             test("should not throw if the contest has started") {
@@ -36,6 +36,7 @@ class AuthorizationUtilTest :
             listOf(
                 Member.Type.ROOT,
                 Member.Type.ADMIN,
+                Member.Type.STAFF,
                 Member.Type.JUDGE,
             ).forEach { memberType ->
                 test("should not throw if the contest has not started and the member is $memberType") {
@@ -90,6 +91,25 @@ class AuthorizationUtilTest :
 
                 shouldThrow<ForbiddenException> {
                     ContestAuthorizer(contest, null).checkMemberType(Member.Type.ADMIN)
+                }
+            }
+        }
+
+        context("checkAnyMember") {
+            test("should not throw if the member is not null") {
+                val contest = ContestMockBuilder.build()
+                val member = MemberMockBuilder.build()
+
+                shouldNotThrow<ForbiddenException> {
+                    ContestAuthorizer(contest, member).checkAnyMember()
+                }
+            }
+
+            test("should throw if the member is null") {
+                val contest = ContestMockBuilder.build()
+
+                shouldThrow<ForbiddenException> {
+                    ContestAuthorizer(contest, null).checkAnyMember()
                 }
             }
         }

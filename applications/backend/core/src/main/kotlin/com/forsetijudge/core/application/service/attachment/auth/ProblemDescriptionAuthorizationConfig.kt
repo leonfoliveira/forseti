@@ -15,7 +15,13 @@ class ProblemDescriptionAuthorizationConfig : AttachmentAuthorizationConfig {
         contest: Contest,
         member: Member,
     ) {
+        // Admin can upload problem description attachments
     }
+
+    override fun authorizeStaffUpload(
+        contest: Contest,
+        member: Member,
+    ) = throw ForbiddenException("Staff cannot upload problem description attachments")
 
     override fun authorizeJudgeUpload(
         contest: Contest,
@@ -27,7 +33,7 @@ class ProblemDescriptionAuthorizationConfig : AttachmentAuthorizationConfig {
         member: Member,
     ) = throw ForbiddenException("Contestants cannot upload problem description attachments")
 
-    override fun authorizePublicUpload(contest: Contest): Unit =
+    override fun authorizePublicUpload(contest: Contest) =
         throw ForbiddenException("Guest users cannot upload problem description attachments")
 
     override fun authorizeAdminDownload(
@@ -35,6 +41,15 @@ class ProblemDescriptionAuthorizationConfig : AttachmentAuthorizationConfig {
         member: Member,
         attachment: Attachment,
     ) {
+        // Admin can download problem description attachments
+    }
+
+    override fun authorizeStaffDownload(
+        contest: Contest,
+        member: Member,
+        attachment: Attachment,
+    ) {
+        // Staff can download problem description attachments
     }
 
     override fun authorizeJudgeDownload(
@@ -42,6 +57,7 @@ class ProblemDescriptionAuthorizationConfig : AttachmentAuthorizationConfig {
         member: Member,
         attachment: Attachment,
     ) {
+        // Judge can download problem description attachments
     }
 
     override fun authorizeContestantDownload(

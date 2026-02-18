@@ -6,6 +6,7 @@ export const routes = {
   CONTEST_SUBMISSIONS: (slug: string) => `/${slug}/submissions`,
   CONTEST_CLARIFICATIONS: (slug: string) => `/${slug}/clarifications`,
   CONTEST_ANNOUNCEMENTS: (slug: string) => `/${slug}/announcements`,
+  CONTEST_TICKETS: (slug: string) => `/${slug}/tickets`,
   CONTEST_SETTINGS: (slug: string) => `/${slug}/settings`,
   FORBIDDEN: `/error/403`,
   NOT_FOUND: `/error/404`,

@@ -92,6 +92,11 @@ class Member(
         JUDGE,
 
         /**
+         * Represents a member who is part of the staff, responsible for assisting contestants.
+         */
+        STAFF,
+
+        /**
          * Represents a member with administrative privileges within the contest, such as contest managers.
          */
         ADMIN,

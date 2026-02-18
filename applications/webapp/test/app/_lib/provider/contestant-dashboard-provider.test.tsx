@@ -12,6 +12,7 @@ import {
   leaderboardListener,
   listenerClientFactory,
   submissionListener,
+  ticketListener,
 } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
@@ -25,6 +26,7 @@ import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/Moc
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
 import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
+import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/_lib/component/page/loading-page", () => ({
@@ -47,6 +49,7 @@ describe("ContestantDashboardProvider", () => {
     MockSubmissionFullResponseDTO(),
     MockSubmissionFullResponseDTO(),
   ];
+  const memberTickets = [MockTicketResponseDTO()];
   const listenerClient = mock<ListenerClient>();
 
   beforeEach(() => {
@@ -55,6 +58,7 @@ describe("ContestantDashboardProvider", () => {
       leaderboard,
       submissions,
       memberSubmissions,
+      memberTickets,
     });
     (listenerClientFactory.create as jest.Mock).mockReturnValue(listenerClient);
   });
@@ -107,6 +111,33 @@ describe("ContestantDashboardProvider", () => {
       contestMetadata.id,
       expect.any(Function),
     );
+    expect(
+      leaderboardListener.subscribeForLeaderboardPartial,
+    ).toHaveBeenCalledWith(
+      listenerClient,
+      contestMetadata.id,
+      expect.any(Function),
+    );
+    expect(
+      leaderboardListener.subscribeForLeaderboardFreeze,
+    ).toHaveBeenCalledWith(
+      listenerClient,
+      contestMetadata.id,
+      expect.any(Function),
+    );
+    expect(
+      leaderboardListener.subscribeForLeaderboardUnfreeze,
+    ).toHaveBeenCalledWith(
+      listenerClient,
+      contestMetadata.id,
+      expect.any(Function),
+    );
+    expect(ticketListener.subscribeForMember).toHaveBeenCalledWith(
+      listenerClient,
+      contestMetadata.id,
+      session.member.id,
+      expect.any(Function),
+    );
 
     const state = store.getState().contestantDashboard;
     expect(state).toEqual({
@@ -114,6 +145,7 @@ describe("ContestantDashboardProvider", () => {
       leaderboard,
       submissions,
       memberSubmissions,
+      memberTickets,
       listenerStatus: ListenerStatus.CONNECTED,
     });
 
@@ -398,6 +430,42 @@ describe("ContestantDashboardProvider", () => {
     expect(
       store.getState().contestantDashboard.contest.clarifications,
     ).toHaveLength(0);
+  });
+
+  it("should handle member ticket updates", async () => {
+    const otherTicket = MockTicketResponseDTO();
+    const { store } = await renderWithProviders(
+      <ContestantDashboardProvider>
+        <div data-testid="child" />
+      </ContestantDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (ticketListener.subscribeForMember as jest.Mock).mock.calls[0][3](
+        otherTicket,
+      );
+    });
+    expect(store.getState().contestantDashboard.memberTickets).toContain(
+      otherTicket,
+    );
+  });
+
+  it("should show toast on announcement update", async () => {
+    const otherTicket = MockTicketResponseDTO({ version: 2 });
+    await renderWithProviders(
+      <ContestantDashboardProvider>
+        <div data-testid="child" />
+      </ContestantDashboardProvider>,
+      { session, contestMetadata },
+    );
+
+    act(() => {
+      (ticketListener.subscribeForMember as jest.Mock).mock.calls[0][3](
+        otherTicket,
+      );
+    });
+    expect(useToast().info).toHaveBeenCalled();
   });
 
   it("should show freeze banner if leaderboard is frozen", async () => {

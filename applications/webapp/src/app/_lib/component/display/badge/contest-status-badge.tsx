@@ -13,9 +13,7 @@ type Props = React.ComponentProps<typeof Badge> & {
  * Displays a badge component styled according to the contest status.
  */
 export function ContestStatusBadge({ status, ...props }: Props) {
-  const text = status && (
-    <FormattedMessage {...globalMessages.contestStatus[status]} />
-  );
+  const text = <FormattedMessage {...globalMessages.contestStatus[status]} />;
 
   switch (status) {
     case ContestStatus.IN_PROGRESS:

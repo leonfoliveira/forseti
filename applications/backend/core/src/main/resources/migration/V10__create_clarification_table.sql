@@ -15,8 +15,7 @@ create table clarification (
     constraint fk_parent_id foreign key (parent_id) references clarification (id)
 );
 
-create index idx_clarification_member_id on clarification (member_id);
-create index idx_clarification_problem_id on clarification (problem_id);
+create index idx_clarification_contest_id on clarification (contest_id);
 
 create table clarification_aud (
     rev bigint not null,

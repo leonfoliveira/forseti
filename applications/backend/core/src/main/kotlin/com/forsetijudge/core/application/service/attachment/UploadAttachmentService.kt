@@ -69,6 +69,7 @@ class UploadAttachmentService(
                 // AUTOJUDGE system members can upload anything
             }
             Member.Type.ADMIN -> config.authorizeAdminUpload(contest, member)
+            Member.Type.STAFF -> config.authorizeStaffUpload(contest, member)
             Member.Type.JUDGE -> config.authorizeJudgeUpload(contest, member)
             Member.Type.CONTESTANT -> config.authorizeContestantUpload(contest, member)
             null -> config.authorizePublicUpload(contest)

@@ -7,6 +7,9 @@ import { renderWithProviders } from "@/test/render-with-providers";
 jest.mock("@/app/[slug]/(dashboard)/problems/admin-problems-page", () => ({
   AdminProblemsPage: () => <span data-testid="admin-page" />,
 }));
+jest.mock("@/app/[slug]/(dashboard)/problems/staff-problems-page", () => ({
+  StaffProblemsPage: () => <span data-testid="staff-page" />,
+}));
 jest.mock("@/app/[slug]/(dashboard)/problems/contestant-problems-page", () => ({
   ContestantProblemsPage: () => <span data-testid="contestant-page" />,
 }));
@@ -21,6 +24,7 @@ describe("DashboardProblemsPage", () => {
   it.each([
     [MemberType.ROOT, "admin-page"],
     [MemberType.ADMIN, "admin-page"],
+    [MemberType.STAFF, "staff-page"],
     [MemberType.JUDGE, "judge-page"],
     [MemberType.CONTESTANT, "contestant-page"],
     [null, "guest-page"],
