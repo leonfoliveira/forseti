@@ -31,23 +31,23 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   moveLabel: {
-    id: "app.[slug].(dashboard).tickets.move-label",
+    id: "app.[slug].(dashboard)._common.tickets.tickets-page-item.move-label",
     defaultMessage: "Move",
   },
   printSubmissionText: {
-    id: "app.[slug].(dashboard).tickets.print-submission-text",
+    id: "app.[slug].(dashboard)._common.tickets.tickets-page-item.print-submission-text",
     defaultMessage: "Please, print my submission",
   },
   printLabel: {
-    id: "app.[slug].(dashboard).tickets.print-label",
+    id: "app.[slug].(dashboard)._common.tickets.tickets-page-item.print-label",
     defaultMessage: "Print",
   },
   printError: {
-    id: "app.[slug].(dashboard).tickets.print-error",
+    id: "app.[slug].(dashboard)._common.tickets.tickets-page-item.print-error",
     defaultMessage: "Failed to download attachment",
   },
   updateStatusError: {
-    id: "app.[slug].(dashboard).tickets.update-status-error",
+    id: "app.[slug].(dashboard)._common.tickets.tickets-page-item.update-status-error",
     defaultMessage: "Failed to update ticket status",
   },
 });

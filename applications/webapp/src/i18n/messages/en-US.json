@@ -191,6 +191,18 @@
             "languages": "Supported languages"
           },
           "tickets": {
+            "tickets-page": {
+              "page-title": "Forseti - Tickets",
+              "page-description": "View and manage tickets for the contest.",
+              "new-label": "New Ticket"
+            },
+            "tickets-page-item": {
+              "move-label": "Move",
+              "print-submission-text": "Please, print my submission",
+              "print-label": "Print",
+              "print-error": "Failed to download attachment",
+              "update-status-error": "Failed to update ticket status"
+            },
             "tickets-page-form": {
               "create-title": "Create Ticket",
               "create-description": "Fill out the form below to create a new ticket.",
@@ -505,16 +517,6 @@
               "text-long": "Cannot exceed 255 characters"
             }
           }
-        },
-        "tickets": {
-          "page-title": "Forseti - Tickets",
-          "page-description": "View and manage tickets for the contest.",
-          "new-label": "New Ticket",
-          "move-label": "Move",
-          "print-submission-text": "Please, print my submission",
-          "print-label": "Print",
-          "print-error": "Failed to download attachment",
-          "update-status-error": "Failed to update ticket status"
         }
       }
     }

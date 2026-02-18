@@ -15,15 +15,15 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
-    id: "app.[slug].(dashboard).tickets.page-title",
+    id: "app.[slug].(dashboard)._common.tickets.tickets-page.page-title",
     defaultMessage: "Forseti - Tickets",
   },
   pageDescription: {
-    id: "app.[slug].(dashboard).tickets.page-description",
+    id: "app.[slug].(dashboard)._common.tickets.tickets-page.page-description",
     defaultMessage: "View and manage tickets for the contest.",
   },
   newLabel: {
-    id: "app.[slug].(dashboard).tickets.new-label",
+    id: "app.[slug].(dashboard)._common.tickets.tickets-page.new-label",
     defaultMessage: "New Ticket",
   },
 });
