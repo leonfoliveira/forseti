@@ -33,8 +33,17 @@ function NativeSelect({
   );
 }
 
-function NativeSelectOption({ ...props }: React.ComponentProps<"option">) {
-  return <option data-slot="native-select-option" {...props} />;
+function NativeSelectOption({
+  className,
+  ...props
+}: React.ComponentProps<"option">) {
+  return (
+    <option
+      data-slot="native-select-option"
+      className={cn(className, "text-black")}
+      {...props}
+    />
+  );
 }
 
 function NativeSelectOptGroup({
