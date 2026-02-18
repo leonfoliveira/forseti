@@ -148,7 +148,9 @@ export function TicketsPageItem({ ticket, canEdit, onEdit }: Props) {
         </ItemDescription>
 
         {(canEdit || ticket.staff) && (
-          <ItemFooter className="border-border/50 flex items-center justify-between gap-2 border-t pt-2">
+          <ItemFooter
+            className={`border-border/50 flex items-center gap-2 border-t pt-2 ${ticket.staff ? "justify-between" : "justify-end"}`}
+          >
             {ticket.staff && (
               <div className="flex flex-col gap-1">
                 <p
@@ -166,7 +168,7 @@ export function TicketsPageItem({ ticket, canEdit, onEdit }: Props) {
               </div>
             )}
 
-            <div className="flex justify-end gap-2">
+            <div className="flex gap-2">
               {canEdit && ticket.type === TicketType.SUBMISSION_PRINT && (
                 <AsyncButton
                   variant="outline"
