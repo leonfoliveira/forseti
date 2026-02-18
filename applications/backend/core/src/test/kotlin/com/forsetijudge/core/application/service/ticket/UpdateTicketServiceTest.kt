@@ -88,6 +88,7 @@ class UpdateTicketServiceTest :
                 val result = sut.updateStatus(contestId, ticketId, staffId, Ticket.Status.IN_PROGRESS)
 
                 result.status shouldBe Ticket.Status.IN_PROGRESS
+                result.staff shouldBe staff
                 verify { anyConstructed<ContestAuthorizer>().checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF) }
                 verify { ticketRepository.save(ticket as Ticket<*>) }
                 verify { applicationEventPublisher.publishEvent(ofType<TicketUpdatedEvent>()) }
@@ -105,23 +106,7 @@ class UpdateTicketServiceTest :
                 val result = sut.updateStatus(contestId, ticketId, staffId, Ticket.Status.RESOLVED)
 
                 result.status shouldBe Ticket.Status.RESOLVED
-                verify { anyConstructed<ContestAuthorizer>().checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF) }
-                verify { ticketRepository.save(ticket as Ticket<*>) }
-                verify { applicationEventPublisher.publishEvent(ofType<TicketUpdatedEvent>()) }
-            }
-
-            test("should update ticket status to REJECTED successfully") {
-                val contest = ContestMockBuilder.build(id = contestId)
-                val staff = MemberMockBuilder.build(id = staffId, type = Member.Type.STAFF)
-                val ticket = TicketMockBuilder.build<Serializable>(id = ticketId, contest = contest, status = Ticket.Status.OPEN)
-                every { contestRepository.findEntityById(contestId) } returns contest
-                every { memberRepository.findEntityById(staffId) } returns staff
-                every { ticketRepository.findByIdAndContestId(ticketId, contestId) } returns ticket
-                every { ticketRepository.save(any<Ticket<*>>()) } returns ticket
-
-                val result = sut.updateStatus(contestId, ticketId, staffId, Ticket.Status.REJECTED)
-
-                result.status shouldBe Ticket.Status.REJECTED
+                result.staff shouldBe staff
                 verify { anyConstructed<ContestAuthorizer>().checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF) }
                 verify { ticketRepository.save(ticket as Ticket<*>) }
                 verify { applicationEventPublisher.publishEvent(ofType<TicketUpdatedEvent>()) }

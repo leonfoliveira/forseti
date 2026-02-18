@@ -53,7 +53,7 @@ open class Ticket<TProperties : Serializable>(
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "staff_id")
-    open val staff: Member? = null,
+    open var staff: Member? = null,
     /**
      * The type of the ticket.
      */
@@ -85,7 +85,6 @@ open class Ticket<TProperties : Serializable>(
         OPEN,
         IN_PROGRESS,
         RESOLVED,
-        REJECTED,
     }
 
     companion object {

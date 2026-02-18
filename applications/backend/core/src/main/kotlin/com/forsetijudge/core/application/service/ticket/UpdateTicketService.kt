@@ -55,6 +55,8 @@ class UpdateTicketService(
         ContestAuthorizer(contest, staff).checkMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF)
 
         ticket.status = status
+        ticket.staff = staff
+
         applicationEventPublisher.publishEvent(TicketUpdatedEvent(this, ticket))
         logger.info("Ticket status updated successfully")
         return ticketRepository.save(ticket)
