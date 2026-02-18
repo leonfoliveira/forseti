@@ -6,6 +6,7 @@ import { AdminDashboardProvider } from "@/app/_lib/provider/admin-dashboard-prov
 import { ContestantDashboardProvider } from "@/app/_lib/provider/contestant-dashboard-provider";
 import { GuestDashboardProvider } from "@/app/_lib/provider/guest-dashboard-provider";
 import { JudgeDashboardProvider } from "@/app/_lib/provider/judge-dashboard-provider";
+import { StaffDashboardProvider } from "@/app/_lib/provider/staff-dashboard-provider";
 import { useAppSelector } from "@/app/_store/store";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
@@ -22,6 +23,8 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     case MemberType.ROOT:
     case MemberType.ADMIN:
       return <AdminDashboardProvider>{children}</AdminDashboardProvider>;
+    case MemberType.STAFF:
+      return <StaffDashboardProvider>{children}</StaffDashboardProvider>;
     case MemberType.JUDGE:
       return <JudgeDashboardProvider>{children}</JudgeDashboardProvider>;
     case MemberType.CONTESTANT:

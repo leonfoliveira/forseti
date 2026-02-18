@@ -246,6 +246,13 @@
               "resubmit-success": "Submission resubmitted successfully",
               "resubmit-error": "Failed to resubmit submission"
             },
+            "submissions-page-action-print": {
+              "print-label": "Request print",
+              "print-success": "Print requested successfully",
+              "print-error": "Failed to request print",
+              "confirm-title": "Are you sure you want to request a print of this submission code?",
+              "confirm-description": "This will create a ticket for the contest staff to print your submission code. It may take some time for the ticket to be fulfilled."
+            },
             "submissions-page-action-judge": {
               "judge-label": "Judge",
               "title": "Are you sure you want to judge?",
@@ -504,7 +511,7 @@
           "page-description": "View and manage tickets for the contest.",
           "new-label": "New Ticket",
           "move-label": "Move",
-          "print-submission-text": "Print my submission",
+          "print-submission-text": "Please, print my submission",
           "print-label": "Print",
           "print-error": "Failed to download attachment",
           "update-status-error": "Failed to update ticket status"

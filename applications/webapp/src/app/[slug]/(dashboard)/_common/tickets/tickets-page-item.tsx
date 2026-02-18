@@ -35,7 +35,7 @@ const messages = defineMessages({
   },
   printSubmissionText: {
     id: "app.[slug].(dashboard).tickets.print-submission-text",
-    defaultMessage: "Print my submission",
+    defaultMessage: "Please, print my submission",
   },
   printLabel: {
     id: "app.[slug].(dashboard).tickets.print-label",
