@@ -1,7 +1,9 @@
 package com.forsetijudge.api.adapter.driving.middleware.websocket
 
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
-import com.forsetijudge.core.domain.model.RequestContext
+import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
@@ -14,17 +16,20 @@ class WebSocketContextHandshakeInterceptorTest :
         val sut = WebSocketContextHandshakeInterceptor()
 
         test("beforeHandshake should store context in attributes") {
-            val mockRequest = mockk<ServerHttpRequest>()
-            val mockResponse = mockk<ServerHttpResponse>()
-            val mockWsHandler = mockk<WebSocketHandler>()
+            val mockRequest = mockk<ServerHttpRequest>(relaxed = true)
+            val mockResponse = mockk<ServerHttpResponse>(relaxed = true)
+            val mockWsHandler = mockk<WebSocketHandler>(relaxed = true)
             val attributes = mutableMapOf<String, Any>()
-            val context = RequestContext(session = SessionMockBuilder.build(), ip = "127.0.0.1", traceId = "traceId")
-            RequestContext.setContext(context)
+            ExecutionContext.set(
+                traceId = IdGenerator.getTraceId(),
+                session = SessionMockBuilder.build().toResponseBodyDTO(),
+                contestId = IdGenerator.getUUID(),
+            )
 
             val result = sut.beforeHandshake(mockRequest, mockResponse, mockWsHandler, attributes)
 
             result shouldBe true
             attributes.containsKey("context") shouldBe true
-            attributes["context"] shouldBe context
+            attributes["context"] shouldBe ExecutionContext.get()
         }
     })

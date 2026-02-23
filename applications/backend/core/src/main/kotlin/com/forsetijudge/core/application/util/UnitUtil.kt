@@ -13,6 +13,12 @@ object UnitUtil {
             "d" to 86_400_000L,
         )
 
+    /**
+     * Parses a time value string with an optional unit suffix and converts it to milliseconds.
+     *
+     * @param value The time value string to parse (e.g., "10s", "5m", "100ms").
+     * @return The time value in milliseconds.
+     */
     fun parseTimeValue(value: String): Long {
         val unit = value.takeLastWhile { it.isLetter() }
         val number =

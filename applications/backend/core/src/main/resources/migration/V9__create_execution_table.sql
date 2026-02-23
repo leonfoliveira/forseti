@@ -6,13 +6,16 @@ create table execution (
     submission_id uuid not null,
     answer text not null,
     total_test_cases integer not null,
-    last_test_case integer,
+    approved_test_cases integer not null,
     input_id uuid not null,
     output_id uuid not null,
     version bigint not null default 1,
     constraint fk_submission_id foreign key (submission_id) references submission (id),
     constraint fk_input_id foreign key (input_id) references attachment (id),
-    constraint fk_output_id foreign key (output_id) references attachment (id)
+    constraint fk_output_id foreign key (output_id) references attachment (id),
+    constraint chk_total_test_cases_positive check (total_test_cases > 0),
+    constraint chk_approved_test_cases_non_negative check (approved_test_cases >= 0),
+    constraint chk_approved_test_cases_less_equal_total check (approved_test_cases <= total_test_cases)
 );
 
 create index idx_execution_submission_id on execution (submission_id);
@@ -28,7 +31,7 @@ create table execution_aud (
     submission_id uuid not null,
     answer text not null,
     total_test_cases integer not null,
-    last_test_case integer,
+    approved_test_cases integer not null,
     input_id uuid not null,
     output_id uuid not null,
     version bigint not null,

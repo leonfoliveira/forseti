@@ -1,20 +1,20 @@
 package com.forsetijudge.api.adapter.driving.controller.contest
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.forsetijudge.api.adapter.dto.response.ticket.toResponseDTO
-import com.forsetijudge.core.application.util.IdUtil
-import com.forsetijudge.core.domain.entity.MemberMockBuilder
-import com.forsetijudge.core.domain.entity.SessionMockBuilder
+import com.forsetijudge.api.adapter.dto.request.ticket.CreateTicketRequestBodyDTO
+import com.forsetijudge.api.adapter.dto.request.ticket.UpdateTicketStatusRequestBodyDTO
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.Ticket
 import com.forsetijudge.core.domain.entity.TicketMockBuilder
-import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.ticket.CreateTicketUseCase
-import com.forsetijudge.core.port.driving.usecase.ticket.FindTicketUseCase
-import com.forsetijudge.core.port.driving.usecase.ticket.UpdateTicketUseCase
-import com.forsetijudge.core.port.dto.input.ticket.CreateTicketInputDTO
+import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
+import com.forsetijudge.core.port.driving.usecase.external.ticket.CreateTicketUseCase
+import com.forsetijudge.core.port.driving.usecase.external.ticket.UpdateTicketStatusUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -22,7 +22,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
 import java.io.Serializable
@@ -34,34 +33,35 @@ class ContestTicketControllerTest(
     @MockkBean(relaxed = true)
     private val createTicketUseCase: CreateTicketUseCase,
     @MockkBean(relaxed = true)
-    private val updateTicketUseCase: UpdateTicketUseCase,
-    @MockkBean(relaxed = true)
-    private val findTicketUseCase: FindTicketUseCase,
+    private val updateTicketStatusUseCase: UpdateTicketStatusUseCase,
     private val webMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) : FunSpec({
         extensions(SpringExtension)
 
-        val member = MemberMockBuilder.build()
+        val basePath = "/api/v1/contests/{contestId}/tickets"
+        val contestId = IdGenerator.getUUID()
+        val memberId = IdGenerator.getUUID()
 
-        beforeEach {
-            val session = SessionMockBuilder.build(member = member)
-            RequestContext.getContext().session = session
+        beforeTest {
+            clearAllMocks()
+            ExecutionContextMockBuilder.build(contestId, memberId)
         }
 
-        val basePath = "/api/v1/contests/{contestId}/tickets"
-
         test("create") {
-            val contestId = IdUtil.getUUIDv7()
+            val contestId = IdGenerator.getUUID()
             val body =
-                CreateTicketInputDTO(
+                CreateTicketRequestBodyDTO(
                     type = Ticket.Type.TECHNICAL_SUPPORT,
                     properties = mapOf("description" to "I have a problem with the submission system."),
                 )
             val ticket = TicketMockBuilder.build<Serializable>()
-            val session = SessionMockBuilder.build()
-            RequestContext.getContext().session = session
-            every { createTicketUseCase.create(contestId, session.member.id, body) } returns ticket
+            val command =
+                CreateTicketUseCase.Command(
+                    type = body.type,
+                    properties = body.properties,
+                )
+            every { createTicketUseCase.execute(command) } returns ticket
 
             webMvc
                 .post(basePath, contestId) {
@@ -69,20 +69,26 @@ class ContestTicketControllerTest(
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {
                     status { isOk() }
-                    content { ticket.toResponseDTO() }
+                    content { ticket.toResponseBodyDTO() }
                 }
 
-            verify { createTicketUseCase.create(contestId, session.member.id, body) }
+            verify { createTicketUseCase.execute(command) }
         }
 
         test("updateStatus") {
-            val contestId = IdUtil.getUUIDv7()
-            val ticketId = IdUtil.getUUIDv7()
-            val body = mapOf("status" to Ticket.Status.IN_PROGRESS)
+            val contestId = IdGenerator.getUUID()
+            val ticketId = IdGenerator.getUUID()
+            val body =
+                UpdateTicketStatusRequestBodyDTO(
+                    status = Ticket.Status.IN_PROGRESS,
+                )
             val ticket = TicketMockBuilder.build<Serializable>()
-            val session = SessionMockBuilder.build()
-            RequestContext.getContext().session = session
-            every { updateTicketUseCase.updateStatus(contestId, ticketId, session.member.id, Ticket.Status.IN_PROGRESS) } returns ticket
+            val command =
+                UpdateTicketStatusUseCase.Command(
+                    ticketId = ticketId,
+                    status = body.status,
+                )
+            every { updateTicketStatusUseCase.execute(command) } returns ticket
 
             webMvc
                 .put("$basePath/{ticketId}:update-status", contestId, ticketId) {
@@ -90,45 +96,9 @@ class ContestTicketControllerTest(
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {
                     status { isOk() }
-                    content { ticket.toResponseDTO() }
+                    content { ticket.toResponseBodyDTO() }
                 }
 
-            verify { updateTicketUseCase.updateStatus(contestId, ticketId, session.member.id, Ticket.Status.IN_PROGRESS) }
-        }
-
-        test("findAllByContestId") {
-            val contestId = IdUtil.getUUIDv7()
-            val ticket = TicketMockBuilder.build<Serializable>()
-            val session = SessionMockBuilder.build()
-            RequestContext.getContext().session = session
-            every { findTicketUseCase.findAllByContestId(contestId, session.member.id) } returns listOf(ticket)
-
-            webMvc
-                .get(basePath, contestId) {
-                    contentType = MediaType.APPLICATION_JSON
-                }.andExpect {
-                    status { isOk() }
-                    content { listOf(ticket.toResponseDTO()) }
-                }
-
-            verify { findTicketUseCase.findAllByContestId(contestId, session.member.id) }
-        }
-
-        test("findAllBySignedInMember") {
-            val contestId = IdUtil.getUUIDv7()
-            val ticket = TicketMockBuilder.build<Serializable>()
-            val session = SessionMockBuilder.build()
-            RequestContext.getContext().session = session
-            every { findTicketUseCase.findAllByContestIdAndMemberId(contestId, session.member.id) } returns listOf(ticket)
-
-            webMvc
-                .get("$basePath/members/me", contestId) {
-                    contentType = MediaType.APPLICATION_JSON
-                }.andExpect {
-                    status { isOk() }
-                    content { listOf(ticket.toResponseDTO()) }
-                }
-
-            verify { findTicketUseCase.findAllByContestIdAndMemberId(contestId, session.member.id) }
+            verify { updateTicketStatusUseCase.execute(command) }
         }
     })

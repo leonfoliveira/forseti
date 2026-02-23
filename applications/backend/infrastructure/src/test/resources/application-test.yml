@@ -6,3 +6,5 @@ external:
     url: http://localhost:8080
 submission:
   max-concurrent: 1
+security:
+  member-id: 00000000-0000-0000-0000-000000000000

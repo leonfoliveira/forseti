@@ -1,9 +1,8 @@
 package com.forsetijudge.core.port.driven.scheduler
 
-import com.forsetijudge.core.domain.entity.Contest
+import com.forsetijudge.core.port.driven.scheduler.payload.AutoFreezeJobPayload
 
-interface AutoFreezeJobScheduler {
-    fun schedule(contest: Contest)
-
-    fun cancel(contest: Contest)
-}
+/**
+ * A specialized [JobScheduler] for scheduling auto-freeze jobs for contests.
+ */
+interface AutoFreezeJobScheduler : JobScheduler<AutoFreezeJobPayload>

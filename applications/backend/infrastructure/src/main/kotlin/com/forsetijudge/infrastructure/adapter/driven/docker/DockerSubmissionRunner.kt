@@ -4,21 +4,20 @@ import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.driven.SubmissionRunner
-import com.forsetijudge.core.port.driving.usecase.attachment.DownloadAttachmentUseCase
-import com.forsetijudge.core.port.driving.usecase.execution.CreateExecutionUseCase
-import com.forsetijudge.core.port.dto.input.execution.CreateExecutionInputDTO
+import com.forsetijudge.core.port.driving.usecase.internal.attachment.DownloadAttachmentInternalUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.execution.CreateExecutionInternalUseCase
 import com.opencsv.CSVReader
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.InputStreamReader
 import java.nio.file.Files
 
-@Service
+@Component
 class DockerSubmissionRunner(
-    private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
-    private val createExecutionUseCase: CreateExecutionUseCase,
+    private val downloadAttachmentInternalUseCase: DownloadAttachmentInternalUseCase,
+    private val createExecutionInternalUseCase: CreateExecutionInternalUseCase,
     private val dockerSubmissionRunnerConfigFactory: DockerSubmissionRunnerConfigFactory,
 ) : SubmissionRunner {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -32,7 +31,12 @@ class DockerSubmissionRunner(
      */
     override fun run(submission: Submission): Execution {
         val problem = submission.problem
-        logger.info("Running submission: ${submission.id} for problem: ${problem.id} with language: ${submission.language}")
+        logger.info(
+            "Running submission: {} for problem: {} with language: {}",
+            submission.id,
+            problem.id,
+            submission.language,
+        )
 
         val tmpDir = Files.createTempDirectory("forseti_${submission.id}").toFile()
         logger.info("Temporary directory created: ${tmpDir.absolutePath}")
@@ -66,13 +70,12 @@ class DockerSubmissionRunner(
 
             val outputs = mutableListOf<String>()
             var status = Submission.Answer.ACCEPTED
-            var lastTestCase: Int? = null
+            var approvedTestCases: Int = 0
             logger.info("Running test cases")
             for ((index, testCase) in testCases.withIndex()) {
                 val input = testCase[0]
                 val expectedOutput = testCase[1]
                 try {
-                    lastTestCase = index
                     val output =
                         runCode(
                             container = container,
@@ -89,63 +92,74 @@ class DockerSubmissionRunner(
                         status = Submission.Answer.WRONG_ANSWER
                         break
                     }
+                    approvedTestCases += 1
                     logger.info("All test cases passed")
                 } catch (_: DockerContainer.DockerTimeOutException) {
                     logger.info("Test case with index: $index timed out")
-                    return createExecutionUseCase.create(
-                        CreateExecutionInputDTO(
+                    return createExecutionInternalUseCase.execute(
+                        CreateExecutionInternalUseCase.Command(
+                            contest = submission.contest,
+                            member = submission.member,
                             submission = submission,
                             answer = Submission.Answer.TIME_LIMIT_EXCEEDED,
                             totalTestCases = testCases.size,
-                            lastTestCase = index,
+                            approvedTestCases = approvedTestCases,
                             input = problem.testCases,
                             output = outputs,
                         ),
                     )
                 } catch (_: DockerContainer.DockerOOMKilledException) {
                     logger.info("Test case with index: $index ran out of memory")
-                    return createExecutionUseCase.create(
-                        CreateExecutionInputDTO(
+                    return createExecutionInternalUseCase.execute(
+                        CreateExecutionInternalUseCase.Command(
+                            contest = submission.contest,
+                            member = submission.member,
                             submission = submission,
                             answer = Submission.Answer.MEMORY_LIMIT_EXCEEDED,
                             totalTestCases = testCases.size,
-                            lastTestCase = index,
+                            approvedTestCases = approvedTestCases,
                             input = problem.testCases,
                             output = outputs,
                         ),
                     )
                 } catch (ex: Exception) {
                     logger.info("Error while running test case with index: $index", ex)
-                    return createExecutionUseCase.create(
-                        CreateExecutionInputDTO(
+                    return createExecutionInternalUseCase.execute(
+                        CreateExecutionInternalUseCase.Command(
+                            contest = submission.contest,
+                            member = submission.member,
                             submission = submission,
                             answer = Submission.Answer.RUNTIME_ERROR,
                             totalTestCases = testCases.size,
-                            lastTestCase = index,
+                            approvedTestCases = approvedTestCases,
                             input = problem.testCases,
                             output = outputs,
                         ),
                     )
                 }
             }
-            return createExecutionUseCase.create(
-                CreateExecutionInputDTO(
+            return createExecutionInternalUseCase.execute(
+                CreateExecutionInternalUseCase.Command(
+                    contest = submission.contest,
+                    member = submission.member,
                     submission = submission,
                     answer = status,
                     totalTestCases = testCases.size,
-                    lastTestCase = lastTestCase,
+                    approvedTestCases = approvedTestCases,
                     input = problem.testCases,
                     output = outputs,
                 ),
             )
         } catch (ex: Exception) {
             logger.info("Error while compiling submission", ex)
-            return createExecutionUseCase.create(
-                CreateExecutionInputDTO(
+            return createExecutionInternalUseCase.execute(
+                CreateExecutionInternalUseCase.Command(
+                    contest = submission.contest,
+                    member = submission.member,
                     submission = submission,
                     answer = Submission.Answer.COMPILATION_ERROR,
                     totalTestCases = testCases.size,
-                    lastTestCase = null,
+                    approvedTestCases = 0,
                     input = problem.testCases,
                     output = emptyList(),
                 ),
@@ -167,7 +181,12 @@ class DockerSubmissionRunner(
         submission: Submission,
         tmpDir: File,
     ): File {
-        val bytes = downloadAttachmentUseCase.download(submission.code)
+        val bytes =
+            downloadAttachmentInternalUseCase.execute(
+                DownloadAttachmentInternalUseCase.Command(
+                    attachment = submission.code,
+                ),
+            )
         val romFile = File(tmpDir, submission.code.filename)
         romFile.writeBytes(bytes)
         return romFile
@@ -180,7 +199,12 @@ class DockerSubmissionRunner(
      * @return A list of test cases, where each test case is represented as an array of strings.
      */
     private fun loadTestCases(problem: Problem): List<Array<String>> {
-        val bytes = downloadAttachmentUseCase.download(problem.testCases)
+        val bytes =
+            downloadAttachmentInternalUseCase.execute(
+                DownloadAttachmentInternalUseCase.Command(
+                    attachment = problem.testCases,
+                ),
+            )
         val csvReader = CSVReader(InputStreamReader(ByteArrayInputStream(bytes)))
         return csvReader.use { reader ->
             reader.readAll()

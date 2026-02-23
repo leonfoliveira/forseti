@@ -1,12 +1,10 @@
 package com.forsetijudge.core.port.driven.producer
 
-import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.port.driven.producer.payload.SubmissionQueuePayload
 
-interface SubmissionQueueProducer {
-    /**
-     * Enqueue a submission to be judged by the autojudge service
-     *
-     * @param submission the submission to be judged
-     */
-    fun produce(submission: Submission)
-}
+/**
+ * A specialized [QueueProducer] for producing messages to a submission processing queue.
+ *
+ * This producer is used to send submission data to a queue for asynchronous processing. The payload contains the necessary information about the submission, such as the submission ID, problem ID, and other relevant details.
+ */
+interface SubmissionQueueProducer : QueueProducer<SubmissionQueuePayload>

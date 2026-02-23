@@ -1,6 +1,6 @@
 package com.forsetijudge.api.adapter.driving.middleware.websocket
 
-import com.forsetijudge.core.domain.model.RequestContext
+import com.forsetijudge.core.domain.model.ExecutionContext
 import org.slf4j.LoggerFactory
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
@@ -21,9 +21,10 @@ class WebSocketContextHandshakeInterceptor : HandshakeInterceptor {
         wsHandler: WebSocketHandler,
         attributes: MutableMap<String, Any>,
     ): Boolean {
-        val context = RequestContext.getContext()
-        logger.info("Storing context in WebSocket attributes: $context")
+        val context = ExecutionContext.get()
+        logger.info("Storing context in WebSocket attributes: {}", context)
         attributes["context"] = context
+        attributes["trace_id"] = context.traceId
         return true
     }
 

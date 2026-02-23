@@ -16,7 +16,7 @@ class TestCasesValidator(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun validate(testCases: Attachment) {
-        logger.info("Validating test cases attachment with id: ${testCases.id}")
+        logger.info("Validating test cases attachment with id: {}", testCases.id)
 
         if (testCases.contentType != "text/csv") {
             throw BusinessException("Test cases file must be a CSV file")

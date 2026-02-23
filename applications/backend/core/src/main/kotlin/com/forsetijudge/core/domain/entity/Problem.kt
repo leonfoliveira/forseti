@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.entity
 
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -13,17 +14,18 @@ import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
+import org.hibernate.envers.NotAudited
 import java.time.OffsetDateTime
 import java.util.UUID
 
 @Entity
 @Table(name = "problem")
 @Audited(withModifiedFlag = true)
-@SQLRestriction("deleted_at is null")
+@SQLRestriction("deleted_at IS NULL")
 class Problem(
-    id: UUID = UuidCreator.getTimeOrderedEpoch(),
-    createdAt: OffsetDateTime = OffsetDateTime.now(),
-    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    id: UUID = IdGenerator.getUUID(),
+    createdAt: OffsetDateTime = ExecutionContext.get().startedAt,
+    updatedAt: OffsetDateTime = ExecutionContext.get().startedAt,
     deletedAt: OffsetDateTime? = null,
     version: Long = 1L,
     /**
@@ -79,4 +81,16 @@ class Problem(
     @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var submissions: List<Submission> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
+    @Column(name = "contest_id", insertable = false, updatable = false)
+    @NotAudited
+    lateinit var contestId: UUID
+
+    @Column(name = "description_id", insertable = false, updatable = false)
+    @NotAudited
+    lateinit var descriptionId: UUID
+
+    @Column(name = "test_cases_id", insertable = false, updatable = false)
+    @NotAudited
+    lateinit var testCasesId: UUID
+}

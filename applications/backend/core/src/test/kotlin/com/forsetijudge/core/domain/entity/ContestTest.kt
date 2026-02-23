@@ -24,10 +24,10 @@ class ContestTest :
             Pair(pastDate, true),
             Pair(futureDate, false),
         ).forEach { (endAt, expected) ->
-            test("hasFinished with endAt = $endAt should return $expected") {
-                val contest = ContestMockBuilder.build(endAt = endAt)
+            test("hasEnded with endAt = $endAt should return $expected") {
+                val contest = ContestMockBuilder.build(startAt = endAt.minusHours(1), endAt = endAt)
 
-                contest.hasFinished() shouldBe expected
+                contest.hasEnded() shouldBe expected
             }
         }
 

@@ -1,12 +1,12 @@
 package com.forsetijudge.core.domain.entity
 
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
 import java.time.OffsetDateTime
 import java.util.UUID
 
 object SubmissionMockBuilder {
     fun build(
-        id: UUID = UuidCreator.getTimeOrderedEpoch(),
+        id: UUID = IdGenerator.getUUID(),
         createdAt: OffsetDateTime = OffsetDateTime.now(),
         updatedAt: OffsetDateTime = OffsetDateTime.now(),
         deletedAt: OffsetDateTime? = null,
@@ -14,7 +14,7 @@ object SubmissionMockBuilder {
         problem: Problem = ProblemMockBuilder.build(),
         language: Submission.Language = Submission.Language.PYTHON_312,
         status: Submission.Status = Submission.Status.JUDGING,
-        answer: Submission.Answer = Submission.Answer.NO_ANSWER,
+        answer: Submission.Answer? = null,
         code: Attachment = AttachmentMockBuilder.build(),
     ) = Submission(
         id = id,
@@ -27,5 +27,9 @@ object SubmissionMockBuilder {
         status = status,
         answer = answer,
         code = code,
-    )
+    ).also {
+        it.memberId = member.id
+        it.problemId = problem.id
+        it.codeId = code.id
+    }
 }

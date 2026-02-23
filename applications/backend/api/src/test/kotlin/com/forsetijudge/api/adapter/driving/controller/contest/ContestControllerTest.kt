@@ -1,28 +1,25 @@
 package com.forsetijudge.api.adapter.driving.controller.contest
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
 import com.forsetijudge.api.adapter.driving.advice.GlobalExceptionHandler
-import com.forsetijudge.api.adapter.dto.response.contest.toFullResponseDTO
-import com.forsetijudge.api.adapter.dto.response.contest.toMetadataDTO
-import com.forsetijudge.api.adapter.dto.response.contest.toPublicOutputDTO
+import com.forsetijudge.api.adapter.dto.request.attachment.AttachmentRequestBodyDTO
+import com.forsetijudge.api.adapter.dto.request.contest.UpdateContestRequestBodyDTO
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.domain.entity.MemberMockBuilder
-import com.forsetijudge.core.domain.entity.ProblemMockBuilder
-import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
-import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.contest.DeleteContestUseCase
-import com.forsetijudge.core.port.driving.usecase.contest.FindContestUseCase
-import com.forsetijudge.core.port.driving.usecase.contest.UpdateContestUseCase
-import com.forsetijudge.core.port.dto.input.attachment.AttachmentInputDTO
-import com.forsetijudge.core.port.dto.input.contest.UpdateContestInputDTO
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
+import com.forsetijudge.core.port.driving.usecase.external.contest.DeleteContestUseCase
+import com.forsetijudge.core.port.driving.usecase.external.contest.FindContestBySlugUseCase
+import com.forsetijudge.core.port.driving.usecase.external.contest.ForceEndContestUseCase
+import com.forsetijudge.core.port.driving.usecase.external.contest.ForceStartContestUseCase
+import com.forsetijudge.core.port.driving.usecase.external.contest.UpdateContestUseCase
+import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -40,9 +37,13 @@ import java.time.OffsetDateTime
 @ContextConfiguration(classes = [ContestController::class, JacksonConfig::class, GlobalExceptionHandler::class])
 class ContestControllerTest(
     @MockkBean(relaxed = true)
+    private val findContestBySlugUseCase: FindContestBySlugUseCase,
+    @MockkBean(relaxed = true)
     private val updateContestUseCase: UpdateContestUseCase,
     @MockkBean(relaxed = true)
-    private val findContestUseCase: FindContestUseCase,
+    private val forceStartContestUseCase: ForceStartContestUseCase,
+    @MockkBean(relaxed = true)
+    private val forceEndContestUseCase: ForceEndContestUseCase,
     @MockkBean(relaxed = true)
     private val deleteContestUseCase: DeleteContestUseCase,
     private val webMvc: MockMvc,
@@ -50,34 +51,46 @@ class ContestControllerTest(
 ) : FunSpec({
         extensions(SpringExtension)
 
-        beforeTest {
-            objectMapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-        }
-
         val basePath = "/api/v1/contests"
-        val session = SessionMockBuilder.build()
+        val contestId = IdGenerator.getUUID()
+        val memberId = IdGenerator.getUUID()
 
-        beforeEach {
-            RequestContext.getContext().session = session
+        beforeTest {
+            clearAllMocks()
+            ExecutionContextMockBuilder.build(contestId, memberId)
         }
 
-        test("updateContest") {
-            val contestId = UuidCreator.getTimeOrderedEpoch()
+        test("findBySlug") {
+            val contest = ContestMockBuilder.build()
+            val command = FindContestBySlugUseCase.Command(slug = contest.slug)
+            every { findContestBySlugUseCase.execute(command) } returns contest
+
+            webMvc
+                .get("$basePath/slug/{slug}", contest.slug) {
+                    contentType = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isOk() }
+                }
+
+            verify { findContestBySlugUseCase.execute(command) }
+        }
+
+        test("update") {
             val body =
-                UpdateContestInputDTO(
+                UpdateContestRequestBodyDTO(
                     slug = "updated-contest",
                     title = "Updated Contest",
                     languages = listOf(Submission.Language.PYTHON_312),
                     startAt = OffsetDateTime.now().plusHours(1),
                     endAt = OffsetDateTime.now().plusHours(2),
                     settings =
-                        UpdateContestInputDTO.SettingsDTO(
+                        UpdateContestRequestBodyDTO.Settings(
                             isAutoJudgeEnabled = false,
                         ),
                     members =
                         listOf(
-                            UpdateContestInputDTO.MemberDTO(
-                                id = UuidCreator.getTimeOrderedEpoch(),
+                            UpdateContestRequestBodyDTO.Member(
+                                id = IdGenerator.getUUID(),
                                 type = Member.Type.CONTESTANT,
                                 name = "Updated Member",
                                 login = "updated_member",
@@ -86,20 +99,66 @@ class ContestControllerTest(
                         ),
                     problems =
                         listOf(
-                            UpdateContestInputDTO.ProblemDTO(
-                                id = UuidCreator.getTimeOrderedEpoch(),
+                            UpdateContestRequestBodyDTO.Problem(
+                                id = IdGenerator.getUUID(),
                                 letter = 'B',
                                 color = "#ffffff",
                                 title = "Problem B",
-                                description = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
+                                description = AttachmentRequestBodyDTO(id = IdGenerator.getUUID()),
                                 timeLimit = 2000,
                                 memoryLimit = 1024,
-                                testCases = AttachmentInputDTO(id = UuidCreator.getTimeOrderedEpoch()),
+                                testCases = AttachmentRequestBodyDTO(id = IdGenerator.getUUID()),
                             ),
                         ),
                 )
             val contest = ContestMockBuilder.build()
-            every { updateContestUseCase.update(contestId, session.member.id, body) } returns contest
+            val command =
+                UpdateContestUseCase.Command(
+                    slug = body.slug,
+                    title = body.title,
+                    languages = body.languages,
+                    startAt = body.startAt,
+                    endAt = body.endAt,
+                    autoFreezeAt = body.autoFreezeAt,
+                    settings =
+                        UpdateContestUseCase.Command.Settings(
+                            isAutoJudgeEnabled = body.settings.isAutoJudgeEnabled,
+                        ),
+                    members =
+                        body.members.map {
+                            UpdateContestUseCase.Command.Member(
+                                id = it.id,
+                                type = it.type,
+                                name = it.name,
+                                login = it.login,
+                                password = it.password,
+                            )
+                        },
+                    problems =
+                        body.problems.map {
+                            UpdateContestUseCase.Command.Problem(
+                                id = it.id,
+                                letter = it.letter,
+                                color = it.color,
+                                title = it.title,
+                                description =
+                                    AttachmentCommandDTO(
+                                        id = it.description.id,
+                                    ),
+                                timeLimit = it.timeLimit,
+                                memoryLimit = it.memoryLimit,
+                                testCases =
+                                    AttachmentCommandDTO(
+                                        id = it.testCases.id,
+                                    ),
+                            )
+                        },
+                )
+            every {
+                updateContestUseCase.execute(
+                    command,
+                )
+            } returns contest
 
             webMvc
                 .put("$basePath/{contestId}", contestId) {
@@ -107,90 +166,47 @@ class ContestControllerTest(
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {
                     status { isOk() }
-                    content { contest.toFullResponseDTO() }
                 }
         }
 
-        test("findContestMetadataBySlug") {
-            val slug = "test-contest"
-            val contest = ContestMockBuilder.build(slug = slug)
-            every { findContestUseCase.findBySlug(slug) } returns contest
-
-            webMvc
-                .get("$basePath/slug/{slug}/metadata", slug) {
-                    accept = MediaType.APPLICATION_JSON
-                }.andExpect {
-                    status { isOk() }
-                    content { contest.toMetadataDTO() }
-                }
-        }
-
-        test("findContestById") {
-            val contestId = UuidCreator.getTimeOrderedEpoch()
-            val contest = ContestMockBuilder.build(id = contestId, startAt = OffsetDateTime.now().minusHours(1))
-            every { findContestUseCase.findById(contestId) } returns contest
-
-            webMvc
-                .get("$basePath/{contestId}", contestId) {
-                    accept = MediaType.APPLICATION_JSON
-                }.andExpect {
-                    status { isOk() }
-                    content { contest.toPublicOutputDTO() }
-                }
-        }
-
-        test("findFullContestById") {
-            val contestId = UuidCreator.getTimeOrderedEpoch()
-            val contest =
-                ContestMockBuilder.build(
-                    id = contestId,
-                    members = listOf(MemberMockBuilder.build()),
-                    problems =
-                        listOf(
-                            ProblemMockBuilder.build(),
-                        ),
-                )
-            every { findContestUseCase.findById(contestId) } returns contest
-
-            webMvc
-                .get("$basePath/{contestId}/full", contestId) {
-                    accept = MediaType.APPLICATION_JSON
-                }.andExpect {
-                    status { isOk() }
-                    content { contest.toFullResponseDTO() }
-                }
-        }
-
-        test("forceStartContest") {
-            val contestId = UuidCreator.getTimeOrderedEpoch()
-            val contest = ContestMockBuilder.build(id = contestId)
-            every { updateContestUseCase.forceStart(contestId) } returns contest
+        test("forceStart") {
+            val contestId = IdGenerator.getUUID()
+            every {
+                forceStartContestUseCase.execute()
+            } returns Unit
 
             webMvc
                 .put("$basePath/{contestId}:force-start", contestId) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
-                    status { isOk() }
-                    content { contest.toMetadataDTO() }
+                    status { isNoContent() }
                 }
+
+            verify {
+                forceStartContestUseCase.execute()
+            }
         }
 
-        test("forceEndContest") {
-            val contestId = UuidCreator.getTimeOrderedEpoch()
-            val contest = ContestMockBuilder.build(id = contestId)
-            every { updateContestUseCase.forceEnd(contestId) } returns contest
+        test("forceEnd") {
+            val contestId = IdGenerator.getUUID()
+            every {
+                forceEndContestUseCase.execute()
+            } returns Unit
 
             webMvc
                 .put("$basePath/{contestId}:force-end", contestId) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
-                    status { isOk() }
-                    content { contest.toMetadataDTO() }
+                    status { isNoContent() }
                 }
+
+            verify {
+                forceEndContestUseCase.execute()
+            }
         }
 
-        test("deleteContest") {
-            val contestId = UuidCreator.getTimeOrderedEpoch()
+        test("delete") {
+            val contestId = IdGenerator.getUUID()
 
             webMvc
                 .delete("$basePath/{contestId}", contestId) {
@@ -199,6 +215,8 @@ class ContestControllerTest(
                     status { isNoContent() }
                 }
 
-            verify { deleteContestUseCase.delete(contestId) }
+            verify {
+                deleteContestUseCase.execute()
+            }
         }
     })

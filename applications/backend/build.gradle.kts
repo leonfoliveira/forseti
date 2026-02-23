@@ -3,6 +3,7 @@ kotlin {
 }
 
 plugins {
+    alias(libs.plugins.kotlin.jpa)
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.ktlint)
@@ -19,6 +20,12 @@ allprojects {
         mavenCentral()
     }
 
+    apply(
+        plugin =
+            rootProject.libs.plugins.kotlin.jpa
+                .get()
+                .pluginId,
+    )
     apply(
         plugin =
             rootProject.libs.plugins.kotlin.jvm

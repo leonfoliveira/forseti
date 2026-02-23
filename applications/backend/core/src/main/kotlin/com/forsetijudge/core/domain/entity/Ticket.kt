@@ -2,7 +2,8 @@ package com.forsetijudge.core.domain.entity
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.persistence.Column
 import jakarta.persistence.DiscriminatorColumn
 import jakarta.persistence.Entity
@@ -17,6 +18,7 @@ import jakarta.persistence.Table
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
+import org.hibernate.envers.NotAudited
 import org.hibernate.type.SqlTypes
 import java.io.Serializable
 import java.time.OffsetDateTime
@@ -27,11 +29,11 @@ import java.util.UUID
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 @Audited
-@SQLRestriction("deleted_at is null")
+@SQLRestriction("deleted_at IS NULL")
 open class Ticket<TProperties : Serializable>(
-    id: UUID = UuidCreator.getTimeOrderedEpoch(),
-    createdAt: OffsetDateTime = OffsetDateTime.now(),
-    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    id: UUID = IdGenerator.getUUID(),
+    createdAt: OffsetDateTime = ExecutionContext.get().startedAt,
+    updatedAt: OffsetDateTime = ExecutionContext.get().startedAt,
     deletedAt: OffsetDateTime? = null,
     version: Long = 1L,
     /**
@@ -75,6 +77,18 @@ open class Ticket<TProperties : Serializable>(
     @Audited(withModifiedFlag = false)
     open var properties: Map<String, Any>,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
+    @Column(name = "contest_id", insertable = false, updatable = false)
+    @NotAudited
+    open lateinit var contestId: UUID
+
+    @Column(name = "member_id", insertable = false, updatable = false)
+    @NotAudited
+    open lateinit var memberId: UUID
+
+    @Column(name = "staff_id", insertable = false, updatable = false)
+    @NotAudited
+    open var staffId: UUID? = null
+
     enum class Type {
         SUBMISSION_PRINT,
         TECHNICAL_SUPPORT,

@@ -16,9 +16,16 @@ headers {
 
 body:json {
   {
-    "login": "contestant",
-    "password": "123"
+    "login": "root",
+    "password": "forsetijudge"
   }
+}
+
+script:post-response {
+  const cookies = res.headers["set-cookie"]
+  const csrfCookie = cookies[1]
+  const match = csrfCookie.match(/csrf_token=(.+?)(;|$)/);
+  bru.setVar("csrf_token", match[1])
 }
 
 settings {

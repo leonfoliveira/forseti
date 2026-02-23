@@ -1,18 +1,11 @@
 package com.forsetijudge.api.adapter.driving.controller.contest
 
-import com.forsetijudge.api.adapter.dto.response.ErrorResponseDTO
-import com.forsetijudge.api.adapter.dto.response.announcement.AnnouncementResponseDTO
-import com.forsetijudge.api.adapter.dto.response.announcement.toResponseDTO
+import com.forsetijudge.api.adapter.dto.request.announcement.CreateAnnouncementRequestBodyDTO
 import com.forsetijudge.api.adapter.util.Private
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.announcement.CreateAnnouncementUseCase
-import com.forsetijudge.core.port.dto.input.announcement.CreateAnnouncementInputDTO
-import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponses
+import com.forsetijudge.core.port.driving.usecase.external.announcement.CreateAnnouncementUseCase
+import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
@@ -30,60 +23,18 @@ class ContestAnnouncementController(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping("/contests/{contestId}/announcements")
-    @Private(Member.Type.ADMIN)
-    @Operation(summary = "Create an announcement")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Announcement created successfully"),
-            ApiResponse(
-                responseCode = "400",
-                description = "Invalid request format",
-                content = [
-                    Content(
-                        mediaType = "application/json",
-                        schema = Schema(implementation = ErrorResponseDTO::class),
-                    ),
-                ],
-            ),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [
-                    Content(
-                        mediaType = "application/json",
-                        schema = Schema(implementation = ErrorResponseDTO::class),
-                    ),
-                ],
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [
-                    Content(
-                        mediaType = "application/json",
-                        schema = Schema(implementation = ErrorResponseDTO::class),
-                    ),
-                ],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Contest not found",
-                content = [
-                    Content(
-                        mediaType = "application/json",
-                        schema = Schema(implementation = ErrorResponseDTO::class),
-                    ),
-                ],
-            ),
-        ],
-    )
+    @Private(Member.Type.ROOT, Member.Type.ADMIN)
     fun create(
         @PathVariable contestId: UUID,
-        @RequestBody body: CreateAnnouncementInputDTO,
-    ): ResponseEntity<AnnouncementResponseDTO> {
-        logger.info("[POST] /v1/contests/$contestId/announcements $body")
-        val member = RequestContext.getContext().session!!.member
-        val announcement = createAnnouncementUseCase.create(contestId, member.id, body)
-        return ResponseEntity.ok(announcement.toResponseDTO())
+        @RequestBody body: CreateAnnouncementRequestBodyDTO,
+    ): ResponseEntity<AnnouncementResponseBodyDTO> {
+        logger.info("[POST] /api/v1/contests/{}/announcements", contestId)
+        val announcement =
+            createAnnouncementUseCase.execute(
+                CreateAnnouncementUseCase.Command(
+                    text = body.text,
+                ),
+            )
+        return ResponseEntity.ok(announcement.toResponseBodyDTO())
     }
 }

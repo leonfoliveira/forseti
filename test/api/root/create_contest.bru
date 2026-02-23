@@ -23,9 +23,17 @@ body:json {
       "{{Submission.Language.JAVA_21}}",
       "{{Submission.Language.PYTHON_312}}"
     ],
-    "startAt": "2026-01-01T00:00:00Z",
-    "endAt": "2026-01-02T00:00:00Z"
+    "startAt": "{{start_at}}",
+    "endAt": "{{end_at}}"
   }
+}
+
+script:pre-request {
+  const startAt = new Date(new Date().getTime() + 60 * 60 * 1000).toISOString()
+  const endAt = new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString()
+  
+  bru.setVar("start_at", startAt)
+  bru.setVar("end_at", endAt)
 }
 
 script:post-response {

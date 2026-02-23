@@ -14,7 +14,11 @@ create table problem (
     version bigint not null default 1,
     constraint fk_contest_id foreign key (contest_id) references contest (id),
     constraint fk_description_id foreign key (description_id) references attachment (id),
-    constraint fk_test_cases_id foreign key (test_cases_id) references attachment (id)
+    constraint fk_test_cases_id foreign key (test_cases_id) references attachment (id),
+    constraint chk_color_hex check (color ~ '^#[0-9a-fA-F]{6}$'),
+    constraint chk_title_length check (length(title) between 1 and 200),
+    constraint chk_time_limit_positive check (time_limit > 0),
+    constraint chk_memory_limit_positive check (memory_limit > 0)
 );
 
 create index idx_problem_contest_id on problem (contest_id);

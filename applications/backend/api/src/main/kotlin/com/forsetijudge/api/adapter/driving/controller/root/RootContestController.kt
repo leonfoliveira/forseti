@@ -1,20 +1,12 @@
 package com.forsetijudge.api.adapter.driving.controller.root
 
-import com.forsetijudge.api.adapter.dto.response.ErrorResponseDTO
-import com.forsetijudge.api.adapter.dto.response.contest.ContestFullResponseDTO
-import com.forsetijudge.api.adapter.dto.response.contest.ContestMetadataResponseDTO
-import com.forsetijudge.api.adapter.dto.response.contest.toFullResponseDTO
-import com.forsetijudge.api.adapter.dto.response.contest.toMetadataDTO
+import com.forsetijudge.api.adapter.dto.request.contest.CreateContestRequestBodyDTO
 import com.forsetijudge.api.adapter.util.Private
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.port.driving.usecase.contest.CreateContestUseCase
-import com.forsetijudge.core.port.driving.usecase.contest.FindContestUseCase
-import com.forsetijudge.core.port.dto.input.contest.CreateContestInputDTO
-import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponses
+import com.forsetijudge.core.port.driving.usecase.external.contest.CreateContestUseCase
+import com.forsetijudge.core.port.driving.usecase.external.contest.FindAllContestUseCase
+import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,67 +19,34 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1")
 class RootContestController(
     private val createContestUseCase: CreateContestUseCase,
-    private val findContestUseCase: FindContestUseCase,
+    private val findAllContestUseCase: FindAllContestUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping("/root/contests")
     @Private(Member.Type.ROOT)
-    @Operation(summary = "Create a contest")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Contest created successfully"),
-            ApiResponse(
-                responseCode = "400",
-                description = "Invalid request format",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "409",
-                description = "Conflict",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    fun createContest(
-        @RequestBody body: CreateContestInputDTO,
-    ): ResponseEntity<ContestFullResponseDTO> {
-        logger.info("[POST] /v1/root/contests $body")
-        val contest = createContestUseCase.create(body)
-        return ResponseEntity.ok(contest.toFullResponseDTO())
+    fun create(
+        @RequestBody body: CreateContestRequestBodyDTO,
+    ): ResponseEntity<ContestResponseBodyDTO> {
+        logger.info("[POST] /v1/root/contests")
+        val contest =
+            createContestUseCase.execute(
+                CreateContestUseCase.Command(
+                    slug = body.slug,
+                    title = body.title,
+                    languages = body.languages,
+                    startAt = body.startAt,
+                    endAt = body.endAt,
+                ),
+            )
+        return ResponseEntity.ok(contest.toResponseBodyDTO())
     }
 
-    @GetMapping("/root/contests/metadata")
+    @GetMapping("/root/contests")
     @Private(Member.Type.ROOT)
-    @Operation(summary = "Find all contest metadata")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Contest metadata found successfully"),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    fun findAllMetadata(): ResponseEntity<List<ContestMetadataResponseDTO>> {
-        logger.info("[GET] /v1/root/contests/metadata")
-        val contests = findContestUseCase.findAll()
-        return ResponseEntity.ok(contests.map { it.toMetadataDTO() })
+    fun findAll(): ResponseEntity<List<ContestResponseBodyDTO>> {
+        logger.info("[GET] /v1/root/contests")
+        val contests = findAllContestUseCase.execute()
+        return ResponseEntity.ok(contests.map { it.toResponseBodyDTO() })
     }
 }

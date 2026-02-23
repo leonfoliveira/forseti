@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.entity
 
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -21,11 +22,11 @@ import java.util.UUID
 @Entity
 @Table(name = "contest")
 @Audited(withModifiedFlag = true)
-@SQLRestriction("deleted_at is null")
+@SQLRestriction("deleted_at IS NULL")
 class Contest(
-    id: UUID = UuidCreator.getTimeOrderedEpoch(),
-    createdAt: OffsetDateTime = OffsetDateTime.now(),
-    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    id: UUID = IdGenerator.getUUID(),
+    createdAt: OffsetDateTime = ExecutionContext.get().startedAt,
+    updatedAt: OffsetDateTime = ExecutionContext.get().startedAt,
     deletedAt: OffsetDateTime? = null,
     version: Long = 1L,
     /**
@@ -41,8 +42,7 @@ class Contest(
     /**
      * The languages that are allowed for submissions in this contest.
      */
-    @Column(nullable = false)
-    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "languages")
     @Enumerated(EnumType.STRING)
     var languages: List<Submission.Language>,
     /**
@@ -90,7 +90,7 @@ class Contest(
      */
     @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    @Where(clause = "parent_id is null")
+    @Where(clause = "parent_id IS NULL")
     @OrderBy("createdAt ASC")
     var clarifications: List<Clarification> = mutableListOf(),
     /**
@@ -108,14 +108,14 @@ class Contest(
     @OrderBy("createdAt ASC")
     var tickets: List<Ticket<*>> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
-    fun hasStarted(): Boolean = !startAt.isAfter(OffsetDateTime.now())
+    fun hasStarted(): Boolean = !startAt.isAfter(ExecutionContext.getStartAt())
 
-    fun hasFinished(): Boolean = !endAt.isAfter(OffsetDateTime.now())
+    fun hasEnded(): Boolean = !endAt.isAfter(ExecutionContext.getStartAt())
 
-    fun isActive(): Boolean = hasStarted() && !hasFinished()
+    fun isActive(): Boolean = hasStarted() && !hasEnded()
 
     val isFrozen: Boolean
-        get() = frozenAt != null && !frozenAt!!.isAfter(OffsetDateTime.now())
+        get() = frozenAt != null && !frozenAt!!.isAfter(ExecutionContext.getStartAt())
 
     data class Settings(
         var isAutoJudgeEnabled: Boolean = true,

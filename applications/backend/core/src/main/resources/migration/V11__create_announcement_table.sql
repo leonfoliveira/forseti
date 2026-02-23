@@ -8,7 +8,8 @@ create table announcement (
     text text not null,
     version bigint not null default 1,
     constraint fk_contest_id foreign key (contest_id) references contest (id),
-    constraint fk_member_id foreign key (member_id) references member (id)
+    constraint fk_member_id foreign key (member_id) references member (id),
+    constraint chk_text_length check (length(text) between 1 and 500)
 );
 
 create index idx_announcement_contest_id on announcement (contest_id);

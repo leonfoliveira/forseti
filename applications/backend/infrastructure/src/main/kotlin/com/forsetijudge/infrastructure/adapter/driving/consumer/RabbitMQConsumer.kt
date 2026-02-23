@@ -1,22 +1,22 @@
 package com.forsetijudge.infrastructure.adapter.driving.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.forsetijudge.core.application.util.IdUtil
-import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.session.RefreshSessionUseCase
+import com.forsetijudge.core.application.util.SessionCache
+import com.forsetijudge.core.domain.model.ExecutionContext
 import io.opentelemetry.api.trace.Span
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import java.io.Serializable
 import java.util.UUID
 
-abstract class RabbitMQConsumer<TPayload : Serializable>(
-    private val memberId: UUID,
-) {
+abstract class RabbitMQConsumer<TPayload : Serializable> {
+    @Value("\${security.member-id}")
+    private lateinit var memberId: UUID
+
     @Autowired
-    private lateinit var refreshSessionUseCase: RefreshSessionUseCase
+    private lateinit var sessionCache: SessionCache
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -28,20 +28,16 @@ abstract class RabbitMQConsumer<TPayload : Serializable>(
      * It also loads the traceId into the RequestContext to keep track of the entire information flow.
      */
     open fun receiveMessage(jsonMessage: String) {
-        val traceId = IdUtil.getTraceId()
-        val currentSpan = Span.current()
-        currentSpan.setAttribute("trace_id", traceId)
-        MDC.put("trace_id", traceId)
-
-        logger.info("Received message: {}", jsonMessage)
-
         val jsonNode = objectMapper.readTree(jsonMessage)
         val id = UUID.fromString(jsonNode["id"].asText())
+        val contestId = jsonNode["contestId"]?.asText()?.let { UUID.fromString(it) }
         val payloadJson = jsonNode["payload"]
 
         val payload = objectMapper.treeToValue(payloadJson, getPayloadType())
 
-        initRequestContext()
+        initExecutionContext(contestId)
+
+        logger.info("Received message: {}", jsonMessage)
 
         try {
             logger.info("Handling message with id: {}", id)
@@ -53,10 +49,13 @@ abstract class RabbitMQConsumer<TPayload : Serializable>(
         }
     }
 
-    private fun initRequestContext() {
-        val session = refreshSessionUseCase.refresh(memberId)
-        RequestContext.getContext().session = session
-        RequestContext.getContext().traceId = Span.current().spanContext.traceId
+    private fun initExecutionContext(contestId: UUID?) {
+        ExecutionContext.set(
+            ip = null,
+            traceId = Span.current().spanContext.traceId,
+            contestId = contestId,
+            session = sessionCache.get(contestId, memberId),
+        )
     }
 
     /**

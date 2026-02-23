@@ -1,6 +1,6 @@
 package com.forsetijudge.api.adapter.driving.advice
 
-import com.forsetijudge.api.adapter.dto.response.ErrorResponseDTO
+import com.forsetijudge.api.adapter.dto.response.ErrorResponseBodyDTO
 import com.forsetijudge.core.domain.exception.BusinessException
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.domain.exception.ForbiddenException
@@ -38,12 +38,17 @@ class GlobalExceptionHandler {
     fun handleBusinessException(
         ex: BusinessException,
         handlerMethod: HandlerMethod,
-    ): ResponseEntity<ErrorResponseDTO> {
+    ): ResponseEntity<ErrorResponseBodyDTO> {
         val status = codesByBusinessException[ex::class] ?: HttpStatus.BAD_REQUEST
-        logger.info("BusinessException occurred in method: ${handlerMethod.method.name}, status: $status, message: ${ex.message}")
+        logger.info(
+            "BusinessException occurred in method: {}, status: {}, message: {}",
+            handlerMethod.method.name,
+            status,
+            ex.message,
+        )
         return ResponseEntity
             .status(status)
-            .body(ErrorResponseDTO(ex.message!!))
+            .body(ErrorResponseBodyDTO(ex.message!!))
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
@@ -81,36 +86,36 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException::class)
-    fun handleTypeMismatch(ex: MethodArgumentTypeMismatchException): ResponseEntity<ErrorResponseDTO> {
+    fun handleTypeMismatch(ex: MethodArgumentTypeMismatchException): ResponseEntity<ErrorResponseBodyDTO> {
         logger.info("Type mismatch error occurred")
         val message = "Invalid type for parameter '${ex.name}'"
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(ErrorResponseDTO(message))
+            .body(ErrorResponseBodyDTO(message))
     }
 
     @ExceptionHandler(NoResourceFoundException::class)
-    fun handleNoResourceFoundException(ex: NoResourceFoundException): ResponseEntity<ErrorResponseDTO> {
+    fun handleNoResourceFoundException(ex: NoResourceFoundException): ResponseEntity<ErrorResponseBodyDTO> {
         logger.info("Resource not found, message: ${ex.message}", ex)
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
-            .body(ErrorResponseDTO("Resource not found"))
+            .body(ErrorResponseBodyDTO("Resource not found"))
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
-    fun handleMethodNotSupported(ex: HttpRequestMethodNotSupportedException): ResponseEntity<ErrorResponseDTO> {
+    fun handleMethodNotSupported(ex: HttpRequestMethodNotSupportedException): ResponseEntity<ErrorResponseBodyDTO> {
         logger.info("Method not supported error occurred")
         val message = "Method ${ex.method} is not supported for this endpoint"
         return ResponseEntity
             .status(HttpStatus.METHOD_NOT_ALLOWED)
-            .body(ErrorResponseDTO(message))
+            .body(ErrorResponseBodyDTO(message))
     }
 
     @ExceptionHandler(Exception::class)
-    fun handleGenericException(ex: Exception): ResponseEntity<ErrorResponseDTO> {
+    fun handleGenericException(ex: Exception): ResponseEntity<ErrorResponseBodyDTO> {
         logger.error("Unexpected error occurred, message: ${ex.message}", ex)
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(ErrorResponseDTO("An unexpected error occurred"))
+            .body(ErrorResponseBodyDTO("An unexpected error occurred"))
     }
 }

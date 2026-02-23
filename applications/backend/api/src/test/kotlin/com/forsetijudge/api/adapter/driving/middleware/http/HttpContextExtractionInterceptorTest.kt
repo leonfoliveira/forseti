@@ -1,10 +1,13 @@
 package com.forsetijudge.api.adapter.driving.middleware.http
 
+import com.forsetijudge.core.application.util.SessionCache
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
+import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
-import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.session.FindSessionUseCase
+import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -21,12 +24,12 @@ import java.time.OffsetDateTime
 
 class HttpContextExtractionInterceptorTest :
     FunSpec({
-        val findSessionUseCase = mockk<FindSessionUseCase>(relaxed = true)
+        val sessionCache = mockk<SessionCache>(relaxed = true)
+        val findSessionByIdUseCase = mockk<FindSessionByIdUseCase>(relaxed = true)
 
-        val sut = HttpContextExtractionInterceptor(findSessionUseCase)
+        val sut = HttpContextExtractionInterceptor(sessionCache, findSessionByIdUseCase)
 
         beforeEach {
-            RequestContext.clearContext()
             clearAllMocks()
         }
 
@@ -40,7 +43,7 @@ class HttpContextExtractionInterceptorTest :
 
             sut.preHandle(request, response, filterChain)
 
-            RequestContext.getContext().ip shouldBe "127.0.0.1"
+            ExecutionContext.get().ip shouldBe "127.0.0.1"
         }
 
         test("should set ip from remote address when X-Forwarded-For header is not present") {
@@ -54,7 +57,7 @@ class HttpContextExtractionInterceptorTest :
 
             sut.preHandle(request, response, filterChain)
 
-            RequestContext.getContext().ip shouldBe "127.0.0.1"
+            ExecutionContext.get().ip shouldBe "127.0.0.1"
         }
 
         test("should set traceId from span header") {
@@ -66,7 +69,7 @@ class HttpContextExtractionInterceptorTest :
 
             sut.preHandle(request, response, filterChain)
 
-            RequestContext.getContext().traceId shouldBe Span.current().spanContext.traceId
+            ExecutionContext.get().traceId shouldBe Span.current().spanContext.traceId
         }
 
         test("should not set authorization when no session_id cookie is present") {
@@ -78,7 +81,7 @@ class HttpContextExtractionInterceptorTest :
 
             sut.preHandle(request, response, filterChain)
 
-            RequestContext.getContext().session shouldBe null
+            ExecutionContext.get().session shouldBe null
         }
 
         test("should not set authorization when session_id cookie is blank") {
@@ -90,7 +93,7 @@ class HttpContextExtractionInterceptorTest :
 
             sut.preHandle(request, response, filterChain)
 
-            RequestContext.getContext().session shouldBe null
+            ExecutionContext.get().session shouldBe null
         }
 
         test("should not set authorization when session_id is invalid") {
@@ -102,7 +105,7 @@ class HttpContextExtractionInterceptorTest :
 
             sut.preHandle(request, response, filterChain)
 
-            RequestContext.getContext().session shouldBe null
+            ExecutionContext.get().session shouldBe null
         }
 
         test("should throw UnauthorizedException when session is not found") {
@@ -111,13 +114,13 @@ class HttpContextExtractionInterceptorTest :
             val filterChain = mockk<FilterChain>(relaxed = true)
             every { request.method } returns "GET"
             every { request.cookies } returns arrayOf(Cookie("session_id", "00000000-0000-0000-0000-000000000000"))
-            every { findSessionUseCase.findByIdNullable(any()) } returns null
+            every { findSessionByIdUseCase.execute(any()) } throws NotFoundException()
 
             shouldThrow<UnauthorizedException> {
                 sut.preHandle(request, response, filterChain)
             }
 
-            verify { findSessionUseCase.findByIdNullable(any()) }
+            verify { findSessionByIdUseCase.execute(any()) }
         }
 
         test("should throw UnauthorizedException when session is expired") {
@@ -131,14 +134,14 @@ class HttpContextExtractionInterceptorTest :
             every { request.method } returns "GET"
             every { request.cookies } returns arrayOf(Cookie("session_id", expiredSession.id.toString()))
             every { request.getHeader("X-CSRF-Token") } returns expiredSession.csrfToken.toString()
-            every { findSessionUseCase.findByIdNullable(expiredSession.id) } returns expiredSession
+            val command = FindSessionByIdUseCase.Command(expiredSession.id)
+            every { findSessionByIdUseCase.execute(command) } returns expiredSession
 
             shouldThrow<UnauthorizedException> {
                 sut.preHandle(request, response, filterChain)
             }
 
-            RequestContext.getContext().session shouldBe null
-            verify { findSessionUseCase.findByIdNullable(expiredSession.id) }
+            verify { findSessionByIdUseCase.execute(command) }
         }
 
         test("should throw ForbiddenException with csrf token mismatch") {
@@ -149,14 +152,14 @@ class HttpContextExtractionInterceptorTest :
             every { request.method } returns "POST"
             every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
             every { request.getHeader("X-CSRF-Token") } returns "invalid-csrf-token"
-            every { findSessionUseCase.findByIdNullable(expectedSession.id) } returns expectedSession
+            val command = FindSessionByIdUseCase.Command(expectedSession.id)
+            every { findSessionByIdUseCase.execute(command) } returns expectedSession
 
             shouldThrow<ForbiddenException> {
                 sut.preHandle(request, response, filterChain)
             }
 
-            RequestContext.getContext().session shouldBe null
-            verify { findSessionUseCase.findByIdNullable(expectedSession.id) }
+            verify { findSessionByIdUseCase.execute(command) }
         }
 
         test("should not set authorization when route contestId is different from session contestId") {
@@ -167,11 +170,12 @@ class HttpContextExtractionInterceptorTest :
             every { request.method } returns "GET"
             every { request.requestURI } returns "/api/v1/contests/11111111-1111-1111-1111-111111111111"
             every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
-            every { findSessionUseCase.findByIdNullable(expectedSession.id) } returns expectedSession
+            val command = FindSessionByIdUseCase.Command(expectedSession.id)
+            every { findSessionByIdUseCase.execute(command) } returns expectedSession
 
             sut.preHandle(request, response, filterChain)
 
-            RequestContext.getContext().session shouldBe null
+            ExecutionContext.get().session shouldBe null
         }
 
         test("should set authorization when access token is valid") {
@@ -182,10 +186,11 @@ class HttpContextExtractionInterceptorTest :
             every { request.method } returns "POST"
             every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
             every { request.getHeader("X-CSRF-Token") } returns expectedSession.csrfToken.toString()
-            every { findSessionUseCase.findByIdNullable(expectedSession.id) } returns expectedSession
+            val command = FindSessionByIdUseCase.Command(expectedSession.id)
+            every { findSessionByIdUseCase.execute(command) } returns expectedSession
 
             sut.preHandle(request, response, filterChain)
 
-            RequestContext.getContext().session shouldBe expectedSession
+            ExecutionContext.get().session shouldBe expectedSession.toResponseBodyDTO()
         }
     })

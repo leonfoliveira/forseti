@@ -49,9 +49,10 @@ minio:
   bucket: ${MINIO_BUCKET:forseti}
 security:
   session:
-    expiration: ${SESSION_EXPIRATION:3h}
-    root-expiration: ${SESSION_ROOT_EXPIRATION:1h}
-    autojudge-expiration: ${SESSION_AUTOJUDGE_EXPIRATION:10m}
+    expiration:
+      default: ${SESSION_EXPIRATION:6h}
+      root: ${SESSION_ROOT_EXPIRATION:1h}
+      system: ${SESSION_SYSTEM_EXPIRATION:3h}
   root:
     password: ${ROOT_PASSWORD} # No default for security reasons
   rate-limit:

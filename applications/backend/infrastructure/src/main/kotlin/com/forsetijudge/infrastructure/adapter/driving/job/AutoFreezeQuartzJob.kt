@@ -1,14 +1,13 @@
 package com.forsetijudge.infrastructure.adapter.driving.job
 
-import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.port.driving.usecase.leaderboard.FreezeLeaderboardUseCase
-import com.forsetijudge.infrastructure.adapter.dto.job.payload.AutoFreezeJobPayload
+import com.forsetijudge.core.port.driven.scheduler.payload.AutoFreezeJobPayload
+import com.forsetijudge.core.port.driving.usecase.external.leaderboard.FreezeLeaderboardUseCase
 import org.springframework.stereotype.Component
 
 @Component
 class AutoFreezeQuartzJob(
     private val freezeLeaderboardUseCase: FreezeLeaderboardUseCase,
-) : QuartzJob<AutoFreezeJobPayload>(Member.Companion.API_ID) {
+) : QuartzJob<AutoFreezeJobPayload>() {
     override fun getPayloadType(): Class<AutoFreezeJobPayload> = AutoFreezeJobPayload::class.java
 
     /**
@@ -17,9 +16,9 @@ class AutoFreezeQuartzJob(
      * @param payload The payload containing the contestId for which the leaderboard should be frozen.
      */
     override fun handlePayload(payload: AutoFreezeJobPayload) {
-        logger.info("Handling ContestFreezeJob for contest with id ${payload.contestId}")
+        logger.info("Handling ContestFreezeJob for contest with id {}", payload.contestId)
 
-        freezeLeaderboardUseCase.freeze(payload.contestId, Member.Companion.API_ID)
+        freezeLeaderboardUseCase.execute()
 
         logger.info("Finished handling ContestFreezeJob")
     }

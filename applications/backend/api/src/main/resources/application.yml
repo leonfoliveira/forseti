@@ -9,3 +9,5 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+security:
+  member-id: 11111111-1111-1111-1111-111111111111

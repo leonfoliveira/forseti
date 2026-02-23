@@ -1,40 +1,52 @@
 package com.forsetijudge.core.domain.entity.aud
 
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
-import com.forsetijudge.core.domain.model.RequestContext
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
 
 class SessionRevisionListenerTest :
     FunSpec({
         val sut = SessionRevisionListener()
 
-        test("should not set sessionId and traceId if no authentication is present") {
-            RequestContext.clearContext()
+        beforeEach {
+            clearAllMocks()
+        }
+
+        test("should not set sessionId if no authentication is present") {
             val revisionEntity = SessionRevisionEntity()
+            ExecutionContext.set(
+                traceId = IdGenerator.getTraceId(),
+            )
 
             sut.newRevision(revisionEntity)
 
             revisionEntity.sessionId shouldBe null
             revisionEntity.ip shouldBe null
-            revisionEntity.traceId shouldBe null
         }
 
         test("should set memberId and traceId in new revision") {
             val revisionEntity = SessionRevisionEntity()
-            val sessionId = UuidCreator.getTimeOrderedEpoch()
-            RequestContext.getContext().session =
-                SessionMockBuilder.build(
-                    id = sessionId,
-                )
-            RequestContext.getContext().ip = "127.0.0.1"
-            RequestContext.getContext().traceId = "test-trace-id"
+            val sessionId = IdGenerator.getUUID()
+            val ip = "127.0.0.1"
+            val traceId = IdGenerator.getTraceId()
+            ExecutionContext.set(
+                ip = ip,
+                traceId = traceId,
+                session =
+                    SessionMockBuilder
+                        .build(
+                            id = sessionId,
+                        ).toResponseBodyDTO(),
+            )
 
             sut.newRevision(revisionEntity)
 
             revisionEntity.sessionId shouldBe sessionId
-            revisionEntity.ip shouldBe "127.0.0.1"
-            revisionEntity.traceId shouldBe "test-trace-id"
+            revisionEntity.ip shouldBe ip
+            revisionEntity.traceId shouldBe traceId
         }
     })

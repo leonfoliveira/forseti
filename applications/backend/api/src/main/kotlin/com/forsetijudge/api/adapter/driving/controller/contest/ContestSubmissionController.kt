@@ -1,28 +1,17 @@
 package com.forsetijudge.api.adapter.driving.controller.contest
 
-import com.forsetijudge.api.adapter.dto.response.ErrorResponseDTO
-import com.forsetijudge.api.adapter.dto.response.submission.SubmissionFullResponseDTO
-import com.forsetijudge.api.adapter.dto.response.submission.SubmissionFullWithExecutionResponseDTO
-import com.forsetijudge.api.adapter.dto.response.submission.SubmissionPublicResponseDTO
-import com.forsetijudge.api.adapter.dto.response.submission.toFullResponseDTO
-import com.forsetijudge.api.adapter.dto.response.submission.toFullWithExecutionResponseDTO
-import com.forsetijudge.api.adapter.dto.response.submission.toPublicResponseDTO
+import com.forsetijudge.api.adapter.dto.request.submission.CreateSubmissionRequestBodyDTO
+import com.forsetijudge.api.adapter.dto.request.submission.UpdateAnswerSubmissionRequestBodyDTO
 import com.forsetijudge.api.adapter.util.Private
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.submission.CreateSubmissionUseCase
-import com.forsetijudge.core.port.driving.usecase.submission.FindSubmissionUseCase
-import com.forsetijudge.core.port.driving.usecase.submission.UpdateSubmissionUseCase
-import com.forsetijudge.core.port.dto.input.submission.CreateSubmissionInputDTO
-import com.forsetijudge.core.port.dto.request.UpdateSubmissionAnswerRequestDTO
-import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponses
+import com.forsetijudge.core.port.driving.usecase.external.submission.CreateSubmissionUseCase
+import com.forsetijudge.core.port.driving.usecase.external.submission.ResetSubmissionUseCase
+import com.forsetijudge.core.port.driving.usecase.external.submission.UpdateAnswerSubmissionUseCase
+import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -35,239 +24,58 @@ import java.util.UUID
 @RequestMapping("/api/v1")
 class ContestSubmissionController(
     private val createSubmissionUseCase: CreateSubmissionUseCase,
-    private val findSubmissionUseCase: FindSubmissionUseCase,
-    private val updateSubmissionUseCase: UpdateSubmissionUseCase,
+    private val resetSubmissionUseCase: ResetSubmissionUseCase,
+    private val updateAnswerSubmissionUseCase: UpdateAnswerSubmissionUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping("/contests/{contestId}/submissions")
     @Private(Member.Type.CONTESTANT)
-    @Operation(summary = "Create a submission")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Submission created successfully"),
-            ApiResponse(
-                responseCode = "400",
-                description = "Invalid request format",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Problem not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
     fun create(
         @PathVariable contestId: UUID,
-        @RequestBody body: CreateSubmissionInputDTO,
-    ): ResponseEntity<SubmissionFullResponseDTO> {
-        logger.info("[POST] /v1/contests/$contestId/submissions $body")
-        val member = RequestContext.getContext().session!!.member
+        @RequestBody body: CreateSubmissionRequestBodyDTO,
+    ): ResponseEntity<SubmissionWithCodeResponseBodyDTO> {
+        logger.info("[POST] /v1/contests/{}/submissions", contestId)
         val submission =
-            createSubmissionUseCase.create(
-                contestId = contestId,
-                memberId = member.id,
-                inputDTO = body,
+            createSubmissionUseCase.execute(
+                CreateSubmissionUseCase.Command(
+                    problemId = body.problemId,
+                    language = body.language,
+                    code = AttachmentCommandDTO(id = body.code.id),
+                ),
             )
-        return ResponseEntity.ok(submission.toFullResponseDTO())
-    }
-
-    @GetMapping("/contests/{contestId}/submissions")
-    @Operation(summary = "Find all submissions")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Submissions found successfully"),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    fun findAll(
-        @PathVariable contestId: UUID,
-    ): ResponseEntity<List<SubmissionPublicResponseDTO>> {
-        logger.info("[GET] /v1/contests/$contestId/submissions")
-        val member = RequestContext.getContext().session?.member
-        val submissions = findSubmissionUseCase.findAllByContest(contestId, member?.id)
-        return ResponseEntity.ok(submissions.map { it.toPublicResponseDTO() })
-    }
-
-    @GetMapping("/contests/{contestId}/submissions/full")
-    @Private(Member.Type.JUDGE, Member.Type.ADMIN)
-    @Operation(summary = "Find all contest full submissions")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Submissions found successfully"),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Contest not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    fun findAllFull(
-        @PathVariable contestId: UUID,
-    ): ResponseEntity<List<SubmissionFullWithExecutionResponseDTO>> {
-        logger.info("[GET] /v1/contests/$contestId/submissions/full")
-        val member = RequestContext.getContext().session?.member
-        val submissions = findSubmissionUseCase.findAllByContestFull(contestId, member?.id)
-        return ResponseEntity.ok(submissions.map { it.toFullWithExecutionResponseDTO() })
-    }
-
-    @GetMapping("/contests/{contestId}/submissions/members/me")
-    @Private(Member.Type.CONTESTANT)
-    @Operation(summary = "Find all full submissions for the signed-in member")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "200", description = "Submissions found successfully"),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Member not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    fun findAllFullForMember(
-        @PathVariable contestId: UUID,
-    ): ResponseEntity<List<SubmissionFullResponseDTO>> {
-        logger.info("[GET] /v1/contests/$contestId/submissions/members/me")
-        val member = RequestContext.getContext().session!!.member
-        val submissions = findSubmissionUseCase.findAllByMember(member.id)
-        return ResponseEntity.ok(submissions.map { it.toFullResponseDTO() })
-    }
-
-    @PutMapping("/contests/{contestId}/submissions/{submissionId}:update-answer")
-    @Private(Member.Type.AUTOJUDGE)
-    @Operation(summary = "Update a submission answer")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "204", description = "Submission answer updated successfully"),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Submission not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    fun updateAnswer(
-        @PathVariable contestId: UUID,
-        @PathVariable submissionId: UUID,
-        @RequestBody body: UpdateSubmissionAnswerRequestDTO,
-    ): ResponseEntity<Void> {
-        logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId:update-answer $body")
-        updateSubmissionUseCase.updateAnswer(submissionId, body.answer)
-        return ResponseEntity.noContent().build()
-    }
-
-    @PutMapping("/contests/{contestId}/submissions/{submissionId}:update-answer-force")
-    @Private(Member.Type.JUDGE, Member.Type.ADMIN)
-    @Operation(summary = "Force update a submission answer")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "204", description = "Submission answer updated successfully"),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Submission not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    fun updateAnswerForce(
-        @PathVariable contestId: UUID,
-        @PathVariable submissionId: UUID,
-        @RequestBody body: UpdateSubmissionAnswerRequestDTO,
-    ): ResponseEntity<Void> {
-        logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId:update-answer-force $body")
-        updateSubmissionUseCase.updateAnswer(submissionId, body.answer, force = true)
-        return ResponseEntity.noContent().build()
+        return ResponseEntity.ok(submission.toWithCodeResponseBodyDTO())
     }
 
     @PostMapping("/contests/{contestId}/submissions/{submissionId}:rerun")
-    @Private(Member.Type.JUDGE, Member.Type.ADMIN)
-    @Operation(summary = "Rerun a submission")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "204", description = "Submission rerun successfully"),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "403",
-                description = "Forbidden",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-            ApiResponse(
-                responseCode = "404",
-                description = "Submission not found",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
-    fun rerunSubmission(
+    @Private(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
+    fun rerun(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
     ): ResponseEntity<Void> {
-        logger.info("[POST] /v1/contests/$contestId/submissions/$submissionId:rerun")
-        updateSubmissionUseCase.rerun(submissionId)
+        logger.info("[POST] /v1/contests/{}/submissions/{}:rerun", contestId, submissionId)
+        resetSubmissionUseCase.execute(
+            ResetSubmissionUseCase.Command(
+                submissionId = submissionId,
+            ),
+        )
+        return ResponseEntity.noContent().build()
+    }
+
+    @PutMapping("/contests/{contestId}/submissions/{submissionId}:update-answer")
+    @Private(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
+    fun updateAnswer(
+        @PathVariable contestId: UUID,
+        @PathVariable submissionId: UUID,
+        @RequestBody body: UpdateAnswerSubmissionRequestBodyDTO,
+    ): ResponseEntity<Void> {
+        logger.info("[PUT] /v1/contests/{}/submissions/{}:update-answer", contestId, submissionId)
+        updateAnswerSubmissionUseCase.execute(
+            UpdateAnswerSubmissionUseCase.Command(
+                submissionId = submissionId,
+                answer = body.answer,
+            ),
+        )
         return ResponseEntity.noContent().build()
     }
 }

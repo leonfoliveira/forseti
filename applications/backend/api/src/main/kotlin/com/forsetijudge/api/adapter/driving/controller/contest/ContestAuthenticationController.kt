@@ -1,17 +1,11 @@
 package com.forsetijudge.api.adapter.driving.controller.contest
 
-import com.forsetijudge.api.adapter.dto.response.ErrorResponseDTO
-import com.forsetijudge.api.adapter.dto.response.session.SessionResponseDTO
-import com.forsetijudge.api.adapter.dto.response.session.toResponseDTO
+import com.forsetijudge.api.adapter.dto.request.authentication.AuthenticateToContestRequestBodyDTO
 import com.forsetijudge.api.adapter.util.cookie.CsrfCookieBuilder
 import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
-import com.forsetijudge.core.port.driving.usecase.authentication.AuthenticateUseCase
-import com.forsetijudge.core.port.dto.input.authorization.ContestAuthenticateInputDTO
-import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.media.Content
-import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.responses.ApiResponse
-import io.swagger.v3.oas.annotations.responses.ApiResponses
+import com.forsetijudge.core.port.driving.usecase.external.authentication.SignInUseCase
+import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
@@ -25,43 +19,32 @@ import java.util.UUID
 @RestController
 @RequestMapping("/api/v1")
 class ContestAuthenticationController(
-    val authenticateUseCase: AuthenticateUseCase,
-    val sessionCookieBuilder: SessionCookieBuilder,
-    val csrfCookieBuilder: CsrfCookieBuilder,
+    private val signInUseCase: SignInUseCase,
+    private val sessionCookieBuilder: SessionCookieBuilder,
+    private val csrfCookieBuilder: CsrfCookieBuilder,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @PostMapping("/contests/{contestId}:sign-in")
-    @Operation(
-        summary = "Sign in to a contest",
-        description = "Authenticate a user to access a specific contest.",
-    )
-    @ApiResponses(
-        value = [
-            ApiResponse(
-                responseCode = "200",
-                description = "Authenticated successfully",
-            ),
-            ApiResponse(
-                responseCode = "401",
-                description = "Unauthorized",
-                content = [Content(mediaType = "application/json", schema = Schema(implementation = ErrorResponseDTO::class))],
-            ),
-        ],
-    )
     fun authenticate(
         @PathVariable contestId: UUID,
-        @RequestBody body: ContestAuthenticateInputDTO,
-    ): ResponseEntity<SessionResponseDTO> {
-        logger.info("[POST] /v1/contests/$contestId:sign-in $body")
-        val session = authenticateUseCase.authenticateToContest(contestId, body)
+        @RequestBody body: AuthenticateToContestRequestBodyDTO,
+    ): ResponseEntity<SessionResponseBodyDTO> {
+        logger.info("[POST] /api/v1/contests/{}:sign-in", contestId)
+        val session =
+            signInUseCase.execute(
+                SignInUseCase.Command(
+                    login = body.login,
+                    password = body.password,
+                ),
+            )
 
-        val sessionCookie = sessionCookieBuilder.buildCookie(session)
-        val csrfCookie = csrfCookieBuilder.buildCookie(session)
+        val sessionCookie = sessionCookieBuilder.buildCookie(session.toResponseBodyDTO())
+        val csrfCookie = csrfCookieBuilder.buildCookie(session.toResponseBodyDTO())
 
         return ResponseEntity
             .ok()
             .header(HttpHeaders.SET_COOKIE, sessionCookie, csrfCookie)
-            .body(session.toResponseDTO())
+            .body(session.toResponseBodyDTO())
     }
 }

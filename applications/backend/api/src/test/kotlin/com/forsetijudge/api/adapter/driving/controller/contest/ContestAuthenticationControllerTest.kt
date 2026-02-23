@@ -1,17 +1,20 @@
 package com.forsetijudge.api.adapter.driving.controller.contest
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.forsetijudge.api.adapter.dto.response.session.toResponseDTO
+import com.forsetijudge.api.adapter.dto.request.authentication.AuthenticateToContestRequestBodyDTO
 import com.forsetijudge.api.adapter.util.cookie.CsrfCookieBuilder
 import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
-import com.forsetijudge.core.port.driving.usecase.authentication.AuthenticateUseCase
-import com.forsetijudge.core.port.dto.input.authorization.ContestAuthenticateInputDTO
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
+import com.forsetijudge.core.port.driving.usecase.external.authentication.SignInUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
+import io.mockk.clearAllMocks
 import io.mockk.every
+import io.mockk.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
@@ -24,7 +27,7 @@ import org.springframework.test.web.servlet.post
 @ContextConfiguration(classes = [ContestAuthenticationController::class])
 class ContestAuthenticationControllerTest(
     @MockkBean(relaxed = true)
-    private val authenticateUseCase: AuthenticateUseCase,
+    private val signInUseCase: SignInUseCase,
     @MockkBean(relaxed = true)
     private val sessionCookieBuilder: SessionCookieBuilder,
     @MockkBean(relaxed = true)
@@ -35,14 +38,28 @@ class ContestAuthenticationControllerTest(
         extensions(SpringExtension)
 
         val basePath = "/api/v1/contests/{contestId}"
+        val contestId = IdGenerator.getUUID()
+
+        beforeTest {
+            clearAllMocks()
+            ExecutionContextMockBuilder.build(contestId, null)
+        }
 
         test("authenticateToContest") {
-            val contestId = UuidCreator.getTimeOrderedEpoch()
-            val body = ContestAuthenticateInputDTO(login = "user", password = "password")
+            val body = AuthenticateToContestRequestBodyDTO(login = "user", password = "password")
             val session = SessionMockBuilder.build()
-            every { authenticateUseCase.authenticateToContest(contestId, body) } returns session
-            every { sessionCookieBuilder.buildCookie(session) } returns "session_id=cookie_value"
-            every { csrfCookieBuilder.buildCookie(session) } returns "csrf_token=cookie_value"
+            val command =
+                SignInUseCase.Command(
+                    login = body.login,
+                    password = body.password,
+                )
+            every {
+                signInUseCase.execute(
+                    command,
+                )
+            } returns session
+            every { sessionCookieBuilder.buildCookie(session.toResponseBodyDTO()) } returns "session_id=cookie_value"
+            every { csrfCookieBuilder.buildCookie(session.toResponseBodyDTO()) } returns "csrf_token=cookie_value"
 
             webMvc
                 .post("$basePath:sign-in", contestId) {
@@ -54,7 +71,9 @@ class ContestAuthenticationControllerTest(
                         value("session_id", "cookie_value")
                         value("csrf_token", "cookie_value")
                     }
-                    content { session.toResponseDTO() }
+                    content { session.toResponseBodyDTO() }
                 }
+
+            verify { signInUseCase.execute(command) }
         }
     })

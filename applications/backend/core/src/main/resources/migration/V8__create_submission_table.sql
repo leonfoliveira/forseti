@@ -7,12 +7,13 @@ create table submission (
     problem_id uuid not null,
     language text not null,
     status text not null,
-    answer text not null,
+    answer text,
     code_id uuid not null,
     version bigint not null default 1,
     constraint fk_member_id foreign key (member_id) references member (id),
     constraint fk_problem_id foreign key (problem_id) references problem (id),
-    constraint fk_code_id foreign key (code_id) references attachment (id)
+    constraint fk_code_id foreign key (code_id) references attachment (id),
+    constraint chk_answer_null_or_status_judging check (answer is null or status = 'JUDGING')
 );
 
 create index idx_submission_member_id on submission (member_id);
@@ -31,7 +32,7 @@ create table submission_aud (
     language text not null,
     status text not null,
     status_mod boolean not null default false,
-    answer text not null,
+    answer text,
     answer_mod boolean not null default false,
     code_id uuid not null,
     version bigint not null,

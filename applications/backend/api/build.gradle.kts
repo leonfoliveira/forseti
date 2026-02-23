@@ -6,8 +6,6 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":infrastructure"))
 
-    implementation(rootProject.libs.springdoc.openapi.ui)
-
     testImplementation(testFixtures(project(":core")))
 }
 

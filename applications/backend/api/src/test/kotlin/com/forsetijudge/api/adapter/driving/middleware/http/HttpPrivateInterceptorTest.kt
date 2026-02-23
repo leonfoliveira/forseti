@@ -1,12 +1,13 @@
 package com.forsetijudge.api.adapter.driving.middleware.http
 
 import com.forsetijudge.api.adapter.util.Private
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
-import com.forsetijudge.core.domain.exception.UnauthorizedException
-import com.forsetijudge.core.domain.model.RequestContext
+import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -19,10 +20,6 @@ import org.springframework.web.method.HandlerMethod
 class HttpPrivateInterceptorTest :
     FunSpec({
         val sut = HttpPrivateInterceptor()
-
-        beforeEach {
-            RequestContext.clearContext()
-        }
 
         test("should return true when handler is not a HandlerMethod") {
             val request = mockk<HttpServletRequest>(relaxed = true)
@@ -41,39 +38,19 @@ class HttpPrivateInterceptorTest :
             sut.preHandle(request, response, handler) shouldBe true
         }
 
-        test("should return true when user type is ROOT") {
-            val request = mockk<HttpServletRequest>(relaxed = true)
-            val response = mockk<HttpServletResponse>(relaxed = true)
-            val handler = mockk<HandlerMethod>(relaxed = true)
-            every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.CONTESTANT])
-            RequestContext.getContext().session =
-                SessionMockBuilder.build(
-                    member = MemberMockBuilder.build(type = Member.Type.ROOT),
-                )
-
-            sut.preHandle(request, response, handler) shouldBe true
-        }
-
-        test("should return UnauthorizedException when no session is found and allowed is empty") {
-            val request = mockk<HttpServletRequest>(relaxed = true)
-            val response = mockk<HttpServletResponse>(relaxed = true)
-            val handler = mockk<HandlerMethod>(relaxed = true)
-            every { handler.getMethodAnnotation(Private::class.java) } returns Private()
-
-            shouldThrow<UnauthorizedException> {
-                sut.preHandle(request, response, handler)
-            }
-        }
-
         test("should return ForbiddenException when user type is not allowed") {
             val request = mockk<HttpServletRequest>(relaxed = true)
             val response = mockk<HttpServletResponse>(relaxed = true)
             val handler = mockk<HandlerMethod>(relaxed = true)
             every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT])
-            RequestContext.getContext().session =
-                SessionMockBuilder.build(
-                    member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
-                )
+            ExecutionContext.set(
+                traceId = IdGenerator.getTraceId(),
+                session =
+                    SessionMockBuilder
+                        .build(
+                            member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
+                        ).toResponseBodyDTO(),
+            )
 
             shouldThrow<ForbiddenException> {
                 sut.preHandle(request, response, handler)
@@ -85,10 +62,14 @@ class HttpPrivateInterceptorTest :
             val response = mockk<HttpServletResponse>(relaxed = true)
             val handler = mockk<HandlerMethod>(relaxed = true)
             every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT, Member.Type.CONTESTANT])
-            RequestContext.getContext().session =
-                SessionMockBuilder.build(
-                    member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
-                )
+            ExecutionContext.set(
+                traceId = IdGenerator.getTraceId(),
+                session =
+                    SessionMockBuilder
+                        .build(
+                            member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
+                        ).toResponseBodyDTO(),
+            )
 
             sut.preHandle(request, response, handler) shouldBe true
         }

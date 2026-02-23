@@ -1,9 +1,9 @@
 package com.forsetijudge.api.adapter.util.cookie
 
-import com.forsetijudge.core.domain.entity.Session
+import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import org.springframework.stereotype.Service
 import java.time.Duration
-import java.time.OffsetDateTime
 
 @Service
 class SessionCookieBuilder(
@@ -19,10 +19,10 @@ class SessionCookieBuilder(
      * @param session The session for which to build the cookie.
      * @return The session cookie string.
      */
-    fun buildCookie(session: Session): String =
+    fun buildCookie(session: SessionResponseBodyDTO): String =
         cookieBuilder
             .from(SESSION_COOKIE_NAME, session.id.toString())
-            .maxAge(Duration.between(OffsetDateTime.now(), session.expiresAt))
+            .maxAge(Duration.between(ExecutionContext.getStartAt(), session.expiresAt))
             .build()
             .toString()
 

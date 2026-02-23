@@ -1,7 +1,6 @@
 package com.forsetijudge.api.adapter.driving.middleware.websocket
 
-import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.domain.model.RequestContext
+import com.forsetijudge.core.domain.exception.NotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
@@ -31,15 +30,8 @@ class WebSocketPrivateInterceptor(
             return message
         }
 
-        val destination = accessor.destination ?: return message
+        val destination = accessor.destination?.trim() ?: return message
         logger.info("Started PrivateWebSocketInterceptor for destination: $destination")
-        val session = RequestContext.getContext().session
-
-        // ROOT users bypass all checks
-        if (session?.member?.type == Member.Type.ROOT) {
-            logger.info("User is ROOT, bypassing access")
-            return message
-        }
 
         val privateFilter =
             webSocketTopicConfigs.privateFilters.entries
@@ -47,13 +39,11 @@ class WebSocketPrivateInterceptor(
                     it.key.matches(destination)
                 }
 
-        // If no private configuration is present, the topic is public
         if (privateFilter == null) {
-            logger.info("No private configuration found for destination: $destination")
-            return message
+            throw NotFoundException("Destination does not exist: $destination")
         }
 
-        logger.info("Applying private filter: ${privateFilter.key}")
+        logger.info("Applying private filter: {}", privateFilter.key)
         privateFilter.value(destination)
 
         logger.info("User is allowed to access destination")

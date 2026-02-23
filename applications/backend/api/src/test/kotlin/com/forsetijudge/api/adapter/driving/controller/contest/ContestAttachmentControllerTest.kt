@@ -1,19 +1,19 @@
 package com.forsetijudge.api.adapter.driving.controller.contest
 
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
-import com.forsetijudge.core.domain.entity.SessionMockBuilder
-import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.attachment.DownloadAttachmentUseCase
-import com.forsetijudge.core.port.driving.usecase.attachment.UploadAttachmentUseCase
-import com.forsetijudge.core.port.dto.output.AttachmentDownloadOutputDTO
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
+import com.forsetijudge.core.port.driving.usecase.external.attachment.DownloadAttachmentUseCase
+import com.forsetijudge.core.port.driving.usecase.external.attachment.UploadAttachmentUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.mockk.clearAllMocks
 import io.mockk.every
+import io.mockk.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
@@ -32,55 +32,74 @@ class ContestAttachmentControllerTest(
         extensions(SpringExtension)
 
         val basePath = "/api/v1/contests/{contestId}/attachments"
+        val contestId = IdGenerator.getUUID()
+        val memberId = IdGenerator.getUUID()
 
-        beforeEach {
+        beforeTest {
             clearAllMocks()
+            ExecutionContextMockBuilder.build(contestId, memberId)
         }
 
-        test("uploadAttachment") {
-            val contestId = UuidCreator.getTimeOrderedEpoch()
+        test("upload") {
+            val fileName = "test.txt"
+            val contentType = "application/octet-stream"
             val testBytes = "test content".toByteArray()
             val attachment = AttachmentMockBuilder.build()
-            val session = SessionMockBuilder.build()
-            RequestContext.getContext().session = session
-            every {
-                uploadAttachmentUseCase.upload(
-                    contestId = contestId,
-                    memberId = session.member.id,
-                    filename = any(),
-                    contentType = any(),
+            val command =
+                UploadAttachmentUseCase.Command(
+                    filename = fileName,
+                    contentType = contentType,
                     context = attachment.context,
-                    bytes = any(),
+                    bytes = ByteArray(0),
                 )
-            } returns attachment
+            every {
+                uploadAttachmentUseCase.execute(
+                    any(),
+                )
+            } returns Pair(attachment, testBytes)
+            val file =
+                MockMultipartFile(
+                    "file",
+                    command.filename,
+                    command.contentType,
+                    testBytes,
+                )
 
             webMvc
                 .multipart("$basePath?context=${attachment.context}", contestId) {
-                    file("file", testBytes)
+                    file(file)
                 }.andExpect {
                     status { isOk() }
                     jsonPath("$.id") { exists() }
                 }
         }
 
-        test("downloadAttachment") {
-            val contestId = UuidCreator.getTimeOrderedEpoch()
+        test("download") {
             val attachment =
                 AttachmentMockBuilder.build(
                     filename = "test.txt",
                     contentType = "application/octet-stream",
                 )
             val bytes = "test data".toByteArray()
-            every { downloadAttachmentUseCase.download(contestId, any(), attachment.id) } returns
-                AttachmentDownloadOutputDTO(
-                    attachment = attachment,
-                    bytes = bytes,
+            val command =
+                DownloadAttachmentUseCase.Command(
+                    attachmentId = attachment.id,
                 )
+            every {
+                downloadAttachmentUseCase.execute(command)
+            } returns Pair(attachment, bytes)
 
             webMvc
                 .get("$basePath/{attachmentId}", contestId, attachment.id)
                 .andExpect {
                     status { isOk() }
+                    header { string("Content-Disposition", "attachment; filename=\"${attachment.filename}\"") }
+                    header { string("Content-Type", attachment.contentType) }
+                    content { bytes(bytes) }
                 }
+
+            verify {
+                downloadAttachmentUseCase.execute(command)
+            }
         }
     })

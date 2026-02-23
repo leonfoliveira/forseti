@@ -1,7 +1,8 @@
 package com.forsetijudge.api.adapter.driving.middleware.websocket
 
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
-import com.forsetijudge.core.domain.model.RequestContext
+import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -18,8 +19,8 @@ class WebSocketContextExtractionInterceptorTest :
         val sut = WebSocketContextExtractionInterceptor()
 
         beforeEach {
-            RequestContext.clearContext()
             mockkStatic(MessageHeaderAccessor::class)
+            ExecutionContext.clear()
         }
 
         test("should set empty context when no accessor is found") {
@@ -29,7 +30,7 @@ class WebSocketContextExtractionInterceptorTest :
 
             sut.preSend(message, channel)
 
-            val context = RequestContext.getContext()
+            val context = ExecutionContext.get()
             context.session shouldBe null
             context.ip shouldBe null
             context.traceId shouldNotBe null
@@ -44,10 +45,8 @@ class WebSocketContextExtractionInterceptorTest :
 
             sut.preSend(message, channel)
 
-            val context = RequestContext.getContext()
+            val context = ExecutionContext.get()
             context.session shouldBe null
-            context.ip shouldBe null
-            context.traceId shouldNotBe null
         }
 
         test("should set empty context when no context is found in session attributes") {
@@ -59,13 +58,13 @@ class WebSocketContextExtractionInterceptorTest :
 
             sut.preSend(message, channel)
 
-            val context = RequestContext.getContext()
+            val context = ExecutionContext.get()
             context.session shouldBe null
             context.ip shouldBe null
             context.traceId shouldNotBe null
         }
 
-        test(" should set empty context when context found in session attributes is not a valid RequestContext") {
+        test(" should set empty context when context found in session attributes is not a valid ExecutionContext") {
             val message = mockk<Message<Any>>(relaxed = true)
             val channel = mockk<MessageChannel>(relaxed = true)
             val accessor = mockk<StompHeaderAccessor>(relaxed = true)
@@ -74,7 +73,7 @@ class WebSocketContextExtractionInterceptorTest :
 
             sut.preSend(message, channel)
 
-            val context = RequestContext.getContext()
+            val context = ExecutionContext.get()
             context.session shouldBe null
             context.ip shouldBe null
             context.traceId shouldNotBe null
@@ -86,12 +85,12 @@ class WebSocketContextExtractionInterceptorTest :
             val accessor = mockk<StompHeaderAccessor>(relaxed = true)
             every { MessageHeaderAccessor.getAccessor(any<Message<*>>(), StompHeaderAccessor::class.java) } returns accessor
             val existingContext =
-                RequestContext(session = SessionMockBuilder.build(), ip = "127.0.0.1", traceId = "traceId")
+                ExecutionContext(session = SessionMockBuilder.build().toResponseBodyDTO(), ip = "127.0.0.1", traceId = "traceId")
             every { accessor.sessionAttributes } returns mapOf("context" to existingContext)
 
             sut.preSend(message, channel)
 
-            val context = RequestContext.getContext()
+            val context = ExecutionContext.get()
             context.session shouldBe existingContext.session
             context.ip shouldBe existingContext.ip
             context.traceId shouldBe existingContext.traceId

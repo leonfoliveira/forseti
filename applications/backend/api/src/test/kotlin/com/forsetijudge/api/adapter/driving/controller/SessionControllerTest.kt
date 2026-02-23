@@ -2,9 +2,11 @@ package com.forsetijudge.api.adapter.driving.controller
 
 import com.forsetijudge.api.adapter.util.cookie.CsrfCookieBuilder
 import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
-import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.session.DeleteSessionUseCase
+import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.driving.usecase.external.session.DeleteAllSessionsByMemberUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -22,7 +24,7 @@ import org.springframework.test.web.servlet.get
 @ContextConfiguration(classes = [SessionController::class])
 class SessionControllerTest(
     @MockkBean(relaxed = true)
-    private val deleteSessionUseCase: DeleteSessionUseCase,
+    private val deleteAllSessionsByMemberUseCase: DeleteAllSessionsByMemberUseCase,
     @MockkBean(relaxed = true)
     private val sessionCookieBuilder: SessionCookieBuilder,
     @MockkBean(relaxed = true)
@@ -38,19 +40,27 @@ class SessionControllerTest(
 
         test("getCurrent") {
             val session = SessionMockBuilder.build()
-            RequestContext.getContext().session = session
+            ExecutionContext.set(
+                traceId = IdGenerator.getTraceId(),
+                contestId = null,
+                session = SessionMockBuilder.build().toResponseBodyDTO(),
+            )
 
             webMvc
                 .get("/api/v1/sessions/me")
                 .andExpect {
                     status { isOk() }
-                    content { session }
+                    content { session.toResponseBodyDTO() }
                 }
         }
 
         test("deleteCurrent") {
             val session = SessionMockBuilder.build()
-            RequestContext.getContext().session = session
+            ExecutionContext.set(
+                traceId = IdGenerator.getTraceId(),
+                contestId = null,
+                session = session.toResponseBodyDTO(),
+            )
 
             webMvc
                 .delete("/api/v1/sessions/me")
@@ -61,20 +71,7 @@ class SessionControllerTest(
                         value("csrf_token", "")
                     }
                 }
-        }
 
-        test("deleteCurrent without session") {
-            RequestContext.getContext().session = null
-            webMvc
-                .delete("/api/v1/sessions/me")
-                .andExpect {
-                    status { isNoContent() }
-                    cookie {
-                        value("session_id", "")
-                        value("csrf_token", "")
-                    }
-                }
-
-            verify { deleteSessionUseCase.deleteCurrent() }
+            verify { deleteAllSessionsByMemberUseCase.execute() }
         }
     })

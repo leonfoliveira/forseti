@@ -1,9 +1,8 @@
 package com.forsetijudge.infrastructure.adapter.driving.job
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.forsetijudge.core.application.util.IdUtil
-import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.session.RefreshSessionUseCase
+import com.forsetijudge.core.application.util.SessionCache
+import com.forsetijudge.core.domain.model.ExecutionContext
 import io.opentelemetry.api.trace.Span
 import org.quartz.DisallowConcurrentExecution
 import org.quartz.JobExecutionContext
@@ -11,7 +10,6 @@ import org.quartz.JobExecutionException
 import org.quartz.PersistJobDataAfterExecution
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.quartz.QuartzJobBean
@@ -20,11 +18,12 @@ import java.util.UUID
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-abstract class QuartzJob<TPayload : Serializable>(
-    private val memberId: UUID,
-) : QuartzJobBean() {
+abstract class QuartzJob<TPayload : Serializable> : QuartzJobBean() {
+    @Value("\${security.member-id}")
+    private lateinit var memberId: UUID
+
     @Autowired
-    private lateinit var refreshSessionUseCase: RefreshSessionUseCase
+    private lateinit var sessionCache: SessionCache
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -41,23 +40,22 @@ abstract class QuartzJob<TPayload : Serializable>(
      * @param context The JobExecutionContext provided by the Quartz scheduler, containing information about the job execution environment.
      */
     override fun executeInternal(context: JobExecutionContext) {
-        val traceId = IdUtil.getTraceId()
-        val currentSpan = Span.current()
-        currentSpan.setAttribute("trace_id", traceId)
-        MDC.put("trace_id", traceId)
-
-        logger.info("Starting job ${this::class.java.simpleName}")
-
         val dataMap = context.mergedJobDataMap
         val id = dataMap.getString("id")
+        val contestId =
+            if (dataMap.contains("contestId")) {
+                UUID.fromString(dataMap.getString("contestId"))
+            } else {
+                null
+            }
         val payloadJson = dataMap.getString("payload")
         var retries = dataMap.getInt("retries")
 
-        logger.info("Job id: {}, payload: {}, retries: {}", id, payloadJson, retries)
-
         val payload = objectMapper.readValue(payloadJson, getPayloadType())
 
-        initRequestContext()
+        initExecutionContext(contestId)
+
+        logger.info("Job id: {}, payload: {}, retries: {}", id, payloadJson, retries)
 
         try {
             logger.info("Handling job with id: {}", id)
@@ -85,10 +83,13 @@ abstract class QuartzJob<TPayload : Serializable>(
         }
     }
 
-    private fun initRequestContext() {
-        val session = refreshSessionUseCase.refresh(memberId)
-        RequestContext.getContext().session = session
-        RequestContext.getContext().traceId = Span.current().spanContext.traceId
+    private fun initExecutionContext(contestId: UUID?) {
+        ExecutionContext.set(
+            ip = null,
+            traceId = Span.current().spanContext.traceId,
+            contestId = contestId,
+            session = sessionCache.get(contestId, memberId),
+        )
     }
 
     /**

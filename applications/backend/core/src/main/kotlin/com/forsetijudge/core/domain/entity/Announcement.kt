@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.entity
 
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -9,17 +10,18 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
+import org.hibernate.envers.NotAudited
 import java.time.OffsetDateTime
 import java.util.UUID
 
 @Entity
 @Table(name = "announcement")
 @Audited(withModifiedFlag = true)
-@SQLRestriction("deleted_at is null")
+@SQLRestriction("deleted_at IS NULL")
 class Announcement(
-    id: UUID = UuidCreator.getTimeOrderedEpoch(),
-    createdAt: OffsetDateTime = OffsetDateTime.now(),
-    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    id: UUID = IdGenerator.getUUID(),
+    createdAt: OffsetDateTime = ExecutionContext.get().startedAt,
+    updatedAt: OffsetDateTime = ExecutionContext.get().startedAt,
     deletedAt: OffsetDateTime? = null,
     version: Long = 1L,
     /**
@@ -41,4 +43,12 @@ class Announcement(
      */
     @Column(nullable = false)
     var text: String,
-) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
+    @Column(name = "contest_id", insertable = false, updatable = false)
+    @NotAudited
+    lateinit var contestId: UUID
+
+    @Column(name = "member_id", insertable = false, updatable = false)
+    @NotAudited
+    lateinit var memberId: UUID
+}

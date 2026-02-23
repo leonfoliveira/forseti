@@ -1,16 +1,10 @@
 package com.forsetijudge.core.port.driven.producer
 
-import java.io.Serializable
+import com.forsetijudge.core.port.driven.producer.payload.WebSocketFanoutPayload
 
-interface WebSocketFanoutProducer {
-    /**
-     * Produces a message to be sent to all instances for websocket fanout.
-     *
-     * @param destination The destination to send the message to
-     * @param payload The payload of the message
-     */
-    fun <T : Serializable> produce(
-        destination: String,
-        payload: T,
-    )
-}
+/**
+ * A specialized [QueueProducer] for producing messages to a WebSocket fanout queue.
+ *
+ * This producer is used to send real-time updates to clients connected via WebSocket. The payload contains the necessary information to identify the target clients and the message content.
+ */
+interface WebSocketFanoutProducer : QueueProducer<WebSocketFanoutPayload>

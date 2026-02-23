@@ -1,17 +1,18 @@
 package com.forsetijudge.api.adapter.driving.controller.contest
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.forsetijudge.api.adapter.dto.response.clarification.toResponseDTO
+import com.forsetijudge.api.adapter.dto.request.clarification.CreateClarificationRequestBodyDTO
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ClarificationMockBuilder
-import com.forsetijudge.core.domain.entity.SessionMockBuilder
-import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.clarification.CreateClarificationUseCase
-import com.forsetijudge.core.port.driving.usecase.clarification.DeleteClarificationUseCase
-import com.forsetijudge.core.port.dto.input.clarification.CreateClarificationInputDTO
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
+import com.forsetijudge.core.port.driving.usecase.external.clarification.CreateClarificationUseCase
+import com.forsetijudge.core.port.driving.usecase.external.clarification.DeleteClarificationUseCase
+import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -36,17 +37,29 @@ class ContestClarificationControllerTest(
         extensions(SpringExtension)
 
         val basePath = "/api/v1/contests/{contestId}/clarifications"
+        val contestId = IdGenerator.getUUID()
+        val memberId = IdGenerator.getUUID()
 
-        test("createClarification") {
-            val contestId = UuidCreator.getTimeOrderedEpoch()
+        beforeTest {
+            clearAllMocks()
+            ExecutionContextMockBuilder.build(contestId, memberId)
+        }
+
+        test("create") {
             val body =
-                CreateClarificationInputDTO(
+                CreateClarificationRequestBodyDTO(
                     text = "This is a test clarification",
                 )
             val clarification = ClarificationMockBuilder.build()
-            val session = SessionMockBuilder.build()
-            RequestContext.getContext().session = session
-            every { createClarificationUseCase.create(contestId, session.member.id, body) } returns clarification
+            val command =
+                CreateClarificationUseCase.Command(
+                    text = body.text,
+                )
+            every {
+                createClarificationUseCase.execute(
+                    command,
+                )
+            } returns clarification
 
             webMvc
                 .post(basePath, contestId) {
@@ -54,23 +67,25 @@ class ContestClarificationControllerTest(
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {
                     status { isOk() }
-                    content { clarification.toResponseDTO() }
+                    content { clarification.toResponseBodyDTO() }
                 }
+
+            verify { createClarificationUseCase.execute(command) }
         }
 
         test("deleteClarificationById") {
-            val contestId = UuidCreator.getTimeOrderedEpoch()
-            val clarificationId = UuidCreator.getTimeOrderedEpoch()
-            val session = SessionMockBuilder.build()
-            RequestContext.getContext().session = session
+            val clarificationId = IdGenerator.getUUID()
+            val command =
+                DeleteClarificationUseCase.Command(
+                    clarificationId = clarificationId,
+                )
 
             webMvc
-                .delete("$basePath/{clarificationId}", contestId, clarificationId) {
-                    contentType = MediaType.APPLICATION_JSON
-                }.andExpect {
+                .delete("$basePath/{clarificationId}", contestId, clarificationId)
+                .andExpect {
                     status { isNoContent() }
                 }
 
-            verify { deleteClarificationUseCase.delete(contestId, session.member.id, clarificationId) }
+            verify { deleteClarificationUseCase.execute(command) }
         }
     })

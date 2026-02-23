@@ -1,16 +1,16 @@
 package com.forsetijudge.core.domain.entity
 
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
 import java.time.OffsetDateTime
 import java.util.UUID
 
 object SessionMockBuilder {
     fun build(
-        id: UUID = UuidCreator.getTimeOrderedEpoch(),
+        id: UUID = IdGenerator.getUUID(),
         createdAt: OffsetDateTime = OffsetDateTime.now(),
         updatedAt: OffsetDateTime = OffsetDateTime.now(),
         deletedAt: OffsetDateTime? = null,
-        csrfToken: UUID = UuidCreator.getTimeOrderedEpoch(),
+        csrfToken: UUID = IdGenerator.getUUID(),
         contest: Contest? = ContestMockBuilder.build(),
         member: Member = MemberMockBuilder.build(),
         expiresAt: OffsetDateTime = OffsetDateTime.now().plusHours(1),
@@ -23,5 +23,8 @@ object SessionMockBuilder {
         contest = contest,
         member = member,
         expiresAt = expiresAt,
-    )
+    ).also {
+        contest?.let { c -> it.contestId = c.id }
+        it.memberId = member.id
+    }
 }

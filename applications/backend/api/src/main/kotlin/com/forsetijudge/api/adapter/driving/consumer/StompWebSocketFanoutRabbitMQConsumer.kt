@@ -1,19 +1,19 @@
 package com.forsetijudge.api.adapter.driving.consumer
 
-import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.port.driven.producer.payload.WebSocketFanoutPayload
 import com.forsetijudge.infrastructure.adapter.driving.consumer.RabbitMQConsumer
-import com.forsetijudge.infrastructure.adapter.dto.message.payload.WebSocketFanoutMessagePayload
 import org.springframework.amqp.rabbit.annotation.Exchange
 import org.springframework.amqp.rabbit.annotation.Queue
 import org.springframework.amqp.rabbit.annotation.QueueBinding
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
+import java.io.Serializable
 
 @Component
 class StompWebSocketFanoutRabbitMQConsumer(
     private val messagingTemplate: SimpMessagingTemplate,
-) : RabbitMQConsumer<WebSocketFanoutMessagePayload>(Member.API_ID) {
+) : RabbitMQConsumer<WebSocketFanoutPayload>() {
     @RabbitListener(
         bindings = [
             QueueBinding(
@@ -37,18 +37,25 @@ class StompWebSocketFanoutRabbitMQConsumer(
         super.receiveMessage(jsonMessage)
     }
 
-    override fun getPayloadType(): Class<WebSocketFanoutMessagePayload> = WebSocketFanoutMessagePayload::class.java
+    override fun getPayloadType(): Class<WebSocketFanoutPayload> = WebSocketFanoutPayload::class.java
 
     /**
      * Handles the payload by sending the message to the specified WebSocket destination.
      *
      * @param payload The payload containing the destination and message.
      */
-    override fun handlePayload(payload: WebSocketFanoutMessagePayload) {
+    override fun handlePayload(payload: WebSocketFanoutPayload) {
         logger.info("Forwarding message to WebSocket destination: {}", payload.destination)
-        messagingTemplate.convertAndSend(
-            payload.destination,
-            payload.payload,
-        )
+
+        if (payload.body != null) {
+            messagingTemplate.convertAndSend(
+                payload.destination,
+                payload.body as Serializable,
+            )
+        } else {
+            messagingTemplate.convertAndSend(
+                payload.destination,
+            )
+        }
     }
 }
