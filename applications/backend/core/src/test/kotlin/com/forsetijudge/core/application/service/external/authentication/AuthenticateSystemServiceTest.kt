@@ -1,6 +1,5 @@
 package com.forsetijudge.core.application.service.external.authentication
 
-import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder

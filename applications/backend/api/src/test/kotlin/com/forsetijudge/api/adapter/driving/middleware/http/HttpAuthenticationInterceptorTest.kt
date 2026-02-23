@@ -2,11 +2,8 @@ package com.forsetijudge.api.adapter.driving.middleware.http
 
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
-import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
-import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -14,12 +11,10 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import io.opentelemetry.api.trace.Span
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.time.OffsetDateTime
 
 class HttpAuthenticationInterceptorTest :
     FunSpec({

@@ -2,12 +2,9 @@ package com.forsetijudge.core.application.util
 
 import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.CreateSessionUseCase
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
-import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component

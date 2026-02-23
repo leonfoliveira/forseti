@@ -4,11 +4,9 @@ import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
-import com.forsetijudge.core.domain.model.dashboard.AdminDashboard
 import com.forsetijudge.core.domain.model.dashboard.ContestantDashboard
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
-import com.forsetijudge.core.port.driving.usecase.external.dashboard.BuildAdminDashboardUseCase
 import com.forsetijudge.core.port.driving.usecase.external.dashboard.BuildContestantDashboardUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
 import org.slf4j.LoggerFactory

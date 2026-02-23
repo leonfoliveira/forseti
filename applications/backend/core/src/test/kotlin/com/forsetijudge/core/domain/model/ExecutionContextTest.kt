@@ -3,7 +3,6 @@ package com.forsetijudge.core.domain.model
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
-import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 

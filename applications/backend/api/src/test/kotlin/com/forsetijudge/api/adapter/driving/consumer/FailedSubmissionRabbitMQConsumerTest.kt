@@ -2,18 +2,13 @@ package com.forsetijudge.api.adapter.driving.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.application.util.IdGenerator
-import com.forsetijudge.core.application.util.SessionCache
 import com.forsetijudge.core.config.JacksonConfig
-import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.port.driven.producer.payload.SubmissionQueuePayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.submission.FailSubmissionUseCase
-import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
-import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 

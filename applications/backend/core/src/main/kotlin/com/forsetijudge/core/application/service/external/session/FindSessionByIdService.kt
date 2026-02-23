@@ -1,7 +1,6 @@
 package com.forsetijudge.core.application.service.external.session
 
 import com.forsetijudge.core.domain.entity.Session
-import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.SessionRepository

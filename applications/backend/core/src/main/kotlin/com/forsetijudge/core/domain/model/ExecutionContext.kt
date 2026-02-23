@@ -4,9 +4,6 @@ import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.exception.UnauthorizedException
-import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.opentelemetry.api.trace.Span
 import org.slf4j.MDC
 import java.time.OffsetDateTime

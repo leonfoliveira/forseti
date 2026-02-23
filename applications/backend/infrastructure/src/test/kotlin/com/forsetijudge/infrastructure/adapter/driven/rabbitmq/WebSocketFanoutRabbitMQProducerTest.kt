@@ -48,7 +48,7 @@ class WebSocketFanoutRabbitMQProducerTest(
                 object :
                     TypeReference<
                         RabbitMQMessage<WebSocketFanoutPayload>,
-                    >() {}
+                        >() {}
 
             val message = objectMapper.readValue(jsonMessage, typeRef)
             message.contestId shouldBe contestId

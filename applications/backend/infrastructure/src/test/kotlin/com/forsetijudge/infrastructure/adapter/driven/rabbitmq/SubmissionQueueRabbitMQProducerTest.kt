@@ -49,7 +49,7 @@ class SubmissionQueueRabbitMQProducerTest(
                 object :
                     TypeReference<
                         RabbitMQMessage<SubmissionQueuePayload>,
-                    >() {}
+                        >() {}
 
             val message = objectMapper.readValue(jsonMessage, typeRef)
             message.contestId shouldBe contestId
