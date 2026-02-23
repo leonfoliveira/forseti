@@ -1,4 +1,5 @@
 [versions]
+bcrypt = "0.10.2"
 flyway = "9.22.3"
 hibernate-envers = "6.6.13.Final"
 hibernate-types = "2.21.1"
@@ -23,6 +24,7 @@ testcontainers = "1.21.0"
 uuid-creator = "6.1.1"
 
 [libraries]
+bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }
 hibernate-envers = { module = "org.hibernate.orm:hibernate-envers", version.ref = "hibernate-envers" }
 hibernate-types = { module = "com.vladmihalcea:hibernate-types-60", version.ref = "hibernate-types" }
 flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
@@ -49,7 +51,6 @@ spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-
 spring-boot-starter-amqp = { module = "org.springframework.boot:spring-boot-starter-amqp", version.ref = "spring-boot" }
 spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "spring-boot" }
 spring-boot-starter-quartz = { module = "org.springframework.boot:spring-boot-starter-quartz", version.ref = "spring-boot" }
-spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "spring-boot" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot" }
 spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "spring-boot" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "spring-boot" }
@@ -90,7 +91,6 @@ spring = [
     "spring-boot-starter-amqp",
     "spring-boot-starter-data-jpa",
     "spring-boot-starter-quartz",
-    "spring-boot-starter-security",
     "spring-boot-starter-validation",
     "spring-boot-starter-web",
     "spring-boot-starter-websocket",
