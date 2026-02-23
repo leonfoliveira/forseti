@@ -23,13 +23,13 @@ create table ticket (
             )
         ) or (
             type = 'TECHNICAL_SUPPORT' and (
-                properties ? 'message' and
-                length(properties->>'message') between 1 and 500
+                properties ? 'description' and
+                length(properties->>'description') between 1 and 500
             )
         ) or (
             type = 'NON_TECHNICAL_SUPPORT' and (
-                properties ? 'message' and
-                length(properties->>'message') between 1 and 500
+                properties ? 'description' and
+                length(properties->>'description') between 1 and 500
             )
         )
     )
