@@ -1,17 +1,23 @@
 meta {
-  name: force_end_contest
+  name: create
   type: http
-  seq: 8
+  seq: 1
 }
 
-put {
-  url: {{base_url}}/{{contest_id}}:force-end
-  body: none
+post {
+  url: {{base_url}}
+  body: json
   auth: inherit
 }
 
 headers {
   x-csrf-token: {{csrf_token}}
+}
+
+body:json {
+  {
+    "text": "{{$randomLoremParagraph}}"
+  }
 }
 
 settings {

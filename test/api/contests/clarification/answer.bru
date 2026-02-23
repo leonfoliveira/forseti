@@ -1,11 +1,11 @@
 meta {
-  name: update_status
+  name: answer
   type: http
-  seq: 1
+  seq: 2
 }
 
-put {
-  url: {{base_url}}/{{ticket_id}}:update-status
+post {
+  url: {{base_url}}
   body: json
   auth: inherit
 }
@@ -16,7 +16,9 @@ headers {
 
 body:json {
   {
-    "status": "IN_PROGRESS"
+    "problemId": null,
+    "parentId": "{{clarification_id}}",
+    "text": "{{$randomLoremParagraph}}"
   }
 }
 

@@ -92,7 +92,7 @@ class ContestController(
                                 memoryLimit = it.memoryLimit,
                                 testCases =
                                     AttachmentCommandDTO(
-                                        id = it.description.id,
+                                        id = it.testCases.id,
                                     ),
                             )
                         },

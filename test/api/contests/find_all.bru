@@ -1,21 +1,17 @@
 meta {
-  name: delete_clarification_by_id
+  name: find_all
   type: http
-  seq: 2
+  seq: 6
 }
 
-delete {
-  url: {{base_url}}/{{clarification_id}}
+get {
+  url: {{base_url}}
   body: none
   auth: inherit
 }
 
 headers {
   x-csrf-token: {{csrf_token}}
-}
-
-vars:pre-request {
-  clarification_id: 123
 }
 
 settings {

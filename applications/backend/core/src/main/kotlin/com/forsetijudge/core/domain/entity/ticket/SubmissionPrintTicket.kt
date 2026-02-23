@@ -1,5 +1,6 @@
 package com.forsetijudge.core.domain.entity.ticket
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
@@ -44,7 +45,9 @@ class SubmissionPrintTicket(
      * The properties of a submission print ticket. It contains the information of the submission and the attachment to be printed.
      */
     data class Properties(
+        @JsonProperty("submission_id")
         val submissionId: UUID,
+        @JsonProperty("attachment_id")
         val attachmentId: UUID,
     ) : Serializable
 }

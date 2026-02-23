@@ -1,11 +1,11 @@
 meta {
-  name: rerun_submission
+  name: delete
   type: http
-  seq: 3
+  seq: 9
 }
 
-post {
-  url: {{base_url}}/{{submission_id}}:rerun
+delete {
+  url: {{base_url}}/{{contest_id}}
   body: none
   auth: inherit
 }

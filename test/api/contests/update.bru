@@ -1,5 +1,5 @@
 meta {
-  name: update_contest
+  name: update
   type: http
   seq: 5
 }
@@ -31,9 +31,15 @@ body:json {
     },
     "members": [
       {
-        "type": "{{Member.Type.CONTESTANT}}",
+        "type": "{{Member.Type.ADMIN}}",
         "name": "{{$randomFirstName}}",
-        "login": "contestant",
+        "login": "admin",
+        "password": "123"
+      },
+      {
+        "type": "{{Member.Type.STAFF}}",
+        "name": "{{$randomFirstName}}",
+        "login": "staff",
         "password": "123"
       },
       {
@@ -43,15 +49,16 @@ body:json {
         "password": "123"
       },
       {
-        "type": "{{Member.Type.ADMIN}}",
+        "type": "{{Member.Type.CONTESTANT}}",
         "name": "{{$randomFirstName}}",
-        "login": "admin",
+        "login": "contestant",
         "password": "123"
       }
     ],
     "problems": [
       {
         "letter": "A",
+        "color": "#ffffff",
         "title": "{{$randomWords}}",
         "description": {
           "id": "{{description_attachment_id}}"
@@ -66,24 +73,15 @@ body:json {
   }
 }
 
-vars:pre-request {
-  description_attachment_id: 123
-  test_cases_attachment_id: 123
-}
-
 script:pre-request {
-  async function uploadFile(file, context) {  
-    bru.setVar("file", file)  
-    bru.setVar("context", context)
-    const response = await bru.runRequest("contests/attachment/upload_attachment")
-    return response.data
-  }
+  const uploadProblemDescriptionResult = await bru.runRequest("contests/attachment/upload/problem_description")
+  const uploadProblemTestCasesResult = await bru.runRequest("contests/attachment/upload/problem_test_cases")
   
-  const descriptionAttachment = await uploadFile("description.pdf", "PROBLEM_DESCRIPTION")
-  const testCasesAttachment = await uploadFile("test_cases.csv", "PROBLEM_TEST_CASES")
+  const problemDescription = uploadProblemDescriptionResult.data
+  const problemTestCases = uploadProblemTestCasesResult.data
   
-  bru.setVar("description_attachment_id", descriptionAttachment.id)
-  bru.setVar("test_cases_attachment_id", testCasesAttachment.id)
+  bru.setVar("description_attachment_id", problemDescription.id)
+  bru.setVar("test_cases_attachment_id", problemTestCases.id)
   
   const startAt = new Date(new Date().getTime() + 60 * 60 * 1000).toISOString()
   const endAt = new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString()
@@ -93,9 +91,11 @@ script:pre-request {
 }
 
 script:post-response {
-  const problemId = res.body.problems[0].id
+  if (res.status == 200) {
+    const problemId = res.body.problems[0].id
   
-  bru.setVar("problem_id", problemId)
+    bru.setVar("problem_id", problemId)
+  }
 }
 
 settings {

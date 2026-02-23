@@ -1,11 +1,11 @@
 meta {
-  name: force_start_contest
+  name: force_end
   type: http
-  seq: 7
+  seq: 8
 }
 
 put {
-  url: {{base_url}}/{{contest_id}}:force-start
+  url: {{base_url}}/{{contest_id}}:force-end
   body: none
   auth: inherit
 }

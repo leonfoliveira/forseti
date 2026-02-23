@@ -1,11 +1,11 @@
 meta {
-  name: delete_contest
+  name: force_start
   type: http
-  seq: 9
+  seq: 7
 }
 
-delete {
-  url: {{base_url}}/{{contest_id}}
+put {
+  url: {{base_url}}/{{contest_id}}:force-start
   body: none
   auth: inherit
 }

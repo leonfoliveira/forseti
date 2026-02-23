@@ -1,23 +1,17 @@
 meta {
-  name: create_announcement
+  name: rerun
   type: http
-  seq: 1
+  seq: 3
 }
 
 post {
-  url: {{base_url}}
-  body: json
+  url: {{base_url}}/{{submission_id}}:rerun
+  body: none
   auth: inherit
 }
 
 headers {
   x-csrf-token: {{csrf_token}}
-}
-
-body:json {
-  {
-    "text": "{{$randomLoremParagraph}}"
-  }
 }
 
 settings {

@@ -42,7 +42,7 @@ class HttpPrivateInterceptor : HandlerInterceptor {
         val memberType = ExecutionContext.getMember().type
         if (memberType !in privateAnnotation.allowed) {
             logger.info("Member type not allowed: {}", memberType)
-            throw ForbiddenException()
+            throw ForbiddenException("Member type $memberType is not allowed to access this resource")
         }
 
         logger.info("Member is allowed to access destination")

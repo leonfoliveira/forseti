@@ -1,5 +1,5 @@
 meta {
-  name: create_clarification
+  name: create
   type: http
   seq: 1
 }
@@ -20,6 +20,12 @@ body:json {
     "parentId": null,
     "text": "{{$randomLoremParagraph}}"
   }
+}
+
+script:post-response {
+  const clarificationId = res.body["id"]
+  
+  bru.setVar("clarification_id", clarificationId)
 }
 
 settings {

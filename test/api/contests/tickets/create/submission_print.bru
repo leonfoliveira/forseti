@@ -1,5 +1,5 @@
 meta {
-  name: create_ticket
+  name: submission_print
   type: http
   seq: 1
 }
@@ -16,9 +16,10 @@ headers {
 
 body:json {
   {
-    "type": "TECHNICAL_SUPPORT",
+    "type": "SUBMISSION_PRINT",
     "properties": {
-      "description": "{{$randomWords}}"
+      "submissionId": "{{submission_id}}",
+      "attachmentId": "{{code_attachment_id}}"
     }
   }
 }

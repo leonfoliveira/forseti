@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
+import java.util.UUID
 
 @Service
 @Validated
@@ -74,7 +75,11 @@ class CreateTicketService(
             .requireMemberType(Member.Type.CONTESTANT)
             .requireContestActive()
 
-        val typedProperties = objectMapper.convertValue(command.properties, SubmissionPrintTicket.Properties::class.java)
+        val typedProperties =
+            SubmissionPrintTicket.Properties(
+                submissionId = UUID.fromString(command.properties["submissionId"] as String),
+                attachmentId = UUID.fromString(command.properties["attachmentId"] as String),
+            )
 
         val submission =
             submissionRepository.findByIdAndContestIdAndMemberId(typedProperties.submissionId, contest.id, member.id)
@@ -104,7 +109,10 @@ class CreateTicketService(
             .requireContestNotEnded()
             .throwIfErrors()
 
-        val typedProperties = objectMapper.convertValue(command.properties, TechnicalSupportTicket.Properties::class.java)
+        val typedProperties =
+            TechnicalSupportTicket.Properties(
+                description = command.properties["description"] as String,
+            )
 
         return TechnicalSupportTicket(
             contest = contest,
@@ -126,7 +134,10 @@ class CreateTicketService(
             .requireContestNotEnded()
             .throwIfErrors()
 
-        val typedProperties = objectMapper.convertValue(command.properties, NonTechnicalSupportTicket.Properties::class.java)
+        val typedProperties =
+            NonTechnicalSupportTicket.Properties(
+                description = command.properties["description"] as String,
+            )
 
         return NonTechnicalSupportTicket(
             contest = contest,

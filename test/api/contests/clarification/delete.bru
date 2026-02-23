@@ -1,11 +1,11 @@
 meta {
-  name: download_attachment
+  name: delete
   type: http
   seq: 2
 }
 
-get {
-  url: {{base_url}}/{{attachment_id}}
+delete {
+  url: {{base_url}}/{{clarification_id}}
   body: none
   auth: inherit
 }
@@ -15,7 +15,7 @@ headers {
 }
 
 vars:pre-request {
-  attachment_id: 123
+  clarification_id: 123
 }
 
 settings {

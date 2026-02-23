@@ -99,6 +99,7 @@ open class Ticket<TProperties : Serializable>(
         OPEN,
         IN_PROGRESS,
         RESOLVED,
+        REJECTED,
     }
 
     companion object {
@@ -108,10 +109,5 @@ open class Ticket<TProperties : Serializable>(
             objectMapper: ObjectMapper,
             typedProperties: Serializable,
         ): Map<String, Any> = objectMapper.convertValue(typedProperties, rawPropertiesTypeReference)
-    }
-
-    fun getTypedProperties(objectMapper: ObjectMapper): TProperties {
-        val typeRef = object : TypeReference<TProperties>() {}
-        return objectMapper.convertValue(properties, typeRef)
     }
 }

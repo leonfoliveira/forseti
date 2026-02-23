@@ -1,0 +1,28 @@
+meta {
+  name: submission_code
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}?context={{Attachment.Context.SUBMISSION_CODE}}
+  body: multipartForm
+  auth: inherit
+}
+
+params:query {
+  context: {{Attachment.Context.SUBMISSION_CODE}}
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+body:multipart-form {
+  file: @file(files\submission_code.py) @contentType(text/csv)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,5 +1,5 @@
 meta {
-  name: create_submission
+  name: create
   type: http
   seq: 1
 }
@@ -24,22 +24,18 @@ body:json {
   }
 }
 
-vars:pre-request {
-  problem_id: 123
-  code_attachment_id: 123
-}
-
 script:pre-request {
-  async function uploadFile(file, context) {  
-    bru.setVar("file", file)
-    bru.setVar("context", context)
-    const response = await bru.runRequest("contest/attachment/upload_attachment")
-    return response.data
-  }
+  const uploadProblemDescriptionResult = await bru.runRequest("contests/attachment/upload/submission_code")
   
-  const codeAttachment = await uploadFile("code_accepted.py", "SUBMISSION_CODE")
+  const codeAttachment = await uploadProblemDescriptionResult.data
   
   bru.setVar("code_attachment_id", codeAttachment.id)
+}
+
+script:post-response {
+  const submissionId = res.body["id"]
+  
+  bru.setVar("submission_id", submissionId)
 }
 
 settings {
