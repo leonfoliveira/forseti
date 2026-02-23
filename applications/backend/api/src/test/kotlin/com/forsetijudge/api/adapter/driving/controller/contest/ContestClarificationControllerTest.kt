@@ -36,7 +36,7 @@ class ContestClarificationControllerTest(
 ) : FunSpec({
         extensions(SpringExtension)
 
-        val basePath = "/api/v1/contests/{contestId}/clarifications"
+        val basePath = "/v1/contests/{contestId}/clarifications"
         val contestId = IdGenerator.getUUID()
         val memberId = IdGenerator.getUUID()
 

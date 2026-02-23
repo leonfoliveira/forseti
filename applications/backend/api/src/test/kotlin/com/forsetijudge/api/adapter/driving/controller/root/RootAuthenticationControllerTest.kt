@@ -55,7 +55,7 @@ class RootAuthenticationControllerTest(
             every { csrfCookieBuilder.buildCookie(session.toResponseBodyDTO()) } returns "csrf_token=cookie_value"
 
             webMvc
-                .post("/api/v1/root:sign-in") {
+                .post("/v1/root:sign-in") {
                     contentType = MediaType.APPLICATION_JSON
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {

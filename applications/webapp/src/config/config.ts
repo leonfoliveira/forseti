@@ -10,8 +10,8 @@ export const serverConfig = {
   env: process.env.NODE_ENV || "development",
   version: process.env.NEXT_PUBLIC_VERSION || "latest",
   locale: process.env.LOCALE || "en-US",
-  apiInternalUrl: process.env.API_INTERNAL_URL || "http://localhost:8080/api",
-  apiPublicUrl: process.env.API_PUBLIC_URL || "http://localhost:8080/api",
+  apiInternalUrl: process.env.API_INTERNAL_URL || "http://localhost:8080",
+  apiPublicUrl: process.env.API_PUBLIC_URL || "http://localhost:8080",
   wsPublicUrl: process.env.WS_PUBLIC_URL || "http://localhost:8080/ws",
   alloyPublicUrl: process.env.ALLOY_PUBLIC_URL || "https://localhost:12347",
 };

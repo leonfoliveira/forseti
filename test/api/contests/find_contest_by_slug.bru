@@ -1,11 +1,11 @@
 meta {
-  name: find_contest_by_id
+  name: find_contest_by_slug
   type: http
-  seq: 7
+  seq: 6
 }
 
 get {
-  url: {{base_url}}/{{contest_id}}
+  url: {{base_url}}/slug/{{contest_slug}}
   body: none
   auth: inherit
 }

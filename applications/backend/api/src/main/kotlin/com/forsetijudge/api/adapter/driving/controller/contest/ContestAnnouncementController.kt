@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/v1")
 class ContestAnnouncementController(
     private val createAnnouncementUseCase: CreateAnnouncementUseCase,
 ) {
@@ -28,7 +28,7 @@ class ContestAnnouncementController(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateAnnouncementRequestBodyDTO,
     ): ResponseEntity<AnnouncementResponseBodyDTO> {
-        logger.info("[POST] /api/v1/contests/{}/announcements", contestId)
+        logger.info("[POST] /v1/contests/{}/announcements", contestId)
         val announcement =
             createAnnouncementUseCase.execute(
                 CreateAnnouncementUseCase.Command(

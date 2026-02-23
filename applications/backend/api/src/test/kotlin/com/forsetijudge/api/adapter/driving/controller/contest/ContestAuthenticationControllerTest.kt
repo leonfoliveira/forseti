@@ -37,7 +37,7 @@ class ContestAuthenticationControllerTest(
 ) : FunSpec({
         extensions(SpringExtension)
 
-        val basePath = "/api/v1/contests/{contestId}"
+        val basePath = "/v1/contests/{contestId}"
         val contestId = IdGenerator.getUUID()
 
         beforeTest {

@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/v1")
 class ContestController(
     private val findContestBySlugUseCase: FindContestBySlugUseCase,
     private val updateContestUseCase: UpdateContestUseCase,
@@ -53,7 +53,7 @@ class ContestController(
         @PathVariable contestId: UUID,
         @RequestBody body: UpdateContestRequestBodyDTO,
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
-        logger.info("[PUT] /api/v1/contests/{}", contestId)
+        logger.info("[PUT] /v1/contests/{}", contestId)
         val contest =
             updateContestUseCase.execute(
                 UpdateContestUseCase.Command(

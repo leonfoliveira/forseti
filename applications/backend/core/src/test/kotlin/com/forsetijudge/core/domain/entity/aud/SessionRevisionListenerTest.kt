@@ -38,6 +38,7 @@ class SessionRevisionListenerTest :
                 SessionMockBuilder
                     .build(
                         id = sessionId,
+                        contest = null,
                     ),
             )
 

@@ -62,7 +62,7 @@ class AuthenticateSystemServiceTest :
             )
 
         test("should authenticate new member") {
-            val expectedSession = SessionMockBuilder.build()
+            val expectedSession = SessionMockBuilder.build(contest = null)
             every { memberRepository.findByLoginAndContestIsNull(command.login) } returns null
             every { createSessionInternalUseCase.execute(any()) } returns expectedSession
 
@@ -81,8 +81,7 @@ class AuthenticateSystemServiceTest :
 
         test("should authenticate existing member") {
             val existingMember = MemberMockBuilder.build()
-            val expectedSession = SessionMockBuilder.build(member = existingMember)
-            val secondSession = SessionMockBuilder.build(member = existingMember)
+            val expectedSession = SessionMockBuilder.build(member = existingMember, contest = null)
             every { memberRepository.findByLoginAndContestIsNull(command.login) } returns existingMember
             every { createSessionInternalUseCase.execute(any()) } returns expectedSession
 
@@ -96,8 +95,8 @@ class AuthenticateSystemServiceTest :
 
         test("should use cached session if valid") {
             val existingMember = MemberMockBuilder.build()
-            val cachedSession = SessionMockBuilder.build(member = existingMember)
-            val secondSession = SessionMockBuilder.build(member = existingMember)
+            val cachedSession = SessionMockBuilder.build(member = existingMember, contest = null)
+            val secondSession = SessionMockBuilder.build(member = existingMember, contest = null)
             every { memberRepository.findByLoginAndContestIsNull(command.login) } returns existingMember
             every { createSessionInternalUseCase.execute(any()) } returnsMany listOf(cachedSession, secondSession)
             every { findSessionByIdUseCase.execute(any()) } returns cachedSession
@@ -113,8 +112,8 @@ class AuthenticateSystemServiceTest :
 
         test("should create new session if cached session is invalid") {
             val existingMember = MemberMockBuilder.build()
-            val cachedSession = SessionMockBuilder.build(member = existingMember)
-            val secondSession = SessionMockBuilder.build(member = existingMember)
+            val cachedSession = SessionMockBuilder.build(member = existingMember, contest = null)
+            val secondSession = SessionMockBuilder.build(member = existingMember, contest = null)
             every { memberRepository.findByLoginAndContestIsNull(command.login) } returns existingMember
             every { createSessionInternalUseCase.execute(any()) } returnsMany listOf(cachedSession, secondSession)
             every { findSessionByIdUseCase.execute(any()) } throws UnauthorizedException()

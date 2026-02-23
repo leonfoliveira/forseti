@@ -1,17 +1,13 @@
 meta {
-  name: find_all_contest_submissions
+  name: autojudge_metrics
   type: http
   seq: 2
 }
 
 get {
-  url: {{base_url}}
+  url: {{autojudge_url}}/metrics
   body: none
   auth: inherit
-}
-
-headers {
-  x-csrf-token: {{csrf_token}}
 }
 
 settings {

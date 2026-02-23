@@ -2,7 +2,6 @@ package com.forsetijudge.api.adapter.driving.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.application.util.IdGenerator
-import com.forsetijudge.core.application.util.SessionCache
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.port.driven.producer.payload.WebSocketFanoutPayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
@@ -19,8 +18,6 @@ import java.io.Serializable
 class StompWebSocketFanoutRabbitMQConsumerTest(
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
-    @MockkBean(relaxed = true)
-    private val sessionCache: SessionCache,
     @MockkBean(relaxed = true)
     private val messagingTemplate: SimpMessagingTemplate,
     private val objectMapper: ObjectMapper,

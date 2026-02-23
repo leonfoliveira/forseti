@@ -65,7 +65,6 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.api-ratelimit.ratelimit.average=100
         - traefik.http.middlewares.api-ratelimit.ratelimit.burst=300
-        - traefik.http.middlewares.api-addprefix.addprefix.prefix=/api
         - traefik.http.middlewares.ws-addprefix.addprefix.prefix=/ws
         - traefik.http.routers.api.rule=Host(`api.forsetijudge.com`)
         - traefik.http.routers.api.entrypoints=websecure
@@ -848,7 +847,7 @@ services:
         order: start-first
     environment:
       ALLOY_PUBLIC_URL: https://alloy.forsetijudge.com
-      API_INTERNAL_URL: http://api:8080/api
+      API_INTERNAL_URL: http://api:8080
       API_PUBLIC_URL: https://api.forsetijudge.com
       WS_PUBLIC_URL: https://ws.forsetijudge.com
       LOCALE: en-US

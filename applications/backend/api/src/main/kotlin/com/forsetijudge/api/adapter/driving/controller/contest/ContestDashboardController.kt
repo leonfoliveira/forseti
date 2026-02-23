@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/v1")
 class ContestDashboardController(
     private val buildAdminDashboardUseCase: BuildAdminDashboardUseCase,
     private val buildContestantDashboardUseCase: BuildContestantDashboardUseCase,
@@ -37,7 +37,7 @@ class ContestDashboardController(
     fun getAdminDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<AdminDashboardResponseBodyDTO> {
-        logger.info("[GET] /api/v1/contests/{}/dashboard/admin", contestId)
+        logger.info("[GET] /v1/contests/{}/dashboard/admin", contestId)
         val dashboard = buildAdminDashboardUseCase.execute()
         return ResponseEntity.ok(dashboard.toResponseBodyDTO())
     }
@@ -47,7 +47,7 @@ class ContestDashboardController(
     fun getJudgeDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<JudgeDashboardResponseBodyDTO> {
-        logger.info("[GET] /api/v1/contests/{}/dashboard/judge", contestId)
+        logger.info("[GET] /v1/contests/{}/dashboard/judge", contestId)
         val dashboard = buildJudgeDashboardUseCase.execute()
         return ResponseEntity.ok(dashboard.toResponseBodyDTO())
     }
@@ -57,7 +57,7 @@ class ContestDashboardController(
     fun getStaffDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<StaffDashboardResponseBodyDTO> {
-        logger.info("[GET] /api/v1/contests/{}/dashboard/staff", contestId)
+        logger.info("[GET] /v1/contests/{}/dashboard/staff", contestId)
         val dashboard = buildStaffDashboardUseCase.execute()
         return ResponseEntity.ok(dashboard.toResponseBodyDTO())
     }
@@ -67,7 +67,7 @@ class ContestDashboardController(
     fun getContestantDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestantDashboardResponseBodyDTO> {
-        logger.info("[GET] /api/v1/contests/{}/dashboard/contestant", contestId)
+        logger.info("[GET] /v1/contests/{}/dashboard/contestant", contestId)
         val dashboard = buildContestantDashboardUseCase.execute()
         return ResponseEntity.ok(dashboard.toResponseBodyDTO())
     }
@@ -76,7 +76,7 @@ class ContestDashboardController(
     fun getGuestDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<GuestDashboardResponseBodyDTO> {
-        logger.info("[GET] /api/v1/contests/{}/dashboard/guest", contestId)
+        logger.info("[GET] /v1/contests/{}/dashboard/guest", contestId)
         val dashboard = buildGuestDashboardUseCase.execute()
         return ResponseEntity.ok(dashboard.toResponseBodyDTO())
     }

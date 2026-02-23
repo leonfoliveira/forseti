@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/v1")
 class ContestAttachmentController(
     private val uploadAttachmentUseCase: UploadAttachmentUseCase,
     private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
@@ -36,7 +36,7 @@ class ContestAttachmentController(
         @RequestParam context: Attachment.Context,
         @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<AttachmentResponseDTO> {
-        logger.info("[POST] /api/v1/contests/{}/attachments", contestId)
+        logger.info("[POST] /v1/contests/{}/attachments", contestId)
         val (attachment) =
             uploadAttachmentUseCase.execute(
                 UploadAttachmentUseCase.Command(
@@ -54,7 +54,7 @@ class ContestAttachmentController(
         @PathVariable contestId: UUID,
         @PathVariable attachmentId: UUID,
     ): ResponseEntity<ByteArray> {
-        logger.info("[GET] /api/v1/contests/{}/attachments/{}", contestId, attachmentId)
+        logger.info("[GET] /v1/contests/{}/attachments/{}", contestId, attachmentId)
         val (attachment, bytes) =
             downloadAttachmentUseCase.execute(
                 DownloadAttachmentUseCase.Command(

@@ -1,6 +1,7 @@
 package com.forsetijudge.api.adapter.driving.middleware.http
 
 import com.forsetijudge.core.domain.exception.ForbiddenException
+import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
 import jakarta.servlet.http.HttpServletRequest
@@ -20,8 +21,8 @@ class HttpAuthenticationInterceptor(
     companion object {
         val csrfAllowList =
             setOf(
-                Regex("/api/v1/root:sign-in"),
-                Regex("/api/v1/contests/[a-fA-F0-9-]+:sign-in"),
+                Regex("/v1/root:sign-in"),
+                Regex("/v1/contests/[a-fA-F0-9-]+:sign-in"),
             )
     }
 
@@ -53,11 +54,11 @@ class HttpAuthenticationInterceptor(
         val sessionId = request.cookies?.find { it.name == "session_id" }?.value
 
         if (sessionId == null) {
-            logger.info("No session_id cookie")
+            logger.info("No session_id cookie. Continuing as guest.")
             return
         }
         if (sessionId.isBlank()) {
-            logger.info("Blank session_id cookie")
+            logger.info("Blank session_id cookie. Continuing as guest.")
             return
         }
 
@@ -65,8 +66,7 @@ class HttpAuthenticationInterceptor(
             try {
                 UUID.fromString(sessionId)
             } catch (e: IllegalArgumentException) {
-                logger.info("Invalid session_id format")
-                return
+                throw UnauthorizedException("Invalid session_id cookie format")
             }
 
         val session =
@@ -75,9 +75,9 @@ class HttpAuthenticationInterceptor(
             )
         logger.info("Found session with id: {}", sessionId)
 
-        val contextSessionId = ExecutionContext.getContestIdNullable()
-        if (contextSessionId != null && session.contestId != contextSessionId) {
-            logger.info("Session does not belong to the current contest")
+        val contextContextId = ExecutionContext.getContestIdNullable()
+        if (contextContextId != session.contestId) {
+            logger.info("Session does not belong to the current contest. Continuing as guest.")
             return
         }
 

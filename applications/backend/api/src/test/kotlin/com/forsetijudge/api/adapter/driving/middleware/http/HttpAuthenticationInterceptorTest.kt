@@ -2,6 +2,7 @@ package com.forsetijudge.api.adapter.driving.middleware.http
 
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
+import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
 import io.kotest.assertions.throwables.shouldThrow
@@ -51,12 +52,27 @@ class HttpAuthenticationInterceptorTest :
             ExecutionContext.get().session shouldBe null
         }
 
-        test("should not set authorization when session_id is invalid") {
+        test("should throw UnauthorizedException when session_id cookie is invalid") {
             val request = mockk<HttpServletRequest>(relaxed = true)
             val response = mockk<HttpServletResponse>(relaxed = true)
             val filterChain = mockk<FilterChain>(relaxed = true)
             every { request.method } returns "GET"
             every { request.cookies } returns arrayOf(Cookie("session_id", "invalid-id"))
+
+            shouldThrow<UnauthorizedException> {
+                sut.preHandle(request, response, filterChain)
+            }
+        }
+
+        test("should not set authorization when session contestId is not the context contestId") {
+            val request = mockk<HttpServletRequest>(relaxed = true)
+            val response = mockk<HttpServletResponse>(relaxed = true)
+            val filterChain = mockk<FilterChain>(relaxed = true)
+            val expectedSession = SessionMockBuilder.build()
+            every { request.method } returns "GET"
+            every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
+            val command = FindSessionByIdUseCase.Command(expectedSession.id)
+            every { findSessionByIdUseCase.execute(command) } returns expectedSession
 
             sut.preHandle(request, response, filterChain)
 
@@ -67,7 +83,7 @@ class HttpAuthenticationInterceptorTest :
             val request = mockk<HttpServletRequest>(relaxed = true)
             val response = mockk<HttpServletResponse>(relaxed = true)
             val filterChain = mockk<FilterChain>(relaxed = true)
-            val expectedSession = SessionMockBuilder.build()
+            val expectedSession = SessionMockBuilder.build(contest = null)
             every { request.method } returns "POST"
             every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
             every { request.getHeader("X-CSRF-Token") } returns "invalid-csrf-token"
@@ -85,7 +101,7 @@ class HttpAuthenticationInterceptorTest :
             val request = mockk<HttpServletRequest>(relaxed = true)
             val response = mockk<HttpServletResponse>(relaxed = true)
             val filterChain = mockk<FilterChain>(relaxed = true)
-            val expectedSession = SessionMockBuilder.build()
+            val expectedSession = SessionMockBuilder.build(contest = null)
             every { request.method } returns "POST"
             every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
             every { request.getHeader("X-CSRF-Token") } returns expectedSession.csrfToken.toString()

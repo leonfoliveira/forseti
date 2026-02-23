@@ -65,7 +65,7 @@ class HttpExecutionContextInterceptorTest :
             val filterChain = mockk<FilterChain>(relaxed = true)
             val contestId = IdGenerator.getUUID()
             every { request.method } returns "GET"
-            every { request.requestURI } returns "/api/v1/contests/$contestId/some-endpoint"
+            every { request.requestURI } returns "/v1/contests/$contestId/some-endpoint"
             every { request.cookies } returns null
 
             sut.preHandle(request, response, filterChain)
@@ -78,7 +78,7 @@ class HttpExecutionContextInterceptorTest :
             val response = mockk<HttpServletResponse>(relaxed = true)
             val filterChain = mockk<FilterChain>(relaxed = true)
             every { request.method } returns "GET"
-            every { request.requestURI } returns "/api/v1/some-endpoint"
+            every { request.requestURI } returns "/v1/some-endpoint"
             every { request.cookies } returns null
 
             sut.preHandle(request, response, filterChain)

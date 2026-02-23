@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/v1")
 class ContestClarificationController(
     private val createClarificationUseCase: CreateClarificationUseCase,
     private val deleteClarificationUseCase: DeleteClarificationUseCase,
@@ -31,7 +31,7 @@ class ContestClarificationController(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateClarificationRequestBodyDTO,
     ): ResponseEntity<ClarificationResponseDTO> {
-        logger.info("[POST] /api/v1/contests/{}/clarifications", contestId)
+        logger.info("[POST] /v1/contests/{}/clarifications", contestId)
         val clarification =
             createClarificationUseCase.execute(
                 CreateClarificationUseCase.Command(
@@ -49,7 +49,7 @@ class ContestClarificationController(
         @PathVariable contestId: UUID,
         @PathVariable clarificationId: UUID,
     ): ResponseEntity<Unit> {
-        logger.info("[DELETE] /api/v1/contests/{}/clarifications/{}", contestId, clarificationId)
+        logger.info("[DELETE] /v1/contests/{}/clarifications/{}", contestId, clarificationId)
         deleteClarificationUseCase.execute(
             DeleteClarificationUseCase.Command(
                 clarificationId = clarificationId,

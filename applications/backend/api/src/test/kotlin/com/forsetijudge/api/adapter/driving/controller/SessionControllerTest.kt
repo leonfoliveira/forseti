@@ -43,7 +43,7 @@ class SessionControllerTest(
             ExecutionContext.authenticate(SessionMockBuilder.build())
 
             webMvc
-                .get("/api/v1/sessions/me")
+                .get("/v1/sessions/me")
                 .andExpect {
                     status { isOk() }
                     content { session.toResponseBodyDTO() }
@@ -55,7 +55,7 @@ class SessionControllerTest(
             ExecutionContext.authenticate(SessionMockBuilder.build())
 
             webMvc
-                .delete("/api/v1/sessions/me")
+                .delete("/v1/sessions/me")
                 .andExpect {
                     status { isNoContent() }
                     cookie {

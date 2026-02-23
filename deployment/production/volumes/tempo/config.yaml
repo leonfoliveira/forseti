@@ -29,7 +29,7 @@ metrics_generator:
   storage:
     path: /var/tempo/metrics-generator/wal
     remote_write:
-      - url: http://prometheus:9090/api/v1/write
+      - url: http://prometheus:9090/v1/write
   traces_storage:
     path: /var/tempo/metrics-generator/traces
   processor:

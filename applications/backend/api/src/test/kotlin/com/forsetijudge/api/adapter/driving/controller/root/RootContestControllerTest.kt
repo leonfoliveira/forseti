@@ -45,7 +45,7 @@ class RootContestControllerTest(
             objectMapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         }
 
-        val basePath = "/api/v1/root/contests"
+        val basePath = "/v1/root/contests"
         val memberId = Member.ROOT_ID
 
         beforeTest {

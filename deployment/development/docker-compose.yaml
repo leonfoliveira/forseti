@@ -227,8 +227,8 @@ services:
       context: ../../applications/webapp
       dockerfile: Dockerfile
     environment:
-      API_INTERNAL_URL: http://api:8080/api
-      API_PUBLIC_URL: http://localhost:8080/api
+      API_INTERNAL_URL: http://api:8080
+      API_PUBLIC_URL: http://localhost:8080
       WS_PUBLIC_URL: http://localhost:8080/ws
       LOCALE: en-US
       NEXT_PUBLIC_VERSION: latest

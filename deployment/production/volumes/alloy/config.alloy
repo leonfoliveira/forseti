@@ -70,7 +70,7 @@ loki.process "default" {
 
 loki.write "default" {
   endpoint {
-    url = "http://loki:3100/loki/api/v1/push"
+    url = "http://loki:3100/loki/v1/push"
   }
 }
 
@@ -409,7 +409,7 @@ prometheus.scrape "traefik" {
 // remote write
 prometheus.remote_write "default" {
   endpoint {
-    url = "http://prometheus:9090/api/v1/write"
+    url = "http://prometheus:9090/v1/write"
   }
 }
 
