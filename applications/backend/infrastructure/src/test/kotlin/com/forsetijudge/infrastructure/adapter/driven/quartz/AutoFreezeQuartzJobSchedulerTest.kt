@@ -25,7 +25,7 @@ class AutoFreezeQuartzJobSchedulerTest(
         val traceId = IdGenerator.getTraceId()
 
         beforeEach {
-            ExecutionContext.set(
+            ExecutionContext.start(
                 contestId = contestId,
                 traceId = traceId,
             )

@@ -1,7 +1,11 @@
 package com.forsetijudge.core.application.util
 
+import com.forsetijudge.core.domain.entity.Session
+import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.CreateSessionUseCase
+import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
@@ -16,40 +20,56 @@ import java.util.concurrent.ConcurrentHashMap
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 class SessionCache(
+    private val findSessionByIdUseCase: FindSessionByIdUseCase,
     private val createSessionUseCase: CreateSessionUseCase,
 ) {
-    private val sessionsByMemberIdAndContestId = ConcurrentHashMap<Pair<UUID, UUID?>, SessionResponseBodyDTO>()
+    private val sessionIdsByMemberIdAndContestId = ConcurrentHashMap<Pair<UUID, UUID?>, UUID>()
 
     /**
      * Retrieves a session for the given memberId and contestId. If a valid cached session exists, it returns that.
      * Otherwise, it creates a new session using the CreateSessionUseCase and caches it before returning.
      *
-     * @param memberId The ID of the member for whom to retrieve the session
-     * @param contestId The ID of the contest for which to retrieve the session (nullable)
      * @return A SessionResponseBodyDTO containing the session information
      */
-    fun get(
-        contestId: UUID?,
-        memberId: UUID,
-    ): SessionResponseBodyDTO {
+    fun get(memberId: UUID): Session {
+        val contestId = ExecutionContext.getContestIdNullable()
         val key = Pair(memberId, contestId)
 
-        val now = ExecutionContext.getStartAt()
+        val cachedSessionId = sessionIdsByMemberIdAndContestId[key]
+
+        if (cachedSessionId == null) {
+            return getNewSession(memberId = memberId, contestId = contestId)
+        }
+
         val session =
-            sessionsByMemberIdAndContestId.compute(key) { _, cached ->
-                if (cached == null || cached.expiresAt.isBefore(now)) {
-                    createSessionUseCase
-                        .execute(
-                            CreateSessionUseCase.Command(
-                                contestId = contestId,
-                                memberId = memberId,
-                            ),
-                        ).toResponseBodyDTO()
-                } else {
-                    cached
-                }
+            try {
+                findSessionByIdUseCase.execute(
+                    FindSessionByIdUseCase.Command(
+                        sessionId = cachedSessionId,
+                    ),
+                )
+            } catch (e: NotFoundException) {
+                return getNewSession(memberId = memberId, contestId = contestId)
             }
 
-        return session!!
+        return session
+    }
+
+    private fun getNewSession(
+        memberId: UUID,
+        contestId: UUID?,
+    ): Session {
+        val session =
+            createSessionUseCase
+                .execute(
+                    CreateSessionUseCase.Command(
+                        contestId = contestId,
+                        memberId = memberId,
+                    ),
+                )
+
+        sessionIdsByMemberIdAndContestId[Pair(memberId, contestId)] = session.id
+
+        return session
     }
 }

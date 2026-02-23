@@ -44,7 +44,7 @@ class CreateSessionInternalService(
                 contest = command.contest,
                 member = command.member,
                 csrfToken = IdGenerator.getUUID(),
-                expiresAt = ExecutionContext.getStartAt().plusSeconds(expiresAtOffset / 1000),
+                expiresAt = ExecutionContext.get().startedAt.plusSeconds(expiresAtOffset / 1000),
             )
         sessionRepository.save(session)
 

@@ -65,7 +65,7 @@ class SignInServiceTest :
             val contest = ContestMockBuilder.build()
             every { contestRepository.findById(any()) } returns contest
             every { memberRepository.findByLoginAndContestIsNull(any()) } returns null
-            ExecutionContext.set()
+            ExecutionContext.start()
 
             shouldThrow<UnauthorizedException> {
                 sut.execute(command)

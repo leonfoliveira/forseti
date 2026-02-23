@@ -30,7 +30,7 @@ class WebSocketFanoutRabbitMQProducerTest(
         val traceId = IdGenerator.getTraceId()
 
         beforeEach {
-            ExecutionContext.set(
+            ExecutionContext.start(
                 contestId = contestId,
                 traceId = traceId,
             )
@@ -48,7 +48,7 @@ class WebSocketFanoutRabbitMQProducerTest(
                 object :
                     TypeReference<
                         RabbitMQMessage<WebSocketFanoutPayload>,
-                        >() {}
+                    >() {}
 
             val message = objectMapper.readValue(jsonMessage, typeRef)
             message.contestId shouldBe contestId

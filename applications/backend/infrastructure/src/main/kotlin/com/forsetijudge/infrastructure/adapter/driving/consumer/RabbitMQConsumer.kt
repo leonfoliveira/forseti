@@ -2,7 +2,9 @@ package com.forsetijudge.infrastructure.adapter.driving.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.application.util.SessionCache
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import io.opentelemetry.api.trace.Span
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -12,11 +14,14 @@ import java.io.Serializable
 import java.util.UUID
 
 abstract class RabbitMQConsumer<TPayload : Serializable> {
-    @Value("\${security.member-id}")
-    private lateinit var memberId: UUID
+    @Value("\${security.member-login}")
+    private lateinit var memberLogin: String
+
+    @Value("\${security.member-type}")
+    private lateinit var memberType: Member.Type
 
     @Autowired
-    private lateinit var sessionCache: SessionCache
+    private lateinit var authenticateSystemUseCase: AuthenticateSystemUseCase
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -28,6 +33,8 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
      * It also loads the traceId into the RequestContext to keep track of the entire information flow.
      */
     open fun receiveMessage(jsonMessage: String) {
+        ExecutionContext.start()
+
         val jsonNode = objectMapper.readTree(jsonMessage)
         val id = UUID.fromString(jsonNode["id"].asText())
         val contestId = jsonNode["contestId"]?.asText()?.let { UUID.fromString(it) }
@@ -35,7 +42,14 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
 
         val payload = objectMapper.treeToValue(payloadJson, getPayloadType())
 
-        initExecutionContext(contestId)
+        ExecutionContext.get().contestId = contestId
+
+        authenticateSystemUseCase.execute(
+            AuthenticateSystemUseCase.Command(
+                login = memberLogin,
+                type = memberType,
+            ),
+        )
 
         logger.info("Received message: {}", jsonMessage)
 
@@ -47,15 +61,6 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
             logger.error("Error thrown from consumer {}: {}", this.javaClass.simpleName, ex.message)
             throw ex
         }
-    }
-
-    private fun initExecutionContext(contestId: UUID?) {
-        ExecutionContext.set(
-            ip = null,
-            traceId = Span.current().spanContext.traceId,
-            contestId = contestId,
-            session = sessionCache.get(contestId, memberId),
-        )
     }
 
     /**

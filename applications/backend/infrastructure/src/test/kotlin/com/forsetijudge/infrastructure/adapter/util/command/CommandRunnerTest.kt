@@ -3,6 +3,7 @@ package com.forsetijudge.infrastructure.adapter.util.command
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import org.springframework.test.context.ActiveProfiles
 
 class CommandRunnerTest :
     FunSpec({

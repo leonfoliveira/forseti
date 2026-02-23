@@ -18,9 +18,7 @@ class SessionRevisionListenerTest :
 
         test("should not set sessionId if no authentication is present") {
             val revisionEntity = SessionRevisionEntity()
-            ExecutionContext.set(
-                traceId = IdGenerator.getTraceId(),
-            )
+            ExecutionContext.start()
 
             sut.newRevision(revisionEntity)
 
@@ -33,14 +31,15 @@ class SessionRevisionListenerTest :
             val sessionId = IdGenerator.getUUID()
             val ip = "127.0.0.1"
             val traceId = IdGenerator.getTraceId()
-            ExecutionContext.set(
+            ExecutionContext.start(
                 ip = ip,
                 traceId = traceId,
-                session =
-                    SessionMockBuilder
-                        .build(
-                            id = sessionId,
-                        ).toResponseBodyDTO(),
+            )
+            ExecutionContext.authenticate(
+                SessionMockBuilder
+                    .build(
+                        id = sessionId,
+                    ),
             )
 
             sut.newRevision(revisionEntity)

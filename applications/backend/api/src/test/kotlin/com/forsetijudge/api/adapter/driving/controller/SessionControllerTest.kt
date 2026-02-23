@@ -2,7 +2,6 @@ package com.forsetijudge.api.adapter.driving.controller
 
 import com.forsetijudge.api.adapter.util.cookie.CsrfCookieBuilder
 import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
-import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.DeleteAllSessionsByMemberUseCase
@@ -40,11 +39,8 @@ class SessionControllerTest(
 
         test("getCurrent") {
             val session = SessionMockBuilder.build()
-            ExecutionContext.set(
-                traceId = IdGenerator.getTraceId(),
-                contestId = null,
-                session = SessionMockBuilder.build().toResponseBodyDTO(),
-            )
+            ExecutionContext.start()
+            ExecutionContext.authenticate(SessionMockBuilder.build())
 
             webMvc
                 .get("/api/v1/sessions/me")
@@ -55,12 +51,8 @@ class SessionControllerTest(
         }
 
         test("deleteCurrent") {
-            val session = SessionMockBuilder.build()
-            ExecutionContext.set(
-                traceId = IdGenerator.getTraceId(),
-                contestId = null,
-                session = session.toResponseBodyDTO(),
-            )
+            ExecutionContext.start()
+            ExecutionContext.authenticate(SessionMockBuilder.build())
 
             webMvc
                 .delete("/api/v1/sessions/me")

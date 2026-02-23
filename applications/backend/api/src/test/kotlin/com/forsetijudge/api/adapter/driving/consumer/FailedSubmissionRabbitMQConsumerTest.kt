@@ -7,6 +7,7 @@ import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.port.driven.producer.payload.SubmissionQueuePayload
+import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.submission.FailSubmissionUseCase
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
@@ -19,18 +20,13 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest(classes = [FailedSubmissionRabbitMQConsumer::class, JacksonConfig::class])
 class FailedSubmissionRabbitMQConsumerTest(
     @MockkBean(relaxed = true)
-    private val sessionCache: SessionCache,
+    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
     private val failSubmissionUseCase: FailSubmissionUseCase,
     private val objectMapper: ObjectMapper,
     private val sut: FailedSubmissionRabbitMQConsumer,
 ) : FunSpec({
-        val session = SessionMockBuilder.build()
         val contestId = IdGenerator.getUUID()
-
-        beforeEach {
-            every { sessionCache.get(contestId, Member.API_ID) } returns session.toResponseBodyDTO()
-        }
 
         val message =
             RabbitMQMessage(

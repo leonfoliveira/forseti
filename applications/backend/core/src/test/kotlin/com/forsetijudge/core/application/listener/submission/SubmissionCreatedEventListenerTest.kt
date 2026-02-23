@@ -9,30 +9,33 @@ import com.forsetijudge.core.port.driven.producer.SubmissionQueueProducer
 import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
 import com.forsetijudge.core.port.driven.producer.payload.SubmissionQueuePayload
 import com.forsetijudge.core.port.driven.producer.payload.WebSocketFanoutPayload
+import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
+import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
-import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 
-class SubmissionCreatedEventListenerTest :
-    FunSpec({
-        val buildLeaderboardCellUseCase = mockk<BuildLeaderboardCellUseCase>(relaxed = true)
-        val webSocketFanoutProducer = mockk<WebSocketFanoutProducer>(relaxed = true)
-        val submissionQueueProducer = mockk<SubmissionQueueProducer>(relaxed = true)
-
-        val sut =
-            SubmissionCreatedEventListener(
-                webSocketFanoutProducer = webSocketFanoutProducer,
-                submissionQueueProducer = submissionQueueProducer,
-                buildLeaderboardCellUseCase = buildLeaderboardCellUseCase,
-            )
-
+@ActiveProfiles("test")
+@SpringBootTest(classes = [SubmissionCreatedEventListener::class])
+class SubmissionCreatedEventListenerTest(
+    @MockkBean(relaxed = true)
+    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
+    @MockkBean(relaxed = true)
+    private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
+    @MockkBean(relaxed = true)
+    private val webSocketFanoutProducer: WebSocketFanoutProducer,
+    @MockkBean(relaxed = true)
+    private val submissionQueueProducer: SubmissionQueueProducer,
+    private val sut: SubmissionCreatedEventListener,
+) : FunSpec({
         beforeEach {
             clearAllMocks()
         }

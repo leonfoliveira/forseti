@@ -6,20 +6,23 @@ import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.port.driven.producer.SubmissionQueueProducer
 import com.forsetijudge.core.port.driven.producer.payload.SubmissionQueuePayload
+import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
+import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
-import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 
-class SubmissionResetEventListenerTest :
-    FunSpec({
-        val submissionQueueProducer = mockk<SubmissionQueueProducer>(relaxed = true)
-
-        val sut =
-            SubmissionResetEventListener(
-                submissionQueueProducer = submissionQueueProducer,
-            )
-
+@ActiveProfiles("test")
+@SpringBootTest(classes = [SubmissionResetEventListener::class])
+class SubmissionResetEventListenerTest(
+    @MockkBean(relaxed = true)
+    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
+    @MockkBean(relaxed = true)
+    private val submissionQueueProducer: SubmissionQueueProducer,
+    private val sut: SubmissionResetEventListener,
+) : FunSpec({
         beforeEach {
             clearAllMocks()
         }

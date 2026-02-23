@@ -44,7 +44,7 @@ class FreezeLeaderboardService(
             throw ForbiddenException("The leaderboard for this contest is already frozen")
         }
 
-        contest.frozenAt = ExecutionContext.getStartAt()
+        contest.frozenAt = ExecutionContext.get().startedAt
 
         contestRepository.save(contest)
         applicationEventPublisher.publishEvent(LeaderboardEvent.Frozen(contest))

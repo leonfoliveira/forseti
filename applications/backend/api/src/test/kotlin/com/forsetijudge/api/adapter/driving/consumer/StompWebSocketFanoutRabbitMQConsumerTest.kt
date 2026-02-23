@@ -7,6 +7,7 @@ import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.port.driven.producer.payload.WebSocketFanoutPayload
+import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
 import com.ninjasquad.springmockk.MockkBean
@@ -21,18 +22,18 @@ import java.io.Serializable
 @SpringBootTest(classes = [StompWebSocketFanoutRabbitMQConsumer::class, JacksonConfig::class])
 class StompWebSocketFanoutRabbitMQConsumerTest(
     @MockkBean(relaxed = true)
+    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
+    @MockkBean(relaxed = true)
     private val sessionCache: SessionCache,
     @MockkBean(relaxed = true)
     private val messagingTemplate: SimpMessagingTemplate,
     private val objectMapper: ObjectMapper,
     private val sut: StompWebSocketFanoutRabbitMQConsumer,
 ) : FunSpec({
-        val session = SessionMockBuilder.build()
         val contestId = IdGenerator.getUUID()
 
         beforeEach {
             clearAllMocks()
-            every { sessionCache.get(contestId, Member.API_ID) } returns session.toResponseBodyDTO()
         }
 
         test("should handle payload") {

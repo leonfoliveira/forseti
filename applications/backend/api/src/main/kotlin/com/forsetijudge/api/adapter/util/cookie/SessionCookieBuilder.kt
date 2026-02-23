@@ -22,7 +22,7 @@ class SessionCookieBuilder(
     fun buildCookie(session: SessionResponseBodyDTO): String =
         cookieBuilder
             .from(SESSION_COOKIE_NAME, session.id.toString())
-            .maxAge(Duration.between(ExecutionContext.getStartAt(), session.expiresAt))
+            .maxAge(Duration.between(ExecutionContext.get().startedAt, session.expiresAt))
             .build()
             .toString()
 

@@ -4,17 +4,23 @@ import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.port.driven.scheduler.AutoFreezeJobScheduler
 import com.forsetijudge.core.port.driven.scheduler.payload.AutoFreezeJobPayload
+import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
+import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
-import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 
-class ContestCreatedEventListenerTest :
-    FunSpec({
-        val autoFreezeJobScheduler = mockk<AutoFreezeJobScheduler>(relaxed = true)
-
-        val sut = ContestCreatedEventListener(autoFreezeJobScheduler = autoFreezeJobScheduler)
-
+@ActiveProfiles("test")
+@SpringBootTest(classes = [ContestCreatedEventListener::class])
+class ContestCreatedEventListenerTest(
+    @MockkBean(relaxed = true)
+    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
+    @MockkBean(relaxed = true)
+    private val autoFreezeJobScheduler: AutoFreezeJobScheduler,
+    private val sut: ContestCreatedEventListener,
+) : FunSpec({
         beforeEach {
             clearAllMocks()
         }

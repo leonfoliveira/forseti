@@ -6,7 +6,7 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:development}
   quartz:
-    properties:
-      org.quartz.threadPool.threadCount: 0
+    auto-startup: false
 security:
-  member-id: 22222222-2222-2222-2222-222222222222
+  member-login: ${HOSTNAME:unknown}
+  member-type: AUTOJUDGE

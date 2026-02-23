@@ -22,7 +22,7 @@ class CsrfCookieBuilder(
     fun buildCookie(session: SessionResponseBodyDTO): String =
         cookieBuilder
             .from(CSRF_COOKIE_NAME, session.csrfToken.toString())
-            .maxAge(Duration.between(ExecutionContext.getStartAt(), session.expiresAt))
+            .maxAge(Duration.between(ExecutionContext.get().startedAt, session.expiresAt))
             .httpOnly(false)
             .build()
             .toString()

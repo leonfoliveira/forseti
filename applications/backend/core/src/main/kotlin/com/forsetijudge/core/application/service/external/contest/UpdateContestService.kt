@@ -72,7 +72,7 @@ class UpdateContestService(
                 throw ForbiddenException("Contest has already started and cannot have its start time updated")
             }
 
-            if (command.startAt.isBefore(ExecutionContext.getStartAt())) {
+            if (command.startAt.isBefore(ExecutionContext.get().startedAt)) {
                 throw BusinessException("Contest start time must be in the future")
             }
         }
@@ -83,7 +83,7 @@ class UpdateContestService(
             } else {
                 command.autoFreezeAt != contest.autoFreezeAt
             }
-        if (isUpdatingAutoFreezeAt && command.autoFreezeAt?.isBefore(ExecutionContext.getStartAt()) == true) {
+        if (isUpdatingAutoFreezeAt && command.autoFreezeAt?.isBefore(ExecutionContext.get().startedAt) == true) {
             throw BusinessException("Contest autoFreezeAt must be in the future")
         }
 

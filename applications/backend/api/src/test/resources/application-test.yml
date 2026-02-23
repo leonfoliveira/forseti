@@ -6,4 +6,8 @@ server:
     allowed-origins: http://localhost:3000
   port: 8080
 security:
-  member-id: 00000000-0000-0000-0000-000000000000
+  cookie:
+    domain: .forsetijudge.com
+    secure: false
+  member-login: api
+  member-type: API

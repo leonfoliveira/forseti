@@ -108,14 +108,14 @@ class Contest(
     @OrderBy("createdAt ASC")
     var tickets: List<Ticket<*>> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
-    fun hasStarted(): Boolean = !startAt.isAfter(ExecutionContext.getStartAt())
+    fun hasStarted(): Boolean = !startAt.isAfter(ExecutionContext.get().startedAt)
 
-    fun hasEnded(): Boolean = !endAt.isAfter(ExecutionContext.getStartAt())
+    fun hasEnded(): Boolean = !endAt.isAfter(ExecutionContext.get().startedAt)
 
     fun isActive(): Boolean = hasStarted() && !hasEnded()
 
     val isFrozen: Boolean
-        get() = frozenAt != null && !frozenAt!!.isAfter(ExecutionContext.getStartAt())
+        get() = frozenAt != null && !frozenAt!!.isAfter(ExecutionContext.get().startedAt)
 
     data class Settings(
         var isAutoJudgeEnabled: Boolean = true,

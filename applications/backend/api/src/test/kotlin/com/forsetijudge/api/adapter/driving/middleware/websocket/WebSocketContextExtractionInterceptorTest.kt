@@ -16,7 +16,7 @@ import org.springframework.messaging.support.MessageHeaderAccessor
 
 class WebSocketContextExtractionInterceptorTest :
     FunSpec({
-        val sut = WebSocketContextExtractionInterceptor()
+        val sut = WebSocketExecutionContextInterceptor()
 
         beforeEach {
             mockkStatic(MessageHeaderAccessor::class)
@@ -85,7 +85,7 @@ class WebSocketContextExtractionInterceptorTest :
             val accessor = mockk<StompHeaderAccessor>(relaxed = true)
             every { MessageHeaderAccessor.getAccessor(any<Message<*>>(), StompHeaderAccessor::class.java) } returns accessor
             val existingContext =
-                ExecutionContext(session = SessionMockBuilder.build().toResponseBodyDTO(), ip = "127.0.0.1", traceId = "traceId")
+                ExecutionContext(session = SessionMockBuilder.build(), ip = "127.0.0.1", traceId = "traceId")
             every { accessor.sessionAttributes } returns mapOf("context" to existingContext)
 
             sut.preSend(message, channel)

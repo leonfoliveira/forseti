@@ -85,10 +85,8 @@ class WebSocketPrivateInterceptorTest :
             every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
             every { accessor.destination } returns "/topic/contests/1/submissions:with-code-and-execution"
             every { accessor.command } returns StompCommand.SUBSCRIBE
-            ExecutionContext.set(
-                traceId = IdGenerator.getTraceId(),
-                session = SessionMockBuilder.build(member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)).toResponseBodyDTO(),
-            )
+            ExecutionContext.start()
+            ExecutionContext.authenticate(SessionMockBuilder.build(member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)))
             every { webSocketTopicConfigs.privateFilters } returns
                 mapOf(
                     Regex("/topic/contests/[a-fA-F0-9-]+/submissions:with-code-and-execution") to { destination: String ->
@@ -112,10 +110,8 @@ class WebSocketPrivateInterceptorTest :
                 mapOf(
                     Regex("/topic/contests/[a-fA-F0-9-]+/submissions:with-code-and-execution") to { _: String -> Unit },
                 )
-            ExecutionContext.set(
-                traceId = IdGenerator.getTraceId(),
-                session = SessionMockBuilder.build(member = MemberMockBuilder.build(type = Member.Type.JUDGE)).toResponseBodyDTO(),
-            )
+            ExecutionContext.start()
+            ExecutionContext.authenticate(SessionMockBuilder.build(member = MemberMockBuilder.build(type = Member.Type.JUDGE)))
 
             val result = sut.preSend(message, channel)
 

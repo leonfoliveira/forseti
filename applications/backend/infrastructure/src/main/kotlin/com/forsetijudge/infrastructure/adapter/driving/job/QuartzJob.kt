@@ -1,9 +1,9 @@
 package com.forsetijudge.infrastructure.adapter.driving.job
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.forsetijudge.core.application.util.SessionCache
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.ExecutionContext
-import io.opentelemetry.api.trace.Span
+import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import org.quartz.DisallowConcurrentExecution
 import org.quartz.JobExecutionContext
 import org.quartz.JobExecutionException
@@ -19,11 +19,14 @@ import java.util.UUID
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
 abstract class QuartzJob<TPayload : Serializable> : QuartzJobBean() {
-    @Value("\${security.member-id}")
-    private lateinit var memberId: UUID
+    @Value("\${security.member-login}")
+    private lateinit var memberLogin: String
+
+    @Value("\${security.member-type}")
+    private lateinit var memberType: Member.Type
 
     @Autowired
-    private lateinit var sessionCache: SessionCache
+    private lateinit var authenticateSystemUseCase: AuthenticateSystemUseCase
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -39,7 +42,9 @@ abstract class QuartzJob<TPayload : Serializable> : QuartzJobBean() {
      *
      * @param context The JobExecutionContext provided by the Quartz scheduler, containing information about the job execution environment.
      */
-    override fun executeInternal(context: JobExecutionContext) {
+    public override fun executeInternal(context: JobExecutionContext) {
+        ExecutionContext.start()
+
         val dataMap = context.mergedJobDataMap
         val id = dataMap.getString("id")
         val contestId =
@@ -53,7 +58,14 @@ abstract class QuartzJob<TPayload : Serializable> : QuartzJobBean() {
 
         val payload = objectMapper.readValue(payloadJson, getPayloadType())
 
-        initExecutionContext(contestId)
+        ExecutionContext.get().contestId = contestId
+
+        authenticateSystemUseCase.execute(
+            AuthenticateSystemUseCase.Command(
+                login = memberLogin,
+                type = memberType,
+            ),
+        )
 
         logger.info("Job id: {}, payload: {}, retries: {}", id, payloadJson, retries)
 
@@ -81,15 +93,6 @@ abstract class QuartzJob<TPayload : Serializable> : QuartzJobBean() {
                 throw ex
             }
         }
-    }
-
-    private fun initExecutionContext(contestId: UUID?) {
-        ExecutionContext.set(
-            ip = null,
-            traceId = Span.current().spanContext.traceId,
-            contestId = contestId,
-            session = sessionCache.get(contestId, memberId),
-        )
     }
 
     /**

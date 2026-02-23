@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
-class WebSocketContextExtractionInterceptor : ChannelInterceptor {
+class WebSocketExecutionContextInterceptor : ChannelInterceptor {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -31,12 +31,12 @@ class WebSocketContextExtractionInterceptor : ChannelInterceptor {
                 null
             }
 
-        ExecutionContext.set(
-            ip = handshakeContext?.ip,
-            traceId = handshakeContext?.traceId,
-            contestId = contestId,
-            session = handshakeContext?.session,
-        )
+        if (handshakeContext != null) {
+            ExecutionContext.set(handshakeContext)
+        } else {
+            ExecutionContext.start()
+        }
+        ExecutionContext.get().contestId = contestId
 
         logger.info("Started WebSocketAuthExtractionInterceptor")
 

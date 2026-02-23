@@ -13,15 +13,15 @@ class ExecutionContextTest :
         val traceId = IdGenerator.getTraceId()
         val contestId = IdGenerator.getUUID()
         val contest = ContestMockBuilder.build(id = contestId)
-        val session = SessionMockBuilder.build(contest = contest).toResponseBodyDTO()
+        val session = SessionMockBuilder.build(contest = contest)
 
         test("ExecutionContext should be initialized with correct values") {
-            ExecutionContext.set(
+            ExecutionContext.start(
                 ip = ip,
                 traceId = traceId,
                 contestId = contestId,
-                session = session,
             )
+            ExecutionContext.authenticate(session)
 
             ExecutionContext.get().ip shouldBe ip
             ExecutionContext.get().traceId shouldBe traceId

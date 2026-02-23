@@ -6,6 +6,7 @@ import com.forsetijudge.core.application.util.SessionCache
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.port.driven.producer.payload.SubmissionQueuePayload
+import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.submission.AutoJudgeSubmissionUseCase
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
@@ -18,16 +19,12 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest(classes = [SubmissionQueueRabbitMQConsumer::class, JacksonConfig::class])
 class SubmissionQueueRabbitMQConsumerTest(
     @MockkBean(relaxed = true)
-    private val sessionCache: SessionCache,
+    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
     private val autoJudgeSubmissionUseCase: AutoJudgeSubmissionUseCase,
     private val objectMapper: ObjectMapper,
     private val sut: SubmissionQueueRabbitMQConsumer,
 ) : FunSpec({
-        beforeEach {
-            every { sessionCache.get(any(), any()) } returns SessionMockBuilder.build().toResponseBodyDTO()
-        }
-
         test("should process payload successfully") {
             val message =
                 RabbitMQMessage(

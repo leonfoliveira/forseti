@@ -9,6 +9,7 @@ import java.util.UUID
  * Accessor for persistence operations related to Session entity
  */
 interface SessionRepository : BaseRepository<Session> {
+    @Query("SELECT s FROM Session s WHERE s.id = ?1 AND s.deletedAt IS NULL")
     fun findById(id: UUID): Session?
 
     @Query("SELECT s FROM Session s WHERE s.id = ?1 AND s.contest.id = ?2 AND s.deletedAt IS NULL")

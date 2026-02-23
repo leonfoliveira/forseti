@@ -54,7 +54,7 @@ class CreateSessionInternalServiceTest :
 
                 result.contest shouldBe contest
                 result.member shouldBe member
-                result.expiresAt shouldBe ExecutionContext.getStartAt().plusHours(1)
+                result.expiresAt shouldBe ExecutionContext.get().startedAt.plusHours(1)
                 verify { sessionRepository.save(result) }
                 verify {
                     deleteAllSessionsByMemberInternalUseCase.execute(
@@ -76,7 +76,7 @@ class CreateSessionInternalServiceTest :
 
             result.contest shouldBe contest
             result.member shouldBe member
-            result.expiresAt shouldBe ExecutionContext.getStartAt().plusHours(1)
+            result.expiresAt shouldBe ExecutionContext.get().startedAt.plusHours(1)
             verify { sessionRepository.save(result) }
             verify { deleteAllSessionsByMemberInternalUseCase.execute(DeleteAllSessionsByMemberInternalUseCase.Command(member)) }
         }
@@ -92,7 +92,7 @@ class CreateSessionInternalServiceTest :
 
                 result.contest shouldBe contest
                 result.member shouldBe member
-                result.expiresAt shouldBe ExecutionContext.getStartAt().plusHours(1)
+                result.expiresAt shouldBe ExecutionContext.get().startedAt.plusHours(1)
                 verify { sessionRepository.save(result) }
                 verify {
                     deleteAllSessionsByMemberInternalUseCase.execute(

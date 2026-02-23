@@ -17,6 +17,7 @@ import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.Hasher
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
@@ -65,10 +66,10 @@ class UpdateContestServiceTest :
             clearAllMocks()
             mockkStatic(OffsetDateTime::class)
             every { OffsetDateTime.now() } returns now
-            ExecutionContext.set(
+            ExecutionContextMockBuilder.build(
                 contestId = contextContestId,
-                session = SessionMockBuilder.build(member = MemberMockBuilder.build(id = contextMemberId)).toResponseBodyDTO(),
-                startedAt = now,
+                memberId = contextMemberId,
+                startAt = now,
             )
         }
 
@@ -244,7 +245,7 @@ class UpdateContestServiceTest :
                 shouldThrow<BusinessException> {
                     sut.execute(
                         command.copy(
-                            autoFreezeAt = ExecutionContext.getStartAt().minusMinutes(30),
+                            autoFreezeAt = ExecutionContext.get().startedAt.minusMinutes(30),
                             startAt = contest.startAt,
                         ),
                     )

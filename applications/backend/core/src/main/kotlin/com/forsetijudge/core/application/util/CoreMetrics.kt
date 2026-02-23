@@ -11,7 +11,7 @@ object CoreMetrics {
             .builder()
             .name("forseti_info")
             .help("Forseti application information")
-            .labelNames("version", "environment")
+            .labelNames("version")
             .register()
 
     val RECEIVED_SUBMISSION: Counter =

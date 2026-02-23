@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.listener.submission
 
 import com.forsetijudge.core.application.listener.BusinessEventListener
+import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.port.driven.producer.SubmissionQueueProducer
 import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
@@ -19,14 +20,16 @@ class SubmissionCreatedEventListener(
     private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
     private val webSocketFanoutProducer: WebSocketFanoutProducer,
     private val submissionQueueProducer: SubmissionQueueProducer,
-) : BusinessEventListener<SubmissionEvent.Created> {
+) : BusinessEventListener<Submission, SubmissionEvent.Created>() {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @TransactionalEventListener(SubmissionEvent.Created::class, phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: SubmissionEvent.Created) {
-        logger.info("Handling submission created event with id: {}", event.submission.id)
+        super.onApplicationEvent(event)
+    }
 
-        val submission = event.submission
+    override fun handlePayload(payload: Submission) {
+        val submission = payload
 
         webSocketFanoutProducer.produce(
             WebSocketFanoutPayload(

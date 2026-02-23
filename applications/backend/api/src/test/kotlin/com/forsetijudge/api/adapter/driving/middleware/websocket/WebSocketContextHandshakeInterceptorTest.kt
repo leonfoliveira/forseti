@@ -1,9 +1,7 @@
 package com.forsetijudge.api.adapter.driving.middleware.websocket
 
-import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContext
-import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.mockk
@@ -20,11 +18,8 @@ class WebSocketContextHandshakeInterceptorTest :
             val mockResponse = mockk<ServerHttpResponse>(relaxed = true)
             val mockWsHandler = mockk<WebSocketHandler>(relaxed = true)
             val attributes = mutableMapOf<String, Any>()
-            ExecutionContext.set(
-                traceId = IdGenerator.getTraceId(),
-                session = SessionMockBuilder.build().toResponseBodyDTO(),
-                contestId = IdGenerator.getUUID(),
-            )
+            ExecutionContext.start()
+            ExecutionContext.authenticate(SessionMockBuilder.build())
 
             val result = sut.beforeHandshake(mockRequest, mockResponse, mockWsHandler, attributes)
 

@@ -1,23 +1,23 @@
 package com.forsetijudge.core.application.listener.contest
 
 import com.forsetijudge.core.application.listener.BusinessEventListener
+import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.port.driven.scheduler.AutoFreezeJobScheduler
 import com.forsetijudge.core.port.driven.scheduler.payload.AutoFreezeJobPayload
-import org.slf4j.LoggerFactory
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
 class ContestUpdatedEventListener(
     val autoFreezeJobScheduler: AutoFreezeJobScheduler,
-) : BusinessEventListener<ContestEvent.Updated> {
-    private val logger = LoggerFactory.getLogger(this::class.java)
-
+) : BusinessEventListener<Contest, ContestEvent.Updated>() {
     @TransactionalEventListener(ContestEvent.Updated::class, phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: ContestEvent.Updated) {
-        logger.info("Handling contest updated event with id: {}", event.contest.id)
+        super.onApplicationEvent(event)
+    }
 
-        val contest = event.contest
+    override fun handlePayload(payload: Contest) {
+        val contest = payload
         val freezeAt = contest.autoFreezeAt
 
         if (freezeAt != null) {

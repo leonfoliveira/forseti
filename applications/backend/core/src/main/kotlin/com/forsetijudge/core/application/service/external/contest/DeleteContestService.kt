@@ -40,7 +40,7 @@ class DeleteContestService(
             .requireContestNotStarted()
             .throwIfErrors()
 
-        contest.deletedAt = ExecutionContext.getStartAt()
+        contest.deletedAt = ExecutionContext.get().startedAt
         contestRepository.save(contest)
         applicationEventPublisher.publishEvent(ContestEvent.Deleted(contest))
 

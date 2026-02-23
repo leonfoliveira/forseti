@@ -39,7 +39,7 @@ class DeleteClarificationService(
             .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
             .throwIfErrors()
 
-        clarification.deletedAt = ExecutionContext.getStartAt()
+        clarification.deletedAt = ExecutionContext.get().startedAt
 
         clarificationRepository.save(clarification)
         applicationEventPublisher.publishEvent(ClarificationEvent.Deleted(clarification))

@@ -43,14 +43,8 @@ class HttpPrivateInterceptorTest :
             val response = mockk<HttpServletResponse>(relaxed = true)
             val handler = mockk<HandlerMethod>(relaxed = true)
             every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT])
-            ExecutionContext.set(
-                traceId = IdGenerator.getTraceId(),
-                session =
-                    SessionMockBuilder
-                        .build(
-                            member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
-                        ).toResponseBodyDTO(),
-            )
+            ExecutionContext.start()
+            ExecutionContext.authenticate(SessionMockBuilder.build(member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)))
 
             shouldThrow<ForbiddenException> {
                 sut.preHandle(request, response, handler)
@@ -62,14 +56,8 @@ class HttpPrivateInterceptorTest :
             val response = mockk<HttpServletResponse>(relaxed = true)
             val handler = mockk<HandlerMethod>(relaxed = true)
             every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT, Member.Type.CONTESTANT])
-            ExecutionContext.set(
-                traceId = IdGenerator.getTraceId(),
-                session =
-                    SessionMockBuilder
-                        .build(
-                            member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
-                        ).toResponseBodyDTO(),
-            )
+            ExecutionContext.start()
+            ExecutionContext.authenticate(SessionMockBuilder.build(member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)))
 
             sut.preHandle(request, response, handler) shouldBe true
         }

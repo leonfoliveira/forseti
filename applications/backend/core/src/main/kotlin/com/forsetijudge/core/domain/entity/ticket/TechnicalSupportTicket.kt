@@ -17,8 +17,8 @@ import java.util.UUID
 @DiscriminatorValue("TECHNICAL_SUPPORT")
 class TechnicalSupportTicket(
     id: UUID = IdGenerator.getUUID(),
-    createdAt: OffsetDateTime = ExecutionContext.getStartAt(),
-    updatedAt: OffsetDateTime = ExecutionContext.getStartAt(),
+    createdAt: OffsetDateTime = ExecutionContext.get().startedAt,
+    updatedAt: OffsetDateTime = ExecutionContext.get().startedAt,
     deletedAt: OffsetDateTime? = null,
     version: Long = 1L,
     contest: Contest,

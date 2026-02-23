@@ -1,7 +1,7 @@
 package com.forsetijudge.api.adapter.config
 
-import com.forsetijudge.api.adapter.driving.middleware.websocket.WebSocketContextExtractionInterceptor
 import com.forsetijudge.api.adapter.driving.middleware.websocket.WebSocketContextHandshakeInterceptor
+import com.forsetijudge.api.adapter.driving.middleware.websocket.WebSocketExecutionContextInterceptor
 import com.forsetijudge.api.adapter.driving.middleware.websocket.WebSocketPrivateInterceptor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
@@ -17,7 +17,7 @@ class WebSocketConfig(
     @Value("\${server.cors.allowed-origins}")
     val allowedOrigins: String,
     val webSocketContextHandshakeInterceptor: WebSocketContextHandshakeInterceptor,
-    val webSocketContextExtractionInterceptor: WebSocketContextExtractionInterceptor,
+    val webSocketExecutionContextInterceptor: WebSocketExecutionContextInterceptor,
     val webSocketPrivateInterceptor: WebSocketPrivateInterceptor,
 ) : WebSocketMessageBrokerConfigurer {
     /**
@@ -44,6 +44,6 @@ class WebSocketConfig(
      * Configure client inbound channel with interceptors for context extraction and private subscription handling.
      */
     override fun configureClientInboundChannel(registration: ChannelRegistration) {
-        registration.interceptors(webSocketContextExtractionInterceptor, webSocketPrivateInterceptor)
+        registration.interceptors(webSocketExecutionContextInterceptor, webSocketPrivateInterceptor)
     }
 }

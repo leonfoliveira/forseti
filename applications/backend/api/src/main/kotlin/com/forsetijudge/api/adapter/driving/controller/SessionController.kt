@@ -5,6 +5,7 @@ import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.DeleteAllSessionsByMemberUseCase
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
@@ -26,7 +27,7 @@ class SessionController(
     fun getSession(): ResponseEntity<SessionResponseBodyDTO> {
         logger.info("[GET] /v1/sessions/me")
         val session = ExecutionContext.getSession()
-        return ResponseEntity.ok(session)
+        return ResponseEntity.ok(session.toResponseBodyDTO())
     }
 
     @DeleteMapping("/sessions/me")

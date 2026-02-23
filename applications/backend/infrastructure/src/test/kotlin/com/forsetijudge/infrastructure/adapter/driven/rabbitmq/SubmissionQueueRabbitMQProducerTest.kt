@@ -31,7 +31,7 @@ class SubmissionQueueRabbitMQProducerTest(
         val traceId = IdGenerator.getTraceId()
 
         beforeEach {
-            ExecutionContext.set(
+            ExecutionContext.start(
                 contestId = contestId,
                 traceId = traceId,
             )
@@ -49,7 +49,7 @@ class SubmissionQueueRabbitMQProducerTest(
                 object :
                     TypeReference<
                         RabbitMQMessage<SubmissionQueuePayload>,
-                        >() {}
+                    >() {}
 
             val message = objectMapper.readValue(jsonMessage, typeRef)
             message.contestId shouldBe contestId

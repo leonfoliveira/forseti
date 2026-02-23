@@ -9,4 +9,5 @@ external:
 submission:
   max-concurrent: 1
 security:
-  member-id: 11111111-1111-1111-1111-111111111111
+  member-login: autojudge
+  member-type: AUTOJUDGE
