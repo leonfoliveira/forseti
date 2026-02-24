@@ -6,9 +6,11 @@ import com.forsetijudge.core.domain.event.ClarificationEvent
 import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
 import com.forsetijudge.core.port.driven.producer.payload.WebSocketFanoutPayload
 import com.forsetijudge.core.port.dto.response.clarification.toIdResponseBodyDTO
+import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
+@Component
 class ClarificationDeletedEventListener(
     private val webSocketFanoutProducer: WebSocketFanoutProducer,
 ) : BusinessEventListener<Clarification, ClarificationEvent.Deleted>() {

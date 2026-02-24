@@ -5,9 +5,11 @@ import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.port.driven.scheduler.AutoFreezeJobScheduler
 import com.forsetijudge.core.port.driven.scheduler.payload.AutoFreezeJobPayload
+import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
+@Component
 class ContestCreatedEventListener(
     val autoFreezeJobScheduler: AutoFreezeJobScheduler,
 ) : BusinessEventListener<Contest, ContestEvent.Created>() {

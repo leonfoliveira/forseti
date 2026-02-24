@@ -10,9 +10,11 @@ import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
+import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
+@Component
 class SubmissionUpdatedEventListener(
     private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
     private val webSocketFanoutProducer: WebSocketFanoutProducer,

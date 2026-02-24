@@ -13,9 +13,11 @@ import com.forsetijudge.core.port.dto.response.submission.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
+@Component
 class SubmissionCreatedEventListener(
     private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
     private val webSocketFanoutProducer: WebSocketFanoutProducer,

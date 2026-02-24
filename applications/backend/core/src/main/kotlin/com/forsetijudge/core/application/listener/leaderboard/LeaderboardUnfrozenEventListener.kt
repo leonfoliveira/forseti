@@ -8,9 +8,11 @@ import com.forsetijudge.core.port.driven.producer.payload.WebSocketFanoutPayload
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.driving.usecase.external.submission.FindAllSubmissionsByContestSinceLastFreezeUseCase
 import com.forsetijudge.core.port.dto.response.leaderboard.toUnfreezeResponseBodyDTO
+import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
+@Component
 class LeaderboardUnfrozenEventListener(
     private val buildLeaderboardUseCase: BuildLeaderboardUseCase,
     private val findAllSubmissionsByContestSinceLastFreezeUseCase: FindAllSubmissionsByContestSinceLastFreezeUseCase,
