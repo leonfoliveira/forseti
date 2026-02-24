@@ -31,7 +31,6 @@ class ContestController(
     private val updateContestUseCase: UpdateContestUseCase,
     private val forceStartContestUseCase: ForceStartContestUseCase,
     private val forceEndContestUseCase: ForceEndContestUseCase,
-    private val deleteContestUseCase: DeleteContestUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -119,15 +118,5 @@ class ContestController(
         logger.info("[PUT] /v1/contests/{}:force-end", contestId)
         val contest = forceEndContestUseCase.execute()
         return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
-    }
-
-    @DeleteMapping("/contests/{contestId}")
-    @Private(Member.Type.ROOT)
-    fun delete(
-        @PathVariable contestId: UUID,
-    ): ResponseEntity<Void> {
-        logger.info("[DELETE] /v1/contests/{}", contestId)
-        deleteContestUseCase.execute()
-        return ResponseEntity.noContent().build()
     }
 }

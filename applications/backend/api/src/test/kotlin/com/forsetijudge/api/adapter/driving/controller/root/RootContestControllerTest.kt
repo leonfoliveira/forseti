@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.forsetijudge.api.adapter.driving.advice.GlobalExceptionHandler
 import com.forsetijudge.api.adapter.dto.request.contest.CreateContestRequestBodyDTO
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driving.usecase.external.contest.CreateContestUseCase
+import com.forsetijudge.core.port.driving.usecase.external.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.driving.usecase.external.contest.FindAllContestUseCase
 import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
@@ -24,6 +26,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import java.time.OffsetDateTime
@@ -36,6 +39,8 @@ class RootContestControllerTest(
     private val createContestUseCase: CreateContestUseCase,
     @MockkBean(relaxed = true)
     private val findAllContestUseCase: FindAllContestUseCase,
+    @MockkBean(relaxed = true)
+    private val deleteContestUseCase: DeleteContestUseCase,
     private val webMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) : FunSpec({
@@ -96,5 +101,20 @@ class RootContestControllerTest(
                 }
 
             verify { findAllContestUseCase.execute() }
+        }
+
+        test("delete") {
+            val contestId = IdGenerator.getUUID()
+
+            webMvc
+                .delete("$basePath/{contestId}", contestId) {
+                    contentType = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isNoContent() }
+                }
+
+            verify {
+                deleteContestUseCase.execute()
+            }
         }
     })

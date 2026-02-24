@@ -45,8 +45,6 @@ class ContestControllerTest(
     private val forceStartContestUseCase: ForceStartContestUseCase,
     @MockkBean(relaxed = true)
     private val forceEndContestUseCase: ForceEndContestUseCase,
-    @MockkBean(relaxed = true)
-    private val deleteContestUseCase: DeleteContestUseCase,
     private val webMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) : FunSpec({
@@ -207,21 +205,6 @@ class ContestControllerTest(
 
             verify {
                 forceEndContestUseCase.execute()
-            }
-        }
-
-        test("delete") {
-            val contestId = IdGenerator.getUUID()
-
-            webMvc
-                .delete("$basePath/{contestId}", contestId) {
-                    contentType = MediaType.APPLICATION_JSON
-                }.andExpect {
-                    status { isNoContent() }
-                }
-
-            verify {
-                deleteContestUseCase.execute()
             }
         }
     })

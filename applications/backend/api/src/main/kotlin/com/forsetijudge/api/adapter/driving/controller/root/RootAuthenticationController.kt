@@ -5,7 +5,6 @@ import com.forsetijudge.api.adapter.util.cookie.CsrfCookieBuilder
 import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.external.authentication.SignInUseCase
-import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.slf4j.LoggerFactory
