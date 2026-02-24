@@ -13,7 +13,7 @@ create table submission (
     constraint fk_member_id foreign key (member_id) references member (id),
     constraint fk_problem_id foreign key (problem_id) references problem (id),
     constraint fk_code_id foreign key (code_id) references attachment (id),
-    constraint chk_answer_null_or_status_judging check (answer is null or status = 'JUDGING')
+    constraint chk_answer_null_or_status_judging check (status <> 'JUDGING' or answer is null)
 );
 
 create index idx_submission_member_id on submission (member_id);
