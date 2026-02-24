@@ -27,7 +27,5 @@ object MemberMockBuilder {
         login = login,
         password = password,
         submissions = submissions,
-    ).also {
-        contest?.let { c -> it.contestId = c.id }
-    }
+    )
 }

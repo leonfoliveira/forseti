@@ -68,20 +68,4 @@ class Clarification(
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var children: List<Clarification> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
-    @Column(name = "contest_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var contestId: UUID
-
-    @Column(name = "member_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var memberId: UUID
-
-    @Column(name = "problem_id", insertable = false, updatable = false)
-    @NotAudited
-    var problemId: UUID? = null
-
-    @Column(name = "parent_id", insertable = false, updatable = false)
-    @NotAudited
-    var parentId: UUID? = null
-}
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)

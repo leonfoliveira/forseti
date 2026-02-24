@@ -49,7 +49,7 @@ class BuildAdminDashboardService(
             clarifications = contest.clarifications,
             announcements = contest.announcements,
             tickets = contest.tickets,
-            memberTickets = contest.tickets.filter { it.memberId == contextMemberId },
+            memberTickets = contest.tickets.filter { it.member.id == contextMemberId },
         )
     }
 }

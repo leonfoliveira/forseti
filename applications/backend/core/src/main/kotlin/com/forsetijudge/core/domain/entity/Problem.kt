@@ -81,16 +81,4 @@ class Problem(
     @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var submissions: List<Submission> = mutableListOf(),
-) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
-    @Column(name = "contest_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var contestId: UUID
-
-    @Column(name = "description_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var descriptionId: UUID
-
-    @Column(name = "test_cases_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var testCasesId: UUID
-}
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)

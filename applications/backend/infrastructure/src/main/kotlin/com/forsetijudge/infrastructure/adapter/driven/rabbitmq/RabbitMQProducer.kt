@@ -30,13 +30,13 @@ abstract class RabbitMQProducer<TPayload : Serializable>(
         val message =
             RabbitMQMessage(
                 id = IdGenerator.getUUID(),
-                contestId = ExecutionContext.get().contestId,
+                contestId = ExecutionContext.getContestIdNullable(),
                 traceId = ExecutionContext.get().traceId,
                 payload = payload,
             )
         val jsonString = objectMapper.writeValueAsString(message)
 
-        logger.info("Sending message: $message")
+        logger.info("Sending message: $jsonString")
 
         rabbitTemplate.convertAndSend(exchange, routingKey, jsonString)
     }

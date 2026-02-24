@@ -28,9 +28,5 @@ object TicketMockBuilder {
         type = type,
         status = status,
         properties = properties,
-    ).also {
-        it.contestId = contest.id
-        it.memberId = member.id
-        staff?.let { s -> it.staffId = s.id }
-    }
+    )
 }

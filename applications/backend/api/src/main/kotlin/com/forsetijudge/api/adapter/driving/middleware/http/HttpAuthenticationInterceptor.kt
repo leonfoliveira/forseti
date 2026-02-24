@@ -68,7 +68,7 @@ class HttpAuthenticationInterceptor(
         logger.info("Found session with id: $sessionId")
 
         val contextContextId = ExecutionContext.getContestIdNullable()
-        if (contextContextId != null && contextContextId != session.contestId) {
+        if (contextContextId != null && contextContextId != session.contest?.id) {
             logger.info("Session does not belong to the current contest. Continuing as guest.")
             return true
         }

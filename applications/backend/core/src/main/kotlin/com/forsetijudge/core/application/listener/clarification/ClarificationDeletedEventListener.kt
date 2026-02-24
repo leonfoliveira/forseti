@@ -23,7 +23,7 @@ class ClarificationDeletedEventListener(
         val clarification = payload
         webSocketFanoutProducer.produce(
             WebSocketFanoutPayload(
-                "/topic/contests/${clarification.contestId}/clarifications:delete",
+                "/topic/contests/${clarification.contest.id}/clarifications:delete",
                 clarification.toIdResponseBodyDTO(),
             ),
         )

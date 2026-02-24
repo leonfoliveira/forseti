@@ -25,8 +25,5 @@ object AttachmentMockBuilder {
         filename = filename,
         contentType = contentType,
         context = context,
-    ).also {
-        it.contestId = contest.id
-        it.memberId = member.id
-    }
+    )
 }

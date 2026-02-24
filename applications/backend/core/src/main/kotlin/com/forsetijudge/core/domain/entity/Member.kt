@@ -65,10 +65,6 @@ class Member(
     @OrderBy("createdAt ASC")
     var submissions: List<Submission> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
-    @Column(name = "contest_id", insertable = false, updatable = false)
-    @NotAudited
-    var contestId: UUID? = null
-
     enum class Type {
         /**
          * Represents a system-level member used for API interactions.

@@ -48,7 +48,7 @@ class BuildJudgeDashboardService(
             submissions = submissions,
             clarifications = contest.clarifications,
             announcements = contest.announcements,
-            memberTickets = contest.tickets.filter { it.memberId == contextMemberId },
+            memberTickets = contest.tickets.filter { it.member.id == contextMemberId },
         )
     }
 }

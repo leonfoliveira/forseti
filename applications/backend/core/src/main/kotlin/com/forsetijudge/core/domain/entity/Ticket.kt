@@ -77,18 +77,6 @@ open class Ticket<TProperties : Serializable>(
     @Audited(withModifiedFlag = false)
     open var properties: Map<String, Any>,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
-    @Column(name = "contest_id", insertable = false, updatable = false)
-    @NotAudited
-    open lateinit var contestId: UUID
-
-    @Column(name = "member_id", insertable = false, updatable = false)
-    @NotAudited
-    open lateinit var memberId: UUID
-
-    @Column(name = "staff_id", insertable = false, updatable = false)
-    @NotAudited
-    open var staffId: UUID? = null
-
     enum class Type {
         SUBMISSION_PRINT,
         TECHNICAL_SUPPORT,

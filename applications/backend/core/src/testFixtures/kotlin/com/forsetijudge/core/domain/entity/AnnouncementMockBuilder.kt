@@ -21,8 +21,5 @@ object AnnouncementMockBuilder {
         contest = contest,
         member = member,
         text = text,
-    ).also {
-        it.contestId = contest.id
-        it.memberId = member.id
-    }
+    )
 }

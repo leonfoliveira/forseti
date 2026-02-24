@@ -43,12 +43,4 @@ class Announcement(
      */
     @Column(nullable = false)
     var text: String,
-) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
-    @Column(name = "contest_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var contestId: UUID
-
-    @Column(name = "member_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var memberId: UUID
-}
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)

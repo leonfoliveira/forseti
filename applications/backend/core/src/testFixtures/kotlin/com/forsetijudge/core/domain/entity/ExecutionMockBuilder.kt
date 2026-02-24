@@ -27,9 +27,5 @@ object ExecutionMockBuilder {
         approvedTestCases = lastTestCase,
         input = input,
         output = output,
-    ).also {
-        it.submissionId = submission.id
-        it.inputId = input.id
-        it.outputId = output.id
-    }
+    )
 }

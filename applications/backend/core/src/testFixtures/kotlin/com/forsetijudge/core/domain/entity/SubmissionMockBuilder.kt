@@ -27,9 +27,5 @@ object SubmissionMockBuilder {
         status = status,
         answer = answer,
         code = code,
-    ).also {
-        it.memberId = member.id
-        it.problemId = problem.id
-        it.codeId = code.id
-    }
+    )
 }

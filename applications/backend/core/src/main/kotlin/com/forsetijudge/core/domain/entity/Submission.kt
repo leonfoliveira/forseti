@@ -78,18 +78,6 @@ class Submission(
     @OrderBy("createdAt ASC")
     val executions: List<Execution> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
-    @Column(name = "member_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var memberId: UUID
-
-    @Column(name = "problem_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var problemId: UUID
-
-    @Column(name = "code_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var codeId: UUID
-
     val contest get() = problem.contest
 
     enum class Language {

@@ -46,10 +46,10 @@ class BuildContestantDashboardService(
             members = contest.members,
             problems = contest.problems,
             submissions = submissions,
-            memberSubmissions = submissions.filter { it.memberId == contextMemberId },
+            memberSubmissions = submissions.filter { it.member.id == contextMemberId },
             clarifications = contest.clarifications,
             announcements = contest.announcements,
-            memberTickets = contest.tickets.filter { it.memberId == contextMemberId },
+            memberTickets = contest.tickets.filter { it.member.id == contextMemberId },
         )
     }
 }

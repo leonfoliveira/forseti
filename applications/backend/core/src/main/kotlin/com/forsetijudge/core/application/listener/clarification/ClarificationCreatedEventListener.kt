@@ -23,7 +23,7 @@ class ClarificationCreatedEventListener(
         val clarification = payload
         webSocketFanoutProducer.produce(
             WebSocketFanoutPayload(
-                "/topic/contests/${clarification.contestId}/clarifications",
+                "/topic/contests/${clarification.contest.id}/clarifications",
                 clarification.toResponseBodyDTO(),
             ),
         )
@@ -32,7 +32,7 @@ class ClarificationCreatedEventListener(
         if (parent != null) {
             webSocketFanoutProducer.produce(
                 WebSocketFanoutPayload(
-                    "/topic/contests/${clarification.contestId}/members/${parent.memberId}/clarifications:answer",
+                    "/topic/contests/${clarification.contest.id}/members/${parent.member.id}/clarifications:answer",
                     clarification.toResponseBodyDTO(),
                 ),
             )

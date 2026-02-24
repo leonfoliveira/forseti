@@ -49,12 +49,4 @@ class Session(
     @Column(name = "expires_at", nullable = false)
     @Audited(withModifiedFlag = false)
     val expiresAt: OffsetDateTime,
-) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
-    @Column(name = "contest_id", insertable = false, updatable = false)
-    @NotAudited
-    var contestId: UUID? = null
-
-    @Column(name = "member_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var memberId: UUID
-}
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)

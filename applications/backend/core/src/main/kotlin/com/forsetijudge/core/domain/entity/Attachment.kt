@@ -58,14 +58,6 @@ class Attachment(
     @Audited(withModifiedFlag = false)
     val context: Context,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
-    @Column(name = "contest_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var contestId: UUID
-
-    @Column(name = "member_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var memberId: UUID
-
     enum class Context {
         PROBLEM_DESCRIPTION,
         PROBLEM_TEST_CASES,

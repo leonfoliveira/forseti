@@ -23,8 +23,5 @@ object SessionMockBuilder {
         contest = contest,
         member = member,
         expiresAt = expiresAt,
-    ).also {
-        contest?.let { c -> it.contestId = c.id }
-        it.memberId = member.id
-    }
+    )
 }

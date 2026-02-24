@@ -33,9 +33,5 @@ object ProblemMockBuilder {
         memoryLimit = memoryLimit,
         testCases = testCases,
         submissions = submissions,
-    ).also {
-        it.contestId = contest.id
-        it.descriptionId = description.id
-        it.testCasesId = testCases.id
-    }
+    )
 }

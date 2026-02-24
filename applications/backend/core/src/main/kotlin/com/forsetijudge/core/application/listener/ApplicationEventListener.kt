@@ -26,7 +26,7 @@ abstract class ApplicationEventListener {
      * @param event The business event to handle.
      */
     open fun onApplicationEvent(event: ApplicationEvent) {
-        ExecutionContext.start()
+        ExecutionContext.start(contestId = ExecutionContext.getContestIdNullable())
 
         logger.info("Handling application event of type: ${event::class.java.simpleName}")
 

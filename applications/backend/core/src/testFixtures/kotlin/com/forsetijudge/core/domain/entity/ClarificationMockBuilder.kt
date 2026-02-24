@@ -27,10 +27,5 @@ object ClarificationMockBuilder {
         parent = parent,
         text = text,
         children = children,
-    ).also {
-        it.contestId = contest.id
-        it.memberId = member.id
-        problem?.let { p -> it.problemId = p.id }
-        parent?.let { p -> it.parentId = p.id }
-    }
+    )
 }

@@ -34,7 +34,7 @@ class WebSocketAuthenticationInterceptor : ChannelInterceptor {
 
         if (session != null) {
             val contextContestId = ExecutionContext.getContestIdNullable()
-            if (contextContestId != null && contextContestId != session.contestId) {
+            if (contextContestId != null && contextContestId != session.contest?.id) {
                 logger.info("Session does not belong to the current contest. Continuing as guest.")
                 return message
             }

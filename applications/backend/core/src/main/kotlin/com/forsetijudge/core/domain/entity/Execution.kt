@@ -68,16 +68,4 @@ class Execution(
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
     val output: Attachment,
-) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
-    @Column(name = "submission_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var submissionId: UUID
-
-    @Column(name = "input_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var inputId: UUID
-
-    @Column(name = "output_id", insertable = false, updatable = false)
-    @NotAudited
-    lateinit var outputId: UUID
-}
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)
