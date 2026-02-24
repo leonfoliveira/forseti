@@ -25,7 +25,7 @@ export class AxiosContestRepository implements ContestRepository {
 
   async findBySlug(contestSlug: string): Promise<ContestResponseDTO> {
     const response = await this.axiosClient.get<ContestResponseDTO>(
-      `${this.basePath}/slug/${contestSlug}`,
+      `/v1/public/contests/slug/${contestSlug}`,
     );
     return response.data;
   }

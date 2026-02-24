@@ -52,7 +52,7 @@ class WebSocketTopicConfigs(
                     },
                 )
             },
-            Regex("/topic/contests/[a-fA-F0-9-]+/clarifications:delete") to { destination ->
+            Regex("/topic/contests/[a-fA-F0-9-]+/clarifications:deleted") to { destination ->
                 contestAuthorizerUseCase.execute(
                     ContestAuthorizerUseCase.Command { contestAuthorizer ->
                         contestAuthorizer
@@ -97,7 +97,7 @@ class WebSocketTopicConfigs(
                     },
                 )
             },
-            Regex("/topic/contests/[a-fA-F0-9-]+/submissions:with-code-and-execution") to { destination ->
+            Regex("/topic/contests/[a-fA-F0-9-]+/submissions:with-code-and-executions") to { destination ->
                 contestAuthorizerUseCase.execute(
                     ContestAuthorizerUseCase.Command { contestAuthorizer ->
                         contestAuthorizer

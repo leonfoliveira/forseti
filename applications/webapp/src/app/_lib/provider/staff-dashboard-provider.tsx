@@ -68,8 +68,6 @@ export function StaffDashboardProvider({
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    state.start();
-
     async function reconnect() {
       try {
         console.debug("Attempting to reconnect...");
@@ -148,6 +146,7 @@ export function StaffDashboardProvider({
     }
 
     async function fetch() {
+      state.start();
       try {
         await init();
         state.finish();

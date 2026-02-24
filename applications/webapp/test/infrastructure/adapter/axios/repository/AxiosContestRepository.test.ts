@@ -44,7 +44,9 @@ describe("AxiosContestRepository", () => {
 
       const result = await sut.findBySlug(slug);
 
-      expect(axiosClient.get).toHaveBeenCalledWith(`/v1/contests/slug/${slug}`);
+      expect(axiosClient.get).toHaveBeenCalledWith(
+        `/v1/public/contests/slug/${slug}`,
+      );
       expect(result).toEqual(expectedResponse);
     });
   });

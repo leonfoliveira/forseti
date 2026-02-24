@@ -6,7 +6,9 @@ import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.clarification.ClarificationResponseDTO
 import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.MemberWithLoginResponseBodyDTO
@@ -19,7 +21,7 @@ import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 
 data class AdminDashboardResponseBodyDTO(
-    val contest: ContestResponseBodyDTO,
+    val contest: ContestWithMembersAndProblemsResponseBodyDTO,
     val leaderboard: LeaderboardResponseBodyDTO,
     val members: List<MemberWithLoginResponseBodyDTO>,
     val problems: List<ProblemWithTestCasesResponseBodyDTO>,
@@ -32,7 +34,7 @@ data class AdminDashboardResponseBodyDTO(
 
 fun AdminDashboard.toResponseBodyDTO(): AdminDashboardResponseBodyDTO =
     AdminDashboardResponseBodyDTO(
-        contest = contest.toResponseBodyDTO(),
+        contest = contest.toWithMembersAndProblemsResponseBodyDTO(),
         leaderboard = leaderboard.toResponseBodyDTO(),
         members = members.map { it.toWithLoginResponseBodyDTO() },
         problems = problems.map { it.toWithTestCasesResponseBodyDTO() },

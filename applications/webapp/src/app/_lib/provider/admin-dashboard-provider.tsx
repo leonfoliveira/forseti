@@ -70,8 +70,6 @@ export function AdminDashboardProvider({
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    state.start();
-
     async function reconnect() {
       try {
         console.debug("Attempting to reconnect...");
@@ -88,6 +86,7 @@ export function AdminDashboardProvider({
       const data = await Composition.dashboardReader.getAdminDashboard(
         contest.id,
       );
+      console.log(data.clarifications);
 
       listenerClientRef.current = Composition.listenerClientFactory.create();
       await listenerClientRef.current.connect(() => {
@@ -150,6 +149,7 @@ export function AdminDashboardProvider({
     }
 
     async function fetch() {
+      state.start();
       try {
         await init();
         state.finish();

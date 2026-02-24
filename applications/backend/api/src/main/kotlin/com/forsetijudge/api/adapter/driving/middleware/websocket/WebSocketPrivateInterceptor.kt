@@ -1,6 +1,7 @@
 package com.forsetijudge.api.adapter.driving.middleware.websocket
 
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.domain.model.ExecutionContext
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
@@ -44,7 +45,12 @@ class WebSocketPrivateInterceptor(
         }
 
         logger.info("Applying private filter: ${privateFilter.key}")
-        privateFilter.value(destination)
+        try {
+            privateFilter.value(destination)
+        } catch (ex: Exception) {
+            logger.warn("Access denied to destination: ${ex.message}")
+            throw ex
+        }
 
         logger.info("User is allowed to access destination")
         return message
