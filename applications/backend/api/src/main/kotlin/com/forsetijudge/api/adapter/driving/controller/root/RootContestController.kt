@@ -21,6 +21,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
+@Suppress("unused")
 class RootContestController(
     private val createContestUseCase: CreateContestUseCase,
     private val findAllContestUseCase: FindAllContestUseCase,

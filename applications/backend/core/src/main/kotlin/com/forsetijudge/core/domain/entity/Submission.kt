@@ -16,7 +16,6 @@ import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
-import org.hibernate.envers.NotAudited
 import java.time.OffsetDateTime
 import java.util.UUID
 

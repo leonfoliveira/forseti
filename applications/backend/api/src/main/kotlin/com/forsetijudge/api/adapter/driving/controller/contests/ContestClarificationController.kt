@@ -19,6 +19,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
+@Suppress("unused")
 class ContestClarificationController(
     private val createClarificationUseCase: CreateClarificationUseCase,
     private val deleteClarificationUseCase: DeleteClarificationUseCase,

@@ -1,8 +1,6 @@
 package com.forsetijudge.core.port.dto.response.session
 
 import com.forsetijudge.core.domain.entity.Session
-import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.toResponseBodyDTO
 import java.io.Serializable

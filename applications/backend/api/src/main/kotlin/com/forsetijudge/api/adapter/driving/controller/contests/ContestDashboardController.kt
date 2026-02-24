@@ -23,6 +23,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
+@Suppress("unused")
 class ContestDashboardController(
     private val buildAdminDashboardUseCase: BuildAdminDashboardUseCase,
     private val buildContestantDashboardUseCase: BuildContestantDashboardUseCase,

@@ -20,6 +20,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
+@Suppress("unused")
 class ContestTicketController(
     private val createTicketUseCase: CreateTicketUseCase,
     private val updateTicketStatusUseCase: UpdateTicketStatusUseCase,

@@ -11,7 +11,6 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.envers.Audited
-import org.hibernate.envers.NotAudited
 import java.time.OffsetDateTime
 import java.util.UUID
 

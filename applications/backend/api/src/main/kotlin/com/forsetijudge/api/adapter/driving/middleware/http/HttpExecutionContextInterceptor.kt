@@ -53,7 +53,7 @@ class HttpExecutionContextInterceptor : HandlerInterceptor {
         return matchResult?.groupValues?.get(1)?.let {
             try {
                 UUID.fromString(it)
-            } catch (e: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 null
             }
         }

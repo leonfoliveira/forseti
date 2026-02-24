@@ -2,6 +2,8 @@ package com.forsetijudge.core.port.dto.response.submission
 
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.dto.response.AttachmentResponseDTO
+import com.forsetijudge.core.port.dto.response.execution.ExecutionResponseDTO
+import com.forsetijudge.core.port.dto.response.execution.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.problem.ProblemResponseBodyDTO
@@ -11,7 +13,7 @@ import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
-data class SubmissionWithCodeAndExecutionResponseBodyDTO(
+data class SubmissionWithCodeAndExecutionsResponseBodyDTO(
     val id: UUID,
     val createdAt: OffsetDateTime,
     val updatedAt: OffsetDateTime,
@@ -21,11 +23,12 @@ data class SubmissionWithCodeAndExecutionResponseBodyDTO(
     val status: Submission.Status,
     val answer: Submission.Answer?,
     val code: AttachmentResponseDTO,
+    val executions: List<ExecutionResponseDTO> = emptyList(),
     val version: Long,
 ) : Serializable
 
-fun Submission.toWithCodeAndExecutionResponseBodyDTO(): SubmissionWithCodeAndExecutionResponseBodyDTO =
-    SubmissionWithCodeAndExecutionResponseBodyDTO(
+fun Submission.toWithCodeAndExecutionResponseBodyDTO(): SubmissionWithCodeAndExecutionsResponseBodyDTO =
+    SubmissionWithCodeAndExecutionsResponseBodyDTO(
         id = id,
         createdAt = createdAt,
         updatedAt = updatedAt,
@@ -35,5 +38,6 @@ fun Submission.toWithCodeAndExecutionResponseBodyDTO(): SubmissionWithCodeAndExe
         status = status,
         answer = answer,
         code = code.toResponseBodyDTO(),
+        executions = executions.map { it.toResponseBodyDTO() },
         version = version,
     )

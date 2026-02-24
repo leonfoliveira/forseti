@@ -5,9 +5,7 @@ import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponse
 import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.clarification.ClarificationResponseDTO
 import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
@@ -15,7 +13,7 @@ import com.forsetijudge.core.port.dto.response.member.MemberWithLoginResponseBod
 import com.forsetijudge.core.port.dto.response.member.toWithLoginResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.problem.ProblemWithTestCasesResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.problem.toWithTestCasesResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
@@ -25,7 +23,7 @@ data class AdminDashboardResponseBodyDTO(
     val leaderboard: LeaderboardResponseBodyDTO,
     val members: List<MemberWithLoginResponseBodyDTO>,
     val problems: List<ProblemWithTestCasesResponseBodyDTO>,
-    val submissions: List<SubmissionWithCodeAndExecutionResponseBodyDTO>,
+    val submissions: List<SubmissionWithCodeAndExecutionsResponseBodyDTO>,
     val clarifications: List<ClarificationResponseDTO>,
     val announcements: List<AnnouncementResponseBodyDTO>,
     val tickets: List<TicketResponseBodyDTO>,

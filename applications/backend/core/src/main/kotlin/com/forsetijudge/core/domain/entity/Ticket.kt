@@ -18,7 +18,6 @@ import jakarta.persistence.Table
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
-import org.hibernate.envers.NotAudited
 import org.hibernate.type.SqlTypes
 import java.io.Serializable
 import java.time.OffsetDateTime
@@ -30,6 +29,7 @@ import java.util.UUID
 @DiscriminatorColumn(name = "type")
 @Audited
 @SQLRestriction("deleted_at IS NULL")
+@Suppress("unused")
 open class Ticket<TProperties : Serializable>(
     id: UUID = IdGenerator.getUUID(),
     createdAt: OffsetDateTime = ExecutionContext.get().startedAt,

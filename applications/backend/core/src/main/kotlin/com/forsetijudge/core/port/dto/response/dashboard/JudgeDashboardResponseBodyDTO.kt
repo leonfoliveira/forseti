@@ -13,7 +13,7 @@ import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.problem.ProblemWithTestCasesResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.problem.toWithTestCasesResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
@@ -23,7 +23,7 @@ data class JudgeDashboardResponseBodyDTO(
     val leaderboard: LeaderboardResponseBodyDTO,
     val members: List<MemberResponseBodyDTO>,
     val problems: List<ProblemWithTestCasesResponseBodyDTO>,
-    val submissions: List<SubmissionWithCodeAndExecutionResponseBodyDTO>,
+    val submissions: List<SubmissionWithCodeAndExecutionsResponseBodyDTO>,
     val clarifications: List<ClarificationResponseDTO>,
     val announcements: List<AnnouncementResponseBodyDTO>,
     val memberTickets: List<TicketResponseBodyDTO>,

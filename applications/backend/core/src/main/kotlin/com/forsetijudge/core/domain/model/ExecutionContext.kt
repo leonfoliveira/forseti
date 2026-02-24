@@ -91,10 +91,6 @@ data class ExecutionContext(
             instance.remove()
         }
 
-        fun setSession(session: Session?) {
-            instance.get().session = session
-        }
-
         fun getSession(): Session = get().session ?: throw UnauthorizedException("Not authenticated")
 
         fun getContestId(): UUID = get().contestId ?: throw UnauthorizedException("Contest ID is not available in the current context")

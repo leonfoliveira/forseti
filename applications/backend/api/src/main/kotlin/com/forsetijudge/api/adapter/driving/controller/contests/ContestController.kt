@@ -20,6 +20,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
+@Suppress("unused")
 class ContestController(
     private val updateContestUseCase: UpdateContestUseCase,
     private val forceStartContestUseCase: ForceStartContestUseCase,

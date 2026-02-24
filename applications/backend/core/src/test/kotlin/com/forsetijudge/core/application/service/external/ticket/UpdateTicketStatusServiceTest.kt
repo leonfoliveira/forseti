@@ -46,7 +46,7 @@ class UpdateTicketStatusServiceTest :
         val command =
             UpdateTicketStatusUseCase.Command(
                 ticketId = IdGenerator.getUUID(),
-                status = Ticket.Status.IN_PROGRESS,
+                status = Ticket.Status.RESOLVED,
             )
 
         test("should throw NotFoundException if ticket does not exist") {
@@ -80,6 +80,11 @@ class UpdateTicketStatusServiceTest :
             every { ticketRepository.findByIdAndContestId(command.ticketId, contextContestId) } returns ticket
             every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns staff
             every { ticketRepository.save(any()) } returnsArgument 0
+            val command =
+                UpdateTicketStatusUseCase.Command(
+                    ticketId = IdGenerator.getUUID(),
+                    status = Ticket.Status.REJECTED,
+                )
 
             val result = sut.execute(command)
 

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1")
+@Suppress("unused")
 class RootAuthenticationController(
     private val signInUseCase: SignInUseCase,
     private val sessionCookieBuilder: SessionCookieBuilder,

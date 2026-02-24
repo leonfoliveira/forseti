@@ -14,6 +14,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
+@Suppress("unused")
 class WebSocketConfig(
     @Value("\${server.cors.allowed-origins}")
     private val allowedOrigins: String,

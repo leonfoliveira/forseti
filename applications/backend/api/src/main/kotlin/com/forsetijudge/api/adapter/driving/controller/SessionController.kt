@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/v1")
+@Suppress("unused")
 class SessionController(
     private val deleteAllSessionsByMemberUseCase: DeleteAllSessionsByMemberUseCase,
     private val sessionCookieBuilder: SessionCookieBuilder,

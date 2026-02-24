@@ -15,7 +15,6 @@ import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
-import org.hibernate.envers.NotAudited
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -104,15 +103,6 @@ class Member(
 
     companion object {
         val ROOT_ID: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
-        const val ROOT_NAME = "Root"
         const val ROOT_LOGIN = "root"
-
-        val API_ID: UUID = UUID.fromString("11111111-1111-1111-1111-111111111111")
-        const val API_NAME = "Api"
-        const val API_LOGIN = "api"
-
-        val AUTOJUDGE_ID: UUID = UUID.fromString("22222222-2222-2222-2222-222222222222")
-        const val AUTOJUDGE_NAME = "Autojudge"
-        const val AUTOJUDGE_LOGIN = "autojudge"
     }
 }

@@ -17,6 +17,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
+@Suppress("unused")
 class ContestAnnouncementController(
     private val createAnnouncementUseCase: CreateAnnouncementUseCase,
 ) {

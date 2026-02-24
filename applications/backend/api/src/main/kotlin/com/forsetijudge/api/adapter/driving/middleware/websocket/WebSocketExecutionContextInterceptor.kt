@@ -35,7 +35,7 @@ class WebSocketExecutionContextInterceptor : ChannelInterceptor {
         val contestIdFromDestination =
             try {
                 UUID.fromString(destination.split("/")[3])
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 null
             }
 

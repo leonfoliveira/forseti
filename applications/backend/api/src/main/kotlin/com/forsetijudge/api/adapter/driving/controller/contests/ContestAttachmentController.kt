@@ -23,6 +23,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
+@Suppress("unused")
 class ContestAttachmentController(
     private val uploadAttachmentUseCase: UploadAttachmentUseCase,
     private val downloadAttachmentUseCase: DownloadAttachmentUseCase,

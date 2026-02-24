@@ -8,7 +8,7 @@ import com.forsetijudge.core.port.driving.usecase.external.submission.CreateSubm
 import com.forsetijudge.core.port.driving.usecase.external.submission.ResetSubmissionUseCase
 import com.forsetijudge.core.port.driving.usecase.external.submission.UpdateAnswerSubmissionUseCase
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
-import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
@@ -24,6 +24,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
+@Suppress("unused")
 class ContestSubmissionController(
     private val createSubmissionUseCase: CreateSubmissionUseCase,
     private val resetSubmissionUseCase: ResetSubmissionUseCase,
@@ -54,7 +55,7 @@ class ContestSubmissionController(
     fun rerun(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
-    ): ResponseEntity<SubmissionWithCodeAndExecutionResponseBodyDTO> {
+    ): ResponseEntity<SubmissionWithCodeAndExecutionsResponseBodyDTO> {
         logger.info("[POST] /v1/contests/$contestId/submissions/$submissionId:rerun")
         val submission =
             resetSubmissionUseCase.execute(
@@ -71,7 +72,7 @@ class ContestSubmissionController(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
         @RequestBody body: UpdateAnswerSubmissionRequestBodyDTO,
-    ): ResponseEntity<SubmissionWithCodeAndExecutionResponseBodyDTO> {
+    ): ResponseEntity<SubmissionWithCodeAndExecutionsResponseBodyDTO> {
         logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId:update-answer")
         val submission =
             updateAnswerSubmissionUseCase.execute(

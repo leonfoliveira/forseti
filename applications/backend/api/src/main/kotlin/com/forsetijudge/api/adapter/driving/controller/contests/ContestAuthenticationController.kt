@@ -18,6 +18,7 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
+@Suppress("unused")
 class ContestAuthenticationController(
     private val signInUseCase: SignInUseCase,
     private val sessionCookieBuilder: SessionCookieBuilder,

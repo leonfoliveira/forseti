@@ -108,7 +108,7 @@ class WebSocketPrivateInterceptorTest :
             every { accessor.command } returns StompCommand.SUBSCRIBE
             every { webSocketTopicPrivateConfigs.privateFilters } returns
                 mapOf(
-                    Regex("/topic/contests/[a-fA-F0-9-]+/submissions:with-code-and-execution") to { _: String -> Unit },
+                    Regex("/topic/contests/[a-fA-F0-9-]+/submissions:with-code-and-execution") to { _: String -> },
                 )
             ExecutionContext.start()
             ExecutionContext.authenticate(

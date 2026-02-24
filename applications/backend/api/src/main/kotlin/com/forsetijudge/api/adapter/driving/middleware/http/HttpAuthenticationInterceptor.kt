@@ -57,7 +57,7 @@ class HttpAuthenticationInterceptor(
         val sessionUuid =
             try {
                 UUID.fromString(sessionId)
-            } catch (e: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 throw UnauthorizedException("Invalid session_id cookie format")
             }
 
