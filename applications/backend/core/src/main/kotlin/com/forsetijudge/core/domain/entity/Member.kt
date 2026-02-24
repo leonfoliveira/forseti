@@ -67,7 +67,7 @@ class Member(
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     @Column(name = "contest_id", insertable = false, updatable = false)
     @NotAudited
-    lateinit var contestId: UUID
+    var contestId: UUID? = null
 
     enum class Type {
         /**

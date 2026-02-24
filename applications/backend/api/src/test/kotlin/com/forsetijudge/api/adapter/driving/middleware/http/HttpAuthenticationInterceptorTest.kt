@@ -1,5 +1,6 @@
 package com.forsetijudge.api.adapter.driving.middleware.http
 
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
@@ -69,6 +70,7 @@ class HttpAuthenticationInterceptorTest :
             val response = mockk<HttpServletResponse>(relaxed = true)
             val filterChain = mockk<FilterChain>(relaxed = true)
             val expectedSession = SessionMockBuilder.build()
+            ExecutionContext.get().contestId = IdGenerator.getUUID()
             every { request.method } returns "GET"
             every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
             val command = FindSessionByIdUseCase.Command(expectedSession.id)
