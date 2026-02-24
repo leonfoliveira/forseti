@@ -17,7 +17,7 @@ data class ExecutionContext(
     var startedAt: OffsetDateTime = OffsetDateTime.now(),
 ) {
     companion object {
-        private var instance: ThreadLocal<ExecutionContext> = ThreadLocal()
+        private var instance = ThreadLocal<ExecutionContext>()
 
         /**
          * Starts a new RequestContext with the given parameters.

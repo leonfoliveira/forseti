@@ -98,48 +98,60 @@ export function AdminDashboardProvider({
         );
         reconnect();
       });
-      await Promise.all([
-        Composition.leaderboardListener.subscribeForLeaderboardCell(
-          listenerClientRef.current,
-          contest.id,
-          receiveLeaderboardPartial,
-        ),
-        Composition.leaderboardListener.subscribeForLeaderboardFrozen(
-          listenerClientRef.current,
-          contest.id,
-          receiveLeaderboardFreeze,
-        ),
-        Composition.leaderboardListener.subscribeForLeaderboardUnfrozen(
-          listenerClientRef.current,
-          contest.id,
-          receiveLeaderboardUnfreeze,
-        ),
-        Composition.submissionListener.subscribeForContestWithCodeAndExecutions(
-          listenerClientRef.current,
-          contest.id,
-          receiveSubmission,
-        ),
-        Composition.announcementListener.subscribeForContest(
-          listenerClientRef.current,
-          contest.id,
-          receiveAnnouncement,
-        ),
-        Composition.clarificationListener.subscribeForContest(
-          listenerClientRef.current,
-          contest.id,
-          receiveClarification,
-        ),
-        Composition.clarificationListener.subscribeForContestDeleted(
-          listenerClientRef.current,
-          contest.id,
-          deleteClarification,
-        ),
-        Composition.ticketListener.subscribeForContest(
-          listenerClientRef.current,
-          contest.id,
-          receiveTicket,
-        ),
-      ]);
+      const subscriptions = [
+        () =>
+          Composition.leaderboardListener.subscribeForLeaderboardCell(
+            listenerClientRef.current as ListenerClient,
+            contest.id,
+            receiveLeaderboardPartial,
+          ),
+        () =>
+          Composition.leaderboardListener.subscribeForLeaderboardFrozen(
+            listenerClientRef.current as ListenerClient,
+            contest.id,
+            receiveLeaderboardFreeze,
+          ),
+        () =>
+          Composition.leaderboardListener.subscribeForLeaderboardUnfrozen(
+            listenerClientRef.current as ListenerClient,
+            contest.id,
+            receiveLeaderboardUnfreeze,
+          ),
+        () =>
+          Composition.submissionListener.subscribeForContestWithCodeAndExecutions(
+            listenerClientRef.current as ListenerClient,
+            contest.id,
+            receiveSubmission,
+          ),
+        () =>
+          Composition.announcementListener.subscribeForContest(
+            listenerClientRef.current as ListenerClient,
+            contest.id,
+            receiveAnnouncement,
+          ),
+        () =>
+          Composition.clarificationListener.subscribeForContest(
+            listenerClientRef.current as ListenerClient,
+            contest.id,
+            receiveClarification,
+          ),
+        () =>
+          Composition.clarificationListener.subscribeForContestDeleted(
+            listenerClientRef.current as ListenerClient,
+            contest.id,
+            deleteClarification,
+          ),
+        () =>
+          Composition.ticketListener.subscribeForContest(
+            listenerClientRef.current as ListenerClient,
+            contest.id,
+            receiveTicket,
+          ),
+      ];
+
+      for (const subscribe of subscriptions) {
+        await subscribe();
+      }
 
       console.debug("Successfully fetched dashboard data and set up listeners");
       dispatch(adminDashboardSlice.actions.set(data));
@@ -171,7 +183,7 @@ export function AdminDashboardProvider({
   }, [session, contest.id]);
 
   function receiveLeaderboardPartial(leaderboard: LeaderboardCellResponseDTO) {
-    console.debug("Received leaderboard partial update:", leaderboard);
+    console.debug("Received leaderboard cell update:", leaderboard);
     dispatch(adminDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 

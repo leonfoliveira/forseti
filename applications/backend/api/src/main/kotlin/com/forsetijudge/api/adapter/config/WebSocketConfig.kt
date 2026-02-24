@@ -46,7 +46,6 @@ class WebSocketConfig(
                 // Interceptor to store handshake context (ip, traceId, contestId) in the WebSocket session attributes
                 webSocketHandshakeExecutionContextInterceptor,
             ).setAllowedOrigins(allowedOrigins)
-            .withSockJS()
     }
 
     /**

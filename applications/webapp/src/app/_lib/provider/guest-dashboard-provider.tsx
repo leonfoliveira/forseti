@@ -151,7 +151,7 @@ export function GuestDashboardProvider({
   }, [session, contest.id]);
 
   function receiveLeaderboardPartial(leaderboard: LeaderboardCellResponseDTO) {
-    console.debug("Received leaderboard partial update:", leaderboard);
+    console.debug("Received leaderboard cell update:", leaderboard);
     dispatch(guestDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 

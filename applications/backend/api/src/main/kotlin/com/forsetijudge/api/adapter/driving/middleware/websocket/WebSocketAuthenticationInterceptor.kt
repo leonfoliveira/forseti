@@ -40,7 +40,10 @@ class WebSocketAuthenticationInterceptor : ChannelInterceptor {
             }
 
             ExecutionContext.authenticate(session)
+        } else {
+            logger.info("No session found in handshake context. Continuing as guest.")
         }
+
         logger.info("Finished authenticating successfully")
         return message
     }
