@@ -1,185 +1,84 @@
 import { mock } from "jest-mock-extended";
 
 import { DashboardService } from "@/core/application/service/DashboardService";
-import { ContestRepository } from "@/core/port/driven/repository/ContestRepository";
-import { LeaderboardRepository } from "@/core/port/driven/repository/LeaderboardRepository";
-import { SubmissionRepository } from "@/core/port/driven/repository/SubmissionRepository";
-import { TicketRepository } from "@/core/port/driven/repository/TicketRepository";
-import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
-import { MockContestPublicResponseDTO } from "@/test/mock/response/contest/MockContestPublicResponseDTO";
-import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
-import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
-import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
-import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
-import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
+import { MockAdminDashboardResponseDTO } from "@/test/mock/response/dashboard/MockAdminDashboardResponseDTO";
+import { MockContestantDashboardResponseDTO } from "@/test/mock/response/dashboard/MockContestantDashboardResponseDTO";
+import { MockGuestDashboardResponseDTO } from "@/test/mock/response/dashboard/MockGuestDashboardResponseDTO";
+import { MockJudgeDashboardResponseDTO } from "@/test/mock/response/dashboard/MockJudgeDashboardResponseDTO";
+import { MockStaffDashboardResponseDTO } from "@/test/mock/response/dashboard/MockStaffDashboardResponseDTO";
 
 describe("DashboardService", () => {
-  const contestRepository = mock<ContestRepository>();
-  const leaderboardRepository = mock<LeaderboardRepository>();
-  const submissionRepository = mock<SubmissionRepository>();
-  const ticketRepository = mock<TicketRepository>();
+  const dashboardService = mock<DashboardService>();
 
-  const sut = new DashboardService(
-    contestRepository,
-    leaderboardRepository,
-    submissionRepository,
-    ticketRepository,
-  );
+  const sut = new DashboardService(dashboardService);
 
-  describe("getAdmin", () => {
+  describe("getAdminDashboard", () => {
     it("should return the admin dashboard data", async () => {
-      const contest = MockContestFullResponseDTO();
-      const leaderboard = MockLeaderboardResponseDTO();
-      const submissions = [MockSubmissionFullWithExecutionResponseDTO()];
-      const tickets = [MockTicketResponseDTO()];
+      const dashboard = MockAdminDashboardResponseDTO();
 
-      contestRepository.findFullById.mockResolvedValueOnce(contest);
-      leaderboardRepository.build.mockResolvedValueOnce(leaderboard);
-      submissionRepository.findAllFullForContest.mockResolvedValueOnce(
-        submissions,
-      );
-      ticketRepository.findAllByContest.mockResolvedValueOnce(tickets);
-      const result = await sut.getAdmin("contest-id");
+      dashboardService.getAdminDashboard.mockResolvedValue(dashboard);
+      const result = await sut.getAdminDashboard("contest-id");
 
-      expect(contestRepository.findFullById).toHaveBeenCalledWith("contest-id");
-      expect(leaderboardRepository.build).toHaveBeenCalledWith("contest-id");
-      expect(submissionRepository.findAllFullForContest).toHaveBeenCalledWith(
+      expect(dashboardService.getAdminDashboard).toHaveBeenCalledWith(
         "contest-id",
       );
-
-      expect(result).toEqual({
-        contest,
-        leaderboard,
-        submissions,
-        tickets,
-      });
+      expect(result).toEqual(dashboard);
     });
   });
 
-  describe("getStaff", () => {
-    it("should return the staff dashboard data", async () => {
-      const contest = MockContestPublicResponseDTO();
-      const leaderboard = MockLeaderboardResponseDTO();
-      const submissions = [MockSubmissionPublicResponseDTO()];
-      const tickets = [MockTicketResponseDTO()];
-
-      contestRepository.findById.mockResolvedValueOnce(contest);
-      leaderboardRepository.build.mockResolvedValueOnce(leaderboard);
-      submissionRepository.findAllForContest.mockResolvedValueOnce(submissions);
-      ticketRepository.findAllByContest.mockResolvedValueOnce(tickets);
-
-      const result = await sut.getStaff("contest-id");
-
-      expect(contestRepository.findById).toHaveBeenCalledWith("contest-id");
-      expect(leaderboardRepository.build).toHaveBeenCalledWith("contest-id");
-      expect(submissionRepository.findAllForContest).toHaveBeenCalledWith(
-        "contest-id",
-      );
-
-      expect(result).toEqual({
-        contest,
-        leaderboard,
-        submissions,
-        tickets,
-      });
-    });
-  });
-
-  describe("getContestant", () => {
+  describe("getContestantDashboard", () => {
     it("should return the contestant dashboard data", async () => {
-      const contest = MockContestPublicResponseDTO();
-      const leaderboard = MockLeaderboardResponseDTO();
-      const submissions = [MockSubmissionPublicResponseDTO()];
-      const memberSubmissions = [MockSubmissionFullResponseDTO()];
-      const memberTickets = [MockTicketResponseDTO()];
+      const dashboard = MockContestantDashboardResponseDTO();
 
-      contestRepository.findById.mockResolvedValueOnce(contest);
-      leaderboardRepository.build.mockResolvedValueOnce(leaderboard);
-      submissionRepository.findAllForContest.mockResolvedValueOnce(submissions);
-      submissionRepository.findAllFullForMember.mockResolvedValueOnce(
-        memberSubmissions,
-      );
-      ticketRepository.findAllBySignedInMember.mockResolvedValueOnce(
-        memberTickets,
-      );
+      dashboardService.getContestantDashboard.mockResolvedValue(dashboard);
+      const result = await sut.getContestantDashboard("contest-id");
 
-      const result = await sut.getContestant("contest-id");
-
-      expect(contestRepository.findById).toHaveBeenCalledWith("contest-id");
-      expect(leaderboardRepository.build).toHaveBeenCalledWith("contest-id");
-      expect(submissionRepository.findAllForContest).toHaveBeenCalledWith(
+      expect(dashboardService.getContestantDashboard).toHaveBeenCalledWith(
         "contest-id",
       );
-      expect(submissionRepository.findAllFullForMember).toHaveBeenCalledWith(
-        "contest-id",
-      );
-
-      expect(result).toEqual({
-        contest,
-        leaderboard,
-        submissions,
-        memberSubmissions,
-        memberTickets,
-      });
+      expect(result).toEqual(dashboard);
     });
   });
 
-  describe("getGuest", () => {
+  describe("getGuestDashboard", () => {
     it("should return the guest dashboard data", async () => {
-      const contest = MockContestPublicResponseDTO();
-      const leaderboard = MockLeaderboardResponseDTO();
-      const submissions = [MockSubmissionPublicResponseDTO()];
+      const dashboard = MockGuestDashboardResponseDTO();
 
-      contestRepository.findById.mockResolvedValueOnce(contest);
-      leaderboardRepository.build.mockResolvedValueOnce(leaderboard);
-      submissionRepository.findAllForContest.mockResolvedValueOnce(submissions);
+      dashboardService.getGuestDashboard.mockResolvedValue(dashboard);
+      const result = await sut.getGuestDashboard("contest-id");
 
-      const result = await sut.getGuest("contest-id");
-
-      expect(contestRepository.findById).toHaveBeenCalledWith("contest-id");
-      expect(leaderboardRepository.build).toHaveBeenCalledWith("contest-id");
-      expect(submissionRepository.findAllForContest).toHaveBeenCalledWith(
+      expect(dashboardService.getGuestDashboard).toHaveBeenCalledWith(
         "contest-id",
       );
-
-      expect(result).toEqual({
-        contest,
-        leaderboard,
-        submissions,
-      });
+      expect(result).toEqual(dashboard);
     });
   });
 
-  describe("getJudge", () => {
+  describe("getJudgeDashboard", () => {
     it("should return the judge dashboard data", async () => {
-      const contest = MockContestFullResponseDTO();
-      const leaderboard = MockLeaderboardResponseDTO();
-      const submissions = [MockSubmissionFullWithExecutionResponseDTO()];
-      const memberTickets = [MockTicketResponseDTO()];
+      const dashboard = MockJudgeDashboardResponseDTO();
 
-      contestRepository.findById.mockResolvedValueOnce(contest);
-      leaderboardRepository.build.mockResolvedValueOnce(leaderboard);
-      submissionRepository.findAllFullForContest.mockResolvedValueOnce(
-        submissions,
-      );
-      ticketRepository.findAllBySignedInMember.mockResolvedValueOnce(
-        memberTickets,
-      );
+      dashboardService.getJudgeDashboard.mockResolvedValue(dashboard);
+      const result = await sut.getJudgeDashboard("contest-id");
 
-      const result = await sut.getJudge("contest-id");
-
-      expect(contestRepository.findById).toHaveBeenCalledWith("contest-id");
-      expect(leaderboardRepository.build).toHaveBeenCalledWith("contest-id");
-      expect(submissionRepository.findAllFullForContest).toHaveBeenCalledWith(
+      expect(dashboardService.getJudgeDashboard).toHaveBeenCalledWith(
         "contest-id",
       );
+      expect(result).toEqual(dashboard);
+    });
+  });
 
-      expect(result).toEqual({
-        contest,
-        leaderboard,
-        submissions,
-        memberTickets,
-      });
+  describe("getStaffDashboard", () => {
+    it("should return the staff dashboard data", async () => {
+      const dashboard = MockStaffDashboardResponseDTO();
+
+      dashboardService.getStaffDashboard.mockResolvedValue(dashboard);
+      const result = await sut.getStaffDashboard("contest-id");
+
+      expect(dashboardService.getStaffDashboard).toHaveBeenCalledWith(
+        "contest-id",
+      );
+      expect(result).toEqual(dashboard);
     });
   });
 });

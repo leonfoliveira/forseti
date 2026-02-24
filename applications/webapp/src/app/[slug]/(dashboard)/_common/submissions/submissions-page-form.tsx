@@ -29,10 +29,10 @@ import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
-import { submissionWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
-import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
@@ -81,12 +81,12 @@ const messages = defineMessages({
 
 type Props = {
   onClose: () => void;
-  problems: ProblemPublicResponseDTO[];
-  onCreate: (submission: SubmissionFullResponseDTO) => void;
+  problems: ProblemResponseDTO[];
+  onCreate: (submission: SubmissionWithCodeResponseDTO) => void;
 };
 
 export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
-  const contestMetadata = useAppSelector((state) => state.contestMetadata);
+  const contest = useAppSelector((state) => state.contest);
   const createSubmissionState = useLoadableState();
   const toast = useToast();
 
@@ -99,8 +99,8 @@ export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
   async function createSubmission(data: SubmissionFormType) {
     createSubmissionState.start();
     try {
-      const newSubmission = await submissionWritter.create(
-        contestMetadata.id,
+      const newSubmission = await Composition.submissionWritter.create(
+        contest.id,
         SubmissionForm.toInputDTO(data),
       );
 
@@ -156,7 +156,7 @@ export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
               field={
                 <NativeSelect data-testid="submission-form-language">
                   <NativeSelectOption value="" disabled />
-                  {contestMetadata.languages.map((language) => (
+                  {contest.languages.map((language) => (
                     <NativeSelectOption key={language} value={language}>
                       <FormattedMessage
                         {...globalMessages.submissionLanguage[

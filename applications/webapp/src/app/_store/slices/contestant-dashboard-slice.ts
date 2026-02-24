@@ -7,10 +7,10 @@ import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { ContestantDashboardResponseDTO } from "@/core/port/dto/response/dashboard/ContestantDashboardResponseDTO";
-import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
+import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 
 export type ContestantDashboardState = ContestantDashboardResponseDTO & {
@@ -35,27 +35,21 @@ export const contestantDashboardSlice = createSlice({
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
       state.leaderboard = action.payload;
     },
-    mergeLeaderboard(
-      state,
-      action: { payload: LeaderboardPartialResponseDTO },
-    ) {
+    mergeLeaderboard(state, action: { payload: LeaderboardCellResponseDTO }) {
       state.leaderboard = mergeLeaderboard(state.leaderboard, action.payload);
     },
     setLeaderboardIsFrozen(state, action: { payload: boolean }) {
       state.leaderboard.isFrozen = action.payload;
     },
-    mergeSubmission(state, action: { payload: SubmissionPublicResponseDTO }) {
+    mergeSubmission(state, action: { payload: SubmissionResponseDTO }) {
       state.submissions = mergeEntity(state.submissions, action.payload);
     },
-    mergeSubmissionBatch(
-      state,
-      action: { payload: SubmissionPublicResponseDTO[] },
-    ) {
+    mergeSubmissionBatch(state, action: { payload: SubmissionResponseDTO[] }) {
       state.submissions = mergeEntityBatch(state.submissions, action.payload);
     },
     mergeMemberSubmission(
       state,
-      action: { payload: SubmissionFullResponseDTO },
+      action: { payload: SubmissionWithCodeResponseDTO },
     ) {
       state.memberSubmissions = mergeEntity(
         state.memberSubmissions,
@@ -63,20 +57,17 @@ export const contestantDashboardSlice = createSlice({
       );
     },
     mergeAnnouncement(state, action: { payload: AnnouncementResponseDTO }) {
-      state.contest.announcements = mergeEntity(
-        state.contest.announcements,
-        action.payload,
-      );
+      state.announcements = mergeEntity(state.announcements, action.payload);
     },
     mergeClarification(state, action: { payload: ClarificationResponseDTO }) {
       if (!action.payload.parentId) {
-        state.contest.clarifications = mergeEntity(
-          state.contest.clarifications,
+        state.clarifications = mergeEntity(
+          state.clarifications,
           action.payload,
         );
       } else {
         const parent = findClarification(
-          state.contest.clarifications,
+          state.clarifications,
           action.payload.parentId,
         );
         if (parent) {
@@ -85,7 +76,7 @@ export const contestantDashboardSlice = createSlice({
       }
     },
     deleteClarification(state, action: { payload: string }) {
-      state.contest.clarifications = state.contest.clarifications.filter(
+      state.clarifications = state.clarifications.filter(
         (clarification) => clarification.id !== action.payload,
       );
     },

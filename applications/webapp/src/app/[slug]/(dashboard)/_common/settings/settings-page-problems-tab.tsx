@@ -29,9 +29,9 @@ import {
 import { useErrorHandler } from "@/app/_lib/hook/error-handler-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { ColorUtil } from "@/app/_lib/util/color-util";
-import { attachmentReader } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
-import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
+import { ContestWithMembersAndProblemsDTO } from "@/core/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -99,7 +99,7 @@ const messages = defineMessages({
 });
 
 type Props = {
-  contest: ContestFullResponseDTO;
+  contest: ContestWithMembersAndProblemsDTO;
   form: UseFormReturn<SettingsFormType>;
   isDisabled?: boolean;
 };
@@ -115,7 +115,7 @@ export function SettingsPageProblemsTab({ contest, form, isDisabled }: Props) {
 
   async function downloadAttachment(attachment: AttachmentResponseDTO) {
     try {
-      await attachmentReader.download(contest.id, attachment);
+      await Composition.attachmentReader.download(contest.id, attachment);
     } catch (error) {
       await errorHandler.handle(error as Error, {
         default: () => toast.error(messages.downloadAttachmentError),

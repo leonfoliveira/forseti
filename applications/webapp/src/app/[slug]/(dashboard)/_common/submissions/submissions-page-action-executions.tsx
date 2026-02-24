@@ -22,7 +22,7 @@ import {
   TableRow,
 } from "@/app/_lib/component/shadcn/table";
 import { useAppSelector } from "@/app/_store/store";
-import { attachmentReader } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { ExecutionResponseDTO } from "@/core/port/dto/response/execution/ExecutionResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -70,7 +70,7 @@ export function SubmissionsPageActionExecutions({
   executions,
   onClose,
 }: Props) {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const contestId = useAppSelector((state) => state.contest.id);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
@@ -146,7 +146,10 @@ export function SubmissionsPageActionExecutions({
                   <TableCell className="text-right">
                     <Button
                       onClick={() =>
-                        attachmentReader.download(contestId, execution.input)
+                        Composition.attachmentReader.download(
+                          contestId,
+                          execution.input,
+                        )
                       }
                       size="sm"
                       variant="outline"
@@ -158,7 +161,10 @@ export function SubmissionsPageActionExecutions({
                   <TableCell className="text-right">
                     <Button
                       onClick={() =>
-                        attachmentReader.download(contestId, execution.output)
+                        Composition.attachmentReader.download(
+                          contestId,
+                          execution.output,
+                        )
                       }
                       size="sm"
                       variant="outline"

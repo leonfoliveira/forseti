@@ -7,10 +7,10 @@ import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
-import { submissionWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -46,9 +46,9 @@ const messages = defineMessages({
 });
 
 type Props = {
-  submission: SubmissionFullWithExecutionResponseDTO;
+  submission: SubmissionWithCodeAndExecutionsResponseDTO;
   onClose: () => void;
-  onRerun: (submission: SubmissionFullWithExecutionResponseDTO) => void;
+  onRerun: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void;
 };
 
 export function SubmissionsPageActionRerun({
@@ -56,7 +56,7 @@ export function SubmissionsPageActionRerun({
   onClose,
   onRerun,
 }: Props) {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const contestId = useAppSelector((state) => state.contest.id);
   const resubmitState = useLoadableState();
   const toast = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -64,7 +64,7 @@ export function SubmissionsPageActionRerun({
   async function resubmitSubmission(submissionId: string) {
     resubmitState.start();
     try {
-      await submissionWritter.rerun(contestId, submissionId);
+      await Composition.submissionWritter.rerun(contestId, submissionId);
 
       onRerun({
         ...submission,

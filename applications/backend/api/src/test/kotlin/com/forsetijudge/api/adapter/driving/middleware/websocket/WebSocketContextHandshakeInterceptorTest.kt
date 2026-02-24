@@ -19,7 +19,7 @@ class WebSocketContextHandshakeInterceptorTest :
             val mockWsHandler = mockk<WebSocketHandler>(relaxed = true)
             val attributes = mutableMapOf<String, Any>()
             ExecutionContext.start()
-            ExecutionContext.authenticate(SessionMockBuilder.build())
+            ExecutionContext.authenticate(SessionMockBuilder.build(contest = null))
 
             val result = sut.beforeHandshake(mockRequest, mockResponse, mockWsHandler, attributes)
 

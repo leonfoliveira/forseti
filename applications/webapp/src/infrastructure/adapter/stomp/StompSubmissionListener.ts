@@ -1,8 +1,8 @@
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { SubmissionListener } from "@/core/port/driven/listener/SubmissionListener";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
-import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 export class StompSubmissionListener implements SubmissionListener {
   /**
@@ -15,7 +15,7 @@ export class StompSubmissionListener implements SubmissionListener {
   async subscribeForContest(
     client: ListenerClient,
     contestId: string,
-    cb: (submission: SubmissionPublicResponseDTO) => void,
+    cb: (submission: SubmissionResponseDTO) => void,
   ): Promise<void> {
     await client.subscribe(`/topic/contests/${contestId}/submissions`, cb);
   }
@@ -27,12 +27,15 @@ export class StompSubmissionListener implements SubmissionListener {
    * @param contestId ID of the contest to subscribe to.
    * @param cb Callback function to handle received full submissions.
    */
-  async subscribeForContestFull(
+  async subscribeForContestWithCodeAndExecutions(
     client: ListenerClient,
     contestId: string,
-    cb: (submission: SubmissionFullWithExecutionResponseDTO) => void,
+    cb: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void,
   ): Promise<void> {
-    await client.subscribe(`/topic/contests/${contestId}/submissions/full`, cb);
+    await client.subscribe(
+      `/topic/contests/${contestId}/submissions:with-code-and-executions`,
+      cb,
+    );
   }
 
   /**
@@ -43,14 +46,14 @@ export class StompSubmissionListener implements SubmissionListener {
    * @param memberId ID of the member whose children submissions to subscribe to.
    * @param cb Callback function to handle received full submissions.
    */
-  async subscribeForMemberFull(
+  async subscribeForMemberWithCode(
     client: ListenerClient,
     contestId: string,
     memberId: string,
-    cb: (submission: SubmissionFullResponseDTO) => void,
+    cb: (submission: SubmissionWithCodeResponseDTO) => void,
   ): Promise<void> {
     await client.subscribe(
-      `/topic/contests/${contestId}/submissions/full/members/${memberId}`,
+      `/topic/contests/${contestId}/members/${memberId}/submissions:with-code`,
       cb,
     );
   }

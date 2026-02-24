@@ -19,7 +19,7 @@ import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-
 import { useAppSelector } from "@/app/_store/store";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
+import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -51,7 +51,7 @@ const messages = defineMessages({
 });
 
 type Props = {
-  problems: ProblemPublicResponseDTO[];
+  problems: ProblemResponseDTO[];
   clarifications: ClarificationResponseDTO[];
   canCreate?: boolean;
   canAnswer?: boolean;
@@ -90,7 +90,7 @@ export function ClarificationsPage({
   onAnswer,
   onDelete,
 }: Props) {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const contestId = useAppSelector((state) => state.contest.id);
   const contestStatus = useContestStatusWatcher();
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 

@@ -7,9 +7,7 @@ export function StaffSubmissionsPage() {
   const submissions = useAppSelector(
     (state) => state.staffDashboard.submissions,
   );
-  const problems = useAppSelector(
-    (state) => state.staffDashboard.contest.problems,
-  );
+  const problems = useAppSelector((state) => state.staffDashboard.problems);
 
   return <SubmissionsPage submissions={submissions} problems={problems} />;
 }

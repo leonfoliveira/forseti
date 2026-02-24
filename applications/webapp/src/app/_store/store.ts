@@ -4,7 +4,7 @@ import { combineReducers } from "redux";
 
 import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
 import { balloonSlice } from "@/app/_store/slices/balloon-slice";
-import { contestMetadataSlice } from "@/app/_store/slices/contest-metadata-slice";
+import { contestSlice } from "@/app/_store/slices/contest-slice";
 import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
 import { guestDashboardSlice } from "@/app/_store/slices/guest-dashboard-slice";
 import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
@@ -14,11 +14,11 @@ import { staffDashboardSlice } from "@/app/_store/slices/staff-dashboard-slice";
 const rootReducer = combineReducers({
   balloon: balloonSlice.reducer,
   session: sessionSlice.reducer,
-  contestMetadata: contestMetadataSlice.reducer,
+  contest: contestSlice.reducer,
+  adminDashboard: adminDashboardSlice.reducer,
   contestantDashboard: contestantDashboardSlice.reducer,
   guestDashboard: guestDashboardSlice.reducer,
   judgeDashboard: judgeDashboardSlice.reducer,
-  adminDashboard: adminDashboardSlice.reducer,
   staffDashboard: staffDashboardSlice.reducer,
 });
 

@@ -3,6 +3,7 @@
 import { SettingsPage } from "@/app/[slug]/(dashboard)/_common/settings/settings-page";
 import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
+import { ContestWithMembersAndProblemsDTO } from "@/core/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 
 /**
  * Displays the admin settings page for a contest.
@@ -19,8 +20,8 @@ export function AdminSettingsPage() {
     <SettingsPage
       contest={contest}
       leaderboard={leaderboard}
-      onToggleFreeze={(isFrozen) => {
-        dispatch(adminDashboardSlice.actions.setLeaderboardIsFrozen(isFrozen));
+      onToggleFreeze={(contest: ContestWithMembersAndProblemsDTO) => {
+        dispatch(adminDashboardSlice.actions.setContest(contest));
       }}
     />
   );

@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.external.contest
 
 import com.forsetijudge.core.application.util.ContestAuthorizer
+import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
@@ -23,7 +24,7 @@ class ForceStartContestService(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
-    override fun execute() {
+    override fun execute(): Contest {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -50,5 +51,6 @@ class ForceStartContestService(
         applicationEventPublisher.publishEvent(ContestEvent.Updated(contest))
 
         logger.info("Contest force started successfully")
+        return contest
     }
 }

@@ -12,6 +12,8 @@ import java.util.UUID
 
 data class ContestWithMembersAndProblemsResponseBodyDTO(
     val id: UUID,
+    val createdAt: OffsetDateTime,
+    val updatedAt: OffsetDateTime,
     val slug: String,
     val title: String,
     val languages: List<Submission.Language>,
@@ -25,6 +27,8 @@ data class ContestWithMembersAndProblemsResponseBodyDTO(
 fun Contest.toWithMembersAndProblemsResponseBodyDTO(): ContestWithMembersAndProblemsResponseBodyDTO =
     ContestWithMembersAndProblemsResponseBodyDTO(
         id = this.id,
+        createdAt = this.createdAt,
+        updatedAt = this.updatedAt,
         slug = this.slug,
         title = this.title,
         languages = this.languages,

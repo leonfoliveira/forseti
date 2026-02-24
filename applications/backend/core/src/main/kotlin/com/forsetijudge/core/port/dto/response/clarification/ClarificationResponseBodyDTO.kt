@@ -12,6 +12,7 @@ import java.util.UUID
 data class ClarificationResponseDTO(
     val id: UUID,
     val createdAt: OffsetDateTime,
+    val updatedAt: OffsetDateTime,
     val member: MemberResponseBodyDTO,
     val problem: ProblemResponseBodyDTO?,
     val parentId: UUID? = null,
@@ -24,6 +25,7 @@ fun Clarification.toResponseBodyDTO(): ClarificationResponseDTO =
     ClarificationResponseDTO(
         id = this.id,
         createdAt = this.createdAt,
+        updatedAt = this.updatedAt,
         member = this.member.toResponseBodyDTO(),
         problem = this.problem?.toResponseBodyDTO(),
         parentId = this.parent?.id,

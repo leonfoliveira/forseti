@@ -1,25 +1,19 @@
-import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { ContestWithMembersAndProblemsDTO } from "@/core/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 
 export type LeaderboardRepository = {
-  /**
-   * Builds a leaderboard for a specific contest.
-   *
-   * @param contestId ID of the contest
-   * @returns The contest leaderboard data
-   */
-  build(contestId: string): Promise<LeaderboardResponseDTO>;
-
   /**
    * Freezes the leaderboard of a specific contest.
    *
    * @param contestId ID of the contest
+   * @return The contest data with members and problems after freezing the leaderboard
    */
-  freeze(contestId: string): Promise<void>;
+  freeze(contestId: string): Promise<ContestWithMembersAndProblemsDTO>;
 
   /**
    * Unfreezes the leaderboard of a specific contest.
    *
    * @param contestId ID of the contest
+   * @return The contest data with members and problems after unfreezing the leaderboard
    */
-  unfreeze(contestId: string): Promise<void>;
+  unfreeze(contestId: string): Promise<ContestWithMembersAndProblemsDTO>;
 };

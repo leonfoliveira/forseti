@@ -6,12 +6,14 @@ import { act } from "react";
 import { SettingsForm } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
 import { SettingsPage } from "@/app/[slug]/(dashboard)/_common/settings/settings-page";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { contestWritter, leaderboardReader } from "@/config/composition";
+import { AdminDashboardState } from "@/app/_store/slices/admin-dashboard-slice";
+import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
-import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/AdminDashboardResponseDTO";
+import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { MockDate } from "@/test/mock/mock-date";
-import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockContestWithMembersAndProblemsDTO } from "@/test/mock/response/contest/MockContestWithMembersAndProblemsDTO";
+import { MockAdminDashboardResponseDTO } from "@/test/mock/response/dashboard/MockAdminDashboardResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -37,11 +39,11 @@ jest.mock(
 );
 
 describe("SettingsPage", () => {
-  const contestMetadata = MockContestMetadataResponseDTO({
+  const contestMetadata = MockContestResponseDTO({
     startAt: MockDate.future().toISOString(),
     endAt: MockDate.future(2).toISOString(),
   });
-  const contest = MockContestFullResponseDTO();
+  const contest = MockContestWithMembersAndProblemsDTO();
 
   beforeEach(() => {
     jest
@@ -50,9 +52,17 @@ describe("SettingsPage", () => {
   });
 
   it("renders correct tabs", async () => {
-    await renderWithProviders(<SettingsPage contest={contest} />, {
-      contestMetadata,
-    });
+    const leaderboard = MockLeaderboardResponseDTO();
+    await renderWithProviders(
+      <SettingsPage
+        contest={contest}
+        leaderboard={leaderboard}
+        onToggleFreeze={() => {}}
+      />,
+      {
+        contest: contestMetadata,
+      },
+    );
 
     expect(screen.getByTestId("settings-contest-tab")).toBeInTheDocument();
     expect(
@@ -64,42 +74,21 @@ describe("SettingsPage", () => {
   });
 
   it("handle save successfully when changing contest slug", async () => {
-    const newContest = MockContestFullResponseDTO({
+    const newContest = MockContestWithMembersAndProblemsDTO({
       slug: "new-contest-slug",
     });
-    (contestWritter.update as jest.Mock).mockResolvedValue(newContest);
-    await renderWithProviders(<SettingsPage contest={contest} />, {
-      contestMetadata,
-    });
-
-    fireEvent.click(screen.getByTestId("save-settings-button"));
-
-    const confirmButton = await screen.findByTestId(
-      "confirmation-dialog-confirm-button",
-    );
-    await act(async () => {
-      fireEvent.click(confirmButton);
-    });
-
-    expect(contestWritter.update).toHaveBeenCalledWith(
-      contest.id,
-      expect.anything(),
-    );
-    expect(useRouter().push).toHaveBeenCalledWith(
-      routes.CONTEST_SETTINGS(newContest.slug),
-    );
-  });
-
-  it("handle save successfully when not changing contest slug", async () => {
-    const newContest = MockContestFullResponseDTO();
     const leaderboard = MockLeaderboardResponseDTO();
-    (contestWritter.update as jest.Mock).mockResolvedValue(newContest);
-    (leaderboardReader.build as jest.Mock).mockResolvedValue(leaderboard);
-    const { store } = await renderWithProviders(
-      <SettingsPage contest={contest} />,
+    (Composition.contestWritter.update as jest.Mock).mockResolvedValue(
+      newContest,
+    );
+    await renderWithProviders(
+      <SettingsPage
+        contest={contest}
+        leaderboard={leaderboard}
+        onToggleFreeze={() => {}}
+      />,
       {
-        contestMetadata,
-        adminDashboard: {} as unknown as AdminDashboardResponseDTO,
+        contest: contestMetadata,
       },
     );
 
@@ -112,22 +101,36 @@ describe("SettingsPage", () => {
       fireEvent.click(confirmButton);
     });
 
-    expect(contestWritter.update).toHaveBeenCalledWith(
+    expect(Composition.contestWritter.update).toHaveBeenCalledWith(
       contest.id,
       expect.anything(),
     );
-    expect(leaderboardReader.build).toHaveBeenCalledWith(newContest.id);
-    expect(store.getState().contestMetadata).toEqual(newContest);
-    expect(store.getState().adminDashboard.contest).toEqual(newContest);
-    expect(store.getState().adminDashboard.leaderboard).toEqual(leaderboard);
-    expect(useToast().success).toHaveBeenCalled();
+    expect(useRouter().push).toHaveBeenCalledWith(
+      routes.CONTEST_SETTINGS(newContest.slug),
+    );
   });
 
-  it("handle save error", async () => {
-    (contestWritter.update as jest.Mock).mockRejectedValue(new Error("Error"));
-    await renderWithProviders(<SettingsPage contest={contest} />, {
-      contestMetadata,
-    });
+  it("handle save successfully when not changing contest slug", async () => {
+    const dashboard = MockAdminDashboardResponseDTO();
+    const newContest = MockContestWithMembersAndProblemsDTO();
+    const leaderboard = MockLeaderboardResponseDTO();
+    (Composition.contestWritter.update as jest.Mock).mockResolvedValue(
+      newContest,
+    );
+    (
+      Composition.dashboardReader.getAdminDashboard as jest.Mock
+    ).mockResolvedValue(dashboard);
+    const { store } = await renderWithProviders(
+      <SettingsPage
+        contest={contest}
+        leaderboard={leaderboard}
+        onToggleFreeze={() => {}}
+      />,
+      {
+        contest: contestMetadata,
+        adminDashboard: {} as unknown as AdminDashboardState,
+      },
+    );
 
     fireEvent.click(screen.getByTestId("save-settings-button"));
 
@@ -138,7 +141,46 @@ describe("SettingsPage", () => {
       fireEvent.click(confirmButton);
     });
 
-    expect(contestWritter.update).toHaveBeenCalledWith(
+    expect(Composition.contestWritter.update).toHaveBeenCalledWith(
+      contest.id,
+      expect.anything(),
+    );
+    expect(Composition.dashboardReader.getAdminDashboard).toHaveBeenCalledWith(
+      contest.id,
+    );
+    expect(store.getState().adminDashboard).toEqual({
+      ...dashboard,
+      listenerStatus: ListenerStatus.CONNECTED,
+    });
+    expect(useToast().success).toHaveBeenCalled();
+  });
+
+  it("handle save error", async () => {
+    (Composition.contestWritter.update as jest.Mock).mockRejectedValue(
+      new Error("Error"),
+    );
+    const leaderboard = MockLeaderboardResponseDTO();
+    await renderWithProviders(
+      <SettingsPage
+        contest={contest}
+        leaderboard={leaderboard}
+        onToggleFreeze={() => {}}
+      />,
+      {
+        contest: contestMetadata,
+      },
+    );
+
+    fireEvent.click(screen.getByTestId("save-settings-button"));
+
+    const confirmButton = await screen.findByTestId(
+      "confirmation-dialog-confirm-button",
+    );
+    await act(async () => {
+      fireEvent.click(confirmButton);
+    });
+
+    expect(Composition.contestWritter.update).toHaveBeenCalledWith(
       contest.id,
       expect.anything(),
     );

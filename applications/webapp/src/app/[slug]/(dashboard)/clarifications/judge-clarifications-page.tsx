@@ -8,11 +8,9 @@ import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 
 export function JudgeClarificationsPage() {
-  const problems = useAppSelector(
-    (state) => state.judgeDashboard.contest.problems,
-  );
+  const problems = useAppSelector((state) => state.judgeDashboard.problems);
   const clarifications = useAppSelector(
-    (state) => state.judgeDashboard.contest.clarifications,
+    (state) => state.judgeDashboard.clarifications,
   );
   const dispatch = useAppDispatch();
 

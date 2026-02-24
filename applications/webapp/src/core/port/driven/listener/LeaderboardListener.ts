@@ -1,49 +1,49 @@
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
-import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
+import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
 
 export interface LeaderboardListener {
   /**
-   * Subscribe to partial leaderboard updates for a contest.
-   * A partial leaderboard update contains only a member / problem cell.
+   * Subscribe to leaderboard cell updates for a contest.
+   * A leaderboard cell update contains only a member / problem cell.
    *
-   * @param client The listener client used to subscribe to the partial leaderboard.
+   * @param client The listener client used to subscribe to the leaderboard cell updates.
    * @param contestId ID of the contest
-   * @param cb Callback function to handle incoming partial leaderboard updates.
+   * @param cb Callback function to handle incoming leaderboard cell updates.
    */
-  subscribeForLeaderboardPartial: (
+  subscribeForLeaderboardCell: (
     client: ListenerClient,
     contestId: string,
-    cb: (leaderboard: LeaderboardPartialResponseDTO) => void,
+    cb: (leaderboard: LeaderboardCellResponseDTO) => void,
   ) => Promise<void>;
 
   /**
-   * Subscribe to leaderboard freeze events for a contest.
+   * Subscribe to leaderboard frozen events for a contest.
    *
-   * @param client The listener client used to subscribe to the leaderboard freeze events.
+   * @param client The listener client used to subscribe to the leaderboard frozen events.
    * @param contestId ID of the contest
-   * @param cb Callback function to handle leaderboard freeze events.
+   * @param cb Callback function to handle leaderboard frozen events.
    */
-  subscribeForLeaderboardFreeze: (
+  subscribeForLeaderboardFrozen: (
     client: ListenerClient,
     contestId: string,
     cb: () => void,
   ) => Promise<void>;
 
   /**
-   * Subscribe to leaderboard unfreeze events for a contest.
+   * Subscribe to leaderboard unfrozen events for a contest.
    *
-   * @param client The listener client used to subscribe to the leaderboard unfreeze events.
+   * @param client The listener client used to subscribe to the leaderboard unfrozen events.
    * @param contestId ID of the contest
-   * @param cb Callback function to handle leaderboard unfreeze events.
+   * @param cb Callback function to handle leaderboard unfrozen events.
    */
-  subscribeForLeaderboardUnfreeze: (
+  subscribeForLeaderboardUnfrozen: (
     client: ListenerClient,
     contestId: string,
     cb: (data: {
       leaderboard: LeaderboardResponseDTO;
-      frozenSubmissions: SubmissionPublicResponseDTO[];
+      frozenSubmissions: SubmissionResponseDTO[];
     }) => void,
   ) => Promise<void>;
 }

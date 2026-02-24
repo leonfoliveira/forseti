@@ -8,6 +8,7 @@ export const routes = {
   CONTEST_ANNOUNCEMENTS: (slug: string) => `/${slug}/announcements`,
   CONTEST_TICKETS: (slug: string) => `/${slug}/tickets`,
   CONTEST_SETTINGS: (slug: string) => `/${slug}/settings`,
+  CONTEST_ABOUT: (slug: string) => `/${slug}/about`,
   FORBIDDEN: `/error/403`,
   NOT_FOUND: `/error/404`,
   INTERNAL_SERVER_ERROR: `/error/500`,

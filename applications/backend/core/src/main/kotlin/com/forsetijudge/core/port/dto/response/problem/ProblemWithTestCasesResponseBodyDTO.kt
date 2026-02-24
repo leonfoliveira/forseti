@@ -8,6 +8,8 @@ import java.util.UUID
 
 data class ProblemWithTestCasesResponseBodyDTO(
     val id: UUID,
+    val createdAt: String,
+    val updatedAt: String,
     val letter: Char,
     val color: String,
     val title: String,
@@ -21,6 +23,8 @@ data class ProblemWithTestCasesResponseBodyDTO(
 fun Problem.toWithTestCasesResponseBodyDTO(): ProblemWithTestCasesResponseBodyDTO =
     ProblemWithTestCasesResponseBodyDTO(
         id = id,
+        createdAt = createdAt.toString(),
+        updatedAt = updatedAt.toString(),
         letter = letter,
         color = color,
         title = title,

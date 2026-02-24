@@ -8,7 +8,9 @@ import com.forsetijudge.core.port.driving.usecase.external.submission.CreateSubm
 import com.forsetijudge.core.port.driving.usecase.external.submission.ResetSubmissionUseCase
 import com.forsetijudge.core.port.driving.usecase.external.submission.UpdateAnswerSubmissionUseCase
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -47,19 +49,20 @@ class ContestSubmissionController(
         return ResponseEntity.ok(submission.toWithCodeResponseBodyDTO())
     }
 
-    @PostMapping("/contests/{contestId}/submissions/{submissionId}:rerun")
+    @PutMapping("/contests/{contestId}/submissions/{submissionId}:rerun")
     @Private(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
     fun rerun(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
-    ): ResponseEntity<Void> {
+    ): ResponseEntity<SubmissionWithCodeAndExecutionResponseBodyDTO> {
         logger.info("[POST] /v1/contests/{}/submissions/{}:rerun", contestId, submissionId)
-        resetSubmissionUseCase.execute(
-            ResetSubmissionUseCase.Command(
-                submissionId = submissionId,
-            ),
-        )
-        return ResponseEntity.noContent().build()
+        val submission =
+            resetSubmissionUseCase.execute(
+                ResetSubmissionUseCase.Command(
+                    submissionId = submissionId,
+                ),
+            )
+        return ResponseEntity.ok(submission.toWithCodeAndExecutionResponseBodyDTO())
     }
 
     @PutMapping("/contests/{contestId}/submissions/{submissionId}:update-answer")
@@ -68,14 +71,15 @@ class ContestSubmissionController(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
         @RequestBody body: UpdateAnswerSubmissionRequestBodyDTO,
-    ): ResponseEntity<Void> {
+    ): ResponseEntity<SubmissionWithCodeAndExecutionResponseBodyDTO> {
         logger.info("[PUT] /v1/contests/{}/submissions/{}:update-answer", contestId, submissionId)
-        updateAnswerSubmissionUseCase.execute(
-            UpdateAnswerSubmissionUseCase.Command(
-                submissionId = submissionId,
-                answer = body.answer,
-            ),
-        )
-        return ResponseEntity.noContent().build()
+        val submission =
+            updateAnswerSubmissionUseCase.execute(
+                UpdateAnswerSubmissionUseCase.Command(
+                    submissionId = submissionId,
+                    answer = body.answer,
+                ),
+            )
+        return ResponseEntity.ok(submission.toWithCodeAndExecutionResponseBodyDTO())
     }
 }

@@ -52,7 +52,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = useAppSelector((state) => state.session);
-  const slug = useAppSelector((state) => state.contestMetadata.slug);
+  const slug = useAppSelector((state) => state.contest.slug);
   const pathname = usePathname();
   const router = useRouter();
 

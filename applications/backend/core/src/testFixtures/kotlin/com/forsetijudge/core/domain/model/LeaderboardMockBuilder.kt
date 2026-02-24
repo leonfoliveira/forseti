@@ -13,6 +13,7 @@ object LeaderboardMockBuilder {
     ): Leaderboard =
         Leaderboard(
             contestId = contestId,
+            contestStartAt = issuedAt.minusHours(2),
             isFrozen = isFrozen,
             rows = rows,
             issuedAt = issuedAt,
@@ -35,6 +36,8 @@ object LeaderboardMockBuilder {
 
     fun buildCell(
         problemId: UUID = IdGenerator.getUUID(),
+        problemLetter: Char = 'A',
+        problemColor: String = "#ffffff",
         isAccepted: Boolean = false,
         acceptedAt: OffsetDateTime? = null,
         wrongSubmissions: Int = 0,
@@ -42,6 +45,8 @@ object LeaderboardMockBuilder {
     ): Leaderboard.Cell =
         Leaderboard.Cell(
             problemId = problemId,
+            problemLetter = problemLetter,
+            problemColor = problemColor,
             isAccepted = isAccepted,
             acceptedAt = acceptedAt,
             wrongSubmissions = wrongSubmissions,

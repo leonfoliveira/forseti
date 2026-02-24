@@ -7,16 +7,16 @@ import {
   DropdownMenuContent,
 } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { submissionWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockSubmissionWithCodeAndExecutionsResponseDTO } from "@/test/mock/response/submission/MockSubmissionWithCodeAndExecutionsResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPageActionJudge", () => {
   it("should handle updateAnswer succesfully", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    const submission = MockSubmissionFullResponseDTO();
+    const contest = MockContestResponseDTO();
+    const submission = MockSubmissionWithCodeAndExecutionsResponseDTO();
     const onClose = jest.fn();
     const onJudge = jest.fn();
     await renderWithProviders(
@@ -29,7 +29,7 @@ describe("SubmissionsPageActionJudge", () => {
           />
         </DropdownMenuContent>
       </DropdownMenu>,
-      { contestMetadata },
+      { contest },
     );
 
     fireEvent.click(screen.getByTestId("submissions-page-action-judge"));
@@ -40,8 +40,8 @@ describe("SubmissionsPageActionJudge", () => {
       fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(submissionWritter.updateAnswer).toHaveBeenCalledWith(
-      contestMetadata.id,
+    expect(Composition.submissionWritter.updateAnswer).toHaveBeenCalledWith(
+      contest.id,
       submission.id,
       "ACCEPTED",
     );
@@ -54,12 +54,12 @@ describe("SubmissionsPageActionJudge", () => {
   });
 
   it("should handle updateAnswer failure", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    const submission = MockSubmissionFullResponseDTO();
+    const contest = MockContestResponseDTO();
+    const submission = MockSubmissionWithCodeAndExecutionsResponseDTO();
     const onClose = jest.fn();
-    (submissionWritter.updateAnswer as jest.Mock).mockRejectedValueOnce(
-      new Error("Failed"),
-    );
+    (
+      Composition.submissionWritter.updateAnswer as jest.Mock
+    ).mockRejectedValueOnce(new Error("Failed"));
     await renderWithProviders(
       <DropdownMenu open>
         <DropdownMenuContent>
@@ -70,7 +70,7 @@ describe("SubmissionsPageActionJudge", () => {
           />
         </DropdownMenuContent>
       </DropdownMenu>,
-      { contestMetadata },
+      { contest },
     );
 
     fireEvent.click(screen.getByTestId("submissions-page-action-judge"));
@@ -81,8 +81,8 @@ describe("SubmissionsPageActionJudge", () => {
       fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(submissionWritter.updateAnswer).toHaveBeenCalledWith(
-      contestMetadata.id,
+    expect(Composition.submissionWritter.updateAnswer).toHaveBeenCalledWith(
+      contest.id,
       submission.id,
       "WRONG_ANSWER",
     );

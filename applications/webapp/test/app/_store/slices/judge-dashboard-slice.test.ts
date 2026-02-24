@@ -1,23 +1,24 @@
-import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
+import {
+  judgeDashboardSlice,
+  JudgeDashboardState,
+} from "@/app/_store/slices/judge-dashboard-slice";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
-import { MockContestPublicResponseDTO } from "@/test/mock/response/contest/MockContestPublicResponseDTO";
-import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardPartialResponseDTO";
+import { MockJudgeDashboardResponseDTO } from "@/test/mock/response/dashboard/MockJudgeDashboardResponseDTO";
+import { MockLeaderboardCellResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardCellResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
-import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
+import { MockSubmissionWithCodeAndExecutionsResponseDTO } from "@/test/mock/response/submission/MockSubmissionWithCodeAndExecutionsResponseDTO";
 import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 
 describe("judgeDashboardSlice", () => {
-  const stateWithData = {
-    contest: MockContestPublicResponseDTO(),
-    leaderboard: MockLeaderboardResponseDTO(),
-    submissions: [MockSubmissionFullWithExecutionResponseDTO()],
-    memberTickets: [MockTicketResponseDTO()],
-  } as any;
+  const stateWithData: JudgeDashboardState = {
+    listenerStatus: ListenerStatus.CONNECTED,
+    ...MockJudgeDashboardResponseDTO(),
+  };
 
   it("should have the correct initial state", () => {
     const state = judgeDashboardSlice.reducer(undefined, {
@@ -60,19 +61,19 @@ describe("judgeDashboardSlice", () => {
   });
 
   it("should merge a partial leaderboard", () => {
-    const partialLeaderboard = MockLeaderboardPartialResponseDTO({
-      memberId: stateWithData.leaderboard.members[0].id,
-      problemId: stateWithData.leaderboard.members[0].problems[0].id,
-      isAccepted: !stateWithData.leaderboard.members[0].problems[0].isAccepted,
+    const leaderboardCell = MockLeaderboardCellResponseDTO({
+      memberId: stateWithData.leaderboard.rows[0].memberId,
+      problemId: stateWithData.leaderboard.rows[0].cells[0].problemId,
+      isAccepted: !stateWithData.leaderboard.rows[0].cells[0].isAccepted,
     });
 
     const state = judgeDashboardSlice.reducer(
       stateWithData,
-      judgeDashboardSlice.actions.mergeLeaderboard(partialLeaderboard),
+      judgeDashboardSlice.actions.mergeLeaderboard(leaderboardCell),
     );
 
-    expect(state.leaderboard.members[0].problems[0].isAccepted).toBe(
-      partialLeaderboard.isAccepted,
+    expect(state.leaderboard.rows[0].cells[0].isAccepted).toBe(
+      leaderboardCell.isAccepted,
     );
   });
 
@@ -86,7 +87,7 @@ describe("judgeDashboardSlice", () => {
   });
 
   it("should merge a new submission", () => {
-    const newSubmission = MockSubmissionFullWithExecutionResponseDTO();
+    const newSubmission = MockSubmissionWithCodeAndExecutionsResponseDTO();
 
     const state = judgeDashboardSlice.reducer(
       stateWithData,
@@ -98,7 +99,7 @@ describe("judgeDashboardSlice", () => {
   });
 
   it("should update an existing submission when merging", () => {
-    const updatedSubmission: SubmissionFullWithExecutionResponseDTO = {
+    const updatedSubmission: SubmissionWithCodeAndExecutionsResponseDTO = {
       ...stateWithData.submissions[0],
       status: SubmissionStatus.JUDGED,
       answer: SubmissionAnswer.WRONG_ANSWER,
@@ -122,8 +123,8 @@ describe("judgeDashboardSlice", () => {
       judgeDashboardSlice.actions.mergeAnnouncement(newAnnouncement),
     );
 
-    expect(state.contest.announcements).toHaveLength(2);
-    expect(state.contest.announcements).toContainEqual(newAnnouncement);
+    expect(state.announcements).toHaveLength(2);
+    expect(state.announcements).toContainEqual(newAnnouncement);
   });
 
   it("should merge a new root clarification", () => {
@@ -136,13 +137,13 @@ describe("judgeDashboardSlice", () => {
       judgeDashboardSlice.actions.mergeClarification(mockClarification),
     );
 
-    expect(state.contest.clarifications).toHaveLength(2);
-    expect(state.contest.clarifications).toContainEqual(mockClarification);
+    expect(state.clarifications).toHaveLength(2);
+    expect(state.clarifications).toContainEqual(mockClarification);
   });
 
   it("should merge a child clarification to the correct parent", () => {
     const mockClarification = MockClarificationResponseDTO({
-      parentId: stateWithData.contest.clarifications[0]?.id,
+      parentId: stateWithData.clarifications[0]?.id,
     });
 
     const state = judgeDashboardSlice.reducer(
@@ -150,22 +151,20 @@ describe("judgeDashboardSlice", () => {
       judgeDashboardSlice.actions.mergeClarification(mockClarification),
     );
 
-    expect(state.contest.clarifications).toHaveLength(1);
-    expect(state.contest.clarifications[0].children).toHaveLength(1);
-    expect(state.contest.clarifications[0].children[0]).toEqual(
-      mockClarification,
-    );
+    expect(state.clarifications).toHaveLength(1);
+    expect(state.clarifications[0].children).toHaveLength(1);
+    expect(state.clarifications[0].children[0]).toEqual(mockClarification);
   });
 
   it("should delete a clarification by id", () => {
     const state = judgeDashboardSlice.reducer(
       stateWithData,
       judgeDashboardSlice.actions.deleteClarification(
-        stateWithData.contest.clarifications[0].id,
+        stateWithData.clarifications[0].id,
       ),
     );
 
-    expect(state.contest.clarifications).toHaveLength(0);
+    expect(state.clarifications).toHaveLength(0);
   });
 
   it("should merge a new ticket", () => {

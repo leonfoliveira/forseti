@@ -8,13 +8,6 @@ export class AnnouncementService implements AnnouncementWritter {
     private readonly announcementRepository: AnnouncementRepository,
   ) {}
 
-  /**
-   * Create an announcement for a contest.
-   *
-   * @param contestId ID of the contest
-   * @param inputDTO Data for creating the announcement
-   * @return The created announcement
-   */
   async create(
     contestId: string,
     inputDTO: CreateAnnouncementRequestDTO,

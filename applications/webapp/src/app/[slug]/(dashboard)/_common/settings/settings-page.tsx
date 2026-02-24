@@ -35,12 +35,13 @@ import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { cn } from "@/app/_lib/util/cn";
 import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
-import { contestMetadataSlice } from "@/app/_store/slices/contest-metadata-slice";
+import { contestSlice } from "@/app/_store/slices/contest-slice";
 import { useAppDispatch } from "@/app/_store/store";
-import { contestWritter, leaderboardReader } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
+import { ObjectUtil } from "@/core/application/util/ObjectUtil";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
-import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
+import { ContestWithMembersAndProblemsDTO } from "@/core/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -114,9 +115,9 @@ const messages = defineMessages({
 });
 
 type Props = {
-  contest: ContestFullResponseDTO;
+  contest: ContestWithMembersAndProblemsDTO;
   leaderboard: LeaderboardResponseDTO;
-  onToggleFreeze: (isFrozen: boolean) => void;
+  onToggleFreeze: (contest: ContestWithMembersAndProblemsDTO) => void;
 };
 
 enum TabKey {
@@ -157,17 +158,25 @@ export function SettingsPage({ contest, leaderboard, onToggleFreeze }: Props) {
       if (contestStatus !== ContestStatus.NOT_STARTED) {
         inputDTO.startAt = contest.startAt;
       }
-      const newContest = await contestWritter.update(contest.id, inputDTO);
+      const updatedContest = await Composition.contestWritter.update(
+        contest.id,
+        inputDTO,
+      );
 
-      if (newContest.slug !== contest.slug) {
+      if (updatedContest.slug !== contest.slug) {
         /* Redirect to new path if slug has changed */
-        router.push(routes.CONTEST_SETTINGS(newContest.slug));
+        router.push(routes.CONTEST_SETTINGS(updatedContest.slug));
       } else {
-        const leaderboard = await leaderboardReader.build(newContest.id);
+        const dashboard = await Composition.dashboardReader.getAdminDashboard(
+          contest.id,
+        );
 
-        dispatch(contestMetadataSlice.actions.set(newContest));
-        dispatch(adminDashboardSlice.actions.setContest(newContest));
-        dispatch(adminDashboardSlice.actions.setLeaderboard(leaderboard));
+        dispatch(
+          contestSlice.actions.set(
+            ObjectUtil.removeKeys(updatedContest, "members", "problems"),
+          ),
+        );
+        dispatch(adminDashboardSlice.actions.set(dashboard));
 
         toast.success(messages.saveSuccess);
         setIsConfirmDialogOpen(false);

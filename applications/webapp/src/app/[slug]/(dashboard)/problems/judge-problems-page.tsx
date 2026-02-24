@@ -6,9 +6,7 @@ import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/problems
 import { useAppSelector } from "@/app/_store/store";
 
 export function JudgeProblemsPage() {
-  const problems = useAppSelector(
-    (state) => state.judgeDashboard.contest.problems,
-  );
+  const problems = useAppSelector((state) => state.judgeDashboard.problems);
 
   return <ProblemsPage problems={problems} />;
 }

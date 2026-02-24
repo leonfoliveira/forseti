@@ -40,7 +40,7 @@ class SessionControllerTest(
         test("getCurrent") {
             val session = SessionMockBuilder.build()
             ExecutionContext.start()
-            ExecutionContext.authenticate(SessionMockBuilder.build())
+            ExecutionContext.authenticate(SessionMockBuilder.build(contest = null))
 
             webMvc
                 .get("/v1/sessions/me")
@@ -52,7 +52,7 @@ class SessionControllerTest(
 
         test("deleteCurrent") {
             ExecutionContext.start()
-            ExecutionContext.authenticate(SessionMockBuilder.build())
+            ExecutionContext.authenticate(SessionMockBuilder.build(contest = null))
 
             webMvc
                 .delete("/v1/sessions/me")

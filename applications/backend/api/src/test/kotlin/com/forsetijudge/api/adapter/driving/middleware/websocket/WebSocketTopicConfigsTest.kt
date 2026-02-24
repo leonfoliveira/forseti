@@ -316,8 +316,8 @@ class WebSocketTopicConfigsTest :
                 }
             }
 
-            context("/topic/contests/[a-fA-F0-9-]+/leaderboard:freeze") {
-                val destination = "/topic/contests/${startedContest.id}/leaderboard:freeze"
+            context("/topic/contests/[a-fA-F0-9-]+/leaderboard:frozen") {
+                val destination = "/topic/contests/${startedContest.id}/leaderboard:frozen"
 
                 test("should allow access when contest has started") {
                     val filter =
@@ -333,7 +333,7 @@ class WebSocketTopicConfigsTest :
                 }
 
                 test("should throw ForbiddenException when contest has not started and user is not privileged") {
-                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard:freeze"
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard:frozen"
                     val filter =
                         sut.privateFilters.entries
                             .first { it.key.matches(notStartedDestination) }
@@ -347,7 +347,7 @@ class WebSocketTopicConfigsTest :
                 }
 
                 test("should allow access when contest has not started but user is admin") {
-                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard:freeze"
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard:frozen"
                     val filter =
                         sut.privateFilters.entries
                             .first { it.key.matches(notStartedDestination) }
@@ -361,8 +361,8 @@ class WebSocketTopicConfigsTest :
                 }
             }
 
-            context("/topic/contests/[a-fA-F0-9-]+/leaderboard:unfreeze") {
-                val destination = "/topic/contests/${startedContest.id}/leaderboard:unfreeze"
+            context("/topic/contests/[a-fA-F0-9-]+/leaderboard:unfrozen") {
+                val destination = "/topic/contests/${startedContest.id}/leaderboard:unfrozen"
 
                 test("should allow access when contest has started") {
                     val filter =
@@ -378,7 +378,7 @@ class WebSocketTopicConfigsTest :
                 }
 
                 test("should throw ForbiddenException when contest has not started and user is not privileged") {
-                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard:unfreeze"
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard:unfrozen"
                     val filter =
                         sut.privateFilters.entries
                             .first { it.key.matches(notStartedDestination) }
@@ -392,7 +392,7 @@ class WebSocketTopicConfigsTest :
                 }
 
                 test("should allow access when contest has not started but user is admin") {
-                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard:unfreeze"
+                    val notStartedDestination = "/topic/contests/${notStartedContest.id}/leaderboard:unfrozen"
                     val filter =
                         sut.privateFilters.entries
                             .first { it.key.matches(notStartedDestination) }

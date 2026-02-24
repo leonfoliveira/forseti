@@ -11,7 +11,9 @@ import java.util.UUID
 
 data class SessionResponseBodyDTO(
     val id: UUID,
-    val contest: ContestResponseBodyDTO?,
+    val createdAt: OffsetDateTime,
+    val updatedAt: OffsetDateTime,
+    val contestId: UUID?,
     val member: MemberResponseBodyDTO,
     val csrfToken: UUID,
     val expiresAt: OffsetDateTime,
@@ -21,7 +23,9 @@ data class SessionResponseBodyDTO(
 fun Session.toResponseBodyDTO() =
     SessionResponseBodyDTO(
         id = id,
-        contest = contest?.toResponseBodyDTO(),
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        contestId = contestId,
         member = member.toResponseBodyDTO(),
         csrfToken = csrfToken,
         expiresAt = expiresAt,

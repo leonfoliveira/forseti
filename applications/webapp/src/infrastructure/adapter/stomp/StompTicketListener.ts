@@ -18,7 +18,7 @@ export class StompTicketListener implements TicketListener {
     cb: (ticket: TicketResponseDTO) => void,
   ): Promise<void> {
     client.subscribe(
-      `/topic/contests/${contestId}/tickets/members/${memberId}`,
+      `/topic/contests/${contestId}/members/${memberId}/tickets`,
       cb,
     );
   }

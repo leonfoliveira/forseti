@@ -7,11 +7,6 @@ import { SessionResponseDTO } from "@/core/port/dto/response/session/SessionResp
 export class SessionService implements SessionReader, SessionWritter {
   constructor(private readonly sessionRepository: SessionRepository) {}
 
-  /**
-   * Get the current session information.
-   *
-   * @return The current session or null if no session exists
-   */
   async getCurrent(): Promise<SessionResponseDTO | null> {
     try {
       return await this.sessionRepository.getCurrent();
@@ -23,9 +18,6 @@ export class SessionService implements SessionReader, SessionWritter {
     }
   }
 
-  /**
-   * Delete the current session.
-   */
   async deleteCurrent(): Promise<void> {
     await this.sessionRepository.deleteCurrent();
   }

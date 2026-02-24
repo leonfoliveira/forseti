@@ -68,4 +68,38 @@ describe("AttachmentService", () => {
       expect(revokeObjectURLSpy).toHaveBeenCalled();
     });
   });
+
+  describe("print", () => {
+    (global.URL.createObjectURL as jest.Mock) = jest.fn(() => "blob:url");
+    (global.URL.revokeObjectURL as jest.Mock) = jest.fn();
+
+    it("Should print an attachment", async () => {
+      const attachment = {
+        id: "1",
+        filename: "test.txt",
+        contentType: "text/plain",
+      } as AttachmentResponseDTO;
+      const file = new File(["content"], "test.txt", { type: "text/plain" });
+      attachmentRepository.download.mockResolvedValue(file);
+
+      const createObjectURLSpy = jest.spyOn(URL, "createObjectURL");
+      const revokeObjectURLSpy = jest.spyOn(URL, "revokeObjectURL");
+      const appendChildSpy = jest.spyOn(document.body, "appendChild");
+      const removeChildSpy = jest.spyOn(document.body, "removeChild");
+
+      await sut.print(contestId, attachment);
+
+      expect(attachmentRepository.download).toHaveBeenCalledWith(
+        contestId,
+        attachment,
+      );
+      expect(createObjectURLSpy).toHaveBeenCalledWith(file);
+      expect(appendChildSpy).toHaveBeenCalled();
+      const iframe = document.querySelector("iframe") as HTMLIFrameElement;
+      expect(iframe).toBeInTheDocument();
+      iframe.onload?.(new Event("load"));
+      expect(removeChildSpy).toHaveBeenCalled();
+      expect(revokeObjectURLSpy).toHaveBeenCalled();
+    });
+  });
 });

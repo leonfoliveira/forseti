@@ -26,9 +26,9 @@ import {
 import { useErrorHandler } from "@/app/_lib/hook/error-handler-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
-import { attachmentReader } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
+import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -84,50 +84,47 @@ const messages = defineMessages({
 });
 
 type Props = {
-  problems: ProblemPublicResponseDTO[];
-  contestantClassificationProblems?: LeaderboardResponseDTO["members"][number]["problems"];
+  problems: ProblemResponseDTO[];
+  leaderboardRow?: LeaderboardResponseDTO["rows"][number];
 };
 
 /**
  * Displays the problems page where users can view all problems for the contest.
  **/
-export function ProblemsPage({
-  problems,
-  contestantClassificationProblems,
-}: Props) {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
+export function ProblemsPage({ problems, leaderboardRow }: Props) {
+  const contestId = useAppSelector((state) => state.contest.id);
   const errorHandler = useErrorHandler();
   const toast = useToast();
 
-  const problemStatus = contestantClassificationProblems?.reduce(
-    (acc, problem) => {
-      acc[problem.id] = problem;
+  const leaderboardCellsMap = leaderboardRow?.cells?.reduce(
+    (acc, cell) => {
+      acc[cell.problemId] = cell;
       return acc;
     },
     {} as Record<
       string,
-      LeaderboardResponseDTO["members"][number]["problems"][number]
+      LeaderboardResponseDTO["rows"][number]["cells"][number]
     >,
   );
-  const hasStatus = contestantClassificationProblems !== undefined;
+  const hasStatus = leaderboardRow !== undefined;
 
   function getStatus(problemId: string) {
-    const status = problemStatus?.[problemId];
-    if (!status) return undefined;
-    if (status.isAccepted)
+    const cell = leaderboardCellsMap?.[problemId];
+    if (!cell) return undefined;
+    if (cell.isAccepted)
       return (
         <p className="text-xs text-green-700 dark:text-green-300">
           <CircleCheckIcon size={14} className="mr-1 inline" />
           <FormattedMessage {...messages.accepted} />
         </p>
       );
-    if (status.wrongSubmissions > 0)
+    if (cell.wrongSubmissions > 0)
       return (
         <p className="text-xs text-yellow-700 dark:text-yellow-300">
           <ClockIcon size={14} className="mr-1 inline" />
           <FormattedMessage
             {...messages.attempts}
-            values={{ attempts: status.wrongSubmissions }}
+            values={{ attempts: cell.wrongSubmissions }}
           />
         </p>
       );
@@ -138,9 +135,12 @@ export function ProblemsPage({
     );
   }
 
-  async function downloadDescription(problem: ProblemPublicResponseDTO) {
+  async function downloadDescription(problem: ProblemResponseDTO) {
     try {
-      await attachmentReader.download(contestId, problem.description);
+      await Composition.attachmentReader.download(
+        contestId,
+        problem.description,
+      );
     } catch (error) {
       await errorHandler.handle(error as Error, {
         default: () => toast.error(messages.descriptionDownloadError),

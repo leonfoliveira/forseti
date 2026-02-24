@@ -61,25 +61,25 @@ class WebSocketTopicConfigs(
                     },
                 )
             },
-            Regex("/topic/contests/[a-fA-F0-9-]+/leaderboard:freeze") to { destination ->
-                contestAuthorizerUseCase.execute(
-                    ContestAuthorizerUseCase.Command { contestAuthorizer ->
-                        contestAuthorizer
-                            .or({ it.requireContestStarted() }, { it.requireMemberCanAccessNotStartedContest() })
-                            .throwIfErrors()
-                    },
-                )
-            },
-            Regex("/topic/contests/[a-fA-F0-9-]+/leaderboard:unfreeze") to { destination ->
-                contestAuthorizerUseCase.execute(
-                    ContestAuthorizerUseCase.Command { contestAuthorizer ->
-                        contestAuthorizer
-                            .or({ it.requireContestStarted() }, { it.requireMemberCanAccessNotStartedContest() })
-                            .throwIfErrors()
-                    },
-                )
-            },
             Regex("/topic/contests/[a-fA-F0-9-]+/leaderboard:cell") to { destination ->
+                contestAuthorizerUseCase.execute(
+                    ContestAuthorizerUseCase.Command { contestAuthorizer ->
+                        contestAuthorizer
+                            .or({ it.requireContestStarted() }, { it.requireMemberCanAccessNotStartedContest() })
+                            .throwIfErrors()
+                    },
+                )
+            },
+            Regex("/topic/contests/[a-fA-F0-9-]+/leaderboard:frozen") to { destination ->
+                contestAuthorizerUseCase.execute(
+                    ContestAuthorizerUseCase.Command { contestAuthorizer ->
+                        contestAuthorizer
+                            .or({ it.requireContestStarted() }, { it.requireMemberCanAccessNotStartedContest() })
+                            .throwIfErrors()
+                    },
+                )
+            },
+            Regex("/topic/contests/[a-fA-F0-9-]+/leaderboard:unfrozen") to { destination ->
                 contestAuthorizerUseCase.execute(
                     ContestAuthorizerUseCase.Command { contestAuthorizer ->
                         contestAuthorizer

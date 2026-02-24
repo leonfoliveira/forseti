@@ -20,9 +20,9 @@ import {
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
-import { submissionWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
@@ -62,9 +62,9 @@ const messages = defineMessages({
 });
 
 type Props = {
-  submission: SubmissionFullWithExecutionResponseDTO;
+  submission: SubmissionWithCodeAndExecutionsResponseDTO;
   onClose: () => void;
-  onJudge: (submission: SubmissionFullWithExecutionResponseDTO) => void;
+  onJudge: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void;
 };
 
 export function SubmissionsPageActionJudge({
@@ -72,7 +72,7 @@ export function SubmissionsPageActionJudge({
   onClose,
   onJudge,
 }: Props) {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const contestId = useAppSelector((state) => state.contest.id);
   const judgeState = useLoadableState();
   const toast = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -85,7 +85,7 @@ export function SubmissionsPageActionJudge({
   async function judgeSubmission(data: SubmissionJudgeFormType) {
     judgeState.start();
     try {
-      await submissionWritter.updateAnswer(
+      await Composition.submissionWritter.updateAnswer(
         contestId,
         submission.id,
         data.answer,

@@ -26,7 +26,7 @@ const messages = defineMessages({
  * Shows the contest title, start time, and supported languages.
  */
 export function WaitPage() {
-  const contestMetadata = useAppSelector((state) => state.contestMetadata);
+  const contest = useAppSelector((state) => state.contest);
   const { theme } = useTheme();
 
   const handleReload = () => {
@@ -54,7 +54,7 @@ export function WaitPage() {
         />
       )}
       <h1 className="text-4xl" data-testid="title">
-        {contestMetadata.title}
+        {contest.title}
       </h1>
       <Separator className="my-3 max-w-lg" />
       <div className="text-center">
@@ -63,7 +63,7 @@ export function WaitPage() {
         </p>
         <div className="flex justify-center text-lg">
           <CountdownClock
-            to={new Date(contestMetadata.startAt)}
+            to={new Date(contest.startAt)}
             onZero={handleReload}
             data-testid="clock"
           />
@@ -74,7 +74,7 @@ export function WaitPage() {
           <FormattedMessage {...messages.languages} />
         </p>
         <ul className="mt-1 text-sm">
-          {contestMetadata.languages.toSorted().map((it) => (
+          {contest.languages.toSorted().map((it) => (
             <li key={it} data-testid="language-item">
               <FormattedMessage {...globalMessages.submissionLanguage[it]} />
             </li>

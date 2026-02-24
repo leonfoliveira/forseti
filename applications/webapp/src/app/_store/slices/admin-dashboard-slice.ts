@@ -6,11 +6,11 @@ import { mergeLeaderboard } from "@/app/_store/util/leaderboard-merger";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
-import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
+import { ContestWithMembersAndProblemsDTO } from "@/core/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 import { AdminDashboardResponseDTO } from "@/core/port/dto/response/dashboard/AdminDashboardResponseDTO";
-import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
+import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 
 export type AdminDashboardState = AdminDashboardResponseDTO & {
@@ -32,7 +32,7 @@ export const adminDashboardSlice = createSlice({
     setListenerStatus(state, action: { payload: ListenerStatus }) {
       state.listenerStatus = action.payload;
     },
-    setContest(state, action: { payload: ContestFullResponseDTO }) {
+    setContest(state, action: { payload: ContestWithMembersAndProblemsDTO }) {
       state.contest = action.payload;
     },
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
@@ -41,33 +41,27 @@ export const adminDashboardSlice = createSlice({
     setLeaderboardIsFrozen(state, action: { payload: boolean }) {
       state.leaderboard.isFrozen = action.payload;
     },
-    mergeLeaderboard(
-      state,
-      action: { payload: LeaderboardPartialResponseDTO },
-    ) {
+    mergeLeaderboard(state, action: { payload: LeaderboardCellResponseDTO }) {
       state.leaderboard = mergeLeaderboard(state.leaderboard, action.payload);
     },
     mergeSubmission(
       state,
-      action: { payload: SubmissionFullWithExecutionResponseDTO },
+      action: { payload: SubmissionWithCodeAndExecutionsResponseDTO },
     ) {
       state.submissions = mergeEntity(state.submissions, action.payload);
     },
     mergeAnnouncement(state, action: { payload: AnnouncementResponseDTO }) {
-      state.contest.announcements = mergeEntity(
-        state.contest.announcements,
-        action.payload,
-      );
+      state.announcements = mergeEntity(state.announcements, action.payload);
     },
     mergeClarification(state, action: { payload: ClarificationResponseDTO }) {
       if (!action.payload.parentId) {
-        state.contest.clarifications = mergeEntity(
-          state.contest.clarifications,
+        state.clarifications = mergeEntity(
+          state.clarifications,
           action.payload,
         );
       } else {
         const parent = findClarification(
-          state.contest.clarifications,
+          state.clarifications,
           action.payload.parentId,
         );
         if (parent) {
@@ -76,7 +70,7 @@ export const adminDashboardSlice = createSlice({
       }
     },
     deleteClarification(state, action: { payload: string }) {
-      state.contest.clarifications = state.contest.clarifications.filter(
+      state.clarifications = state.clarifications.filter(
         (clarification) => clarification.id !== action.payload,
       );
     },

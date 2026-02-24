@@ -27,10 +27,10 @@ import { Toggle } from "@/app/_lib/component/shadcn/toggle";
 import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
 import { cn } from "@/app/_lib/util/cn";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
-import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
-import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResponseDTO";
+import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
@@ -84,27 +84,34 @@ const messages = defineMessages({
 });
 
 type Props = {
-  submissions: SubmissionPublicResponseDTO[] | SubmissionFullResponseDTO[];
-  memberSubmissions?: SubmissionFullResponseDTO[];
-  problems: ProblemPublicResponseDTO[];
+  submissions:
+    | SubmissionResponseDTO[]
+    | SubmissionWithCodeResponseDTO[]
+    | SubmissionWithCodeAndExecutionsResponseDTO[];
+  memberSubmissions?: SubmissionWithCodeResponseDTO[];
+  problems: ProblemResponseDTO[];
 } & (
   | {
       canCreate: true;
-      onCreate: (submission: SubmissionFullResponseDTO) => void;
+      onCreate: (submission: SubmissionWithCodeResponseDTO) => void;
     }
   | {
       canCreate?: false;
-      onCreate?: (submission: SubmissionFullResponseDTO) => void;
+      onCreate?: (submission: SubmissionWithCodeResponseDTO) => void;
     }
 ) &
   (
     | {
         canEdit: true;
-        onEdit: (submission: SubmissionFullWithExecutionResponseDTO) => void;
+        onEdit: (
+          submission: SubmissionWithCodeAndExecutionsResponseDTO,
+        ) => void;
       }
     | {
         canEdit?: false;
-        onEdit?: (submission: SubmissionFullWithExecutionResponseDTO) => void;
+        onEdit?: (
+          submission: SubmissionWithCodeAndExecutionsResponseDTO,
+        ) => void;
       }
   ) &
   (
@@ -252,8 +259,8 @@ export function SubmissionsPage({
                         <SubmissionsPageActionsMenu
                           submission={
                             submission as
-                              | SubmissionFullResponseDTO
-                              | SubmissionFullWithExecutionResponseDTO
+                              | SubmissionWithCodeResponseDTO
+                              | SubmissionWithCodeAndExecutionsResponseDTO
                           }
                           canEdit={canEdit}
                           onEdit={onEdit as any}

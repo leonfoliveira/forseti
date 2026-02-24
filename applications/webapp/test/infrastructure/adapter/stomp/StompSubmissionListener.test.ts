@@ -23,30 +23,39 @@ describe("StompSubmissionListener", () => {
     });
   });
 
-  describe("subscribeForContestFull", () => {
+  describe("subscribeForContestWithCodeAndExecutions", () => {
     it("should subscribe to full contest submissions", async () => {
       const client = mock<ListenerClient>();
       const callback = jest.fn();
 
-      await sut.subscribeForContestFull(client, contestId, callback);
+      await sut.subscribeForContestWithCodeAndExecutions(
+        client,
+        contestId,
+        callback,
+      );
 
       expect(client.subscribe).toHaveBeenCalledWith(
-        `/topic/contests/${contestId}/submissions/full`,
+        `/topic/contests/${contestId}/submissions:with-code-and-executions`,
         callback,
       );
     });
   });
 
-  describe("subscribeForMember", () => {
-    it("should subscribe to member submissions", async () => {
+  describe("subscribeForMemberWithCode", () => {
+    it("should subscribe to member submissions with code", async () => {
       const client = mock<ListenerClient>();
       const memberId = uuidv4();
       const callback = jest.fn();
 
-      await sut.subscribeForMemberFull(client, contestId, memberId, callback);
+      await sut.subscribeForMemberWithCode(
+        client,
+        contestId,
+        memberId,
+        callback,
+      );
 
       expect(client.subscribe).toHaveBeenCalledWith(
-        `/topic/contests/${contestId}/submissions/full/members/${memberId}`,
+        `/topic/contests/${contestId}/members/${memberId}/submissions:with-code`,
         callback,
       );
     });

@@ -46,6 +46,8 @@ class BuildLeaderboardCellInternalService : BuildLeaderboardCellInternalUseCase 
 
         return Leaderboard.Cell(
             problemId = command.problem.id,
+            problemLetter = command.problem.letter,
+            problemColor = command.problem.color,
             isAccepted = isAccepted,
             acceptedAt = if (isAccepted) firstAcceptedSubmission.createdAt else null,
             wrongSubmissions = wrongSubmissionsBeforeAccepted.size,

@@ -1,23 +1,24 @@
-import { staffDashboardSlice } from "@/app/_store/slices/staff-dashboard-slice";
+import {
+  staffDashboardSlice,
+  StaffDashboardState,
+} from "@/app/_store/slices/staff-dashboard-slice";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
-import { MockContestPublicResponseDTO } from "@/test/mock/response/contest/MockContestPublicResponseDTO";
-import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardPartialResponseDTO";
+import { MockStaffDashboardResponseDTO } from "@/test/mock/response/dashboard/MockStaffDashboardResponseDTO";
+import { MockLeaderboardCellResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardCellResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
-import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
+import { MockSubmissionResponseDTO } from "@/test/mock/response/submission/MockSubmissionResponseDTO";
 import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 
 describe("staffDashboardSlice", () => {
-  const stateWithData = {
-    contest: MockContestPublicResponseDTO(),
-    leaderboard: MockLeaderboardResponseDTO(),
-    submissions: [MockSubmissionPublicResponseDTO()],
-    tickets: [MockTicketResponseDTO()],
-  } as any;
+  const stateWithData: StaffDashboardState = {
+    listenerStatus: ListenerStatus.CONNECTED,
+    ...MockStaffDashboardResponseDTO(),
+  };
 
   it("should have the correct initial state", () => {
     const state = staffDashboardSlice.reducer(undefined, {
@@ -60,19 +61,19 @@ describe("staffDashboardSlice", () => {
   });
 
   it("should merge a partial leaderboard", () => {
-    const partialLeaderboard = MockLeaderboardPartialResponseDTO({
-      memberId: stateWithData.leaderboard.members[0].id,
-      problemId: stateWithData.leaderboard.members[0].problems[0].id,
-      isAccepted: !stateWithData.leaderboard.members[0].problems[0].isAccepted,
+    const leaderboardCell = MockLeaderboardCellResponseDTO({
+      memberId: stateWithData.leaderboard.rows[0].memberId,
+      problemId: stateWithData.leaderboard.rows[0].cells[0].problemId,
+      isAccepted: !stateWithData.leaderboard.rows[0].cells[0].isAccepted,
     });
 
     const state = staffDashboardSlice.reducer(
       stateWithData,
-      staffDashboardSlice.actions.mergeLeaderboard(partialLeaderboard),
+      staffDashboardSlice.actions.mergeLeaderboard(leaderboardCell),
     );
 
-    expect(state.leaderboard.members[0].problems[0].isAccepted).toBe(
-      partialLeaderboard.isAccepted,
+    expect(state.leaderboard.rows[0].cells[0].isAccepted).toBe(
+      leaderboardCell.isAccepted,
     );
   });
 
@@ -86,7 +87,7 @@ describe("staffDashboardSlice", () => {
   });
 
   it("should merge a new submission", () => {
-    const newSubmission = MockSubmissionPublicResponseDTO();
+    const newSubmission = MockSubmissionResponseDTO();
 
     const state = staffDashboardSlice.reducer(
       stateWithData,
@@ -98,7 +99,7 @@ describe("staffDashboardSlice", () => {
   });
 
   it("should update an existing submission when merging", () => {
-    const updatedSubmission: SubmissionPublicResponseDTO = {
+    const updatedSubmission: SubmissionResponseDTO = {
       ...stateWithData.submissions[0],
       status: SubmissionStatus.JUDGED,
       answer: SubmissionAnswer.WRONG_ANSWER,
@@ -116,8 +117,8 @@ describe("staffDashboardSlice", () => {
 
   it("should merge a batch of submissions", () => {
     const newSubmissions = [
-      MockSubmissionPublicResponseDTO(),
-      MockSubmissionPublicResponseDTO(),
+      MockSubmissionResponseDTO(),
+      MockSubmissionResponseDTO(),
     ];
 
     const state = staffDashboardSlice.reducer(
@@ -139,8 +140,8 @@ describe("staffDashboardSlice", () => {
       staffDashboardSlice.actions.mergeAnnouncement(newAnnouncement),
     );
 
-    expect(state.contest.announcements).toHaveLength(2);
-    expect(state.contest.announcements).toContainEqual(newAnnouncement);
+    expect(state.announcements).toHaveLength(2);
+    expect(state.announcements).toContainEqual(newAnnouncement);
   });
 
   it("should merge a new root clarification", () => {
@@ -153,13 +154,13 @@ describe("staffDashboardSlice", () => {
       staffDashboardSlice.actions.mergeClarification(mockClarification),
     );
 
-    expect(state.contest.clarifications).toHaveLength(2);
-    expect(state.contest.clarifications).toContainEqual(mockClarification);
+    expect(state.clarifications).toHaveLength(2);
+    expect(state.clarifications).toContainEqual(mockClarification);
   });
 
   it("should merge a child clarification to the correct parent", () => {
     const mockClarification = MockClarificationResponseDTO({
-      parentId: stateWithData.contest.clarifications[0]?.id,
+      parentId: stateWithData.clarifications[0]?.id,
     });
 
     const state = staffDashboardSlice.reducer(
@@ -167,22 +168,20 @@ describe("staffDashboardSlice", () => {
       staffDashboardSlice.actions.mergeClarification(mockClarification),
     );
 
-    expect(state.contest.clarifications).toHaveLength(1);
-    expect(state.contest.clarifications[0].children).toHaveLength(1);
-    expect(state.contest.clarifications[0].children[0]).toEqual(
-      mockClarification,
-    );
+    expect(state.clarifications).toHaveLength(1);
+    expect(state.clarifications[0].children).toHaveLength(1);
+    expect(state.clarifications[0].children[0]).toEqual(mockClarification);
   });
 
   it("should delete a clarification by id", () => {
     const state = staffDashboardSlice.reducer(
       stateWithData,
       staffDashboardSlice.actions.deleteClarification(
-        stateWithData.contest.clarifications[0].id,
+        stateWithData.clarifications[0].id,
       ),
     );
 
-    expect(state.contest.clarifications).toHaveLength(0);
+    expect(state.clarifications).toHaveLength(0);
   });
 
   it("should merge a new ticket", () => {

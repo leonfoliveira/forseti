@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.driving.usecase.external.submission.CreateSubm
 import com.forsetijudge.core.port.driving.usecase.external.submission.ResetSubmissionUseCase
 import com.forsetijudge.core.port.driving.usecase.external.submission.UpdateAnswerSubmissionUseCase
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
@@ -83,15 +84,18 @@ class ContestSubmissionControllerTest(
 
         test("rerun") {
             val id = IdGenerator.getUUID()
+            val submission = SubmissionMockBuilder.build(id = id)
             val command =
                 ResetSubmissionUseCase.Command(
                     submissionId = id,
                 )
+            every { resetSubmissionUseCase.execute(command) } returns submission
 
             webMvc
-                .post("$basePath/{id}:rerun", contestId, id)
+                .put("$basePath/{id}:rerun", contestId, id)
                 .andExpect {
-                    status { isNoContent() }
+                    status { isOk() }
+                    content { submission.toWithCodeAndExecutionResponseBodyDTO() }
                 }
 
             verify { resetSubmissionUseCase.execute(command) }
@@ -101,18 +105,21 @@ class ContestSubmissionControllerTest(
             val id = IdGenerator.getUUID()
             val answer = Submission.Answer.ACCEPTED
             val body = UpdateAnswerSubmissionRequestBodyDTO(answer = answer)
+            val submission = SubmissionMockBuilder.build(id = id)
             val command =
                 UpdateAnswerSubmissionUseCase.Command(
                     submissionId = id,
                     answer = answer,
                 )
+            every { updateAnswerSubmissionUseCase.execute(command) } returns submission
 
             webMvc
                 .put("$basePath/{id}:update-answer", contestId, id) {
                     contentType = MediaType.APPLICATION_JSON
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {
-                    status { isNoContent() }
+                    status { isOk() }
+                    content { submission.toWithCodeAndExecutionResponseBodyDTO() }
                 }
 
             verify { updateAnswerSubmissionUseCase.execute(command) }

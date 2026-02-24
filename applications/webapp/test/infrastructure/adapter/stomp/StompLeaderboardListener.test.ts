@@ -9,43 +9,43 @@ describe("StompLeaderboardListener", () => {
 
   const contestId = uuidv4();
 
-  describe("subscribeForLeaderboardPartial", () => {
-    it("should subscribe to the contest partial leaderboard", async () => {
+  describe("subscribeForLeaderboardCell", () => {
+    it("should subscribe to the contest leaderboard cell", async () => {
       const client = mock<ListenerClient>();
       const callback = jest.fn();
 
-      await sut.subscribeForLeaderboardPartial(client, contestId, callback);
+      await sut.subscribeForLeaderboardCell(client, contestId, callback);
 
       expect(client.subscribe).toHaveBeenCalledWith(
-        `/topic/contests/${contestId}/leaderboard/partial`,
+        `/topic/contests/${contestId}/leaderboard:cell`,
         callback,
       );
     });
   });
 
-  describe("subscribeForLeaderboardFreeze", () => {
-    it("should subscribe to the contest leaderboard freeze", async () => {
+  describe("subscribeForLeaderboardFrozen", () => {
+    it("should subscribe to the contest leaderboard frozen", async () => {
       const client = mock<ListenerClient>();
       const callback = jest.fn();
 
-      await sut.subscribeForLeaderboardFreeze(client, contestId, callback);
+      await sut.subscribeForLeaderboardFrozen(client, contestId, callback);
 
       expect(client.subscribe).toHaveBeenCalledWith(
-        `/topic/contests/${contestId}/leaderboard/freeze`,
+        `/topic/contests/${contestId}/leaderboard:frozen`,
         callback,
       );
     });
   });
 
-  describe("subscribeForLeaderboardUnfreeze", () => {
-    it("should subscribe to the contest leaderboard unfreeze", async () => {
+  describe("subscribeForLeaderboardUnfrozen", () => {
+    it("should subscribe to the contest leaderboard unfrozen", async () => {
       const client = mock<ListenerClient>();
       const callback = jest.fn();
 
-      await sut.subscribeForLeaderboardUnfreeze(client, contestId, callback);
+      await sut.subscribeForLeaderboardUnfrozen(client, contestId, callback);
 
       expect(client.subscribe).toHaveBeenCalledWith(
-        `/topic/contests/${contestId}/leaderboard/unfreeze`,
+        `/topic/contests/${contestId}/leaderboard:unfrozen`,
         callback,
       );
     });

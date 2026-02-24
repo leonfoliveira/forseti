@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useAppSelector } from "@/app/_store/store";
-import { ContestUtil } from "@/core/application/util/contest-util";
+import { ContestUtil } from "@/core/application/util/ContestUtil";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 
 /**
@@ -9,30 +9,30 @@ import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
  * It automatically updates the status based on contest metadata changes and startAt/endAt times.
  */
 export function useContestStatusWatcher() {
-  const contestMetadata = useAppSelector((state) => state.contestMetadata);
+  const contest = useAppSelector((state) => state.contest);
   const [status, setStatus] = useState<ContestStatus>(
-    ContestUtil.getStatus(contestMetadata),
+    ContestUtil.getStatus(contest),
   );
 
   useEffect(() => {
-    setStatus(ContestUtil.getStatus(contestMetadata));
+    setStatus(ContestUtil.getStatus(contest));
 
     const now = Date.now();
-    const start = new Date(contestMetadata.startAt).getTime();
-    const end = new Date(contestMetadata.endAt).getTime();
+    const start = new Date(contest.startAt).getTime();
+    const end = new Date(contest.endAt).getTime();
 
     let startTimeout: NodeJS.Timeout | null = null;
     let endTimeout: NodeJS.Timeout | null = null;
 
     if (start > now) {
       startTimeout = setTimeout(() => {
-        setStatus(ContestUtil.getStatus(contestMetadata));
+        setStatus(ContestUtil.getStatus(contest));
       }, start - now);
     }
 
     if (end > now) {
       endTimeout = setTimeout(() => {
-        setStatus(ContestUtil.getStatus(contestMetadata));
+        setStatus(ContestUtil.getStatus(contest));
       }, end - now);
     }
 
@@ -40,7 +40,7 @@ export function useContestStatusWatcher() {
       if (startTimeout) clearTimeout(startTimeout);
       if (endTimeout) clearTimeout(endTimeout);
     };
-  }, [contestMetadata]);
+  }, [contest]);
 
   return status;
 }

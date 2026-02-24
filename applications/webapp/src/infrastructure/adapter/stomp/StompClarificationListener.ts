@@ -19,21 +19,21 @@ export class StompClarificationListener implements ClarificationListener {
   }
 
   /**
-   * Subscribe to clarifications updates for the children of a member in a contest using STOMP websocket protocol.
+   * Subscribe to clarifications updates for the answers of a member in a contest using STOMP websocket protocol.
    *
    * @param client The STOMP client used for subscribing.
    * @param contestId ID of the contest to subscribe to.
-   * @param memberId ID of the member whose children clarifications to subscribe to.
+   * @param memberId ID of the member whose answers to subscribe to.
    * @param cb Callback function to handle received clarifications.
    */
-  async subscribeForMemberChildren(
+  async subscribeForMemberAnswer(
     client: ListenerClient,
     contestId: string,
     memberId: string,
     cb: (clarification: ClarificationResponseDTO) => void,
   ): Promise<void> {
     await client.subscribe(
-      `/topic/contests/${contestId}/clarifications/children/members/${memberId}`,
+      `/topic/contests/${contestId}/members/${memberId}/clarifications:answer`,
       cb,
     );
   }
@@ -51,7 +51,7 @@ export class StompClarificationListener implements ClarificationListener {
     cb: (payload: { id: string }) => void,
   ): Promise<void> {
     await client.subscribe(
-      `/topic/contests/${contestId}/clarifications/deleted`,
+      `/topic/contests/${contestId}/clarifications:deleted`,
       cb,
     );
   }

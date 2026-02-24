@@ -23,7 +23,7 @@ export interface ClarificationListener {
    * @param memberId ID of the member
    * @param cb Callback function to handle incoming clarifications.
    */
-  subscribeForMemberChildren: (
+  subscribeForMemberAnswer: (
     client: ListenerClient,
     contestId: string,
     memberId: string,

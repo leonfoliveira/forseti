@@ -76,7 +76,7 @@ export function AnnouncementsPage({
   canCreate = false,
   onCreate,
 }: Props) {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const contestId = useAppSelector((state) => state.contest.id);
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 
   return (

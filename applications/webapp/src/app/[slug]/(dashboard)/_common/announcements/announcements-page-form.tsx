@@ -23,7 +23,7 @@ import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Textarea } from "@/app/_lib/component/shadcn/textarea";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { announcementWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -77,7 +77,7 @@ export function AnnouncementsPageForm({ contestId, onCreate, onClose }: Props) {
   async function createAnnouncement(data: AnnouncementFormType) {
     createAnnouncementState.start();
     try {
-      const newAnnouncement = await announcementWritter.create(
+      const newAnnouncement = await Composition.announcementWritter.create(
         contestId,
         AnnouncementForm.toInputDTO(data),
       );

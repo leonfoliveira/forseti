@@ -6,11 +6,9 @@ import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarificati
 import { useAppSelector } from "@/app/_store/store";
 
 export function StaffClarificationsPage() {
-  const problems = useAppSelector(
-    (state) => state.staffDashboard.contest.problems,
-  );
+  const problems = useAppSelector((state) => state.staffDashboard.problems);
   const clarifications = useAppSelector(
-    (state) => state.staffDashboard.contest.clarifications,
+    (state) => state.staffDashboard.clarifications,
   );
 
   return (

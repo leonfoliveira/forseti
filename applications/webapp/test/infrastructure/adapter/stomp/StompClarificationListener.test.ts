@@ -23,21 +23,16 @@ describe("StompClarificationListener", () => {
     });
   });
 
-  describe("subscribeForMemberChildren", () => {
-    it("should subscribe to member children clarifications", async () => {
+  describe("subscribeForMemberAnswer", () => {
+    it("should subscribe to member answer clarifications", async () => {
       const client = mock<ListenerClient>();
       const memberId = uuidv4();
       const callback = jest.fn();
 
-      await sut.subscribeForMemberChildren(
-        client,
-        contestId,
-        memberId,
-        callback,
-      );
+      await sut.subscribeForMemberAnswer(client, contestId, memberId, callback);
 
       expect(client.subscribe).toHaveBeenCalledWith(
-        `/topic/contests/${contestId}/clarifications/children/members/${memberId}`,
+        `/topic/contests/${contestId}/members/${memberId}/clarifications:answer`,
         callback,
       );
     });
@@ -52,7 +47,7 @@ describe("StompClarificationListener", () => {
       await sut.subscribeForContestDeleted(client, contestId, callback);
 
       expect(client.subscribe).toHaveBeenCalledWith(
-        `/topic/contests/${contestId}/clarifications/deleted`,
+        `/topic/contests/${contestId}/clarifications:deleted`,
         callback,
       );
     });

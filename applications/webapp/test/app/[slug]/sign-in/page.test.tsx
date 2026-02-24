@@ -1,24 +1,24 @@
 import { fireEvent, screen } from "@testing-library/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { act } from "react";
+import { act } from "react";
 
 import SignInPage from "@/app/[slug]/sign-in/page";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { authenticationWritter, sessionWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SignInPage", () => {
-  const mockContestMetadata = MockContestMetadataResponseDTO({
+  const mockContestMetadata = MockContestResponseDTO({
     id: "contest-1",
     slug: "test-contest",
   });
 
   it("should render the sign-in form with all required elements", async () => {
     await renderWithProviders(<SignInPage />, {
-      contestMetadata: mockContestMetadata,
+      contest: mockContestMetadata,
     });
 
     expect(document.title).toBe("Forseti - Sign In");
@@ -38,7 +38,7 @@ describe("SignInPage", () => {
       get: jest.fn().mockReturnValue("true"),
     });
     await renderWithProviders(<SignInPage />, {
-      contestMetadata: mockContestMetadata,
+      contest: mockContestMetadata,
     });
 
     expect(useToast().warning).toHaveBeenCalled();
@@ -46,12 +46,12 @@ describe("SignInPage", () => {
 
   it("should sign-in successfully", async () => {
     const session = MockSession();
-    (authenticationWritter.authenticate as jest.Mock).mockResolvedValue(
-      session,
-    );
+    (
+      Composition.authenticationWritter.authenticate as jest.Mock
+    ).mockResolvedValue(session);
 
     await renderWithProviders(<SignInPage />, {
-      contestMetadata: mockContestMetadata,
+      contest: mockContestMetadata,
     });
 
     fireEvent.change(screen.getByTestId("login"), {
@@ -65,7 +65,7 @@ describe("SignInPage", () => {
       fireEvent.click(screen.getByTestId("sign-in"));
     });
 
-    expect(authenticationWritter.authenticate).toHaveBeenCalledWith(
+    expect(Composition.authenticationWritter.authenticate).toHaveBeenCalledWith(
       mockContestMetadata.id,
       {
         login: "testuser",
@@ -75,12 +75,12 @@ describe("SignInPage", () => {
   });
 
   it("should handle unauthorized exception", async () => {
-    (authenticationWritter.authenticate as jest.Mock).mockRejectedValue(
-      new UnauthorizedException("Wrong login or password."),
-    );
+    (
+      Composition.authenticationWritter.authenticate as jest.Mock
+    ).mockRejectedValue(new UnauthorizedException("Wrong login or password."));
 
     const { store } = await renderWithProviders(<SignInPage />, {
-      contestMetadata: mockContestMetadata,
+      contest: mockContestMetadata,
     });
 
     fireEvent.change(screen.getByTestId("login"), {
@@ -100,12 +100,12 @@ describe("SignInPage", () => {
   });
 
   it("should handle error", async () => {
-    (authenticationWritter.authenticate as jest.Mock).mockRejectedValue(
-      new Error("An error occurred"),
-    );
+    (
+      Composition.authenticationWritter.authenticate as jest.Mock
+    ).mockRejectedValue(new Error("An error occurred"));
 
     const { store } = await renderWithProviders(<SignInPage />, {
-      contestMetadata: mockContestMetadata,
+      contest: mockContestMetadata,
     });
 
     fireEvent.change(screen.getByTestId("login"), {
@@ -126,23 +126,23 @@ describe("SignInPage", () => {
 
   it("should enter as guest", async () => {
     await renderWithProviders(<SignInPage />, {
-      contestMetadata: mockContestMetadata,
+      contest: mockContestMetadata,
     });
 
     await act(async () => {
       fireEvent.click(screen.getByTestId("enter-guest"));
     });
 
-    expect(sessionWritter.deleteCurrent).toHaveBeenCalled();
+    expect(Composition.sessionWritter.deleteCurrent).toHaveBeenCalled();
   });
 
   it("should handle error when entering as guest", async () => {
-    (sessionWritter.deleteCurrent as jest.Mock).mockRejectedValue(
+    (Composition.sessionWritter.deleteCurrent as jest.Mock).mockRejectedValue(
       new Error("An error occurred"),
     );
 
     await renderWithProviders(<SignInPage />, {
-      contestMetadata: mockContestMetadata,
+      contest: mockContestMetadata,
     });
 
     await act(async () => {

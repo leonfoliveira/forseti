@@ -7,9 +7,9 @@ import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { JudgeDashboardResponseDTO } from "@/core/port/dto/response/dashboard/JudgeDashboardResponseDTO";
-import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
+import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 
 export type JudgeDashboardState = JudgeDashboardResponseDTO & {
@@ -34,10 +34,7 @@ export const judgeDashboardSlice = createSlice({
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
       state.leaderboard = action.payload;
     },
-    mergeLeaderboard(
-      state,
-      action: { payload: LeaderboardPartialResponseDTO },
-    ) {
+    mergeLeaderboard(state, action: { payload: LeaderboardCellResponseDTO }) {
       state.leaderboard = mergeLeaderboard(state.leaderboard, action.payload);
     },
     setLeaderboardIsFrozen(state, action: { payload: boolean }) {
@@ -45,25 +42,22 @@ export const judgeDashboardSlice = createSlice({
     },
     mergeSubmission(
       state,
-      action: { payload: SubmissionFullWithExecutionResponseDTO },
+      action: { payload: SubmissionWithCodeAndExecutionsResponseDTO },
     ) {
       state.submissions = mergeEntity(state.submissions, action.payload);
     },
     mergeAnnouncement(state, action: { payload: AnnouncementResponseDTO }) {
-      state.contest.announcements = mergeEntity(
-        state.contest.announcements,
-        action.payload,
-      );
+      state.announcements = mergeEntity(state.announcements, action.payload);
     },
     mergeClarification(state, action: { payload: ClarificationResponseDTO }) {
       if (!action.payload.parentId) {
-        state.contest.clarifications = mergeEntity(
-          state.contest.clarifications,
+        state.clarifications = mergeEntity(
+          state.clarifications,
           action.payload,
         );
       } else {
         const parent = findClarification(
-          state.contest.clarifications,
+          state.clarifications,
           action.payload.parentId,
         );
         if (parent) {
@@ -72,7 +66,7 @@ export const judgeDashboardSlice = createSlice({
       }
     },
     deleteClarification(state, action: { payload: string }) {
-      state.contest.clarifications = state.contest.clarifications.filter(
+      state.clarifications = state.clarifications.filter(
         (clarification) => clarification.id !== action.payload,
       );
     },

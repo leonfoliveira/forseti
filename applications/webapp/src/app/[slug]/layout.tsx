@@ -10,10 +10,10 @@ import { LoadingPage } from "@/app/_lib/component/page/loading-page";
 import { useErrorHandlerRoot } from "@/app/_lib/hook/error-handler-hook";
 import { useLoadableStateRoot } from "@/app/_lib/hook/loadable-state-hook";
 import { StoreProvider } from "@/app/_store/store-provider";
-import { sessionReader, contestReader } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
-import { ContestMetadataResponseDTO } from "@/core/port/dto/response/contest/ContestMetadataResponseDTO";
+import { ContestResponseDTO } from "@/core/port/dto/response/contest/ContestResponseDTO";
 import { SessionResponseDTO } from "@/core/port/dto/response/session/SessionResponseDTO";
 
 /**
@@ -30,18 +30,18 @@ export default function ContestLayout({
   const errorHandler = useErrorHandlerRoot(slug);
   const initState = useLoadableStateRoot<{
     session: SessionResponseDTO | null;
-    contestMetadata: ContestMetadataResponseDTO;
+    contest: ContestResponseDTO;
   }>(errorHandler, { isLoading: true });
 
   useEffect(() => {
     async function fetchData() {
       initState.start();
       try {
-        const [session, contestMetadata] = await Promise.all([
-          sessionReader.getCurrent(),
-          contestReader.findMetadataBySlug(slug),
+        const [session, contest] = await Promise.all([
+          Composition.sessionReader.getCurrent(),
+          Composition.contestReader.findBySlug(slug),
         ]);
-        initState.finish({ session, contestMetadata });
+        initState.finish({ session, contest });
       } catch (error) {
         await initState.fail(error, {
           [NotFoundException.name]: () => redirect(routes.NOT_FOUND),
@@ -61,8 +61,7 @@ export default function ContestLayout({
   }
 
   const doesSessionBelongToContest =
-    initState.data?.session?.contest?.id ===
-    initState.data?.contestMetadata?.id;
+    initState.data?.session?.contestId === initState.data?.contest?.id;
 
   return (
     <StoreProvider
@@ -70,7 +69,7 @@ export default function ContestLayout({
         session: doesSessionBelongToContest
           ? initState.data?.session
           : undefined,
-        contestMetadata: initState.data?.contestMetadata,
+        contest: initState.data?.contest,
       }}
     >
       <div className="bg-muted flex min-h-screen flex-col">

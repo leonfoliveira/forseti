@@ -10,6 +10,7 @@ import java.util.UUID
 data class AnnouncementResponseBodyDTO(
     val id: UUID,
     val createdAt: OffsetDateTime,
+    val updatedAt: OffsetDateTime,
     val member: MemberResponseBodyDTO,
     val text: String,
     val version: Long,
@@ -19,6 +20,7 @@ fun Announcement.toResponseBodyDTO(): AnnouncementResponseBodyDTO =
     AnnouncementResponseBodyDTO(
         id = this.id,
         createdAt = this.createdAt,
+        updatedAt = this.updatedAt,
         member = this.member.toResponseBodyDTO(),
         text = this.text,
         version = this.version,

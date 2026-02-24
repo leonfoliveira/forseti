@@ -90,8 +90,9 @@ class UnfreezeLeaderboardServiceTest :
             every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
             every { contestRepository.save(any()) } returnsArgument 0
 
-            sut.execute()
+            val result = sut.execute()
 
+            result shouldBe contest
             contest.frozenAt shouldBe null
             verify { contestRepository.save(contest) }
             verify { applicationEventPublisher.publishEvent(match<LeaderboardEvent.Unfrozen> { it.contest == contest }) }

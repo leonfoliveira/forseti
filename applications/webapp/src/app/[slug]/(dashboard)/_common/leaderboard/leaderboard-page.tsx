@@ -19,7 +19,7 @@ import {
 import { cn } from "@/app/_lib/util/cn";
 import { useAppSelector } from "@/app/_store/store";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
+import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -55,7 +55,7 @@ const messages = defineMessages({
 });
 
 type Props = {
-  problems: ProblemPublicResponseDTO[];
+  problems: ProblemResponseDTO[];
   leaderboard: LeaderboardResponseDTO;
 };
 
@@ -112,34 +112,34 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {leaderboard.members.map((member, index) => (
+              {leaderboard.rows.map((row, index) => (
                 <TableRow
-                  key={member.id}
+                  key={row.memberId}
                   className={cn(
-                    member.id === session?.member.id && "bg-muted/50",
+                    row.memberId === session?.member.id && "bg-muted/50",
                   )}
                   data-testid="leaderboard-member-row"
                 >
                   <TableCell data-testid="member-rank">
                     {getMedal(index)}
                   </TableCell>
-                  <TableCell data-testid="member-name">{member.name}</TableCell>
-                  <TableCell data-testid="member-score">
-                    {member.score}
+                  <TableCell data-testid="member-name">
+                    {row.memberName}
                   </TableCell>
+                  <TableCell data-testid="member-score">{row.score}</TableCell>
                   <TableCell data-testid="member-penalty">
-                    {member.penalty}
+                    {row.penalty}
                   </TableCell>
-                  {member.problems.map((problem) => (
+                  {row.cells.map((cell) => (
                     <TableCell
-                      key={problem.id}
+                      key={cell.problemId}
                       className="text-center"
                       data-testid="member-problem"
                     >
                       <ProblemStatusBadge
-                        isAccepted={problem.isAccepted}
-                        acceptedAt={problem.acceptedAt}
-                        wrongSubmissions={problem.wrongSubmissions}
+                        isAccepted={cell.isAccepted}
+                        acceptedAt={cell.acceptedAt}
+                        wrongSubmissions={cell.wrongSubmissions}
                       />
                     </TableCell>
                   ))}

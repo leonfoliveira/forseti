@@ -1,13 +1,13 @@
-import { contestMetadataSlice } from "@/app/_store/slices/contest-metadata-slice";
-import { ContestMetadataResponseDTO } from "@/core/port/dto/response/contest/ContestMetadataResponseDTO";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { contestSlice } from "@/app/_store/slices/contest-slice";
+import { ContestResponseDTO } from "@/core/port/dto/response/contest/ContestResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 
-describe("contestMetadataSlice", () => {
+describe("contestSlice", () => {
   it("should set contest metadata", () => {
-    const metadata = MockContestMetadataResponseDTO();
-    const state = contestMetadataSlice.reducer(
-      null as unknown as ContestMetadataResponseDTO,
-      contestMetadataSlice.actions.set(metadata),
+    const metadata = MockContestResponseDTO();
+    const state = contestSlice.reducer(
+      null as unknown as ContestResponseDTO,
+      contestSlice.actions.set(metadata),
     );
     expect(state).toEqual(metadata);
   });

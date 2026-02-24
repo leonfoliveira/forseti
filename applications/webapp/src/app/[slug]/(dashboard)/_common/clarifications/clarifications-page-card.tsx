@@ -35,7 +35,7 @@ import {
 } from "@/app/_lib/component/shadcn/tooltip";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { clarificationWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -130,10 +130,13 @@ export function ClarificationsPageCard({
   async function answerClarification(data: ClarificationAnswerFormType) {
     answerClarificationState.start();
     try {
-      const newClarification = await clarificationWritter.create(contestId, {
-        ...ClarificationAnswerForm.toInputDTO(data, clarification.id),
-        parentId: clarification.id,
-      });
+      const newClarification = await Composition.clarificationWritter.create(
+        contestId,
+        {
+          ...ClarificationAnswerForm.toInputDTO(data, clarification.id),
+          parentId: clarification.id,
+        },
+      );
 
       onAnswer?.(newClarification);
       answerClarificationState.finish();
@@ -149,7 +152,10 @@ export function ClarificationsPageCard({
   async function deleteClarification() {
     deleteClarificationState.start();
     try {
-      await clarificationWritter.deleteById(contestId, clarification.id);
+      await Composition.clarificationWritter.deleteById(
+        contestId,
+        clarification.id,
+      );
 
       onDelete?.(clarification.id);
       deleteClarificationState.finish();

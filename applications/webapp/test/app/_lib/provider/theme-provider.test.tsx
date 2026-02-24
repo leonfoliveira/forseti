@@ -5,19 +5,7 @@ import {
   ThemeProvider,
   useTheme,
 } from "@/app/_lib/provider/theme-provider";
-import { storageReader, storageWritter } from "@/config/composition";
-
-jest.mock("@/config/composition", () => ({
-  storageReader: {
-    getKey: jest.fn(),
-  },
-  storageWritter: {
-    setKey: jest.fn(),
-  },
-}));
-
-const mockStorageReader = storageReader as jest.Mocked<typeof storageReader>;
-const mockStorageWritter = storageWritter as jest.Mocked<typeof storageWritter>;
+import { Composition } from "@/config/composition";
 
 const mockDocumentElement = {
   classList: {
@@ -47,15 +35,13 @@ function TestComponent() {
 describe("ThemeProvider", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockStorageReader.getKey.mockClear();
-    mockStorageWritter.setKey.mockClear();
     mockDocumentElement.classList.add.mockClear();
     mockDocumentElement.classList.remove.mockClear();
   });
 
   describe("initialization", () => {
     it("should initialize with dark theme when no stored theme and user prefers dark", () => {
-      mockStorageReader.getKey.mockReturnValue(null);
+      (Composition.storageReader.getKey as jest.Mock).mockReturnValue(null);
 
       // Mock matchMedia to return true for prefers-color-scheme: dark
       Object.defineProperty(window, "matchMedia", {
@@ -75,14 +61,14 @@ describe("ThemeProvider", () => {
       expect(mockDocumentElement.classList.add).toHaveBeenCalledWith(
         Theme.DARK,
       );
-      expect(mockStorageWritter.setKey).toHaveBeenCalledWith(
+      expect(Composition.storageWritter.setKey).toHaveBeenCalledWith(
         "theme",
         Theme.DARK,
       );
     });
 
     it("should initialize with light theme when no stored theme and user prefers light", () => {
-      mockStorageReader.getKey.mockReturnValue(null);
+      (Composition.storageReader.getKey as jest.Mock).mockReturnValue(null);
 
       // Mock matchMedia to return false for prefers-color-scheme: dark
       Object.defineProperty(window, "matchMedia", {
@@ -102,14 +88,16 @@ describe("ThemeProvider", () => {
       expect(mockDocumentElement.classList.add).toHaveBeenCalledWith(
         Theme.LIGHT,
       );
-      expect(mockStorageWritter.setKey).toHaveBeenCalledWith(
+      expect(Composition.storageWritter.setKey).toHaveBeenCalledWith(
         "theme",
         Theme.LIGHT,
       );
     });
 
     it("should initialize with stored theme when available", () => {
-      mockStorageReader.getKey.mockReturnValue(Theme.LIGHT);
+      (Composition.storageReader.getKey as jest.Mock).mockReturnValue(
+        Theme.LIGHT,
+      );
 
       const { getByTestId } = render(
         <ThemeProvider>
@@ -121,17 +109,19 @@ describe("ThemeProvider", () => {
       expect(mockDocumentElement.classList.add).toHaveBeenCalledWith(
         Theme.LIGHT,
       );
-      expect(mockStorageWritter.setKey).toHaveBeenCalledWith(
+      expect(Composition.storageWritter.setKey).toHaveBeenCalledWith(
         "theme",
         Theme.LIGHT,
       );
-      expect(mockStorageReader.getKey).toHaveBeenCalledWith("theme");
+      expect(Composition.storageReader.getKey).toHaveBeenCalledWith("theme");
     });
   });
 
   describe("theme toggling", () => {
     it("should toggle from dark to light theme", () => {
-      mockStorageReader.getKey.mockReturnValue(Theme.DARK);
+      (Composition.storageReader.getKey as jest.Mock).mockReturnValue(
+        Theme.DARK,
+      );
 
       const { getByTestId } = render(
         <ThemeProvider>
@@ -152,14 +142,16 @@ describe("ThemeProvider", () => {
       expect(mockDocumentElement.classList.add).toHaveBeenCalledWith(
         Theme.LIGHT,
       );
-      expect(mockStorageWritter.setKey).toHaveBeenCalledWith(
+      expect(Composition.storageWritter.setKey).toHaveBeenCalledWith(
         "theme",
         Theme.LIGHT,
       );
     });
 
     it("should toggle from light to dark theme", () => {
-      mockStorageReader.getKey.mockReturnValue(Theme.LIGHT);
+      (Composition.storageReader.getKey as jest.Mock).mockReturnValue(
+        Theme.LIGHT,
+      );
 
       const { getByTestId } = render(
         <ThemeProvider>
@@ -180,14 +172,16 @@ describe("ThemeProvider", () => {
       expect(mockDocumentElement.classList.add).toHaveBeenCalledWith(
         Theme.DARK,
       );
-      expect(mockStorageWritter.setKey).toHaveBeenCalledWith(
+      expect(Composition.storageWritter.setKey).toHaveBeenCalledWith(
         "theme",
         Theme.DARK,
       );
     });
 
     it("should toggle multiple times correctly", () => {
-      mockStorageReader.getKey.mockReturnValue(Theme.DARK);
+      (Composition.storageReader.getKey as jest.Mock).mockReturnValue(
+        Theme.DARK,
+      );
 
       const { getByTestId } = render(
         <ThemeProvider>
@@ -220,7 +214,9 @@ describe("ThemeProvider", () => {
 
   describe("storage integration", () => {
     it("should read theme from storage on initialization", () => {
-      mockStorageReader.getKey.mockReturnValue(Theme.LIGHT);
+      (Composition.storageReader.getKey as jest.Mock).mockReturnValue(
+        Theme.LIGHT,
+      );
 
       render(
         <ThemeProvider>
@@ -228,11 +224,11 @@ describe("ThemeProvider", () => {
         </ThemeProvider>,
       );
 
-      expect(mockStorageReader.getKey).toHaveBeenCalledWith("theme");
+      expect(Composition.storageReader.getKey).toHaveBeenCalledWith("theme");
     });
 
     it("should write theme to storage on initialization when no stored theme", () => {
-      mockStorageReader.getKey.mockReturnValue(null);
+      (Composition.storageReader.getKey as jest.Mock).mockReturnValue(null);
 
       Object.defineProperty(window, "matchMedia", {
         writable: true,
@@ -247,14 +243,16 @@ describe("ThemeProvider", () => {
         </ThemeProvider>,
       );
 
-      expect(mockStorageWritter.setKey).toHaveBeenCalledWith(
+      expect(Composition.storageWritter.setKey).toHaveBeenCalledWith(
         "theme",
         Theme.DARK,
       );
     });
 
     it("should write theme to storage on toggle", () => {
-      mockStorageReader.getKey.mockReturnValue(Theme.DARK);
+      (Composition.storageReader.getKey as jest.Mock).mockReturnValue(
+        Theme.DARK,
+      );
 
       const { getByTestId } = render(
         <ThemeProvider>
@@ -266,7 +264,7 @@ describe("ThemeProvider", () => {
         getByTestId("toggle-button").click();
       });
 
-      expect(mockStorageWritter.setKey).toHaveBeenCalledWith(
+      expect(Composition.storageWritter.setKey).toHaveBeenCalledWith(
         "theme",
         Theme.LIGHT,
       );
@@ -275,7 +273,9 @@ describe("ThemeProvider", () => {
 
   describe("DOM manipulation", () => {
     it("should add theme class to document element on initialization", () => {
-      mockStorageReader.getKey.mockReturnValue(Theme.LIGHT);
+      (Composition.storageReader.getKey as jest.Mock).mockReturnValue(
+        Theme.LIGHT,
+      );
 
       render(
         <ThemeProvider>
@@ -289,7 +289,9 @@ describe("ThemeProvider", () => {
     });
 
     it("should remove old theme class and add new theme class on toggle", () => {
-      mockStorageReader.getKey.mockReturnValue(Theme.DARK);
+      (Composition.storageReader.getKey as jest.Mock).mockReturnValue(
+        Theme.DARK,
+      );
 
       const { getByTestId } = render(
         <ThemeProvider>
@@ -312,7 +314,9 @@ describe("ThemeProvider", () => {
 
   describe("useTheme hook", () => {
     it("should provide current theme and toggleTheme function", () => {
-      mockStorageReader.getKey.mockReturnValue(Theme.DARK);
+      (Composition.storageReader.getKey as jest.Mock).mockReturnValue(
+        Theme.DARK,
+      );
 
       const { getByTestId } = render(
         <ThemeProvider>

@@ -8,11 +8,9 @@ import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 
 export function AdminClarificationsPage() {
-  const problems = useAppSelector(
-    (state) => state.adminDashboard.contest.problems,
-  );
+  const problems = useAppSelector((state) => state.adminDashboard.problems);
   const clarifications = useAppSelector(
-    (state) => state.adminDashboard.contest.clarifications,
+    (state) => state.adminDashboard.clarifications,
   );
   const dispatch = useAppDispatch();
 

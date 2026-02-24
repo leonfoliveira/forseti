@@ -19,7 +19,6 @@ import { ClarificationWritter } from "@/core/port/driving/usecase/clarification/
 import { ContestReader } from "@/core/port/driving/usecase/contest/ContestReader";
 import { ContestWritter } from "@/core/port/driving/usecase/contest/ContestWritter";
 import { DashboardReader } from "@/core/port/driving/usecase/dashboard/DashboardReader";
-import { LeaderboardReader } from "@/core/port/driving/usecase/leaderboard/LeaderboardReader";
 import { LeaderboardWritter } from "@/core/port/driving/usecase/leaderboard/LeaderboardWritter";
 import { SessionReader } from "@/core/port/driving/usecase/session/SessionReader";
 import { SessionWritter } from "@/core/port/driving/usecase/session/SessionWritter";
@@ -33,6 +32,7 @@ import { AxiosAttachmentRepository } from "@/infrastructure/adapter/axios/reposi
 import { AxiosAuthenticationRepository } from "@/infrastructure/adapter/axios/repository/AxiosAuthenticationRepository";
 import { AxiosClarificationRepository } from "@/infrastructure/adapter/axios/repository/AxiosClarificationRepository";
 import { AxiosContestRepository } from "@/infrastructure/adapter/axios/repository/AxiosContestRepository";
+import { AxiosDashboardRepository } from "@/infrastructure/adapter/axios/repository/AxiosDashboardRepository";
 import { AxiosLeaderboardRepository } from "@/infrastructure/adapter/axios/repository/AxiosLeaderboardRepository";
 import { AxiosSessionRepository } from "@/infrastructure/adapter/axios/repository/AxiosSessionRepository";
 import { AxiosSubmissionRepository } from "@/infrastructure/adapter/axios/repository/AxiosSubmissionRepository";
@@ -72,6 +72,7 @@ export function build(): Composition {
   );
   const clarificationRepository = new AxiosClarificationRepository(axiosClient);
   const contestRepository = new AxiosContestRepository(axiosClient);
+  const dashboardRepository = new AxiosDashboardRepository(axiosClient);
   const leaderboardRepository = new AxiosLeaderboardRepository(axiosClient);
   const sessionRepository = new AxiosSessionRepository(axiosClient);
   const storageRepository = new LocalStorageRepository();
@@ -91,12 +92,7 @@ export function build(): Composition {
     contestRepository,
     attachmentService,
   );
-  const dashboardService = new DashboardService(
-    contestRepository,
-    leaderboardRepository,
-    submissionRepository,
-    ticketRepository,
-  );
+  const dashboardService = new DashboardService(dashboardRepository);
   const leaderboardService = new LeaderboardService(leaderboardRepository);
   const sessionService = new SessionService(sessionRepository);
   const storageService = new StorageService(storageRepository);
@@ -115,7 +111,6 @@ export function build(): Composition {
   const contestReader: ContestReader = contestService;
   const contestWritter: ContestWritter = contestService;
   const dashboardReader: DashboardReader = dashboardService;
-  const leaderboardReader: LeaderboardReader = leaderboardService;
   const leaderboardWritter: LeaderboardWritter = leaderboardService;
   const sessionReader: SessionReader = sessionService;
   const sessionWritter: SessionWritter = sessionService;
@@ -139,7 +134,6 @@ export function build(): Composition {
     contestReader,
     contestWritter,
     dashboardReader,
-    leaderboardReader,
     leaderboardWritter,
     sessionReader,
     sessionWritter,

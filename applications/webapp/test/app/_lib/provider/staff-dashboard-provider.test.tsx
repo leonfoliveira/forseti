@@ -6,25 +6,17 @@ import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { StaffDashboardProvider } from "@/app/_lib/provider/staff-dashboard-provider";
 import { staffDashboardSlice } from "@/app/_store/slices/staff-dashboard-slice";
-import {
-  announcementListener,
-  clarificationListener,
-  dashboardReader,
-  leaderboardListener,
-  listenerClientFactory,
-  submissionListener,
-  ticketListener,
-} from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockContestPublicResponseDTO } from "@/test/mock/response/contest/MockContestPublicResponseDTO";
-import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardPartialResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockStaffDashboardResponseDTO } from "@/test/mock/response/dashboard/MockStaffDashboardResponseDTO";
+import { MockLeaderboardCellResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardCellResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
-import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
+import { MockSubmissionResponseDTO } from "@/test/mock/response/submission/MockSubmissionResponseDTO";
 import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -37,24 +29,17 @@ jest.mock("@/app/_lib/component/page/error-page", () => ({
 
 describe("StaffDashboardProvider", () => {
   const session = MockSession();
-  const contestMetadata = MockContestMetadataResponseDTO();
-  const contest = MockContestPublicResponseDTO();
-  const leaderboard = MockLeaderboardResponseDTO();
-  const submissions = [
-    MockSubmissionPublicResponseDTO(),
-    MockSubmissionPublicResponseDTO(),
-  ];
-  const tickets = [MockTicketResponseDTO()];
+  const contest = MockContestResponseDTO();
+  const dashboard = MockStaffDashboardResponseDTO();
   const listenerClient = mock<ListenerClient>();
 
   beforeEach(() => {
-    (dashboardReader.getStaff as jest.Mock).mockResolvedValue({
-      contest,
-      leaderboard,
-      submissions,
-      tickets,
-    });
-    (listenerClientFactory.create as jest.Mock).mockReturnValue(listenerClient);
+    (
+      Composition.dashboardReader.getStaffDashboard as jest.Mock
+    ).mockResolvedValue(dashboard);
+    (Composition.listenerClientFactory.create as jest.Mock).mockReturnValue(
+      listenerClient,
+    );
   });
 
   it("should load data on startup and render children", async () => {
@@ -62,66 +47,43 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
-    expect(dashboardReader.getStaff).toHaveBeenCalledWith(contestMetadata.id);
+    expect(Composition.dashboardReader.getStaffDashboard).toHaveBeenCalledWith(
+      contest.id,
+    );
 
-    expect(submissionListener.subscribeForContest).toHaveBeenCalledWith(
-      listenerClient,
-      contestMetadata.id,
-      expect.any(Function),
-    );
-    expect(announcementListener.subscribeForContest).toHaveBeenCalledWith(
-      listenerClient,
-      contestMetadata.id,
-      expect.any(Function),
-    );
-    expect(clarificationListener.subscribeForContest).toHaveBeenCalledWith(
-      listenerClient,
-      contestMetadata.id,
-      expect.any(Function),
-    );
     expect(
-      clarificationListener.subscribeForContestDeleted,
-    ).toHaveBeenCalledWith(
-      listenerClient,
-      contestMetadata.id,
-      expect.any(Function),
-    );
+      Composition.submissionListener.subscribeForContest,
+    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
     expect(
-      leaderboardListener.subscribeForLeaderboardPartial,
-    ).toHaveBeenCalledWith(
-      listenerClient,
-      contestMetadata.id,
-      expect.any(Function),
-    );
+      Composition.announcementListener.subscribeForContest,
+    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
     expect(
-      leaderboardListener.subscribeForLeaderboardFreeze,
-    ).toHaveBeenCalledWith(
-      listenerClient,
-      contestMetadata.id,
-      expect.any(Function),
-    );
+      Composition.clarificationListener.subscribeForContest,
+    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
     expect(
-      leaderboardListener.subscribeForLeaderboardUnfreeze,
-    ).toHaveBeenCalledWith(
+      Composition.clarificationListener.subscribeForContestDeleted,
+    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
+    expect(
+      Composition.leaderboardListener.subscribeForLeaderboardCell,
+    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
+    expect(
+      Composition.leaderboardListener.subscribeForLeaderboardFrozen,
+    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
+    expect(
+      Composition.leaderboardListener.subscribeForLeaderboardUnfrozen,
+    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
+    expect(Composition.ticketListener.subscribeForContest).toHaveBeenCalledWith(
       listenerClient,
-      contestMetadata.id,
-      expect.any(Function),
-    );
-    expect(ticketListener.subscribeForContest).toHaveBeenCalledWith(
-      listenerClient,
-      contestMetadata.id,
+      contest.id,
       expect.any(Function),
     );
 
     const state = store.getState().staffDashboard;
     expect(state).toEqual({
-      contest,
-      leaderboard,
-      submissions,
-      tickets,
+      ...dashboard,
       listenerStatus: ListenerStatus.CONNECTED,
     });
 
@@ -131,12 +93,14 @@ describe("StaffDashboardProvider", () => {
 
   it("should handle error state", async () => {
     const error = new Error("Test error");
-    (dashboardReader.getStaff as jest.Mock).mockRejectedValue(error);
+    (
+      Composition.dashboardReader.getStaffDashboard as jest.Mock
+    ).mockRejectedValue(error);
     const { store } = await renderWithProviders(
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     const state = store.getState().staffDashboard;
@@ -147,26 +111,25 @@ describe("StaffDashboardProvider", () => {
   });
 
   it("should handle leaderboard partial updates", async () => {
-    const leaderboardPartial = MockLeaderboardPartialResponseDTO({
-      memberId: leaderboard.members[0].id,
-      problemId: leaderboard.members[0].problems[0].id,
-      isAccepted: !leaderboard.members[0].problems[0].isAccepted,
+    const leaderboardPartial = MockLeaderboardCellResponseDTO({
+      memberId: dashboard.leaderboard.rows[0].memberId,
+      problemId: dashboard.leaderboard.rows[0].cells[0].problemId,
+      isAccepted: !dashboard.leaderboard.rows[0].cells[0].isAccepted,
     });
     const { store } = await renderWithProviders(
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     act(() => {
       (
-        leaderboardListener.subscribeForLeaderboardPartial as jest.Mock
+        Composition.leaderboardListener.subscribeForLeaderboardCell as jest.Mock
       ).mock.calls[0][2](leaderboardPartial);
     });
     expect(
-      store.getState().staffDashboard.leaderboard.members[0].problems[0]
-        .isAccepted,
+      store.getState().staffDashboard.leaderboard.rows[0].cells[0].isAccepted,
     ).toBe(leaderboardPartial.isAccepted);
   });
 
@@ -175,12 +138,13 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     act(() => {
       (
-        leaderboardListener.subscribeForLeaderboardFreeze as jest.Mock
+        Composition.leaderboardListener
+          .subscribeForLeaderboardFrozen as jest.Mock
       ).mock.calls[0][2]();
     });
     expect(store.getState().staffDashboard.leaderboard.isFrozen).toBe(true);
@@ -189,17 +153,18 @@ describe("StaffDashboardProvider", () => {
 
   it("should handle leaderboard unfreeze updates", async () => {
     const otherLeaderboard = MockLeaderboardResponseDTO();
-    const frozenSubmissions = [MockSubmissionPublicResponseDTO()];
+    const frozenSubmissions = [MockSubmissionResponseDTO()];
     const { store } = await renderWithProviders(
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     act(() => {
       (
-        leaderboardListener.subscribeForLeaderboardUnfreeze as jest.Mock
+        Composition.leaderboardListener
+          .subscribeForLeaderboardUnfrozen as jest.Mock
       ).mock.calls[0][2]({ leaderboard: otherLeaderboard, frozenSubmissions });
     });
     expect(store.getState().staffDashboard.leaderboard).toBe(otherLeaderboard);
@@ -210,18 +175,18 @@ describe("StaffDashboardProvider", () => {
   });
 
   it("should handle submissions updates", async () => {
-    const otherSubmission = MockSubmissionPublicResponseDTO();
+    const otherSubmission = MockSubmissionResponseDTO();
     const { store } = await renderWithProviders(
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     act(() => {
-      (submissionListener.subscribeForContest as jest.Mock).mock.calls[0][2](
-        otherSubmission,
-      );
+      (
+        Composition.submissionListener.subscribeForContest as jest.Mock
+      ).mock.calls[0][2](otherSubmission);
     });
     expect(store.getState().staffDashboard.submissions).toContain(
       otherSubmission,
@@ -234,15 +199,15 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     act(() => {
-      (announcementListener.subscribeForContest as jest.Mock).mock.calls[0][2](
-        otherAnnouncement,
-      );
+      (
+        Composition.announcementListener.subscribeForContest as jest.Mock
+      ).mock.calls[0][2](otherAnnouncement);
     });
-    expect(store.getState().staffDashboard.contest.announcements).toContain(
+    expect(store.getState().staffDashboard.announcements).toContain(
       otherAnnouncement,
     );
     expect(useToast().warning).toHaveBeenCalled();
@@ -250,22 +215,22 @@ describe("StaffDashboardProvider", () => {
 
   it("should handle clarifications updates", async () => {
     const otherClarification = MockClarificationResponseDTO({
-      parentId: contest.clarifications[0].id,
+      parentId: dashboard.clarifications[0].id,
     });
     const { store } = await renderWithProviders(
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     act(() => {
-      (clarificationListener.subscribeForContest as jest.Mock).mock.calls[0][2](
-        otherClarification,
-      );
+      (
+        Composition.clarificationListener.subscribeForContest as jest.Mock
+      ).mock.calls[0][2](otherClarification);
     });
     expect(
-      store.getState().staffDashboard.contest.clarifications[0].children,
+      store.getState().staffDashboard.clarifications[0].children,
     ).toContain(otherClarification);
   });
 
@@ -274,17 +239,16 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     act(() => {
       (
-        clarificationListener.subscribeForContestDeleted as jest.Mock
-      ).mock.calls[0][2]({ id: contest.clarifications[0].id });
+        Composition.clarificationListener
+          .subscribeForContestDeleted as jest.Mock
+      ).mock.calls[0][2]({ id: dashboard.clarifications[0].id });
     });
-    expect(store.getState().staffDashboard.contest.clarifications).toHaveLength(
-      0,
-    );
+    expect(store.getState().staffDashboard.clarifications).toHaveLength(0);
   });
 
   it("should handle ticket updates", async () => {
@@ -295,13 +259,13 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     act(() => {
-      (ticketListener.subscribeForContest as jest.Mock).mock.calls[0][2](
-        otherTicket,
-      );
+      (
+        Composition.ticketListener.subscribeForContest as jest.Mock
+      ).mock.calls[0][2](otherTicket);
     });
 
     expect(store.getState().staffDashboard.tickets).toContain(otherTicket);
@@ -315,13 +279,13 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     act(() => {
-      (ticketListener.subscribeForContest as jest.Mock).mock.calls[0][2](
-        otherTicket,
-      );
+      (
+        Composition.ticketListener.subscribeForContest as jest.Mock
+      ).mock.calls[0][2](otherTicket);
     });
     expect(useToast().info).toHaveBeenCalled();
   });
@@ -335,13 +299,13 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     act(() => {
-      (ticketListener.subscribeForContest as jest.Mock).mock.calls[0][2](
-        otherTicket,
-      );
+      (
+        Composition.ticketListener.subscribeForContest as jest.Mock
+      ).mock.calls[0][2](otherTicket);
     });
     expect(useToast().info).toHaveBeenCalled();
   });
@@ -351,7 +315,7 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     act(() => {
@@ -366,7 +330,7 @@ describe("StaffDashboardProvider", () => {
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     act(() => {

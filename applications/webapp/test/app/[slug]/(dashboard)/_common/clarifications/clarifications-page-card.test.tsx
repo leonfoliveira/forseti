@@ -4,7 +4,7 @@ import { act } from "@testing-library/react";
 import { ClarificationAnswerForm } from "@/app/[slug]/(dashboard)/_common/clarifications/clarification-answer-form";
 import { ClarificationsPageCard } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page-card";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { clarificationWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -137,9 +137,9 @@ describe("ClarificationsPageCard", () => {
 
     it("should create answer when form is submitted", async () => {
       const newClarification = MockClarificationResponseDTO();
-      (clarificationWritter.create as jest.Mock).mockResolvedValueOnce(
-        newClarification,
-      );
+      (
+        Composition.clarificationWritter.create as jest.Mock
+      ).mockResolvedValueOnce(newClarification);
       const clarification = MockClarificationResponseDTO();
       const onAnswer = jest.fn();
       await renderWithProviders(
@@ -164,23 +164,26 @@ describe("ClarificationsPageCard", () => {
         );
       });
 
-      expect(clarificationWritter.create).toHaveBeenCalledWith("test-contest", {
-        ...ClarificationAnswerForm.toInputDTO(
-          {
-            text: "This is an answer",
-          },
-          clarification.id,
-        ),
-        parentId: clarification.id,
-      });
+      expect(Composition.clarificationWritter.create).toHaveBeenCalledWith(
+        "test-contest",
+        {
+          ...ClarificationAnswerForm.toInputDTO(
+            {
+              text: "This is an answer",
+            },
+            clarification.id,
+          ),
+          parentId: clarification.id,
+        },
+      );
       expect(useToast().success).toHaveBeenCalled();
       expect(onAnswer).toHaveBeenCalledWith(newClarification);
     });
 
     it("should show error toast when creating answer fails", async () => {
-      (clarificationWritter.create as jest.Mock).mockRejectedValueOnce(
-        new Error("Failed to create answer"),
-      );
+      (
+        Composition.clarificationWritter.create as jest.Mock
+      ).mockRejectedValueOnce(new Error("Failed to create answer"));
       const clarification = MockClarificationResponseDTO();
       await renderWithProviders(
         <ClarificationsPageCard
@@ -204,20 +207,25 @@ describe("ClarificationsPageCard", () => {
         );
       });
 
-      expect(clarificationWritter.create).toHaveBeenCalledWith("test-contest", {
-        ...ClarificationAnswerForm.toInputDTO(
-          {
-            text: "This is an answer",
-          },
-          clarification.id,
-        ),
-        parentId: clarification.id,
-      });
+      expect(Composition.clarificationWritter.create).toHaveBeenCalledWith(
+        "test-contest",
+        {
+          ...ClarificationAnswerForm.toInputDTO(
+            {
+              text: "This is an answer",
+            },
+            clarification.id,
+          ),
+          parentId: clarification.id,
+        },
+      );
       expect(useToast().error).toHaveBeenCalled();
     });
 
     it("should render delete button and delete clarification when delete button is clicked", async () => {
-      (clarificationWritter.deleteById as jest.Mock).mockResolvedValueOnce({});
+      (
+        Composition.clarificationWritter.deleteById as jest.Mock
+      ).mockResolvedValueOnce({});
       const clarification = MockClarificationResponseDTO();
       const onDelete = jest.fn();
       await renderWithProviders(
@@ -240,7 +248,7 @@ describe("ClarificationsPageCard", () => {
         );
       });
 
-      expect(clarificationWritter.deleteById).toHaveBeenCalledWith(
+      expect(Composition.clarificationWritter.deleteById).toHaveBeenCalledWith(
         "test-contest",
         clarification.id,
       );
@@ -249,9 +257,9 @@ describe("ClarificationsPageCard", () => {
     });
 
     it("should show error toast when deleting clarification fails", async () => {
-      (clarificationWritter.deleteById as jest.Mock).mockRejectedValueOnce(
-        new Error("Failed to delete clarification"),
-      );
+      (
+        Composition.clarificationWritter.deleteById as jest.Mock
+      ).mockRejectedValueOnce(new Error("Failed to delete clarification"));
       const clarification = MockClarificationResponseDTO();
       await renderWithProviders(
         <ClarificationsPageCard
@@ -273,7 +281,7 @@ describe("ClarificationsPageCard", () => {
         );
       });
 
-      expect(clarificationWritter.deleteById).toHaveBeenCalledWith(
+      expect(Composition.clarificationWritter.deleteById).toHaveBeenCalledWith(
         "test-contest",
         clarification.id,
       );

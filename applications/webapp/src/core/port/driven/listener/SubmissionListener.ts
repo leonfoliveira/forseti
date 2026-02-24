@@ -1,7 +1,7 @@
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
-import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 export interface SubmissionListener {
   /**
@@ -14,7 +14,7 @@ export interface SubmissionListener {
   subscribeForContest: (
     client: ListenerClient,
     contestId: string,
-    cb: (submission: SubmissionPublicResponseDTO) => void,
+    cb: (submission: SubmissionResponseDTO) => void,
   ) => Promise<void>;
 
   /**
@@ -24,10 +24,10 @@ export interface SubmissionListener {
    * @param contestId ID of the contest
    * @param cb Callback function to handle incoming full submissions.
    */
-  subscribeForContestFull: (
+  subscribeForContestWithCodeAndExecutions: (
     client: ListenerClient,
     contestId: string,
-    cb: (submission: SubmissionFullWithExecutionResponseDTO) => void,
+    cb: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void,
   ) => Promise<void>;
 
   /**
@@ -38,10 +38,10 @@ export interface SubmissionListener {
    * @param memberId ID of the member
    * @param cb Callback function to handle incoming full submissions.
    */
-  subscribeForMemberFull: (
+  subscribeForMemberWithCode: (
     client: ListenerClient,
     contestId: string,
     memberId: string,
-    cb: (submission: SubmissionFullResponseDTO) => void,
+    cb: (submission: SubmissionWithCodeResponseDTO) => void,
   ) => Promise<void>;
 }

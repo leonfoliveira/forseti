@@ -103,8 +103,9 @@ class ForceEndContestServiceTest :
             every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
             every { contestRepository.save(any()) } returnsArgument 0
 
-            sut.execute()
+            val result = sut.execute()
 
+            result shouldBe contest
             contest.endAt shouldBe now
             verify { applicationEventPublisher.publishEvent(match<ContestEvent.Updated> { it.contest == contest }) }
         }

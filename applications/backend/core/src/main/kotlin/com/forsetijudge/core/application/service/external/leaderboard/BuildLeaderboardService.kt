@@ -81,6 +81,7 @@ class BuildLeaderboardService(
 
         return Leaderboard(
             contestId = contest.id,
+            contestStartAt = contest.startAt,
             isFrozen = contest.isFrozen,
             rows = rows,
             issuedAt = ExecutionContext.Companion.get().startedAt,

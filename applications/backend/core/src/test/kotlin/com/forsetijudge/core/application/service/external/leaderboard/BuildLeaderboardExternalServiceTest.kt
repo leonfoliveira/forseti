@@ -97,6 +97,8 @@ class BuildLeaderboardExternalServiceTest :
                     // memberWithNoSubmission
                     Leaderboard.Cell(
                         problemId = problemA.id,
+                        problemLetter = problemA.letter,
+                        problemColor = problemA.color,
                         isAccepted = false,
                         acceptedAt = null,
                         wrongSubmissions = 0,
@@ -104,6 +106,8 @@ class BuildLeaderboardExternalServiceTest :
                     ),
                     Leaderboard.Cell(
                         problemId = problemB.id,
+                        problemLetter = problemB.letter,
+                        problemColor = problemB.color,
                         isAccepted = false,
                         acceptedAt = null,
                         wrongSubmissions = 0,
@@ -112,6 +116,8 @@ class BuildLeaderboardExternalServiceTest :
                     // memberWithWrongSubmission
                     Leaderboard.Cell(
                         problemId = problemA.id,
+                        problemLetter = problemA.letter,
+                        problemColor = problemA.color,
                         isAccepted = false,
                         acceptedAt = null,
                         wrongSubmissions = 1,
@@ -119,6 +125,8 @@ class BuildLeaderboardExternalServiceTest :
                     ),
                     Leaderboard.Cell(
                         problemId = problemB.id,
+                        problemLetter = problemB.letter,
+                        problemColor = problemB.color,
                         isAccepted = false,
                         acceptedAt = null,
                         wrongSubmissions = 0,
@@ -127,6 +135,8 @@ class BuildLeaderboardExternalServiceTest :
                     // memberWithAcceptedSubmission
                     Leaderboard.Cell(
                         problemId = problemA.id,
+                        problemLetter = problemA.letter,
+                        problemColor = problemA.color,
                         isAccepted = true,
                         acceptedAt = ExecutionContext.Companion.get().startedAt,
                         wrongSubmissions = 0,
@@ -134,6 +144,8 @@ class BuildLeaderboardExternalServiceTest :
                     ),
                     Leaderboard.Cell(
                         problemId = problemB.id,
+                        problemLetter = problemB.letter,
+                        problemColor = problemB.color,
                         isAccepted = false,
                         acceptedAt = null,
                         wrongSubmissions = 0,
@@ -142,6 +154,8 @@ class BuildLeaderboardExternalServiceTest :
                     // memberWithWrongAndAcceptedSubmission
                     Leaderboard.Cell(
                         problemId = problemA.id,
+                        problemLetter = problemA.letter,
+                        problemColor = problemA.color,
                         isAccepted = true,
                         acceptedAt = ExecutionContext.Companion.get().startedAt,
                         wrongSubmissions = 1,
@@ -149,6 +163,8 @@ class BuildLeaderboardExternalServiceTest :
                     ),
                     Leaderboard.Cell(
                         problemId = problemB.id,
+                        problemLetter = problemB.letter,
+                        problemColor = problemB.color,
                         isAccepted = false,
                         acceptedAt = null,
                         wrongSubmissions = 0,
@@ -157,6 +173,8 @@ class BuildLeaderboardExternalServiceTest :
                     // memberWithDoubleAcceptedSubmission
                     Leaderboard.Cell(
                         problemId = problemA.id,
+                        problemLetter = problemA.letter,
+                        problemColor = problemA.color,
                         isAccepted = true,
                         acceptedAt = ExecutionContext.Companion.get().startedAt,
                         wrongSubmissions = 1,
@@ -164,6 +182,8 @@ class BuildLeaderboardExternalServiceTest :
                     ),
                     Leaderboard.Cell(
                         problemId = problemB.id,
+                        problemLetter = problemB.letter,
+                        problemColor = problemB.color,
                         isAccepted = true,
                         acceptedAt = ExecutionContext.Companion.get().startedAt,
                         wrongSubmissions = 1,
@@ -176,6 +196,7 @@ class BuildLeaderboardExternalServiceTest :
             result shouldBe
                 Leaderboard(
                     contestId = contextContestId,
+                    contestStartAt = contest.startAt,
                     isFrozen = contest.isFrozen,
                     issuedAt = ExecutionContext.Companion.get().startedAt,
                     rows =
@@ -189,6 +210,8 @@ class BuildLeaderboardExternalServiceTest :
                                     listOf(
                                         Leaderboard.Cell(
                                             problemId = problemA.id,
+                                            problemLetter = problemA.letter,
+                                            problemColor = problemA.color,
                                             isAccepted = true,
                                             acceptedAt = ExecutionContext.Companion.get().startedAt,
                                             wrongSubmissions = 1,
@@ -196,6 +219,8 @@ class BuildLeaderboardExternalServiceTest :
                                         ),
                                         Leaderboard.Cell(
                                             problemId = problemB.id,
+                                            problemLetter = problemB.letter,
+                                            problemColor = problemB.color,
                                             isAccepted = true,
                                             acceptedAt = ExecutionContext.Companion.get().startedAt,
                                             wrongSubmissions = 1,
@@ -212,6 +237,8 @@ class BuildLeaderboardExternalServiceTest :
                                     listOf(
                                         Leaderboard.Cell(
                                             problemId = problemA.id,
+                                            problemLetter = problemA.letter,
+                                            problemColor = problemA.color,
                                             isAccepted = true,
                                             acceptedAt = ExecutionContext.Companion.get().startedAt,
                                             wrongSubmissions = 0,
@@ -219,6 +246,8 @@ class BuildLeaderboardExternalServiceTest :
                                         ),
                                         Leaderboard.Cell(
                                             problemId = problemB.id,
+                                            problemLetter = problemB.letter,
+                                            problemColor = problemB.color,
                                             isAccepted = false,
                                             acceptedAt = null,
                                             wrongSubmissions = 0,
@@ -235,6 +264,8 @@ class BuildLeaderboardExternalServiceTest :
                                     listOf(
                                         Leaderboard.Cell(
                                             problemId = problemA.id,
+                                            problemLetter = problemA.letter,
+                                            problemColor = problemA.color,
                                             isAccepted = true,
                                             acceptedAt = ExecutionContext.Companion.get().startedAt,
                                             wrongSubmissions = 1,
@@ -242,6 +273,8 @@ class BuildLeaderboardExternalServiceTest :
                                         ),
                                         Leaderboard.Cell(
                                             problemId = problemB.id,
+                                            problemLetter = problemB.letter,
+                                            problemColor = problemB.color,
                                             isAccepted = false,
                                             acceptedAt = null,
                                             wrongSubmissions = 0,
@@ -258,6 +291,8 @@ class BuildLeaderboardExternalServiceTest :
                                     listOf(
                                         Leaderboard.Cell(
                                             problemId = problemA.id,
+                                            problemLetter = problemA.letter,
+                                            problemColor = problemA.color,
                                             isAccepted = false,
                                             acceptedAt = null,
                                             wrongSubmissions = 1,
@@ -265,6 +300,8 @@ class BuildLeaderboardExternalServiceTest :
                                         ),
                                         Leaderboard.Cell(
                                             problemId = problemB.id,
+                                            problemLetter = problemB.letter,
+                                            problemColor = problemB.color,
                                             isAccepted = false,
                                             acceptedAt = null,
                                             wrongSubmissions = 0,
@@ -281,6 +318,8 @@ class BuildLeaderboardExternalServiceTest :
                                     listOf(
                                         Leaderboard.Cell(
                                             problemId = problemA.id,
+                                            problemLetter = problemA.letter,
+                                            problemColor = problemA.color,
                                             isAccepted = false,
                                             acceptedAt = null,
                                             wrongSubmissions = 0,
@@ -288,6 +327,8 @@ class BuildLeaderboardExternalServiceTest :
                                         ),
                                         Leaderboard.Cell(
                                             problemId = problemB.id,
+                                            problemLetter = problemB.letter,
+                                            problemColor = problemB.color,
                                             isAccepted = false,
                                             acceptedAt = null,
                                             wrongSubmissions = 0,

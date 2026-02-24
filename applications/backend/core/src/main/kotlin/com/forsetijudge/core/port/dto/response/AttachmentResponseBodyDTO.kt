@@ -2,10 +2,13 @@ package com.forsetijudge.core.port.dto.response
 
 import com.forsetijudge.core.domain.entity.Attachment
 import java.io.Serializable
+import java.time.OffsetDateTime
 import java.util.UUID
 
 data class AttachmentResponseDTO(
     val id: UUID,
+    val createdAt: OffsetDateTime,
+    val updatedAt: OffsetDateTime,
     val filename: String,
     val contentType: String,
     val version: Long,
@@ -14,6 +17,8 @@ data class AttachmentResponseDTO(
 fun Attachment.toResponseBodyDTO(): AttachmentResponseDTO =
     AttachmentResponseDTO(
         id = this.id,
+        createdAt = this.createdAt,
+        updatedAt = this.updatedAt,
         filename = this.filename,
         contentType = this.contentType,
         version = this.version,

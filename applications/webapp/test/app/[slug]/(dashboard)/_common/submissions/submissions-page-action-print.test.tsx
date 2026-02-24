@@ -3,21 +3,21 @@ import { act, fireEvent, screen } from "@testing-library/react";
 import { SubmissionsPageActionPrint } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-print";
 import { DropdownMenu } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { ticketWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { TicketType } from "@/core/domain/enumerate/TicketType";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockSubmissionWithCodeResponseDTO } from "@/test/mock/response/submission/MockSubmissionWithCodeResponseDTO";
 import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPageActionPrint", () => {
   it("should request print and show success toast on success", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
+    const contest = MockContestResponseDTO();
     const ticket = MockTicketResponseDTO();
-    const submission = MockSubmissionFullResponseDTO();
+    const submission = MockSubmissionWithCodeResponseDTO();
     const onClose = jest.fn();
     const onRequest = jest.fn();
-    (ticketWritter.create as jest.Mock).mockResolvedValue(ticket);
+    (Composition.ticketWritter.create as jest.Mock).mockResolvedValue(ticket);
 
     await renderWithProviders(
       <DropdownMenu open>
@@ -28,7 +28,7 @@ describe("SubmissionsPageActionPrint", () => {
         />
       </DropdownMenu>,
       {
-        contestMetadata,
+        contest,
       },
     );
 
@@ -39,7 +39,7 @@ describe("SubmissionsPageActionPrint", () => {
       fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(ticketWritter.create).toHaveBeenCalledWith(contestMetadata.id, {
+    expect(Composition.ticketWritter.create).toHaveBeenCalledWith(contest.id, {
       type: TicketType.SUBMISSION_PRINT,
       properties: {
         submissionId: submission.id,
@@ -52,11 +52,11 @@ describe("SubmissionsPageActionPrint", () => {
   });
 
   it("should show error toast on failure", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    const submission = MockSubmissionFullResponseDTO();
+    const contest = MockContestResponseDTO();
+    const submission = MockSubmissionWithCodeResponseDTO();
     const onClose = jest.fn();
     const onRequest = jest.fn();
-    (ticketWritter.create as jest.Mock).mockRejectedValue(
+    (Composition.ticketWritter.create as jest.Mock).mockRejectedValue(
       new Error("Failed to request print"),
     );
 
@@ -69,7 +69,7 @@ describe("SubmissionsPageActionPrint", () => {
         />
       </DropdownMenu>,
       {
-        contestMetadata,
+        contest,
       },
     );
 
@@ -80,7 +80,7 @@ describe("SubmissionsPageActionPrint", () => {
       fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(ticketWritter.create).toHaveBeenCalledWith(contestMetadata.id, {
+    expect(Composition.ticketWritter.create).toHaveBeenCalledWith(contest.id, {
       type: TicketType.SUBMISSION_PRINT,
       properties: {
         submissionId: submission.id,

@@ -2,7 +2,7 @@ import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-
 import { DashboardProvider } from "@/app/_lib/provider/dashboard-provider";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { MockMemberPublicResponseDTO } from "@/test/mock/response/member/MockMemberPublicResponseDTO";
+import { MockMemberResponseDTO } from "@/test/mock/response/member/MockMemberResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -60,7 +60,7 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: MockSession({
-            member: MockMemberPublicResponseDTO({
+            member: MockMemberResponseDTO({
               id: "test-id",
               name: "Test User",
               type: MemberType.ROOT,
@@ -84,7 +84,7 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: MockSession({
-            member: MockMemberPublicResponseDTO({
+            member: MockMemberResponseDTO({
               id: "test-id",
               name: "Test User",
               type: MemberType.ADMIN,
@@ -108,7 +108,7 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: MockSession({
-            member: MockMemberPublicResponseDTO({
+            member: MockMemberResponseDTO({
               id: "test-id",
               name: "Test User",
               type: MemberType.STAFF,
@@ -132,7 +132,7 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: MockSession({
-            member: MockMemberPublicResponseDTO({
+            member: MockMemberResponseDTO({
               id: "test-id",
               name: "Test User",
               type: MemberType.JUDGE,
@@ -156,7 +156,7 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: MockSession({
-            member: MockMemberPublicResponseDTO({
+            member: MockMemberResponseDTO({
               id: "test-id",
               name: "Test User",
               type: MemberType.CONTESTANT,
@@ -178,7 +178,7 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: MockSession({
-            member: MockMemberPublicResponseDTO({
+            member: MockMemberResponseDTO({
               id: "test-id",
               name: "Test User",
               type: MemberType.CONTESTANT,
@@ -200,7 +200,7 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: MockSession({
-            member: MockMemberPublicResponseDTO({
+            member: MockMemberResponseDTO({
               id: "test-id",
               name: "Test User",
               type: MemberType.CONTESTANT,

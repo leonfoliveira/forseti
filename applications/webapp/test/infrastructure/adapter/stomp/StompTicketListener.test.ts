@@ -32,7 +32,7 @@ describe("StompTicketListener", () => {
       await sut.subscribeForMember(client, contestId, memberId, callback);
 
       expect(client.subscribe).toHaveBeenCalledWith(
-        `/topic/contests/${contestId}/tickets/members/${memberId}`,
+        `/topic/contests/${contestId}/members/${memberId}/tickets`,
         callback,
       );
     });

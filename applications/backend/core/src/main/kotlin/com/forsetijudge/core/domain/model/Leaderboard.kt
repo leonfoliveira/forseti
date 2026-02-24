@@ -13,6 +13,7 @@ import java.util.UUID
  */
 data class Leaderboard(
     val contestId: UUID,
+    val contestStartAt: OffsetDateTime,
     val isFrozen: Boolean,
     val rows: List<Row>,
     val issuedAt: OffsetDateTime,
@@ -38,6 +39,8 @@ data class Leaderboard(
      * Represents a cell in the leaderboard, which corresponds to a problem and contains information about the contestant's performance on that problem.
      *
      * @param problemId The ID of the problem.
+     * @param problemLetter The letter assigned to the problem (e.g., 'A', 'B', 'C', etc.).
+     * @param problemColor The hexadecimal color representing the status of the problem for the contestant.
      * @param isAccepted Whether the problem was accepted by the contestant.
      * @param acceptedAt The time when the problem was accepted. This is only relevant if `isAccepted` is true.
      * @param wrongSubmissions The number of wrong submissions made for this problem before it was accepted. This is only relevant if `isAccepted` is true.
@@ -45,6 +48,8 @@ data class Leaderboard(
      */
     data class Cell(
         val problemId: UUID,
+        val problemLetter: Char,
+        val problemColor: String,
         val isAccepted: Boolean,
         val acceptedAt: OffsetDateTime?,
         val wrongSubmissions: Int,

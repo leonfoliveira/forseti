@@ -10,24 +10,16 @@ import { useToast } from "@/app/_lib/hook/toast-hook";
 import { balloonSlice } from "@/app/_store/slices/balloon-slice";
 import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
-import {
-  announcementListener,
-  clarificationListener,
-  dashboardReader,
-  leaderboardListener,
-  listenerClientFactory,
-  submissionListener,
-  ticketListener,
-} from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
-import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
+import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
@@ -68,7 +60,7 @@ export function ContestantDashboardProvider({
   children: React.ReactNode;
 }) {
   const session = useAppSelector((state) => state.session);
-  const contestMetadata = useAppSelector((state) => state.contestMetadata);
+  const contest = useAppSelector((state) => state.contest);
   const listenerStatus = useAppSelector(
     (state) => state.contestantDashboard.listenerStatus,
   );
@@ -98,9 +90,11 @@ export function ContestantDashboardProvider({
     }
 
     async function init() {
-      const data = await dashboardReader.getContestant(contestMetadata.id);
+      const data = await Composition.dashboardReader.getContestantDashboard(
+        contest.id,
+      );
 
-      listenerClientRef.current = listenerClientFactory.create();
+      listenerClientRef.current = Composition.listenerClientFactory.create();
       await listenerClientRef.current.connect(() => {
         console.debug("Listener connection lost");
         dispatch(
@@ -111,56 +105,56 @@ export function ContestantDashboardProvider({
         reconnect();
       });
       await Promise.all([
-        leaderboardListener.subscribeForLeaderboardPartial(
+        Composition.leaderboardListener.subscribeForLeaderboardCell(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           receiveLeaderboardPartial,
         ),
-        leaderboardListener.subscribeForLeaderboardFreeze(
+        Composition.leaderboardListener.subscribeForLeaderboardFrozen(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           receiveLeaderboardFreeze,
         ),
-        leaderboardListener.subscribeForLeaderboardUnfreeze(
+        Composition.leaderboardListener.subscribeForLeaderboardUnfrozen(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           receiveLeaderboardUnfreeze,
         ),
-        submissionListener.subscribeForContest(
+        Composition.submissionListener.subscribeForContest(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           receiveSubmission,
         ),
-        submissionListener.subscribeForMemberFull(
+        Composition.submissionListener.subscribeForMemberWithCode(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           session!.member.id,
           receiveMemberSubmission,
         ),
-        announcementListener.subscribeForContest(
+        Composition.announcementListener.subscribeForContest(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           receiveAnnouncement,
         ),
-        clarificationListener.subscribeForContest(
+        Composition.clarificationListener.subscribeForContest(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           receiveClarification,
         ),
-        clarificationListener.subscribeForMemberChildren(
+        Composition.clarificationListener.subscribeForMemberAnswer(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           session!.member.id,
           receiveClarificationAnswer,
         ),
-        clarificationListener.subscribeForContestDeleted(
+        Composition.clarificationListener.subscribeForContestDeleted(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           deleteClarification,
         ),
-        ticketListener.subscribeForMember(
+        Composition.ticketListener.subscribeForMember(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           session!.member.id,
           receiveMemberTicket,
         ),
@@ -194,11 +188,9 @@ export function ContestantDashboardProvider({
         listenerClientRef.current.disconnect();
       }
     };
-  }, [session, contestMetadata.id]);
+  }, [session, contest.id]);
 
-  function receiveLeaderboardPartial(
-    leaderboard: LeaderboardPartialResponseDTO,
-  ) {
+  function receiveLeaderboardPartial(leaderboard: LeaderboardCellResponseDTO) {
     console.debug("Received leaderboard partial update:", leaderboard);
     dispatch(contestantDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
@@ -210,7 +202,7 @@ export function ContestantDashboardProvider({
 
   function receiveLeaderboardUnfreeze(data: {
     leaderboard: LeaderboardResponseDTO;
-    frozenSubmissions: SubmissionPublicResponseDTO[];
+    frozenSubmissions: SubmissionResponseDTO[];
   }) {
     console.debug("Received leaderboard unfreeze:", data);
     dispatch(contestantDashboardSlice.actions.setLeaderboard(data.leaderboard));
@@ -222,21 +214,19 @@ export function ContestantDashboardProvider({
     toast.info(messages.unfrozen);
   }
 
-  function receiveSubmission(submission: SubmissionPublicResponseDTO) {
+  function receiveSubmission(submission: SubmissionResponseDTO) {
     console.debug("Received submission:", submission);
     dispatch(contestantDashboardSlice.actions.mergeSubmission(submission));
   }
 
-  function receiveMemberSubmission(submission: SubmissionPublicResponseDTO) {
+  function receiveMemberSubmission(submission: SubmissionWithCodeResponseDTO) {
     console.debug("Received member submission:", submission);
     if (submission.answer === SubmissionAnswer.NO_ANSWER) {
       return;
     }
 
     dispatch(
-      contestantDashboardSlice.actions.mergeMemberSubmission(
-        submission as SubmissionFullResponseDTO,
-      ),
+      contestantDashboardSlice.actions.mergeMemberSubmission(submission),
     );
 
     const text = {

@@ -37,6 +37,8 @@ class BuildLeaderboardCellInternalServiceTest :
             cell shouldBe
                 Leaderboard.Cell(
                     problemId = problem.id,
+                    problemLetter = problem.letter,
+                    problemColor = problem.color,
                     isAccepted = false,
                     acceptedAt = null,
                     wrongSubmissions = 0,
@@ -63,6 +65,8 @@ class BuildLeaderboardCellInternalServiceTest :
             cell shouldBe
                 Leaderboard.Cell(
                     problemId = problem.id,
+                    problemLetter = problem.letter,
+                    problemColor = problem.color,
                     isAccepted = true,
                     acceptedAt = acceptedSubmission.createdAt,
                     wrongSubmissions = 0,
@@ -89,6 +93,8 @@ class BuildLeaderboardCellInternalServiceTest :
             cell shouldBe
                 Leaderboard.Cell(
                     problemId = problem.id,
+                    problemLetter = problem.letter,
+                    problemColor = problem.color,
                     isAccepted = false,
                     acceptedAt = null,
                     wrongSubmissions = 1,
@@ -125,6 +131,8 @@ class BuildLeaderboardCellInternalServiceTest :
             cell shouldBe
                 Leaderboard.Cell(
                     problemId = problem.id,
+                    problemLetter = problem.letter,
+                    problemColor = problem.color,
                     isAccepted = true,
                     acceptedAt = acceptedSubmission.createdAt,
                     wrongSubmissions = 1,

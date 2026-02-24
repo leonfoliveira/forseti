@@ -21,7 +21,7 @@ import {
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
-import { attachmentReader, ticketWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { TicketStatus } from "@/core/domain/enumerate/TicketStatus";
 import { TicketType } from "@/core/domain/enumerate/TicketType";
 import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
@@ -59,7 +59,7 @@ type Props = {
 };
 
 export function TicketsPageItem({ ticket, canEdit, onEdit }: Props) {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const contestId = useAppSelector((state) => state.contest.id);
   const printAttachmentState = useLoadableState();
   const updateStatusState = useLoadableState();
   const toast = useToast();
@@ -67,7 +67,7 @@ export function TicketsPageItem({ ticket, canEdit, onEdit }: Props) {
   async function printAttachment(attachmentId: string) {
     printAttachmentState.start();
     try {
-      await attachmentReader.print(contestId, {
+      await Composition.attachmentReader.print(contestId, {
         attachmentId,
       } as unknown as AttachmentResponseDTO);
 
@@ -82,7 +82,7 @@ export function TicketsPageItem({ ticket, canEdit, onEdit }: Props) {
   async function updateStatus(newStatus: TicketStatus) {
     updateStatusState.start();
     try {
-      const updatedTicket = await ticketWritter.updateStatus(
+      const updatedTicket = await Composition.ticketWritter.updateStatus(
         contestId,
         ticket.id,
         newStatus,

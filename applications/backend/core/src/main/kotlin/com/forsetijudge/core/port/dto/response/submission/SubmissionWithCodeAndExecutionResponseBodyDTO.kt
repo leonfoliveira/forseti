@@ -13,25 +13,27 @@ import java.util.UUID
 
 data class SubmissionWithCodeAndExecutionResponseBodyDTO(
     val id: UUID,
+    val createdAt: OffsetDateTime,
+    val updatedAt: OffsetDateTime,
     val member: MemberResponseBodyDTO,
     val problem: ProblemResponseBodyDTO,
     val language: Submission.Language,
     val status: Submission.Status,
     val answer: Submission.Answer?,
     val code: AttachmentResponseDTO,
-    val createdAt: OffsetDateTime,
     val version: Long,
 ) : Serializable
 
 fun Submission.toWithCodeAndExecutionResponseBodyDTO(): SubmissionWithCodeAndExecutionResponseBodyDTO =
     SubmissionWithCodeAndExecutionResponseBodyDTO(
         id = id,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
         member = member.toResponseBodyDTO(),
         problem = problem.toResponseBodyDTO(),
         language = language,
         status = status,
         answer = answer,
         code = code.toResponseBodyDTO(),
-        createdAt = createdAt,
         version = version,
     )

@@ -3,19 +3,16 @@ import { fireEvent, screen } from "@testing-library/dom";
 import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page";
 import { MockDate } from "@/test/mock/mock-date";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockProblemResponseDTO } from "@/test/mock/response/problem/MockProblemResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("ClarificationsPage", () => {
-  const contestMetadata = MockContestMetadataResponseDTO({
+  const contest = MockContestResponseDTO({
     startAt: MockDate.past().toISOString(),
     endAt: MockDate.future().toISOString(),
   });
-  const problems = [
-    MockProblemPublicResponseDTO(),
-    MockProblemPublicResponseDTO(),
-  ];
+  const problems = [MockProblemResponseDTO(), MockProblemResponseDTO()];
   const clarifications = [
     MockClarificationResponseDTO(),
     MockClarificationResponseDTO({
@@ -27,7 +24,7 @@ describe("ClarificationsPage", () => {
   it("should render variant with no clarification", async () => {
     await renderWithProviders(
       <ClarificationsPage problems={problems} clarifications={[]} />,
-      { contestMetadata },
+      { contest },
     );
 
     expect(screen.queryAllByTestId("clarification-card").length).toBe(0);
@@ -40,7 +37,7 @@ describe("ClarificationsPage", () => {
         problems={problems}
         clarifications={clarifications}
       />,
-      { contestMetadata },
+      { contest },
     );
 
     expect(screen.queryAllByTestId("clarification-card").length).toBe(2);
@@ -55,7 +52,7 @@ describe("ClarificationsPage", () => {
         canCreate
         onCreate={() => {}}
       />,
-      { contestMetadata },
+      { contest },
     );
 
     expect(screen.getByTestId("open-create-form-button")).toBeInTheDocument();
@@ -65,7 +62,7 @@ describe("ClarificationsPage", () => {
   });
 
   it("should not render form when contest is ended", async () => {
-    const pastContestMetadata = MockContestMetadataResponseDTO({
+    const pastContestMetadata = MockContestResponseDTO({
       startAt: MockDate.past(10).toISOString(),
       endAt: MockDate.past(5).toISOString(),
     });
@@ -77,7 +74,7 @@ describe("ClarificationsPage", () => {
         canCreate
         onCreate={() => {}}
       />,
-      { contestMetadata: pastContestMetadata },
+      { contest: pastContestMetadata },
     );
 
     expect(

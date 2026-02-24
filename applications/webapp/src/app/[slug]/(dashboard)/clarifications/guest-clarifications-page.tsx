@@ -6,11 +6,9 @@ import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarificati
 import { useAppSelector } from "@/app/_store/store";
 
 export function GuestClarificationsPage() {
-  const problems = useAppSelector(
-    (state) => state.guestDashboard.contest.problems,
-  );
+  const problems = useAppSelector((state) => state.guestDashboard.problems);
   const clarifications = useAppSelector(
-    (state) => state.guestDashboard.contest.clarifications,
+    (state) => state.guestDashboard.clarifications,
   );
 
   return (

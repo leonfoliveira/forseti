@@ -14,11 +14,11 @@ export class ActorOnLeaderboardPage extends Actor {
 
     const memberRows = leaderboardTable.getByTestId("leaderboard-member-row");
     const memberRowsCount = await memberRows.count();
-    expect(memberRowsCount).toBe(leaderboard.members.length);
+    expect(memberRowsCount).toBe(leaderboard.rows.length);
 
     for (let i = 0; i < memberRowsCount; i++) {
       const memberRow = memberRows.nth(i);
-      const member = leaderboard.members[i];
+      const member = leaderboard.rows[i];
       await memberRow.scrollIntoViewIfNeeded();
 
       const rankCell = memberRow.getByTestId("member-rank");

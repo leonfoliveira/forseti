@@ -1,8 +1,8 @@
 import { LeaderboardListener } from "@/core/port/driven/listener/LeaderboardListener";
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
-import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
+import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
 
 export class StompLeaderboardListener implements LeaderboardListener {
   /**
@@ -13,38 +13,35 @@ export class StompLeaderboardListener implements LeaderboardListener {
    * @param contestId ID of the contest
    * @param cb Callback function to handle incoming partial leaderboard updates.
    */
-  async subscribeForLeaderboardPartial(
+  async subscribeForLeaderboardCell(
     client: ListenerClient,
     contestId: string,
-    cb: (leaderboard: LeaderboardPartialResponseDTO) => void,
+    cb: (leaderboard: LeaderboardCellResponseDTO) => void,
   ): Promise<void> {
-    await client.subscribe(
-      `/topic/contests/${contestId}/leaderboard/partial`,
-      cb,
-    );
+    await client.subscribe(`/topic/contests/${contestId}/leaderboard:cell`, cb);
   }
 
-  async subscribeForLeaderboardFreeze(
+  async subscribeForLeaderboardFrozen(
     client: ListenerClient,
     contestId: string,
     cb: () => void,
   ): Promise<void> {
     await client.subscribe(
-      `/topic/contests/${contestId}/leaderboard/freeze`,
+      `/topic/contests/${contestId}/leaderboard:frozen`,
       cb,
     );
   }
 
-  async subscribeForLeaderboardUnfreeze(
+  async subscribeForLeaderboardUnfrozen(
     client: ListenerClient,
     contestId: string,
     cb: (data: {
       leaderboard: LeaderboardResponseDTO;
-      frozenSubmissions: SubmissionPublicResponseDTO[];
+      frozenSubmissions: SubmissionResponseDTO[];
     }) => void,
   ): Promise<void> {
     await client.subscribe(
-      `/topic/contests/${contestId}/leaderboard/unfreeze`,
+      `/topic/contests/${contestId}/leaderboard:unfrozen`,
       cb,
     );
   }

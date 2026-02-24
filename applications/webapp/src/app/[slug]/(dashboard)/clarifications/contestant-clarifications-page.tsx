@@ -9,10 +9,10 @@ import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification
 
 export function ContestantClarificationsPage() {
   const problems = useAppSelector(
-    (state) => state.contestantDashboard.contest.problems,
+    (state) => state.contestantDashboard.problems,
   );
   const clarifications = useAppSelector(
-    (state) => state.contestantDashboard.contest.clarifications,
+    (state) => state.contestantDashboard.clarifications,
   );
   const dispatch = useAppDispatch();
 

@@ -6,11 +6,11 @@ import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/sett
 import { SettingsPageContestTab } from "@/app/[slug]/(dashboard)/_common/settings/settings-page-contest-tab";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { AdminDashboardState } from "@/app/_store/slices/admin-dashboard-slice";
-import { contestWritter, leaderboardWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { MockDate } from "@/test/mock/mock-date";
-import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockContestWithMembersAndProblemsDTO } from "@/test/mock/response/contest/MockContestWithMembersAndProblemsDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import {
   renderHookWithProviders,
@@ -18,11 +18,10 @@ import {
 } from "@/test/render-with-providers";
 
 describe("SettingsPageContestTab", () => {
-  const contest = MockContestFullResponseDTO();
   const leaderboard = MockLeaderboardResponseDTO();
 
   it("renders contest fields correctly", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
+    const contest = MockContestWithMembersAndProblemsDTO();
     const { result } = await renderHookWithProviders(() =>
       useForm<SettingsFormType>(),
     );
@@ -34,7 +33,7 @@ describe("SettingsPageContestTab", () => {
         form={result.current}
         onToggleFreeze={() => {}}
       />,
-      { contestMetadata },
+      { contest },
     );
 
     fireEvent.change(screen.getByTestId("contest-slug"), {
@@ -77,12 +76,12 @@ describe("SettingsPageContestTab", () => {
   });
 
   it("should handle force start successfully", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO({
+    const contest = MockContestWithMembersAndProblemsDTO({
       startAt: MockDate.future().toISOString(),
       endAt: MockDate.future(2).toISOString(),
     });
-    const newContestMetadata = MockContestMetadataResponseDTO();
-    (contestWritter.forceStart as jest.Mock).mockResolvedValue(
+    const newContestMetadata = MockContestResponseDTO();
+    (Composition.contestWritter.forceStart as jest.Mock).mockResolvedValue(
       newContestMetadata,
     );
     const { result } = await renderHookWithProviders(() =>
@@ -97,7 +96,7 @@ describe("SettingsPageContestTab", () => {
         onToggleFreeze={() => {}}
       />,
       {
-        contestMetadata,
+        contest,
         adminDashboard: {} as unknown as AdminDashboardState,
       },
     );
@@ -107,21 +106,23 @@ describe("SettingsPageContestTab", () => {
       fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(contestWritter.forceStart).toHaveBeenCalledWith(contest.id);
+    expect(Composition.contestWritter.forceStart).toHaveBeenCalledWith(
+      contest.id,
+    );
     expect(store.getState().adminDashboard.contest).toEqual({
       ...contest,
       ...newContestMetadata,
     });
-    expect(store.getState().contestMetadata).toEqual(newContestMetadata);
+    expect(store.getState().contest).toEqual(newContestMetadata);
     expect(useToast().success).toHaveBeenCalled();
   });
 
   it("should handle force start error", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO({
+    const contest = MockContestWithMembersAndProblemsDTO({
       startAt: MockDate.future().toISOString(),
       endAt: MockDate.future(2).toISOString(),
     });
-    (contestWritter.forceStart as jest.Mock).mockRejectedValue(
+    (Composition.contestWritter.forceStart as jest.Mock).mockRejectedValue(
       new Error("Force start failed"),
     );
     const { result } = await renderHookWithProviders(() =>
@@ -136,7 +137,7 @@ describe("SettingsPageContestTab", () => {
         onToggleFreeze={() => {}}
       />,
       {
-        contestMetadata,
+        contest,
         adminDashboard: {} as unknown as AdminDashboardState,
       },
     );
@@ -146,17 +147,19 @@ describe("SettingsPageContestTab", () => {
       fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(contestWritter.forceStart).toHaveBeenCalledWith(contest.id);
+    expect(Composition.contestWritter.forceStart).toHaveBeenCalledWith(
+      contest.id,
+    );
     expect(useToast().error).toHaveBeenCalled();
   });
 
   it("should handle force end successfully", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO({
+    const contest = MockContestWithMembersAndProblemsDTO({
       startAt: MockDate.past().toISOString(),
       endAt: MockDate.future().toISOString(),
     });
-    const newContestMetadata = MockContestMetadataResponseDTO();
-    (contestWritter.forceEnd as jest.Mock).mockResolvedValue(
+    const newContestMetadata = MockContestResponseDTO();
+    (Composition.contestWritter.forceEnd as jest.Mock).mockResolvedValue(
       newContestMetadata,
     );
     const { result } = await renderHookWithProviders(() =>
@@ -171,7 +174,7 @@ describe("SettingsPageContestTab", () => {
         onToggleFreeze={() => {}}
       />,
       {
-        contestMetadata,
+        contest,
         adminDashboard: {} as unknown as AdminDashboardState,
       },
     );
@@ -181,21 +184,23 @@ describe("SettingsPageContestTab", () => {
       fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(contestWritter.forceEnd).toHaveBeenCalledWith(contest.id);
+    expect(Composition.contestWritter.forceEnd).toHaveBeenCalledWith(
+      contest.id,
+    );
     expect(store.getState().adminDashboard.contest).toEqual({
       ...contest,
       ...newContestMetadata,
     });
-    expect(store.getState().contestMetadata).toEqual(newContestMetadata);
+    expect(store.getState().contest).toEqual(newContestMetadata);
     expect(useToast().success).toHaveBeenCalled();
   });
 
   it("should handle force end error", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO({
+    const contest = MockContestWithMembersAndProblemsDTO({
       startAt: MockDate.past().toISOString(),
       endAt: MockDate.future().toISOString(),
     });
-    (contestWritter.forceEnd as jest.Mock).mockRejectedValue(
+    (Composition.contestWritter.forceEnd as jest.Mock).mockRejectedValue(
       new Error("Force end failed"),
     );
     const { result } = await renderHookWithProviders(() =>
@@ -210,7 +215,7 @@ describe("SettingsPageContestTab", () => {
         onToggleFreeze={() => {}}
       />,
       {
-        contestMetadata,
+        contest,
         adminDashboard: {} as unknown as AdminDashboardState,
       },
     );
@@ -220,12 +225,14 @@ describe("SettingsPageContestTab", () => {
       fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(contestWritter.forceEnd).toHaveBeenCalledWith(contest.id);
+    expect(Composition.contestWritter.forceEnd).toHaveBeenCalledWith(
+      contest.id,
+    );
     expect(useToast().error).toHaveBeenCalled();
   });
 
   it("should handle freeze successfully", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO({
+    const contest = MockContestWithMembersAndProblemsDTO({
       startAt: MockDate.past().toISOString(),
       endAt: MockDate.future().toISOString(),
     });
@@ -233,6 +240,11 @@ describe("SettingsPageContestTab", () => {
     const { result } = await renderHookWithProviders(() =>
       useForm<SettingsFormType>(),
     );
+    const updatedContest = MockContestWithMembersAndProblemsDTO();
+    (Composition.leaderboardWritter.freeze as jest.Mock).mockResolvedValue(
+      updatedContest,
+    );
+
     const onFreezeToggle = jest.fn();
     await renderWithProviders(
       <SettingsPageContestTab
@@ -242,7 +254,7 @@ describe("SettingsPageContestTab", () => {
         onToggleFreeze={onFreezeToggle}
       />,
       {
-        contestMetadata,
+        contest,
         adminDashboard: {} as unknown as AdminDashboardState,
       },
     );
@@ -252,18 +264,20 @@ describe("SettingsPageContestTab", () => {
       fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(leaderboardWritter.freeze).toHaveBeenCalledWith(contest.id);
+    expect(Composition.leaderboardWritter.freeze).toHaveBeenCalledWith(
+      contest.id,
+    );
     expect(useToast().success).toHaveBeenCalled();
-    expect(onFreezeToggle).toHaveBeenCalledWith(true);
+    expect(onFreezeToggle).toHaveBeenCalledWith(updatedContest);
   });
 
   it("should handle freeze error", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO({
+    const contest = MockContestWithMembersAndProblemsDTO({
       startAt: MockDate.past().toISOString(),
       endAt: MockDate.future().toISOString(),
     });
     const leaderboard = MockLeaderboardResponseDTO({ isFrozen: false });
-    (leaderboardWritter.freeze as jest.Mock).mockRejectedValue(
+    (Composition.leaderboardWritter.freeze as jest.Mock).mockRejectedValue(
       new Error("Freeze failed"),
     );
     const { result } = await renderHookWithProviders(() =>
@@ -278,7 +292,7 @@ describe("SettingsPageContestTab", () => {
         onToggleFreeze={() => {}}
       />,
       {
-        contestMetadata,
+        contest,
         adminDashboard: {} as unknown as AdminDashboardState,
       },
     );
@@ -288,12 +302,14 @@ describe("SettingsPageContestTab", () => {
       fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(leaderboardWritter.freeze).toHaveBeenCalledWith(contest.id);
+    expect(Composition.leaderboardWritter.freeze).toHaveBeenCalledWith(
+      contest.id,
+    );
     expect(useToast().error).toHaveBeenCalled();
   });
 
   it("should not disable unfreeze button when contest is frozen", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO({
+    const contest = MockContestWithMembersAndProblemsDTO({
       startAt: MockDate.past().toISOString(),
       endAt: MockDate.past().toISOString(),
     });
@@ -310,7 +326,7 @@ describe("SettingsPageContestTab", () => {
         onToggleFreeze={() => {}}
       />,
       {
-        contestMetadata,
+        contest,
         adminDashboard: {} as unknown as AdminDashboardState,
       },
     );
@@ -320,7 +336,7 @@ describe("SettingsPageContestTab", () => {
   });
 
   it("should handle unfreeze successfully", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO({
+    const contest = MockContestWithMembersAndProblemsDTO({
       startAt: MockDate.past().toISOString(),
       endAt: MockDate.future().toISOString(),
     });
@@ -328,6 +344,11 @@ describe("SettingsPageContestTab", () => {
     const { result } = await renderHookWithProviders(() =>
       useForm<SettingsFormType>(),
     );
+    const updatedContest = MockContestWithMembersAndProblemsDTO();
+    (Composition.leaderboardWritter.unfreeze as jest.Mock).mockResolvedValue(
+      updatedContest,
+    );
+
     const onFreezeToggle = jest.fn();
     await renderWithProviders(
       <SettingsPageContestTab
@@ -337,7 +358,7 @@ describe("SettingsPageContestTab", () => {
         onToggleFreeze={onFreezeToggle}
       />,
       {
-        contestMetadata,
+        contest,
         adminDashboard: {} as unknown as AdminDashboardState,
       },
     );
@@ -347,18 +368,20 @@ describe("SettingsPageContestTab", () => {
       fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(leaderboardWritter.unfreeze).toHaveBeenCalledWith(contest.id);
+    expect(Composition.leaderboardWritter.unfreeze).toHaveBeenCalledWith(
+      contest.id,
+    );
     expect(useToast().success).toHaveBeenCalled();
-    expect(onFreezeToggle).toHaveBeenCalledWith(false);
+    expect(onFreezeToggle).toHaveBeenCalledWith(updatedContest);
   });
 
   it("should handle unfreeze error", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO({
+    const contest = MockContestWithMembersAndProblemsDTO({
       startAt: MockDate.past().toISOString(),
       endAt: MockDate.future().toISOString(),
     });
     const leaderboard = MockLeaderboardResponseDTO({ isFrozen: true });
-    (leaderboardWritter.unfreeze as jest.Mock).mockRejectedValue(
+    (Composition.leaderboardWritter.unfreeze as jest.Mock).mockRejectedValue(
       new Error("Unfreeze failed"),
     );
     const { result } = await renderHookWithProviders(() =>
@@ -373,7 +396,7 @@ describe("SettingsPageContestTab", () => {
         onToggleFreeze={() => {}}
       />,
       {
-        contestMetadata,
+        contest,
         adminDashboard: {} as unknown as AdminDashboardState,
       },
     );
@@ -383,7 +406,9 @@ describe("SettingsPageContestTab", () => {
       fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(leaderboardWritter.unfreeze).toHaveBeenCalledWith(contest.id);
+    expect(Composition.leaderboardWritter.unfreeze).toHaveBeenCalledWith(
+      contest.id,
+    );
     expect(useToast().error).toHaveBeenCalled();
   });
 });

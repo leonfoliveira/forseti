@@ -105,20 +105,20 @@ class ContestController(
     @Private(Member.Type.ROOT, Member.Type.ADMIN)
     fun forceStart(
         @PathVariable contestId: UUID,
-    ): ResponseEntity<Unit> {
+    ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
         logger.info("[PUT] /v1/contests/{}:force-start", contestId)
-        forceStartContestUseCase.execute()
-        return ResponseEntity.noContent().build()
+        val contest = forceStartContestUseCase.execute()
+        return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
     }
 
     @PutMapping("/contests/{contestId}:force-end")
     @Private(Member.Type.ROOT, Member.Type.ADMIN)
     fun forceEnd(
         @PathVariable contestId: UUID,
-    ): ResponseEntity<Unit> {
+    ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
         logger.info("[PUT] /v1/contests/{}:force-end", contestId)
-        forceEndContestUseCase.execute()
-        return ResponseEntity.noContent().build()
+        val contest = forceEndContestUseCase.execute()
+        return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
     }
 
     @DeleteMapping("/contests/{contestId}")

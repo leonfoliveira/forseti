@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 
 export function AdminAnnouncementsPage() {
   const announcements = useAppSelector(
-    (state) => state.adminDashboard.contest.announcements,
+    (state) => state.adminDashboard.announcements,
   );
   const dispatch = useAppDispatch();
 

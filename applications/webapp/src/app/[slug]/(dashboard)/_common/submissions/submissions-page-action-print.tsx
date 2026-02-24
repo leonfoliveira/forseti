@@ -7,9 +7,9 @@ import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
-import { ticketWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { TicketType } from "@/core/domain/enumerate/TicketType";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -39,7 +39,7 @@ const messages = defineMessages({
 });
 
 type Props = {
-  submission: SubmissionFullResponseDTO;
+  submission: SubmissionWithCodeResponseDTO;
   onClose: () => void;
   onRequest: (ticket: TicketResponseDTO) => void;
 };
@@ -50,14 +50,14 @@ export function SubmissionsPageActionPrint({
   onRequest,
 }: Props) {
   const requestPrintState = useLoadableState();
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const contestId = useAppSelector((state) => state.contest.id);
   const toast = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   async function requestPrint() {
     requestPrintState.start();
     try {
-      const newTicket = await ticketWritter.create(contestId, {
+      const newTicket = await Composition.ticketWritter.create(contestId, {
         type: TicketType.SUBMISSION_PRINT,
         properties: {
           submissionId: submission.id,

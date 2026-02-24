@@ -1,5 +1,5 @@
 import { LeaderboardRepository } from "@/core/port/driven/repository/LeaderboardRepository";
-import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { ContestWithMembersAndProblemsDTO } from "@/core/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 
 export class AxiosLeaderboardRepository implements LeaderboardRepository {
@@ -8,18 +8,19 @@ export class AxiosLeaderboardRepository implements LeaderboardRepository {
 
   constructor(private readonly axiosClient: AxiosClient) {}
 
-  async build(contestId: string): Promise<LeaderboardResponseDTO> {
-    const result = await this.axiosClient.get<LeaderboardResponseDTO>(
-      this.basePath(contestId),
-    );
-    return result.data;
+  async freeze(contestId: string): Promise<ContestWithMembersAndProblemsDTO> {
+    const response =
+      await this.axiosClient.put<ContestWithMembersAndProblemsDTO>(
+        `${this.basePath(contestId)}:freeze`,
+      );
+    return response.data;
   }
 
-  async freeze(contestId: string): Promise<void> {
-    await this.axiosClient.put(`${this.basePath(contestId)}:freeze`);
-  }
-
-  async unfreeze(contestId: string): Promise<void> {
-    await this.axiosClient.put(`${this.basePath(contestId)}:unfreeze`);
+  async unfreeze(contestId: string): Promise<ContestWithMembersAndProblemsDTO> {
+    const response =
+      await this.axiosClient.put<ContestWithMembersAndProblemsDTO>(
+        `${this.basePath(contestId)}:unfreeze`,
+      );
+    return response.data;
   }
 }

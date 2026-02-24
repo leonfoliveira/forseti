@@ -2,20 +2,20 @@ import { screen } from "@testing-library/dom";
 
 import { SubmissionsPageActionsMenu } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-actions-menu";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { MemberFullResponseDTO } from "@/core/port/dto/response/member/MemberFullResponseDTO";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MemberWithLoginResponseDTO } from "@/core/port/dto/response/member/MemberWithLoginResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
-import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
-import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
+import { MockSubmissionWithCodeAndExecutionsResponseDTO } from "@/test/mock/response/submission/MockSubmissionWithCodeAndExecutionsResponseDTO";
+import { MockSubmissionWithCodeResponseDTO } from "@/test/mock/response/submission/MockSubmissionWithCodeResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPageActionsMenu", () => {
   it("should display download action only", async () => {
-    const submission = MockSubmissionFullResponseDTO();
-    const contestMetadata = MockContestMetadataResponseDTO();
+    const submission = MockSubmissionWithCodeResponseDTO();
+    const contest = MockContestResponseDTO();
     await renderWithProviders(
       <SubmissionsPageActionsMenu submission={submission} />,
-      { contestMetadata },
+      { contest },
     );
 
     expect(
@@ -36,15 +36,15 @@ describe("SubmissionsPageActionsMenu", () => {
   });
 
   it("should display all actions", async () => {
-    const submission = MockSubmissionFullWithExecutionResponseDTO();
-    const contestMetadata = MockContestMetadataResponseDTO();
+    const submission = MockSubmissionWithCodeAndExecutionsResponseDTO();
+    const contest = MockContestResponseDTO();
     await renderWithProviders(
       <SubmissionsPageActionsMenu
         submission={submission}
         canEdit
         onEdit={() => {}}
       />,
-      { contestMetadata },
+      { contest },
     );
 
     expect(
@@ -65,17 +65,17 @@ describe("SubmissionsPageActionsMenu", () => {
   });
 
   it("should not display rerun action when submission is judging", async () => {
-    const submission = MockSubmissionFullWithExecutionResponseDTO({
+    const submission = MockSubmissionWithCodeAndExecutionsResponseDTO({
       status: SubmissionStatus.JUDGING,
     });
-    const contestMetadata = MockContestMetadataResponseDTO();
+    const contest = MockContestResponseDTO();
     await renderWithProviders(
       <SubmissionsPageActionsMenu
         submission={submission}
         canEdit
         onEdit={() => {}}
       />,
-      { contestMetadata },
+      { contest },
     );
 
     expect(
@@ -85,17 +85,17 @@ describe("SubmissionsPageActionsMenu", () => {
 
   it("should display print action only for submission owner", async () => {
     const session = MockSession();
-    const submission = MockSubmissionFullResponseDTO({
-      member: session.member as unknown as MemberFullResponseDTO,
+    const submission = MockSubmissionWithCodeResponseDTO({
+      member: session.member as unknown as MemberWithLoginResponseDTO,
     });
-    const contestMetadata = MockContestMetadataResponseDTO();
+    const contest = MockContestResponseDTO();
     await renderWithProviders(
       <SubmissionsPageActionsMenu
         submission={submission}
         canPrint
         onPrint={() => {}}
       />,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     expect(

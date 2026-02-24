@@ -3,7 +3,7 @@ import { act } from "@testing-library/react";
 
 import { AnnouncementsPageForm } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page-form";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { announcementWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -42,7 +42,7 @@ describe("AnnouncementsPageForm", () => {
 
   it("should create announcement when submit button is clicked", async () => {
     const newAnnouncement = MockAnnouncementResponseDTO();
-    (announcementWritter.create as jest.Mock).mockResolvedValueOnce(
+    (Composition.announcementWritter.create as jest.Mock).mockResolvedValueOnce(
       newAnnouncement,
     );
 
@@ -63,16 +63,19 @@ describe("AnnouncementsPageForm", () => {
       fireEvent.click(screen.getByTestId("announcement-form-submit"));
     });
 
-    expect(announcementWritter.create).toHaveBeenCalledWith("test-contest", {
-      text: "Test announcement",
-    });
+    expect(Composition.announcementWritter.create).toHaveBeenCalledWith(
+      "test-contest",
+      {
+        text: "Test announcement",
+      },
+    );
     expect(useToast().success).toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
     expect(onCreate).toHaveBeenCalledWith(newAnnouncement);
   });
 
   it("should show error toast when announcement creation fails", async () => {
-    (announcementWritter.create as jest.Mock).mockRejectedValueOnce(
+    (Composition.announcementWritter.create as jest.Mock).mockRejectedValueOnce(
       new Error("Creation failed"),
     );
 
@@ -93,9 +96,12 @@ describe("AnnouncementsPageForm", () => {
       fireEvent.click(screen.getByTestId("announcement-form-submit"));
     });
 
-    expect(announcementWritter.create).toHaveBeenCalledWith("test-contest", {
-      text: "Test announcement",
-    });
+    expect(Composition.announcementWritter.create).toHaveBeenCalledWith(
+      "test-contest",
+      {
+        text: "Test announcement",
+      },
+    );
     expect(useToast().error).toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
   });

@@ -9,23 +9,25 @@ import java.time.OffsetDateTime
 
 data class ExecutionResponseDTO(
     val id: String,
+    val createdAt: OffsetDateTime,
+    val updatedAt: OffsetDateTime,
     val answer: Submission.Answer,
     val totalTestCases: Int,
     val lastTestCase: Int?,
     val input: AttachmentResponseDTO,
     val output: AttachmentResponseDTO,
-    val createdAt: OffsetDateTime,
     val version: Long,
 ) : Serializable
 
 fun Execution.toResponseBodyDTO(): ExecutionResponseDTO =
     ExecutionResponseDTO(
         id = id.toString(),
+        createdAt = createdAt,
+        updatedAt = updatedAt,
         answer = answer,
         totalTestCases = totalTestCases,
         lastTestCase = approvedTestCases,
         input = input.toResponseBodyDTO(),
         output = output.toResponseBodyDTO(),
-        createdAt = createdAt,
         version = version,
     )

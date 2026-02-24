@@ -16,6 +16,7 @@ import com.forsetijudge.core.port.driving.usecase.external.contest.ForceEndConte
 import com.forsetijudge.core.port.driving.usecase.external.contest.ForceStartContestUseCase
 import com.forsetijudge.core.port.driving.usecase.external.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
+import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -171,15 +172,17 @@ class ContestControllerTest(
 
         test("forceStart") {
             val contestId = IdGenerator.getUUID()
+            val contest = ContestMockBuilder.build()
             every {
                 forceStartContestUseCase.execute()
-            } returns Unit
+            } returns contest
 
             webMvc
                 .put("$basePath/{contestId}:force-start", contestId) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
-                    status { isNoContent() }
+                    status { isOk() }
+                    content { contest.toWithMembersAndProblemsResponseBodyDTO() }
                 }
 
             verify {
@@ -189,15 +192,17 @@ class ContestControllerTest(
 
         test("forceEnd") {
             val contestId = IdGenerator.getUUID()
+            val contest = ContestMockBuilder.build()
             every {
                 forceEndContestUseCase.execute()
-            } returns Unit
+            } returns contest
 
             webMvc
                 .put("$basePath/{contestId}:force-end", contestId) {
                     contentType = MediaType.APPLICATION_JSON
                 }.andExpect {
-                    status { isNoContent() }
+                    status { isOk() }
+                    content { contest.toWithMembersAndProblemsResponseBodyDTO() }
                 }
 
             verify {

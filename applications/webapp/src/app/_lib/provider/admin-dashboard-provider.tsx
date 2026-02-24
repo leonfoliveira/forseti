@@ -9,24 +9,16 @@ import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
-import {
-  announcementListener,
-  clarificationListener,
-  dashboardReader,
-  leaderboardListener,
-  listenerClientFactory,
-  submissionListener,
-  ticketListener,
-} from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
-import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
+import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
@@ -63,7 +55,7 @@ export function AdminDashboardProvider({
   children: React.ReactNode;
 }) {
   const session = useAppSelector((state) => state.session);
-  const contestMetadata = useAppSelector((state) => state.contestMetadata);
+  const contest = useAppSelector((state) => state.contest);
   const listenerStatus = useAppSelector(
     (state) => state.adminDashboard.listenerStatus,
   );
@@ -93,9 +85,11 @@ export function AdminDashboardProvider({
     }
 
     async function init() {
-      const data = await dashboardReader.getAdmin(contestMetadata.id);
+      const data = await Composition.dashboardReader.getAdminDashboard(
+        contest.id,
+      );
 
-      listenerClientRef.current = listenerClientFactory.create();
+      listenerClientRef.current = Composition.listenerClientFactory.create();
       await listenerClientRef.current.connect(() => {
         console.debug("Listener connection lost");
         dispatch(
@@ -106,44 +100,44 @@ export function AdminDashboardProvider({
         reconnect();
       });
       await Promise.all([
-        leaderboardListener.subscribeForLeaderboardPartial(
+        Composition.leaderboardListener.subscribeForLeaderboardCell(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           receiveLeaderboardPartial,
         ),
-        leaderboardListener.subscribeForLeaderboardFreeze(
+        Composition.leaderboardListener.subscribeForLeaderboardFrozen(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           receiveLeaderboardFreeze,
         ),
-        leaderboardListener.subscribeForLeaderboardUnfreeze(
+        Composition.leaderboardListener.subscribeForLeaderboardUnfrozen(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           receiveLeaderboardUnfreeze,
         ),
-        submissionListener.subscribeForContestFull(
+        Composition.submissionListener.subscribeForContestWithCodeAndExecutions(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           receiveSubmission,
         ),
-        announcementListener.subscribeForContest(
+        Composition.announcementListener.subscribeForContest(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           receiveAnnouncement,
         ),
-        clarificationListener.subscribeForContest(
+        Composition.clarificationListener.subscribeForContest(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           receiveClarification,
         ),
-        clarificationListener.subscribeForContestDeleted(
+        Composition.clarificationListener.subscribeForContestDeleted(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           deleteClarification,
         ),
-        ticketListener.subscribeForContest(
+        Composition.ticketListener.subscribeForContest(
           listenerClientRef.current,
-          contestMetadata.id,
+          contest.id,
           receiveTicket,
         ),
       ]);
@@ -174,11 +168,9 @@ export function AdminDashboardProvider({
         listenerClientRef.current.disconnect();
       }
     };
-  }, [session, contestMetadata.id]);
+  }, [session, contest.id]);
 
-  function receiveLeaderboardPartial(
-    leaderboard: LeaderboardPartialResponseDTO,
-  ) {
+  function receiveLeaderboardPartial(leaderboard: LeaderboardCellResponseDTO) {
     console.debug("Received leaderboard partial update:", leaderboard);
     dispatch(adminDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
@@ -191,7 +183,7 @@ export function AdminDashboardProvider({
 
   function receiveLeaderboardUnfreeze(data: {
     leaderboard: LeaderboardResponseDTO;
-    frozenSubmissions: SubmissionPublicResponseDTO[];
+    frozenSubmissions: SubmissionResponseDTO[];
   }) {
     console.debug("Received leaderboard unfreeze:", data);
     dispatch(adminDashboardSlice.actions.setLeaderboard(data.leaderboard));
@@ -199,7 +191,7 @@ export function AdminDashboardProvider({
   }
 
   function receiveSubmission(
-    submission: SubmissionFullWithExecutionResponseDTO,
+    submission: SubmissionWithCodeAndExecutionsResponseDTO,
   ) {
     console.debug("Received submission:", submission);
     dispatch(adminDashboardSlice.actions.mergeSubmission(submission));

@@ -3,15 +3,13 @@ import React from "react";
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
 import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
-import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 
 export function JudgeSubmissionsPage() {
   const submissions = useAppSelector(
     (state) => state.judgeDashboard.submissions,
   );
-  const problems = useAppSelector(
-    (state) => state.judgeDashboard.contest.problems,
-  );
+  const problems = useAppSelector((state) => state.judgeDashboard.problems);
   const dispatch = useAppDispatch();
 
   return (
@@ -19,7 +17,7 @@ export function JudgeSubmissionsPage() {
       submissions={submissions}
       problems={problems}
       canEdit
-      onEdit={(submission: SubmissionFullWithExecutionResponseDTO) => {
+      onEdit={(submission: SubmissionWithCodeAndExecutionsResponseDTO) => {
         dispatch(judgeDashboardSlice.actions.mergeSubmission(submission));
       }}
     />
