@@ -22,7 +22,7 @@ data class GuestDashboardResponseBodyDTO(
     val members: List<MemberResponseBodyDTO>,
     val problems: List<ProblemResponseBodyDTO>,
     val submissions: List<SubmissionResponseBodyDTO>,
-    val clarification: List<ClarificationResponseDTO>,
+    val clarifications: List<ClarificationResponseDTO>,
     val announcements: List<AnnouncementResponseBodyDTO>,
 )
 
@@ -33,6 +33,6 @@ fun GuestDashboard.toResponseBodyDTO(): GuestDashboardResponseBodyDTO =
         members = members.map { it.toResponseBodyDTO() },
         problems = problems.map { it.toResponseBodyDTO() },
         submissions = submissions.map { it.toResponseBodyDTO() },
-        clarification = clarifications.map { it.toResponseBodyDTO() },
+        clarifications = clarifications.map { it.toResponseBodyDTO() },
         announcements = announcements.map { it.toResponseBodyDTO() },
     )

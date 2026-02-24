@@ -1,4 +1,4 @@
-package com.forsetijudge.api.adapter.driving.controller.contest
+package com.forsetijudge.api.adapter.driving.controller.contests
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.api.adapter.dto.request.clarification.CreateClarificationRequestBodyDTO
@@ -8,7 +8,6 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driving.usecase.external.clarification.CreateClarificationUseCase
 import com.forsetijudge.core.port.driving.usecase.external.clarification.DeleteClarificationUseCase
 import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension

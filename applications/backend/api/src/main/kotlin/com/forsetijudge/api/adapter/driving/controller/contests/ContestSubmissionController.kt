@@ -1,4 +1,4 @@
-package com.forsetijudge.api.adapter.driving.controller.contest
+package com.forsetijudge.api.adapter.driving.controller.contests
 
 import com.forsetijudge.api.adapter.dto.request.submission.CreateSubmissionRequestBodyDTO
 import com.forsetijudge.api.adapter.dto.request.submission.UpdateAnswerSubmissionRequestBodyDTO

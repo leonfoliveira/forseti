@@ -1,4 +1,4 @@
-package com.forsetijudge.api.adapter.driving.controller.contest
+package com.forsetijudge.api.adapter.driving.controller.contests
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.api.adapter.dto.request.authentication.AuthenticateToContestRequestBodyDTO

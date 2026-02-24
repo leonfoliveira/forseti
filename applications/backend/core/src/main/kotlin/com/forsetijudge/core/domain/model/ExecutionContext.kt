@@ -60,7 +60,7 @@ data class ExecutionContext(
          */
         fun authenticate(session: Session): ExecutionContext {
             val context = get()
-            if (context.contestId != session.contestId) {
+            if (context.contestId != null && context.contestId != session.contestId) {
                 throw UnauthorizedException("Session contest ID does not match the current context's contest ID")
             }
             context.session = session

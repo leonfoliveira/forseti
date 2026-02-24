@@ -1,22 +1,16 @@
-package com.forsetijudge.api.adapter.driving.controller.contest
+package com.forsetijudge.api.adapter.driving.controller.contests
 
 import com.forsetijudge.api.adapter.dto.request.contest.UpdateContestRequestBodyDTO
 import com.forsetijudge.api.adapter.util.Private
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.port.driving.usecase.external.contest.DeleteContestUseCase
-import com.forsetijudge.core.port.driving.usecase.external.contest.FindContestBySlugUseCase
 import com.forsetijudge.core.port.driving.usecase.external.contest.ForceEndContestUseCase
 import com.forsetijudge.core.port.driving.usecase.external.contest.ForceStartContestUseCase
 import com.forsetijudge.core.port.driving.usecase.external.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
-import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -27,24 +21,11 @@ import java.util.UUID
 @RestController
 @RequestMapping("/v1")
 class ContestController(
-    private val findContestBySlugUseCase: FindContestBySlugUseCase,
     private val updateContestUseCase: UpdateContestUseCase,
     private val forceStartContestUseCase: ForceStartContestUseCase,
     private val forceEndContestUseCase: ForceEndContestUseCase,
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java)
-
-    @GetMapping("/contests/slug/{slug}")
-    fun findBySlug(
-        @PathVariable slug: String,
-    ): ResponseEntity<ContestResponseBodyDTO> {
-        logger.info("[GET] /v1/contests/slug/$slug")
-        val contest =
-            findContestBySlugUseCase.execute(
-                FindContestBySlugUseCase.Command(slug = slug),
-            )
-        return ResponseEntity.ok(contest.toResponseBodyDTO())
-    }
 
     @PutMapping("/contests/{contestId}")
     @Private(Member.Type.ROOT, Member.Type.ADMIN)

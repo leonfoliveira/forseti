@@ -24,7 +24,7 @@ data class ContestantDashboardResponseBodyDTO(
     val members: List<MemberResponseBodyDTO>,
     val problems: List<ProblemResponseBodyDTO>,
     val submissions: List<SubmissionResponseBodyDTO>,
-    val clarification: List<ClarificationResponseDTO>,
+    val clarifications: List<ClarificationResponseDTO>,
     val announcements: List<AnnouncementResponseBodyDTO>,
     val memberTickets: List<TicketResponseBodyDTO>,
 )
@@ -36,7 +36,7 @@ fun ContestantDashboard.toResponseBodyDTO(): ContestantDashboardResponseBodyDTO 
         members = members.map { it.toResponseBodyDTO() },
         problems = problems.map { it.toResponseBodyDTO() },
         submissions = submissions.map { it.toResponseBodyDTO() },
-        clarification = clarifications.map { it.toResponseBodyDTO() },
+        clarifications = clarifications.map { it.toResponseBodyDTO() },
         announcements = announcements.map { it.toResponseBodyDTO() },
         memberTickets = memberTickets.map { it.toResponseBodyDTO() },
     )

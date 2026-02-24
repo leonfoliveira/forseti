@@ -1,4 +1,4 @@
-package com.forsetijudge.api.adapter.driving.controller.contest
+package com.forsetijudge.api.adapter.driving.controller.contests
 
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder

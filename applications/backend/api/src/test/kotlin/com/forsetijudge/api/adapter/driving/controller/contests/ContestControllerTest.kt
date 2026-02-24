@@ -1,4 +1,4 @@
-package com.forsetijudge.api.adapter.driving.controller.contest
+package com.forsetijudge.api.adapter.driving.controller.contests
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.api.adapter.driving.advice.GlobalExceptionHandler
@@ -10,7 +10,6 @@ import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
-import com.forsetijudge.core.port.driving.usecase.external.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.driving.usecase.external.contest.FindContestBySlugUseCase
 import com.forsetijudge.core.port.driving.usecase.external.contest.ForceEndContestUseCase
 import com.forsetijudge.core.port.driving.usecase.external.contest.ForceStartContestUseCase
@@ -28,7 +27,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
 import java.time.OffsetDateTime
@@ -37,8 +35,6 @@ import java.time.OffsetDateTime
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = [ContestController::class, JacksonConfig::class, GlobalExceptionHandler::class])
 class ContestControllerTest(
-    @MockkBean(relaxed = true)
-    private val findContestBySlugUseCase: FindContestBySlugUseCase,
     @MockkBean(relaxed = true)
     private val updateContestUseCase: UpdateContestUseCase,
     @MockkBean(relaxed = true)
@@ -57,21 +53,6 @@ class ContestControllerTest(
         beforeTest {
             clearAllMocks()
             ExecutionContextMockBuilder.build(contestId, memberId)
-        }
-
-        test("findBySlug") {
-            val contest = ContestMockBuilder.build()
-            val command = FindContestBySlugUseCase.Command(slug = contest.slug)
-            every { findContestBySlugUseCase.execute(command) } returns contest
-
-            webMvc
-                .get("$basePath/slug/{slug}", contest.slug) {
-                    contentType = MediaType.APPLICATION_JSON
-                }.andExpect {
-                    status { isOk() }
-                }
-
-            verify { findContestBySlugUseCase.execute(command) }
         }
 
         test("update") {

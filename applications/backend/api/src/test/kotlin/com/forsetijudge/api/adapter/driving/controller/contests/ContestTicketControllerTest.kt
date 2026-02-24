@@ -1,4 +1,4 @@
-package com.forsetijudge.api.adapter.driving.controller.contest
+package com.forsetijudge.api.adapter.driving.controller.contests
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.api.adapter.dto.request.ticket.CreateTicketRequestBodyDTO
@@ -9,7 +9,6 @@ import com.forsetijudge.core.domain.entity.TicketMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driving.usecase.external.ticket.CreateTicketUseCase
 import com.forsetijudge.core.port.driving.usecase.external.ticket.UpdateTicketStatusUseCase
-import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
