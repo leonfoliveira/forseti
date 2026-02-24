@@ -32,7 +32,7 @@ class ContestTicketController(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateTicketRequestBodyDTO,
     ): ResponseEntity<TicketResponseBodyDTO> {
-        logger.info("[POST] /v1/contests/{}/tickets", contestId)
+        logger.info("[POST] /v1/contests/$contestId/tickets")
         val ticket =
             createTicketUseCase.execute(
                 CreateTicketUseCase.Command(
@@ -50,7 +50,7 @@ class ContestTicketController(
         @PathVariable ticketId: UUID,
         @RequestBody body: UpdateTicketStatusRequestBodyDTO,
     ): ResponseEntity<TicketResponseBodyDTO> {
-        logger.info("[PUT] /v1/contests/{}/tickets/{}", contestId, ticketId)
+        logger.info("[PUT] /v1/contests/$contestId/tickets/$ticketId")
         val ticket =
             updateTicketStatusUseCase.execute(
                 UpdateTicketStatusUseCase.Command(

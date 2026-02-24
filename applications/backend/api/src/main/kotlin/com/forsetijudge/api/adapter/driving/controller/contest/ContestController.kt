@@ -38,7 +38,7 @@ class ContestController(
     fun findBySlug(
         @PathVariable slug: String,
     ): ResponseEntity<ContestResponseBodyDTO> {
-        logger.info("[GET] /v1/contests/slug/{}", slug)
+        logger.info("[GET] /v1/contests/slug/$slug")
         val contest =
             findContestBySlugUseCase.execute(
                 FindContestBySlugUseCase.Command(slug = slug),
@@ -52,7 +52,7 @@ class ContestController(
         @PathVariable contestId: UUID,
         @RequestBody body: UpdateContestRequestBodyDTO,
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
-        logger.info("[PUT] /v1/contests/{}", contestId)
+        logger.info("[PUT] /v1/contests/$contestId")
         val contest =
             updateContestUseCase.execute(
                 UpdateContestUseCase.Command(
@@ -105,7 +105,7 @@ class ContestController(
     fun forceStart(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
-        logger.info("[PUT] /v1/contests/{}:force-start", contestId)
+        logger.info("[PUT] /v1/contests/$contestId:force-start")
         val contest = forceStartContestUseCase.execute()
         return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
     }
@@ -115,7 +115,7 @@ class ContestController(
     fun forceEnd(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
-        logger.info("[PUT] /v1/contests/{}:force-end", contestId)
+        logger.info("[PUT] /v1/contests/$contestId:force-end")
         val contest = forceEndContestUseCase.execute()
         return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
     }

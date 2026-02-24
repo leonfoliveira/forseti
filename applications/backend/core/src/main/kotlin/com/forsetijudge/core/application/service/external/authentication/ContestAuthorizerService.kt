@@ -22,7 +22,7 @@ class ContestAuthorizerService(
         val contextContestId = ExecutionContext.getContestIdNullable()
         val contextMemberId = ExecutionContext.getMemberIdNullable()
 
-        logger.info("Authorizing member with id: {} for contest with id: {}", contextMemberId, contextContestId)
+        logger.info("Authorizing member with id: $contextMemberId for contest with id: $contextContestId")
 
         val contest =
             contextContestId?.let {

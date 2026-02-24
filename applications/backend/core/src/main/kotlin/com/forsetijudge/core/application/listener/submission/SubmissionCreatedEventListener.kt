@@ -67,7 +67,7 @@ class SubmissionCreatedEventListener(
         if (submission.contest.settings.isAutoJudgeEnabled) {
             submissionQueueProducer.produce(SubmissionQueuePayload(submissionId = submission.id))
         } else {
-            logger.info("Auto judge is disabled for contest with id: {}", submission.contest.id)
+            logger.info("Auto judge is disabled for contest with id: ${submission.contest.id}")
         }
     }
 }

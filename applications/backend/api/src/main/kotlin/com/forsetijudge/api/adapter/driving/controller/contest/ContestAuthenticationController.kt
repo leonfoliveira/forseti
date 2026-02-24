@@ -30,7 +30,7 @@ class ContestAuthenticationController(
         @PathVariable contestId: UUID,
         @RequestBody body: AuthenticateToContestRequestBodyDTO,
     ): ResponseEntity<SessionResponseBodyDTO> {
-        logger.info("[POST] /v1/contests/{}:sign-in", contestId)
+        logger.info("[POST] /v1/contests/$contestId:sign-in")
         val session =
             signInUseCase.execute(
                 SignInUseCase.Command(

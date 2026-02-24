@@ -13,7 +13,7 @@ class DeleteAllSessionsByMemberInternalService(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun execute(command: DeleteAllSessionsByMemberInternalUseCase.Command) {
-        logger.info("Deleting all sessions for member with id: {}", command.member.id)
+        logger.info("Deleting all sessions for member with id: ${command.member.id}")
 
         val sessions =
             sessionRepository.findAllByMemberIdAndExpiresAtGreaterThan(

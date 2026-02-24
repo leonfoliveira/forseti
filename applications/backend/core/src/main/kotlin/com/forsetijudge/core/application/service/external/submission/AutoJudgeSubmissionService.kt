@@ -30,7 +30,7 @@ class AutoJudgeSubmissionService(
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Auto judging submission: {}", command.submissionId)
+        logger.info("Auto judging submission with id: ${command.submissionId}")
 
         val preJudgeSubmission =
             submissionRepository.findByIdAndContestId(command.submissionId, contextContestId)
@@ -48,7 +48,7 @@ class AutoJudgeSubmissionService(
          * Concurrency issues are acceptable as the judge can manually judge the submission again after the auto judging process if needed.
          */
         if (preJudgeSubmission.status != Submission.Status.JUDGING) {
-            logger.info("Submission is not in JUDGING status. Current status: {}. Skipping judging process.", preJudgeSubmission.status)
+            logger.info("Submission is not in JUDGING status. Current status: ${preJudgeSubmission.status}. Skipping judging process.")
             return
         }
 
@@ -64,7 +64,7 @@ class AutoJudgeSubmissionService(
                 CoreMetrics.SUCCESSFUL_SUBMISSION
                     .labelValues(execution.answer.toString())
                     .inc()
-                logger.info("Execution completed with answer: {}. Updating submission answer.", execution.answer)
+                logger.info("Execution completed with answer: ${execution.answer}. Updating submission answer.")
                 execution.answer
             } catch (ex: Exception) {
                 CoreMetrics.FAILED_SUBMISSION.inc()
@@ -83,8 +83,7 @@ class AutoJudgeSubmissionService(
          */
         if (postJudgeSubmission.status != Submission.Status.JUDGING) {
             logger.info(
-                "Submission status changed during judging process. Current status: {}. Skipping updating submission answer.",
-                postJudgeSubmission.status,
+                "Submission status changed during judging process. Current status: ${postJudgeSubmission.status}. Skipping updating submission answer.",
             )
             return
         }

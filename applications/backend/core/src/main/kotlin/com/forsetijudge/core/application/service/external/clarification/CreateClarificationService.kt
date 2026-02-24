@@ -84,7 +84,7 @@ class CreateClarificationService(
         clarificationRepository.save(clarification)
         applicationEventPublisher.publishEvent(ClarificationEvent.Created(clarification))
 
-        logger.info("Clarification created successfully with id = {}", clarification.id)
+        logger.info("Clarification created successfully with id = ${clarification.id}")
         return clarification
     }
 }

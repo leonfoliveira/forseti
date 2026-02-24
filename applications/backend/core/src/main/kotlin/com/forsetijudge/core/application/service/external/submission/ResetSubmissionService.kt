@@ -27,7 +27,7 @@ class ResetSubmissionService(
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Resetting submission with id: {}", command.submissionId)
+        logger.info("Resetting submission with id: ${command.submissionId}")
 
         val submission =
             submissionRepository.findByIdAndContestId(command.submissionId, contextContestId)

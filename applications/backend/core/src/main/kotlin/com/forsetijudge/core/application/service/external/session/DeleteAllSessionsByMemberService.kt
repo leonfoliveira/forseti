@@ -18,7 +18,7 @@ class DeleteAllSessionsByMemberService(
     override fun execute() {
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Deleting all sessions for member with id: {}", contextMemberId)
+        logger.info("Deleting all sessions for member with id: $contextMemberId")
 
         val member =
             memberRepository.findById(contextMemberId)
@@ -30,6 +30,6 @@ class DeleteAllSessionsByMemberService(
             ),
         )
 
-        logger.info("All sessions for member with id: {} deleted successfully", contextMemberId)
+        logger.info("All sessions deleted successfully")
     }
 }

@@ -12,7 +12,7 @@ class DownloadAttachmentInternalService(
     private val logger = LoggerFactory.getLogger(DownloadAttachmentInternalService::class.java)
 
     override fun execute(command: DownloadAttachmentInternalUseCase.Command): ByteArray {
-        logger.info("Downloading attachment with id: {}", command.attachment.id)
+        logger.info("Downloading attachment with id: ${command.attachment.id}")
 
         val bytes = attachmentBucket.download(command.attachment)
 

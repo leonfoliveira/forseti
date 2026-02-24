@@ -27,8 +27,7 @@ class FindAllSubmissionsByContestSinceLastFreezeService(
         val contextMemberId = ExecutionContext.getMemberId()
 
         logger.info(
-            "Finding all submissions for contest with id: {} since last freeze",
-            contextContestId,
+            "Finding all submissions for contest with id: $contextContestId since last freeze",
         )
 
         val contest =
@@ -48,7 +47,7 @@ class FindAllSubmissionsByContestSinceLastFreezeService(
 
         val submissions = submissionRepository.findByContestIdAndCreatedAtGreaterThanEqual(contest.id, contest.frozenAt!!)
 
-        logger.info("Found {} submissions", submissions.size)
+        logger.info("Found ${submissions.size} submissions")
         return submissions
     }
 }

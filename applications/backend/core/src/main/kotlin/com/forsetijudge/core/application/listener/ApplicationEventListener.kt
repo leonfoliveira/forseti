@@ -28,7 +28,7 @@ abstract class ApplicationEventListener {
     open fun onApplicationEvent(event: ApplicationEvent) {
         ExecutionContext.start()
 
-        logger.info("Handling application event of type: {}", event::class.java.simpleName)
+        logger.info("Handling application event of type: ${event::class.java.simpleName}")
 
         authenticateSystemUseCase.execute(
             AuthenticateSystemUseCase.Command(
@@ -37,6 +37,6 @@ abstract class ApplicationEventListener {
             ),
         )
 
-        logger.info("Finished application business event of type: {}", event::class.java.simpleName)
+        logger.info("Finished application business event of type: ${event::class.java.simpleName}")
     }
 }

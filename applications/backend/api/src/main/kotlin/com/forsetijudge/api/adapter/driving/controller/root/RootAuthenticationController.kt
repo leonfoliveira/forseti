@@ -28,7 +28,7 @@ class RootAuthenticationController(
     fun authenticateRoot(
         @RequestBody body: AuthenticateRootRequestBodyDTO,
     ): ResponseEntity<SessionResponseBodyDTO> {
-        logger.info("[POST] /v1/root:sign-in {}", body)
+        logger.info("[POST] /v1/root:sign-in")
         val session =
             signInUseCase.execute(
                 SignInUseCase.Command(

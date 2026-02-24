@@ -27,7 +27,7 @@ class ForceEndContestService(
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Force ending contest with id: {}", contextContestId)
+        logger.info("Force ending contest with id: $contextContestId")
 
         val contest =
             contestRepository.findById(contextContestId)

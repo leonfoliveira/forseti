@@ -26,7 +26,7 @@ class CreateSessionInternalService(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun execute(command: CreateSessionInternalUseCase.Command): Session {
-        logger.info("Creating session for member with id = {} in contest with id = {}", command.member.id, command.contest?.id)
+        logger.info("Creating session for member with id = ${command.member.id} in contest with id = ${command.contest?.id}")
 
         deleteAllSessionsByMemberInternalUseCase.execute(DeleteAllSessionsByMemberInternalUseCase.Command(command.member))
 
@@ -48,7 +48,7 @@ class CreateSessionInternalService(
             )
         sessionRepository.save(session)
 
-        logger.info("Session created successfully with id = {}", session.id)
+        logger.info("Session created successfully with id = ${session.id}")
         return session
     }
 }

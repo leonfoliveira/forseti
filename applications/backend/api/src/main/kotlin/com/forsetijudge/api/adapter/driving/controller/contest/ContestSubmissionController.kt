@@ -37,7 +37,7 @@ class ContestSubmissionController(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateSubmissionRequestBodyDTO,
     ): ResponseEntity<SubmissionWithCodeResponseBodyDTO> {
-        logger.info("[POST] /v1/contests/{}/submissions", contestId)
+        logger.info("[POST] /v1/contests/$contestId/submissions")
         val submission =
             createSubmissionUseCase.execute(
                 CreateSubmissionUseCase.Command(
@@ -55,7 +55,7 @@ class ContestSubmissionController(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
     ): ResponseEntity<SubmissionWithCodeAndExecutionResponseBodyDTO> {
-        logger.info("[POST] /v1/contests/{}/submissions/{}:rerun", contestId, submissionId)
+        logger.info("[POST] /v1/contests/$contestId/submissions/$submissionId:rerun")
         val submission =
             resetSubmissionUseCase.execute(
                 ResetSubmissionUseCase.Command(
@@ -72,7 +72,7 @@ class ContestSubmissionController(
         @PathVariable submissionId: UUID,
         @RequestBody body: UpdateAnswerSubmissionRequestBodyDTO,
     ): ResponseEntity<SubmissionWithCodeAndExecutionResponseBodyDTO> {
-        logger.info("[PUT] /v1/contests/{}/submissions/{}:update-answer", contestId, submissionId)
+        logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId:update-answer")
         val submission =
             updateAnswerSubmissionUseCase.execute(
                 UpdateAnswerSubmissionUseCase.Command(

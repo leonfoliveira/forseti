@@ -22,7 +22,7 @@ class WebSocketContextHandshakeInterceptor : HandshakeInterceptor {
         attributes: MutableMap<String, Any>,
     ): Boolean {
         val context = ExecutionContext.get()
-        logger.info("Storing context in WebSocket attributes: {}", context)
+        logger.info("Storing context in WebSocket attributes: ${context}")
         attributes["context"] = context
         attributes["trace_id"] = context.traceId
         return true

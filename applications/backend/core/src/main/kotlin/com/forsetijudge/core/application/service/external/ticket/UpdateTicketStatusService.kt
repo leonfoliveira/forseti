@@ -28,10 +28,7 @@ class UpdateTicketStatusService(
         val contextMemberId = ExecutionContext.getMemberId()
 
         logger.info(
-            "Updating ticket status for ticketId: {}, staffId: {}, status: {}",
-            command.ticketId,
-            contextMemberId,
-            command.status,
+            "Updating ticket status for ticketId: ${command.ticketId}, staffId: $contextMemberId, status: ${command.status}",
         )
 
         val ticket =

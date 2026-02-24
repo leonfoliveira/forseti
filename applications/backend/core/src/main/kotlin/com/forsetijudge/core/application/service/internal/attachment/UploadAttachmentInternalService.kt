@@ -20,10 +20,7 @@ class UploadAttachmentInternalService(
 
     override fun execute(command: UploadAttachmentInternalUseCase.Command): Pair<Attachment, ByteArray> {
         logger.info(
-            "Uploading attachment for contest with id: {}, member with id: {} and context: {}",
-            command.contest.id,
-            command.member.id,
-            command.context,
+            "Uploading attachment for contest with id: ${command.contest.id}, member with id: ${command.member.id} and context: ${command.context}",
         )
 
         val id = IdGenerator.getUUID()
@@ -37,7 +34,7 @@ class UploadAttachmentInternalService(
                 context = command.context,
             )
 
-        logger.info("Uploading {} bytes to attachment with id: {}", command.bytes.size, attachment.id)
+        logger.info("Uploading ${command.bytes.size} bytes to attachment with id: ${attachment.id}")
         attachmentRepository.save(attachment)
         attachmentBucket.upload(attachment, command.bytes)
         applicationEventPublisher.publishEvent(AttachmentsEvent.Uploaded(attachment))

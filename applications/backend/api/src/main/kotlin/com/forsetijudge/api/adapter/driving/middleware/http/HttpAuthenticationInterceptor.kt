@@ -73,7 +73,7 @@ class HttpAuthenticationInterceptor(
             findSessionByIdUseCase.execute(
                 FindSessionByIdUseCase.Command(sessionId = sessionUuid),
             )
-        logger.info("Found session with id: {}", sessionId)
+        logger.info("Found session with id: $sessionId")
 
         val contextContextId = ExecutionContext.getContestIdNullable()
         if (contextContextId != session.contestId) {

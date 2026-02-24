@@ -26,7 +26,7 @@ class DeleteClarificationService(
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Deleting clarification with id: {}", command.clarificationId)
+        logger.info("Deleting clarification with id: ${command.clarificationId}")
 
         val clarification =
             clarificationRepository.findByIdAndContestId(command.clarificationId, contextContestId)

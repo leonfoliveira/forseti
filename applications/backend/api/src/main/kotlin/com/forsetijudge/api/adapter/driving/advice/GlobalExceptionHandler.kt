@@ -41,10 +41,7 @@ class GlobalExceptionHandler {
     ): ResponseEntity<ErrorResponseBodyDTO> {
         val status = codesByBusinessException[ex::class] ?: HttpStatus.BAD_REQUEST
         logger.info(
-            "${ex.javaClass.simpleName} occurred in method: {}, status: {}, message: {}",
-            handlerMethod.method.name,
-            status,
-            ex.message,
+            "${ex.javaClass.simpleName} occurred in method: ${handlerMethod.method.name}, status: $status, message: ${ex.message}",
         )
         return ResponseEntity
             .status(status)

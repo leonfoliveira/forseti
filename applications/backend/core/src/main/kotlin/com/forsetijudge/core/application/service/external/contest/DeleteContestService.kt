@@ -26,7 +26,7 @@ class DeleteContestService(
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Deleting contest with id: {}", contextContestId)
+        logger.info("Deleting contest with id: $contextContestId")
 
         val contest =
             contestRepository.findById(contextContestId)

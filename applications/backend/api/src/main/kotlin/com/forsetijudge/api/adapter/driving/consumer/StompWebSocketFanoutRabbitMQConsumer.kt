@@ -45,7 +45,7 @@ class StompWebSocketFanoutRabbitMQConsumer(
      * @param payload The payload containing the destination and message.
      */
     override fun handlePayload(payload: WebSocketFanoutPayload) {
-        logger.info("Forwarding message to WebSocket destination: {}", payload.destination)
+        logger.info("Forwarding message to WebSocket destination: ${payload.destination}")
 
         if (payload.body != null) {
             messagingTemplate.convertAndSend(

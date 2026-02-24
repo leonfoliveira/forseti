@@ -47,7 +47,7 @@ class UpdateContestService(
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Updating contest with id: {}", contextContestId)
+        logger.info("Updating contest with id: $contextContestId")
 
         val contest =
             contestRepository
@@ -137,7 +137,7 @@ class UpdateContestService(
         contest: Contest,
         memberDTO: UpdateContestUseCase.Command.Member,
     ): Member {
-        logger.info("Creating member with login: {}", memberDTO.login)
+        logger.info("Creating member with login: ${memberDTO.login}")
 
         // Forbid members to have ROOT login. It is required to ensure a root can sign-in in any contest.
         if (memberDTO.login == Member.ROOT_LOGIN) {
@@ -164,7 +164,7 @@ class UpdateContestService(
         contest: Contest,
         problemDTO: UpdateContestUseCase.Command.Problem,
     ): Problem {
-        logger.info("Creating problem with title: {}", problemDTO.title)
+        logger.info("Creating problem with title: ${problemDTO.title}")
 
         val description =
             attachmentRepository.findByIdAndContestId(problemDTO.description.id, contest.id)
@@ -208,7 +208,7 @@ class UpdateContestService(
         membersHash: Map<UUID, Member>,
         memberDTO: UpdateContestUseCase.Command.Member,
     ): Member {
-        logger.info("Updating member with id: {}", memberDTO.id)
+        logger.info("Updating member with id: ${memberDTO.id}")
 
         val member =
             membersHash[memberDTO.id]
@@ -237,7 +237,7 @@ class UpdateContestService(
         problemsHash: Map<UUID, Problem>,
         problemDTO: UpdateContestUseCase.Command.Problem,
     ): Problem {
-        logger.info("Updating problem with id: {}", problemDTO.id)
+        logger.info("Updating problem with id: ${problemDTO.id}")
 
         val problem =
             problemsHash[problemDTO.id]
@@ -279,7 +279,7 @@ class UpdateContestService(
      * @param members The list of members to be marked as deleted.
      */
     private fun deleteMembers(members: List<Member>) {
-        logger.info("Deleting members with ids: {}", members.map { it.id })
+        logger.info("Deleting members with ids: ${members.map { it.id }}")
 
         members.forEach { it.deletedAt = ExecutionContext.get().startedAt }
         memberRepository.saveAll(members)
@@ -291,7 +291,7 @@ class UpdateContestService(
      * @param problems The list of problems to be marked as deleted.
      */
     private fun deleteProblems(problems: List<Problem>) {
-        logger.info("Deleting problems with ids: {}", problems.map { it.id })
+        logger.info("Deleting problems with ids: ${problems.map { it.id }}")
 
         problems.forEach { it.deletedAt = ExecutionContext.get().startedAt }
         problemRepository.saveAll(problems)

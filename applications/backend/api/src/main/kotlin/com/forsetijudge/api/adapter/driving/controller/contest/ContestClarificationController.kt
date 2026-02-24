@@ -31,7 +31,7 @@ class ContestClarificationController(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateClarificationRequestBodyDTO,
     ): ResponseEntity<ClarificationResponseDTO> {
-        logger.info("[POST] /v1/contests/{}/clarifications", contestId)
+        logger.info("[POST] /v1/contests/$contestId/clarifications")
         val clarification =
             createClarificationUseCase.execute(
                 CreateClarificationUseCase.Command(
@@ -49,7 +49,7 @@ class ContestClarificationController(
         @PathVariable contestId: UUID,
         @PathVariable clarificationId: UUID,
     ): ResponseEntity<Unit> {
-        logger.info("[DELETE] /v1/contests/{}/clarifications/{}", contestId, clarificationId)
+        logger.info("[DELETE] /v1/contests/$contestId/clarifications/$clarificationId")
         deleteClarificationUseCase.execute(
             DeleteClarificationUseCase.Command(
                 clarificationId = clarificationId,

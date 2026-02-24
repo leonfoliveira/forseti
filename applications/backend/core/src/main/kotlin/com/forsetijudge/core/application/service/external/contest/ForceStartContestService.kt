@@ -28,7 +28,7 @@ class ForceStartContestService(
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Force starting contest with id: {}", contextContestId)
+        logger.info("Force starting contest with id: $contextContestId")
 
         val contest =
             contestRepository.findById(contextContestId)

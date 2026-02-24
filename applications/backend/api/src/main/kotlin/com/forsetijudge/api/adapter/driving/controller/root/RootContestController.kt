@@ -60,7 +60,7 @@ class RootContestController(
     fun delete(
         @PathVariable contestId: UUID,
     ): ResponseEntity<Void> {
-        logger.info("[DELETE] /v1/contests/{}", contestId)
+        logger.info("[DELETE] /v1/contests/$contestId")
         deleteContestUseCase.execute()
         return ResponseEntity.noContent().build()
     }

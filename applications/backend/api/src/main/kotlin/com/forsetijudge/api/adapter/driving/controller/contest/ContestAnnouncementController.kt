@@ -28,7 +28,7 @@ class ContestAnnouncementController(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateAnnouncementRequestBodyDTO,
     ): ResponseEntity<AnnouncementResponseBodyDTO> {
-        logger.info("[POST] /v1/contests/{}/announcements", contestId)
+        logger.info("[POST] /v1/contests/$contestId/announcements")
         val announcement =
             createAnnouncementUseCase.execute(
                 CreateAnnouncementUseCase.Command(

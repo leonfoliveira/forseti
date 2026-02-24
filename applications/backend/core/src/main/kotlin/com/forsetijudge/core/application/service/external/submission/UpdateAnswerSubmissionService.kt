@@ -28,9 +28,7 @@ class UpdateAnswerSubmissionService(
         val contextMemberId = ExecutionContext.getMemberId()
 
         logger.info(
-            "Updating answer for submission with id: {} to answer: {}",
-            command.submissionId,
-            command.answer,
+            "Updating answer for submission with id: ${command.submissionId} to answer: ${command.answer}",
         )
 
         val submission =

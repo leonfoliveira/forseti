@@ -16,7 +16,7 @@ class BuildLeaderboardCellInternalService : BuildLeaderboardCellInternalUseCase 
     }
 
     override fun execute(command: BuildLeaderboardCellInternalUseCase.Command): Leaderboard.Cell {
-        logger.info("Building leaderboard cell for problem with id: {}", command.problem.id)
+        logger.info("Building leaderboard cell for problem with id: ${command.problem.id}")
 
         val sortedSubmissions = command.submissions.sortedBy { it.createdAt }
 

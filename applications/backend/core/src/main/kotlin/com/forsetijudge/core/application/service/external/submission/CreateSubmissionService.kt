@@ -40,7 +40,7 @@ class CreateSubmissionService(
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Creating submission for member with id: {} and problem with id: {}", contextMemberId, command.problemId)
+        logger.info("Creating submission for member with id: $contextMemberId and problem with id: ${command.problemId}")
 
         val contest =
             contestRepository.findById(contextContestId)

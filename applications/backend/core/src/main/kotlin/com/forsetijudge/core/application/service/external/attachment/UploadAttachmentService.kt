@@ -71,12 +71,12 @@ class UploadAttachmentService(
                 contentType = command.contentType ?: "application/octet-stream",
                 context = command.context,
             )
-        logger.info("Uploading {} bytes to attachment with id: {}", command.bytes.size, attachment.id)
+        logger.info("Uploading ${command.bytes.size} bytes")
         attachmentRepository.save(attachment)
         attachmentBucket.upload(attachment, command.bytes)
         applicationEventPublisher.publishEvent(AttachmentsEvent.Uploaded(attachment))
 
-        logger.info("Attachment uploaded successfully with id = {}", attachment.id)
+        logger.info("Attachment uploaded successfully with id = ${attachment.id}")
         return attachment to command.bytes
     }
 }

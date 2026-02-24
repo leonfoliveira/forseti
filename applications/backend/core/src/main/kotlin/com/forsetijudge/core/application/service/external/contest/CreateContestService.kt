@@ -32,7 +32,7 @@ class CreateContestService(
     ): Contest {
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Creating contest with slug: {}", command.slug)
+        logger.info("Creating contest with slug: ${command.slug}")
 
         val member =
             memberRepository.findById(contextMemberId)
@@ -57,7 +57,7 @@ class CreateContestService(
         contestRepository.save(contest)
         applicationEventPublisher.publishEvent(ContestEvent.Created(contest))
 
-        logger.info("Contest created with id: {}", contest.id)
+        logger.info("Contest created with id: ${contest.id}")
         return contest
     }
 }

@@ -16,7 +16,7 @@ class AutoFreezeQuartzJob(
      * @param payload The payload containing the contestId for which the leaderboard should be frozen.
      */
     override fun handlePayload(payload: AutoFreezeJobPayload) {
-        logger.info("Handling ContestFreezeJob for contest with id {}", payload.contestId)
+        logger.info("Handling ContestFreezeJob for contest with id ${payload.contestId}")
 
         freezeLeaderboardUseCase.execute()
 

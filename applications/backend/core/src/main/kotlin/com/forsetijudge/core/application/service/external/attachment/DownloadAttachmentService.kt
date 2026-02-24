@@ -37,7 +37,7 @@ class DownloadAttachmentService(
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberIdNullable()
 
-        logger.info("Downloading attachment with id: {}", command.attachmentId)
+        logger.info("Downloading attachment with id: ${command.attachmentId}")
 
         val member =
             contextMemberId?.let {

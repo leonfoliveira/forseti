@@ -14,11 +14,11 @@ abstract class BusinessEventListener<TPayload, TBusinessEvent : BusinessEvent<TP
     open fun onApplicationEvent(event: TBusinessEvent) {
         super.onApplicationEvent(event)
 
-        logger.info("Handling business event of type: {}", event::class.java.simpleName)
+        logger.info("Handling business event of type: ${event::class.java.simpleName}")
 
         handlePayload(event.payload)
 
-        logger.info("Finished handling business event of type: {}", event::class.java.simpleName)
+        logger.info("Finished handling business event of type: ${event::class.java.simpleName}")
     }
 
     abstract fun handlePayload(payload: TPayload)

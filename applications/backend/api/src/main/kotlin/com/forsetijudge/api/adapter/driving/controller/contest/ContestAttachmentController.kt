@@ -36,7 +36,7 @@ class ContestAttachmentController(
         @RequestParam context: Attachment.Context,
         @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<AttachmentResponseDTO> {
-        logger.info("[POST] /v1/contests/{}/attachments", contestId)
+        logger.info("[POST] /v1/contests/$contestId/attachments")
         val (attachment) =
             uploadAttachmentUseCase.execute(
                 UploadAttachmentUseCase.Command(
@@ -54,7 +54,7 @@ class ContestAttachmentController(
         @PathVariable contestId: UUID,
         @PathVariable attachmentId: UUID,
     ): ResponseEntity<ByteArray> {
-        logger.info("[GET] /v1/contests/{}/attachments/{}", contestId, attachmentId)
+        logger.info("[GET] /v1/contests/$contestId/attachments/$attachmentId")
         val (attachment, bytes) =
             downloadAttachmentUseCase.execute(
                 DownloadAttachmentUseCase.Command(

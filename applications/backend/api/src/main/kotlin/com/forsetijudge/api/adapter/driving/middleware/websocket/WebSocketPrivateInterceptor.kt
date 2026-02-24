@@ -43,7 +43,7 @@ class WebSocketPrivateInterceptor(
             throw NotFoundException("Destination does not exist: $destination")
         }
 
-        logger.info("Applying private filter: {}", privateFilter.key)
+        logger.info("Applying private filter: ${privateFilter.key}")
         privateFilter.value(destination)
 
         logger.info("User is allowed to access destination")

@@ -41,7 +41,7 @@ class CreateTicketService(
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Creating ticket for contestId: {}, memberId: {}, type: {}", contextContestId, contextMemberId, command.type)
+        logger.info("Creating ticket for contestId: $contextContestId, memberId: $contextMemberId, type: ${command.type}")
 
         val contest =
             contestRepository.findById(contextContestId)
@@ -60,7 +60,7 @@ class CreateTicketService(
         ticketRepository.save(ticket)
         applicationEventPublisher.publishEvent(TicketEvent.Created(ticket))
 
-        logger.info("Ticket created successfully with id: {}", ticket.id)
+        logger.info("Ticket created successfully with id: ${ticket.id}")
         return ticket
     }
 

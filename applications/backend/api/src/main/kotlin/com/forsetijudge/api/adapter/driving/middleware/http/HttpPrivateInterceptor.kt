@@ -41,7 +41,7 @@ class HttpPrivateInterceptor : HandlerInterceptor {
         // Otherwise, check if the user has a valid session and is of an allowed member type
         val memberType = ExecutionContext.getMember().type
         if (memberType !in privateAnnotation.allowed) {
-            logger.info("Member type not allowed: {}", memberType)
+            logger.info("Member type not allowed: $memberType")
             throw ForbiddenException("Member type $memberType is not allowed to access this resource")
         }
 

@@ -20,7 +20,7 @@ class CreateSessionService(
 
     @Transactional
     override fun execute(command: CreateSessionUseCase.Command): Session {
-        logger.info("Creating session for member with id: {} and contest with id: {}", command.memberId, command.contestId)
+        logger.info("Creating session for member with id: ${command.memberId} and contest with id: ${command.contestId}")
 
         val contest =
             command.contestId?.let {
@@ -44,7 +44,7 @@ class CreateSessionService(
                 ),
             )
 
-        logger.info("Session created successfully with id: {}", session.id)
+        logger.info("Session created successfully with id: ${session.id}")
         return session
     }
 }

@@ -56,7 +56,7 @@ class CreateAnnouncementService(
         announcementRepository.save(announcement)
         applicationEventPublisher.publishEvent(AnnouncementEvent.Created(announcement))
 
-        logger.info("Announcement created successfully with id = {}", announcement.id)
+        logger.info("Announcement created successfully with id = ${announcement.id}")
         return announcement
     }
 }

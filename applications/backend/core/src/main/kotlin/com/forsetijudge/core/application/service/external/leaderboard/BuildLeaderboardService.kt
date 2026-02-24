@@ -29,7 +29,7 @@ class BuildLeaderboardService(
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Building leaderboard for contest with id: {}", contextContestId)
+        logger.info("Building leaderboard for contest with id: $contextContestId")
 
         val contest =
             contestRepository.findById(contextContestId)

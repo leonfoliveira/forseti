@@ -28,7 +28,7 @@ class SignInService(
     override fun execute(command: SignInUseCase.Command): Session {
         val contextContestId = ExecutionContext.getContestIdNullable()
 
-        logger.info("Authenticating to contest with id = {}", contextContestId)
+        logger.info("Authenticating to contest with id = $contextContestId")
 
         val contest =
             contextContestId?.let {
@@ -50,7 +50,7 @@ class SignInService(
         deleteAllSessionsByMemberInternalUseCase.execute(DeleteAllSessionsByMemberInternalUseCase.Command(member))
         val session = createSessionInternalUseCase.execute(CreateSessionInternalUseCase.Command(contest, member))
 
-        logger.info("Finished authenticating member with session id = {}", session.id)
+        logger.info("Finished authenticating member with session id = ${session.id}")
         return session
     }
 }

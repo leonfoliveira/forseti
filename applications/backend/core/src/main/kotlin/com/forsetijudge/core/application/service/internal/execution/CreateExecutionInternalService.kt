@@ -24,7 +24,7 @@ class CreateExecutionInternalService(
     }
 
     override fun execute(command: CreateExecutionInternalUseCase.Command): Execution {
-        logger.info("Creating execution for submission with id: {}", command.submission.id)
+        logger.info("Creating execution for submission with id: ${command.submission.id}")
 
         val csvContent = command.output.joinToString("\n")
         val bytes = csvContent.toByteArray()
@@ -53,7 +53,7 @@ class CreateExecutionInternalService(
         executionRepository.save(execution)
         applicationEventPublisher.publishEvent(ExecutionEvent.Created(execution))
 
-        logger.info("Created execution with id: {}", execution.id)
+        logger.info("Created execution with id: ${execution.id}")
         return execution
     }
 }

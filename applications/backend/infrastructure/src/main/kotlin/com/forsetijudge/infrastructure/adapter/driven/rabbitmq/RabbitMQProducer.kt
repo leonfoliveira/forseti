@@ -36,7 +36,7 @@ abstract class RabbitMQProducer<TPayload : Serializable>(
             )
         val jsonString = objectMapper.writeValueAsString(message)
 
-        logger.info("Sending message: {}", message)
+        logger.info("Sending message: $message")
 
         rabbitTemplate.convertAndSend(exchange, routingKey, jsonString)
     }

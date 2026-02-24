@@ -67,14 +67,14 @@ abstract class QuartzJob<TPayload : Serializable> : QuartzJobBean() {
             ),
         )
 
-        logger.info("Job id: {}, payload: {}, retries: {}", id, payloadJson, retries)
+        logger.info("Job id: $id, payload: $payload, retries: $retries")
 
         try {
-            logger.info("Handling job with id: {}", id)
+            logger.info("Handling job with id: $id")
             handlePayload(payload)
             logger.info("Finished handling job")
         } catch (ex: Exception) {
-            logger.error("Error thrown from job {}: {}", this.javaClass.simpleName, ex.message)
+            logger.error("Error thrown from job ${this.javaClass.simpleName}: ${ex.message}")
 
             retries++
             dataMap.put("retries", retries)

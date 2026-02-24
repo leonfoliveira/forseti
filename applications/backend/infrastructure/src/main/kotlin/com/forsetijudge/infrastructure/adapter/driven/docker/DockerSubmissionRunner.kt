@@ -32,10 +32,7 @@ class DockerSubmissionRunner(
     override fun run(submission: Submission): Execution {
         val problem = submission.problem
         logger.info(
-            "Running submission: {} for problem: {} with language: {}",
-            submission.id,
-            problem.id,
-            submission.language,
+            "Running submission: ${submission.id} for problem: ${problem.id} with language: ${submission.language}",
         )
 
         val tmpDir = Files.createTempDirectory("forseti_${submission.id}").toFile()

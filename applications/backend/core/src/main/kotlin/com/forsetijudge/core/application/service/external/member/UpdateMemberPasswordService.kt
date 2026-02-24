@@ -27,7 +27,7 @@ class UpdateMemberPasswordService(
     ) {
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Updating password for member with id = {}", command.memberId)
+        logger.info("Updating password for member with id = ${command.memberId}")
 
         val contextMember =
             memberRepository.findById(contextMemberId)

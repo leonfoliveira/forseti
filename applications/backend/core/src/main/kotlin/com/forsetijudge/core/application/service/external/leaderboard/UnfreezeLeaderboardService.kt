@@ -28,7 +28,7 @@ class UnfreezeLeaderboardService(
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
-        logger.info("Unfreezing leaderboard for contest with id {}", contextContestId)
+        logger.info("Unfreezing leaderboard for contest with id $contextContestId")
 
         val contest =
             contestRepository.findById(contextContestId)

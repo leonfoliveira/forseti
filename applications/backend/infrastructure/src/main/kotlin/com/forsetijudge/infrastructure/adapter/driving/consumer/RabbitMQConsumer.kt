@@ -49,14 +49,14 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
             ),
         )
 
-        logger.info("Received message: {}", jsonMessage)
+        logger.info("Received message: $jsonMessage")
 
         try {
-            logger.info("Handling message with id: {}", id)
+            logger.info("Handling message with id: $id")
             handlePayload(payload)
             logger.info("Finished handling message")
         } catch (ex: Exception) {
-            logger.error("Error thrown from consumer {}: {}", this.javaClass.simpleName, ex.message)
+            logger.error("Error thrown from consumer ${this.javaClass.simpleName}: ${ex.message}")
             throw ex
         }
     }

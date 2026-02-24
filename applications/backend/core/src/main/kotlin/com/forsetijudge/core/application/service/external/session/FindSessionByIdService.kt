@@ -17,7 +17,7 @@ class FindSessionByIdService(
 
     @Transactional(readOnly = true)
     override fun execute(command: FindSessionByIdUseCase.Command): Session {
-        logger.info("Finding session with id: {}", command.sessionId)
+        logger.info("Finding session with id: ${command.sessionId}")
 
         val session =
             sessionRepository.findById(command.sessionId)
@@ -28,7 +28,7 @@ class FindSessionByIdService(
             throw UnauthorizedException("Session with id: ${command.sessionId} has expired")
         }
 
-        logger.info("Session with id: {} found successfully", command.sessionId)
+        logger.info("Session found successfully")
         return session
     }
 }

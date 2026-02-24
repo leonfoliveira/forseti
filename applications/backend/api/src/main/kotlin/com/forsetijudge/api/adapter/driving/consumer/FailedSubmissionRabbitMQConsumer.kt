@@ -23,7 +23,7 @@ class FailedSubmissionRabbitMQConsumer(
      * @param payload The payload containing the submission ID.
      */
     override fun handlePayload(payload: SubmissionQueuePayload) {
-        logger.info("Handling failed submission with ID: {}", payload.submissionId)
+        logger.info("Handling failed submission with ID: ${payload.submissionId}")
         failSubmissionUseCase.execute(
             FailSubmissionUseCase.Command(submissionId = payload.submissionId),
         )
