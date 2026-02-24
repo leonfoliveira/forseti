@@ -8,14 +8,15 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor
 import org.springframework.messaging.support.ChannelInterceptor
 import org.springframework.messaging.support.MessageHeaderAccessor
 import org.springframework.stereotype.Component
-import java.util.UUID
 
 @Component
-class WebSocketExecutionContextInterceptor : ChannelInterceptor {
+class WebSocketAuthenticationInterceptor : ChannelInterceptor {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
-     * Fill the ExecutionContext with relevant information from the handshake context and the WebSocket message headers.
+     * Authenticate the user based on the session information extracted from the WebSocket message headers.
+     * If the session is valid, populate the ExecutionContext with the session information.
+     * If the session is invalid or missing, continue as guest (no authentication) but do not throw an error, as some WebSocket endpoints may allow guest access.
      *
      * @param message The WebSocket message.
      * @param channel The message channel.
@@ -25,23 +26,22 @@ class WebSocketExecutionContextInterceptor : ChannelInterceptor {
         message: Message<*>,
         channel: MessageChannel,
     ): Message<*>? {
-        ExecutionContext.start()
-
         logger.info("Extracting session and contestId from WebSocket message headers")
 
         val accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) ?: return message
         val handShakeContext = accessor.sessionAttributes?.get("handshake_context") as? ExecutionContext ?: return message
-        val destination = accessor.destination ?: return message
-        val contestIdFromDestination =
-            try {
-                UUID.fromString(destination.split("/")[3])
-            } catch (e: Exception) {
-                null
+        val session = handShakeContext.session
+
+        if (session != null) {
+            val contextContestId = ExecutionContext.getContestIdNullable()
+            if (contextContestId != null && contextContestId != session.contestId) {
+                logger.info("Session does not belong to the current contest. Continuing as guest.")
+                return message
             }
 
-        ExecutionContext.get().ip = handShakeContext.ip
-        ExecutionContext.get().contestId = contestIdFromDestination
-
+            ExecutionContext.authenticate(session)
+        }
+        logger.info("Finished authenticating successfully")
         return message
     }
 }

@@ -97,18 +97,22 @@ export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
 
   async function createSubmission(data: SubmissionFormType) {
+    console.debug("Creating submission with data:", data);
     createSubmissionState.start();
+
     try {
       const newSubmission = await Composition.submissionWritter.create(
         contest.id,
         SubmissionForm.toInputDTO(data),
       );
 
+      toast.success(messages.createSuccess);
       onCreate(newSubmission);
       form.reset();
       formRef.current?.reset();
-      toast.success(messages.createSuccess);
       createSubmissionState.finish();
+      console.debug("Submission created successfully:", newSubmission);
+
       onClose();
     } catch (error) {
       await createSubmissionState.fail(error, {

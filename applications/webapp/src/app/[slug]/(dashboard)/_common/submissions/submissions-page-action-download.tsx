@@ -31,8 +31,15 @@ export function SubmissionsPageActionDownload({ submission, onClose }: Props) {
   const toast = useToast();
 
   async function downloadSubmission() {
+    console.debug("Attempting to download submission with ID:", submission.id);
     try {
       await Composition.attachmentReader.download(contestId, submission.code);
+
+      console.debug(
+        "Submission downloaded successfully with ID:",
+        submission.id,
+      );
+
       onClose();
     } catch (error) {
       await errorHandler.handle(error as Error, {

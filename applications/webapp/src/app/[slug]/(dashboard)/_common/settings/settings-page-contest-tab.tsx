@@ -221,14 +221,17 @@ export function SettingsPageContestTab({
       ? messages.unfreezeError
       : messages.freezeError;
 
+    console.debug("Toggling freeze. Current state:", leaderboard.isFrozen);
     freezeToggleState.start();
+
     try {
       const updatedContest = await method(contest.id);
 
-      onToggleFreeze(updatedContest);
       toast.success(successMessage);
+      onToggleFreeze(updatedContest);
       freezeConfirmationDialog.close();
       freezeToggleState.finish();
+      console.debug("Freeze toggled successfully");
     } catch (error) {
       await freezeToggleState.fail(error, {
         default: () => toast.error(errorMessage),
@@ -246,9 +249,13 @@ export function SettingsPageContestTab({
     const errorMessage =
       mode === "start" ? messages.forceStartError : messages.forceEndError;
 
+    console.debug(`Forcing contest ${mode}. Current status:`, contestStatus);
     forceState.start();
+
     try {
       const newContestMetadata = await method(contest.id);
+
+      toast.success(successMessage);
       dispatch(
         adminDashboardSlice.actions.setContest({
           ...contest,
@@ -256,9 +263,10 @@ export function SettingsPageContestTab({
         }),
       );
       dispatch(contestSlice.actions.set(newContestMetadata));
-      toast.success(successMessage);
       forceConfirmationDialog.close();
       forceState.finish();
+
+      console.debug(`Contest force ${mode}ed successfully`);
     } catch (error) {
       await forceState.fail(error, {
         default: () => toast.error(errorMessage),

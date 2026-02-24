@@ -62,18 +62,22 @@ export function SubmissionsPageActionRerun({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   async function resubmitSubmission(submissionId: string) {
+    console.debug("Resubmitting submission with ID:", submissionId);
     resubmitState.start();
+
     try {
       await Composition.submissionWritter.rerun(contestId, submissionId);
 
+      toast.success(messages.resubmitSuccess);
       onRerun({
         ...submission,
         status: SubmissionStatus.JUDGING,
         answer: SubmissionAnswer.NO_ANSWER,
       });
-      toast.success(messages.resubmitSuccess);
       setIsDialogOpen(false);
       resubmitState.finish();
+      console.debug("Submission resubmitted successfully");
+
       onClose();
     } catch (error) {
       await resubmitState.fail(error, {

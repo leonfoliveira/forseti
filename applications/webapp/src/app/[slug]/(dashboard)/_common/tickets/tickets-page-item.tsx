@@ -65,13 +65,16 @@ export function TicketsPageItem({ ticket, canEdit, onEdit }: Props) {
   const toast = useToast();
 
   async function printAttachment(attachmentId: string) {
+    console.debug("Printing attachment with ID:", attachmentId);
     printAttachmentState.start();
+
     try {
       await Composition.attachmentReader.print(contestId, {
         attachmentId,
       } as unknown as AttachmentResponseDTO);
 
       printAttachmentState.finish();
+      console.debug("Attachment printed successfully:", attachmentId);
     } catch (error) {
       printAttachmentState.fail(error, {
         default: () => toast.error(messages.printError),
@@ -80,7 +83,9 @@ export function TicketsPageItem({ ticket, canEdit, onEdit }: Props) {
   }
 
   async function updateStatus(newStatus: TicketStatus) {
+    console.debug("Updating ticket status to:", newStatus);
     updateStatusState.start();
+
     try {
       const updatedTicket = await Composition.ticketWritter.updateStatus(
         contestId,
@@ -90,6 +95,7 @@ export function TicketsPageItem({ ticket, canEdit, onEdit }: Props) {
 
       onEdit?.(updatedTicket);
       updateStatusState.finish();
+      console.debug("Ticket status updated successfully:", updatedTicket);
     } catch (error) {
       updateStatusState.fail(error, {
         default: () => toast.error(messages.updateStatusError),

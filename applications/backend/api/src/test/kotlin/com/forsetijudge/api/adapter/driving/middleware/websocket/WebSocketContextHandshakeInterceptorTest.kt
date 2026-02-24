@@ -11,7 +11,7 @@ import org.springframework.web.socket.WebSocketHandler
 
 class WebSocketContextHandshakeInterceptorTest :
     FunSpec({
-        val sut = WebSocketContextHandshakeInterceptor()
+        val sut = WebSocketHandshakeExecutionContextInterceptor()
 
         test("beforeHandshake should store context in attributes") {
             val mockRequest = mockk<ServerHttpRequest>(relaxed = true)
@@ -24,7 +24,7 @@ class WebSocketContextHandshakeInterceptorTest :
             val result = sut.beforeHandshake(mockRequest, mockResponse, mockWsHandler, attributes)
 
             result shouldBe true
-            attributes.containsKey("context") shouldBe true
-            attributes["context"] shouldBe ExecutionContext.get()
+            attributes.containsKey("handshake_context") shouldBe true
+            attributes["handshake_context"] shouldBe ExecutionContext.get()
         }
     })

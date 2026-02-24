@@ -98,17 +98,21 @@ export function ClarificationsPageForm({
   });
 
   async function createClarification(data: ClarificationFormType) {
+    console.debug("Creating clarification with data:", data);
     createClarificationState.start();
+
     try {
       const newClarification = await Composition.clarificationWritter.create(
         contestId,
         ClarificationForm.toInputDTO(data),
       );
 
+      toast.success(messages.createSuccess);
       onCreate(newClarification);
+      console.debug("Clarification created successfully:", newClarification);
       createClarificationState.finish();
       form.reset();
-      toast.success(messages.createSuccess);
+
       onClose();
     } catch (error) {
       await createClarificationState.fail(error, {

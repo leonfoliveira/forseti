@@ -16,6 +16,11 @@ class HttpPrivateInterceptor : HandlerInterceptor {
 
     /**
      * Checks if the incoming request has access to the destination based on the @Private annotation.
+     *
+     * @param request The HTTP request.
+     * @param response The HTTP response.
+     * @param handler The handler for the request, which can be a HandlerMethod.
+     * @return true to continue processing the request, false to abort.
      */
     override fun preHandle(
         request: HttpServletRequest,

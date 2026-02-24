@@ -136,10 +136,17 @@ export function ProblemsPage({ problems, leaderboardRow }: Props) {
   }
 
   async function downloadDescription(problem: ProblemResponseDTO) {
+    console.debug("Downloading description for problem:", problem.id);
+
     try {
       await Composition.attachmentReader.download(
         contestId,
         problem.description,
+      );
+
+      console.debug(
+        "Problem description downloaded successfully for problem:",
+        problem.id,
       );
     } catch (error) {
       await errorHandler.handle(error as Error, {

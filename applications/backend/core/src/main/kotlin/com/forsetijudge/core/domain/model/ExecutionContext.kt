@@ -10,11 +10,11 @@ import java.time.OffsetDateTime
 import java.util.UUID
 
 data class ExecutionContext(
-    val ip: String? = null,
-    val traceId: String,
+    var ip: String? = null,
+    var traceId: String,
     var contestId: UUID? = null,
     var session: Session? = null,
-    val startedAt: OffsetDateTime = OffsetDateTime.now(),
+    var startedAt: OffsetDateTime = OffsetDateTime.now(),
 ) {
     companion object {
         private var instance: ThreadLocal<ExecutionContext> = ThreadLocal()

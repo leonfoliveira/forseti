@@ -85,7 +85,9 @@ export function SettingsPageMembersTab({ form, isDisabled }: Props) {
   });
 
   async function loadCsv(file: File) {
+    console.debug("Starting to load members from CSV file:", file.name);
     loadCsvState.start();
+
     try {
       const members = await MemberLoader.loadFromCsv(file);
       replace(members);
@@ -93,6 +95,7 @@ export function SettingsPageMembersTab({ form, isDisabled }: Props) {
         memberFileInputRef.current.value = "";
       }
       loadCsvState.finish();
+      console.debug("Members loaded successfully from CSV file:", members);
     } catch (error) {
       await loadCsvState.fail(error, {
         default: () => toast.error(messages.loadCsvError),

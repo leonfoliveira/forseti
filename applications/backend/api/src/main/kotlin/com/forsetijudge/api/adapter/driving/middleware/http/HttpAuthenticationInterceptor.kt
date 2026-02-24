@@ -27,7 +27,14 @@ class HttpAuthenticationInterceptor(
     }
 
     /**
-     * Fill the RequestContext with relevant information from the HTTP request.
+     * Authenticate the user based on the session_id cookie.
+     * If the session is valid, populate the RequestContext with the session information.
+     * If the session is invalid or missing, continue as guest (no authentication) but do not throw an error, as some endpoints may allow guest access.
+     *
+     * @param request The HTTP request.
+     * @param response The HTTP response.
+     * @param handler The handler for the request.
+     * @return true to continue processing the request, false to abort.
      */
     override fun preHandle(
         request: HttpServletRequest,
@@ -36,30 +43,15 @@ class HttpAuthenticationInterceptor(
     ): Boolean {
         logger.info("Started HttpAuthenticationInterceptor")
 
-        authenticate(request)
-
-        logger.info("Finished HttpAuthenticationInterceptor")
-        return true
-    }
-
-    /**
-     * Fetch the session from the database using the session ID from the cookie.
-     *
-     * @param request The HTTP request containing the cookies and headers for authentication.
-     * @return The session if found and valid, null otherwise.
-     * @throw UnauthorizedException if the session is not found, expired, or does not belong to the current contest.
-     * @throws ForbiddenException if the CSRF token is missing or does not match the session's CSRF token for non-GET requests that are not in the allow list.
-     */
-    private fun authenticate(request: HttpServletRequest) {
         val sessionId = request.cookies?.find { it.name == "session_id" }?.value
 
         if (sessionId == null) {
             logger.info("No session_id cookie. Continuing as guest.")
-            return
+            return true
         }
         if (sessionId.isBlank()) {
             logger.info("Blank session_id cookie. Continuing as guest.")
-            return
+            return true
         }
 
         val sessionUuid =
@@ -78,7 +70,7 @@ class HttpAuthenticationInterceptor(
         val contextContextId = ExecutionContext.getContestIdNullable()
         if (contextContextId != null && contextContextId != session.contestId) {
             logger.info("Session does not belong to the current contest. Continuing as guest.")
-            return
+            return true
         }
 
         val isPathInCsrfAllowList = csrfAllowList.any { it.matches(request.requestURI) }
@@ -92,5 +84,6 @@ class HttpAuthenticationInterceptor(
 
         ExecutionContext.authenticate(session)
         logger.info("Finished authenticating successfully")
+        return true
     }
 }

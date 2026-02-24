@@ -128,7 +128,9 @@ export function ClarificationsPageCard({
     clarification.children.length > 0 ? clarification.children[0] : undefined;
 
   async function answerClarification(data: ClarificationAnswerFormType) {
+    console.debug("Answering clarification with data:", data);
     answerClarificationState.start();
+
     try {
       const newClarification = await Composition.clarificationWritter.create(
         contestId,
@@ -138,10 +140,11 @@ export function ClarificationsPageCard({
         },
       );
 
+      toast.success(messages.createSuccess);
       onAnswer?.(newClarification);
       answerClarificationState.finish();
       form.reset();
-      toast.success(messages.createSuccess);
+      console.debug("Clarification answered successfully:", newClarification);
     } catch (error) {
       await answerClarificationState.fail(error, {
         default: () => toast.error(messages.createError),
@@ -150,6 +153,7 @@ export function ClarificationsPageCard({
   }
 
   async function deleteClarification() {
+    console.debug("Deleting clarification with id:", clarification.id);
     deleteClarificationState.start();
     try {
       await Composition.clarificationWritter.deleteById(
@@ -157,10 +161,11 @@ export function ClarificationsPageCard({
         clarification.id,
       );
 
+      toast.success(messages.deleteSuccess);
       onDelete?.(clarification.id);
       deleteClarificationState.finish();
       setIsDeleteDialogOpen(false);
-      toast.success(messages.deleteSuccess);
+      console.debug("Clarification deleted successfully:", clarification.id);
     } catch (error) {
       await deleteClarificationState.fail(error, {
         default: () => toast.error(messages.deleteError),

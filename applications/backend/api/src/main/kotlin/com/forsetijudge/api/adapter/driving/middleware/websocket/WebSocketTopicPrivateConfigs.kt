@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
-class WebSocketTopicConfigs(
+class WebSocketTopicPrivateConfigs(
     private val contestAuthorizerUseCase: ContestAuthorizerUseCase,
 ) {
     /**

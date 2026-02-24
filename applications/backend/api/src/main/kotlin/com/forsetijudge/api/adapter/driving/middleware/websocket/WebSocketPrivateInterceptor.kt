@@ -1,7 +1,6 @@
 package com.forsetijudge.api.adapter.driving.middleware.websocket
 
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.domain.model.ExecutionContext
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class WebSocketPrivateInterceptor(
-    val webSocketTopicConfigs: WebSocketTopicConfigs,
+    val webSocketTopicPrivateConfigs: WebSocketTopicPrivateConfigs,
 ) : ChannelInterceptor {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -35,7 +34,7 @@ class WebSocketPrivateInterceptor(
         logger.info("Started PrivateWebSocketInterceptor for destination: $destination")
 
         val privateFilter =
-            webSocketTopicConfigs.privateFilters.entries
+            webSocketTopicPrivateConfigs.privateFilters.entries
                 .find {
                     it.key.matches(destination)
                 }
@@ -48,7 +47,7 @@ class WebSocketPrivateInterceptor(
         try {
             privateFilter.value(destination)
         } catch (ex: Exception) {
-            logger.warn("Access denied to destination: ${ex.message}")
+            logger.info("Could not authorize: ${ex.message}")
             throw ex
         }
 

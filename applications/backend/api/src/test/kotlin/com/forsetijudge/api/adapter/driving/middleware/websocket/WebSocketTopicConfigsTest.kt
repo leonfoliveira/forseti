@@ -23,7 +23,7 @@ class WebSocketTopicConfigsTest :
         val contestAuthorizerUseCase = mockk<ContestAuthorizerUseCase>(relaxed = true)
 
         val sut =
-            WebSocketTopicConfigs(
+            WebSocketTopicPrivateConfigs(
                 contestAuthorizerUseCase = contestAuthorizerUseCase,
             )
 

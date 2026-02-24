@@ -9,7 +9,7 @@ import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.server.HandshakeInterceptor
 
 @Component
-class WebSocketContextHandshakeInterceptor : HandshakeInterceptor {
+class WebSocketHandshakeExecutionContextInterceptor : HandshakeInterceptor {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -21,10 +21,8 @@ class WebSocketContextHandshakeInterceptor : HandshakeInterceptor {
         wsHandler: WebSocketHandler,
         attributes: MutableMap<String, Any>,
     ): Boolean {
-        val context = ExecutionContext.get()
-        logger.info("Storing context in WebSocket attributes: ${context}")
-        attributes["context"] = context
-        attributes["trace_id"] = context.traceId
+        logger.info("Storing handshake context in WebSocket attributes")
+        attributes["handshake_context"] = ExecutionContext.get()
         return true
     }
 
@@ -33,7 +31,5 @@ class WebSocketContextHandshakeInterceptor : HandshakeInterceptor {
         response: ServerHttpResponse,
         wsHandler: WebSocketHandler,
         exception: Exception?,
-    ) {
-        // No-op
-    }
+    ) {}
 }

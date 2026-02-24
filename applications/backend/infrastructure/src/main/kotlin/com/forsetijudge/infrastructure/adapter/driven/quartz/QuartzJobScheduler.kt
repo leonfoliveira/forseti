@@ -37,7 +37,7 @@ abstract class QuartzJobScheduler<TPayload : Serializable>(
         payload: TPayload,
         at: OffsetDateTime,
     ) {
-        logger.info("Scheduling a job to run at ${at}")
+        logger.info("Scheduling a job to run at $at")
 
         val context = ExecutionContext.get()
         val message =

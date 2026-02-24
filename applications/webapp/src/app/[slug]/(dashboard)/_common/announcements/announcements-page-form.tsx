@@ -75,18 +75,22 @@ export function AnnouncementsPageForm({ contestId, onCreate, onClose }: Props) {
   });
 
   async function createAnnouncement(data: AnnouncementFormType) {
+    console.debug("Creating announcement with data:", data);
     createAnnouncementState.start();
+
     try {
       const newAnnouncement = await Composition.announcementWritter.create(
         contestId,
         AnnouncementForm.toInputDTO(data),
       );
 
-      onCreate(newAnnouncement);
       toast.success(messages.createSuccess);
-      createAnnouncementState.finish();
-      onClose();
+      onCreate(newAnnouncement);
       form.reset();
+      createAnnouncementState.finish();
+      console.debug("Announcement created successfully:", newAnnouncement);
+
+      onClose();
     } catch (error) {
       await createAnnouncementState.fail(error, {
         default: () => toast.error(messages.createError),

@@ -83,7 +83,9 @@ export function SubmissionsPageActionJudge({
   });
 
   async function judgeSubmission(data: SubmissionJudgeFormType) {
+    console.debug("Judging submission with data:", data);
     judgeState.start();
+
     try {
       await Composition.submissionWritter.updateAnswer(
         contestId,
@@ -91,11 +93,13 @@ export function SubmissionsPageActionJudge({
         data.answer,
       );
 
-      onJudge({ ...submission, answer: data.answer });
       toast.success(messages.judgeSuccess);
+      onJudge({ ...submission, answer: data.answer });
       judgeForm.reset();
       setIsDialogOpen(false);
       judgeState.finish();
+      console.debug("Submission judged successfully");
+
       onClose();
     } catch (error) {
       await judgeState.fail(error, {

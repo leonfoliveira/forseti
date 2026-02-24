@@ -21,9 +21,9 @@ import org.springframework.messaging.support.MessageHeaderAccessor
 
 class WebSocketPrivateInterceptorTest :
     FunSpec({
-        val webSocketTopicConfigs = mockk<WebSocketTopicConfigs>(relaxed = true)
+        val webSocketTopicPrivateConfigs = mockk<WebSocketTopicPrivateConfigs>(relaxed = true)
 
-        val sut = WebSocketPrivateInterceptor(webSocketTopicConfigs)
+        val sut = WebSocketPrivateInterceptor(webSocketTopicPrivateConfigs)
 
         beforeEach {
             clearAllMocks()
@@ -87,7 +87,7 @@ class WebSocketPrivateInterceptorTest :
             ExecutionContext.authenticate(
                 SessionMockBuilder.build(member = MemberMockBuilder.build(type = Member.Type.CONTESTANT), contest = null),
             )
-            every { webSocketTopicConfigs.privateFilters } returns
+            every { webSocketTopicPrivateConfigs.privateFilters } returns
                 mapOf(
                     Regex("/topic/contests/[a-fA-F0-9-]+/submissions:with-code-and-execution") to { destination: String ->
                         throw ForbiddenException()
@@ -106,7 +106,7 @@ class WebSocketPrivateInterceptorTest :
             every { MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor::class.java) } returns accessor
             every { accessor.destination } returns "/topic/contests/1/submissions:with-code-and-execution"
             every { accessor.command } returns StompCommand.SUBSCRIBE
-            every { webSocketTopicConfigs.privateFilters } returns
+            every { webSocketTopicPrivateConfigs.privateFilters } returns
                 mapOf(
                     Regex("/topic/contests/[a-fA-F0-9-]+/submissions:with-code-and-execution") to { _: String -> Unit },
                 )

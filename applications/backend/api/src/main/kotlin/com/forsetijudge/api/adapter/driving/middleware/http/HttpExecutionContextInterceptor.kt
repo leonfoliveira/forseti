@@ -14,6 +14,14 @@ class HttpExecutionContextInterceptor : HandlerInterceptor {
 
     /**
      * Fill the RequestContext with relevant information from the HTTP request.
+     *
+     * This interceptor should be executed before the HttpAuthenticationInterceptor,
+     * so that the ExecutionContext is populated with the IP address and contestId before any authentication logic is applied.
+     *
+     * @param request The HTTP request.
+     * @param response The HTTP response.
+     * @param handler The handler for the request.
+     * @return true to continue processing the request, false to abort.
      */
     override fun preHandle(
         request: HttpServletRequest,

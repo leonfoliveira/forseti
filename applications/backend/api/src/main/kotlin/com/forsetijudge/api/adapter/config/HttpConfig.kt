@@ -13,13 +13,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 class HttpConfig(
     @Value("\${server.cors.allowed-origins}")
-    val allowedOrigins: String,
+    private val allowedOrigins: String,
     private val httpExecutionContextInterceptor: HttpExecutionContextInterceptor,
     private val httpAuthenticationInterceptor: HttpAuthenticationInterceptor,
     private val httpPrivateInterceptor: HttpPrivateInterceptor,
 ) : WebMvcConfigurer {
     /**
      * Configure CORS to allow requests from the frontend application.
+     *
+     * @param registry the CORS registry to configure
      */
     override fun addCorsMappings(registry: CorsRegistry) {
         registry
@@ -30,6 +32,11 @@ class HttpConfig(
             .allowCredentials(true)
     }
 
+    /**
+     * Add interceptors to the registry in the order of execution:
+     *
+     * @param registry the interceptor registry to configure
+     */
     override fun addInterceptors(registry: InterceptorRegistry) {
         // Interceptor to extract execution context (ip, traceId, contestId)
         registry.addInterceptor(httpExecutionContextInterceptor).order(1)

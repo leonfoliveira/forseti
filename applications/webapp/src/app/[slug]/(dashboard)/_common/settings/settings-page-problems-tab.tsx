@@ -114,8 +114,12 @@ export function SettingsPageProblemsTab({ contest, form, isDisabled }: Props) {
   });
 
   async function downloadAttachment(attachment: AttachmentResponseDTO) {
+    console.debug("Starting to download attachment:", attachment.filename);
+
     try {
       await Composition.attachmentReader.download(contest.id, attachment);
+
+      console.debug("Attachment downloaded successfully:", attachment.filename);
     } catch (error) {
       await errorHandler.handle(error as Error, {
         default: () => toast.error(messages.downloadAttachmentError),

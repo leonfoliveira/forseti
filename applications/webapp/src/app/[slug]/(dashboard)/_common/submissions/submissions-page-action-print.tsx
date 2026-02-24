@@ -55,7 +55,9 @@ export function SubmissionsPageActionPrint({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   async function requestPrint() {
+    console.debug("Requesting print for submission:", submission);
     requestPrintState.start();
+
     try {
       const newTicket = await Composition.ticketWritter.create(contestId, {
         type: TicketType.SUBMISSION_PRINT,
@@ -65,9 +67,11 @@ export function SubmissionsPageActionPrint({
         },
       });
 
-      onRequest(newTicket);
       toast.success(messages.printSuccess);
+      onRequest(newTicket);
       requestPrintState.finish();
+      console.debug("Print requested successfully:", newTicket);
+
       onClose();
     } catch (error) {
       await requestPrintState.fail(error as Error, {

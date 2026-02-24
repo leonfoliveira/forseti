@@ -87,18 +87,22 @@ export function TicketsPageForm({ onCreate, onClose }: Props) {
   });
 
   async function createTicket(data: TicketFormType) {
+    console.debug("Creating ticket with data:", data);
     createTicketState.start();
+
     try {
       const newTicket = await Composition.ticketWritter.create(
         contestId,
         TicketForm.toRequestDTO(data),
       );
 
+      toast.success(messages.createSuccess);
       onCreate(newTicket);
       form.reset();
       formRef.current?.reset();
-      toast.success(messages.createSuccess);
       createTicketState.finish();
+      console.debug("Ticket created successfully:", newTicket);
+
       onClose();
     } catch (error) {
       await createTicketState.fail(error, {
