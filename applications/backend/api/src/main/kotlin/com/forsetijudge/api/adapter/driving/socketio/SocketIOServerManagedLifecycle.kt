@@ -23,14 +23,14 @@ class SocketIOServerManagedLifecycle(
             server.start()
             isRunning = true
             logger.info("Netty-SocketIO server started on port ${server.configuration.port} (ws)")
-        } catch (e: Exception) {
-            logger.error("Failed to start Socket.IO server", e)
+        } catch (ex: Exception) {
+            logger.error("Failed to start Socket.IO server", ex)
+            throw ex
         }
     }
 
     /**
      * Stops the Socket.IO server when the application context is closed.
-     * This method is called by Spring during the shutdown phase.
      */
     override fun stop() {
         logger.info("Stopping Netty-SocketIO server")
