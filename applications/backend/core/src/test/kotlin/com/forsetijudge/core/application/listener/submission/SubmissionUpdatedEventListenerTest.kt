@@ -5,8 +5,10 @@ import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.model.LeaderboardMockBuilder
-import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
-import com.forsetijudge.core.port.driven.producer.payload.WebSocketFanoutPayload
+import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
+import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
+import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
+import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
@@ -30,7 +32,7 @@ class SubmissionUpdatedEventListenerTest(
     @MockkBean(relaxed = true)
     private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
     @MockkBean(relaxed = true)
-    private val webSocketFanoutProducer: WebSocketFanoutProducer,
+    private val broadcastProducer: BroadcastProducer,
     private val sut: SubmissionUpdatedEventListener,
 ) : FunSpec({
         beforeEach {
@@ -48,47 +50,115 @@ class SubmissionUpdatedEventListenerTest(
                         problemId = submission.problem.id,
                     ),
                 )
-            } returns Pair(leaderboardCell, submission.memberId)
+            } returns Pair(leaderboardCell, submission.member.id)
 
             sut.onApplicationEvent(event)
 
             verify {
-                webSocketFanoutProducer.produce(
-                    WebSocketFanoutPayload(
-                        "/topic/contests/${submission.contest.id}}/submissions",
-                        submission.toResponseBodyDTO(),
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardAdmin(submission.contest.id),
+                        event = BroadcastEvent.SUBMISSION_UPDATED,
+                        body = submission.toWithCodeAndExecutionResponseBodyDTO(),
                     ),
                 )
             }
             verify {
-                webSocketFanoutProducer.produce(
-                    WebSocketFanoutPayload(
-                        "/topic/contests/${submission.contest.id}/submissions:with-code-and-execution",
-                        submission.toWithCodeAndExecutionResponseBodyDTO(),
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardJudge(submission.contest.id),
+                        event = BroadcastEvent.SUBMISSION_UPDATED,
+                        body = submission.toResponseBodyDTO(),
                     ),
                 )
             }
             verify {
-                webSocketFanoutProducer.produce(
-                    WebSocketFanoutPayload(
-                        "/topic/contests/${submission.contest.id}/members/${submission.member.id}/submissions:with-code",
-                        submission.toWithCodeResponseBodyDTO(),
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsMembers(submission.contest.id, submission.member.id),
+                        event = BroadcastEvent.SUBMISSION_UPDATED,
+                        body = submission.toWithCodeResponseBodyDTO(),
                     ),
                 )
             }
             verify {
-                buildLeaderboardCellUseCase.execute(
-                    BuildLeaderboardCellUseCase.Command(
-                        memberId = submission.member.id,
-                        problemId = submission.problem.id,
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardContestant(submission.contest.id),
+                        event = BroadcastEvent.SUBMISSION_UPDATED,
+                        body = submission.toResponseBodyDTO(),
                     ),
                 )
             }
             verify {
-                webSocketFanoutProducer.produce(
-                    WebSocketFanoutPayload(
-                        "/topic/contests/${submission.contest.id}/leaderboard:cell",
-                        leaderboardCell.toResponseBodyDTO(submission.member.id),
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardGuest(submission.contest.id),
+                        event = BroadcastEvent.SUBMISSION_UPDATED,
+                        body = submission.toResponseBodyDTO(),
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardStaff(submission.contest.id),
+                        event = BroadcastEvent.SUBMISSION_UPDATED,
+                        body = submission.toResponseBodyDTO(),
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsMembers(submission.contest.id, submission.member.id),
+                        event = BroadcastEvent.SUBMISSION_UPDATED,
+                        body = submission.toWithCodeResponseBodyDTO(),
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardAdmin(submission.contest.id),
+                        event = BroadcastEvent.LEADERBOARD_UPDATED,
+                        body = leaderboardCell.toResponseBodyDTO(submission.member.id),
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardContestant(submission.contest.id),
+                        event = BroadcastEvent.LEADERBOARD_UPDATED,
+                        body = leaderboardCell.toResponseBodyDTO(submission.member.id),
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardGuest(submission.contest.id),
+                        event = BroadcastEvent.LEADERBOARD_UPDATED,
+                        body = leaderboardCell.toResponseBodyDTO(submission.member.id),
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardJudge(submission.contest.id),
+                        event = BroadcastEvent.LEADERBOARD_UPDATED,
+                        body = leaderboardCell.toResponseBodyDTO(submission.member.id),
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardStaff(submission.contest.id),
+                        event = BroadcastEvent.LEADERBOARD_UPDATED,
+                        body = leaderboardCell.toResponseBodyDTO(submission.member.id),
                     ),
                 )
             }
@@ -109,24 +179,79 @@ class SubmissionUpdatedEventListenerTest(
                         problemId = submission.problem.id,
                     ),
                 )
-            } returns Pair(leaderboardCell, submission.memberId)
+            } returns Pair(leaderboardCell, submission.member.id)
             val event = SubmissionEvent.Updated(submission)
 
             sut.onApplicationEvent(event)
-
             verify(exactly = 0) {
-                webSocketFanoutProducer.produce(
-                    WebSocketFanoutPayload(
-                        "/topic/contests/${submission.contest.id}}/submissions",
-                        submission.toResponseBodyDTO(),
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardContestant(submission.contest.id),
+                        event = BroadcastEvent.SUBMISSION_UPDATED,
+                        body = submission.toResponseBodyDTO(),
                     ),
                 )
             }
             verify(exactly = 0) {
-                webSocketFanoutProducer.produce(
-                    WebSocketFanoutPayload(
-                        "/topic/contests/${submission.contest.id}/leaderboard:cell",
-                        leaderboardCell.toResponseBodyDTO(submission.member.id),
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardGuest(submission.contest.id),
+                        event = BroadcastEvent.SUBMISSION_UPDATED,
+                        body = submission.toResponseBodyDTO(),
+                    ),
+                )
+            }
+            verify(exactly = 0) {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardStaff(submission.contest.id),
+                        event = BroadcastEvent.SUBMISSION_UPDATED,
+                        body = submission.toResponseBodyDTO(),
+                    ),
+                )
+            }
+            verify(exactly = 0) {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardAdmin(submission.contest.id),
+                        event = BroadcastEvent.LEADERBOARD_UPDATED,
+                        body = leaderboardCell.toResponseBodyDTO(submission.member.id),
+                    ),
+                )
+            }
+            verify(exactly = 0) {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardContestant(submission.contest.id),
+                        event = BroadcastEvent.LEADERBOARD_UPDATED,
+                        body = leaderboardCell.toResponseBodyDTO(submission.member.id),
+                    ),
+                )
+            }
+            verify(exactly = 0) {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardGuest(submission.contest.id),
+                        event = BroadcastEvent.LEADERBOARD_UPDATED,
+                        body = leaderboardCell.toResponseBodyDTO(submission.member.id),
+                    ),
+                )
+            }
+            verify(exactly = 0) {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardJudge(submission.contest.id),
+                        event = BroadcastEvent.LEADERBOARD_UPDATED,
+                        body = leaderboardCell.toResponseBodyDTO(submission.member.id),
+                    ),
+                )
+            }
+            verify(exactly = 0) {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardStaff(submission.contest.id),
+                        event = BroadcastEvent.LEADERBOARD_UPDATED,
+                        body = leaderboardCell.toResponseBodyDTO(submission.member.id),
                     ),
                 )
             }

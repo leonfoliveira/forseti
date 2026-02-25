@@ -1,7 +1,7 @@
 package com.forsetijudge.infrastructure.adapter.driven.rabbitmq
 
-import com.forsetijudge.core.port.driven.producer.SubmissionQueueProducer
-import com.forsetijudge.core.port.driven.producer.payload.SubmissionQueuePayload
+import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
+import com.forsetijudge.core.port.driven.queue.payload.SubmissionQueuePayload
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 

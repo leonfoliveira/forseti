@@ -20,6 +20,7 @@ COPY --from=builder /app/opentelemetry-javaagent.jar opentelemetry-javaagent.jar
 COPY ./entrypoint.sh entrypoint.sh
 
 EXPOSE 8080
+EXPOSE 8081
 
 RUN chmod +x ./entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]

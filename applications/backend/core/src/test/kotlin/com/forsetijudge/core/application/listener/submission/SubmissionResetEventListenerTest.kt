@@ -4,8 +4,8 @@ import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.event.SubmissionEvent
-import com.forsetijudge.core.port.driven.producer.SubmissionQueueProducer
-import com.forsetijudge.core.port.driven.producer.payload.SubmissionQueuePayload
+import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
+import com.forsetijudge.core.port.driven.queue.payload.SubmissionQueuePayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec

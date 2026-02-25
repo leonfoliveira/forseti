@@ -3,7 +3,7 @@ package com.forsetijudge.autojudge.adapter.driving.consumer
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
-import com.forsetijudge.core.port.driven.producer.payload.SubmissionQueuePayload
+import com.forsetijudge.core.port.driven.queue.payload.SubmissionQueuePayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.submission.AutoJudgeSubmissionUseCase
 import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage

@@ -77,17 +77,18 @@ class UpdateTicketStatusServiceTest :
         test("should update ticket status successfully") {
             val ticket = TicketMockBuilder.build<Serializable>()
             val staff = MemberMockBuilder.build(contest = ticket.contest, type = Member.Type.STAFF)
-            every { ticketRepository.findByIdAndContestId(command.ticketId, contextContestId) } returns ticket
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns staff
-            every { ticketRepository.save(any()) } returnsArgument 0
             val command =
                 UpdateTicketStatusUseCase.Command(
                     ticketId = IdGenerator.getUUID(),
                     status = Ticket.Status.REJECTED,
                 )
+            every { ticketRepository.findByIdAndContestId(command.ticketId, contextContestId) } returns ticket
+            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns staff
+            every { ticketRepository.save(any()) } returnsArgument 0
 
             val result = sut.execute(command)
 
+            result shouldBe ticket
             result.staff shouldBe staff
             result.status shouldBe command.status
             verify { ticketRepository.save(result) }

@@ -1,0 +1,20 @@
+meta {
+  name: listener2
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_url}}/ws
+  body: json
+  auth: inherit
+}
+
+body:json {
+  ["CONNECT\naccept-version:1.1,1.2\nheart-beat:10000,10000\n\n\u0000"]
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

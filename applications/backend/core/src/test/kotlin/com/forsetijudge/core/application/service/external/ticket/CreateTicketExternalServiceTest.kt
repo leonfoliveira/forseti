@@ -8,7 +8,6 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.entity.Ticket
-import com.forsetijudge.core.domain.entity.ticket.SubmissionPrintTicket
 import com.forsetijudge.core.domain.entity.ticket.TechnicalSupportTicket
 import com.forsetijudge.core.domain.event.TicketEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
@@ -176,9 +175,9 @@ class CreateTicketExternalServiceTest :
                 result.member shouldBe member
                 result.type shouldBe Ticket.Type.SUBMISSION_PRINT
                 result.properties shouldBe
-                    Ticket.Companion.getRawProperties(
-                        objectMapper,
-                        objectMapper.convertValue(command.properties, SubmissionPrintTicket.Properties::class.java),
+                    mapOf(
+                        "submissionId" to submissionId.toString(),
+                        "attachmentId" to attachmentId.toString(),
                     )
                 verify { ticketRepository.save(result) }
                 verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.payload == result }) }

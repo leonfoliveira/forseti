@@ -85,6 +85,6 @@ class BuildStaffDashboardServiceTest :
             dashboard.clarifications shouldBe contest.clarifications
             dashboard.announcements shouldBe contest.announcements
             dashboard.tickets shouldBe contest.tickets
-            dashboard.memberTickets shouldBe contest.tickets.filter { it.memberId == memberId }
+            dashboard.memberTickets shouldBe contest.tickets.filter { it.member.id == memberId }
         }
     })

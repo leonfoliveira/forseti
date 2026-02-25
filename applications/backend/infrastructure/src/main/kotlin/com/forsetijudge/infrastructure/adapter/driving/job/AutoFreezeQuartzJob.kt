@@ -1,6 +1,6 @@
 package com.forsetijudge.infrastructure.adapter.driving.job
 
-import com.forsetijudge.core.port.driven.scheduler.payload.AutoFreezeJobPayload
+import com.forsetijudge.core.port.driven.job.payload.AutoFreezeJobPayload
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.FreezeLeaderboardUseCase
 import org.springframework.stereotype.Component
 

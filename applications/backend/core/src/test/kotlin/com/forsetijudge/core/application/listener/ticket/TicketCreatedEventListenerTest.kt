@@ -2,8 +2,10 @@ package com.forsetijudge.core.application.listener.ticket
 
 import com.forsetijudge.core.domain.entity.TicketMockBuilder
 import com.forsetijudge.core.domain.event.TicketEvent
-import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
-import com.forsetijudge.core.port.driven.producer.payload.WebSocketFanoutPayload
+import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
+import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
+import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
+import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
@@ -20,7 +22,7 @@ class TicketCreatedEventListenerTest(
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
-    private val webSocketFanoutProducer: WebSocketFanoutProducer,
+    private val broadcastProducer: BroadcastProducer,
     private val sut: TicketCreatedEventListener,
 ) : FunSpec({
         beforeEach {
@@ -34,18 +36,20 @@ class TicketCreatedEventListenerTest(
             sut.onApplicationEvent(event)
 
             verify {
-                webSocketFanoutProducer.produce(
-                    WebSocketFanoutPayload(
-                        "/topic/contests/${ticket.contest.id}/tickets",
-                        ticket.toResponseBodyDTO(),
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardAdmin(ticket.contest.id),
+                        event = BroadcastEvent.TICKET_CREATED,
+                        body = ticket.toResponseBodyDTO(),
                     ),
                 )
             }
             verify {
-                webSocketFanoutProducer.produce(
-                    WebSocketFanoutPayload(
-                        "/topic/contests/${ticket.contest.id}/members/${ticket.member.id}/tickets",
-                        ticket.toResponseBodyDTO(),
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardStaff(ticket.contest.id),
+                        event = BroadcastEvent.TICKET_CREATED,
+                        body = ticket.toResponseBodyDTO(),
                     ),
                 )
             }

@@ -197,7 +197,7 @@ services:
     healthcheck:
       test:
         - CMD-SHELL
-        - curl -f http://localhost:8081/actuator/health
+        - curl -f http://localhost:8082/actuator/health
       timeout: 10s
       interval: 30s
       retries: 5

@@ -20,7 +20,8 @@ class UploadAttachmentInternalService(
 
     override fun execute(command: UploadAttachmentInternalUseCase.Command): Pair<Attachment, ByteArray> {
         logger.info(
-            "Uploading attachment for contest with id: ${command.contest.id}, member with id: ${command.member.id} and context: ${command.context}",
+            "Uploading attachment for contest with id: ${command.contest.id}, member with id: ${command.member.id} " +
+                "and context: ${command.context}",
         )
 
         val id = IdGenerator.getUUID()

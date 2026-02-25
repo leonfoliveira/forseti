@@ -1,6 +1,6 @@
 package com.forsetijudge.autojudge.adapter.driving.consumer
 
-import com.forsetijudge.core.port.driven.producer.payload.SubmissionQueuePayload
+import com.forsetijudge.core.port.driven.queue.payload.SubmissionQueuePayload
 import com.forsetijudge.core.port.driving.usecase.external.submission.AutoJudgeSubmissionUseCase
 import com.forsetijudge.infrastructure.adapter.driving.consumer.RabbitMQConsumer
 import org.springframework.amqp.rabbit.annotation.RabbitListener

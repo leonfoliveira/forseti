@@ -84,6 +84,6 @@ class BuildJudgeDashboardServiceTest :
             dashboard.submissions shouldBe contest.problems.map { it.submissions }.flatten()
             dashboard.clarifications shouldBe contest.clarifications
             dashboard.announcements shouldBe contest.announcements
-            dashboard.memberTickets shouldBe contest.tickets.filter { it.memberId == memberId }
+            dashboard.memberTickets shouldBe contest.tickets.filter { it.member.id == memberId }
         }
     })

@@ -12,6 +12,7 @@ kover = "0.9.1"
 ktlint = "12.1.1"
 minio = "8.5.17"
 mockk = "1.13.17"
+socketio = "2.0.13"
 opencsv = "5.11"
 opentelemetry = "1.56.0"
 opentelemetry-mdc = "2.11.0-alpha"
@@ -37,6 +38,7 @@ kotest-extensions-spring = { module = 'io.kotest.extensions:kotest-extensions-sp
 kotlin-reflect = { module = 'org.jetbrains.kotlin:kotlin-reflect', version.ref = "kotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 minio = { module = "io.minio:minio", version.ref = "minio" }
+netty-socketio = { module = "com.corundumstudio.socketio:netty-socketio", version.ref = "socketio" }
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 opentelemetry-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "opentelemetry" }
 opentelemetry-instrumentation-logback-mdc = { module = "io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0", version.ref = "opentelemetry-mdc" }
@@ -93,7 +95,6 @@ spring = [
     "spring-boot-starter-quartz",
     "spring-boot-starter-validation",
     "spring-boot-starter-web",
-    "spring-boot-starter-websocket",
 ]
 spring-test = [
     "kotest-extensions-spring",

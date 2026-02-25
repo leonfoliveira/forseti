@@ -3,7 +3,7 @@ package com.forsetijudge.infrastructure.adapter.driving
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
-import com.forsetijudge.core.port.driven.scheduler.payload.AutoFreezeJobPayload
+import com.forsetijudge.core.port.driven.job.payload.AutoFreezeJobPayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.FreezeLeaderboardUseCase
 import com.forsetijudge.infrastructure.adapter.driving.job.AutoFreezeQuartzJob

@@ -3,8 +3,8 @@ package com.forsetijudge.core.application.listener.contest
 import com.forsetijudge.core.application.listener.BusinessEventListener
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.event.ContestEvent
-import com.forsetijudge.core.port.driven.scheduler.AutoFreezeJobScheduler
-import com.forsetijudge.core.port.driven.scheduler.payload.AutoFreezeJobPayload
+import com.forsetijudge.core.port.driven.job.AutoFreezeJobScheduler
+import com.forsetijudge.core.port.driven.job.payload.AutoFreezeJobPayload
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener

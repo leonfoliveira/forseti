@@ -2,8 +2,10 @@ package com.forsetijudge.core.application.listener.clarification
 
 import com.forsetijudge.core.domain.entity.ClarificationMockBuilder
 import com.forsetijudge.core.domain.event.ClarificationEvent
-import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
-import com.forsetijudge.core.port.driven.producer.payload.WebSocketFanoutPayload
+import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
+import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
+import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
+import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.dto.response.clarification.toIdResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
@@ -19,7 +21,7 @@ class ClarificationDeletedEventListenerTest(
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
-    private val webSocketFanoutProducer: WebSocketFanoutProducer,
+    private val broadcastProducer: BroadcastProducer,
     private val sut: ClarificationDeletedEventListener,
 ) : FunSpec({
         beforeEach {
@@ -31,12 +33,48 @@ class ClarificationDeletedEventListenerTest(
             val event = ClarificationEvent.Deleted(clarification = clarification)
 
             sut.onApplicationEvent(event)
-
             verify {
-                webSocketFanoutProducer.produce(
-                    WebSocketFanoutPayload(
-                        "/topic/contests/${clarification.contestId}/clarifications:delete",
-                        clarification.toIdResponseBodyDTO(),
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardAdmin(clarification.contest.id),
+                        event = BroadcastEvent.CLARIFICATION_DELETED,
+                        body = clarification.toIdResponseBodyDTO(),
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardContestant(clarification.contest.id),
+                        event = BroadcastEvent.CLARIFICATION_DELETED,
+                        body = clarification.toIdResponseBodyDTO(),
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardGuest(clarification.contest.id),
+                        event = BroadcastEvent.CLARIFICATION_DELETED,
+                        body = clarification.toIdResponseBodyDTO(),
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardJudge(clarification.contest.id),
+                        event = BroadcastEvent.CLARIFICATION_DELETED,
+                        body = clarification.toIdResponseBodyDTO(),
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardStaff(clarification.contest.id),
+                        event = BroadcastEvent.CLARIFICATION_DELETED,
+                        body = clarification.toIdResponseBodyDTO(),
                     ),
                 )
             }

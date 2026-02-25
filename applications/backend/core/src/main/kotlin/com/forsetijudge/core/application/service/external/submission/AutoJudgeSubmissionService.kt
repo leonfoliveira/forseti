@@ -83,7 +83,8 @@ class AutoJudgeSubmissionService(
          */
         if (postJudgeSubmission.status != Submission.Status.JUDGING) {
             logger.info(
-                "Submission status changed during judging process. Current status: ${postJudgeSubmission.status}. Skipping updating submission answer.",
+                "Submission status changed during judging process. " +
+                    "Current status: ${postJudgeSubmission.status}. Skipping updating submission answer.",
             )
             return
         }

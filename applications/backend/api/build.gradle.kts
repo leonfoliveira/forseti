@@ -6,6 +6,8 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":infrastructure"))
 
+    implementation(libs.netty.socketio)
+
     testImplementation(testFixtures(project(":core")))
 }
 

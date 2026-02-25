@@ -129,6 +129,8 @@ class BuildLeaderboardCellServiceTest :
             val cell =
                 Leaderboard.Cell(
                     problemId = problem.id,
+                    problemLetter = 'A',
+                    problemColor = "#ffffff",
                     isAccepted = false,
                     acceptedAt = null,
                     wrongSubmissions = 0,

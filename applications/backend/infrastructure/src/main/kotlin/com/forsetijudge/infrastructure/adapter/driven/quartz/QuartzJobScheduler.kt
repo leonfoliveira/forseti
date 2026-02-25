@@ -2,7 +2,7 @@ package com.forsetijudge.infrastructure.adapter.driven.quartz
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.domain.model.ExecutionContext
-import com.forsetijudge.core.port.driven.scheduler.JobScheduler
+import com.forsetijudge.core.port.driven.job.JobScheduler
 import com.forsetijudge.infrastructure.adapter.dto.job.QuartzMessage
 import org.quartz.Job
 import org.quartz.JobBuilder

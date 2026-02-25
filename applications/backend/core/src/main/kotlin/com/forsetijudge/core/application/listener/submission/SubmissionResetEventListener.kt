@@ -3,8 +3,8 @@ package com.forsetijudge.core.application.listener.submission
 import com.forsetijudge.core.application.listener.BusinessEventListener
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
-import com.forsetijudge.core.port.driven.producer.SubmissionQueueProducer
-import com.forsetijudge.core.port.driven.producer.payload.SubmissionQueuePayload
+import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
+import com.forsetijudge.core.port.driven.queue.payload.SubmissionQueuePayload
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase

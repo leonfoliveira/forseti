@@ -30,7 +30,8 @@ class BuildLeaderboardCellService(
         val contextMemberId = ExecutionContext.getMemberId()
 
         logger.info(
-            "Building leaderboard cell for contest with id: $contextContestId, memberId: ${command.memberId} and problemId: ${command.problemId}",
+            "Building leaderboard cell for contest with id: $contextContestId, memberId: ${command.memberId} " +
+                "and problemId: ${command.problemId}",
         )
 
         val contest =

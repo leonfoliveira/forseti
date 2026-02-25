@@ -2,8 +2,10 @@ package com.forsetijudge.core.application.listener.leaderboard
 
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.event.LeaderboardEvent
-import com.forsetijudge.core.port.driven.producer.WebSocketFanoutProducer
-import com.forsetijudge.core.port.driven.producer.payload.WebSocketFanoutPayload
+import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
+import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
+import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
+import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
@@ -18,7 +20,7 @@ class LeaderboardFrozenEventListenerTest(
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
-    private val webSocketFanoutProducer: WebSocketFanoutProducer,
+    private val broadcastProducer: BroadcastProducer,
     private val sut: LeaderboardFrozenEventListener,
 ) : FunSpec({
         beforeEach {
@@ -30,11 +32,43 @@ class LeaderboardFrozenEventListenerTest(
             val event = LeaderboardEvent.Frozen(contest)
 
             sut.onApplicationEvent(event)
-
             verify {
-                webSocketFanoutProducer.produce(
-                    WebSocketFanoutPayload(
-                        "/topic/contests/${contest.id}/leaderboard:frozen",
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardAdmin(contest.id),
+                        event = BroadcastEvent.LEADERBOARD_FROZEN,
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardContestant(contest.id),
+                        event = BroadcastEvent.LEADERBOARD_FROZEN,
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardGuest(contest.id),
+                        event = BroadcastEvent.LEADERBOARD_FROZEN,
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardJudge(contest.id),
+                        event = BroadcastEvent.LEADERBOARD_FROZEN,
+                    ),
+                )
+            }
+            verify {
+                broadcastProducer.produce(
+                    BroadcastPayload(
+                        topic = BroadcastTopic.ContestsDashboardStaff(contest.id),
+                        event = BroadcastEvent.LEADERBOARD_FROZEN,
                     ),
                 )
             }

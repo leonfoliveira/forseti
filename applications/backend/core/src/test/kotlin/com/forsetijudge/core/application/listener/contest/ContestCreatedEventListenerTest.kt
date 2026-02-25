@@ -2,8 +2,8 @@ package com.forsetijudge.core.application.listener.contest
 
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.event.ContestEvent
-import com.forsetijudge.core.port.driven.scheduler.AutoFreezeJobScheduler
-import com.forsetijudge.core.port.driven.scheduler.payload.AutoFreezeJobPayload
+import com.forsetijudge.core.port.driven.job.AutoFreezeJobScheduler
+import com.forsetijudge.core.port.driven.job.payload.AutoFreezeJobPayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec

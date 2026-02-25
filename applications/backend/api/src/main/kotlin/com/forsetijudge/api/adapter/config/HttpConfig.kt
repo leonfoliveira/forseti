@@ -1,8 +1,8 @@
 package com.forsetijudge.api.adapter.config
 
-import com.forsetijudge.api.adapter.driving.middleware.http.HttpAuthenticationInterceptor
-import com.forsetijudge.api.adapter.driving.middleware.http.HttpExecutionContextInterceptor
-import com.forsetijudge.api.adapter.driving.middleware.http.HttpPrivateInterceptor
+import com.forsetijudge.api.adapter.driving.http.middleware.HttpAuthenticationInterceptor
+import com.forsetijudge.api.adapter.driving.http.middleware.HttpExecutionContextInterceptor
+import com.forsetijudge.api.adapter.driving.http.middleware.HttpPrivateInterceptor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
