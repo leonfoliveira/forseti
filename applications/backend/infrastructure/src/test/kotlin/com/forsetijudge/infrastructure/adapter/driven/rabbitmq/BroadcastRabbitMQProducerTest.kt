@@ -39,9 +39,9 @@ class BroadcastRabbitMQProducerTest(
         test("should produce message to RabbitMQ") {
             val payload =
                 BroadcastEvent(
-                    topic = BroadcastTopic("/topic/test"),
-                    event = BroadcastEvent.TICKET_CREATED,
-                    body =
+                    room = "/topic/test",
+                    name = "TICKET_CREATED",
+                    data =
                         mapOf("foo" to "bar") as Serializable,
                 )
 
@@ -59,8 +59,8 @@ class BroadcastRabbitMQProducerTest(
             val message = objectMapper.readValue(jsonMessage, typeRef)
             message.contestId shouldBe contestId
             message.traceId shouldBe traceId
-            message.payload.topic.name shouldBe payload.topic.name
-            message.payload.event shouldBe payload.event
-            message.payload.body shouldBe payload.body
+            message.payload.room shouldBe payload.room
+            message.payload.name shouldBe payload.name
+            message.payload.data shouldBe payload.data
         }
     })
