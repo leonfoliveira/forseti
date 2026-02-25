@@ -28,6 +28,6 @@ export class StaffDashboardBroadcastRoom extends BroadcastRoom<StaffDashboardBro
     contestId: string,
     public callbacks: StaffDashboardBroadcastRoomCallbacks,
   ) {
-    super(`contests/${contestId}/staff`, callbacks);
+    super(`/contests/${contestId}/dashboard/staff`, callbacks);
   }
 }

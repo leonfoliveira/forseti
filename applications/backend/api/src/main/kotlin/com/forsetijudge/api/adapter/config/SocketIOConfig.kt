@@ -1,8 +1,9 @@
 package com.forsetijudge.api.adapter.config
 
 import com.corundumstudio.socketio.SocketIOServer
-import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOConnectListener
-import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOSubscribeListener
+import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOAuthenticateListener
+import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOJoinListener
+import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOPingListener
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -14,8 +15,9 @@ class SocketIOConfig(
     private val allowedOrigins: String,
     @Value("\${server.ws-port}")
     private val port: Int,
-    private val socketIOConnectListener: SocketIOConnectListener,
-    private val socketIOSubscribeListener: SocketIOSubscribeListener,
+    private val socketIOAuthenticateListener: SocketIOAuthenticateListener,
+    private val socketIOJoinListener: SocketIOJoinListener,
+    private val socketIOPingListener: SocketIOPingListener,
 ) {
     @Bean
     fun socketIOServer(): SocketIOServer {
@@ -26,8 +28,9 @@ class SocketIOConfig(
 
         val server = SocketIOServer(config)
 
-        server.addConnectListener(socketIOConnectListener)
-        server.addEventListener("subscribe", String::class.java, socketIOSubscribeListener)
+        server.addEventListener("ping", String::class.java, socketIOPingListener)
+        server.addEventListener("authenticate", String::class.java, socketIOAuthenticateListener)
+        server.addEventListener("join", String::class.java, socketIOJoinListener)
 
         return server
     }

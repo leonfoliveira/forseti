@@ -2,7 +2,6 @@ import {
   contestantDashboardSlice,
   ContestantDashboardState,
 } from "@/app/_store/slices/contestant-dashboard-slice";
-import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
@@ -18,38 +17,8 @@ import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketRes
 
 describe("contestantDashboardSlice", () => {
   const stateWithData: ContestantDashboardState = {
-    listenerStatus: ListenerStatus.CONNECTED,
     ...MockContestantDashboardResponseDTO(),
   };
-
-  it("should have the correct initial state", () => {
-    const state = contestantDashboardSlice.reducer(undefined, {
-      type: "@@INIT",
-    });
-    expect(state).toEqual({ listenerStatus: ListenerStatus.DISCONNECTED });
-  });
-
-  it("should set initial state", () => {
-    const state = contestantDashboardSlice.reducer(
-      undefined,
-      contestantDashboardSlice.actions.set(stateWithData),
-    );
-
-    expect(state).toEqual({
-      ...stateWithData,
-      listenerStatus: ListenerStatus.CONNECTED,
-    });
-  });
-
-  it("should set the listener status", () => {
-    const state = contestantDashboardSlice.reducer(
-      undefined,
-      contestantDashboardSlice.actions.setListenerStatus(
-        ListenerStatus.LOST_CONNECTION,
-      ),
-    );
-    expect(state.listenerStatus).toBe(ListenerStatus.LOST_CONNECTION);
-  });
 
   it("should set the leaderboard", () => {
     const newLeaderboard = MockLeaderboardResponseDTO();

@@ -12,11 +12,11 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 
-class SocketIOSubscribeListenerTest :
+class SocketIOJoinListenerTest :
     FunSpec({
         val socketIORoomAuthorizers = mockk<SocketIORoomAuthorizers>()
 
-        val sut = SocketIOSubscribeListener(socketIORoomAuthorizers)
+        val sut = SocketIOJoinListener(socketIORoomAuthorizers)
 
         beforeEach {
             every { socketIORoomAuthorizers.authorizers } returns

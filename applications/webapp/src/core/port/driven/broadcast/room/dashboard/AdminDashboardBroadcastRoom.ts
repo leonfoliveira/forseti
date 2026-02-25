@@ -28,6 +28,6 @@ export class AdminDashboardBroadcastRoom extends BroadcastRoom<AdminDashboardBro
     contestId: string,
     public callbacks: AdminDashboardBroadcastRoomCallbacks,
   ) {
-    super(`contests/${contestId}/admin`, callbacks);
+    super(`/contests/${contestId}/dashboard/admin`, callbacks);
   }
 }

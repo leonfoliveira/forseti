@@ -16,6 +16,6 @@ export class ContestantPrivateBroadcastRoom extends BroadcastRoom<ContestantPriv
     memberId: string,
     public callbacks: ContestantPrivateBroadcastRoomCallbacks,
   ) {
-    super(`members/${memberId}/private/contestant`, callbacks);
+    super(`/members/${memberId}/private/contestant`, callbacks);
   }
 }

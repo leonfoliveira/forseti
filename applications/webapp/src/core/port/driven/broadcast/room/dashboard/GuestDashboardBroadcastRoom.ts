@@ -24,6 +24,6 @@ export class GuestDashboardBroadcastRoom extends BroadcastRoom<GuestDashboardBro
     contestId: string,
     public callbacks: GuestDashboardBroadcastCallbacks,
   ) {
-    super(`contests/${contestId}/guest`, callbacks);
+    super(`/contests/${contestId}/dashboard/guest`, callbacks);
   }
 }

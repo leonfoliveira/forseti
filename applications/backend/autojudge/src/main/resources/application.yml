@@ -8,5 +8,5 @@ spring:
   quartz:
     auto-startup: false
 security:
-  member-login: ${HOSTNAME:unknown}
+  member-login: ${HOSTNAME:autojudge}
   member-type: AUTOJUDGE

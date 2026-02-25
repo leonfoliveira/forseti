@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
-class SocketIOSubscribeListener(
+class SocketIOJoinListener(
     val socketIORoomAuthorizers: SocketIORoomAuthorizers,
 ) : DataListener<String> {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -50,8 +50,7 @@ class SocketIOSubscribeListener(
 
         if (authorizer == null) {
             logger.warn("No private filter found for room: {}", roomName)
-            client.sendEvent("error", "Room not found: $roomName")
-            return
+            return client.sendEvent("error", "Room not found: $roomName")
         }
 
         logger.info("Applying private filter: ${authorizer.key}")
@@ -59,6 +58,7 @@ class SocketIOSubscribeListener(
             authorizer.value(roomName)
             client.joinRoom(roomName)
             logger.info("Client subscribed to room: {}", roomName)
+            client.sendEvent("joined", roomName)
         } catch (ex: Exception) {
             logger.info("Could not authorize: ${ex.message}")
             client.sendEvent("error", "Unauthorized to subscribe to room: $roomName")

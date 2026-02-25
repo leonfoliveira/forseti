@@ -44,7 +44,7 @@ class SocketIOFanoutRabbitMQConsumer(
      * @param payload The payload containing the topic and message.
      */
     override fun handlePayload(payload: BroadcastEvent) {
-        logger.info("Broadcasting message to room: ${payload.room}")
+        logger.info("Broadcasting event ${payload.name} to room: ${payload.room}")
 
         socketIOServer.getRoomOperations(payload.room).sendEvent(payload.name, payload.data)
     }

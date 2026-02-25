@@ -49,9 +49,9 @@ describe("ContestantDashboardProvider", () => {
     ).toHaveBeenCalledWith(contest.id);
 
     expect(Composition.broadcastClient.connect).toHaveBeenCalled();
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
-    expect(room.name).toBe(`contests/${contest.id}/contestant`);
+    expect(room.name).toBe(`/contests/${contest.id}/dashboard/contestant`);
 
     const state = store.getState().contestantDashboard;
     expect(state).toEqual({
@@ -68,15 +68,12 @@ describe("ContestantDashboardProvider", () => {
     (
       Composition.dashboardReader.getContestantDashboard as jest.Mock
     ).mockRejectedValue(error);
-    const { store } = await renderWithProviders(
+    await renderWithProviders(
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
       { session, contest },
     );
-
-    const state = store.getState().contestantDashboard;
-    expect(state).toEqual({ listenerStatus: ListenerStatus.DISCONNECTED });
 
     expect(screen.queryByTestId("error-page")).toBeInTheDocument();
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
@@ -95,7 +92,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.LEADERBOARD_UPDATED(leaderboardPartial);
@@ -114,7 +111,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.LEADERBOARD_FROZEN();
@@ -135,7 +132,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.LEADERBOARD_UNFROZEN({
@@ -161,7 +158,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.SUBMISSION_CREATED(otherSubmission);
@@ -182,7 +179,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[1][0];
     act(() => {
       room.callbacks.SUBMISSION_UPDATED(otherSubmission);
@@ -205,7 +202,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[1][0];
     act(() => {
       room.callbacks.SUBMISSION_UPDATED(otherSubmission);
@@ -224,7 +221,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[1][0];
     act(() => {
       room.callbacks.SUBMISSION_UPDATED(otherSubmission);
@@ -243,7 +240,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[1][0];
     act(() => {
       room.callbacks.SUBMISSION_UPDATED(otherSubmission);
@@ -260,7 +257,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.ANNOUNCEMENT_CREATED(otherAnnouncement);
@@ -282,7 +279,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.CLARIFICATION_CREATED(otherClarification);
@@ -300,7 +297,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[1][0];
     act(() => {
       room.callbacks.CLARIFICATION_ANSWERED(
@@ -320,7 +317,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.CLARIFICATION_DELETED({
@@ -339,7 +336,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[1][0];
     act(() => {
       room.callbacks.TICKET_UPDATED(otherTicket);
@@ -358,7 +355,7 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.ANNOUNCEMENT_CREATED(otherTicket);
@@ -384,21 +381,18 @@ describe("ContestantDashboardProvider", () => {
   });
 
   it("should show disconnection banner if listener status is LOST_CONNECTION", async () => {
-    const { store } = await renderWithProviders(
+    (Composition.broadcastClient.connect as jest.Mock).mockRejectedValueOnce(
+      new Error("Connection failed"),
+    );
+    await renderWithProviders(
       <ContestantDashboardProvider>
         <div data-testid="child" />
       </ContestantDashboardProvider>,
       { session, contest },
     );
 
-    act(() => {
-      store.dispatch(
-        contestantDashboardSlice.actions.setListenerStatus(
-          ListenerStatus.LOST_CONNECTION,
-        ),
-      );
-    });
-
-    expect(screen.getByTestId("disconnection-banner")).toBeInTheDocument();
+    expect(
+      await screen.findByTestId("disconnection-banner"),
+    ).toBeInTheDocument();
   });
 });

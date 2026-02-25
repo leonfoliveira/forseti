@@ -4,6 +4,7 @@ import { DisconnectionBanner } from "@/app/_lib/component/feedback/disconnection
 import { FreezeBanner } from "@/app/_lib/component/feedback/freeze-banner";
 import { ErrorPage } from "@/app/_lib/component/page/error-page";
 import { LoadingPage } from "@/app/_lib/component/page/loading-page";
+import { useDashboardReseter } from "@/app/_lib/hook/dashboard-reseter-hook";
 import { useIntl } from "@/app/_lib/hook/intl-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
@@ -46,7 +47,8 @@ const messages = defineMessages({
 });
 
 /**
- * Provider component for fetching admin dashboard data and setting up listeners.
+ * Provider component for fetching admin dashboard data and setting up broadcast listeners.
+ * Failures in setting up listeners will not cause the entire provider to fail, but will show a disconnection banner and attempt to reconnect.
  */
 export function AdminDashboardProvider({
   children,
@@ -55,9 +57,6 @@ export function AdminDashboardProvider({
 }) {
   const session = useAppSelector((state) => state.session);
   const contest = useAppSelector((state) => state.contest);
-  const listenerStatus = useAppSelector(
-    (state) => state.adminDashboard.listenerStatus,
-  );
   const isFrozen = useAppSelector(
     (state) => state.adminDashboard.leaderboard?.isFrozen,
   );
@@ -65,68 +64,71 @@ export function AdminDashboardProvider({
   const dispatch = useAppDispatch();
   const toast = useToast();
   const intl = useIntl();
+  const dashboardReseter = useDashboardReseter();
+
+  const [listenerStatus, setListenerStatus] = React.useState<ListenerStatus>(
+    ListenerStatus.DISCONNECTED,
+  );
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    async function reconnect() {
+    async function setupBroadcastListeners() {
+      console.debug("Setting up broadcast listeners");
+
       try {
-        console.debug("Attempting to reconnect...");
-        await init();
-      } catch {
-        console.debug("Reconnection attempt failed");
-        reconnectTimeoutRef.current = setTimeout(() => {
-          reconnect();
-        }, 5000);
+        await Composition.broadcastClient.connect(() => {
+          setListenerStatus(ListenerStatus.FAILURE);
+          reconnectTimeoutRef.current = setTimeout(
+            setupBroadcastListeners,
+            5000,
+          );
+        });
+        await Composition.broadcastClient.join(
+          new AdminDashboardBroadcastRoom(contest.id, {
+            ANNOUNCEMENT_CREATED: receiveAnnouncement,
+            CLARIFICATION_CREATED: receiveClarification,
+            CLARIFICATION_DELETED: deleteClarification,
+            LEADERBOARD_UPDATED: receiveLeaderboardPartial,
+            LEADERBOARD_FROZEN: receiveLeaderboardFreeze,
+            LEADERBOARD_UNFROZEN: receiveLeaderboardUnfreeze,
+            SUBMISSION_CREATED: receiveSubmission,
+            SUBMISSION_UPDATED: receiveSubmission,
+            TICKET_CREATED: receiveTicket,
+            TICKET_UPDATED: receiveTicket,
+          }),
+        );
+
+        console.debug("Successfully set up broadcast listeners");
+        setListenerStatus(ListenerStatus.CONNECTED);
+      } catch (error) {
+        console.error("Failed to setup broadcast listeners:", error);
+        setListenerStatus(ListenerStatus.FAILURE);
+        reconnectTimeoutRef.current = setTimeout(setupBroadcastListeners, 5000);
       }
     }
 
-    async function init() {
+    async function fetch() {
+      console.debug("Fetching dashboard data");
       const data = await Composition.dashboardReader.getAdminDashboard(
         contest.id,
       );
-
-      await Composition.broadcastClient.connect(() => {
-        console.debug("Listener connection lost");
-        dispatch(
-          adminDashboardSlice.actions.setListenerStatus(
-            ListenerStatus.LOST_CONNECTION,
-          ),
-        );
-        reconnect();
-      });
-      await Composition.broadcastClient.subscribe(
-        new AdminDashboardBroadcastRoom(contest.id, {
-          ANNOUNCEMENT_CREATED: receiveAnnouncement,
-          CLARIFICATION_CREATED: receiveClarification,
-          CLARIFICATION_DELETED: deleteClarification,
-          LEADERBOARD_UPDATED: receiveLeaderboardPartial,
-          LEADERBOARD_FROZEN: receiveLeaderboardFreeze,
-          LEADERBOARD_UNFROZEN: receiveLeaderboardUnfreeze,
-          SUBMISSION_CREATED: receiveSubmission,
-          SUBMISSION_UPDATED: receiveSubmission,
-          TICKET_CREATED: receiveTicket,
-          TICKET_UPDATED: receiveTicket,
-        }),
-      );
-
-      console.debug("Successfully fetched dashboard data and set up listeners");
       dispatch(adminDashboardSlice.actions.set(data));
-      dispatch(
-        adminDashboardSlice.actions.setListenerStatus(ListenerStatus.CONNECTED),
-      );
+      console.debug("Successfully fetched dashboard data");
     }
 
-    async function fetch() {
+    async function init() {
       state.start();
       try {
-        await init();
+        dashboardReseter.reset();
+        await fetch();
+        await setupBroadcastListeners();
         state.finish();
       } catch (error) {
         await state.fail(error as Error);
       }
     }
 
-    fetch();
+    init();
 
     return () => {
       if (reconnectTimeoutRef.current) {
@@ -134,6 +136,7 @@ export function AdminDashboardProvider({
       }
       if (Composition.broadcastClient.isConnected) {
         Composition.broadcastClient.disconnect();
+        setListenerStatus(ListenerStatus.DISCONNECTED);
       }
     };
   }, [session, contest.id]);
@@ -214,9 +217,7 @@ export function AdminDashboardProvider({
   return (
     <>
       {isFrozen && <FreezeBanner />}
-      {listenerStatus === ListenerStatus.LOST_CONNECTION && (
-        <DisconnectionBanner />
-      )}
+      {listenerStatus === ListenerStatus.FAILURE && <DisconnectionBanner />}
       {children}
     </>
   );

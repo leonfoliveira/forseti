@@ -14,11 +14,11 @@ import io.mockk.mockk
 import io.mockk.verify
 import io.netty.handler.codec.http.HttpHeaders
 
-class SocketIOConnectListenerTest :
+class SocketIOAuthenticateListenerTest :
     FunSpec({
         val findSessionByIdUseCase = mockk<FindSessionByIdUseCase>(relaxed = true)
 
-        val sut = SocketIOConnectListener(findSessionByIdUseCase)
+        val sut = SocketIOAuthenticateListener(findSessionByIdUseCase)
 
         beforeEach {
             clearAllMocks()
@@ -33,7 +33,7 @@ class SocketIOConnectListenerTest :
             every { mockHandshakeData.httpHeaders } returns mockHttpHeaders
             every { mockClient.handshakeData } returns mockHandshakeData
 
-            sut.onConnect(mockClient)
+            sut.onData(mockClient, null, mockk())
 
             verify(exactly = 0) { mockClient.set("session", any()) }
         }
@@ -46,7 +46,7 @@ class SocketIOConnectListenerTest :
             every { mockHandshakeData.httpHeaders } returns mockHttpHeaders
             every { mockClient.handshakeData } returns mockHandshakeData
 
-            sut.onConnect(mockClient)
+            sut.onData(mockClient, null, mockk())
 
             verify(exactly = 0) { mockClient.set("session", any()) }
         }
@@ -59,7 +59,7 @@ class SocketIOConnectListenerTest :
             every { mockHandshakeData.httpHeaders } returns mockHttpHeaders
             every { mockClient.handshakeData } returns mockHandshakeData
 
-            sut.onConnect(mockClient)
+            sut.onData(mockClient, null, mockk())
 
             verify(exactly = 0) { findSessionByIdUseCase.execute(any()) }
             verify { mockClient.sendEvent("error", "Invalid session_id cookie format.") }
@@ -74,7 +74,7 @@ class SocketIOConnectListenerTest :
             every { mockHandshakeData.httpHeaders } returns mockHttpHeaders
             every { mockClient.handshakeData } returns mockHandshakeData
 
-            sut.onConnect(mockClient)
+            sut.onData(mockClient, null, mockk())
 
             verify { mockClient.sendEvent("error", "Invalid session_id cookie format.") }
             verify { mockClient.disconnect() }
@@ -89,7 +89,7 @@ class SocketIOConnectListenerTest :
             every { mockClient.handshakeData } returns mockHandshakeData
             every { findSessionByIdUseCase.execute(any()) } throws UnauthorizedException("Session not found")
 
-            sut.onConnect(mockClient)
+            sut.onData(mockClient, null, mockk())
 
             verify { findSessionByIdUseCase.execute(any()) }
             verify { mockClient.sendEvent("error", "Session not found") }
@@ -107,7 +107,7 @@ class SocketIOConnectListenerTest :
             val session = SessionMockBuilder.build()
             every { findSessionByIdUseCase.execute(any()) } returns session
 
-            sut.onConnect(mockClient)
+            sut.onData(mockClient, null, mockk())
 
             verify { findSessionByIdUseCase.execute(any()) }
             verify { mockClient.set("session", session) }

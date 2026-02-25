@@ -45,9 +45,9 @@ describe("GuestDashboardProvider", () => {
     );
 
     expect(Composition.broadcastClient.connect).toHaveBeenCalled();
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
-    expect(room.name).toBe(`contests/${contest.id}/guest`);
+    expect(room.name).toBe(`/contests/${contest.id}/dashboard/guest`);
 
     const state = store.getState().guestDashboard;
     expect(state).toEqual({
@@ -64,15 +64,12 @@ describe("GuestDashboardProvider", () => {
     (
       Composition.dashboardReader.getGuestDashboard as jest.Mock
     ).mockRejectedValue(error);
-    const { store } = await renderWithProviders(
+    await renderWithProviders(
       <GuestDashboardProvider>
         <div data-testid="child" />
       </GuestDashboardProvider>,
       { contest },
     );
-
-    const state = store.getState().guestDashboard;
-    expect(state).toEqual({ listenerStatus: ListenerStatus.DISCONNECTED });
 
     expect(screen.queryByTestId("error-page")).toBeInTheDocument();
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
@@ -91,7 +88,7 @@ describe("GuestDashboardProvider", () => {
       { contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.LEADERBOARD_UPDATED(leaderboardPartial);
@@ -109,7 +106,7 @@ describe("GuestDashboardProvider", () => {
       { contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.LEADERBOARD_FROZEN();
@@ -128,7 +125,7 @@ describe("GuestDashboardProvider", () => {
       { contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.LEADERBOARD_UNFROZEN({
@@ -152,7 +149,7 @@ describe("GuestDashboardProvider", () => {
       { contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.SUBMISSION_CREATED(otherSubmission);
@@ -171,7 +168,7 @@ describe("GuestDashboardProvider", () => {
       { contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.ANNOUNCEMENT_CREATED(otherAnnouncement);
@@ -193,7 +190,7 @@ describe("GuestDashboardProvider", () => {
       { contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.CLARIFICATION_CREATED(otherClarification);
@@ -211,7 +208,7 @@ describe("GuestDashboardProvider", () => {
       { contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.CLARIFICATION_DELETED({
@@ -237,21 +234,18 @@ describe("GuestDashboardProvider", () => {
   });
 
   it("should show disconnection banner if listener status is LOST_CONNECTION", async () => {
-    const { store } = await renderWithProviders(
+    (Composition.broadcastClient.connect as jest.Mock).mockRejectedValueOnce(
+      new Error("Connection failed"),
+    );
+    await renderWithProviders(
       <GuestDashboardProvider>
         <div data-testid="child" />
       </GuestDashboardProvider>,
       { contest },
     );
 
-    act(() => {
-      store.dispatch(
-        guestDashboardSlice.actions.setListenerStatus(
-          ListenerStatus.LOST_CONNECTION,
-        ),
-      );
-    });
-
-    expect(screen.getByTestId("disconnection-banner")).toBeInTheDocument();
+    expect(
+      await screen.findByTestId("disconnection-banner"),
+    ).toBeInTheDocument();
   });
 });

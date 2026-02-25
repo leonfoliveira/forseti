@@ -13,24 +13,20 @@ import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/Lea
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 
-export type AdminDashboardState = AdminDashboardResponseDTO & {
-  listenerStatus: ListenerStatus;
-};
+export type AdminDashboardState = AdminDashboardResponseDTO;
 
 /**
  * Redux slice for the admin dashboard data.
  */
 export const adminDashboardSlice = createSlice({
   name: "adminDashboard",
-  initialState: {
-    listenerStatus: ListenerStatus.DISCONNECTED,
-  } as unknown as AdminDashboardState,
+  initialState: {} as unknown as AdminDashboardState,
   reducers: {
     set(state, action: { payload: AdminDashboardResponseDTO }) {
       return { ...action.payload, listenerStatus: ListenerStatus.CONNECTED };
     },
-    setListenerStatus(state, action: { payload: ListenerStatus }) {
-      state.listenerStatus = action.payload;
+    reset() {
+      return {} as unknown as AdminDashboardState;
     },
     setContest(state, action: { payload: ContestWithMembersAndProblemsDTO }) {
       state.contest = action.payload;

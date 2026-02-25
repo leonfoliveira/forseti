@@ -49,9 +49,9 @@ describe("StaffDashboardProvider", () => {
     );
 
     expect(Composition.broadcastClient.connect).toHaveBeenCalled();
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
-    expect(room.name).toBe(`contests/${contest.id}/staff`);
+    expect(room.name).toBe(`/contests/${contest.id}/dashboard/staff`);
 
     const state = store.getState().staffDashboard;
     expect(state).toEqual({
@@ -68,15 +68,12 @@ describe("StaffDashboardProvider", () => {
     (
       Composition.dashboardReader.getStaffDashboard as jest.Mock
     ).mockRejectedValue(error);
-    const { store } = await renderWithProviders(
+    await renderWithProviders(
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
       { session, contest },
     );
-
-    const state = store.getState().staffDashboard;
-    expect(state).toEqual({ listenerStatus: ListenerStatus.DISCONNECTED });
 
     expect(screen.queryByTestId("error-page")).toBeInTheDocument();
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
@@ -95,7 +92,7 @@ describe("StaffDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.LEADERBOARD_UPDATED(leaderboardPartial);
@@ -113,7 +110,7 @@ describe("StaffDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.LEADERBOARD_FROZEN();
@@ -131,7 +128,7 @@ describe("StaffDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.LEADERBOARD_UNFROZEN(otherLeaderboard);
@@ -149,7 +146,7 @@ describe("StaffDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.SUBMISSION_UPDATED(otherSubmission);
@@ -168,7 +165,7 @@ describe("StaffDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.ANNOUNCEMENT_CREATED(otherAnnouncement);
@@ -190,7 +187,7 @@ describe("StaffDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.CLARIFICATION_CREATED(otherClarification);
@@ -208,7 +205,7 @@ describe("StaffDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.CLARIFICATION_DELETED({
@@ -229,7 +226,7 @@ describe("StaffDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.TICKET_UPDATED(otherTicket);
@@ -249,7 +246,7 @@ describe("StaffDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.TICKET_UPDATED(otherTicket);
@@ -269,7 +266,7 @@ describe("StaffDashboardProvider", () => {
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
     act(() => {
       room.callbacks.TICKET_UPDATED(otherTicket);
@@ -293,21 +290,19 @@ describe("StaffDashboardProvider", () => {
   });
 
   it("should show disconnection banner if listener status is LOST_CONNECTION", async () => {
-    const { store } = await renderWithProviders(
+    (Composition.broadcastClient.connect as jest.Mock).mockRejectedValueOnce(
+      new Error("Connection failed"),
+    );
+
+    await renderWithProviders(
       <StaffDashboardProvider>
         <div data-testid="child" />
       </StaffDashboardProvider>,
       { session, contest },
     );
 
-    act(() => {
-      store.dispatch(
-        staffDashboardSlice.actions.setListenerStatus(
-          ListenerStatus.LOST_CONNECTION,
-        ),
-      );
-    });
-
-    expect(screen.getByTestId("disconnection-banner")).toBeInTheDocument();
+    expect(
+      await screen.findByTestId("disconnection-banner"),
+    ).toBeInTheDocument();
   });
 });

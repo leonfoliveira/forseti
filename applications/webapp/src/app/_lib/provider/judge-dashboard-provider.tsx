@@ -22,6 +22,7 @@ import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/resp
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
+import { useDashboardReseter } from "@/app/_lib/hook/dashboard-reseter-hook";
 
 const messages = defineMessages({
   submissionFailed: {
@@ -52,6 +53,7 @@ const messages = defineMessages({
 
 /**
  * Provider component for fetching judge dashboard data and setting up listeners.
+ * Failures in setting up listeners will not cause the entire provider to fail, but will show a disconnection banner and attempt to reconnect.
  */
 export function JudgeDashboardProvider({
   children,
@@ -60,9 +62,6 @@ export function JudgeDashboardProvider({
 }) {
   const session = useAppSelector((state) => state.session);
   const contest = useAppSelector((state) => state.contest);
-  const listenerStatus = useAppSelector(
-    (state) => state.judgeDashboard.listenerStatus,
-  );
   const isFrozen = useAppSelector(
     (state) => state.judgeDashboard.leaderboard?.isFrozen,
   );
@@ -70,71 +69,75 @@ export function JudgeDashboardProvider({
   const dispatch = useAppDispatch();
   const toast = useToast();
   const intl = useIntl();
+  const dashboardReseter = useDashboardReseter();
+
+  const [listenerStatus, setListenerStatus] = React.useState<ListenerStatus>(
+    ListenerStatus.DISCONNECTED,
+  );
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    async function reconnect() {
+    async function setupBroadcastListeners() {
+      console.debug("Setting up broadcast listeners");
+
       try {
-        console.debug("Attempting to reconnect...");
-        await init();
-      } catch {
-        console.debug("Reconnection attempt failed");
-        reconnectTimeoutRef.current = setTimeout(() => {
-          reconnect();
-        }, 1000);
-      }
-    }
-
-    async function init() {
-      const data = await Composition.dashboardReader.getJudgeDashboard(
-        contest.id,
-      );
-
-      await Composition.broadcastClient.connect(() => {
-        console.debug("Listener connection lost");
-        dispatch(
-          judgeDashboardSlice.actions.setListenerStatus(
-            ListenerStatus.LOST_CONNECTION,
-          ),
+        await Composition.broadcastClient.connect(() => {
+          console.debug("Listener connection lost");
+          setListenerStatus(ListenerStatus.FAILURE);
+          reconnectTimeoutRef.current = setTimeout(
+            setupBroadcastListeners,
+            5000,
+          );
+        });
+        await Composition.broadcastClient.join(
+          new JudgeDashboardBroadcastRoom(contest.id, {
+            ANNOUNCEMENT_CREATED: receiveAnnouncement,
+            CLARIFICATION_CREATED: receiveClarification,
+            CLARIFICATION_DELETED: deleteClarification,
+            LEADERBOARD_UPDATED: receiveLeaderboardPartial,
+            LEADERBOARD_FROZEN: receiveLeaderboardFreeze,
+            LEADERBOARD_UNFROZEN: receiveLeaderboardUnfreeze,
+            SUBMISSION_CREATED: receiveSubmission,
+            SUBMISSION_UPDATED: receiveSubmission,
+          }),
         );
-        reconnect();
-      });
-      await Composition.broadcastClient.subscribe(
-        new JudgeDashboardBroadcastRoom(contest.id, {
-          ANNOUNCEMENT_CREATED: receiveAnnouncement,
-          CLARIFICATION_CREATED: receiveClarification,
-          CLARIFICATION_DELETED: deleteClarification,
-          LEADERBOARD_UPDATED: receiveLeaderboardPartial,
-          LEADERBOARD_FROZEN: receiveLeaderboardFreeze,
-          LEADERBOARD_UNFROZEN: receiveLeaderboardUnfreeze,
-          SUBMISSION_CREATED: receiveSubmission,
-          SUBMISSION_UPDATED: receiveSubmission,
-        }),
-      );
-      await Composition.broadcastClient.subscribe(
-        new JudgePrivateBroadcastRoom(session!.member.id, {
-          TICKET_UPDATED: receiveMemberTicket,
-        }),
-      );
+        await Composition.broadcastClient.join(
+          new JudgePrivateBroadcastRoom(session!.member.id, {
+            TICKET_UPDATED: receiveMemberTicket,
+          }),
+        );
 
-      console.debug("Successfully fetched dashboard data and set up listeners");
-      dispatch(judgeDashboardSlice.actions.set(data));
-      dispatch(
-        judgeDashboardSlice.actions.setListenerStatus(ListenerStatus.CONNECTED),
-      );
+        console.debug("Successfully set up broadcast listeners");
+        setListenerStatus(ListenerStatus.CONNECTED);
+      } catch (error) {
+        console.error("Failed to set up broadcast listeners:", error);
+        setListenerStatus(ListenerStatus.FAILURE);
+        reconnectTimeoutRef.current = setTimeout(setupBroadcastListeners, 5000);
+      }
     }
 
     async function fetch() {
+      console.debug("Fetching dashboard data");
+      const data = await Composition.dashboardReader.getJudgeDashboard(
+        contest.id,
+      );
+      dispatch(judgeDashboardSlice.actions.set(data));
+      console.debug("Successfully fetched dashboard data");
+    }
+
+    async function init() {
       state.start();
       try {
-        await init();
+        dashboardReseter.reset();
+        await fetch();
+        await setupBroadcastListeners();
         state.finish();
       } catch (error) {
-        await state.fail(error);
+        await state.fail(error as Error);
       }
     }
 
-    fetch();
+    init();
 
     return () => {
       if (reconnectTimeoutRef.current) {
@@ -143,6 +146,7 @@ export function JudgeDashboardProvider({
       if (Composition.broadcastClient.isConnected) {
         Composition.broadcastClient.disconnect();
       }
+      setListenerStatus(ListenerStatus.DISCONNECTED);
     };
   }, [session, contest.id]);
 
@@ -225,9 +229,7 @@ export function JudgeDashboardProvider({
   return (
     <>
       {isFrozen && <FreezeBanner />}
-      {listenerStatus === ListenerStatus.LOST_CONNECTION && (
-        <DisconnectionBanner />
-      )}
+      {listenerStatus === ListenerStatus.FAILURE && <DisconnectionBanner />}
       {children}
     </>
   );

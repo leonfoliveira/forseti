@@ -13,24 +13,20 @@ import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/Submi
 import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 
-export type ContestantDashboardState = ContestantDashboardResponseDTO & {
-  listenerStatus: ListenerStatus;
-};
+export type ContestantDashboardState = ContestantDashboardResponseDTO;
 
 /**
  * Redux slice for the contestant dashboard data.
  */
 export const contestantDashboardSlice = createSlice({
   name: "contestantDashboard",
-  initialState: {
-    listenerStatus: ListenerStatus.DISCONNECTED,
-  } as unknown as ContestantDashboardState,
+  initialState: {} as unknown as ContestantDashboardState,
   reducers: {
     set(state, action: { payload: ContestantDashboardResponseDTO }) {
       return { ...action.payload, listenerStatus: ListenerStatus.CONNECTED };
     },
-    setListenerStatus(state, action: { payload: ListenerStatus }) {
-      state.listenerStatus = action.payload;
+    reset() {
+      return {} as unknown as ContestantDashboardState;
     },
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
       state.leaderboard = action.payload;

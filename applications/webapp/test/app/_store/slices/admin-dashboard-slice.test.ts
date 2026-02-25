@@ -2,7 +2,6 @@ import {
   adminDashboardSlice,
   AdminDashboardState,
 } from "@/app/_store/slices/admin-dashboard-slice";
-import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
@@ -17,38 +16,8 @@ import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketRes
 
 describe("adminDashboardSlice", () => {
   const stateWithData: AdminDashboardState = {
-    listenerStatus: ListenerStatus.CONNECTED,
     ...MockAdminDashboardResponseDTO(),
   };
-
-  it("should have the correct initial state", () => {
-    const state = adminDashboardSlice.reducer(undefined, {
-      type: "@@INIT",
-    });
-    expect(state).toEqual({ listenerStatus: ListenerStatus.DISCONNECTED });
-  });
-
-  it("should set initial state", () => {
-    const state = adminDashboardSlice.reducer(
-      undefined,
-      adminDashboardSlice.actions.set(stateWithData),
-    );
-
-    expect(state).toEqual({
-      ...stateWithData,
-      listenerStatus: ListenerStatus.CONNECTED,
-    });
-  });
-
-  it("should set the listener status", () => {
-    const state = adminDashboardSlice.reducer(
-      undefined,
-      adminDashboardSlice.actions.setListenerStatus(
-        ListenerStatus.LOST_CONNECTION,
-      ),
-    );
-    expect(state.listenerStatus).toBe(ListenerStatus.LOST_CONNECTION);
-  });
 
   it("should set the contest", () => {
     const newContest = MockContestWithMembersAndProblemsDTO();

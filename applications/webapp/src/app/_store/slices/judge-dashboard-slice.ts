@@ -12,9 +12,7 @@ import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/Lea
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 
-export type JudgeDashboardState = JudgeDashboardResponseDTO & {
-  listenerStatus: ListenerStatus;
-};
+export type JudgeDashboardState = JudgeDashboardResponseDTO;
 
 /**
  * Redux slice for the judge dashboard data.
@@ -28,8 +26,8 @@ export const judgeDashboardSlice = createSlice({
     set(state, action: { payload: JudgeDashboardResponseDTO }) {
       return { ...action.payload, listenerStatus: ListenerStatus.CONNECTED };
     },
-    setListenerStatus(state, action: { payload: ListenerStatus }) {
-      state.listenerStatus = action.payload;
+    reset() {
+      return {} as unknown as JudgeDashboardState;
     },
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
       state.leaderboard = action.payload;

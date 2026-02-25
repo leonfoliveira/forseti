@@ -25,6 +25,6 @@ export class JudgeDashboardBroadcastRoom extends BroadcastRoom<JudgeDashboardBro
     contestId: string,
     public callbacks: JudgeDashboardBroadcastRoomCallbacks,
   ) {
-    super(`contests/${contestId}/judge`, callbacks);
+    super(`/contests/${contestId}/dashboard/judge`, callbacks);
   }
 }

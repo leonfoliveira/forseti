@@ -10,6 +10,6 @@ export class JudgePrivateBroadcastRoom extends BroadcastRoom<JudgePrivateBroadca
     memberId: string,
     public callbacks: JudgePrivateBroadcastRoomCallbacks,
   ) {
-    super(`members/${memberId}/private/judge`, callbacks);
+    super(`/members/${memberId}/private/judge`, callbacks);
   }
 }

@@ -30,7 +30,7 @@ describe("SocketIOClient", () => {
       disconnect: jest.fn(),
     };
     client.on.mockImplementation((event, callback) => {
-      if (event === "connect") {
+      if (event === "ready") {
         callback();
       }
       if (event === "disconnect") {
@@ -93,7 +93,7 @@ describe("SocketIOClient", () => {
       connected: true,
     };
     client.on.mockImplementation((event, callback) => {
-      if (event === "connect") {
+      if (event === "ready") {
         callback();
       }
       if (event === "disconnect") {
@@ -109,26 +109,26 @@ describe("SocketIOClient", () => {
     expect(client.disconnect).toHaveBeenCalled();
   });
 
-  test("should throw error when subscribing without connection", async () => {
+  test("should throw error when joining without connection", async () => {
     const sut = new SocketIOBroadcastClient(url);
     const topic = {
       name: "test-topic",
       callbacks: {},
     };
 
-    await expect(sut.subscribe(topic)).rejects.toThrow(
+    await expect(sut.join(topic)).rejects.toThrow(
       "Not connected to Socket.IO server",
     );
   });
 
-  test("should subscribe successfully", async () => {
+  test("should join successfully", async () => {
     const client = {
       on: jest.fn(),
       emit: jest.fn(),
       connected: true,
     };
     client.on.mockImplementation((event, callback) => {
-      if (event === "connect") {
+      if (event === "ready") {
         callback();
       }
     });
@@ -142,8 +142,8 @@ describe("SocketIOClient", () => {
     };
 
     await sut.connect();
-    await sut.subscribe(topic);
+    await sut.join(topic);
 
-    expect(client.emit).toHaveBeenCalledWith("subscribe", topic.name);
+    expect(client.emit).toHaveBeenCalledWith("join", topic.name);
   });
 });

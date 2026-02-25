@@ -1,4 +1,3 @@
-import { BroadcastEvent } from "@/core/domain/enumerate/BroadcastEvent";
 import { BroadcastRoom } from "@/core/port/driven/broadcast/BroadcastRoom";
 
 export interface BroadcastClient {
@@ -23,14 +22,12 @@ export interface BroadcastClient {
   disconnect: () => Promise<void>;
 
   /**
-   * Subscribes to a broadcast topic with the specified callbacks for each event.
+   * Joins a broadcast room to start receiving real-time updates for the specified events.
    *
-   * @param topic The broadcast topic to subscribe to, which includes the callbacks for each event.
-   * @returns A promise that resolves when the subscription is successful.
+   * @param room The broadcast room to join, which includes the callbacks for each event.
+   * @returns A promise that resolves when the join operation is successful.
    */
-  subscribe<
-    TCallbacks extends { [event in BroadcastEvent]?: (payload: any) => void },
-  >(
-    topic: BroadcastRoom<TCallbacks>,
+  join<TCallbacks extends { [event: string]: (payload: any) => void }>(
+    room: BroadcastRoom<TCallbacks>,
   ): Promise<void>;
 }

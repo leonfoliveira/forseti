@@ -11,9 +11,7 @@ import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
 
-export type GuestDashboardState = GuestDashboardResponseDTO & {
-  listenerStatus: ListenerStatus;
-};
+export type GuestDashboardState = GuestDashboardResponseDTO;
 
 /**
  * Redux slice for the guest dashboard data.
@@ -27,8 +25,8 @@ export const guestDashboardSlice = createSlice({
     set(state, action: { payload: GuestDashboardResponseDTO }) {
       return { ...action.payload, listenerStatus: ListenerStatus.CONNECTED };
     },
-    setListenerStatus(state, action: { payload: ListenerStatus }) {
-      state.listenerStatus = action.payload;
+    reset() {
+      return {} as unknown as GuestDashboardState;
     },
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
       state.leaderboard = action.payload;
