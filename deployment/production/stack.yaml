@@ -65,19 +65,18 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.api-ratelimit.ratelimit.average=100
         - traefik.http.middlewares.api-ratelimit.ratelimit.burst=300
-        - traefik.http.middlewares.ws-addprefix.addprefix.prefix=/ws
         - traefik.http.routers.api.rule=Host(`api.forsetijudge.com`)
         - traefik.http.routers.api.entrypoints=websecure
         - traefik.http.routers.api.tls=true
-        - traefik.http.routers.api.middlewares=api-ratelimit,api-addprefix
+        - traefik.http.routers.api.middlewares=api-ratelimit
         - traefik.http.routers.api.service=api
         - traefik.http.routers.ws.rule=Host(`ws.forsetijudge.com`)
         - traefik.http.routers.ws.entrypoints=websecure
         - traefik.http.routers.ws.tls=true
-        - traefik.http.routers.ws.middlewares=api-ratelimit,ws-addprefix
+        - traefik.http.routers.ws.middlewares=api-ratelimit
         - traefik.http.routers.ws.service=ws
         - traefik.http.services.api.loadbalancer.server.port=8080
-        - traefik.http.services.ws.loadbalancer.server.port=8080
+        - traefik.http.services.ws.loadbalancer.server.port=8081
         - traefik.http.services.ws.loadbalancer.sticky.cookie=true
         - traefik.http.services.ws.loadbalancer.sticky.cookie.name=ws-session
         - traefik.http.services.ws.loadbalancer.sticky.cookie.secure=true
@@ -849,7 +848,7 @@ services:
       ALLOY_PUBLIC_URL: https://alloy.forsetijudge.com
       API_INTERNAL_URL: http://api:8080
       API_PUBLIC_URL: https://api.forsetijudge.com
-      WS_PUBLIC_URL: https://ws.forsetijudge.com
+      WS_PUBLIC_URL: wss://ws.forsetijudge.com
       LOCALE: en-US
       NEXT_PUBLIC_VERSION: ${VERSION:-latest}
       NODE_ENV: production
