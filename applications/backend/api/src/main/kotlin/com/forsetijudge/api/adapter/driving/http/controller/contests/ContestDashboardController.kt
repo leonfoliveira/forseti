@@ -43,6 +43,25 @@ class ContestDashboardController(
         return ResponseEntity.ok(dashboard.toResponseBodyDTO())
     }
 
+    @GetMapping("/contests/{contestId}/dashboard/contestant")
+    @Private(Member.Type.CONTESTANT)
+    fun getContestantDashboard(
+        @PathVariable contestId: UUID,
+    ): ResponseEntity<ContestantDashboardResponseBodyDTO> {
+        logger.info("[GET] /v1/contests/$contestId/dashboard/contestant")
+        val dashboard = buildContestantDashboardUseCase.execute()
+        return ResponseEntity.ok(dashboard.toResponseBodyDTO())
+    }
+
+    @GetMapping("/contests/{contestId}/dashboard/guest")
+    fun getGuestDashboard(
+        @PathVariable contestId: UUID,
+    ): ResponseEntity<GuestDashboardResponseBodyDTO> {
+        logger.info("[GET] /v1/contests/$contestId/dashboard/guest")
+        val dashboard = buildGuestDashboardUseCase.execute()
+        return ResponseEntity.ok(dashboard.toResponseBodyDTO())
+    }
+
     @GetMapping("/contests/{contestId}/dashboard/judge")
     @Private(Member.Type.JUDGE)
     fun getJudgeDashboard(
@@ -60,25 +79,6 @@ class ContestDashboardController(
     ): ResponseEntity<StaffDashboardResponseBodyDTO> {
         logger.info("[GET] /v1/contests/$contestId/dashboard/staff")
         val dashboard = buildStaffDashboardUseCase.execute()
-        return ResponseEntity.ok(dashboard.toResponseBodyDTO())
-    }
-
-    @GetMapping("/contests/{contestId}/dashboard/contestant")
-    @Private(Member.Type.CONTESTANT)
-    fun getContestantDashboard(
-        @PathVariable contestId: UUID,
-    ): ResponseEntity<ContestantDashboardResponseBodyDTO> {
-        logger.info("[GET] /v1/contests/$contestId/dashboard/contestant")
-        val dashboard = buildContestantDashboardUseCase.execute()
-        return ResponseEntity.ok(dashboard.toResponseBodyDTO())
-    }
-
-    @GetMapping("/contests/{contestId}/dashboard/guest")
-    fun getGuestDashboard(
-        @PathVariable contestId: UUID,
-    ): ResponseEntity<GuestDashboardResponseBodyDTO> {
-        logger.info("[GET] /v1/contests/$contestId/dashboard/guest")
-        val dashboard = buildGuestDashboardUseCase.execute()
         return ResponseEntity.ok(dashboard.toResponseBodyDTO())
     }
 }

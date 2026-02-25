@@ -5,17 +5,16 @@ import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.model.LeaderboardMockBuilder
-import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
-import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
-import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.ContestantDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
 import com.forsetijudge.core.port.driven.queue.payload.SubmissionQueuePayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
-import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
@@ -56,51 +55,16 @@ class SubmissionCreatedEventListenerTest(
 
             sut.onApplicationEvent(event)
 
+            verify { broadcastProducer.produce(AdminDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission)) }
             verify {
                 broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardAdmin(submission.contest.id),
-                        event = BroadcastEvent.SUBMISSION_CREATED,
-                        body = submission.toWithCodeAndExecutionResponseBodyDTO(),
-                    ),
+                    ContestantDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission),
                 )
             }
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardContestant(submission.contest.id),
-                        event = BroadcastEvent.SUBMISSION_CREATED,
-                        body = submission.toResponseBodyDTO(),
-                    ),
-                )
-            }
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardGuest(submission.contest.id),
-                        event = BroadcastEvent.SUBMISSION_CREATED,
-                        body = submission.toResponseBodyDTO(),
-                    ),
-                )
-            }
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardJudge(submission.contest.id),
-                        event = BroadcastEvent.SUBMISSION_CREATED,
-                        body = submission.toWithCodeAndExecutionResponseBodyDTO(),
-                    ),
-                )
-            }
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardStaff(submission.contest.id),
-                        event = BroadcastEvent.SUBMISSION_CREATED,
-                        body = submission.toResponseBodyDTO(),
-                    ),
-                )
-            }
+            verify { broadcastProducer.produce(GuestDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission)) }
+            verify { broadcastProducer.produce(JudgeDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission)) }
+            verify { broadcastProducer.produce(StaffDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission)) }
+
             verify {
                 submissionQueueProducer.produce(
                     SubmissionQueuePayload(submissionId = submission.id),

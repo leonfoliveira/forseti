@@ -1,7 +1,5 @@
 package com.forsetijudge.core.port.driven.broadcast
 
-import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
-
 /**
  * Interface for producing broadcast messages.
  *
@@ -11,7 +9,7 @@ interface BroadcastProducer {
     /**
      * Produces a broadcast message with the specified [payload].
      *
-     * @param payload The data to be sent as a broadcast message. It must be of type [BroadcastPayload].
+     * @param payload The data to be sent as a broadcast message. It must be of type [BroadcastEvent].
      */
-    fun produce(payload: BroadcastPayload)
+    fun produce(payload: BroadcastEvent)
 }

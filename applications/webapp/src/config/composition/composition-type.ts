@@ -1,8 +1,4 @@
-import { AnnouncementListener } from "@/core/port/driven/listener/AnnouncementListener";
-import { ClarificationListener } from "@/core/port/driven/listener/ClarificationListener";
-import { LeaderboardListener } from "@/core/port/driven/listener/LeaderboardListener";
-import { SubmissionListener } from "@/core/port/driven/listener/SubmissionListener";
-import { TicketListener } from "@/core/port/driven/listener/TicketListener";
+import { BroadcastClient } from "@/core/port/driven/broadcast/BroadcastClient";
 import { AnnouncementWritter } from "@/core/port/driving/usecase/announcement/AnnouncementWritter";
 import { AttachmentReader } from "@/core/port/driving/usecase/attachment/AttachmentReader";
 import { AttachmentWritter } from "@/core/port/driving/usecase/attachment/AttachmentWritter";
@@ -18,16 +14,10 @@ import { StorageReader } from "@/core/port/driving/usecase/storage/StorageReader
 import { StorageWritter } from "@/core/port/driving/usecase/storage/StorageWritter";
 import { SubmissionWritter } from "@/core/port/driving/usecase/submission/SubmissionWritter";
 import { TicketWritter } from "@/core/port/driving/usecase/ticket/TicketWritter";
-import { StompClientFactory } from "@/infrastructure/adapter/stomp/StompClientFactory";
 
 export type Composition = {
-  // Listeners
-  listenerClientFactory: StompClientFactory;
-  announcementListener: AnnouncementListener;
-  clarificationListener: ClarificationListener;
-  leaderboardListener: LeaderboardListener;
-  submissionListener: SubmissionListener;
-  ticketListener: TicketListener;
+  // Broadcast
+  broadcastClient: BroadcastClient;
 
   // UseCases
   announcementWritter: AnnouncementWritter;

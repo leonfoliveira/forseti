@@ -3,6 +3,7 @@ package com.forsetijudge.api.adapter.driving.socketio.listener
 import com.corundumstudio.socketio.SocketIOClient
 import com.corundumstudio.socketio.listener.ConnectListener
 import com.forsetijudge.core.domain.exception.UnauthorizedException
+import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -21,6 +22,10 @@ class SocketIOConnectListener(
      * @param client the SocketIOClient that has connected
      */
     override fun onConnect(client: SocketIOClient) {
+        ExecutionContext.start(
+            ip = client.handshakeData.httpHeaders.get("X-Forwarded-For"),
+        )
+
         val cookieHeader = client.handshakeData.httpHeaders.get("Cookie")
         val sessionId = getSessionIdFromCookies(cookieHeader)
 

@@ -38,12 +38,7 @@ import { AxiosSessionRepository } from "@/infrastructure/adapter/axios/repositor
 import { AxiosSubmissionRepository } from "@/infrastructure/adapter/axios/repository/AxiosSubmissionRepository";
 import { AxiosTicketRepository } from "@/infrastructure/adapter/axios/repository/AxiosTicketRepository";
 import { LocalStorageRepository } from "@/infrastructure/adapter/localstorage/LocalStorageRepository";
-import { StompAnnouncementListener } from "@/infrastructure/adapter/stomp/StompAnnouncementListener";
-import { StompClarificationListener } from "@/infrastructure/adapter/stomp/StompClarificationListener";
-import { StompClientFactory } from "@/infrastructure/adapter/stomp/StompClientFactory";
-import { StompLeaderboardListener } from "@/infrastructure/adapter/stomp/StompLeaderboardListener";
-import { StompSubmissionListener } from "@/infrastructure/adapter/stomp/StompSubmissionListener";
-import { StompTicketListener } from "@/infrastructure/adapter/stomp/StompTicketListener";
+import { SocketIOBroadcastClient } from "@/infrastructure/adapter/socketio/SocketIOClient";
 
 /**
  * Instantiate all client-side composition dependencies
@@ -51,16 +46,8 @@ import { StompTicketListener } from "@/infrastructure/adapter/stomp/StompTicketL
  * @returns The client-side composition
  */
 export function build(): Composition {
-  // Listeners
-  const listenerClientFactory = new StompClientFactory(
-    clientConfig.wsPublicUrl,
-  );
-
-  const announcementListener = new StompAnnouncementListener();
-  const clarificationListener = new StompClarificationListener();
-  const leaderboardListener = new StompLeaderboardListener();
-  const submissionListener = new StompSubmissionListener();
-  const ticketListener = new StompTicketListener();
+  // Broadcast
+  const broadcastClient = new SocketIOBroadcastClient(clientConfig.wsPublicUrl);
 
   // Repositories
   const axiosClient = new AxiosClientSideClient(clientConfig.apiPublicUrl);
@@ -120,12 +107,7 @@ export function build(): Composition {
   const ticketWritter: TicketWritter = ticketService;
 
   return {
-    listenerClientFactory,
-    announcementListener,
-    clarificationListener,
-    leaderboardListener,
-    submissionListener,
-    ticketListener,
+    broadcastClient,
     announcementWritter,
     attachmentReader,
     attachmentWritter,

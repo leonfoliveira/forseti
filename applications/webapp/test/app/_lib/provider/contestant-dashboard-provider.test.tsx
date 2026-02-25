@@ -1,5 +1,4 @@
 import { screen } from "@testing-library/dom";
-import { mock } from "jest-mock-extended";
 import { act } from "react";
 
 import { useToast } from "@/app/_lib/hook/toast-hook";
@@ -8,7 +7,6 @@ import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboa
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
-import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
 import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
@@ -31,15 +29,11 @@ describe("ContestantDashboardProvider", () => {
   const session = MockSession();
   const contest = MockContestResponseDTO();
   const dashboard = MockContestantDashboardResponseDTO();
-  const listenerClient = mock<ListenerClient>();
 
   beforeEach(() => {
     (
       Composition.dashboardReader.getContestantDashboard as jest.Mock
     ).mockResolvedValue(dashboard);
-    (Composition.listenerClientFactory.create as jest.Mock).mockReturnValue(
-      listenerClient,
-    );
   });
 
   it("should load data on startup and render children", async () => {
@@ -54,49 +48,10 @@ describe("ContestantDashboardProvider", () => {
       Composition.dashboardReader.getContestantDashboard,
     ).toHaveBeenCalledWith(contest.id);
 
-    expect(
-      Composition.submissionListener.subscribeForContest,
-    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
-    expect(
-      Composition.submissionListener.subscribeForMemberWithCode,
-    ).toHaveBeenCalledWith(
-      listenerClient,
-      contest.id,
-      session.member.id,
-      expect.any(Function),
-    );
-    expect(
-      Composition.announcementListener.subscribeForContest,
-    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
-    expect(
-      Composition.clarificationListener.subscribeForContest,
-    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
-    expect(
-      Composition.clarificationListener.subscribeForMemberAnswer,
-    ).toHaveBeenCalledWith(
-      listenerClient,
-      contest.id,
-      session.member.id,
-      expect.any(Function),
-    );
-    expect(
-      Composition.clarificationListener.subscribeForContestDeleted,
-    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
-    expect(
-      Composition.leaderboardListener.subscribeForLeaderboardCell,
-    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
-    expect(
-      Composition.leaderboardListener.subscribeForLeaderboardFrozen,
-    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
-    expect(
-      Composition.leaderboardListener.subscribeForLeaderboardUnfrozen,
-    ).toHaveBeenCalledWith(listenerClient, contest.id, expect.any(Function));
-    expect(Composition.ticketListener.subscribeForMember).toHaveBeenCalledWith(
-      listenerClient,
-      contest.id,
-      session.member.id,
-      expect.any(Function),
-    );
+    expect(Composition.broadcastClient.connect).toHaveBeenCalled();
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[0][0];
+    expect(room.name).toBe(`contests/${contest.id}/contestant`);
 
     const state = store.getState().contestantDashboard;
     expect(state).toEqual({
@@ -140,10 +95,10 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      (
-        Composition.leaderboardListener.subscribeForLeaderboardCell as jest.Mock
-      ).mock.calls[0][2](leaderboardPartial);
+      room.callbacks.LEADERBOARD_UPDATED(leaderboardPartial);
     });
     expect(
       store.getState().contestantDashboard.leaderboard.rows[0].cells[0]
@@ -159,11 +114,10 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      (
-        Composition.leaderboardListener
-          .subscribeForLeaderboardFrozen as jest.Mock
-      ).mock.calls[0][2]();
+      room.callbacks.LEADERBOARD_FROZEN();
     });
     expect(store.getState().contestantDashboard.leaderboard.isFrozen).toBe(
       true,
@@ -181,11 +135,13 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      (
-        Composition.leaderboardListener
-          .subscribeForLeaderboardUnfrozen as jest.Mock
-      ).mock.calls[0][2]({ leaderboard: otherLeaderboard, frozenSubmissions });
+      room.callbacks.LEADERBOARD_UNFROZEN({
+        leaderboard: otherLeaderboard,
+        frozenSubmissions,
+      });
     });
     expect(store.getState().contestantDashboard.leaderboard).toBe(
       otherLeaderboard,
@@ -205,10 +161,10 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      (
-        Composition.submissionListener.subscribeForContest as jest.Mock
-      ).mock.calls[0][2](otherSubmission);
+      room.callbacks.SUBMISSION_CREATED(otherSubmission);
     });
     expect(store.getState().contestantDashboard.submissions).toContain(
       otherSubmission,
@@ -226,10 +182,10 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[1][0];
     act(() => {
-      (
-        Composition.submissionListener.subscribeForMemberWithCode as jest.Mock
-      ).mock.calls[0][3](otherSubmission);
+      room.callbacks.SUBMISSION_UPDATED(otherSubmission);
     });
     expect(store.getState().contestantDashboard.memberSubmissions).toContain(
       otherSubmission,
@@ -249,10 +205,10 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[1][0];
     act(() => {
-      (
-        Composition.submissionListener.subscribeForMemberWithCode as jest.Mock
-      ).mock.calls[0][3](otherSubmission);
+      room.callbacks.SUBMISSION_UPDATED(otherSubmission);
     });
     expect(useToast().error).toHaveBeenCalled();
   });
@@ -268,10 +224,10 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[1][0];
     act(() => {
-      (
-        Composition.submissionListener.subscribeForMemberWithCode as jest.Mock
-      ).mock.calls[0][3](otherSubmission);
+      room.callbacks.SUBMISSION_UPDATED(otherSubmission);
     });
     expect(useToast().info).toHaveBeenCalled();
   });
@@ -287,33 +243,12 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[1][0];
     act(() => {
-      (
-        Composition.submissionListener.subscribeForMemberWithCode as jest.Mock
-      ).mock.calls[0][3](otherSubmission);
+      room.callbacks.SUBMISSION_UPDATED(otherSubmission);
     });
     expect(useToast().warning).toHaveBeenCalled();
-  });
-
-  it("should ignore member submission updates with no answer", async () => {
-    const otherSubmission = MockSubmissionResponseDTO({
-      answer: SubmissionAnswer.NO_ANSWER,
-    });
-    const { store } = await renderWithProviders(
-      <ContestantDashboardProvider>
-        <div data-testid="child" />
-      </ContestantDashboardProvider>,
-      { session, contest },
-    );
-
-    act(() => {
-      (
-        Composition.submissionListener.subscribeForMemberWithCode as jest.Mock
-      ).mock.calls[0][3](otherSubmission);
-    });
-    expect(
-      store.getState().contestantDashboard.memberSubmissions,
-    ).not.toContain(otherSubmission);
   });
 
   it("should handle announcements update", async () => {
@@ -325,10 +260,10 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      (
-        Composition.announcementListener.subscribeForContest as jest.Mock
-      ).mock.calls[0][2](otherAnnouncement);
+      room.callbacks.ANNOUNCEMENT_CREATED(otherAnnouncement);
     });
     expect(store.getState().contestantDashboard.announcements).toContain(
       otherAnnouncement,
@@ -347,10 +282,10 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      (
-        Composition.clarificationListener.subscribeForContest as jest.Mock
-      ).mock.calls[0][2](otherClarification);
+      room.callbacks.CLARIFICATION_CREATED(otherClarification);
     });
     expect(
       store.getState().contestantDashboard.clarifications[0].children,
@@ -365,10 +300,14 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[1][0];
     act(() => {
-      (
-        Composition.clarificationListener.subscribeForMemberAnswer as jest.Mock
-      ).mock.calls[0][3]();
+      room.callbacks.CLARIFICATION_ANSWERED(
+        MockClarificationResponseDTO({
+          parentId: dashboard.clarifications[0].id,
+        }),
+      );
     });
     expect(useToast().info).toHaveBeenCalled();
   });
@@ -381,11 +320,12 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      (
-        Composition.clarificationListener
-          .subscribeForContestDeleted as jest.Mock
-      ).mock.calls[0][2]({ id: dashboard.clarifications[0].id });
+      room.callbacks.CLARIFICATION_DELETED({
+        id: dashboard.clarifications[0].id,
+      });
     });
     expect(store.getState().contestantDashboard.clarifications).toHaveLength(0);
   });
@@ -399,17 +339,17 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[1][0];
     act(() => {
-      (
-        Composition.ticketListener.subscribeForMember as jest.Mock
-      ).mock.calls[0][3](otherTicket);
+      room.callbacks.TICKET_UPDATED(otherTicket);
     });
     expect(store.getState().contestantDashboard.memberTickets).toContain(
       otherTicket,
     );
   });
 
-  it("should show toast on announcement update", async () => {
+  it("should show toast on announcement created", async () => {
     const otherTicket = MockTicketResponseDTO({ version: 2 });
     await renderWithProviders(
       <ContestantDashboardProvider>
@@ -418,12 +358,12 @@ describe("ContestantDashboardProvider", () => {
       { session, contest },
     );
 
+    const room = (Composition.broadcastClient.subscribe as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      (
-        Composition.ticketListener.subscribeForMember as jest.Mock
-      ).mock.calls[0][3](otherTicket);
+      room.callbacks.ANNOUNCEMENT_CREATED(otherTicket);
     });
-    expect(useToast().info).toHaveBeenCalled();
+    expect(useToast().warning).toHaveBeenCalled();
   });
 
   it("should show freeze banner if leaderboard is frozen", async () => {

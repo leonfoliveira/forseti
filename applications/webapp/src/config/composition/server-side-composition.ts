@@ -10,6 +10,7 @@ import { LeaderboardService } from "@/core/application/service/LeaderboardServic
 import { SessionService } from "@/core/application/service/SessionService";
 import { SubmissionService } from "@/core/application/service/SubmissionService";
 import { TicketService } from "@/core/application/service/TicketService";
+import { BroadcastClient } from "@/core/port/driven/broadcast/BroadcastClient";
 import { AnnouncementWritter } from "@/core/port/driving/usecase/announcement/AnnouncementWritter";
 import { AttachmentReader } from "@/core/port/driving/usecase/attachment/AttachmentReader";
 import { AttachmentWritter } from "@/core/port/driving/usecase/attachment/AttachmentWritter";
@@ -36,26 +37,14 @@ import { AxiosLeaderboardRepository } from "@/infrastructure/adapter/axios/repos
 import { AxiosSessionRepository } from "@/infrastructure/adapter/axios/repository/AxiosSessionRepository";
 import { AxiosSubmissionRepository } from "@/infrastructure/adapter/axios/repository/AxiosSubmissionRepository";
 import { AxiosTicketRepository } from "@/infrastructure/adapter/axios/repository/AxiosTicketRepository";
-import { StompAnnouncementListener } from "@/infrastructure/adapter/stomp/StompAnnouncementListener";
-import { StompClarificationListener } from "@/infrastructure/adapter/stomp/StompClarificationListener";
-import { StompClientFactory } from "@/infrastructure/adapter/stomp/StompClientFactory";
-import { StompLeaderboardListener } from "@/infrastructure/adapter/stomp/StompLeaderboardListener";
-import { StompSubmissionListener } from "@/infrastructure/adapter/stomp/StompSubmissionListener";
-import { StompTicketListener } from "@/infrastructure/adapter/stomp/StompTicketListener";
-
 /**
  * Instantiate all server-side composition dependencies
  *
  * @returns The server-side composition
  */
 export function build(): Composition {
-  // Listeners (no server-side implementations)
-  const listenerClientFactory = null as unknown as StompClientFactory;
-  const announcementListener = null as unknown as StompAnnouncementListener;
-  const clarificationListener = null as unknown as StompClarificationListener;
-  const leaderboardListener = null as unknown as StompLeaderboardListener;
-  const submissionListener = null as unknown as StompSubmissionListener;
-  const ticketListener = null as unknown as StompTicketListener;
+  // Broadcast
+  const broadcastClient = null as unknown as BroadcastClient;
 
   // Repositories
   const axiosClient = new AxiosServerSideClient(serverConfig.apiInternalUrl);
@@ -114,12 +103,7 @@ export function build(): Composition {
   const ticketWritter: TicketWritter = ticketService;
 
   return {
-    listenerClientFactory,
-    announcementListener,
-    clarificationListener,
-    leaderboardListener,
-    submissionListener,
-    ticketListener,
+    broadcastClient,
     announcementWritter,
     attachmentReader,
     attachmentWritter,

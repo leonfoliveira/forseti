@@ -4,15 +4,15 @@ import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.event.LeaderboardEvent
 import com.forsetijudge.core.domain.model.LeaderboardMockBuilder
-import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
-import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
-import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.ContestantDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.driving.usecase.external.submission.FindAllSubmissionsByContestSinceLastFreezeUseCase
-import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
@@ -20,7 +20,6 @@ import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
-import java.io.Serializable
 
 @ActiveProfiles("test")
 @SpringBootTest(classes = [LeaderboardUnfrozenEventListener::class])
@@ -48,70 +47,19 @@ class LeaderboardUnfrozenEventListenerTest(
             every { findAllSubmissionsByContestSinceLastFreezeUseCase.execute() } returns frozenSubmissions
 
             sut.onApplicationEvent(event)
+
+            verify { broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildLeaderboardUnfrozenEvent(leaderboard)) }
             verify {
                 broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardAdmin(contest.id),
-                        event = BroadcastEvent.LEADERBOARD_UNFROZEN,
-                        body =
-                            mapOf(
-                                "leaderboard" to leaderboard.toResponseBodyDTO(),
-                                "announcement" to frozenSubmissions.map { it.toResponseBodyDTO() },
-                            ) as Serializable,
-                    ),
+                    ContestantDashboardBroadcastRoom(contest.id).buildLeaderboardUnfrozenEvent(leaderboard, frozenSubmissions),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardContestant(contest.id),
-                        event = BroadcastEvent.LEADERBOARD_UNFROZEN,
-                        body =
-                            mapOf(
-                                "leaderboard" to leaderboard.toResponseBodyDTO(),
-                                "announcement" to frozenSubmissions.map { it.toResponseBodyDTO() },
-                            ) as Serializable,
-                    ),
+                    GuestDashboardBroadcastRoom(contest.id).buildLeaderboardUnfrozenEvent(leaderboard, frozenSubmissions),
                 )
             }
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardGuest(contest.id),
-                        event = BroadcastEvent.LEADERBOARD_UNFROZEN,
-                        body =
-                            mapOf(
-                                "leaderboard" to leaderboard.toResponseBodyDTO(),
-                                "announcement" to frozenSubmissions.map { it.toResponseBodyDTO() },
-                            ) as Serializable,
-                    ),
-                )
-            }
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardJudge(contest.id),
-                        event = BroadcastEvent.LEADERBOARD_UNFROZEN,
-                        body =
-                            mapOf(
-                                "leaderboard" to leaderboard.toResponseBodyDTO(),
-                                "announcement" to frozenSubmissions.map { it.toResponseBodyDTO() },
-                            ) as Serializable,
-                    ),
-                )
-            }
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardStaff(contest.id),
-                        event = BroadcastEvent.LEADERBOARD_UNFROZEN,
-                        body =
-                            mapOf(
-                                "leaderboard" to leaderboard.toResponseBodyDTO(),
-                                "announcement" to frozenSubmissions.map { it.toResponseBodyDTO() },
-                            ) as Serializable,
-                    ),
-                )
-            }
+            verify { broadcastProducer.produce(JudgeDashboardBroadcastRoom(contest.id).buildLeaderboardUnfrozenEvent(leaderboard)) }
+            verify { broadcastProducer.produce(StaffDashboardBroadcastRoom(contest.id).buildLeaderboardUnfrozenEvent(leaderboard)) }
         }
     })

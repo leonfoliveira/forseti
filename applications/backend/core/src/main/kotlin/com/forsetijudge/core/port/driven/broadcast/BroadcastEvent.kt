@@ -1,15 +1,9 @@
 package com.forsetijudge.core.port.driven.broadcast
 
-enum class BroadcastEvent {
-    ANNOUNCEMENT_CREATED,
-    CLARIFICATION_CREATED,
-    CLARIFICATION_ANSWERED,
-    CLARIFICATION_DELETED,
-    LEADERBOARD_UPDATED,
-    LEADERBOARD_FROZEN,
-    LEADERBOARD_UNFROZEN,
-    SUBMISSION_CREATED,
-    SUBMISSION_UPDATED,
-    TICKET_CREATED,
-    TICKET_UPDATED,
-}
+import java.io.Serializable
+
+data class BroadcastEvent(
+    val room: String,
+    val name: String,
+    val data: Serializable? = null,
+) : Serializable

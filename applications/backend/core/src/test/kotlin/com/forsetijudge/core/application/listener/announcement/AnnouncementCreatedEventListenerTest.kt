@@ -2,12 +2,13 @@ package com.forsetijudge.core.application.listener.announcement
 
 import com.forsetijudge.core.domain.entity.AnnouncementMockBuilder
 import com.forsetijudge.core.domain.event.AnnouncementEvent
-import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
-import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
-import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.ContestantDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
@@ -36,47 +37,27 @@ class AnnouncementCreatedEventListenerTest(
 
             verify {
                 broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardAdmin(announcement.contest.id),
-                        event = BroadcastEvent.ANNOUNCEMENT_CREATED,
-                        body = announcement.toResponseBodyDTO(),
-                    ),
+                    AdminDashboardBroadcastRoom(announcement.contest.id).buildAnnouncementCreatedEvent(announcement),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardContestant(announcement.contest.id),
-                        event = BroadcastEvent.ANNOUNCEMENT_CREATED,
-                        body = announcement.toResponseBodyDTO(),
-                    ),
+                    ContestantDashboardBroadcastRoom(announcement.contest.id).buildAnnouncementCreatedEvent(announcement),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardGuest(announcement.contest.id),
-                        event = BroadcastEvent.ANNOUNCEMENT_CREATED,
-                        body = announcement.toResponseBodyDTO(),
-                    ),
+                    GuestDashboardBroadcastRoom(announcement.contest.id).buildAnnouncementCreatedEvent(announcement),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardJudge(announcement.contest.id),
-                        event = BroadcastEvent.ANNOUNCEMENT_CREATED,
-                        body = announcement.toResponseBodyDTO(),
-                    ),
+                    JudgeDashboardBroadcastRoom(announcement.contest.id).buildAnnouncementCreatedEvent(announcement),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardStaff(announcement.contest.id),
-                        event = BroadcastEvent.ANNOUNCEMENT_CREATED,
-                        body = announcement.toResponseBodyDTO(),
-                    ),
+                    StaffDashboardBroadcastRoom(announcement.contest.id).buildAnnouncementCreatedEvent(announcement),
                 )
             }
         }

@@ -4,8 +4,11 @@ import com.corundumstudio.socketio.HandshakeData
 import com.corundumstudio.socketio.SocketIOClient
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.exception.UnauthorizedException
+import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -16,6 +19,11 @@ class SocketIOConnectListenerTest :
         val findSessionByIdUseCase = mockk<FindSessionByIdUseCase>(relaxed = true)
 
         val sut = SocketIOConnectListener(findSessionByIdUseCase)
+
+        beforeEach {
+            clearAllMocks()
+            ExecutionContext.clear()
+        }
 
         test("should not set session when there is no session id in handshake data") {
             val mockClient = mockk<SocketIOClient>(relaxed = true)
@@ -92,6 +100,7 @@ class SocketIOConnectListenerTest :
             val mockClient = mockk<SocketIOClient>(relaxed = true)
             val mockHandshakeData = mockk<HandshakeData>(relaxed = true)
             val mockHttpHeaders = mockk<HttpHeaders>(relaxed = true)
+            every { mockHttpHeaders.get("X-Forwarded-For") } returns "0.0.0.0"
             every { mockHttpHeaders.get("Cookie") } returns "session_id=123e4567-e89b-12d3-a456-426614174000"
             every { mockHandshakeData.httpHeaders } returns mockHttpHeaders
             every { mockClient.handshakeData } returns mockHandshakeData
@@ -102,5 +111,6 @@ class SocketIOConnectListenerTest :
 
             verify { findSessionByIdUseCase.execute(any()) }
             verify { mockClient.set("session", session) }
+            ExecutionContext.get().ip shouldBe "0.0.0.0"
         }
     })

@@ -12,12 +12,11 @@ import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
+import { AdminDashboardBroadcastRoom } from "@/core/port/driven/broadcast/room/dashboard/AdminDashboardBroadcastRoom";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
@@ -66,7 +65,6 @@ export function AdminDashboardProvider({
   const dispatch = useAppDispatch();
   const toast = useToast();
   const intl = useIntl();
-  const listenerClientRef = React.useRef<ListenerClient | null>(null);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -86,10 +84,8 @@ export function AdminDashboardProvider({
       const data = await Composition.dashboardReader.getAdminDashboard(
         contest.id,
       );
-      console.log(data.clarifications);
 
-      listenerClientRef.current = Composition.listenerClientFactory.create();
-      await listenerClientRef.current.connect(() => {
+      await Composition.broadcastClient.connect(() => {
         console.debug("Listener connection lost");
         dispatch(
           adminDashboardSlice.actions.setListenerStatus(
@@ -98,60 +94,20 @@ export function AdminDashboardProvider({
         );
         reconnect();
       });
-      const subscriptions = [
-        () =>
-          Composition.leaderboardListener.subscribeForLeaderboardCell(
-            listenerClientRef.current as ListenerClient,
-            contest.id,
-            receiveLeaderboardPartial,
-          ),
-        () =>
-          Composition.leaderboardListener.subscribeForLeaderboardFrozen(
-            listenerClientRef.current as ListenerClient,
-            contest.id,
-            receiveLeaderboardFreeze,
-          ),
-        () =>
-          Composition.leaderboardListener.subscribeForLeaderboardUnfrozen(
-            listenerClientRef.current as ListenerClient,
-            contest.id,
-            receiveLeaderboardUnfreeze,
-          ),
-        () =>
-          Composition.submissionListener.subscribeForContestWithCodeAndExecutions(
-            listenerClientRef.current as ListenerClient,
-            contest.id,
-            receiveSubmission,
-          ),
-        () =>
-          Composition.announcementListener.subscribeForContest(
-            listenerClientRef.current as ListenerClient,
-            contest.id,
-            receiveAnnouncement,
-          ),
-        () =>
-          Composition.clarificationListener.subscribeForContest(
-            listenerClientRef.current as ListenerClient,
-            contest.id,
-            receiveClarification,
-          ),
-        () =>
-          Composition.clarificationListener.subscribeForContestDeleted(
-            listenerClientRef.current as ListenerClient,
-            contest.id,
-            deleteClarification,
-          ),
-        () =>
-          Composition.ticketListener.subscribeForContest(
-            listenerClientRef.current as ListenerClient,
-            contest.id,
-            receiveTicket,
-          ),
-      ];
-
-      for (const subscribe of subscriptions) {
-        await subscribe();
-      }
+      await Composition.broadcastClient.subscribe(
+        new AdminDashboardBroadcastRoom(contest.id, {
+          ANNOUNCEMENT_CREATED: receiveAnnouncement,
+          CLARIFICATION_CREATED: receiveClarification,
+          CLARIFICATION_DELETED: deleteClarification,
+          LEADERBOARD_UPDATED: receiveLeaderboardPartial,
+          LEADERBOARD_FROZEN: receiveLeaderboardFreeze,
+          LEADERBOARD_UNFROZEN: receiveLeaderboardUnfreeze,
+          SUBMISSION_CREATED: receiveSubmission,
+          SUBMISSION_UPDATED: receiveSubmission,
+          TICKET_CREATED: receiveTicket,
+          TICKET_UPDATED: receiveTicket,
+        }),
+      );
 
       console.debug("Successfully fetched dashboard data and set up listeners");
       dispatch(adminDashboardSlice.actions.set(data));
@@ -176,8 +132,8 @@ export function AdminDashboardProvider({
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
-      if (listenerClientRef.current) {
-        listenerClientRef.current.disconnect();
+      if (Composition.broadcastClient.isConnected) {
+        Composition.broadcastClient.disconnect();
       }
     };
   }, [session, contest.id]);
@@ -193,12 +149,9 @@ export function AdminDashboardProvider({
     toast.info(messages.frozen);
   }
 
-  function receiveLeaderboardUnfreeze(data: {
-    leaderboard: LeaderboardResponseDTO;
-    frozenSubmissions: SubmissionResponseDTO[];
-  }) {
-    console.debug("Received leaderboard unfreeze:", data);
-    dispatch(adminDashboardSlice.actions.setLeaderboard(data.leaderboard));
+  function receiveLeaderboardUnfreeze(leaderboard: LeaderboardResponseDTO) {
+    console.debug("Received leaderboard unfreeze:", leaderboard);
+    dispatch(adminDashboardSlice.actions.setLeaderboard(leaderboard));
     toast.info(messages.unfrozen);
   }
 

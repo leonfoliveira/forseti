@@ -2,10 +2,12 @@ package com.forsetijudge.core.application.listener.leaderboard
 
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.event.LeaderboardEvent
-import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
-import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
-import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.ContestantDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
@@ -32,45 +34,11 @@ class LeaderboardFrozenEventListenerTest(
             val event = LeaderboardEvent.Frozen(contest)
 
             sut.onApplicationEvent(event)
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardAdmin(contest.id),
-                        event = BroadcastEvent.LEADERBOARD_FROZEN,
-                    ),
-                )
-            }
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardContestant(contest.id),
-                        event = BroadcastEvent.LEADERBOARD_FROZEN,
-                    ),
-                )
-            }
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardGuest(contest.id),
-                        event = BroadcastEvent.LEADERBOARD_FROZEN,
-                    ),
-                )
-            }
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardJudge(contest.id),
-                        event = BroadcastEvent.LEADERBOARD_FROZEN,
-                    ),
-                )
-            }
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardStaff(contest.id),
-                        event = BroadcastEvent.LEADERBOARD_FROZEN,
-                    ),
-                )
-            }
+
+            verify { broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildLeaderboardFrozenEvent()) }
+            verify { broadcastProducer.produce(ContestantDashboardBroadcastRoom(contest.id).buildLeaderboardFrozenEvent()) }
+            verify { broadcastProducer.produce(GuestDashboardBroadcastRoom(contest.id).buildLeaderboardFrozenEvent()) }
+            verify { broadcastProducer.produce(JudgeDashboardBroadcastRoom(contest.id).buildLeaderboardFrozenEvent()) }
+            verify { broadcastProducer.produce(StaffDashboardBroadcastRoom(contest.id).buildLeaderboardFrozenEvent()) }
         }
     })

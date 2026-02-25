@@ -3,10 +3,12 @@ package com.forsetijudge.core.application.listener.leaderboard
 import com.forsetijudge.core.application.listener.BusinessEventListener
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.event.LeaderboardEvent
-import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
-import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
-import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.ContestantDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
@@ -23,39 +25,10 @@ class LeaderboardFrozenEventListener(
     override fun handlePayload(payload: Contest) {
         val contest = payload
 
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardAdmin(contest.id),
-                event = BroadcastEvent.LEADERBOARD_FROZEN,
-            ),
-        )
-
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardContestant(contest.id),
-                event = BroadcastEvent.LEADERBOARD_FROZEN,
-            ),
-        )
-
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardGuest(contest.id),
-                event = BroadcastEvent.LEADERBOARD_FROZEN,
-            ),
-        )
-
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardJudge(contest.id),
-                event = BroadcastEvent.LEADERBOARD_FROZEN,
-            ),
-        )
-
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardStaff(contest.id),
-                event = BroadcastEvent.LEADERBOARD_FROZEN,
-            ),
-        )
+        broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildLeaderboardFrozenEvent())
+        broadcastProducer.produce(ContestantDashboardBroadcastRoom(contest.id).buildLeaderboardFrozenEvent())
+        broadcastProducer.produce(GuestDashboardBroadcastRoom(contest.id).buildLeaderboardFrozenEvent())
+        broadcastProducer.produce(JudgeDashboardBroadcastRoom(contest.id).buildLeaderboardFrozenEvent())
+        broadcastProducer.produce(StaffDashboardBroadcastRoom(contest.id).buildLeaderboardFrozenEvent())
     }
 }

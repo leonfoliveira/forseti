@@ -12,12 +12,12 @@ import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
+import { JudgeDashboardBroadcastRoom } from "@/core/port/driven/broadcast/room/dashboard/JudgeDashboardBroadcastRoom";
+import { JudgePrivateBroadcastRoom } from "@/core/port/driven/broadcast/room/private/JudgePrivateBroadcastRoom";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
@@ -70,7 +70,6 @@ export function JudgeDashboardProvider({
   const dispatch = useAppDispatch();
   const toast = useToast();
   const intl = useIntl();
-  const listenerClientRef = React.useRef<ListenerClient | null>(null);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -91,8 +90,7 @@ export function JudgeDashboardProvider({
         contest.id,
       );
 
-      listenerClientRef.current = Composition.listenerClientFactory.create();
-      await listenerClientRef.current.connect(() => {
+      await Composition.broadcastClient.connect(() => {
         console.debug("Listener connection lost");
         dispatch(
           judgeDashboardSlice.actions.setListenerStatus(
@@ -101,49 +99,23 @@ export function JudgeDashboardProvider({
         );
         reconnect();
       });
-      await Promise.all([
-        Composition.leaderboardListener.subscribeForLeaderboardCell(
-          listenerClientRef.current,
-          contest.id,
-          receiveLeaderboardPartial,
-        ),
-        Composition.leaderboardListener.subscribeForLeaderboardFrozen(
-          listenerClientRef.current,
-          contest.id,
-          receiveLeaderboardFreeze,
-        ),
-        Composition.leaderboardListener.subscribeForLeaderboardUnfrozen(
-          listenerClientRef.current,
-          contest.id,
-          receiveLeaderboardUnfreeze,
-        ),
-        Composition.submissionListener.subscribeForContestWithCodeAndExecutions(
-          listenerClientRef.current,
-          contest.id,
-          receiveSubmission,
-        ),
-        Composition.announcementListener.subscribeForContest(
-          listenerClientRef.current,
-          contest.id,
-          receiveAnnouncement,
-        ),
-        Composition.clarificationListener.subscribeForContest(
-          listenerClientRef.current,
-          contest.id,
-          receiveClarification,
-        ),
-        Composition.clarificationListener.subscribeForContestDeleted(
-          listenerClientRef.current,
-          contest.id,
-          deleteClarification,
-        ),
-        Composition.ticketListener.subscribeForMember(
-          listenerClientRef.current,
-          contest.id,
-          session!.member.id,
-          receiveMemberTicket,
-        ),
-      ]);
+      await Composition.broadcastClient.subscribe(
+        new JudgeDashboardBroadcastRoom(contest.id, {
+          ANNOUNCEMENT_CREATED: receiveAnnouncement,
+          CLARIFICATION_CREATED: receiveClarification,
+          CLARIFICATION_DELETED: deleteClarification,
+          LEADERBOARD_UPDATED: receiveLeaderboardPartial,
+          LEADERBOARD_FROZEN: receiveLeaderboardFreeze,
+          LEADERBOARD_UNFROZEN: receiveLeaderboardUnfreeze,
+          SUBMISSION_CREATED: receiveSubmission,
+          SUBMISSION_UPDATED: receiveSubmission,
+        }),
+      );
+      await Composition.broadcastClient.subscribe(
+        new JudgePrivateBroadcastRoom(session!.member.id, {
+          TICKET_UPDATED: receiveMemberTicket,
+        }),
+      );
 
       console.debug("Successfully fetched dashboard data and set up listeners");
       dispatch(judgeDashboardSlice.actions.set(data));
@@ -168,8 +140,8 @@ export function JudgeDashboardProvider({
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
-      if (listenerClientRef.current) {
-        listenerClientRef.current.disconnect();
+      if (Composition.broadcastClient.isConnected) {
+        Composition.broadcastClient.disconnect();
       }
     };
   }, [session, contest.id]);
@@ -185,12 +157,9 @@ export function JudgeDashboardProvider({
     toast.info(messages.frozen);
   }
 
-  function receiveLeaderboardUnfreeze(data: {
-    leaderboard: LeaderboardResponseDTO;
-    frozenSubmissions: SubmissionResponseDTO[];
-  }) {
-    console.debug("Received leaderboard unfreeze:", data);
-    dispatch(judgeDashboardSlice.actions.setLeaderboard(data.leaderboard));
+  function receiveLeaderboardUnfreeze(leaderboard: LeaderboardResponseDTO) {
+    console.debug("Received leaderboard unfreeze:", leaderboard);
+    dispatch(judgeDashboardSlice.actions.setLeaderboard(leaderboard));
     toast.info(messages.unfrozen);
   }
 

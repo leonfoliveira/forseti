@@ -10,7 +10,7 @@ import { guestDashboardSlice } from "@/app/_store/slices/guest-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
-import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
+import { GuestDashboardBroadcastRoom } from "@/core/port/driven/broadcast/room/dashboard/GuestDashboardBroadcastRoom";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
@@ -52,7 +52,7 @@ export function GuestDashboardProvider({
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
   const toast = useToast();
-  const listenerClientRef = React.useRef<ListenerClient | null>(null);
+
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -73,8 +73,7 @@ export function GuestDashboardProvider({
         contest.id,
       );
 
-      listenerClientRef.current = Composition.listenerClientFactory.create();
-      await listenerClientRef.current.connect(() => {
+      await Composition.broadcastClient.connect(() => {
         console.debug("Listener connection lost");
         dispatch(
           guestDashboardSlice.actions.setListenerStatus(
@@ -83,43 +82,18 @@ export function GuestDashboardProvider({
         );
         reconnect();
       });
-      await Promise.all([
-        Composition.leaderboardListener.subscribeForLeaderboardCell(
-          listenerClientRef.current,
-          contest.id,
-          receiveLeaderboardPartial,
-        ),
-        Composition.leaderboardListener.subscribeForLeaderboardFrozen(
-          listenerClientRef.current,
-          contest.id,
-          receiveLeaderboardFreeze,
-        ),
-        Composition.leaderboardListener.subscribeForLeaderboardUnfrozen(
-          listenerClientRef.current,
-          contest.id,
-          receiveLeaderboardUnfreeze,
-        ),
-        Composition.submissionListener.subscribeForContest(
-          listenerClientRef.current,
-          contest.id,
-          receiveSubmission,
-        ),
-        Composition.announcementListener.subscribeForContest(
-          listenerClientRef.current,
-          contest.id,
-          receiveAnnouncement,
-        ),
-        Composition.clarificationListener.subscribeForContest(
-          listenerClientRef.current,
-          contest.id,
-          receiveClarification,
-        ),
-        Composition.clarificationListener.subscribeForContestDeleted(
-          listenerClientRef.current,
-          contest.id,
-          deleteClarification,
-        ),
-      ]);
+      await Composition.broadcastClient.subscribe(
+        new GuestDashboardBroadcastRoom(contest.id, {
+          ANNOUNCEMENT_CREATED: receiveAnnouncement,
+          CLARIFICATION_CREATED: receiveClarification,
+          CLARIFICATION_DELETED: deleteClarification,
+          LEADERBOARD_UPDATED: receiveLeaderboardPartial,
+          LEADERBOARD_FROZEN: receiveLeaderboardFreeze,
+          LEADERBOARD_UNFROZEN: receiveLeaderboardUnfreeze,
+          SUBMISSION_CREATED: receiveSubmission,
+          SUBMISSION_UPDATED: receiveSubmission,
+        }),
+      );
 
       console.debug("Successfully fetched dashboard data and set up listeners");
       dispatch(guestDashboardSlice.actions.set(data));
@@ -144,8 +118,8 @@ export function GuestDashboardProvider({
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
-      if (listenerClientRef.current) {
-        listenerClientRef.current.disconnect();
+      if (Composition.broadcastClient.isConnected) {
+        Composition.broadcastClient.disconnect();
       }
     };
   }, [session, contest.id]);

@@ -3,15 +3,15 @@ package com.forsetijudge.core.application.listener.submission
 import com.forsetijudge.core.application.listener.BusinessEventListener
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
-import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
-import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
-import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.ContestantDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
 import com.forsetijudge.core.port.driven.queue.payload.SubmissionQueuePayload
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
-import com.forsetijudge.core.port.dto.response.submission.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
@@ -33,45 +33,11 @@ class SubmissionCreatedEventListener(
     override fun handlePayload(payload: Submission) {
         val submission = payload
 
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardAdmin(submission.contest.id),
-                event = BroadcastEvent.SUBMISSION_CREATED,
-                body = submission.toWithCodeAndExecutionResponseBodyDTO(),
-            ),
-        )
-
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardContestant(submission.contest.id),
-                event = BroadcastEvent.SUBMISSION_CREATED,
-                body = submission.toResponseBodyDTO(),
-            ),
-        )
-
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardGuest(submission.contest.id),
-                event = BroadcastEvent.SUBMISSION_CREATED,
-                body = submission.toResponseBodyDTO(),
-            ),
-        )
-
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardJudge(submission.contest.id),
-                event = BroadcastEvent.SUBMISSION_CREATED,
-                body = submission.toWithCodeAndExecutionResponseBodyDTO(),
-            ),
-        )
-
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardStaff(submission.contest.id),
-                event = BroadcastEvent.SUBMISSION_CREATED,
-                body = submission.toResponseBodyDTO(),
-            ),
-        )
+        broadcastProducer.produce(AdminDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission))
+        broadcastProducer.produce(ContestantDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission))
+        broadcastProducer.produce(GuestDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission))
+        broadcastProducer.produce(JudgeDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission))
+        broadcastProducer.produce(StaffDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission))
 
         if (submission.contest.settings.isAutoJudgeEnabled) {
             submissionQueueProducer.produce(SubmissionQueuePayload(submissionId = submission.id))

@@ -1,7 +1,7 @@
 package com.forsetijudge.api.adapter.driving.rabbitmq.consumer
 
 import com.corundumstudio.socketio.SocketIOServer
-import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
+import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.infrastructure.adapter.driving.consumer.RabbitMQConsumer
 import org.springframework.amqp.rabbit.annotation.Exchange
 import org.springframework.amqp.rabbit.annotation.Queue
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 @Component
 class SocketIOFanoutRabbitMQConsumer(
     private val socketIOServer: SocketIOServer,
-) : RabbitMQConsumer<BroadcastPayload>() {
+) : RabbitMQConsumer<BroadcastEvent>() {
     @RabbitListener(
         bindings = [
             QueueBinding(
@@ -36,16 +36,16 @@ class SocketIOFanoutRabbitMQConsumer(
         super.receiveMessage(jsonMessage)
     }
 
-    override fun getPayloadType(): Class<BroadcastPayload> = BroadcastPayload::class.java
+    override fun getPayloadType(): Class<BroadcastEvent> = BroadcastEvent::class.java
 
     /**
-     * Handles the payload by sending the message to the specified WebSocket topic.
+     * Handles the payload by sending the message to the specified socket.io room.
      *
      * @param payload The payload containing the topic and message.
      */
-    override fun handlePayload(payload: BroadcastPayload) {
-        logger.info("Broadcasting message to WebSocket topic: ${payload.topic}")
+    override fun handlePayload(payload: BroadcastEvent) {
+        logger.info("Broadcasting message to room: ${payload.room}")
 
-        socketIOServer.getRoomOperations(payload.topic.name).sendEvent(payload.event.name, payload.body)
+        socketIOServer.getRoomOperations(payload.room).sendEvent(payload.name, payload.data)
     }
 }

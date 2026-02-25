@@ -2,12 +2,10 @@ package com.forsetijudge.core.application.listener.ticket
 
 import com.forsetijudge.core.domain.entity.TicketMockBuilder
 import com.forsetijudge.core.domain.event.TicketEvent
-import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
-import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
-import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
@@ -35,23 +33,7 @@ class TicketCreatedEventListenerTest(
 
             sut.onApplicationEvent(event)
 
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardAdmin(ticket.contest.id),
-                        event = BroadcastEvent.TICKET_CREATED,
-                        body = ticket.toResponseBodyDTO(),
-                    ),
-                )
-            }
-            verify {
-                broadcastProducer.produce(
-                    BroadcastPayload(
-                        topic = BroadcastTopic.ContestsDashboardStaff(ticket.contest.id),
-                        event = BroadcastEvent.TICKET_CREATED,
-                        body = ticket.toResponseBodyDTO(),
-                    ),
-                )
-            }
+            verify { broadcastProducer.produce(AdminDashboardBroadcastRoom(ticket.contest.id).buildTicketCreatedEvent(ticket)) }
+            verify { broadcastProducer.produce(StaffDashboardBroadcastRoom(ticket.contest.id).buildTicketCreatedEvent(ticket)) }
         }
     })

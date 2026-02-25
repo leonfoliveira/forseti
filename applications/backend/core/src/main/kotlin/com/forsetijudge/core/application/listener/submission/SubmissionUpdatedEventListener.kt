@@ -3,15 +3,14 @@ package com.forsetijudge.core.application.listener.submission
 import com.forsetijudge.core.application.listener.BusinessEventListener
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
-import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
-import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
-import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.ContestantDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
-import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
@@ -33,101 +32,27 @@ class SubmissionUpdatedEventListener(
                 BuildLeaderboardCellUseCase.Command(memberId = submission.member.id, problemId = submission.problem.id),
             )
 
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardAdmin(submission.contest.id),
-                event = BroadcastEvent.SUBMISSION_UPDATED,
-                body = submission.toWithCodeAndExecutionResponseBodyDTO(),
-            ),
-        )
-
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardJudge(submission.contest.id),
-                event = BroadcastEvent.SUBMISSION_UPDATED,
-                body = submission.toResponseBodyDTO(),
-            ),
-        )
-
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsMembers(submission.contest.id, submission.member.id),
-                event = BroadcastEvent.SUBMISSION_UPDATED,
-                body = submission.toWithCodeResponseBodyDTO(),
-            ),
-        )
-
+        broadcastProducer.produce(AdminDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
+        broadcastProducer.produce(JudgeDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
+        broadcastProducer.produce(StaffDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
+        broadcastProducer.produce(ContestantPrivateBroadcastRoom(submission.member.id).buildSubmissionUpdatedEvent(submission))
         if (!submission.contest.isFrozen) {
+            broadcastProducer.produce(ContestantDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
+            broadcastProducer.produce(GuestDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
             broadcastProducer.produce(
-                BroadcastPayload(
-                    topic = BroadcastTopic.ContestsDashboardContestant(submission.contest.id),
-                    event = BroadcastEvent.SUBMISSION_UPDATED,
-                    body = submission.toResponseBodyDTO(),
-                ),
+                AdminDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
             )
-
             broadcastProducer.produce(
-                BroadcastPayload(
-                    topic = BroadcastTopic.ContestsDashboardGuest(submission.contest.id),
-                    event = BroadcastEvent.SUBMISSION_UPDATED,
-                    body = submission.toResponseBodyDTO(),
-                ),
+                ContestantDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
             )
-
             broadcastProducer.produce(
-                BroadcastPayload(
-                    topic = BroadcastTopic.ContestsDashboardStaff(submission.contest.id),
-                    event = BroadcastEvent.SUBMISSION_UPDATED,
-                    body = submission.toResponseBodyDTO(),
-                ),
+                GuestDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
             )
-
             broadcastProducer.produce(
-                BroadcastPayload(
-                    topic = BroadcastTopic.ContestsMembers(submission.contest.id, submission.member.id),
-                    event = BroadcastEvent.SUBMISSION_UPDATED,
-                    body = submission.toWithCodeResponseBodyDTO(),
-                ),
+                JudgeDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
             )
-
             broadcastProducer.produce(
-                BroadcastPayload(
-                    topic = BroadcastTopic.ContestsDashboardAdmin(submission.contest.id),
-                    event = BroadcastEvent.LEADERBOARD_UPDATED,
-                    body = leaderboardCell.toResponseBodyDTO(submission.member.id),
-                ),
-            )
-
-            broadcastProducer.produce(
-                BroadcastPayload(
-                    topic = BroadcastTopic.ContestsDashboardContestant(submission.contest.id),
-                    event = BroadcastEvent.LEADERBOARD_UPDATED,
-                    body = leaderboardCell.toResponseBodyDTO(submission.member.id),
-                ),
-            )
-
-            broadcastProducer.produce(
-                BroadcastPayload(
-                    topic = BroadcastTopic.ContestsDashboardGuest(submission.contest.id),
-                    event = BroadcastEvent.LEADERBOARD_UPDATED,
-                    body = leaderboardCell.toResponseBodyDTO(submission.member.id),
-                ),
-            )
-
-            broadcastProducer.produce(
-                BroadcastPayload(
-                    topic = BroadcastTopic.ContestsDashboardJudge(submission.contest.id),
-                    event = BroadcastEvent.LEADERBOARD_UPDATED,
-                    body = leaderboardCell.toResponseBodyDTO(submission.member.id),
-                ),
-            )
-
-            broadcastProducer.produce(
-                BroadcastPayload(
-                    topic = BroadcastTopic.ContestsDashboardStaff(submission.contest.id),
-                    event = BroadcastEvent.LEADERBOARD_UPDATED,
-                    body = leaderboardCell.toResponseBodyDTO(submission.member.id),
-                ),
+                StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
             )
         }
     }

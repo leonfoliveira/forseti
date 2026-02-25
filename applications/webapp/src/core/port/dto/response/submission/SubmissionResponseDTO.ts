@@ -12,6 +12,6 @@ export type SubmissionResponseDTO = {
   member: MemberResponseDTO;
   language: SubmissionLanguage;
   status: SubmissionStatus;
-  answer: SubmissionAnswer;
+  answer?: SubmissionAnswer;
   version: number;
 };

@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
-import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
-import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
 import com.ninjasquad.springmockk.MockkBean
@@ -39,10 +37,10 @@ class SocketIOFanoutRabbitMQConsumerTest(
 
         test("should handle payload") {
             val payload =
-                BroadcastPayload(
-                    topic = BroadcastTopic("/topic/any"),
-                    event = BroadcastEvent.TICKET_CREATED,
-                    body = mapOf("foo" to "bar") as Serializable,
+                BroadcastEvent(
+                    room = "/topic/any",
+                    name = "ANY",
+                    data = mapOf("foo" to "bar") as Serializable,
                 )
             val message =
                 RabbitMQMessage(
@@ -60,8 +58,8 @@ class SocketIOFanoutRabbitMQConsumerTest(
             }
             verify {
                 broadcastOperations.sendEvent(
-                    payload.event.name,
-                    payload.body,
+                    payload.name,
+                    payload.data,
                 )
             }
         }

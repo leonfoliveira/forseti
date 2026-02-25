@@ -3,11 +3,9 @@ package com.forsetijudge.core.application.listener.ticket
 import com.forsetijudge.core.application.listener.BusinessEventListener
 import com.forsetijudge.core.domain.entity.Ticket
 import com.forsetijudge.core.domain.event.TicketEvent
-import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
-import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
-import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
-import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
@@ -24,20 +22,7 @@ class TicketCreatedEventListener(
     override fun handlePayload(payload: Ticket<*>) {
         val ticket = payload
 
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardAdmin(ticket.contest.id),
-                event = BroadcastEvent.TICKET_CREATED,
-                body = ticket.toResponseBodyDTO(),
-            ),
-        )
-
-        broadcastProducer.produce(
-            BroadcastPayload(
-                topic = BroadcastTopic.ContestsDashboardStaff(ticket.contest.id),
-                event = BroadcastEvent.TICKET_CREATED,
-                body = ticket.toResponseBodyDTO(),
-            ),
-        )
+        broadcastProducer.produce(AdminDashboardBroadcastRoom(ticket.contest.id).buildTicketCreatedEvent(ticket))
+        broadcastProducer.produce(StaffDashboardBroadcastRoom(ticket.contest.id).buildTicketCreatedEvent(ticket))
     }
 }

@@ -12,8 +12,8 @@ export const serverConfig = {
   locale: process.env.LOCALE || "en-US",
   apiInternalUrl: process.env.API_INTERNAL_URL || "http://localhost:8080",
   apiPublicUrl: process.env.API_PUBLIC_URL || "http://localhost:8080",
-  wsPublicUrl: process.env.WS_PUBLIC_URL || "http://localhost:8080/ws",
-  alloyPublicUrl: process.env.ALLOY_PUBLIC_URL || "https://localhost:12347",
+  wsPublicUrl: process.env.WS_PUBLIC_URL || "ws://localhost:8081",
+  alloyPublicUrl: process.env.ALLOY_PUBLIC_URL || "http://localhost:12347",
 };
 
 /**

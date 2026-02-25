@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @Suppress("unused")
-class WebSocketConfig(
+class SocketIOConfig(
     @Value("\${server.cors.allowed-origins}")
     private val allowedOrigins: String,
     @Value("\${server.ws-port}")

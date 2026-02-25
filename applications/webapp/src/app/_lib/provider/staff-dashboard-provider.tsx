@@ -11,7 +11,7 @@ import { staffDashboardSlice } from "@/app/_store/slices/staff-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
-import { ListenerClient } from "@/core/port/driven/listener/ListenerClient";
+import { StaffDashboardBroadcastRoom } from "@/core/port/driven/broadcast/room/dashboard/StaffDashboardBroadcastRoom";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
@@ -64,7 +64,6 @@ export function StaffDashboardProvider({
   const dispatch = useAppDispatch();
   const toast = useToast();
   const intl = useIntl();
-  const listenerClientRef = React.useRef<ListenerClient | null>(null);
   const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -85,8 +84,7 @@ export function StaffDashboardProvider({
         contest.id,
       );
 
-      listenerClientRef.current = Composition.listenerClientFactory.create();
-      await listenerClientRef.current.connect(() => {
+      await Composition.broadcastClient.connect(() => {
         console.debug("Listener connection lost");
         dispatch(
           staffDashboardSlice.actions.setListenerStatus(
@@ -95,48 +93,20 @@ export function StaffDashboardProvider({
         );
         reconnect();
       });
-      await Promise.all([
-        Composition.leaderboardListener.subscribeForLeaderboardCell(
-          listenerClientRef.current,
-          contest.id,
-          receiveLeaderboardPartial,
-        ),
-        Composition.leaderboardListener.subscribeForLeaderboardFrozen(
-          listenerClientRef.current,
-          contest.id,
-          receiveLeaderboardFreeze,
-        ),
-        Composition.leaderboardListener.subscribeForLeaderboardUnfrozen(
-          listenerClientRef.current,
-          contest.id,
-          receiveLeaderboardUnfreeze,
-        ),
-        Composition.submissionListener.subscribeForContest(
-          listenerClientRef.current,
-          contest.id,
-          receiveSubmission,
-        ),
-        Composition.announcementListener.subscribeForContest(
-          listenerClientRef.current,
-          contest.id,
-          receiveAnnouncement,
-        ),
-        Composition.clarificationListener.subscribeForContest(
-          listenerClientRef.current,
-          contest.id,
-          receiveClarification,
-        ),
-        Composition.clarificationListener.subscribeForContestDeleted(
-          listenerClientRef.current,
-          contest.id,
-          deleteClarification,
-        ),
-        Composition.ticketListener.subscribeForContest(
-          listenerClientRef.current,
-          contest.id,
-          receiveTicket,
-        ),
-      ]);
+      await Composition.broadcastClient.subscribe(
+        new StaffDashboardBroadcastRoom(contest.id, {
+          ANNOUNCEMENT_CREATED: receiveAnnouncement,
+          CLARIFICATION_CREATED: receiveClarification,
+          CLARIFICATION_DELETED: deleteClarification,
+          LEADERBOARD_UPDATED: receiveLeaderboardPartial,
+          LEADERBOARD_FROZEN: receiveLeaderboardFreeze,
+          LEADERBOARD_UNFROZEN: receiveLeaderboardUnfreeze,
+          SUBMISSION_CREATED: receiveSubmission,
+          SUBMISSION_UPDATED: receiveSubmission,
+          TICKET_CREATED: receiveTicket,
+          TICKET_UPDATED: receiveTicket,
+        }),
+      );
 
       console.debug("Successfully fetched dashboard data and set up listeners");
       dispatch(staffDashboardSlice.actions.set(data));
@@ -161,8 +131,8 @@ export function StaffDashboardProvider({
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
-      if (listenerClientRef.current) {
-        listenerClientRef.current.disconnect();
+      if (Composition.broadcastClient.isConnected) {
+        Composition.broadcastClient.disconnect();
       }
     };
   }, [session, contest.id]);
@@ -178,15 +148,9 @@ export function StaffDashboardProvider({
     toast.info(messages.frozen);
   }
 
-  function receiveLeaderboardUnfreeze(data: {
-    leaderboard: LeaderboardResponseDTO;
-    frozenSubmissions: SubmissionResponseDTO[];
-  }) {
-    console.debug("Received leaderboard unfreeze:", data);
-    dispatch(staffDashboardSlice.actions.setLeaderboard(data.leaderboard));
-    dispatch(
-      staffDashboardSlice.actions.mergeSubmissionBatch(data.frozenSubmissions),
-    );
+  function receiveLeaderboardUnfreeze(leaderboard: LeaderboardResponseDTO) {
+    console.debug("Received leaderboard unfreeze:", leaderboard);
+    dispatch(staffDashboardSlice.actions.setLeaderboard(leaderboard));
     toast.info(messages.unfrozen);
   }
 

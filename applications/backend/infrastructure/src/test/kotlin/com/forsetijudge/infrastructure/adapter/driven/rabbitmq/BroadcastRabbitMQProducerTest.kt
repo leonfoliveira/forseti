@@ -6,8 +6,6 @@ import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
-import com.forsetijudge.core.port.driven.broadcast.BroadcastTopic
-import com.forsetijudge.core.port.driven.broadcast.payload.BroadcastPayload
 import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
@@ -40,7 +38,7 @@ class BroadcastRabbitMQProducerTest(
 
         test("should produce message to RabbitMQ") {
             val payload =
-                BroadcastPayload(
+                BroadcastEvent(
                     topic = BroadcastTopic("/topic/test"),
                     event = BroadcastEvent.TICKET_CREATED,
                     body =
@@ -55,8 +53,8 @@ class BroadcastRabbitMQProducerTest(
             val typeRef =
                 object :
                     TypeReference<
-                        RabbitMQMessage<BroadcastPayload>,
-                        >() {}
+                        RabbitMQMessage<BroadcastEvent>,
+                    >() {}
 
             val message = objectMapper.readValue(jsonMessage, typeRef)
             message.contestId shouldBe contestId

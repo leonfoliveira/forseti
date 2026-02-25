@@ -1,0 +1,150 @@
+import { BroadcastEvent } from "@/core/domain/enumerate/BroadcastEvent";
+import { SocketIOBroadcastClient } from "@/infrastructure/adapter/socketio/SocketIOClient";
+
+jest.mock("socket.io-client", () => ({
+  ...jest.requireActual("socket.io-client").Socket,
+  io: jest.fn(),
+}));
+
+describe("SocketIOClient", () => {
+  const url = "ws://localhost:8081";
+
+  test("should connect successfully", async () => {
+    const client = {
+      on: jest.fn(),
+    };
+    client.on.mockImplementation((event, callback) => {
+      if (event === "connect") {
+        callback();
+      }
+    });
+    jest.spyOn(require("socket.io-client"), "io").mockReturnValue(client);
+    const sut = new SocketIOBroadcastClient(url);
+
+    expect(sut.connect).not.toThrow();
+  });
+
+  test("should handle disconnection", async () => {
+    const onDisconnect = jest.fn();
+    const client = {
+      on: jest.fn(),
+      disconnect: jest.fn(),
+    };
+    client.on.mockImplementation((event, callback) => {
+      if (event === "connect") {
+        callback();
+      }
+      if (event === "disconnect") {
+        callback();
+      }
+    });
+    jest.spyOn(require("socket.io-client"), "io").mockReturnValue(client);
+    const sut = new SocketIOBroadcastClient(url);
+
+    await sut.connect(onDisconnect);
+
+    expect(onDisconnect).toHaveBeenCalled();
+    expect(sut.isConnected).toBe(false);
+  });
+
+  test("should handle connection error", async () => {
+    const error = new Error("Connection failed");
+    const client = {
+      on: jest.fn(),
+    };
+    client.on.mockImplementation((event, callback) => {
+      if (event === "connect_error") {
+        callback(error);
+      }
+    });
+    jest.spyOn(require("socket.io-client"), "io").mockReturnValue(client);
+    const sut = new SocketIOBroadcastClient(url);
+
+    await expect(sut.connect()).rejects.toThrow("Connection failed");
+  });
+
+  test("should handle connection timeout", async () => {
+    const timeout = 5000;
+    const client = {
+      on: jest.fn(),
+    };
+    client.on.mockImplementation((event, callback) => {
+      if (event === "connect_timeout") {
+        callback(timeout);
+      }
+    });
+    jest.spyOn(require("socket.io-client"), "io").mockReturnValue(client);
+    const sut = new SocketIOBroadcastClient(url);
+
+    await expect(sut.connect()).rejects.toThrow("Connection timeout");
+  });
+
+  test("should throw error when disconnecting without connection", async () => {
+    const sut = new SocketIOBroadcastClient(url);
+
+    await expect(sut.disconnect()).rejects.toThrow(
+      "Not connected to Socket.IO server",
+    );
+  });
+
+  test("should disconnect successfully", async () => {
+    const client = {
+      on: jest.fn(),
+      disconnect: jest.fn(),
+      connected: true,
+    };
+    client.on.mockImplementation((event, callback) => {
+      if (event === "connect") {
+        callback();
+      }
+      if (event === "disconnect") {
+        callback();
+      }
+    });
+    jest.spyOn(require("socket.io-client"), "io").mockReturnValue(client);
+    const sut = new SocketIOBroadcastClient(url);
+
+    await sut.connect();
+    await sut.disconnect();
+
+    expect(client.disconnect).toHaveBeenCalled();
+  });
+
+  test("should throw error when subscribing without connection", async () => {
+    const sut = new SocketIOBroadcastClient(url);
+    const topic = {
+      name: "test-topic",
+      callbacks: {},
+    };
+
+    await expect(sut.subscribe(topic)).rejects.toThrow(
+      "Not connected to Socket.IO server",
+    );
+  });
+
+  test("should subscribe successfully", async () => {
+    const client = {
+      on: jest.fn(),
+      emit: jest.fn(),
+      connected: true,
+    };
+    client.on.mockImplementation((event, callback) => {
+      if (event === "connect") {
+        callback();
+      }
+    });
+    jest.spyOn(require("socket.io-client"), "io").mockReturnValue(client);
+    const sut = new SocketIOBroadcastClient(url);
+    const topic = {
+      name: "test-topic",
+      callbacks: {
+        [BroadcastEvent.ANNOUNCEMENT_CREATED]: jest.fn(),
+      },
+    };
+
+    await sut.connect();
+    await sut.subscribe(topic);
+
+    expect(client.emit).toHaveBeenCalledWith("subscribe", topic.name);
+  });
+});
