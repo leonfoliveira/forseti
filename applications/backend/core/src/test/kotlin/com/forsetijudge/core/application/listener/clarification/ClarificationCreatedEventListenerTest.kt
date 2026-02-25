@@ -72,7 +72,7 @@ class ClarificationCreatedEventListenerTest(
 
             verify {
                 broadcastProducer.produce(
-                    ContestantPrivateBroadcastRoom(parent.member.id).buildClarificationAnsweredEvent(
+                    ContestantPrivateBroadcastRoom(clarification.contest.id, parent.member.id).buildClarificationAnsweredEvent(
                         clarification,
                     ),
                 )

@@ -26,7 +26,7 @@ class TicketUpdatedEventListener(
 
         broadcastProducer.produce(AdminDashboardBroadcastRoom(ticket.contest.id).buildTicketUpdatedEvent(ticket))
         broadcastProducer.produce(StaffDashboardBroadcastRoom(ticket.contest.id).buildTicketUpdatedEvent(ticket))
-        broadcastProducer.produce(ContestantPrivateBroadcastRoom(ticket.member.id).buildTicketUpdatedEvent(ticket))
-        broadcastProducer.produce(JudgePrivateBroadcastRoom(ticket.member.id).buildTicketUpdatedEvent(ticket))
+        broadcastProducer.produce(ContestantPrivateBroadcastRoom(ticket.contest.id, ticket.member.id).buildTicketUpdatedEvent(ticket))
+        broadcastProducer.produce(JudgePrivateBroadcastRoom(ticket.contest.id, ticket.member.id).buildTicketUpdatedEvent(ticket))
     }
 }

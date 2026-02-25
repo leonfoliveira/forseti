@@ -40,7 +40,7 @@ class SocketIOJoinListener(
             }
         }
 
-        logger.info("Client is trying to subscribe to room: {}", roomName)
+        logger.info("Client is trying to subscribe to room: $roomName")
 
         val authorizer =
             socketIORoomAuthorizers.authorizers.entries
@@ -49,7 +49,7 @@ class SocketIOJoinListener(
                 }
 
         if (authorizer == null) {
-            logger.warn("No private filter found for room: {}", roomName)
+            logger.warn("No private filter found for room: $roomName")
             return client.sendEvent("error", "Room not found: $roomName")
         }
 
@@ -57,7 +57,7 @@ class SocketIOJoinListener(
         try {
             authorizer.value(roomName)
             client.joinRoom(roomName)
-            logger.info("Client subscribed to room: {}", roomName)
+            logger.info("Client subscribed to room: $roomName")
             client.sendEvent("joined", roomName)
         } catch (ex: Exception) {
             logger.info("Could not authorize: ${ex.message}")

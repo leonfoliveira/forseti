@@ -10,9 +10,13 @@ export interface BroadcastClient {
    * Connects to the broadcast listener service.
    *
    * @param onDisconnect Optional callback to be invoked when the connection is lost.
+   * @param onReconnect Optional callback to be invoked when the connection is re-established after being lost.
    * @returns A promise that resolves when the connection is successfully established.
    */
-  connect: (onDisconnect?: () => void) => Promise<void>;
+  connect: (
+    onDisconnect?: () => void,
+    onReconnect?: () => void,
+  ) => Promise<void>;
 
   /**
    * Disconnects from the broadcast listener service.

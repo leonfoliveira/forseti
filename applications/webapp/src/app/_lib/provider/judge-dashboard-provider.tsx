@@ -4,6 +4,7 @@ import { DisconnectionBanner } from "@/app/_lib/component/feedback/disconnection
 import { FreezeBanner } from "@/app/_lib/component/feedback/freeze-banner";
 import { ErrorPage } from "@/app/_lib/component/page/error-page";
 import { LoadingPage } from "@/app/_lib/component/page/loading-page";
+import { useDashboardReseter } from "@/app/_lib/hook/dashboard-reseter-hook";
 import { useIntl } from "@/app/_lib/hook/intl-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
@@ -22,7 +23,6 @@ import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/resp
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
-import { useDashboardReseter } from "@/app/_lib/hook/dashboard-reseter-hook";
 
 const messages = defineMessages({
   submissionFailed: {
@@ -74,21 +74,16 @@ export function JudgeDashboardProvider({
   const [listenerStatus, setListenerStatus] = React.useState<ListenerStatus>(
     ListenerStatus.DISCONNECTED,
   );
-  const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     async function setupBroadcastListeners() {
       console.debug("Setting up broadcast listeners");
 
       try {
-        await Composition.broadcastClient.connect(() => {
-          console.debug("Listener connection lost");
-          setListenerStatus(ListenerStatus.FAILURE);
-          reconnectTimeoutRef.current = setTimeout(
-            setupBroadcastListeners,
-            5000,
-          );
-        });
+        await Composition.broadcastClient.connect(
+          () => setListenerStatus(ListenerStatus.FAILURE),
+          () => setListenerStatus(ListenerStatus.CONNECTED),
+        );
         await Composition.broadcastClient.join(
           new JudgeDashboardBroadcastRoom(contest.id, {
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
@@ -102,7 +97,7 @@ export function JudgeDashboardProvider({
           }),
         );
         await Composition.broadcastClient.join(
-          new JudgePrivateBroadcastRoom(session!.member.id, {
+          new JudgePrivateBroadcastRoom(contest.id, session!.member.id, {
             TICKET_UPDATED: receiveMemberTicket,
           }),
         );
@@ -112,7 +107,6 @@ export function JudgeDashboardProvider({
       } catch (error) {
         console.error("Failed to set up broadcast listeners:", error);
         setListenerStatus(ListenerStatus.FAILURE);
-        reconnectTimeoutRef.current = setTimeout(setupBroadcastListeners, 5000);
       }
     }
 
@@ -140,9 +134,6 @@ export function JudgeDashboardProvider({
     init();
 
     return () => {
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-      }
       if (Composition.broadcastClient.isConnected) {
         Composition.broadcastClient.disconnect();
       }

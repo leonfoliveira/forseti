@@ -58,7 +58,7 @@ class SubmissionUpdatedEventListenerTest(
             verify { broadcastProducer.produce(StaffDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission)) }
             verify {
                 broadcastProducer.produce(
-                    ContestantPrivateBroadcastRoom(submission.member.id).buildSubmissionUpdatedEvent(submission),
+                    ContestantPrivateBroadcastRoom(submission.contest.id, submission.member.id).buildSubmissionUpdatedEvent(submission),
                 )
             }
             verify {

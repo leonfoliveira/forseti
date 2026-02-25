@@ -69,20 +69,16 @@ export function AdminDashboardProvider({
   const [listenerStatus, setListenerStatus] = React.useState<ListenerStatus>(
     ListenerStatus.DISCONNECTED,
   );
-  const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     async function setupBroadcastListeners() {
       console.debug("Setting up broadcast listeners");
 
       try {
-        await Composition.broadcastClient.connect(() => {
-          setListenerStatus(ListenerStatus.FAILURE);
-          reconnectTimeoutRef.current = setTimeout(
-            setupBroadcastListeners,
-            5000,
-          );
-        });
+        await Composition.broadcastClient.connect(
+          () => setListenerStatus(ListenerStatus.FAILURE),
+          () => setListenerStatus(ListenerStatus.CONNECTED),
+        );
         await Composition.broadcastClient.join(
           new AdminDashboardBroadcastRoom(contest.id, {
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
@@ -103,7 +99,6 @@ export function AdminDashboardProvider({
       } catch (error) {
         console.error("Failed to setup broadcast listeners:", error);
         setListenerStatus(ListenerStatus.FAILURE);
-        reconnectTimeoutRef.current = setTimeout(setupBroadcastListeners, 5000);
       }
     }
 
@@ -131,9 +126,6 @@ export function AdminDashboardProvider({
     init();
 
     return () => {
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-      }
       if (Composition.broadcastClient.isConnected) {
         Composition.broadcastClient.disconnect();
         setListenerStatus(ListenerStatus.DISCONNECTED);

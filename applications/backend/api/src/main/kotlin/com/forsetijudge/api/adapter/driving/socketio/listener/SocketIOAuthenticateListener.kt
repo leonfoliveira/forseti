@@ -47,7 +47,7 @@ class SocketIOAuthenticateListener(
                 try {
                     UUID.fromString(sessionId)
                 } catch (e: IllegalArgumentException) {
-                    logger.error("Invalid session_id cookie format: {}", sessionId)
+                    logger.error("Invalid session_id cookie format: $sessionId")
                     client.sendEvent("error", "Invalid session_id cookie format")
                     return client.disconnect()
                 }
@@ -63,7 +63,7 @@ class SocketIOAuthenticateListener(
                     return client.disconnect()
                 }
 
-            logger.info("Found session with id: {}", sessionId)
+            logger.info("Found session with id: $sessionId")
             client.set("session", session)
             client.sendEvent("ready")
         } catch (ex: Exception) {

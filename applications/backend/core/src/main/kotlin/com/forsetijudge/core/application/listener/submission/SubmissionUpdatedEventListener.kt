@@ -35,7 +35,9 @@ class SubmissionUpdatedEventListener(
         broadcastProducer.produce(AdminDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
         broadcastProducer.produce(JudgeDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
         broadcastProducer.produce(StaffDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
-        broadcastProducer.produce(ContestantPrivateBroadcastRoom(submission.member.id).buildSubmissionUpdatedEvent(submission))
+        broadcastProducer.produce(
+            ContestantPrivateBroadcastRoom(submission.contest.id, submission.member.id).buildSubmissionUpdatedEvent(submission),
+        )
         if (!submission.contest.isFrozen) {
             broadcastProducer.produce(ContestantDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
             broadcastProducer.produce(GuestDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))

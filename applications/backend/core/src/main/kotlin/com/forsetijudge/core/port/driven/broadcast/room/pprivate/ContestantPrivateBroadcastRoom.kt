@@ -10,13 +10,14 @@ import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import java.util.UUID
 
 class ContestantPrivateBroadcastRoom(
+    contestId: UUID,
     memberId: UUID,
 ) {
     companion object {
-        val pattern = Regex("/members/(?<memberId>[a-f0-9\\-]+)/private/contestant")
+        val pattern = Regex("/contests/(?<contestId>[a-f0-9\\-]+)/members/(?<memberId>[a-f0-9\\-]+)/private/contestant")
     }
 
-    private val name = "/members/$memberId/private/contestant"
+    private val name = "/contests/$contestId/members/$memberId/private/contestant"
 
     fun buildClarificationAnsweredEvent(clarification: Clarification) =
         BroadcastEvent(

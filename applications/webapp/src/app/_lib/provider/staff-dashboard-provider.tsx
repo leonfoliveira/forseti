@@ -4,6 +4,7 @@ import { DisconnectionBanner } from "@/app/_lib/component/feedback/disconnection
 import { FreezeBanner } from "@/app/_lib/component/feedback/freeze-banner";
 import { ErrorPage } from "@/app/_lib/component/page/error-page";
 import { LoadingPage } from "@/app/_lib/component/page/loading-page";
+import { useDashboardReseter } from "@/app/_lib/hook/dashboard-reseter-hook";
 import { useIntl } from "@/app/_lib/hook/intl-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
@@ -20,7 +21,6 @@ import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/Submi
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
-import { useDashboardReseter } from "@/app/_lib/hook/dashboard-reseter-hook";
 
 /**
  * Provider component for fetching staff dashboard data and setting up listeners.
@@ -68,21 +68,16 @@ export function StaffDashboardProvider({
   const [listenerStatus, setListenerStatus] = React.useState<ListenerStatus>(
     ListenerStatus.DISCONNECTED,
   );
-  const reconnectTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     async function setupBroadcastListeners() {
       console.debug("Setting up broadcast listeners");
 
       try {
-        await Composition.broadcastClient.connect(() => {
-          console.debug("Listener connection lost");
-          setListenerStatus(ListenerStatus.FAILURE);
-          reconnectTimeoutRef.current = setTimeout(
-            setupBroadcastListeners,
-            5000,
-          );
-        });
+        await Composition.broadcastClient.connect(
+          () => setListenerStatus(ListenerStatus.FAILURE),
+          () => setListenerStatus(ListenerStatus.CONNECTED),
+        );
         await Composition.broadcastClient.join(
           new StaffDashboardBroadcastRoom(contest.id, {
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
@@ -103,7 +98,6 @@ export function StaffDashboardProvider({
       } catch (error) {
         console.error("Failed to set up broadcast listeners:", error);
         setListenerStatus(ListenerStatus.FAILURE);
-        reconnectTimeoutRef.current = setTimeout(setupBroadcastListeners, 5000);
       }
     }
 
@@ -131,9 +125,6 @@ export function StaffDashboardProvider({
     init();
 
     return () => {
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-      }
       if (Composition.broadcastClient.isConnected) {
         Composition.broadcastClient.disconnect();
       }

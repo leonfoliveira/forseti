@@ -13,9 +13,13 @@ export type ContestantPrivateBroadcastRoomCallbacks = {
 
 export class ContestantPrivateBroadcastRoom extends BroadcastRoom<ContestantPrivateBroadcastRoomCallbacks> {
   constructor(
+    contestId: string,
     memberId: string,
     public callbacks: ContestantPrivateBroadcastRoomCallbacks,
   ) {
-    super(`/members/${memberId}/private/contestant`, callbacks);
+    super(
+      `/contests/${contestId}/members/${memberId}/private/contestant`,
+      callbacks,
+    );
   }
 }

@@ -12,7 +12,10 @@ export class SocketIOBroadcastClient implements BroadcastClient {
     return this.client?.connected ?? false;
   }
 
-  async connect(onConnectionLost?: () => void): Promise<void> {
+  async connect(
+    onConnectionLost?: () => void,
+    onReconnect?: () => void,
+  ): Promise<void> {
     return new Promise((resolve, reject) => {
       this.client = io(this.url, {
         withCredentials: true,
@@ -24,7 +27,7 @@ export class SocketIOBroadcastClient implements BroadcastClient {
       });
 
       this.client.on("ready", () => {
-        console.log("Socket.IO connection is ready");
+        console.log("Socket.IO server is ready");
         resolve();
       });
 
@@ -41,6 +44,11 @@ export class SocketIOBroadcastClient implements BroadcastClient {
       this.client.on("connect_timeout", (timeout) => {
         console.error("Connection timeout:", timeout);
         reject(new Error("Connection timeout"));
+      });
+
+      this.client.on("reconnect", () => {
+        console.log("Reconnected to Socket.IO server");
+        onReconnect?.();
       });
 
       this.client.on("error", (error) => {

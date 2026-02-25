@@ -34,7 +34,7 @@ class ClarificationCreatedEventListener(
         val parent = clarification.parent
         if (parent != null) {
             broadcastProducer.produce(
-                ContestantPrivateBroadcastRoom(parent.member.id).buildClarificationAnsweredEvent(
+                ContestantPrivateBroadcastRoom(clarification.contest.id, parent.member.id).buildClarificationAnsweredEvent(
                     clarification,
                 ),
             )
