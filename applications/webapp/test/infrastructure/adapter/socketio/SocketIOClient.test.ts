@@ -1,4 +1,3 @@
-import { BroadcastEvent } from "@/core/domain/enumerate/BroadcastEvent";
 import { SocketIOBroadcastClient } from "@/infrastructure/adapter/socketio/SocketIOClient";
 
 jest.mock("socket.io-client", () => ({
@@ -138,7 +137,7 @@ describe("SocketIOClient", () => {
     const topic = {
       name: "test-topic",
       callbacks: {
-        [BroadcastEvent.ANNOUNCEMENT_CREATED]: jest.fn(),
+        ANNOUNCEMENT_CREATED: jest.fn(),
       },
     };
 
