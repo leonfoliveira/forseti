@@ -5,6 +5,8 @@ import { ClockAlertIcon } from "lucide-react";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
 import { defineMessages } from "@/i18n/message";
+import { useAppSelector } from "@/app/_store/store";
+import { useEffect } from "react";
 
 const messages = defineMessages({
   pageTitle: {
@@ -41,6 +43,24 @@ const messages = defineMessages({
  * Shows the contest title, start time, and supported languages.
  */
 export function WaitPage() {
+  const contestStartAt = useAppSelector((state) => state.contest.startAt);
+
+  useEffect(() => {
+    const now = new Date();
+    const startAt = new Date(contestStartAt);
+    const timeout = startAt.getTime() - now.getTime();
+
+    if (timeout > 0) {
+      const timer = setTimeout(() => {
+        window.location.reload();
+      }, timeout);
+
+      return () => clearTimeout(timer);
+    } else {
+      window.location.reload();
+    }
+  }, [contestStartAt]);
+
   return (
     <Page title={messages.pageTitle} description={messages.pageDescription}>
       <div
