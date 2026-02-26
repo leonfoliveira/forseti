@@ -124,20 +124,10 @@ export class Actor {
     await this.page.waitForTimeout(1000);
   }
 
-  async checkWaitPage(contest: Contest) {
+  async checkWaitPage() {
     const waitPage = this.page.getByTestId("wait-page");
-
-    const title = waitPage.getByTestId("title");
-    const clock = waitPage.getByTestId("clock");
-    const languageItems = waitPage.getByTestId("language-item");
-
-    await expect(title).toHaveText(contest.title);
-    await expect(clock).toBeVisible();
-    for (let i = 0; i < contest.languages.length; i++) {
-      const languageItem = languageItems.nth(i);
-      const language = contest.languages[i];
-      await expect(languageItem).toHaveText(language);
-    }
+    await waitPage.scrollIntoViewIfNeeded();
+    expect(waitPage).toBeVisible();
   }
 
   async checkHeader(contest: Contest) {

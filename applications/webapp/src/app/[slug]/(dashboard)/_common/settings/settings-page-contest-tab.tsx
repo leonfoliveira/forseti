@@ -27,7 +27,10 @@ import { adminDashboardSlice } from "@/app/_store/slices/dashboard/admin-dashboa
 import { useAppDispatch } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
-import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
+import {
+  languageGroups,
+  SubmissionLanguage,
+} from "@/core/domain/enumerate/SubmissionLanguage";
 import { ContestWithMembersAndProblemsDTO } from "@/core/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { globalMessages } from "@/i18n/global";
@@ -202,7 +205,6 @@ export function SettingsPageContestTab({
   const forceConfirmationDialog = useDialog();
 
   const languageError = form.formState.errors.contest?.languages?.message;
-  const languageGroups = ["CPP", "JAVA", "PYTHON"];
 
   async function toggleFreeze() {
     const method = leaderboard.isFrozen

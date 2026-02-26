@@ -15,8 +15,44 @@ permissions:
   pull-requests: read
 
 jobs:
+  changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      webapp: ${{ steps.filter.outputs.webapp }}
+      backend: ${{ steps.filter.outputs.backend }}
+      autoscaler: ${{ steps.filter.outputs.autoscaler }}
+      cli: ${{ steps.filter.outputs.cli }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            webapp:
+              - 'applications/webapp/**'
+              - '.github/workflows/codeql.yaml'
+            backend:
+              - 'applications/backend/**'
+              - '.github/workflows/codeql.yaml'
+            autoscaler:
+              - 'applications/autoscaler/**'
+              - '.github/workflows/codeql.yaml'
+            cli:
+              - 'applications/cli/**'
+              - '.github/workflows/codeql.yaml'
+
   analyze:
     name: Analyze (${{ matrix.language }})
+    needs: [changes]
+    if: |
+      (matrix.language == 'javascript-typescript' && needs.changes.outputs.webapp == 'true') ||
+      (matrix.language == 'java-kotlin' && needs.changes.outputs.backend == 'true') ||
+      (matrix.language == 'python' && (needs.changes.outputs.autoscaler == 'true' || needs.changes.outputs.cli == 'true'))
     runs-on: ubuntu-latest
     timeout-minutes: 360
 

@@ -3,3 +3,5 @@ export enum SubmissionLanguage {
   JAVA_21 = "JAVA_21",
   PYTHON_312 = "PYTHON_312",
 }
+
+export const languageGroups = ["CPP", "JAVA", "PYTHON"];
