@@ -85,4 +85,5 @@ fun FrozenSubmission.unfreeze(): Submission =
         status = this.status,
         answer = this.answer,
         code = this.code,
+        executions = this.executions,
     )
