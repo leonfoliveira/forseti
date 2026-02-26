@@ -68,5 +68,5 @@ class ExecutionOutputAuthorizationConfig : AttachmentAuthorizationConfig() {
     override fun authorizeGuestDownload(
         contest: Contest,
         attachment: Attachment,
-    ) = throw ForbiddenException("Public cannot download execution outputs")
+    ) = throw ForbiddenException("Guest cannot download execution outputs")
 }
