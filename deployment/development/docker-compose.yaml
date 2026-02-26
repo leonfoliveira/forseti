@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: forsetijudge
       POSTGRES_DB: forseti
     healthcheck:
-      test: "CMD-SHELL pg_isready -U forseti -d forseti"
+      test: ["CMD-SHELL", "pg_isready -U forseti -d forseti"]
       timeout: 5s
       interval: 15s
       retries: 5
@@ -29,7 +29,11 @@ services:
       MINIO_ROOT_USER: forseti
       MINIO_ROOT_PASSWORD: forsetijudge
     healthcheck:
-      test: "CMD-SHELL curl -f http://localhost:9000/minio/health/live || exit 1"
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://localhost:9000/minio/health/live || exit 1",
+        ]
       timeout: 5s
       interval: 15s
       retries: 5
@@ -52,7 +56,7 @@ services:
       RABBITMQ_USER: forseti
       RABBITMQ_PASSWORD: forsetijudge
     healthcheck:
-      test: "CMD-SHELL rabbitmq-diagnostics check_port_connectivity"
+      test: ["CMD-SHELL", "rabbitmq-diagnostics check_port_connectivity"]
       timeout: 5s
       interval: 15s
       retries: 5
@@ -90,10 +94,19 @@ services:
       - ../../applications/backend/core/src/main/resources/migration:/flyway/sql
 
   api:
-    container_name: dev-forseti-api
     build:
       context: ../../applications/backend
       dockerfile: api.Dockerfile
+    container_name: dev-forseti-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
     environment:
       API_PORT: 8080
       COOKIE_SECURE: "false"
@@ -126,17 +139,9 @@ services:
       VERSION: latest
       WEBAPP_PUBLIC_URL: http://localhost:3000
       WS_PORT: 8081
-    depends_on:
-      postgres:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-      migration:
-        condition: service_completed_successfully
     healthcheck:
-      test: "CMD-SHELL wget --spider -q http://localhost:8080/actuator/health"
+      test:
+        ["CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health"]
       timeout: 5s
       interval: 15s
       retries: 5
@@ -150,10 +155,19 @@ services:
       - backend
 
   autojudge:
-    container_name: dev-forseti-autojudge
     build:
       context: ../../applications/backend
       dockerfile: autojudge.Dockerfile
+    container_name: dev-forseti-autojudge
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
     environment:
       API_URL: http://api:8080
       DB_PASSWORD: forsetijudge
@@ -185,17 +199,8 @@ services:
       OTEL_SERVICE_NAME: autojudge
       SPRING_PROFILES_ACTIVE: development
       VERSION: latest
-    depends_on:
-      postgres:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-      migration:
-        condition: service_completed_successfully
     healthcheck:
-      test: "CMD-SHELL curl -f http://localhost:8082/actuator/health"
+      test: ["CMD-SHELL", "curl -f http://localhost:8082/actuator/health"]
       timeout: 5s
       interval: 15s
       retries: 5
@@ -215,16 +220,16 @@ services:
     build:
       context: ../../applications/webapp
       dockerfile: Dockerfile
-    environment:
-      API_INTERNAL_URL: http://api:8080
-      API_PUBLIC_URL: http://localhost:8080
-      WS_PUBLIC_URL: http://localhost:8080/ws
-      LOCALE: en-US
-      NEXT_PUBLIC_VERSION: latest
-      NODE_ENV: development
     depends_on:
       api:
         condition: service_healthy
+    environment:
+      API_INTERNAL_URL: http://api:8080
+      API_PUBLIC_URL: http://localhost:8080
+      WS_PUBLIC_URL: ws://localhost:8081
+      LOCALE: en-US
+      NEXT_PUBLIC_VERSION: latest
+      NODE_ENV: development
     healthcheck:
       test: "CMD-SHELL curl -f http://localhost:3000"
       timeout: 5s
