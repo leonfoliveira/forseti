@@ -23,6 +23,7 @@ services:
       - dev-postgres_data:/var/lib/postgresql/data
 
   redis:
+    command: redis-server --requirepass "forsetijudge"
     container_name: dev-forseti-redis
     healthcheck:
       test: ["CMD-SHELL", "redis-cli ping || exit 1"]

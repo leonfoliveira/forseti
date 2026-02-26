@@ -9,6 +9,8 @@ secrets:
     external: true
   rabbitmq_password:
     external: true
+  redis_password:
+    external: true
   root_password:
     external: true
 
@@ -143,6 +145,7 @@ services:
       - db_password
       - minio_password
       - rabbitmq_password
+      - redis_password
       - root_password
 
   autojudge:
@@ -215,6 +218,7 @@ services:
       - db_password
       - minio_password
       - rabbitmq_password
+      - redis_password
       - root_password
 
   autojudge-autoscaler:
@@ -718,6 +722,7 @@ services:
         read_only: true
 
   redis:
+    command: redis-server --requirepass "$(cat /run/secrets/redis_password)"
     deploy:
       mode: replicated
       replicas: 1
@@ -742,6 +747,8 @@ services:
     image: redis:8.6.1-alpine
     networks:
       network:
+    secrets:
+      - redis_password
 
   redis-exporter:
     deploy:
@@ -758,7 +765,8 @@ services:
         condition: on-failure
         delay: 5s
     environment:
-      REDIS_ADDR: redis:6379
+      REDIS_ADDR: redis://redis:6379
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
     healthcheck:
       test:
         - CMD-SHELL
@@ -770,6 +778,8 @@ services:
     image: oliver006/redis_exporter:v1.39.0
     networks:
       network:
+    secrets:
+      - redis_password
 
   tempo:
     entrypoint: sh /entrypoint.sh
