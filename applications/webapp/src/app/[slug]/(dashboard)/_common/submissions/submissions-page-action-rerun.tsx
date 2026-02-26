@@ -1,9 +1,9 @@
 import { RefreshCwIcon } from "lucide-react";
-import { useState } from "react";
 
 import { ConfirmationDialog } from "@/app/_lib/component/feedback/confirmation-dialog";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
+import { useDialog } from "@/app/_lib/hook/dialog-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
@@ -11,7 +11,6 @@ import { Composition } from "@/config/composition";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { defineMessages } from "@/i18n/message";
-import { useDialog } from "@/app/_lib/hook/dialog-hook";
 
 const messages = defineMessages({
   resubmitLabel: {

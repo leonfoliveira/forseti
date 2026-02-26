@@ -34,8 +34,8 @@ import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { cn } from "@/app/_lib/util/cn";
-import { adminDashboardSlice } from "@/app/_store/slices/dashboard/admin-dashboard-slice";
 import { contestSlice } from "@/app/_store/slices/contest-slice";
+import { adminDashboardSlice } from "@/app/_store/slices/dashboard/admin-dashboard-slice";
 import { useAppDispatch } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";

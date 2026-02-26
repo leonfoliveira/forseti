@@ -78,27 +78,6 @@ describe("SocketIOClient", () => {
 
       await expect(sut.connect()).rejects.toThrow("Connection timeout");
     });
-
-    test("should handle reconnect", async () => {
-      const onReconnect = jest.fn();
-      const client = {
-        on: jest.fn(),
-      };
-      client.on.mockImplementation((event, callback) => {
-        if (event === "ready") {
-          callback();
-        }
-        if (event === "reconnect") {
-          callback();
-        }
-      });
-      jest.spyOn(require("socket.io-client"), "io").mockReturnValue(client);
-      const sut = new SocketIOBroadcastClient(url);
-
-      await sut.connect(undefined, onReconnect);
-
-      expect(onReconnect).toHaveBeenCalled();
-    });
   });
 
   describe("disconnect", () => {

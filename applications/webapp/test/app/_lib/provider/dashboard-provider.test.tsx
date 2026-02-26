@@ -6,33 +6,36 @@ import { MockMemberResponseDTO } from "@/test/mock/response/member/MockMemberRes
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
-jest.mock("@/app/_lib/provider/admin-dashboard-provider", () => ({
+jest.mock("@/app/_lib/provider/dashboard/admin-dashboard-provider", () => ({
   AdminDashboardProvider: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="admin-dashboard-provider">{children}</div>
   ),
 }));
 
-jest.mock("@/app/_lib/provider/contestant-dashboard-provider", () => ({
-  ContestantDashboardProvider: ({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) => <div data-testid="contestant-dashboard-provider">{children}</div>,
-}));
+jest.mock(
+  "@/app/_lib/provider/dashboard/contestant-dashboard-provider",
+  () => ({
+    ContestantDashboardProvider: ({
+      children,
+    }: {
+      children: React.ReactNode;
+    }) => <div data-testid="contestant-dashboard-provider">{children}</div>,
+  }),
+);
 
-jest.mock("@/app/_lib/provider/guest-dashboard-provider", () => ({
+jest.mock("@/app/_lib/provider/dashboard/guest-dashboard-provider", () => ({
   GuestDashboardProvider: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="guest-dashboard-provider">{children}</div>
   ),
 }));
 
-jest.mock("@/app/_lib/provider/judge-dashboard-provider", () => ({
+jest.mock("@/app/_lib/provider/dashboard/judge-dashboard-provider", () => ({
   JudgeDashboardProvider: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="judge-dashboard-provider">{children}</div>
   ),
 }));
 
-jest.mock("@/app/_lib/provider/staff-dashboard-provider", () => ({
+jest.mock("@/app/_lib/provider/dashboard/staff-dashboard-provider", () => ({
   StaffDashboardProvider: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="staff-dashboard-provider">{children}</div>
   ),
