@@ -25,7 +25,7 @@ class ContestLeaderboardController(
     fun freeze(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
-        logger.info("[POST] /v1/contests/$contestId/leaderboard:freeze")
+        logger.info("[PUT] /v1/contests/$contestId/leaderboard:freeze")
         val contest = freezeLeaderboardUseCase.execute()
         return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
     }
@@ -34,7 +34,7 @@ class ContestLeaderboardController(
     fun unfreeze(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
-        logger.info("[POST] /v1/contests/$contestId/leaderboard:unfreeze")
+        logger.info("[PUT] /v1/contests/$contestId/leaderboard:unfreeze")
         val contest = unfreezeLeaderboardUseCase.execute()
         return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
     }
