@@ -186,12 +186,30 @@
           "tab-clarifications": "Esclarecimentos",
           "tab-announcements": "Anúncios",
           "tab-tickets": "Tickets",
-          "tab-settings": "Configurações"
+          "tab-settings": "Configurações",
+          "tab-about": "Sobre"
+        },
+        "about": {
+          "page": {
+            "page-title": "Forseti - Sobre",
+            "page-description": "Veja detalhes e configurações do concurso.",
+            "start-at": "Início em",
+            "end-at": "Fim em",
+            "auto-freeze-at": "Congelar Automaticamente em",
+            "auto-freeze-disabled": "Desativado",
+            "languages": "Linguagens suportadas",
+            "settings": "Configurações",
+            "setting-is-auto-judge-enabled": "Juiz Automático"
+          }
         },
         "_common": {
           "wait-page": {
+            "page-title": "Forseti - Aguardando o início do concurso",
+            "page-description": "Página de espera exibida quando o concurso ainda não começou.",
+            "description": "O concurso ainda não começou. Por favor, aguarde o início do concurso.",
             "start-at": "Inicia em",
-            "languages": "Linguagens suportadas"
+            "languages": "Linguagens suportadas",
+            "reload": "A página será recarregada automaticamente quando o concurso começar. Você também pode recarregar manualmente."
           },
           "tickets": {
             "tickets-page": {

@@ -16,39 +16,39 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
-    id: "app.[slug].(dashboard).about.page-title",
+    id: "app.[slug].(dashboard).about.page.page-title",
     defaultMessage: "Forseti - About",
   },
   pageDescription: {
-    id: "app.[slug].(dashboard).about.page-description",
+    id: "app.[slug].(dashboard).about.page.page-description",
     defaultMessage: "View contest details and settings.",
   },
   startAt: {
-    id: "app.[slug].(dashboard).about.start-at",
+    id: "app.[slug].(dashboard).about.page.start-at",
     defaultMessage: "Start At",
   },
   endAt: {
-    id: "app.[slug].(dashboard).about.end-at",
+    id: "app.[slug].(dashboard).about.page.end-at",
     defaultMessage: "End At",
   },
   autoFreezeAt: {
-    id: "app.[slug].(dashboard).about.auto-freeze-at",
+    id: "app.[slug].(dashboard).about.page.auto-freeze-at",
     defaultMessage: "Auto Freeze At",
   },
   autoFreezeDisabled: {
-    id: "app.[slug].(dashboard).about.auto-freeze-disabled",
+    id: "app.[slug].(dashboard).about.page.auto-freeze-disabled",
     defaultMessage: "Disabled",
   },
   languages: {
-    id: "app.[slug].(dashboard).about.languages",
+    id: "app.[slug].(dashboard).about.page.languages",
     defaultMessage: "Supported languages",
   },
   settings: {
-    id: "app.[slug].(dashboard).about.settings",
+    id: "app.[slug].(dashboard).about.page.settings",
     defaultMessage: "Settings",
   },
   settingIsAutoJudgeEnabled: {
-    id: "app.[slug].(dashboard).about.setting-is-auto-judge-enabled",
+    id: "app.[slug].(dashboard).about.page.setting-is-auto-judge-enabled",
     defaultMessage: "Auto Judge",
   },
 });
