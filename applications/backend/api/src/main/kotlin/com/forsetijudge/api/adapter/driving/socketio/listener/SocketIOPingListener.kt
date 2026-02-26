@@ -3,7 +3,6 @@ package com.forsetijudge.api.adapter.driving.socketio.listener
 import com.corundumstudio.socketio.AckRequest
 import com.corundumstudio.socketio.SocketIOClient
 import com.corundumstudio.socketio.listener.DataListener
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component

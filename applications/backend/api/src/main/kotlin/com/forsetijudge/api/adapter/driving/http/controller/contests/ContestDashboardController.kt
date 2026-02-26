@@ -1,6 +1,7 @@
 package com.forsetijudge.api.adapter.driving.http.controller.contests
 
 import com.forsetijudge.api.adapter.util.Private
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.external.dashboard.BuildAdminDashboardUseCase
 import com.forsetijudge.core.port.driving.usecase.external.dashboard.BuildContestantDashboardUseCase
@@ -13,7 +14,6 @@ import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseB
 import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.dashboard.StaffDashboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
-import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -31,7 +31,7 @@ class ContestDashboardController(
     private val buildJudgeDashboardUseCase: BuildJudgeDashboardUseCase,
     private val buildStaffDashboardUseCase: BuildStaffDashboardUseCase,
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @GetMapping("/contests/{contestId}/dashboard/admin")
     @Private(Member.Type.ROOT, Member.Type.ADMIN)

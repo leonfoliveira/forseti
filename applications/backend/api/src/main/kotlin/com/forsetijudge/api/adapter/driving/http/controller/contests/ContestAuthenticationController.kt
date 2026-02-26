@@ -3,10 +3,10 @@ package com.forsetijudge.api.adapter.driving.http.controller.contests
 import com.forsetijudge.api.adapter.dto.request.authentication.AuthenticateToContestRequestBodyDTO
 import com.forsetijudge.api.adapter.util.cookie.CsrfCookieBuilder
 import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.port.driving.usecase.external.authentication.SignInUseCase
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
@@ -24,7 +24,7 @@ class ContestAuthenticationController(
     private val sessionCookieBuilder: SessionCookieBuilder,
     private val csrfCookieBuilder: CsrfCookieBuilder,
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}:sign-in")
     fun authenticate(

@@ -2,11 +2,11 @@ package com.forsetijudge.api.adapter.driving.http.controller
 
 import com.forsetijudge.api.adapter.util.cookie.CsrfCookieBuilder
 import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.DeleteAllSessionsByMemberUseCase
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -22,7 +22,7 @@ class SessionController(
     private val sessionCookieBuilder: SessionCookieBuilder,
     private val csrfCookieBuilder: CsrfCookieBuilder,
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @GetMapping("/sessions/me")
     fun getSession(): ResponseEntity<SessionResponseBodyDTO> {

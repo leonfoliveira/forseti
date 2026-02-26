@@ -3,10 +3,10 @@ package com.forsetijudge.api.adapter.driving.socketio.listener
 import com.corundumstudio.socketio.AckRequest
 import com.corundumstudio.socketio.SocketIOClient
 import com.corundumstudio.socketio.listener.DataListener
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.util.UUID
 
@@ -14,7 +14,7 @@ import java.util.UUID
 class SocketIOAuthenticateListener(
     private val findSessionByIdUseCase: FindSessionByIdUseCase,
 ) : DataListener<String> {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     /**
      * @param client the SocketIOClient that has connected

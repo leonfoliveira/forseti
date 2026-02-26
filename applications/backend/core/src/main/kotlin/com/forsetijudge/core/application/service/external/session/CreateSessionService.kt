@@ -1,12 +1,12 @@
 package com.forsetijudge.core.application.service.external.session
 
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.session.CreateSessionUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -16,7 +16,7 @@ class CreateSessionService(
     private val memberRepository: MemberRepository,
     private val createSessionInternalUseCase: CreateSessionInternalUseCase,
 ) : CreateSessionUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @Transactional
     override fun execute(command: CreateSessionUseCase.Command): Session {

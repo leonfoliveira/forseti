@@ -2,6 +2,7 @@ package com.forsetijudge.core.application.service.external.ticket
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.application.util.ContestAuthorizer
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Ticket
@@ -17,7 +18,6 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.ticket.CreateTicketUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -34,7 +34,7 @@ class CreateTicketService(
     private val applicationEventPublisher: ApplicationEventPublisher,
     private val objectMapper: ObjectMapper,
 ) : CreateTicketUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @Transactional
     override fun execute(command: CreateTicketUseCase.Command): Ticket<*> {

@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.external.leaderboard
 
 import com.forsetijudge.core.application.util.ContestAuthorizer
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
@@ -11,7 +12,6 @@ import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.UUID
 
@@ -23,7 +23,7 @@ class BuildLeaderboardCellService(
     private val submissionRepository: SubmissionRepository,
     private val buildLeaderboardCellInternalUseCase: BuildLeaderboardCellInternalUseCase,
 ) : BuildLeaderboardCellUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     override fun execute(command: BuildLeaderboardCellUseCase.Command): Pair<Leaderboard.Cell, UUID> {
         val contextContestId = ExecutionContext.getContestId()

@@ -13,9 +13,6 @@ from .input_adapter import InputAdapter
 warnings.simplefilter("ignore", InsecureRequestWarning)
 
 
-VERIFY_SSL = False
-
-
 class ApiAdapter:
     SERVICE_NAME = "forseti-cli"
 
@@ -36,7 +33,6 @@ class ApiAdapter:
         response = requests.get(
             url,
             **kwargs,
-            verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
             headers={self.CSRF_TOKEN_HEADER: csrf_token},
         )
@@ -55,7 +51,6 @@ class ApiAdapter:
             url,
             json=json,
             **kwargs,
-            verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
             headers={self.CSRF_TOKEN_HEADER: csrf_token},
         )
@@ -74,7 +69,6 @@ class ApiAdapter:
             url,
             json=json,
             **kwargs,
-            verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
             headers={self.CSRF_TOKEN_HEADER: csrf_token},
         )
@@ -92,7 +86,6 @@ class ApiAdapter:
         response = requests.delete(
             url,
             **kwargs,
-            verify=VERIFY_SSL,
             cookies={self.SESSION_ID_COOKIE: session_id},
             headers={self.CSRF_TOKEN_HEADER: csrf_token},
         )
@@ -109,7 +102,6 @@ class ApiAdapter:
         ):
             response = requests.get(
                 f"{self.api_url}/v1/sessions/me",
-                verify=VERIFY_SSL,
                 cookies={self.SESSION_ID_COOKIE: session_id},
                 headers={self.CSRF_TOKEN_HEADER: csrf_token},
             )
@@ -120,7 +112,6 @@ class ApiAdapter:
         url = f"{self.api_url}/v1/root:sign-in"
         response = requests.post(
             url,
-            verify=VERIFY_SSL,
             json={"password": password},
         )
         if response.status_code != 200:

@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.external.leaderboard
 
 import com.forsetijudge.core.application.util.ContestAuthorizer
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.LeaderboardEvent
@@ -10,7 +11,6 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.FreezeLeaderboardUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,7 +21,7 @@ class FreezeLeaderboardService(
     private val memberRepository: MemberRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : FreezeLeaderboardUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @Transactional
     override fun execute(): Contest {

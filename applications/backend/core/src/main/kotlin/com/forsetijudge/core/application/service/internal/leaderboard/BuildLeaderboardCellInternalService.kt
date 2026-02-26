@@ -1,15 +1,15 @@
 package com.forsetijudge.core.application.service.internal.leaderboard
 
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Duration
 
 @Service
 class BuildLeaderboardCellInternalService : BuildLeaderboardCellInternalUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     companion object {
         private const val WRONG_SUBMISSION_PENALTY_MINUTES = 20

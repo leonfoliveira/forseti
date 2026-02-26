@@ -1,9 +1,9 @@
 package com.forsetijudge.api.application.listener
 
 import com.forsetijudge.core.application.listener.ApplicationEventListener
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.external.member.UpdateMemberPasswordUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
@@ -16,7 +16,7 @@ class ApplicationReadyEventListener(
     @Value("\${security.root.password}")
     private val rootPassword: String,
 ) : ApplicationEventListener() {
-    private val logger = LoggerFactory.getLogger(ApplicationReadyEventListener::class.java)
+    private val logger = SafeLogger(this::class)
 
     /**
      * Updates the root user's password when the application is ready.

@@ -1,12 +1,12 @@
 package com.forsetijudge.core.application.service.internal.attachment
 
 import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.event.AttachmentsEvent
 import com.forsetijudge.core.port.driven.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.UploadAttachmentInternalUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
@@ -16,7 +16,7 @@ class UploadAttachmentInternalService(
     private val attachmentBucket: AttachmentBucket,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : UploadAttachmentInternalUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     override fun execute(command: UploadAttachmentInternalUseCase.Command): Pair<Attachment, ByteArray> {
         logger.info(

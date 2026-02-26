@@ -2,12 +2,12 @@ package com.forsetijudge.api.adapter.driving.http.controller.contests
 
 import com.forsetijudge.api.adapter.dto.request.clarification.CreateClarificationRequestBodyDTO
 import com.forsetijudge.api.adapter.util.Private
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.external.clarification.CreateClarificationUseCase
 import com.forsetijudge.core.port.driving.usecase.external.clarification.DeleteClarificationUseCase
 import com.forsetijudge.core.port.dto.response.clarification.ClarificationResponseDTO
 import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
-import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -24,7 +24,7 @@ class ContestClarificationController(
     private val createClarificationUseCase: CreateClarificationUseCase,
     private val deleteClarificationUseCase: DeleteClarificationUseCase,
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/clarifications")
     @Private(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE, Member.Type.CONTESTANT)

@@ -4,7 +4,6 @@ import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.exception.BusinessException
 import com.forsetijudge.core.port.driven.AttachmentBucket
 import com.opencsv.CSVReader
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
@@ -13,7 +12,7 @@ import java.io.InputStreamReader
 class TestCasesValidator(
     private val attachmentBucket: AttachmentBucket,
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     fun validate(testCases: Attachment) {
         logger.info("Validating test cases attachment with id: ${testCases.id}")

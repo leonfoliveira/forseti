@@ -4,7 +4,6 @@ import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.event.SubmissionEvent
-import com.forsetijudge.core.domain.model.LeaderboardMockBuilder
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.ContestantDashboardBroadcastRoom
@@ -14,11 +13,9 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboard
 import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
 import com.forsetijudge.core.port.driven.queue.payload.SubmissionQueuePayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
-import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -28,8 +25,6 @@ import org.springframework.test.context.ActiveProfiles
 class SubmissionCreatedEventListenerTest(
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
-    @MockkBean(relaxed = true)
-    private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
     @MockkBean(relaxed = true)
     private val broadcastProducer: BroadcastProducer,
     @MockkBean(relaxed = true)
@@ -42,17 +37,7 @@ class SubmissionCreatedEventListenerTest(
 
         test("should handle event successfully") {
             val submission = SubmissionMockBuilder.build()
-            val leaderboardCell = LeaderboardMockBuilder.buildCell()
             val event = SubmissionEvent.Created(submission)
-            every {
-                buildLeaderboardCellUseCase.execute(
-                    BuildLeaderboardCellUseCase.Command(
-                        memberId = submission.member.id,
-                        problemId = submission.problem.id,
-                    ),
-                )
-            } returns Pair(leaderboardCell, submission.member.id)
-
             sut.onApplicationEvent(event)
 
             verify { broadcastProducer.produce(AdminDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission)) }
@@ -77,15 +62,6 @@ class SubmissionCreatedEventListenerTest(
             contest.settings.isAutoJudgeEnabled = false
             val problem = ProblemMockBuilder.build(contest = contest)
             val submission = SubmissionMockBuilder.build(problem = problem)
-            val leaderboardCell = LeaderboardMockBuilder.buildCell()
-            every {
-                buildLeaderboardCellUseCase.execute(
-                    BuildLeaderboardCellUseCase.Command(
-                        memberId = submission.member.id,
-                        problemId = submission.problem.id,
-                    ),
-                )
-            } returns Pair(leaderboardCell, submission.member.id)
             val event = SubmissionEvent.Created(submission)
 
             sut.onApplicationEvent(event)

@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.external.submission
 
 import com.forsetijudge.core.application.util.ContestAuthorizer
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
@@ -15,7 +16,6 @@ import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.submission.CreateSubmissionUseCase
 import jakarta.validation.Valid
-import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -31,7 +31,7 @@ class CreateSubmissionService(
     private val submissionRepository: SubmissionRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : CreateSubmissionUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @Transactional
     override fun execute(

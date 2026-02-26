@@ -1,9 +1,9 @@
 package com.forsetijudge.core.application.listener
 
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEvent
@@ -18,7 +18,7 @@ abstract class ApplicationEventListener {
     @Autowired
     private lateinit var authenticateSystemUseCase: AuthenticateSystemUseCase
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     /**
      * Handles the given business event.

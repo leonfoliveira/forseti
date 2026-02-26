@@ -6,6 +6,7 @@ import com.forsetijudge.core.application.service.external.attachment.auth.Proble
 import com.forsetijudge.core.application.service.external.attachment.auth.SubmissionCodeAuthorizationConfig
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.event.AttachmentsEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
@@ -16,7 +17,6 @@ import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.attachment.UploadAttachmentUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -29,7 +29,7 @@ class UploadAttachmentService(
     private val attachmentBucket: AttachmentBucket,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : UploadAttachmentUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     private val authorizationConfigsByContext =
         mapOf(

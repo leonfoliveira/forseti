@@ -1,6 +1,7 @@
 package com.forsetijudge.infrastructure.adapter.driving.job
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
@@ -8,8 +9,6 @@ import org.quartz.DisallowConcurrentExecution
 import org.quartz.JobExecutionContext
 import org.quartz.JobExecutionException
 import org.quartz.PersistJobDataAfterExecution
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.quartz.QuartzJobBean
@@ -34,7 +33,7 @@ abstract class QuartzJob<TPayload : Serializable> : QuartzJobBean() {
     @Value("\${spring.quartz.max-retries}")
     private lateinit var maxRetries: Integer
 
-    protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    protected val logger = SafeLogger(this::class)
 
     /**
      * Executes the job and handles any exceptions that may occur during execution.
