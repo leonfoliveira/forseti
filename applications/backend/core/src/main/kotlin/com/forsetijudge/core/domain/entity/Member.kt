@@ -63,6 +63,13 @@ class Member(
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var submissions: List<Submission> = mutableListOf(),
+    /**
+     * The frozen submissions for this member, which are used for the frozen leaderboard and are not visible to the member until the contest is unfrozen.
+     */
+    @Audited(withModifiedFlag = false)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @OrderBy("createdAt ASC")
+    var frozenSubmissions: List<FrozenSubmission> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     enum class Type {
         /**

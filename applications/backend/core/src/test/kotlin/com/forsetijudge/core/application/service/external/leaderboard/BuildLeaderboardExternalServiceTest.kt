@@ -5,6 +5,9 @@ import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
+import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
+import com.forsetijudge.core.domain.entity.freeze
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
@@ -19,6 +22,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.time.OffsetDateTime
 
 class BuildLeaderboardExternalServiceTest :
@@ -338,5 +342,60 @@ class BuildLeaderboardExternalServiceTest :
                             ),
                         ),
                 )
+        }
+
+        test("should build leaderboard with frozen contest") {
+            val problem = ProblemMockBuilder.build()
+            val submission =
+                SubmissionMockBuilder.build(
+                    problem = problem,
+                    status = Submission.Status.JUDGED,
+                    answer = Submission.Answer.ACCEPTED,
+                )
+            val frozenSubmission =
+                SubmissionMockBuilder
+                    .build(
+                        problem = problem,
+                        status = Submission.Status.JUDGING,
+                        answer = null,
+                    ).freeze()
+            val member =
+                MemberMockBuilder.build(
+                    type = Member.Type.CONTESTANT,
+                    submissions = listOf(submission),
+                    frozenSubmissions = listOf(frozenSubmission),
+                )
+            val contest =
+                ContestMockBuilder.build(
+                    id = contextContestId,
+                    startAt = OffsetDateTime.now().minusHours(2),
+                    members = listOf(member),
+                    problems = listOf(problem),
+                    frozenAt = ExecutionContext.get().startedAt.minusHours(1),
+                )
+
+            every { contestRepository.findById(contextContestId) } returns contest
+            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+            every { memberRepository.findAllByContestIdAndType(contextContestId, Member.Type.CONTESTANT) } returns listOf(member)
+            every { buildLeaderboardCellInternalUseCase.execute(any()) } returns
+                Leaderboard.Cell(
+                    problemId = problem.id,
+                    problemLetter = problem.letter,
+                    problemColor = problem.color,
+                    isAccepted = false,
+                    acceptedAt = null,
+                    wrongSubmissions = 0,
+                    penalty = 0,
+                )
+
+            sut.execute()
+
+            verify {
+                buildLeaderboardCellInternalUseCase.execute(
+                    withArg { command ->
+                        command.submissions shouldBe emptyList()
+                    },
+                )
+            }
         }
     })
