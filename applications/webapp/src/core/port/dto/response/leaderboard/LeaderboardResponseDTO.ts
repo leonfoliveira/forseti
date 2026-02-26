@@ -1,17 +1,17 @@
 export type LeaderboardResponseDTO = {
   contestId: string;
+  contestStartAt: string;
   isFrozen: boolean;
-  slug: string;
-  startAt: string;
   issuedAt: string;
-  members: {
-    id: string;
-    name: string;
+  rows: {
+    memberId: string;
+    memberName: string;
     score: number;
     penalty: number;
-    problems: {
-      id: string;
-      letter: string;
+    cells: {
+      problemId: string;
+      problemLetter: string;
+      problemColor: string;
       isAccepted: boolean;
       acceptedAt?: string;
       wrongSubmissions: number;

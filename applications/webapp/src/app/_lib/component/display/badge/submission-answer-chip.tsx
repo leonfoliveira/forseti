@@ -18,8 +18,6 @@ export function SubmissionAnswerBadge({ answer, ...props }: Props) {
   );
 
   switch (answer) {
-    case SubmissionAnswer.NO_ANSWER:
-      return null;
     case SubmissionAnswer.ACCEPTED:
       return (
         <Badge data-testid="badge-accepted" {...props} variant="success">

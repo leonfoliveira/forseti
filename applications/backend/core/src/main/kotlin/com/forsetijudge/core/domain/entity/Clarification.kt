@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.entity
 
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -18,11 +19,11 @@ import java.util.UUID
 @Entity
 @Table(name = "clarification")
 @Audited(withModifiedFlag = true)
-@SQLRestriction("deleted_at is null")
+@SQLRestriction("deleted_at IS NULL")
 class Clarification(
-    id: UUID = UuidCreator.getTimeOrderedEpoch(),
-    createdAt: OffsetDateTime = OffsetDateTime.now(),
-    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    id: UUID = IdGenerator.getUUID(),
+    createdAt: OffsetDateTime = ExecutionContext.get().startedAt,
+    updatedAt: OffsetDateTime = ExecutionContext.get().startedAt,
     deletedAt: OffsetDateTime? = null,
     version: Long = 1L,
     /**

@@ -35,7 +35,7 @@ import {
 } from "@/app/_lib/component/shadcn/tooltip";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { clarificationWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -128,17 +128,23 @@ export function ClarificationsPageCard({
     clarification.children.length > 0 ? clarification.children[0] : undefined;
 
   async function answerClarification(data: ClarificationAnswerFormType) {
+    console.debug("Answering clarification with data:", data);
     answerClarificationState.start();
-    try {
-      const newClarification = await clarificationWritter.create(contestId, {
-        ...ClarificationAnswerForm.toInputDTO(data, clarification.id),
-        parentId: clarification.id,
-      });
 
+    try {
+      const newClarification = await Composition.clarificationWritter.create(
+        contestId,
+        {
+          ...ClarificationAnswerForm.toInputDTO(data, clarification.id),
+          parentId: clarification.id,
+        },
+      );
+
+      toast.success(messages.createSuccess);
       onAnswer?.(newClarification);
       answerClarificationState.finish();
       form.reset();
-      toast.success(messages.createSuccess);
+      console.debug("Clarification answered successfully:", newClarification);
     } catch (error) {
       await answerClarificationState.fail(error, {
         default: () => toast.error(messages.createError),
@@ -147,14 +153,19 @@ export function ClarificationsPageCard({
   }
 
   async function deleteClarification() {
+    console.debug("Deleting clarification with id:", clarification.id);
     deleteClarificationState.start();
     try {
-      await clarificationWritter.deleteById(contestId, clarification.id);
+      await Composition.clarificationWritter.deleteById(
+        contestId,
+        clarification.id,
+      );
 
+      toast.success(messages.deleteSuccess);
       onDelete?.(clarification.id);
       deleteClarificationState.finish();
       setIsDeleteDialogOpen(false);
-      toast.success(messages.deleteSuccess);
+      console.debug("Clarification deleted successfully:", clarification.id);
     } catch (error) {
       await deleteClarificationState.fail(error, {
         default: () => toast.error(messages.deleteError),

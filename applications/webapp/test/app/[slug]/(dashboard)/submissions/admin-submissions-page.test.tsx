@@ -1,8 +1,8 @@
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
 import { AdminSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/admin-submissions-page";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
-import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockProblemResponseDTO } from "@/test/mock/response/problem/MockProblemResponseDTO";
+import { MockSubmissionResponseDTO } from "@/test/mock/response/submission/MockSubmissionResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock(
@@ -14,19 +14,16 @@ jest.mock(
 
 describe("AdminSubmissionsPage", () => {
   it("should render common SubmissionsPage with correct data", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    const problems = [
-      MockProblemPublicResponseDTO(),
-      MockProblemPublicResponseDTO(),
-    ];
+    const contest = MockContestResponseDTO();
+    const problems = [MockProblemResponseDTO(), MockProblemResponseDTO()];
     const submissions = [
-      MockSubmissionPublicResponseDTO(),
-      MockSubmissionPublicResponseDTO(),
+      MockSubmissionResponseDTO(),
+      MockSubmissionResponseDTO(),
     ];
     await renderWithProviders(<AdminSubmissionsPage />, {
-      contestMetadata,
+      contest,
       adminDashboard: {
-        contest: { problems },
+        problems,
         submissions,
       },
     } as any);

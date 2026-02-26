@@ -1,9 +1,7 @@
-import React from "react";
-
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
-import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
+import { contestantDashboardSlice } from "@/app/_store/slices/dashboard/contestant-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 
 export function ContestantSubmissionsPage() {
@@ -14,7 +12,7 @@ export function ContestantSubmissionsPage() {
     (state) => state.contestantDashboard.memberSubmissions,
   );
   const problems = useAppSelector(
-    (state) => state.contestantDashboard.contest.problems,
+    (state) => state.contestantDashboard.problems,
   );
   const dispatch = useAppDispatch();
 
@@ -24,7 +22,7 @@ export function ContestantSubmissionsPage() {
       memberSubmissions={memberSubmissions}
       problems={problems}
       canCreate
-      onCreate={(submission: SubmissionFullResponseDTO) => {
+      onCreate={(submission: SubmissionWithCodeResponseDTO) => {
         dispatch(contestantDashboardSlice.actions.mergeSubmission(submission));
       }}
       canPrint

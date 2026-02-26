@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.entity
 
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -21,11 +22,11 @@ import java.util.UUID
 @Entity
 @Table(name = "submission")
 @Audited
-@SQLRestriction("deleted_at is null")
+@SQLRestriction("deleted_at IS NULL")
 class Submission(
-    id: UUID = UuidCreator.getTimeOrderedEpoch(),
-    createdAt: OffsetDateTime = OffsetDateTime.now(),
-    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    id: UUID = IdGenerator.getUUID(),
+    createdAt: OffsetDateTime = ExecutionContext.get().startedAt,
+    updatedAt: OffsetDateTime = ExecutionContext.get().startedAt,
     deletedAt: OffsetDateTime? = null,
     version: Long = 1L,
     /**
@@ -56,11 +57,11 @@ class Submission(
     @Enumerated(EnumType.STRING)
     var status: Status,
     /**
-     * The answer to the submission, which is NO_ANSWER before judged.
+     * The answer to the submission. It will be null if the submission has not been judged yet.
      */
     @Column("answer")
     @Enumerated(EnumType.STRING)
-    var answer: Answer = Answer.NO_ANSWER,
+    var answer: Answer? = null,
     /**
      * The code submitted by the member for the problem.
      */
@@ -107,11 +108,6 @@ class Submission(
     }
 
     enum class Answer {
-        /**
-         * No answer has been provided yet, typically used before the submission is judged.
-         */
-        NO_ANSWER,
-
         /**
          * The submission has been accepted, meaning it passed all tests and requirements.
          */

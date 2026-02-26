@@ -17,7 +17,7 @@ import {
 import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
 import { Theme, useTheme } from "@/app/_lib/provider/theme-provider";
 import { useAppSelector } from "@/app/_store/store";
-import { sessionWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { globalMessages } from "@/i18n/global";
@@ -43,7 +43,7 @@ const messages = defineMessages({
  * Includes contest title, status, countdown clock, theme switch, and user authentication options.
  */
 export function Header() {
-  const contestMetadata = useAppSelector((state) => state.contestMetadata);
+  const contest = useAppSelector((state) => state.contest);
   const session = useAppSelector((state) => state.session);
   const contestStatus = useContestStatusWatcher();
   const pathname = usePathname();
@@ -51,13 +51,12 @@ export function Header() {
   const { theme, toggleTheme } = useTheme();
 
   async function handleSignOut() {
-    await sessionWritter.deleteCurrent();
-    window.location.href = routes.CONTEST_SIGN_IN(contestMetadata.slug);
+    await Composition.sessionWritter.deleteCurrent();
+    window.location.href = routes.CONTEST_SIGN_IN(contest.slug);
   }
 
   const isAuthorized = !!session?.member;
-  const isSignInPage =
-    pathname === routes.CONTEST_SIGN_IN(contestMetadata.slug);
+  const isSignInPage = pathname === routes.CONTEST_SIGN_IN(contest.slug);
 
   return (
     <div
@@ -80,7 +79,7 @@ export function Header() {
               Forseti
             </p>
             <p className="truncate text-xs sm:text-sm" data-testid="title">
-              {contestMetadata.title}
+              {contest.title}
             </p>
           </div>
         </div>
@@ -128,7 +127,7 @@ export function Header() {
                   variant="outline"
                   size="sm"
                   onClick={() =>
-                    router.push(routes.CONTEST_SIGN_IN(contestMetadata.slug))
+                    router.push(routes.CONTEST_SIGN_IN(contest.slug))
                   }
                   data-testid="sign-in"
                   className="h-8 px-2"
@@ -154,8 +153,8 @@ export function Header() {
               to={
                 new Date(
                   contestStatus === ContestStatus.NOT_STARTED
-                    ? contestMetadata.startAt
-                    : contestMetadata.endAt,
+                    ? contest.startAt
+                    : contest.endAt,
                 )
               }
               data-testid="countdown-clock"
@@ -221,7 +220,7 @@ export function Header() {
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  router.push(routes.CONTEST_SIGN_IN(contestMetadata.slug))
+                  router.push(routes.CONTEST_SIGN_IN(contest.slug))
                 }
                 data-testid="sign-in"
               >

@@ -5,9 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 import { AxiosContestRepository } from "@/infrastructure/adapter/axios/repository/AxiosContestRepository";
 import { MockUpdateContestRequestDTO } from "@/test/mock/request/MockUpdateContestRequestDTO";
-import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockContestPublicResponseDTO } from "@/test/mock/response/contest/MockContestPublicResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 
 describe("AxiosContestRepository", () => {
   const axiosClient = mock<AxiosClient>();
@@ -16,7 +14,7 @@ describe("AxiosContestRepository", () => {
 
   const contestId = uuidv4();
 
-  describe("updateContest", () => {
+  describe("update", () => {
     it("should update a contest and return the full response", async () => {
       const requestDTO = MockUpdateContestRequestDTO();
       const expectedResponse = MockUpdateContestRequestDTO();
@@ -36,73 +34,26 @@ describe("AxiosContestRepository", () => {
     });
   });
 
-  describe("findAllContestMetadata", () => {
-    it("should return an array of contest metadata", async () => {
-      const expectedResponse = [
-        MockContestMetadataResponseDTO(),
-        MockContestMetadataResponseDTO(),
-      ];
-      axiosClient.get.mockResolvedValueOnce({
-        data: expectedResponse,
-      } as AxiosResponse);
-
-      const result = await sut.findAllMetadata();
-
-      expect(axiosClient.get).toHaveBeenCalledWith("/v1/contests/metadata");
-      expect(result).toEqual(expectedResponse);
-    });
-  });
-
-  describe("findContestById", () => {
-    it("should return a public contest response", async () => {
-      const expectedResponse = MockContestPublicResponseDTO();
-      axiosClient.get.mockResolvedValueOnce({
-        data: expectedResponse,
-      } as AxiosResponse);
-
-      const result = await sut.findById(contestId);
-
-      expect(axiosClient.get).toHaveBeenCalledWith(`/v1/contests/${contestId}`);
-      expect(result).toEqual(expectedResponse);
-    });
-  });
-
-  describe("findContestMetadataBySlug", () => {
-    it("should return contest metadata by slug", async () => {
+  describe("findBySlug", () => {
+    it("should return contest by slug", async () => {
       const slug = "contest-1";
-      const expectedResponse = MockContestMetadataResponseDTO();
+      const expectedResponse = MockContestResponseDTO();
       axiosClient.get.mockResolvedValueOnce({
         data: expectedResponse,
       } as AxiosResponse);
 
-      const result = await sut.findMetadataBySlug(slug);
+      const result = await sut.findBySlug(slug);
 
       expect(axiosClient.get).toHaveBeenCalledWith(
-        `/v1/contests/slug/${slug}/metadata`,
-      );
-      expect(result).toEqual(expectedResponse);
-    });
-  });
-
-  describe("findFullContestById", () => {
-    it("should return a full contest response", async () => {
-      const expectedResponse = MockContestFullResponseDTO();
-      axiosClient.get.mockResolvedValueOnce({
-        data: expectedResponse,
-      } as AxiosResponse);
-
-      const result = await sut.findFullById(contestId);
-
-      expect(axiosClient.get).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/full`,
+        `/v1/public/contests/slug/${slug}`,
       );
       expect(result).toEqual(expectedResponse);
     });
   });
 
   describe("forceStart", () => {
-    it("should force start a contest and return metadata", async () => {
-      const expectedResponse = MockContestMetadataResponseDTO();
+    it("should force start a contest", async () => {
+      const expectedResponse = MockContestResponseDTO();
       axiosClient.put.mockResolvedValueOnce({
         data: expectedResponse,
       } as AxiosResponse);
@@ -117,8 +68,8 @@ describe("AxiosContestRepository", () => {
   });
 
   describe("forceEnd", () => {
-    it("should force end a contest and return metadata", async () => {
-      const expectedResponse = MockContestMetadataResponseDTO();
+    it("should force end a contest", async () => {
+      const expectedResponse = MockContestResponseDTO();
       axiosClient.put.mockResolvedValueOnce({
         data: expectedResponse,
       } as AxiosResponse);

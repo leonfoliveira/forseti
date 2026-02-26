@@ -1,9 +1,10 @@
 package com.forsetijudge.core.domain.entity.ticket
 
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Ticket
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.persistence.DiscriminatorValue
 import jakarta.persistence.Entity
 import org.hibernate.envers.Audited
@@ -15,9 +16,9 @@ import java.util.UUID
 @Audited
 @DiscriminatorValue("NON_TECHNICAL_SUPPORT")
 class NonTechnicalSupportTicket(
-    id: UUID = UuidCreator.getTimeOrderedEpoch(),
-    createdAt: OffsetDateTime = OffsetDateTime.now(),
-    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    id: UUID = IdGenerator.getUUID(),
+    createdAt: OffsetDateTime = ExecutionContext.get().startedAt,
+    updatedAt: OffsetDateTime = ExecutionContext.get().startedAt,
     deletedAt: OffsetDateTime? = null,
     version: Long = 1L,
     contest: Contest,

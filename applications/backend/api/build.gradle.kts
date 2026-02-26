@@ -6,7 +6,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":infrastructure"))
 
-    implementation(rootProject.libs.springdoc.openapi.ui)
+    implementation(libs.netty.socketio)
 
     testImplementation(testFixtures(project(":core")))
 }

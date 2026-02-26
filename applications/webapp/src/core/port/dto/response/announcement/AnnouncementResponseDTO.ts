@@ -1,9 +1,10 @@
-import { MemberPublicResponseDTO } from "@/core/port/dto/response/member/MemberPublicResponseDTO";
+import { MemberResponseDTO } from "@/core/port/dto/response/member/MemberResponseDTO";
 
 export type AnnouncementResponseDTO = {
   id: string;
   createdAt: string;
-  member: MemberPublicResponseDTO;
+  updatedAt: string;
+  member: MemberResponseDTO;
   text: string;
   version: number;
 };

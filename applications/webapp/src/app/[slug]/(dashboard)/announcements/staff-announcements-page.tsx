@@ -7,7 +7,7 @@ import { useAppSelector } from "@/app/_store/store";
 
 export function StaffAnnouncementsPage() {
   const announcements = useAppSelector(
-    (state) => state.staffDashboard.contest.announcements,
+    (state) => state.staffDashboard.announcements,
   );
 
   return <AnnouncementsPage announcements={announcements} />;

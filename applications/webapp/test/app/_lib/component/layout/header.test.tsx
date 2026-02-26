@@ -3,9 +3,9 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { Header } from "@/app/_lib/component/layout/header";
 import { useTheme } from "@/app/_lib/provider/theme-provider";
-import { sessionWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -16,22 +16,23 @@ jest.mock("@/app/_lib/provider/theme-provider", () => ({
 
 describe("Header", () => {
   const session = MockSession();
-  const contestMetadata = MockContestMetadataResponseDTO();
+  const contest = MockContestResponseDTO();
 
   it("should render brand correctly", async () => {
-    await renderWithProviders(<Header />, { session, contestMetadata });
+    await renderWithProviders(<Header />, {
+      session,
+      contest,
+    });
 
-    expect(screen.getByTestId("title")).toHaveTextContent(
-      contestMetadata.title,
-    );
+    expect(screen.getByTestId("title")).toHaveTextContent(contest.title);
     expect(screen.getByTestId("status")).toBeInTheDocument();
   });
 
   it("should render countdown when contest has not started", async () => {
     await renderWithProviders(<Header />, {
       session,
-      contestMetadata: {
-        ...contestMetadata,
+      contest: {
+        ...contest,
         startAt: new Date(Date.now() + 1000 * 60 * 5).toISOString(),
         endAt: new Date(Date.now() + 1000 * 60 * 60).toISOString(),
       },
@@ -43,8 +44,8 @@ describe("Header", () => {
   it("should render countdown when contest has started", async () => {
     await renderWithProviders(<Header />, {
       session,
-      contestMetadata: {
-        ...contestMetadata,
+      contest: {
+        ...contest,
         startAt: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
         endAt: new Date(Date.now() + 1000 * 60 * 60).toISOString(),
       },
@@ -56,8 +57,8 @@ describe("Header", () => {
   it("should not render countdown when contest has ended", async () => {
     await renderWithProviders(<Header />, {
       session,
-      contestMetadata: {
-        ...contestMetadata,
+      contest: {
+        ...contest,
         startAt: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
         endAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
       },
@@ -71,7 +72,7 @@ describe("Header", () => {
     (useTheme as jest.Mock).mockReturnValue({ theme: "dark", toggleTheme });
     await renderWithProviders(<Header />, {
       session,
-      contestMetadata,
+      contest,
     });
 
     const button = screen.getAllByTestId("theme-toggle")[0];
@@ -83,7 +84,7 @@ describe("Header", () => {
   it("should not render member information if not authorized", async () => {
     await renderWithProviders(<Header />, {
       session: null,
-      contestMetadata,
+      contest,
     });
 
     expect(screen.queryByTestId("member-name")).not.toBeInTheDocument();
@@ -94,7 +95,7 @@ describe("Header", () => {
   it("should render member information correctly", async () => {
     await renderWithProviders(<Header />, {
       session,
-      contestMetadata,
+      contest,
     });
 
     expect(screen.getAllByTestId("member-name")[0]).toHaveTextContent(
@@ -104,35 +105,33 @@ describe("Header", () => {
     expect(screen.getAllByTestId("sign-out")[0]).toBeInTheDocument();
 
     fireEvent.click(screen.getAllByTestId("sign-out")[0]);
-    expect(sessionWritter.deleteCurrent).toHaveBeenCalled();
+    expect(Composition.sessionWritter.deleteCurrent).toHaveBeenCalled();
   });
 
   it("should not render sign-in button if pathname is sign in page", async () => {
     (usePathname as jest.Mock).mockReturnValue(
-      routes.CONTEST_SIGN_IN(contestMetadata.slug),
+      routes.CONTEST_SIGN_IN(contest.slug),
     );
     await renderWithProviders(<Header />, {
       session: null,
-      contestMetadata,
+      contest,
     });
 
     expect(screen.queryByTestId("sign-in")).not.toBeInTheDocument();
   });
 
   it("should render sign-in button correctly", async () => {
-    (usePathname as jest.Mock).mockReturnValue(
-      routes.CONTEST(contestMetadata.slug),
-    );
+    (usePathname as jest.Mock).mockReturnValue(routes.CONTEST(contest.slug));
     await renderWithProviders(<Header />, {
       session: null,
-      contestMetadata,
+      contest,
     });
 
     const button = screen.getAllByTestId("sign-in")[0];
     expect(button).toBeInTheDocument();
     fireEvent.click(button);
     expect(useRouter().push).toHaveBeenCalledWith(
-      routes.CONTEST_SIGN_IN(contestMetadata.slug),
+      routes.CONTEST_SIGN_IN(contest.slug),
     );
   });
 });

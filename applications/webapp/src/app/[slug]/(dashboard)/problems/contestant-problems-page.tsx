@@ -8,19 +8,13 @@ import { useAppSelector } from "@/app/_store/store";
 export function ContestantProblemsPage() {
   const session = useAppSelector((state) => state.session);
   const problems = useAppSelector(
-    (state) => state.contestantDashboard.contest.problems,
+    (state) => state.contestantDashboard.problems,
   );
-  const classification = useAppSelector(
-    (state) => state.contestantDashboard.leaderboard.members,
-  );
-  const contestantClassification = classification.find(
-    (it) => it.id === session!.member.id,
+  const leaderboardRow = useAppSelector((state) =>
+    state.contestantDashboard.leaderboard.rows.find(
+      (it) => it.memberId === session!.member.id,
+    ),
   );
 
-  return (
-    <ProblemsPage
-      problems={problems}
-      contestantClassificationProblems={contestantClassification!.problems}
-    />
-  );
+  return <ProblemsPage problems={problems} leaderboardRow={leaderboardRow} />;
 }

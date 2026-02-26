@@ -2,7 +2,8 @@ package com.forsetijudge.core.domain.entity
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.persistence.Column
 import jakarta.persistence.DiscriminatorColumn
 import jakarta.persistence.Entity
@@ -27,11 +28,12 @@ import java.util.UUID
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 @Audited
-@SQLRestriction("deleted_at is null")
+@SQLRestriction("deleted_at IS NULL")
+@Suppress("unused")
 open class Ticket<TProperties : Serializable>(
-    id: UUID = UuidCreator.getTimeOrderedEpoch(),
-    createdAt: OffsetDateTime = OffsetDateTime.now(),
-    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    id: UUID = IdGenerator.getUUID(),
+    createdAt: OffsetDateTime = ExecutionContext.get().startedAt,
+    updatedAt: OffsetDateTime = ExecutionContext.get().startedAt,
     deletedAt: OffsetDateTime? = null,
     version: Long = 1L,
     /**
@@ -85,6 +87,7 @@ open class Ticket<TProperties : Serializable>(
         OPEN,
         IN_PROGRESS,
         RESOLVED,
+        REJECTED,
     }
 
     companion object {
@@ -94,10 +97,5 @@ open class Ticket<TProperties : Serializable>(
             objectMapper: ObjectMapper,
             typedProperties: Serializable,
         ): Map<String, Any> = objectMapper.convertValue(typedProperties, rawPropertiesTypeReference)
-    }
-
-    fun getTypedProperties(objectMapper: ObjectMapper): TProperties {
-        val typeRef = object : TypeReference<TProperties>() {}
-        return objectMapper.convertValue(properties, typeRef)
     }
 }

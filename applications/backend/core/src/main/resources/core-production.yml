@@ -49,9 +49,10 @@ minio:
   bucket: ${MINIO_BUCKET:forseti}
 security:
   session:
-    expiration: ${SESSION_EXPIRATION:3h}
-    root-expiration: ${SESSION_ROOT_EXPIRATION:1h}
-    autojudge-expiration: ${SESSION_AUTOJUDGE_EXPIRATION:10m}
+    expiration:
+      default: ${SESSION_EXPIRATION:6h}
+      root: ${SESSION_ROOT_EXPIRATION:1h}
+      system: ${SESSION_SYSTEM_EXPIRATION:3h}
   root:
     password: ${ROOT_PASSWORD} # No default for security reasons
   rate-limit:
@@ -66,6 +67,3 @@ security:
       requests-per-minute: ${RATE_LIMIT_AUTH_RPM:5}
       requests-per-hour: ${RATE_LIMIT_AUTH_RPH:20}
       burst-capacity: ${RATE_LIMIT_AUTH_BURST:2}
-external:
-  api:
-    url: ${API_URL:http://api:8080}

@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 
 import { mergeLeaderboard } from "@/app/_store/util/leaderboard-merger";
-import { MockLeaderboardPartialResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardPartialResponseDTO";
+import { MockLeaderboardCellResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardCellResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 
 describe("mergeLeaderboard", () => {
@@ -20,24 +20,26 @@ describe("mergeLeaderboard", () => {
       const memberId = uuidv4();
       const problemId = uuidv4();
       const leaderboard = MockLeaderboardResponseDTO({
-        members: [
+        rows: [
           {
-            id: memberId,
-            name: "Test User",
+            memberId: memberId,
+            memberName: "Test User",
             score: 0,
             penalty: 0,
-            problems: [
+            cells: [
               {
-                id: problemId,
-                letter: "A",
+                problemId: problemId,
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: false,
                 acceptedAt: undefined,
                 wrongSubmissions: 0,
                 penalty: 0,
               },
               {
-                id: uuidv4(),
-                letter: "B",
+                problemId: uuidv4(),
+                problemLetter: "B",
+                problemColor: "#000000",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T12:00:00Z",
                 wrongSubmissions: 1,
@@ -48,7 +50,7 @@ describe("mergeLeaderboard", () => {
         ],
       });
 
-      const partial = MockLeaderboardPartialResponseDTO({
+      const partial = MockLeaderboardCellResponseDTO({
         memberId,
         problemId,
         isAccepted: true,
@@ -59,14 +61,15 @@ describe("mergeLeaderboard", () => {
 
       const result = mergeLeaderboard(leaderboard, partial);
 
-      const updatedMember = result.members[0];
-      const updatedProblem = updatedMember.problems.find(
-        (p) => p.id === problemId,
+      const updatedMember = result.rows[0];
+      const updatedProblem = updatedMember.cells.find(
+        (p) => p.problemId === problemId,
       );
 
       expect(updatedProblem).toEqual({
-        id: problemId,
-        letter: "A",
+        problemId: problemId,
+        problemLetter: "A",
+        problemColor: "#ffffff",
         isAccepted: true,
         acceptedAt: "2025-01-01T11:30:00Z",
         wrongSubmissions: 2,
@@ -83,16 +86,17 @@ describe("mergeLeaderboard", () => {
       const memberId = uuidv4();
       const problemId = uuidv4();
       const leaderboard = MockLeaderboardResponseDTO({
-        members: [
+        rows: [
           {
-            id: memberId,
-            name: "Test User",
+            memberId: memberId,
+            memberName: "Test User",
             score: 1,
             penalty: 60,
-            problems: [
+            cells: [
               {
-                id: problemId,
-                letter: "A",
+                problemId: problemId,
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T11:00:00Z",
                 wrongSubmissions: 1,
@@ -103,7 +107,7 @@ describe("mergeLeaderboard", () => {
         ],
       });
 
-      const partial = MockLeaderboardPartialResponseDTO({
+      const partial = MockLeaderboardCellResponseDTO({
         memberId,
         problemId,
         isAccepted: false,
@@ -114,7 +118,7 @@ describe("mergeLeaderboard", () => {
 
       const result = mergeLeaderboard(leaderboard, partial);
 
-      const updatedMember = result.members[0];
+      const updatedMember = result.rows[0];
       expect(updatedMember.score).toBe(0);
       expect(updatedMember.penalty).toBe(0);
     });
@@ -123,7 +127,7 @@ describe("mergeLeaderboard", () => {
   describe("when member is not found", () => {
     it("should return original leaderboard and log warning", () => {
       const leaderboard = MockLeaderboardResponseDTO();
-      const partial = MockLeaderboardPartialResponseDTO({
+      const partial = MockLeaderboardCellResponseDTO({
         memberId: "non-existent-member",
       });
 
@@ -140,17 +144,17 @@ describe("mergeLeaderboard", () => {
     it("should return original leaderboard and log warning", () => {
       const memberId = uuidv4();
       const leaderboard = MockLeaderboardResponseDTO({
-        members: [
+        rows: [
           {
-            id: memberId,
-            name: "Test User",
+            memberId: memberId,
+            memberName: "Test User",
             score: 0,
             penalty: 0,
-            problems: [],
+            cells: [],
           },
         ],
       });
-      const partial = MockLeaderboardPartialResponseDTO({
+      const partial = MockLeaderboardCellResponseDTO({
         memberId,
         problemId: "non-existent-problem",
       });
@@ -171,16 +175,17 @@ describe("mergeLeaderboard", () => {
       const problemId = uuidv4();
 
       const leaderboard = MockLeaderboardResponseDTO({
-        members: [
+        rows: [
           {
-            id: member1Id,
-            name: "User A",
+            memberId: member1Id,
+            memberName: "User A",
             score: 1,
             penalty: 60,
-            problems: [
+            cells: [
               {
-                id: problemId,
-                letter: "A",
+                problemId: problemId,
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T11:00:00Z",
                 wrongSubmissions: 1,
@@ -189,22 +194,24 @@ describe("mergeLeaderboard", () => {
             ],
           },
           {
-            id: member2Id,
-            name: "User B",
+            memberId: member2Id,
+            memberName: "User B",
             score: 2,
             penalty: 120,
-            problems: [
+            cells: [
               {
-                id: uuidv4(),
-                letter: "A",
+                problemId: uuidv4(),
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T11:00:00Z",
                 wrongSubmissions: 1,
                 penalty: 60,
               },
               {
-                id: uuidv4(),
-                letter: "B",
+                problemId: uuidv4(),
+                problemLetter: "B",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T12:00:00Z",
                 wrongSubmissions: 1,
@@ -215,7 +222,7 @@ describe("mergeLeaderboard", () => {
         ],
       });
 
-      const partial = MockLeaderboardPartialResponseDTO({
+      const partial = MockLeaderboardCellResponseDTO({
         memberId: member1Id,
         problemId,
         isAccepted: true,
@@ -226,8 +233,8 @@ describe("mergeLeaderboard", () => {
 
       const result = mergeLeaderboard(leaderboard, partial);
 
-      expect(result.members[0].id).toBe(member2Id); // Higher score (2)
-      expect(result.members[1].id).toBe(member1Id); // Lower score (1)
+      expect(result.rows[0].memberId).toBe(member2Id); // Higher score (2)
+      expect(result.rows[1].memberId).toBe(member1Id); // Lower score (1)
     });
 
     it("should sort by penalty when scores are equal (lower is better)", () => {
@@ -236,16 +243,17 @@ describe("mergeLeaderboard", () => {
       const problemId = uuidv4();
 
       const leaderboard = MockLeaderboardResponseDTO({
-        members: [
+        rows: [
           {
-            id: member1Id,
-            name: "User A",
+            memberId: member1Id,
+            memberName: "User A",
             score: 1,
             penalty: 100,
-            problems: [
+            cells: [
               {
-                id: problemId,
-                letter: "A",
+                problemId: problemId,
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T11:00:00Z",
                 wrongSubmissions: 3,
@@ -254,14 +262,15 @@ describe("mergeLeaderboard", () => {
             ],
           },
           {
-            id: member2Id,
-            name: "User B",
+            memberId: member2Id,
+            memberName: "User B",
             score: 1,
             penalty: 60,
-            problems: [
+            cells: [
               {
-                id: uuidv4(),
-                letter: "A",
+                problemId: uuidv4(),
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T11:00:00Z",
                 wrongSubmissions: 1,
@@ -272,7 +281,7 @@ describe("mergeLeaderboard", () => {
         ],
       });
 
-      const partial = MockLeaderboardPartialResponseDTO({
+      const partial = MockLeaderboardCellResponseDTO({
         memberId: member1Id,
         problemId,
         isAccepted: true,
@@ -283,8 +292,8 @@ describe("mergeLeaderboard", () => {
 
       const result = mergeLeaderboard(leaderboard, partial);
 
-      expect(result.members[0].id).toBe(member2Id); // Lower penalty (60)
-      expect(result.members[1].id).toBe(member1Id); // Higher penalty (100)
+      expect(result.rows[0].memberId).toBe(member2Id); // Lower penalty (60)
+      expect(result.rows[1].memberId).toBe(member1Id); // Higher penalty (100)
     });
 
     it("should sort by accepted times when score and penalty are equal", () => {
@@ -293,16 +302,17 @@ describe("mergeLeaderboard", () => {
       const problemId = uuidv4();
 
       const leaderboard = MockLeaderboardResponseDTO({
-        members: [
+        rows: [
           {
-            id: member1Id,
-            name: "User A",
+            memberId: member1Id,
+            memberName: "User A",
             score: 1,
             penalty: 60,
-            problems: [
+            cells: [
               {
-                id: problemId,
-                letter: "A",
+                problemId: problemId,
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T12:00:00Z", // Later acceptance
                 wrongSubmissions: 1,
@@ -311,14 +321,15 @@ describe("mergeLeaderboard", () => {
             ],
           },
           {
-            id: member2Id,
-            name: "User B",
+            memberId: member2Id,
+            memberName: "User B",
             score: 1,
             penalty: 60,
-            problems: [
+            cells: [
               {
-                id: uuidv4(),
-                letter: "A",
+                problemId: uuidv4(),
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T11:00:00Z", // Earlier acceptance
                 wrongSubmissions: 1,
@@ -329,7 +340,7 @@ describe("mergeLeaderboard", () => {
         ],
       });
 
-      const partial = MockLeaderboardPartialResponseDTO({
+      const partial = MockLeaderboardCellResponseDTO({
         memberId: member1Id,
         problemId,
         isAccepted: true,
@@ -340,8 +351,8 @@ describe("mergeLeaderboard", () => {
 
       const result = mergeLeaderboard(leaderboard, partial);
 
-      expect(result.members[0].id).toBe(member2Id); // Earlier acceptance time
-      expect(result.members[1].id).toBe(member1Id); // Later acceptance time
+      expect(result.rows[0].memberId).toBe(member2Id); // Earlier acceptance time
+      expect(result.rows[1].memberId).toBe(member1Id); // Later acceptance time
     });
 
     it("should treat acceptance times within the same minute as equal", () => {
@@ -350,16 +361,17 @@ describe("mergeLeaderboard", () => {
       const problemId = uuidv4();
 
       const leaderboard = MockLeaderboardResponseDTO({
-        members: [
+        rows: [
           {
-            id: member1Id,
-            name: "User B", // Alphabetically second
+            memberId: member1Id,
+            memberName: "User B", // Alphabetically second
             score: 1,
             penalty: 60,
-            problems: [
+            cells: [
               {
-                id: problemId,
-                letter: "A",
+                problemId: problemId,
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T11:00:45Z", // Same minute, different seconds
                 wrongSubmissions: 1,
@@ -368,14 +380,15 @@ describe("mergeLeaderboard", () => {
             ],
           },
           {
-            id: member2Id,
-            name: "User A", // Alphabetically first
+            memberId: member2Id,
+            memberName: "User A", // Alphabetically first
             score: 1,
             penalty: 60,
-            problems: [
+            cells: [
               {
-                id: uuidv4(),
-                letter: "A",
+                problemId: uuidv4(),
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T11:00:15Z", // Same minute, different seconds
                 wrongSubmissions: 1,
@@ -386,7 +399,7 @@ describe("mergeLeaderboard", () => {
         ],
       });
 
-      const partial = MockLeaderboardPartialResponseDTO({
+      const partial = MockLeaderboardCellResponseDTO({
         memberId: member1Id,
         problemId,
         isAccepted: true,
@@ -398,8 +411,8 @@ describe("mergeLeaderboard", () => {
       const result = mergeLeaderboard(leaderboard, partial);
 
       // Should fall back to name sorting since acceptance times are in same minute
-      expect(result.members[0].name).toBe("User A"); // Alphabetically first
-      expect(result.members[1].name).toBe("User B"); // Alphabetically second
+      expect(result.rows[0].memberName).toBe("User A"); // Alphabetically first
+      expect(result.rows[1].memberName).toBe("User B"); // Alphabetically second
     });
 
     it("should sort by name when all other criteria are equal", () => {
@@ -408,16 +421,17 @@ describe("mergeLeaderboard", () => {
       const problemId = uuidv4();
 
       const leaderboard = MockLeaderboardResponseDTO({
-        members: [
+        rows: [
           {
-            id: member1Id,
-            name: "Charlie",
+            memberId: member1Id,
+            memberName: "Charlie",
             score: 1,
             penalty: 60,
-            problems: [
+            cells: [
               {
-                id: problemId,
-                letter: "A",
+                problemId: problemId,
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T11:00:00Z",
                 wrongSubmissions: 1,
@@ -426,14 +440,15 @@ describe("mergeLeaderboard", () => {
             ],
           },
           {
-            id: member2Id,
-            name: "Alice",
+            memberId: member2Id,
+            memberName: "Alice",
             score: 1,
             penalty: 60,
-            problems: [
+            cells: [
               {
-                id: uuidv4(),
-                letter: "A",
+                problemId: uuidv4(),
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T11:00:00Z",
                 wrongSubmissions: 1,
@@ -444,7 +459,7 @@ describe("mergeLeaderboard", () => {
         ],
       });
 
-      const partial = MockLeaderboardPartialResponseDTO({
+      const partial = MockLeaderboardCellResponseDTO({
         memberId: member1Id,
         problemId,
         isAccepted: true,
@@ -455,8 +470,8 @@ describe("mergeLeaderboard", () => {
 
       const result = mergeLeaderboard(leaderboard, partial);
 
-      expect(result.members[0].name).toBe("Alice"); // Alphabetically first
-      expect(result.members[1].name).toBe("Charlie"); // Alphabetically second
+      expect(result.rows[0].memberName).toBe("Alice"); // Alphabetically first
+      expect(result.rows[1].memberName).toBe("Charlie"); // Alphabetically second
     });
 
     it("should handle members with different numbers of accepted problems", () => {
@@ -465,16 +480,17 @@ describe("mergeLeaderboard", () => {
       const problemId = uuidv4();
 
       const leaderboard = MockLeaderboardResponseDTO({
-        members: [
+        rows: [
           {
-            id: member1Id,
-            name: "User A",
+            memberId: member1Id,
+            memberName: "User A",
             score: 1,
             penalty: 60,
-            problems: [
+            cells: [
               {
-                id: problemId,
-                letter: "A",
+                problemId: problemId,
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T11:00:00Z",
                 wrongSubmissions: 1,
@@ -483,30 +499,33 @@ describe("mergeLeaderboard", () => {
             ],
           },
           {
-            id: member2Id,
-            name: "User B",
+            memberId: member2Id,
+            memberName: "User B",
             score: 3,
             penalty: 180,
-            problems: [
+            cells: [
               {
-                id: uuidv4(),
-                letter: "A",
+                problemId: uuidv4(),
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T11:00:00Z",
                 wrongSubmissions: 1,
                 penalty: 60,
               },
               {
-                id: uuidv4(),
-                letter: "B",
+                problemId: uuidv4(),
+                problemLetter: "B",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T12:00:00Z",
                 wrongSubmissions: 1,
                 penalty: 60,
               },
               {
-                id: uuidv4(),
-                letter: "C",
+                problemId: uuidv4(),
+                problemLetter: "C",
+                problemColor: "#ffffff",
                 isAccepted: true,
                 acceptedAt: "2025-01-01T13:00:00Z",
                 wrongSubmissions: 1,
@@ -517,7 +536,7 @@ describe("mergeLeaderboard", () => {
         ],
       });
 
-      const partial = MockLeaderboardPartialResponseDTO({
+      const partial = MockLeaderboardCellResponseDTO({
         memberId: member1Id,
         problemId,
         isAccepted: true,
@@ -529,8 +548,8 @@ describe("mergeLeaderboard", () => {
       const result = mergeLeaderboard(leaderboard, partial);
 
       // Should not throw error when comparing arrays of different lengths
-      expect(result.members[0].id).toBe(member2Id); // Higher score
-      expect(result.members[1].id).toBe(member1Id); // Lower score
+      expect(result.rows[0].memberId).toBe(member2Id); // Higher score
+      expect(result.rows[1].memberId).toBe(member1Id); // Lower score
     });
   });
 
@@ -539,24 +558,26 @@ describe("mergeLeaderboard", () => {
       const memberId = uuidv4();
       const problemId = uuidv4();
       const leaderboard = MockLeaderboardResponseDTO({
-        members: [
+        rows: [
           {
-            id: memberId,
-            name: "Test User",
+            memberId: memberId,
+            memberName: "Test User",
             score: 0,
             penalty: 0,
-            problems: [
+            cells: [
               {
-                id: problemId,
-                letter: "A",
+                problemId: problemId,
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: false,
                 acceptedAt: undefined,
                 wrongSubmissions: 0,
                 penalty: 0,
               },
               {
-                id: uuidv4(),
-                letter: "B",
+                problemId: uuidv4(),
+                problemLetter: "B",
+                problemColor: "#ffffff",
                 isAccepted: false,
                 acceptedAt: undefined,
                 wrongSubmissions: 0,
@@ -567,7 +588,7 @@ describe("mergeLeaderboard", () => {
         ],
       });
 
-      const partial = MockLeaderboardPartialResponseDTO({
+      const partial = MockLeaderboardCellResponseDTO({
         memberId,
         problemId,
         isAccepted: true,
@@ -578,7 +599,7 @@ describe("mergeLeaderboard", () => {
 
       const result = mergeLeaderboard(leaderboard, partial);
 
-      const updatedMember = result.members[0];
+      const updatedMember = result.rows[0];
       expect(updatedMember.score).toBe(1);
       expect(updatedMember.penalty).toBe(60); // Should handle undefined penalty as 0
     });
@@ -587,16 +608,17 @@ describe("mergeLeaderboard", () => {
       const memberId = uuidv4();
       const problemId = uuidv4();
       const leaderboard = MockLeaderboardResponseDTO({
-        members: [
+        rows: [
           {
-            id: memberId,
-            name: "Test User",
+            memberId: memberId,
+            memberName: "Test User",
             score: 0,
             penalty: 0,
-            problems: [
+            cells: [
               {
-                id: problemId,
-                letter: "A",
+                problemId: problemId,
+                problemLetter: "A",
+                problemColor: "#ffffff",
                 isAccepted: false,
                 acceptedAt: undefined,
                 wrongSubmissions: 0,
@@ -607,7 +629,7 @@ describe("mergeLeaderboard", () => {
         ],
       });
 
-      const partial = MockLeaderboardPartialResponseDTO({
+      const partial = MockLeaderboardCellResponseDTO({
         memberId,
         problemId,
         isAccepted: false,
@@ -618,7 +640,7 @@ describe("mergeLeaderboard", () => {
 
       const result = mergeLeaderboard(leaderboard, partial);
 
-      const updatedMember = result.members[0];
+      const updatedMember = result.rows[0];
       expect(updatedMember.score).toBe(0);
       expect(updatedMember.penalty).toBe(0);
     });

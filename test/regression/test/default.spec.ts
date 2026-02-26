@@ -4,6 +4,7 @@ import { Actor } from "@/test/actor/actor";
 import { Announcement } from "@/test/entity/announcement";
 import { Clarification } from "@/test/entity/clarification";
 import { Contest, ContestStatus } from "@/test/entity/contest";
+import { Leaderboard } from "@/test/entity/leaderboard";
 import { Member, MemberType } from "@/test/entity/member";
 import { Problem } from "@/test/entity/problem";
 import {
@@ -79,12 +80,12 @@ test("Default contest behaviour", async ({ page }) => {
   const judgeActor = new Actor(page, judgeMember);
   const contestantActor = new Actor(page, contestantMember);
 
-  const leaderboard = {
-    members: [
+  const leaderboard: Leaderboard = {
+    rows: [
       {
-        name: contestantMember.name,
+        memberName: contestantMember.name,
         score: 1,
-        problems: [
+        cells: [
           {
             isAccepted: true,
             wrongSubmissions: 4,

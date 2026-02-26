@@ -3,12 +3,12 @@
 import React from "react";
 
 import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page";
-import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
+import { adminDashboardSlice } from "@/app/_store/slices/dashboard/admin-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 
 export function AdminAnnouncementsPage() {
   const announcements = useAppSelector(
-    (state) => state.adminDashboard.contest.announcements,
+    (state) => state.adminDashboard.announcements,
   );
   const dispatch = useAppDispatch();
 

@@ -1,7 +1,7 @@
 import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/problems-page";
 import { StaffProblemsPage } from "@/app/[slug]/(dashboard)/problems/staff-problems-page";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockProblemResponseDTO } from "@/test/mock/response/problem/MockProblemResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/[slug]/(dashboard)/_common/problems/problems-page", () => ({
@@ -10,15 +10,12 @@ jest.mock("@/app/[slug]/(dashboard)/_common/problems/problems-page", () => ({
 
 describe("StaffProblemsPage", () => {
   it("should render common ProblemsPage with correct data", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    const problems = [
-      MockProblemPublicResponseDTO(),
-      MockProblemPublicResponseDTO(),
-    ];
+    const contest = MockContestResponseDTO();
+    const problems = [MockProblemResponseDTO(), MockProblemResponseDTO()];
     await renderWithProviders(<StaffProblemsPage />, {
-      contestMetadata,
+      contest,
       staffDashboard: {
-        contest: { problems },
+        problems,
       },
     } as any);
 

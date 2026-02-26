@@ -14,8 +14,6 @@ import org.springframework.context.event.EventListener
 class PrometheusClientConfig(
     @Value("\${spring.application.version}")
     private val version: String,
-    @Value("\${spring.profiles.active}")
-    private val environment: String,
 ) {
     /**
      * Registers the Prometheus metrics servlet at the "/metrics" endpoint.
@@ -30,6 +28,6 @@ class PrometheusClientConfig(
     @EventListener(ApplicationReadyEvent::class)
     fun initializeMetrics() {
         JvmMetrics.builder().register()
-        CoreMetrics.INFO.setLabelValues(version, environment)
+        CoreMetrics.INFO.setLabelValues(version)
     }
 }

@@ -2,6 +2,6 @@ spring:
   config:
     import: classpath:core-development.yml
 server:
-  port: ${PORT:8081}
+  port: ${PORT:8082}
 submission:
   max-concurrent: ${MAX_CONCURRENT_SUBMISSIONS:1}

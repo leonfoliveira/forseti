@@ -4,7 +4,7 @@ import { ForbiddenException } from "@/core/domain/exception/ForbiddenException";
 import { ServiceUnavailableException } from "@/core/domain/exception/ServiceUnavailableException";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { usePathname, useRouter } from "@/test/jest.setup";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { renderHookWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/_lib/action/clear-cookies-server-action");
@@ -13,7 +13,7 @@ describe("useErrorHandler", () => {
   const mockSlug = "test-contest";
   const mockPath = "/test/path";
   const preloadedState = {
-    contestMetadata: MockContestMetadataResponseDTO({ slug: mockSlug }),
+    contest: MockContestResponseDTO({ slug: mockSlug }),
   };
 
   beforeEach(() => {

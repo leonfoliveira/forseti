@@ -3,13 +3,13 @@ import { act } from "@testing-library/react";
 
 import { ClarificationsPageForm } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page-form";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { clarificationWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
-import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
+import { MockProblemResponseDTO } from "@/test/mock/response/problem/MockProblemResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("ClarificationsPageForm", () => {
-  const problems = [MockProblemPublicResponseDTO()];
+  const problems = [MockProblemResponseDTO()];
 
   it("should render form fields and submit button", async () => {
     const onClose = jest.fn();
@@ -45,9 +45,9 @@ describe("ClarificationsPageForm", () => {
 
   it("should create clarification when submit button is clicked", async () => {
     const newClarification = MockClarificationResponseDTO();
-    (clarificationWritter.create as jest.Mock).mockResolvedValueOnce(
-      newClarification,
-    );
+    (
+      Composition.clarificationWritter.create as jest.Mock
+    ).mockResolvedValueOnce(newClarification);
 
     const onClose = jest.fn();
     const onCreate = jest.fn();
@@ -71,19 +71,22 @@ describe("ClarificationsPageForm", () => {
       fireEvent.click(screen.getByTestId("clarification-form-submit"));
     });
 
-    expect(clarificationWritter.create).toHaveBeenCalledWith("test-contest", {
-      text: "Test clarification",
-      problemId: undefined,
-    });
+    expect(Composition.clarificationWritter.create).toHaveBeenCalledWith(
+      "test-contest",
+      {
+        text: "Test clarification",
+        problemId: undefined,
+      },
+    );
     expect(useToast().success).toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
     expect(onCreate).toHaveBeenCalledWith(newClarification);
   });
 
   it("should show error toast when clarification creation fails", async () => {
-    (clarificationWritter.create as jest.Mock).mockRejectedValueOnce(
-      new Error("Creation failed"),
-    );
+    (
+      Composition.clarificationWritter.create as jest.Mock
+    ).mockRejectedValueOnce(new Error("Creation failed"));
 
     const onClose = jest.fn();
     await renderWithProviders(
@@ -106,10 +109,13 @@ describe("ClarificationsPageForm", () => {
       fireEvent.click(screen.getByTestId("clarification-form-submit"));
     });
 
-    expect(clarificationWritter.create).toHaveBeenCalledWith("test-contest", {
-      text: "Test clarification",
-      problemId: undefined,
-    });
+    expect(Composition.clarificationWritter.create).toHaveBeenCalledWith(
+      "test-contest",
+      {
+        text: "Test clarification",
+        problemId: undefined,
+      },
+    );
     expect(useToast().error).toHaveBeenCalled();
   });
 });

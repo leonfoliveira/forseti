@@ -1,12 +1,12 @@
 package com.forsetijudge.core.domain.entity
 
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
 import java.time.OffsetDateTime
 import java.util.UUID
 
 object ContestMockBuilder {
     fun build(
-        id: UUID = UuidCreator.getTimeOrderedEpoch(),
+        id: UUID = IdGenerator.getUUID(),
         createdAt: OffsetDateTime = OffsetDateTime.now(),
         updatedAt: OffsetDateTime = OffsetDateTime.now(),
         deletedAt: OffsetDateTime? = null,
@@ -32,8 +32,15 @@ object ContestMockBuilder {
         title = title,
         languages = languages,
         startAt = startAt,
-        endAt = endAt,
-        autoFreezeAt = autoFreezeAt,
+        endAt = if (endAt < startAt) startAt.plusHours(1) else endAt,
+        autoFreezeAt =
+            if (autoFreezeAt != null &&
+                !(autoFreezeAt > startAt && autoFreezeAt < endAt)
+            ) {
+                startAt.plusMinutes(30)
+            } else {
+                autoFreezeAt
+            },
         frozenAt = frozenAt,
         settings = settings,
         members = members,

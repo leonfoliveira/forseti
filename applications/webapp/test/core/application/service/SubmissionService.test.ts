@@ -7,8 +7,9 @@ import { AttachmentContext } from "@/core/domain/enumerate/AttachmentContext";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionRepository } from "@/core/port/driven/repository/SubmissionRepository";
 import { MockCreateSubmissionInputDTO } from "@/test/mock/input/MockCreateSubmissionInputDTO";
-import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachment";
-import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
+import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachmentResponseDTO";
+import { MockSubmissionWithCodeAndExecutionsResponseDTO } from "@/test/mock/response/submission/MockSubmissionWithCodeAndExecutionsResponseDTO";
+import { MockSubmissionWithCodeResponseDTO } from "@/test/mock/response/submission/MockSubmissionWithCodeResponseDTO";
 
 describe("SubmissionService", () => {
   const submissionRepository = mock<SubmissionRepository>();
@@ -23,7 +24,7 @@ describe("SubmissionService", () => {
       const inputDTO = MockCreateSubmissionInputDTO();
       const attachment = MockAttachmentResponseDTO();
       attachmentService.upload.mockResolvedValue(attachment);
-      const submission = MockSubmissionFullResponseDTO();
+      const submission = MockSubmissionWithCodeResponseDTO();
       submissionRepository.create.mockResolvedValue(submission);
 
       const result = await sut.create(contestId, inputDTO);
@@ -43,11 +44,14 @@ describe("SubmissionService", () => {
 
   describe("updateAnswer", () => {
     it("should update submission answer", async () => {
+      const submission = MockSubmissionWithCodeAndExecutionsResponseDTO();
       const submissionId = uuidv4();
       const answer = SubmissionAnswer.ACCEPTED;
+      submissionRepository.updateAnswer.mockResolvedValue(submission);
 
-      await sut.updateAnswer(contestId, submissionId, answer);
+      const result = await sut.updateAnswer(contestId, submissionId, answer);
 
+      expect(result).toEqual(submission);
       expect(submissionRepository.updateAnswer).toHaveBeenCalledWith(
         contestId,
         submissionId,
@@ -58,10 +62,13 @@ describe("SubmissionService", () => {
 
   describe("rerun", () => {
     it("should rerun submission", async () => {
+      const submission = MockSubmissionWithCodeAndExecutionsResponseDTO();
       const submissionId = uuidv4();
+      submissionRepository.rerun.mockResolvedValue(submission);
 
-      await sut.rerun(contestId, submissionId);
+      const result = await sut.rerun(contestId, submissionId);
 
+      expect(result).toEqual(submission);
       expect(submissionRepository.rerun).toHaveBeenCalledWith(
         contestId,
         submissionId,

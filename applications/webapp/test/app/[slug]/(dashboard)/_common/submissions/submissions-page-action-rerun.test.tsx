@@ -7,17 +7,17 @@ import {
   DropdownMenuContent,
 } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { submissionWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockSubmissionWithCodeAndExecutionsResponseDTO } from "@/test/mock/response/submission/MockSubmissionWithCodeAndExecutionsResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPageActionRerun", () => {
   it("should handle resubmitSubmission successfully", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    const submission = MockSubmissionFullWithExecutionResponseDTO();
+    const contest = MockContestResponseDTO();
+    const submission = MockSubmissionWithCodeAndExecutionsResponseDTO();
     const onClose = jest.fn();
     const onRerun = jest.fn();
     await renderWithProviders(
@@ -30,7 +30,7 @@ describe("SubmissionsPageActionRerun", () => {
           />
         </DropdownMenuContent>
       </DropdownMenu>,
-      { contestMetadata },
+      { contest },
     );
 
     fireEvent.click(screen.getByTestId("submissions-page-action-rerun"));
@@ -38,8 +38,8 @@ describe("SubmissionsPageActionRerun", () => {
       fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(submissionWritter.rerun).toHaveBeenCalledWith(
-      contestMetadata.id,
+    expect(Composition.submissionWritter.rerun).toHaveBeenCalledWith(
+      contest.id,
       submission.id,
     );
     expect(useToast().success).toHaveBeenCalled();

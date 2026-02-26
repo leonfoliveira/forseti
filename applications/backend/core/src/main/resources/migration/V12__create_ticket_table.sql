@@ -11,7 +11,28 @@ create table ticket (
     properties jsonb not null,
     version bigint not null default 1,
     constraint fk_contest_id foreign key (contest_id) references contest (id),
-    constraint fk_member_id foreign key (member_id) references member (id)
+    constraint fk_member_id foreign key (member_id) references member (id),
+    constraint fk_staff_id foreign key (staff_id) references member (id),
+    constraint chk_properties check (
+        (
+            type = 'SUBMISSION_PRINT' and (
+                properties ? 'submissionId' and
+                properties->>'submissionId' ~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$' and
+                properties ? 'attachmentId' and
+                properties->>'attachmentId' ~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            )
+        ) or (
+            type = 'TECHNICAL_SUPPORT' and (
+                properties ? 'description' and
+                length(properties->>'description') between 1 and 500
+            )
+        ) or (
+            type = 'NON_TECHNICAL_SUPPORT' and (
+                properties ? 'description' and
+                length(properties->>'description') between 1 and 500
+            )
+        )
+    )
 );
 
 create index idx_ticket_member_id on ticket (member_id);

@@ -26,9 +26,10 @@ import {
 import { useErrorHandler } from "@/app/_lib/hook/error-handler-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
-import { attachmentReader } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
+import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResponseDTO";
+import { ProblemWithTestCasesResponseDTO } from "@/core/port/dto/response/problem/ProblemWithTestCasesResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -56,9 +57,17 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.problems.problems-page.memory-limit-header",
     defaultMessage: "Memory Limit",
   },
+  testCasesHeader: {
+    id: "app.[slug].(dashboard)._common.problems.problems-page.test-cases-header",
+    defaultMessage: "Test Cases",
+  },
   statusHeader: {
     id: "app.[slug].(dashboard)._common.problems.problems-page.status-header",
     defaultMessage: "Status",
+  },
+  descriptionHeader: {
+    id: "app.[slug].(dashboard)._common.problems.problems-page.description-header",
+    defaultMessage: "Description",
   },
   accepted: {
     id: "app.[slug].(dashboard)._common.problems.problems-page.accepted",
@@ -72,6 +81,10 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.problems.problems-page.not-attempted",
     defaultMessage: "Not attempted",
   },
+  testCasesDownloadError: {
+    id: "app.[slug].(dashboard)._common.problems.problems-page.test-cases-download-error",
+    defaultMessage: "Failed to download problem test cases",
+  },
   descriptionDownloadError: {
     id: "app.[slug].(dashboard)._common.problems.problems-page.description-download-error",
     defaultMessage: "Failed to download problem description",
@@ -84,8 +97,9 @@ const messages = defineMessages({
 });
 
 type Props = {
-  problems: ProblemPublicResponseDTO[];
-  contestantClassificationProblems?: LeaderboardResponseDTO["members"][number]["problems"];
+  problems: ProblemResponseDTO[] | ProblemWithTestCasesResponseDTO[];
+  canDownloadTestCases?: boolean;
+  leaderboardRow?: LeaderboardResponseDTO["rows"][number];
 };
 
 /**
@@ -93,41 +107,42 @@ type Props = {
  **/
 export function ProblemsPage({
   problems,
-  contestantClassificationProblems,
+  canDownloadTestCases,
+  leaderboardRow,
 }: Props) {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const contestId = useAppSelector((state) => state.contest.id);
   const errorHandler = useErrorHandler();
   const toast = useToast();
 
-  const problemStatus = contestantClassificationProblems?.reduce(
-    (acc, problem) => {
-      acc[problem.id] = problem;
+  const leaderboardCellsMap = leaderboardRow?.cells?.reduce(
+    (acc, cell) => {
+      acc[cell.problemId] = cell;
       return acc;
     },
     {} as Record<
       string,
-      LeaderboardResponseDTO["members"][number]["problems"][number]
+      LeaderboardResponseDTO["rows"][number]["cells"][number]
     >,
   );
-  const hasStatus = contestantClassificationProblems !== undefined;
+  const hasStatus = leaderboardRow !== undefined;
 
   function getStatus(problemId: string) {
-    const status = problemStatus?.[problemId];
-    if (!status) return undefined;
-    if (status.isAccepted)
+    const cell = leaderboardCellsMap?.[problemId];
+    if (!cell) return undefined;
+    if (cell.isAccepted)
       return (
         <p className="text-xs text-green-700 dark:text-green-300">
           <CircleCheckIcon size={14} className="mr-1 inline" />
           <FormattedMessage {...messages.accepted} />
         </p>
       );
-    if (status.wrongSubmissions > 0)
+    if (cell.wrongSubmissions > 0)
       return (
         <p className="text-xs text-yellow-700 dark:text-yellow-300">
           <ClockIcon size={14} className="mr-1 inline" />
           <FormattedMessage
             {...messages.attempts}
-            values={{ attempts: status.wrongSubmissions }}
+            values={{ attempts: cell.wrongSubmissions }}
           />
         </p>
       );
@@ -138,9 +153,36 @@ export function ProblemsPage({
     );
   }
 
-  async function downloadDescription(problem: ProblemPublicResponseDTO) {
+  async function downloadTestCases(problem: ProblemWithTestCasesResponseDTO) {
+    console.debug("Downloading test cases for problem:", problem.id);
+
     try {
-      await attachmentReader.download(contestId, problem.description);
+      await Composition.attachmentReader.download(contestId, problem.testCases);
+
+      console.debug(
+        "Problem test cases downloaded successfully for problem:",
+        problem.id,
+      );
+    } catch (error) {
+      await errorHandler.handle(error as Error, {
+        default: () => toast.error(messages.descriptionDownloadError),
+      });
+    }
+  }
+
+  async function downloadDescription(problem: ProblemResponseDTO) {
+    console.debug("Downloading description for problem:", problem.id);
+
+    try {
+      await Composition.attachmentReader.download(
+        contestId,
+        problem.description,
+      );
+
+      console.debug(
+        "Problem description downloaded successfully for problem:",
+        problem.id,
+      );
     } catch (error) {
       await errorHandler.handle(error as Error, {
         default: () => toast.error(messages.descriptionDownloadError),
@@ -172,7 +214,14 @@ export function ProblemsPage({
                     <FormattedMessage {...messages.statusHeader} />
                   </TableHead>
                 )}
-                <TableHead className="text-right" />
+                {canDownloadTestCases && (
+                  <TableHead className="text-right">
+                    <FormattedMessage {...messages.testCasesHeader} />
+                  </TableHead>
+                )}
+                <TableHead className="text-right">
+                  <FormattedMessage {...messages.descriptionHeader} />
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -201,9 +250,27 @@ export function ProblemsPage({
                       {getStatus(problem.id)}
                     </TableCell>
                   )}
+                  {canDownloadTestCases && (
+                    <TableCell
+                      data-testid="problem-test-cases"
+                      className="text-right"
+                    >
+                      <Button
+                        size="xs"
+                        onClick={() =>
+                          downloadTestCases(
+                            problem as ProblemWithTestCasesResponseDTO,
+                          )
+                        }
+                        data-testid="problem-download-test-cases"
+                      >
+                        <DownloadIcon size={16} /> CSV
+                      </Button>
+                    </TableCell>
+                  )}
                   <TableCell
                     className="text-right"
-                    data-testid="problem-actions"
+                    data-testid="problem-download-description"
                   >
                     <Button
                       size="xs"

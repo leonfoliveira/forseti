@@ -3,11 +3,12 @@ import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/Attac
 
 export type ExecutionResponseDTO = {
   id: string;
+  createdAt: string;
+  updatedAt: string;
   answer: SubmissionAnswer;
   totalTestCases: number;
   lastTestCase?: number;
   input: AttachmentResponseDTO;
   output: AttachmentResponseDTO;
-  createdAt: string;
   version: number;
 };

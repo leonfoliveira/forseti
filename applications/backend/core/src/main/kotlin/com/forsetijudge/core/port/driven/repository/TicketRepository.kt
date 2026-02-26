@@ -8,15 +8,15 @@ import java.util.UUID
  * Accessor for persistence operations related to Ticket entity
  */
 interface TicketRepository : BaseRepository<Ticket<*>> {
-    fun findEntityById(id: UUID): Ticket<*>?
+    fun findById(id: UUID): Ticket<*>?
 
-    @Query("SELECT t FROM Ticket t WHERE t.id = :id AND t.contest.id = :contestId")
+    @Query("SELECT t FROM Ticket t WHERE t.id = :id AND t.contest.id = :contestId AND deletedAt IS NULL")
     fun findByIdAndContestId(
         id: UUID,
         contestId: UUID,
     ): Ticket<*>?
 
-    @Query("SELECT t FROM Ticket t WHERE t.contest.id = :contestId AND t.member.id = :memberId")
+    @Query("SELECT t FROM Ticket t WHERE t.contest.id = :contestId AND t.member.id = :memberId AND deletedAt IS NULL")
     fun findAllByContestIdAndMemberId(
         contestId: UUID,
         memberId: UUID,

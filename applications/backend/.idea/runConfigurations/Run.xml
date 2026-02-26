@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run" type="CompoundRunConfigurationType">
+    <toRun name="Run Api" type="JetRunConfigurationType" />
+    <toRun name="Run Auto Judge" type="JetRunConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

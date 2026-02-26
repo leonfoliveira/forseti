@@ -5,3 +5,9 @@ server:
   cors:
     allowed-origins: http://localhost:3000
   port: 8080
+security:
+  cookie:
+    domain: .forsetijudge.com
+    secure: false
+  member-login: api
+  member-type: API

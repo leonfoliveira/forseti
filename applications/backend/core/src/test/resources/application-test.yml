@@ -1,0 +1,6 @@
+spring:
+  config:
+    import: classpath:core-test.yml
+security:
+  member-login: core
+  member-type: API

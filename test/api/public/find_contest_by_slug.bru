@@ -1,0 +1,20 @@
+meta {
+  name: find_contest_by_slug
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{base_url}}/contests/slug/{{contest_slug}}
+  body: none
+  auth: inherit
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

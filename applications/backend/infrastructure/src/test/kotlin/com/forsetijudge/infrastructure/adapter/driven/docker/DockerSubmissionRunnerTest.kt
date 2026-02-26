@@ -4,14 +4,12 @@ import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
-import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.port.driven.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.ContestRepository
-import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.testcontainer.MinioTestContainer
 import com.forsetijudge.core.testcontainer.PostgresTestContainer
@@ -30,7 +28,6 @@ class DockerSubmissionRunnerTest(
     val sut: DockerSubmissionRunner,
     val contestRepository: ContestRepository,
     val submissionRepository: SubmissionRepository,
-    val memberRepository: MemberRepository,
     val attachmentBucket: AttachmentBucket,
 ) : FunSpec({
         extensions(SpringExtension)
@@ -40,10 +37,6 @@ class DockerSubmissionRunnerTest(
         beforeSpec {
             contest = ContestMockBuilder.build()
             contest = contestRepository.save(contest)
-
-            val root = MemberMockBuilder.build(id = Member.ROOT_ID, contest = null, type = Member.Type.ROOT)
-            val autojudge = MemberMockBuilder.build(id = Member.AUTOJUDGE_ID, contest = null, type = Member.Type.AUTOJUDGE)
-            memberRepository.saveAll(listOf(root, autojudge))
 
             val member = MemberMockBuilder.build(contest = contest)
             contest.members = listOf(member)

@@ -7,8 +7,8 @@ import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 import { MockDate } from "@/test/mock/mock-date";
-import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachment";
-import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
+import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachmentResponseDTO";
+import { MockContestWithMembersAndProblemsDTO } from "@/test/mock/response/contest/MockContestWithMembersAndProblemsDTO";
 
 describe("SettingsForm", () => {
   const mockAttachment: AttachmentResponseDTO = MockAttachmentResponseDTO();
@@ -926,7 +926,7 @@ describe("SettingsForm", () => {
   });
 
   describe("fromResponseDTO", () => {
-    const mockContestResponse = MockContestFullResponseDTO({
+    const mockContestResponse = MockContestWithMembersAndProblemsDTO({
       id: "contest-1",
       slug: "test-contest",
       title: "Test Contest",

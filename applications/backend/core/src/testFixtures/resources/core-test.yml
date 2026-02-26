@@ -28,17 +28,7 @@ spring:
     routing-key:
       submission-routing-key: submission-routing-key
   quartz:
-    job-store-type: jdbc
-    jdbc:
-      initialize-schema: always
-    properties:
-      org:
-        quartz:
-          jobStore:
-            isClustered: true
-            clusterCheckinInterval: 20000
-            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
-            tablePrefix: QRTZ_
+    job-store-type: memory
     max-retries: 0
   jpa:
     show-sql: false
@@ -58,8 +48,9 @@ minio:
   bucket: forseti
 security:
   session:
-    expiration: 12h
-    root-expiration: 12h
-    autojudge-expiration: 10m
+    expiration:
+      default: 1h
+      root: 1h
+      system: 1h
   root:
     password: forsetijudge

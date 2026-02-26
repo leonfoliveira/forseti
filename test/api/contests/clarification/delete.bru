@@ -1,0 +1,24 @@
+meta {
+  name: delete
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{base_url}}/{{clarification_id}}
+  body: none
+  auth: inherit
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+vars:pre-request {
+  clarification_id: 123
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

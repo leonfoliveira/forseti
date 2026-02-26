@@ -1,0 +1,28 @@
+meta {
+  name: problem_description
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}?context={{Attachment.Context.PROBLEM_DESCRIPTION}}
+  body: multipartForm
+  auth: inherit
+}
+
+params:query {
+  context: {{Attachment.Context.PROBLEM_DESCRIPTION}}
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+body:multipart-form {
+  file: @file(files\problem_description.pdf) @contentType(application/pdf)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

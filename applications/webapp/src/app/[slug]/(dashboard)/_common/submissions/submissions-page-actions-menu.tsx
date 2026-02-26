@@ -16,8 +16,8 @@ import {
 } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useAppSelector } from "@/app/_store/store";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
-import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -30,16 +30,17 @@ const messages = defineMessages({
 
 type Props = {
   submission:
-    | SubmissionFullResponseDTO
-    | SubmissionFullWithExecutionResponseDTO;
+    | SubmissionWithCodeResponseDTO
+    | SubmissionWithCodeAndExecutionsResponseDTO;
+  canViewExecutions?: boolean;
 } & (
   | {
       canEdit: true;
-      onEdit: (submission: SubmissionFullWithExecutionResponseDTO) => void;
+      onEdit: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void;
     }
   | {
       canEdit?: false;
-      onEdit?: (submission: SubmissionFullWithExecutionResponseDTO) => void;
+      onEdit?: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void;
     }
 ) &
   (
@@ -59,6 +60,7 @@ export function SubmissionsPageActionsMenu({
   onEdit,
   canPrint,
   onPrint,
+  canViewExecutions,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const session = useAppSelector((state) => state.session);
@@ -95,19 +97,21 @@ export function SubmissionsPageActionsMenu({
                 onRequest={onPrint}
               />
             )}
+            {canViewExecutions && (
+              <SubmissionsPageActionExecutions
+                executions={
+                  (submission as SubmissionWithCodeAndExecutionsResponseDTO)
+                    .executions
+                }
+                onClose={close}
+              />
+            )}
             {canEdit && (
               <>
-                <SubmissionsPageActionExecutions
-                  executions={
-                    (submission as SubmissionFullWithExecutionResponseDTO)
-                      .executions
-                  }
-                  onClose={close}
-                />
                 {submission.status != SubmissionStatus.JUDGING && (
                   <SubmissionsPageActionRerun
                     submission={
-                      submission as SubmissionFullWithExecutionResponseDTO
+                      submission as SubmissionWithCodeAndExecutionsResponseDTO
                     }
                     onClose={close}
                     onRerun={onEdit}
@@ -115,7 +119,7 @@ export function SubmissionsPageActionsMenu({
                 )}
                 <SubmissionsPageActionJudge
                   submission={
-                    submission as SubmissionFullWithExecutionResponseDTO
+                    submission as SubmissionWithCodeAndExecutionsResponseDTO
                   }
                   onClose={close}
                   onJudge={onEdit}

@@ -9,3 +9,6 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+security:
+  member-login: ${HOSTNAME:api}
+  member-type: API

@@ -5,9 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { AxiosClient } from "@/infrastructure/adapter/axios/AxiosClient";
 import { AxiosSubmissionRepository } from "@/infrastructure/adapter/axios/repository/AxiosSubmissionRepository";
-import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
-import { MockSubmissionFullWithExecutionResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullWithExecutionResponseDTO";
-import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
+import { MockSubmissionWithCodeResponseDTO } from "@/test/mock/response/submission/MockSubmissionWithCodeResponseDTO";
 
 describe("AxiosSubmissionRepository", () => {
   const axiosClient = mock<AxiosClient>();
@@ -16,10 +14,10 @@ describe("AxiosSubmissionRepository", () => {
 
   const contestId = uuidv4();
 
-  describe("createSubmission", () => {
+  describe("create", () => {
     it("should create a submission and return the full response", async () => {
       const request = { language: "java" } as any;
-      const expectedResponse = MockSubmissionFullResponseDTO();
+      const expectedResponse = MockSubmissionWithCodeResponseDTO();
       axiosClient.post.mockResolvedValueOnce({
         data: expectedResponse,
       } as AxiosResponse);
@@ -36,88 +34,41 @@ describe("AxiosSubmissionRepository", () => {
     });
   });
 
-  describe("findAllContestSubmissions", () => {
-    it("should return an array of submissions for the contest", async () => {
-      const expectedResponse = [
-        MockSubmissionPublicResponseDTO(),
-        MockSubmissionPublicResponseDTO(),
-      ];
-      axiosClient.get.mockResolvedValueOnce({
-        data: expectedResponse,
-      } as AxiosResponse);
-
-      const result = await sut.findAllForContest(contestId);
-
-      expect(axiosClient.get).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/submissions`,
-      );
-      expect(result).toEqual(expectedResponse);
-    });
-  });
-
-  describe("findAllContestFullSubmissions", () => {
-    it("should return an array of full submissions for the contest", async () => {
-      const expectedResponse = [
-        MockSubmissionFullWithExecutionResponseDTO(),
-        MockSubmissionFullWithExecutionResponseDTO(),
-      ];
-      axiosClient.get.mockResolvedValueOnce({
-        data: expectedResponse,
-      } as AxiosResponse);
-
-      const result = await sut.findAllFullForContest(contestId);
-
-      expect(axiosClient.get).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/submissions/full`,
-      );
-      expect(result).toEqual(expectedResponse);
-    });
-  });
-
-  describe("findAllFullForMember", () => {
-    it("should return an array of full submissions for the member", async () => {
-      const expectedResponse = [
-        MockSubmissionFullResponseDTO(),
-        MockSubmissionFullResponseDTO(),
-      ];
-      axiosClient.get.mockResolvedValueOnce({
-        data: expectedResponse,
-      } as AxiosResponse);
-
-      const result = await sut.findAllFullForMember(contestId);
-
-      expect(axiosClient.get).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/submissions/members/me`,
-      );
-      expect(result).toEqual(expectedResponse);
-    });
-  });
-
-  describe("updateSubmissionAnswer", () => {
+  describe("updateAnswer", () => {
     it("should update the submission answer", async () => {
+      const submission = MockSubmissionWithCodeResponseDTO();
+      (axiosClient.put as jest.Mock).mockResolvedValueOnce({
+        data: submission,
+      } as AxiosResponse);
       const submissionId = uuidv4();
       const answer = SubmissionAnswer.ACCEPTED;
 
-      await sut.updateAnswer(contestId, submissionId, answer);
+      const result = await sut.updateAnswer(contestId, submissionId, answer);
 
       expect(axiosClient.put).toHaveBeenCalledWith(
-        `/v1/contests/${contestId}/submissions/${submissionId}:update-answer-force`,
+        `/v1/contests/${contestId}/submissions/${submissionId}:update-answer`,
         {
           data: { answer },
         },
       );
+      expect(result).toEqual(submission);
     });
   });
 
-  describe("rerunSubmission", () => {
+  describe("rerun", () => {
     it("should rerun the submission", async () => {
+      const submission = MockSubmissionWithCodeResponseDTO();
+      (axiosClient.put as jest.Mock).mockResolvedValueOnce({
+        data: submission,
+      } as AxiosResponse);
       const submissionId = uuidv4();
 
-      await sut.rerun(contestId, submissionId);
+      const result = await sut.rerun(contestId, submissionId);
 
-      expect(axiosClient.post).toHaveBeenCalledWith(
+      expect(axiosClient.put).toHaveBeenCalledWith(
         `/v1/contests/${contestId}/submissions/${submissionId}:rerun`,
       );
+      expect(result).toEqual(submission);
     });
   });
 });

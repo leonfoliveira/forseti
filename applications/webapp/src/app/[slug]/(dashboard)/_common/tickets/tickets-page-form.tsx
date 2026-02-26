@@ -29,7 +29,7 @@ import { Textarea } from "@/app/_lib/component/shadcn/textarea";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
-import { ticketWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { TicketType } from "@/core/domain/enumerate/TicketType";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
@@ -76,7 +76,7 @@ type Props = {
 };
 
 export function TicketsPageForm({ onCreate, onClose }: Props) {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const contestId = useAppSelector((state) => state.contest.id);
   const createTicketState = useLoadableState();
   const toast = useToast();
   const formRef = useRef<HTMLFormElement>(null);
@@ -87,18 +87,22 @@ export function TicketsPageForm({ onCreate, onClose }: Props) {
   });
 
   async function createTicket(data: TicketFormType) {
+    console.debug("Creating ticket with data:", data);
     createTicketState.start();
+
     try {
-      const newTicket = await ticketWritter.create(
+      const newTicket = await Composition.ticketWritter.create(
         contestId,
         TicketForm.toRequestDTO(data),
       );
 
+      toast.success(messages.createSuccess);
       onCreate(newTicket);
       form.reset();
       formRef.current?.reset();
-      toast.success(messages.createSuccess);
       createTicketState.finish();
+      console.debug("Ticket created successfully:", newTicket);
+
       onClose();
     } catch (error) {
       await createTicketState.fail(error, {

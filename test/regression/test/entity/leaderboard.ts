@@ -1,14 +1,14 @@
 export type Leaderboard = {
-  members: LeaderboardMember[];
+  rows: LeaderboardRow[];
 };
 
-export type LeaderboardMember = {
-  name: string;
+export type LeaderboardRow = {
+  memberName: string;
   score: number;
-  problems: LeaderboardProblem[];
+  cells: LeaderboardCell[];
 };
 
-export type LeaderboardProblem = {
+export type LeaderboardCell = {
   isAccepted: boolean;
   wrongSubmissions: number;
 };

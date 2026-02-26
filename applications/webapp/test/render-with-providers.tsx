@@ -6,7 +6,7 @@ import { Provider } from "react-redux";
 import { TooltipProvider } from "@/app/_lib/component/shadcn/tooltip";
 import { AppStore, makeStore, RootState } from "@/app/_store/store";
 import messages from "@/i18n/messages/en-US.json";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -26,7 +26,7 @@ function Wrapper({ children, store }: WrapperProps) {
 export async function renderWithProviders(
   component: React.ReactNode,
   preloadedState: Partial<RootState> = {
-    contestMetadata: MockContestMetadataResponseDTO(),
+    contest: MockContestResponseDTO(),
   },
 ) {
   const store = makeStore(preloadedState);

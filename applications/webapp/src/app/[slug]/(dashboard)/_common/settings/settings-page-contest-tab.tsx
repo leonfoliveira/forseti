@@ -4,10 +4,7 @@ import { AlertCircleIcon, TriangleAlertIcon } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
-import {
-  ConfirmationDialog,
-  useConfirmationDialog,
-} from "@/app/_lib/component/feedback/confirmation-dialog";
+import { ConfirmationDialog } from "@/app/_lib/component/feedback/confirmation-dialog";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";
@@ -22,15 +19,16 @@ import { Input } from "@/app/_lib/component/shadcn/input";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Switch } from "@/app/_lib/component/shadcn/switch";
 import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
+import { useDialog } from "@/app/_lib/hook/dialog-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
-import { contestMetadataSlice } from "@/app/_store/slices/contest-metadata-slice";
+import { contestSlice } from "@/app/_store/slices/contest-slice";
+import { adminDashboardSlice } from "@/app/_store/slices/dashboard/admin-dashboard-slice";
 import { useAppDispatch } from "@/app/_store/store";
-import { contestWritter, leaderboardWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
-import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
+import { ContestWithMembersAndProblemsDTO } from "@/core/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
@@ -180,10 +178,10 @@ const messages = defineMessages({
 });
 
 type Props = {
-  contest: ContestFullResponseDTO;
+  contest: ContestWithMembersAndProblemsDTO;
   leaderboard: LeaderboardResponseDTO;
   form: UseFormReturn<SettingsFormType>;
-  onToggleFreeze: (isFrozen: boolean) => void;
+  onToggleFreeze: (contest: ContestWithMembersAndProblemsDTO) => void;
   isDisabled?: boolean;
 };
 
@@ -200,16 +198,20 @@ export function SettingsPageContestTab({
   const dispatch = useAppDispatch();
   const toast = useToast();
 
-  const freezeConfirmationDialog = useConfirmationDialog();
-  const forceConfirmationDialog = useConfirmationDialog();
+  const freezeConfirmationDialog = useDialog();
+  const forceConfirmationDialog = useDialog();
 
   const languageError = form.formState.errors.contest?.languages?.message;
   const languageGroups = ["CPP", "JAVA", "PYTHON"];
 
   async function toggleFreeze() {
     const method = leaderboard.isFrozen
-      ? leaderboardWritter.unfreeze.bind(leaderboardWritter)
-      : leaderboardWritter.freeze.bind(leaderboardWritter);
+      ? Composition.leaderboardWritter.unfreeze.bind(
+          Composition.leaderboardWritter,
+        )
+      : Composition.leaderboardWritter.freeze.bind(
+          Composition.leaderboardWritter,
+        );
     const successMessage = leaderboard.isFrozen
       ? messages.unfreezeSuccess
       : messages.freezeSuccess;
@@ -217,14 +219,17 @@ export function SettingsPageContestTab({
       ? messages.unfreezeError
       : messages.freezeError;
 
+    console.debug("Toggling freeze. Current state:", leaderboard.isFrozen);
     freezeToggleState.start();
-    try {
-      await method(contest.id);
 
-      onToggleFreeze(!leaderboard.isFrozen);
+    try {
+      const updatedContest = await method(contest.id);
+
       toast.success(successMessage);
+      onToggleFreeze(updatedContest);
       freezeConfirmationDialog.close();
       freezeToggleState.finish();
+      console.debug("Freeze toggled successfully");
     } catch (error) {
       await freezeToggleState.fail(error, {
         default: () => toast.error(errorMessage),
@@ -235,26 +240,31 @@ export function SettingsPageContestTab({
   async function force(mode: "start" | "end") {
     const method =
       mode === "start"
-        ? contestWritter.forceStart.bind(contestWritter)
-        : contestWritter.forceEnd.bind(contestWritter);
+        ? Composition.contestWritter.forceStart.bind(Composition.contestWritter)
+        : Composition.contestWritter.forceEnd.bind(Composition.contestWritter);
     const successMessage =
       mode === "start" ? messages.forceStartSuccess : messages.forceEndSuccess;
     const errorMessage =
       mode === "start" ? messages.forceStartError : messages.forceEndError;
 
+    console.debug(`Forcing contest ${mode}. Current status:`, contestStatus);
     forceState.start();
+
     try {
       const newContestMetadata = await method(contest.id);
+
+      toast.success(successMessage);
       dispatch(
         adminDashboardSlice.actions.setContest({
           ...contest,
           ...newContestMetadata,
         }),
       );
-      dispatch(contestMetadataSlice.actions.set(newContestMetadata));
-      toast.success(successMessage);
+      dispatch(contestSlice.actions.set(newContestMetadata));
       forceConfirmationDialog.close();
       forceState.finish();
+
+      console.debug(`Contest force ${mode}ed successfully`);
     } catch (error) {
       await forceState.fail(error, {
         default: () => toast.error(errorMessage),

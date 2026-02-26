@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/dom";
 
 import { ProblemStatusBadge } from "@/app/_lib/component/display/badge/problem-status-badge";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("ProblemStatusBadge", () => {
@@ -12,7 +12,7 @@ describe("ProblemStatusBadge", () => {
         acceptedAt="2025-01-01T00:00:00Z"
         wrongSubmissions={0}
       />,
-      { contestMetadata: MockContestMetadataResponseDTO() },
+      { contest: MockContestResponseDTO() },
     );
 
     const badge = screen.getByTestId("badge-accepted");
@@ -27,7 +27,7 @@ describe("ProblemStatusBadge", () => {
         acceptedAt="2025-01-01T00:00:00Z"
         wrongSubmissions={2}
       />,
-      { contestMetadata: MockContestMetadataResponseDTO() },
+      { contest: MockContestResponseDTO() },
     );
 
     const badge = screen.getByTestId("badge-accepted");
@@ -38,7 +38,7 @@ describe("ProblemStatusBadge", () => {
   it("should render badge correctly when is not accepted with wrong submissions", async () => {
     await renderWithProviders(
       <ProblemStatusBadge isAccepted={false} wrongSubmissions={3} />,
-      { contestMetadata: MockContestMetadataResponseDTO() },
+      { contest: MockContestResponseDTO() },
     );
 
     const badge = screen.getByTestId("badge-rejected");
@@ -49,7 +49,7 @@ describe("ProblemStatusBadge", () => {
   it("should not render badge when is not accepted and no wrong submissions", async () => {
     await renderWithProviders(
       <ProblemStatusBadge isAccepted={false} wrongSubmissions={0} />,
-      { contestMetadata: MockContestMetadataResponseDTO() },
+      { contest: MockContestResponseDTO() },
     );
 
     expect(screen.queryByTestId("badge-accepted")).not.toBeInTheDocument();

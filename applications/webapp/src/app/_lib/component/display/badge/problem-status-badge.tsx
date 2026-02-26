@@ -22,13 +22,12 @@ export function ProblemStatusBadge({
   wrongSubmissions,
   ...props
 }: Props) {
-  const contestMetadata = useAppSelector((state) => state.contestMetadata);
+  const contest = useAppSelector((state) => state.contest);
 
   if (isAccepted && acceptedAt) {
     const diffMs = Math.max(
       0,
-      new Date(acceptedAt).getTime() -
-        new Date(contestMetadata.startAt).getTime(),
+      new Date(acceptedAt).getTime() - new Date(contest.startAt).getTime(),
     );
     return (
       <Badge

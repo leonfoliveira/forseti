@@ -2,11 +2,11 @@
 
 import { WaitPage } from "@/app/[slug]/(dashboard)/_common/wait-page";
 import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
-import { AdminDashboardProvider } from "@/app/_lib/provider/admin-dashboard-provider";
-import { ContestantDashboardProvider } from "@/app/_lib/provider/contestant-dashboard-provider";
-import { GuestDashboardProvider } from "@/app/_lib/provider/guest-dashboard-provider";
-import { JudgeDashboardProvider } from "@/app/_lib/provider/judge-dashboard-provider";
-import { StaffDashboardProvider } from "@/app/_lib/provider/staff-dashboard-provider";
+import { AdminDashboardProvider } from "@/app/_lib/provider/dashboard/admin-dashboard-provider";
+import { ContestantDashboardProvider } from "@/app/_lib/provider/dashboard/contestant-dashboard-provider";
+import { GuestDashboardProvider } from "@/app/_lib/provider/dashboard/guest-dashboard-provider";
+import { JudgeDashboardProvider } from "@/app/_lib/provider/dashboard/judge-dashboard-provider";
+import { StaffDashboardProvider } from "@/app/_lib/provider/dashboard/staff-dashboard-provider";
 import { useAppSelector } from "@/app/_store/store";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { MemberType } from "@/core/domain/enumerate/MemberType";

@@ -1,11 +1,11 @@
-import { ContestMetadataResponseDTO } from "@/core/port/dto/response/contest/ContestMetadataResponseDTO";
+import { ContestResponseDTO } from "@/core/port/dto/response/contest/ContestResponseDTO";
 
 export interface ContestReader {
   /**
-   * Find contest metadata by its slug.
+   * Find a contest by its slug.
    *
    * @param slug Slug of the contest
-   * @return The contest metadata
+   * @return The contest data
    */
-  findMetadataBySlug(slug: string): Promise<ContestMetadataResponseDTO>;
+  findBySlug(slug: string): Promise<ContestResponseDTO>;
 }

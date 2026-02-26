@@ -1,0 +1,36 @@
+meta {
+  name: submission_print
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+body:json {
+  {
+    "type": "SUBMISSION_PRINT",
+    "properties": {
+      "submissionId": "{{submission_id}}",
+      "attachmentId": "{{code_attachment_id}}"
+    }
+  }
+}
+
+script:post-response {
+  const ticketId = res.body.id
+  
+  bru.setVar("ticket_id", ticketId)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -2,24 +2,21 @@ import { fireEvent, screen } from "@testing-library/dom";
 
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
 import { MockDate } from "@/test/mock/mock-date";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
-import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
-import { MockSubmissionPublicResponseDTO } from "@/test/mock/response/submission/MockSubmissionPublicResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockProblemResponseDTO } from "@/test/mock/response/problem/MockProblemResponseDTO";
+import { MockSubmissionResponseDTO } from "@/test/mock/response/submission/MockSubmissionResponseDTO";
+import { MockSubmissionWithCodeResponseDTO } from "@/test/mock/response/submission/MockSubmissionWithCodeResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPage", () => {
-  const contestMetadata = MockContestMetadataResponseDTO({
+  const contest = MockContestResponseDTO({
     startAt: MockDate.past().toISOString(),
     endAt: MockDate.future().toISOString(),
   });
-  const problems = [
-    MockProblemPublicResponseDTO(),
-    MockProblemPublicResponseDTO(),
-  ];
+  const problems = [MockProblemResponseDTO(), MockProblemResponseDTO()];
 
   describe("variant - cannot create or edit", () => {
-    const submissions = [MockSubmissionPublicResponseDTO()];
+    const submissions = [MockSubmissionResponseDTO()];
 
     it("should render submissions table without actions", async () => {
       await renderWithProviders(
@@ -29,7 +26,7 @@ describe("SubmissionsPage", () => {
           canCreate={false}
           canEdit={false}
         />,
-        { contestMetadata },
+        { contest },
       );
 
       expect(screen.queryByTestId("submission-form")).not.toBeInTheDocument();
@@ -64,11 +61,11 @@ describe("SubmissionsPage", () => {
 
   describe("variant - can create", () => {
     const submissions = [
-      MockSubmissionPublicResponseDTO(),
-      MockSubmissionPublicResponseDTO(),
+      MockSubmissionResponseDTO(),
+      MockSubmissionResponseDTO(),
     ];
     const memberSubmissions = [
-      MockSubmissionFullResponseDTO({ id: submissions[0].id }),
+      MockSubmissionWithCodeResponseDTO({ id: submissions[0].id }),
     ];
 
     it("should render create form", async () => {
@@ -81,7 +78,7 @@ describe("SubmissionsPage", () => {
           onCreate={() => {}}
           canEdit={false}
         />,
-        { contestMetadata },
+        { contest },
       );
 
       expect(screen.queryByTestId("submission-form")).not.toBeInTheDocument();
@@ -99,7 +96,7 @@ describe("SubmissionsPage", () => {
           onCreate={() => {}}
           canEdit={false}
         />,
-        { contestMetadata },
+        { contest },
       );
 
       expect(screen.getAllByTestId("submission-member")).toHaveLength(2);
@@ -108,7 +105,7 @@ describe("SubmissionsPage", () => {
     });
 
     it("should not render create form when contest ended", async () => {
-      const endedContestMetadata = MockContestMetadataResponseDTO({
+      const endedContestMetadata = MockContestResponseDTO({
         startAt: MockDate.past(2).toISOString(),
         endAt: MockDate.past().toISOString(),
       });
@@ -122,7 +119,7 @@ describe("SubmissionsPage", () => {
           onCreate={() => {}}
           canEdit={false}
         />,
-        { contestMetadata: endedContestMetadata },
+        { contest: endedContestMetadata },
       );
 
       expect(

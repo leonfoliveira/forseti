@@ -1,6 +1,7 @@
 package com.forsetijudge.api.adapter.util.cookie
 
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
@@ -31,7 +32,7 @@ class CsrfCookieBuilderTest :
             test("should build CSRF token cookie") {
                 val session = SessionMockBuilder.build()
 
-                val cookie = sut.buildCookie(session)
+                val cookie = sut.buildCookie(session.toResponseBodyDTO())
 
                 cookie shouldContain "csrf_token=${session.csrfToken}"
                 cookie shouldNotContain "HttpOnly"

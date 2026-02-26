@@ -1,7 +1,7 @@
 import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page";
 import { ContestantClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/contestant-clarifications-page";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
-import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
+import { MockProblemResponseDTO } from "@/test/mock/response/problem/MockProblemResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock(
@@ -13,17 +13,15 @@ jest.mock(
 
 describe("ContestantClarificationsPage", () => {
   it("should render common ClarificationsPage with correct data", async () => {
-    const problems = [
-      MockProblemPublicResponseDTO(),
-      MockProblemPublicResponseDTO(),
-    ];
+    const problems = [MockProblemResponseDTO(), MockProblemResponseDTO()];
     const clarifications = [
       MockClarificationResponseDTO(),
       MockClarificationResponseDTO(),
     ];
     await renderWithProviders(<ContestantClarificationsPage />, {
       contestantDashboard: {
-        contest: { problems, clarifications },
+        problems,
+        clarifications,
       },
     } as any);
 

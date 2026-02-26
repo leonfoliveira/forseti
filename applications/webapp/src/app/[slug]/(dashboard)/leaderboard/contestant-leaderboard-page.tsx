@@ -5,7 +5,7 @@ import { useAppSelector } from "@/app/_store/store";
 
 export function ContestantLeaderboardPage() {
   const problems = useAppSelector(
-    (state) => state.contestantDashboard.contest.problems,
+    (state) => state.contestantDashboard.problems,
   );
   const leaderboard = useAppSelector(
     (state) => state.contestantDashboard.leaderboard,

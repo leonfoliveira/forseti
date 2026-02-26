@@ -1,0 +1,44 @@
+meta {
+  name: create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+body:json {
+  {
+    "problemId": "{{problem_id}}",
+    "language": "{{Submission.Language.PYTHON_312}}",
+    "code": {
+      "id": "{{code_attachment_id}}"
+    }
+  }
+}
+
+script:pre-request {
+  const uploadProblemDescriptionResult = await bru.runRequest("contests/attachment/upload/submission_code")
+  
+  const codeAttachment = await uploadProblemDescriptionResult.data
+  
+  bru.setVar("code_attachment_id", codeAttachment.id)
+}
+
+script:post-response {
+  const submissionId = res.body["id"]
+  
+  bru.setVar("submission_id", submissionId)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

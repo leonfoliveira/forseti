@@ -5,8 +5,8 @@ import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useErrorHandler } from "@/app/_lib/hook/error-handler-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
-import { attachmentReader } from "@/config/composition";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { Composition } from "@/config/composition";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -21,18 +21,25 @@ const messages = defineMessages({
 });
 
 type Props = {
-  submission: SubmissionFullResponseDTO;
+  submission: SubmissionWithCodeResponseDTO;
   onClose: () => void;
 };
 
 export function SubmissionsPageActionDownload({ submission, onClose }: Props) {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const contestId = useAppSelector((state) => state.contest.id);
   const errorHandler = useErrorHandler();
   const toast = useToast();
 
   async function downloadSubmission() {
+    console.debug("Attempting to download submission with ID:", submission.id);
     try {
-      await attachmentReader.download(contestId, submission.code);
+      await Composition.attachmentReader.download(contestId, submission.code);
+
+      console.debug(
+        "Submission downloaded successfully with ID:",
+        submission.id,
+      );
+
       onClose();
     } catch (error) {
       await errorHandler.handle(error as Error, {

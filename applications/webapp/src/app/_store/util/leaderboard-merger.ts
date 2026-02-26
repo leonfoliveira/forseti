@@ -1,5 +1,5 @@
 import { DateTimeUtil } from "@/app/_lib/util/datetime-util";
-import { LeaderboardPartialResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardPartialResponseDTO";
+import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
 /**
@@ -10,10 +10,10 @@ import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/Lea
  */
 export function mergeLeaderboard(
   leaderboard: LeaderboardResponseDTO,
-  leaderboardPartial: LeaderboardPartialResponseDTO,
+  leaderboardPartial: LeaderboardCellResponseDTO,
 ): LeaderboardResponseDTO {
-  const row = leaderboard.members.find(
-    (it) => it.id === leaderboardPartial.memberId,
+  const row = leaderboard.rows.find(
+    (it) => it.memberId === leaderboardPartial.memberId,
   );
 
   if (!row) {
@@ -23,8 +23,8 @@ export function mergeLeaderboard(
     return leaderboard;
   }
 
-  const cell = row.problems.find(
-    (it) => it.id === leaderboardPartial.problemId,
+  const cell = row.cells.find(
+    (it) => it.problemId === leaderboardPartial.problemId,
   );
 
   if (!cell) {
@@ -39,10 +39,10 @@ export function mergeLeaderboard(
   cell.wrongSubmissions = leaderboardPartial.wrongSubmissions;
   cell.penalty = leaderboardPartial.penalty;
 
-  row.score = row.problems.filter((it) => it.isAccepted).length;
-  row.penalty = row.problems.reduce((sum, it) => sum + (it.penalty || 0), 0);
+  row.score = row.cells.filter((it) => it.isAccepted).length;
+  row.penalty = row.cells.reduce((sum, it) => sum + (it.penalty || 0), 0);
 
-  leaderboard.members.sort((a, b) => {
+  leaderboard.rows.sort((a, b) => {
     if (a.score !== b.score) {
       return b.score - a.score;
     }
@@ -50,11 +50,11 @@ export function mergeLeaderboard(
       return a.penalty - b.penalty;
     }
 
-    const aAcceptedTimes = a.problems
+    const aAcceptedTimes = a.cells
       .filter((it) => it.isAccepted)
       .toSorted((a, b) => a.acceptedAt!.localeCompare(b.acceptedAt!))
       .toReversed();
-    const bAcceptedTimes = b.problems
+    const bAcceptedTimes = b.cells
       .filter((it) => it.isAccepted)
       .toSorted((a, b) => a.acceptedAt!.localeCompare(b.acceptedAt!))
       .toReversed();
@@ -63,7 +63,7 @@ export function mergeLeaderboard(
     for (let i = 0; i < minLength; i++) {
       const acceptedDiff = Math.floor(
         DateTimeUtil.diffMs(
-          leaderboard.startAt,
+          leaderboard.contestStartAt,
           aAcceptedTimes[i].acceptedAt!,
         ) /
           1000 /
@@ -71,7 +71,7 @@ export function mergeLeaderboard(
       );
       const acceptedDiffB = Math.floor(
         DateTimeUtil.diffMs(
-          leaderboard.startAt,
+          leaderboard.contestStartAt,
           bAcceptedTimes[i].acceptedAt!,
         ) /
           1000 /
@@ -84,7 +84,7 @@ export function mergeLeaderboard(
       }
     }
 
-    return a.name.localeCompare(b.name);
+    return a.memberName.localeCompare(b.memberName);
   });
 
   return { ...leaderboard };
