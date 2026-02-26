@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: ${DB_URL}
+    url: ${DB_URL:jdbc:postgresql://postgres:5432/forseti}
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
@@ -42,6 +42,9 @@ spring:
         default-requeue-rejected: false
   quartz:
     max-retries: 2
+redis:
+  url: ${REDIS_URL:redis://localhost:6379}
+  password: ${REDIS_PASSWORD} # No default for security reasons
 minio:
   endpoint: ${MINIO_ENDPOINT:http://minio:9000}
   access-key: ${MINIO_ACCESS_KEY:forseti}

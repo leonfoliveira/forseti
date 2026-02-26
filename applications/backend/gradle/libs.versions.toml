@@ -18,6 +18,7 @@ opentelemetry = "1.56.0"
 opentelemetry-mdc = "2.11.0-alpha"
 postgresql = "42.7.5"
 prometheus = "1.4.3"
+redisson = "4.2.0"
 snakeyaml = "2.4"
 spring-boot = "3.4.5"
 springmockk = "4.0.2"
@@ -46,6 +47,7 @@ postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" 
 prometheus-metrics-core = { module = "io.prometheus:prometheus-metrics-core", version.ref = "prometheus" }
 prometheus-metrics-exporter-servlet-jakarta = { module = "io.prometheus:prometheus-metrics-exporter-servlet-jakarta", version.ref = "prometheus" }
 prometheus-metrics-instrumentation-jvm = { module = "io.prometheus:prometheus-metrics-instrumentation-jvm", version.ref = "prometheus" }
+redisson = { module = "org.redisson:redisson", version.ref = "redisson" }
 snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
 spring-boot-dev-tools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
 spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot" }

@@ -64,6 +64,7 @@ subprojects {
         implementation(rootProject.libs.bundles.spring)
         implementation(rootProject.libs.bundles.opentelemetry)
         implementation(rootProject.libs.uuid.creator)
+        implementation(rootProject.libs.redisson)
 
         testImplementation(rootProject.libs.bundles.kotest)
         testImplementation(rootProject.libs.bundles.mockk)
