@@ -55,7 +55,6 @@ create table frozen_submission (
     answer text,
     code_id uuid not null,
     version bigint not null default 1,
-    constraint fk_id foreign key (id) references submission (id),
     constraint fk_member_id foreign key (member_id) references member (id),
     constraint fk_problem_id foreign key (problem_id) references problem (id),
     constraint fk_code_id foreign key (code_id) references attachment (id)
