@@ -16,6 +16,7 @@ object MemberMockBuilder {
         login: String = "test_member",
         password: String = "password",
         submissions: List<Submission> = emptyList(),
+        frozenSubmissions: List<FrozenSubmission> = emptyList(),
     ) = Member(
         id = id,
         createdAt = createdAt,
@@ -27,5 +28,6 @@ object MemberMockBuilder {
         login = login,
         password = password,
         submissions = submissions,
+        frozenSubmissions = frozenSubmissions,
     )
 }

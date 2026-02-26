@@ -5,6 +5,7 @@ import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.entity.unfreeze
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.Leaderboard
@@ -90,6 +91,7 @@ class BuildLeaderboardService(
 
     /**
      * Builds a Row for the leaderboard based on the member's submissions and the contest's problems.
+     * If the contest is frozen, it uses the frozen submissions instead of the regular submissions.
      *
      * @param contest The contest
      * @param member The member
@@ -99,7 +101,14 @@ class BuildLeaderboardService(
         contest: Contest,
         member: Member,
     ): Leaderboard.Row {
-        val submissionProblemHash = member.submissions.groupBy { it.problem.id }
+        val submissions =
+            if (contest.isFrozen) {
+                member.frozenSubmissions.map { it.unfreeze() }
+            } else {
+                member.submissions
+            }
+
+        val submissionProblemHash = submissions.groupBy { it.problem.id }
         val cells =
             contest.problems.map { problem ->
                 buildLeaderboardCellInternalUseCase.execute(
