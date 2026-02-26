@@ -1,6 +1,7 @@
 import { expect, Page } from "playwright/test";
 
 import { Actor } from "@/test/actor/actor";
+import { LeaderboardRow } from "@/test/entity/leaderboard";
 import { Member } from "@/test/entity/member";
 import { Problem } from "@/test/entity/problem";
 
