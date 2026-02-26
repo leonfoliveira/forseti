@@ -8,7 +8,7 @@ import { useDashboardReseter } from "@/app/_lib/hook/dashboard-reseter-hook";
 import { useIntl } from "@/app/_lib/hook/intl-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
+import { adminDashboardSlice } from "@/app/_store/slices/dashboard/admin-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";

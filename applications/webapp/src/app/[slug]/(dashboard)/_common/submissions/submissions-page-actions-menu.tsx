@@ -32,6 +32,7 @@ type Props = {
   submission:
     | SubmissionWithCodeResponseDTO
     | SubmissionWithCodeAndExecutionsResponseDTO;
+  canViewExecutions?: boolean;
 } & (
   | {
       canEdit: true;
@@ -59,6 +60,7 @@ export function SubmissionsPageActionsMenu({
   onEdit,
   canPrint,
   onPrint,
+  canViewExecutions,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const session = useAppSelector((state) => state.session);
@@ -95,15 +97,17 @@ export function SubmissionsPageActionsMenu({
                 onRequest={onPrint}
               />
             )}
+            {canViewExecutions && (
+              <SubmissionsPageActionExecutions
+                executions={
+                  (submission as SubmissionWithCodeAndExecutionsResponseDTO)
+                    .executions
+                }
+                onClose={close}
+              />
+            )}
             {canEdit && (
               <>
-                <SubmissionsPageActionExecutions
-                  executions={
-                    (submission as SubmissionWithCodeAndExecutionsResponseDTO)
-                      .executions
-                  }
-                  onClose={close}
-                />
                 {submission.status != SubmissionStatus.JUDGING && (
                   <SubmissionsPageActionRerun
                     submission={

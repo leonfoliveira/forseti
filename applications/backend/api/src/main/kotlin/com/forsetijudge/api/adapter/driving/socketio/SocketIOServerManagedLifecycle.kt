@@ -11,35 +11,57 @@ class SocketIOServerManagedLifecycle(
     private val server: SocketIOServer,
 ) : SmartLifecycle {
     private val logger = LoggerFactory.getLogger(this::class.java)
+
+    @Volatile
     private var isRunning = false
 
     /**
-     * Starts the Socket.IO server when the application context is refreshed.
-     * This method is called by Spring during the startup phase.
+     * Starting the Socket.IO server in the start() method ensures it is fully initialized
      */
     override fun start() {
-        logger.info("Starting Netty-SocketIO server")
+        if (isRunning) return
+
+        logger.info("Starting Netty-SocketIO server...")
         try {
             server.start()
             isRunning = true
-            logger.info("Netty-SocketIO server started on port ${server.configuration.port} (ws)")
+            logger.info("Netty-SocketIO server started on port ${server.configuration.port}")
         } catch (ex: Exception) {
-            logger.error("Failed to start Socket.IO server", ex)
+            logger.error("Failed to start Socket.IO server. Application will now exit.", ex)
             throw ex
         }
     }
 
     /**
-     * Stops the Socket.IO server when the application context is closed.
+     * Gracefully stops the Socket.IO server, allowing it to finish processing ongoing connections and tasks before shutting down.
      */
+    override fun stop(callback: Runnable) {
+        if (isRunning) {
+            logger.info("Stopping Netty-SocketIO server...")
+            try {
+                server.stop()
+                isRunning = false
+                logger.info("Netty-SocketIO server stopped successfully")
+            } catch (ex: Exception) {
+                logger.error("Error during Netty-SocketIO server shutdown", ex)
+            } finally {
+                callback.run()
+            }
+        } else {
+            callback.run()
+        }
+    }
+
     override fun stop() {
-        logger.info("Stopping Netty-SocketIO server")
-        server.stop()
         isRunning = false
-        logger.info("Netty-SocketIO server stopped")
     }
 
     override fun isRunning(): Boolean = isRunning
 
+    /**
+     * Set to a high value so it starts AFTER other beans (like databases) and stops BEFORE them during shutdown.
+     */
     override fun getPhase(): Int = Integer.MAX_VALUE
+
+    override fun isAutoStartup(): Boolean = true
 }

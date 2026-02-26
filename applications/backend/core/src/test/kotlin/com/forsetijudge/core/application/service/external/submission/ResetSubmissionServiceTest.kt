@@ -56,7 +56,7 @@ class ResetSubmissionServiceTest :
         test("should throw NotFoundException when member not found") {
             val submission = SubmissionMockBuilder.build()
             every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns submission
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextMemberId) } returns null
+            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns null
 
             shouldThrow<NotFoundException> { sut.execute(command) }
         }
@@ -65,7 +65,7 @@ class ResetSubmissionServiceTest :
             val submission = SubmissionMockBuilder.build()
             val member = MemberMockBuilder.build()
             every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns submission
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextMemberId) } returns member
+            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
 
             shouldThrow<ForbiddenException> { sut.execute(command) }
         }
@@ -75,7 +75,7 @@ class ResetSubmissionServiceTest :
                 val submission = SubmissionMockBuilder.build()
                 val member = MemberMockBuilder.build(type = memberType, contest = submission.contest)
                 every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns submission
-                every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextMemberId) } returns member
+                every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
 
                 shouldThrow<ForbiddenException> { sut.execute(command) }
             }
@@ -85,7 +85,7 @@ class ResetSubmissionServiceTest :
             val submission = SubmissionMockBuilder.build()
             val member = MemberMockBuilder.build(type = Member.Type.JUDGE, contest = submission.contest)
             every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns submission
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextMemberId) } returns member
+            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
             every { submissionRepository.save(any()) } returnsArgument 0
 
             val result = sut.execute(command)

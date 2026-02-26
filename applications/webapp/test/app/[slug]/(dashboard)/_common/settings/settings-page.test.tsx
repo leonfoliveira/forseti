@@ -6,7 +6,7 @@ import { act } from "react";
 import { SettingsForm } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
 import { SettingsPage } from "@/app/[slug]/(dashboard)/_common/settings/settings-page";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { AdminDashboardState } from "@/app/_store/slices/admin-dashboard-slice";
+import { AdminDashboardState } from "@/app/_store/slices/dashboard/admin-dashboard-slice";
 import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";

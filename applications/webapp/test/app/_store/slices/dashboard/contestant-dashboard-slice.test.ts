@@ -1,28 +1,31 @@
 import {
-  guestDashboardSlice,
-  GuestDashboardState,
-} from "@/app/_store/slices/guest-dashboard-slice";
+  contestantDashboardSlice,
+  ContestantDashboardState,
+} from "@/app/_store/slices/dashboard/contestant-dashboard-slice";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
-import { MockGuestDashboardResponseDTO } from "@/test/mock/response/dashboard/MockGuestDashboardResponseDTO";
+import { MockContestantDashboardResponseDTO } from "@/test/mock/response/dashboard/MockContestantDashboardResponseDTO";
 import { MockLeaderboardCellResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardCellResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockSubmissionResponseDTO } from "@/test/mock/response/submission/MockSubmissionResponseDTO";
+import { MockSubmissionWithCodeResponseDTO } from "@/test/mock/response/submission/MockSubmissionWithCodeResponseDTO";
+import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 
-describe("guestDashboardSlice", () => {
-  const stateWithData: GuestDashboardState = {
-    ...MockGuestDashboardResponseDTO(),
+describe("contestantDashboardSlice", () => {
+  const stateWithData: ContestantDashboardState = {
+    ...MockContestantDashboardResponseDTO(),
   };
 
   it("should set the leaderboard", () => {
     const newLeaderboard = MockLeaderboardResponseDTO();
 
-    const state = guestDashboardSlice.reducer(
+    const state = contestantDashboardSlice.reducer(
       stateWithData,
-      guestDashboardSlice.actions.setLeaderboard(newLeaderboard),
+      contestantDashboardSlice.actions.setLeaderboard(newLeaderboard),
     );
 
     expect(state.leaderboard).toEqual(newLeaderboard);
@@ -35,9 +38,9 @@ describe("guestDashboardSlice", () => {
       isAccepted: !stateWithData.leaderboard.rows[0].cells[0].isAccepted,
     });
 
-    const state = guestDashboardSlice.reducer(
+    const state = contestantDashboardSlice.reducer(
       stateWithData,
-      guestDashboardSlice.actions.mergeLeaderboard(leaderboardCell),
+      contestantDashboardSlice.actions.mergeLeaderboard(leaderboardCell),
     );
 
     expect(state.leaderboard.rows[0].cells[0].isAccepted).toBe(
@@ -46,9 +49,9 @@ describe("guestDashboardSlice", () => {
   });
 
   it("should set the leaderboard as frozen", () => {
-    const state = guestDashboardSlice.reducer(
+    const state = contestantDashboardSlice.reducer(
       stateWithData,
-      guestDashboardSlice.actions.setLeaderboardIsFrozen(true),
+      contestantDashboardSlice.actions.setLeaderboardIsFrozen(true),
     );
 
     expect(state.leaderboard.isFrozen).toBe(true);
@@ -57,9 +60,9 @@ describe("guestDashboardSlice", () => {
   it("should merge a new submission", () => {
     const newSubmission = MockSubmissionResponseDTO();
 
-    const state = guestDashboardSlice.reducer(
+    const state = contestantDashboardSlice.reducer(
       stateWithData,
-      guestDashboardSlice.actions.mergeSubmission(newSubmission),
+      contestantDashboardSlice.actions.mergeSubmission(newSubmission),
     );
 
     expect(state.submissions).toHaveLength(2);
@@ -74,24 +77,24 @@ describe("guestDashboardSlice", () => {
       version: 2,
     };
 
-    const state = guestDashboardSlice.reducer(
+    const state = contestantDashboardSlice.reducer(
       stateWithData,
-      guestDashboardSlice.actions.mergeSubmission(updatedSubmission),
+      contestantDashboardSlice.actions.mergeSubmission(updatedSubmission),
     );
 
     expect(state.submissions).toHaveLength(1);
     expect(state.submissions[0]).toEqual(updatedSubmission);
   });
 
-  it("should merge a batch of submissions", () => {
+  it("should merge a batch of new submissions", () => {
     const newSubmissions = [
       MockSubmissionResponseDTO(),
       MockSubmissionResponseDTO(),
     ];
 
-    const state = guestDashboardSlice.reducer(
+    const state = contestantDashboardSlice.reducer(
       stateWithData,
-      guestDashboardSlice.actions.mergeSubmissionBatch(newSubmissions),
+      contestantDashboardSlice.actions.mergeSubmissionBatch(newSubmissions),
     );
 
     expect(state.submissions).toHaveLength(3);
@@ -100,12 +103,43 @@ describe("guestDashboardSlice", () => {
     );
   });
 
+  it("should merge a new member submission", () => {
+    const newMemberSubmission = MockSubmissionWithCodeResponseDTO();
+
+    const state = contestantDashboardSlice.reducer(
+      stateWithData,
+      contestantDashboardSlice.actions.mergeMemberSubmission(
+        newMemberSubmission,
+      ),
+    );
+
+    expect(state.memberSubmissions).toHaveLength(2);
+    expect(state.memberSubmissions).toContainEqual(newMemberSubmission);
+  });
+
+  it("should update an existing member submission when merging", () => {
+    const updatedMemberSubmission: SubmissionWithCodeResponseDTO = {
+      ...stateWithData.memberSubmissions[0],
+      answer: SubmissionAnswer.ACCEPTED,
+    };
+
+    const state = contestantDashboardSlice.reducer(
+      stateWithData,
+      contestantDashboardSlice.actions.mergeMemberSubmission(
+        updatedMemberSubmission,
+      ),
+    );
+
+    expect(state.memberSubmissions).toHaveLength(1);
+    expect(state.memberSubmissions[0]).toEqual(updatedMemberSubmission);
+  });
+
   it("should merge a new announcement", () => {
     const newAnnouncement = MockAnnouncementResponseDTO();
 
-    const state = guestDashboardSlice.reducer(
+    const state = contestantDashboardSlice.reducer(
       stateWithData,
-      guestDashboardSlice.actions.mergeAnnouncement(newAnnouncement),
+      contestantDashboardSlice.actions.mergeAnnouncement(newAnnouncement),
     );
 
     expect(state.announcements).toHaveLength(2);
@@ -117,9 +151,9 @@ describe("guestDashboardSlice", () => {
       parentId: undefined,
     });
 
-    const state = guestDashboardSlice.reducer(
+    const state = contestantDashboardSlice.reducer(
       stateWithData,
-      guestDashboardSlice.actions.mergeClarification(mockClarification),
+      contestantDashboardSlice.actions.mergeClarification(mockClarification),
     );
 
     expect(state.clarifications).toHaveLength(2);
@@ -131,9 +165,9 @@ describe("guestDashboardSlice", () => {
       parentId: stateWithData.clarifications[0]?.id,
     });
 
-    const state = guestDashboardSlice.reducer(
+    const state = contestantDashboardSlice.reducer(
       stateWithData,
-      guestDashboardSlice.actions.mergeClarification(mockClarification),
+      contestantDashboardSlice.actions.mergeClarification(mockClarification),
     );
 
     expect(state.clarifications).toHaveLength(1);
@@ -142,13 +176,25 @@ describe("guestDashboardSlice", () => {
   });
 
   it("should delete a clarification by id", () => {
-    const state = guestDashboardSlice.reducer(
+    const state = contestantDashboardSlice.reducer(
       stateWithData,
-      guestDashboardSlice.actions.deleteClarification(
+      contestantDashboardSlice.actions.deleteClarification(
         stateWithData.clarifications[0].id,
       ),
     );
 
     expect(state.clarifications).toHaveLength(0);
+  });
+
+  it("should merge a new ticket", () => {
+    const ticket = MockTicketResponseDTO();
+
+    const state = contestantDashboardSlice.reducer(
+      stateWithData,
+      contestantDashboardSlice.actions.mergeMemberTicket(ticket),
+    );
+
+    expect(state.memberTickets).toHaveLength(2);
+    expect(state.memberTickets).toContainEqual(ticket);
   });
 });

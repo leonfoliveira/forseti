@@ -9,5 +9,11 @@ export function StaffSubmissionsPage() {
   );
   const problems = useAppSelector((state) => state.staffDashboard.problems);
 
-  return <SubmissionsPage submissions={submissions} problems={problems} />;
+  return (
+    <SubmissionsPage
+      submissions={submissions}
+      problems={problems}
+      canViewExecutions
+    />
+  );
 }

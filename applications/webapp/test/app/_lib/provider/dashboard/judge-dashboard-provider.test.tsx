@@ -3,15 +3,15 @@ import { act } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { AdminDashboardProvider } from "@/app/_lib/provider/admin-dashboard-provider";
-import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
+import { JudgeDashboardProvider } from "@/app/_lib/provider/dashboard/judge-dashboard-provider";
+import { judgeDashboardSlice } from "@/app/_store/slices/dashboard/judge-dashboard-slice";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
 import { MockClarificationResponseDTO } from "@/test/mock/response/clarification/MockClarificationResponseDTO";
-import { MockContestWithMembersAndProblemsDTO } from "@/test/mock/response/contest/MockContestWithMembersAndProblemsDTO";
-import { MockAdminDashboardResponseDTO } from "@/test/mock/response/dashboard/MockAdminDashboardResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockJudgeDashboardResponseDTO } from "@/test/mock/response/dashboard/MockJudgeDashboardResponseDTO";
 import { MockLeaderboardCellResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardCellResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
@@ -26,35 +26,35 @@ jest.mock("@/app/_lib/component/page/error-page", () => ({
   ErrorPage: () => <span data-testid="error-page" />,
 }));
 
-describe("AdminDashboardProvider", () => {
+describe("JudgeDashboardProvider", () => {
   const session = MockSession();
-  const contest = MockContestWithMembersAndProblemsDTO();
-  const dashboard = MockAdminDashboardResponseDTO();
+  const contest = MockContestResponseDTO();
+  const dashboard = MockJudgeDashboardResponseDTO();
 
   beforeEach(() => {
     (
-      Composition.dashboardReader.getAdminDashboard as jest.Mock
+      Composition.dashboardReader.getJudgeDashboard as jest.Mock
     ).mockResolvedValue(dashboard);
   });
 
   it("should load data on startup and render children", async () => {
     const { store } = await renderWithProviders(
-      <AdminDashboardProvider>
+      <JudgeDashboardProvider>
         <div data-testid="child" />
-      </AdminDashboardProvider>,
+      </JudgeDashboardProvider>,
       { session, contest },
     );
 
-    expect(Composition.dashboardReader.getAdminDashboard).toHaveBeenCalledWith(
+    expect(Composition.dashboardReader.getJudgeDashboard).toHaveBeenCalledWith(
       contest.id,
     );
 
     expect(Composition.broadcastClient.connect).toHaveBeenCalled();
     const room = (Composition.broadcastClient.join as jest.Mock).mock
       .calls[0][0];
-    expect(room.name).toBe(`/contests/${contest.id}/dashboard/admin`);
+    expect(room.name).toBe(`/contests/${contest.id}/dashboard/judge`);
 
-    const state = store.getState().adminDashboard;
+    const state = store.getState().judgeDashboard;
     expect(state).toEqual({
       ...dashboard,
       listenerStatus: ListenerStatus.CONNECTED,
@@ -67,12 +67,12 @@ describe("AdminDashboardProvider", () => {
   it("should handle error state", async () => {
     const error = new Error("Test error");
     (
-      Composition.dashboardReader.getAdminDashboard as jest.Mock
+      Composition.dashboardReader.getJudgeDashboard as jest.Mock
     ).mockRejectedValue(error);
     await renderWithProviders(
-      <AdminDashboardProvider>
+      <JudgeDashboardProvider>
         <div data-testid="child" />
-      </AdminDashboardProvider>,
+      </JudgeDashboardProvider>,
       { session, contest },
     );
 
@@ -87,9 +87,9 @@ describe("AdminDashboardProvider", () => {
       isAccepted: !dashboard.leaderboard.rows[0].cells[0].isAccepted,
     });
     const { store } = await renderWithProviders(
-      <AdminDashboardProvider>
+      <JudgeDashboardProvider>
         <div data-testid="child" />
-      </AdminDashboardProvider>,
+      </JudgeDashboardProvider>,
       { session, contest },
     );
 
@@ -99,57 +99,60 @@ describe("AdminDashboardProvider", () => {
       room.callbacks.LEADERBOARD_UPDATED(leaderboardPartial);
     });
     expect(
-      store.getState().adminDashboard.leaderboard.rows[0].cells[0].isAccepted,
+      store.getState().judgeDashboard.leaderboard.rows[0].cells[0].isAccepted,
     ).toBe(leaderboardPartial.isAccepted);
   });
 
-  it("should handle leaderboard frozen updates", async () => {
+  it("should handle leaderboard freeze updates", async () => {
     const { store } = await renderWithProviders(
-      <AdminDashboardProvider>
+      <JudgeDashboardProvider>
         <div data-testid="child" />
-      </AdminDashboardProvider>,
+      </JudgeDashboardProvider>,
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.join as jest.Mock).mock;
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      room.calls[0][0].callbacks.LEADERBOARD_FROZEN();
+      room.callbacks.LEADERBOARD_FROZEN();
     });
-    expect(store.getState().adminDashboard.leaderboard.isFrozen).toBe(true);
+    expect(store.getState().judgeDashboard.leaderboard.isFrozen).toBe(true);
     expect(useToast().info).toHaveBeenCalled();
   });
 
-  it("should handle leaderboard unfrozen updates", async () => {
+  it("should handle leaderboard unfreeze updates", async () => {
     const otherLeaderboard = MockLeaderboardResponseDTO();
     const { store } = await renderWithProviders(
-      <AdminDashboardProvider>
+      <JudgeDashboardProvider>
         <div data-testid="child" />
-      </AdminDashboardProvider>,
+      </JudgeDashboardProvider>,
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.join as jest.Mock).mock;
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      room.calls[0][0].callbacks.LEADERBOARD_UNFROZEN(otherLeaderboard);
+      room.callbacks.LEADERBOARD_UNFROZEN(otherLeaderboard);
     });
-    expect(store.getState().adminDashboard.leaderboard).toBe(otherLeaderboard);
+    expect(store.getState().judgeDashboard.leaderboard).toBe(otherLeaderboard);
     expect(useToast().info).toHaveBeenCalled();
   });
 
   it("should handle submissions updates", async () => {
     const otherSubmission = MockSubmissionWithCodeAndExecutionsResponseDTO();
     const { store } = await renderWithProviders(
-      <AdminDashboardProvider>
+      <JudgeDashboardProvider>
         <div data-testid="child" />
-      </AdminDashboardProvider>,
+      </JudgeDashboardProvider>,
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.join as jest.Mock).mock;
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      room.calls[0][0].callbacks.SUBMISSION_CREATED(otherSubmission);
+      room.callbacks.SUBMISSION_UPDATED(otherSubmission);
     });
-    expect(store.getState().adminDashboard.submissions).toContain(
+    expect(store.getState().judgeDashboard.submissions).toContain(
       otherSubmission,
     );
   });
@@ -159,15 +162,16 @@ describe("AdminDashboardProvider", () => {
       status: SubmissionStatus.FAILED,
     });
     await renderWithProviders(
-      <AdminDashboardProvider>
+      <JudgeDashboardProvider>
         <div data-testid="child" />
-      </AdminDashboardProvider>,
+      </JudgeDashboardProvider>,
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.join as jest.Mock).mock;
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      room.calls[0][0].callbacks.SUBMISSION_CREATED(otherSubmission);
+      room.callbacks.SUBMISSION_UPDATED(otherSubmission);
     });
     expect(useToast().error).toHaveBeenCalled();
   });
@@ -177,17 +181,18 @@ describe("AdminDashboardProvider", () => {
       member: session.member,
     });
     const { store } = await renderWithProviders(
-      <AdminDashboardProvider>
+      <JudgeDashboardProvider>
         <div data-testid="child" />
-      </AdminDashboardProvider>,
+      </JudgeDashboardProvider>,
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.join as jest.Mock).mock;
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      room.calls[0][0].callbacks.ANNOUNCEMENT_CREATED(otherAnnouncement);
+      room.callbacks.ANNOUNCEMENT_CREATED(otherAnnouncement);
     });
-    expect(store.getState().adminDashboard.announcements).toContain(
+    expect(store.getState().judgeDashboard.announcements).toContain(
       otherAnnouncement,
     );
   });
@@ -197,15 +202,16 @@ describe("AdminDashboardProvider", () => {
       member: { ...MockAnnouncementResponseDTO().member, id: uuidv4() },
     });
     await renderWithProviders(
-      <AdminDashboardProvider>
+      <JudgeDashboardProvider>
         <div data-testid="child" />
-      </AdminDashboardProvider>,
+      </JudgeDashboardProvider>,
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.join as jest.Mock).mock;
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      room.calls[0][0].callbacks.ANNOUNCEMENT_CREATED(otherAnnouncement);
+      room.callbacks.ANNOUNCEMENT_CREATED(otherAnnouncement);
     });
     expect(useToast().warning).toHaveBeenCalled();
   });
@@ -215,86 +221,105 @@ describe("AdminDashboardProvider", () => {
       parentId: dashboard.clarifications[0].id,
     });
     const { store } = await renderWithProviders(
-      <AdminDashboardProvider>
+      <JudgeDashboardProvider>
         <div data-testid="child" />
-      </AdminDashboardProvider>,
+      </JudgeDashboardProvider>,
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.join as jest.Mock).mock;
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      room.calls[0][0].callbacks.CLARIFICATION_CREATED(otherClarification);
+      room.callbacks.CLARIFICATION_CREATED(otherClarification);
     });
     expect(
-      store.getState().adminDashboard.clarifications[0].children,
+      store.getState().judgeDashboard.clarifications[0].children,
     ).toContain(otherClarification);
   });
 
-  it("should handle deleted clarifications", async () => {
-    const { store } = await renderWithProviders(
-      <AdminDashboardProvider>
-        <div data-testid="child" />
-      </AdminDashboardProvider>,
-      { session, contest },
-    );
-
-    const room = (Composition.broadcastClient.join as jest.Mock).mock;
-    act(() => {
-      room.calls[0][0].callbacks.CLARIFICATION_DELETED({
-        id: dashboard.clarifications[0].id,
-      });
-    });
-    expect(store.getState().adminDashboard.clarifications).toHaveLength(0);
-  });
-
-  it("should handle ticket updates", async () => {
-    const otherTicket = MockTicketResponseDTO({
-      id: uuidv4(),
-    });
-    const { store } = await renderWithProviders(
-      <AdminDashboardProvider>
-        <div data-testid="child" />
-      </AdminDashboardProvider>,
-      { session, contest },
-    );
-
-    const room = (Composition.broadcastClient.join as jest.Mock).mock;
-    act(() => {
-      room.calls[0][0].callbacks.TICKET_CREATED(otherTicket);
-    });
-
-    expect(store.getState().adminDashboard.tickets).toContain(otherTicket);
-  });
-
-  it("should show a toast for ticket updates owned by member", async () => {
-    const otherTicket = MockTicketResponseDTO({
-      member: session.member,
-      version: 2,
+  it("should show toast for clarifications without parent", async () => {
+    const otherClarification = MockClarificationResponseDTO({
+      parentId: undefined,
     });
     await renderWithProviders(
-      <AdminDashboardProvider>
+      <JudgeDashboardProvider>
         <div data-testid="child" />
-      </AdminDashboardProvider>,
+      </JudgeDashboardProvider>,
       { session, contest },
     );
 
-    const room = (Composition.broadcastClient.join as jest.Mock).mock;
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
+      .calls[0][0];
     act(() => {
-      room.calls[0][0].callbacks.TICKET_CREATED(otherTicket);
+      room.callbacks.CLARIFICATION_CREATED(otherClarification);
     });
     expect(useToast().info).toHaveBeenCalled();
   });
 
+  it("should handle deleted clarifications", async () => {
+    const { store } = await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { session, contest },
+    );
+
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
+      .calls[0][0];
+    act(() => {
+      room.callbacks.CLARIFICATION_DELETED({
+        id: dashboard.clarifications[0].id,
+      });
+    });
+    expect(store.getState().judgeDashboard.clarifications).toHaveLength(0);
+  });
+
+  it("should handle member ticket updates", async () => {
+    const otherTicket = MockTicketResponseDTO();
+    const { store } = await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { session, contest },
+    );
+
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
+      .calls[1][0];
+    act(() => {
+      room.callbacks.TICKET_UPDATED(otherTicket);
+    });
+    expect(store.getState().judgeDashboard.memberTickets).toContain(
+      otherTicket,
+    );
+  });
+
+  it("should show toast on announcement creation", async () => {
+    const otherTicket = MockTicketResponseDTO({ version: 2 });
+    await renderWithProviders(
+      <JudgeDashboardProvider>
+        <div data-testid="child" />
+      </JudgeDashboardProvider>,
+      { session, contest },
+    );
+
+    const room = (Composition.broadcastClient.join as jest.Mock).mock
+      .calls[0][0];
+    act(() => {
+      room.callbacks.ANNOUNCEMENT_CREATED(otherTicket);
+    });
+    expect(useToast().warning).toHaveBeenCalled();
+  });
+
   it("should show freeze banner if leaderboard is frozen", async () => {
     const { store } = await renderWithProviders(
-      <AdminDashboardProvider>
+      <JudgeDashboardProvider>
         <div data-testid="child" />
-      </AdminDashboardProvider>,
+      </JudgeDashboardProvider>,
       { session, contest },
     );
 
     act(() => {
-      store.dispatch(adminDashboardSlice.actions.setLeaderboardIsFrozen(true));
+      store.dispatch(judgeDashboardSlice.actions.setLeaderboardIsFrozen(true));
     });
 
     expect(screen.getByTestId("freeze-banner")).toBeInTheDocument();
@@ -305,9 +330,9 @@ describe("AdminDashboardProvider", () => {
       new Error("Connection failed"),
     );
     await renderWithProviders(
-      <AdminDashboardProvider>
+      <JudgeDashboardProvider>
         <div data-testid="child" />
-      </AdminDashboardProvider>,
+      </JudgeDashboardProvider>,
       { session, contest },
     );
 

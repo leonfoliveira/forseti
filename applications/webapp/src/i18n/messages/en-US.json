@@ -428,10 +428,13 @@
               "problem-header": "Problem",
               "time-limit-header": "Time Limit",
               "memory-limit-header": "Memory Limit",
+              "test-cases-header": "Test Cases",
               "status-header": "Status",
+              "description-header": "Description",
               "accepted": "Accepted",
               "attempts": "{attempts} Attempts",
               "not-attempted": "Not attempted",
+              "test-cases-download-error": "Failed to download problem test cases",
               "description-download-error": "Failed to download problem description",
               "guidance-text": "Here you can view all contest problems. Click the PDF button to download problem statements. Time and memory limits are displayed for each problem."
             }

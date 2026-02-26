@@ -1,7 +1,7 @@
 import React from "react";
 
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
-import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
+import { judgeDashboardSlice } from "@/app/_store/slices/dashboard/judge-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 
@@ -16,6 +16,7 @@ export function JudgeSubmissionsPage() {
     <SubmissionsPage
       submissions={submissions}
       problems={problems}
+      canViewExecutions
       canEdit
       onEdit={(submission: SubmissionWithCodeAndExecutionsResponseDTO) => {
         dispatch(judgeDashboardSlice.actions.mergeSubmission(submission));

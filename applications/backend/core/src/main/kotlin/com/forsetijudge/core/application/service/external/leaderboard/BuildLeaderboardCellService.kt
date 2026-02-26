@@ -52,10 +52,10 @@ class BuildLeaderboardCellService(
             problemRepository.findByIdAndContestId(command.problemId, contest.id)
                 ?: throw NotFoundException("Could not find problem with id = ${command.problemId} in this contest")
         val submissions =
-            submissionRepository.findAllByMemberIdAndProblemIdAndAnswer(
+            submissionRepository.findAllByMemberIdAndProblemIdAndStatus(
                 memberId = command.memberId,
                 problemId = command.problemId,
-                answer = Submission.Answer.ACCEPTED,
+                status = Submission.Status.JUDGED,
             )
 
         val internalCommand =

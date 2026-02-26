@@ -1,5 +1,5 @@
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
-import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
+import { contestantDashboardSlice } from "@/app/_store/slices/dashboard/contestant-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";

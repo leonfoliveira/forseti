@@ -5,40 +5,59 @@ import { FreezeBanner } from "@/app/_lib/component/feedback/freeze-banner";
 import { ErrorPage } from "@/app/_lib/component/page/error-page";
 import { LoadingPage } from "@/app/_lib/component/page/loading-page";
 import { useDashboardReseter } from "@/app/_lib/hook/dashboard-reseter-hook";
+import { useIntl } from "@/app/_lib/hook/intl-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { guestDashboardSlice } from "@/app/_store/slices/guest-dashboard-slice";
+import { balloonSlice } from "@/app/_store/slices/balloon-slice";
+import { contestantDashboardSlice } from "@/app/_store/slices/dashboard/contestant-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
-import { GuestDashboardBroadcastRoom } from "@/core/port/driven/broadcast/room/dashboard/GuestDashboardBroadcastRoom";
+import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { ContestantDashboardBroadcastRoom } from "@/core/port/driven/broadcast/room/dashboard/ContestantDashboardBroadcastRoom";
+import { ContestantPrivateBroadcastRoom } from "@/core/port/driven/broadcast/room/private/ContestantPrivateBroadcastRoom";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
+import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
-/**
- * Provider component for fetching guest dashboard data and setting up listeners.
- * Failures in setting up listeners will not cause the entire provider to fail, but will show a disconnection banner and attempt to reconnect.
- */
 const messages = defineMessages({
+  problemAnswer: {
+    id: "app._lib.provider.contestant-dashboard-provider.problem-answer",
+    defaultMessage: "Problem {letter}: {answer}",
+  },
   announcement: {
-    id: "app._lib.provider.guest-dashboard-provider.announcement",
+    id: "app._lib.provider.contestant-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
+  clarificationAnswer: {
+    id: "app._lib.provider.contestant-dashboard-provider.clarification-answer",
+    defaultMessage: "New answer for a clarification",
+  },
   frozen: {
-    id: "app._lib.provider.guest-dashboard-provider.frozen",
+    id: "app._lib.provider.contestant-dashboard-provider.frozen",
     defaultMessage: "Leaderboard has been frozen",
   },
   unfrozen: {
-    id: "app._lib.provider.guest-dashboard-provider.unfrozen",
+    id: "app._lib.provider.contestant-dashboard-provider.unfrozen",
     defaultMessage: "Leaderboard has been unfrozen",
+  },
+  ticketUpdated: {
+    id: "app._lib.provider.contestant-dashboard-provider.ticket-updated",
+    defaultMessage: "Your ticket has been updated to ''{status}''",
   },
 });
 
-export function GuestDashboardProvider({
+/**
+ * Provider component for fetching contestant dashboard data and setting up listeners.
+ * Failures in setting up listeners will not cause the entire provider to fail, but will show a disconnection banner and attempt to reconnect.
+ */
+export function ContestantDashboardProvider({
   children,
 }: {
   children: React.ReactNode;
@@ -46,11 +65,12 @@ export function GuestDashboardProvider({
   const session = useAppSelector((state) => state.session);
   const contest = useAppSelector((state) => state.contest);
   const isFrozen = useAppSelector(
-    (state) => state.guestDashboard.leaderboard?.isFrozen,
+    (state) => state.contestantDashboard.leaderboard?.isFrozen,
   );
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
   const toast = useToast();
+  const intl = useIntl();
   const dashboardReseter = useDashboardReseter();
 
   const [listenerStatus, setListenerStatus] = React.useState<ListenerStatus>(
@@ -66,9 +86,8 @@ export function GuestDashboardProvider({
           () => setListenerStatus(ListenerStatus.FAILURE),
           () => setListenerStatus(ListenerStatus.CONNECTED),
         );
-
         await Composition.broadcastClient.join(
-          new GuestDashboardBroadcastRoom(contest.id, {
+          new ContestantDashboardBroadcastRoom(contest.id, {
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
             CLARIFICATION_CREATED: receiveClarification,
             CLARIFICATION_DELETED: deleteClarification,
@@ -77,6 +96,13 @@ export function GuestDashboardProvider({
             LEADERBOARD_UNFROZEN: receiveLeaderboardUnfreeze,
             SUBMISSION_CREATED: receiveSubmission,
             SUBMISSION_UPDATED: receiveSubmission,
+          }),
+        );
+        await Composition.broadcastClient.join(
+          new ContestantPrivateBroadcastRoom(contest.id, session!.member.id, {
+            CLARIFICATION_ANSWERED: receiveClarificationAnswer,
+            SUBMISSION_UPDATED: receiveMemberSubmission,
+            TICKET_UPDATED: receiveMemberTicket,
           }),
         );
 
@@ -90,10 +116,10 @@ export function GuestDashboardProvider({
 
     async function fetch() {
       console.debug("Fetching dashboard data");
-      const data = await Composition.dashboardReader.getGuestDashboard(
+      const data = await Composition.dashboardReader.getContestantDashboard(
         contest.id,
       );
-      dispatch(guestDashboardSlice.actions.set(data));
+      dispatch(contestantDashboardSlice.actions.set(data));
       console.debug("Successfully fetched dashboard data");
     }
 
@@ -121,12 +147,11 @@ export function GuestDashboardProvider({
 
   function receiveLeaderboardPartial(leaderboard: LeaderboardCellResponseDTO) {
     console.debug("Received leaderboard cell update:", leaderboard);
-    dispatch(guestDashboardSlice.actions.mergeLeaderboard(leaderboard));
+    dispatch(contestantDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
   function receiveLeaderboardFreeze() {
-    console.debug("Received leaderboard freeze");
-    dispatch(guestDashboardSlice.actions.setLeaderboardIsFrozen(true));
+    dispatch(contestantDashboardSlice.actions.setLeaderboardIsFrozen(true));
     toast.info(messages.frozen);
   }
 
@@ -135,21 +160,68 @@ export function GuestDashboardProvider({
     frozenSubmissions: SubmissionResponseDTO[];
   }) {
     console.debug("Received leaderboard unfreeze:", data);
-    dispatch(guestDashboardSlice.actions.setLeaderboard(data.leaderboard));
+    dispatch(contestantDashboardSlice.actions.setLeaderboard(data.leaderboard));
     dispatch(
-      guestDashboardSlice.actions.mergeSubmissionBatch(data.frozenSubmissions),
+      contestantDashboardSlice.actions.mergeSubmissionBatch(
+        data.frozenSubmissions,
+      ),
     );
     toast.info(messages.unfrozen);
   }
 
   function receiveSubmission(submission: SubmissionResponseDTO) {
     console.debug("Received submission:", submission);
-    dispatch(guestDashboardSlice.actions.mergeSubmission(submission));
+    dispatch(contestantDashboardSlice.actions.mergeSubmission(submission));
+  }
+
+  function receiveMemberSubmission(submission: SubmissionWithCodeResponseDTO) {
+    console.debug("Received member submission:", submission);
+    if (!submission.answer) {
+      return;
+    }
+
+    dispatch(
+      contestantDashboardSlice.actions.mergeMemberSubmission(submission),
+    );
+
+    const text = {
+      ...messages.problemAnswer,
+      values: {
+        letter: submission.problem.letter,
+        answer: intl.formatMessage(
+          globalMessages.submissionAnswer[submission.answer],
+        ),
+      },
+    };
+
+    switch (submission.answer) {
+      case SubmissionAnswer.ACCEPTED: {
+        toast.success(text);
+        dispatch(
+          balloonSlice.actions.addBalloon({ color: submission.problem.color }),
+        );
+        break;
+      }
+      case SubmissionAnswer.WRONG_ANSWER: {
+        toast.error(text);
+        break;
+      }
+      case SubmissionAnswer.TIME_LIMIT_EXCEEDED:
+      case SubmissionAnswer.MEMORY_LIMIT_EXCEEDED: {
+        toast.info(text);
+        break;
+      }
+      case SubmissionAnswer.RUNTIME_ERROR:
+      case SubmissionAnswer.COMPILATION_ERROR: {
+        toast.warning(text);
+        break;
+      }
+    }
   }
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
     console.debug("Received announcement:", announcement);
-    dispatch(guestDashboardSlice.actions.mergeAnnouncement(announcement));
+    dispatch(contestantDashboardSlice.actions.mergeAnnouncement(announcement));
     toast.warning({
       ...messages.announcement,
       values: { text: announcement.text },
@@ -158,12 +230,35 @@ export function GuestDashboardProvider({
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
     console.debug("Received clarification:", clarification);
-    dispatch(guestDashboardSlice.actions.mergeClarification(clarification));
+    dispatch(
+      contestantDashboardSlice.actions.mergeClarification(clarification),
+    );
+  }
+
+  function receiveClarificationAnswer() {
+    console.debug("Received clarification answer");
+    toast.info(messages.clarificationAnswer);
   }
 
   function deleteClarification({ id }: { id: string }) {
     console.debug("Received clarification deletion:", id);
-    dispatch(guestDashboardSlice.actions.deleteClarification(id));
+    dispatch(contestantDashboardSlice.actions.deleteClarification(id));
+  }
+
+  function receiveMemberTicket(memberTicket: TicketResponseDTO) {
+    console.debug("Received member ticket:", memberTicket);
+    dispatch(contestantDashboardSlice.actions.mergeMemberTicket(memberTicket));
+
+    if (memberTicket.version > 1) {
+      toast.info({
+        ...messages.ticketUpdated,
+        values: {
+          status: intl.formatMessage(
+            globalMessages.ticketStatus[memberTicket.status],
+          ),
+        },
+      });
+    }
   }
 
   if (state.isLoading) {

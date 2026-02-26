@@ -102,12 +102,10 @@ describe("SocketIOClient", () => {
   });
 
   describe("disconnect", () => {
-    test("should throw error when disconnecting without connection", async () => {
+    test("should do nothing if not connected", async () => {
       const sut = new SocketIOBroadcastClient(url);
 
-      await expect(sut.disconnect()).rejects.toThrow(
-        "Not connected to Socket.IO server",
-      );
+      await expect(sut.disconnect()).resolves.toBeUndefined();
     });
 
     test("should disconnect successfully", async () => {

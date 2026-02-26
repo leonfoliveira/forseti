@@ -1,7 +1,7 @@
 import {
   staffDashboardSlice,
   StaffDashboardState,
-} from "@/app/_store/slices/staff-dashboard-slice";
+} from "@/app/_store/slices/dashboard/staff-dashboard-slice";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";

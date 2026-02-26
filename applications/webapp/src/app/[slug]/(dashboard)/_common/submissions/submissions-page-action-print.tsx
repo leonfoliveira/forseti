@@ -12,6 +12,7 @@ import { TicketType } from "@/core/domain/enumerate/TicketType";
 import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { defineMessages } from "@/i18n/message";
+import { useDialog } from "@/app/_lib/hook/dialog-hook";
 
 const messages = defineMessages({
   printLabel: {
@@ -52,7 +53,7 @@ export function SubmissionsPageActionPrint({
   const requestPrintState = useLoadableState();
   const contestId = useAppSelector((state) => state.contest.id);
   const toast = useToast();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const dialog = useDialog();
 
   async function requestPrint() {
     console.debug("Requesting print for submission:", submission);
@@ -70,6 +71,7 @@ export function SubmissionsPageActionPrint({
       toast.success(messages.printSuccess);
       onRequest(newTicket);
       requestPrintState.finish();
+      dialog.close();
       console.debug("Print requested successfully:", newTicket);
 
       onClose();
@@ -85,7 +87,7 @@ export function SubmissionsPageActionPrint({
       <DropdownMenuItem
         onClick={(e) => {
           e.preventDefault();
-          setIsDialogOpen(true);
+          dialog.open();
         }}
         data-testid="submissions-page-action-print"
       >
@@ -94,11 +96,11 @@ export function SubmissionsPageActionPrint({
       </DropdownMenuItem>
 
       <ConfirmationDialog
-        isOpen={isDialogOpen}
+        isOpen={dialog.isOpen}
         title={messages.confirmTitle}
         description={messages.confirmDescription}
-        onCancel={() => setIsDialogOpen(false)}
-        onConfirm={() => requestPrint()}
+        onCancel={dialog.close}
+        onConfirm={requestPrint}
         isLoading={requestPrintState.isLoading}
       />
     </>

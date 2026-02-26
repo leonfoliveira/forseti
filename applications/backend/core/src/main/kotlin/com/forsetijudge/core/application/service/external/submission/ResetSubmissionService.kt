@@ -33,7 +33,7 @@ class ResetSubmissionService(
             submissionRepository.findByIdAndContestId(command.submissionId, contextContestId)
                 ?: throw NotFoundException("Could not find submission with id: ${command.submissionId} in this contest")
         val member =
-            memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextMemberId)
+            memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId)
                 ?: throw NotFoundException("Could not find member with id: $contextContestId in this contest")
 
         ContestAuthorizer(submission.contest, member)

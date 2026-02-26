@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
 import { SettingsPageContestTab } from "@/app/[slug]/(dashboard)/_common/settings/settings-page-contest-tab";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { AdminDashboardState } from "@/app/_store/slices/admin-dashboard-slice";
+import { AdminDashboardState } from "@/app/_store/slices/dashboard/admin-dashboard-slice";
 import { Composition } from "@/config/composition";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { MockDate } from "@/test/mock/mock-date";

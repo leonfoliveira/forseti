@@ -51,13 +51,13 @@ class ProblemTestCasesAuthorizationConfig : AttachmentAuthorizationConfig() {
         contest: Contest,
         member: Member,
         attachment: Attachment,
-    ) = throw ForbiddenException("Staff cannot download test cases attachments")
+    ) {}
 
     override fun authorizeJudgeDownload(
         contest: Contest,
         member: Member,
         attachment: Attachment,
-    ) = throw ForbiddenException("Judges cannot download test cases attachments")
+    ) {}
 
     override fun authorizeContestantDownload(
         contest: Contest,

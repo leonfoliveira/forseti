@@ -90,6 +90,7 @@ type Props = {
     | SubmissionWithCodeAndExecutionsResponseDTO[];
   memberSubmissions?: SubmissionWithCodeResponseDTO[];
   problems: ProblemResponseDTO[];
+  canViewExecutions?: boolean;
 } & (
   | {
       canCreate: true;
@@ -132,6 +133,7 @@ export function SubmissionsPage({
   submissions,
   memberSubmissions,
   problems,
+  canViewExecutions,
   canCreate,
   onCreate,
   canEdit,
@@ -252,7 +254,9 @@ export function SubmissionsPage({
                       className="text-right"
                       data-testid="submission-answer"
                     >
-                      <SubmissionAnswerBadge answer={submission.answer} />
+                      {submission.answer && (
+                        <SubmissionAnswerBadge answer={submission.answer} />
+                      )}
                     </TableCell>
                     {hasAnyAction && (
                       <TableCell data-testid="submission-actions">
@@ -262,6 +266,7 @@ export function SubmissionsPage({
                               | SubmissionWithCodeResponseDTO
                               | SubmissionWithCodeAndExecutionsResponseDTO
                           }
+                          canViewExecutions={canViewExecutions}
                           canEdit={canEdit}
                           onEdit={onEdit as any}
                           canPrint={canPrint}

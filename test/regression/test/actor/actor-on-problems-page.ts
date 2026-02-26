@@ -1,7 +1,6 @@
 import { expect, Page } from "playwright/test";
 
 import { Actor } from "@/test/actor/actor";
-import { LeaderboardMember } from "@/test/entity/leaderboard";
 import { Member } from "@/test/entity/member";
 import { Problem } from "@/test/entity/problem";
 
@@ -43,7 +42,7 @@ export class ActorOnProblemsPage extends Actor {
 
   async checkProblemsStatus(
     problems: Problem[],
-    leaderboardMember: LeaderboardMember,
+    leaderboardRow: LeaderboardRow,
   ) {
     const problemsTable = this.page.getByTestId("problems-table");
 
@@ -53,15 +52,15 @@ export class ActorOnProblemsPage extends Actor {
 
     for (let i = 0; i < problemRowsCount; i++) {
       const problemRow = problemRows.nth(i);
-      const problemStatus = leaderboardMember.problems[i];
+      const cell = leaderboardRow.cells[i];
       await problemRow.scrollIntoViewIfNeeded();
 
       const statusCell = problemRow.getByTestId("problem-status");
-      if (problemStatus.isAccepted) {
+      if (cell.isAccepted) {
         await expect(statusCell).toHaveText("Accepted");
-      } else if (problemStatus.wrongSubmissions > 0) {
+      } else if (cell.wrongSubmissions > 0) {
         await expect(statusCell).toHaveText(
-          `${problemStatus.wrongSubmissions} Attempts`,
+          `${cell.wrongSubmissions} Attempts`,
         );
       } else {
         await expect(statusCell).toHaveText("Not Attempted");

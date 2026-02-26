@@ -1,6 +1,5 @@
 import { joiResolver } from "@hookform/resolvers/joi";
 import { GavelIcon } from "lucide-react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import {
@@ -17,6 +16,7 @@ import {
   NativeSelect,
   NativeSelectOption,
 } from "@/app/_lib/component/shadcn/native-select";
+import { useDialog } from "@/app/_lib/hook/dialog-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
@@ -75,7 +75,7 @@ export function SubmissionsPageActionJudge({
   const contestId = useAppSelector((state) => state.contest.id);
   const judgeState = useLoadableState();
   const toast = useToast();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const dialog = useDialog();
 
   const judgeForm = useForm<SubmissionJudgeFormType>({
     resolver: joiResolver(SubmissionJudgeForm.schema),
@@ -96,7 +96,7 @@ export function SubmissionsPageActionJudge({
       toast.success(messages.judgeSuccess);
       onJudge({ ...submission, answer: data.answer });
       judgeForm.reset();
-      setIsDialogOpen(false);
+      dialog.close();
       judgeState.finish();
       console.debug("Submission judged successfully");
 
@@ -113,7 +113,7 @@ export function SubmissionsPageActionJudge({
       <DropdownMenuItem
         onClick={(e) => {
           e.preventDefault();
-          setIsDialogOpen(true);
+          dialog.open();
         }}
         data-testid="submissions-page-action-judge"
       >
@@ -122,7 +122,7 @@ export function SubmissionsPageActionJudge({
       </DropdownMenuItem>
 
       <ConfirmationDialog
-        isOpen={isDialogOpen}
+        isOpen={dialog.isOpen}
         title={messages.title}
         description={messages.description}
         content={
@@ -138,24 +138,22 @@ export function SubmissionsPageActionJudge({
                 field={
                   <NativeSelect data-testid="submission-judge-form-answer">
                     <NativeSelectOption value="" disabled />
-                    {Object.keys(SubmissionAnswer)
-                      .filter((answer) => answer !== SubmissionAnswer.NO_ANSWER)
-                      .map((answer) => (
-                        <NativeSelectOption key={answer} value={answer}>
-                          <FormattedMessage
-                            {...globalMessages.submissionAnswer[
-                              answer as SubmissionAnswer
-                            ]}
-                          />
-                        </NativeSelectOption>
-                      ))}
+                    {Object.keys(SubmissionAnswer).map((answer) => (
+                      <NativeSelectOption key={answer} value={answer}>
+                        <FormattedMessage
+                          {...globalMessages.submissionAnswer[
+                            answer as SubmissionAnswer
+                          ]}
+                        />
+                      </NativeSelectOption>
+                    ))}
                   </NativeSelect>
                 }
               />
             </FieldSet>
           </Form>
         }
-        onCancel={() => setIsDialogOpen(false)}
+        onCancel={dialog.close}
         onConfirm={judgeForm.handleSubmit(judgeSubmission)}
         isLoading={judgeState.isLoading}
       />

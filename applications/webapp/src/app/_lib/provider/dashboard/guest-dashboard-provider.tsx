@@ -5,57 +5,40 @@ import { FreezeBanner } from "@/app/_lib/component/feedback/freeze-banner";
 import { ErrorPage } from "@/app/_lib/component/page/error-page";
 import { LoadingPage } from "@/app/_lib/component/page/loading-page";
 import { useDashboardReseter } from "@/app/_lib/hook/dashboard-reseter-hook";
-import { useIntl } from "@/app/_lib/hook/intl-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
+import { guestDashboardSlice } from "@/app/_store/slices/dashboard/guest-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
-import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { JudgeDashboardBroadcastRoom } from "@/core/port/driven/broadcast/room/dashboard/JudgeDashboardBroadcastRoom";
-import { JudgePrivateBroadcastRoom } from "@/core/port/driven/broadcast/room/private/JudgePrivateBroadcastRoom";
+import { GuestDashboardBroadcastRoom } from "@/core/port/driven/broadcast/room/dashboard/GuestDashboardBroadcastRoom";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
-import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
-import { globalMessages } from "@/i18n/global";
+import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
+/**
+ * Provider component for fetching guest dashboard data and setting up listeners.
+ * Failures in setting up listeners will not cause the entire provider to fail, but will show a disconnection banner and attempt to reconnect.
+ */
 const messages = defineMessages({
-  submissionFailed: {
-    id: "app._lib.provider.judge-dashboard-provider.submission-failed",
-    defaultMessage: "New failed submission",
-  },
   announcement: {
-    id: "app._lib.provider.judge-dashboard-provider.announcement",
+    id: "app._lib.provider.guest-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
-  newClarification: {
-    id: "app._lib.provider.judge-dashboard-provider.new-clarification",
-    defaultMessage: "New clarification",
-  },
   frozen: {
-    id: "app._lib.provider.judge-dashboard-provider.frozen",
+    id: "app._lib.provider.guest-dashboard-provider.frozen",
     defaultMessage: "Leaderboard has been frozen",
   },
   unfrozen: {
-    id: "app._lib.provider.judge-dashboard-provider.unfrozen",
+    id: "app._lib.provider.guest-dashboard-provider.unfrozen",
     defaultMessage: "Leaderboard has been unfrozen",
-  },
-  ticketUpdated: {
-    id: "app._lib.provider.judge-dashboard-provider.ticket-updated",
-    defaultMessage: "Your ticket has been updated to ''{status}''",
   },
 });
 
-/**
- * Provider component for fetching judge dashboard data and setting up listeners.
- * Failures in setting up listeners will not cause the entire provider to fail, but will show a disconnection banner and attempt to reconnect.
- */
-export function JudgeDashboardProvider({
+export function GuestDashboardProvider({
   children,
 }: {
   children: React.ReactNode;
@@ -63,12 +46,11 @@ export function JudgeDashboardProvider({
   const session = useAppSelector((state) => state.session);
   const contest = useAppSelector((state) => state.contest);
   const isFrozen = useAppSelector(
-    (state) => state.judgeDashboard.leaderboard?.isFrozen,
+    (state) => state.guestDashboard.leaderboard?.isFrozen,
   );
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
   const toast = useToast();
-  const intl = useIntl();
   const dashboardReseter = useDashboardReseter();
 
   const [listenerStatus, setListenerStatus] = React.useState<ListenerStatus>(
@@ -84,8 +66,9 @@ export function JudgeDashboardProvider({
           () => setListenerStatus(ListenerStatus.FAILURE),
           () => setListenerStatus(ListenerStatus.CONNECTED),
         );
+
         await Composition.broadcastClient.join(
-          new JudgeDashboardBroadcastRoom(contest.id, {
+          new GuestDashboardBroadcastRoom(contest.id, {
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
             CLARIFICATION_CREATED: receiveClarification,
             CLARIFICATION_DELETED: deleteClarification,
@@ -94,11 +77,6 @@ export function JudgeDashboardProvider({
             LEADERBOARD_UNFROZEN: receiveLeaderboardUnfreeze,
             SUBMISSION_CREATED: receiveSubmission,
             SUBMISSION_UPDATED: receiveSubmission,
-          }),
-        );
-        await Composition.broadcastClient.join(
-          new JudgePrivateBroadcastRoom(contest.id, session!.member.id, {
-            TICKET_UPDATED: receiveMemberTicket,
           }),
         );
 
@@ -112,10 +90,10 @@ export function JudgeDashboardProvider({
 
     async function fetch() {
       console.debug("Fetching dashboard data");
-      const data = await Composition.dashboardReader.getJudgeDashboard(
+      const data = await Composition.dashboardReader.getGuestDashboard(
         contest.id,
       );
-      dispatch(judgeDashboardSlice.actions.set(data));
+      dispatch(guestDashboardSlice.actions.set(data));
       console.debug("Successfully fetched dashboard data");
     }
 
@@ -143,71 +121,49 @@ export function JudgeDashboardProvider({
 
   function receiveLeaderboardPartial(leaderboard: LeaderboardCellResponseDTO) {
     console.debug("Received leaderboard cell update:", leaderboard);
-    dispatch(judgeDashboardSlice.actions.mergeLeaderboard(leaderboard));
+    dispatch(guestDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
   function receiveLeaderboardFreeze() {
     console.debug("Received leaderboard freeze");
-    dispatch(judgeDashboardSlice.actions.setLeaderboardIsFrozen(true));
+    dispatch(guestDashboardSlice.actions.setLeaderboardIsFrozen(true));
     toast.info(messages.frozen);
   }
 
-  function receiveLeaderboardUnfreeze(leaderboard: LeaderboardResponseDTO) {
-    console.debug("Received leaderboard unfreeze:", leaderboard);
-    dispatch(judgeDashboardSlice.actions.setLeaderboard(leaderboard));
+  function receiveLeaderboardUnfreeze(data: {
+    leaderboard: LeaderboardResponseDTO;
+    frozenSubmissions: SubmissionResponseDTO[];
+  }) {
+    console.debug("Received leaderboard unfreeze:", data);
+    dispatch(guestDashboardSlice.actions.setLeaderboard(data.leaderboard));
+    dispatch(
+      guestDashboardSlice.actions.mergeSubmissionBatch(data.frozenSubmissions),
+    );
     toast.info(messages.unfrozen);
   }
 
-  function receiveSubmission(
-    submission: SubmissionWithCodeAndExecutionsResponseDTO,
-  ) {
+  function receiveSubmission(submission: SubmissionResponseDTO) {
     console.debug("Received submission:", submission);
-    dispatch(judgeDashboardSlice.actions.mergeSubmission(submission));
-
-    if (submission.status === SubmissionStatus.FAILED) {
-      toast.error(messages.submissionFailed);
-    }
+    dispatch(guestDashboardSlice.actions.mergeSubmission(submission));
   }
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
     console.debug("Received announcement:", announcement);
-    dispatch(judgeDashboardSlice.actions.mergeAnnouncement(announcement));
-
-    if (announcement.member.id !== session?.member.id) {
-      toast.warning({
-        ...messages.announcement,
-        values: { text: announcement.text },
-      });
-    }
+    dispatch(guestDashboardSlice.actions.mergeAnnouncement(announcement));
+    toast.warning({
+      ...messages.announcement,
+      values: { text: announcement.text },
+    });
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
     console.debug("Received clarification:", clarification);
-    dispatch(judgeDashboardSlice.actions.mergeClarification(clarification));
-    if (!clarification.parentId) {
-      toast.info(messages.newClarification);
-    }
+    dispatch(guestDashboardSlice.actions.mergeClarification(clarification));
   }
 
   function deleteClarification({ id }: { id: string }) {
     console.debug("Received clarification deletion:", id);
-    dispatch(judgeDashboardSlice.actions.deleteClarification(id));
-  }
-
-  function receiveMemberTicket(memberTicket: TicketResponseDTO) {
-    console.debug("Received member ticket:", memberTicket);
-    dispatch(judgeDashboardSlice.actions.mergeMemberTicket(memberTicket));
-
-    if (memberTicket.version > 1) {
-      toast.info({
-        ...messages.ticketUpdated,
-        values: {
-          status: intl.formatMessage(
-            globalMessages.ticketStatus[memberTicket.status],
-          ),
-        },
-      });
-    }
+    dispatch(guestDashboardSlice.actions.deleteClarification(id));
   }
 
   if (state.isLoading) {

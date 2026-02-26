@@ -2,14 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { combineReducers } from "redux";
 
-import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
 import { balloonSlice } from "@/app/_store/slices/balloon-slice";
 import { contestSlice } from "@/app/_store/slices/contest-slice";
-import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
-import { guestDashboardSlice } from "@/app/_store/slices/guest-dashboard-slice";
-import { judgeDashboardSlice } from "@/app/_store/slices/judge-dashboard-slice";
+import { adminDashboardSlice } from "@/app/_store/slices/dashboard/admin-dashboard-slice";
+import { contestantDashboardSlice } from "@/app/_store/slices/dashboard/contestant-dashboard-slice";
+import { guestDashboardSlice } from "@/app/_store/slices/dashboard/guest-dashboard-slice";
+import { judgeDashboardSlice } from "@/app/_store/slices/dashboard/judge-dashboard-slice";
+import { staffDashboardSlice } from "@/app/_store/slices/dashboard/staff-dashboard-slice";
 import { sessionSlice } from "@/app/_store/slices/session-slice";
-import { staffDashboardSlice } from "@/app/_store/slices/staff-dashboard-slice";
 
 const rootReducer = combineReducers({
   balloon: balloonSlice.reducer,

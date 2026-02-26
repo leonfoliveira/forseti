@@ -29,6 +29,7 @@ import { useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResponseDTO";
+import { ProblemWithTestCasesResponseDTO } from "@/core/port/dto/response/problem/ProblemWithTestCasesResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -56,9 +57,17 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.problems.problems-page.memory-limit-header",
     defaultMessage: "Memory Limit",
   },
+  testCasesHeader: {
+    id: "app.[slug].(dashboard)._common.problems.problems-page.test-cases-header",
+    defaultMessage: "Test Cases",
+  },
   statusHeader: {
     id: "app.[slug].(dashboard)._common.problems.problems-page.status-header",
     defaultMessage: "Status",
+  },
+  descriptionHeader: {
+    id: "app.[slug].(dashboard)._common.problems.problems-page.description-header",
+    defaultMessage: "Description",
   },
   accepted: {
     id: "app.[slug].(dashboard)._common.problems.problems-page.accepted",
@@ -72,6 +81,10 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.problems.problems-page.not-attempted",
     defaultMessage: "Not attempted",
   },
+  testCasesDownloadError: {
+    id: "app.[slug].(dashboard)._common.problems.problems-page.test-cases-download-error",
+    defaultMessage: "Failed to download problem test cases",
+  },
   descriptionDownloadError: {
     id: "app.[slug].(dashboard)._common.problems.problems-page.description-download-error",
     defaultMessage: "Failed to download problem description",
@@ -84,14 +97,19 @@ const messages = defineMessages({
 });
 
 type Props = {
-  problems: ProblemResponseDTO[];
+  problems: ProblemResponseDTO[] | ProblemWithTestCasesResponseDTO[];
+  canDownloadTestCases?: boolean;
   leaderboardRow?: LeaderboardResponseDTO["rows"][number];
 };
 
 /**
  * Displays the problems page where users can view all problems for the contest.
  **/
-export function ProblemsPage({ problems, leaderboardRow }: Props) {
+export function ProblemsPage({
+  problems,
+  canDownloadTestCases,
+  leaderboardRow,
+}: Props) {
   const contestId = useAppSelector((state) => state.contest.id);
   const errorHandler = useErrorHandler();
   const toast = useToast();
@@ -133,6 +151,23 @@ export function ProblemsPage({ problems, leaderboardRow }: Props) {
         <FormattedMessage {...messages.notAttempted} />
       </Badge>
     );
+  }
+
+  async function downloadTestCases(problem: ProblemWithTestCasesResponseDTO) {
+    console.debug("Downloading test cases for problem:", problem.id);
+
+    try {
+      await Composition.attachmentReader.download(contestId, problem.testCases);
+
+      console.debug(
+        "Problem test cases downloaded successfully for problem:",
+        problem.id,
+      );
+    } catch (error) {
+      await errorHandler.handle(error as Error, {
+        default: () => toast.error(messages.descriptionDownloadError),
+      });
+    }
   }
 
   async function downloadDescription(problem: ProblemResponseDTO) {
@@ -179,7 +214,14 @@ export function ProblemsPage({ problems, leaderboardRow }: Props) {
                     <FormattedMessage {...messages.statusHeader} />
                   </TableHead>
                 )}
-                <TableHead className="text-right" />
+                {canDownloadTestCases && (
+                  <TableHead className="text-right">
+                    <FormattedMessage {...messages.testCasesHeader} />
+                  </TableHead>
+                )}
+                <TableHead className="text-right">
+                  <FormattedMessage {...messages.descriptionHeader} />
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -208,9 +250,27 @@ export function ProblemsPage({ problems, leaderboardRow }: Props) {
                       {getStatus(problem.id)}
                     </TableCell>
                   )}
+                  {canDownloadTestCases && (
+                    <TableCell
+                      data-testid="problem-test-cases"
+                      className="text-right"
+                    >
+                      <Button
+                        size="xs"
+                        onClick={() =>
+                          downloadTestCases(
+                            problem as ProblemWithTestCasesResponseDTO,
+                          )
+                        }
+                        data-testid="problem-download-test-cases"
+                      >
+                        <DownloadIcon size={16} /> CSV
+                      </Button>
+                    </TableCell>
+                  )}
                   <TableCell
                     className="text-right"
-                    data-testid="problem-actions"
+                    data-testid="problem-download-description"
                   >
                     <Button
                       size="xs"

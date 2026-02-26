@@ -8,5 +8,5 @@ import { useAppSelector } from "@/app/_store/store";
 export function AdminProblemsPage() {
   const problems = useAppSelector((state) => state.adminDashboard.problems);
 
-  return <ProblemsPage problems={problems} />;
+  return <ProblemsPage problems={problems} canDownloadTestCases />;
 }

@@ -3,7 +3,7 @@
 import React from "react";
 
 import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page";
-import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
+import { adminDashboardSlice } from "@/app/_store/slices/dashboard/admin-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 

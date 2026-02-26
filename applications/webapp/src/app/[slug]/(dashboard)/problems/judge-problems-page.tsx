@@ -8,5 +8,5 @@ import { useAppSelector } from "@/app/_store/store";
 export function JudgeProblemsPage() {
   const problems = useAppSelector((state) => state.judgeDashboard.problems);
 
-  return <ProblemsPage problems={problems} />;
+  return <ProblemsPage problems={problems} canDownloadTestCases />;
 }

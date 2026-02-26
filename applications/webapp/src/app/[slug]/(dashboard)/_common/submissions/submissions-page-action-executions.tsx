@@ -1,5 +1,4 @@
 import { DownloadIcon, HistoryIcon } from "lucide-react";
-import { useState } from "react";
 
 import { SubmissionAnswerBadge } from "@/app/_lib/component/display/badge/submission-answer-chip";
 import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
@@ -21,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/_lib/component/shadcn/table";
+import { useDialog } from "@/app/_lib/hook/dialog-hook";
 import { useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { ExecutionResponseDTO } from "@/core/port/dto/response/execution/ExecutionResponseDTO";
@@ -71,14 +71,14 @@ export function SubmissionsPageActionExecutions({
   onClose,
 }: Props) {
   const contestId = useAppSelector((state) => state.contest.id);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const dialog = useDialog();
 
   return (
     <>
       <DropdownMenuItem
         onClick={(e) => {
           e.preventDefault();
-          setIsDialogOpen(true);
+          dialog.open();
         }}
         data-testid="submissions-page-action-executions"
       >
@@ -87,15 +87,15 @@ export function SubmissionsPageActionExecutions({
       </DropdownMenuItem>
 
       <Dialog
-        open={isDialogOpen}
+        open={dialog.isOpen}
         onOpenChange={(isOpen) => {
-          setIsDialogOpen(isOpen);
           if (!isOpen) {
+            dialog.close();
             onClose();
           }
         }}
       >
-        <DialogContent>
+        <DialogContent className="sm:max-w-3xl">
           <DialogHeader>
             <DialogTitle>
               <FormattedMessage {...messages.title} />
@@ -145,32 +145,34 @@ export function SubmissionsPageActionExecutions({
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
+                      type="button"
+                      size="xs"
+                      variant="default"
                       onClick={() =>
                         Composition.attachmentReader.download(
                           contestId,
                           execution.input,
                         )
                       }
-                      size="sm"
-                      variant="outline"
                       data-testid="submission-execution-input"
                     >
-                      <DownloadIcon />
+                      <DownloadIcon size={16} /> CSV
                     </Button>
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
+                      type="button"
+                      size="xs"
+                      variant="default"
                       onClick={() =>
                         Composition.attachmentReader.download(
                           contestId,
                           execution.output,
                         )
                       }
-                      size="sm"
-                      variant="outline"
                       data-testid="submission-execution-output"
                     >
-                      <DownloadIcon />
+                      <DownloadIcon size={16} /> CSV
                     </Button>
                   </TableCell>
                 </TableRow>

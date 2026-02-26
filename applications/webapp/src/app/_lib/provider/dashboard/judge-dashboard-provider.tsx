@@ -8,48 +8,54 @@ import { useDashboardReseter } from "@/app/_lib/hook/dashboard-reseter-hook";
 import { useIntl } from "@/app/_lib/hook/intl-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { staffDashboardSlice } from "@/app/_store/slices/staff-dashboard-slice";
+import { judgeDashboardSlice } from "@/app/_store/slices/dashboard/judge-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
-import { StaffDashboardBroadcastRoom } from "@/core/port/driven/broadcast/room/dashboard/StaffDashboardBroadcastRoom";
+import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
+import { JudgeDashboardBroadcastRoom } from "@/core/port/driven/broadcast/room/dashboard/JudgeDashboardBroadcastRoom";
+import { JudgePrivateBroadcastRoom } from "@/core/port/driven/broadcast/room/private/JudgePrivateBroadcastRoom";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
-/**
- * Provider component for fetching staff dashboard data and setting up listeners.
- * Failures in setting up listeners will not cause the entire provider to fail, but will show a disconnection banner and attempt to reconnect.
- */
 const messages = defineMessages({
+  submissionFailed: {
+    id: "app._lib.provider.judge-dashboard-provider.submission-failed",
+    defaultMessage: "New failed submission",
+  },
   announcement: {
-    id: "app._lib.provider.staff-dashboard-provider.announcement",
+    id: "app._lib.provider.judge-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
+  newClarification: {
+    id: "app._lib.provider.judge-dashboard-provider.new-clarification",
+    defaultMessage: "New clarification",
+  },
   frozen: {
-    id: "app._lib.provider.staff-dashboard-provider.frozen",
+    id: "app._lib.provider.judge-dashboard-provider.frozen",
     defaultMessage: "Leaderboard has been frozen",
   },
   unfrozen: {
-    id: "app._lib.provider.staff-dashboard-provider.unfrozen",
+    id: "app._lib.provider.judge-dashboard-provider.unfrozen",
     defaultMessage: "Leaderboard has been unfrozen",
   },
-  newTicket: {
-    id: "app._lib.provider.staff-dashboard-provider.new-ticket",
-    defaultMessage: "New ticket",
-  },
   ticketUpdated: {
-    id: "app._lib.provider.staff-dashboard-provider.ticket-updated",
+    id: "app._lib.provider.judge-dashboard-provider.ticket-updated",
     defaultMessage: "Your ticket has been updated to ''{status}''",
   },
 });
 
-export function StaffDashboardProvider({
+/**
+ * Provider component for fetching judge dashboard data and setting up listeners.
+ * Failures in setting up listeners will not cause the entire provider to fail, but will show a disconnection banner and attempt to reconnect.
+ */
+export function JudgeDashboardProvider({
   children,
 }: {
   children: React.ReactNode;
@@ -57,7 +63,7 @@ export function StaffDashboardProvider({
   const session = useAppSelector((state) => state.session);
   const contest = useAppSelector((state) => state.contest);
   const isFrozen = useAppSelector(
-    (state) => state.staffDashboard.leaderboard?.isFrozen,
+    (state) => state.judgeDashboard.leaderboard?.isFrozen,
   );
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
@@ -79,7 +85,7 @@ export function StaffDashboardProvider({
           () => setListenerStatus(ListenerStatus.CONNECTED),
         );
         await Composition.broadcastClient.join(
-          new StaffDashboardBroadcastRoom(contest.id, {
+          new JudgeDashboardBroadcastRoom(contest.id, {
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
             CLARIFICATION_CREATED: receiveClarification,
             CLARIFICATION_DELETED: deleteClarification,
@@ -88,8 +94,11 @@ export function StaffDashboardProvider({
             LEADERBOARD_UNFROZEN: receiveLeaderboardUnfreeze,
             SUBMISSION_CREATED: receiveSubmission,
             SUBMISSION_UPDATED: receiveSubmission,
-            TICKET_CREATED: receiveTicket,
-            TICKET_UPDATED: receiveTicket,
+          }),
+        );
+        await Composition.broadcastClient.join(
+          new JudgePrivateBroadcastRoom(contest.id, session!.member.id, {
+            TICKET_UPDATED: receiveMemberTicket,
           }),
         );
 
@@ -103,10 +112,10 @@ export function StaffDashboardProvider({
 
     async function fetch() {
       console.debug("Fetching dashboard data");
-      const data = await Composition.dashboardReader.getStaffDashboard(
+      const data = await Composition.dashboardReader.getJudgeDashboard(
         contest.id,
       );
-      dispatch(staffDashboardSlice.actions.set(data));
+      dispatch(judgeDashboardSlice.actions.set(data));
       console.debug("Successfully fetched dashboard data");
     }
 
@@ -134,59 +143,67 @@ export function StaffDashboardProvider({
 
   function receiveLeaderboardPartial(leaderboard: LeaderboardCellResponseDTO) {
     console.debug("Received leaderboard cell update:", leaderboard);
-    dispatch(staffDashboardSlice.actions.mergeLeaderboard(leaderboard));
+    dispatch(judgeDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
   function receiveLeaderboardFreeze() {
     console.debug("Received leaderboard freeze");
-    dispatch(staffDashboardSlice.actions.setLeaderboardIsFrozen(true));
+    dispatch(judgeDashboardSlice.actions.setLeaderboardIsFrozen(true));
     toast.info(messages.frozen);
   }
 
   function receiveLeaderboardUnfreeze(leaderboard: LeaderboardResponseDTO) {
     console.debug("Received leaderboard unfreeze:", leaderboard);
-    dispatch(staffDashboardSlice.actions.setLeaderboard(leaderboard));
+    dispatch(judgeDashboardSlice.actions.setLeaderboard(leaderboard));
     toast.info(messages.unfrozen);
   }
 
-  function receiveSubmission(submission: SubmissionResponseDTO) {
+  function receiveSubmission(
+    submission: SubmissionWithCodeAndExecutionsResponseDTO,
+  ) {
     console.debug("Received submission:", submission);
-    dispatch(staffDashboardSlice.actions.mergeSubmission(submission));
+    dispatch(judgeDashboardSlice.actions.mergeSubmission(submission));
+
+    if (submission.status === SubmissionStatus.FAILED) {
+      toast.error(messages.submissionFailed);
+    }
   }
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
     console.debug("Received announcement:", announcement);
-    dispatch(staffDashboardSlice.actions.mergeAnnouncement(announcement));
-    toast.warning({
-      ...messages.announcement,
-      values: { text: announcement.text },
-    });
+    dispatch(judgeDashboardSlice.actions.mergeAnnouncement(announcement));
+
+    if (announcement.member.id !== session?.member.id) {
+      toast.warning({
+        ...messages.announcement,
+        values: { text: announcement.text },
+      });
+    }
   }
 
   function receiveClarification(clarification: ClarificationResponseDTO) {
     console.debug("Received clarification:", clarification);
-    dispatch(staffDashboardSlice.actions.mergeClarification(clarification));
+    dispatch(judgeDashboardSlice.actions.mergeClarification(clarification));
+    if (!clarification.parentId) {
+      toast.info(messages.newClarification);
+    }
   }
 
   function deleteClarification({ id }: { id: string }) {
     console.debug("Received clarification deletion:", id);
-    dispatch(staffDashboardSlice.actions.deleteClarification(id));
+    dispatch(judgeDashboardSlice.actions.deleteClarification(id));
   }
 
-  function receiveTicket(ticket: TicketResponseDTO) {
-    console.debug("Received ticket:", ticket);
-    dispatch(staffDashboardSlice.actions.mergeTicket(ticket));
+  function receiveMemberTicket(memberTicket: TicketResponseDTO) {
+    console.debug("Received member ticket:", memberTicket);
+    dispatch(judgeDashboardSlice.actions.mergeMemberTicket(memberTicket));
 
-    if (ticket.member.id !== session?.member.id && ticket.version === 1) {
-      toast.info(messages.newTicket);
-    }
-
-    if (ticket.member.id === session?.member.id && ticket.version > 1) {
+    if (memberTicket.version > 1) {
       toast.info({
         ...messages.ticketUpdated,
         values: {
           status: intl.formatMessage(
-            globalMessages.ticketStatus[ticket.status],
+            globalMessages.ticketStatus[memberTicket.status],
           ),
         },
       });

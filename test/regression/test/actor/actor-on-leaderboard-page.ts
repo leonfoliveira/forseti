@@ -18,7 +18,7 @@ export class ActorOnLeaderboardPage extends Actor {
 
     for (let i = 0; i < memberRowsCount; i++) {
       const memberRow = memberRows.nth(i);
-      const member = leaderboard.rows[i];
+      const row = leaderboard.rows[i];
       await memberRow.scrollIntoViewIfNeeded();
 
       const rankCell = memberRow.getByTestId("member-rank");
@@ -28,15 +28,15 @@ export class ActorOnLeaderboardPage extends Actor {
       const problemCells = memberRow.getByTestId("member-problem");
 
       await expect(rankCell).toHaveText(String(i + 1));
-      await expect(nameCell).toHaveText(member.name);
-      await expect(scoreCell).toHaveText(String(member.score));
+      await expect(nameCell).toHaveText(row.memberName);
+      await expect(scoreCell).toHaveText(String(row.score));
       await expect(penaltyCell).not.toBeEmpty();
       const problemCellsCount = await problemCells.count();
-      expect(problemCellsCount).toBe(member.problems.length);
+      expect(problemCellsCount).toBe(row.cells.length);
 
       for (let j = 0; j < problemCellsCount; j++) {
         const problemCell = problemCells.nth(j);
-        const problem = member.problems[j];
+        const problem = row.cells[j];
 
         if (problem.isAccepted && problem.wrongSubmissions === 0) {
           await expect(problemCell).toHaveText(/^\d+$/);

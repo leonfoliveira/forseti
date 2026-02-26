@@ -19,20 +19,29 @@ export class SocketIOBroadcastClient implements BroadcastClient {
     return new Promise((resolve, reject) => {
       this.client = io(this.url, {
         withCredentials: true,
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
       });
 
       this.client.on("connect", () => {
-        console.log("Connected to Socket.IO server");
-        this.client?.emit("authenticate");
+        if (this.client?.recovered) {
+          console.debug("Reconnected to Socket.IO server");
+          onReconnect?.();
+        } else {
+          console.debug("Connected to Socket.IO server");
+          this.client?.emit("authenticate");
+        }
       });
 
       this.client.on("ready", () => {
-        console.log("Socket.IO server is ready");
+        console.debug("Socket.IO server is ready");
         resolve();
       });
 
       this.client.on("disconnect", () => {
-        console.log("Lost connection to Socket.IO server");
+        console.debug("Lost connection to Socket.IO server");
         onConnectionLost?.();
       });
 
@@ -44,11 +53,6 @@ export class SocketIOBroadcastClient implements BroadcastClient {
       this.client.on("connect_timeout", (timeout) => {
         console.error("Connection timeout:", timeout);
         reject(new Error("Connection timeout"));
-      });
-
-      this.client.on("reconnect", () => {
-        console.log("Reconnected to Socket.IO server");
-        onReconnect?.();
       });
 
       this.client.on("error", (error) => {
@@ -65,14 +69,14 @@ export class SocketIOBroadcastClient implements BroadcastClient {
   }
 
   async disconnect(): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (!this.client || !this.client.connected) {
-        reject(new Error("Not connected to Socket.IO server"));
-        return;
+        console.debug("Already disconnected");
+        return resolve();
       }
 
       this.client.on("disconnect", () => {
-        console.log("Disconnected from Socket.IO server");
+        console.debug("Disconnected from Socket.IO server");
         resolve();
       });
 

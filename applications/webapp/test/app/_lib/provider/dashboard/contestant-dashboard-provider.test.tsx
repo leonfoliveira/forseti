@@ -2,8 +2,8 @@ import { screen } from "@testing-library/dom";
 import { act } from "react";
 
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { ContestantDashboardProvider } from "@/app/_lib/provider/contestant-dashboard-provider";
-import { contestantDashboardSlice } from "@/app/_store/slices/contestant-dashboard-slice";
+import { ContestantDashboardProvider } from "@/app/_lib/provider/dashboard/contestant-dashboard-provider";
+import { contestantDashboardSlice } from "@/app/_store/slices/dashboard/contestant-dashboard-slice";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/core/domain/enumerate/ListenerStatus";
 import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";

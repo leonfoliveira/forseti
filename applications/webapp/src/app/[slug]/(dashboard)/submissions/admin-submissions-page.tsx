@@ -1,7 +1,7 @@
 import React from "react";
 
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page";
-import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
+import { adminDashboardSlice } from "@/app/_store/slices/dashboard/admin-dashboard-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 
@@ -16,6 +16,7 @@ export function AdminSubmissionsPage() {
     <SubmissionsPage
       submissions={submissions}
       problems={problems}
+      canViewExecutions
       canEdit
       onEdit={(submission: SubmissionWithCodeAndExecutionsResponseDTO) => {
         dispatch(adminDashboardSlice.actions.mergeSubmission(submission));

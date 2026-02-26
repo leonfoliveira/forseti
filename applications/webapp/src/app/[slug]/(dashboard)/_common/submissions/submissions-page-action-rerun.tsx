@@ -8,10 +8,10 @@ import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { defineMessages } from "@/i18n/message";
+import { useDialog } from "@/app/_lib/hook/dialog-hook";
 
 const messages = defineMessages({
   resubmitLabel: {
@@ -59,7 +59,7 @@ export function SubmissionsPageActionRerun({
   const contestId = useAppSelector((state) => state.contest.id);
   const resubmitState = useLoadableState();
   const toast = useToast();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const dialog = useDialog();
 
   async function resubmitSubmission(submissionId: string) {
     console.debug("Resubmitting submission with ID:", submissionId);
@@ -72,9 +72,9 @@ export function SubmissionsPageActionRerun({
       onRerun({
         ...submission,
         status: SubmissionStatus.JUDGING,
-        answer: SubmissionAnswer.NO_ANSWER,
+        answer: undefined,
       });
-      setIsDialogOpen(false);
+      dialog.close();
       resubmitState.finish();
       console.debug("Submission resubmitted successfully");
 
@@ -91,7 +91,7 @@ export function SubmissionsPageActionRerun({
       <DropdownMenuItem
         onClick={(e) => {
           e.preventDefault();
-          setIsDialogOpen(true);
+          dialog.open();
         }}
         data-testid="submissions-page-action-rerun"
       >
@@ -100,10 +100,10 @@ export function SubmissionsPageActionRerun({
       </DropdownMenuItem>
 
       <ConfirmationDialog
-        isOpen={isDialogOpen}
+        isOpen={dialog.isOpen}
         title={messages.title}
         description={messages.description}
-        onCancel={() => setIsDialogOpen(false)}
+        onCancel={() => dialog.close()}
         onConfirm={() => resubmitSubmission(submission.id)}
         isLoading={resubmitState.isLoading}
       />

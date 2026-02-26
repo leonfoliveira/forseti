@@ -316,27 +316,25 @@ class DownloadAttachmentServiceTest :
             }
 
             context("STAFF") {
-                test("should throw ForbiddenException") {
-                    assertForbidden(
+                test("should download successfully") {
+                    assertDownloadSuccessfully(
                         member = MemberMockBuilder.build(type = Member.Type.STAFF),
                         attachment =
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.PROBLEM_TEST_CASES,
                             ),
-                        message = "Staff cannot download test cases attachments",
                     )
                 }
             }
 
             context("JUDGE") {
-                test("should throw ForbiddenException") {
-                    assertForbidden(
+                test("should download successfully") {
+                    assertDownloadSuccessfully(
                         member = MemberMockBuilder.build(type = Member.Type.JUDGE),
                         attachment =
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.PROBLEM_TEST_CASES,
                             ),
-                        message = "Judges cannot download test cases attachments",
                     )
                 }
             }

@@ -41,6 +41,7 @@ describe("SubmissionsPageActionsMenu", () => {
     await renderWithProviders(
       <SubmissionsPageActionsMenu
         submission={submission}
+        canViewExecutions
         canEdit
         onEdit={() => {}}
       />,

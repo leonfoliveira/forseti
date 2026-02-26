@@ -4,10 +4,7 @@ import { AlertCircleIcon, TriangleAlertIcon } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
-import {
-  ConfirmationDialog,
-  useConfirmationDialog,
-} from "@/app/_lib/component/feedback/confirmation-dialog";
+import { ConfirmationDialog } from "@/app/_lib/component/feedback/confirmation-dialog";
 import { ControlledField } from "@/app/_lib/component/form/controlled-field";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";
@@ -22,10 +19,11 @@ import { Input } from "@/app/_lib/component/shadcn/input";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Switch } from "@/app/_lib/component/shadcn/switch";
 import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
+import { useDialog } from "@/app/_lib/hook/dialog-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { adminDashboardSlice } from "@/app/_store/slices/admin-dashboard-slice";
 import { contestSlice } from "@/app/_store/slices/contest-slice";
+import { adminDashboardSlice } from "@/app/_store/slices/dashboard/admin-dashboard-slice";
 import { useAppDispatch } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
@@ -200,8 +198,8 @@ export function SettingsPageContestTab({
   const dispatch = useAppDispatch();
   const toast = useToast();
 
-  const freezeConfirmationDialog = useConfirmationDialog();
-  const forceConfirmationDialog = useConfirmationDialog();
+  const freezeConfirmationDialog = useDialog();
+  const forceConfirmationDialog = useDialog();
 
   const languageError = form.formState.errors.contest?.languages?.message;
   const languageGroups = ["CPP", "JAVA", "PYTHON"];

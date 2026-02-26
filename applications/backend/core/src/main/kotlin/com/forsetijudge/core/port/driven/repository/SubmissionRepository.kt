@@ -31,13 +31,6 @@ interface SubmissionRepository : BaseRepository<Submission> {
         status: Submission.Status,
     ): List<Submission>
 
-    @Query("SELECT s FROM Submission s WHERE s.member.id = ?1 AND s.problem.id = ?2 AND s.answer = ?3 AND deletedAt IS NULL")
-    fun findAllByMemberIdAndProblemIdAndAnswer(
-        memberId: UUID,
-        problemId: UUID,
-        answer: Submission.Answer,
-    ): List<Submission>
-
     @Query("SELECT s FROM Submission s WHERE s.problem.contest.id = ?1 AND s.createdAt >= ?2 AND deletedAt IS NULL")
     fun findByContestIdAndCreatedAtGreaterThanEqual(
         contestId: UUID,
