@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.entity
 
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -15,11 +16,11 @@ import java.util.UUID
 @Entity
 @Table(name = "session")
 @Audited
-@SQLRestriction("deleted_at is null")
+@SQLRestriction("deleted_at IS NULL")
 class Session(
-    id: UUID = UuidCreator.getTimeOrderedEpoch(),
-    createdAt: OffsetDateTime = OffsetDateTime.now(),
-    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    id: UUID = IdGenerator.getUUID(),
+    createdAt: OffsetDateTime = ExecutionContext.get().startedAt,
+    updatedAt: OffsetDateTime = ExecutionContext.get().startedAt,
     deletedAt: OffsetDateTime? = null,
     version: Long = 1L,
     /**
@@ -47,15 +48,4 @@ class Session(
     @Column(name = "expires_at", nullable = false)
     @Audited(withModifiedFlag = false)
     val expiresAt: OffsetDateTime,
-) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
-    /**
-     * Checks if the session is about to expire within the given threshold in minutes.
-     *
-     * @param thresholdMinutes The threshold in minutes to check against.
-     * @return True if the session is about to expire, false otherwise.
-     */
-    fun isAboutToExpire(thresholdMinutes: Long): Boolean {
-        val thresholdTime = OffsetDateTime.now().plusMinutes(thresholdMinutes)
-        return expiresAt.isBefore(thresholdTime)
-    }
-}
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)

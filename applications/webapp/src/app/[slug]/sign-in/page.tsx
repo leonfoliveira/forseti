@@ -25,7 +25,7 @@ import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
-import { authenticationWritter, sessionWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { defineMessages } from "@/i18n/message";
@@ -91,7 +91,7 @@ const messages = defineMessages({
 export default function SignInPage() {
   const signInState = useLoadableState();
   const enterAsGuestState = useLoadableState();
-  const contestMetadata = useAppSelector((state) => state.contestMetadata);
+  const contest = useAppSelector((state) => state.contest);
   const searchParams = useSearchParams();
   const toast = useToast();
 
@@ -111,8 +111,8 @@ export default function SignInPage() {
   async function signIn(data: SignInFormType) {
     signInState.start();
     try {
-      await authenticationWritter.authenticate(contestMetadata.id, data);
-      window.location.href = routes.CONTEST(contestMetadata.slug);
+      await Composition.authenticationWritter.authenticate(contest.id, data);
+      window.location.href = routes.CONTEST(contest.slug);
     } catch (error) {
       await signInState.fail(error, {
         [UnauthorizedException.name]: () => {
@@ -133,8 +133,8 @@ export default function SignInPage() {
   async function enterAsGuest() {
     enterAsGuestState.start();
     try {
-      await sessionWritter.deleteCurrent();
-      window.location.href = routes.CONTEST(contestMetadata.slug);
+      await Composition.sessionWritter.deleteCurrent();
+      window.location.href = routes.CONTEST(contest.slug);
     } catch (error) {
       await enterAsGuestState.fail(error, {
         default: () => toast.error(messages.enterGuestError),

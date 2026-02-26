@@ -3,21 +3,21 @@ import { act, fireEvent, screen } from "@testing-library/react";
 import { SubmissionForm } from "@/app/[slug]/(dashboard)/_common/submissions/submission-form";
 import { SubmissionsPageForm } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-form";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { submissionWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
-import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockProblemResponseDTO } from "@/test/mock/response/problem/MockProblemResponseDTO";
+import { MockSubmissionWithCodeResponseDTO } from "@/test/mock/response/submission/MockSubmissionWithCodeResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPageForm", () => {
   it("should create submission successfully", async () => {
-    const newSubmission = MockSubmissionFullResponseDTO();
-    (submissionWritter.create as jest.Mock).mockResolvedValueOnce(
+    const newSubmission = MockSubmissionWithCodeResponseDTO();
+    (Composition.submissionWritter.create as jest.Mock).mockResolvedValueOnce(
       newSubmission,
     );
-    const contestMetadata = MockContestMetadataResponseDTO();
-    const problems = [MockProblemPublicResponseDTO()];
+    const contest = MockContestResponseDTO();
+    const problems = [MockProblemResponseDTO()];
     const onClose = jest.fn();
     const onCreate = jest.fn();
     await renderWithProviders(
@@ -26,7 +26,7 @@ describe("SubmissionsPageForm", () => {
         onCreate={onCreate}
         problems={problems}
       />,
-      { contestMetadata },
+      { contest },
     );
 
     const problemId = problems[0].id;
@@ -51,8 +51,8 @@ describe("SubmissionsPageForm", () => {
       fireEvent.click(screen.getByTestId("submission-form-submit"));
     });
 
-    expect(submissionWritter.create).toHaveBeenCalledWith(
-      contestMetadata.id,
+    expect(Composition.submissionWritter.create).toHaveBeenCalledWith(
+      contest.id,
       SubmissionForm.toInputDTO({
         problemId,
         language: SubmissionLanguage.JAVA_21,
@@ -65,8 +65,8 @@ describe("SubmissionsPageForm", () => {
   });
 
   it("should show error toast when creation fails", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    const problems = [MockProblemPublicResponseDTO()];
+    const contest = MockContestResponseDTO();
+    const problems = [MockProblemResponseDTO()];
     const onClose = jest.fn();
     await renderWithProviders(
       <SubmissionsPageForm
@@ -74,10 +74,10 @@ describe("SubmissionsPageForm", () => {
         problems={problems}
         onCreate={() => {}}
       />,
-      { contestMetadata },
+      { contest },
     );
 
-    (submissionWritter.create as jest.Mock).mockRejectedValueOnce(
+    (Composition.submissionWritter.create as jest.Mock).mockRejectedValueOnce(
       new Error("Failed to create submission"),
     );
 

@@ -1,14 +1,14 @@
 import { TicketStatus } from "@/core/domain/enumerate/TicketStatus";
 import { TicketType } from "@/core/domain/enumerate/TicketType";
-import { MemberPublicResponseDTO } from "@/core/port/dto/response/member/MemberPublicResponseDTO";
+import { MemberResponseDTO } from "@/core/port/dto/response/member/MemberResponseDTO";
 
 export type TicketResponseDTO = {
   id: string;
   createdAt: string;
   updatedAt: string;
   version: number;
-  member: MemberPublicResponseDTO;
-  staff?: MemberPublicResponseDTO;
+  member: MemberResponseDTO;
+  staff?: MemberResponseDTO;
   status: TicketStatus;
 } & (
   | {

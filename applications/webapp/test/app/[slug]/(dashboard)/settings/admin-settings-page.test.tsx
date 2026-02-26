@@ -1,6 +1,6 @@
 import { SettingsPage } from "@/app/[slug]/(dashboard)/_common/settings/settings-page";
 import { AdminSettingsPage } from "@/app/[slug]/(dashboard)/settings/admin-settings-page";
-import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
+import { MockContestWithMembersAndProblemsDTO } from "@/test/mock/response/contest/MockContestWithMembersAndProblemsDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -10,7 +10,7 @@ jest.mock("@/app/[slug]/(dashboard)/_common/settings/settings-page", () => ({
 
 describe("AdminSettingsPage", () => {
   it("should render common SettingsPage with correct data", async () => {
-    const contest = MockContestFullResponseDTO();
+    const contest = MockContestWithMembersAndProblemsDTO();
     const leaderboard = MockLeaderboardResponseDTO();
     await renderWithProviders(<AdminSettingsPage />, {
       adminDashboard: {

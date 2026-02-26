@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.entity
 
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.persistence.Column
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
@@ -14,13 +15,13 @@ import java.util.UUID
 @Audited(withModifiedFlag = true)
 open class BaseEntity(
     @Id
-    open val id: UUID = UuidCreator.getTimeOrderedEpoch(),
+    open val id: UUID = IdGenerator.getUUID(),
     @Column(name = "created_at", nullable = false)
     @Audited(withModifiedFlag = false)
-    open val createdAt: OffsetDateTime = OffsetDateTime.now(),
+    open val createdAt: OffsetDateTime = ExecutionContext.get().startedAt,
     @Column(name = "updated_at", nullable = false)
     @Audited(withModifiedFlag = false)
-    open var updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    open var updatedAt: OffsetDateTime = ExecutionContext.get().startedAt,
     @Column(name = "deleted_at")
     open var deletedAt: OffsetDateTime? = null,
     @Version
@@ -30,6 +31,6 @@ open class BaseEntity(
 ) {
     @PreUpdate
     protected fun onUpdate() {
-        updatedAt = OffsetDateTime.now()
+        updatedAt = ExecutionContext.get().startedAt
     }
 }

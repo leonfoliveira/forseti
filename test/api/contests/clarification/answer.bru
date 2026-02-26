@@ -1,0 +1,28 @@
+meta {
+  name: answer
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+body:json {
+  {
+    "problemId": null,
+    "parentId": "{{clarification_id}}",
+    "text": "{{$randomLoremParagraph}}"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

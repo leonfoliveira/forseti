@@ -7,14 +7,6 @@ import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/Attac
 export class AttachmentService implements AttachmentReader, AttachmentWritter {
   constructor(private attachmentRepository: AttachmentRepository) {}
 
-  /**
-   * Upload a file as an attachment.
-   *
-   * @param contestId ID of the contest
-   * @param context Context of the attachment
-   * @param file The file to upload
-   * @return The created attachment
-   */
   async upload(
     contestId: string,
     context: AttachmentContext,
@@ -23,13 +15,6 @@ export class AttachmentService implements AttachmentReader, AttachmentWritter {
     return this.attachmentRepository.upload(contestId, context, file);
   }
 
-  /**
-   * Download a file associated with an attachment.
-   *
-   * @param contestId ID of the contest
-   * @param attachment The attachment to download
-   * @return The downloaded file
-   */
   async download(
     contestId: string,
     attachment: AttachmentResponseDTO,

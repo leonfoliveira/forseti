@@ -1,0 +1,38 @@
+import { BroadcastClient } from "@/core/port/driven/broadcast/BroadcastClient";
+import { AnnouncementWritter } from "@/core/port/driving/usecase/announcement/AnnouncementWritter";
+import { AttachmentReader } from "@/core/port/driving/usecase/attachment/AttachmentReader";
+import { AttachmentWritter } from "@/core/port/driving/usecase/attachment/AttachmentWritter";
+import { AuthenticationWritter } from "@/core/port/driving/usecase/authentication/AuthenticationWritter";
+import { ClarificationWritter } from "@/core/port/driving/usecase/clarification/ClarificationWritter";
+import { ContestReader } from "@/core/port/driving/usecase/contest/ContestReader";
+import { ContestWritter } from "@/core/port/driving/usecase/contest/ContestWritter";
+import { DashboardReader } from "@/core/port/driving/usecase/dashboard/DashboardReader";
+import { LeaderboardWritter } from "@/core/port/driving/usecase/leaderboard/LeaderboardWritter";
+import { SessionReader } from "@/core/port/driving/usecase/session/SessionReader";
+import { SessionWritter } from "@/core/port/driving/usecase/session/SessionWritter";
+import { StorageReader } from "@/core/port/driving/usecase/storage/StorageReader";
+import { StorageWritter } from "@/core/port/driving/usecase/storage/StorageWritter";
+import { SubmissionWritter } from "@/core/port/driving/usecase/submission/SubmissionWritter";
+import { TicketWritter } from "@/core/port/driving/usecase/ticket/TicketWritter";
+
+export type Composition = {
+  // Broadcast
+  broadcastClient: BroadcastClient;
+
+  // UseCases
+  announcementWritter: AnnouncementWritter;
+  attachmentReader: AttachmentReader;
+  attachmentWritter: AttachmentWritter;
+  authenticationWritter: AuthenticationWritter;
+  clarificationWritter: ClarificationWritter;
+  contestReader: ContestReader;
+  contestWritter: ContestWritter;
+  dashboardReader: DashboardReader;
+  leaderboardWritter: LeaderboardWritter;
+  sessionReader: SessionReader;
+  sessionWritter: SessionWritter;
+  storageReader: StorageReader;
+  storageWritter: StorageWritter;
+  submissionWritter: SubmissionWritter;
+  ticketWritter: TicketWritter;
+};

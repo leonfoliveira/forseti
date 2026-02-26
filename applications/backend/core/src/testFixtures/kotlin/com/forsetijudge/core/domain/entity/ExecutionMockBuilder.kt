@@ -1,12 +1,12 @@
 package com.forsetijudge.core.domain.entity
 
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
 import java.time.OffsetDateTime
 import java.util.UUID
 
 object ExecutionMockBuilder {
     fun build(
-        id: UUID = UuidCreator.getTimeOrderedEpoch(),
+        id: UUID = IdGenerator.getUUID(),
         createdAt: OffsetDateTime = OffsetDateTime.now(),
         updatedAt: OffsetDateTime = OffsetDateTime.now(),
         deletedAt: OffsetDateTime? = null,
@@ -24,7 +24,7 @@ object ExecutionMockBuilder {
         submission = submission,
         answer = answer,
         totalTestCases = totalTestCases,
-        lastTestCase = lastTestCase,
+        approvedTestCases = lastTestCase,
         input = input,
         output = output,
     )

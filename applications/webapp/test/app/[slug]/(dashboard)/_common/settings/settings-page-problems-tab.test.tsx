@@ -5,16 +5,16 @@ import { useForm } from "react-hook-form";
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
 import { SettingsPageProblemsTab } from "@/app/[slug]/(dashboard)/_common/settings/settings-page-problems-tab";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { attachmentReader } from "@/config/composition";
-import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachment";
-import { MockContestFullResponseDTO } from "@/test/mock/response/contest/MockContestFullResponseDTO";
+import { Composition } from "@/config/composition";
+import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachmentResponseDTO";
+import { MockContestWithMembersAndProblemsDTO } from "@/test/mock/response/contest/MockContestWithMembersAndProblemsDTO";
 import {
   renderHookWithProviders,
   renderWithProviders,
 } from "@/test/render-with-providers";
 
 describe("SettingsPageProblemsTab", () => {
-  const contest = MockContestFullResponseDTO();
+  const contest = MockContestWithMembersAndProblemsDTO();
 
   it("renders problem fields correctly", async () => {
     const { result } = await renderHookWithProviders(() =>
@@ -99,13 +99,13 @@ describe("SettingsPageProblemsTab", () => {
     );
 
     fireEvent.click(screen.getByTestId("problem-description-download"));
-    expect(attachmentReader.download).toHaveBeenCalledWith(
+    expect(Composition.attachmentReader.download).toHaveBeenCalledWith(
       contest.id,
       descriptionAttachment,
     );
 
     fireEvent.click(screen.getByTestId("problem-test-cases-download"));
-    expect(attachmentReader.download).toHaveBeenCalledWith(
+    expect(Composition.attachmentReader.download).toHaveBeenCalledWith(
       contest.id,
       testCasesAttachment,
     );
@@ -113,7 +113,7 @@ describe("SettingsPageProblemsTab", () => {
 
   it("handles download errors gracefully", async () => {
     const descriptionAttachment = MockAttachmentResponseDTO();
-    (attachmentReader.download as jest.Mock).mockRejectedValueOnce(
+    (Composition.attachmentReader.download as jest.Mock).mockRejectedValueOnce(
       new Error("Download failed"),
     );
 
@@ -138,7 +138,7 @@ describe("SettingsPageProblemsTab", () => {
       fireEvent.click(screen.getByTestId("problem-description-download"));
     });
 
-    expect(attachmentReader.download).toHaveBeenCalledWith(
+    expect(Composition.attachmentReader.download).toHaveBeenCalledWith(
       contest.id,
       descriptionAttachment,
     );

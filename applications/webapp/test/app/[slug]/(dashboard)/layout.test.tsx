@@ -3,8 +3,8 @@ import { screen } from "@testing-library/dom";
 import DashboardLayout from "@/app/[slug]/(dashboard)/layout";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockMemberPublicResponseDTO } from "@/test/mock/response/member/MockMemberPublicResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockMemberResponseDTO } from "@/test/mock/response/member/MockMemberResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -24,7 +24,7 @@ describe("DashboardLayout", () => {
       <DashboardLayout>
         <span data-testid="child" />
       </DashboardLayout>,
-      { contestMetadata: MockContestMetadataResponseDTO() },
+      { contest: MockContestResponseDTO() },
     );
 
     const tab = screen.getByTestId(`tab-${path("test-contest")}`);
@@ -41,9 +41,9 @@ describe("DashboardLayout", () => {
       </DashboardLayout>,
       {
         session: MockSession({
-          member: { ...MockMemberPublicResponseDTO(), type: MemberType.ADMIN },
+          member: { ...MockMemberResponseDTO(), type: MemberType.ADMIN },
         }),
-        contestMetadata: MockContestMetadataResponseDTO(),
+        contest: MockContestResponseDTO(),
       },
     );
 
@@ -62,11 +62,11 @@ describe("DashboardLayout", () => {
       {
         session: MockSession({
           member: {
-            ...MockMemberPublicResponseDTO(),
+            ...MockMemberResponseDTO(),
             type: MemberType.CONTESTANT,
           },
         }),
-        contestMetadata: MockContestMetadataResponseDTO(),
+        contest: MockContestResponseDTO(),
       },
     );
 
@@ -84,11 +84,11 @@ describe("DashboardLayout", () => {
       {
         session: MockSession({
           member: {
-            ...MockMemberPublicResponseDTO(),
+            ...MockMemberResponseDTO(),
             type: MemberType.CONTESTANT,
           },
         }),
-        contestMetadata: MockContestMetadataResponseDTO(),
+        contest: MockContestResponseDTO(),
       },
     );
 

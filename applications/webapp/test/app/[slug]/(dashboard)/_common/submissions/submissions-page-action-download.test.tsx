@@ -7,15 +7,15 @@ import {
   DropdownMenuContent,
 } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { attachmentReader } from "@/config/composition";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
-import { MockSubmissionFullResponseDTO } from "@/test/mock/response/submission/MockSubmissionFullResponseDTO";
+import { Composition } from "@/config/composition";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
+import { MockSubmissionWithCodeResponseDTO } from "@/test/mock/response/submission/MockSubmissionWithCodeResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPageActionDownload", () => {
   it("should call attachmentReader.download with correct parameters when clicked", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    const submission = MockSubmissionFullResponseDTO();
+    const contest = MockContestResponseDTO();
+    const submission = MockSubmissionWithCodeResponseDTO();
     const onClose = jest.fn();
     await renderWithProviders(
       <DropdownMenu open>
@@ -26,26 +26,28 @@ describe("SubmissionsPageActionDownload", () => {
           />
         </DropdownMenuContent>
       </DropdownMenu>,
-      { contestMetadata },
+      { contest },
     );
 
     await act(async () => {
       fireEvent.click(screen.getByTestId("submissions-page-action-download"));
     });
 
-    expect(attachmentReader.download).toHaveBeenCalledWith(
-      contestMetadata.id,
+    expect(Composition.attachmentReader.download).toHaveBeenCalledWith(
+      contest.id,
       submission.code,
     );
     expect(onClose).toHaveBeenCalled();
   });
 
   it("should show error toast when download fails", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
-    const submission = MockSubmissionFullResponseDTO();
+    const contest = MockContestResponseDTO();
+    const submission = MockSubmissionWithCodeResponseDTO();
     const onClose = jest.fn();
     const error = new Error("Download failed");
-    (attachmentReader.download as jest.Mock).mockRejectedValueOnce(error);
+    (Composition.attachmentReader.download as jest.Mock).mockRejectedValueOnce(
+      error,
+    );
 
     await renderWithProviders(
       <DropdownMenu open>
@@ -56,7 +58,7 @@ describe("SubmissionsPageActionDownload", () => {
           />
         </DropdownMenuContent>
       </DropdownMenu>,
-      { contestMetadata },
+      { contest },
     );
 
     await act(async () => {

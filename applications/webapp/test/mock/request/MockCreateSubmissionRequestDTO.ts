@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { CreateSubmissionRequestDTO } from "@/core/port/dto/request/CreateSubmissionRequestDTO";
-import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachment";
+import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachmentResponseDTO";
 
 export function MockCreateSubmissionRequestDTO(
   partial: Partial<CreateSubmissionRequestDTO> = {},

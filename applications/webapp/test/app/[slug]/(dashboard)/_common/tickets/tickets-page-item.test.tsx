@@ -3,10 +3,10 @@ import { act } from "@testing-library/react";
 
 import { TicketsPageItem } from "@/app/[slug]/(dashboard)/_common/tickets/tickets-page-item";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { attachmentReader, ticketWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { TicketStatus } from "@/core/domain/enumerate/TicketStatus";
 import { TicketType } from "@/core/domain/enumerate/TicketType";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -54,7 +54,7 @@ describe("TicketsPageItem", () => {
   });
 
   it("should print attachment when print button is clicked", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
+    const contest = MockContestResponseDTO();
     const ticket = MockTicketResponseDTO({
       type: TicketType.SUBMISSION_PRINT,
       properties: {
@@ -63,20 +63,23 @@ describe("TicketsPageItem", () => {
       },
     });
     await renderWithProviders(<TicketsPageItem ticket={ticket} canEdit />, {
-      contestMetadata,
+      contest,
     });
 
     await act(async () => {
       fireEvent.click(screen.getByTestId("print-attachment-button"));
     });
 
-    expect(attachmentReader.print).toHaveBeenCalledWith(contestMetadata.id, {
-      attachmentId: "attachment-id",
-    });
+    expect(Composition.attachmentReader.print).toHaveBeenCalledWith(
+      contest.id,
+      {
+        attachmentId: "attachment-id",
+      },
+    );
   });
 
   it("should show error toast when print attachment fails", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
+    const contest = MockContestResponseDTO();
     const ticket = MockTicketResponseDTO({
       type: TicketType.SUBMISSION_PRINT,
       properties: {
@@ -84,11 +87,11 @@ describe("TicketsPageItem", () => {
         submissionId: "submission-id",
       },
     });
-    (attachmentReader.print as jest.Mock).mockRejectedValueOnce(
+    (Composition.attachmentReader.print as jest.Mock).mockRejectedValueOnce(
       new Error("Print failed"),
     );
     await renderWithProviders(<TicketsPageItem ticket={ticket} canEdit />, {
-      contestMetadata,
+      contest,
     });
 
     await act(async () => {
@@ -99,7 +102,7 @@ describe("TicketsPageItem", () => {
   });
 
   it("should update ticket status when move button is clicked", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
+    const contest = MockContestResponseDTO();
     const ticket = MockTicketResponseDTO({
       type: TicketType.TECHNICAL_SUPPORT,
       properties: {
@@ -107,7 +110,7 @@ describe("TicketsPageItem", () => {
       },
     });
     const updatedTicket = MockTicketResponseDTO();
-    (ticketWritter.updateStatus as jest.Mock).mockResolvedValueOnce(
+    (Composition.ticketWritter.updateStatus as jest.Mock).mockResolvedValueOnce(
       updatedTicket,
     );
     const onEdit = jest.fn();
@@ -115,7 +118,7 @@ describe("TicketsPageItem", () => {
     await renderWithProviders(
       <TicketsPageItem ticket={ticket} canEdit onEdit={onEdit} />,
       {
-        contestMetadata,
+        contest,
       },
     );
 
@@ -124,8 +127,8 @@ describe("TicketsPageItem", () => {
       fireEvent.click(screen.getByTestId("move-ticket-button-resolved"));
     });
 
-    expect(ticketWritter.updateStatus).toHaveBeenCalledWith(
-      contestMetadata.id,
+    expect(Composition.ticketWritter.updateStatus).toHaveBeenCalledWith(
+      contest.id,
       ticket.id,
       TicketStatus.RESOLVED,
     );
@@ -133,19 +136,19 @@ describe("TicketsPageItem", () => {
   });
 
   it("should show error toast when update ticket status fails", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
+    const contest = MockContestResponseDTO();
     const ticket = MockTicketResponseDTO({
       type: TicketType.TECHNICAL_SUPPORT,
       properties: {
         description: "I need help with my submission",
       },
     });
-    (ticketWritter.updateStatus as jest.Mock).mockRejectedValueOnce(
+    (Composition.ticketWritter.updateStatus as jest.Mock).mockRejectedValueOnce(
       new Error("Update failed"),
     );
 
     await renderWithProviders(<TicketsPageItem ticket={ticket} canEdit />, {
-      contestMetadata,
+      contest,
     });
 
     fireEvent.click(screen.getByTestId("move-ticket-button"));

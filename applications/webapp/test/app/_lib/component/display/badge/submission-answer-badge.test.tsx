@@ -30,12 +30,4 @@ describe("SubmissionAnswerBadge", () => {
       expect(badge).toHaveTextContent(expectedText);
     },
   );
-
-  it("should render nothing for NO_ANSWER", async () => {
-    const { container } = await renderWithProviders(
-      <SubmissionAnswerBadge answer={SubmissionAnswer.NO_ANSWER} />,
-    );
-
-    expect(container).toBeEmptyDOMElement();
-  });
 });

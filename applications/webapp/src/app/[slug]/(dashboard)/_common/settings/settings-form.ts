@@ -6,7 +6,7 @@ import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { UpdateContestInputDTO } from "@/core/port/driving/usecase/contest/ContestWritter";
 import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
-import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
+import { ContestWithMembersAndProblemsDTO } from "@/core/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 import { defineMessages } from "@/i18n/message";
 
 export type SettingsFormType = {
@@ -451,7 +451,9 @@ export class SettingsForm {
     return !!files && files.length > 0 ? files[0] : undefined;
   }
 
-  static fromResponseDTO(contest: ContestFullResponseDTO): SettingsFormType {
+  static fromResponseDTO(
+    contest: ContestWithMembersAndProblemsDTO,
+  ): SettingsFormType {
     const problems = [...contest.problems]
       .sort((a, b) => a.letter.localeCompare(b.letter))
       .map((problem) => ({

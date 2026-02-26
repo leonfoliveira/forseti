@@ -1,9 +1,17 @@
-import { ContestPublicResponseDTO } from "@/core/port/dto/response/contest/ContestPublicResponseDTO";
+import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
+import { ContestResponseDTO } from "@/core/port/dto/response/contest/ContestResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionPublicResponseDTO } from "@/core/port/dto/response/submission/SubmissionPublicResponseDTO";
+import { MemberResponseDTO } from "@/core/port/dto/response/member/MemberResponseDTO";
+import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResponseDTO";
+import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
 
 export type GuestDashboardResponseDTO = {
-  contest: ContestPublicResponseDTO;
+  contest: ContestResponseDTO;
   leaderboard: LeaderboardResponseDTO;
-  submissions: SubmissionPublicResponseDTO[];
+  members: MemberResponseDTO[];
+  problems: ProblemResponseDTO[];
+  submissions: SubmissionResponseDTO[];
+  clarifications: ClarificationResponseDTO[];
+  announcements: AnnouncementResponseDTO[];
 };

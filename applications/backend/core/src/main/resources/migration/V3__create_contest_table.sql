@@ -10,9 +10,16 @@ create table contest (
     end_at timestamp not null,
     auto_freeze_at timestamp,
     frozen_at timestamp,
-    unfreeze_at timestamp,
+    unfrozen_at timestamp,
     settings jsonb not null,
-    version bigint not null default 1
+    version bigint not null default 1,
+    constraint chk_title_length check (length(title) between 1 and 500),
+    constraint chk_slug_length check (length(slug) between 1 and 30),
+    constraint chk_slug_alphanumeric check (slug ~ '^[a-zA-Z0-9_-]+$'),
+    constraint chk_languages_not_empty check (array_length(languages, 1) > 0),
+    constraint chk_end_at_after_start_at check (end_at > start_at),
+    constraint chk_auto_freeze_at_between_start_at_and_end_at check (auto_freeze_at is null or (auto_freeze_at > start_at and auto_freeze_at < end_at)),
+    constraint chk_frozen_at_null_or_unfreeze_at_null check (frozen_at is null or unfrozen_at is null)
 );
 
 create index idx_contest_slug on contest (slug);

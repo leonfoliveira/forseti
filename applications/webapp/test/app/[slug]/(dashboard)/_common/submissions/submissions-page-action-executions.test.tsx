@@ -3,8 +3,8 @@ import { act } from "@testing-library/react";
 
 import { SubmissionsPageActionExecutions } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-executions";
 import { DropdownMenu } from "@/app/_lib/component/shadcn/dropdown-menu";
-import { attachmentReader } from "@/config/composition";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { Composition } from "@/config/composition";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { MockExecutionResponseDTO } from "@/test/mock/response/execution/MockExecutionResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -14,7 +14,11 @@ describe("SubmissionsPageActionExecutions", () => {
 
     await renderWithProviders(
       <DropdownMenu open>
-        <SubmissionsPageActionExecutions executions={executions} />,
+        <SubmissionsPageActionExecutions
+          executions={executions}
+          onClose={() => {}}
+        />
+        ,
       </DropdownMenu>,
     );
 
@@ -44,7 +48,11 @@ describe("SubmissionsPageActionExecutions", () => {
 
     await renderWithProviders(
       <DropdownMenu open>
-        <SubmissionsPageActionExecutions executions={executions} />,
+        <SubmissionsPageActionExecutions
+          executions={executions}
+          onClose={() => {}}
+        />
+        ,
       </DropdownMenu>,
     );
 
@@ -59,14 +67,18 @@ describe("SubmissionsPageActionExecutions", () => {
 
   it("should handle file download", async () => {
     const executions = [MockExecutionResponseDTO()];
-    const contestMetadata = MockContestMetadataResponseDTO();
+    const contest = MockContestResponseDTO();
 
     await renderWithProviders(
       <DropdownMenu open>
-        <SubmissionsPageActionExecutions executions={executions} />,
+        <SubmissionsPageActionExecutions
+          executions={executions}
+          onClose={() => {}}
+        />
+        ,
       </DropdownMenu>,
       {
-        contestMetadata,
+        contest,
       },
     );
 
@@ -75,14 +87,14 @@ describe("SubmissionsPageActionExecutions", () => {
     });
 
     fireEvent.click(screen.getByTestId("submission-execution-input"));
-    expect(attachmentReader.download).toHaveBeenCalledWith(
-      contestMetadata.id,
+    expect(Composition.attachmentReader.download).toHaveBeenCalledWith(
+      contest.id,
       executions[0].input,
     );
 
     fireEvent.click(screen.getByTestId("submission-execution-output"));
-    expect(attachmentReader.download).toHaveBeenCalledWith(
-      contestMetadata.id,
+    expect(Composition.attachmentReader.download).toHaveBeenCalledWith(
+      contest.id,
       executions[0].output,
     );
   });

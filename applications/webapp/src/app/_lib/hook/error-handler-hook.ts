@@ -11,8 +11,8 @@ import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedExcep
  * Custom hook to handle errors with predefined and custom handlers.
  */
 export function useErrorHandler() {
-  const contestMetadata = useAppSelector((state) => state.contestMetadata);
-  return useErrorHandlerRoot(contestMetadata.slug);
+  const contest = useAppSelector((state) => state.contest);
+  return useErrorHandlerRoot(contest.slug);
 }
 
 export function useErrorHandlerRoot(slug: string) {

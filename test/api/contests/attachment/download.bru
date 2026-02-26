@@ -1,0 +1,24 @@
+meta {
+  name: download
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/{{attachment_id}}
+  body: none
+  auth: inherit
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+vars:pre-request {
+  attachment_id: 123
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

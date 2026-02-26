@@ -27,9 +27,9 @@ import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Textarea } from "@/app/_lib/component/shadcn/textarea";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { clarificationWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
-import { ProblemPublicResponseDTO } from "@/core/port/dto/response/problem/ProblemPublicResponseDTO";
+import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -80,7 +80,7 @@ type Props = {
   contestId: string;
   onClose: () => void;
   onCreate: (clarification: ClarificationResponseDTO) => void;
-  problems: ProblemPublicResponseDTO[];
+  problems: ProblemResponseDTO[];
 };
 
 export function ClarificationsPageForm({
@@ -98,17 +98,21 @@ export function ClarificationsPageForm({
   });
 
   async function createClarification(data: ClarificationFormType) {
+    console.debug("Creating clarification with data:", data);
     createClarificationState.start();
+
     try {
-      const newClarification = await clarificationWritter.create(
+      const newClarification = await Composition.clarificationWritter.create(
         contestId,
         ClarificationForm.toInputDTO(data),
       );
 
+      toast.success(messages.createSuccess);
       onCreate(newClarification);
+      console.debug("Clarification created successfully:", newClarification);
       createClarificationState.finish();
       form.reset();
-      toast.success(messages.createSuccess);
+
       onClose();
     } catch (error) {
       await createClarificationState.fail(error, {

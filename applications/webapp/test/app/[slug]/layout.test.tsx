@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 import ContestLayout from "@/app/[slug]/layout";
-import { sessionReader, contestReader } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { NotFoundException } from "@/core/domain/exception/NotFoundException";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -51,7 +51,9 @@ describe("ContestLayout", () => {
 
   it("redirects to 404 page on NotFoundException", async () => {
     const error = new NotFoundException("Contest not found");
-    (sessionReader.getCurrent as jest.Mock).mockRejectedValueOnce(error);
+    (Composition.sessionReader.getCurrent as jest.Mock).mockRejectedValueOnce(
+      error,
+    );
 
     await renderWithProviders(
       <ContestLayout>
@@ -64,7 +66,9 @@ describe("ContestLayout", () => {
 
   it("renders error page on fetch failure", async () => {
     const error = new Error("Failed to fetch data");
-    (sessionReader.getCurrent as jest.Mock).mockRejectedValueOnce(error);
+    (Composition.sessionReader.getCurrent as jest.Mock).mockRejectedValueOnce(
+      error,
+    );
 
     await renderWithProviders(
       <ContestLayout>
@@ -77,8 +81,10 @@ describe("ContestLayout", () => {
   });
 
   it("renders header, footer, and children on successful data fetch", async () => {
-    (sessionReader.getCurrent as jest.Mock).mockResolvedValueOnce(mockSession);
-    (contestReader.findMetadataBySlug as jest.Mock).mockResolvedValueOnce(
+    (Composition.sessionReader.getCurrent as jest.Mock).mockResolvedValueOnce(
+      mockSession,
+    );
+    (Composition.contestReader.findBySlug as jest.Mock).mockResolvedValueOnce(
       mockContestMetadata,
     );
 

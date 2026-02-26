@@ -11,7 +11,7 @@ export interface DashboardReader {
    * @param contestId ID of the contest
    * @return The admin dashboard data
    */
-  getAdmin(contestId: string): Promise<AdminDashboardResponseDTO>;
+  getAdminDashboard(contestId: string): Promise<AdminDashboardResponseDTO>;
 
   /**
    * Get the staff dashboard for a contest.
@@ -19,7 +19,7 @@ export interface DashboardReader {
    * @param contestId ID of the contest
    * @return The staff dashboard data
    */
-  getStaff(contestId: string): Promise<StaffDashboardResponseDTO>;
+  getStaffDashboard(contestId: string): Promise<StaffDashboardResponseDTO>;
 
   /**
    * Get the contestant dashboard for a contest.
@@ -27,7 +27,9 @@ export interface DashboardReader {
    * @param contestId ID of the contest
    * @return The contestant dashboard data
    */
-  getContestant(contestId: string): Promise<ContestantDashboardResponseDTO>;
+  getContestantDashboard(
+    contestId: string,
+  ): Promise<ContestantDashboardResponseDTO>;
 
   /**
    * Get the guest dashboard for a contest.
@@ -35,7 +37,7 @@ export interface DashboardReader {
    * @param contestId ID of the contest
    * @return The guest dashboard data
    */
-  getGuest(contestId: string): Promise<GuestDashboardResponseDTO>;
+  getGuestDashboard(contestId: string): Promise<GuestDashboardResponseDTO>;
 
   /**
    * Get the judge dashboard for a contest.
@@ -43,5 +45,5 @@ export interface DashboardReader {
    * @param contestId ID of the contest
    * @return The judge dashboard data
    */
-  getJudge(contestId: string): Promise<JudgeDashboardResponseDTO>;
+  getJudgeDashboard(contestId: string): Promise<JudgeDashboardResponseDTO>;
 }

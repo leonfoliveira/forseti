@@ -23,7 +23,7 @@ import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Textarea } from "@/app/_lib/component/shadcn/textarea";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { announcementWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/AnnouncementResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -75,18 +75,22 @@ export function AnnouncementsPageForm({ contestId, onCreate, onClose }: Props) {
   });
 
   async function createAnnouncement(data: AnnouncementFormType) {
+    console.debug("Creating announcement with data:", data);
     createAnnouncementState.start();
+
     try {
-      const newAnnouncement = await announcementWritter.create(
+      const newAnnouncement = await Composition.announcementWritter.create(
         contestId,
         AnnouncementForm.toInputDTO(data),
       );
 
-      onCreate(newAnnouncement);
       toast.success(messages.createSuccess);
-      createAnnouncementState.finish();
-      onClose();
+      onCreate(newAnnouncement);
       form.reset();
+      createAnnouncementState.finish();
+      console.debug("Announcement created successfully:", newAnnouncement);
+
+      onClose();
     } catch (error) {
       await createAnnouncementState.fail(error, {
         default: () => toast.error(messages.createError),

@@ -2,11 +2,11 @@ import { fireEvent, screen } from "@testing-library/dom";
 
 import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements/announcements-page";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/announcement/MockAnnouncementResponseDTO";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("AnnouncementsPage", () => {
-  const contestMetadata = MockContestMetadataResponseDTO();
+  const contest = MockContestResponseDTO();
   const announcements = [
     MockAnnouncementResponseDTO(),
     MockAnnouncementResponseDTO(),
@@ -14,7 +14,7 @@ describe("AnnouncementsPage", () => {
 
   it("should render variant with no announcement", async () => {
     await renderWithProviders(<AnnouncementsPage announcements={[]} />, {
-      contestMetadata,
+      contest,
     });
 
     expect(document.title).toBe("Forseti - Announcements");
@@ -25,7 +25,7 @@ describe("AnnouncementsPage", () => {
   it("should render variant with announcements", async () => {
     await renderWithProviders(
       <AnnouncementsPage announcements={announcements} />,
-      { contestMetadata },
+      { contest },
     );
 
     expect(document.title).toBe("Forseti - Announcements");
@@ -40,7 +40,7 @@ describe("AnnouncementsPage", () => {
         canCreate
         onCreate={() => {}}
       />,
-      { contestMetadata },
+      { contest },
     );
 
     const createButton = screen.getByTestId("open-create-form-button");

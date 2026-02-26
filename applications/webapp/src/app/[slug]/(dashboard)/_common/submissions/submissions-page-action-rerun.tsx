@@ -1,16 +1,15 @@
 import { RefreshCwIcon } from "lucide-react";
-import { useState } from "react";
 
 import { ConfirmationDialog } from "@/app/_lib/component/feedback/confirmation-dialog";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
+import { useDialog } from "@/app/_lib/hook/dialog-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
-import { submissionWritter } from "@/config/composition";
-import { SubmissionAnswer } from "@/core/domain/enumerate/SubmissionAnswer";
+import { Composition } from "@/config/composition";
 import { SubmissionStatus } from "@/core/domain/enumerate/SubmissionStatus";
-import { SubmissionFullWithExecutionResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullWithExecutionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -46,9 +45,9 @@ const messages = defineMessages({
 });
 
 type Props = {
-  submission: SubmissionFullWithExecutionResponseDTO;
+  submission: SubmissionWithCodeAndExecutionsResponseDTO;
   onClose: () => void;
-  onRerun: (submission: SubmissionFullWithExecutionResponseDTO) => void;
+  onRerun: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void;
 };
 
 export function SubmissionsPageActionRerun({
@@ -56,24 +55,28 @@ export function SubmissionsPageActionRerun({
   onClose,
   onRerun,
 }: Props) {
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const contestId = useAppSelector((state) => state.contest.id);
   const resubmitState = useLoadableState();
   const toast = useToast();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const dialog = useDialog();
 
   async function resubmitSubmission(submissionId: string) {
+    console.debug("Resubmitting submission with ID:", submissionId);
     resubmitState.start();
-    try {
-      await submissionWritter.rerun(contestId, submissionId);
 
+    try {
+      await Composition.submissionWritter.rerun(contestId, submissionId);
+
+      toast.success(messages.resubmitSuccess);
       onRerun({
         ...submission,
         status: SubmissionStatus.JUDGING,
-        answer: SubmissionAnswer.NO_ANSWER,
+        answer: undefined,
       });
-      toast.success(messages.resubmitSuccess);
-      setIsDialogOpen(false);
+      dialog.close();
       resubmitState.finish();
+      console.debug("Submission resubmitted successfully");
+
       onClose();
     } catch (error) {
       await resubmitState.fail(error, {
@@ -87,7 +90,7 @@ export function SubmissionsPageActionRerun({
       <DropdownMenuItem
         onClick={(e) => {
           e.preventDefault();
-          setIsDialogOpen(true);
+          dialog.open();
         }}
         data-testid="submissions-page-action-rerun"
       >
@@ -96,10 +99,10 @@ export function SubmissionsPageActionRerun({
       </DropdownMenuItem>
 
       <ConfirmationDialog
-        isOpen={isDialogOpen}
+        isOpen={dialog.isOpen}
         title={messages.title}
         description={messages.description}
-        onCancel={() => setIsDialogOpen(false)}
+        onCancel={() => dialog.close()}
         onConfirm={() => resubmitSubmission(submission.id)}
         isLoading={resubmitState.isLoading}
       />

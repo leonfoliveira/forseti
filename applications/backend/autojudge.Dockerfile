@@ -25,7 +25,7 @@ COPY --from=builder /app/autojudge/build/libs/autojudge.jar app.jar
 COPY --from=builder /app/opentelemetry-javaagent.jar opentelemetry-javaagent.jar
 COPY ./entrypoint.sh entrypoint.sh
 
-EXPOSE 8081
+EXPOSE 8082
 
 RUN chmod +x ./entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]

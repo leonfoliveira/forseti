@@ -38,7 +38,7 @@ def create(slug: str, api_url: Optional[str]):
 @contest.command(help="List all contests.")
 @click.option("--api-url", help=API_URL_HELP, default=__api_url__)
 def ls(api_url: Optional[str]):
-    contests = ApiAdapter(api_url=api_url).get("/v1/root/contests/metadata")
+    contests = ApiAdapter(api_url=api_url).get("/v1/root/contests")
     headers = ["ID", "Slug", "Title", "Start At", "End At", "Status"]
     table = []
     for contest in contests:
@@ -60,21 +60,7 @@ def ls(api_url: Optional[str]):
 @click.argument("contest_id", required=True)
 @click.option("--api-url", help=API_URL_HELP, default=__api_url__)
 def delete(contest_id: str, api_url: Optional[str]):
-    ApiAdapter(api_url=api_url).delete(f"/v1/contests/{contest_id}")
-
-
-@contest.command(help="Force start a contest by ID.")
-@click.argument("contest_id", required=True)
-@click.option("--api-url", help=API_URL_HELP, default=__api_url__)
-def start(contest_id: str, api_url: Optional[str]):
-    ApiAdapter(api_url=api_url).put(f"/v1/contests/{contest_id}:force-start")
-
-
-@contest.command(help="Force end a contest by ID.")
-@click.argument("contest_id", required=True)
-@click.option("--api-url", help=API_URL_HELP, default=__api_url__)
-def end(contest_id: str, api_url: Optional[str]):
-    ApiAdapter(api_url=api_url).put(f"/v1/contests/{contest_id}:force-end")
+    ApiAdapter(api_url=api_url).delete(f"/v1/root/contests/{contest_id}")
 
 
 def _get_contest_status(contest):

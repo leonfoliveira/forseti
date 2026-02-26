@@ -37,20 +37,4 @@ export class AxiosTicketRepository implements TicketRepository {
     );
     return response.data;
   }
-
-  async findAllByContest(contestId: string): Promise<TicketResponseDTO[]> {
-    const response = await this.axiosClient.get<TicketResponseDTO[]>(
-      this.basePath(contestId),
-    );
-    return response.data;
-  }
-
-  async findAllBySignedInMember(
-    contestId: string,
-  ): Promise<TicketResponseDTO[]> {
-    const response = await this.axiosClient.get<TicketResponseDTO[]>(
-      `${this.basePath(contestId)}/members/me`,
-    );
-    return response.data;
-  }
 }

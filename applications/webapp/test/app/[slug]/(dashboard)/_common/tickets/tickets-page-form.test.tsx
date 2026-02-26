@@ -3,9 +3,9 @@ import { act } from "@testing-library/react";
 
 import { TicketsPageForm } from "@/app/[slug]/(dashboard)/_common/tickets/tickets-page-form";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { ticketWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { TicketType } from "@/core/domain/enumerate/TicketType";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -37,14 +37,16 @@ describe("TicketsPageForm", () => {
 
   it("should create ticket when submit button is clicked", async () => {
     const newTicket = MockTicketResponseDTO();
-    (ticketWritter.create as jest.Mock).mockResolvedValueOnce(newTicket);
-    const contestMetadata = MockContestMetadataResponseDTO();
+    (Composition.ticketWritter.create as jest.Mock).mockResolvedValueOnce(
+      newTicket,
+    );
+    const contest = MockContestResponseDTO();
 
     const onClose = jest.fn();
     const onCreate = jest.fn();
     await renderWithProviders(
       <TicketsPageForm onClose={onClose} onCreate={onCreate} />,
-      { contestMetadata },
+      { contest },
     );
 
     fireEvent.change(screen.getByTestId("ticket-form-type"), {
@@ -57,7 +59,7 @@ describe("TicketsPageForm", () => {
       fireEvent.click(screen.getByTestId("ticket-form-submit"));
     });
 
-    expect(ticketWritter.create).toHaveBeenCalledWith(contestMetadata.id, {
+    expect(Composition.ticketWritter.create).toHaveBeenCalledWith(contest.id, {
       type: TicketType.TECHNICAL_SUPPORT,
       properties: {
         description: "Test ticket description",
@@ -68,7 +70,7 @@ describe("TicketsPageForm", () => {
   });
 
   it("should show error toast when ticket creation fails", async () => {
-    (ticketWritter.create as jest.Mock).mockRejectedValueOnce(
+    (Composition.ticketWritter.create as jest.Mock).mockRejectedValueOnce(
       new Error("Failed to create ticket"),
     );
 
@@ -88,7 +90,7 @@ describe("TicketsPageForm", () => {
       fireEvent.click(screen.getByTestId("ticket-form-submit"));
     });
 
-    expect(ticketWritter.create).toHaveBeenCalled();
+    expect(Composition.ticketWritter.create).toHaveBeenCalled();
     expect(onCreate).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
     expect(useToast().error).toHaveBeenCalled();

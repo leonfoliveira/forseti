@@ -7,20 +7,20 @@ export function MockLeaderboardResponseDTO(
 ): LeaderboardResponseDTO {
   return {
     contestId: uuidv4(),
+    contestStartAt: "2025-01-01T10:00:00Z",
     isFrozen: false,
-    slug: "test-contest",
-    startAt: "2025-01-01T10:00:00Z",
     issuedAt: "2025-01-01T15:00:00Z",
-    members: [
+    rows: [
       {
-        id: uuidv4(),
-        name: "Test User",
+        memberId: uuidv4(),
+        memberName: "Test User",
         score: 100,
         penalty: 60,
-        problems: [
+        cells: [
           {
-            id: uuidv4(),
-            letter: "A",
+            problemId: uuidv4(),
+            problemLetter: "A",
+            problemColor: "#ffffff",
             isAccepted: true,
             acceptedAt: "2025-01-01T11:00:00Z",
             wrongSubmissions: 1,

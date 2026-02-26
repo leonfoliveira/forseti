@@ -1,22 +1,25 @@
 package com.forsetijudge.infrastructure.adapter.driving.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.forsetijudge.core.application.util.IdUtil
-import com.forsetijudge.core.domain.model.RequestContext
-import com.forsetijudge.core.port.driving.usecase.session.RefreshSessionUseCase
-import io.opentelemetry.api.trace.Span
+import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import java.io.Serializable
 import java.util.UUID
 
-abstract class RabbitMQConsumer<TPayload : Serializable>(
-    private val memberId: UUID,
-) {
+abstract class RabbitMQConsumer<TPayload : Serializable> {
+    @Value("\${security.member-login}")
+    private lateinit var memberLogin: String
+
+    @Value("\${security.member-type}")
+    private lateinit var memberType: Member.Type
+
     @Autowired
-    private lateinit var refreshSessionUseCase: RefreshSessionUseCase
+    private lateinit var authenticateSystemUseCase: AuthenticateSystemUseCase
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -28,35 +31,34 @@ abstract class RabbitMQConsumer<TPayload : Serializable>(
      * It also loads the traceId into the RequestContext to keep track of the entire information flow.
      */
     open fun receiveMessage(jsonMessage: String) {
-        val traceId = IdUtil.getTraceId()
-        val currentSpan = Span.current()
-        currentSpan.setAttribute("trace_id", traceId)
-        MDC.put("trace_id", traceId)
-
-        logger.info("Received message: {}", jsonMessage)
+        ExecutionContext.start()
 
         val jsonNode = objectMapper.readTree(jsonMessage)
         val id = UUID.fromString(jsonNode["id"].asText())
+        val contestId = jsonNode["contestId"]?.asText()?.let { UUID.fromString(it) }
         val payloadJson = jsonNode["payload"]
 
         val payload = objectMapper.treeToValue(payloadJson, getPayloadType())
 
-        initRequestContext()
+        ExecutionContext.get().contestId = contestId
+
+        authenticateSystemUseCase.execute(
+            AuthenticateSystemUseCase.Command(
+                login = memberLogin,
+                type = memberType,
+            ),
+        )
+
+        logger.info("Received message: $jsonMessage")
 
         try {
-            logger.info("Handling message with id: {}", id)
+            logger.info("Handling message with id: $id")
             handlePayload(payload)
             logger.info("Finished handling message")
         } catch (ex: Exception) {
-            logger.error("Error thrown from consumer {}: {}", this.javaClass.simpleName, ex.message)
+            logger.error("Error thrown from consumer ${this.javaClass.simpleName}: ${ex.message}")
             throw ex
         }
-    }
-
-    private fun initRequestContext() {
-        val session = refreshSessionUseCase.refresh(memberId)
-        RequestContext.getContext().session = session
-        RequestContext.getContext().traceId = Span.current().spanContext.traceId
     }
 
     /**

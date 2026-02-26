@@ -1,0 +1,104 @@
+meta {
+  name: update
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{base_url}}/{{contest_id}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+body:json {
+  {
+    "id": "{{contest_id}}",
+    "slug": "{{$randomWord}}",
+    "title": "{{$randomWords}}",
+    "languages": [
+      "{{Submission.Language.CPP_17}}",
+      "{{Submission.Language.JAVA_21}}",
+      "{{Submission.Language.PYTHON_312}}"
+    ],
+    "startAt": "{{start_at}}",
+    "endAt": "{{end_at}}",
+    "settings": {
+      "isAutoJudgeEnabled": true
+    },
+    "members": [
+      {
+        "type": "{{Member.Type.ADMIN}}",
+        "name": "{{$randomFirstName}}",
+        "login": "admin",
+        "password": "123"
+      },
+      {
+        "type": "{{Member.Type.STAFF}}",
+        "name": "{{$randomFirstName}}",
+        "login": "staff",
+        "password": "123"
+      },
+      {
+        "type": "{{Member.Type.JUDGE}}",
+        "name": "{{$randomFirstName}}",
+        "login": "judge",
+        "password": "123"
+      },
+      {
+        "type": "{{Member.Type.CONTESTANT}}",
+        "name": "{{$randomFirstName}}",
+        "login": "contestant",
+        "password": "123"
+      }
+    ],
+    "problems": [
+      {
+        "letter": "A",
+        "color": "#ffffff",
+        "title": "{{$randomWords}}",
+        "description": {
+          "id": "{{description_attachment_id}}"
+        },
+        "timeLimit": 1000,
+        "memoryLimit": 1024,
+        "testCases": {
+          "id": "{{test_cases_attachment_id}}"
+        }
+      }
+    ]
+  }
+}
+
+script:pre-request {
+  const uploadProblemDescriptionResult = await bru.runRequest("contests/attachment/upload/problem_description")
+  const uploadProblemTestCasesResult = await bru.runRequest("contests/attachment/upload/problem_test_cases")
+  
+  const problemDescription = uploadProblemDescriptionResult.data
+  const problemTestCases = uploadProblemTestCasesResult.data
+  
+  bru.setVar("description_attachment_id", problemDescription.id)
+  bru.setVar("test_cases_attachment_id", problemTestCases.id)
+  
+  const startAt = new Date(new Date().getTime() + 60 * 60 * 1000).toISOString()
+  const endAt = new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString()
+  
+  bru.setVar("start_at", startAt)
+  bru.setVar("end_at", endAt)
+}
+
+script:post-response {
+  if (res.status == 200) {
+    const problemId = res.body.problems[0].id
+  
+    bru.setVar("problem_id", problemId)
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

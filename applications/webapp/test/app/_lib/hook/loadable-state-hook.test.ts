@@ -2,7 +2,7 @@ import { act } from "@testing-library/react";
 
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { renderHookWithProviders } from "@/test/render-with-providers";
 
 // Mock the error handler hook
@@ -14,7 +14,7 @@ jest.mock("@/app/_lib/hook/error-handler-hook", () => ({
 
 describe("useLoadableState", () => {
   const preloadedState = {
-    contestMetadata: MockContestMetadataResponseDTO(),
+    contest: MockContestResponseDTO(),
   };
 
   it("should initialize with default state", async () => {

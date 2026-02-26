@@ -23,7 +23,13 @@ class TestContestCommand:
         result = runner.invoke(contest, ["create", "valid-slug"])
         assert result.exit_code == 0
         assert "12345" in result.output
-        api_adapter.post.assert_called_once()
+        api_adapter.post.assert_called_once_with("/v1/root/contests", json={
+            "slug": "valid-slug",
+            "title": "New Contest",
+            "languages": ["CPP_17", "JAVA_21", "PYTHON_312"],
+            "startAt": "2100-01-01T00:00:00.000Z",
+            "endAt": "2100-01-01T01:00:00.000Z",
+        })
 
     def test_create_contest_invalid_slug(self, runner):
         """Test creating a contest with an invalid slug."""
@@ -53,13 +59,13 @@ class TestContestCommand:
         assert result.exit_code == 0
         assert "contest-1" in result.output
         assert "contest-2" in result.output
-        api_adapter.get.assert_called_once()
+        api_adapter.get.assert_called_once_with("/v1/root/contests")
 
     def test_delete_contest(self, runner, api_adapter):
         """Test deleting a contest."""
         result = runner.invoke(contest, ["delete", "12345"])
         assert result.exit_code == 0
-        api_adapter.delete.assert_called_once_with("/v1/contests/12345")
+        api_adapter.delete.assert_called_once_with("/v1/root/contests/12345")
         assert api_adapter.delete.call_count == 1
 
     def test_get_contest_status_not_started(self, runner, api_adapter):
@@ -106,18 +112,3 @@ class TestContestCommand:
         result = runner.invoke(contest, ["ls"])
         assert result.exit_code == 0
         assert "ENDED" in result.output
-
-    def test_start_contest(self, runner, api_adapter):
-        """Test force starting a contest."""
-        result = runner.invoke(contest, ["start", "12345"])
-        assert result.exit_code == 0
-        api_adapter.put.assert_called_once_with(
-            "/v1/contests/12345:force-start")
-        assert api_adapter.put.call_count == 1
-
-    def test_end_contest(self, runner, api_adapter):
-        """Test force ending a contest."""
-        result = runner.invoke(contest, ["end", "12345"])
-        assert result.exit_code == 0
-        api_adapter.put.assert_called_once_with("/v1/contests/12345:force-end")
-        assert api_adapter.put.call_count == 1

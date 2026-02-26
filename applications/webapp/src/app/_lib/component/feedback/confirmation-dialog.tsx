@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { AsyncButton } from "@/app/_lib/component/form/async-button";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
@@ -85,22 +85,4 @@ export function ConfirmationDialog({
       </AlertDialogContent>
     </AlertDialog>
   );
-}
-
-export function useConfirmationDialog(isOpenDefault = false) {
-  const [isOpen, setIsOpen] = useState(isOpenDefault);
-
-  function open() {
-    setIsOpen(true);
-  }
-
-  function close() {
-    setIsOpen(false);
-  }
-
-  return {
-    isOpen,
-    open,
-    close,
-  };
 }

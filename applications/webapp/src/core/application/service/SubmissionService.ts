@@ -6,6 +6,8 @@ import {
   CreateSubmissionInputDTO,
   SubmissionWritter,
 } from "@/core/port/driving/usecase/submission/SubmissionWritter";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 export class SubmissionService implements SubmissionWritter {
   constructor(
@@ -13,14 +15,10 @@ export class SubmissionService implements SubmissionWritter {
     private readonly attachmentService: AttachmentService,
   ) {}
 
-  /**
-   * Create a submission for a contest.
-   *
-   * @param contestId ID of the contest
-   * @param inputDTO Data for creating the submission
-   * @return The created submission
-   */
-  async create(contestId: string, inputDTO: CreateSubmissionInputDTO) {
+  async create(
+    contestId: string,
+    inputDTO: CreateSubmissionInputDTO,
+  ): Promise<SubmissionWithCodeResponseDTO> {
     const attachment = await this.attachmentService.upload(
       contestId,
       AttachmentContext.SUBMISSION_CODE,
@@ -32,18 +30,11 @@ export class SubmissionService implements SubmissionWritter {
     });
   }
 
-  /**
-   * Update the answer for a submission.
-   *
-   * @param contestId ID of the contest
-   * @param submissionId ID of the submission
-   * @param answer The new answer for the submission
-   */
   async updateAnswer(
     contestId: string,
     submissionId: string,
     answer: SubmissionAnswer,
-  ): Promise<void> {
+  ): Promise<SubmissionWithCodeAndExecutionsResponseDTO> {
     return await this.submissionRepository.updateAnswer(
       contestId,
       submissionId,
@@ -51,13 +42,10 @@ export class SubmissionService implements SubmissionWritter {
     );
   }
 
-  /**
-   * Reenqueue a submission for re-evaluation.
-   *
-   * @param contestId ID of the contest
-   * @param submissionId ID of the submission to rerun
-   */
-  async rerun(contestId: string, submissionId: string): Promise<void> {
+  async rerun(
+    contestId: string,
+    submissionId: string,
+  ): Promise<SubmissionWithCodeAndExecutionsResponseDTO> {
     return await this.submissionRepository.rerun(contestId, submissionId);
   }
 }

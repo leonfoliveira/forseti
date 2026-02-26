@@ -80,41 +80,43 @@
     },
     "_lib": {
       "provider": {
-        "staff-dashboard-provider": {
-          "announcement": "Novo anúncio: {text}",
-          "frozen": "Placar foi congelado",
-          "unfrozen": "Placar foi descongelado",
-          "new-ticket": "Novo ticket",
-          "ticket-updated": "Seu ticket foi atualizado para ''{status}''"
-        },
-        "judge-dashboard-provider": {
-          "submission-failed": "Nova submissão falhada",
-          "announcement": "Novo anúncio: {text}",
-          "new-clarification": "Nova pergunta",
-          "frozen": "Placar foi congelado",
-          "unfrozen": "Placar foi descongelado",
-          "ticket-updated": "Seu ticket foi atualizado para ''{status}''"
-        },
-        "guest-dashboard-provider": {
-          "announcement": "Novo anúncio: {text}",
-          "frozen": "Placar foi congelado",
-          "unfrozen": "Placar foi descongelado"
-        },
-        "contestant-dashboard-provider": {
-          "problem-answer": "Problema {letter}: {answer}",
-          "announcement": "Novo anúncio: {text}",
-          "clarification-answer": "Nova resposta para uma pergunta",
-          "frozen": "Placar foi congelado",
-          "unfrozen": "Placar foi descongelado",
-          "ticket-updated": "Seu ticket foi atualizado para ''{status}''"
-        },
-        "admin-dashboard-provider": {
-          "submission-failed": "Nova submissão falhada",
-          "announcement": "Novo anúncio: {text}",
-          "new-clarification": "Nova pergunta",
-          "frozen": "Placar foi congelado",
-          "unfrozen": "Placar foi descongelado",
-          "ticket-updated": "Seu ticket foi atualizado para ''{status}''"
+        "dashboard": {
+          "staff-dashboard-provider": {
+            "announcement": "Novo anúncio: {text}",
+            "frozen": "Placar foi congelado",
+            "unfrozen": "Placar foi descongelado",
+            "new-ticket": "Novo ticket",
+            "ticket-updated": "Seu ticket foi atualizado para ''{status}''"
+          },
+          "judge-dashboard-provider": {
+            "submission-failed": "Nova submissão falhada",
+            "announcement": "Novo anúncio: {text}",
+            "new-clarification": "Nova pergunta",
+            "frozen": "Placar foi congelado",
+            "unfrozen": "Placar foi descongelado",
+            "ticket-updated": "Seu ticket foi atualizado para ''{status}''"
+          },
+          "guest-dashboard-provider": {
+            "announcement": "Novo anúncio: {text}",
+            "frozen": "Placar foi congelado",
+            "unfrozen": "Placar foi descongelado"
+          },
+          "contestant-dashboard-provider": {
+            "problem-answer": "Problema {letter}: {answer}",
+            "announcement": "Novo anúncio: {text}",
+            "clarification-answer": "Nova resposta para uma pergunta",
+            "frozen": "Placar foi congelado",
+            "unfrozen": "Placar foi descongelado",
+            "ticket-updated": "Seu ticket foi atualizado para ''{status}''"
+          },
+          "admin-dashboard-provider": {
+            "submission-failed": "Nova submissão falhada",
+            "announcement": "Novo anúncio: {text}",
+            "new-clarification": "Nova pergunta",
+            "frozen": "Placar foi congelado",
+            "unfrozen": "Placar foi descongelado",
+            "ticket-updated": "Seu ticket foi atualizado para ''{status}''"
+          }
         }
       },
       "component": {
@@ -426,7 +428,10 @@
               "page-title": "Forseti - Problemas",
               "page-description": "Visualize todos os problemas do concurso.",
               "empty": "Nenhum problema ainda",
+              "description-header": "Descrição",
               "problem-header": "Problema",
+              "test-cases-header": "Casos de Teste",
+              "test-cases-download-error": "Falha ao baixar casos de teste.",
               "time-limit-header": "Limite de Tempo",
               "memory-limit-header": "Limite de Memória",
               "status-header": "Status",

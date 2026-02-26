@@ -1,22 +1,22 @@
 import { screen } from "@testing-library/dom";
 
 import { LeaderboardPage } from "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-page";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
-import { MockProblemPublicResponseDTO } from "@/test/mock/response/problem/MockProblemPublicResponseDTO";
+import { MockProblemResponseDTO } from "@/test/mock/response/problem/MockProblemResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("LeaderboardPage", () => {
-  const problems = [MockProblemPublicResponseDTO()];
+  const problems = [MockProblemResponseDTO()];
   const leaderboard = MockLeaderboardResponseDTO();
 
   it("should render common LeaderboardPage with correct data", async () => {
-    const contestMetadata = MockContestMetadataResponseDTO();
+    const contest = MockContestResponseDTO();
     const session = MockSession();
     await renderWithProviders(
       <LeaderboardPage problems={problems} leaderboard={leaderboard} />,
-      { session, contestMetadata },
+      { session, contest },
     );
 
     expect(document.title).toBe("Forseti - Leaderboard");

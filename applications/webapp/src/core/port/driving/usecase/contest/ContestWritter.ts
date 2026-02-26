@@ -1,7 +1,6 @@
 import { UpdateContestRequestDTO } from "@/core/port/dto/request/UpdateContestRequestDTO";
 import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
-import { ContestFullResponseDTO } from "@/core/port/dto/response/contest/ContestFullResponseDTO";
-import { ContestMetadataResponseDTO } from "@/core/port/dto/response/contest/ContestMetadataResponseDTO";
+import { ContestWithMembersAndProblemsDTO } from "@/core/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 
 export type UpdateContestInputDTO = Omit<
   UpdateContestRequestDTO,
@@ -29,21 +28,21 @@ export interface ContestWritter {
   update(
     contestId: string,
     inputDTO: UpdateContestInputDTO,
-  ): Promise<ContestFullResponseDTO>;
+  ): Promise<ContestWithMembersAndProblemsDTO>;
 
   /**
    * Force start a contest immediately.
    *
    * @param contestId ID of the contest to start
-   * @return The updated contest metadata
+   * @return The updated contest
    */
-  forceStart(contestId: string): Promise<ContestMetadataResponseDTO>;
+  forceStart(contestId: string): Promise<ContestWithMembersAndProblemsDTO>;
 
   /**
    * Force end a contest immediately.
    *
    * @param contestId ID of the contest to end
-   * @return The updated contest metadata
+   * @return The updated contest
    */
-  forceEnd(contestId: string): Promise<ContestMetadataResponseDTO>;
+  forceEnd(contestId: string): Promise<ContestWithMembersAndProblemsDTO>;
 }

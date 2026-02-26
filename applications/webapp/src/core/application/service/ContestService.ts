@@ -8,7 +8,8 @@ import {
 } from "@/core/port/driving/usecase/contest/ContestWritter";
 import { UpdateContestRequestDTO } from "@/core/port/dto/request/UpdateContestRequestDTO";
 import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
-import { ContestMetadataResponseDTO } from "@/core/port/dto/response/contest/ContestMetadataResponseDTO";
+import { ContestResponseDTO } from "@/core/port/dto/response/contest/ContestResponseDTO";
+import { ContestWithMembersAndProblemsDTO } from "@/core/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 
 export class ContestService implements ContestWritter, ContestReader {
   constructor(
@@ -16,12 +17,6 @@ export class ContestService implements ContestWritter, ContestReader {
     private readonly attachmentService: AttachmentService,
   ) {}
 
-  /**
-   * Update contest details.
-   *
-   * @param inputDTO Data for updating the contest
-   * @return The updated contest details
-   */
   async update(contestId: string, inputDTO: UpdateContestInputDTO) {
     const request = {
       ...inputDTO,
@@ -30,33 +25,17 @@ export class ContestService implements ContestWritter, ContestReader {
     return await this.contestRepository.update(contestId, request);
   }
 
-  /**
-   * Find contest metadata by its slug.
-   *
-   * @param slug Slug of the contest
-   * @return The contest metadata
-   */
-  async findMetadataBySlug(slug: string): Promise<ContestMetadataResponseDTO> {
-    return await this.contestRepository.findMetadataBySlug(slug);
+  async findBySlug(slug: string): Promise<ContestResponseDTO> {
+    return await this.contestRepository.findBySlug(slug);
   }
 
-  /**
-   * Force start a contest immediately.
-   *
-   * @param contestId ID of the contest to start
-   * @return The updated contest metadata
-   */
-  async forceStart(contestId: string) {
+  async forceStart(
+    contestId: string,
+  ): Promise<ContestWithMembersAndProblemsDTO> {
     return await this.contestRepository.forceStart(contestId);
   }
 
-  /**
-   * Force end a contest immediately.
-   *
-   * @param contestId ID of the contest to end
-   * @return The updated contest metadata
-   */
-  async forceEnd(contestId: string) {
+  async forceEnd(contestId: string): Promise<ContestWithMembersAndProblemsDTO> {
     return await this.contestRepository.forceEnd(contestId);
   }
 

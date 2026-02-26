@@ -1,15 +1,15 @@
 import { DownloadIcon } from "lucide-react";
-import { useState } from "react";
 
 import { ConfirmationDialog } from "@/app/_lib/component/feedback/confirmation-dialog";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
+import { useDialog } from "@/app/_lib/hook/dialog-hook";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
 import { useAppSelector } from "@/app/_store/store";
-import { ticketWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 import { TicketType } from "@/core/domain/enumerate/TicketType";
-import { SubmissionFullResponseDTO } from "@/core/port/dto/response/submission/SubmissionFullResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -39,7 +39,7 @@ const messages = defineMessages({
 });
 
 type Props = {
-  submission: SubmissionFullResponseDTO;
+  submission: SubmissionWithCodeResponseDTO;
   onClose: () => void;
   onRequest: (ticket: TicketResponseDTO) => void;
 };
@@ -50,14 +50,16 @@ export function SubmissionsPageActionPrint({
   onRequest,
 }: Props) {
   const requestPrintState = useLoadableState();
-  const contestId = useAppSelector((state) => state.contestMetadata.id);
+  const contestId = useAppSelector((state) => state.contest.id);
   const toast = useToast();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const dialog = useDialog();
 
   async function requestPrint() {
+    console.debug("Requesting print for submission:", submission);
     requestPrintState.start();
+
     try {
-      const newTicket = await ticketWritter.create(contestId, {
+      const newTicket = await Composition.ticketWritter.create(contestId, {
         type: TicketType.SUBMISSION_PRINT,
         properties: {
           submissionId: submission.id,
@@ -65,9 +67,12 @@ export function SubmissionsPageActionPrint({
         },
       });
 
-      onRequest(newTicket);
       toast.success(messages.printSuccess);
+      onRequest(newTicket);
       requestPrintState.finish();
+      dialog.close();
+      console.debug("Print requested successfully:", newTicket);
+
       onClose();
     } catch (error) {
       await requestPrintState.fail(error as Error, {
@@ -81,7 +86,7 @@ export function SubmissionsPageActionPrint({
       <DropdownMenuItem
         onClick={(e) => {
           e.preventDefault();
-          setIsDialogOpen(true);
+          dialog.open();
         }}
         data-testid="submissions-page-action-print"
       >
@@ -90,11 +95,11 @@ export function SubmissionsPageActionPrint({
       </DropdownMenuItem>
 
       <ConfirmationDialog
-        isOpen={isDialogOpen}
+        isOpen={dialog.isOpen}
         title={messages.confirmTitle}
         description={messages.confirmDescription}
-        onCancel={() => setIsDialogOpen(false)}
-        onConfirm={() => requestPrint()}
+        onCancel={dialog.close}
+        onConfirm={requestPrint}
         isLoading={requestPrintState.isLoading}
       />
     </>

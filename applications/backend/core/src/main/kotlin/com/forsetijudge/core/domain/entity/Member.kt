@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.entity
 
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -20,11 +21,11 @@ import java.util.UUID
 @Entity
 @Table(name = "member")
 @Audited(withModifiedFlag = true)
-@SQLRestriction("deleted_at is null")
+@SQLRestriction("deleted_at IS NULL")
 class Member(
-    id: UUID = UuidCreator.getTimeOrderedEpoch(),
-    createdAt: OffsetDateTime = OffsetDateTime.now(),
-    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    id: UUID = IdGenerator.getUUID(),
+    createdAt: OffsetDateTime = ExecutionContext.get().startedAt,
+    updatedAt: OffsetDateTime = ExecutionContext.get().startedAt,
     deletedAt: OffsetDateTime? = null,
     version: Long = 1L,
     /**
@@ -63,33 +64,26 @@ class Member(
     @OrderBy("createdAt ASC")
     var submissions: List<Submission> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
-    fun isSystemMember(): Boolean = contest == null
-
     enum class Type {
-        /**
-         * Represents a member who can create contests and has administrative privileges within all contests.
-         */
-        ROOT,
-
         /**
          * Represents a system-level member used for API interactions.
          */
         API,
 
         /**
-         * Represents a worker who judges submissions.
+         * Represents a system-level member used for automatic judging of submissions.
          */
         AUTOJUDGE,
 
         /**
-         * Represents a member who participates in the contest, such as a contestant.
+         * Represents a member who can create contests and has administrative privileges within all contests.
          */
-        CONTESTANT,
+        ROOT,
 
         /**
-         * Represents a member who is part of the jury, responsible for judging submissions.
+         * Represents a member with administrative privileges within the contest, such as contest managers.
          */
-        JUDGE,
+        ADMIN,
 
         /**
          * Represents a member who is part of the staff, responsible for assisting contestants.
@@ -97,26 +91,18 @@ class Member(
         STAFF,
 
         /**
-         * Represents a member with administrative privileges within the contest, such as contest managers.
+         * Represents a member who is part of the jury, responsible for judging submissions.
          */
-        ADMIN,
+        JUDGE,
 
-        ;
-
-        fun isSystemType(): Boolean = setOf(API, AUTOJUDGE).contains(this)
+        /**
+         * Represents a member who participates in the contest, such as a contestant.
+         */
+        CONTESTANT,
     }
 
     companion object {
         val ROOT_ID: UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
-        const val ROOT_NAME = "Root"
         const val ROOT_LOGIN = "root"
-
-        val API_ID: UUID = UUID.fromString("11111111-1111-1111-1111-111111111111")
-        const val API_NAME = "Api"
-        const val API_LOGIN = "api"
-
-        val AUTOJUDGE_ID: UUID = UUID.fromString("22222222-2222-2222-2222-222222222222")
-        const val AUTOJUDGE_NAME = "Autojudge"
-        const val AUTOJUDGE_LOGIN = "autojudge"
     }
 }

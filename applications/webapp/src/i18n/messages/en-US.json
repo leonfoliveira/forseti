@@ -19,7 +19,6 @@
         "judge": "Judge"
       },
       "formatted-submission-answer": {
-        "no_answer": "Judging",
         "accepted": "Accepted",
         "wrong_answer": "Wrong Answer",
         "compilation_error": "Compilation Error",
@@ -80,40 +79,42 @@
     },
     "_lib": {
       "provider": {
-        "staff-dashboard-provider": {
-          "announcement": "New announcement: {text}",
-          "frozen": "Leaderboard has been frozen",
-          "unfrozen": "Leaderboard has been unfrozen",
-          "new-ticket": "New ticket",
-          "ticket-updated": "Your ticket has been updated to ''{status}''"
-        },
-        "judge-dashboard-provider": {
-          "submission-failed": "New failed submission",
-          "announcement": "New announcement: {text}",
-          "new-clarification": "New clarification",
-          "frozen": "Leaderboard has been frozen",
-          "unfrozen": "Leaderboard has been unfrozen",
-          "ticket-updated": "Your ticket has been updated to ''{status}''"
-        },
-        "guest-dashboard-provider": {
-          "announcement": "New announcement: {text}",
-          "frozen": "Leaderboard has been frozen",
-          "unfrozen": "Leaderboard has been unfrozen"
-        },
-        "contestant-dashboard-provider": {
-          "problem-answer": "Problem {letter}: {answer}",
-          "announcement": "New announcement: {text}",
-          "clarification-answer": "New answer for a clarification",
-          "frozen": "Leaderboard has been frozen",
-          "unfrozen": "Leaderboard has been unfrozen",
-          "ticket-updated": "Your ticket has been updated to ''{status}''"
-        },
-        "admin-dashboard-provider": {
-          "submission-failed": "New failed submission",
-          "announcement": "New announcement: {text}",
-          "frozen": "Leaderboard has been frozen",
-          "unfrozen": "Leaderboard has been unfrozen",
-          "ticket-updated": "Your ticket has been updated to ''{status}''"
+        "dashboard": {
+          "staff-dashboard-provider": {
+            "announcement": "New announcement: {text}",
+            "frozen": "Leaderboard has been frozen",
+            "unfrozen": "Leaderboard has been unfrozen",
+            "new-ticket": "New ticket",
+            "ticket-updated": "Your ticket has been updated to ''{status}''"
+          },
+          "judge-dashboard-provider": {
+            "submission-failed": "New failed submission",
+            "announcement": "New announcement: {text}",
+            "new-clarification": "New clarification",
+            "frozen": "Leaderboard has been frozen",
+            "unfrozen": "Leaderboard has been unfrozen",
+            "ticket-updated": "Your ticket has been updated to ''{status}''"
+          },
+          "guest-dashboard-provider": {
+            "announcement": "New announcement: {text}",
+            "frozen": "Leaderboard has been frozen",
+            "unfrozen": "Leaderboard has been unfrozen"
+          },
+          "contestant-dashboard-provider": {
+            "problem-answer": "Problem {letter}: {answer}",
+            "announcement": "New announcement: {text}",
+            "clarification-answer": "New answer for a clarification",
+            "frozen": "Leaderboard has been frozen",
+            "unfrozen": "Leaderboard has been unfrozen",
+            "ticket-updated": "Your ticket has been updated to ''{status}''"
+          },
+          "admin-dashboard-provider": {
+            "submission-failed": "New failed submission",
+            "announcement": "New announcement: {text}",
+            "frozen": "Leaderboard has been frozen",
+            "unfrozen": "Leaderboard has been unfrozen",
+            "ticket-updated": "Your ticket has been updated to ''{status}''"
+          }
         }
       },
       "component": {
@@ -428,10 +429,13 @@
               "problem-header": "Problem",
               "time-limit-header": "Time Limit",
               "memory-limit-header": "Memory Limit",
+              "test-cases-header": "Test Cases",
               "status-header": "Status",
+              "description-header": "Description",
               "accepted": "Accepted",
               "attempts": "{attempts} Attempts",
               "not-attempted": "Not attempted",
+              "test-cases-download-error": "Failed to download problem test cases",
               "description-download-error": "Failed to download problem description",
               "guidance-text": "Here you can view all contest problems. Click the PDF button to download problem statements. Time and memory limits are displayed for each problem."
             }

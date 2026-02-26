@@ -6,10 +6,14 @@ spring:
     properties:
       org:
         quartz:
+          scheduler:
+            instanceId: AUTO
+            instanceName: ForsetiSharedScheduler
           jobStore:
-            isClustered: true
+            class: org.springframework.scheduling.quartz.LocalDataSourceJobStore
             clusterCheckinInterval: 20000
             driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            isClustered: true
             tablePrefix: QRTZ_
   jpa:
     show-sql: false

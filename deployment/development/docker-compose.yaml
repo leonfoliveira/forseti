@@ -7,9 +7,7 @@ services:
       POSTGRES_PASSWORD: forsetijudge
       POSTGRES_DB: forseti
     healthcheck:
-      test:
-        - "CMD-SHELL"
-        - "pg_isready -U forseti -d forseti"
+      test: "CMD-SHELL pg_isready -U forseti -d forseti"
       timeout: 5s
       interval: 15s
       retries: 5
@@ -31,9 +29,7 @@ services:
       MINIO_ROOT_USER: forseti
       MINIO_ROOT_PASSWORD: forsetijudge
     healthcheck:
-      test:
-        - "CMD-SHELL"
-        - "curl -f http://localhost:9000/minio/health/live || exit 1"
+      test: "CMD-SHELL curl -f http://localhost:9000/minio/health/live || exit 1"
       timeout: 5s
       interval: 15s
       retries: 5
@@ -56,10 +52,7 @@ services:
       RABBITMQ_USER: forseti
       RABBITMQ_PASSWORD: forsetijudge
     healthcheck:
-      test:
-        - "CMD"
-        - "rabbitmq-diagnostics"
-        - "check_port_connectivity"
+      test: "CMD-SHELL rabbitmq-diagnostics check_port_connectivity"
       timeout: 5s
       interval: 15s
       retries: 5
@@ -102,6 +95,7 @@ services:
       context: ../../applications/backend
       dockerfile: api.Dockerfile
     environment:
+      API_PORT: 8080
       COOKIE_SECURE: "false"
       DB_PASSWORD: forsetijudge
       DB_URL: jdbc:postgresql://postgres:5432/forseti
@@ -114,7 +108,6 @@ services:
       MINIO_ACCESS_KEY: forseti
       MINIO_SECRET_KEY: forsetijudge
       MINIO_BUCKET: forseti
-      PORT: 8080
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: forseti
@@ -132,6 +125,7 @@ services:
       SPRING_PROFILES_ACTIVE: development
       VERSION: latest
       WEBAPP_PUBLIC_URL: http://localhost:3000
+      WS_PORT: 8081
     depends_on:
       postgres:
         condition: service_healthy
@@ -142,9 +136,7 @@ services:
       migration:
         condition: service_completed_successfully
     healthcheck:
-      test:
-        - CMD-SHELL
-        - wget --spider -q http://localhost:8080/actuator/health
+      test: "CMD-SHELL wget --spider -q http://localhost:8080/actuator/health"
       timeout: 5s
       interval: 15s
       retries: 5
@@ -153,6 +145,7 @@ services:
       - dev-forseti-network
     ports:
       - 8080:8080
+      - 8081:8081
     profiles:
       - backend
 
@@ -175,7 +168,7 @@ services:
       MINIO_ACCESS_KEY: forseti
       MINIO_SECRET_KEY: forsetijudge
       MINIO_BUCKET: forseti
-      PORT: 8081
+      PORT: 8082
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: forseti
@@ -201,12 +194,8 @@ services:
         condition: service_healthy
       migration:
         condition: service_completed_successfully
-      api:
-        condition: service_healthy
     healthcheck:
-      test:
-        - CMD-SHELL
-        - curl -f http://localhost:8081/actuator/health
+      test: "CMD-SHELL curl -f http://localhost:8082/actuator/health"
       timeout: 5s
       interval: 15s
       retries: 5
@@ -214,7 +203,7 @@ services:
     networks:
       - dev-forseti-network
     ports:
-      - 8081:8081
+      - 8082:8082
     profiles:
       - backend
     volumes:
@@ -227,8 +216,8 @@ services:
       context: ../../applications/webapp
       dockerfile: Dockerfile
     environment:
-      API_INTERNAL_URL: http://api:8080/api
-      API_PUBLIC_URL: http://localhost:8080/api
+      API_INTERNAL_URL: http://api:8080
+      API_PUBLIC_URL: http://localhost:8080
       WS_PUBLIC_URL: http://localhost:8080/ws
       LOCALE: en-US
       NEXT_PUBLIC_VERSION: latest
@@ -237,9 +226,7 @@ services:
       api:
         condition: service_healthy
     healthcheck:
-      test:
-        - CMD-SHELL
-        - curl -f http://localhost:3000
+      test: "CMD-SHELL curl -f http://localhost:3000"
       timeout: 5s
       interval: 15s
       retries: 5

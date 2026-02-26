@@ -8,7 +8,7 @@ describe("makeStore", () => {
     const state = store.getState();
     expect(state).toHaveProperty("balloon");
     expect(state).toHaveProperty("session");
-    expect(state).toHaveProperty("contestMetadata");
+    expect(state).toHaveProperty("contest");
     expect(state).toHaveProperty("contestantDashboard");
     expect(state).toHaveProperty("guestDashboard");
     expect(state).toHaveProperty("judgeDashboard");

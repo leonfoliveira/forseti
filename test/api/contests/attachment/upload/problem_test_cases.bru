@@ -1,0 +1,28 @@
+meta {
+  name: problem_test_cases
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}?context={{Attachment.Context.PROBLEM_TEST_CASES}}
+  body: multipartForm
+  auth: inherit
+}
+
+params:query {
+  context: {{Attachment.Context.PROBLEM_TEST_CASES}}
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+body:multipart-form {
+  file: @file(files\problem_test_cases.csv) @contentType(text/csv)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

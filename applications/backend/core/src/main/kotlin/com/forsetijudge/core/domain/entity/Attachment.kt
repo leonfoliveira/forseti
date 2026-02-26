@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.entity
 
-import com.github.f4b6a3.uuid.UuidCreator
+import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -17,25 +18,25 @@ import java.util.UUID
 @Table(name = "attachment")
 @Audited(withModifiedFlag = true)
 class Attachment(
-    id: UUID = UuidCreator.getTimeOrderedEpoch(),
-    createdAt: OffsetDateTime = OffsetDateTime.now(),
-    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    id: UUID = IdGenerator.getUUID(),
+    createdAt: OffsetDateTime = ExecutionContext.get().startedAt,
+    updatedAt: OffsetDateTime = ExecutionContext.get().startedAt,
     deletedAt: OffsetDateTime? = null,
     version: Long = 1L,
     /**
      * The contest to which this attachment belongs.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contest_id")
+    @JoinColumn(name = "contest_id", nullable = false)
     @Audited(withModifiedFlag = false)
     val contest: Contest,
     /**
      * The member who uploaded this attachment.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     @Audited(withModifiedFlag = false)
-    val member: Member? = null,
+    val member: Member,
     /**
      * Original filename of the attachment. This is important for compiling Java code.
      */

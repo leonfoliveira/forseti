@@ -1,0 +1,20 @@
+meta {
+  name: force_end
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{base_url}}/{{contest_id}}:force-end
+  body: none
+  auth: inherit
+}
+
+headers {
+  x-csrf-token: {{csrf_token}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

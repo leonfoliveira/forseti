@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { SubmissionLanguage } from "@/core/domain/enumerate/SubmissionLanguage";
 import { UpdateContestRequestDTO } from "@/core/port/dto/request/UpdateContestRequestDTO";
-import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachment";
+import { MockAttachmentResponseDTO } from "@/test/mock/response/attachment/MockAttachmentResponseDTO";
 
 export function MockUpdateContestRequestDTO(
   partial: Partial<UpdateContestRequestDTO> = {},

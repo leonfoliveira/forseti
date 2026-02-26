@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-import { storageReader, storageWritter } from "@/config/composition";
+import { Composition } from "@/config/composition";
 
 export enum Theme {
   LIGHT = "light",
@@ -25,7 +25,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
    * Apply the theme class to the HTML element and store the theme in storage.
    */
   useEffect(() => {
-    let theme = storageReader.getKey<Theme>(THEME_STORAGE_KEY);
+    let theme = Composition.storageReader.getKey<Theme>(THEME_STORAGE_KEY);
     if (!theme) {
       const prefersDark = window.matchMedia(
         "(prefers-color-scheme: dark)",
@@ -35,7 +35,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const htmlElement = document.documentElement;
     htmlElement.classList.add(theme);
-    storageWritter.setKey(THEME_STORAGE_KEY, theme);
+    Composition.storageWritter.setKey(THEME_STORAGE_KEY, theme);
     setTheme(theme);
   }, []);
 
@@ -49,7 +49,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const newTheme = theme === Theme.DARK ? Theme.LIGHT : Theme.DARK;
     htmlElement.classList.add(newTheme);
-    storageWritter.setKey(THEME_STORAGE_KEY, newTheme);
+    Composition.storageWritter.setKey(THEME_STORAGE_KEY, newTheme);
     setTheme(newTheme);
   }
 

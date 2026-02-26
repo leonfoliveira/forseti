@@ -2,7 +2,7 @@ import { act } from "react";
 
 import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
-import { MockContestMetadataResponseDTO } from "@/test/mock/response/contest/MockContestMetadataResponseDTO";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { renderHookWithProviders } from "@/test/render-with-providers";
 
 describe("useContestStatusWatcher", () => {
@@ -14,7 +14,7 @@ describe("useContestStatusWatcher", () => {
     const { result } = await renderHookWithProviders(
       () => useContestStatusWatcher(),
       {
-        contestMetadata: MockContestMetadataResponseDTO({
+        contest: MockContestResponseDTO({
           startAt: "2025-01-01T10:00:00Z", // 1 hour from mock time
           endAt: "2025-01-01T15:00:00Z", // 6 hours from mock time
         }),
@@ -28,7 +28,7 @@ describe("useContestStatusWatcher", () => {
     const { result } = await renderHookWithProviders(
       () => useContestStatusWatcher(),
       {
-        contestMetadata: MockContestMetadataResponseDTO({
+        contest: MockContestResponseDTO({
           startAt: "2025-01-01T10:00:00Z", // 1 hour from mock time
           endAt: "2025-01-01T15:00:00Z", // 6 hours from mock time
         }),
@@ -47,7 +47,7 @@ describe("useContestStatusWatcher", () => {
     const { result } = await renderHookWithProviders(
       () => useContestStatusWatcher(),
       {
-        contestMetadata: MockContestMetadataResponseDTO({
+        contest: MockContestResponseDTO({
           startAt: "2025-01-01T10:00:00Z", // 1 hour from mock time
           endAt: "2025-01-01T15:00:00Z", // 6 hours from mock time
         }),

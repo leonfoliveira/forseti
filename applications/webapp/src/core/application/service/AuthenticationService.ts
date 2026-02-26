@@ -8,13 +8,6 @@ export class AuthenticationService implements AuthenticationWritter {
     private readonly authenticationRepository: AuthenticationRepository,
   ) {}
 
-  /**
-   * Authenticate a user for a contest.
-   *
-   * @param contestId ID of the contest
-   * @param requestDTO Data for authentication
-   * @return The session information
-   */
   async authenticate(
     contestId: string,
     requestDTO: AuthenticateRequestDTO,

@@ -3,58 +3,95 @@ package com.forsetijudge.core.application.util
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
-import kotlin.collections.contains
+import com.forsetijudge.core.domain.exception.InternalServerException
 
-/**
- * Utility class for authorization checks related to contests and members.
- *
- * @param contest The contest for which the authorization checks are being performed.
- * @param member The member for whom the authorization checks are being performed.
- */
 class ContestAuthorizer(
-    private val contest: Contest,
+    private val contest: Contest? = null,
     private val member: Member? = null,
 ) {
-    /**
-     * Checks if the contest has started.
-     * If the contest has not started yet, only ROOT, ADMIN, STAFF and JUDGE members can access it.
-     *
-     * @throws ForbiddenException if the contest has not started yet and the member is not ROOT, ADMIN or JUDGE.
-     */
-    fun checkContestStarted(): ContestAuthorizer {
-        if (setOf(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF, Member.Type.JUDGE).contains(member?.type) ||
-            member?.isSystemMember() == true
-        ) {
-            return this
+    private val errors = mutableListOf<String>()
+
+    private fun append(error: String): ContestAuthorizer {
+        errors.add(error)
+        return this
+    }
+
+    private fun append(errors: List<String>): ContestAuthorizer {
+        this.errors.addAll(errors)
+        return this
+    }
+
+    fun throwIfErrors() {
+        if (errors.isNotEmpty()) {
+            throw ForbiddenException(errors.joinToString("\n"))
+        }
+    }
+
+    fun or(vararg contestAuthorizers: (contestAuthorizer: ContestAuthorizer) -> ContestAuthorizer): ContestAuthorizer {
+        val allErrors = mutableListOf<String>()
+        for (contestAuthorizer in contestAuthorizers) {
+            val current = ContestAuthorizer(contest, member)
+            val errors = contestAuthorizer(current).errors
+            if (errors.isEmpty()) {
+                return this
+            }
+            allErrors.addAll(errors)
+        }
+        append(allErrors)
+        return this
+    }
+
+    fun requireContestNotStarted(): ContestAuthorizer {
+        if (contest == null) {
+            throw InternalServerException("Contest is required to perform this action")
+        }
+
+        if (contest.hasStarted()) {
+            return append("Contest has already started")
+        }
+        return this
+    }
+
+    fun requireContestStarted(): ContestAuthorizer {
+        if (contest == null) {
+            throw InternalServerException("Contest is required to perform this action")
         }
 
         if (!contest.hasStarted()) {
-            throw ForbiddenException("Contest has not started yet")
+            return append("Contest has not started yet")
         }
         return this
     }
 
-    /**
-     * Checks if the member has one of the allowed types.
-     *
-     * @param allowedTypes The set of allowed member types.
-     * @throws ForbiddenException if the member's type is not in the set of allowed types
-     */
-    fun checkMemberType(vararg allowedTypes: Member.Type): ContestAuthorizer {
+    fun requireContestNotEnded(): ContestAuthorizer {
+        if (contest == null) {
+            throw InternalServerException("Contest is required to perform this action")
+        }
+
+        if (contest.hasEnded()) {
+            return append("Contest has ended")
+        }
+        return this
+    }
+
+    fun requireContestActive(): ContestAuthorizer = requireContestStarted().requireContestNotEnded()
+
+    fun requireMemberType(vararg allowedTypes: Member.Type): ContestAuthorizer {
         if (!allowedTypes.contains(member?.type)) {
-            throw ForbiddenException("Member type ${member?.type} is not allowed to perform this action")
+            return append("Member type ${member?.type} is not allowed to perform this action")
         }
         return this
     }
 
-    /**
-     * Checks if the member is authenticated (i.e., not null).
-     *
-     * @throws ForbiddenException if the member is null (not authenticated)
-     */
-    fun checkAnyMember(): ContestAuthorizer {
+    fun requireMemberCanAccessNotStartedContest(): ContestAuthorizer {
         if (member == null) {
-            throw ForbiddenException("Authentication is required to perform this action")
+            throw InternalServerException("Member is required to perform this action")
+        }
+
+        if (member.type !in
+            setOf(Member.Type.API, Member.Type.AUTOJUDGE, Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF, Member.Type.JUDGE)
+        ) {
+            return append("Member cannot access this contest before it starts")
         }
         return this
     }

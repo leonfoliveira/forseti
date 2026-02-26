@@ -8,9 +8,10 @@ import java.util.UUID
  * Accessor for persistence operations related to Problem entity
  */
 interface ProblemRepository : BaseRepository<Problem> {
-    fun findEntityById(id: UUID): Problem?
+    @Query("SELECT p FROM Problem p WHERE p.id = ?1 AND p.deletedAt IS NULL")
+    fun findById(id: UUID): Problem?
 
-    @Query("SELECT p FROM Problem p WHERE p.id = :id AND p.contest.id = :contestId AND p.deletedAt IS NULL")
+    @Query("SELECT p FROM Problem p WHERE p.id = ?1 AND p.contest.id = ?2 AND p.deletedAt IS NULL")
     fun findByIdAndContestId(
         id: UUID,
         contestId: UUID,
