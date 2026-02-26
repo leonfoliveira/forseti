@@ -1,4 +1,4 @@
-package com.forsetijudge.infrastructure.adapter.driven.minio
+package com.forsetijudge.infrastructure.config
 
 import com.forsetijudge.core.application.util.SafeLogger
 import io.minio.BucketExistsArgs

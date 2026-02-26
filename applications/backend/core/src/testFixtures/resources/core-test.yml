@@ -9,6 +9,10 @@ spring:
     username: forseti
     password: forsetijudge
     driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: forseti
+      port: forseti
   flyway:
     enabled: true
     locations: classpath:migration

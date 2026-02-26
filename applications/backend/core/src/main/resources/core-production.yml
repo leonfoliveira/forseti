@@ -13,6 +13,11 @@ spring:
       max-lifetime: 1800000
       leak-detection-threshold: 60000
       connection-test-query: SELECT 1
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD} # No default for security reasons
   amqp:
     deserialization:
       trust:

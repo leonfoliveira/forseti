@@ -26,7 +26,7 @@ abstract class RabbitMQProducer<TPayload : Serializable>(
      *
      * @param payload The payload to be sent in the message.
      */
-    fun produce(payload: TPayload) {
+    open fun produce(payload: TPayload) {
         val message =
             RabbitMQMessage(
                 id = IdGenerator.getUUID(),

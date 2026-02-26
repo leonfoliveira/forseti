@@ -18,11 +18,11 @@ opentelemetry = "1.56.0"
 opentelemetry-mdc = "2.11.0-alpha"
 postgresql = "42.7.5"
 prometheus = "1.4.3"
-redisson = "4.2.0"
 snakeyaml = "2.4"
 spring-boot = "3.4.5"
 springmockk = "4.0.2"
 testcontainers = "1.21.0"
+testcontainers-redis = "2.2.2"
 uuid-creator = "6.1.1"
 
 [libraries]
@@ -47,13 +47,13 @@ postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" 
 prometheus-metrics-core = { module = "io.prometheus:prometheus-metrics-core", version.ref = "prometheus" }
 prometheus-metrics-exporter-servlet-jakarta = { module = "io.prometheus:prometheus-metrics-exporter-servlet-jakarta", version.ref = "prometheus" }
 prometheus-metrics-instrumentation-jvm = { module = "io.prometheus:prometheus-metrics-instrumentation-jvm", version.ref = "prometheus" }
-redisson = { module = "org.redisson:redisson", version.ref = "redisson" }
 snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
 spring-boot-dev-tools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "spring-boot" }
 spring-boot-starter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "spring-boot" }
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "spring-boot" }
 spring-boot-starter-amqp = { module = "org.springframework.boot:spring-boot-starter-amqp", version.ref = "spring-boot" }
 spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa", version.ref = "spring-boot" }
+spring-boot-starter-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis", version.ref = "spring-boot" }
 spring-boot-starter-quartz = { module = "org.springframework.boot:spring-boot-starter-quartz", version.ref = "spring-boot" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "spring-boot" }
 spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "spring-boot" }
@@ -65,6 +65,7 @@ testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", ve
 testcontainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 testcontainers-minio = { module = "org.testcontainers:minio", version.ref = "testcontainers" }
 testcontainers-rabbitmq = { module = "org.testcontainers:rabbitmq", version.ref = "testcontainers" }
+testcontainers-redis = { module = "com.redis:testcontainers-redis", version.ref = "testcontainers-redis" }
 uuid-creator = { module = "com.github.f4b6a3:uuid-creator", version.ref = "uuid-creator" }
 
 [bundles]
@@ -94,6 +95,7 @@ spring = [
     "spring-boot-starter-actuator",
     "spring-boot-starter-amqp",
     "spring-boot-starter-data-jpa",
+    "spring-boot-starter-data-redis",
     "spring-boot-starter-quartz",
     "spring-boot-starter-validation",
     "spring-boot-starter-web",
@@ -107,7 +109,8 @@ testcontainers = [
     "testcontainers-junit-jupiter",
     "testcontainers-postgres",
     "testcontainers-minio",
-    "testcontainers-rabbitmq"
+    "testcontainers-rabbitmq",
+    "testcontainers-redis"
 ]
 
 [plugins]
