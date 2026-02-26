@@ -358,6 +358,30 @@ prometheus.scrape "rabbitmq" {
   scrape_interval = "15s"
 }
 
+// redis
+discovery.relabel "redis" {
+  targets = discovery.relabel.default.output
+
+  rule {
+    source_labels = ["service_name"]
+    regex         = "redis"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__address__"]
+    target_label  = "__address__"
+    replacement   = "${1}:9121"
+    regex         = "([^:]+)(:[0-9]+)?"
+  }
+}
+
+prometheus.scrape "redis" {
+  targets    = discovery.relabel.redis.output
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+}
+
 // tempo
 discovery.relabel "tempo" {
   targets = discovery.relabel.default.output
