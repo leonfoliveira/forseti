@@ -32,6 +32,5 @@ open class BaseEntity(
     @PreUpdate
     protected fun onUpdate() {
         updatedAt = ExecutionContext.get().startedAt
-        version = version + 1
     }
 }
