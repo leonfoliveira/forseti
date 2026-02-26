@@ -40,6 +40,10 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard).layout.tab-settings",
     defaultMessage: "Settings",
   },
+  tabAbout: {
+    id: "app.[slug].(dashboard).layout.tab-about",
+    defaultMessage: "About",
+  },
 });
 
 /**
@@ -95,6 +99,11 @@ export default function DashboardLayout({
       path: routes.CONTEST_SETTINGS(slug),
     });
   }
+
+  tabs.push({
+    title: messages.tabAbout,
+    path: routes.CONTEST_ABOUT(slug),
+  });
 
   return (
     <DashboardProvider>

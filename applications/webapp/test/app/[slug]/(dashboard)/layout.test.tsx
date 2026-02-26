@@ -19,6 +19,7 @@ describe("DashboardLayout", () => {
     ["Submissions", routes.CONTEST_SUBMISSIONS],
     ["Clarifications", routes.CONTEST_CLARIFICATIONS],
     ["Announcements", routes.CONTEST_ANNOUNCEMENTS],
+    ["About", routes.CONTEST_ABOUT],
   ])("should render %s tab and children", async (title, path) => {
     await renderWithProviders(
       <DashboardLayout>

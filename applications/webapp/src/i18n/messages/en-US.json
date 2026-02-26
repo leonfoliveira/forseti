@@ -184,7 +184,19 @@
           "tab-clarifications": "Clarifications",
           "tab-announcements": "Announcements",
           "tab-tickets": "Tickets",
-          "tab-settings": "Settings"
+          "tab-settings": "Settings",
+          "tab-about": "About"
+        },
+        "about": {
+          "page-title": "Forseti - About",
+          "page-description": "View contest details and settings.",
+          "start-at": "Start At",
+          "end-at": "End At",
+          "auto-freeze-at": "Auto Freeze At",
+          "auto-freeze-disabled": "Disabled",
+          "languages": "Supported languages",
+          "settings": "Settings",
+          "setting-is-auto-judge-enabled": "Auto Judge"
         },
         "_common": {
           "wait-page": {

@@ -17,6 +17,7 @@ if (!!window) {
   });
 }
 
+process.env.TZ = "UTC";
 jest.useFakeTimers();
 
 declare global {

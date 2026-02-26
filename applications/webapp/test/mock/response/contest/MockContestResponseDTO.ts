@@ -17,7 +17,7 @@ export function MockContestResponseDTO(
     endAt: "2025-01-01T15:00:00Z",
     autoFreezeAt: "2025-01-01T14:00:00Z",
     settings: {
-      isAutoJudgeEnabled: false,
+      isAutoJudgeEnabled: true,
     },
     version: 1,
     ...partial,
