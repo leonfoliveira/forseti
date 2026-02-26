@@ -1,12 +1,12 @@
 package com.forsetijudge.api.adapter.driving.http.middleware
 
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
@@ -16,7 +16,7 @@ import java.util.UUID
 class HttpAuthenticationInterceptor(
     private val findSessionByIdUseCase: FindSessionByIdUseCase,
 ) : HandlerInterceptor {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     companion object {
         val csrfAllowList =

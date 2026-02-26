@@ -1,5 +1,6 @@
 package com.forsetijudge.infrastructure.adapter.driven.docker
 
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.domain.entity.Submission
@@ -7,7 +8,6 @@ import com.forsetijudge.core.port.driven.SubmissionRunner
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.DownloadAttachmentInternalUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.execution.CreateExecutionInternalUseCase
 import com.opencsv.CSVReader
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -20,7 +20,7 @@ class DockerSubmissionRunner(
     private val createExecutionInternalUseCase: CreateExecutionInternalUseCase,
     private val dockerSubmissionRunnerConfigFactory: DockerSubmissionRunnerConfigFactory,
 ) : SubmissionRunner {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     /**
      * Runs the submission inside a Docker container, compares the output with the expected output,
@@ -120,7 +120,7 @@ class DockerSubmissionRunner(
                         ),
                     )
                 } catch (ex: Exception) {
-                    logger.info("Error while running test case with index: $index", ex)
+                    logger.info("Error while running test case with index: $index: $ex")
                     return createExecutionInternalUseCase.execute(
                         CreateExecutionInternalUseCase.Command(
                             contest = submission.contest,
@@ -148,7 +148,7 @@ class DockerSubmissionRunner(
                 ),
             )
         } catch (ex: Exception) {
-            logger.info("Error while compiling submission", ex)
+            logger.info("Error while compiling submission: $ex")
             return createExecutionInternalUseCase.execute(
                 CreateExecutionInternalUseCase.Command(
                     contest = submission.contest,

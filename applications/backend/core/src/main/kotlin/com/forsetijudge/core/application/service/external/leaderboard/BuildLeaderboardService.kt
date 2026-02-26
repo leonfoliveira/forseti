@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.external.leaderboard
 
 import com.forsetijudge.core.application.util.ContestAuthorizer
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
@@ -11,7 +12,6 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
@@ -22,7 +22,7 @@ class BuildLeaderboardService(
     private val memberRepository: MemberRepository,
     private val buildLeaderboardCellInternalUseCase: BuildLeaderboardCellInternalUseCase,
 ) : BuildLeaderboardUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @Transactional(readOnly = true)
     override fun execute(): Leaderboard {

@@ -1,13 +1,13 @@
 package com.forsetijudge.api.adapter.driving.http.advice
 
 import com.forsetijudge.api.adapter.dto.response.ErrorResponseBodyDTO
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.exception.BusinessException
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import jakarta.validation.ConstraintViolationException
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -21,7 +21,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
-    private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
+    private val logger = SafeLogger(this::class)
 
     private val codesByBusinessException =
         mapOf(
@@ -41,7 +41,7 @@ class GlobalExceptionHandler {
     ): ResponseEntity<ErrorResponseBodyDTO> {
         val status = codesByBusinessException[ex::class] ?: HttpStatus.BAD_REQUEST
         logger.info(
-            "${ex.javaClass.simpleName} occurred in method: ${handlerMethod.method.name}, status: $status, message: ${ex.message}",
+            "${ex.javaClass.simpleName} occurred in method: ${handlerMethod.method.name}, message: ${ex.message}",
         )
         return ResponseEntity
             .status(status)
@@ -78,14 +78,13 @@ class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleJsonParseErrors(ex: HttpMessageNotReadableException): ResponseEntity<Map<String, String>> {
         logger.info("JSON parsing error occurred")
-        val message = ex.mostSpecificCause.message ?: "Malformed JSON"
-        return ResponseEntity(mapOf("error" to "Invalid request format: $message"), HttpStatus.BAD_REQUEST)
+        return ResponseEntity(mapOf("error" to "Invalid request format: ${ex.message}"), HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException::class)
     fun handleTypeMismatch(ex: MethodArgumentTypeMismatchException): ResponseEntity<ErrorResponseBodyDTO> {
         logger.info("Type mismatch error occurred")
-        val message = "Invalid type for parameter '${ex.name}'"
+        val message = "Invalid type for parameter '${ex.message}'"
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(ErrorResponseBodyDTO(message))
@@ -93,7 +92,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(NoResourceFoundException::class)
     fun handleNoResourceFoundException(ex: NoResourceFoundException): ResponseEntity<ErrorResponseBodyDTO> {
-        logger.info("Resource not found, message: ${ex.message}", ex)
+        logger.info("Resource not found, message: ${ex.message}")
         return ResponseEntity
             .status(HttpStatus.NOT_FOUND)
             .body(ErrorResponseBodyDTO("Resource not found"))

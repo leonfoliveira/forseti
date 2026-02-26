@@ -1,7 +1,6 @@
 package com.forsetijudge.core.application.listener.announcement
 
 import com.forsetijudge.core.application.listener.BusinessEventListener
-import com.forsetijudge.core.domain.entity.Announcement
 import com.forsetijudge.core.domain.event.AnnouncementEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom

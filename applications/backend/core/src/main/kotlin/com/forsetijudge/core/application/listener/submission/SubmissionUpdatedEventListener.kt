@@ -1,7 +1,6 @@
 package com.forsetijudge.core.application.listener.submission
 
 import com.forsetijudge.core.application.listener.BusinessEventListener
-import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom

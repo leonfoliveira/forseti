@@ -1,11 +1,11 @@
 package com.forsetijudge.core.application.service.external.session
 
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.session.DeleteAllSessionsByMemberUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.DeleteAllSessionsByMemberInternalUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -13,7 +13,7 @@ class DeleteAllSessionsByMemberService(
     private val memberRepository: MemberRepository,
     private val deleteAllSessionsByMemberInternalUseCase: DeleteAllSessionsByMemberInternalUseCase,
 ) : DeleteAllSessionsByMemberUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     override fun execute() {
         val contextMemberId = ExecutionContext.getMemberId()

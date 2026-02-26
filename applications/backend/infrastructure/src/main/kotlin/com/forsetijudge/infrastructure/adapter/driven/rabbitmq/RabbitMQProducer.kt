@@ -2,9 +2,9 @@ package com.forsetijudge.infrastructure.adapter.driven.rabbitmq
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
-import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.Serializable
@@ -19,7 +19,7 @@ abstract class RabbitMQProducer<TPayload : Serializable>(
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     /**
      * Serializes a payload and sends it to the configured RabbitMQ exchange with the specified routing key.

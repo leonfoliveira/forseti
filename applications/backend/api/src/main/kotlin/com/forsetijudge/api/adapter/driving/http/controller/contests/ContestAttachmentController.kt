@@ -1,13 +1,13 @@
 package com.forsetijudge.api.adapter.driving.http.controller.contests
 
 import com.forsetijudge.api.adapter.util.Private
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.external.attachment.DownloadAttachmentUseCase
 import com.forsetijudge.core.port.driving.usecase.external.attachment.UploadAttachmentUseCase
 import com.forsetijudge.core.port.dto.response.AttachmentResponseDTO
 import com.forsetijudge.core.port.dto.response.toResponseBodyDTO
-import org.slf4j.LoggerFactory
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -28,7 +28,7 @@ class ContestAttachmentController(
     private val uploadAttachmentUseCase: UploadAttachmentUseCase,
     private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/attachments")
     @Private(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF, Member.Type.JUDGE, Member.Type.CONTESTANT)

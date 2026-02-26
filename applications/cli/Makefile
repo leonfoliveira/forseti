@@ -7,6 +7,7 @@ build:
 		$(if $(VERSION),--version $(VERSION),--version latest) \
 		$(if $(API_URL),--api-url $(API_URL))
 	pyinstaller --onefile -n forseti -p . cli/__main__.py
+	rm -f ./cli/_config.py
 
 lint:
 	black cli --check

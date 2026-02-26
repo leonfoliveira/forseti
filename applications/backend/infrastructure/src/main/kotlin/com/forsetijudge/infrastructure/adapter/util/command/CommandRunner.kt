@@ -1,11 +1,11 @@
 package com.forsetijudge.infrastructure.adapter.util.command
 
-import org.slf4j.LoggerFactory
+import com.forsetijudge.core.application.util.SafeLogger
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 object CommandRunner {
-    private val logger = LoggerFactory.getLogger(CommandRunner::class.java)
+    private val logger = SafeLogger(this::class)
 
     /**
      * Runs a command-line process with the specified command and optional input.

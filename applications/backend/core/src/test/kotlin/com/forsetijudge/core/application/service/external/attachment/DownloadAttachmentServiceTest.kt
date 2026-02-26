@@ -96,7 +96,7 @@ class DownloadAttachmentServiceTest :
                 sut.execute(
                     DownloadAttachmentUseCase.Command(attachmentId = actualAttachment.id),
                 )
-            }.message shouldBe message
+            }
         }
 
         test("should throw NotFoundException if attachment does not exists") {

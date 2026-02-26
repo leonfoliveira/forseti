@@ -3,6 +3,7 @@ package com.forsetijudge.api.adapter.driving.http.controller.contests
 import com.forsetijudge.api.adapter.dto.request.submission.CreateSubmissionRequestBodyDTO
 import com.forsetijudge.api.adapter.dto.request.submission.UpdateAnswerSubmissionRequestBodyDTO
 import com.forsetijudge.api.adapter.util.Private
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.external.submission.CreateSubmissionUseCase
 import com.forsetijudge.core.port.driving.usecase.external.submission.ResetSubmissionUseCase
@@ -12,7 +13,6 @@ import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndE
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
-import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -30,7 +30,7 @@ class ContestSubmissionController(
     private val resetSubmissionUseCase: ResetSubmissionUseCase,
     private val updateAnswerSubmissionUseCase: UpdateAnswerSubmissionUseCase,
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/submissions")
     @Private(Member.Type.CONTESTANT)
