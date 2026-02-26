@@ -2,13 +2,13 @@ package com.forsetijudge.api.adapter.driving.http.controller.root
 
 import com.forsetijudge.api.adapter.dto.request.contest.CreateContestRequestBodyDTO
 import com.forsetijudge.api.adapter.util.Private
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.external.contest.CreateContestUseCase
 import com.forsetijudge.core.port.driving.usecase.external.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.driving.usecase.external.contest.FindAllContestUseCase
 import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
-import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,7 +27,7 @@ class RootContestController(
     private val findAllContestUseCase: FindAllContestUseCase,
     private val deleteContestUseCase: DeleteContestUseCase,
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @PostMapping("/root/contests")
     @Private(Member.Type.ROOT)

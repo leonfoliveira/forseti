@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.external.dashboard
 
 import com.forsetijudge.core.application.util.ContestAuthorizer
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
@@ -9,7 +10,6 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.dashboard.BuildAdminDashboardUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,7 +18,7 @@ class BuildAdminDashboardService(
     private val memberRepository: MemberRepository,
     private val buildLeaderboardUseCase: BuildLeaderboardUseCase,
 ) : BuildAdminDashboardUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     override fun execute(): AdminDashboard {
         val contextContestId = ExecutionContext.getContestId()

@@ -1,12 +1,12 @@
 package com.forsetijudge.core.application.service.external.authentication
 
 import com.forsetijudge.core.application.util.ContestAuthorizer
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.ContestAuthorizerUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -15,7 +15,7 @@ class ContestAuthorizerService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
 ) : ContestAuthorizerUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @Transactional(readOnly = true)
     override fun execute(command: ContestAuthorizerUseCase.Command) {

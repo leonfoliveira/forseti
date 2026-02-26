@@ -1,7 +1,6 @@
 package com.forsetijudge.core.application.listener.contest
 
 import com.forsetijudge.core.application.listener.BusinessEventListener
-import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.port.driven.job.AutoFreezeJobScheduler
 import org.springframework.stereotype.Component

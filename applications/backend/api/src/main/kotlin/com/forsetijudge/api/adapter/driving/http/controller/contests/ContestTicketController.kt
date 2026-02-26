@@ -3,12 +3,12 @@ package com.forsetijudge.api.adapter.driving.http.controller.contests
 import com.forsetijudge.api.adapter.dto.request.ticket.CreateTicketRequestBodyDTO
 import com.forsetijudge.api.adapter.dto.request.ticket.UpdateTicketStatusRequestBodyDTO
 import com.forsetijudge.api.adapter.util.Private
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.external.ticket.CreateTicketUseCase
 import com.forsetijudge.core.port.driving.usecase.external.ticket.UpdateTicketStatusUseCase
 import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
-import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,7 +25,7 @@ class ContestTicketController(
     private val createTicketUseCase: CreateTicketUseCase,
     private val updateTicketStatusUseCase: UpdateTicketStatusUseCase,
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/tickets")
     @Private(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF, Member.Type.JUDGE, Member.Type.CONTESTANT)

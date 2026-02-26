@@ -1,9 +1,9 @@
 package com.forsetijudge.infrastructure.adapter.driven.minio
 
+import com.forsetijudge.core.application.util.SafeLogger
 import io.minio.BucketExistsArgs
 import io.minio.MakeBucketArgs
 import io.minio.MinioClient
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.annotation.Bean
@@ -21,7 +21,7 @@ class MinioConfig(
     @Value("\${minio.bucket}")
     private val bucket: String,
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @Bean
     fun minioClient(): MinioClient =

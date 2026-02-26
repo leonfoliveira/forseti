@@ -1,12 +1,12 @@
 package com.forsetijudge.core.application.service.internal.execution
 
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.event.ExecutionEvent
 import com.forsetijudge.core.port.driven.repository.ExecutionRepository
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.UploadAttachmentInternalUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.execution.CreateExecutionInternalUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
@@ -16,7 +16,7 @@ class CreateExecutionInternalService(
     private val uploadAttachmentInternalUseCase: UploadAttachmentInternalUseCase,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : CreateExecutionInternalUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     companion object {
         const val OUTPUT_FILENAME = "output.csv"

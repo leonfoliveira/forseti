@@ -1,16 +1,16 @@
 package com.forsetijudge.api.adapter.driving.http.middleware
 
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
 import java.util.UUID
 
 @Component
 class HttpExecutionContextInterceptor : HandlerInterceptor {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     /**
      * Fill the RequestContext with relevant information from the HTTP request.

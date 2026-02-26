@@ -3,9 +3,9 @@ package com.forsetijudge.api.adapter.driving.socketio.listener
 import com.corundumstudio.socketio.AckRequest
 import com.corundumstudio.socketio.SocketIOClient
 import com.corundumstudio.socketio.listener.DataListener
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.model.ExecutionContext
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.util.UUID
 
@@ -13,7 +13,7 @@ import java.util.UUID
 class SocketIOJoinListener(
     val socketIORoomAuthorizers: SocketIORoomAuthorizers,
 ) : DataListener<String> {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     /**
      * Handles client subscription to a room.

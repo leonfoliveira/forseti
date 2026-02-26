@@ -1,7 +1,6 @@
 package com.forsetijudge.core.application.listener.ticket
 
 import com.forsetijudge.core.application.listener.BusinessEventListener
-import com.forsetijudge.core.domain.entity.Ticket
 import com.forsetijudge.core.domain.event.TicketEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom

@@ -1,6 +1,7 @@
 package com.forsetijudge.infrastructure.adapter.driven.quartz
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.job.JobScheduler
 import com.forsetijudge.infrastructure.adapter.dto.job.QuartzMessage
@@ -18,7 +19,7 @@ import java.util.Date
 abstract class QuartzJobScheduler<TPayload : Serializable>(
     private val jobClass: Class<out Job>,
 ) : JobScheduler<TPayload> {
-    private val logger = org.slf4j.LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @Autowired
     private lateinit var scheduler: Scheduler

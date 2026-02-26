@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.external.authentication
 
 import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Session
@@ -13,7 +14,6 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
@@ -26,7 +26,7 @@ class AuthenticateSystemService(
     private val createSessionInternalUseCase: CreateSessionInternalUseCase,
     private val hasher: Hasher,
 ) : AuthenticateSystemUseCase {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     private var cachedSessionByContestIdAndMemberId = ConcurrentHashMap<Pair<UUID?, UUID>, Session>()
 

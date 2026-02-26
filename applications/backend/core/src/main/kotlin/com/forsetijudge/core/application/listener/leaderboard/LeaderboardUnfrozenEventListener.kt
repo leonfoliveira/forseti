@@ -1,7 +1,6 @@
 package com.forsetijudge.core.application.listener.leaderboard
 
 import com.forsetijudge.core.application.listener.BusinessEventListener
-import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.event.LeaderboardEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom

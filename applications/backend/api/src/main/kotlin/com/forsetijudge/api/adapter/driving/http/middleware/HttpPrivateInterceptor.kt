@@ -1,18 +1,18 @@
 package com.forsetijudge.api.adapter.driving.http.middleware
 
 import com.forsetijudge.api.adapter.util.Private
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
 
 @Component
 class HttpPrivateInterceptor : HandlerInterceptor {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     /**
      * Checks if the incoming request has access to the destination based on the @Private annotation.

@@ -1,7 +1,7 @@
 package com.forsetijudge.core.application.listener.submission
 
 import com.forsetijudge.core.application.listener.BusinessEventListener
-import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
@@ -11,19 +11,16 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
 import com.forsetijudge.core.port.driven.queue.payload.SubmissionQueuePayload
-import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class SubmissionCreatedEventListener(
-    private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
     private val broadcastProducer: BroadcastProducer,
     private val submissionQueueProducer: SubmissionQueueProducer,
 ) : BusinessEventListener<SubmissionEvent.Created>() {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @TransactionalEventListener(SubmissionEvent.Created::class, phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: SubmissionEvent.Created) {

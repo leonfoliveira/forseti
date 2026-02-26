@@ -1,10 +1,10 @@
 package com.forsetijudge.core.application.listener
 
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.event.BusinessEvent
-import org.slf4j.LoggerFactory
 
 abstract class BusinessEventListener<TBusinessEvent : BusinessEvent> : ApplicationEventListener() {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     /**
      * Handles the given business event.

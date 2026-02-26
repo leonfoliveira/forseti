@@ -1,7 +1,7 @@
 package com.forsetijudge.api.adapter.driving.socketio
 
 import com.corundumstudio.socketio.SocketIOServer
-import org.slf4j.LoggerFactory
+import com.forsetijudge.core.application.util.SafeLogger
 import org.springframework.context.SmartLifecycle
 import org.springframework.stereotype.Component
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 class SocketIOServerManagedLifecycle(
     private val server: SocketIOServer,
 ) : SmartLifecycle {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     @Volatile
     private var isRunning = false

@@ -1,11 +1,11 @@
 package com.forsetijudge.infrastructure.adapter.driven.minio
 
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.port.driven.AttachmentBucket
 import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -15,7 +15,7 @@ class MinioAttachmentBucket(
     @Value("\${minio.bucket}")
     private val bucket: String,
 ) : AttachmentBucket {
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = SafeLogger(this::class)
 
     /**
      * Uploads an attachment to the MinIO bucket

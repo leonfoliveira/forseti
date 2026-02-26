@@ -1,11 +1,10 @@
 package com.forsetijudge.infrastructure.adapter.driving.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import java.io.Serializable
@@ -24,7 +23,7 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    protected val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    protected val logger = SafeLogger(this::class)
 
     /**
      * Method to receive a message from RabbitMQ, deserialize it, and handle the payload.
