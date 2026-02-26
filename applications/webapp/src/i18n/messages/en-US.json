@@ -19,7 +19,6 @@
         "judge": "Judge"
       },
       "formatted-submission-answer": {
-        "no_answer": "Judging",
         "accepted": "Accepted",
         "wrong_answer": "Wrong Answer",
         "compilation_error": "Compilation Error",
