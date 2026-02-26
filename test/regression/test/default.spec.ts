@@ -180,7 +180,7 @@ test("Default contest behaviour", async ({ page }) => {
   await contestantActor.signIn(contest);
   await contestantActor.checkHeader(contest);
   await contestantActor.toggleTheme();
-  await contestantActor.checkWaitPage(contest);
+  await contestantActor.checkWaitPage();
   await contestantActor.signOut(contest);
 
   // Step 4: Sign in as admin, create an announcement, add a problem, and start the contest

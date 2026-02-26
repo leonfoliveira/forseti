@@ -59,8 +59,8 @@ export default function DashboardAboutPage() {
 
   return (
     <Page title={messages.pageTitle} description={messages.pageDescription}>
-      <div className="mx-auto w-full max-w-4xl space-y-5">
-        <Card className="my-5">
+      <div className="mx-auto my-5 w-full max-w-4xl">
+        <Card>
           <CardContent>
             <div className="flex flex-col items-center sm:flex-row sm:items-center sm:gap-6">
               {theme === Theme.DARK ? (

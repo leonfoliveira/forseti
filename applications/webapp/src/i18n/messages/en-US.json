@@ -200,8 +200,12 @@
         },
         "_common": {
           "wait-page": {
+            "page-title": "Forseti - Waiting for the contest to start",
+            "page-description": "Waiting page displayed when the contest has not started yet.",
+            "description": "The contest has not started yet. Please wait for the contest to start.",
             "start-at": "Starts in",
-            "languages": "Supported languages"
+            "languages": "Supported languages",
+            "reload": "The page will automatically reload when the contest starts. You can also reload manually."
           },
           "tickets": {
             "tickets-page": {

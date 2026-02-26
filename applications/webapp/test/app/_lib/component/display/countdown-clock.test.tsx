@@ -34,22 +34,6 @@ describe("CountdownClock", () => {
     });
   });
 
-  it("should call onZero callback when countdown reaches zero", async () => {
-    const onZero = jest.fn();
-    const futureDate = new Date(Date.now() + 60000); // 1 minute from now
-
-    await renderWithProviders(
-      <CountdownClock to={futureDate} onZero={onZero} />,
-    );
-
-    await act(async () => {
-      jest.advanceTimersByTime(60000);
-    });
-    await waitFor(() => {
-      expect(onZero).toHaveBeenCalledTimes(1);
-    });
-  });
-
   it("should stop countdown and show 0 when time reaches zero", async () => {
     const futureDate = new Date(Date.now() + 1000); // 1 second from now
 

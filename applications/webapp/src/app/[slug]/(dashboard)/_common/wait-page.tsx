@@ -1,16 +1,26 @@
 "use client";
 
-import Image from "next/image";
+import { ClockAlertIcon } from "lucide-react";
 
-import { CountdownClock } from "@/app/_lib/component/display/countdown-clock";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
-import { Separator } from "@/app/_lib/component/shadcn/separator";
-import { Theme, useTheme } from "@/app/_lib/provider/theme-provider";
-import { useAppSelector } from "@/app/_store/store";
-import { globalMessages } from "@/i18n/global";
+import { Page } from "@/app/_lib/component/page/page";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
+  pageTitle: {
+    id: "app.[slug].(dashboard)._common.wait-page.page-title",
+    defaultMessage: "Forseti - Waiting for the contest to start",
+  },
+  pageDescription: {
+    id: "app.[slug].(dashboard)._common.wait-page.page-description",
+    defaultMessage:
+      "Waiting page displayed when the contest has not started yet.",
+  },
+  description: {
+    id: "app.[slug].(dashboard)._common.wait-page.description",
+    defaultMessage:
+      "The contest has not started yet. Please wait for the contest to start.",
+  },
   startAt: {
     id: "app.[slug].(dashboard)._common.wait-page.start-at",
     defaultMessage: "Starts in",
@@ -19,6 +29,11 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.wait-page.languages",
     defaultMessage: "Supported languages",
   },
+  reload: {
+    id: "app.[slug].(dashboard)._common.wait-page.reload",
+    defaultMessage:
+      "The page will automatically reload when the contest starts. You can also reload manually.",
+  },
 });
 
 /**
@@ -26,61 +41,22 @@ const messages = defineMessages({
  * Shows the contest title, start time, and supported languages.
  */
 export function WaitPage() {
-  const contest = useAppSelector((state) => state.contest);
-  const { theme } = useTheme();
-
-  const handleReload = () => {
-    window.location.reload();
-  };
-
   return (
-    <div
-      className="flex flex-1 flex-col items-center justify-center gap-5"
-      data-testid="wait-page"
-    >
-      {theme === Theme.DARK ? (
-        <Image
-          src={"/icon-dark.png"}
-          alt="Logo of forseti"
-          width={100}
-          height={100}
-        />
-      ) : (
-        <Image
-          src={"/icon-light.png"}
-          alt="Logo of forseti"
-          width={100}
-          height={100}
-        />
-      )}
-      <h1 className="text-4xl" data-testid="title">
-        {contest.title}
-      </h1>
-      <Separator className="my-3 max-w-lg" />
-      <div className="text-center">
-        <p className="font-semibold" data-testid="description">
-          <FormattedMessage {...messages.startAt} />
-        </p>
-        <div className="flex justify-center text-lg">
-          <CountdownClock
-            to={new Date(contest.startAt)}
-            onZero={handleReload}
-            data-testid="clock"
-          />
+    <Page title={messages.pageTitle} description={messages.pageDescription}>
+      <div
+        className="flex flex-1 items-center justify-center"
+        data-testid="wait-page"
+      >
+        <div className="flex flex-col items-center gap-3 text-center">
+          <ClockAlertIcon size={100} className="mb-5" />
+          <p>
+            <FormattedMessage {...messages.description} />
+          </p>
+          <p>
+            <FormattedMessage {...messages.reload} />
+          </p>
         </div>
       </div>
-      <div className="text-center">
-        <p className="font-semibold" data-testid="languages">
-          <FormattedMessage {...messages.languages} />
-        </p>
-        <ul className="mt-1 text-sm">
-          {contest.languages.toSorted().map((it) => (
-            <li key={it} data-testid="language-item">
-              <FormattedMessage {...globalMessages.submissionLanguage[it]} />
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+    </Page>
   );
 }
