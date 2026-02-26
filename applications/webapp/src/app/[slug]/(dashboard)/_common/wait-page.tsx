@@ -1,12 +1,12 @@
 "use client";
 
 import { ClockAlertIcon } from "lucide-react";
+import { useEffect } from "react";
 
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
-import { defineMessages } from "@/i18n/message";
 import { useAppSelector } from "@/app/_store/store";
-import { useEffect } from "react";
+import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
