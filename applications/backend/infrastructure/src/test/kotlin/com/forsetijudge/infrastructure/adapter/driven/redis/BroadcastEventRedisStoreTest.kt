@@ -20,16 +20,16 @@ import java.time.OffsetDateTime
 class BroadcastEventRedisStoreTest(
     private val sut: BroadcastEventRedisStore,
 ) : FunSpec({
-        test("should save and retrieve broadcast events correctly") {
+        test("should add and retrieve broadcast events correctly") {
             val event1 = BroadcastEvent(room = "/room1", name = "event", data = mapOf("foo" to "bar") as Serializable)
-            val event2 = BroadcastEvent(room = "/room1", name = "event", data = mapOf("foo" to "bar") as Serializable)
-            val event3 = BroadcastEvent(room = "/room2", name = "event", data = mapOf("foo" to "bar") as Serializable)
 
-            sut.save(event1)
+            sut.add(event1)
             delay(1000)
             val now = OffsetDateTime.now()
-            sut.save(event2)
-            sut.save(event3)
+            val event2 = BroadcastEvent(room = "/room1", name = "event", data = mapOf("foo" to "bar") as Serializable)
+            val event3 = BroadcastEvent(room = "/room2", name = "event", data = mapOf("foo" to "bar") as Serializable)
+            sut.add(event2)
+            sut.add(event3)
 
             val retrievedEvents = sut.getAllSince("/room1", now)
 
@@ -39,7 +39,7 @@ class BroadcastEventRedisStoreTest(
         test("should maintain a maximum of 100 events per room") {
             val room = "/room1"
             for (i in 1..105) {
-                sut.save(BroadcastEvent(room = room, name = "event$i", data = mapOf("foo" to "bar") as Serializable))
+                sut.add(BroadcastEvent(room = room, name = "event$i", data = mapOf("foo" to "bar") as Serializable))
             }
 
             val retrievedEvents = sut.getAllSince(room, OffsetDateTime.now().minusDays(1))

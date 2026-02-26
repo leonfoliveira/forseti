@@ -1,8 +1,7 @@
 package com.forsetijudge.api.adapter.driving.rabbitmq.consumer
 
-import com.corundumstudio.socketio.BroadcastOperations
-import com.corundumstudio.socketio.SocketIOServer
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.forsetijudge.api.adapter.driven.socketio.SocketIOBroadcastEmitter
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
@@ -11,8 +10,6 @@ import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
-import io.mockk.every
-import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 import java.io.Serializable
@@ -22,17 +19,14 @@ class SocketIOFanoutRabbitMQConsumerTest(
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
-    private val socketIOServer: SocketIOServer,
+    private val socketIOBroadcastEmitter: SocketIOBroadcastEmitter,
     private val objectMapper: ObjectMapper,
     private val sut: SocketIOFanoutRabbitMQConsumer,
 ) : FunSpec({
         val contestId = IdGenerator.getUUID()
 
-        val broadcastOperations = mockk<BroadcastOperations>(relaxed = true)
-
         beforeEach {
             clearAllMocks()
-            every { socketIOServer.getRoomOperations(any()) } returns broadcastOperations
         }
 
         test("should handle payload") {
@@ -54,13 +48,7 @@ class SocketIOFanoutRabbitMQConsumerTest(
             sut.receiveMessage(jsonMessage)
 
             verify {
-                socketIOServer.getRoomOperations("/topic/any")
-            }
-            verify {
-                broadcastOperations.sendEvent(
-                    payload.name,
-                    payload.data,
-                )
+                socketIOBroadcastEmitter.emit(any())
             }
         }
     })

@@ -1,6 +1,6 @@
 package com.forsetijudge.api.adapter.driving.rabbitmq.consumer
 
-import com.corundumstudio.socketio.SocketIOServer
+import com.forsetijudge.api.adapter.driven.socketio.SocketIOBroadcastEmitter
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.infrastructure.adapter.driving.consumer.RabbitMQConsumer
 import org.springframework.amqp.rabbit.annotation.Exchange
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class SocketIOFanoutRabbitMQConsumer(
-    private val socketIOServer: SocketIOServer,
+    private val socketIOBroadcastEmitter: SocketIOBroadcastEmitter,
 ) : RabbitMQConsumer<BroadcastEvent>() {
     @RabbitListener(
         bindings = [
@@ -44,8 +44,6 @@ class SocketIOFanoutRabbitMQConsumer(
      * @param payload The payload containing the topic and message.
      */
     override fun handlePayload(payload: BroadcastEvent) {
-        logger.info("Broadcasting event ${payload.name} to room: ${payload.room}")
-
-        socketIOServer.getRoomOperations(payload.room).sendEvent(payload.name, payload.data)
+        socketIOBroadcastEmitter.emit(payload)
     }
 }

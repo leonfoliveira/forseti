@@ -2,6 +2,7 @@ package com.forsetijudge.infrastructure.adapter.driven.redis
 
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
+import com.forsetijudge.core.port.driven.cache.BroadcastEventCacheStore
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
@@ -9,7 +10,7 @@ import java.time.OffsetDateTime
 @Component
 class BroadcastEventRedisStore(
     val redisTemplate: RedisTemplate<String, BroadcastEvent>,
-) {
+) : BroadcastEventCacheStore {
     private val logger = SafeLogger(this::class)
 
     companion object {
@@ -17,21 +18,17 @@ class BroadcastEventRedisStore(
         const val MAX_SIZE = 100L
     }
 
-    /**
-     * Saves a broadcast event to Redis with the current timestamp as the score in a sorted set.
-     * If the total number of events exceeds the defined maximum size, the oldest events will be removed to maintain the limit.
-     *
-     * @param event The broadcast event to be saved.
-     */
-    fun save(event: BroadcastEvent) {
-        val timestamp = System.currentTimeMillis().toDouble()
+    override fun add(event: BroadcastEvent) {
         val key = "${BROADCAST_EVENTS_KEY}:${event.room}"
-        logger.info("Saving broadcast event with id: ${event.id} with key = $key and timestamp: $timestamp")
+        logger.info("Saving broadcast event with id: ${event.id} with key = $key and timestamp: ${event.timestamp}")
 
         redisTemplate.opsForZSet().add(
             key,
             event,
-            timestamp,
+            event.timestamp
+                .toInstant()
+                .toEpochMilli()
+                .toDouble(),
         )
 
         val count = redisTemplate.opsForZSet().size(key) ?: 0
@@ -41,14 +38,7 @@ class BroadcastEventRedisStore(
         }
     }
 
-    /**
-     * Retrieves all broadcast events from Redis that have a timestamp greater than the provided timestamp.
-     *
-     * @param room The room for which to retrieve broadcast events.
-     * @param timestamp The timestamp to filter events. Only events with a timestamp greater than this will be returned.
-     * @return A list of broadcast events that occurred since the provided timestamp.
-     */
-    fun getAllSince(
+    override fun getAllSince(
         room: String,
         timestamp: OffsetDateTime,
     ): List<BroadcastEvent> {

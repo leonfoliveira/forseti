@@ -65,6 +65,6 @@ class BroadcastRabbitMQProducerTest(
             message.payload.room shouldBe payload.room
             message.payload.name shouldBe payload.name
             message.payload.data shouldBe payload.data
-            verify { broadCastEventRedisStore.save(payload) }
+            verify { broadCastEventRedisStore.add(payload) }
         }
     })

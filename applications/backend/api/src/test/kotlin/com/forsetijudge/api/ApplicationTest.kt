@@ -7,6 +7,7 @@ import org.springframework.boot.runApplication
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.test.context.ActiveProfiles
+import java.util.TimeZone
 
 @SpringBootApplication(
     scanBasePackages = [
@@ -31,5 +32,6 @@ import org.springframework.test.context.ActiveProfiles
 class ApplicationTest
 
 fun main(args: Array<String>) {
+    TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
     runApplication<ApplicationTest>(*args)
 }
