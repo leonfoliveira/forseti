@@ -28,27 +28,27 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   problemAnswer: {
-    id: "app._lib.provider.contestant-dashboard-provider.problem-answer",
+    id: "app._lib.provider.dashboard.contestant-dashboard-provider.problem-answer",
     defaultMessage: "Problem {letter}: {answer}",
   },
   announcement: {
-    id: "app._lib.provider.contestant-dashboard-provider.announcement",
+    id: "app._lib.provider.dashboard.contestant-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
   clarificationAnswer: {
-    id: "app._lib.provider.contestant-dashboard-provider.clarification-answer",
+    id: "app._lib.provider.dashboard.contestant-dashboard-provider.clarification-answer",
     defaultMessage: "New answer for a clarification",
   },
   frozen: {
-    id: "app._lib.provider.contestant-dashboard-provider.frozen",
+    id: "app._lib.provider.dashboard.contestant-dashboard-provider.frozen",
     defaultMessage: "Leaderboard has been frozen",
   },
   unfrozen: {
-    id: "app._lib.provider.contestant-dashboard-provider.unfrozen",
+    id: "app._lib.provider.dashboard.contestant-dashboard-provider.unfrozen",
     defaultMessage: "Leaderboard has been unfrozen",
   },
   ticketUpdated: {
-    id: "app._lib.provider.contestant-dashboard-provider.ticket-updated",
+    id: "app._lib.provider.dashboard.contestant-dashboard-provider.ticket-updated",
     defaultMessage: "Your ticket has been updated to ''{status}''",
   },
 });

@@ -26,27 +26,27 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   submissionFailed: {
-    id: "app._lib.provider.judge-dashboard-provider.submission-failed",
+    id: "app._lib.provider.dashboard.judge-dashboard-provider.submission-failed",
     defaultMessage: "New failed submission",
   },
   announcement: {
-    id: "app._lib.provider.judge-dashboard-provider.announcement",
+    id: "app._lib.provider.dashboard.judge-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
   newClarification: {
-    id: "app._lib.provider.judge-dashboard-provider.new-clarification",
+    id: "app._lib.provider.dashboard.judge-dashboard-provider.new-clarification",
     defaultMessage: "New clarification",
   },
   frozen: {
-    id: "app._lib.provider.judge-dashboard-provider.frozen",
+    id: "app._lib.provider.dashboard.judge-dashboard-provider.frozen",
     defaultMessage: "Leaderboard has been frozen",
   },
   unfrozen: {
-    id: "app._lib.provider.judge-dashboard-provider.unfrozen",
+    id: "app._lib.provider.dashboard.judge-dashboard-provider.unfrozen",
     defaultMessage: "Leaderboard has been unfrozen",
   },
   ticketUpdated: {
-    id: "app._lib.provider.judge-dashboard-provider.ticket-updated",
+    id: "app._lib.provider.dashboard.judge-dashboard-provider.ticket-updated",
     defaultMessage: "Your ticket has been updated to ''{status}''",
   },
 });

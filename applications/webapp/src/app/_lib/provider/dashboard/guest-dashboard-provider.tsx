@@ -25,15 +25,15 @@ import { defineMessages } from "@/i18n/message";
  */
 const messages = defineMessages({
   announcement: {
-    id: "app._lib.provider.guest-dashboard-provider.announcement",
+    id: "app._lib.provider.dashboard.guest-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
   frozen: {
-    id: "app._lib.provider.guest-dashboard-provider.frozen",
+    id: "app._lib.provider.dashboard.guest-dashboard-provider.frozen",
     defaultMessage: "Leaderboard has been frozen",
   },
   unfrozen: {
-    id: "app._lib.provider.guest-dashboard-provider.unfrozen",
+    id: "app._lib.provider.dashboard.guest-dashboard-provider.unfrozen",
     defaultMessage: "Leaderboard has been unfrozen",
   },
 });

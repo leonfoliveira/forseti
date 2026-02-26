@@ -25,23 +25,23 @@ import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
   submissionFailed: {
-    id: "app._lib.provider.admin-dashboard-provider.submission-failed",
+    id: "app._lib.provider.dashboard.admin-dashboard-provider.submission-failed",
     defaultMessage: "New failed submission",
   },
   announcement: {
-    id: "app._lib.provider.admin-dashboard-provider.announcement",
+    id: "app._lib.provider.dashboard.admin-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
   frozen: {
-    id: "app._lib.provider.admin-dashboard-provider.frozen",
+    id: "app._lib.provider.dashboard.admin-dashboard-provider.frozen",
     defaultMessage: "Leaderboard has been frozen",
   },
   unfrozen: {
-    id: "app._lib.provider.admin-dashboard-provider.unfrozen",
+    id: "app._lib.provider.dashboard.admin-dashboard-provider.unfrozen",
     defaultMessage: "Leaderboard has been unfrozen",
   },
   ticketUpdated: {
-    id: "app._lib.provider.admin-dashboard-provider.ticket-updated",
+    id: "app._lib.provider.dashboard.admin-dashboard-provider.ticket-updated",
     defaultMessage: "Your ticket has been updated to ''{status}''",
   },
 });

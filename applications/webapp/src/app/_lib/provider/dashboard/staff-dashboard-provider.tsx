@@ -28,23 +28,23 @@ import { defineMessages } from "@/i18n/message";
  */
 const messages = defineMessages({
   announcement: {
-    id: "app._lib.provider.staff-dashboard-provider.announcement",
+    id: "app._lib.provider.dashboard.staff-dashboard-provider.announcement",
     defaultMessage: "New announcement: {text}",
   },
   frozen: {
-    id: "app._lib.provider.staff-dashboard-provider.frozen",
+    id: "app._lib.provider.dashboard.staff-dashboard-provider.frozen",
     defaultMessage: "Leaderboard has been frozen",
   },
   unfrozen: {
-    id: "app._lib.provider.staff-dashboard-provider.unfrozen",
+    id: "app._lib.provider.dashboard.staff-dashboard-provider.unfrozen",
     defaultMessage: "Leaderboard has been unfrozen",
   },
   newTicket: {
-    id: "app._lib.provider.staff-dashboard-provider.new-ticket",
+    id: "app._lib.provider.dashboard.staff-dashboard-provider.new-ticket",
     defaultMessage: "New ticket",
   },
   ticketUpdated: {
-    id: "app._lib.provider.staff-dashboard-provider.ticket-updated",
+    id: "app._lib.provider.dashboard.staff-dashboard-provider.ticket-updated",
     defaultMessage: "Your ticket has been updated to ''{status}''",
   },
 });
