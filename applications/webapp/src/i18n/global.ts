@@ -61,10 +61,6 @@ const memberType = defineMessages({
 });
 
 const submissionAnswer = defineMessages({
-  [SubmissionAnswer.NO_ANSWER]: {
-    id: "i18n.global.formatted-submission-answer.no_answer",
-    defaultMessage: "Judging",
-  },
   [SubmissionAnswer.ACCEPTED]: {
     id: "i18n.global.formatted-submission-answer.accepted",
     defaultMessage: "Accepted",
