@@ -45,10 +45,11 @@ class UnfreezeLeaderboardService(
             throw ForbiddenException("The leaderboard for this contest is not frozen")
         }
 
+        val frozenAt = contest.frozenAt!!
         contest.frozenAt = null
 
         contestRepository.save(contest)
-        applicationEventPublisher.publishEvent(LeaderboardEvent.Unfrozen(contest))
+        applicationEventPublisher.publishEvent(LeaderboardEvent.Unfrozen(contest, frozenAt))
 
         logger.info("Leaderboard unfrozen successfully")
         return contest

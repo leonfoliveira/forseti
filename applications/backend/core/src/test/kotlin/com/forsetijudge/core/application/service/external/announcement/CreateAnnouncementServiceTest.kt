@@ -93,6 +93,6 @@ class CreateAnnouncementServiceTest :
             announcement.member shouldBe member
             announcement.text shouldBe command.text
             verify { announcementRepository.save(announcement) }
-            verify { applicationEventPublisher.publishEvent(match<AnnouncementEvent.Created> { it.payload == announcement }) }
+            verify { applicationEventPublisher.publishEvent(match<AnnouncementEvent.Created> { it.announcement == announcement }) }
         }
     })

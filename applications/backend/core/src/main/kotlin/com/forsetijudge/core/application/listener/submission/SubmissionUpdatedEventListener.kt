@@ -19,14 +19,14 @@ import org.springframework.transaction.event.TransactionalEventListener
 class SubmissionUpdatedEventListener(
     private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<Submission, SubmissionEvent.Updated>() {
+) : BusinessEventListener<SubmissionEvent.Updated>() {
     @TransactionalEventListener(SubmissionEvent.Updated::class, phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: SubmissionEvent.Updated) {
         super.onApplicationEvent(event)
     }
 
-    override fun handlePayload(payload: Submission) {
-        val submission = payload
+    override fun handleEvent(event: SubmissionEvent.Updated) {
+        val submission = event.submission
         val (leaderboardCell) =
             buildLeaderboardCellUseCase.execute(
                 BuildLeaderboardCellUseCase.Command(memberId = submission.member.id, problemId = submission.problem.id),

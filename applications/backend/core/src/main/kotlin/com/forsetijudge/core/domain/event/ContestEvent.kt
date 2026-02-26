@@ -2,17 +2,15 @@ package com.forsetijudge.core.domain.event
 
 import com.forsetijudge.core.domain.entity.Contest
 
-abstract class ContestEvent(
-    val contest: Contest,
-) : BusinessEvent<Contest>(contest) {
+abstract class ContestEvent : BusinessEvent() {
     /**
      * Event triggered when a contest is created.
      *
      * @property contest The contest that was created.
      */
     class Created(
-        contest: Contest,
-    ) : ContestEvent(contest)
+        val contest: Contest,
+    ) : ContestEvent()
 
     /**
      * Event triggered when a contest is updated.
@@ -20,8 +18,8 @@ abstract class ContestEvent(
      * @property contest The contest that was updated.
      */
     class Updated(
-        contest: Contest,
-    ) : ContestEvent(contest)
+        val contest: Contest,
+    ) : ContestEvent()
 
     /**
      * Event triggered when a contest is deleted.
@@ -29,6 +27,6 @@ abstract class ContestEvent(
      * @property contest The contest that was deleted.
      */
     class Deleted(
-        contest: Contest,
-    ) : ContestEvent(contest)
+        val contest: Contest,
+    ) : ContestEvent()
 }

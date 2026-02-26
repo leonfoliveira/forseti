@@ -13,16 +13,17 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class TicketCreatedEventListener(
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<Ticket<*>, TicketEvent.Created>() {
+) : BusinessEventListener<TicketEvent.Created>() {
     @TransactionalEventListener(TicketEvent.Created::class, phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: TicketEvent.Created) {
         super.onApplicationEvent(event)
     }
 
-    override fun handlePayload(payload: Ticket<*>) {
-        val ticket = payload
+    override fun handleEvent(event: TicketEvent.Created) {
+        val ticket = event.ticket
+        val contest = ticket.contest
 
-        broadcastProducer.produce(AdminDashboardBroadcastRoom(ticket.contest.id).buildTicketCreatedEvent(ticket))
-        broadcastProducer.produce(StaffDashboardBroadcastRoom(ticket.contest.id).buildTicketCreatedEvent(ticket))
+        broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildTicketCreatedEvent(ticket))
+        broadcastProducer.produce(StaffDashboardBroadcastRoom(contest.id).buildTicketCreatedEvent(ticket))
     }
 }

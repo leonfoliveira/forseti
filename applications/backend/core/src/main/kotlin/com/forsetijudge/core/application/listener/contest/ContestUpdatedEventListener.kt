@@ -12,14 +12,14 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class ContestUpdatedEventListener(
     val autoFreezeJobScheduler: AutoFreezeJobScheduler,
-) : BusinessEventListener<Contest, ContestEvent.Updated>() {
+) : BusinessEventListener<ContestEvent.Updated>() {
     @TransactionalEventListener(ContestEvent.Updated::class, phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: ContestEvent.Updated) {
         super.onApplicationEvent(event)
     }
 
-    override fun handlePayload(payload: Contest) {
-        val contest = payload
+    override fun handleEvent(event: ContestEvent.Updated) {
+        val contest = event.contest
         val freezeAt = contest.autoFreezeAt
 
         if (freezeAt != null) {

@@ -16,14 +16,14 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class LeaderboardFrozenEventListener(
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<Contest, LeaderboardEvent.Frozen>() {
+) : BusinessEventListener<LeaderboardEvent.Frozen>() {
     @TransactionalEventListener(LeaderboardEvent.Frozen::class, phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: LeaderboardEvent.Frozen) {
         super.onApplicationEvent(event)
     }
 
-    override fun handlePayload(payload: Contest) {
-        val contest = payload
+    override fun handleEvent(event: LeaderboardEvent.Frozen) {
+        val contest = event.contest
 
         broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildLeaderboardFrozenEvent())
         broadcastProducer.produce(ContestantDashboardBroadcastRoom(contest.id).buildLeaderboardFrozenEvent())

@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.driving.usecase.external.submission
 
 import com.forsetijudge.core.domain.entity.Submission
+import java.time.OffsetDateTime
 
 interface FindAllSubmissionsByContestSinceLastFreezeUseCase {
     /**
@@ -8,5 +9,9 @@ interface FindAllSubmissionsByContestSinceLastFreezeUseCase {
      *
      * @return A list of [Submission] representing the submissions found.
      */
-    fun execute(): List<Submission>
+    fun execute(command: Command): List<Submission>
+
+    data class Command(
+        val frozenAt: OffsetDateTime,
+    )
 }

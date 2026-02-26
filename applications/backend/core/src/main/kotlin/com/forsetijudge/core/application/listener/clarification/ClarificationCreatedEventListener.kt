@@ -17,24 +17,25 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class ClarificationCreatedEventListener(
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<Clarification, ClarificationEvent.Created>() {
+) : BusinessEventListener<ClarificationEvent.Created>() {
     @TransactionalEventListener(ClarificationEvent.Created::class, phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: ClarificationEvent.Created) {
         super.onApplicationEvent(event)
     }
 
-    override fun handlePayload(payload: Clarification) {
-        val clarification = payload
+    override fun handleEvent(event: ClarificationEvent.Created) {
+        val clarification = event.clarification
+        val contest = clarification.contest
 
-        broadcastProducer.produce(AdminDashboardBroadcastRoom(clarification.contest.id).buildClarificationCreatedEvent(clarification))
-        broadcastProducer.produce(ContestantDashboardBroadcastRoom(clarification.contest.id).buildClarificationCreatedEvent(clarification))
-        broadcastProducer.produce(GuestDashboardBroadcastRoom(clarification.contest.id).buildClarificationCreatedEvent(clarification))
-        broadcastProducer.produce(JudgeDashboardBroadcastRoom(clarification.contest.id).buildClarificationCreatedEvent(clarification))
-        broadcastProducer.produce(StaffDashboardBroadcastRoom(clarification.contest.id).buildClarificationCreatedEvent(clarification))
+        broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildClarificationCreatedEvent(clarification))
+        broadcastProducer.produce(ContestantDashboardBroadcastRoom(contest.id).buildClarificationCreatedEvent(clarification))
+        broadcastProducer.produce(GuestDashboardBroadcastRoom(contest.id).buildClarificationCreatedEvent(clarification))
+        broadcastProducer.produce(JudgeDashboardBroadcastRoom(contest.id).buildClarificationCreatedEvent(clarification))
+        broadcastProducer.produce(StaffDashboardBroadcastRoom(contest.id).buildClarificationCreatedEvent(clarification))
         val parent = clarification.parent
         if (parent != null) {
             broadcastProducer.produce(
-                ContestantPrivateBroadcastRoom(clarification.contest.id, parent.member.id).buildClarificationAnsweredEvent(
+                ContestantPrivateBroadcastRoom(contest.id, parent.member.id).buildClarificationAnsweredEvent(
                     clarification,
                 ),
             )

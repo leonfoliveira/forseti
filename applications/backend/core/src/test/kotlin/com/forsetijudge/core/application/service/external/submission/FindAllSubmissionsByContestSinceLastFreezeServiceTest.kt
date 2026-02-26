@@ -12,6 +12,7 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
+import com.forsetijudge.core.port.driving.usecase.external.submission.FindAllSubmissionsByContestSinceLastFreezeUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -41,10 +42,15 @@ class FindAllSubmissionsByContestSinceLastFreezeServiceTest :
             ExecutionContextMockBuilder.build(contestId = contextContestId, memberId = contextMemberId)
         }
 
+        val command =
+            FindAllSubmissionsByContestSinceLastFreezeUseCase.Command(
+                frozenAt = OffsetDateTime.now().minusHours(1),
+            )
+
         test("should throw NotFoundException if contest does not exist") {
             every { contestRepository.findById(contextContestId) } returns null
 
-            shouldThrow<NotFoundException> { sut.execute() }
+            shouldThrow<NotFoundException> { sut.execute(command) }
         }
 
         test("should throw NotFoundException if member does not exist in contest") {
@@ -52,7 +58,7 @@ class FindAllSubmissionsByContestSinceLastFreezeServiceTest :
             every { contestRepository.findById(contextContestId) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns null
 
-            shouldThrow<NotFoundException> { sut.execute() }
+            shouldThrow<NotFoundException> { sut.execute(command) }
         }
 
         test("should throw ForbiddenException if member cannot access not started contest") {
@@ -64,16 +70,7 @@ class FindAllSubmissionsByContestSinceLastFreezeServiceTest :
             val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
             every { memberRepository.findByIdAndContestIdOrContestIsNull(any(), any()) } returns member
 
-            shouldThrow<BusinessException> { sut.execute() }
-        }
-
-        test("should throw ForbiddenException if contest is not frozen") {
-            val contest = ContestMockBuilder.build(frozenAt = null)
-            every { contestRepository.findById(any()) } returns contest
-            val member = MemberMockBuilder.build(type = Member.Type.ADMIN)
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
-
-            shouldThrow<ForbiddenException> { sut.execute() }
+            shouldThrow<BusinessException> { sut.execute(command) }
         }
 
         test("should return submissions since last freeze") {
@@ -86,9 +83,9 @@ class FindAllSubmissionsByContestSinceLastFreezeServiceTest :
                     SubmissionMockBuilder.build(),
                     SubmissionMockBuilder.build(),
                 )
-            every { submissionRepository.findByContestIdAndCreatedAtGreaterThanEqual(contest.id, contest.frozenAt!!) } returns submissions
+            every { submissionRepository.findByContestIdAndCreatedAtGreaterThanEqual(contest.id, command.frozenAt) } returns submissions
 
-            val result = sut.execute()
+            val result = sut.execute(command)
 
             result shouldBe submissions
         }

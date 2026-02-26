@@ -22,7 +22,7 @@ class FindAllSubmissionsByContestSinceLastFreezeService(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional(readOnly = true)
-    override fun execute(): List<Submission> {
+    override fun execute(command: FindAllSubmissionsByContestSinceLastFreezeUseCase.Command): List<Submission> {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -41,11 +41,7 @@ class FindAllSubmissionsByContestSinceLastFreezeService(
             .or({ it.requireMemberCanAccessNotStartedContest() }, { it.requireContestStarted() })
             .throwIfErrors()
 
-        if (!contest.isFrozen) {
-            throw ForbiddenException("Contest ${contest.id} is not frozen")
-        }
-
-        val submissions = submissionRepository.findByContestIdAndCreatedAtGreaterThanEqual(contest.id, contest.frozenAt!!)
+        val submissions = submissionRepository.findByContestIdAndCreatedAtGreaterThanEqual(contest.id, command.frozenAt)
 
         logger.info("Found ${submissions.size} submissions")
         return submissions

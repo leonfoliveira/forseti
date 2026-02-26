@@ -20,17 +20,19 @@ class LeaderboardUnfrozenEventListener(
     private val buildLeaderboardUseCase: BuildLeaderboardUseCase,
     private val findAllSubmissionsByContestSinceLastFreezeUseCase: FindAllSubmissionsByContestSinceLastFreezeUseCase,
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<Contest, LeaderboardEvent.Unfrozen>() {
+) : BusinessEventListener<LeaderboardEvent.Unfrozen>() {
     @TransactionalEventListener(LeaderboardEvent.Unfrozen::class, phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: LeaderboardEvent.Unfrozen) {
         super.onApplicationEvent(event)
     }
 
-    override fun handlePayload(payload: Contest) {
-        val contest = payload
+    override fun handleEvent(event: LeaderboardEvent.Unfrozen) {
+        val contest = event.contest
         val leaderboard = buildLeaderboardUseCase.execute()
         val frozenSubmissions =
-            findAllSubmissionsByContestSinceLastFreezeUseCase.execute()
+            findAllSubmissionsByContestSinceLastFreezeUseCase.execute(
+                FindAllSubmissionsByContestSinceLastFreezeUseCase.Command(frozenAt = event.frozenAt),
+            )
 
         broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildLeaderboardUnfrozenEvent(leaderboard))
         broadcastProducer.produce(

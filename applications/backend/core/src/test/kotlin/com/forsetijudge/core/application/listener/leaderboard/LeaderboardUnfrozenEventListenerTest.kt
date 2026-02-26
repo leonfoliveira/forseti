@@ -20,6 +20,7 @@ import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import java.time.OffsetDateTime
 
 @ActiveProfiles("test")
 @SpringBootTest(classes = [LeaderboardUnfrozenEventListener::class])
@@ -40,11 +41,12 @@ class LeaderboardUnfrozenEventListenerTest(
 
         test("should handle event successfully") {
             val contest = ContestMockBuilder.build()
+            val frozenAt = OffsetDateTime.now()
             val leaderboard = LeaderboardMockBuilder.build()
             val frozenSubmissions = listOf(SubmissionMockBuilder.build(), SubmissionMockBuilder.build())
-            val event = LeaderboardEvent.Unfrozen(contest)
+            val event = LeaderboardEvent.Unfrozen(contest, frozenAt)
             every { buildLeaderboardUseCase.execute() } returns leaderboard
-            every { findAllSubmissionsByContestSinceLastFreezeUseCase.execute() } returns frozenSubmissions
+            every { findAllSubmissionsByContestSinceLastFreezeUseCase.execute(any()) } returns frozenSubmissions
 
             sut.onApplicationEvent(event)
 

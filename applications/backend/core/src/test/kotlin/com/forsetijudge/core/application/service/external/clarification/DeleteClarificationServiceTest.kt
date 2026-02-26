@@ -91,6 +91,6 @@ class DeleteClarificationServiceTest :
 
             clarification.deletedAt shouldBe now
             verify { clarificationRepository.save(clarification) }
-            verify { applicationEventPublisher.publishEvent(match<ClarificationEvent.Deleted> { it.payload == clarification }) }
+            verify { applicationEventPublisher.publishEvent(match<ClarificationEvent.Deleted> { it.clarification == clarification }) }
         }
     })

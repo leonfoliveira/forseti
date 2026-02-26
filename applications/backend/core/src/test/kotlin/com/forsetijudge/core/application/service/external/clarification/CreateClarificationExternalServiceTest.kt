@@ -132,7 +132,7 @@ class CreateClarificationExternalServiceTest :
                 verify {
                     applicationEventPublisher.publishEvent(
                         match<ClarificationEvent.Created> {
-                            it.payload == result
+                            it.clarification == result
                         },
                     )
                 }
@@ -222,7 +222,7 @@ class CreateClarificationExternalServiceTest :
                 verify {
                     applicationEventPublisher.publishEvent(
                         match<ClarificationEvent.Created> {
-                            it.payload == result
+                            it.clarification == result
                         },
                     )
                 }

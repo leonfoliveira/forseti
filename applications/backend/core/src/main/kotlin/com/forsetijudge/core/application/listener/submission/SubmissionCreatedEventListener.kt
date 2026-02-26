@@ -22,7 +22,7 @@ class SubmissionCreatedEventListener(
     private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
     private val broadcastProducer: BroadcastProducer,
     private val submissionQueueProducer: SubmissionQueueProducer,
-) : BusinessEventListener<Submission, SubmissionEvent.Created>() {
+) : BusinessEventListener<SubmissionEvent.Created>() {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @TransactionalEventListener(SubmissionEvent.Created::class, phase = TransactionPhase.AFTER_COMMIT)
@@ -30,19 +30,20 @@ class SubmissionCreatedEventListener(
         super.onApplicationEvent(event)
     }
 
-    override fun handlePayload(payload: Submission) {
-        val submission = payload
+    override fun handleEvent(event: SubmissionEvent.Created) {
+        val submission = event.submission
+        val contest = submission.contest
 
-        broadcastProducer.produce(AdminDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission))
-        broadcastProducer.produce(ContestantDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission))
-        broadcastProducer.produce(GuestDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission))
-        broadcastProducer.produce(JudgeDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission))
-        broadcastProducer.produce(StaffDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission))
+        broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildSubmissionCreatedEvent(submission))
+        broadcastProducer.produce(ContestantDashboardBroadcastRoom(contest.id).buildSubmissionCreatedEvent(submission))
+        broadcastProducer.produce(GuestDashboardBroadcastRoom(contest.id).buildSubmissionCreatedEvent(submission))
+        broadcastProducer.produce(JudgeDashboardBroadcastRoom(contest.id).buildSubmissionCreatedEvent(submission))
+        broadcastProducer.produce(StaffDashboardBroadcastRoom(contest.id).buildSubmissionCreatedEvent(submission))
 
         if (submission.contest.settings.isAutoJudgeEnabled) {
             submissionQueueProducer.produce(SubmissionQueuePayload(submissionId = submission.id))
         } else {
-            logger.info("Auto judge is disabled for contest with id: ${submission.contest.id}")
+            logger.info("Auto judge is disabled for contest with id: ${contest.id}")
         }
     }
 }

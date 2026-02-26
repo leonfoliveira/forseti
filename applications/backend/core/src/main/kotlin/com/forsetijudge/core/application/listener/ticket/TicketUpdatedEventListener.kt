@@ -15,18 +15,19 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class TicketUpdatedEventListener(
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<Ticket<*>, TicketEvent.Updated>() {
+) : BusinessEventListener<TicketEvent.Updated>() {
     @TransactionalEventListener(TicketEvent.Updated::class, phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: TicketEvent.Updated) {
         super.onApplicationEvent(event)
     }
 
-    override fun handlePayload(payload: Ticket<*>) {
-        val ticket = payload
+    override fun handleEvent(event: TicketEvent.Updated) {
+        val ticket = event.ticket
+        val contest = ticket.contest
 
-        broadcastProducer.produce(AdminDashboardBroadcastRoom(ticket.contest.id).buildTicketUpdatedEvent(ticket))
-        broadcastProducer.produce(StaffDashboardBroadcastRoom(ticket.contest.id).buildTicketUpdatedEvent(ticket))
-        broadcastProducer.produce(ContestantPrivateBroadcastRoom(ticket.contest.id, ticket.member.id).buildTicketUpdatedEvent(ticket))
-        broadcastProducer.produce(JudgePrivateBroadcastRoom(ticket.contest.id, ticket.member.id).buildTicketUpdatedEvent(ticket))
+        broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildTicketUpdatedEvent(ticket))
+        broadcastProducer.produce(StaffDashboardBroadcastRoom(contest.id).buildTicketUpdatedEvent(ticket))
+        broadcastProducer.produce(ContestantPrivateBroadcastRoom(contest.id, ticket.member.id).buildTicketUpdatedEvent(ticket))
+        broadcastProducer.produce(JudgePrivateBroadcastRoom(contest.id, ticket.member.id).buildTicketUpdatedEvent(ticket))
     }
 }

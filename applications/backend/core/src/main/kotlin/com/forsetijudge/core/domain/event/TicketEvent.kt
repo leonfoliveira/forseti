@@ -2,17 +2,15 @@ package com.forsetijudge.core.domain.event
 
 import com.forsetijudge.core.domain.entity.Ticket
 
-abstract class TicketEvent(
-    val ticket: Ticket<*>,
-) : BusinessEvent<Ticket<*>>(ticket) {
+abstract class TicketEvent : BusinessEvent() {
     /**
      * Event triggered when a new ticket is created
      *
      * @property ticket the created ticket
      */
     class Created(
-        ticket: Ticket<*>,
-    ) : TicketEvent(ticket)
+        val ticket: Ticket<*>,
+    ) : TicketEvent()
 
     /**
      * Event triggered when a ticket is updated
@@ -20,6 +18,6 @@ abstract class TicketEvent(
      * @property ticket the updated ticket
      */
     class Updated(
-        ticket: Ticket<*>,
-    ) : TicketEvent(ticket)
+        val ticket: Ticket<*>,
+    ) : TicketEvent()
 }

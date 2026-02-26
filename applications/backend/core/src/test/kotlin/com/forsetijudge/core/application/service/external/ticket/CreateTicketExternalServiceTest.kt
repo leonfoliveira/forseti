@@ -180,7 +180,7 @@ class CreateTicketExternalServiceTest :
                         "attachmentId" to attachmentId.toString(),
                     )
                 verify { ticketRepository.save(result) }
-                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.payload == result }) }
+                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.ticket == result }) }
             }
         }
 
@@ -250,7 +250,7 @@ class CreateTicketExternalServiceTest :
                         objectMapper.convertValue(command.properties, TechnicalSupportTicket.Properties::class.java),
                     )
                 verify { ticketRepository.save(result) }
-                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.payload == result }) }
+                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.ticket == result }) }
             }
         }
 
@@ -320,7 +320,7 @@ class CreateTicketExternalServiceTest :
                         objectMapper.convertValue(command.properties, TechnicalSupportTicket.Properties::class.java),
                     )
                 verify { ticketRepository.save(result) }
-                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.payload == result }) }
+                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.ticket == result }) }
             }
         }
     })

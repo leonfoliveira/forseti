@@ -2,17 +2,15 @@ package com.forsetijudge.core.domain.event
 
 import com.forsetijudge.core.domain.entity.Submission
 
-abstract class SubmissionEvent(
-    val submission: Submission,
-) : BusinessEvent<Submission>(submission) {
+abstract class SubmissionEvent : BusinessEvent() {
     /**
      * Event triggered when a new submission is created
      *
      * @param submission the created submission
      */
     class Created(
-        submission: Submission,
-    ) : SubmissionEvent(submission)
+        val submission: Submission,
+    ) : SubmissionEvent()
 
     /**
      * Event triggered when a submission is reset
@@ -20,8 +18,8 @@ abstract class SubmissionEvent(
      * @param submission the reset submission
      */
     class Reset(
-        submission: Submission,
-    ) : SubmissionEvent(submission)
+        val submission: Submission,
+    ) : SubmissionEvent()
 
     /**
      * Event triggered when a submission is updated
@@ -29,6 +27,6 @@ abstract class SubmissionEvent(
      * @param submission the updated submission
      */
     class Updated(
-        submission: Submission,
-    ) : SubmissionEvent(submission)
+        val submission: Submission,
+    ) : SubmissionEvent()
 }

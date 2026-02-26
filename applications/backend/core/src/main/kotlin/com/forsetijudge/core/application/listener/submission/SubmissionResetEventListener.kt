@@ -13,7 +13,7 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class SubmissionResetEventListener(
     private val submissionQueueProducer: SubmissionQueueProducer,
-) : BusinessEventListener<Submission, SubmissionEvent.Reset>() {
+) : BusinessEventListener<SubmissionEvent.Reset>() {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @TransactionalEventListener(SubmissionEvent.Reset::class, phase = TransactionPhase.AFTER_COMMIT)
@@ -21,12 +21,14 @@ class SubmissionResetEventListener(
         super.onApplicationEvent(event)
     }
 
-    override fun handlePayload(payload: Submission) {
-        val submission = payload
+    override fun handleEvent(event: SubmissionEvent.Reset) {
+        val submission = event.submission
+        val contest = submission.contest
+
         if (submission.contest.settings.isAutoJudgeEnabled) {
             submissionQueueProducer.produce(SubmissionQueuePayload(submissionId = submission.id))
         } else {
-            logger.info("Auto judge is disabled for contest with id: ${submission.contest.id}")
+            logger.info("Auto judge is disabled for contest with id: ${contest.id}")
         }
     }
 }

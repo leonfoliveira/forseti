@@ -16,19 +16,20 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class ClarificationDeletedEventListener(
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<Clarification, ClarificationEvent.Deleted>() {
+) : BusinessEventListener<ClarificationEvent.Deleted>() {
     @TransactionalEventListener(ClarificationEvent.Deleted::class, phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: ClarificationEvent.Deleted) {
         super.onApplicationEvent(event)
     }
 
-    override fun handlePayload(payload: Clarification) {
-        val clarification = payload
+    override fun handleEvent(event: ClarificationEvent.Deleted) {
+        val clarification = event.clarification
+        val contest = clarification.contest
 
-        broadcastProducer.produce(AdminDashboardBroadcastRoom(clarification.contest.id).buildClarificationDeletedEvent(clarification))
-        broadcastProducer.produce(ContestantDashboardBroadcastRoom(clarification.contest.id).buildClarificationDeletedEvent(clarification))
-        broadcastProducer.produce(GuestDashboardBroadcastRoom(clarification.contest.id).buildClarificationDeletedEvent(clarification))
-        broadcastProducer.produce(JudgeDashboardBroadcastRoom(clarification.contest.id).buildClarificationDeletedEvent(clarification))
-        broadcastProducer.produce(StaffDashboardBroadcastRoom(clarification.contest.id).buildClarificationDeletedEvent(clarification))
+        broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildClarificationDeletedEvent(clarification))
+        broadcastProducer.produce(ContestantDashboardBroadcastRoom(contest.id).buildClarificationDeletedEvent(clarification))
+        broadcastProducer.produce(GuestDashboardBroadcastRoom(contest.id).buildClarificationDeletedEvent(clarification))
+        broadcastProducer.produce(JudgeDashboardBroadcastRoom(contest.id).buildClarificationDeletedEvent(clarification))
+        broadcastProducer.produce(StaffDashboardBroadcastRoom(contest.id).buildClarificationDeletedEvent(clarification))
     }
 }

@@ -16,19 +16,20 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class AnnouncementCreatedEventListener(
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<Announcement, AnnouncementEvent.Created>() {
+) : BusinessEventListener<AnnouncementEvent.Created>() {
     @TransactionalEventListener(AnnouncementEvent.Created::class, phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: AnnouncementEvent.Created) {
         super.onApplicationEvent(event)
     }
 
-    override fun handlePayload(payload: Announcement) {
-        val announcement = payload
+    override fun handleEvent(event: AnnouncementEvent.Created) {
+        val announcement = event.announcement
+        val contest = announcement.contest
 
-        broadcastProducer.produce(AdminDashboardBroadcastRoom(announcement.contest.id).buildAnnouncementCreatedEvent(announcement))
-        broadcastProducer.produce(ContestantDashboardBroadcastRoom(announcement.contest.id).buildAnnouncementCreatedEvent(announcement))
-        broadcastProducer.produce(GuestDashboardBroadcastRoom(announcement.contest.id).buildAnnouncementCreatedEvent(announcement))
-        broadcastProducer.produce(JudgeDashboardBroadcastRoom(announcement.contest.id).buildAnnouncementCreatedEvent(announcement))
-        broadcastProducer.produce(StaffDashboardBroadcastRoom(announcement.contest.id).buildAnnouncementCreatedEvent(announcement))
+        broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildAnnouncementCreatedEvent(announcement))
+        broadcastProducer.produce(ContestantDashboardBroadcastRoom(contest.id).buildAnnouncementCreatedEvent(announcement))
+        broadcastProducer.produce(GuestDashboardBroadcastRoom(contest.id).buildAnnouncementCreatedEvent(announcement))
+        broadcastProducer.produce(JudgeDashboardBroadcastRoom(contest.id).buildAnnouncementCreatedEvent(announcement))
+        broadcastProducer.produce(StaffDashboardBroadcastRoom(contest.id).buildAnnouncementCreatedEvent(announcement))
     }
 }

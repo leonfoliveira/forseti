@@ -3,7 +3,7 @@ package com.forsetijudge.core.application.listener
 import com.forsetijudge.core.domain.event.BusinessEvent
 import org.slf4j.LoggerFactory
 
-abstract class BusinessEventListener<TPayload, TBusinessEvent : BusinessEvent<TPayload>> : ApplicationEventListener() {
+abstract class BusinessEventListener<TBusinessEvent : BusinessEvent> : ApplicationEventListener() {
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -16,10 +16,10 @@ abstract class BusinessEventListener<TPayload, TBusinessEvent : BusinessEvent<TP
 
         logger.info("Handling business event of type: ${event::class.java.simpleName}")
 
-        handlePayload(event.payload)
+        handleEvent(event)
 
         logger.info("Finished handling business event of type: ${event::class.java.simpleName}")
     }
 
-    abstract fun handlePayload(payload: TPayload)
+    abstract fun handleEvent(event: TBusinessEvent)
 }
