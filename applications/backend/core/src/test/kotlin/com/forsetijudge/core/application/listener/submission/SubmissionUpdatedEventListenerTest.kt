@@ -99,7 +99,7 @@ class SubmissionUpdatedEventListenerTest(
             }
 
             verify {
-                leaderboardCacheStore.cache(submission.contest.id, leaderboardCell)
+                leaderboardCacheStore.cacheCell(submission.contest.id, leaderboardCell)
             }
         }
 
@@ -157,7 +157,7 @@ class SubmissionUpdatedEventListenerTest(
                 )
             }
             verify(exactly = 0) {
-                leaderboardCacheStore.cache(submission.contest.id, leaderboardCell)
+                leaderboardCacheStore.cacheCell(submission.contest.id, leaderboardCell)
             }
         }
     })

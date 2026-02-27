@@ -7,6 +7,7 @@ import com.forsetijudge.core.testcontainer.RedisTestContainer
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
@@ -23,12 +24,15 @@ class LeaderboardRedisStoreTest(
             val cell1 = LeaderboardMockBuilder.buildCell()
             val cell2 = LeaderboardMockBuilder.buildCell()
 
-            sut.cache(contest1Id, cell1)
-            sut.cache(contest2Id, cell2)
+            sut.cacheCell(contest1Id, cell1)
+            sut.cacheCell(contest2Id, cell2)
 
-            val retrievedCells = sut.getAllByContestId(contest1Id)
+            val cell = sut.getCell(contest1Id, cell1.memberId, cell1.problemId)
+            cell shouldNotBe cell1
 
-            retrievedCells shouldHaveSize 1
-            retrievedCells shouldContainExactlyInAnyOrder listOf(cell1)
+            val retrievedContestCells = sut.getAllCellsByContestId(contest1Id)
+
+            retrievedContestCells shouldHaveSize 1
+            retrievedContestCells shouldContainExactlyInAnyOrder listOf(cell1)
         }
     })

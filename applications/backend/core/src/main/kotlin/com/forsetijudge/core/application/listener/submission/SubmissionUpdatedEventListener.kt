@@ -58,7 +58,7 @@ class SubmissionUpdatedEventListener(
                 StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
             )
 
-            leaderboardCacheStore.cache(submission.contest.id, leaderboardCell)
+            leaderboardCacheStore.cacheCell(submission.contest.id, leaderboardCell)
         }
     }
 }
