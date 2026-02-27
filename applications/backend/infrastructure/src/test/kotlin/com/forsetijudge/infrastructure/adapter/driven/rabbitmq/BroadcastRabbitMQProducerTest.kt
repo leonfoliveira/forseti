@@ -57,7 +57,7 @@ class BroadcastRabbitMQProducerTest(
                 object :
                     TypeReference<
                         RabbitMQMessage<BroadcastEvent>,
-                    >() {}
+                        >() {}
 
             val message = objectMapper.readValue(jsonMessage, typeRef)
             message.contestId shouldBe contestId
@@ -65,6 +65,6 @@ class BroadcastRabbitMQProducerTest(
             message.payload.room shouldBe payload.room
             message.payload.name shouldBe payload.name
             message.payload.data shouldBe payload.data
-            verify { broadCastEventRedisStore.add(payload) }
+            verify { broadCastEventRedisStore.cache(payload) }
         }
     })

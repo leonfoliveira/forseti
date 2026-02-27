@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
+import com.forsetijudge.core.port.driven.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
 import com.ninjasquad.springmockk.MockkBean
@@ -31,6 +32,8 @@ class SubmissionUpdatedEventListenerTest(
     @MockkBean(relaxed = true)
     private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
     @MockkBean(relaxed = true)
+    private val leaderboardCacheStore: LeaderboardCacheStore,
+    @MockkBean(relaxed = true)
     private val broadcastProducer: BroadcastProducer,
     private val sut: SubmissionUpdatedEventListener,
 ) : FunSpec({
@@ -49,7 +52,7 @@ class SubmissionUpdatedEventListenerTest(
                         problemId = submission.problem.id,
                     ),
                 )
-            } returns Pair(leaderboardCell, submission.member.id)
+            } returns leaderboardCell
 
             sut.onApplicationEvent(event)
 
@@ -69,30 +72,34 @@ class SubmissionUpdatedEventListenerTest(
             verify { broadcastProducer.produce(GuestDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission)) }
             verify {
                 broadcastProducer.produce(
-                    AdminDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    AdminDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify {
                 broadcastProducer.produce(
                     ContestantDashboardBroadcastRoom(
                         submission.contest.id,
-                    ).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    ).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    GuestDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    GuestDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    JudgeDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    JudgeDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
+            }
+
+            verify {
+                leaderboardCacheStore.cacheCell(submission.contest.id, leaderboardCell)
             }
         }
 
@@ -111,7 +118,7 @@ class SubmissionUpdatedEventListenerTest(
                         problemId = submission.problem.id,
                     ),
                 )
-            } returns Pair(leaderboardCell, submission.member.id)
+            } returns leaderboardCell
             val event = SubmissionEvent.Updated(submission)
 
             sut.onApplicationEvent(event)
@@ -124,30 +131,33 @@ class SubmissionUpdatedEventListenerTest(
             ) { broadcastProducer.produce(GuestDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission)) }
             verify(exactly = 0) {
                 broadcastProducer.produce(
-                    AdminDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    AdminDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify(exactly = 0) {
                 broadcastProducer.produce(
                     ContestantDashboardBroadcastRoom(
                         submission.contest.id,
-                    ).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    ).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify(exactly = 0) {
                 broadcastProducer.produce(
-                    GuestDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    GuestDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify(exactly = 0) {
                 broadcastProducer.produce(
-                    JudgeDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    JudgeDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify(exactly = 0) {
                 broadcastProducer.produce(
-                    StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
+            }
+            verify(exactly = 0) {
+                leaderboardCacheStore.cacheCell(submission.contest.id, leaderboardCell)
             }
         }
     })

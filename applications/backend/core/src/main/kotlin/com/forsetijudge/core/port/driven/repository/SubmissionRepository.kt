@@ -15,6 +15,15 @@ interface SubmissionRepository : BaseRepository<Submission> {
     @Query("SELECT s FROM Submission s WHERE s.problem.contest.id = ?1 AND deletedAt IS NULL")
     fun findAllByContestId(contestId: UUID): List<Submission>
 
+    @Query(
+        """SELECT s FROM Submission s WHERE s.problem.contest.id = ?1 AND s.status = ?2 AND (s.member.id, s.problem.id) NOT IN ?3 AND deletedAt IS NULL""",
+    )
+    fun findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
+        contestId: UUID,
+        status: Submission.Status,
+        excludedMemberProblemPairs: Collection<Pair<UUID, UUID>>,
+    ): List<Submission>
+
     @Query("SELECT s FROM Submission s WHERE s.id = ?1 AND s.problem.contest.id = ?2 AND deletedAt IS NULL")
     fun findByIdAndContestId(
         id: UUID,

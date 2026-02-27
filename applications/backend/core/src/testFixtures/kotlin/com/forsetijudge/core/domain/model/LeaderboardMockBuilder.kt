@@ -35,6 +35,7 @@ object LeaderboardMockBuilder {
         )
 
     fun buildCell(
+        memberId: UUID = IdGenerator.getUUID(),
         problemId: UUID = IdGenerator.getUUID(),
         problemLetter: Char = 'A',
         problemColor: String = "#ffffff",
@@ -44,6 +45,7 @@ object LeaderboardMockBuilder {
         penalty: Int = 0,
     ): Leaderboard.Cell =
         Leaderboard.Cell(
+            memberId = memberId,
             problemId = problemId,
             problemLetter = problemLetter,
             problemColor = problemColor,

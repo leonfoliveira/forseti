@@ -38,6 +38,7 @@ data class Leaderboard(
     /**
      * Represents a cell in the leaderboard, which corresponds to a problem and contains information about the contestant's performance on that problem.
      *
+     * @param memberId The ID of the contestant.
      * @param problemId The ID of the problem.
      * @param problemLetter The letter assigned to the problem (e.g., 'A', 'B', 'C', etc.).
      * @param problemColor The hexadecimal color representing the status of the problem for the contestant.
@@ -47,6 +48,7 @@ data class Leaderboard(
      * @param penalty The penalty time in minutes for this problem, which is calculated based on the time of acceptance and the number of wrong submissions. This is only relevant if `isAccepted` is true.
      */
     data class Cell(
+        val memberId: UUID,
         val problemId: UUID,
         val problemLetter: Char,
         val problemColor: String,

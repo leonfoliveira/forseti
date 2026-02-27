@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.external.dashboard
 
 import com.forsetijudge.core.application.util.SafeLogger
+import com.forsetijudge.core.domain.entity.unfreeze
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.dashboard.GuestDashboard
@@ -26,7 +27,10 @@ class BuildGuestDashboardService(
                 ?: throw NotFoundException("Could not find contest with id $contextContestId")
 
         val leaderboard = buildLeaderboardUseCase.execute()
-        val submissions = contest.problems.map { it.submissions }.flatten()
+        val submissions =
+            contest.problems
+                .map { problem -> if (contest.isFrozen) problem.frozenSubmissions.map { it.unfreeze() } else problem.submissions }
+                .flatten()
 
         return GuestDashboard(
             contest = contest,

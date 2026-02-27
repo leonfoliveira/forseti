@@ -15,6 +15,7 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
+import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
@@ -37,6 +38,7 @@ class CreateSubmissionExternalServiceTest :
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val problemRepository = mockk<ProblemRepository>(relaxed = true)
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
+        val frozenSubmissionRepository = mockk<FrozenSubmissionRepository>(relaxed = true)
         val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
         val sut =
@@ -46,6 +48,7 @@ class CreateSubmissionExternalServiceTest :
                 memberRepository = memberRepository,
                 problemRepository = problemRepository,
                 submissionRepository = submissionRepository,
+                frozenSubmissionRepository = frozenSubmissionRepository,
                 applicationEventPublisher = applicationEventPublisher,
             )
 
@@ -174,6 +177,7 @@ class CreateSubmissionExternalServiceTest :
             every { problemRepository.findByIdAndContestId(command.problemId, contextContestId) } returns problem
             every { attachmentRepository.findByIdAndContestId(command.code.id, contextContestId) } returns code
             every { submissionRepository.save(any()) } answers { firstArg() }
+            every { frozenSubmissionRepository.save(any()) } answers { firstArg() }
             every { applicationEventPublisher.publishEvent(any<SubmissionEvent.Created>()) } returns Unit
 
             val result = sut.execute(command)
@@ -188,5 +192,6 @@ class CreateSubmissionExternalServiceTest :
             submission.answer shouldBe null
             submission.code shouldBe code
             result shouldBe submission
+            verify { frozenSubmissionRepository.save(any()) }
         }
     })

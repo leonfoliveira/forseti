@@ -5,12 +5,14 @@ import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.entity.freeze
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
+import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
@@ -29,6 +31,7 @@ class CreateSubmissionService(
     private val memberRepository: MemberRepository,
     private val problemRepository: ProblemRepository,
     private val submissionRepository: SubmissionRepository,
+    private val frozenSubmissionRepository: FrozenSubmissionRepository,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : CreateSubmissionUseCase {
     private val logger = SafeLogger(this::class)
@@ -78,6 +81,7 @@ class CreateSubmissionService(
                 code = code,
             )
         submissionRepository.save(submission)
+        frozenSubmissionRepository.save(submission.freeze())
         applicationEventPublisher.publishEvent(SubmissionEvent.Created(submission))
 
         logger.info("Submission created")

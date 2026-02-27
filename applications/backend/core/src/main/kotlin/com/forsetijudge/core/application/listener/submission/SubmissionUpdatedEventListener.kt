@@ -9,6 +9,7 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
+import com.forsetijudge.core.port.driven.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
@@ -18,6 +19,7 @@ import org.springframework.transaction.event.TransactionalEventListener
 class SubmissionUpdatedEventListener(
     private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
     private val broadcastProducer: BroadcastProducer,
+    private val leaderboardCacheStore: LeaderboardCacheStore,
 ) : BusinessEventListener<SubmissionEvent.Updated>() {
     @TransactionalEventListener(SubmissionEvent.Updated::class, phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: SubmissionEvent.Updated) {
@@ -26,7 +28,7 @@ class SubmissionUpdatedEventListener(
 
     override fun handleEvent(event: SubmissionEvent.Updated) {
         val submission = event.submission
-        val (leaderboardCell) =
+        val leaderboardCell =
             buildLeaderboardCellUseCase.execute(
                 BuildLeaderboardCellUseCase.Command(memberId = submission.member.id, problemId = submission.problem.id),
             )
@@ -41,20 +43,22 @@ class SubmissionUpdatedEventListener(
             broadcastProducer.produce(ContestantDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
             broadcastProducer.produce(GuestDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
             broadcastProducer.produce(
-                AdminDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                AdminDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
             )
             broadcastProducer.produce(
-                ContestantDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                ContestantDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
             )
             broadcastProducer.produce(
-                GuestDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                GuestDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
             )
             broadcastProducer.produce(
-                JudgeDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                JudgeDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
             )
             broadcastProducer.produce(
-                StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
             )
+
+            leaderboardCacheStore.cacheCell(submission.contest.id, leaderboardCell)
         }
     }
 }

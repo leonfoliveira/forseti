@@ -9,7 +9,7 @@ interface BroadcastEventCacheStore {
      *
      * @param event The broadcast event to be added to the cache store.
      */
-    fun add(event: BroadcastEvent)
+    fun cache(event: BroadcastEvent)
 
     /**
      * Get all broadcast events for a specific room that have been added to the cache store since a given timestamp.
