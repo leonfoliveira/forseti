@@ -19,7 +19,8 @@ class SocketIOServerManagedLifecycleTest :
         }
 
         test("should stop server on stop") {
-            sut.stop()
+            sut.start()
+            sut.stop { }
 
             verify { server.stop() }
         }

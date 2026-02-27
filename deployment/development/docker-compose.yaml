@@ -22,6 +22,23 @@ services:
     volumes:
       - dev-postgres_data:/var/lib/postgresql/data
 
+  redis:
+    command: redis-server --requirepass "forsetijudge"
+    container_name: dev-forseti-redis
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a forsetijudge ping || exit 1"]
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: redis:8.6.1-alpine
+    networks:
+      - dev-forseti-network
+    ports:
+      - 6379:6379
+    profiles:
+      - infra
+
   minio:
     command: server /data --console-address ":9001"
     container_name: dev-forseti-minio
@@ -130,6 +147,9 @@ services:
       RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: forsetijudge
       ROOT_PASSWORD: forsetijudge
       OTEL_LOGS_EXPORTER: none
       OTEL_METRICS_EXPORTER: none
@@ -192,6 +212,9 @@ services:
       RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: forsetijudge
       ROOT_PASSWORD: forsetijudge
       OTEL_LOGS_EXPORTER: none
       OTEL_METRICS_EXPORTER: none
@@ -249,5 +272,6 @@ networks:
 
 volumes:
   dev-postgres_data:
+  dev-redis_data:
   dev-minio_data:
   dev-rabbitmq_data:

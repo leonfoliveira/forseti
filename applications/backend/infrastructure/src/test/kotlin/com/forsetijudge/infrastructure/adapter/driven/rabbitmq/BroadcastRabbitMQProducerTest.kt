@@ -6,6 +6,7 @@ import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
+import com.forsetijudge.infrastructure.adapter.driven.redis.BroadcastEventRedisStore
 import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
@@ -23,6 +24,8 @@ class BroadcastRabbitMQProducerTest(
     private val rabbitTemplate: RabbitTemplate,
     @Value("\${spring.rabbitmq.exchange.websocket-exchange}")
     private val exchange: String,
+    @MockkBean(relaxed = true)
+    private val broadCastEventRedisStore: BroadcastEventRedisStore,
     private val sut: BroadcastRabbitMQProducer,
     private val objectMapper: ObjectMapper,
 ) : FunSpec({
@@ -54,7 +57,7 @@ class BroadcastRabbitMQProducerTest(
                 object :
                     TypeReference<
                         RabbitMQMessage<BroadcastEvent>,
-                        >() {}
+                    >() {}
 
             val message = objectMapper.readValue(jsonMessage, typeRef)
             message.contestId shouldBe contestId
@@ -62,5 +65,6 @@ class BroadcastRabbitMQProducerTest(
             message.payload.room shouldBe payload.room
             message.payload.name shouldBe payload.name
             message.payload.data shouldBe payload.data
+            verify { broadCastEventRedisStore.add(payload) }
         }
     })

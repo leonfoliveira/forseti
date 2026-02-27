@@ -9,6 +9,8 @@ secrets:
     external: true
   rabbitmq_password:
     external: true
+  redis_password:
+    external: true
   root_password:
     external: true
 
@@ -119,6 +121,9 @@ services:
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       RABBITMQ_WEBSOCKET_EXCHANGE: websocket-exchange
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
       ROOT_PASSWORD_FILE: /run/secrets/root_password
       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://alloy:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
@@ -143,6 +148,7 @@ services:
       - db_password
       - minio_password
       - rabbitmq_password
+      - redis_password
       - root_password
 
   autojudge:
@@ -185,6 +191,9 @@ services:
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       RABBITMQ_WEBSOCKET_EXCHANGE: websocket-exchange
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
       ROOT_PASSWORD_FILE: /run/secrets/root_password
       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://alloy:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
@@ -215,6 +224,7 @@ services:
       - db_password
       - minio_password
       - rabbitmq_password
+      - redis_password
       - root_password
 
   autojudge-autoscaler:
@@ -716,6 +726,66 @@ services:
         source: ./volumes/rabbitmq/definitions.template.json
         target: /etc/rabbitmq/definitions.template.json
         read_only: true
+
+  redis:
+    command: redis-server --requirepass "$(cat /run/secrets/redis_password)"
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli -a "$(cat /run/secrets/redis_password)" ping || exit 1
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
+    image: redis:8.6.1-alpine
+    networks:
+      network:
+    secrets:
+      - redis_password
+
+  redis-exporter:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.2"
+          memory: 128M
+        reservations:
+          cpus: "0.1"
+          memory: 64M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    environment:
+      REDIS_ADDR: redis://redis:6379
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - wget --spider -q http://localhost:9121/metrics
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 10s
+    image: oliver006/redis_exporter:v1.39.0
+    networks:
+      network:
+    secrets:
+      - redis_password
 
   tempo:
     entrypoint: sh /entrypoint.sh

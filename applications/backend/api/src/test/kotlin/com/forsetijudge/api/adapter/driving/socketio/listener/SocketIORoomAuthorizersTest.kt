@@ -171,7 +171,7 @@ class SocketIORoomAuthorizersTest :
                     ExecutionContextMockBuilder.build(contest.id, member.id)
 
                     val filter = sut.authorizers[ContestantPrivateBroadcastRoom.pattern] ?: error("Filter not found")
-                    filter("/members/${member.id}/private/contestant")
+                    filter("/contests/${contest.id}/members/${member.id}/private/contestant")
 
                     val commandSlot = slot<ContestAuthorizerUseCase.Command>()
                     verify { contestAuthorizerUseCase.execute(capture(commandSlot)) }
@@ -188,7 +188,7 @@ class SocketIORoomAuthorizersTest :
                 ExecutionContextMockBuilder.build(contest.id, member.id)
 
                 val filter = sut.authorizers[ContestantPrivateBroadcastRoom.pattern] ?: error("Filter not found")
-                filter("/members/${member.id}/private/contestant")
+                filter("/contests/${contest.id}/members/${member.id}/private/contestant")
 
                 val commandSlot = slot<ContestAuthorizerUseCase.Command>()
                 verify { contestAuthorizerUseCase.execute(capture(commandSlot)) }
@@ -206,7 +206,7 @@ class SocketIORoomAuthorizersTest :
 
                 val filter = sut.authorizers[ContestantPrivateBroadcastRoom.pattern] ?: error("Filter not found")
                 shouldThrow<ForbiddenException> {
-                    filter("/members/${member2.id}/private/contestant")
+                    filter("/contests/${contest.id}/members/${member2.id}/private/contestant")
                 }
             }
         }
@@ -218,7 +218,7 @@ class SocketIORoomAuthorizersTest :
                 ExecutionContextMockBuilder.build(contest.id, member.id)
 
                 val filter = sut.authorizers[JudgePrivateBroadcastRoom.pattern] ?: error("Filter not found")
-                filter("/members/${member.id}/private/judge")
+                filter("/contests/${contest.id}/members/${member.id}/private/judge")
 
                 val commandSlot = slot<ContestAuthorizerUseCase.Command>()
                 verify { contestAuthorizerUseCase.execute(capture(commandSlot)) }
@@ -236,7 +236,7 @@ class SocketIORoomAuthorizersTest :
 
                 val filter = sut.authorizers[JudgePrivateBroadcastRoom.pattern] ?: error("Filter not found")
                 shouldThrow<ForbiddenException> {
-                    filter("/members/${member2.id}/private/judge")
+                    filter("/contests/${contest.id}/members/${member2.id}/private/judge")
                 }
             }
         }

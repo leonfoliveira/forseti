@@ -62,7 +62,7 @@ class SocketIOAuthenticateListenerTest :
             sut.onData(mockClient, null, mockk())
 
             verify(exactly = 0) { findSessionByIdUseCase.execute(any()) }
-            verify { mockClient.sendEvent("error", "Invalid session_id cookie format.") }
+            verify { mockClient.sendEvent("error", "Invalid session_id cookie format") }
             verify { mockClient.disconnect() }
         }
 
@@ -76,7 +76,7 @@ class SocketIOAuthenticateListenerTest :
 
             sut.onData(mockClient, null, mockk())
 
-            verify { mockClient.sendEvent("error", "Invalid session_id cookie format.") }
+            verify { mockClient.sendEvent("error", "Invalid session_id cookie format") }
             verify { mockClient.disconnect() }
         }
 

@@ -51,9 +51,6 @@ class FrozenSubmission(
     @OneToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(name = "code_id", nullable = false)
     val code: Attachment,
-    @OneToMany(mappedBy = "submission", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    @OrderBy("createdAt ASC")
-    val executions: List<Execution>,
 )
 
 fun Submission.freeze(): FrozenSubmission =
@@ -69,7 +66,6 @@ fun Submission.freeze(): FrozenSubmission =
         status = this.status,
         answer = this.answer,
         code = this.code,
-        executions = this.executions,
     )
 
 fun FrozenSubmission.unfreeze(): Submission =
@@ -85,5 +81,4 @@ fun FrozenSubmission.unfreeze(): Submission =
         status = this.status,
         answer = this.answer,
         code = this.code,
-        executions = this.executions,
     )

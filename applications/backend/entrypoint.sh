@@ -36,6 +36,11 @@ if [ -n "$DB_URL" ]; then
     wait_for_service "$DB_HOST" "$DB_PORT" "PostgreSQL" 60
 fi
 
+# Wait for Redis to be ready
+if [ -n "$REDIS_HOST" ] && [ -n "$REDIS_PORT" ]; then
+    wait_for_service "$REDIS_HOST" "$REDIS_PORT" "Redis" 30
+fi
+
 # Wait for Minio to be ready
 if [ -n "$MINIO_ENDPOINT" ]; then
     # http://host:port
@@ -62,6 +67,10 @@ fi
 # Load secrets into environment variables
 if [ -n "$DB_PASSWORD_FILE" ]; then
     export DB_PASSWORD=$(cat "$DB_PASSWORD_FILE")
+fi
+
+if [ -n "$REDIS_PASSWORD_FILE" ]; then
+    export REDIS_PASSWORD=$(cat "$REDIS_PASSWORD_FILE")
 fi
 
 if [ -n "$MINIO_SECRET_KEY_FILE" ]; then
