@@ -18,16 +18,16 @@ class LeaderboardRedisStore(
     private val logger = SafeLogger(this::class)
 
     companion object {
-        const val STORE_KEY = "leaderboard"
-        const val TTL_MILLIS = 6 * 60 * 60 * 1000L
+        const val CELL_STORE_KEY = "leaderboard:cell"
+        const val CELL_TTL_MILLIS = 6 * 60 * 60 * 1000L
     }
 
     override fun cacheCell(
         contestId: UUID,
         cell: Leaderboard.Cell,
     ) {
-        val cellKey = "${STORE_KEY}:$contestId:${cell.memberId}:${cell.problemId}"
-        val contestKey = "${STORE_KEY}:$contestId"
+        val cellKey = "${CELL_STORE_KEY}:$contestId:${cell.memberId}:${cell.problemId}"
+        val contestKey = "${CELL_STORE_KEY}:$contestId"
         logger.info("Caching leaderboard cell with cellKey = $cellKey and contestKey = $contestKey)")
 
         val rawCell = objectMapper.writeValueAsString(cell)
@@ -40,7 +40,7 @@ class LeaderboardRedisStore(
     }
 
     override fun getAllCellsByContestId(contestId: UUID): List<Leaderboard.Cell> {
-        val contestKey = "${STORE_KEY}:$contestId"
+        val contestKey = "${CELL_STORE_KEY}:$contestId"
         logger.info("Retrieving all leaderboard cells for contestKey: $contestKey")
 
         val cellKeys = redisTemplate.opsForSet().members(contestKey)
@@ -70,6 +70,6 @@ class LeaderboardRedisStore(
      * @param contestKey The key of the contest for which to set the expiration time.
      */
     private fun clean(contestKey: String) {
-        redisTemplate.expire(contestKey, TTL_MILLIS.milliseconds.toJavaDuration())
+        redisTemplate.expire(contestKey, CELL_TTL_MILLIS.milliseconds.toJavaDuration())
     }
 }
