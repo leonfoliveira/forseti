@@ -109,4 +109,26 @@ describe("SubmissionsPageActionsMenu", () => {
       screen.getByTestId("submissions-page-action-print"),
     ).toBeInTheDocument();
   });
+
+  it("should not display print action when feature is disabled", async () => {
+    const session = MockSession();
+    const submission = MockSubmissionWithCodeResponseDTO({
+      member: session.member as unknown as MemberWithLoginResponseDTO,
+    });
+    const contest = MockContestResponseDTO({
+      settings: { isSubmissionPrintTicketEnabled: false },
+    } as any);
+    await renderWithProviders(
+      <SubmissionsPageActionsMenu
+        submission={submission}
+        canPrint
+        onPrint={() => {}}
+      />,
+      { session, contest },
+    );
+
+    expect(
+      screen.queryByTestId("submissions-page-action-print"),
+    ).not.toBeInTheDocument();
+  });
 });

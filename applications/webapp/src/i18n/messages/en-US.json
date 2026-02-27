@@ -486,7 +486,9 @@
               "new-label": "New Clarification",
               "empty-title": "No clarifications yet",
               "empty-description": "Clarifications will appear here once requested.",
-              "guidance-text": "Use this page to ask questions about contest problems and view official responses from judges. All clarifications and answers are visible to all contestants to ensure fairness. Ask specific questions about problem statements, input/output formats, or edge cases."
+              "guidance-text": "Use this page to ask questions about contest problems and view official responses from judges. All clarifications and answers are visible to all contestants to ensure fairness. Ask specific questions about problem statements, input/output formats, or edge cases.",
+              "disabled-title": "Disabled",
+              "disabled-description": "Clarification creation is currently disabled for this contest."
             },
             "clarifications-page-form": {
               "create-title": "Create Clarification",

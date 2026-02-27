@@ -344,6 +344,11 @@ export class SettingsForm {
           .optional(),
         settings: Joi.object({
           isAutoJudgeEnabled: Joi.boolean().required(),
+          isClarificationEnabled: Joi.boolean().required(),
+          isSubmissionPrintTicketEnabled: Joi.boolean().required(),
+          isTechnicalSupportTicketEnabled: Joi.boolean().required(),
+          isNonTechnicalSupportTicketEnabled: Joi.boolean().required(),
+          isGuestEnabled: Joi.boolean().required(),
         }).required(),
       }).required(),
       problems: Joi.array()
