@@ -48,6 +48,7 @@ def init(ctx, ip: str):
 
     _create_secret("root_password", "Root password:")
     _create_secret("db_password", "DB password:")
+    _create_secret("redis_password", "Redis password:")
     _create_secret("minio_password", "MinIO password:")
     _create_secret("rabbitmq_password", "RabbitMQ password:")
 
@@ -72,7 +73,8 @@ def info():
         raise e
 
     # Extract tokens and manager IP
-    worker_match = re.search(r"docker swarm join --token (\S+)", worker_result[2])
+    worker_match = re.search(
+        r"docker swarm join --token (\S+)", worker_result[2])
     manager_match = re.search(
         r"docker swarm join --token (\S+) ([^\:]+):2377", manager_result[2]
     )
@@ -97,7 +99,8 @@ def join(token: str, manager_ip: str):
 
     try:
         command_adapter.run(
-            ["docker", "swarm", "join", "--token", token, f"{manager_ip}:2377"],
+            ["docker", "swarm", "join", "--token",
+                token, f"{manager_ip}:2377"],
         )
     except CommandAdapter.Error as e:
         if "This node is already part of a swarm" in str(e):

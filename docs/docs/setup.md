@@ -39,10 +39,20 @@ Configure resource constraints in `stack.yaml` according to your contest scale a
 | postgres-exporter    | replicated      | 1            | 0.1              | 64M                 | 0.2           | 128M             |
 | prometheus           | replicated      | 1            | 0.25             | 256M                | 0.5           | 512M             |
 | rabbitmq             | replicated      | 1            | 0.25             | 256M                | 0.5           | 512M             |
+| redis                | replicated      | 1            | 0.25             | 256M                | 0.5           | 512M             |
+| tempo                | replicated      | 1            | 0.25             | 256M                | 0.5           | 512M             |
 | traefik              | replicated      | 1            | 0.25             | 128M                | 0.5           | 256M             |
 | webapp               | replicated      | 1            | 1                | 256M                | 2             | 512M             |
 
 \* Auto-scaled by `autojudge-autoscaler` service. See environment variables to customize scaling behavior.
+
+Total reserved resources for the default configuration:
+- CPU: 6.5 cores
+- Memory: 3.9 GB
+
+Total limits for the default configuration:
+- CPU: 12.5 cores
+- Memory: 7.6 GB
 
 ### Resource Planning Guidelines
 
@@ -97,6 +107,9 @@ Configure environment variables in `stack.yaml` to customize service behavior. V
 |                          | RABBITMQ_SUBMISSION_ROUTING_KEY    | submission-routing-key                                                              | Routing key for submissions                           |
 |                          | RABBITMQ_SUBMISSION_FAILED_QUEUE   | submission-failed-queue                                                             | Queue name for failed submissions                     |
 |                          | RABBITMQ_WEBSOCKET_EXCHANGE        | websocket-exchange                                                                  | Exchange name for WebSocket messages                  |
+|                          | REDIS_HOST                         | redis                                                                               | Redis hostname                                        |
+|                          | REDIS_PORT                         | 6379                                                                                | Redis port                                            |
+|                          | REDIS_PASSWORD_FILE                | /run/secrets/redis_password                                                         | File containing Redis password                        |
 |                          | ROOT_PASSWORD_FILE                 | /run/secrets/root_password                                                          | File containing root user password                    |
 |                          | OTEL_EXPORTER_OTLP_TRACES_ENDPOINT | http://alloy:4317                                                                   | OpenTelemetry traces exporter endpoint                |
 |                          | OTEL_EXPORTER_OTLP_PROTOCOL        | grpc                                                                                | OpenTelemetry exporter protocol                       |
@@ -124,6 +137,9 @@ Configure environment variables in `stack.yaml` to customize service behavior. V
 |                          | RABBITMQ_SUBMISSION_ROUTING_KEY    | submission-routing-key                                                              | Routing key for submissions                           |
 |                          | RABBITMQ_SUBMISSION_FAILED_QUEUE   | submission-failed-queue                                                             | Queue name for failed submissions                     |
 |                          | RABBITMQ_WEBSOCKET_EXCHANGE        | websocket-exchange                                                                  | Exchange name for WebSocket messages                  |
+|                          | REDIS_HOST                         | redis                                                                               | Redis hostname                                        |
+|                          | REDIS_PORT                         | 6379                                                                                | Redis port                                            |
+|                          | REDIS_PASSWORD_FILE                | /run/secrets/redis_password                                                         | File containing Redis password                        |
 |                          | ROOT_PASSWORD_FILE                 | /run/secrets/root_password                                                          | File containing root user password                    |
 |                          | OTEL_EXPORTER_OTLP_TRACES_ENDPOINT | http://alloy:4317                                                                   | OpenTelemetry traces exporter endpoint                |
 |                          | OTEL_EXPORTER_OTLP_PROTOCOL        | grpc                                                                                | OpenTelemetry exporter protocol                       |
@@ -164,7 +180,7 @@ Configure environment variables in `stack.yaml` to customize service behavior. V
 |                          | RABBITMQ_PASSWORD_FILE             | /run/secrets/rabbitmq_password                                                      | File containing RabbitMQ password                     |
 | **webapp**               | API_INTERNAL_URL                   | http://api:8080                                                                     | Internal API URL for server-side requests             |
 |                          | API_PUBLIC_URL                     | https://api.forsetijudge.com                                                        | Public API URL for client-side requests               |
-|                          | WS_PUBLIC_URL                      | wss://ws.forsetijudge.com                                                           | Public WebSocket URL for real-time features          |
+|                          | WS_PUBLIC_URL                      | wss://ws.forsetijudge.com                                                           | Public WebSocket URL for real-time features           |
 |                          | LOCALE                             | en-US                                                                               | Application locale/language                           |
 
 ### Important Configuration Notes

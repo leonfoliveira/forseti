@@ -37,12 +37,11 @@ class TestSwarmCommand:
 
         # Mock password inputs for secret creation
         input_adapter.password.side_effect = [
+            "root_password",
             "db_password",
+            "redis_password",
             "minio_password",
             "rabbitmq_password",
-            "root_password",
-            "grafana_admin_password",
-            "traefik_admin_password",
         ]
 
         worker_token = "SWMTKN-1-xxxx"
@@ -51,8 +50,12 @@ class TestSwarmCommand:
 
         # Mock the command_adapter.run calls
         command_adapter.run.side_effect = [
-            [],    # docker swarm init
-            Exception(), [], [], [], [], [], [], [],  # docker secret commands
+            [],  # docker swarm init
+            Exception(), [],  # root_password
+            [], [],  # db_password
+            [], [],  # redis_password
+            [], [],  # minio_password
+            [], [],  # rabbitmq_password
             [
                 "To add a worker to this swarm, run the following command:",
                 "",
@@ -76,10 +79,11 @@ class TestSwarmCommand:
 
         # Verify that all secrets were created
         secret_calls = [
-            call for call in command_adapter.run.call_args_list[1:14:2]]
+            call for call in command_adapter.run.call_args_list[1:11:2]]
         # Fourth argument is the secret name
         secret_names = [call[0][0][3] for call in secret_calls]
         assert "db_password" in secret_names
+        assert "redis_password" in secret_names
         assert "minio_password" in secret_names
         assert "rabbitmq_password" in secret_names
         assert "root_password" in secret_names

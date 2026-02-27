@@ -735,17 +735,17 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 256M
+          memory: 512M
         reservations:
           cpus: "0.25"
-          memory: 128M
+          memory: 256M
       restart_policy:
         condition: on-failure
         delay: 5s
     healthcheck:
       test:
         - CMD-SHELL
-        - redis-cli ping || exit 1
+        - redis-cli -a "$(cat /run/secrets/redis_password)" ping || exit 1
       timeout: 5s
       interval: 15s
       retries: 5

@@ -26,7 +26,7 @@ services:
     command: redis-server --requirepass "forsetijudge"
     container_name: dev-forseti-redis
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping || exit 1"]
+      test: ["CMD-SHELL", "redis-cli -a forsetijudge ping || exit 1"]
       timeout: 5s
       interval: 15s
       retries: 5
@@ -272,5 +272,6 @@ networks:
 
 volumes:
   dev-postgres_data:
+  dev-redis_data:
   dev-minio_data:
   dev-rabbitmq_data:

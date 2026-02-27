@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.AckRequest
 import com.corundumstudio.socketio.SocketIOClient
 import com.corundumstudio.socketio.listener.DataListener
 import com.forsetijudge.api.adapter.driven.socketio.SocketIOBroadcastEmitter
+import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.infrastructure.adapter.driven.redis.BroadcastEventRedisStore
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
@@ -13,7 +14,7 @@ class SocketIOSyncListener(
     private val broadcastEventRedisStore: BroadcastEventRedisStore,
     private val socketIOBroadcastEmitter: SocketIOBroadcastEmitter,
 ) : DataListener<SocketIOSyncListenerPayload> {
-    private val logger = org.slf4j.LoggerFactory.getLogger(SocketIOSyncListener::class.java)
+    private val logger = SafeLogger(this::class)
 
     override fun onData(
         client: SocketIOClient,
@@ -27,7 +28,6 @@ class SocketIOSyncListener(
             return client.sendEvent("error", "Not in the room")
         }
 
-        client.sendEvent("sync_start")
         val events = broadcastEventRedisStore.getAllSince(data.room, data.timestamp)
         events.forEach {
             socketIOBroadcastEmitter.emitToClient(client, it)

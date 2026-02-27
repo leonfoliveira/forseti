@@ -8,6 +8,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.runTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
@@ -21,20 +22,25 @@ class BroadcastEventRedisStoreTest(
     private val sut: BroadcastEventRedisStore,
 ) : FunSpec({
         test("should add and retrieve broadcast events correctly") {
-            val event1 = BroadcastEvent(room = "/room1", name = "event", data = mapOf("foo" to "bar") as Serializable)
+            runTest {
+                val event1 =
+                    BroadcastEvent(room = "/room1", name = "event", data = mapOf("foo" to "bar") as Serializable)
 
-            sut.add(event1)
-            delay(1000)
-            val now = OffsetDateTime.now()
-            val event2 = BroadcastEvent(room = "/room1", name = "event", data = mapOf("foo" to "bar") as Serializable)
-            val event3 = BroadcastEvent(room = "/room2", name = "event", data = mapOf("foo" to "bar") as Serializable)
-            sut.add(event2)
-            sut.add(event3)
+                sut.add(event1)
+                delay(1000)
+                val now = OffsetDateTime.now()
+                val event2 =
+                    BroadcastEvent(room = "/room1", name = "event", data = mapOf("foo" to "bar") as Serializable)
+                val event3 =
+                    BroadcastEvent(room = "/room2", name = "event", data = mapOf("foo" to "bar") as Serializable)
+                sut.add(event2)
+                sut.add(event3)
 
-            val retrievedEvents = sut.getAllSince("/room1", now)
+                val retrievedEvents = sut.getAllSince("/room1", now)
 
-            retrievedEvents shouldHaveSize 1
-            retrievedEvents.first().id shouldBe event2.id
+                retrievedEvents shouldHaveSize 1
+                retrievedEvents.first().id shouldBe event2.id
+            }
         }
 
         test("should maintain a maximum of 100 events per room") {

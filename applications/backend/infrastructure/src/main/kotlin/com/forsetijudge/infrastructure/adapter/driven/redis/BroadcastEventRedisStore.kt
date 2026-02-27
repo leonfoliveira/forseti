@@ -6,6 +6,8 @@ import com.forsetijudge.core.port.driven.cache.BroadcastEventCacheStore
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.toJavaDuration
 
 @Component
 class BroadcastEventRedisStore(
@@ -16,6 +18,7 @@ class BroadcastEventRedisStore(
     companion object {
         const val BROADCAST_EVENTS_KEY = "broadcast_events"
         const val MAX_SIZE = 100L
+        const val TTL_MILLIS = 6 * 60 * 60 * 1000L
     }
 
     override fun add(event: BroadcastEvent) {
@@ -36,6 +39,7 @@ class BroadcastEventRedisStore(
             val removedCount = redisTemplate.opsForZSet().removeRange(key, 0, count - MAX_SIZE - 1)
             logger.info("Removed $removedCount old broadcast events to maintain max size of $MAX_SIZE")
         }
+        redisTemplate.expire(key, TTL_MILLIS.milliseconds.toJavaDuration())
     }
 
     override fun getAllSince(
