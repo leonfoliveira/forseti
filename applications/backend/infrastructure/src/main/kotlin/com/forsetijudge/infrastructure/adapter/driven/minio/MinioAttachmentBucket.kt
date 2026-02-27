@@ -6,6 +6,8 @@ import com.forsetijudge.core.port.driven.AttachmentBucket
 import io.minio.GetObjectArgs
 import io.minio.MinioClient
 import io.minio.PutObjectArgs
+import io.minio.RemoveObjectsArgs
+import io.minio.messages.DeleteObject
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -17,12 +19,6 @@ class MinioAttachmentBucket(
 ) : AttachmentBucket {
     private val logger = SafeLogger(this::class)
 
-    /**
-     * Uploads an attachment to the MinIO bucket
-     *
-     * @param attachment the attachment metadata
-     * @param bytes the attachment content
-     */
     override fun upload(
         attachment: Attachment,
         bytes: ByteArray,
@@ -44,12 +40,6 @@ class MinioAttachmentBucket(
         logger.info("Successfully uploaded")
     }
 
-    /**
-     * Downloads an attachment from the MinIO bucket
-     *
-     * @param attachment the attachment metadata
-     * @return the attachment content as a byte array
-     */
     override fun download(attachment: Attachment): ByteArray {
         val key = attachment.id.toString()
         logger.info("Downloading file with key: $key")
@@ -66,5 +56,20 @@ class MinioAttachmentBucket(
         val bytes = s3Object.readAllBytes()
         logger.info("Successfully downloaded file with size: ${bytes.size}")
         return bytes
+    }
+
+    override fun deleteAll(attachments: List<Attachment>) {
+        logger.info("Deleting ${attachments.size} attachments")
+
+        val removeObjectArgs =
+            RemoveObjectsArgs
+                .builder()
+                .bucket(bucket)
+                .objects(attachments.map { DeleteObject(it.id.toString()) })
+                .build()
+
+        minioClient.removeObjects(removeObjectArgs)
+
+        logger.info("Successfully deleted attachments")
     }
 }

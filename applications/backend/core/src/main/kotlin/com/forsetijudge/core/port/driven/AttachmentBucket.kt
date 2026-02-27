@@ -21,4 +21,11 @@ interface AttachmentBucket {
      * @return the attachment content
      */
     fun download(attachment: Attachment): ByteArray
+
+    /**
+     * Delete a list of attachments from the bucket
+     *
+     * @param attachments the list of attachments to delete
+     */
+    fun deleteAll(attachments: List<Attachment>)
 }

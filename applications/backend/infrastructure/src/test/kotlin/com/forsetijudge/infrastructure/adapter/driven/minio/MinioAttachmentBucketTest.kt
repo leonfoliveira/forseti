@@ -1,7 +1,9 @@
 package com.forsetijudge.infrastructure.adapter.driven.minio
 
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
+import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.testcontainer.TestContainers
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import org.springframework.boot.test.context.SpringBootTest
@@ -22,5 +24,7 @@ class MinioAttachmentBucketTest(
             val downloadedBytes = sut.download(attachment)
 
             downloadedBytes shouldBe bytes
+
+            sut.deleteAll(listOf(attachment))
         }
     })
