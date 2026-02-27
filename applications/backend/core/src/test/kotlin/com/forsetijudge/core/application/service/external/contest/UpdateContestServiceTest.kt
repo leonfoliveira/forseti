@@ -34,6 +34,7 @@ import io.mockk.mockkStatic
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
+import kotlin.Boolean
 
 class UpdateContestServiceTest :
     FunSpec({
@@ -79,7 +80,14 @@ class UpdateContestServiceTest :
                     languages = listOf(Submission.Language.PYTHON_312),
                     startAt = now.plusHours(1),
                     endAt = now.plusHours(2),
-                    settings = UpdateContestUseCase.Command.Settings(isAutoJudgeEnabled = true),
+                    settings =
+                        UpdateContestUseCase.Command.Settings(
+                            isAutoJudgeEnabled = true,
+                            isClarificationEnabled = true,
+                            isSubmissionPrintTicketEnabled = true,
+                            isTechnicalSupportTicketEnabled = true,
+                            isNonTechnicalSupportTicketEnabled = true,
+                        ),
                     members =
                         listOf(
                             UpdateContestUseCase.Command.Member(

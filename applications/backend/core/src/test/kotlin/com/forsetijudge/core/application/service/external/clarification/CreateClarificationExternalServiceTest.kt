@@ -2,6 +2,7 @@ package com.forsetijudge.core.application.service.external.clarification
 
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ClarificationMockBuilder
+import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
@@ -72,6 +73,17 @@ class CreateClarificationExternalServiceTest :
                 every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns null
 
                 shouldThrow<NotFoundException> {
+                    sut.execute(command)
+                }
+            }
+
+            test("should throw ForbiddenException when clarifications are not enabled") {
+                val contest = ContestMockBuilder.build(settings = Contest.Settings(isClarificationEnabled = false))
+                val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT, contest = contest)
+                every { contestRepository.findById(contextContestId) } returns contest
+                every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+
+                shouldThrow<ForbiddenException> {
                     sut.execute(command)
                 }
             }
