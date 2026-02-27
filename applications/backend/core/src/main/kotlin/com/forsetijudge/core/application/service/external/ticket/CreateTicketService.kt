@@ -71,6 +71,10 @@ class CreateTicketService(
     ): SubmissionPrintTicket {
         logger.info("Creating submission print ticket")
 
+        if (!contest.settings.isSubmissionPrintTicketEnabled) {
+            throw ForbiddenException("Submission print ticket is not enabled for this contest")
+        }
+
         ContestAuthorizer(contest, member)
             .requireMemberType(Member.Type.CONTESTANT)
             .requireContestActive()
@@ -104,6 +108,10 @@ class CreateTicketService(
     ): TechnicalSupportTicket {
         logger.info("Creating technical support ticket")
 
+        if (!contest.settings.isTechnicalSupportTicketEnabled) {
+            throw ForbiddenException("Technical support ticket is not enabled for this contest")
+        }
+
         ContestAuthorizer(contest, member)
             .or({ it.requireMemberCanAccessNotStartedContest() }, { it.requireContestStarted() })
             .requireContestNotEnded()
@@ -128,6 +136,10 @@ class CreateTicketService(
         command: CreateTicketUseCase.Command,
     ): NonTechnicalSupportTicket {
         logger.info("Creating non-technical support ticket")
+
+        if (!contest.settings.isNonTechnicalSupportTicketEnabled) {
+            throw ForbiddenException("Non-technical support ticket is not enabled for this contest")
+        }
 
         ContestAuthorizer(contest, member)
             .or({ it.requireMemberCanAccessNotStartedContest() }, { it.requireContestStarted() })
