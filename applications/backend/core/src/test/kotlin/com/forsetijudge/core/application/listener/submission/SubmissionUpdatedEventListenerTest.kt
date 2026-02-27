@@ -52,7 +52,7 @@ class SubmissionUpdatedEventListenerTest(
                         problemId = submission.problem.id,
                     ),
                 )
-            } returns Pair(leaderboardCell, submission.member.id)
+            } returns leaderboardCell
 
             sut.onApplicationEvent(event)
 
@@ -118,7 +118,7 @@ class SubmissionUpdatedEventListenerTest(
                         problemId = submission.problem.id,
                     ),
                 )
-            } returns Pair(leaderboardCell, submission.member.id)
+            } returns leaderboardCell
             val event = SubmissionEvent.Updated(submission)
 
             sut.onApplicationEvent(event)

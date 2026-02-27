@@ -13,7 +13,6 @@ import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
 import org.springframework.stereotype.Service
-import java.util.UUID
 
 @Service
 class BuildLeaderboardCellService(
@@ -25,7 +24,7 @@ class BuildLeaderboardCellService(
 ) : BuildLeaderboardCellUseCase {
     private val logger = SafeLogger(this::class)
 
-    override fun execute(command: BuildLeaderboardCellUseCase.Command): Pair<Leaderboard.Cell, UUID> {
+    override fun execute(command: BuildLeaderboardCellUseCase.Command): Leaderboard.Cell {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -68,6 +67,6 @@ class BuildLeaderboardCellService(
         val cell = buildLeaderboardCellInternalUseCase.execute(internalCommand)
 
         logger.info("Leaderboard cell built successfully")
-        return cell to member.id
+        return cell
     }
 }

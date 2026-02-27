@@ -28,7 +28,7 @@ class SubmissionUpdatedEventListener(
 
     override fun handleEvent(event: SubmissionEvent.Updated) {
         val submission = event.submission
-        val (leaderboardCell) =
+        val leaderboardCell =
             buildLeaderboardCellUseCase.execute(
                 BuildLeaderboardCellUseCase.Command(memberId = submission.member.id, problemId = submission.problem.id),
             )
