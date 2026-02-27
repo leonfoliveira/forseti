@@ -12,12 +12,12 @@ import java.util.UUID
 interface FrozenSubmissionRepository : Repository<FrozenSubmission, UUID> {
     fun saveAll(entities: Iterable<FrozenSubmission>): List<FrozenSubmission>
 
-    @Query("SELECT fs FROM FrozenSubmission fs WHERE fs.problem.contest.id = :contestId")
-    fun findAllByContestId(contestId: UUID): List<FrozenSubmission>
-
-    @Query("SELECT fs FROM FrozenSubmission fs WHERE fs.problem.contest.id = :contestId AND fs.status = :status")
-    fun findAllByContestIdAndStatus(
+    @Query(
+        """SELECT f FROM FrozenSubmission f WHERE f.problem.contest.id = ?1 AND f.status = ?2 AND (f.member.id, f.problem.id) NOT IN ?3""",
+    )
+    fun findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
         contestId: UUID,
         status: Submission.Status,
+        excludedMemberProblemPairs: Collection<Pair<UUID, UUID>>,
     ): List<FrozenSubmission>
 }

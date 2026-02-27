@@ -13,6 +13,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.domain.model.Leaderboard
+import com.forsetijudge.core.port.driven.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -34,6 +35,7 @@ class BuildLeaderboardExternalServiceTest :
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
         val frozenSubmissionRepository = mockk<FrozenSubmissionRepository>(relaxed = true)
         val buildLeaderboardCellInternalUseCase = mockk<BuildLeaderboardCellInternalUseCase>(relaxed = true)
+        val leaderboardCacheStore = mockk<LeaderboardCacheStore>(relaxed = true)
 
         val sut =
             BuildLeaderboardService(
@@ -42,6 +44,7 @@ class BuildLeaderboardExternalServiceTest :
                 submissionRepository = submissionRepository,
                 frozenSubmissionRepository = frozenSubmissionRepository,
                 buildLeaderboardCellInternalUseCase = buildLeaderboardCellInternalUseCase,
+                leaderboardCacheStore = leaderboardCacheStore,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -188,6 +191,10 @@ class BuildLeaderboardExternalServiceTest :
                         wrongSubmissions = 0,
                         penalty = 0,
                     ),
+                )
+
+            every { leaderboardCacheStore.getAllCellsByContestId(contest.id) } returns
+                listOf(
                     // memberWithDoubleAcceptedSubmission
                     Leaderboard.Cell(
                         memberId = memberWithDoubleAcceptedSubmission.id,

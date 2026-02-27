@@ -27,9 +27,6 @@ class LeaderboardRedisStoreTest(
             sut.cacheCell(contest1Id, cell1)
             sut.cacheCell(contest2Id, cell2)
 
-            val cell = sut.getCell(contest1Id, cell1.memberId, cell1.problemId)
-            cell shouldNotBe cell1
-
             val retrievedContestCells = sut.getAllCellsByContestId(contest1Id)
 
             retrievedContestCells shouldHaveSize 1

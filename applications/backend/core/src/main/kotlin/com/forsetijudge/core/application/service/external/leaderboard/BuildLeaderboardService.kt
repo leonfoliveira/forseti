@@ -10,6 +10,7 @@ import com.forsetijudge.core.domain.entity.unfreeze
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.Leaderboard
+import com.forsetijudge.core.port.driven.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -27,6 +28,7 @@ class BuildLeaderboardService(
     private val submissionRepository: SubmissionRepository,
     private val frozenSubmissionRepository: FrozenSubmissionRepository,
     private val buildLeaderboardCellInternalUseCase: BuildLeaderboardCellInternalUseCase,
+    private val leaderboardCacheStore: LeaderboardCacheStore,
 ) : BuildLeaderboardUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -130,44 +132,51 @@ class BuildLeaderboardService(
      * Builds the cells of the leaderboard, one for each contestant and problem.
      *
      * @param contest the contest for which the leaderboard is being built
-     * @param contestants the list of contestants participating in the contest
+     * @param members the list of contestants participating in the contest
      * @param problems the list of problems in the contest
      */
     private fun buildCells(
         contest: Contest,
-        contestants: List<Member>,
+        members: List<Member>,
         problems: List<Problem>,
     ): List<Leaderboard.Cell> {
-        val submissions =
+        val allMemberProblemPairs = members.flatMap { member -> problems.map { problem -> member.id to problem.id } }.toSet()
+        val cachedCells = leaderboardCacheStore.getAllCellsByContestId(contest.id).groupBy { it.memberId to it.problemId }
+        val nonCachedMemberProblemPairs = allMemberProblemPairs.filterNot { cachedCells.containsKey(it) }
+
+        val submissionsForNonCachedMemberProblemPairs =
             if (contest.isFrozen) {
                 frozenSubmissionRepository
-                    .findAllByContestIdAndStatus(
+                    .findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
                         contestId = contest.id,
                         status = Submission.Status.JUDGED,
+                        excludedMemberProblemPairs = nonCachedMemberProblemPairs,
                     ).map { it.unfreeze() }
             } else {
                 submissionRepository
-                    .findAllByContestIdAndStatus(
+                    .findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
                         contestId = contest.id,
                         status = Submission.Status.JUDGED,
+                        excludedMemberProblemPairs = nonCachedMemberProblemPairs,
                     )
-            }
-        val submissionsByMemberProblem = submissions.groupBy { it.member.id to it.problem.id }
+            }.groupBy { it.member.id to it.problem.id }
 
         val cells =
-            contestants.map { member ->
-                problems.map { problem ->
-                    buildLeaderboardCellInternalUseCase.execute(
-                        BuildLeaderboardCellInternalUseCase.Command(
-                            contest = contest,
-                            member = member,
-                            problem = problem,
-                            submissions = submissionsByMemberProblem[member.id to problem.id] ?: emptyList(),
-                        ),
-                    )
-                }
-            }
+            members
+                .map { member ->
+                    problems.map { problem ->
+                        cachedCells[member.id to problem.id]?.first()
+                            ?: buildLeaderboardCellInternalUseCase.execute(
+                                BuildLeaderboardCellInternalUseCase.Command(
+                                    contest = contest,
+                                    member = member,
+                                    problem = problem,
+                                    submissions = submissionsForNonCachedMemberProblemPairs[member.id to problem.id] ?: emptyList(),
+                                ),
+                            )
+                    }
+                }.flatten()
 
-        return cells.flatten()
+        return cells
     }
 }

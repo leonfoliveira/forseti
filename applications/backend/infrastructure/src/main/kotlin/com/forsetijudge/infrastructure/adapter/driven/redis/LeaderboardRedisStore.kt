@@ -39,25 +39,6 @@ class LeaderboardRedisStore(
         logger.info("Leaderboard cell cached successfully")
     }
 
-    override fun getCell(
-        contestId: UUID,
-        memberId: UUID,
-        problemId: UUID,
-    ): Leaderboard.Cell? {
-        val cellKey = "${STORE_KEY}:$contestId:$memberId:$problemId"
-        logger.info("Retrieving leaderboard cell with cellKey: $cellKey")
-
-        val rawCell = redisTemplate.opsForValue().get(cellKey)
-        if (rawCell.isNullOrEmpty()) {
-            logger.info("No leaderboard cell found for cellKey: $cellKey")
-            return null
-        }
-
-        val cell = objectMapper.readValue(rawCell, Leaderboard.Cell::class.java)
-        logger.info("Leaderboard cell retrieved successfully for cellKey: $cellKey")
-        return cell
-    }
-
     override fun getAllCellsByContestId(contestId: UUID): List<Leaderboard.Cell> {
         val contestKey = "${STORE_KEY}:$contestId"
         logger.info("Retrieving all leaderboard cells for contestKey: $contestKey")
