@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.driving.usecase.internal.leaderboard
 
 import com.forsetijudge.core.domain.entity.Contest
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.Leaderboard
@@ -18,11 +19,13 @@ interface BuildLeaderboardCellInternalUseCase {
      * Command for building a leaderboard cell.
      *
      * @param contest The contest for which the cell is being built.
+     * @param member The member for which the cell is being built.
      * @param problem The problem for which the cell is being built.
      * @param submissions The list of submissions for the given problem and contest.
      */
     data class Command(
         val contest: Contest,
+        val member: Member,
         val problem: Problem,
         val submissions: List<Submission>,
     )

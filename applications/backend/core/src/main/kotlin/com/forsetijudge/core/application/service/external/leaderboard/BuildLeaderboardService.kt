@@ -4,13 +4,16 @@ import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.entity.unfreeze
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.port.driven.repository.ContestRepository
+import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
+import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
 import org.springframework.stereotype.Service
@@ -21,6 +24,8 @@ import java.time.Duration
 class BuildLeaderboardService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
+    private val submissionRepository: SubmissionRepository,
+    private val frozenSubmissionRepository: FrozenSubmissionRepository,
     private val buildLeaderboardCellInternalUseCase: BuildLeaderboardCellInternalUseCase,
 ) : BuildLeaderboardUseCase {
     private val logger = SafeLogger(this::class)
@@ -43,13 +48,11 @@ class BuildLeaderboardService(
             .or({ it.requireMemberCanAccessNotStartedContest() }, { it.requireContestStarted() })
             .throwIfErrors()
 
-        val contestants = memberRepository.findAllByContestIdAndType(contestId = contextContestId, Member.Type.CONTESTANT)
+        val contestants = memberRepository.findAllByContestIdAndType(contest.id, Member.Type.CONTESTANT)
+        val problems = contest.problems
 
         val rows =
-            contestants
-                // Only contestants are considered for the leaderboard
-                .filter { it.type == Member.Type.CONTESTANT }
-                .map { buildRow(contest, it) }
+            buildRows(contest, contestants, problems)
                 .sortedWith { a, b ->
                     if (a.score != b.score) {
                         return@sortedWith -a.score.compareTo(b.score)
@@ -90,48 +93,81 @@ class BuildLeaderboardService(
     }
 
     /**
-     * Builds a Row for the leaderboard based on the member's submissions and the contest's problems.
-     * If the contest is frozen, it uses the frozen submissions instead of the regular submissions.
+     * Builds the rows of the leaderboard, one for each contestant. Each row contains the score, penalty and cells of the contestant.
      *
-     * @param contest The contest
-     * @param member The member
-     * @return The Row for the leaderboard
+     * @param contest the contest for which the leaderboard is being built
+     * @param contestants the list of contestants participating in the contest
+     * @param problems the list of problems in the contest
      */
-    private fun buildRow(
+    private fun buildRows(
         contest: Contest,
-        member: Member,
-    ): Leaderboard.Row {
-        val submissions =
-            if (contest.isFrozen) {
-                member.frozenSubmissions.map { it.unfreeze() }
-            } else {
-                member.submissions
-            }
+        contestants: List<Member>,
+        problems: List<Problem>,
+    ): List<Leaderboard.Row> {
+        val cells = buildCells(contest, contestants, problems)
+        val cellsByMemberId = cells.groupBy { it.memberId }
 
-        val submissionProblemHash = submissions.groupBy { it.problem.id }
-        val cells =
-            contest.problems.map { problem ->
-                buildLeaderboardCellInternalUseCase.execute(
-                    BuildLeaderboardCellInternalUseCase.Command(
-                        contest = contest,
-                        problem = problem,
-                        submissions =
-                            submissionProblemHash[problem.id]
-                                ?.filter { it.status == Submission.Status.JUDGED }
-                                ?: emptyList(),
-                    ),
+        val rows =
+            contestants.map { contestant ->
+                val memberCells = cellsByMemberId[contestant.id]!!
+
+                val score = memberCells.count { it.isAccepted }
+                val penalty = memberCells.sumOf { it.penalty }
+
+                Leaderboard.Row(
+                    memberId = contestant.id,
+                    memberName = contestant.name,
+                    score = score,
+                    penalty = penalty,
+                    cells = memberCells.sortedBy { it.problemLetter },
                 )
             }
 
-        val score = cells.count { it.isAccepted }
-        val penalty = cells.sumOf { it.penalty }
+        return rows
+    }
 
-        return Leaderboard.Row(
-            memberId = member.id,
-            memberName = member.name,
-            score = score,
-            penalty = penalty,
-            cells = cells,
-        )
+    /**
+     * Builds the cells of the leaderboard, one for each contestant and problem.
+     *
+     * @param contest the contest for which the leaderboard is being built
+     * @param contestants the list of contestants participating in the contest
+     * @param problems the list of problems in the contest
+     */
+    private fun buildCells(
+        contest: Contest,
+        contestants: List<Member>,
+        problems: List<Problem>,
+    ): List<Leaderboard.Cell> {
+        val submissions =
+            if (contest.isFrozen) {
+                frozenSubmissionRepository
+                    .findAllByContestIdAndStatus(
+                        contestId = contest.id,
+                        status = Submission.Status.JUDGED,
+                    ).map { it.unfreeze() }
+            } else {
+                submissionRepository
+                    .findAllByContestIdAndStatus(
+                        contestId = contest.id,
+                        status = Submission.Status.JUDGED,
+                    )
+            }
+        val submissionsByMemberProblem = submissions.groupBy { it.member.id to it.problem.id }
+
+        val cells =
+            contestants.map { member ->
+                problems.map { problem ->
+                    buildLeaderboardCellInternalUseCase.execute(
+                        BuildLeaderboardCellInternalUseCase.Command(
+                            contest = contest,
+                            member = member,
+                            problem = problem,
+                            submissions = submissionsByMemberProblem[member.id to problem.id] ?: emptyList(),
+                        ),
+                    )
+                }
+            }
+
+        return cells.flatten()
     }
 }

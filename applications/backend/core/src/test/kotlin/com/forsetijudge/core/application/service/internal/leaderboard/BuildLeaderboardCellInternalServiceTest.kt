@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.internal.leaderboard
 
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
+import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
@@ -16,6 +17,7 @@ class BuildLeaderboardCellInternalServiceTest :
         val sut = BuildLeaderboardCellInternalService()
 
         val contest = ContestMockBuilder.build()
+        val member = MemberMockBuilder.build()
         val problem = ProblemMockBuilder.build()
 
         beforeEach {
@@ -28,6 +30,7 @@ class BuildLeaderboardCellInternalServiceTest :
             val command =
                 BuildLeaderboardCellInternalUseCase.Command(
                     contest = contest,
+                    member = member,
                     problem = problem,
                     submissions = emptyList(),
                 )
@@ -36,6 +39,7 @@ class BuildLeaderboardCellInternalServiceTest :
 
             cell shouldBe
                 Leaderboard.Cell(
+                    memberId = member.id,
                     problemId = problem.id,
                     problemLetter = problem.letter,
                     problemColor = problem.color,
@@ -56,6 +60,7 @@ class BuildLeaderboardCellInternalServiceTest :
             val command =
                 BuildLeaderboardCellInternalUseCase.Command(
                     contest = contest,
+                    member = member,
                     problem = problem,
                     submissions = listOf(acceptedSubmission),
                 )
@@ -64,6 +69,7 @@ class BuildLeaderboardCellInternalServiceTest :
 
             cell shouldBe
                 Leaderboard.Cell(
+                    memberId = member.id,
                     problemId = problem.id,
                     problemLetter = problem.letter,
                     problemColor = problem.color,
@@ -84,6 +90,7 @@ class BuildLeaderboardCellInternalServiceTest :
             val command =
                 BuildLeaderboardCellInternalUseCase.Command(
                     contest = contest,
+                    member = member,
                     problem = problem,
                     submissions = listOf(wrongSubmission1),
                 )
@@ -92,6 +99,7 @@ class BuildLeaderboardCellInternalServiceTest :
 
             cell shouldBe
                 Leaderboard.Cell(
+                    memberId = member.id,
                     problemId = problem.id,
                     problemLetter = problem.letter,
                     problemColor = problem.color,
@@ -122,6 +130,7 @@ class BuildLeaderboardCellInternalServiceTest :
             val command =
                 BuildLeaderboardCellInternalUseCase.Command(
                     contest = contest,
+                    member = member,
                     problem = problem,
                     submissions = listOf(wrongSubmission1, acceptedSubmission, wrongSubmission2),
                 )
@@ -130,6 +139,7 @@ class BuildLeaderboardCellInternalServiceTest :
 
             cell shouldBe
                 Leaderboard.Cell(
+                    memberId = member.id,
                     problemId = problem.id,
                     problemLetter = problem.letter,
                     problemColor = problem.color,

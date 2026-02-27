@@ -128,6 +128,7 @@ class BuildLeaderboardCellServiceTest :
             every { problemRepository.findByIdAndContestId(problemId, contest.id) } returns problem
             val cell =
                 Leaderboard.Cell(
+                    memberId = member.id,
                     problemId = problem.id,
                     problemLetter = 'A',
                     problemColor = "#ffffff",

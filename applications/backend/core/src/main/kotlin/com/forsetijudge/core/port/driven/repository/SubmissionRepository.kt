@@ -1,5 +1,6 @@
 package com.forsetijudge.core.port.driven.repository
 
+import com.forsetijudge.core.domain.entity.FrozenSubmission
 import com.forsetijudge.core.domain.entity.Submission
 import org.springframework.data.jpa.repository.Query
 import java.time.OffsetDateTime
@@ -14,6 +15,12 @@ interface SubmissionRepository : BaseRepository<Submission> {
 
     @Query("SELECT s FROM Submission s WHERE s.problem.contest.id = ?1 AND deletedAt IS NULL")
     fun findAllByContestId(contestId: UUID): List<Submission>
+
+    @Query("SELECT s FROM Submission s WHERE s.problem.contest.id = ?1 AND s.status = ?2 AND deletedAt IS NULL")
+    fun findAllByContestIdAndStatus(
+        contestId: UUID,
+        status: Submission.Status,
+    ): List<Submission>
 
     @Query("SELECT s FROM Submission s WHERE s.id = ?1 AND s.problem.contest.id = ?2 AND deletedAt IS NULL")
     fun findByIdAndContestId(

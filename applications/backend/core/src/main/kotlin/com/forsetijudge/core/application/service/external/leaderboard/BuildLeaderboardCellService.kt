@@ -61,6 +61,7 @@ class BuildLeaderboardCellService(
         val internalCommand =
             BuildLeaderboardCellInternalUseCase.Command(
                 contest = contest,
+                member = member,
                 problem = problem,
                 submissions = submissions,
             )

@@ -45,6 +45,7 @@ class BuildLeaderboardCellInternalService : BuildLeaderboardCellInternalUseCase 
             }
 
         return Leaderboard.Cell(
+            memberId = command.member.id,
             problemId = command.problem.id,
             problemLetter = command.problem.letter,
             problemColor = command.problem.color,
