@@ -129,6 +129,6 @@ class Contest(
         // Whether members can submit non-technical support tickets during the contest.
         var isNonTechnicalSupportTicketEnabled: Boolean = true,
         // Whether guests are allowed to view the contest and its problems without logging in.
-        var isGuestEnabled: Boolean = false,
+        var isGuestEnabled: Boolean = true,
     )
 }

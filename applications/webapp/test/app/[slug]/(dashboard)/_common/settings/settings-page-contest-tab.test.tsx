@@ -53,6 +53,17 @@ describe("SettingsPageContestTab", () => {
     });
     fireEvent.click(screen.getByTestId("contest-language-PYTHON_312"));
     fireEvent.click(screen.getByTestId("contest-is-auto-judge-enabled"));
+    fireEvent.click(screen.getByTestId("contest-is-clarification-enabled"));
+    fireEvent.click(
+      screen.getByTestId("contest-is-submission-print-ticket-enabled"),
+    );
+    fireEvent.click(
+      screen.getByTestId("contest-is-technical-support-ticket-enabled"),
+    );
+    fireEvent.click(
+      screen.getByTestId("contest-is-non-technical-support-ticket-enabled"),
+    );
+    fireEvent.click(screen.getByTestId("contest-is-guest-enabled"));
 
     expect(result.current.getValues()).toEqual({
       contest: {
@@ -70,6 +81,11 @@ describe("SettingsPageContestTab", () => {
         ),
         settings: {
           isAutoJudgeEnabled: true,
+          isClarificationEnabled: true,
+          isSubmissionPrintTicketEnabled: true,
+          isTechnicalSupportTicketEnabled: true,
+          isNonTechnicalSupportTicketEnabled: true,
+          isGuestEnabled: true,
         },
       },
     });

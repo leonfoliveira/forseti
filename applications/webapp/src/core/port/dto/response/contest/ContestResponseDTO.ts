@@ -12,6 +12,11 @@ export type ContestResponseDTO = {
   autoFreezeAt?: string;
   settings: {
     isAutoJudgeEnabled: boolean;
+    isClarificationEnabled: boolean;
+    isSubmissionPrintTicketEnabled: boolean;
+    isTechnicalSupportTicketEnabled: boolean;
+    isNonTechnicalSupportTicketEnabled: boolean;
+    isGuestEnabled: boolean;
   };
   version: number;
 };
