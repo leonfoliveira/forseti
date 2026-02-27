@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.driven.job
 
 import java.io.Serializable
+import java.time.Duration
 import java.time.OffsetDateTime
 
 interface JobScheduler<TPayload : Serializable> {
@@ -15,6 +16,20 @@ interface JobScheduler<TPayload : Serializable> {
         id: String,
         payload: TPayload,
         at: OffsetDateTime,
+    )
+
+    /**
+     * Schedules a job with the given [id], [payload] and execution interval [interval].
+     *
+     * The [id] should be unique for each scheduled job. If a job with the same [id] already exists, it will be replaced with the new one.
+     * The [payload] will be passed to the job executor when the job is executed.
+     * The [interval] parameter specifies the duration after which the job should be executed. It must be a positive duration, otherwise the job will be executed immediately.
+     */
+    fun schedule(
+        id: String,
+        payload: TPayload,
+        interval: Duration,
+        startAt: OffsetDateTime = OffsetDateTime.now(),
     )
 
     /**

@@ -4,6 +4,7 @@ import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.event.ExecutionEvent
+import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.port.driven.repository.ExecutionRepository
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.UploadAttachmentInternalUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.execution.CreateExecutionInternalUseCase
@@ -26,6 +27,10 @@ class CreateExecutionInternalService(
     override fun execute(command: CreateExecutionInternalUseCase.Command): Execution {
         logger.info("Creating execution for submission with id: ${command.submission.id}")
 
+        if (command.input.context != Attachment.Context.PROBLEM_TEST_CASES) {
+            throw ForbiddenException("Input attachment context must be PROBLEM_TEST_CASES")
+        }
+
         val csvContent = command.output.joinToString("\n")
         val bytes = csvContent.toByteArray()
         val output =
@@ -41,6 +46,7 @@ class CreateExecutionInternalService(
                     ),
                 ).first
 
+        output.isCommited = true
         val execution =
             Execution(
                 submission = command.submission,

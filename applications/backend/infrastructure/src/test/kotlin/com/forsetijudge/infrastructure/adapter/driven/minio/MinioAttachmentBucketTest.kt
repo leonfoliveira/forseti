@@ -22,5 +22,7 @@ class MinioAttachmentBucketTest(
             val downloadedBytes = sut.download(attachment)
 
             downloadedBytes shouldBe bytes
+
+            sut.deleteAll(listOf(attachment))
         }
     })

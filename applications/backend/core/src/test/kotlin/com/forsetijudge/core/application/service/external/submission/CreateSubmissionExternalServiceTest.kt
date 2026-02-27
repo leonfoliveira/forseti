@@ -171,7 +171,7 @@ class CreateSubmissionExternalServiceTest :
                 )
             val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT, contest = contest)
             val problem = ProblemMockBuilder.build()
-            val code = AttachmentMockBuilder.build(context = Attachment.Context.SUBMISSION_CODE)
+            val code = AttachmentMockBuilder.build(context = Attachment.Context.SUBMISSION_CODE, isCommited = false)
             every { contestRepository.findById(any()) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(any(), any()) } returns member
             every { problemRepository.findByIdAndContestId(command.problemId, contextContestId) } returns problem
@@ -191,6 +191,7 @@ class CreateSubmissionExternalServiceTest :
             submission.status shouldBe Submission.Status.JUDGING
             submission.answer shouldBe null
             submission.code shouldBe code
+            submission.code.isCommited shouldBe true
             result shouldBe submission
             verify { frozenSubmissionRepository.save(any()) }
         }

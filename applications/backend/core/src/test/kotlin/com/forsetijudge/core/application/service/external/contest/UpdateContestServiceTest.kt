@@ -395,8 +395,12 @@ class UpdateContestServiceTest :
                 every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
                 every { contestRepository.existsBySlugAndIdNot(command.slug, contextContestId) } returns false
                 every { hasher.hash(any()) } returns "hashedPassword"
-                val descriptionAttachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_DESCRIPTION)
-                val testCasesAttachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_TEST_CASES)
+                val descriptionAttachment =
+                    AttachmentMockBuilder.build(
+                        context = Attachment.Context.PROBLEM_DESCRIPTION,
+                        isCommited = false,
+                    )
+                val testCasesAttachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_TEST_CASES, isCommited = false)
                 every { attachmentRepository.findByIdAndContestId(inputProblemToCreate.description.id, contextContestId) } returns
                     descriptionAttachment
                 every { attachmentRepository.findByIdAndContestId(inputProblemToCreate.testCases.id, contextContestId) } returns
@@ -444,17 +448,24 @@ class UpdateContestServiceTest :
                 contest.problems[1].color shouldBe inputProblemToUpdateMinimum.color.lowercase()
                 contest.problems[1].title shouldBe inputProblemToUpdateMinimum.title
                 contest.problems[1].description shouldBe problemToUpdateMinimum.description
+                contest.problems[1].description.isCommited shouldBe true
                 contest.problems[1].timeLimit shouldBe problemToUpdateMinimum.timeLimit
                 contest.problems[1].memoryLimit shouldBe problemToUpdateMinimum.memoryLimit
                 contest.problems[1].testCases shouldBe problemToUpdateMinimum.testCases
+                contest.problems[1].testCases.isCommited shouldBe true
                 contest.problems[2].id shouldBe inputProblemToUpdateFull.id
                 contest.problems[2].letter shouldBe inputProblemToUpdateFull.letter
                 contest.problems[2].color shouldBe inputProblemToUpdateFull.color.lowercase()
                 contest.problems[2].title shouldBe inputProblemToUpdateFull.title
                 contest.problems[2].description shouldBe descriptionAttachment
+                contest.problems[2].description.isCommited shouldBe true
                 contest.problems[2].timeLimit shouldBe inputProblemToUpdateFull.timeLimit
                 contest.problems[2].memoryLimit shouldBe inputProblemToUpdateFull.memoryLimit
                 contest.problems[2].testCases shouldBe testCasesAttachment
+                contest.problems[2].testCases.isCommited shouldBe true
+
+                problemToDelete.description.isCommited shouldBe false
+                problemToDelete.testCases.isCommited shouldBe false
 
                 verify { testCasesValidator.validate(testCasesAttachment) }
                 verify { contestRepository.save(contest) }

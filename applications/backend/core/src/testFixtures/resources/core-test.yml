@@ -50,6 +50,10 @@ minio:
   access-key: forseti
   secret-key: forsetijudge
   bucket: forseti
+jobs:
+  attachment-bucket-cleaner:
+    id: attachment-bucket-cleaner
+    interval: 24h
 security:
   session:
     expiration:

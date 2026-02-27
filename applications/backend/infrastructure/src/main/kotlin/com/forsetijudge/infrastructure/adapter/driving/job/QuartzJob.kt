@@ -47,7 +47,7 @@ abstract class QuartzJob<TPayload : Serializable> : QuartzJobBean() {
         val dataMap = context.mergedJobDataMap
         val id = dataMap.getString("id")
         val contestId =
-            if (dataMap.contains("contestId")) {
+            if (!(dataMap.get("contestId") as? String).isNullOrEmpty()) {
                 UUID.fromString(dataMap.getString("contestId"))
             } else {
                 null
@@ -82,7 +82,7 @@ abstract class QuartzJob<TPayload : Serializable> : QuartzJobBean() {
                 val e2 = JobExecutionException(ex)
                 try {
                     Thread.sleep(30000)
-                } catch (ignored: InterruptedException) {
+                } catch (_: InterruptedException) {
                 }
 
                 e2.setRefireImmediately(true)

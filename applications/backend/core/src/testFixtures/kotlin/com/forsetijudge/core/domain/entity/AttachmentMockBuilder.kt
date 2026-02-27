@@ -15,6 +15,7 @@ object AttachmentMockBuilder {
         filename: String = "file.txt",
         contentType: String = "text/plain",
         context: Attachment.Context = Attachment.Context.SUBMISSION_CODE,
+        isCommited: Boolean = true,
     ) = Attachment(
         id = id,
         createdAt = createdAt,
@@ -25,5 +26,6 @@ object AttachmentMockBuilder {
         filename = filename,
         contentType = contentType,
         context = context,
+        isCommited = isCommited,
     )
 }
