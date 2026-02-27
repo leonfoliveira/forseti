@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 @Configuration
@@ -28,7 +29,8 @@ class JacksonConfig {
             serializers: SerializerProvider?,
         ) {
             if (value != null) {
-                gen?.writeString(formatter.format(value))
+                val utc = value.withOffsetSameInstant(ZoneOffset.UTC)
+                gen?.writeString(formatter.format(utc))
             }
         }
     }
