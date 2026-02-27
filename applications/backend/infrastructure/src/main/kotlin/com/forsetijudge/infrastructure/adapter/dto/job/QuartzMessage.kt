@@ -16,6 +16,6 @@ data class QuartzMessage<TPayload : Serializable>(
     val id: String,
     val contestId: UUID?,
     val traceId: String,
-    val payload: TPayload,
+    val payload: TPayload?,
     val retries: Int = 0,
 )

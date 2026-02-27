@@ -13,6 +13,7 @@ import org.quartz.SimpleScheduleBuilder
 import org.quartz.TriggerBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import java.io.Serializable
+import java.time.Duration
 import java.time.OffsetDateTime
 import java.util.Date
 
@@ -69,6 +70,53 @@ abstract class QuartzJobScheduler<TPayload : Serializable>(
                 .withSchedule(
                     SimpleScheduleBuilder
                         .simpleSchedule()
+                        .withMisfireHandlingInstructionFireNow(),
+                ).build()
+
+        scheduler.scheduleJob(jobDetail, trigger)
+
+        logger.info("Job scheduled successfully")
+    }
+
+    override fun schedule(
+        id: String,
+        payload: TPayload,
+        interval: Duration,
+        startAt: OffsetDateTime,
+    ) {
+        logger.info("Scheduling a job to run every $interval")
+
+        val context = ExecutionContext.get()
+        val message =
+            QuartzMessage(
+                id = id,
+                contestId = context.contestId,
+                traceId = context.traceId,
+                payload = payload,
+            )
+
+        val jobDetail =
+            JobBuilder
+                .newJob(jobClass)
+                .withIdentity(message.id)
+                .usingJobData("id", message.id)
+                .usingJobData("traceId", message.traceId)
+                .usingJobData("payload", objectMapper.writeValueAsString(message.payload))
+                .usingJobData("retries", message.retries)
+                .storeDurably()
+                .build()
+
+        val trigger =
+            TriggerBuilder
+                .newTrigger()
+                .forJob(jobDetail)
+                .withIdentity(message.id)
+                .startAt(Date.from(startAt.toInstant()))
+                .withSchedule(
+                    SimpleScheduleBuilder
+                        .simpleSchedule()
+                        .withIntervalInMilliseconds(interval.toMillis())
+                        .repeatForever()
                         .withMisfireHandlingInstructionFireNow(),
                 ).build()
 

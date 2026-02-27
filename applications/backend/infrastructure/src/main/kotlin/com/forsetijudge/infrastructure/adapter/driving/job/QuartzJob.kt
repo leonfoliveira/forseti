@@ -47,7 +47,7 @@ abstract class QuartzJob<TPayload : Serializable> : QuartzJobBean() {
         val dataMap = context.mergedJobDataMap
         val id = dataMap.getString("id")
         val contestId =
-            if (dataMap.contains("contestId")) {
+            if (!(dataMap.get("contestId") as? String).isNullOrEmpty()) {
                 UUID.fromString(dataMap.getString("contestId"))
             } else {
                 null

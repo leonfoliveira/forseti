@@ -8,15 +8,15 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
-import com.forsetijudge.core.port.driving.usecase.external.attachment.CleanAttachmentUseCase
+import com.forsetijudge.core.port.driving.usecase.external.attachment.CleanUncommitedAttachmentsUseCase
 import org.springframework.stereotype.Service
 
 @Service
-class CleanAttachmentService(
+class CleanUncommitedAttachmentsService(
     private val memberRepository: MemberRepository,
     private val attachmentRepository: AttachmentRepository,
     private val attachmentBucket: AttachmentBucket,
-) : CleanAttachmentUseCase {
+) : CleanUncommitedAttachmentsUseCase {
     private val logger = SafeLogger(this::class)
 
     companion object {

@@ -19,14 +19,14 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 
-class CleanAttachmentServiceTest :
+class CleanUncommitedAttachmentsServiceTest :
     FunSpec({
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
         val attachmentBucket = mockk<AttachmentBucket>(relaxed = true)
 
         val sut =
-            CleanAttachmentService(
+            CleanUncommitedAttachmentsService(
                 memberRepository = memberRepository,
                 attachmentRepository = attachmentRepository,
                 attachmentBucket = attachmentBucket,
