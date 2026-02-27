@@ -16,7 +16,7 @@ class BroadcastRabbitMQProducer(
     QueueProducer<BroadcastEvent>,
     BroadcastProducer {
     override fun produce(payload: BroadcastEvent) {
-        broadCastEventRedisStore.add(payload)
+        broadCastEventRedisStore.cache(payload)
         super.produce(payload)
     }
 }

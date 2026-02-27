@@ -3,7 +3,6 @@ package com.forsetijudge.infrastructure.adapter.driven.redis
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.testcontainer.RedisTestContainer
-import com.forsetijudge.infrastructure.config.RedisConfig
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -16,7 +15,7 @@ import java.io.Serializable
 import java.time.OffsetDateTime
 
 @ActiveProfiles("test")
-@SpringBootTest(classes = [BroadcastEventRedisStore::class, RedisConfig::class, JacksonConfig::class])
+@SpringBootTest(classes = [BroadcastEventRedisStore::class, JacksonConfig::class])
 @Import(RedisTestContainer::class)
 class BroadcastEventRedisStoreTest(
     private val sut: BroadcastEventRedisStore,
@@ -26,15 +25,15 @@ class BroadcastEventRedisStoreTest(
                 val event1 =
                     BroadcastEvent(room = "/room1", name = "event1", data = mapOf("foo" to "bar") as Serializable)
 
-                sut.add(event1)
+                sut.cache(event1)
                 delay(1000)
                 val now = OffsetDateTime.now()
                 val event2 =
                     BroadcastEvent(room = "/room1", name = "event2", data = mapOf("foo" to "bar") as Serializable)
                 val event3 =
                     BroadcastEvent(room = "/room2", name = "event3", data = mapOf("foo" to "bar") as Serializable)
-                sut.add(event2)
-                sut.add(event3)
+                sut.cache(event2)
+                sut.cache(event3)
 
                 val retrievedEvents = sut.getAllSince("/room1", now)
 
@@ -46,7 +45,7 @@ class BroadcastEventRedisStoreTest(
         test("should maintain a maximum of 100 events per room") {
             val room = "/room1"
             for (i in 1..105) {
-                sut.add(BroadcastEvent(room = room, name = "event$i", data = mapOf("foo" to "bar") as Serializable))
+                sut.cache(BroadcastEvent(room = room, name = "event$i", data = mapOf("foo" to "bar") as Serializable))
             }
 
             val retrievedEvents = sut.getAllSince(room, OffsetDateTime.now().minusDays(1))

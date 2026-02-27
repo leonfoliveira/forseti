@@ -6,6 +6,7 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean
 import org.springframework.data.redis.connection.RedisConnectionFactory
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
 
@@ -26,4 +27,7 @@ class RedisTestContainer {
     @Bean
     fun redisConnectionFactory(container: RedisContainer): RedisConnectionFactory =
         LettuceConnectionFactory(container.host, container.firstMappedPort)
+
+    @Bean
+    fun stringRedisTemplate(connectionFactory: RedisConnectionFactory) = StringRedisTemplate(connectionFactory)
 }

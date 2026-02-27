@@ -69,29 +69,29 @@ class SubmissionUpdatedEventListenerTest(
             verify { broadcastProducer.produce(GuestDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission)) }
             verify {
                 broadcastProducer.produce(
-                    AdminDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    AdminDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify {
                 broadcastProducer.produce(
                     ContestantDashboardBroadcastRoom(
                         submission.contest.id,
-                    ).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    ).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    GuestDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    GuestDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    JudgeDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    JudgeDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
         }
@@ -124,29 +124,29 @@ class SubmissionUpdatedEventListenerTest(
             ) { broadcastProducer.produce(GuestDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission)) }
             verify(exactly = 0) {
                 broadcastProducer.produce(
-                    AdminDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    AdminDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify(exactly = 0) {
                 broadcastProducer.produce(
                     ContestantDashboardBroadcastRoom(
                         submission.contest.id,
-                    ).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    ).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify(exactly = 0) {
                 broadcastProducer.produce(
-                    GuestDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    GuestDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify(exactly = 0) {
                 broadcastProducer.produce(
-                    JudgeDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    JudgeDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify(exactly = 0) {
                 broadcastProducer.produce(
-                    StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell, submission.member.id),
+                    StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
         }

@@ -43,14 +43,12 @@ class GuestDashboardBroadcastRoom(
             data = clarification.toIdResponseBodyDTO(),
         )
 
-    fun buildLeaderboardUpdatedEvent(
-        leaderboardCell: Leaderboard.Cell,
-        memberId: UUID,
-    ) = BroadcastEvent(
-        room = name,
-        name = "LEADERBOARD_UPDATED",
-        data = leaderboardCell.toResponseBodyDTO(memberId),
-    )
+    fun buildLeaderboardUpdatedEvent(leaderboardCell: Leaderboard.Cell) =
+        BroadcastEvent(
+            room = name,
+            name = "LEADERBOARD_UPDATED",
+            data = leaderboardCell.toResponseBodyDTO(),
+        )
 
     fun buildLeaderboardFrozenEvent() =
         BroadcastEvent(

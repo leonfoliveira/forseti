@@ -1,5 +1,6 @@
 package com.forsetijudge.core.config
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonSerializer
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -48,6 +50,7 @@ class JacksonConfig {
         val javaTimeModule = JavaTimeModule()
         javaTimeModule.addSerializer(OffsetDateTime::class.java, OffsetDateTimeSerializer())
         objectMapper.registerModule(javaTimeModule)
+        objectMapper.registerModule(KotlinModule.Builder().build())
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         return objectMapper

@@ -14,7 +14,7 @@ data class LeaderboardCellResponseBodyDTO(
     val penalty: Int,
 ) : Serializable
 
-fun Leaderboard.Cell.toResponseBodyDTO(memberId: UUID): LeaderboardCellResponseBodyDTO =
+fun Leaderboard.Cell.toResponseBodyDTO(): LeaderboardCellResponseBodyDTO =
     LeaderboardCellResponseBodyDTO(
         memberId = memberId,
         problemId = problemId,
