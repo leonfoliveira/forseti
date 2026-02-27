@@ -63,7 +63,12 @@ class ContestControllerTest(
                     endAt = OffsetDateTime.now().plusHours(2),
                     settings =
                         UpdateContestRequestBodyDTO.Settings(
-                            isAutoJudgeEnabled = false,
+                            isAutoJudgeEnabled = true,
+                            isClarificationEnabled = true,
+                            isSubmissionPrintTicketEnabled = true,
+                            isTechnicalSupportTicketEnabled = true,
+                            isNonTechnicalSupportTicketEnabled = true,
+                            isGuestEnabled = true,
                         ),
                     members =
                         listOf(
@@ -101,6 +106,11 @@ class ContestControllerTest(
                     settings =
                         UpdateContestUseCase.Command.Settings(
                             isAutoJudgeEnabled = body.settings.isAutoJudgeEnabled,
+                            isClarificationEnabled = body.settings.isClarificationEnabled,
+                            isSubmissionPrintTicketEnabled = body.settings.isSubmissionPrintTicketEnabled,
+                            isTechnicalSupportTicketEnabled = body.settings.isTechnicalSupportTicketEnabled,
+                            isNonTechnicalSupportTicketEnabled = body.settings.isNonTechnicalSupportTicketEnabled,
+                            isGuestEnabled = body.settings.isGuestEnabled,
                         ),
                     members =
                         body.members.map {

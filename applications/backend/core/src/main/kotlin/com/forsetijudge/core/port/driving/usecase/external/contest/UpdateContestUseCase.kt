@@ -77,6 +77,7 @@ interface UpdateContestUseCase {
             val isSubmissionPrintTicketEnabled: Boolean,
             val isTechnicalSupportTicketEnabled: Boolean,
             val isNonTechnicalSupportTicketEnabled: Boolean,
+            val isGuestEnabled: Boolean,
         )
 
         data class Member(

@@ -47,6 +47,11 @@ class ContestController(
                     settings =
                         UpdateContestUseCase.Command.Settings(
                             isAutoJudgeEnabled = body.settings.isAutoJudgeEnabled,
+                            isClarificationEnabled = body.settings.isClarificationEnabled,
+                            isSubmissionPrintTicketEnabled = body.settings.isSubmissionPrintTicketEnabled,
+                            isTechnicalSupportTicketEnabled = body.settings.isTechnicalSupportTicketEnabled,
+                            isNonTechnicalSupportTicketEnabled = body.settings.isNonTechnicalSupportTicketEnabled,
+                            isGuestEnabled = body.settings.isGuestEnabled,
                         ),
                     members =
                         body.members.map {

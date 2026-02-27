@@ -100,6 +100,11 @@ class UpdateContestService(
         contest.settings =
             Contest.Settings(
                 isAutoJudgeEnabled = command.settings.isAutoJudgeEnabled,
+                isClarificationEnabled = command.settings.isClarificationEnabled,
+                isSubmissionPrintTicketEnabled = command.settings.isSubmissionPrintTicketEnabled,
+                isTechnicalSupportTicketEnabled = command.settings.isTechnicalSupportTicketEnabled,
+                isNonTechnicalSupportTicketEnabled = command.settings.isNonTechnicalSupportTicketEnabled,
+                isGuestEnabled = command.settings.isGuestEnabled,
             )
 
         val membersToCreate = command.members.filter { it.id == null }

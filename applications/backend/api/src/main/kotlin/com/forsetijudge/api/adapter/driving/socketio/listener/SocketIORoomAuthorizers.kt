@@ -49,6 +49,7 @@ class SocketIORoomAuthorizers(
                 contestAuthorizerUseCase.execute(
                     ContestAuthorizerUseCase.Command { contestAuthorizer ->
                         contestAuthorizer
+                            .requireSettingGuestEnabled()
                             .requireContestStarted()
                             .throwIfErrors()
                     },

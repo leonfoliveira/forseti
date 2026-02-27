@@ -118,10 +118,17 @@ class Contest(
         get() = frozenAt != null && !frozenAt!!.isAfter(ExecutionContext.get().startedAt)
 
     data class Settings(
+        // Whether the auto-judge system is enabled for this contest, allowing for automatic evaluation of submissions.
         var isAutoJudgeEnabled: Boolean = true,
+        // Whether members can ask for clarifications during the contest.
         var isClarificationEnabled: Boolean = true,
+        // Whether members can request a printout of a submission code.
         var isSubmissionPrintTicketEnabled: Boolean = true,
+        // Whether members can submit technical support tickets during the contest.
         var isTechnicalSupportTicketEnabled: Boolean = true,
+        // Whether members can submit non-technical support tickets during the contest.
         var isNonTechnicalSupportTicketEnabled: Boolean = true,
+        // Whether guests are allowed to view the contest and its problems without logging in.
+        var isGuestEnabled: Boolean = false,
     )
 }

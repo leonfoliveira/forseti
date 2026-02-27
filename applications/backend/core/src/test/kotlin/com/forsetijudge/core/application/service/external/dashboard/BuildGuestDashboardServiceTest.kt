@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.external.dashboard
 
 import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
@@ -36,6 +37,15 @@ class BuildGuestDashboardServiceTest :
 
         test("should throw NotFoundException if contest is not found") {
             every { contestRepository.findById(contestId) } returns null
+
+            shouldThrow<NotFoundException> {
+                sut.execute()
+            }
+        }
+
+        test("should throw NotFoundException if guest dashboard is not enabled") {
+            val contest = ContestMockBuilder.build(settings = Contest.Settings(isGuestEnabled = false))
+            every { contestRepository.findById(contestId) } returns contest
 
             shouldThrow<NotFoundException> {
                 sut.execute()

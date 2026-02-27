@@ -34,7 +34,6 @@ import io.mockk.mockkStatic
 import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
-import kotlin.Boolean
 
 class UpdateContestServiceTest :
     FunSpec({
@@ -87,6 +86,7 @@ class UpdateContestServiceTest :
                             isSubmissionPrintTicketEnabled = true,
                             isTechnicalSupportTicketEnabled = true,
                             isNonTechnicalSupportTicketEnabled = true,
+                            isGuestEnabled = true,
                         ),
                     members =
                         listOf(

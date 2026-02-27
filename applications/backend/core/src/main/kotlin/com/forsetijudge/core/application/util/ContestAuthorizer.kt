@@ -95,4 +95,27 @@ class ContestAuthorizer(
         }
         return this
     }
+
+    private fun requireSettingEnabled(setting: Boolean?): ContestAuthorizer {
+        if (setting == null) {
+            throw InternalServerException("Contest is required to perform this action")
+        }
+        if (!setting) {
+            return append("This feature is not enabled for this contest")
+        }
+        return this
+    }
+
+    fun requireSettingClarificationEnabled(): ContestAuthorizer = requireSettingEnabled(contest?.settings?.isClarificationEnabled)
+
+    fun requireSettingSubmissionPrintTicketEnabled(): ContestAuthorizer =
+        requireSettingEnabled(contest?.settings?.isSubmissionPrintTicketEnabled)
+
+    fun requireSettingTechnicalSupportTicketEnabled(): ContestAuthorizer =
+        requireSettingEnabled(contest?.settings?.isTechnicalSupportTicketEnabled)
+
+    fun requireSettingNonTechnicalSupportTicketEnabled(): ContestAuthorizer =
+        requireSettingEnabled(contest?.settings?.isNonTechnicalSupportTicketEnabled)
+
+    fun requireSettingGuestEnabled(): ContestAuthorizer = requireSettingEnabled(contest?.settings?.isGuestEnabled)
 }
