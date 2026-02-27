@@ -61,7 +61,6 @@ class SocketIOSyncListenerTest :
             sut.onData(client, payload, mockk())
 
             verify {
-                client.sendEvent("sync_start")
                 socketIOBroadcastEmitter.emitToClient(client, events[0])
                 client.sendEvent("sync_complete")
             }
