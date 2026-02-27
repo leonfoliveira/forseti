@@ -82,7 +82,7 @@ abstract class QuartzJob<TPayload : Serializable> : QuartzJobBean() {
                 val e2 = JobExecutionException(ex)
                 try {
                     Thread.sleep(30000)
-                } catch (ignored: InterruptedException) {
+                } catch (_: InterruptedException) {
                 }
 
                 e2.setRefireImmediately(true)

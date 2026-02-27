@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest(classes = [AttachmentBucketCleanerQuartzJob::class, JacksonConfig::class])
 @ActiveProfiles("test")
+@Suppress("unused")
 class AttachmentBucketCleanerQuartzJobTest(
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,

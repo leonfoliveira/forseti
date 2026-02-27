@@ -33,6 +33,7 @@ class ApplicationReadyEventListener(
      * Updates the root user's password when the application is ready.
      */
     @EventListener(ApplicationReadyEvent::class)
+    @Suppress("unused")
     fun onApplicationReady(event: ApplicationReadyEvent) {
         super.onApplicationEvent(event)
 
