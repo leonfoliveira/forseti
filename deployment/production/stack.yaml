@@ -121,6 +121,9 @@ services:
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       RABBITMQ_WEBSOCKET_EXCHANGE: websocket-exchange
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
       ROOT_PASSWORD_FILE: /run/secrets/root_password
       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://alloy:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
@@ -188,6 +191,9 @@ services:
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
       RABBITMQ_WEBSOCKET_EXCHANGE: websocket-exchange
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
       ROOT_PASSWORD_FILE: /run/secrets/root_password
       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://alloy:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc

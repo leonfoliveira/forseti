@@ -147,6 +147,9 @@ services:
       RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: forsetijudge
       ROOT_PASSWORD: forsetijudge
       OTEL_LOGS_EXPORTER: none
       OTEL_METRICS_EXPORTER: none
@@ -209,6 +212,9 @@ services:
       RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
       RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: forsetijudge
       ROOT_PASSWORD: forsetijudge
       OTEL_LOGS_EXPORTER: none
       OTEL_METRICS_EXPORTER: none

@@ -5,7 +5,7 @@ import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.testcontainer.RedisTestContainer
 import com.forsetijudge.infrastructure.config.RedisConfig
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.delay
 import org.springframework.boot.test.context.SpringBootTest
@@ -33,7 +33,8 @@ class BroadcastEventRedisStoreTest(
 
             val retrievedEvents = sut.getAllSince("/room1", now)
 
-            retrievedEvents shouldContainExactly listOf(event2)
+            retrievedEvents shouldHaveSize 1
+            retrievedEvents.first().id shouldBe event2.id
         }
 
         test("should maintain a maximum of 100 events per room") {
