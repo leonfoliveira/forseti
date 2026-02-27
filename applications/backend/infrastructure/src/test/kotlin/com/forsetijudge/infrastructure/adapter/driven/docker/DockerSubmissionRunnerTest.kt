@@ -13,6 +13,7 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.testcontainer.MinioTestContainer
 import com.forsetijudge.core.testcontainer.PostgresTestContainer
+import com.forsetijudge.core.testcontainer.TestContainers
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
 import io.kotest.matchers.shouldBe
@@ -23,7 +24,7 @@ import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test")
 @SpringBootTest
-@Import(PostgresTestContainer::class, MinioTestContainer::class)
+@Import(TestContainers::class)
 class DockerSubmissionRunnerTest(
     val sut: DockerSubmissionRunner,
     val contestRepository: ContestRepository,
