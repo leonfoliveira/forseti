@@ -143,6 +143,6 @@ class BuildLeaderboardCellServiceTest :
 
             val result = sut.execute(command)
 
-            result shouldBe Pair(cell, member.id)
+            result shouldBe cell
         }
     })
