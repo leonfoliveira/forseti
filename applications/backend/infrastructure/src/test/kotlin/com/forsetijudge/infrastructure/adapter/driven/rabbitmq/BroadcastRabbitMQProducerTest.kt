@@ -57,7 +57,7 @@ class BroadcastRabbitMQProducerTest(
                 object :
                     TypeReference<
                         RabbitMQMessage<BroadcastEvent>,
-                    >() {}
+                        >() {}
 
             val message = objectMapper.readValue(jsonMessage, typeRef)
             message.contestId shouldBe contestId

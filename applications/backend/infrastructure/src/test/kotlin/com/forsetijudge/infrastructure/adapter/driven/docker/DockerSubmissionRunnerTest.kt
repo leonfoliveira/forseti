@@ -11,8 +11,6 @@ import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.port.driven.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
-import com.forsetijudge.core.testcontainer.MinioTestContainer
-import com.forsetijudge.core.testcontainer.PostgresTestContainer
 import com.forsetijudge.core.testcontainer.TestContainers
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
