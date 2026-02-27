@@ -111,7 +111,7 @@ class BuildLeaderboardService(
 
         val rows =
             contestants.map { contestant ->
-                val memberCells = cellsByMemberId[contestant.id]!!
+                val memberCells = cellsByMemberId[contestant.id].orEmpty()
 
                 val score = memberCells.count { it.isAccepted }
                 val penalty = memberCells.sumOf { it.penalty }
@@ -140,9 +140,7 @@ class BuildLeaderboardService(
         members: List<Member>,
         problems: List<Problem>,
     ): List<Leaderboard.Cell> {
-        val allMemberProblemPairs = members.flatMap { member -> problems.map { problem -> member.id to problem.id } }.toSet()
         val cachedCells = leaderboardCacheStore.getAllCellsByContestId(contest.id).groupBy { it.memberId to it.problemId }
-        val nonCachedMemberProblemPairs = allMemberProblemPairs.filterNot { cachedCells.containsKey(it) }
 
         val submissionsForNonCachedMemberProblemPairs =
             if (contest.isFrozen) {
@@ -150,14 +148,14 @@ class BuildLeaderboardService(
                     .findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
                         contestId = contest.id,
                         status = Submission.Status.JUDGED,
-                        excludedMemberProblemPairs = nonCachedMemberProblemPairs,
+                        excludedMemberProblemPairs = cachedCells.keys,
                     ).map { it.unfreeze() }
             } else {
                 submissionRepository
                     .findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
                         contestId = contest.id,
                         status = Submission.Status.JUDGED,
-                        excludedMemberProblemPairs = nonCachedMemberProblemPairs,
+                        excludedMemberProblemPairs = cachedCells.keys,
                     )
             }.groupBy { it.member.id to it.problem.id }
 

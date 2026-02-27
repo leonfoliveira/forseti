@@ -28,7 +28,7 @@ class LeaderboardRedisStore(
     ) {
         val cellKey = "${CELL_STORE_KEY}:$contestId:${cell.memberId}:${cell.problemId}"
         val contestKey = "${CELL_STORE_KEY}:$contestId"
-        logger.info("Caching leaderboard cell with cellKey = $cellKey and contestKey = $contestKey)")
+        logger.info("Caching leaderboard cell with cellKey = $cellKey and contestKey = $contestKey")
 
         val rawCell = objectMapper.writeValueAsString(cell)
         redisTemplate.opsForValue().set(cellKey, rawCell)
@@ -48,7 +48,7 @@ class LeaderboardRedisStore(
             logger.info("No cell keys found for contestKey: $contestKey")
             return emptyList()
         }
-        val rawCells = redisTemplate.opsForValue().multiGet(cellKeys)
+        val rawCells = redisTemplate.opsForValue().multiGet(cellKeys)?.filter { it.isNullOrEmpty() }
         if (rawCells.isNullOrEmpty()) {
             logger.info("No leaderboard cells found for contestKey: $contestKey")
             return emptyList()
