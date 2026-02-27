@@ -72,6 +72,7 @@ class CreateSubmissionService(
             throw ForbiddenException("Language ${command.language} is not allowed for this contest")
         }
 
+        code.isCommited = true
         val submission =
             Submission(
                 member = member,

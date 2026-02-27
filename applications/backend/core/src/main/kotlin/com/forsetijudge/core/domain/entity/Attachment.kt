@@ -60,7 +60,7 @@ class Attachment(
      * Whether the attachment has been commited to the storage bucket. This is used to prevent orphaned attachments.
      */
     @Column(nullable = false)
-    val isCommited: Boolean = false,
+    var isCommited: Boolean = false,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     enum class Context {
         PROBLEM_DESCRIPTION,

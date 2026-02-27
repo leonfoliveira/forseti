@@ -172,14 +172,16 @@ class UpdateContestService(
         if (description.context != Attachment.Context.PROBLEM_DESCRIPTION) {
             throw ForbiddenException("Attachment with id: ${description.id} is not a valid problem description")
         }
+        description.isCommited = true
+
         val testCases =
             attachmentRepository.findByIdAndContestId(problemDTO.testCases.id, contest.id)
                 ?: throw NotFoundException("Could not find testCases attachment with id: ${problemDTO.testCases.id} in this contest")
         if (testCases.context != Attachment.Context.PROBLEM_TEST_CASES) {
             throw ForbiddenException("Attachment with id: ${testCases.id} is not a valid problem test cases")
         }
-        // Validate if the test cases file follows the expected format
         testCasesValidator.validate(testCases)
+        testCases.isCommited = true
 
         val problem =
             Problem(
@@ -252,6 +254,7 @@ class UpdateContestService(
             if (description.context != Attachment.Context.PROBLEM_DESCRIPTION) {
                 throw ForbiddenException("Attachment with id: ${description.id} is not a valid problem description")
             }
+            description.isCommited = true
             problem.description = description
         }
         if (problem.testCases.id != problemDTO.testCases.id) {
@@ -262,6 +265,7 @@ class UpdateContestService(
                 throw ForbiddenException("Attachment with id: ${testCases.id} is not a valid problem test cases")
             }
             testCasesValidator.validate(testCases)
+            testCases.isCommited = true
             problem.testCases = testCases
         }
 
@@ -293,7 +297,11 @@ class UpdateContestService(
     private fun deleteProblems(problems: List<Problem>) {
         logger.info("Deleting problems with ids: ${problems.map { it.id }}")
 
-        problems.forEach { it.deletedAt = ExecutionContext.get().startedAt }
+        problems.forEach {
+            it.deletedAt = ExecutionContext.get().startedAt
+            it.description.isCommited = false
+            it.testCases.isCommited = false
+        }
         problemRepository.saveAll(problems)
     }
 }
