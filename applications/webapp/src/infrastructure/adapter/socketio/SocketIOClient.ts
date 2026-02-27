@@ -7,6 +7,9 @@ export class SocketIOBroadcastClient implements BroadcastClient {
   constructor(private url: string) {}
 
   private client: Socket | null = null;
+  private rooms: Map<string, { [event: string]: (payload: any) => void }> =
+    new Map();
+  private lastConnectionLostAt: Date | null = null;
 
   get isConnected(): boolean {
     return this.client?.connected ?? false;
@@ -27,7 +30,7 @@ export class SocketIOBroadcastClient implements BroadcastClient {
 
       this.client.on("connect", () => {
         if (this.client?.recovered) {
-          console.debug("Reconnected to Socket.IO server");
+          this.restoreConnection(this.client);
           onReconnect?.();
         } else {
           console.debug("Connected to Socket.IO server");
@@ -92,9 +95,28 @@ export class SocketIOBroadcastClient implements BroadcastClient {
     }
 
     this.client.emit("join", room.name);
+    this.rooms.set(room.name, room.callbacks);
 
     for (const [event, callback] of Object.entries(room.callbacks)) {
       this.client.on(event, callback);
+    }
+  }
+
+  /**
+   * Restore the connection by rejoining all rooms and resubscribing to events.
+   * Emits a "sync" event for each room with the timestamp of when the connection was lost, allowing the server to send any missed messages.
+   *
+   * @param client The Socket.IO client instance that has reconnected to the server.
+   */
+  private async restoreConnection(client: Socket): Promise<void> {
+    for (const [room, callbacks] of this.rooms.entries()) {
+      await this.join({ name: room, callbacks });
+      if (this.lastConnectionLostAt) {
+        client.emit("sync", {
+          room,
+          timestamp: this.lastConnectionLostAt.toISOString(),
+        });
+      }
     }
   }
 }
