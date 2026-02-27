@@ -80,4 +80,11 @@ class Problem(
     @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var submissions: List<Submission> = mutableListOf(),
+    /**
+     * Frozen submissions for this problem, which are snapshots of submissions at the time the leaderboard is frozen.
+     */
+    @Audited(withModifiedFlag = false)
+    @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @OrderBy("createdAt ASC")
+    var frozenSubmissions: List<FrozenSubmission> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)

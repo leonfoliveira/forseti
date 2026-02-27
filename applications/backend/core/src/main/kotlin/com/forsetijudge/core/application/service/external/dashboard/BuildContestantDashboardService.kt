@@ -3,6 +3,7 @@ package com.forsetijudge.core.application.service.external.dashboard
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.entity.unfreeze
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.dashboard.ContestantDashboard
@@ -38,7 +39,15 @@ class BuildContestantDashboardService(
             .throwIfErrors()
 
         val leaderboard = buildLeaderboardUseCase.execute()
-        val submissions = contest.problems.map { it.submissions }.flatten()
+        val submissions =
+            contest.problems
+                .map { problem -> if (contest.isFrozen) problem.frozenSubmissions.map { it.unfreeze() } else problem.submissions }
+                .flatten()
+        val memberSubmissions =
+            contest.problems
+                .map { it.submissions }
+                .flatten()
+                .filter { it.member.id == contextMemberId }
 
         return ContestantDashboard(
             contest = contest,
@@ -46,7 +55,7 @@ class BuildContestantDashboardService(
             members = contest.members,
             problems = contest.problems,
             submissions = submissions,
-            memberSubmissions = submissions.filter { it.member.id == contextMemberId },
+            memberSubmissions = memberSubmissions,
             clarifications = contest.clarifications,
             announcements = contest.announcements,
             memberTickets = contest.tickets.filter { it.member.id == contextMemberId },

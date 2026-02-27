@@ -17,6 +17,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import java.time.OffsetDateTime
 
 class BuildContestantDashboardServiceTest :
     FunSpec({
@@ -90,5 +91,18 @@ class BuildContestantDashboardServiceTest :
             dashboard.clarifications shouldBe contest.clarifications
             dashboard.announcements shouldBe contest.announcements
             dashboard.memberTickets shouldBe contest.tickets.filter { it.member.id == memberId }
+        }
+
+        test("should unfreeze submissions if contest is frozen") {
+            val contest = ContestMockBuilder.build(frozenAt = OffsetDateTime.now().minusHours(1))
+            val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
+            val leaderboard = LeaderboardMockBuilder.build()
+            every { contestRepository.findById(contestId) } returns contest
+            every { memberRepository.findByIdAndContestIdOrContestIsNull(memberId, contestId) } returns member
+            every { buildLeaderboardUseCase.execute() } returns leaderboard
+
+            val dashboard = sut.execute()
+
+            dashboard.submissions shouldBe contest.problems.map { it.frozenSubmissions }.flatten()
         }
     })

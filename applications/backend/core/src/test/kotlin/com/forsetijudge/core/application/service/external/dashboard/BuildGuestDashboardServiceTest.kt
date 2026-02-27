@@ -13,6 +13,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import java.time.OffsetDateTime
 
 class BuildGuestDashboardServiceTest :
     FunSpec({
@@ -56,5 +57,16 @@ class BuildGuestDashboardServiceTest :
             dashboard.submissions shouldBe contest.problems.map { it.submissions }.flatten()
             dashboard.clarifications shouldBe contest.clarifications
             dashboard.announcements shouldBe contest.announcements
+        }
+
+        test("should build guest dashboard with frozen submissions") {
+            val contest = ContestMockBuilder.build(frozenAt = OffsetDateTime.now().minusHours(1))
+            val leaderboard = LeaderboardMockBuilder.build()
+            every { contestRepository.findById(contestId) } returns contest
+            every { buildLeaderboardUseCase.execute() } returns leaderboard
+
+            val dashboard = sut.execute()
+
+            dashboard.submissions shouldBe contest.problems.map { it.frozenSubmissions }.flatten()
         }
     })
