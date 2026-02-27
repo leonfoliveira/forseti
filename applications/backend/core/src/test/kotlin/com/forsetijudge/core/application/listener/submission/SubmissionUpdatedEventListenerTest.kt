@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
+import com.forsetijudge.core.port.driven.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
 import com.ninjasquad.springmockk.MockkBean
@@ -30,6 +31,8 @@ class SubmissionUpdatedEventListenerTest(
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
     private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
+    @MockkBean(relaxed = true)
+    private val leaderboardCacheStore: LeaderboardCacheStore,
     @MockkBean(relaxed = true)
     private val broadcastProducer: BroadcastProducer,
     private val sut: SubmissionUpdatedEventListener,
@@ -94,6 +97,10 @@ class SubmissionUpdatedEventListenerTest(
                     StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
+
+            verify {
+                leaderboardCacheStore.cache(submission.contest.id, leaderboardCell)
+            }
         }
 
         test("should not produce to submission topic and leaderboard cell topic if contest is frozen") {
@@ -148,6 +155,9 @@ class SubmissionUpdatedEventListenerTest(
                 broadcastProducer.produce(
                     StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
+            }
+            verify(exactly = 0) {
+                leaderboardCacheStore.cache(submission.contest.id, leaderboardCell)
             }
         }
     })
