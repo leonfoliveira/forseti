@@ -24,22 +24,22 @@ class BroadcastEventRedisStoreTest(
         test("should add and retrieve broadcast events correctly") {
             runTest {
                 val event1 =
-                    BroadcastEvent(room = "/room1", name = "event", data = mapOf("foo" to "bar") as Serializable)
+                    BroadcastEvent(room = "/room1", name = "event1", data = mapOf("foo" to "bar") as Serializable)
 
                 sut.add(event1)
                 delay(1000)
                 val now = OffsetDateTime.now()
                 val event2 =
-                    BroadcastEvent(room = "/room1", name = "event", data = mapOf("foo" to "bar") as Serializable)
+                    BroadcastEvent(room = "/room1", name = "event2", data = mapOf("foo" to "bar") as Serializable)
                 val event3 =
-                    BroadcastEvent(room = "/room2", name = "event", data = mapOf("foo" to "bar") as Serializable)
+                    BroadcastEvent(room = "/room2", name = "event3", data = mapOf("foo" to "bar") as Serializable)
                 sut.add(event2)
                 sut.add(event3)
 
                 val retrievedEvents = sut.getAllSince("/room1", now)
 
                 retrievedEvents shouldHaveSize 1
-                retrievedEvents.first().id shouldBe event2.id
+                retrievedEvents.first().name shouldBe "event2"
             }
         }
 

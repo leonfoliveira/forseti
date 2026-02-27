@@ -6,6 +6,7 @@ import com.forsetijudge.core.port.driven.cache.BroadcastEventCacheStore
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
+import java.util.UUID
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.toJavaDuration
 
@@ -23,12 +24,13 @@ class BroadcastEventRedisStore(
 
     override fun add(event: BroadcastEvent) {
         val key = "${BROADCAST_EVENTS_KEY}:${event.room}"
-        logger.info("Saving broadcast event with id: ${event.id} with key = $key and timestamp: ${event.timestamp}")
+        val timestamp = OffsetDateTime.now()
+        logger.info("Saving broadcast event with key = $key and timestamp: $timestamp")
 
         redisTemplate.opsForZSet().add(
             key,
             event,
-            event.timestamp
+            timestamp
                 .toInstant()
                 .toEpochMilli()
                 .toDouble(),
