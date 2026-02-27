@@ -4,7 +4,6 @@ import com.forsetijudge.core.application.listener.ApplicationEventListener
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.application.util.UnitUtil
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.port.driven.AttachmentBucket
 import com.forsetijudge.core.port.driven.job.AttachmentBucketCleanerJobScheduler
 import com.forsetijudge.core.port.driven.job.payload.AttachmentBucketCleanerJobPayload
 import com.forsetijudge.core.port.driving.usecase.external.member.UpdateMemberPasswordUseCase

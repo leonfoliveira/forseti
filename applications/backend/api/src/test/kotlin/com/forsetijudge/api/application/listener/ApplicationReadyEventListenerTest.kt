@@ -3,7 +3,6 @@ package com.forsetijudge.api.application.listener
 import com.forsetijudge.core.application.util.UnitUtil
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driven.job.AttachmentBucketCleanerJobScheduler
-import com.forsetijudge.core.port.driven.job.payload.AttachmentBucketCleanerJobPayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.member.UpdateMemberPasswordUseCase
 import com.ninjasquad.springmockk.MockkBean
@@ -11,13 +10,11 @@ import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import io.mockk.verify
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.orm.ObjectOptimisticLockingFailureException
-import java.time.OffsetDateTime
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.toJavaDuration
 
