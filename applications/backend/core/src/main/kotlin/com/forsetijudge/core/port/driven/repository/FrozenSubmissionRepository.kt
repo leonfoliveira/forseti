@@ -10,6 +10,8 @@ import java.util.UUID
  * Accessor for persistence operations related to FrozenSubmission entity
  */
 interface FrozenSubmissionRepository : Repository<FrozenSubmission, UUID> {
+    fun save(entity: FrozenSubmission): FrozenSubmission
+
     fun saveAll(entities: Iterable<FrozenSubmission>): List<FrozenSubmission>
 
     @Query(
