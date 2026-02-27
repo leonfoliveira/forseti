@@ -119,5 +119,9 @@ class Contest(
 
     data class Settings(
         var isAutoJudgeEnabled: Boolean = true,
+        var isClarificationEnabled: Boolean = true,
+        var isSubmissionPrintTicketEnabled: Boolean = true,
+        var isTechnicalSupportTicketEnabled: Boolean = true,
+        var isNonTechnicalSupportTicketEnabled: Boolean = true,
     )
 }
