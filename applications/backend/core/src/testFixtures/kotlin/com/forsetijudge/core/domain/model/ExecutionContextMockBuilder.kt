@@ -4,6 +4,7 @@ import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -21,7 +22,7 @@ object ExecutionContextMockBuilder {
         val member = memberId?.let { MemberMockBuilder.build(id = memberId, contest = contest) }
         val session = member?.let { SessionMockBuilder.build(member = member) }
         if (session != null) {
-            ExecutionContext.authenticate(session)
+            ExecutionContext.setSession(session.toResponseBodyDTO())
         }
     }
 }

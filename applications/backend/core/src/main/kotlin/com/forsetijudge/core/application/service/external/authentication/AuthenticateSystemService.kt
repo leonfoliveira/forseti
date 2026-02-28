@@ -2,19 +2,20 @@ package com.forsetijudge.core.application.service.external.authentication
 
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.application.util.SafeLogger
-import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.cryptography.Hasher
-import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
+import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
@@ -27,8 +28,9 @@ class AuthenticateSystemService(
 ) : AuthenticateSystemUseCase {
     private val logger = SafeLogger(this::class)
 
-    private var cachedSessionByMemberId = ConcurrentHashMap<UUID, Session>()
+    private var cachedSessionByMemberId = ConcurrentHashMap<UUID, SessionResponseBodyDTO>()
 
+    @Transactional
     override fun execute(command: AuthenticateSystemUseCase.Command) {
         logger.info("Authenticating system member with login: ${command.login}")
 
@@ -39,7 +41,7 @@ class AuthenticateSystemService(
         val member = upsertSystemMember(command)
         val session = getSession(member)
 
-        ExecutionContext.authenticate(session)
+        ExecutionContext.setSession(session)
         logger.info("System member authenticated successfully")
     }
 
@@ -71,7 +73,7 @@ class AuthenticateSystemService(
         }
     }
 
-    fun getSession(member: Member): Session {
+    fun getSession(member: Member): SessionResponseBodyDTO {
         val cachedSession = cachedSessionByMemberId[member.id]
 
         if (cachedSession != null) {
@@ -92,11 +94,11 @@ class AuthenticateSystemService(
         return createSession(member)
     }
 
-    fun createSession(member: Member): Session {
+    fun createSession(member: Member): SessionResponseBodyDTO {
         val session =
             createSessionInternalUseCase.execute(CreateSessionInternalUseCase.Command(member))
-        cachedSessionByMemberId[member.id] = session
+        cachedSessionByMemberId[member.id] = session.toResponseBodyDTO()
         logger.info("Created new session with id: ${session.id}")
-        return session
+        return session.toResponseBodyDTO()
     }
 }

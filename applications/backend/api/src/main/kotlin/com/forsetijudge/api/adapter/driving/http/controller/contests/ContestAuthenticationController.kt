@@ -40,12 +40,12 @@ class ContestAuthenticationController(
                 ),
             )
 
-        val sessionCookie = sessionCookieBuilder.buildCookie(session.toResponseBodyDTO())
-        val csrfCookie = csrfCookieBuilder.buildCookie(session.toResponseBodyDTO())
+        val sessionCookie = sessionCookieBuilder.buildCookie(session)
+        val csrfCookie = csrfCookieBuilder.buildCookie(session)
 
         return ResponseEntity
             .ok()
             .header(HttpHeaders.SET_COOKIE, sessionCookie, csrfCookie)
-            .body(session.toResponseBodyDTO())
+            .body(session)
     }
 }

@@ -14,6 +14,7 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.SignInUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.DeleteAllSessionsByMemberInternalUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -105,7 +106,7 @@ class SignInServiceTest :
 
             val result = sut.execute(command)
 
-            result shouldBe session
+            result shouldBe session.toResponseBodyDTO()
             verify { hasher.verify(command.password, member.password) }
             verify { deleteAllSessionsByMemberInternalUseCase.execute(DeleteAllSessionsByMemberInternalUseCase.Command(member)) }
             verify { createSessionInternalUseCase.execute(CreateSessionInternalUseCase.Command(member)) }

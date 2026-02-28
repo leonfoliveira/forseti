@@ -6,6 +6,7 @@ import com.corundumstudio.socketio.listener.DataListener
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import org.springframework.stereotype.Component
 import java.util.UUID
 
@@ -31,12 +32,17 @@ class SocketIOJoinListener(
             contestId = contestId,
         )
 
-        val session = client.get<Session?>("session")
+        val session = client.get<SessionResponseBodyDTO?>("session")
         if (session != null) {
-            if (session.member.contest?.id == contestId) {
-                ExecutionContext.get().session = session
+            if (contestId != null) {
+                val memberContestId = session.member.contestId
+                if (memberContestId != null && memberContestId != ExecutionContext.getContestIdNullable()) {
+                    logger.info("Session does not belong to the current contest. Continuing as guest.")
+                } else {
+                    ExecutionContext.setSession(session)
+                }
             } else {
-                logger.info("Session contest ID does not match room contest ID. Continuing as guest.")
+                ExecutionContext.setSession(session)
             }
         }
 

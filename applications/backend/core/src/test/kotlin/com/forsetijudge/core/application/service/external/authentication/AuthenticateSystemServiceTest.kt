@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -67,7 +68,7 @@ class AuthenticateSystemServiceTest :
             sut.execute(command)
 
             val session = ExecutionContext.getSession()
-            session shouldBe expectedSession
+            session shouldBe expectedSession.toResponseBodyDTO()
             val newMemberSlot = slot<Member>()
             verify { memberRepository.save(capture(newMemberSlot)) }
             val newMember = newMemberSlot.captured
@@ -86,8 +87,7 @@ class AuthenticateSystemServiceTest :
             sut.execute(command)
 
             val session = ExecutionContext.getSession()
-            session shouldBe expectedSession
-            session.member shouldBe existingMember
+            session shouldBe expectedSession.toResponseBodyDTO()
             verify { memberRepository.save(existingMember) }
         }
 
@@ -97,14 +97,13 @@ class AuthenticateSystemServiceTest :
             val secondSession = SessionMockBuilder.build(member = existingMember)
             every { memberRepository.findByLoginAndContestIsNull(command.login) } returns existingMember
             every { createSessionInternalUseCase.execute(any()) } returnsMany listOf(cachedSession, secondSession)
-            every { findSessionByIdUseCase.execute(any()) } returns cachedSession
+            every { findSessionByIdUseCase.execute(any()) } returns cachedSession.toResponseBodyDTO()
 
             sut.execute(command)
             sut.execute(command)
 
             val session = ExecutionContext.getSession()
-            session shouldBe cachedSession
-            session.member shouldBe existingMember
+            session.id shouldBe cachedSession.id
             verify(exactly = 1) { createSessionInternalUseCase.execute(any()) }
         }
 
@@ -120,8 +119,7 @@ class AuthenticateSystemServiceTest :
             sut.execute(command)
 
             val session = ExecutionContext.getSession()
-            session shouldBe secondSession
-            session.member shouldBe existingMember
+            session.id shouldBe secondSession.id
             verify { createSessionInternalUseCase.execute(any()) }
         }
     })

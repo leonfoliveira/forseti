@@ -1,9 +1,9 @@
 package com.forsetijudge.core.domain.model
 
 import com.forsetijudge.core.application.util.IdGenerator
-import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.exception.UnauthorizedException
+import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import io.opentelemetry.api.trace.Span
 import org.slf4j.MDC
 import java.time.OffsetDateTime
@@ -13,7 +13,7 @@ data class ExecutionContext(
     var ip: String? = null,
     var traceId: String,
     var contestId: UUID? = null,
-    var session: Session? = null,
+    var session: SessionResponseBodyDTO? = null,
     var startedAt: OffsetDateTime = OffsetDateTime.now(),
 ) {
     companion object {
@@ -31,6 +31,7 @@ data class ExecutionContext(
             ip: String? = null,
             traceId: String? = null,
             contestId: UUID? = null,
+            session: SessionResponseBodyDTO? = null,
             startedAt: OffsetDateTime = OffsetDateTime.now(),
         ): ExecutionContext {
             val traceId = traceId ?: Span.current().spanContext.traceId ?: IdGenerator.getTraceId()
@@ -40,6 +41,7 @@ data class ExecutionContext(
                     ip = ip,
                     traceId = traceId,
                     contestId = contestId,
+                    session = session,
                     startedAt = startedAt,
                 )
 
@@ -49,21 +51,6 @@ data class ExecutionContext(
             currentSpan.setAttribute("trace_id", traceId)
             MDC.put("trace_id", traceId)
 
-            return context
-        }
-
-        /**
-         * Update the current ExecutionContext with the session information from the provided Session object.
-         *
-         * @return The updated ExecutionContext with the session information included.
-         * @throw UnauthorizedException if the session's contest ID does not match the current context's contest ID (if the context has a contest ID)
-         */
-        fun authenticate(session: Session): ExecutionContext {
-            val context = get()
-            if (context.contestId != null && session.member.contest != null && context.contestId != session.member.contest.id) {
-                throw UnauthorizedException("Session contest ID does not match the current context's contest ID")
-            }
-            context.session = session
             return context
         }
 
@@ -85,13 +72,22 @@ data class ExecutionContext(
         }
 
         /**
+         * Sets the session attribute
+         *
+         * @param session The session to set
+         */
+        fun setSession(session: SessionResponseBodyDTO) {
+            get().session = session
+        }
+
+        /**
          * Clears the current RequestContext from the security context.
          */
         fun clear() {
             instance.remove()
         }
 
-        fun getSession(): Session = get().session ?: throw UnauthorizedException("Not authenticated")
+        fun getSession(): SessionResponseBodyDTO = get().session ?: throw UnauthorizedException("Not authenticated")
 
         fun getContestId(): UUID = get().contestId ?: throw UnauthorizedException("Contest ID is not available in the current context")
 
@@ -101,6 +97,6 @@ data class ExecutionContext(
 
         fun getMemberIdNullable(): UUID? = get().session?.member?.id
 
-        fun getMember(): Member = get().session?.member ?: throw UnauthorizedException("Not authenticated")
+        fun getMember(): MemberResponseBodyDTO = get().session?.member ?: throw UnauthorizedException("Not authenticated")
     }
 }

@@ -6,6 +6,7 @@ import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -105,12 +106,12 @@ class SocketIOAuthenticateListenerTest :
             every { mockHandshakeData.httpHeaders } returns mockHttpHeaders
             every { mockClient.handshakeData } returns mockHandshakeData
             val session = SessionMockBuilder.build()
-            every { findSessionByIdUseCase.execute(any()) } returns session
+            every { findSessionByIdUseCase.execute(any()) } returns session.toResponseBodyDTO()
 
             sut.onData(mockClient, null, mockk())
 
             verify { findSessionByIdUseCase.execute(any()) }
-            verify { mockClient.set("session", session) }
+            verify { mockClient.set("session", session.toResponseBodyDTO()) }
             ExecutionContext.get().ip shouldBe "0.0.0.0"
         }
     })

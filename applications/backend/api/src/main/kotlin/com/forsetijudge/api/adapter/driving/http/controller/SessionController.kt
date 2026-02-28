@@ -28,7 +28,7 @@ class SessionController(
     fun getSession(): ResponseEntity<SessionResponseBodyDTO> {
         logger.info("[GET] /v1/sessions/me")
         val session = ExecutionContext.getSession()
-        return ResponseEntity.ok(session.toResponseBodyDTO())
+        return ResponseEntity.ok(session)
     }
 
     @DeleteMapping("/sessions/me")

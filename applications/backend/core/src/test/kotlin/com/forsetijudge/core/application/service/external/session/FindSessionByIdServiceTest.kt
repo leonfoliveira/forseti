@@ -6,6 +6,7 @@ import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.SessionRepository
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -51,6 +52,6 @@ class FindSessionByIdServiceTest :
 
             val result = sut.execute(command)
 
-            result shouldBe session
+            result shouldBe session.toResponseBodyDTO()
         }
     })
