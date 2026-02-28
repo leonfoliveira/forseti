@@ -9,10 +9,10 @@ import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock(
-  "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-page-reveal",
+  "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-page-revealer",
   () => ({
-    LeaderboardPageReveal: () => (
-      <span data-testid="mocked-leaderboard-page-reveal" />
+    LeaderboardPageRevealer: () => (
+      <span data-testid="mocked-leaderboard-page-revealer" />
     ),
   }),
 );
@@ -66,7 +66,7 @@ describe("LeaderboardPage", () => {
     fireEvent.click(screen.getByTestId("open-reveal-button"));
 
     expect(
-      screen.getByTestId("mocked-leaderboard-page-reveal"),
+      screen.getByTestId("mocked-leaderboard-page-revealer"),
     ).toBeInTheDocument();
   });
 });
