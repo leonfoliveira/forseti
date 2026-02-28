@@ -35,6 +35,11 @@ describe("SettingsForm", () => {
       autoFreezeAt: "2026-12-31T12:00",
       settings: {
         isAutoJudgeEnabled: true,
+        isClarificationEnabled: true,
+        isSubmissionPrintTicketEnabled: true,
+        isTechnicalSupportTicketEnabled: true,
+        isNonTechnicalSupportTicketEnabled: true,
+        isGuestEnabled: true,
       },
     },
     problems: [
@@ -72,6 +77,11 @@ describe("SettingsForm", () => {
       endAt: "2026-12-31T18:00",
       settings: {
         isAutoJudgeEnabled: true,
+        isClarificationEnabled: true,
+        isSubmissionPrintTicketEnabled: true,
+        isTechnicalSupportTicketEnabled: true,
+        isNonTechnicalSupportTicketEnabled: true,
+        isGuestEnabled: true,
       },
     },
     problems: [
@@ -822,7 +832,14 @@ describe("SettingsForm", () => {
       expect(dto.slug).toBe("test-contest");
       expect(dto.title).toBe("Test Contest");
       expect(dto.languages).toEqual([SubmissionLanguage.CPP_17]);
-      expect(dto.settings).toEqual({ isAutoJudgeEnabled: true });
+      expect(dto.settings).toEqual({
+        isAutoJudgeEnabled: true,
+        isClarificationEnabled: true,
+        isSubmissionPrintTicketEnabled: true,
+        isTechnicalSupportTicketEnabled: true,
+        isNonTechnicalSupportTicketEnabled: true,
+        isGuestEnabled: true,
+      });
       expect(dto.startAt).toBeDefined();
       expect(dto.endAt).toBeDefined();
       expect(dto.members).toHaveLength(1);
@@ -935,10 +952,17 @@ describe("SettingsForm", () => {
       endAt: "2026-12-31T18:00:00Z",
       settings: {
         isAutoJudgeEnabled: true,
+        isClarificationEnabled: true,
+        isSubmissionPrintTicketEnabled: true,
+        isTechnicalSupportTicketEnabled: true,
+        isNonTechnicalSupportTicketEnabled: true,
+        isGuestEnabled: true,
       },
       problems: [
         {
           id: "problem-1",
+          createdAt: "2026-12-30T12:00:00Z",
+          updatedAt: "2026-12-30T12:00:00Z",
           letter: "A",
           color: "#ffffff",
           title: "Problem A",
@@ -952,6 +976,8 @@ describe("SettingsForm", () => {
       members: [
         {
           id: "member-1",
+          createdAt: "2026-12-30T12:00:00Z",
+          updatedAt: "2026-12-30T12:00:00Z",
           type: MemberType.CONTESTANT,
           name: "John Doe",
           login: "johndoe",
@@ -971,7 +997,14 @@ describe("SettingsForm", () => {
       expect(formData.contest.languages[SubmissionLanguage.PYTHON_312]).toBe(
         false,
       );
-      expect(formData.contest.settings).toEqual({ isAutoJudgeEnabled: true });
+      expect(formData.contest.settings).toEqual({
+        isAutoJudgeEnabled: true,
+        isClarificationEnabled: true,
+        isSubmissionPrintTicketEnabled: true,
+        isTechnicalSupportTicketEnabled: true,
+        isNonTechnicalSupportTicketEnabled: true,
+        isGuestEnabled: true,
+      });
     });
 
     it("should convert problems correctly", () => {
