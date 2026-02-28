@@ -30,7 +30,7 @@ class BuildGuestDashboardService(
             throw NotFoundException("Guest dashboard is not enabled for this contest")
         }
 
-        val leaderboard = buildLeaderboardUseCase.execute()
+        val leaderboard = buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command())
         val submissions =
             contest.problems
                 .map { problem -> if (contest.isFrozen) problem.frozenSubmissions.map { it.unfreeze() } else problem.submissions }

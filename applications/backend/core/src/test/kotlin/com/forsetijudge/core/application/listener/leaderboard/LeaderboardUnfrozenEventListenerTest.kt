@@ -45,7 +45,7 @@ class LeaderboardUnfrozenEventListenerTest(
             val leaderboard = LeaderboardMockBuilder.build()
             val frozenSubmissions = listOf(SubmissionMockBuilder.build(), SubmissionMockBuilder.build())
             val event = LeaderboardEvent.Unfrozen(contest, frozenAt)
-            every { buildLeaderboardUseCase.execute() } returns leaderboard
+            every { buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command()) } returns leaderboard
             every { findAllSubmissionsByContestSinceLastFreezeUseCase.execute(any()) } returns frozenSubmissions
 
             sut.onApplicationEvent(event)

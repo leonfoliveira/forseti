@@ -486,7 +486,15 @@
               "header-penalty": "Penalty",
               "empty": "No contestants yet",
               "rules-explanation": "Rankings are determined by: 1) Total problems solved (more is better); 2) Total penalty time (less is better); 3) Time of accepted submissions (earlier is better); 4) Name (alphabetical). Penalty includes submission time plus 20 minutes for each wrong answer before acceptance.",
-              "unofficial": "Unofficial"
+              "unofficial": "Unofficial",
+              "open-revealer": "Open Revealer"
+            },
+            "leaderboard-page-revealer": {
+              "get-error": "Failed to load leaderboard data",
+              "final-standing": "Final Standing",
+              "header-contestant": "Contestant",
+              "header-score": "Score",
+              "header-penalty": "Penalty"
             }
           },
           "clarifications": {

@@ -7,6 +7,7 @@ import { ClarificationWritter } from "@/core/port/driving/usecase/clarification/
 import { ContestReader } from "@/core/port/driving/usecase/contest/ContestReader";
 import { ContestWritter } from "@/core/port/driving/usecase/contest/ContestWritter";
 import { DashboardReader } from "@/core/port/driving/usecase/dashboard/DashboardReader";
+import { LeaderboardReader } from "@/core/port/driving/usecase/leaderboard/LeaderboardReader";
 import { LeaderboardWritter } from "@/core/port/driving/usecase/leaderboard/LeaderboardWritter";
 import { SessionReader } from "@/core/port/driving/usecase/session/SessionReader";
 import { SessionWritter } from "@/core/port/driving/usecase/session/SessionWritter";
@@ -28,6 +29,7 @@ export type Composition = {
   contestReader: ContestReader;
   contestWritter: ContestWritter;
   dashboardReader: DashboardReader;
+  leaderboardReader: LeaderboardReader;
   leaderboardWritter: LeaderboardWritter;
   sessionReader: SessionReader;
   sessionWritter: SessionWritter;

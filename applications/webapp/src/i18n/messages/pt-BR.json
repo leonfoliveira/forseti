@@ -488,7 +488,15 @@
               "header-penalty": "Penalidade",
               "empty": "Nenhum competidor ainda",
               "rules-explanation": "As classificações são determinadas por: 1) Total de problemas resolvidos (mais é melhor); 2) Tempo total de penalidade (menos é melhor); 3) Tempo das submissões aceitas (mais cedo é melhor); 4) Nome (ordem alfabética). A penalidade inclui o tempo de submissão mais 20 minutos para cada resposta errada antes da aceitação.",
-              "unofficial": "Café com Leite"
+              "unofficial": "Café com Leite",
+              "open-revealer": "Abrir Revelador"
+            },
+            "leaderboard-page-revealer": {
+              "get-error": "Falha ao carregar dados do placar",
+              "final-standing": "Classificação Final",
+              "header-contestant": "Competidor",
+              "header-score": "Pontuação",
+              "header-penalty": "Penalidade"
             }
           },
           "clarifications": {

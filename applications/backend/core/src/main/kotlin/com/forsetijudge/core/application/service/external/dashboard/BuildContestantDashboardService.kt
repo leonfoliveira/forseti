@@ -38,7 +38,7 @@ class BuildContestantDashboardService(
             .requireMemberType(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
             .throwIfErrors()
 
-        val leaderboard = buildLeaderboardUseCase.execute()
+        val leaderboard = buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command())
         val submissions =
             contest.problems
                 .map { problem -> if (contest.isFrozen) problem.frozenSubmissions.map { it.unfreeze() } else problem.submissions }

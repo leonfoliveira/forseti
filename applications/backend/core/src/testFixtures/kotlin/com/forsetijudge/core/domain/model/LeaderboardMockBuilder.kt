@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.model
 
 import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.domain.entity.Member
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -29,6 +30,7 @@ object LeaderboardMockBuilder {
         Leaderboard.Row(
             memberId = memberId,
             memberName = memberName,
+            memberType = Member.Type.CONTESTANT,
             score = score,
             penalty = penalty,
             cells = cells,

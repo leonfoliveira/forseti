@@ -33,7 +33,7 @@ class BuildLeaderboardService(
     private val logger = SafeLogger(this::class)
 
     @Transactional(readOnly = true)
-    override fun execute(): Leaderboard {
+    override fun execute(command: BuildLeaderboardUseCase.Command): Leaderboard {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -58,7 +58,7 @@ class BuildLeaderboardService(
         val problems = contest.problems
 
         val rows =
-            buildRows(contest, contestants, problems)
+            buildRows(command, contest, contestants, problems)
                 .sortedWith { a, b ->
                     if (a.score != b.score) {
                         return@sortedWith -a.score.compareTo(b.score)
@@ -106,11 +106,12 @@ class BuildLeaderboardService(
      * @param problems the list of problems in the contest
      */
     private fun buildRows(
+        command: BuildLeaderboardUseCase.Command,
         contest: Contest,
         members: List<Member>,
         problems: List<Problem>,
     ): List<Leaderboard.Row> {
-        val cells = buildCells(contest, members, problems)
+        val cells = buildCells(command, contest, members, problems)
         val cellsByMemberId = cells.groupBy { it.memberId }
 
         val rows =
@@ -141,14 +142,23 @@ class BuildLeaderboardService(
      * @param problems the list of problems in the contest
      */
     private fun buildCells(
+        command: BuildLeaderboardUseCase.Command,
         contest: Contest,
         members: List<Member>,
         problems: List<Problem>,
     ): List<Leaderboard.Cell> {
-        val cachedCells = leaderboardCacheStore.getAllCellsByContestId(contest.id).groupBy { it.memberId to it.problemId }
+        val cachedCells =
+            if (command.bypassFreeze) {
+                emptyMap()
+            } else {
+                leaderboardCacheStore.getAllCellsByContestId(contest.id).groupBy {
+                    it.memberId to
+                        it.problemId
+                }
+            }
 
         val submissionsForNonCachedMemberProblemPairs =
-            if (contest.isFrozen) {
+            if (contest.isFrozen && !command.bypassFreeze) {
                 frozenSubmissionRepository
                     .findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
                         contestId = contest.id,

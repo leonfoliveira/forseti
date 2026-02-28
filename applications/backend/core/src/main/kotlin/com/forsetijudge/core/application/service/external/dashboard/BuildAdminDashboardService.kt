@@ -37,7 +37,7 @@ class BuildAdminDashboardService(
             .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN)
             .throwIfErrors()
 
-        val leaderboard = buildLeaderboardUseCase.execute()
+        val leaderboard = buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command())
         val submissions = contest.problems.map { it.submissions }.flatten()
 
         return AdminDashboard(

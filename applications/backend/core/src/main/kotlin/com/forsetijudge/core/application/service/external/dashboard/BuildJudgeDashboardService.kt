@@ -37,7 +37,7 @@ class BuildJudgeDashboardService(
             .requireMemberType(Member.Type.JUDGE)
             .throwIfErrors()
 
-        val leaderboard = buildLeaderboardUseCase.execute()
+        val leaderboard = buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command())
         val submissions = contest.problems.map { it.submissions }.flatten()
 
         return JudgeDashboard(

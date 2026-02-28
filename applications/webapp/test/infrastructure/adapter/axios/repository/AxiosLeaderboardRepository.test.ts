@@ -12,6 +12,22 @@ describe("AxiosLeaderboardRepository", () => {
 
   const contestId = uuidv4();
 
+  describe("get", () => {
+    it("should retrieve the contest leaderboard", async () => {
+      const leaderboard = MockContestWithMembersAndProblemsDTO();
+      (axiosClient.get as jest.Mock).mockResolvedValueOnce({
+        data: leaderboard,
+      });
+
+      const result = await sut.get(contestId);
+
+      expect(axiosClient.get).toHaveBeenCalledWith(
+        `/v1/contests/${contestId}/leaderboard`,
+      );
+      expect(result).toEqual(leaderboard);
+    });
+  });
+
   describe("freeze", () => {
     it("should freeze the contest leaderboard", async () => {
       const contest = MockContestWithMembersAndProblemsDTO();

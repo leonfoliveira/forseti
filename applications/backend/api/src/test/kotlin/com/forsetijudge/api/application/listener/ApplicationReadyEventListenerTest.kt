@@ -16,7 +16,6 @@ import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.orm.ObjectOptimisticLockingFailureException
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.toJavaDuration
 
 @SpringBootTest(classes = [ApplicationReadyEventListener::class])
 class ApplicationReadyEventListenerTest(
