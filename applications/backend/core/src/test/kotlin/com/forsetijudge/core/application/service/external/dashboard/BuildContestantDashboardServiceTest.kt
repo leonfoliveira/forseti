@@ -74,7 +74,7 @@ class BuildContestantDashboardServiceTest :
             val leaderboard = LeaderboardMockBuilder.build()
             every { contestRepository.findById(contestId) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(memberId, contestId) } returns member
-            every { buildLeaderboardUseCase.execute() } returns leaderboard
+            every { buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command()) } returns leaderboard
 
             val dashboard = sut.execute()
 
@@ -99,7 +99,7 @@ class BuildContestantDashboardServiceTest :
             val leaderboard = LeaderboardMockBuilder.build()
             every { contestRepository.findById(contestId) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(memberId, contestId) } returns member
-            every { buildLeaderboardUseCase.execute() } returns leaderboard
+            every { buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command()) } returns leaderboard
 
             val dashboard = sut.execute()
 

@@ -27,7 +27,7 @@ class LeaderboardUnfrozenEventListener(
 
     override fun handleEvent(event: LeaderboardEvent.Unfrozen) {
         val contest = event.contest
-        val leaderboard = buildLeaderboardUseCase.execute()
+        val leaderboard = buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command())
         val frozenSubmissions =
             findAllSubmissionsByContestSinceLastFreezeUseCase.execute(
                 FindAllSubmissionsByContestSinceLastFreezeUseCase.Command(frozenAt = event.frozenAt),

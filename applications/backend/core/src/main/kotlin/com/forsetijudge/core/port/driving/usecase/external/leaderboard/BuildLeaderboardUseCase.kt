@@ -8,5 +8,14 @@ interface BuildLeaderboardUseCase {
      *
      * @return The result of building the leaderboard, including the leaderboard data.
      */
-    fun execute(): Leaderboard
+    fun execute(command: Command): Leaderboard
+
+    /**
+     * Command for building the leaderboard.
+     *
+     * @property bypassFreeze Whether to bypass the freeze period when building the leaderboard. Default is false.
+     */
+    data class Command(
+        val bypassFreeze: Boolean = false,
+    )
 }

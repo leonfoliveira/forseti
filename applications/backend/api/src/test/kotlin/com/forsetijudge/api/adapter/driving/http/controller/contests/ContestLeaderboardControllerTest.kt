@@ -5,9 +5,12 @@ import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
+import com.forsetijudge.core.domain.model.LeaderboardMockBuilder
+import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.FreezeLeaderboardUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.UnfreezeLeaderboardUseCase
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -19,12 +22,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.put
 
 @WebMvcTest(controllers = [ContestLeaderboardController::class])
 @AutoConfigureMockMvc(addFilters = false)
 @ContextConfiguration(classes = [ContestLeaderboardController::class, JacksonConfig::class, GlobalExceptionHandler::class])
-class ContestLeaderboardTest(
+class ContestLeaderboardControllerTest(
+    @MockkBean(relaxed = true)
+    private val buildLeaderboardUseCase: BuildLeaderboardUseCase,
     @MockkBean(relaxed = true)
     private val freezeLeaderboardUseCase: FreezeLeaderboardUseCase,
     @MockkBean(relaxed = true)
@@ -40,6 +46,21 @@ class ContestLeaderboardTest(
         beforeTest {
             clearAllMocks()
             ExecutionContextMockBuilder.build(contestId, memberId)
+        }
+
+        test("get") {
+            val leaderboard = LeaderboardMockBuilder.build()
+            every {
+                buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command(bypassFreeze = true))
+            } returns leaderboard
+
+            webMvc
+                .get(basePath, contestId) {
+                    contentType = MediaType.APPLICATION_JSON
+                }.andExpect {
+                    status { isOk() }
+                    content { leaderboard.toResponseBodyDTO() }
+                }
         }
 
         test("freeze") {
