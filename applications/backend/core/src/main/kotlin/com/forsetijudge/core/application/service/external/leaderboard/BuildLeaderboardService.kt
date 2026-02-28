@@ -102,27 +102,28 @@ class BuildLeaderboardService(
      * Builds the rows of the leaderboard, one for each contestant. Each row contains the score, penalty and cells of the contestant.
      *
      * @param contest the contest for which the leaderboard is being built
-     * @param contestants the list of contestants participating in the contest
+     * @param members the list of contestants participating in the contest
      * @param problems the list of problems in the contest
      */
     private fun buildRows(
         contest: Contest,
-        contestants: List<Member>,
+        members: List<Member>,
         problems: List<Problem>,
     ): List<Leaderboard.Row> {
-        val cells = buildCells(contest, contestants, problems)
+        val cells = buildCells(contest, members, problems)
         val cellsByMemberId = cells.groupBy { it.memberId }
 
         val rows =
-            contestants.map { contestant ->
-                val memberCells = cellsByMemberId[contestant.id].orEmpty()
+            members.map { member ->
+                val memberCells = cellsByMemberId[member.id].orEmpty()
 
                 val score = memberCells.count { it.isAccepted }
                 val penalty = memberCells.sumOf { it.penalty }
 
                 Leaderboard.Row(
-                    memberId = contestant.id,
-                    memberName = contestant.name,
+                    memberId = member.id,
+                    memberName = member.name,
+                    memberType = member.type,
                     score = score,
                     penalty = penalty,
                     cells = memberCells.sortedBy { it.problemLetter },

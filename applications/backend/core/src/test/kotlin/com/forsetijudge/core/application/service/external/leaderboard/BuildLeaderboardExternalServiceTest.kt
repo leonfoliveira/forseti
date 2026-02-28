@@ -94,7 +94,7 @@ class BuildLeaderboardExternalServiceTest :
             val memberWithWrongSubmission = MemberMockBuilder.build(type = Member.Type.CONTESTANT, name = "first")
             val memberWithAcceptedSubmission = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
             val memberWithWrongAndAcceptedSubmission = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
-            val memberWithDoubleAcceptedSubmission = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
+            val memberWithDoubleAcceptedSubmission = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT)
 
             every {
                 memberRepository.findAllByContestIdAndTypeIn(
@@ -239,6 +239,7 @@ class BuildLeaderboardExternalServiceTest :
                             Leaderboard.Row(
                                 memberId = memberWithDoubleAcceptedSubmission.id,
                                 memberName = memberWithDoubleAcceptedSubmission.name,
+                                memberType = memberWithDoubleAcceptedSubmission.type,
                                 score = 2,
                                 penalty = 20,
                                 cells =
@@ -268,6 +269,7 @@ class BuildLeaderboardExternalServiceTest :
                             Leaderboard.Row(
                                 memberId = memberWithAcceptedSubmission.id,
                                 memberName = memberWithAcceptedSubmission.name,
+                                memberType = memberWithDoubleAcceptedSubmission.type,
                                 score = 1,
                                 penalty = 0,
                                 cells =
@@ -297,6 +299,7 @@ class BuildLeaderboardExternalServiceTest :
                             Leaderboard.Row(
                                 memberId = memberWithWrongAndAcceptedSubmission.id,
                                 memberName = memberWithWrongAndAcceptedSubmission.name,
+                                memberType = memberWithDoubleAcceptedSubmission.type,
                                 score = 1,
                                 penalty = 10,
                                 cells =
@@ -326,6 +329,7 @@ class BuildLeaderboardExternalServiceTest :
                             Leaderboard.Row(
                                 memberId = memberWithWrongSubmission.id,
                                 memberName = memberWithWrongSubmission.name,
+                                memberType = memberWithWrongSubmission.type,
                                 score = 0,
                                 penalty = 0,
                                 cells =
@@ -355,6 +359,7 @@ class BuildLeaderboardExternalServiceTest :
                             Leaderboard.Row(
                                 memberId = memberWithNoSubmission.id,
                                 memberName = memberWithNoSubmission.name,
+                                memberType = memberWithNoSubmission.type,
                                 score = 0,
                                 penalty = 0,
                                 cells =

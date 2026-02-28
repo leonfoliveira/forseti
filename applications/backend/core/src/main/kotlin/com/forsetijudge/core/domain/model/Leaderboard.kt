@@ -1,5 +1,6 @@
 package com.forsetijudge.core.domain.model
 
+import com.forsetijudge.core.domain.entity.Member
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -23,6 +24,7 @@ data class Leaderboard(
      *
      * @param memberId The ID of the contestant.
      * @param memberName The name of the contestant.
+     * @param memberType The type of the contestant, which can be either CONTESTANT or UNOFFICIAL_CONTESTANT.
      * @param score The total score of the contestant, which is typically the number of problems they have solved.
      * @param penalty The total penalty time in minutes for the contestant, which is calculated based on the time of acceptance and the number of wrong submissions for each problem.
      * @param cells A list of cells corresponding to each problem in the contest, containing information about the contestant's performance on each problem.
@@ -30,6 +32,7 @@ data class Leaderboard(
     data class Row(
         val memberId: UUID,
         val memberName: String,
+        val memberType: Member.Type,
         val score: Int,
         val penalty: Int,
         val cells: List<Cell>,
