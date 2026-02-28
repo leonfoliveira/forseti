@@ -39,7 +39,7 @@ class SocketIORoomAuthorizers(
                 contestAuthorizerUseCase.execute(
                     ContestAuthorizerUseCase.Command { contestAuthorizer ->
                         contestAuthorizer
-                            .requireMemberType(Member.Type.CONTESTANT)
+                            .requireMemberType(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
                             .requireContestStarted()
                             .throwIfErrors()
                     },
@@ -80,7 +80,7 @@ class SocketIORoomAuthorizers(
                 contestAuthorizerUseCase.execute(
                     ContestAuthorizerUseCase.Command { contestAuthorizer ->
                         contestAuthorizer
-                            .requireMemberType(Member.Type.CONTESTANT)
+                            .requireMemberType(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
                             .requireContestStarted()
                             .throwIfErrors()
                     },

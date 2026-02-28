@@ -73,7 +73,7 @@ class CreateTicketService(
 
         ContestAuthorizer(contest, member)
             .requireSettingSubmissionPrintTicketEnabled()
-            .requireMemberType(Member.Type.CONTESTANT)
+            .requireMemberType(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
             .requireContestActive()
 
         val typedProperties =

@@ -35,7 +35,7 @@ class BuildContestantDashboardService(
                 ?: throw NotFoundException("Could not find member with id $contextMemberId in this contest")
 
         ContestAuthorizer(contest, member)
-            .requireMemberType(Member.Type.CONTESTANT)
+            .requireMemberType(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
             .throwIfErrors()
 
         val leaderboard = buildLeaderboardUseCase.execute()

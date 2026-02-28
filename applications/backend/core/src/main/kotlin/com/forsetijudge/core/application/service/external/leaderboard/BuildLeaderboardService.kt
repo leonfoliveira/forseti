@@ -50,7 +50,11 @@ class BuildLeaderboardService(
             .or({ it.requireMemberCanAccessNotStartedContest() }, { it.requireContestStarted() })
             .throwIfErrors()
 
-        val contestants = memberRepository.findAllByContestIdAndType(contest.id, Member.Type.CONTESTANT)
+        val contestants =
+            memberRepository.findAllByContestIdAndTypeIn(
+                contest.id,
+                listOf(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT),
+            )
         val problems = contest.problems
 
         val rows =

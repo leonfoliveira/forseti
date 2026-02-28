@@ -18,11 +18,14 @@ abstract class AttachmentAuthorizationConfig {
         member: Member?,
     ) {
         when (member?.type) {
-            Member.Type.ROOT -> authorizeRootUpload(contest, member)
-            Member.Type.ADMIN -> authorizeAdminUpload(contest, member)
+            Member.Type.ROOT,
+            Member.Type.ADMIN,
+            -> authorizeAdminUpload(contest, member)
             Member.Type.STAFF -> authorizeStaffUpload(contest, member)
             Member.Type.JUDGE -> authorizeJudgeUpload(contest, member)
-            Member.Type.CONTESTANT -> authorizeContestantUpload(contest, member)
+            Member.Type.UNOFFICIAL_CONTESTANT,
+            Member.Type.CONTESTANT,
+            -> authorizeContestantUpload(contest, member)
             null -> throw ForbiddenException("Guests cannot upload attachments")
             else -> throw ForbiddenException("Members of type ${member.type} cannot upload attachments")
         }
@@ -43,22 +46,20 @@ abstract class AttachmentAuthorizationConfig {
         attachment: Attachment,
     ) {
         when (member?.type) {
-            Member.Type.ROOT -> authorizeRootDownload(contest, member, attachment)
-            Member.Type.ADMIN -> authorizeAdminDownload(contest, member, attachment)
+            Member.Type.ROOT,
+            Member.Type.ADMIN,
+            -> authorizeAdminDownload(contest, member, attachment)
             Member.Type.STAFF -> authorizeStaffDownload(contest, member, attachment)
             Member.Type.JUDGE -> authorizeJudgeDownload(contest, member, attachment)
-            Member.Type.CONTESTANT -> authorizeContestantDownload(contest, member, attachment)
+            Member.Type.UNOFFICIAL_CONTESTANT,
+            Member.Type.CONTESTANT,
+            -> authorizeContestantDownload(contest, member, attachment)
             null -> authorizeGuestDownload(contest, attachment)
             else -> throw ForbiddenException("Members of type ${member.type} cannot download attachments")
         }
     }
 
     // Upload authorizations
-
-    abstract fun authorizeRootUpload(
-        contest: Contest,
-        member: Member,
-    )
 
     abstract fun authorizeAdminUpload(
         contest: Contest,
@@ -81,12 +82,6 @@ abstract class AttachmentAuthorizationConfig {
     )
 
     // Download authorizations
-
-    abstract fun authorizeRootDownload(
-        contest: Contest,
-        member: Member,
-        attachment: Attachment,
-    )
 
     abstract fun authorizeAdminDownload(
         contest: Contest,

@@ -180,6 +180,15 @@ class UploadAttachmentServiceTest :
                 }
             }
 
+            context("UNOFFICIAL_CONTESTANT") {
+                test("should throw ForbiddenException") {
+                    assertForbidden(
+                        member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT),
+                        context = Attachment.Context.EXECUTION_OUTPUT,
+                    )
+                }
+            }
+
             context("CONTESTANT") {
                 test("should throw ForbiddenException") {
                     assertForbidden(
@@ -222,6 +231,15 @@ class UploadAttachmentServiceTest :
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.JUDGE),
+                        context = Attachment.Context.PROBLEM_DESCRIPTION,
+                    )
+                }
+            }
+
+            context("UNOFFICIAL_CONTESTANT") {
+                test("should throw ForbiddenException") {
+                    assertForbidden(
+                        member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT),
                         context = Attachment.Context.PROBLEM_DESCRIPTION,
                     )
                 }
@@ -274,6 +292,15 @@ class UploadAttachmentServiceTest :
                 }
             }
 
+            context("UNOFFICIAL_CONTESTANT") {
+                test("should throw ForbiddenException") {
+                    assertForbidden(
+                        member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT),
+                        context = Attachment.Context.PROBLEM_TEST_CASES,
+                    )
+                }
+            }
+
             context("CONTESTANT") {
                 test("should throw ForbiddenException") {
                     assertForbidden(
@@ -316,6 +343,31 @@ class UploadAttachmentServiceTest :
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.STAFF),
+                        context = Attachment.Context.SUBMISSION_CODE,
+                    )
+                }
+            }
+
+            context("UNOFFICIAL_CONTESTANT") {
+                test("should throw ForbiddenException when contest is not active") {
+                    assertForbidden(
+                        contest =
+                            ContestMockBuilder.build(
+                                startAt = OffsetDateTime.now().plusHours(1),
+                            ),
+                        member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT),
+                        context = Attachment.Context.SUBMISSION_CODE,
+                    )
+                }
+
+                test("should upload successfully") {
+                    assertUploadSuccessfully(
+                        contest =
+                            ContestMockBuilder.build(
+                                startAt = OffsetDateTime.now().minusHours(1),
+                                endAt = OffsetDateTime.now().plusHours(1),
+                            ),
+                        member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT),
                         context = Attachment.Context.SUBMISSION_CODE,
                     )
                 }

@@ -88,7 +88,7 @@ class CreateClarificationExternalServiceTest :
                 }
             }
 
-            Member.Type.entries.filter { it != Member.Type.CONTESTANT }.forEach { memberType ->
+            Member.Type.entries.filter { it !in setOf(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT) }.forEach { memberType ->
                 test("Should throw ForbiddenException when member type is $memberType") {
                     val contest = ContestMockBuilder.build()
                     val member = MemberMockBuilder.build(type = memberType, contest = contest)

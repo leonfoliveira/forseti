@@ -28,7 +28,14 @@ class ContestTicketController(
     private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/tickets")
-    @Private(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF, Member.Type.JUDGE, Member.Type.CONTESTANT)
+    @Private(
+        Member.Type.ROOT,
+        Member.Type.ADMIN,
+        Member.Type.STAFF,
+        Member.Type.JUDGE,
+        Member.Type.CONTESTANT,
+        Member.Type.UNOFFICIAL_CONTESTANT,
+    )
     fun create(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateTicketRequestBodyDTO,

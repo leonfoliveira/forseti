@@ -96,7 +96,15 @@ class BuildLeaderboardExternalServiceTest :
             val memberWithWrongAndAcceptedSubmission = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
             val memberWithDoubleAcceptedSubmission = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
 
-            every { memberRepository.findAllByContestIdAndType(contextContestId, Member.Type.CONTESTANT) } returns
+            every {
+                memberRepository.findAllByContestIdAndTypeIn(
+                    contextContestId,
+                    listOf(
+                        Member.Type.CONTESTANT,
+                        Member.Type.UNOFFICIAL_CONTESTANT,
+                    ),
+                )
+            } returns
                 listOf(
                     memberWithNoSubmission,
                     memberWithWrongSubmission,
@@ -409,7 +417,15 @@ class BuildLeaderboardExternalServiceTest :
 
             every { contestRepository.findById(contextContestId) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
-            every { memberRepository.findAllByContestIdAndType(contextContestId, Member.Type.CONTESTANT) } returns listOf(member)
+            every {
+                memberRepository.findAllByContestIdAndTypeIn(
+                    contextContestId,
+                    listOf(
+                        Member.Type.CONTESTANT,
+                        Member.Type.UNOFFICIAL_CONTESTANT,
+                    ),
+                )
+            } returns listOf(member)
             every { buildLeaderboardCellInternalUseCase.execute(any()) } returns
                 Leaderboard.Cell(
                     memberId = member.id,

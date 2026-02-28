@@ -44,7 +44,7 @@ class ContestDashboardController(
     }
 
     @GetMapping("/contests/{contestId}/dashboard/contestant")
-    @Private(Member.Type.CONTESTANT)
+    @Private(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
     fun getContestantDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestantDashboardResponseBodyDTO> {

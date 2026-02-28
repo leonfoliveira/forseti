@@ -8,11 +8,6 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 class ExecutionOutputAuthorizationConfig : AttachmentAuthorizationConfig() {
     // Upload authorizations
 
-    override fun authorizeRootUpload(
-        contest: Contest,
-        member: Member,
-    ) = throw ForbiddenException("Root cannot upload execution outputs")
-
     override fun authorizeAdminUpload(
         contest: Contest,
         member: Member,
@@ -34,12 +29,6 @@ class ExecutionOutputAuthorizationConfig : AttachmentAuthorizationConfig() {
     ) = throw ForbiddenException("Contestant cannot upload execution outputs")
 
     // Download authorizations
-
-    override fun authorizeRootDownload(
-        contest: Contest,
-        member: Member,
-        attachment: Attachment,
-    ) {}
 
     override fun authorizeAdminDownload(
         contest: Contest,

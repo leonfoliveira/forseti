@@ -174,7 +174,10 @@ class ContestAuthorizerTest :
                 val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
 
                 shouldNotThrow<ForbiddenException> {
-                    ContestAuthorizer(contest, member).requireMemberType(Member.Type.CONTESTANT).throwIfErrors()
+                    ContestAuthorizer(
+                        contest,
+                        member,
+                    ).requireMemberType(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT).throwIfErrors()
                 }
             }
 

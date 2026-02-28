@@ -8,11 +8,6 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 class ProblemTestCasesAuthorizationConfig : AttachmentAuthorizationConfig() {
     // Upload authorizations
 
-    override fun authorizeRootUpload(
-        contest: Contest,
-        member: Member,
-    ) {}
-
     override fun authorizeAdminUpload(
         contest: Contest,
         member: Member,
@@ -34,12 +29,6 @@ class ProblemTestCasesAuthorizationConfig : AttachmentAuthorizationConfig() {
     ) = throw ForbiddenException("Contestants cannot upload test cases description attachments")
 
     // Download authorizations
-
-    override fun authorizeRootDownload(
-        contest: Contest,
-        member: Member,
-        attachment: Attachment,
-    ) {}
 
     override fun authorizeAdminDownload(
         contest: Contest,

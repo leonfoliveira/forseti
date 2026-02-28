@@ -27,7 +27,7 @@ class ContestClarificationController(
     private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/clarifications")
-    @Private(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE, Member.Type.CONTESTANT)
+    @Private(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE, Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
     fun create(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateClarificationRequestBodyDTO,

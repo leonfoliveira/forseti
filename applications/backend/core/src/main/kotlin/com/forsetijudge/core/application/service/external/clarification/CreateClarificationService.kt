@@ -61,7 +61,7 @@ class CreateClarificationService(
                 .throwIfErrors()
         } else {
             ContestAuthorizer(contest, member)
-                .requireMemberType(Member.Type.CONTESTANT)
+                .requireMemberType(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
                 .requireContestStarted()
                 .throwIfErrors()
         }

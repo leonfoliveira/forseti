@@ -33,7 +33,7 @@ class ContestSubmissionController(
     private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/submissions")
-    @Private(Member.Type.CONTESTANT)
+    @Private(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
     fun create(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateSubmissionRequestBodyDTO,
