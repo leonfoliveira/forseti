@@ -2,7 +2,6 @@ package com.forsetijudge.infrastructure.adapter.driven.quartz
 
 import com.forsetijudge.infrastructure.adapter.driving.job.AttachmentBucketCleanerQuartzJob
 import com.forsetijudge.infrastructure.adapter.dto.quartz.QuartzMessage
-import com.forsetijudge.infrastructure.adapter.dto.quartz.payload.AttachmentBucketCleanerJobPayload
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks

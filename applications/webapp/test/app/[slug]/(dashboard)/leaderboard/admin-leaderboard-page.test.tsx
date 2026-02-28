@@ -29,6 +29,7 @@ describe("AdminLeaderboardPage", () => {
       expect.objectContaining({
         problems,
         leaderboard,
+        canReveal: true,
       }),
       undefined,
     );

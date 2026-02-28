@@ -1,13 +1,16 @@
 "use client";
 
 import { ArrowDown01Icon, AwardIcon } from "lucide-react";
+import React from "react";
 
+import { LeaderboardPageRevealer } from "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-page-revealer";
 import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/problem-letter-badge";
 import { ProblemStatusBadge } from "@/app/_lib/component/display/badge/problem-status-badge";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
 import { Alert, AlertDescription } from "@/app/_lib/component/shadcn/alert";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
+import { Button } from "@/app/_lib/component/shadcn/button";
 import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
 import {
   Table,
@@ -58,18 +61,24 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.unofficial",
     defaultMessage: "Unofficial",
   },
+  openRevealer: {
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.open-revealer",
+    defaultMessage: "Open Revealer",
+  },
 });
 
 type Props = {
   problems: ProblemResponseDTO[];
   leaderboard: LeaderboardResponseDTO;
+  canReveal?: boolean;
 };
 
 /**
  * A generic leaderboard page component for displaying contest results.
  */
-export function LeaderboardPage({ problems, leaderboard }: Props) {
+export function LeaderboardPage({ problems, leaderboard, canReveal }: Props) {
   const session = useAppSelector((state) => state.session);
+  const [isRevealOpen, setIsRevealOpen] = React.useState(false);
 
   function getMedal(rank: number) {
     if (rank > 12) {
@@ -105,6 +114,16 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
     <Page title={messages.pageTitle} description={messages.pageDescription}>
       <Card className="my-5">
         <CardContent>
+          {canReveal && (
+            <div className="mb-3 flex justify-end">
+              <Button
+                onClick={() => setIsRevealOpen(true)}
+                data-testid="open-reveal-button"
+              >
+                <FormattedMessage {...messages.openRevealer} />
+              </Button>
+            </div>
+          )}
           <Table data-testid="leaderboard-table" className="border-b-1">
             <TableHeader className="bg-muted">
               <TableRow>
@@ -182,6 +201,13 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
           </Alert>
         </CardContent>
       </Card>
+
+      {isRevealOpen && (
+        <LeaderboardPageRevealer
+          problems={problems}
+          onClose={() => setIsRevealOpen(false)}
+        />
+      )}
     </Page>
   );
 }

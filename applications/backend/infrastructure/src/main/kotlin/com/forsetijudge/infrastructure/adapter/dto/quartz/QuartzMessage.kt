@@ -2,7 +2,6 @@ package com.forsetijudge.infrastructure.adapter.dto.quartz
 
 import com.forsetijudge.core.domain.model.ExecutionContext
 import java.io.Serializable
-import java.util.UUID
 
 /**
  * A generic Quartz message wrapper that includes a unique identifier for tracking.

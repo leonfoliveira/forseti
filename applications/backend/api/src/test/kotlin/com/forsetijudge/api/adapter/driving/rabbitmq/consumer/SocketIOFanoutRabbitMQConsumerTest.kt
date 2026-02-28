@@ -6,8 +6,6 @@ import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.forsetijudge.infrastructure.adapter.dto.rabbitmq.RabbitMQMessage
-import com.forsetijudge.infrastructure.adapter.dto.rabbitmq.body.SubmissionQueueMessageBody
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks

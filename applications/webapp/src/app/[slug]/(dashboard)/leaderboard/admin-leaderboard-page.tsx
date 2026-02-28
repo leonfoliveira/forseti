@@ -9,5 +9,7 @@ export function AdminLeaderboardPage() {
     (state) => state.adminDashboard.leaderboard,
   );
 
-  return <LeaderboardPage problems={problems} leaderboard={leaderboard} />;
+  return (
+    <LeaderboardPage problems={problems} leaderboard={leaderboard} canReveal />
+  );
 }
