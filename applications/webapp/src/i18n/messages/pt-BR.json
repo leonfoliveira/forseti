@@ -199,7 +199,12 @@
             "auto-freeze-disabled": "Desativado",
             "languages": "Linguagens suportadas",
             "settings": "Configurações",
-            "setting-is-auto-judge-enabled": "Juiz Automático"
+            "setting-is-auto-judge-enabled": "Juiz Automático",
+            "setting-is-clarification-enabled": "Esclarecimentos",
+            "setting-is-submission-print-ticket-enabled": "Impressão de Submissão",
+            "setting-is-technical-support-ticket-enabled": "Suporte Técnico",
+            "setting-is-non-technical-support-ticket-enabled": "Suporte Não Técnico",
+            "setting-is-guest-enabled": "Acesso de Convidado"
           }
         },
         "_common": {
@@ -215,7 +220,9 @@
             "tickets-page": {
               "page-title": "Forseti - Tickets",
               "page-description": "Visualize e gerencie tickets do concurso.",
-              "new-label": "Novo Ticket"
+              "new-label": "Novo Ticket",
+              "disabled-title": "Desativado",
+              "disabled-description": "A criação de tickets de suporte está atualmente desativada para este concurso."
             },
             "tickets-page-item": {
               "move-label": "Mover",
@@ -232,7 +239,8 @@
               "type-label": "Tipo",
               "description-label": "Descrição",
               "cancel-label": "Cancelar",
-              "submit-label": "Enviar"
+              "submit-label": "Enviar",
+              "disabled-option": "(Desativado)"
             },
             "ticket-form": {
               "type-required": "Tipo é obrigatório",
@@ -381,6 +389,16 @@
               "languages-description": "As linguagens de programação permitidas no concurso.",
               "is-auto-judge-enabled-label": "Juiz Automático",
               "is-auto-judge-enabled-description": "Se deve habilitar o julgamento automático de submissões.",
+              "is-clarification-enabled-label": "Esclarecimentos",
+              "is-clarification-enabled-description": "Se deve permitir que os participantes façam esclarecimentos.",
+              "is-submission-print-ticket-enabled-label": "Impressão de Submissão",
+              "is-submission-print-ticket-enabled-description": "Se deve permitir tickets de impressão para submissões.",
+              "is-technical-support-ticket-enabled-label": "Suporte Técnico",
+              "is-technical-support-ticket-enabled-description": "Se deve permitir tickets de suporte técnico.",
+              "is-non-technical-support-ticket-enabled-label": "Suporte Não Técnico",
+              "is-non-technical-support-ticket-enabled-description": "Se deve permitir tickets de suporte não técnico.",
+              "is-guest-enabled-label": "Acesso de Convidado",
+              "is-guest-enabled-description": "Se deve permitir acesso de convidado ao concurso.",
               "freeze-label": "Congelar",
               "unfreeze-label": "Descongelar",
               "freeze-success": "Placar congelado com sucesso.",
