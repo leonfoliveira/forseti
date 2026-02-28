@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { LeaderboardService } from "@/core/application/service/LeaderboardService";
 import { LeaderboardRepository } from "@/core/port/driven/repository/LeaderboardRepository";
 import { MockContestWithMembersAndProblemsDTO } from "@/test/mock/response/contest/MockContestWithMembersAndProblemsDTO";
+import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 
 describe("LeaderboardService", () => {
   const leaderboardRepository = mock<LeaderboardRepository>();
@@ -11,6 +12,18 @@ describe("LeaderboardService", () => {
   const sut = new LeaderboardService(leaderboardRepository);
 
   const contestId = uuidv4();
+
+  describe("get", () => {
+    it("should call LeaderboardRepository.get with the correct parameters", async () => {
+      const leaderboardResponse = MockLeaderboardResponseDTO();
+      leaderboardRepository.get.mockResolvedValue(leaderboardResponse);
+
+      const result = await sut.get(contestId);
+
+      expect(result).toEqual(leaderboardResponse);
+      expect(leaderboardRepository.get).toHaveBeenCalledWith(contestId);
+    });
+  });
 
   describe("freeze", () => {
     it("should call LeaderboardRepository.freeze with the correct parameters", async () => {
