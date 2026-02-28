@@ -1,7 +1,7 @@
 package com.forsetijudge.infrastructure.adapter.driven.bcrypt
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import com.forsetijudge.core.port.driven.Hasher
+import com.forsetijudge.core.port.driven.cryptography.Hasher
 import org.springframework.stereotype.Service
 
 @Service

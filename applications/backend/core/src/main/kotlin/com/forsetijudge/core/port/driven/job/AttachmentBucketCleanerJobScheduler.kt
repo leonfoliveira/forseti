@@ -1,5 +1,7 @@
 package com.forsetijudge.core.port.driven.job
 
-import java.io.Serializable
+import kotlin.time.Duration
 
-interface AttachmentBucketCleanerJobScheduler : JobScheduler<Serializable>
+interface AttachmentBucketCleanerJobScheduler {
+    fun schedule(interval: Duration)
+}

@@ -10,7 +10,7 @@ import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
-import com.forsetijudge.core.port.driven.AttachmentBucket
+import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.attachment.DownloadAttachmentUseCase
@@ -76,7 +76,6 @@ class DownloadAttachmentServiceTest :
             contest: Contest = ContestMockBuilder.build(),
             member: Member? = MemberMockBuilder.build(),
             attachment: Attachment? = null,
-            message: String,
         ) {
             val actualMember = member
             val actualAttachment =
@@ -144,7 +143,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.EXECUTION_OUTPUT,
                             ),
-                        message = "Staff cannot download execution outputs",
                     )
                 }
             }
@@ -169,7 +167,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.EXECUTION_OUTPUT,
                             ),
-                        message = "Contestant cannot download execution outputs",
                     )
                 }
             }
@@ -182,7 +179,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.EXECUTION_OUTPUT,
                             ),
-                        message = "Contestant cannot download execution outputs",
                     )
                 }
             }
@@ -195,7 +191,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.EXECUTION_OUTPUT,
                             ),
-                        message = "Public cannot download execution outputs",
                     )
                 }
             }
@@ -300,7 +295,6 @@ class DownloadAttachmentServiceTest :
                             contest = notStarted,
                             member = unofficialContestant,
                         ),
-                    message = "Contest has not started yet",
                 )
 
                 assertForbidden(
@@ -312,7 +306,6 @@ class DownloadAttachmentServiceTest :
                             contest = notStarted,
                             member = contestant,
                         ),
-                    message = "Contest has not started yet",
                 )
 
                 assertForbidden(
@@ -324,7 +317,6 @@ class DownloadAttachmentServiceTest :
                             contest = notStarted,
                             member = MemberMockBuilder.build(contest = notStarted),
                         ),
-                    message = "Contest has not started yet",
                 )
             }
         }
@@ -386,7 +378,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.PROBLEM_TEST_CASES,
                             ),
-                        message = "Contestants cannot download test cases attachments",
                     )
                 }
             }
@@ -399,7 +390,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.PROBLEM_TEST_CASES,
                             ),
-                        message = "Contestants cannot download test cases attachments",
                     )
                 }
             }
@@ -412,7 +402,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.PROBLEM_TEST_CASES,
                             ),
-                        message = "Guest users cannot download test cases attachments",
                     )
                 }
             }
@@ -463,7 +452,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.SUBMISSION_CODE,
                             ),
-                        message = "Staff cannot download submission code attachments",
                     )
                 }
             }
@@ -504,7 +492,6 @@ class DownloadAttachmentServiceTest :
                         contest = contest,
                         member = member,
                         attachment = attachment,
-                        message = "Contest has not started yet",
                     )
                 }
 
@@ -527,7 +514,6 @@ class DownloadAttachmentServiceTest :
                         contest = contest,
                         member = member,
                         attachment = attachment,
-                        message = "Contestants can only download their own submission code attachments",
                     )
                 }
             }
@@ -568,7 +554,6 @@ class DownloadAttachmentServiceTest :
                         contest = contest,
                         member = member,
                         attachment = attachment,
-                        message = "Contest has not started yet",
                     )
                 }
 
@@ -591,7 +576,6 @@ class DownloadAttachmentServiceTest :
                         contest = contest,
                         member = member,
                         attachment = attachment,
-                        message = "Contestants can only download their own submission code attachments",
                     )
                 }
             }
@@ -604,7 +588,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.SUBMISSION_CODE,
                             ),
-                        message = "Guest users cannot download submission code attachments",
                     )
                 }
             }

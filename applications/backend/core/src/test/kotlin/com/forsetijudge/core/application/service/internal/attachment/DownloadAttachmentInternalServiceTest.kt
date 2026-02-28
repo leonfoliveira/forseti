@@ -2,7 +2,7 @@ package com.forsetijudge.core.application.service.internal.attachment
 
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
-import com.forsetijudge.core.port.driven.AttachmentBucket
+import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.DownloadAttachmentInternalUseCase
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

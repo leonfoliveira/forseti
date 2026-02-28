@@ -1,8 +1,13 @@
 package com.forsetijudge.core.port.driven.job
 
-import com.forsetijudge.core.port.driven.job.payload.AutoFreezeJobPayload
+import java.time.OffsetDateTime
+import java.util.UUID
 
-/**
- * A specialized [JobScheduler] for scheduling auto-freeze jobs for contests.
- */
-interface AutoFreezeJobScheduler : JobScheduler<AutoFreezeJobPayload>
+interface AutoFreezeJobScheduler {
+    fun schedule(
+        contestId: UUID,
+        freezeAt: OffsetDateTime,
+    )
+
+    fun cancel(contestId: UUID)
+}

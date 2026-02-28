@@ -33,11 +33,8 @@ class ContestUpdatedEventListenerTest(
 
             verify {
                 autoFreezeJobScheduler.schedule(
-                    id = "freeze-contest-${contest.id}",
-                    payload =
-                        com.forsetijudge.core.port.driven.job.payload
-                            .AutoFreezeJobPayload(contest.id),
-                    at = contest.autoFreezeAt!!,
+                    contestId = contest.id,
+                    freezeAt = contest.autoFreezeAt!!,
                 )
             }
         }
@@ -49,7 +46,7 @@ class ContestUpdatedEventListenerTest(
             sut.onApplicationEvent(event)
 
             verify {
-                autoFreezeJobScheduler.cancel("freeze-contest-${contest.id}")
+                autoFreezeJobScheduler.cancel(contest.id)
             }
         }
     })

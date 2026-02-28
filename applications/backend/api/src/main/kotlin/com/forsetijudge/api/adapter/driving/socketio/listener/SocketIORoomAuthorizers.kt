@@ -125,7 +125,7 @@ class SocketIORoomAuthorizers(
                 ?: throw IllegalArgumentException("Invalid room name: $roomName")
         return try {
             UUID.fromString(memberIdString)
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             throw ForbiddenException("Invalid member ID in room name: $roomName")
         }
     }

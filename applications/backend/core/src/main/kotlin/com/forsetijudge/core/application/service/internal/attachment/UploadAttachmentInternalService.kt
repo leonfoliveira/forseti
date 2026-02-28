@@ -4,7 +4,7 @@ import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.event.AttachmentsEvent
-import com.forsetijudge.core.port.driven.AttachmentBucket
+import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.UploadAttachmentInternalUseCase
 import org.springframework.context.ApplicationEventPublisher

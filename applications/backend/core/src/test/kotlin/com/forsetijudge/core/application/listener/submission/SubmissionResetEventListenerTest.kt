@@ -5,7 +5,6 @@ import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
-import com.forsetijudge.core.port.driven.queue.payload.SubmissionQueuePayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
@@ -34,7 +33,7 @@ class SubmissionResetEventListenerTest(
             sut.onApplicationEvent(event)
 
             verify {
-                submissionQueueProducer.produce(SubmissionQueuePayload(submissionId = submission.id))
+                submissionQueueProducer.produce(submission)
             }
         }
 
@@ -48,7 +47,7 @@ class SubmissionResetEventListenerTest(
             sut.onApplicationEvent(event)
 
             verify(exactly = 0) {
-                submissionQueueProducer.produce(SubmissionQueuePayload(submissionId = submission.id))
+                submissionQueueProducer.produce(submission)
             }
         }
     })

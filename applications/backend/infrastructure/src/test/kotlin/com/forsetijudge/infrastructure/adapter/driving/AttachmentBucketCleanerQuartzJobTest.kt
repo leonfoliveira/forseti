@@ -3,11 +3,11 @@ package com.forsetijudge.infrastructure.adapter.driving
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
-import com.forsetijudge.core.port.driven.job.payload.AttachmentBucketCleanerJobPayload
 import com.forsetijudge.core.port.driving.usecase.external.attachment.CleanUncommitedAttachmentsUseCase
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.infrastructure.adapter.driving.job.AttachmentBucketCleanerQuartzJob
-import com.forsetijudge.infrastructure.adapter.dto.job.QuartzMessage
+import com.forsetijudge.infrastructure.adapter.dto.quartz.QuartzMessage
+import com.forsetijudge.infrastructure.adapter.dto.quartz.payload.AttachmentBucketCleanerJobPayload
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.every
@@ -34,7 +34,6 @@ class AttachmentBucketCleanerQuartzJobTest(
             val message =
                 QuartzMessage(
                     id = IdGenerator.getUUID().toString(),
-                    contestId = null,
                     traceId = IdGenerator.getTraceId(),
                     payload = payload,
                 )

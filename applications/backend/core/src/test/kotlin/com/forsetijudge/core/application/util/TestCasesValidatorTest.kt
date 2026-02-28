@@ -2,7 +2,7 @@ package com.forsetijudge.core.application.util
 
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.exception.BusinessException
-import com.forsetijudge.core.port.driven.AttachmentBucket
+import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
