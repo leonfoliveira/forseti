@@ -14,9 +14,10 @@
       "formatted-member-type": {
         "root": "Root",
         "admin": "Admin",
-        "staff": "Staff",
         "contestant": "Contestant",
-        "judge": "Judge"
+        "judge": "Judge",
+        "staff": "Staff",
+        "unofficial_contestant": "Unofficial Contestant"
       },
       "formatted-submission-answer": {
         "accepted": "Accepted",

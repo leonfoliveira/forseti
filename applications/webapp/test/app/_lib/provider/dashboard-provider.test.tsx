@@ -235,6 +235,80 @@ describe("DashboardProvider", () => {
     });
   });
 
+  describe("when user is UNOFFICIAL_CONTESTANT", () => {
+    it("should render WaitPage when contest has not started", async () => {
+      const contest = MockContestResponseDTO();
+      mockUseContestStatusWatcher.mockReturnValue(ContestStatus.NOT_STARTED);
+
+      const { getByTestId, queryByTestId } = await renderWithProviders(
+        <DashboardProvider>
+          <TestComponent />
+        </DashboardProvider>,
+        {
+          session: MockSession({
+            member: MockMemberResponseDTO({
+              id: "test-id",
+              name: "Test User",
+              type: MemberType.UNOFFICIAL_CONTESTANT,
+            }),
+          }),
+          contest,
+        },
+      );
+
+      expect(getByTestId("wait-page")).toBeInTheDocument();
+      expect(queryByTestId("test-content")).not.toBeInTheDocument();
+    });
+
+    it("should render ContestantDashboardProvider when contest is in progress", async () => {
+      const contest = MockContestResponseDTO();
+      mockUseContestStatusWatcher.mockReturnValue(ContestStatus.IN_PROGRESS);
+
+      const { getByTestId } = await renderWithProviders(
+        <DashboardProvider>
+          <TestComponent />
+        </DashboardProvider>,
+        {
+          session: MockSession({
+            member: MockMemberResponseDTO({
+              id: "test-id",
+              name: "Test User",
+              type: MemberType.UNOFFICIAL_CONTESTANT,
+            }),
+          }),
+          contest,
+        },
+      );
+
+      expect(getByTestId("contestant-dashboard-provider")).toBeInTheDocument();
+      expect(getByTestId("test-content")).toBeInTheDocument();
+    });
+
+    it("should render ContestantDashboardProvider when contest has ended", async () => {
+      const contest = MockContestResponseDTO();
+      mockUseContestStatusWatcher.mockReturnValue(ContestStatus.ENDED);
+
+      const { getByTestId } = await renderWithProviders(
+        <DashboardProvider>
+          <TestComponent />
+        </DashboardProvider>,
+        {
+          session: MockSession({
+            member: MockMemberResponseDTO({
+              id: "test-id",
+              name: "Test User",
+              type: MemberType.UNOFFICIAL_CONTESTANT,
+            }),
+          }),
+          contest,
+        },
+      );
+
+      expect(getByTestId("contestant-dashboard-provider")).toBeInTheDocument();
+      expect(getByTestId("test-content")).toBeInTheDocument();
+    });
+  });
+
   describe("when user is not authenticated (guest)", () => {
     it("should redirect to sign-in page when guest access is disabled", async () => {
       const contest = MockContestResponseDTO({
