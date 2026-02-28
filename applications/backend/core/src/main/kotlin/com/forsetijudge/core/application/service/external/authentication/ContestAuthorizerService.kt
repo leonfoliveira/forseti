@@ -27,15 +27,12 @@ class ContestAuthorizerService(
         val contest =
             contextContestId?.let {
                 contestRepository.findById(contextContestId)
-                    ?: throw NotFoundException("Contest with id $contextContestId not found")
+                    ?: throw NotFoundException("Could not find contest with id = $contextContestId")
             }
         val member =
             contextMemberId?.let {
-                contextContestId?.let {
-                    memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId)
-                        ?: throw NotFoundException("Member with id $contextMemberId not found in this contest")
-                } ?: memberRepository.findById(contextMemberId)
-                    ?: throw NotFoundException("Member with id $contextMemberId not found")
+                memberRepository.findById(contextMemberId)
+                    ?: throw NotFoundException("Could not find member with id = $contextMemberId")
             }
 
         command.chain(ContestAuthorizer(contest, member))

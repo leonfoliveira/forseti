@@ -34,12 +34,11 @@ class FailSubmissionExternalServiceTest :
                 applicationEventPublisher = applicationEventPublisher,
             )
 
-        val contextContestId = IdGenerator.getUUID()
         val contextMemberId = IdGenerator.getUUID()
 
         beforeEach {
             clearAllMocks()
-            ExecutionContextMockBuilder.build(contestId = contextContestId, memberId = contextMemberId)
+            ExecutionContextMockBuilder.build(memberId = contextMemberId)
         }
 
         val command =
@@ -48,15 +47,15 @@ class FailSubmissionExternalServiceTest :
             )
 
         test("should throw NotFoundException when submission not found") {
-            every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns null
+            every { submissionRepository.findById(command.submissionId) } returns null
 
             shouldThrow<NotFoundException> { sut.execute(command) }
         }
 
         test("should throw NotFoundException when member not found") {
             val submission = SubmissionMockBuilder.build()
-            every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns submission
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns null
+            every { submissionRepository.findById(command.submissionId) } returns submission
+            every { memberRepository.findById(contextMemberId) } returns null
 
             shouldThrow<NotFoundException> { sut.execute(command) }
         }
@@ -65,8 +64,8 @@ class FailSubmissionExternalServiceTest :
             test("should throw ForbiddenException when member type is $memberType") {
                 val submission = SubmissionMockBuilder.build()
                 val member = MemberMockBuilder.build(type = memberType)
-                every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns submission
-                every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+                every { submissionRepository.findById(command.submissionId) } returns submission
+                every { memberRepository.findById(contextMemberId) } returns member
 
                 shouldThrow<ForbiddenException> { sut.execute(command) }
             }
@@ -74,9 +73,9 @@ class FailSubmissionExternalServiceTest :
 
         test("should skip failing submission when submission is not in judging status") {
             val submission = SubmissionMockBuilder.build(status = Submission.Status.JUDGED)
-            every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns submission
+            every { submissionRepository.findById(command.submissionId) } returns submission
             val member = MemberMockBuilder.build(type = Member.Type.API)
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+            every { memberRepository.findById(contextMemberId) } returns member
 
             sut.execute(command)
 
@@ -86,9 +85,9 @@ class FailSubmissionExternalServiceTest :
 
         test("should fail submission successfully") {
             val submission = SubmissionMockBuilder.build()
-            every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns submission
+            every { submissionRepository.findById(command.submissionId) } returns submission
             val member = MemberMockBuilder.build(type = Member.Type.API)
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+            every { memberRepository.findById(contextMemberId) } returns member
             every { submissionRepository.save(any()) } returnsArgument 0
 
             sut.execute(command)

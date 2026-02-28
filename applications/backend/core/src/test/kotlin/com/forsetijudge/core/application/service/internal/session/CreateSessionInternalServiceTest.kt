@@ -51,7 +51,6 @@ class CreateSessionInternalServiceTest :
             Member.Type.UNOFFICIAL_CONTESTANT,
         ).forEach { memberType ->
             test("should create session successfully for $memberType member") {
-                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build(type = memberType)
                 val command = CreateSessionInternalUseCase.Command(member)
                 every { sessionRepository.save(any()) } answers { firstArg() }
@@ -72,7 +71,6 @@ class CreateSessionInternalServiceTest :
         }
 
         test("should create session successfully for root member") {
-            val contest = ContestMockBuilder.build()
             val member = MemberMockBuilder.build(type = Member.Type.ROOT)
             val command = CreateSessionInternalUseCase.Command(member)
             every { sessionRepository.save(any()) } answers { firstArg() }
@@ -87,7 +85,6 @@ class CreateSessionInternalServiceTest :
 
         listOf(Member.Type.API, Member.Type.AUTOJUDGE).forEach { memberType ->
             test("should create session successfully for $memberType member") {
-                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build(type = memberType)
                 val command = CreateSessionInternalUseCase.Command(member)
                 every { sessionRepository.save(any()) } answers { firstArg() }
