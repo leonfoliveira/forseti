@@ -106,6 +106,11 @@ class Member(
          * Represents a member who participates in the contest, such as a contestant.
          */
         CONTESTANT,
+
+        /**
+         * Represents a member who participates in the contest unofficially and is not included in final standings.
+         */
+        UNOFFICIAL_CONTESTANT,
     }
 
     companion object {

@@ -32,7 +32,7 @@ class ContestDeletedEventListenerTest(
 
             verify {
                 autoFreezeJobScheduler.cancel(
-                    id = "freeze-contest-${contest.id}",
+                    contest.id,
                 )
             }
         }

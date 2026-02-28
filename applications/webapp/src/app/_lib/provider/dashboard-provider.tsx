@@ -36,6 +36,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     case MemberType.JUDGE:
       return <JudgeDashboardProvider>{children}</JudgeDashboardProvider>;
     case MemberType.CONTESTANT:
+    case MemberType.UNOFFICIAL_CONTESTANT:
       if (contestStatus === ContestStatus.NOT_STARTED) {
         return <WaitPage />;
       }

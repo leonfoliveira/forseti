@@ -28,7 +28,6 @@ spring:
             do_not_audit_optimistic_locking_field: false
 jobs:
   attachment-bucket-cleaner:
-    id: attachment-bucket-cleaner
     interval: 24h
 management:
   endpoints:

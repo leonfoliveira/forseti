@@ -1,7 +1,7 @@
 package com.forsetijudge.core.application.service.internal.attachment
 
 import com.forsetijudge.core.application.util.SafeLogger
-import com.forsetijudge.core.port.driven.AttachmentBucket
+import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.DownloadAttachmentInternalUseCase
 import org.springframework.stereotype.Service
 

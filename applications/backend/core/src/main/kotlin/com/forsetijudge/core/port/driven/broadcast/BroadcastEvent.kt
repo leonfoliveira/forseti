@@ -6,4 +6,4 @@ data class BroadcastEvent(
     val room: String,
     val name: String,
     val data: Serializable? = null,
-) : Serializable
+)

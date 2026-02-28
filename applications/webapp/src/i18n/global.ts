@@ -46,10 +46,6 @@ const memberType = defineMessages({
     id: "i18n.global.formatted-member-type.admin",
     defaultMessage: "Admin",
   },
-  [MemberType.STAFF]: {
-    id: "i18n.global.formatted-member-type.staff",
-    defaultMessage: "Staff",
-  },
   [MemberType.CONTESTANT]: {
     id: "i18n.global.formatted-member-type.contestant",
     defaultMessage: "Contestant",
@@ -57,6 +53,14 @@ const memberType = defineMessages({
   [MemberType.JUDGE]: {
     id: "i18n.global.formatted-member-type.judge",
     defaultMessage: "Judge",
+  },
+  [MemberType.STAFF]: {
+    id: "i18n.global.formatted-member-type.staff",
+    defaultMessage: "Staff",
+  },
+  [MemberType.UNOFFICIAL_CONTESTANT]: {
+    id: "i18n.global.formatted-member-type.unofficial_contestant",
+    defaultMessage: "Unofficial Contestant",
   },
 });
 

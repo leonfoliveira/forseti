@@ -1,5 +1,6 @@
-package com.forsetijudge.infrastructure.adapter.dto.job
+package com.forsetijudge.infrastructure.adapter.dto.quartz
 
+import com.forsetijudge.core.domain.model.ExecutionContext
 import java.io.Serializable
 import java.util.UUID
 
@@ -14,8 +15,7 @@ import java.util.UUID
  */
 data class QuartzMessage<TPayload : Serializable>(
     val id: String,
-    val contestId: UUID?,
-    val traceId: String,
+    val traceId: String = ExecutionContext.get().traceId,
     val payload: TPayload?,
     val retries: Int = 0,
 )

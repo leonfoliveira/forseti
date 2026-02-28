@@ -5,12 +5,13 @@ import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
+import org.springframework.amqp.core.Message
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import java.io.Serializable
 import java.util.UUID
 
-abstract class RabbitMQConsumer<TPayload : Serializable> {
+abstract class RabbitMQConsumer<TBody : Serializable> {
     @Value("\${security.member-login}")
     private lateinit var memberLogin: String
 
@@ -25,21 +26,13 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
 
     protected val logger = SafeLogger(this::class)
 
-    /**
-     * Method to receive a message from RabbitMQ, deserialize it, and handle the payload.
-     * It also loads the traceId into the RequestContext to keep track of the entire information flow.
-     */
-    open fun receiveMessage(jsonMessage: String) {
+    open fun receiveMessage(message: Message) {
         ExecutionContext.start()
 
-        val jsonNode = objectMapper.readTree(jsonMessage)
-        val id = UUID.fromString(jsonNode["id"].asText())
-        val contestId = jsonNode["contestId"]?.asText()?.let { UUID.fromString(it) }
-        val payloadJson = jsonNode["payload"]
+        val id = UUID.fromString(message.messageProperties.headers["id"] as String)
+        val body = objectMapper.readValue(message.body, getBodyType())
 
-        val payload = objectMapper.treeToValue(payloadJson, getPayloadType())
-
-        ExecutionContext.get().contestId = contestId
+        logger.info("Received message with id: $id and body: $body")
 
         authenticateSystemUseCase.execute(
             AuthenticateSystemUseCase.Command(
@@ -48,11 +41,9 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
             ),
         )
 
-        logger.info("Received message: $jsonMessage")
-
         try {
-            logger.info("Handling message with id: $id")
-            handlePayload(payload)
+            logger.info("Starting to handle message")
+            handleBody(body)
             logger.info("Finished handling message")
         } catch (ex: Exception) {
             logger.error("Error thrown from consumer ${this.javaClass.simpleName}: ${ex.message}")
@@ -60,13 +51,7 @@ abstract class RabbitMQConsumer<TPayload : Serializable> {
         }
     }
 
-    /**
-     * Method to get the payload type for deserialization.
-     */
-    protected abstract fun getPayloadType(): Class<TPayload>
+    protected abstract fun getBodyType(): Class<TBody>
 
-    /**
-     * Method to handle the payload after deserialization.
-     */
-    protected abstract fun handlePayload(payload: TPayload)
+    protected abstract fun handleBody(body: TBody)
 }

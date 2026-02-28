@@ -14,9 +14,10 @@
       "formatted-member-type": {
         "root": "Root",
         "admin": "Admin",
-        "staff": "Staff",
         "contestant": "Contestant",
-        "judge": "Judge"
+        "judge": "Judge",
+        "staff": "Staff",
+        "unofficial_contestant": "Unofficial Contestant"
       },
       "formatted-submission-answer": {
         "accepted": "Accepted",
@@ -484,7 +485,8 @@
               "header-score": "Score",
               "header-penalty": "Penalty",
               "empty": "No contestants yet",
-              "rules-explanation": "Rankings are determined by: 1) Total problems solved (more is better); 2) Total penalty time (less is better); 3) Time of accepted submissions (earlier is better); 4) Name (alphabetical). Penalty includes submission time plus 20 minutes for each wrong answer before acceptance."
+              "rules-explanation": "Rankings are determined by: 1) Total problems solved (more is better); 2) Total penalty time (less is better); 3) Time of accepted submissions (earlier is better); 4) Name (alphabetical). Penalty includes submission time plus 20 minutes for each wrong answer before acceptance.",
+              "unofficial": "Unofficial"
             }
           },
           "clarifications": {

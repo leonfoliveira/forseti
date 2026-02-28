@@ -1,7 +1,7 @@
 package com.forsetijudge.infrastructure.adapter.driving.job
 
-import com.forsetijudge.core.port.driven.job.payload.AttachmentBucketCleanerJobPayload
 import com.forsetijudge.core.port.driving.usecase.external.attachment.CleanUncommitedAttachmentsUseCase
+import com.forsetijudge.infrastructure.adapter.dto.quartz.payload.AttachmentBucketCleanerJobPayload
 import org.springframework.stereotype.Component
 
 @Component

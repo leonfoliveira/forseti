@@ -19,6 +19,6 @@ class ContestDeletedEventListener(
     override fun handleEvent(event: ContestEvent.Deleted) {
         val contest = event.contest
 
-        autoFreezeJobScheduler.cancel("freeze-contest-${contest.id}")
+        autoFreezeJobScheduler.cancel(contest.id)
     }
 }

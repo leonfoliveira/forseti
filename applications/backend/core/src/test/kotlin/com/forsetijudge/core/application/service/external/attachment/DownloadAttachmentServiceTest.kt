@@ -10,7 +10,7 @@ import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
-import com.forsetijudge.core.port.driven.AttachmentBucket
+import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.attachment.DownloadAttachmentUseCase
@@ -76,7 +76,6 @@ class DownloadAttachmentServiceTest :
             contest: Contest = ContestMockBuilder.build(),
             member: Member? = MemberMockBuilder.build(),
             attachment: Attachment? = null,
-            message: String,
         ) {
             val actualMember = member
             val actualAttachment =
@@ -144,7 +143,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.EXECUTION_OUTPUT,
                             ),
-                        message = "Staff cannot download execution outputs",
                     )
                 }
             }
@@ -161,6 +159,18 @@ class DownloadAttachmentServiceTest :
                 }
             }
 
+            context("UNOFFICIAL_CONTESTANT") {
+                test("should throw ForbiddenException") {
+                    assertForbidden(
+                        member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT),
+                        attachment =
+                            AttachmentMockBuilder.build(
+                                context = Attachment.Context.EXECUTION_OUTPUT,
+                            ),
+                    )
+                }
+            }
+
             context("CONTESTANT") {
                 test("should throw ForbiddenException") {
                     assertForbidden(
@@ -169,7 +179,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.EXECUTION_OUTPUT,
                             ),
-                        message = "Contestant cannot download execution outputs",
                     )
                 }
             }
@@ -182,7 +191,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.EXECUTION_OUTPUT,
                             ),
-                        message = "Public cannot download execution outputs",
                     )
                 }
             }
@@ -242,6 +250,17 @@ class DownloadAttachmentServiceTest :
 
                 assertDownloadSuccessfully(
                     contest = started,
+                    member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT, contest = started),
+                    attachment =
+                        AttachmentMockBuilder.build(
+                            context = Attachment.Context.PROBLEM_DESCRIPTION,
+                            contest = started,
+                            member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT, contest = started),
+                        ),
+                )
+
+                assertDownloadSuccessfully(
+                    contest = started,
                     member = MemberMockBuilder.build(type = Member.Type.CONTESTANT, contest = started),
                     attachment =
                         AttachmentMockBuilder.build(
@@ -263,17 +282,30 @@ class DownloadAttachmentServiceTest :
                 )
 
                 val notStarted = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
-                val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT, contest = notStarted)
+                val unofficialContestant =
+                    MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT, contest = notStarted)
+                val contestant = MemberMockBuilder.build(type = Member.Type.CONTESTANT, contest = notStarted)
+
                 assertForbidden(
                     contest = notStarted,
-                    member = member,
+                    member = unofficialContestant,
                     attachment =
                         AttachmentMockBuilder.build(
                             context = Attachment.Context.PROBLEM_DESCRIPTION,
                             contest = notStarted,
-                            member = member,
+                            member = unofficialContestant,
                         ),
-                    message = "Contest has not started yet",
+                )
+
+                assertForbidden(
+                    contest = notStarted,
+                    member = contestant,
+                    attachment =
+                        AttachmentMockBuilder.build(
+                            context = Attachment.Context.PROBLEM_DESCRIPTION,
+                            contest = notStarted,
+                            member = contestant,
+                        ),
                 )
 
                 assertForbidden(
@@ -285,7 +317,6 @@ class DownloadAttachmentServiceTest :
                             contest = notStarted,
                             member = MemberMockBuilder.build(contest = notStarted),
                         ),
-                    message = "Contest has not started yet",
                 )
             }
         }
@@ -339,6 +370,18 @@ class DownloadAttachmentServiceTest :
                 }
             }
 
+            context("UNOFFICIAL_CONTESTANT") {
+                test("should throw ForbiddenException") {
+                    assertForbidden(
+                        member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT),
+                        attachment =
+                            AttachmentMockBuilder.build(
+                                context = Attachment.Context.PROBLEM_TEST_CASES,
+                            ),
+                    )
+                }
+            }
+
             context("CONTESTANT") {
                 test("should throw ForbiddenException") {
                     assertForbidden(
@@ -347,7 +390,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.PROBLEM_TEST_CASES,
                             ),
-                        message = "Contestants cannot download test cases attachments",
                     )
                 }
             }
@@ -360,7 +402,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.PROBLEM_TEST_CASES,
                             ),
-                        message = "Guest users cannot download test cases attachments",
                     )
                 }
             }
@@ -411,7 +452,68 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.SUBMISSION_CODE,
                             ),
-                        message = "Staff cannot download submission code attachments",
+                    )
+                }
+            }
+
+            context("UNOFFICIAL_CONTESTANT") {
+                test("should download their own submission code") {
+                    val contest =
+                        ContestMockBuilder.build(
+                            startAt = OffsetDateTime.now().minusHours(1),
+                            endAt = OffsetDateTime.now().plusHours(1),
+                        )
+                    val member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT, contest = contest)
+                    val attachment =
+                        AttachmentMockBuilder.build(
+                            context = Attachment.Context.SUBMISSION_CODE,
+                            contest = contest,
+                            member = member,
+                        )
+
+                    assertDownloadSuccessfully(
+                        contest = contest,
+                        member = member,
+                        attachment = attachment,
+                    )
+                }
+
+                test("should throw ForbiddenException when contest has not started") {
+                    val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
+                    val member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT, contest = contest)
+                    val attachment =
+                        AttachmentMockBuilder.build(
+                            context = Attachment.Context.SUBMISSION_CODE,
+                            contest = contest,
+                            member = member,
+                        )
+
+                    assertForbidden(
+                        contest = contest,
+                        member = member,
+                        attachment = attachment,
+                    )
+                }
+
+                test("should throw ForbiddenException when trying to download others' submission code") {
+                    val contest =
+                        ContestMockBuilder.build(
+                            startAt = OffsetDateTime.now().minusHours(1),
+                            endAt = OffsetDateTime.now().plusHours(1),
+                        )
+                    val member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT, contest = contest)
+                    val other = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT, contest = contest)
+                    val attachment =
+                        AttachmentMockBuilder.build(
+                            context = Attachment.Context.SUBMISSION_CODE,
+                            contest = contest,
+                            member = other,
+                        )
+
+                    assertForbidden(
+                        contest = contest,
+                        member = member,
+                        attachment = attachment,
                     )
                 }
             }
@@ -452,7 +554,6 @@ class DownloadAttachmentServiceTest :
                         contest = contest,
                         member = member,
                         attachment = attachment,
-                        message = "Contest has not started yet",
                     )
                 }
 
@@ -475,7 +576,6 @@ class DownloadAttachmentServiceTest :
                         contest = contest,
                         member = member,
                         attachment = attachment,
-                        message = "Contestants can only download their own submission code attachments",
                     )
                 }
             }
@@ -488,7 +588,6 @@ class DownloadAttachmentServiceTest :
                             AttachmentMockBuilder.build(
                                 context = Attachment.Context.SUBMISSION_CODE,
                             ),
-                        message = "Guest users cannot download submission code attachments",
                     )
                 }
             }

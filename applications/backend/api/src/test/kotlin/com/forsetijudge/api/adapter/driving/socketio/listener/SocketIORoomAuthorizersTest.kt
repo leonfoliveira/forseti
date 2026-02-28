@@ -77,7 +77,7 @@ class SocketIORoomAuthorizersTest :
         }
 
         context("ContestsDashboardContestant") {
-            Member.Type.entries.filter { it != Member.Type.CONTESTANT }.forEach { memberType ->
+            Member.Type.entries.filter { it !in setOf(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT) }.forEach { memberType ->
                 test("should throw ForbiddenException for member type $memberType") {
                     val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().minusHours(1))
                     val member = MemberMockBuilder.build(type = memberType)
@@ -183,7 +183,7 @@ class SocketIORoomAuthorizersTest :
         }
 
         context("ContestantPrivateBroadcastRoom") {
-            Member.Type.entries.filter { it != Member.Type.CONTESTANT }.forEach { memberType ->
+            Member.Type.entries.filter { it !in setOf(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT) }.forEach { memberType ->
                 test("should throw ForbiddenException for member type $memberType") {
                     val member = MemberMockBuilder.build(type = memberType)
                     val contest = ContestMockBuilder.build()

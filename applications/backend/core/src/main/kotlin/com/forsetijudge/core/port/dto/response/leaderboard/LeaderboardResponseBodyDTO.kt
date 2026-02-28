@@ -1,5 +1,6 @@
 package com.forsetijudge.core.port.dto.response.leaderboard
 
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.Leaderboard
 import java.io.Serializable
 import java.time.OffsetDateTime
@@ -14,6 +15,7 @@ data class LeaderboardResponseBodyDTO(
     data class Row(
         val memberId: UUID,
         val memberName: String,
+        val memberType: Member.Type,
         val score: Int,
         val penalty: Int,
         val cells: List<Cell>,
@@ -37,6 +39,7 @@ fun Leaderboard.toResponseBodyDTO(): LeaderboardResponseBodyDTO =
                 LeaderboardResponseBodyDTO.Row(
                     memberId = row.memberId,
                     memberName = row.memberName,
+                    memberType = row.memberType,
                     score = row.score,
                     penalty = row.penalty,
                     cells =

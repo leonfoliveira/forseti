@@ -11,7 +11,6 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
-import com.forsetijudge.core.port.driven.queue.payload.SubmissionQueuePayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
@@ -51,9 +50,7 @@ class SubmissionCreatedEventListenerTest(
             verify { broadcastProducer.produce(StaffDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission)) }
 
             verify {
-                submissionQueueProducer.produce(
-                    SubmissionQueuePayload(submissionId = submission.id),
-                )
+                submissionQueueProducer.produce(submission)
             }
         }
 
@@ -67,9 +64,7 @@ class SubmissionCreatedEventListenerTest(
             sut.onApplicationEvent(event)
 
             verify(exactly = 0) {
-                submissionQueueProducer.produce(
-                    SubmissionQueuePayload(submissionId = submission.id),
-                )
+                submissionQueueProducer.produce(submission)
             }
         }
     })

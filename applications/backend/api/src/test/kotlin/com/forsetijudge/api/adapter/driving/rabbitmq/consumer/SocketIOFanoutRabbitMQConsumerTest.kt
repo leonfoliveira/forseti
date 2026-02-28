@@ -6,11 +6,15 @@ import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.forsetijudge.infrastructure.adapter.dto.message.RabbitMQMessage
+import com.forsetijudge.infrastructure.adapter.dto.rabbitmq.RabbitMQMessage
+import com.forsetijudge.infrastructure.adapter.dto.rabbitmq.body.SubmissionQueueMessageBody
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.amqp.core.Message
 import org.springframework.boot.test.context.SpringBootTest
 import java.io.Serializable
 
@@ -23,29 +27,23 @@ class SocketIOFanoutRabbitMQConsumerTest(
     private val objectMapper: ObjectMapper,
     private val sut: SocketIOFanoutRabbitMQConsumer,
 ) : FunSpec({
-        val contestId = IdGenerator.getUUID()
 
         beforeEach {
             clearAllMocks()
         }
 
         test("should handle payload") {
-            val payload =
+            val event =
                 BroadcastEvent(
                     room = "/topic/any",
                     name = "ANY",
                     data = mapOf("foo" to "bar") as Serializable,
                 )
-            val message =
-                RabbitMQMessage(
-                    id = IdGenerator.getUUID(),
-                    contestId = contestId,
-                    traceId = IdGenerator.getTraceId(),
-                    payload = payload,
-                )
-            val jsonMessage = objectMapper.writeValueAsString(message)
+            val message = mockk<Message>(relaxed = true)
+            every { message.messageProperties.headers } returns mapOf("id" to IdGenerator.getUUID().toString())
+            every { message.body } returns objectMapper.writeValueAsBytes(event)
 
-            sut.receiveMessage(jsonMessage)
+            sut.receiveMessage(message)
 
             verify {
                 socketIOBroadcastEmitter.emit(any())

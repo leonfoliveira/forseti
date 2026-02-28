@@ -3,7 +3,6 @@ package com.forsetijudge.core.application.listener.contest
 import com.forsetijudge.core.application.listener.BusinessEventListener
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.port.driven.job.AutoFreezeJobScheduler
-import com.forsetijudge.core.port.driven.job.payload.AutoFreezeJobPayload
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
@@ -23,9 +22,8 @@ class ContestCreatedEventListener(
 
         if (freezeAt != null) {
             autoFreezeJobScheduler.schedule(
-                id = "freeze-contest-${contest.id}",
-                payload = AutoFreezeJobPayload(contest.id),
-                at = freezeAt,
+                contestId = contest.id,
+                freezeAt = freezeAt,
             )
         }
     }

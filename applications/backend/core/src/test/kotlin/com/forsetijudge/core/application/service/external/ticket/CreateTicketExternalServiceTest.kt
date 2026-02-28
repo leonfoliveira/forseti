@@ -100,7 +100,7 @@ class CreateTicketExternalServiceTest :
                 shouldThrow<ForbiddenException> { sut.execute(command) }
             }
 
-            Member.Type.entries.filter { it != Member.Type.CONTESTANT }.forEach { memberType ->
+            Member.Type.entries.filter { it !in setOf(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT) }.forEach { memberType ->
                 test("should throw ForbiddenException if member type is $memberType") {
                     val contest =
                         ContestMockBuilder.build(

@@ -1,6 +1,7 @@
 import { screen } from "@testing-library/dom";
 
 import { LeaderboardPage } from "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-page";
+import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
 import { MockProblemResponseDTO } from "@/test/mock/response/problem/MockProblemResponseDTO";
@@ -9,7 +10,16 @@ import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("LeaderboardPage", () => {
   const problems = [MockProblemResponseDTO()];
-  const leaderboard = MockLeaderboardResponseDTO();
+  const leaderboard = MockLeaderboardResponseDTO({
+    ...MockLeaderboardResponseDTO(),
+    rows: [
+      { ...MockLeaderboardResponseDTO().rows[0] },
+      {
+        ...MockLeaderboardResponseDTO().rows[0],
+        memberType: MemberType.UNOFFICIAL_CONTESTANT,
+      },
+    ],
+  });
 
   it("should render common LeaderboardPage with correct data", async () => {
     const contest = MockContestResponseDTO();
@@ -20,10 +30,15 @@ describe("LeaderboardPage", () => {
     );
 
     expect(document.title).toBe("Forseti - Leaderboard");
-    expect(screen.getByTestId("member-rank")).toHaveTextContent("1");
-    expect(screen.getByTestId("member-name")).toHaveTextContent("Test User");
-    expect(screen.getByTestId("member-score")).toHaveTextContent("100");
-    expect(screen.getByTestId("member-penalty")).toHaveTextContent("60");
-    expect(screen.getByTestId("member-problem")).toHaveTextContent("60 (+1)");
+    expect(screen.getAllByTestId("member-rank")[0]).toHaveTextContent("1");
+    expect(screen.getAllByTestId("member-name")[0]).toHaveTextContent(
+      "Test User",
+    );
+    expect(screen.getAllByTestId("member-score")[0]).toHaveTextContent("100");
+    expect(screen.getAllByTestId("member-penalty")[0]).toHaveTextContent("60");
+    expect(screen.getAllByTestId("member-problem")[0]).toHaveTextContent(
+      "60 (+1)",
+    );
+    expect(screen.getAllByTestId("member-rank")[1]).toBeEmptyDOMElement();
   });
 });

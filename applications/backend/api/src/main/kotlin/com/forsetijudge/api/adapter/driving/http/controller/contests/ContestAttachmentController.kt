@@ -31,7 +31,14 @@ class ContestAttachmentController(
     private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/attachments")
-    @Private(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF, Member.Type.JUDGE, Member.Type.CONTESTANT)
+    @Private(
+        Member.Type.ROOT,
+        Member.Type.ADMIN,
+        Member.Type.STAFF,
+        Member.Type.JUDGE,
+        Member.Type.CONTESTANT,
+        Member.Type.UNOFFICIAL_CONTESTANT,
+    )
     fun upload(
         @PathVariable contestId: UUID,
         @RequestParam context: Attachment.Context,

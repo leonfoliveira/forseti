@@ -3,7 +3,6 @@ package com.forsetijudge.core.application.listener.contest
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.port.driven.job.AutoFreezeJobScheduler
-import com.forsetijudge.core.port.driven.job.payload.AutoFreezeJobPayload
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
@@ -33,9 +32,8 @@ class ContestCreatedEventListenerTest(
 
             verify {
                 autoFreezeJobScheduler.schedule(
-                    id = "freeze-contest-${contest.id}",
-                    payload = AutoFreezeJobPayload(contest.id),
-                    at = contest.autoFreezeAt!!,
+                    contestId = contest.id,
+                    freezeAt = contest.autoFreezeAt!!,
                 )
             }
         }

@@ -1,55 +1,52 @@
 package com.forsetijudge.infrastructure.adapter.driven.quartz
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.application.util.IdGenerator
-import com.forsetijudge.core.config.JacksonConfig
-import com.forsetijudge.core.domain.model.ExecutionContext
-import com.forsetijudge.core.port.driven.job.payload.AutoFreezeJobPayload
-import com.ninjasquad.springmockk.MockkBean
+import com.forsetijudge.infrastructure.adapter.driving.job.AutoFreezeQuartzJob
+import com.forsetijudge.infrastructure.adapter.dto.quartz.QuartzMessage
+import com.forsetijudge.infrastructure.adapter.dto.quartz.payload.AutoFreezeJobPayload
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
+import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
-import org.quartz.Scheduler
-import org.springframework.boot.test.context.SpringBootTest
 import java.time.OffsetDateTime
-import java.util.Date
 
-@SpringBootTest(classes = [AutoFreezeQuartzJobScheduler::class, JacksonConfig::class])
-class AutoFreezeQuartzJobSchedulerTest(
-    @MockkBean(relaxed = true)
-    private val scheduler: Scheduler,
-    private val objectMapper: ObjectMapper,
-    private val sut: AutoFreezeQuartzJobScheduler,
-) : FunSpec({
-        val contestId = IdGenerator.getUUID()
-        val traceId = IdGenerator.getTraceId()
+class AutoFreezeQuartzJobSchedulerTest :
+    FunSpec({
+        val quartzJobScheduler = mockk<QuartzJobScheduler>(relaxed = true)
+
+        val sut = AutoFreezeQuartzJobScheduler(quartzJobScheduler)
 
         beforeEach {
-            ExecutionContext.start(
-                contestId = contestId,
-                traceId = traceId,
-            )
+            clearAllMocks()
         }
 
         test("should schedule a job successfully") {
-            val payload = AutoFreezeJobPayload(contestId = IdGenerator.getUUID())
-            val at = OffsetDateTime.now().plusMinutes(10)
+            val contestId = IdGenerator.getUUID()
+            val freezeAt = OffsetDateTime.now().plusDays(1)
 
-            sut.schedule(id = "test-job-id", payload = payload, at = at)
+            sut.schedule(contestId, freezeAt)
+
+            val messageSlot = slot<QuartzMessage<AutoFreezeJobPayload>>()
+            verify {
+                quartzJobScheduler.schedule(
+                    jobClass = AutoFreezeQuartzJob::class,
+                    message = capture(messageSlot),
+                    at = freezeAt,
+                )
+            }
+            messageSlot.captured.id shouldBe "${AutoFreezeQuartzJobScheduler.JOB_ID_PREFIX}:$contestId"
+            messageSlot.captured.payload!!.contestId shouldBe contestId
+        }
+
+        test("should cancel a job successfully") {
+            val contestId = IdGenerator.getUUID()
+
+            sut.cancel(contestId)
 
             verify {
-                scheduler.scheduleJob(
-                    withArg { jobDetail ->
-                        jobDetail.key.name shouldBe "test-job-id"
-                        jobDetail.jobDataMap["id"] shouldBe "test-job-id"
-                        jobDetail.jobDataMap["traceId"] shouldBe traceId
-                        jobDetail.jobDataMap["payload"] shouldBe objectMapper.writeValueAsString(payload)
-                        jobDetail.jobDataMap["retries"] shouldBe 0
-                    },
-                    withArg { trigger ->
-                        trigger.startTime shouldBe Date.from(at.toInstant())
-                    },
-                )
+                quartzJobScheduler.cancel("${AutoFreezeQuartzJobScheduler.JOB_ID_PREFIX}:$contestId")
             }
         }
     })

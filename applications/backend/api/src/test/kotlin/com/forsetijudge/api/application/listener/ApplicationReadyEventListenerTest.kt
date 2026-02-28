@@ -73,17 +73,13 @@ class ApplicationReadyEventListenerTest(
                     .parseTimeValue(
                         attachmentBucketCleanerJobInterval,
                     ).milliseconds
-                    .toJavaDuration()
 
             val event = mockk<ApplicationReadyEvent>()
             sut.onApplicationEvent(event)
 
             verify {
                 attachmentBucketCleanerJobScheduler.schedule(
-                    id = attachmentBucketCleanerJobId,
-                    payload = any(),
                     interval = attachmentBucketCleanerJobIntervalMillis,
-                    startAt = any(),
                 )
             }
         }

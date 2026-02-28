@@ -4,7 +4,7 @@ import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.domain.entity.Submission
-import com.forsetijudge.core.port.driven.SubmissionRunner
+import com.forsetijudge.core.port.driven.sandbox.SubmissionRunner
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.DownloadAttachmentInternalUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.execution.CreateExecutionInternalUseCase
 import com.opencsv.CSVReader

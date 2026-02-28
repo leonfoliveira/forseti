@@ -10,7 +10,6 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
-import com.forsetijudge.core.port.driven.queue.payload.SubmissionQueuePayload
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
@@ -38,7 +37,7 @@ class SubmissionCreatedEventListener(
         broadcastProducer.produce(StaffDashboardBroadcastRoom(contest.id).buildSubmissionCreatedEvent(submission))
 
         if (submission.contest.settings.isAutoJudgeEnabled) {
-            submissionQueueProducer.produce(SubmissionQueuePayload(submissionId = submission.id))
+            submissionQueueProducer.produce(submission)
         } else {
             logger.info("Auto judge is disabled for contest with id: ${contest.id}")
         }

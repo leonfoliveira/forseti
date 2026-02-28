@@ -10,9 +10,9 @@ import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
-import com.forsetijudge.core.port.driven.SubmissionRunner
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
+import com.forsetijudge.core.port.driven.sandbox.SubmissionRunner
 import com.forsetijudge.core.port.driving.usecase.external.submission.AutoJudgeSubmissionUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec

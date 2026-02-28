@@ -1,4 +1,4 @@
-package com.forsetijudge.core.port.driven
+package com.forsetijudge.core.port.driven.sandbox
 
 import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.entity.Submission

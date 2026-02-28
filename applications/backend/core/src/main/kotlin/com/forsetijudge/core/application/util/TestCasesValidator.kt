@@ -2,7 +2,7 @@ package com.forsetijudge.core.application.util
 
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.exception.BusinessException
-import com.forsetijudge.core.port.driven.AttachmentBucket
+import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.opencsv.CSVReader
 import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream

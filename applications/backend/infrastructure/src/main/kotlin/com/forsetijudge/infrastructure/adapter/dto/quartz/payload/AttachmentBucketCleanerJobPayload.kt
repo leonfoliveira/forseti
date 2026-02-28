@@ -1,4 +1,4 @@
-package com.forsetijudge.core.port.driven.job.payload
+package com.forsetijudge.infrastructure.adapter.dto.quartz.payload
 
 import java.io.Serializable
 

@@ -1,4 +1,4 @@
-package com.forsetijudge.core.port.driven
+package com.forsetijudge.core.port.driven.bucket
 
 import com.forsetijudge.core.domain.entity.Attachment
 

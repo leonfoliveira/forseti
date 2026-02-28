@@ -9,11 +9,6 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 class SubmissionCodeAuthorizationConfig : AttachmentAuthorizationConfig() {
     // Upload authorizations
 
-    override fun authorizeRootUpload(
-        contest: Contest,
-        member: Member,
-    ) = throw ForbiddenException("Root cannot upload submission code attachments")
-
     override fun authorizeAdminUpload(
         contest: Contest,
         member: Member,
@@ -38,12 +33,6 @@ class SubmissionCodeAuthorizationConfig : AttachmentAuthorizationConfig() {
     }
 
     // Download authorizations
-
-    override fun authorizeRootDownload(
-        contest: Contest,
-        member: Member,
-        attachment: Attachment,
-    ) {}
 
     override fun authorizeAdminDownload(
         contest: Contest,

@@ -43,7 +43,13 @@ class CreateSessionInternalServiceTest :
             ExecutionContextMockBuilder.build()
         }
 
-        listOf(Member.Type.ADMIN, Member.Type.STAFF, Member.Type.JUDGE, Member.Type.CONTESTANT).forEach { memberType ->
+        listOf(
+            Member.Type.ADMIN,
+            Member.Type.STAFF,
+            Member.Type.JUDGE,
+            Member.Type.CONTESTANT,
+            Member.Type.UNOFFICIAL_CONTESTANT,
+        ).forEach { memberType ->
             test("should create session successfully for $memberType member") {
                 val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build(type = memberType)

@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
+import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
 export function MockLeaderboardResponseDTO(
@@ -14,6 +15,7 @@ export function MockLeaderboardResponseDTO(
       {
         memberId: uuidv4(),
         memberName: "Test User",
+        memberType: MemberType.CONTESTANT,
         score: 100,
         penalty: 60,
         cells: [
