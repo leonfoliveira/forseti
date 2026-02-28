@@ -1,4 +1,4 @@
-import { PlusIcon } from "lucide-react";
+import { CircleXIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 
 import { TicketsPageForm } from "@/app/[slug]/(dashboard)/_common/tickets/tickets-page-form";
@@ -7,7 +7,15 @@ import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/app/_lib/component/shadcn/empty";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
+import { useAppSelector } from "@/app/_store/store";
 import { TicketStatus } from "@/core/domain/enumerate/TicketStatus";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
@@ -25,6 +33,15 @@ const messages = defineMessages({
   newLabel: {
     id: "app.[slug].(dashboard)._common.tickets.tickets-page.new-label",
     defaultMessage: "New Ticket",
+  },
+  disabledTitle: {
+    id: "app.[slug].(dashboard)._common.tickets.tickets-page.disabled-title",
+    defaultMessage: "Disabled",
+  },
+  disabledDescription: {
+    id: "app.[slug].(dashboard)._common.tickets.tickets-page.disabled-description",
+    defaultMessage:
+      "Support ticket creation is currently disabled for this contest.",
   },
 });
 
@@ -58,6 +75,7 @@ export function TicketsPage({
   canEdit,
   onEdit,
 }: Props) {
+  const contestSettings = useAppSelector((state) => state.contest.settings);
   const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
 
   const getColumnByStatus = (status: TicketStatus) => {
@@ -83,10 +101,16 @@ export function TicketsPage({
     );
   };
 
+  const isAnyTicketEnabled =
+    contestSettings.isNonTechnicalSupportTicketEnabled ||
+    contestSettings.isTechnicalSupportTicketEnabled;
+
+  const shouldSeeCreationComponents = canCreate && isAnyTicketEnabled;
+
   return (
     <Page title={messages.pageTitle} description={messages.pageDescription}>
       <div className="flex flex-col items-center py-5">
-        {canCreate && isCreateFormOpen && (
+        {shouldSeeCreationComponents && isCreateFormOpen && (
           <TicketsPageForm
             onCreate={(ticket) => {
               onCreate?.(ticket);
@@ -96,7 +120,7 @@ export function TicketsPage({
           />
         )}
 
-        {canCreate && !isCreateFormOpen && (
+        {shouldSeeCreationComponents && !isCreateFormOpen && (
           <Button
             onClick={() => setIsCreateFormOpen(true)}
             data-testid="open-create-form-button"
@@ -105,7 +129,25 @@ export function TicketsPage({
             <FormattedMessage {...messages.newLabel} />
           </Button>
         )}
-        {canCreate && <Separator className="my-5 w-full max-w-4xl" />}
+        {shouldSeeCreationComponents && (
+          <Separator className="my-5 w-full max-w-4xl" />
+        )}
+
+        {!isAnyTicketEnabled && (
+          <Empty data-testid="disabled">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <CircleXIcon size={48} />
+              </EmptyMedia>
+              <EmptyTitle>
+                <FormattedMessage {...messages.disabledTitle} />
+              </EmptyTitle>
+            </EmptyHeader>
+            <EmptyDescription>
+              <FormattedMessage {...messages.disabledDescription} />
+            </EmptyDescription>
+          </Empty>
+        )}
 
         <Card className="w-full">
           <CardContent>

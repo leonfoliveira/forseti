@@ -213,7 +213,9 @@
             "tickets-page": {
               "page-title": "Forseti - Tickets",
               "page-description": "View and manage tickets for the contest.",
-              "new-label": "New Ticket"
+              "new-label": "New Ticket",
+              "disabled-title": "Disabled",
+              "disabled-description": "Support ticket creation is currently disabled for this contest."
             },
             "tickets-page-item": {
               "move-label": "Move",

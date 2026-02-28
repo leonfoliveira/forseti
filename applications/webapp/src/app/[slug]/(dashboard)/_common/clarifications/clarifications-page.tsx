@@ -137,7 +137,7 @@ export function ClarificationsPage({
         )}
 
         {!isClarificationEnabled && (
-          <Empty>
+          <Empty data-testid="disabled">
             <EmptyHeader>
               <EmptyMedia variant="icon">
                 <CircleXIcon size={48} />

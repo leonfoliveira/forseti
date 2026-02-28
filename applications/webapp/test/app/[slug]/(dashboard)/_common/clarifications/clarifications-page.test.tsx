@@ -21,6 +21,24 @@ describe("ClarificationsPage", () => {
     }),
   ];
 
+  it("should render variant with clarification creation disabled", async () => {
+    const disabledContestMetadata = MockContestResponseDTO({
+      settings: {
+        isClarificationEnabled: false,
+      } as any,
+    });
+
+    await renderWithProviders(
+      <ClarificationsPage
+        problems={problems}
+        clarifications={clarifications}
+      />,
+      { contest: disabledContestMetadata },
+    );
+
+    expect(screen.getByTestId("disabled")).toBeInTheDocument();
+  });
+
   it("should render variant with no clarification", async () => {
     await renderWithProviders(
       <ClarificationsPage problems={problems} clarifications={[]} />,
