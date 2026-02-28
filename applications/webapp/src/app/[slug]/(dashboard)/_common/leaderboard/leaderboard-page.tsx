@@ -53,7 +53,7 @@ const messages = defineMessages({
     defaultMessage:
       "Rankings are determined by: 1) Total problems solved (more is better); 2) Total penalty time (less is better); 3) Time of accepted submissions (earlier is better); 4) Name (alphabetical). Penalty includes submission time plus 20 minutes for each wrong answer before acceptance.",
   },
-  unofficialNotice: {
+  unofficial: {
     id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.unofficial",
     defaultMessage: "(Unofficial)",
   },
@@ -147,7 +147,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                     data-testid="member-name"
                   >
                     {row.memberType !== MemberType.CONTESTANT && (
-                      <FormattedMessage {...messages.unofficialNotice} />
+                      <FormattedMessage {...messages.unofficial} />
                     )}{" "}
                     {row.memberName}
                   </TableCell>
