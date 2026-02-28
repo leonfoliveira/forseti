@@ -33,7 +33,7 @@ class SocketIOJoinListener(
 
         val session = client.get<Session?>("session")
         if (session != null) {
-            if (session.contest?.id == contestId) {
+            if (session.member.contest?.id == contestId) {
                 ExecutionContext.get().session = session
             } else {
                 logger.info("Session contest ID does not match room contest ID. Continuing as guest.")

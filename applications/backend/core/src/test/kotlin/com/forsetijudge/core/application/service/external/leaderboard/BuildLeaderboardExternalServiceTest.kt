@@ -18,6 +18,7 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
+import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -58,7 +59,7 @@ class BuildLeaderboardExternalServiceTest :
         test("should throw NotFoundException when contest does not exist") {
             every { contestRepository.findById(contextContestId) } returns null
 
-            shouldThrow<NotFoundException> { sut.execute() }
+            shouldThrow<NotFoundException> { sut.execute(BuildLeaderboardUseCase.Command()) }
         }
 
         test("should throw NotFoundException when member does not exist") {
@@ -66,7 +67,7 @@ class BuildLeaderboardExternalServiceTest :
             every { contestRepository.findById(contextContestId) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns null
 
-            shouldThrow<NotFoundException> { sut.execute() }
+            shouldThrow<NotFoundException> { sut.execute(BuildLeaderboardUseCase.Command()) }
         }
 
         test("should throw ForbiddenException when member cannot access not started contest") {
@@ -78,7 +79,7 @@ class BuildLeaderboardExternalServiceTest :
             every { contestRepository.findById(contextContestId) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
 
-            shouldThrow<ForbiddenException> { sut.execute() }
+            shouldThrow<ForbiddenException> { sut.execute(BuildLeaderboardUseCase.Command()) }
         }
 
         test("should build leaderboard cells successfully") {
@@ -226,7 +227,7 @@ class BuildLeaderboardExternalServiceTest :
                     ),
                 )
 
-            val result = sut.execute()
+            val result = sut.execute(BuildLeaderboardUseCase.Command())
 
             result shouldBe
                 Leaderboard(
@@ -269,7 +270,7 @@ class BuildLeaderboardExternalServiceTest :
                             Leaderboard.Row(
                                 memberId = memberWithAcceptedSubmission.id,
                                 memberName = memberWithAcceptedSubmission.name,
-                                memberType = memberWithDoubleAcceptedSubmission.type,
+                                memberType = memberWithAcceptedSubmission.type,
                                 score = 1,
                                 penalty = 0,
                                 cells =
@@ -299,7 +300,7 @@ class BuildLeaderboardExternalServiceTest :
                             Leaderboard.Row(
                                 memberId = memberWithWrongAndAcceptedSubmission.id,
                                 memberName = memberWithWrongAndAcceptedSubmission.name,
-                                memberType = memberWithDoubleAcceptedSubmission.type,
+                                memberType = memberWithWrongAndAcceptedSubmission.type,
                                 score = 1,
                                 penalty = 10,
                                 cells =
@@ -443,7 +444,7 @@ class BuildLeaderboardExternalServiceTest :
                     penalty = 0,
                 )
 
-            sut.execute()
+            sut.execute(BuildLeaderboardUseCase.Command())
 
             verify {
                 buildLeaderboardCellInternalUseCase.execute(

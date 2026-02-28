@@ -30,12 +30,6 @@ class Session(
     @Audited(withModifiedFlag = false)
     val csrfToken: UUID,
     /**
-     * The contest to which this session belongs, if any.
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @Audited(withModifiedFlag = false)
-    val contest: Contest?,
-    /**
      * The member to which this session belongs.
      */
     @ManyToOne(fetch = FetchType.EAGER)

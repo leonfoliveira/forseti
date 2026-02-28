@@ -48,7 +48,7 @@ class SignInService(
         }
 
         deleteAllSessionsByMemberInternalUseCase.execute(DeleteAllSessionsByMemberInternalUseCase.Command(member))
-        val session = createSessionInternalUseCase.execute(CreateSessionInternalUseCase.Command(contest, member))
+        val session = createSessionInternalUseCase.execute(CreateSessionInternalUseCase.Command(member))
 
         logger.info("Finished authenticating member with session id = ${session.id}")
         return session

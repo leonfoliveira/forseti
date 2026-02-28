@@ -1,6 +1,7 @@
 package com.forsetijudge.api.adapter.driving.http.middleware
 
 import com.forsetijudge.core.application.util.SafeLogger
+import com.forsetijudge.core.domain.exception.BusinessException
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
@@ -67,10 +68,13 @@ class HttpAuthenticationInterceptor(
             )
         logger.info("Found session with id: $sessionId")
 
-        val contextContextId = ExecutionContext.getContestIdNullable()
-        if (contextContextId != null && contextContextId != session.contest?.id) {
-            logger.info("Session does not belong to the current contest. Continuing as guest.")
-            return true
+        val isRequestingContestAPI = ExecutionContext.get().contestId != null
+        if (isRequestingContestAPI) {
+            val memberContest = session.member.contest
+            if (memberContest != null && memberContest.id != ExecutionContext.get().contestId) {
+                logger.info("Session does not belong to the current contest. Continuing as guest.")
+                return true
+            }
         }
 
         val isPathInCsrfAllowList = csrfAllowList.any { it.matches(request.requestURI) }

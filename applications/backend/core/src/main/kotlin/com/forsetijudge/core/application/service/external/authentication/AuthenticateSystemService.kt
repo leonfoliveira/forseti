@@ -20,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap
 
 @Service
 class AuthenticateSystemService(
-    private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
     private val findSessionByIdUseCase: FindSessionByIdUseCase,
     private val createSessionInternalUseCase: CreateSessionInternalUseCase,
@@ -28,25 +27,17 @@ class AuthenticateSystemService(
 ) : AuthenticateSystemUseCase {
     private val logger = SafeLogger(this::class)
 
-    private var cachedSessionByContestIdAndMemberId = ConcurrentHashMap<Pair<UUID?, UUID>, Session>()
+    private var cachedSessionByMemberId = ConcurrentHashMap<UUID, Session>()
 
     override fun execute(command: AuthenticateSystemUseCase.Command) {
-        val contextContestId = ExecutionContext.getContestIdNullable()
-
         logger.info("Authenticating system member with login: ${command.login}")
 
         if (command.type !in setOf(Member.Type.API, Member.Type.AUTOJUDGE)) {
             throw ForbiddenException("Invalid member type for system member: ${command.type}")
         }
 
-        val contest =
-            contextContestId ?.let {
-                contestRepository.findById(it)
-                    ?: throw ForbiddenException("Could not find contest with id: $it")
-            }
-
         val member = upsertSystemMember(command)
-        val session = getSession(contest, member)
+        val session = getSession(member)
 
         ExecutionContext.authenticate(session)
         logger.info("System member authenticated successfully")
@@ -80,12 +71,8 @@ class AuthenticateSystemService(
         }
     }
 
-    fun getSession(
-        contest: Contest?,
-        member: Member,
-    ): Session {
-        val key = Pair(contest?.id, member.id)
-        val cachedSession = cachedSessionByContestIdAndMemberId[key]
+    fun getSession(member: Member): Session {
+        val cachedSession = cachedSessionByMemberId[member.id]
 
         if (cachedSession != null) {
             return try {
@@ -97,24 +84,18 @@ class AuthenticateSystemService(
                     )
                 logger.info("Using cached session with id: ${existingSession.id}")
                 existingSession
-            } catch (ex: UnauthorizedException) {
-                return createSession(contest, member)
+            } catch (_: UnauthorizedException) {
+                return createSession(member)
             }
         }
 
-        return createSession(contest, member)
+        return createSession(member)
     }
 
-    fun createSession(
-        contest: Contest?,
-        member: Member,
-    ): Session {
+    fun createSession(member: Member): Session {
         val session =
-            createSessionInternalUseCase.execute(CreateSessionInternalUseCase.Command(contest, member))
-
-        val key = Pair(contest?.id, member.id)
-        cachedSessionByContestIdAndMemberId[key] = session
-
+            createSessionInternalUseCase.execute(CreateSessionInternalUseCase.Command(member))
+        cachedSessionByMemberId[member.id] = session
         logger.info("Created new session with id: ${session.id}")
         return session
     }

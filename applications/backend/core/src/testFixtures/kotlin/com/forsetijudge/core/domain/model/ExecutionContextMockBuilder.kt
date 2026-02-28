@@ -17,13 +17,11 @@ object ExecutionContextMockBuilder {
             contestId = contestId,
             startedAt = startAt,
         )
-        if (memberId != null) {
-            ExecutionContext.authenticate(
-                SessionMockBuilder.build(
-                    contest = contestId?.let { ContestMockBuilder.build(id = contestId) },
-                    member = MemberMockBuilder.build(id = memberId),
-                ),
-            )
+        val contest = contestId?.let { ContestMockBuilder.build(id = contestId) }
+        val member = memberId?.let { MemberMockBuilder.build(id = memberId, contest = contest) }
+        val session = member?.let { SessionMockBuilder.build(member = member) }
+        if (session != null) {
+            ExecutionContext.authenticate(session)
         }
     }
 }

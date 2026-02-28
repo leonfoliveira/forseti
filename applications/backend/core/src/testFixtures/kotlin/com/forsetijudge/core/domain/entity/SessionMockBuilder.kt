@@ -11,7 +11,6 @@ object SessionMockBuilder {
         updatedAt: OffsetDateTime = OffsetDateTime.now(),
         deletedAt: OffsetDateTime? = null,
         csrfToken: UUID = IdGenerator.getUUID(),
-        contest: Contest? = ContestMockBuilder.build(),
         member: Member = MemberMockBuilder.build(),
         expiresAt: OffsetDateTime = OffsetDateTime.now().plusHours(1),
     ) = Session(
@@ -20,7 +19,6 @@ object SessionMockBuilder {
         updatedAt = updatedAt,
         deletedAt = deletedAt,
         csrfToken = csrfToken,
-        contest = contest,
         member = member,
         expiresAt = expiresAt,
     )
