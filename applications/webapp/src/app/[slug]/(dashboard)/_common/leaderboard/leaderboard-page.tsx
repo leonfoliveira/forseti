@@ -18,6 +18,7 @@ import {
 } from "@/app/_lib/component/shadcn/table";
 import { cn } from "@/app/_lib/util/cn";
 import { useAppSelector } from "@/app/_store/store";
+import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResponseDTO";
 import { defineMessages } from "@/i18n/message";
@@ -52,6 +53,10 @@ const messages = defineMessages({
     defaultMessage:
       "Rankings are determined by: 1) Total problems solved (more is better); 2) Total penalty time (less is better); 3) Time of accepted submissions (earlier is better); 4) Name (alphabetical). Penalty includes submission time plus 20 minutes for each wrong answer before acceptance.",
   },
+  unofficialNotice: {
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.unofficial",
+    defaultMessage: "(Unofficial)",
+  },
 });
 
 type Props = {
@@ -65,24 +70,34 @@ type Props = {
 export function LeaderboardPage({ problems, leaderboard }: Props) {
   const session = useAppSelector((state) => state.session);
 
-  function getMedal(index: number) {
-    if (index >= 12) {
-      return index + 1;
+  function getMedal(rank: number) {
+    if (rank > 12) {
+      return rank;
     }
     const color = [
       "text-yellow-400 fill-yellow-400",
       "text-gray-300 fill-gray-300",
       "text-yellow-600 fill-yellow-600",
-    ][Math.floor(index / 4)];
+    ][Math.floor((rank - 1) / 4)];
     return (
       <>
         <AwardIcon
           className={cn("fill-foreground inline h-5", color)}
           strokeWidth={3}
         />
-        {index + 1}
+        {rank}
       </>
     );
+  }
+
+  const ranks: Record<string, number> = {};
+  let currentRank = 1;
+  for (let i = 0; i < leaderboard.rows.length; i++) {
+    if (leaderboard.rows[i].memberType !== MemberType.CONTESTANT) {
+      continue;
+    }
+    ranks[leaderboard.rows[i].memberId] = currentRank;
+    currentRank++;
   }
 
   return (
@@ -112,7 +127,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {leaderboard.rows.map((row, index) => (
+              {leaderboard.rows.map((row) => (
                 <TableRow
                   key={row.memberId}
                   className={cn(
@@ -121,9 +136,19 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                   data-testid="leaderboard-member-row"
                 >
                   <TableCell data-testid="member-rank">
-                    {getMedal(index)}
+                    {ranks[row.memberId] !== undefined &&
+                      getMedal(ranks[row.memberId])}
                   </TableCell>
-                  <TableCell data-testid="member-name">
+                  <TableCell
+                    className={cn(
+                      row.memberType !== MemberType.CONTESTANT &&
+                        "text-muted-foreground",
+                    )}
+                    data-testid="member-name"
+                  >
+                    {row.memberType !== MemberType.CONTESTANT && (
+                      <FormattedMessage {...messages.unofficialNotice} />
+                    )}{" "}
                     {row.memberName}
                   </TableCell>
                   <TableCell data-testid="member-score">{row.score}</TableCell>

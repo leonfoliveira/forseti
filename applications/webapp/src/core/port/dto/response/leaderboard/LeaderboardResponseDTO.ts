@@ -1,3 +1,5 @@
+import { MemberType } from "@/core/domain/enumerate/MemberType";
+
 export type LeaderboardResponseDTO = {
   contestId: string;
   contestStartAt: string;
@@ -6,6 +8,7 @@ export type LeaderboardResponseDTO = {
   rows: {
     memberId: string;
     memberName: string;
+    memberType: MemberType;
     score: number;
     penalty: number;
     cells: {
