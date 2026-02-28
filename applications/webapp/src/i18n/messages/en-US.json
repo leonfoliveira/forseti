@@ -197,7 +197,12 @@
             "auto-freeze-disabled": "Disabled",
             "languages": "Supported languages",
             "settings": "Settings",
-            "setting-is-auto-judge-enabled": "Auto Judge"
+            "setting-is-auto-judge-enabled": "Auto Judge",
+            "setting-is-clarification-enabled": "Clarifications",
+            "setting-is-submission-print-ticket-enabled": "Submission Print Ticket",
+            "setting-is-technical-support-ticket-enabled": "Technical Support Ticket",
+            "setting-is-non-technical-support-ticket-enabled": "Non-Technical Support Ticket",
+            "setting-is-guest-enabled": "Guest Access"
           }
         },
         "_common": {
