@@ -1,7 +1,11 @@
+import { useRouter } from "next/navigation";
+
 import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
 import { DashboardProvider } from "@/app/_lib/provider/dashboard-provider";
+import { routes } from "@/config/routes";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { MockMemberResponseDTO } from "@/test/mock/response/member/MockMemberResponseDTO";
 import { MockSession } from "@/test/mock/response/session/MockSession";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -55,6 +59,7 @@ describe("DashboardProvider", () => {
 
   describe("when user is ROOT", () => {
     it("should render AdminDashboardProvider", async () => {
+      const contest = MockContestResponseDTO();
       mockUseContestStatusWatcher.mockReturnValue(ContestStatus.IN_PROGRESS);
 
       const { getByTestId } = await renderWithProviders(
@@ -69,6 +74,7 @@ describe("DashboardProvider", () => {
               type: MemberType.ROOT,
             }),
           }),
+          contest,
         },
       );
 
@@ -79,6 +85,7 @@ describe("DashboardProvider", () => {
 
   describe("when user is ADMIN", () => {
     it("should render AdminDashboardProvider", async () => {
+      const contest = MockContestResponseDTO();
       mockUseContestStatusWatcher.mockReturnValue(ContestStatus.IN_PROGRESS);
 
       const { getByTestId } = await renderWithProviders(
@@ -93,6 +100,7 @@ describe("DashboardProvider", () => {
               type: MemberType.ADMIN,
             }),
           }),
+          contest,
         },
       );
 
@@ -103,6 +111,7 @@ describe("DashboardProvider", () => {
 
   describe("when user is STAFF", () => {
     it("should render StaffDashboardProvider", async () => {
+      const contest = MockContestResponseDTO();
       mockUseContestStatusWatcher.mockReturnValue(ContestStatus.IN_PROGRESS);
 
       const { getByTestId } = await renderWithProviders(
@@ -117,6 +126,7 @@ describe("DashboardProvider", () => {
               type: MemberType.STAFF,
             }),
           }),
+          contest,
         },
       );
 
@@ -127,6 +137,7 @@ describe("DashboardProvider", () => {
 
   describe("when user is JUDGE", () => {
     it("should render JudgeDashboardProvider", async () => {
+      const contest = MockContestResponseDTO();
       mockUseContestStatusWatcher.mockReturnValue(ContestStatus.IN_PROGRESS);
 
       const { getByTestId } = await renderWithProviders(
@@ -141,6 +152,7 @@ describe("DashboardProvider", () => {
               type: MemberType.JUDGE,
             }),
           }),
+          contest,
         },
       );
 
@@ -151,6 +163,7 @@ describe("DashboardProvider", () => {
 
   describe("when user is CONTESTANT", () => {
     it("should render WaitPage when contest has not started", async () => {
+      const contest = MockContestResponseDTO();
       mockUseContestStatusWatcher.mockReturnValue(ContestStatus.NOT_STARTED);
 
       const { getByTestId, queryByTestId } = await renderWithProviders(
@@ -165,6 +178,7 @@ describe("DashboardProvider", () => {
               type: MemberType.CONTESTANT,
             }),
           }),
+          contest,
         },
       );
 
@@ -173,6 +187,7 @@ describe("DashboardProvider", () => {
     });
 
     it("should render ContestantDashboardProvider when contest is in progress", async () => {
+      const contest = MockContestResponseDTO();
       mockUseContestStatusWatcher.mockReturnValue(ContestStatus.IN_PROGRESS);
 
       const { getByTestId } = await renderWithProviders(
@@ -187,6 +202,7 @@ describe("DashboardProvider", () => {
               type: MemberType.CONTESTANT,
             }),
           }),
+          contest,
         },
       );
 
@@ -195,6 +211,7 @@ describe("DashboardProvider", () => {
     });
 
     it("should render ContestantDashboardProvider when contest has ended", async () => {
+      const contest = MockContestResponseDTO();
       mockUseContestStatusWatcher.mockReturnValue(ContestStatus.ENDED);
 
       const { getByTestId } = await renderWithProviders(
@@ -209,6 +226,7 @@ describe("DashboardProvider", () => {
               type: MemberType.CONTESTANT,
             }),
           }),
+          contest,
         },
       );
 
@@ -218,7 +236,30 @@ describe("DashboardProvider", () => {
   });
 
   describe("when user is not authenticated (guest)", () => {
+    it("should redirect to sign-in page when guest access is disabled", async () => {
+      const contest = MockContestResponseDTO({
+        settings: {
+          isGuestEnabled: false,
+        } as any,
+      });
+
+      await renderWithProviders(
+        <DashboardProvider>
+          <TestComponent />
+        </DashboardProvider>,
+        {
+          session: null,
+          contest,
+        },
+      );
+
+      expect(useRouter().replace).toHaveBeenCalledWith(
+        routes.CONTEST_SIGN_IN("test-contest"),
+      );
+    });
+
     it("should render WaitPage when contest has not started", async () => {
+      const contest = MockContestResponseDTO();
       mockUseContestStatusWatcher.mockReturnValue(ContestStatus.NOT_STARTED);
 
       const { getByTestId, queryByTestId } = await renderWithProviders(
@@ -227,6 +268,7 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: null,
+          contest,
         },
       );
 
@@ -235,6 +277,7 @@ describe("DashboardProvider", () => {
     });
 
     it("should render GuestDashboardProvider when contest is in progress", async () => {
+      const contest = MockContestResponseDTO();
       mockUseContestStatusWatcher.mockReturnValue(ContestStatus.IN_PROGRESS);
 
       const { getByTestId } = await renderWithProviders(
@@ -243,6 +286,7 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: null,
+          contest,
         },
       );
 
@@ -251,6 +295,7 @@ describe("DashboardProvider", () => {
     });
 
     it("should render GuestDashboardProvider when contest has ended", async () => {
+      const contest = MockContestResponseDTO();
       mockUseContestStatusWatcher.mockReturnValue(ContestStatus.ENDED);
 
       const { getByTestId } = await renderWithProviders(
@@ -259,6 +304,7 @@ describe("DashboardProvider", () => {
         </DashboardProvider>,
         {
           session: null,
+          contest,
         },
       );
 
