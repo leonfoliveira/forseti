@@ -7,6 +7,7 @@ import { ProblemStatusBadge } from "@/app/_lib/component/display/badge/problem-s
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Page } from "@/app/_lib/component/page/page";
 import { Alert, AlertDescription } from "@/app/_lib/component/shadcn/alert";
+import { Badge } from "@/app/_lib/component/shadcn/badge";
 import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
 import {
   Table,
@@ -53,6 +54,10 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.rules-explanation",
     defaultMessage:
       "Rankings are determined by: 1) Total problems solved (more is better); 2) Total penalty time (less is better); 3) Time of accepted submissions (earlier is better); 4) Name (alphabetical). Penalty includes submission time plus 20 minutes for each wrong answer before acceptance.",
+  },
+  unofficial: {
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.unofficial",
+    defaultMessage: "Unofficial",
   },
 });
 
@@ -144,13 +149,9 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                     data-testid="member-name"
                   >
                     {row.memberType !== MemberType.CONTESTANT && (
-                      <>
-                        {"("}
-                        <FormattedMessage
-                          {...globalMessages.memberType[row.memberType]}
-                        />
-                        {") "}
-                      </>
+                      <Badge className="bg-muted text-muted-foreground mr-1 text-xs">
+                        <FormattedMessage {...messages.unofficial} />
+                      </Badge>
                     )}
                     {row.memberName}
                   </TableCell>
