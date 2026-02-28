@@ -232,7 +232,8 @@
               "type-label": "Type",
               "description-label": "Description",
               "cancel-label": "Cancel",
-              "submit-label": "Submit"
+              "submit-label": "Submit",
+              "disabled-option": "(Disabled)"
             },
             "ticket-form": {
               "type-required": "Type is required",

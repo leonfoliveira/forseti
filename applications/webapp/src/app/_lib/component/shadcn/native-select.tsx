@@ -40,7 +40,7 @@ function NativeSelectOption({
   return (
     <option
       data-slot="native-select-option"
-      className={cn(className, "text-black")}
+      className={cn(className, "disabled:text-muted-foreground text-black")}
       {...props}
     />
   );
