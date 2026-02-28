@@ -33,6 +33,22 @@ describe("SignInPage", () => {
     expect(screen.getByTestId("enter-guest")).toBeInTheDocument();
   });
 
+  it("should hide enter as guest button if guest access is disabled", async () => {
+    const contestWithGuestDisabled = {
+      ...mockContestMetadata,
+      settings: {
+        ...mockContestMetadata.settings,
+        isGuestEnabled: false,
+      },
+    };
+
+    await renderWithProviders(<SignInPage />, {
+      contest: contestWithGuestDisabled,
+    });
+
+    expect(screen.queryByTestId("enter-guest")).not.toBeInTheDocument();
+  });
+
   it("should show expired session warning if session has expired", async () => {
     (useSearchParams as jest.Mock).mockReturnValueOnce({
       get: jest.fn().mockReturnValue("true"),
