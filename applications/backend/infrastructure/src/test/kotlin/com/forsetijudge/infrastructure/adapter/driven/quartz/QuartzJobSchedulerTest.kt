@@ -42,11 +42,12 @@ class QuartzJobSchedulerTest :
             sut.schedule(jobClass::class, message, at)
 
             val jobDetailSlot = slot<JobDetail>()
-            val triggerSlot = slot<Trigger>()
+            val triggerSlot = slot<Set<Trigger>>()
             verify {
                 scheduler.scheduleJob(
                     capture(jobDetailSlot),
                     capture(triggerSlot),
+                    true,
                 )
             }
             jobDetailSlot.captured.key.name shouldBe message.id
@@ -54,8 +55,12 @@ class QuartzJobSchedulerTest :
             jobDetailSlot.captured.jobDataMap.getString("traceId") shouldBe message.traceId
             jobDetailSlot.captured.jobDataMap.getString("payload") shouldBe objectMapper.writeValueAsString(message.payload)
             jobDetailSlot.captured.jobDataMap.getInt("retries") shouldBe message.retries
-            triggerSlot.captured.key.name shouldBe message.id
-            triggerSlot.captured.startTime
+            triggerSlot.captured
+                .first()
+                .key.name shouldBe message.id
+            triggerSlot.captured
+                .first()
+                .startTime
                 .toInstant()
                 .truncatedTo(ChronoUnit.SECONDS) shouldBe
                 at.toInstant().truncatedTo(ChronoUnit.SECONDS)
@@ -74,11 +79,12 @@ class QuartzJobSchedulerTest :
             sut.schedule(jobClass::class, message, interval, startAt)
 
             val jobDetailSlot = slot<JobDetail>()
-            val triggerSlot = slot<Trigger>()
+            val triggerSlot = slot<Set<Trigger>>()
             verify {
                 scheduler.scheduleJob(
                     capture(jobDetailSlot),
                     capture(triggerSlot),
+                    true,
                 )
             }
             jobDetailSlot.captured.key.name shouldBe message.id
@@ -86,8 +92,12 @@ class QuartzJobSchedulerTest :
             jobDetailSlot.captured.jobDataMap.getString("traceId") shouldBe message.traceId
             jobDetailSlot.captured.jobDataMap.getString("payload") shouldBe objectMapper.writeValueAsString(message.payload)
             jobDetailSlot.captured.jobDataMap.getInt("retries") shouldBe message.retries
-            triggerSlot.captured.key.name shouldBe message.id
-            triggerSlot.captured.startTime
+            triggerSlot.captured
+                .first()
+                .key.name shouldBe message.id
+            triggerSlot.captured
+                .first()
+                .startTime
                 .toInstant()
                 .truncatedTo(ChronoUnit.SECONDS) shouldBe
                 startAt.toInstant().truncatedTo(ChronoUnit.SECONDS)

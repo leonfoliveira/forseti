@@ -52,7 +52,7 @@ class QuartzJobScheduler(
                         .withMisfireHandlingInstructionFireNow(),
                 ).build()
 
-        scheduler.scheduleJob(jobDetail, trigger)
+        scheduler.scheduleJob(jobDetail, setOf(trigger), true)
 
         logger.info("Job scheduled successfully")
     }
@@ -92,7 +92,7 @@ class QuartzJobScheduler(
                         .withMisfireHandlingInstructionFireNow(),
                 ).build()
 
-        scheduler.scheduleJob(jobDetail, trigger)
+        scheduler.scheduleJob(jobDetail, setOf(trigger), true)
 
         logger.info("Job scheduled successfully")
     }
