@@ -487,8 +487,7 @@
               "header-score": "Pontuação",
               "header-penalty": "Penalidade",
               "empty": "Nenhum competidor ainda",
-              "rules-explanation": "As classificações são determinadas por: 1) Total de problemas resolvidos (mais é melhor); 2) Tempo total de penalidade (menos é melhor); 3) Tempo das submissões aceitas (mais cedo é melhor); 4) Nome (ordem alfabética). A penalidade inclui o tempo de submissão mais 20 minutos para cada resposta errada antes da aceitação.",
-              "unofficial": "(Café com Leite)"
+              "rules-explanation": "As classificações são determinadas por: 1) Total de problemas resolvidos (mais é melhor); 2) Tempo total de penalidade (menos é melhor); 3) Tempo das submissões aceitas (mais cedo é melhor); 4) Nome (ordem alfabética). A penalidade inclui o tempo de submissão mais 20 minutos para cada resposta errada antes da aceitação."
             }
           },
           "clarifications": {
@@ -498,7 +497,9 @@
               "new-label": "Novo Esclarecimento",
               "empty-title": "Nenhum esclarecimento ainda",
               "empty-description": "Os esclarecimentos aparecerão aqui uma vez solicitados.",
-              "guidance-text": "Use esta página para fazer perguntas sobre problemas do concurso e visualizar respostas oficiais dos juízes. Clique em 'Novo Esclarecimento' para enviar uma pergunta. Todos os esclarecimentos e respostas são visíveis para todos os competidores para garantir a imparcialidade. Faça perguntas específicas sobre enunciados de problemas, formatos de entrada/saída ou casos extremos."
+              "guidance-text": "Use esta página para fazer perguntas sobre problemas do concurso e visualizar respostas oficiais dos juízes. Clique em 'Novo Esclarecimento' para enviar uma pergunta. Todos os esclarecimentos e respostas são visíveis para todos os competidores para garantir a imparcialidade. Faça perguntas específicas sobre enunciados de problemas, formatos de entrada/saída ou casos extremos.",
+              "disabled-title": "Esclarecimentos Desativados",
+              "disabled-description": "A solicitação de esclarecimentos está atualmente desativada para este concurso."
             },
             "clarifications-page-form": {
               "create-title": "Criar Esclarecimento",

@@ -21,6 +21,7 @@ import { useAppSelector } from "@/app/_store/store";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResponseDTO";
+import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
@@ -52,10 +53,6 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.rules-explanation",
     defaultMessage:
       "Rankings are determined by: 1) Total problems solved (more is better); 2) Total penalty time (less is better); 3) Time of accepted submissions (earlier is better); 4) Name (alphabetical). Penalty includes submission time plus 20 minutes for each wrong answer before acceptance.",
-  },
-  unofficial: {
-    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page.unofficial",
-    defaultMessage: "(Unofficial)",
   },
 });
 
@@ -147,8 +144,14 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                     data-testid="member-name"
                   >
                     {row.memberType !== MemberType.CONTESTANT && (
-                      <FormattedMessage {...messages.unofficial} />
-                    )}{" "}
+                      <>
+                        {"("}
+                        <FormattedMessage
+                          {...globalMessages.memberType[row.memberType]}
+                        />
+                        {") "}
+                      </>
+                    )}
                     {row.memberName}
                   </TableCell>
                   <TableCell data-testid="member-score">{row.score}</TableCell>
