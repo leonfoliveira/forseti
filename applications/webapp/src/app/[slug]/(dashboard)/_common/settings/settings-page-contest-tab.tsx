@@ -94,6 +94,46 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.is-auto-judge-enabled-description",
     defaultMessage: "Whether to enable auto judging of submissions.",
   },
+  isClarificationEnabledLabel: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.is-clarification-enabled-label",
+    defaultMessage: "Clarifications",
+  },
+  isClarificationEnabledDescription: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.is-clarification-enabled-description",
+    defaultMessage: "Whether to allow participants to ask clarifications.",
+  },
+  isSubmissionPrintTicketEnabledLabel: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.is-submission-print-ticket-enabled-label",
+    defaultMessage: "Submission Print Ticket",
+  },
+  isSubmissionPrintTicketEnabledDescription: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.is-submission-print-ticket-enabled-description",
+    defaultMessage: "Whether to enable print tickets for submissions.",
+  },
+  isTechnicalSupportTicketEnabledLabel: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.is-technical-support-ticket-enabled-label",
+    defaultMessage: "Technical Support Ticket",
+  },
+  isTechnicalSupportTicketEnabledDescription: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.is-technical-support-ticket-enabled-description",
+    defaultMessage: "Whether to enable technical support tickets.",
+  },
+  isNonTechnicalSupportTicketEnabledLabel: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.is-non-technical-support-ticket-enabled-label",
+    defaultMessage: "Non-Technical Support Ticket",
+  },
+  isNonTechnicalSupportTicketEnabledDescription: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.is-non-technical-support-ticket-enabled-description",
+    defaultMessage: "Whether to enable non-technical support tickets.",
+  },
+  isGuestEnabledLabel: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.is-guest-enabled-label",
+    defaultMessage: "Guest Access",
+  },
+  isGuestEnabledDescription: {
+    id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.is-guest-enabled-description",
+    defaultMessage: "Whether to allow guest access to the contest.",
+  },
   freezeLabel: {
     id: "app.[slug].(dashboard)._common.settings.settings-page-contest-tab.freeze-label",
     defaultMessage: "Freeze",
@@ -376,14 +416,60 @@ export function SettingsPageContestTab({
 
             <Separator className="mt-3" />
 
-            <div className="mt-3">
+            <div className="mt-3 grid gap-6 sm:grid-cols-2">
               <ControlledField
-                className="col-span-2"
                 form={form}
                 name="contest.settings.isAutoJudgeEnabled"
                 label={messages.isAutoJudgeEnabledLabel}
                 field={<Switch data-testid="contest-is-auto-judge-enabled" />}
                 description={messages.isAutoJudgeEnabledDescription}
+              />
+              <ControlledField
+                form={form}
+                name="contest.settings.isClarificationEnabled"
+                label={messages.isClarificationEnabledLabel}
+                field={
+                  <Switch data-testid="contest-is-clarification-enabled" />
+                }
+                description={messages.isClarificationEnabledDescription}
+              />
+              <ControlledField
+                form={form}
+                name="contest.settings.isSubmissionPrintTicketEnabled"
+                label={messages.isSubmissionPrintTicketEnabledLabel}
+                field={
+                  <Switch data-testid="contest-is-submission-print-ticket-enabled" />
+                }
+                description={messages.isSubmissionPrintTicketEnabledDescription}
+              />
+              <ControlledField
+                form={form}
+                name="contest.settings.isTechnicalSupportTicketEnabled"
+                label={messages.isTechnicalSupportTicketEnabledLabel}
+                field={
+                  <Switch data-testid="contest-is-technical-support-ticket-enabled" />
+                }
+                description={
+                  messages.isTechnicalSupportTicketEnabledDescription
+                }
+              />
+              <ControlledField
+                form={form}
+                name="contest.settings.isNonTechnicalSupportTicketEnabled"
+                label={messages.isNonTechnicalSupportTicketEnabledLabel}
+                field={
+                  <Switch data-testid="contest-is-non-technical-support-ticket-enabled" />
+                }
+                description={
+                  messages.isNonTechnicalSupportTicketEnabledDescription
+                }
+              />
+              <ControlledField
+                form={form}
+                name="contest.settings.isGuestEnabled"
+                label={messages.isGuestEnabledLabel}
+                field={<Switch data-testid="contest-is-guest-enabled" />}
+                description={messages.isGuestEnabledDescription}
               />
             </div>
           </div>

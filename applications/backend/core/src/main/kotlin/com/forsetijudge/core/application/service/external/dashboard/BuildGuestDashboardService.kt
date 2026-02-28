@@ -26,6 +26,10 @@ class BuildGuestDashboardService(
             contestRepository.findById(contextContestId)
                 ?: throw NotFoundException("Could not find contest with id $contextContestId")
 
+        if (!contest.settings.isGuestEnabled) {
+            throw NotFoundException("Guest dashboard is not enabled for this contest")
+        }
+
         val leaderboard = buildLeaderboardUseCase.execute()
         val submissions =
             contest.problems

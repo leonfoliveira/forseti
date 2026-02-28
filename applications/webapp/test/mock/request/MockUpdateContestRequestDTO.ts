@@ -16,6 +16,11 @@ export function MockUpdateContestRequestDTO(
     endAt: "2025-01-01T15:00:00Z",
     settings: {
       isAutoJudgeEnabled: false,
+      isClarificationEnabled: false,
+      isSubmissionPrintTicketEnabled: false,
+      isTechnicalSupportTicketEnabled: false,
+      isNonTechnicalSupportTicketEnabled: false,
+      isGuestEnabled: false,
     },
     members: [
       {

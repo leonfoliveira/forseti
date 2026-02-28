@@ -11,6 +11,11 @@ export type UpdateContestRequestDTO = {
   autoFreezeAt?: string;
   settings: {
     isAutoJudgeEnabled: boolean;
+    isClarificationEnabled: boolean;
+    isSubmissionPrintTicketEnabled: boolean;
+    isTechnicalSupportTicketEnabled: boolean;
+    isNonTechnicalSupportTicketEnabled: boolean;
+    isGuestEnabled: boolean;
   };
   members: {
     id?: string;

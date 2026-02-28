@@ -72,6 +72,7 @@ class CreateTicketService(
         logger.info("Creating submission print ticket")
 
         ContestAuthorizer(contest, member)
+            .requireSettingSubmissionPrintTicketEnabled()
             .requireMemberType(Member.Type.CONTESTANT)
             .requireContestActive()
 
@@ -105,6 +106,7 @@ class CreateTicketService(
         logger.info("Creating technical support ticket")
 
         ContestAuthorizer(contest, member)
+            .requireSettingTechnicalSupportTicketEnabled()
             .or({ it.requireMemberCanAccessNotStartedContest() }, { it.requireContestStarted() })
             .requireContestNotEnded()
             .throwIfErrors()
@@ -130,6 +132,7 @@ class CreateTicketService(
         logger.info("Creating non-technical support ticket")
 
         ContestAuthorizer(contest, member)
+            .requireSettingNonTechnicalSupportTicketEnabled()
             .or({ it.requireMemberCanAccessNotStartedContest() }, { it.requireContestStarted() })
             .requireContestNotEnded()
             .throwIfErrors()

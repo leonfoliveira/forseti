@@ -197,7 +197,12 @@
             "auto-freeze-disabled": "Disabled",
             "languages": "Supported languages",
             "settings": "Settings",
-            "setting-is-auto-judge-enabled": "Auto Judge"
+            "setting-is-auto-judge-enabled": "Auto Judge",
+            "setting-is-clarification-enabled": "Clarifications",
+            "setting-is-submission-print-ticket-enabled": "Submission Print Ticket",
+            "setting-is-technical-support-ticket-enabled": "Technical Support Ticket",
+            "setting-is-non-technical-support-ticket-enabled": "Non-Technical Support Ticket",
+            "setting-is-guest-enabled": "Guest Access"
           }
         },
         "_common": {
@@ -213,7 +218,9 @@
             "tickets-page": {
               "page-title": "Forseti - Tickets",
               "page-description": "View and manage tickets for the contest.",
-              "new-label": "New Ticket"
+              "new-label": "New Ticket",
+              "disabled-title": "Disabled",
+              "disabled-description": "Support ticket creation is currently disabled for this contest."
             },
             "tickets-page-item": {
               "move-label": "Move",
@@ -230,7 +237,8 @@
               "type-label": "Type",
               "description-label": "Description",
               "cancel-label": "Cancel",
-              "submit-label": "Submit"
+              "submit-label": "Submit",
+              "disabled-option": "(Disabled)"
             },
             "ticket-form": {
               "type-required": "Type is required",
@@ -379,6 +387,16 @@
               "languages-description": "The programming languages allowed in the contest.",
               "is-auto-judge-enabled-label": "Auto Judge",
               "is-auto-judge-enabled-description": "Whether to enable auto judging of submissions.",
+              "is-clarification-enabled-label": "Clarifications",
+              "is-clarification-enabled-description": "Whether to allow participants to ask clarifications.",
+              "is-submission-print-ticket-enabled-label": "Submission Print Ticket",
+              "is-submission-print-ticket-enabled-description": "Whether to enable print tickets for submissions.",
+              "is-technical-support-ticket-enabled-label": "Technical Support Ticket",
+              "is-technical-support-ticket-enabled-description": "Whether to enable technical support tickets.",
+              "is-non-technical-support-ticket-enabled-label": "Non-Technical Support Ticket",
+              "is-non-technical-support-ticket-enabled-description": "Whether to enable non-technical support tickets.",
+              "is-guest-enabled-label": "Guest Access",
+              "is-guest-enabled-description": "Whether to allow guest access to the contest.",
               "freeze-label": "Freeze",
               "unfreeze-label": "Unfreeze",
               "freeze-success": "Leaderboard frozen successfully.",
@@ -476,7 +494,9 @@
               "new-label": "New Clarification",
               "empty-title": "No clarifications yet",
               "empty-description": "Clarifications will appear here once requested.",
-              "guidance-text": "Use this page to ask questions about contest problems and view official responses from judges. All clarifications and answers are visible to all contestants to ensure fairness. Ask specific questions about problem statements, input/output formats, or edge cases."
+              "guidance-text": "Use this page to ask questions about contest problems and view official responses from judges. All clarifications and answers are visible to all contestants to ensure fairness. Ask specific questions about problem statements, input/output formats, or edge cases.",
+              "disabled-title": "Disabled",
+              "disabled-description": "Clarification creation is currently disabled for this contest."
             },
             "clarifications-page-form": {
               "create-title": "Create Clarification",

@@ -2,11 +2,13 @@ import { act, fireEvent, screen, within } from "@testing-library/react";
 
 import { TicketsPage } from "@/app/[slug]/(dashboard)/_common/tickets/tickets-page";
 import { TicketStatus } from "@/core/domain/enumerate/TicketStatus";
+import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { MockTicketResponseDTO } from "@/test/mock/response/ticket/MockTicketResponseDTO";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("TicketsPage", () => {
   it("renders tickets in the correct columns based on their status", async () => {
+    const contest = MockContestResponseDTO();
     const tickets = [
       MockTicketResponseDTO({
         status: TicketStatus.OPEN,
@@ -19,7 +21,7 @@ describe("TicketsPage", () => {
       }),
     ];
 
-    await renderWithProviders(<TicketsPage tickets={tickets} />);
+    await renderWithProviders(<TicketsPage tickets={tickets} />, { contest });
 
     const openColumn = screen.getByTestId("ticket-column-open");
     const inProgressColumn = screen.getByTestId("ticket-column-in_progress");
@@ -34,9 +36,26 @@ describe("TicketsPage", () => {
     );
   });
 
+  it("renders variant with disabled ticket creation", async () => {
+    const contest = MockContestResponseDTO({
+      settings: {
+        isTechnicalSupportTicketEnabled: false,
+        isNonTechnicalSupportTicketEnabled: false,
+      } as any,
+    });
+    await renderWithProviders(<TicketsPage tickets={[]} />, { contest });
+
+    expect(
+      screen.queryByTestId("open-create-form-button"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("disabled")).toBeInTheDocument();
+  });
+
   it("renders variant with create button", async () => {
+    const contest = MockContestResponseDTO();
     await renderWithProviders(
       <TicketsPage tickets={[]} canCreate onCreate={() => {}} />,
+      { contest },
     );
 
     expect(screen.queryByTestId("ticket-form")).not.toBeInTheDocument();

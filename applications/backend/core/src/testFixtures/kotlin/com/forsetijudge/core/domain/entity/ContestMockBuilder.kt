@@ -17,7 +17,15 @@ object ContestMockBuilder {
         endAt: OffsetDateTime = OffsetDateTime.now().plusHours(2),
         autoFreezeAt: OffsetDateTime? = OffsetDateTime.now().plusMinutes(30),
         frozenAt: OffsetDateTime? = null,
-        settings: Contest.Settings = Contest.Settings(isAutoJudgeEnabled = true),
+        settings: Contest.Settings =
+            Contest.Settings(
+                isAutoJudgeEnabled = true,
+                isClarificationEnabled = true,
+                isSubmissionPrintTicketEnabled = true,
+                isTechnicalSupportTicketEnabled = true,
+                isNonTechnicalSupportTicketEnabled = true,
+                isGuestEnabled = true,
+            ),
         members: List<Member> = emptyList(),
         problems: List<Problem> = emptyList(),
         clarifications: List<Clarification> = emptyList(),

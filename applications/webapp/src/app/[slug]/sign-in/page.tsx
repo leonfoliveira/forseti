@@ -94,6 +94,9 @@ export default function SignInPage() {
   const contest = useAppSelector((state) => state.contest);
   const searchParams = useSearchParams();
   const toast = useToast();
+  const isGuestEnabled = useAppSelector(
+    (state) => state.contest.settings.isGuestEnabled,
+  );
 
   const hasExpired = searchParams.get("expired");
 
@@ -189,16 +192,18 @@ export default function SignInPage() {
                 >
                   <FormattedMessage {...messages.signIn} />
                 </AsyncButton>
-                <AsyncButton
-                  className="w-full"
-                  type="button"
-                  onClick={enterAsGuest}
-                  variant="outline"
-                  isLoading={enterAsGuestState.isLoading}
-                  data-testid="enter-guest"
-                >
-                  <FormattedMessage {...messages.enterGuestLabel} />
-                </AsyncButton>
+                {isGuestEnabled && (
+                  <AsyncButton
+                    className="w-full"
+                    type="button"
+                    onClick={enterAsGuest}
+                    variant="outline"
+                    isLoading={enterAsGuestState.isLoading}
+                    data-testid="enter-guest"
+                  >
+                    <FormattedMessage {...messages.enterGuestLabel} />
+                  </AsyncButton>
+                )}
               </CardFooter>
             </Card>
           </FieldSet>

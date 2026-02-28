@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 import { SubmissionsPageActionDownload } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-download";
 import { SubmissionsPageActionExecutions } from "@/app/[slug]/(dashboard)/_common/submissions/submissions-page-action-executions";
@@ -62,10 +62,77 @@ export function SubmissionsPageActionsMenu({
   onPrint,
   canViewExecutions,
 }: Props) {
+  const isSubmissionPrintTicketEnabled = useAppSelector(
+    (state) => state.contest.settings.isSubmissionPrintTicketEnabled,
+  );
   const [isOpen, setIsOpen] = useState(false);
   const session = useAppSelector((state) => state.session);
 
   const close = () => setIsOpen(false);
+
+  const items: React.ReactNode[] = [];
+
+  if (submission.code) {
+    items.push(
+      <SubmissionsPageActionDownload
+        key="download"
+        submission={submission}
+        onClose={close}
+      />,
+    );
+  }
+
+  if (
+    canPrint &&
+    isSubmissionPrintTicketEnabled &&
+    submission.member.id === session?.member.id
+  ) {
+    items.push(
+      <SubmissionsPageActionPrint
+        key="print"
+        submission={submission}
+        onClose={close}
+        onRequest={onPrint!}
+      />,
+    );
+  }
+
+  if (canViewExecutions) {
+    items.push(
+      <SubmissionsPageActionExecutions
+        key="executions"
+        executions={
+          (submission as SubmissionWithCodeAndExecutionsResponseDTO).executions
+        }
+        onClose={close}
+      />,
+    );
+  }
+
+  if (canEdit) {
+    if (submission.status != SubmissionStatus.JUDGING) {
+      items.push(
+        <SubmissionsPageActionRerun
+          key="rerun"
+          submission={submission as SubmissionWithCodeAndExecutionsResponseDTO}
+          onClose={close}
+          onRerun={onEdit!}
+        />,
+      );
+    }
+    items.push(
+      <SubmissionsPageActionJudge
+        key="judge"
+        submission={submission as SubmissionWithCodeAndExecutionsResponseDTO}
+        onClose={close}
+        onJudge={onEdit!}
+      />,
+    );
+  }
+
+  if (items.length === 0) {
+    return null;
+  }
 
   return (
     <div className="flex justify-end gap-2">
@@ -90,13 +157,15 @@ export function SubmissionsPageActionsMenu({
                 onClose={close}
               />
             )}
-            {canPrint && submission.member.id === session?.member.id && (
-              <SubmissionsPageActionPrint
-                submission={submission}
-                onClose={close}
-                onRequest={onPrint}
-              />
-            )}
+            {canPrint &&
+              isSubmissionPrintTicketEnabled &&
+              submission.member.id === session?.member.id && (
+                <SubmissionsPageActionPrint
+                  submission={submission}
+                  onClose={close}
+                  onRequest={onPrint}
+                />
+              )}
             {canViewExecutions && (
               <SubmissionsPageActionExecutions
                 executions={

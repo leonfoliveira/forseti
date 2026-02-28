@@ -23,6 +23,17 @@ describe("Dashboard > About", () => {
       expect(screen.getByTestId(`language-${lang}`)).toBeInTheDocument();
     });
     expect(screen.getByTestId("auto-judge-enabled")).toBeInTheDocument();
+    expect(screen.getByTestId("clarification-enabled")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("submission-print-ticket-enabled"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("technical-support-ticket-enabled"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("non-technical-support-ticket-enabled"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("guest-enabled")).toBeInTheDocument();
   });
 
   test("should render auto freeze disabled when auto freeze is not set", async () => {
@@ -38,10 +49,26 @@ describe("Dashboard > About", () => {
     const contest = MockContestResponseDTO({
       settings: {
         isAutoJudgeEnabled: false,
+        isClarificationEnabled: false,
+        isSubmissionPrintTicketEnabled: false,
+        isTechnicalSupportTicketEnabled: false,
+        isNonTechnicalSupportTicketEnabled: false,
+        isGuestEnabled: false,
       },
     });
     await renderWithProviders(<DashboardAboutPage />, { contest });
 
     expect(screen.getByTestId("auto-judge-disabled")).toBeInTheDocument();
+    expect(screen.getByTestId("clarification-disabled")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("submission-print-ticket-disabled"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("technical-support-ticket-disabled"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("non-technical-support-ticket-disabled"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("guest-disabled")).toBeInTheDocument();
   });
 });

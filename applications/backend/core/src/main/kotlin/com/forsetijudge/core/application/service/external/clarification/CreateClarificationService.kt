@@ -46,6 +46,10 @@ class CreateClarificationService(
             memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId)
                 ?: throw NotFoundException("Could not find member with id $contextMemberId in this contest")
 
+        ContestAuthorizer(contest, member)
+            .requireSettingClarificationEnabled()
+            .throwIfErrors()
+
         val isAnswer = command.parentId != null
         if (isAnswer) {
             if (command.problemId != null) {

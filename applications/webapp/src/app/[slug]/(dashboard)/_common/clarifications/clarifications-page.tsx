@@ -1,4 +1,4 @@
-import { MessageCircleQuestionIcon, PlusIcon } from "lucide-react";
+import { CircleXIcon, MessageCircleQuestionIcon, PlusIcon } from "lucide-react";
 import React from "react";
 
 import { ClarificationsPageCard } from "@/app/[slug]/(dashboard)/_common/clarifications/clarifications-page-card";
@@ -48,6 +48,15 @@ const messages = defineMessages({
     defaultMessage:
       "Use this page to ask questions about contest problems and view official responses from judges. All clarifications and answers are visible to all contestants to ensure fairness. Ask specific questions about problem statements, input/output formats, or edge cases.",
   },
+  disabledTitle: {
+    id: "app.[slug].(dashboard)._common.clarifications.clarifications-page.disabled-title",
+    defaultMessage: "Disabled",
+  },
+  disabledDescription: {
+    id: "app.[slug].(dashboard)._common.clarifications.clarifications-page.disabled-description",
+    defaultMessage:
+      "Clarification creation is currently disabled for this contest.",
+  },
 });
 
 type Props = {
@@ -90,12 +99,17 @@ export function ClarificationsPage({
   onAnswer,
   onDelete,
 }: Props) {
+  const isClarificationEnabled = useAppSelector(
+    (state) => state.contest.settings.isClarificationEnabled,
+  );
   const contestId = useAppSelector((state) => state.contest.id);
   const contestStatus = useContestStatusWatcher();
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 
   const shouldSeeCreationComponents =
-    canCreate && contestStatus === ContestStatus.IN_PROGRESS;
+    canCreate &&
+    isClarificationEnabled &&
+    contestStatus === ContestStatus.IN_PROGRESS;
 
   return (
     <Page title={messages.pageTitle} description={messages.pageDescription}>
@@ -122,8 +136,24 @@ export function ClarificationsPage({
           <Separator className="my-5 w-full max-w-4xl" />
         )}
 
+        {!isClarificationEnabled && (
+          <Empty data-testid="disabled">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <CircleXIcon size={48} />
+              </EmptyMedia>
+              <EmptyTitle>
+                <FormattedMessage {...messages.disabledTitle} />
+              </EmptyTitle>
+            </EmptyHeader>
+            <EmptyDescription>
+              <FormattedMessage {...messages.disabledDescription} />
+            </EmptyDescription>
+          </Empty>
+        )}
+
         {/* Empty State */}
-        {clarifications.length == 0 && (
+        {clarifications.length == 0 && isClarificationEnabled && (
           <Empty data-testid="empty">
             <EmptyHeader>
               <EmptyMedia variant="icon">
@@ -138,7 +168,6 @@ export function ClarificationsPage({
             </EmptyDescription>
           </Empty>
         )}
-
         {/* Items */}
         {clarifications.length > 0 && (
           <div
@@ -157,7 +186,6 @@ export function ClarificationsPage({
             ))}
           </div>
         )}
-
         <Alert className="bg-card mt-5 w-full max-w-4xl py-2">
           <AlertDescription className="text-xs">
             <FormattedMessage {...messages.guidanceText} />

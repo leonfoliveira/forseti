@@ -79,7 +79,15 @@ class UpdateContestServiceTest :
                     languages = listOf(Submission.Language.PYTHON_312),
                     startAt = now.plusHours(1),
                     endAt = now.plusHours(2),
-                    settings = UpdateContestUseCase.Command.Settings(isAutoJudgeEnabled = true),
+                    settings =
+                        UpdateContestUseCase.Command.Settings(
+                            isAutoJudgeEnabled = true,
+                            isClarificationEnabled = true,
+                            isSubmissionPrintTicketEnabled = true,
+                            isTechnicalSupportTicketEnabled = true,
+                            isNonTechnicalSupportTicketEnabled = true,
+                            isGuestEnabled = true,
+                        ),
                     members =
                         listOf(
                             UpdateContestUseCase.Command.Member(

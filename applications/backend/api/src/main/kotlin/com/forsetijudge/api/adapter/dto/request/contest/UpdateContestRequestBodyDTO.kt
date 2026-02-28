@@ -22,6 +22,11 @@ data class UpdateContestRequestBodyDTO(
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class Settings(
         val isAutoJudgeEnabled: Boolean,
+        val isClarificationEnabled: Boolean,
+        val isSubmissionPrintTicketEnabled: Boolean,
+        val isTechnicalSupportTicketEnabled: Boolean,
+        val isNonTechnicalSupportTicketEnabled: Boolean,
+        val isGuestEnabled: Boolean,
     )
 
     @JsonIgnoreProperties(ignoreUnknown = true)

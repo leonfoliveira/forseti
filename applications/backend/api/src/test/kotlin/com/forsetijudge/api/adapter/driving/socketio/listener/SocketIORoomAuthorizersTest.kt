@@ -1,6 +1,7 @@
 package com.forsetijudge.api.adapter.driving.socketio.listener
 
 import com.forsetijudge.core.application.util.ContestAuthorizer
+import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
@@ -110,6 +111,24 @@ class SocketIORoomAuthorizersTest :
         }
 
         context("GuestDashboardBroadcastRoom") {
+            test("should throw ForbiddenException if guest setting is disabled") {
+                val contest =
+                    ContestMockBuilder.build(
+                        startAt = OffsetDateTime.now().minusHours(1),
+                        settings = Contest.Settings(isGuestEnabled = false),
+                    )
+
+                val filter = sut.authorizers[GuestDashboardBroadcastRoom.pattern] ?: error("Filter not found")
+                filter("/contests/${contest.id}/dashboard/guest")
+
+                val commandSlot = slot<ContestAuthorizerUseCase.Command>()
+                verify { contestAuthorizerUseCase.execute(capture(commandSlot)) }
+                val authorizer = ContestAuthorizer(contest)
+                shouldThrow<ForbiddenException> {
+                    commandSlot.captured.chain(authorizer)
+                }
+            }
+
             test("should throw ForbiddenException if contest not started") {
                 val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
 

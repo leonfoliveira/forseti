@@ -68,6 +68,10 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.tickets.tickets-page-form.submit-label",
     defaultMessage: "Submit",
   },
+  disabledOption: {
+    id: "app.[slug].(dashboard)._common.tickets.tickets-page-form.disabled-option",
+    defaultMessage: "(Disabled)",
+  },
 });
 
 type Props = {
@@ -76,6 +80,7 @@ type Props = {
 };
 
 export function TicketsPageForm({ onCreate, onClose }: Props) {
+  const contestSettings = useAppSelector((state) => state.contest.settings);
   const contestId = useAppSelector((state) => state.contest.id);
   const createTicketState = useLoadableState();
   const toast = useToast();
@@ -111,6 +116,13 @@ export function TicketsPageForm({ onCreate, onClose }: Props) {
     }
   }
 
+  const ticketTypeToSetting: Record<string, boolean> = {
+    [TicketType.TECHNICAL_SUPPORT]:
+      contestSettings.isTechnicalSupportTicketEnabled,
+    [TicketType.NON_TECHNICAL_SUPPORT]:
+      contestSettings.isNonTechnicalSupportTicketEnabled,
+  };
+
   return (
     <Card className="w-full max-w-4xl" data-testid="ticket-form">
       <CardHeader>
@@ -136,10 +148,20 @@ export function TicketsPageForm({ onCreate, onClose }: Props) {
                     TicketType.TECHNICAL_SUPPORT,
                     TicketType.NON_TECHNICAL_SUPPORT,
                   ].map((type) => (
-                    <NativeSelectOption key={type} value={type}>
+                    <NativeSelectOption
+                      key={type}
+                      value={type}
+                      disabled={!ticketTypeToSetting[type]}
+                    >
                       <FormattedMessage
                         {...globalMessages.ticketType[type as TicketType]}
                       />
+                      {!ticketTypeToSetting[type] && (
+                        <>
+                          {" "}
+                          <FormattedMessage {...messages.disabledOption} />
+                        </>
+                      )}
                     </NativeSelectOption>
                   ))}
                 </NativeSelect>

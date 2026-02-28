@@ -35,6 +35,29 @@ describe("TicketsPageForm", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
+  it("should render disabled options when ticket type is not allowed", async () => {
+    const contest = MockContestResponseDTO({
+      settings: {
+        isNonTechnicalSupportTicketEnabled: false,
+        isTechnicalSupportTicketEnabled: false,
+      } as any,
+    });
+
+    const onClose = jest.fn();
+    const onCreate = jest.fn();
+    await renderWithProviders(
+      <TicketsPageForm onClose={onClose} onCreate={onCreate} />,
+      { contest },
+    );
+
+    const options = screen
+      .getByTestId("ticket-form-type")
+      .querySelectorAll("option");
+    expect(options).toHaveLength(3);
+    expect(options[1]).toBeDisabled();
+    expect(options[2]).toBeDisabled();
+  });
+
   it("should create ticket when submit button is clicked", async () => {
     const newTicket = MockTicketResponseDTO();
     (Composition.ticketWritter.create as jest.Mock).mockResolvedValueOnce(

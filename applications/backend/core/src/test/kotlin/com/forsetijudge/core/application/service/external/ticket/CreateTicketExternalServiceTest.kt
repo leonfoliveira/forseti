@@ -3,6 +3,7 @@ package com.forsetijudge.core.application.service.external.ticket
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
+import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
@@ -83,6 +84,20 @@ class CreateTicketExternalServiceTest :
                 every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns null
 
                 shouldThrow<NotFoundException> { sut.execute(command) }
+            }
+
+            test("should throw ForbiddenException if submission print ticket is not enabled") {
+                val contest =
+                    ContestMockBuilder.build(
+                        startAt = OffsetDateTime.now().minusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(1),
+                        settings = Contest.Settings(isSubmissionPrintTicketEnabled = false),
+                    )
+                val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT, contest = contest)
+                every { contestRepository.findById(contextContestId) } returns contest
+                every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+
+                shouldThrow<ForbiddenException> { sut.execute(command) }
             }
 
             Member.Type.entries.filter { it != Member.Type.CONTESTANT }.forEach { memberType ->
@@ -210,6 +225,20 @@ class CreateTicketExternalServiceTest :
                 shouldThrow<NotFoundException> { sut.execute(command) }
             }
 
+            test("should throw ForbiddenException if technical support ticket is not enabled") {
+                val contest =
+                    ContestMockBuilder.build(
+                        startAt = OffsetDateTime.now().minusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(1),
+                        settings = Contest.Settings(isTechnicalSupportTicketEnabled = false),
+                    )
+                val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT, contest = contest)
+                every { contestRepository.findById(contextContestId) } returns contest
+                every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+
+                shouldThrow<ForbiddenException> { sut.execute(command) }
+            }
+
             test("should throw ForbiddenException if member cannot access not started contest") {
                 val contest = ContestMockBuilder.build(startAt = OffsetDateTime.now().plusHours(1))
                 val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT, contest = contest)
@@ -278,6 +307,20 @@ class CreateTicketExternalServiceTest :
                 every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns null
 
                 shouldThrow<NotFoundException> { sut.execute(command) }
+            }
+
+            test("should throw ForbiddenException if non technical support ticket is not enabled") {
+                val contest =
+                    ContestMockBuilder.build(
+                        startAt = OffsetDateTime.now().minusHours(1),
+                        endAt = OffsetDateTime.now().plusHours(1),
+                        settings = Contest.Settings(isNonTechnicalSupportTicketEnabled = false),
+                    )
+                val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT, contest = contest)
+                every { contestRepository.findById(contextContestId) } returns contest
+                every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+
+                shouldThrow<ForbiddenException> { sut.execute(command) }
             }
 
             test("should throw ForbiddenException if member cannot access not started contest") {

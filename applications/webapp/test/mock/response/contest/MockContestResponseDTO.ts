@@ -18,6 +18,11 @@ export function MockContestResponseDTO(
     autoFreezeAt: "2025-01-01T14:00:00Z",
     settings: {
       isAutoJudgeEnabled: true,
+      isClarificationEnabled: true,
+      isSubmissionPrintTicketEnabled: true,
+      isTechnicalSupportTicketEnabled: true,
+      isNonTechnicalSupportTicketEnabled: true,
+      isGuestEnabled: true,
     },
     version: 1,
     ...partial,

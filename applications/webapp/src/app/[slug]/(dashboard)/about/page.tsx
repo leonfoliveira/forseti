@@ -12,7 +12,7 @@ import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Theme, useTheme } from "@/app/_lib/provider/theme-provider";
 import { useAppSelector } from "@/app/_store/store";
 import { globalMessages } from "@/i18n/global";
-import { defineMessages } from "@/i18n/message";
+import { defineMessages, Message } from "@/i18n/message";
 
 const messages = defineMessages({
   pageTitle: {
@@ -51,11 +51,58 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard).about.page.setting-is-auto-judge-enabled",
     defaultMessage: "Auto Judge",
   },
+  settingIsClarificationEnabled: {
+    id: "app.[slug].(dashboard).about.page.setting-is-clarification-enabled",
+    defaultMessage: "Clarifications",
+  },
+  settingIsSubmissionPrintTicketEnabled: {
+    id: "app.[slug].(dashboard).about.page.setting-is-submission-print-ticket-enabled",
+    defaultMessage: "Submission Print Ticket",
+  },
+  settingIsTechnicalSupportTicketEnabled: {
+    id: "app.[slug].(dashboard).about.page.setting-is-technical-support-ticket-enabled",
+    defaultMessage: "Technical Support Ticket",
+  },
+  settingIsNonTechnicalSupportTicketEnabled: {
+    id: "app.[slug].(dashboard).about.page.setting-is-non-technical-support-ticket-enabled",
+    defaultMessage: "Non-Technical Support Ticket",
+  },
+  settingIsGuestEnabled: {
+    id: "app.[slug].(dashboard).about.page.setting-is-guest-enabled",
+    defaultMessage: "Guest Access",
+  },
 });
 
 export default function DashboardAboutPage() {
   const contest = useAppSelector((state) => state.contest);
   const { theme } = useTheme();
+
+  function getSettingItem(
+    isEnabled: boolean,
+    label: Message,
+    dataTestId: string,
+  ) {
+    return (
+      <li className="flex items-center gap-3">
+        <span className="bg-muted/30 inline-flex h-7 w-7 items-center justify-center rounded-full">
+          {isEnabled ? (
+            <CheckIcon
+              className="h-4 w-4 stroke-green-500"
+              data-testid={`${dataTestId}-enabled`}
+            />
+          ) : (
+            <XIcon
+              className="h-4 w-4 stroke-red-500"
+              data-testid={`${dataTestId}-disabled`}
+            />
+          )}
+        </span>
+        <span>
+          <FormattedMessage {...label} />
+        </span>
+      </li>
+    );
+  }
 
   return (
     <Page title={messages.pageTitle} description={messages.pageDescription}>
@@ -151,26 +198,36 @@ export default function DashboardAboutPage() {
                   <FormattedMessage {...messages.settings} />
                 </p>
                 <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-3">
-                    <span className="bg-muted/30 inline-flex h-7 w-7 items-center justify-center rounded-full">
-                      {contest.settings.isAutoJudgeEnabled ? (
-                        <CheckIcon
-                          className="h-4 w-4 stroke-green-500"
-                          data-testid="auto-judge-enabled"
-                        />
-                      ) : (
-                        <XIcon
-                          className="h-4 w-4 stroke-red-500"
-                          data-testid="auto-judge-disabled"
-                        />
-                      )}
-                    </span>
-                    <span>
-                      <FormattedMessage
-                        {...messages.settingIsAutoJudgeEnabled}
-                      />
-                    </span>
-                  </li>
+                  {getSettingItem(
+                    contest.settings.isAutoJudgeEnabled,
+                    messages.settingIsAutoJudgeEnabled,
+                    "auto-judge",
+                  )}
+                  {getSettingItem(
+                    contest.settings.isClarificationEnabled,
+                    messages.settingIsClarificationEnabled,
+                    "clarification",
+                  )}
+                  {getSettingItem(
+                    contest.settings.isSubmissionPrintTicketEnabled,
+                    messages.settingIsSubmissionPrintTicketEnabled,
+                    "submission-print-ticket",
+                  )}
+                  {getSettingItem(
+                    contest.settings.isTechnicalSupportTicketEnabled,
+                    messages.settingIsTechnicalSupportTicketEnabled,
+                    "technical-support-ticket",
+                  )}
+                  {getSettingItem(
+                    contest.settings.isNonTechnicalSupportTicketEnabled,
+                    messages.settingIsNonTechnicalSupportTicketEnabled,
+                    "non-technical-support-ticket",
+                  )}
+                  {getSettingItem(
+                    contest.settings.isGuestEnabled,
+                    messages.settingIsGuestEnabled,
+                    "guest",
+                  )}
                 </ul>
               </section>
             </div>
