@@ -27,17 +27,16 @@ class AutoJudgeSubmissionService(
 
     @Transactional
     override fun execute(command: AutoJudgeSubmissionUseCase.Command) {
-        val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
         logger.info("Auto judging submission with id: ${command.submissionId}")
 
         val preJudgeSubmission =
-            submissionRepository.findByIdAndContestId(command.submissionId, contextContestId)
-                ?: throw NotFoundException("Could not find submission with id = ${command.submissionId} in this contest")
+            submissionRepository.findById(command.submissionId)
+                ?: throw NotFoundException("Could not find submission with id = ${command.submissionId}")
         val member =
-            memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId)
-                ?: throw NotFoundException("Could not find member with id = $contextMemberId in this contest")
+            memberRepository.findById(contextMemberId)
+                ?: throw NotFoundException("Could not find member with id = $contextMemberId")
 
         ContestAuthorizer(preJudgeSubmission.contest, member)
             .requireMemberType(Member.Type.AUTOJUDGE)
@@ -72,9 +71,9 @@ class AutoJudgeSubmissionService(
             }
 
         val postJudgeSubmission =
-            submissionRepository.findByIdAndContestId(command.submissionId, contextContestId)
+            submissionRepository.findById(command.submissionId)
                 ?: throw NotFoundException(
-                    "Could not find submission with id = ${command.submissionId} in this contest after judging process",
+                    "Could not find submission with id = ${command.submissionId} after judging process",
                 )
 
         /**

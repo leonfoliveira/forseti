@@ -51,14 +51,12 @@ class CreateSessionInternalServiceTest :
             Member.Type.UNOFFICIAL_CONTESTANT,
         ).forEach { memberType ->
             test("should create session successfully for $memberType member") {
-                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build(type = memberType)
-                val command = CreateSessionInternalUseCase.Command(contest, member)
+                val command = CreateSessionInternalUseCase.Command(member)
                 every { sessionRepository.save(any()) } answers { firstArg() }
 
                 val result = sut.execute(command)
 
-                result.contest shouldBe contest
                 result.member shouldBe member
                 result.expiresAt shouldBe ExecutionContext.get().startedAt.plusHours(1)
                 verify { sessionRepository.save(result) }
@@ -73,14 +71,12 @@ class CreateSessionInternalServiceTest :
         }
 
         test("should create session successfully for root member") {
-            val contest = ContestMockBuilder.build()
             val member = MemberMockBuilder.build(type = Member.Type.ROOT)
-            val command = CreateSessionInternalUseCase.Command(contest, member)
+            val command = CreateSessionInternalUseCase.Command(member)
             every { sessionRepository.save(any()) } answers { firstArg() }
 
             val result = sut.execute(command)
 
-            result.contest shouldBe contest
             result.member shouldBe member
             result.expiresAt shouldBe ExecutionContext.get().startedAt.plusHours(1)
             verify { sessionRepository.save(result) }
@@ -89,14 +85,12 @@ class CreateSessionInternalServiceTest :
 
         listOf(Member.Type.API, Member.Type.AUTOJUDGE).forEach { memberType ->
             test("should create session successfully for $memberType member") {
-                val contest = ContestMockBuilder.build()
                 val member = MemberMockBuilder.build(type = memberType)
-                val command = CreateSessionInternalUseCase.Command(contest, member)
+                val command = CreateSessionInternalUseCase.Command(member)
                 every { sessionRepository.save(any()) } answers { firstArg() }
 
                 val result = sut.execute(command)
 
-                result.contest shouldBe contest
                 result.member shouldBe member
                 result.expiresAt shouldBe ExecutionContext.get().startedAt.plusHours(1)
                 verify { sessionRepository.save(result) }

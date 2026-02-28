@@ -51,11 +51,11 @@ class SocketIOJoinListenerTest :
             every { mockClient.handshakeData.httpHeaders.get("X-Forwarded-For") } returns "0.0.0.0"
             every { mockClient.get<Session?>("session") } returns session
 
-            sut.onData(mockClient, "/contests/${session.contest!!.id}", mockk())
+            sut.onData(mockClient, "/contests/${session.member.contest!!.id}", mockk())
 
-            verify { mockClient.joinRoom("/contests/${session.contest!!.id}") }
+            verify { mockClient.joinRoom("/contests/${session.member.contest!!.id}") }
             ExecutionContext.get().ip shouldBe "0.0.0.0"
-            ExecutionContext.get().contestId shouldBe session.contest!!.id
+            ExecutionContext.get().contestId shouldBe session.member.contest!!.id
             ExecutionContext.get().session shouldBe session
         }
 

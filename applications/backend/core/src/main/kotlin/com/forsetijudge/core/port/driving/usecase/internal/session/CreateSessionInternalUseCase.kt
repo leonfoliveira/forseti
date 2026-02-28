@@ -16,11 +16,9 @@ interface CreateSessionInternalUseCase {
     /**
      * Command for creating a new session.
      *
-     * @param contest The contest for which to create the session.
      * @param member The member for whom to create the session.
      */
     data class Command(
-        val contest: Contest?,
         val member: Member,
     )
 }

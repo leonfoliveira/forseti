@@ -26,7 +26,7 @@ class CreateSessionInternalService(
     private val logger = SafeLogger(this::class)
 
     override fun execute(command: CreateSessionInternalUseCase.Command): Session {
-        logger.info("Creating session for member with id = ${command.member.id} in contest with id = ${command.contest?.id}")
+        logger.info("Creating session for member with id = ${command.member.id}")
 
         deleteAllSessionsByMemberInternalUseCase.execute(DeleteAllSessionsByMemberInternalUseCase.Command(command.member))
 
@@ -41,7 +41,6 @@ class CreateSessionInternalService(
 
         val session =
             Session(
-                contest = command.contest,
                 member = command.member,
                 csrfToken = IdGenerator.getUUID(),
                 expiresAt = ExecutionContext.get().startedAt.plusSeconds(expiresAtOffset / 1000),

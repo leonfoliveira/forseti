@@ -40,7 +40,6 @@ class CreateSessionService(
             createSessionInternalUseCase.execute(
                 CreateSessionInternalUseCase.Command(
                     member = member,
-                    contest = contest,
                 ),
             )
 

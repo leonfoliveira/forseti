@@ -38,12 +38,11 @@ class AutoJudgeSubmissionServiceTest :
                 applicationEventPublisher = applicationEventPublisher,
             )
 
-        val contextContestId = IdGenerator.getUUID()
         val contextMemberId = IdGenerator.getUUID()
 
         beforeEach {
             clearAllMocks()
-            ExecutionContextMockBuilder.build(contestId = contextContestId, memberId = contextMemberId)
+            ExecutionContextMockBuilder.build(memberId = contextMemberId)
         }
 
         val command =
@@ -52,33 +51,33 @@ class AutoJudgeSubmissionServiceTest :
             )
 
         test("should throw NotFoundException when submission not found") {
-            every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns null
+            every { submissionRepository.findById(command.submissionId) } returns null
 
             shouldThrow<NotFoundException> { sut.execute(command) }
         }
 
         test("should throw NotFoundException when member not found") {
             val submission = SubmissionMockBuilder.build()
-            every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns submission
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns null
+            every { submissionRepository.findById(command.submissionId) } returns submission
+            every { memberRepository.findById(contextMemberId) } returns null
 
             shouldThrow<NotFoundException> { sut.execute(command) }
         }
 
         test("should throw ForbiddenException when member is not auto judge") {
             val submission = SubmissionMockBuilder.build()
-            every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns submission
+            every { submissionRepository.findById(command.submissionId) } returns submission
             val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+            every { memberRepository.findById(contextMemberId) } returns member
 
             shouldThrow<ForbiddenException> { sut.execute(command) }
         }
 
         test("should skip judging process when submission is not in JUDGING status") {
             val submission = SubmissionMockBuilder.build(status = Submission.Status.JUDGED)
-            every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns submission
+            every { submissionRepository.findById(command.submissionId) } returns submission
             val member = MemberMockBuilder.build(type = Member.Type.AUTOJUDGE)
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+            every { memberRepository.findById(contextMemberId) } returns member
 
             sut.execute(command)
 
@@ -89,13 +88,13 @@ class AutoJudgeSubmissionServiceTest :
 
         test("should run submission but skip update if submission status changes to not JUDGING") {
             val submission = SubmissionMockBuilder.build()
-            every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returnsMany
+            every { submissionRepository.findById(command.submissionId) } returnsMany
                 listOf(
                     submission,
                     SubmissionMockBuilder.build(status = Submission.Status.JUDGED),
                 )
             val member = MemberMockBuilder.build(type = Member.Type.AUTOJUDGE)
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+            every { memberRepository.findById(contextMemberId) } returns member
             val execution = ExecutionMockBuilder.build()
             every { submissionRunner.run(submission) } returns execution
 
@@ -108,9 +107,9 @@ class AutoJudgeSubmissionServiceTest :
 
         test("should run submission and update status and answer") {
             val submission = SubmissionMockBuilder.build()
-            every { submissionRepository.findByIdAndContestId(command.submissionId, contextContestId) } returns submission
+            every { submissionRepository.findById(command.submissionId) } returns submission
             val member = MemberMockBuilder.build(type = Member.Type.AUTOJUDGE)
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+            every { memberRepository.findById(contextMemberId) } returns member
             val execution = ExecutionMockBuilder.build()
             every { submissionRunner.run(submission) } returns execution
             every { submissionRepository.save(any()) } returnsArgument 0

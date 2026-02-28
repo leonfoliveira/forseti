@@ -24,16 +24,15 @@ class FailSubmissionService(
 
     @Transactional
     override fun execute(command: FailSubmissionUseCase.Command) {
-        val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
         logger.info("Failing submission with id: ${command.submissionId}")
 
         val submission =
-            submissionRepository.findByIdAndContestId(command.submissionId, contextContestId)
+            submissionRepository.findById(command.submissionId)
                 ?: throw NotFoundException("Could not find submission with id: ${command.submissionId} in this contest")
         val member =
-            memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId)
+            memberRepository.findById(contextMemberId)
                 ?: throw NotFoundException("Could not find member with id: $contextMemberId in this contest")
 
         ContestAuthorizer(submission.contest, member)

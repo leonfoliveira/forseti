@@ -97,7 +97,7 @@ class SignInServiceTest :
         test("should create session successfully") {
             val contest = ContestMockBuilder.build()
             val member = MemberMockBuilder.build(contest = contest)
-            val session = SessionMockBuilder.build(contest = contest, member = member)
+            val session = SessionMockBuilder.build(member = member)
             every { contestRepository.findById(contextContestId) } returns contest
             every { memberRepository.findByLoginAndContestIdOrContestIsNull(command.login, contextContestId) } returns member
             every { hasher.verify(any(), any()) } returns true
@@ -108,6 +108,6 @@ class SignInServiceTest :
             result shouldBe session
             verify { hasher.verify(command.password, member.password) }
             verify { deleteAllSessionsByMemberInternalUseCase.execute(DeleteAllSessionsByMemberInternalUseCase.Command(member)) }
-            verify { createSessionInternalUseCase.execute(CreateSessionInternalUseCase.Command(contest, member)) }
+            verify { createSessionInternalUseCase.execute(CreateSessionInternalUseCase.Command(member)) }
         }
     })

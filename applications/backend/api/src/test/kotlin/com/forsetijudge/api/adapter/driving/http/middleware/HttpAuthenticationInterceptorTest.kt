@@ -85,7 +85,7 @@ class HttpAuthenticationInterceptorTest :
             val request = mockk<HttpServletRequest>(relaxed = true)
             val response = mockk<HttpServletResponse>(relaxed = true)
             val filterChain = mockk<FilterChain>(relaxed = true)
-            val expectedSession = SessionMockBuilder.build(contest = null)
+            val expectedSession = SessionMockBuilder.build()
             every { request.method } returns "POST"
             every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
             every { request.getHeader("X-CSRF-Token") } returns "invalid-csrf-token"
@@ -103,7 +103,7 @@ class HttpAuthenticationInterceptorTest :
             val request = mockk<HttpServletRequest>(relaxed = true)
             val response = mockk<HttpServletResponse>(relaxed = true)
             val filterChain = mockk<FilterChain>(relaxed = true)
-            val expectedSession = SessionMockBuilder.build(contest = null)
+            val expectedSession = SessionMockBuilder.build()
             every { request.method } returns "POST"
             every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
             every { request.getHeader("X-CSRF-Token") } returns expectedSession.csrfToken.toString()

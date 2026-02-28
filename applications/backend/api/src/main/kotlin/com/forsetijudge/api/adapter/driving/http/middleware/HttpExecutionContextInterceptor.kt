@@ -1,6 +1,7 @@
 package com.forsetijudge.api.adapter.driving.http.middleware
 
 import com.forsetijudge.core.application.util.SafeLogger
+import com.forsetijudge.core.domain.exception.BusinessException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -54,7 +55,7 @@ class HttpExecutionContextInterceptor : HandlerInterceptor {
             try {
                 UUID.fromString(it)
             } catch (_: IllegalArgumentException) {
-                null
+                throw BusinessException("Invalid contestId format in path: $it")
             }
         }
     }

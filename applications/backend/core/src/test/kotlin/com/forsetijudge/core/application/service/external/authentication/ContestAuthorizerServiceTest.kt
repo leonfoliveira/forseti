@@ -50,7 +50,7 @@ class ContestAuthorizerServiceTest :
         test("should throw NotFoundException when member is not found") {
             val contest = ContestMockBuilder.build()
             every { contestRepository.findById(contextContestId) } returns contest
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns null
+            every { memberRepository.findById(contextMemberId) } returns null
 
             shouldThrow<NotFoundException> { sut.execute(command) }
         }
@@ -59,7 +59,7 @@ class ContestAuthorizerServiceTest :
             val contest = ContestMockBuilder.build()
             val member = MemberMockBuilder.build()
             every { contestRepository.findById(contextContestId) } returns contest
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+            every { memberRepository.findById(contextMemberId) } returns member
 
             var chainExecuted = false
             val testCommand =
