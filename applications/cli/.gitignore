@@ -1,8 +1,17 @@
+# Environment
 .idea/
 venv/
-**/__pycache__/
-.coverage
+.env
 
+# Cache
+**/__pycache__/
+.pytest_cache/
+
+# Coverage reports
+.coverage
+htmlcov/
+
+# Distribution files
 build/
 dist/
 *.spec
@@ -10,6 +19,7 @@ dist/
 # Generated config file
 cli/_config.py
 
+# Misc
 backups/
 certs/
 sandboxes/
