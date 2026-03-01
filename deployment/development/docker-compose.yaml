@@ -254,7 +254,7 @@ services:
       NEXT_PUBLIC_VERSION: latest
       NODE_ENV: development
     healthcheck:
-      test: "CMD-SHELL curl -f http://localhost:3000"
+      test: ["CMD-SHELL", "curl -f http://localhost:3000"]
       timeout: 5s
       interval: 15s
       retries: 5
