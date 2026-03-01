@@ -4,11 +4,12 @@ import com.corundumstudio.socketio.SocketIOClient
 import com.corundumstudio.socketio.SocketIOServer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Component
 
 @Component
 class SocketIOBroadcastEmitter(
-    private val socketIOServer: SocketIOServer,
+    @Lazy private val socketIOServer: SocketIOServer,
 ) {
     private val logger = SafeLogger(this::class)
 
