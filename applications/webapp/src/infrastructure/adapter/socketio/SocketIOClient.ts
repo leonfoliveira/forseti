@@ -25,6 +25,9 @@ export class SocketIOBroadcastClient implements BroadcastClient {
       this.client.disconnect();
       this.client = null;
     }
+    this.hasConnectedBefore = false;
+    this.rooms.clear();
+    this.lastConnectionLostAt = null;
 
     return new Promise((resolve, reject) => {
       this.client = io(this.url, {
@@ -53,8 +56,8 @@ export class SocketIOBroadcastClient implements BroadcastClient {
           onReconnect?.();
         } else {
           this.hasConnectedBefore = true;
-          resolve();
         }
+        resolve();
       });
 
       this.client.on("joined", (room: string) => {
@@ -108,21 +111,25 @@ export class SocketIOBroadcastClient implements BroadcastClient {
   }
 
   async disconnect(): Promise<void> {
-    return new Promise((resolve) => {
-      if (!this.client || !this.client.connected) {
-        console.debug("Already disconnected");
-        return resolve();
-      }
+    if (!this.client || !this.client.connected) {
+      console.debug("Already disconnected");
+      return;
+    }
 
-      this.client.on("disconnect", () => {
+    const client = this.client;
+    this.client = null;
+    this.hasConnectedBefore = false;
+    this.rooms.clear();
+    this.lastConnectionLostAt = null;
+
+    return new Promise((resolve) => {
+      client.on("disconnect", () => {
         console.debug("Disconnected from Socket.IO server");
+        client.removeAllListeners();
         resolve();
       });
 
-      this.client.removeAllListeners();
-      this.client.disconnect();
-      this.client = null;
-      this.hasConnectedBefore = false;
+      client.disconnect();
     });
   }
 
