@@ -4,6 +4,8 @@ import com.corundumstudio.socketio.SocketIOServer
 import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOAuthenticateListener
 import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOJoinListener
 import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOPingListener
+import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOSyncListener
+import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOSyncListenerPayload
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,6 +20,7 @@ class SocketIOConfig(
     private val socketIOAuthenticateListener: SocketIOAuthenticateListener,
     private val socketIOJoinListener: SocketIOJoinListener,
     private val socketIOPingListener: SocketIOPingListener,
+    private val socketIOSyncListener: SocketIOSyncListener,
 ) {
     @Bean
     fun socketIOServer(): SocketIOServer {
@@ -31,6 +34,7 @@ class SocketIOConfig(
         server.addEventListener("ping", String::class.java, socketIOPingListener)
         server.addEventListener("authenticate", String::class.java, socketIOAuthenticateListener)
         server.addEventListener("join", String::class.java, socketIOJoinListener)
+        server.addEventListener("sync", SocketIOSyncListenerPayload::class.java, socketIOSyncListener)
 
         return server
     }

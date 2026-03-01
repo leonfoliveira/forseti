@@ -9,6 +9,7 @@ export class SocketIOBroadcastClient implements BroadcastClient {
   private client: Socket | null = null;
   private rooms: Set<string> = new Set();
   private lastConnectionLostAt: Date | null = null;
+  private hasConnectedBefore: boolean = false;
 
   get isConnected(): boolean {
     return this.client?.connected ?? false;
@@ -18,6 +19,13 @@ export class SocketIOBroadcastClient implements BroadcastClient {
     onConnectionLost?: () => void,
     onReconnect?: () => void,
   ): Promise<void> {
+    // Clean up any existing socket before creating a new one
+    if (this.client) {
+      this.client.removeAllListeners();
+      this.client.disconnect();
+      this.client = null;
+    }
+
     return new Promise((resolve, reject) => {
       this.client = io(this.url, {
         withCredentials: true,
@@ -28,10 +36,9 @@ export class SocketIOBroadcastClient implements BroadcastClient {
       });
 
       this.client.on("connect", () => {
-        if (this.client?.recovered) {
+        if (this.hasConnectedBefore) {
           console.debug("Reconnected to Socket.IO server");
-          this.syncronize(this.client);
-          onReconnect?.();
+          this.client?.emit("authenticate");
         } else {
           console.debug("Connected to Socket.IO server");
           this.client?.emit("authenticate");
@@ -40,7 +47,14 @@ export class SocketIOBroadcastClient implements BroadcastClient {
 
       this.client.on("ready", () => {
         console.debug("Socket.IO server is ready");
-        resolve();
+
+        if (this.hasConnectedBefore) {
+          this.rejoinRooms();
+          onReconnect?.();
+        } else {
+          this.hasConnectedBefore = true;
+          resolve();
+        }
       });
 
       this.client.on("joined", (room: string) => {
@@ -54,17 +68,30 @@ export class SocketIOBroadcastClient implements BroadcastClient {
 
       this.client.on("disconnect", () => {
         console.debug("Lost connection to Socket.IO server");
+        this.lastConnectionLostAt = new Date();
         onConnectionLost?.();
       });
 
       this.client.on("connect_error", (error) => {
         console.error("Connection error:", error);
-        reject(error);
+        if (!this.hasConnectedBefore) {
+          reject(error);
+        }
       });
 
       this.client.on("connect_timeout", (timeout) => {
         console.error("Connection timeout:", timeout);
-        reject(new Error("Connection timeout"));
+        if (!this.hasConnectedBefore) {
+          reject(new Error("Connection timeout"));
+        }
+      });
+
+      this.client.on("reconnect_failed", () => {
+        console.error("Reconnection failed");
+      });
+
+      this.client.on("reconnect_error", (error) => {
+        console.error("Reconnection error:", error);
       });
 
       this.client.on("error", (error) => {
@@ -92,7 +119,10 @@ export class SocketIOBroadcastClient implements BroadcastClient {
         resolve();
       });
 
+      this.client.removeAllListeners();
       this.client.disconnect();
+      this.client = null;
+      this.hasConnectedBefore = false;
     });
   }
 
@@ -112,11 +142,30 @@ export class SocketIOBroadcastClient implements BroadcastClient {
   }
 
   /**
-   * Syncronize missed messages by requesting the server to resend any messages that were sent after the last connection loss timestamp.
+   * Rejoin all previously-joined rooms after a reconnect, then trigger sync for missed messages.
+   */
+  private rejoinRooms(): void {
+    if (!this.client || !this.client.connected) {
+      console.warn("Cannot rejoin rooms: not connected");
+      return;
+    }
+
+    console.debug(
+      `Rejoining rooms after reconnect: ${[...this.rooms].join(", ")}`,
+    );
+    for (const room of this.rooms) {
+      this.client.emit("join", room);
+    }
+
+    this.synchronize(this.client);
+  }
+
+  /**
+   * Synchronize missed messages by requesting the server to resend any messages that were sent after the last connection loss timestamp.
    *
    * @param client The Socket.IO client instance to use for emitting the sync request.
    */
-  private async syncronize(client: Socket): Promise<void> {
+  private synchronize(client: Socket): void {
     if (!this.lastConnectionLostAt) {
       console.warn(
         "No timestamp for last connection loss. Unable to sync missed messages.",
