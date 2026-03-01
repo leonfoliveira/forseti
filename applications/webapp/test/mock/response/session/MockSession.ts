@@ -10,7 +10,6 @@ export function MockSession(
     id: uuidv4(),
     createdAt: "2025-01-01T10:00:00Z",
     updatedAt: "2025-01-01T10:00:00Z",
-    contestId: uuidv4(),
     member: MockMemberResponseDTO(),
     expiresAt: "2025-01-01T00:00:00Z",
     version: 1,

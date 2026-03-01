@@ -6,6 +6,7 @@ import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -42,8 +43,8 @@ class HttpPrivateInterceptorTest :
             val handler = mockk<HandlerMethod>(relaxed = true)
             every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT])
             ExecutionContext.start()
-            ExecutionContext.authenticate(
-                SessionMockBuilder.build(member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)),
+            ExecutionContext.setSession(
+                SessionMockBuilder.build(member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)).toResponseBodyDTO(),
             )
 
             shouldThrow<ForbiddenException> {
@@ -57,8 +58,8 @@ class HttpPrivateInterceptorTest :
             val handler = mockk<HandlerMethod>(relaxed = true)
             every { handler.getMethodAnnotation(Private::class.java) } returns Private(allowed = [Member.Type.ROOT, Member.Type.CONTESTANT])
             ExecutionContext.start()
-            ExecutionContext.authenticate(
-                SessionMockBuilder.build(member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)),
+            ExecutionContext.setSession(
+                SessionMockBuilder.build(member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)).toResponseBodyDTO(),
             )
 
             sut.preHandle(request, response, handler) shouldBe true

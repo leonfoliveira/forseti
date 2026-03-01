@@ -5,6 +5,8 @@ import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import com.github.dockerjava.api.exception.UnauthorizedException
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -49,14 +51,14 @@ class SocketIOJoinListenerTest :
             val mockClient = mockk<SocketIOClient>(relaxed = true)
             val session = SessionMockBuilder.build()
             every { mockClient.handshakeData.httpHeaders.get("X-Forwarded-For") } returns "0.0.0.0"
-            every { mockClient.get<Session?>("session") } returns session
+            every { mockClient.get<SessionResponseBodyDTO?>("session") } returns session.toResponseBodyDTO()
 
             sut.onData(mockClient, "/contests/${session.member.contest!!.id}", mockk())
 
             verify { mockClient.joinRoom("/contests/${session.member.contest!!.id}") }
             ExecutionContext.get().ip shouldBe "0.0.0.0"
             ExecutionContext.get().contestId shouldBe session.member.contest!!.id
-            ExecutionContext.get().session shouldBe session
+            ExecutionContext.get().session shouldBe session.toResponseBodyDTO()
         }
 
         test("should join room when private filter authorizes with mismatching contestId") {
@@ -64,7 +66,7 @@ class SocketIOJoinListenerTest :
             val session = SessionMockBuilder.build()
             val otherContestId = IdGenerator.getUUID()
             every { mockClient.handshakeData.httpHeaders.get("X-Forwarded-For") } returns "0.0.0.0"
-            every { mockClient.get<Session?>("session") } returns session
+            every { mockClient.get<SessionResponseBodyDTO?>("session") } returns session.toResponseBodyDTO()
 
             sut.onData(mockClient, "/contests/$otherContestId", mockk())
 
@@ -76,7 +78,7 @@ class SocketIOJoinListenerTest :
 
         test("should send error message when private filter throws exception") {
             val mockClient = mockk<SocketIOClient>(relaxed = true)
-            every { mockClient.get<Session?>("session") } returns null
+            every { mockClient.get<SessionResponseBodyDTO?>("session") } returns null
 
             sut.onData(mockClient, "/error", mockk())
 

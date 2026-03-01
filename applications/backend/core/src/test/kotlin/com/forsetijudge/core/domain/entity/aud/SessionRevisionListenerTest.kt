@@ -3,6 +3,7 @@ package com.forsetijudge.core.domain.entity.aud
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -34,11 +35,11 @@ class SessionRevisionListenerTest :
                 ip = ip,
                 traceId = traceId,
             )
-            ExecutionContext.authenticate(
+            ExecutionContext.setSession(
                 SessionMockBuilder
                     .build(
                         id = sessionId,
-                    ),
+                    ).toResponseBodyDTO(),
             )
 
             sut.newRevision(revisionEntity)

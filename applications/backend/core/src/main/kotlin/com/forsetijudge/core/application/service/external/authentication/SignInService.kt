@@ -1,7 +1,6 @@
 package com.forsetijudge.core.application.service.external.authentication
 
 import com.forsetijudge.core.application.util.SafeLogger
-import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
@@ -11,6 +10,8 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.SignInUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.DeleteAllSessionsByMemberInternalUseCase
+import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -25,7 +26,7 @@ class SignInService(
     private val logger = SafeLogger(this::class)
 
     @Transactional
-    override fun execute(command: SignInUseCase.Command): Session {
+    override fun execute(command: SignInUseCase.Command): SessionResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestIdNullable()
 
         logger.info("Authenticating to contest with id = $contextContestId")
@@ -51,6 +52,6 @@ class SignInService(
         val session = createSessionInternalUseCase.execute(CreateSessionInternalUseCase.Command(member))
 
         logger.info("Finished authenticating member with session id = ${session.id}")
-        return session
+        return session.toResponseBodyDTO()
     }
 }

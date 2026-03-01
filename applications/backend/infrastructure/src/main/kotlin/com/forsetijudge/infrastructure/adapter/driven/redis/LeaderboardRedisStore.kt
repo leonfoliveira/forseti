@@ -18,7 +18,7 @@ class LeaderboardRedisStore(
     private val logger = SafeLogger(this::class)
 
     companion object {
-        const val CELL_STORE_KEY = "leaderboard:cell"
+        const val CELL_STORE_KEY = "leaderboard_cell"
         const val CELL_TTL_MILLIS = 6 * 60 * 60 * 1000L
     }
 

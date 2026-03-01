@@ -1,6 +1,5 @@
 package com.forsetijudge.core.port.driving.usecase.internal.session
 
-import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Session
 

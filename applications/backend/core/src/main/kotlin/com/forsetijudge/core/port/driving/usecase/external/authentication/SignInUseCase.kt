@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.driving.usecase.external.authentication
 
-import com.forsetijudge.core.domain.entity.Session
+import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 
 interface SignInUseCase {
     /**
@@ -9,7 +9,7 @@ interface SignInUseCase {
      * @param command The command containing the login credentials.
      * @return The created session if authentication is successful.
      */
-    fun execute(command: Command): Session
+    fun execute(command: Command): SessionResponseBodyDTO
 
     /**
      * Command for signing in a user.

@@ -6,9 +6,11 @@ import com.forsetijudge.core.application.util.UnitUtil
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.driven.repository.SessionRepository
 import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.DeleteAllSessionsByMemberInternalUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service
 class CreateSessionInternalService(
     private val sessionRepository: SessionRepository,
     private val deleteAllSessionsByMemberInternalUseCase: DeleteAllSessionsByMemberInternalUseCase,
+    private val sessionCache: SessionCache,
     @Value("\${security.session.expiration.default}")
     private val defaultExpiration: String,
     @Value("\${security.session.expiration.root}")
@@ -46,6 +49,7 @@ class CreateSessionInternalService(
                 expiresAt = ExecutionContext.get().startedAt.plusSeconds(expiresAtOffset / 1000),
             )
         sessionRepository.save(session)
+        sessionCache.cache(session.toResponseBodyDTO())
 
         logger.info("Session created successfully with id = ${session.id}")
         return session

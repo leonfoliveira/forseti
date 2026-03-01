@@ -84,7 +84,7 @@ export function TicketsPage({
         className="flex flex-col gap-5"
         data-testid={`ticket-column-${status.toLowerCase()}`}
       >
-        <h2 className="text-lg font-semibold">
+        <h2 className="text-md font-semibold">
           <FormattedMessage {...globalMessages.ticketStatus[status]} />
         </h2>
         {tickets

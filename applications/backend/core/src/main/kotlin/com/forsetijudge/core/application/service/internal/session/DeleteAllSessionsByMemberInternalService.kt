@@ -2,13 +2,16 @@ package com.forsetijudge.core.application.service.internal.session
 
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.driven.repository.SessionRepository
 import com.forsetijudge.core.port.driving.usecase.internal.session.DeleteAllSessionsByMemberInternalUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.springframework.stereotype.Service
 
 @Service
 class DeleteAllSessionsByMemberInternalService(
     private val sessionRepository: SessionRepository,
+    private val sessionCache: SessionCache,
 ) : DeleteAllSessionsByMemberInternalUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -23,6 +26,7 @@ class DeleteAllSessionsByMemberInternalService(
 
         sessions.forEach { it.deletedAt = ExecutionContext.get().startedAt }
         sessionRepository.saveAll(sessions)
+        sessionCache.evictAll(sessions.map { it.toResponseBodyDTO() })
 
         logger.info("All sessions deleted successfully")
     }

@@ -6,7 +6,6 @@ import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.port.driving.usecase.external.authentication.SignInUseCase
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
@@ -40,12 +39,12 @@ class ContestAuthenticationController(
                 ),
             )
 
-        val sessionCookie = sessionCookieBuilder.buildCookie(session.toResponseBodyDTO())
-        val csrfCookie = csrfCookieBuilder.buildCookie(session.toResponseBodyDTO())
+        val sessionCookie = sessionCookieBuilder.buildCookie(session)
+        val csrfCookie = csrfCookieBuilder.buildCookie(session)
 
         return ResponseEntity
             .ok()
             .header(HttpHeaders.SET_COOKIE, sessionCookie, csrfCookie)
-            .body(session.toResponseBodyDTO())
+            .body(session)
     }
 }

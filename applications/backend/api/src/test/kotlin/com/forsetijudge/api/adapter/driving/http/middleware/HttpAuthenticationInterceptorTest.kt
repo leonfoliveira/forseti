@@ -6,6 +6,7 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -74,7 +75,7 @@ class HttpAuthenticationInterceptorTest :
             every { request.method } returns "GET"
             every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
             val command = FindSessionByIdUseCase.Command(expectedSession.id)
-            every { findSessionByIdUseCase.execute(command) } returns expectedSession
+            every { findSessionByIdUseCase.execute(command) } returns expectedSession.toResponseBodyDTO()
 
             sut.preHandle(request, response, filterChain)
 
@@ -90,7 +91,7 @@ class HttpAuthenticationInterceptorTest :
             every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
             every { request.getHeader("X-CSRF-Token") } returns "invalid-csrf-token"
             val command = FindSessionByIdUseCase.Command(expectedSession.id)
-            every { findSessionByIdUseCase.execute(command) } returns expectedSession
+            every { findSessionByIdUseCase.execute(command) } returns expectedSession.toResponseBodyDTO()
 
             shouldThrow<ForbiddenException> {
                 sut.preHandle(request, response, filterChain)
@@ -108,10 +109,10 @@ class HttpAuthenticationInterceptorTest :
             every { request.cookies } returns arrayOf(Cookie("session_id", expectedSession.id.toString()))
             every { request.getHeader("X-CSRF-Token") } returns expectedSession.csrfToken.toString()
             val command = FindSessionByIdUseCase.Command(expectedSession.id)
-            every { findSessionByIdUseCase.execute(command) } returns expectedSession
+            every { findSessionByIdUseCase.execute(command) } returns expectedSession.toResponseBodyDTO()
 
             sut.preHandle(request, response, filterChain)
 
-            ExecutionContext.get().session shouldBe expectedSession
+            ExecutionContext.get().session shouldBe expectedSession.toResponseBodyDTO()
         }
     })

@@ -35,13 +35,20 @@ export default function ContestLayout({
 
   useEffect(() => {
     async function fetchData() {
+      console.debug("Fetching session and contest data for slug:", slug);
       initState.start();
+
       try {
         const [session, contest] = await Promise.all([
           Composition.sessionReader.getCurrent(),
           Composition.contestReader.findBySlug(slug),
         ]);
+
         initState.finish({ session, contest });
+        console.debug("Fetched session and contest data:", {
+          session,
+          contest,
+        });
       } catch (error) {
         await initState.fail(error, {
           [NotFoundException.name]: () => redirect(routes.NOT_FOUND),
@@ -60,13 +67,14 @@ export default function ContestLayout({
     return <ErrorPage />;
   }
 
-  const doesSessionBelongToContest =
-    initState.data?.session?.contestId === initState.data?.contest?.id;
+  const memberContestId = initState.data?.session?.member?.contestId;
+  const doesMemberBelongToContest =
+    !memberContestId || memberContestId === initState.data?.contest?.id;
 
   return (
     <StoreProvider
       preloadedState={{
-        session: doesSessionBelongToContest
+        session: doesMemberBelongToContest
           ? initState.data?.session
           : undefined,
         contest: initState.data?.contest,

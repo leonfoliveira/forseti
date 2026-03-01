@@ -10,6 +10,7 @@ export function MockMemberWithLoginResponseDTO(
     id: uuidv4(),
     createdAt: "2025-01-01T10:00:00Z",
     updatedAt: "2025-01-01T10:00:00Z",
+    contestId: uuidv4(),
     type: MemberType.CONTESTANT,
     name: "Test User",
     login: "testuser",

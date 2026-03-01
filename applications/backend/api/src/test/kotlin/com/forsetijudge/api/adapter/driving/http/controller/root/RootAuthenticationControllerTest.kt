@@ -50,7 +50,7 @@ class RootAuthenticationControllerTest(
                     login = Member.ROOT_LOGIN,
                     password = body.password,
                 )
-            every { signInUseCase.execute(command) } returns session
+            every { signInUseCase.execute(command) } returns session.toResponseBodyDTO()
             every { sessionCookieBuilder.buildCookie(session.toResponseBodyDTO()) } returns "session_id=cookie_value"
             every { csrfCookieBuilder.buildCookie(session.toResponseBodyDTO()) } returns "csrf_token=cookie_value"
 
