@@ -31,8 +31,11 @@ class SessionRedisStoreTest(
             sut.get(session.id) shouldNotBe null
             sut.get(IdGenerator.getUUID()) shouldBe null
 
+            sut.getByMemberId(session.member.id) shouldNotBe null
+
             sut.evictAll(listOf(session.id))
 
             sut.get(session.id) shouldBe null
+            sut.get(session.member.id) shouldBe null
         }
     })

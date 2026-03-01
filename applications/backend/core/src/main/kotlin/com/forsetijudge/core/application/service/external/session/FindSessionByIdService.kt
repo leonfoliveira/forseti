@@ -28,7 +28,7 @@ class FindSessionByIdService(
                 ?: sessionRepository.findById(command.sessionId)?.toResponseBodyDTO()
                 ?: throw UnauthorizedException("Could not find session with id: ${command.sessionId}")
 
-        if (session.expiresAt < ExecutionContext.get().startedAt) {
+        if (session.expiresAt <= ExecutionContext.get().startedAt) {
             logger.info("Session has expired")
             throw UnauthorizedException("Session with id: ${command.sessionId} has expired")
         }

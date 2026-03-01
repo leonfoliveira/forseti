@@ -1,6 +1,5 @@
 package com.forsetijudge.core.port.driving.usecase.external.session
 
-import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import java.util.UUID
 

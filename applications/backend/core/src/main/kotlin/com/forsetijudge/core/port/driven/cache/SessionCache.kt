@@ -15,6 +15,11 @@ interface SessionCache {
     fun get(id: UUID): SessionResponseBodyDTO?
 
     /**
+     * Retrieves the session associated with the given member ID from the cache. Returns null if no session for the given member ID exists.
+     */
+    fun getByMemberId(memberId: UUID): SessionResponseBodyDTO?
+
+    /**
      * Evicts all sessions with the given IDs from the cache. If a session with a given ID does not exist, it will be ignored.
      */
     fun evictAll(sessionIds: Collection<UUID>)

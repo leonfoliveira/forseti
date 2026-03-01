@@ -7,6 +7,7 @@ import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.driven.cryptography.Hasher
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
@@ -22,13 +23,11 @@ import java.util.concurrent.ConcurrentHashMap
 @Service
 class AuthenticateSystemService(
     private val memberRepository: MemberRepository,
-    private val findSessionByIdUseCase: FindSessionByIdUseCase,
     private val createSessionInternalUseCase: CreateSessionInternalUseCase,
     private val hasher: Hasher,
+    private val sessionCache: SessionCache,
 ) : AuthenticateSystemUseCase {
     private val logger = SafeLogger(this::class)
-
-    private var cachedSessionByMemberId = ConcurrentHashMap<UUID, SessionResponseBodyDTO>()
 
     @Transactional
     override fun execute(command: AuthenticateSystemUseCase.Command) {
@@ -74,21 +73,11 @@ class AuthenticateSystemService(
     }
 
     fun getSession(member: Member): SessionResponseBodyDTO {
-        val cachedSession = cachedSessionByMemberId[member.id]
+        val cachedSession = sessionCache.getByMemberId(member.id)
 
-        if (cachedSession != null) {
-            return try {
-                val existingSession =
-                    findSessionByIdUseCase.execute(
-                        FindSessionByIdUseCase.Command(
-                            sessionId = cachedSession.id,
-                        ),
-                    )
-                logger.info("Using cached session with id: ${existingSession.id}")
-                existingSession
-            } catch (_: UnauthorizedException) {
-                return createSession(member)
-            }
+        if (cachedSession != null && cachedSession.expiresAt > ExecutionContext.get().startedAt) {
+            logger.info("Using cached session with id: ${cachedSession.id}")
+            return cachedSession
         }
 
         return createSession(member)
@@ -97,7 +86,6 @@ class AuthenticateSystemService(
     fun createSession(member: Member): SessionResponseBodyDTO {
         val session =
             createSessionInternalUseCase.execute(CreateSessionInternalUseCase.Command(member))
-        cachedSessionByMemberId[member.id] = session.toResponseBodyDTO()
         logger.info("Created new session with id: ${session.id}")
         return session.toResponseBodyDTO()
     }
