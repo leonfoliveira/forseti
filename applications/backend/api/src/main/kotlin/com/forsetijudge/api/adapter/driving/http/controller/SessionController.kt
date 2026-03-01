@@ -6,7 +6,6 @@ import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.DeleteAllSessionsByMemberUseCase
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping

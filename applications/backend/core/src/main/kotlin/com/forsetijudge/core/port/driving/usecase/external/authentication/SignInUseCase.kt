@@ -1,6 +1,5 @@
 package com.forsetijudge.core.port.driving.usecase.external.authentication
 
-import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 
 interface SignInUseCase {

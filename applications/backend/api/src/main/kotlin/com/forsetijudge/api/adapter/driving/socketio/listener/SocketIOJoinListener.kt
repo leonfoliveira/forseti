@@ -4,7 +4,6 @@ import com.corundumstudio.socketio.AckRequest
 import com.corundumstudio.socketio.SocketIOClient
 import com.corundumstudio.socketio.listener.DataListener
 import com.forsetijudge.core.application.util.SafeLogger
-import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import org.springframework.stereotype.Component

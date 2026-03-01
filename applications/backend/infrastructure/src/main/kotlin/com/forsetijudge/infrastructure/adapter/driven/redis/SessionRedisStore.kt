@@ -6,9 +6,9 @@ import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
+import java.time.Duration
+import java.time.OffsetDateTime
 import java.util.UUID
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.toJavaDuration
 
 @Component
 class SessionRedisStore(
@@ -20,18 +20,17 @@ class SessionRedisStore(
     companion object {
         const val STORE_KEY = "session"
         const val MEMBER_STORE_KEY = "session_member"
-        const val TTL_MILLIS = 6 * 60 * 60 * 1000L
     }
 
     override fun cache(session: SessionResponseBodyDTO) {
         val key = "${STORE_KEY}:${session.id}"
         val memberKey = "${MEMBER_STORE_KEY}:${session.member.id}"
+        val ttl = Duration.between(OffsetDateTime.now(), session.expiresAt)
         logger.info("Caching session with key $key")
 
         val rawSession = objectMapper.writeValueAsString(session)
-        redisTemplate.opsForValue().set(key, rawSession)
-        redisTemplate.opsForSet().add(memberKey, key)
-        redisTemplate.expire(key, TTL_MILLIS.milliseconds.toJavaDuration())
+        redisTemplate.opsForValue().set(key, rawSession, ttl)
+        redisTemplate.opsForValue().set(memberKey, key, ttl)
 
         logger.info("Session cached successfully")
     }
@@ -55,15 +54,12 @@ class SessionRedisStore(
         val memberKey = "${MEMBER_STORE_KEY}:$memberId"
         logger.info("Retrieving session for member ID $memberId with member key $memberKey")
 
-        val sessionKeys = redisTemplate.opsForSet().members(memberKey)
-        if (sessionKeys.isNullOrEmpty()) {
-            logger.info("No session keys found for member key $memberKey")
+        val sessionKey = redisTemplate.opsForValue().get(memberKey)
+        if (sessionKey.isNullOrEmpty()) {
+            logger.info("No session key found for member key $memberKey")
             return null
         }
 
-        logger.info("Found session keys for member key $memberKey: $sessionKeys")
-
-        val sessionKey = sessionKeys.last()
         logger.info("Retrieving session with key $sessionKey for member ID $memberId")
 
         val rawSession = redisTemplate.opsForValue().get(sessionKey)
@@ -77,11 +73,23 @@ class SessionRedisStore(
         return session
     }
 
-    override fun evictAll(sessionIds: Collection<UUID>) {
-        val keys = sessionIds.map { "${STORE_KEY}:$it" }
+    override fun evict(session: SessionResponseBodyDTO) {
+        val key = "${STORE_KEY}:${session.id}"
+        val memberKey = "${MEMBER_STORE_KEY}:${session.member.id}"
+        logger.info("Evicting session with key $key and member key $memberKey")
+
+        redisTemplate.delete(key)
+        redisTemplate.delete(memberKey)
+
+        logger.info("Session evicted successfully for key $key and member key $memberKey")
+    }
+
+    override fun evictAll(sessions: Collection<SessionResponseBodyDTO>) {
+        val keys = sessions.map { "${STORE_KEY}:${it.id}" }.toSet()
+        val memberKeys = sessions.map { "${MEMBER_STORE_KEY}:${it.member.id}" }.toSet()
         logger.info("Deleting sessions with keys $keys")
 
-        redisTemplate.delete(keys)
+        redisTemplate.delete(keys + memberKeys)
 
         logger.info("Sessions deleted successfully")
     }

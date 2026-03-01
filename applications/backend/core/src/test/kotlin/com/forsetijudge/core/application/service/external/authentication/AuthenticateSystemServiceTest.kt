@@ -4,14 +4,11 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
-import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.driven.cryptography.Hasher
-import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
@@ -119,6 +116,7 @@ class AuthenticateSystemServiceTest :
             val session = ExecutionContext.getSession()
             session.id shouldBe newSession.id
             verify { createSessionInternalUseCase.execute(any()) }
+            verify { sessionCache.evict(any()) }
         }
 
         test("should create new session if no cached session is found") {

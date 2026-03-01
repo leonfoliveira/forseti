@@ -14,6 +14,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.time.OffsetDateTime
 
 class FindSessionByIdServiceTest :
@@ -49,6 +50,7 @@ class FindSessionByIdServiceTest :
             every { sessionRepository.findById(command.sessionId) } returns session
 
             shouldThrow<UnauthorizedException> { sut.execute(command) }
+            verify { sessionCache.evict(session.toResponseBodyDTO()) }
         }
 
         test("should return session when session is found") {
@@ -59,6 +61,7 @@ class FindSessionByIdServiceTest :
             val result = sut.execute(command)
 
             result shouldBe session.toResponseBodyDTO()
+            verify { sessionCache.cache(session.toResponseBodyDTO()) }
         }
 
         test("should return session from cache when session is found in cache") {

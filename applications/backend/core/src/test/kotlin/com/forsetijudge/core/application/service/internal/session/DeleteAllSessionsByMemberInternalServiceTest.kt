@@ -7,6 +7,7 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.driven.repository.SessionRepository
 import com.forsetijudge.core.port.driving.usecase.internal.session.DeleteAllSessionsByMemberInternalUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -39,6 +40,6 @@ class DeleteAllSessionsByMemberInternalServiceTest :
 
             verify { sessionRepository.saveAll(sessions) }
             sessions.forEach { it.deletedAt == ExecutionContext.get().startedAt }
-            verify { sessionCache.evictAll(sessions.map { it.id }) }
+            verify { sessionCache.evictAll(sessions.map { it.toResponseBodyDTO() }) }
         }
     })

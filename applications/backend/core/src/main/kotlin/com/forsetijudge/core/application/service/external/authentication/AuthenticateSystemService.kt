@@ -3,22 +3,17 @@ package com.forsetijudge.core.application.service.external.authentication
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.exception.ForbiddenException
-import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.driven.cryptography.Hasher
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
 
 @Service
 class AuthenticateSystemService(
@@ -75,9 +70,14 @@ class AuthenticateSystemService(
     fun getSession(member: Member): SessionResponseBodyDTO {
         val cachedSession = sessionCache.getByMemberId(member.id)
 
-        if (cachedSession != null && cachedSession.expiresAt > ExecutionContext.get().startedAt) {
-            logger.info("Using cached session with id: ${cachedSession.id}")
-            return cachedSession
+        if (cachedSession != null) {
+            if (cachedSession.expiresAt <= ExecutionContext.get().startedAt) {
+                logger.info("Cached session with id: ${cachedSession.id} has expired")
+                sessionCache.evict(cachedSession)
+            } else {
+                logger.info("Using cached session with id: ${cachedSession.id}")
+                return cachedSession
+            }
         }
 
         return createSession(member)

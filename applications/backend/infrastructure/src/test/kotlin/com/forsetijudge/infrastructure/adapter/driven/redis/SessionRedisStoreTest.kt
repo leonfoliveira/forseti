@@ -25,17 +25,20 @@ class SessionRedisStoreTest(
 
         test("should cache session successfully") {
             val session = SessionMockBuilder.build().toResponseBodyDTO()
+            val session2 = SessionMockBuilder.build().toResponseBodyDTO()
 
             sut.cache(session)
+            sut.cache(session2)
 
             sut.get(session.id) shouldNotBe null
             sut.get(IdGenerator.getUUID()) shouldBe null
-
             sut.getByMemberId(session.member.id) shouldNotBe null
 
-            sut.evictAll(listOf(session.id))
+            sut.evict(session2)
+            sut.get(session2.id) shouldBe null
 
+            sut.evictAll(listOf(session))
             sut.get(session.id) shouldBe null
-            sut.get(session.member.id) shouldBe null
+            sut.getByMemberId(session.member.id) shouldBe null
         }
     })
