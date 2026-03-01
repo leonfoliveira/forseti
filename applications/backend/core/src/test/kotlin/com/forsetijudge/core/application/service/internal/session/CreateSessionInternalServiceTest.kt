@@ -1,13 +1,14 @@
 package com.forsetijudge.core.application.service.internal.session
 
-import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
+import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.driven.repository.SessionRepository
 import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.DeleteAllSessionsByMemberInternalUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -21,6 +22,7 @@ class CreateSessionInternalServiceTest :
     FunSpec({
         val sessionRepository = mockk<SessionRepository>(relaxed = true)
         val deleteAllSessionsByMemberInternalUseCase = mockk<DeleteAllSessionsByMemberInternalUseCase>(relaxed = true)
+        val sessionCache = mockk<SessionCache>(relaxed = true)
         val defaultExpiration = "1h"
         val rootExpiration = "1h"
         val systemExpiration = "1h"
@@ -29,6 +31,7 @@ class CreateSessionInternalServiceTest :
             CreateSessionInternalService(
                 sessionRepository = sessionRepository,
                 deleteAllSessionsByMemberInternalUseCase = deleteAllSessionsByMemberInternalUseCase,
+                sessionCache = sessionCache,
                 defaultExpiration = defaultExpiration,
                 rootExpiration = rootExpiration,
                 systemExpiration = systemExpiration,
@@ -101,6 +104,7 @@ class CreateSessionInternalServiceTest :
                         ),
                     )
                 }
+                verify { sessionCache.cache(result.toResponseBodyDTO()) }
             }
         }
     })

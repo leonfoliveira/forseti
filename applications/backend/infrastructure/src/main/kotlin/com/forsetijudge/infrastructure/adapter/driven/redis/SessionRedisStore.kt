@@ -48,12 +48,12 @@ class SessionRedisStore(
         return session
     }
 
-    override fun delete(sessionId: UUID) {
-        val key = "${STORE_KEY}:$sessionId"
-        logger.info("Deleting session with key $key")
+    override fun evictAll(sessionIds: Collection<UUID>) {
+        val keys = sessionIds.map { "${STORE_KEY}:$it" }
+        logger.info("Deleting sessions with keys $keys")
 
-        redisTemplate.delete(key)
+        redisTemplate.delete(keys)
 
-        logger.info("Session deleted successfully for key $key")
+        logger.info("Sessions deleted successfully")
     }
 }

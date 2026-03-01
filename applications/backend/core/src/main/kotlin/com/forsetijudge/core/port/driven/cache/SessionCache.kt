@@ -15,7 +15,7 @@ interface SessionCache {
     fun get(id: UUID): SessionResponseBodyDTO?
 
     /**
-     * Deletes the given session from the cache. If the session does not exist, this method does nothing.
+     * Evicts all sessions with the given IDs from the cache. If a session with a given ID does not exist, it will be ignored.
      */
-    fun delete(sessionId: UUID)
+    fun evictAll(sessionIds: Collection<UUID>)
 }

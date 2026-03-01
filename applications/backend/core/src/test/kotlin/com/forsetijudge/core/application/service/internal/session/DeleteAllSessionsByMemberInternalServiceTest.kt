@@ -4,6 +4,7 @@ import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
+import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.driven.repository.SessionRepository
 import com.forsetijudge.core.port.driving.usecase.internal.session.DeleteAllSessionsByMemberInternalUseCase
 import io.kotest.core.spec.style.FunSpec
@@ -15,10 +16,12 @@ import io.mockk.verify
 class DeleteAllSessionsByMemberInternalServiceTest :
     FunSpec({
         val sessionRepository = mockk<SessionRepository>(relaxed = true)
+        val sessionCache = mockk<SessionCache>(relaxed = true)
 
         val sut =
             DeleteAllSessionsByMemberInternalService(
                 sessionRepository = sessionRepository,
+                sessionCache = sessionCache,
             )
 
         beforeEach {
@@ -36,5 +39,6 @@ class DeleteAllSessionsByMemberInternalServiceTest :
 
             verify { sessionRepository.saveAll(sessions) }
             sessions.forEach { it.deletedAt == ExecutionContext.get().startedAt }
+            verify { sessionCache.evictAll(sessions.map { it.id }) }
         }
     })

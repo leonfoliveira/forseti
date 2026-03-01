@@ -4,6 +4,7 @@ import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.driven.repository.SessionRepository
 import com.forsetijudge.core.port.driving.usecase.external.session.FindSessionByIdUseCase
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class FindSessionByIdService(
     private val sessionRepository: SessionRepository,
+    private val sessionCache: SessionCache,
 ) : FindSessionByIdUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -22,7 +24,8 @@ class FindSessionByIdService(
         logger.info("Finding session with id: ${command.sessionId}")
 
         val session =
-            sessionRepository.findById(command.sessionId)
+            sessionCache.get(command.sessionId)
+                ?: sessionRepository.findById(command.sessionId)?.toResponseBodyDTO()
                 ?: throw UnauthorizedException("Could not find session with id: ${command.sessionId}")
 
         if (session.expiresAt < ExecutionContext.get().startedAt) {
@@ -31,6 +34,6 @@ class FindSessionByIdService(
         }
 
         logger.info("Session found successfully")
-        return session.toResponseBodyDTO()
+        return session
     }
 }
