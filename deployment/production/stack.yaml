@@ -728,7 +728,7 @@ services:
         read_only: true
 
   redis:
-    command: redis-server --requirepass "$(cat /run/secrets/redis_password)"
+    command: redis-server --requirepass "$(cat /run/secrets/redis_password)" --maxmemory 400mb --maxmemory-policy allkeys-lru
     deploy:
       mode: replicated
       replicas: 1
