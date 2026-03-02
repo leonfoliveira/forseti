@@ -152,7 +152,7 @@ export function TicketsPage({
         <Card className="w-full">
           <CardContent>
             <div
-              className="grid [grid-template-columns:1fr] gap-3 lg:[grid-template-columns:1fr_auto_1fr_auto_1fr]"
+              className="grid [grid-template-columns:1fr] gap-3 lg:[grid-template-columns:1fr_auto_1fr_auto_1fr_auto_1fr]"
               data-testid="tickets-kanban"
             >
               {getColumnByStatus(TicketStatus.OPEN)}
@@ -162,6 +162,9 @@ export function TicketsPage({
               <Separator orientation="vertical" className="hidden lg:block" />
               <Separator orientation="horizontal" className="lg:hidden" />
               {getColumnByStatus(TicketStatus.RESOLVED)}
+              <Separator orientation="vertical" className="hidden lg:block" />
+              <Separator orientation="horizontal" className="lg:hidden" />
+              {getColumnByStatus(TicketStatus.REJECTED)}
             </div>
           </CardContent>
         </Card>
