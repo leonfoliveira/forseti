@@ -1,6 +1,6 @@
 # Environment
 .idea/
-venv/
+.venv/
 .env
 
 # Cache
