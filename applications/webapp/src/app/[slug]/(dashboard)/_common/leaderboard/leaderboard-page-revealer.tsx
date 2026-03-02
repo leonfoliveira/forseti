@@ -3,6 +3,7 @@ import {
   AwardIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  CircleXIcon,
   LoaderIcon,
   PauseIcon,
   PlayIcon,
@@ -17,6 +18,13 @@ import { ProblemStatusBadge } from "@/app/_lib/component/display/badge/problem-s
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import { ButtonGroup } from "@/app/_lib/component/shadcn/button-group";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/app/_lib/component/shadcn/empty";
 import {
   Table,
   TableBody,
@@ -37,9 +45,13 @@ import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResp
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
-  getError: {
-    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page-revealer.get-error",
-    defaultMessage: "Failed to load leaderboard data",
+  errorTitle: {
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page-revealer.error-title",
+    defaultMessage: "Failed to Load Leaderboard",
+  },
+  errorDescription: {
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page-revealer.error-description",
+    defaultMessage: "An error occurred while loading the leaderboard.",
   },
   finalStanding: {
     id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page-revealer.final-standing",
@@ -153,9 +165,7 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
         const leaderboard = await Composition.leaderboardReader.get(contest.id);
         leaderboardState.finish(leaderboard);
       } catch (error) {
-        await leaderboardState.fail(error, {
-          default: () => toast.error(messages.getError),
-        });
+        await leaderboardState.fail(error);
       }
     }
     fetch();
@@ -234,6 +244,22 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
           <div className="flex h-screen w-screen items-center justify-center">
             <LoaderIcon className="animate-spin" size={48} />
           </div>
+        )}
+
+        {!leaderboardState.isLoading && leaderboardState.error && (
+          <Empty data-testid="error">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <CircleXIcon />
+              </EmptyMedia>
+              <EmptyTitle>
+                <FormattedMessage {...messages.errorTitle} />
+              </EmptyTitle>
+            </EmptyHeader>
+            <EmptyDescription>
+              <FormattedMessage {...messages.errorDescription} />
+            </EmptyDescription>
+          </Empty>
         )}
 
         {!leaderboardState.isLoading && !leaderboardState.error && (

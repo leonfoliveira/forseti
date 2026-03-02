@@ -491,7 +491,8 @@
               "open-revealer": "Open Revealer"
             },
             "leaderboard-page-revealer": {
-              "get-error": "Failed to load leaderboard data",
+              "error-title": "Failed to Load Leaderboard",
+              "error-description": "An error occurred while loading the leaderboard.",
               "final-standing": "Final Standing",
               "header-contestant": "Contestant",
               "header-score": "Score",

@@ -1,7 +1,6 @@
 import { fireEvent, screen } from "@testing-library/dom";
 
 import { LeaderboardPageRevealer } from "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-page-revealer";
-import { useToast } from "@/app/_lib/hook/toast-hook";
 import { Composition } from "@/config/composition";
 import { MockContestResponseDTO } from "@/test/mock/response/contest/MockContestResponseDTO";
 import { MockLeaderboardResponseDTO } from "@/test/mock/response/leaderboard/MockLeaderboardResponseDTO";
@@ -18,7 +17,7 @@ describe("LeaderboardPageRevealer", () => {
     ],
   });
 
-  it("show toast when leaderboard fails to load", async () => {
+  it("should show error when leaderboard fails to load", async () => {
     (Composition.leaderboardReader.get as jest.Mock).mockRejectedValue(
       new Error("Failed to load"),
     );
@@ -28,7 +27,7 @@ describe("LeaderboardPageRevealer", () => {
       { contest },
     );
 
-    expect(useToast().error).toHaveBeenCalled();
+    expect(screen.getByTestId("error")).toBeInTheDocument();
   });
 
   it("should render leaderboard with all cells hidden initially and reveal them on key press", async () => {
