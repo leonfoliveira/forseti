@@ -14,7 +14,6 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.announcement.CreateAnnouncementUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -89,10 +88,7 @@ class CreateAnnouncementServiceTest :
 
             val announcement = sut.execute(command)
 
-            announcement.contest shouldBe contest
-            announcement.member shouldBe member
-            announcement.text shouldBe command.text
-            verify { announcementRepository.save(announcement) }
-            verify { applicationEventPublisher.publishEvent(match<AnnouncementEvent.Created> { it.announcement == announcement }) }
+            verify { announcementRepository.save(match { it.id == announcement.id }) }
+            verify { applicationEventPublisher.publishEvent(match<AnnouncementEvent.Created> { it.announcementId == announcement.id }) }
         }
     })

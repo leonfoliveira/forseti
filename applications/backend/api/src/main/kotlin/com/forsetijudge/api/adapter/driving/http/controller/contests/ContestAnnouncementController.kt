@@ -6,7 +6,6 @@ import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.external.announcement.CreateAnnouncementUseCase
 import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -36,6 +35,6 @@ class ContestAnnouncementController(
                     text = body.text,
                 ),
             )
-        return ResponseEntity.ok(announcement.toResponseBodyDTO())
+        return ResponseEntity.ok(announcement)
     }
 }

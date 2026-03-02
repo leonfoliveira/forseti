@@ -15,6 +15,7 @@ import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
+import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -142,6 +143,6 @@ class BuildLeaderboardCellServiceTest :
 
             val result = sut.execute(command)
 
-            result shouldBe cell
+            result shouldBe cell.toResponseBodyDTO()
         }
     })

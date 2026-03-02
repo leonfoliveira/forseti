@@ -20,6 +20,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 
@@ -113,9 +114,7 @@ class UploadAttachmentServiceTest :
                     ),
                 )
 
-            attachment.contest shouldBe contest
-            attachment.member shouldBe actualMember
-            attachment.context shouldBe context
+            verify { attachmentRepository.save(match { it.id == attachment.id }) }
             bytes shouldBe "Hello, World!".toByteArray()
         }
 

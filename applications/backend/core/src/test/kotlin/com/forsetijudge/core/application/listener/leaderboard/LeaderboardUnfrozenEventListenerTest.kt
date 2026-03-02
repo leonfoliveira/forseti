@@ -10,9 +10,10 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.ContestantDash
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
-import com.forsetijudge.core.port.driving.usecase.external.submission.FindAllSubmissionsByContestSinceLastFreezeUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.submission.FindAllSubmissionsByContestSinceLastFreezeInternalUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
@@ -28,9 +29,11 @@ class LeaderboardUnfrozenEventListenerTest(
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
-    private val buildLeaderboardUseCase: BuildLeaderboardUseCase,
+    private val contestRepository: ContestRepository,
     @MockkBean(relaxed = true)
-    private val findAllSubmissionsByContestSinceLastFreezeUseCase: FindAllSubmissionsByContestSinceLastFreezeUseCase,
+    private val buildLeaderboardInternalUseCase: BuildLeaderboardInternalUseCase,
+    @MockkBean(relaxed = true)
+    private val findAllSubmissionsByContestSinceLastFreezeInternalUseCase: FindAllSubmissionsByContestSinceLastFreezeInternalUseCase,
     @MockkBean(relaxed = true)
     private val broadcastProducer: BroadcastProducer,
     private val sut: LeaderboardUnfrozenEventListener,
@@ -44,9 +47,11 @@ class LeaderboardUnfrozenEventListenerTest(
             val frozenAt = OffsetDateTime.now()
             val leaderboard = LeaderboardMockBuilder.build()
             val frozenSubmissions = listOf(SubmissionMockBuilder.build(), SubmissionMockBuilder.build())
-            val event = LeaderboardEvent.Unfrozen(contest, frozenAt)
-            every { buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command()) } returns leaderboard
-            every { findAllSubmissionsByContestSinceLastFreezeUseCase.execute(any()) } returns frozenSubmissions
+            val event = LeaderboardEvent.Unfrozen(contest.id, frozenAt)
+            every { contestRepository.findById(contest.id) } returns contest
+            every { buildLeaderboardInternalUseCase.execute(BuildLeaderboardInternalUseCase.Command(contest = contest)) } returns
+                leaderboard
+            every { findAllSubmissionsByContestSinceLastFreezeInternalUseCase.execute(any()) } returns frozenSubmissions
 
             sut.onApplicationEvent(event)
 

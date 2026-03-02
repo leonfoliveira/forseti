@@ -6,18 +6,24 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.repository.ContestRepository
+import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
+import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.dashboard.BuildGuestDashboardUseCase
-import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
+import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
 import org.springframework.stereotype.Service
 
 @Service
 class BuildGuestDashboardService(
     private val contestRepository: ContestRepository,
-    private val buildLeaderboardUseCase: BuildLeaderboardUseCase,
+    private val submissionRepository: SubmissionRepository,
+    private val frozenSubmissionRepository: FrozenSubmissionRepository,
+    private val buildLeaderboardInternalUseCase: BuildLeaderboardInternalUseCase,
 ) : BuildGuestDashboardUseCase {
     private val logger = SafeLogger(this::class)
 
-    override fun execute(): GuestDashboard {
+    override fun execute(): GuestDashboardResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
 
         logger.info("Building guest dashboard")
@@ -30,20 +36,25 @@ class BuildGuestDashboardService(
             throw NotFoundException("Guest dashboard is not enabled for this contest")
         }
 
-        val leaderboard = buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command())
+        val leaderboard = buildLeaderboardInternalUseCase.execute(BuildLeaderboardInternalUseCase.Command(contest = contest))
         val submissions =
-            contest.problems
-                .map { problem -> if (contest.isFrozen) problem.frozenSubmissions.map { it.unfreeze() } else problem.submissions }
-                .flatten()
+            if (contest.isFrozen) {
+                frozenSubmissionRepository.findAllByContestId(contest.id).map { it.unfreeze() }
+            } else {
+                submissionRepository.findAllByContestId(contest.id)
+            }
 
-        return GuestDashboard(
-            contest = contest,
-            leaderboard = leaderboard,
-            members = contest.members,
-            problems = contest.problems,
-            submissions = submissions,
-            clarifications = contest.clarifications,
-            announcements = contest.announcements,
-        )
+        val dashboard =
+            GuestDashboard(
+                contest = contest,
+                leaderboard = leaderboard,
+                members = contest.members,
+                problems = contest.problems,
+                submissions = submissions,
+                clarifications = contest.clarifications,
+                announcements = contest.announcements,
+            )
+
+        return dashboard.toResponseBodyDTO()
     }
 }

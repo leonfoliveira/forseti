@@ -92,7 +92,7 @@ class AutoJudgeSubmissionService(
         postJudgeSubmission.answer = answer
         postJudgeSubmission.status = Submission.Status.JUDGED
         submissionRepository.save(postJudgeSubmission)
-        applicationEventPublisher.publishEvent(SubmissionEvent.Updated(postJudgeSubmission))
+        applicationEventPublisher.publishEvent(SubmissionEvent.Updated(postJudgeSubmission.id))
 
         logger.info("Submission judged")
     }

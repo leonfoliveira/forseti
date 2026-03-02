@@ -21,6 +21,7 @@ import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.submission.CreateSubmissionUseCase
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -192,7 +193,7 @@ class CreateSubmissionExternalServiceTest :
             submission.answer shouldBe null
             submission.code shouldBe code
             submission.code.isCommited shouldBe true
-            result shouldBe submission
+            result shouldBe submission.toWithCodeResponseBodyDTO()
             verify { frozenSubmissionRepository.save(any()) }
         }
     })

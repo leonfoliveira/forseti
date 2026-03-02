@@ -75,7 +75,7 @@ class RootContestControllerTest(
                     endAt = body.endAt,
                 )
             val contest = ContestMockBuilder.build()
-            every { createContestUseCase.execute(command) } returns contest
+            every { createContestUseCase.execute(command) } returns contest.toResponseBodyDTO()
 
             webMvc
                 .post(basePath) {
@@ -89,7 +89,7 @@ class RootContestControllerTest(
 
         test("findAll") {
             val contests = listOf(ContestMockBuilder.build(), ContestMockBuilder.build())
-            every { findAllContestUseCase.execute() } returns contests
+            every { findAllContestUseCase.execute() } returns contests.map { it.toResponseBodyDTO() }
 
             webMvc
                 .get(basePath) {

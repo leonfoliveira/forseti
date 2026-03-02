@@ -8,7 +8,6 @@ import com.forsetijudge.core.port.driving.usecase.external.contest.CreateContest
 import com.forsetijudge.core.port.driving.usecase.external.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.driving.usecase.external.contest.FindAllContestUseCase
 import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -45,7 +44,7 @@ class RootContestController(
                     endAt = body.endAt,
                 ),
             )
-        return ResponseEntity.ok(contest.toResponseBodyDTO())
+        return ResponseEntity.ok(contest)
     }
 
     @GetMapping("/root/contests")
@@ -53,7 +52,7 @@ class RootContestController(
     fun findAll(): ResponseEntity<List<ContestResponseBodyDTO>> {
         logger.info("[GET] /v1/root/contests")
         val contests = findAllContestUseCase.execute()
-        return ResponseEntity.ok(contests.map { it.toResponseBodyDTO() })
+        return ResponseEntity.ok(contests)
     }
 
     @DeleteMapping("/root/contests/{contestId}")

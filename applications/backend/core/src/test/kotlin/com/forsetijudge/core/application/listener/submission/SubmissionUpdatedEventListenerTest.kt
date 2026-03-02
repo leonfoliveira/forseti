@@ -2,6 +2,7 @@ package com.forsetijudge.core.application.listener.submission
 
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
+import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.model.LeaderboardMockBuilder
@@ -13,8 +14,9 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
 import com.forsetijudge.core.port.driven.cache.LeaderboardCacheStore
+import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
@@ -30,7 +32,9 @@ class SubmissionUpdatedEventListenerTest(
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
-    private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
+    private val submissionRepository: SubmissionRepository,
+    @MockkBean(relaxed = true)
+    private val buildLeaderboardCellInternalUseCase: BuildLeaderboardCellInternalUseCase,
     @MockkBean(relaxed = true)
     private val leaderboardCacheStore: LeaderboardCacheStore,
     @MockkBean(relaxed = true)
@@ -44,12 +48,22 @@ class SubmissionUpdatedEventListenerTest(
         test("should handle event successfully") {
             val submission = SubmissionMockBuilder.build()
             val leaderboardCell = LeaderboardMockBuilder.buildCell()
-            val event = SubmissionEvent.Updated(submission)
+            val event = SubmissionEvent.Updated(submission.id)
+            every { submissionRepository.findById(submission.id) } returns submission
             every {
-                buildLeaderboardCellUseCase.execute(
-                    BuildLeaderboardCellUseCase.Command(
-                        memberId = submission.member.id,
-                        problemId = submission.problem.id,
+                submissionRepository.findAllByMemberIdAndProblemIdAndStatus(
+                    submission.member.id,
+                    submission.problem.id,
+                    Submission.Status.JUDGED,
+                )
+            } returns listOf(submission)
+            every {
+                buildLeaderboardCellInternalUseCase.execute(
+                    BuildLeaderboardCellInternalUseCase.Command(
+                        submission.contest,
+                        submission.member,
+                        submission.problem,
+                        listOf(submission),
                     ),
                 )
             } returns leaderboardCell
@@ -111,15 +125,25 @@ class SubmissionUpdatedEventListenerTest(
             val problem = ProblemMockBuilder.build(contest = contest)
             val submission = SubmissionMockBuilder.build(problem = problem)
             val leaderboardCell = LeaderboardMockBuilder.buildCell()
+            val event = SubmissionEvent.Updated(submission.id)
+            every { submissionRepository.findById(submission.id) } returns submission
             every {
-                buildLeaderboardCellUseCase.execute(
-                    BuildLeaderboardCellUseCase.Command(
-                        memberId = submission.member.id,
-                        problemId = submission.problem.id,
+                submissionRepository.findAllByMemberIdAndProblemIdAndStatus(
+                    submission.member.id,
+                    submission.problem.id,
+                    Submission.Status.JUDGED,
+                )
+            } returns listOf(submission)
+            every {
+                buildLeaderboardCellInternalUseCase.execute(
+                    BuildLeaderboardCellInternalUseCase.Command(
+                        submission.contest,
+                        submission.member,
+                        submission.problem,
+                        listOf(submission),
                     ),
                 )
             } returns leaderboardCell
-            val event = SubmissionEvent.Updated(submission)
 
             sut.onApplicationEvent(event)
 

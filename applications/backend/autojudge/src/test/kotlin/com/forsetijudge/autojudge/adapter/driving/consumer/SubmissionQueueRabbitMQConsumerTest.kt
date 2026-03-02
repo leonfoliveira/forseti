@@ -26,7 +26,8 @@ class SubmissionQueueRabbitMQConsumerTest(
         test("should process payload successfully") {
             val message = mockk<Message>(relaxed = true)
             val submissionId = IdGenerator.getUUID()
-            every { message.messageProperties.headers } returns mapOf("id" to IdGenerator.getUUID().toString())
+            every { message.messageProperties.headers } returns
+                mapOf("id" to IdGenerator.getUUID().toString(), "contest-id" to IdGenerator.getUUID().toString())
             every { message.body } returns
                 objectMapper.writeValueAsBytes(
                     SubmissionQueueMessageBody(

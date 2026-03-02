@@ -94,6 +94,6 @@ class FailSubmissionExternalServiceTest :
 
             submission.status shouldBe Submission.Status.FAILED
             verify { submissionRepository.save(submission) }
-            verify { applicationEventPublisher.publishEvent(match<SubmissionEvent.Updated> { it.submission == submission }) }
+            verify { applicationEventPublisher.publishEvent(match<SubmissionEvent.Updated> { it.submissionId == submission.id }) }
         }
     })

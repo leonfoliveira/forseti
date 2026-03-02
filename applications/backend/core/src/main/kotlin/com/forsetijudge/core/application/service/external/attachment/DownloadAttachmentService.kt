@@ -13,6 +13,8 @@ import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.attachment.DownloadAttachmentUseCase
+import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
+import com.forsetijudge.core.port.dto.response.attachment.toResponseBodyDTO
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -33,7 +35,7 @@ class DownloadAttachmentService(
         )
 
     @Transactional(readOnly = true)
-    override fun execute(command: DownloadAttachmentUseCase.Command): Pair<Attachment, ByteArray> {
+    override fun execute(command: DownloadAttachmentUseCase.Command): Pair<AttachmentResponseDTO, ByteArray> {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberIdNullable()
 
@@ -55,6 +57,6 @@ class DownloadAttachmentService(
         val bytes = attachmentBucket.download(attachment)
 
         logger.info("Attachment downloaded successfully")
-        return attachment to bytes
+        return attachment.toResponseBodyDTO() to bytes
     }
 }

@@ -146,7 +146,7 @@ class ContestControllerTest(
                 updateContestUseCase.execute(
                     command,
                 )
-            } returns contest
+            } returns contest.toWithMembersAndProblemsResponseBodyDTO()
 
             webMvc
                 .put("$basePath/{contestId}", contestId) {
@@ -162,7 +162,7 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build()
             every {
                 forceStartContestUseCase.execute()
-            } returns contest
+            } returns contest.toWithMembersAndProblemsResponseBodyDTO()
 
             webMvc
                 .put("$basePath/{contestId}:force-start", contestId) {
@@ -182,7 +182,7 @@ class ContestControllerTest(
             val contest = ContestMockBuilder.build()
             every {
                 forceEndContestUseCase.execute()
-            } returns contest
+            } returns contest.toWithMembersAndProblemsResponseBodyDTO()
 
             webMvc
                 .put("$basePath/{contestId}:force-end", contestId) {

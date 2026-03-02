@@ -38,8 +38,8 @@ class UploadAttachmentInternalService(
         logger.info("Uploading ${command.bytes.size} bytes to attachment with id: ${attachment.id}")
         attachmentRepository.save(attachment)
         attachmentBucket.upload(attachment, command.bytes)
-        applicationEventPublisher.publishEvent(AttachmentsEvent.Uploaded(attachment))
+        applicationEventPublisher.publishEvent(AttachmentsEvent.Uploaded(attachment.id))
 
-        return Pair(attachment, command.bytes)
+        return attachment to command.bytes
     }
 }

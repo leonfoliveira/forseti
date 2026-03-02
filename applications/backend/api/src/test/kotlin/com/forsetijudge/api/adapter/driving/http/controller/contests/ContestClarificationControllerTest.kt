@@ -58,7 +58,7 @@ class ContestClarificationControllerTest(
                 createClarificationUseCase.execute(
                     command,
                 )
-            } returns clarification
+            } returns clarification.toResponseBodyDTO()
 
             webMvc
                 .post(basePath, contestId) {
@@ -66,7 +66,7 @@ class ContestClarificationControllerTest(
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {
                     status { isOk() }
-                    content { clarification.toResponseBodyDTO() }
+                    content { clarification }
                 }
 
             verify { createClarificationUseCase.execute(command) }

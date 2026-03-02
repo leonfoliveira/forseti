@@ -41,7 +41,8 @@
       "formatted-ticket-status": {
         "open": "Aberto",
         "in_progress": "Em Andamento",
-        "resolved": "Resolvido"
+        "resolved": "Resolvido",
+        "rejected": "Rejeitado"
       }
     }
   },
@@ -492,7 +493,8 @@
               "open-revealer": "Abrir Revelador"
             },
             "leaderboard-page-revealer": {
-              "get-error": "Falha ao carregar dados do placar",
+              "error-title": "Erro ao carregar placar",
+              "error-description": "Ocorreu um erro ao carregar o placar.",
               "final-standing": "Classificação Final",
               "header-contestant": "Competidor",
               "header-score": "Pontuação",

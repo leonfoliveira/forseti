@@ -2,6 +2,7 @@ package com.forsetijudge.core.application.listener.clarification
 
 import com.forsetijudge.core.application.listener.BusinessEventListener
 import com.forsetijudge.core.domain.event.ClarificationEvent
+import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.ContestantDashboardBroadcastRoom
@@ -9,12 +10,15 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
+import com.forsetijudge.core.port.driven.repository.ClarificationRepository
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class ClarificationCreatedEventListener(
+    private val clarificationRepository: ClarificationRepository,
     private val broadcastProducer: BroadcastProducer,
 ) : BusinessEventListener<ClarificationEvent.Created>() {
     @TransactionalEventListener(ClarificationEvent.Created::class, phase = TransactionPhase.AFTER_COMMIT)
@@ -22,8 +26,11 @@ class ClarificationCreatedEventListener(
         super.onApplicationEvent(event)
     }
 
+    @Transactional(readOnly = true)
     override fun handleEvent(event: ClarificationEvent.Created) {
-        val clarification = event.clarification
+        val clarification =
+            clarificationRepository.findById(event.clarificationId)
+                ?: throw NotFoundException("Could not find clarification with id: ${event.clarificationId}")
         val contest = clarification.contest
 
         broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildClarificationCreatedEvent(clarification))

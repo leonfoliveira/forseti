@@ -7,7 +7,7 @@ import com.forsetijudge.core.domain.entity.Ticket
 import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.clarification.toIdResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.clarification.ClarificationIdResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
@@ -37,11 +37,11 @@ class StaffDashboardBroadcastRoom(
             data = clarification.toResponseBodyDTO(),
         )
 
-    fun buildClarificationDeletedEvent(clarification: Clarification) =
+    fun buildClarificationDeletedEvent(clarificationId: UUID) =
         BroadcastEvent(
             room = name,
             name = "CLARIFICATION_DELETED",
-            data = clarification.toIdResponseBodyDTO(),
+            data = ClarificationIdResponseBodyDTO(clarificationId),
         )
 
     fun buildLeaderboardUpdatedEvent(leaderboardCell: Leaderboard.Cell) =

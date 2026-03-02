@@ -11,8 +11,6 @@ import com.forsetijudge.core.port.driving.usecase.external.submission.UpdateAnsw
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -47,7 +45,7 @@ class ContestSubmissionController(
                     code = AttachmentCommandDTO(id = body.code.id),
                 ),
             )
-        return ResponseEntity.ok(submission.toWithCodeResponseBodyDTO())
+        return ResponseEntity.ok(submission)
     }
 
     @PutMapping("/contests/{contestId}/submissions/{submissionId}:rerun")
@@ -63,7 +61,7 @@ class ContestSubmissionController(
                     submissionId = submissionId,
                 ),
             )
-        return ResponseEntity.ok(submission.toWithCodeAndExecutionResponseBodyDTO())
+        return ResponseEntity.ok(submission)
     }
 
     @PutMapping("/contests/{contestId}/submissions/{submissionId}:update-answer")
@@ -81,6 +79,6 @@ class ContestSubmissionController(
                     answer = body.answer,
                 ),
             )
-        return ResponseEntity.ok(submission.toWithCodeAndExecutionResponseBodyDTO())
+        return ResponseEntity.ok(submission)
     }
 }

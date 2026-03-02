@@ -1,7 +1,7 @@
 package com.forsetijudge.core.domain.event
 
-import com.forsetijudge.core.domain.entity.Contest
 import java.time.OffsetDateTime
+import java.util.UUID
 
 abstract class LeaderboardEvent : BusinessEvent() {
     /**
@@ -10,7 +10,7 @@ abstract class LeaderboardEvent : BusinessEvent() {
      * @property contest The contest whose leaderboard was frozen.
      */
     class Frozen(
-        val contest: Contest,
+        val contestId: UUID,
     ) : LeaderboardEvent()
 
     /**
@@ -20,7 +20,7 @@ abstract class LeaderboardEvent : BusinessEvent() {
      * @property frozenAt The timestamp when the leaderboard was frozen.
      */
     class Unfrozen(
-        val contest: Contest,
+        val contestId: UUID,
         val frozenAt: OffsetDateTime,
     ) : LeaderboardEvent()
 }

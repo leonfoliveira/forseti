@@ -13,6 +13,7 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.CreateContestUseCase
+import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -95,11 +96,11 @@ class CreateContestServiceTest :
                 val contestSlot = slot<Contest>()
                 verify { contestRepository.save(capture(contestSlot)) }
                 val contest = contestSlot.captured
-                result shouldBe contest
+                result shouldBe contest.toResponseBodyDTO()
                 verify {
                     applicationEventPublisher.publishEvent(
                         match<ContestEvent.Created> {
-                            it.contest == contest
+                            it.contestId == contest.id
                         },
                     )
                 }

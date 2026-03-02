@@ -3,11 +3,23 @@ package com.forsetijudge.core.application.service.external.dashboard
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
+import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
+import com.forsetijudge.core.domain.entity.freeze
+import com.forsetijudge.core.domain.entity.unfreeze
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.domain.model.LeaderboardMockBuilder
 import com.forsetijudge.core.port.driven.repository.ContestRepository
-import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
+import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
+import com.forsetijudge.core.port.driven.repository.SubmissionRepository
+import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
+import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.member.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.problem.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -18,13 +30,17 @@ import java.time.OffsetDateTime
 
 class BuildGuestDashboardServiceTest :
     FunSpec({
-        val contestRepository = mockk<ContestRepository>()
-        val buildLeaderboardUseCase = mockk<BuildLeaderboardUseCase>()
+        val contestRepository = mockk<ContestRepository>(relaxed = true)
+        val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
+        val frozenSubmissionRepository = mockk<FrozenSubmissionRepository>(relaxed = true)
+        val buildLeaderboardInternalUseCase = mockk<BuildLeaderboardInternalUseCase>(relaxed = true)
 
         val sut =
             BuildGuestDashboardService(
                 contestRepository = contestRepository,
-                buildLeaderboardUseCase = buildLeaderboardUseCase,
+                submissionRepository = submissionRepository,
+                frozenSubmissionRepository = frozenSubmissionRepository,
+                buildLeaderboardInternalUseCase = buildLeaderboardInternalUseCase,
             )
 
         val contestId = IdGenerator.getUUID()
@@ -53,30 +69,34 @@ class BuildGuestDashboardServiceTest :
         }
 
         test("should build guest dashboard successfully") {
-            val contest = ContestMockBuilder.build()
+            val contest = ContestMockBuilder.build(frozenAt = null)
             val leaderboard = LeaderboardMockBuilder.build()
+            val submissions = listOf(SubmissionMockBuilder.build())
             every { contestRepository.findById(contestId) } returns contest
-            every { buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command()) } returns leaderboard
+            every { buildLeaderboardInternalUseCase.execute(any()) } returns leaderboard
+            every { submissionRepository.findAllByContestId(contest.id) } returns submissions
 
             val dashboard = sut.execute()
 
-            dashboard.contest shouldBe contest
-            dashboard.leaderboard shouldBe leaderboard
-            dashboard.members shouldBe contest.members
-            dashboard.problems shouldBe contest.problems
-            dashboard.submissions shouldBe contest.problems.map { it.submissions }.flatten()
-            dashboard.clarifications shouldBe contest.clarifications
-            dashboard.announcements shouldBe contest.announcements
+            dashboard.contest shouldBe contest.toResponseBodyDTO()
+            dashboard.leaderboard shouldBe leaderboard.toResponseBodyDTO()
+            dashboard.members shouldBe contest.members.map { it.toResponseBodyDTO() }
+            dashboard.problems shouldBe contest.problems.map { it.toResponseBodyDTO() }
+            dashboard.submissions shouldBe submissions.map { it.toResponseBodyDTO() }
+            dashboard.clarifications shouldBe contest.clarifications.map { it.toResponseBodyDTO() }
+            dashboard.announcements shouldBe contest.announcements.map { it.toResponseBodyDTO() }
         }
 
         test("should build guest dashboard with frozen submissions") {
             val contest = ContestMockBuilder.build(frozenAt = OffsetDateTime.now().minusHours(1))
             val leaderboard = LeaderboardMockBuilder.build()
+            val submissions = listOf(SubmissionMockBuilder.build().freeze())
             every { contestRepository.findById(contestId) } returns contest
-            every { buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command()) } returns leaderboard
+            every { buildLeaderboardInternalUseCase.execute(any()) } returns leaderboard
+            every { frozenSubmissionRepository.findAllByContestId(contest.id) } returns submissions
 
             val dashboard = sut.execute()
 
-            dashboard.submissions shouldBe contest.problems.map { it.frozenSubmissions }.flatten()
+            dashboard.submissions shouldBe submissions.map { it.unfreeze().toResponseBodyDTO() }
         }
     })

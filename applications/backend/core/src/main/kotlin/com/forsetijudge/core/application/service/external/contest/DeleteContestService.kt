@@ -42,7 +42,7 @@ class DeleteContestService(
 
         contest.deletedAt = ExecutionContext.get().startedAt
         contestRepository.save(contest)
-        applicationEventPublisher.publishEvent(ContestEvent.Deleted(contest))
+        applicationEventPublisher.publishEvent(ContestEvent.Deleted(contest.id))
 
         logger.info("Contest deleted successfully")
     }

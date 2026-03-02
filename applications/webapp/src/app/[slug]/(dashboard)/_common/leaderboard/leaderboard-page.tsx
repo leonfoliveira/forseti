@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown01Icon, AwardIcon } from "lucide-react";
+import { ArrowDown01Icon, AwardIcon, PlayIcon } from "lucide-react";
 import React from "react";
 
 import { LeaderboardPageRevealer } from "@/app/[slug]/(dashboard)/_common/leaderboard/leaderboard-page-revealer";
@@ -121,6 +121,7 @@ export function LeaderboardPage({ problems, leaderboard, canReveal }: Props) {
                 data-testid="open-reveal-button"
               >
                 <FormattedMessage {...messages.openRevealer} />
+                <PlayIcon />
               </Button>
             </div>
           )}
@@ -151,7 +152,7 @@ export function LeaderboardPage({ problems, leaderboard, canReveal }: Props) {
                 <TableRow
                   key={row.memberId}
                   className={cn(
-                    row.memberId === session?.member.id && "bg-muted/50",
+                    row.memberId === session?.member.id && "font-bold",
                   )}
                   data-testid="leaderboard-member-row"
                 >

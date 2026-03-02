@@ -6,6 +6,7 @@ import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driving.usecase.external.contest.FindContestBySlugUseCase
+import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -41,7 +42,7 @@ class PublicControllerTest(
         test("findBySlug") {
             val contest = ContestMockBuilder.build()
             val command = FindContestBySlugUseCase.Command(slug = contest.slug)
-            every { findContestBySlugUseCase.execute(command) } returns contest
+            every { findContestBySlugUseCase.execute(command) } returns contest.toResponseBodyDTO()
 
             webMvc
                 .get("$basePath/slug/{slug}", contest.slug) {

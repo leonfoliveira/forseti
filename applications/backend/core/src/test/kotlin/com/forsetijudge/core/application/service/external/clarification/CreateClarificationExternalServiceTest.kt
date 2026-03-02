@@ -18,7 +18,6 @@ import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driving.usecase.external.clarification.CreateClarificationUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -135,16 +134,11 @@ class CreateClarificationExternalServiceTest :
 
                 val result = sut.execute(command)
 
-                verify { clarificationRepository.save(result) }
-                result.contest shouldBe contest
-                result.member shouldBe member
-                result.text shouldBe command.text
-                result.problem shouldBe problem
-                result.parent shouldBe null
+                verify { clarificationRepository.save(match { it.id == result.id }) }
                 verify {
                     applicationEventPublisher.publishEvent(
                         match<ClarificationEvent.Created> {
-                            it.clarification == result
+                            it.clarificationId == result.id
                         },
                     )
                 }
@@ -225,16 +219,11 @@ class CreateClarificationExternalServiceTest :
 
                 val result = sut.execute(command)
 
-                verify { clarificationRepository.save(result) }
-                result.contest shouldBe contest
-                result.member shouldBe member
-                result.text shouldBe command.text
-                result.problem shouldBe null
-                result.parent shouldBe parent
+                verify { clarificationRepository.save(match { it.id == result.id }) }
                 verify {
                     applicationEventPublisher.publishEvent(
                         match<ClarificationEvent.Created> {
-                            it.clarification == result
+                            it.clarificationId == result.id
                         },
                     )
                 }

@@ -1,7 +1,9 @@
 package com.forsetijudge.core.application.listener.submission
 
 import com.forsetijudge.core.application.listener.BusinessEventListener
+import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
+import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.ContestantDashboardBroadcastRoom
@@ -10,14 +12,17 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
 import com.forsetijudge.core.port.driven.cache.LeaderboardCacheStore
-import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
+import com.forsetijudge.core.port.driven.repository.SubmissionRepository
+import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class SubmissionUpdatedEventListener(
-    private val buildLeaderboardCellUseCase: BuildLeaderboardCellUseCase,
+    private val submissionRepository: SubmissionRepository,
+    private val buildLeaderboardCellInternalUseCase: BuildLeaderboardCellInternalUseCase,
     private val broadcastProducer: BroadcastProducer,
     private val leaderboardCacheStore: LeaderboardCacheStore,
 ) : BusinessEventListener<SubmissionEvent.Updated>() {
@@ -26,11 +31,20 @@ class SubmissionUpdatedEventListener(
         super.onApplicationEvent(event)
     }
 
+    @Transactional(readOnly = true)
     override fun handleEvent(event: SubmissionEvent.Updated) {
-        val submission = event.submission
+        val submission =
+            submissionRepository.findById(event.submissionId)
+                ?: throw NotFoundException("Could not find submission with id: ${event.submissionId}")
+        val cellSubmissions =
+            submissionRepository.findAllByMemberIdAndProblemIdAndStatus(
+                memberId = submission.member.id,
+                problemId = submission.problem.id,
+                status = Submission.Status.JUDGED,
+            )
         val leaderboardCell =
-            buildLeaderboardCellUseCase.execute(
-                BuildLeaderboardCellUseCase.Command(memberId = submission.member.id, problemId = submission.problem.id),
+            buildLeaderboardCellInternalUseCase.execute(
+                BuildLeaderboardCellInternalUseCase.Command(submission.contest, submission.member, submission.problem, cellSubmissions),
             )
 
         broadcastProducer.produce(AdminDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))

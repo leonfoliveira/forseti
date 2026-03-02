@@ -102,7 +102,7 @@ class DeleteContestServiceTest :
                 verify {
                     applicationEventPublisher.publishEvent(
                         match<ContestEvent.Deleted> {
-                            it.contest == contest
+                            it.contestId == contest.id
                         },
                     )
                 }

@@ -16,7 +16,7 @@ import io.mockk.verify
 
 class SocketIOJoinListenerTest :
     FunSpec({
-        val socketIORoomAuthorizers = mockk<SocketIORoomAuthorizers>()
+        val socketIORoomAuthorizers = mockk<SocketIORoomAuthorizers>(relaxed = true)
 
         val sut = SocketIOJoinListener(socketIORoomAuthorizers)
 

@@ -56,7 +56,7 @@ class ContestDashboardControllerTest(
 
         test("getAdminDashboard") {
             val dashboard = AdminDashboardMockBuilder.build()
-            every { buildAdminDashboardUseCase.execute() } returns dashboard
+            every { buildAdminDashboardUseCase.execute() } returns dashboard.toResponseBodyDTO()
 
             webMvc
                 .get("$basePath/admin", contestId) {
@@ -69,7 +69,7 @@ class ContestDashboardControllerTest(
 
         test("getContestantDashboard") {
             val dashboard = ContestantDashboardMockBuilder.build()
-            every { buildContestantDashboardUseCase.execute() } returns dashboard
+            every { buildContestantDashboardUseCase.execute() } returns dashboard.toResponseBodyDTO()
 
             webMvc
                 .get("$basePath/contestant", contestId) {
@@ -82,7 +82,7 @@ class ContestDashboardControllerTest(
 
         test("getGuestDashboard") {
             val dashboard = GuestDashboardMockBuilder.build()
-            every { buildGuestDashboardUseCase.execute() } returns dashboard
+            every { buildGuestDashboardUseCase.execute() } returns dashboard.toResponseBodyDTO()
 
             webMvc
                 .get("$basePath/guest", contestId) {
@@ -95,7 +95,7 @@ class ContestDashboardControllerTest(
 
         test("getJudgeDashboard") {
             val dashboard = JudgeDashboardMockBuilder.build()
-            every { buildJudgeDashboardUseCase.execute() } returns dashboard
+            every { buildJudgeDashboardUseCase.execute() } returns dashboard.toResponseBodyDTO()
 
             webMvc
                 .get("$basePath/judge", contestId) {
@@ -108,7 +108,7 @@ class ContestDashboardControllerTest(
 
         test("getStaffDashboard") {
             val dashboard = StaffDashboardMockBuilder.build()
-            every { buildStaffDashboardUseCase.execute() } returns dashboard
+            every { buildStaffDashboardUseCase.execute() } returns dashboard.toResponseBodyDTO()
 
             webMvc
                 .get("$basePath/staff", contestId) {

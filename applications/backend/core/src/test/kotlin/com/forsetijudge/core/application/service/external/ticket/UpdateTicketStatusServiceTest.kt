@@ -12,6 +12,7 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.ticket.UpdateTicketStatusUseCase
+import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -88,10 +89,9 @@ class UpdateTicketStatusServiceTest :
 
             val result = sut.execute(command)
 
-            result shouldBe ticket
-            result.staff shouldBe staff
+            result shouldBe ticket.toResponseBodyDTO()
             result.status shouldBe command.status
-            verify { ticketRepository.save(result) }
-            verify { applicationEventPublisher.publishEvent(match<TicketEvent.Updated> { it.ticket == ticket }) }
+            verify { ticketRepository.save(any()) }
+            verify { applicationEventPublisher.publishEvent(match<TicketEvent.Updated> { it.ticketId == ticket.id }) }
         }
     })

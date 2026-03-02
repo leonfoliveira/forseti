@@ -5,13 +5,14 @@ import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
-import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
+import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardCellResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import org.springframework.stereotype.Service
 
 @Service
@@ -24,7 +25,7 @@ class BuildLeaderboardCellService(
 ) : BuildLeaderboardCellUseCase {
     private val logger = SafeLogger(this::class)
 
-    override fun execute(command: BuildLeaderboardCellUseCase.Command): Leaderboard.Cell {
+    override fun execute(command: BuildLeaderboardCellUseCase.Command): LeaderboardCellResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -67,6 +68,6 @@ class BuildLeaderboardCellService(
         val cell = buildLeaderboardCellInternalUseCase.execute(internalCommand)
 
         logger.info("Leaderboard cell built successfully")
-        return cell
+        return cell.toResponseBodyDTO()
     }
 }

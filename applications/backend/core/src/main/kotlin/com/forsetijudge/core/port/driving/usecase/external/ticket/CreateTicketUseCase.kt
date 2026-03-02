@@ -2,6 +2,7 @@ package com.forsetijudge.core.port.driving.usecase.external.ticket
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.forsetijudge.core.domain.entity.Ticket
+import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
 import jakarta.validation.Valid
 import jakarta.validation.constraints.AssertTrue
 import java.util.UUID
@@ -15,7 +16,7 @@ interface CreateTicketUseCase {
      */
     fun execute(
         @Valid command: Command,
-    ): Ticket<*>
+    ): TicketResponseBodyDTO
 
     /**
      * Command for creating a ticket

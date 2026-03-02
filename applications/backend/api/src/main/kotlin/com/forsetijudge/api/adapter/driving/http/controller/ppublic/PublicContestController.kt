@@ -3,7 +3,6 @@ package com.forsetijudge.api.adapter.driving.http.controller.ppublic
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.port.driving.usecase.external.contest.FindContestBySlugUseCase
 import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -27,6 +26,6 @@ class PublicContestController(
             findContestBySlugUseCase.execute(
                 FindContestBySlugUseCase.Command(slug = slug),
             )
-        return ResponseEntity.ok(contest.toResponseBodyDTO())
+        return ResponseEntity.ok(contest)
     }
 }

@@ -17,6 +17,8 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.submission.CreateSubmissionUseCase
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
 import jakarta.validation.Valid
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -39,7 +41,7 @@ class CreateSubmissionService(
     @Transactional
     override fun execute(
         @Valid command: CreateSubmissionUseCase.Command,
-    ): Submission {
+    ): SubmissionWithCodeResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -83,9 +85,9 @@ class CreateSubmissionService(
             )
         submissionRepository.save(submission)
         frozenSubmissionRepository.save(submission.freeze())
-        applicationEventPublisher.publishEvent(SubmissionEvent.Created(submission))
+        applicationEventPublisher.publishEvent(SubmissionEvent.Created(submission.id))
 
         logger.info("Submission created")
-        return submission
+        return submission.toWithCodeResponseBodyDTO()
     }
 }

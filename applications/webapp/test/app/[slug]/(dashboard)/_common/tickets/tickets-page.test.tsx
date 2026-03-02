@@ -19,6 +19,9 @@ describe("TicketsPage", () => {
       MockTicketResponseDTO({
         status: TicketStatus.RESOLVED,
       }),
+      MockTicketResponseDTO({
+        status: TicketStatus.REJECTED,
+      }),
     ];
 
     await renderWithProviders(<TicketsPage tickets={tickets} />, { contest });
@@ -26,12 +29,15 @@ describe("TicketsPage", () => {
     const openColumn = screen.getByTestId("ticket-column-open");
     const inProgressColumn = screen.getByTestId("ticket-column-in_progress");
     const resolvedColumn = screen.getByTestId("ticket-column-resolved");
-
+    const rejectedColumn = screen.getByTestId("ticket-column-rejected");
     expect(within(openColumn).getAllByTestId("ticket-item")).toHaveLength(1);
     expect(within(inProgressColumn).getAllByTestId("ticket-item")).toHaveLength(
       1,
     );
     expect(within(resolvedColumn).getAllByTestId("ticket-item")).toHaveLength(
+      1,
+    );
+    expect(within(rejectedColumn).getAllByTestId("ticket-item")).toHaveLength(
       1,
     );
   });

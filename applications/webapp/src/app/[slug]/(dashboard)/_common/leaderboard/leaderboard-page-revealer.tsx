@@ -1,11 +1,30 @@
-import { ArrowDown01Icon, AwardIcon, LoaderIcon, XIcon } from "lucide-react";
+import {
+  ArrowDown01Icon,
+  AwardIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  CircleXIcon,
+  LoaderIcon,
+  PauseIcon,
+  PlayIcon,
+  StarIcon,
+  XIcon,
+} from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState, useMemo } from "react"; // Added useState, useMemo
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/problem-letter-badge";
 import { ProblemStatusBadge } from "@/app/_lib/component/display/badge/problem-status-badge";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";
+import { ButtonGroup } from "@/app/_lib/component/shadcn/button-group";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/app/_lib/component/shadcn/empty";
 import {
   Table,
   TableBody,
@@ -15,7 +34,6 @@ import {
   TableRow,
 } from "@/app/_lib/component/shadcn/table";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
-import { useToast } from "@/app/_lib/hook/toast-hook";
 import { Theme, useTheme } from "@/app/_lib/provider/theme-provider";
 import { cn } from "@/app/_lib/util/cn";
 import { useAppSelector } from "@/app/_store/store";
@@ -26,9 +44,13 @@ import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResp
 import { defineMessages } from "@/i18n/message";
 
 const messages = defineMessages({
-  getError: {
-    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page-revealer.get-error",
-    defaultMessage: "Failed to load leaderboard data",
+  errorTitle: {
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page-revealer.error-title",
+    defaultMessage: "Failed to Load Leaderboard",
+  },
+  errorDescription: {
+    id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page-revealer.error-description",
+    defaultMessage: "An error occurred while loading the leaderboard.",
   },
   finalStanding: {
     id: "app.[slug].(dashboard)._common.leaderboard.leaderboard-page-revealer.final-standing",
@@ -60,9 +82,10 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
     isLoading: true,
   });
   const { theme } = useTheme();
-  const toast = useToast();
 
   const [revealedCount, setRevealedCount] = useState(0);
+  const [isAutoRevealing, setIsAutoRevealing] = useState(false);
+  const autoRevealIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const contestantRows = useMemo(() => {
     return (leaderboardState.data?.rows || []).filter(
@@ -70,36 +93,34 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
     );
   }, [leaderboardState.data]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowUp") {
-        event.preventDefault();
-        setRevealedCount((prev) => Math.min(prev + 1, contestantRows.length));
+  function reveal() {
+    setRevealedCount((prev) => {
+      const newCount = Math.min(prev + 1, contestantRows.length);
+      if (newCount >= contestantRows.length && autoRevealIntervalRef.current) {
+        clearInterval(autoRevealIntervalRef.current);
+        autoRevealIntervalRef.current = null;
+        setIsAutoRevealing(false);
       }
+      return newCount;
+    });
+  }
 
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        setRevealedCount((prev) => Math.max(prev - 1, 0));
-      }
-    };
+  function hide() {
+    setRevealedCount((prev) => Math.max(prev - 1, 0));
+  }
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [contestantRows.length]);
-
-  useEffect(() => {
-    async function fetch() {
-      try {
-        const leaderboard = await Composition.leaderboardReader.get(contest.id);
-        leaderboardState.finish(leaderboard);
-      } catch (error) {
-        await leaderboardState.fail(error, {
-          default: () => toast.error(messages.getError),
-        });
-      }
+  function toggleAutoReveal() {
+    if (autoRevealIntervalRef.current) {
+      clearInterval(autoRevealIntervalRef.current);
+      autoRevealIntervalRef.current = null;
+      setIsAutoRevealing(false);
+    } else {
+      setIsAutoRevealing(true);
+      autoRevealIntervalRef.current = setInterval(() => {
+        reveal();
+      }, 1000);
     }
-    fetch();
-  }, []);
+  }
 
   function getMedal(rank: number) {
     if (rank > 12) return rank;
@@ -119,8 +140,40 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
     );
   }
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        reveal();
+      }
+
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        hide();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [contestantRows.length]);
+
+  useEffect(() => {
+    async function fetch() {
+      try {
+        const leaderboard = await Composition.leaderboardReader.get(contest.id);
+        leaderboardState.finish(leaderboard);
+      } catch (error) {
+        await leaderboardState.fail(error);
+      }
+    }
+    fetch();
+  }, []);
+
   return (
-    <div className="bg-muted absolute top-0 left-0 h-screen w-screen overflow-x-hidden">
+    <div
+      className="bg-muted absolute top-0 left-0 h-screen w-screen overflow-x-hidden"
+      style={{ zIndex: Number.MAX_SAFE_INTEGER }}
+    >
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -150,7 +203,10 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
         }}
       />
 
-      <div className="bg-card fixed top-0 z-10 grid w-screen [grid-template-columns:1fr_1fr_1fr] gap-4 border-b px-6 py-2">
+      <div
+        className="bg-card sticky top-0 grid w-screen [grid-template-columns:40px_1fr_40px] items-center gap-4 border-b px-6 py-2"
+        style={{ zIndex: 2147483646 }}
+      >
         <div className="flex gap-2">
           <div className="mr-2 flex items-center justify-center">
             <Image
@@ -161,10 +217,12 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
             />
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center truncate text-2xl font-bold">
-          <p>{contest.title}</p>
-          <p className="text-muted-foreground text-sm font-normal">
+        <div className="flex flex-col items-center justify-center truncate font-bold">
+          <p className="text-sm sm:text-2xl">{contest.title}</p>
+          <p className="text-muted-foreground text-xs font-normal sm:text-sm">
+            <StarIcon className="fill-muted-foreground mr-2 inline" size={12} />
             <FormattedMessage {...messages.finalStanding} />
+            <StarIcon className="fill-muted-foreground ml-2 inline" size={12} />
           </p>
         </div>
         <div className="text-end">
@@ -179,101 +237,154 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
         </div>
       </div>
 
-      {leaderboardState.isLoading && (
-        <div className="flex h-screen w-screen items-center justify-center">
-          <LoaderIcon className="animate-spin" size={48} />
-        </div>
-      )}
+      <div className="py-5">
+        {leaderboardState.isLoading && (
+          <div className="flex h-screen w-screen items-center justify-center">
+            <LoaderIcon className="animate-spin" size={48} />
+          </div>
+        )}
 
-      {!leaderboardState.isLoading && !leaderboardState.error && (
-        <>
-          <div className="bg-card mx-auto mt-25 max-w-[1920px] p-5">
-            <Table className="border-b-1">
-              <TableHeader className="bg-muted">
-                <TableRow>
-                  <TableHead>
-                    <ArrowDown01Icon size={16} />
-                  </TableHead>
-                  <TableHead>
-                    <FormattedMessage {...messages.headerContestant} />
-                  </TableHead>
-                  <TableHead>
-                    <FormattedMessage {...messages.headerScore} />
-                  </TableHead>
-                  <TableHead>
-                    <FormattedMessage {...messages.headerPenalty} />
-                  </TableHead>
-                  {problems.map((p) => (
-                    <TableHead key={p.id} className="text-center">
-                      <ProblemLetterBadge problem={p} />
+        {!leaderboardState.isLoading && leaderboardState.error && (
+          <Empty data-testid="error">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <CircleXIcon />
+              </EmptyMedia>
+              <EmptyTitle>
+                <FormattedMessage {...messages.errorTitle} />
+              </EmptyTitle>
+            </EmptyHeader>
+            <EmptyDescription>
+              <FormattedMessage {...messages.errorDescription} />
+            </EmptyDescription>
+          </Empty>
+        )}
+
+        {!leaderboardState.isLoading && !leaderboardState.error && (
+          <>
+            <div className="bg-card mx-auto max-w-[1920px] p-4">
+              <Table className="border-b-1">
+                <TableHeader className="bg-muted">
+                  <TableRow>
+                    <TableHead>
+                      <ArrowDown01Icon size={16} />
                     </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {contestantRows.map((row, index) => {
-                  const isRevealed =
-                    index >= contestantRows.length - revealedCount;
+                    <TableHead>
+                      <FormattedMessage {...messages.headerContestant} />
+                    </TableHead>
+                    <TableHead>
+                      <FormattedMessage {...messages.headerScore} />
+                    </TableHead>
+                    <TableHead>
+                      <FormattedMessage {...messages.headerPenalty} />
+                    </TableHead>
+                    {problems.map((p) => (
+                      <TableHead key={p.id} className="text-center">
+                        <ProblemLetterBadge problem={p} />
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {contestantRows.map((row, index) => {
+                    const isRevealed =
+                      index >= contestantRows.length - revealedCount;
 
-                  return (
-                    <TableRow
-                      key={row.memberId}
-                      className={cn(
-                        "flip-row hover:bg-inherit",
-                        isRevealed && "is-revealed",
-                      )}
-                      data-testid="row"
-                    >
-                      <TableCell data-testid="cell-rank">
-                        <div className="flip-cell-inner">
-                          <div className="cell-front bg-muted" />
-                          <div className="cell-back">{getMedal(index + 1)}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell data-testid="cell-name">
-                        <div className="flip-cell-inner">
-                          <div className="cell-front bg-muted" />
-                          <div className="cell-back">{row.memberName}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell data-testid="cell-score">
-                        <div className="flip-cell-inner">
-                          <div className="cell-front bg-muted" />
-                          <div className="cell-back">{row.score}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell data-testid="cell-penalty">
-                        <div className="flip-cell-inner">
-                          <div className="cell-front bg-muted" />
-                          <div className="cell-back">{row.penalty}</div>
-                        </div>
-                      </TableCell>
-                      {row.cells.map((cell) => (
-                        <TableCell
-                          key={cell.problemId}
-                          className="text-center"
-                          data-testid={`cell-problem-${cell.problemId}`}
-                        >
+                    return (
+                      <TableRow
+                        key={row.memberId}
+                        className={cn(
+                          "flip-row hover:bg-inherit",
+                          isRevealed && "is-revealed",
+                        )}
+                        data-testid="row"
+                      >
+                        <TableCell data-testid="cell-rank">
                           <div className="flip-cell-inner">
                             <div className="cell-front bg-muted" />
                             <div className="cell-back">
-                              <ProblemStatusBadge
-                                isAccepted={cell.isAccepted}
-                                acceptedAt={cell.acceptedAt}
-                                wrongSubmissions={cell.wrongSubmissions}
-                              />
+                              {getMedal(index + 1)}
                             </div>
                           </div>
                         </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </>
-      )}
+                        <TableCell data-testid="cell-name">
+                          <div className="flip-cell-inner">
+                            <div className="cell-front bg-muted" />
+                            <div className="cell-back">{row.memberName}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell data-testid="cell-score">
+                          <div className="flip-cell-inner">
+                            <div className="cell-front bg-muted" />
+                            <div className="cell-back">{row.score}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell data-testid="cell-penalty">
+                          <div className="flip-cell-inner">
+                            <div className="cell-front bg-muted" />
+                            <div className="cell-back">{row.penalty}</div>
+                          </div>
+                        </TableCell>
+                        {row.cells.map((cell) => (
+                          <TableCell
+                            key={cell.problemId}
+                            className="text-center"
+                            data-testid={`cell-problem-${cell.problemId}`}
+                          >
+                            <div className="flip-cell-inner">
+                              <div className="cell-front bg-muted" />
+                              <div className="cell-back">
+                                <ProblemStatusBadge
+                                  isAccepted={cell.isAccepted}
+                                  acceptedAt={cell.acceptedAt}
+                                  wrongSubmissions={cell.wrongSubmissions}
+                                />
+                              </div>
+                            </div>
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+
+              <ButtonGroup
+                className="absolute right-5 bottom-5"
+                orientation="vertical"
+              >
+                <Button
+                  size="icon-lg"
+                  onClick={reveal}
+                  disabled={revealedCount >= contestantRows.length}
+                  data-testid="reveal-button"
+                >
+                  <ChevronUpIcon size={16} />
+                </Button>
+                <Button
+                  size="icon-lg"
+                  onClick={hide}
+                  disabled={revealedCount <= 0}
+                  data-testid="hide-button"
+                >
+                  <ChevronDownIcon size={16} />
+                </Button>
+                <Button
+                  size="icon-lg"
+                  onClick={toggleAutoReveal}
+                  disabled={revealedCount >= contestantRows.length}
+                >
+                  {isAutoRevealing ? (
+                    <PauseIcon size={16} />
+                  ) : (
+                    <PlayIcon size={16} />
+                  )}
+                </Button>
+              </ButtonGroup>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

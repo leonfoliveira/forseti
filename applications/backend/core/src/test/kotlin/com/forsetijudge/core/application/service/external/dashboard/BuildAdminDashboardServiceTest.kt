@@ -4,31 +4,48 @@ import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
+import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
+import com.forsetijudge.core.domain.entity.TicketMockBuilder
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.domain.model.LeaderboardMockBuilder
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
-import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
+import com.forsetijudge.core.port.driven.repository.SubmissionRepository
+import com.forsetijudge.core.port.driven.repository.TicketRepository
+import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
+import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.member.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.problem.toWithTestCasesResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import java.io.Serializable
 
 class BuildAdminDashboardServiceTest :
     FunSpec({
-        val contestRepository = mockk<ContestRepository>()
-        val memberRepository = mockk<MemberRepository>()
-        val buildLeaderboardUseCase = mockk<BuildLeaderboardUseCase>()
+        val contestRepository = mockk<ContestRepository>(relaxed = true)
+        val memberRepository = mockk<MemberRepository>(relaxed = true)
+        val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
+        val ticketRepository = mockk<TicketRepository>(relaxed = true)
+        val buildLeaderboardInternalUseCase = mockk<BuildLeaderboardInternalUseCase>(relaxed = true)
 
         val sut =
             BuildAdminDashboardService(
                 contestRepository = contestRepository,
                 memberRepository = memberRepository,
-                buildLeaderboardUseCase = buildLeaderboardUseCase,
+                submissionRepository = submissionRepository,
+                ticketRepository = ticketRepository,
+                buildLeaderboardInternalUseCase = buildLeaderboardInternalUseCase,
             )
 
         val contestId = IdGenerator.getUUID()
@@ -71,20 +88,24 @@ class BuildAdminDashboardServiceTest :
             val contest = ContestMockBuilder.build()
             val member = MemberMockBuilder.build(type = Member.Type.ADMIN)
             val leaderboard = LeaderboardMockBuilder.build()
+            val submissions = listOf(SubmissionMockBuilder.build())
+            val memberTickets = listOf(TicketMockBuilder.build<Serializable>())
             every { contestRepository.findById(contestId) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(memberId, contestId) } returns member
-            every { buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command()) } returns leaderboard
+            every { buildLeaderboardInternalUseCase.execute(any()) } returns leaderboard
+            every { submissionRepository.findAllByContestId(contest.id) } returns submissions
+            every { ticketRepository.findAllByContestIdAndMemberId(contest.id, memberId) } returns memberTickets
 
             val dashboard = sut.execute()
 
-            dashboard.contest shouldBe contest
-            dashboard.leaderboard shouldBe leaderboard
-            dashboard.members shouldBe contest.members
-            dashboard.problems shouldBe contest.problems
-            dashboard.submissions shouldBe contest.problems.map { it.submissions }.flatten()
-            dashboard.clarifications shouldBe contest.clarifications
-            dashboard.announcements shouldBe contest.announcements
-            dashboard.tickets shouldBe contest.tickets
-            dashboard.memberTickets shouldBe contest.tickets.filter { it.member.id == memberId }
+            dashboard.contest shouldBe contest.toWithMembersAndProblemsResponseBodyDTO()
+            dashboard.leaderboard shouldBe leaderboard.toResponseBodyDTO()
+            dashboard.members shouldBe contest.members.map { it.toResponseBodyDTO() }
+            dashboard.problems shouldBe contest.problems.map { it.toWithTestCasesResponseBodyDTO() }
+            dashboard.submissions shouldBe submissions.map { it.toWithCodeAndExecutionResponseBodyDTO() }
+            dashboard.clarifications shouldBe contest.clarifications.map { it.toResponseBodyDTO() }
+            dashboard.announcements shouldBe contest.announcements.map { it.toResponseBodyDTO() }
+            dashboard.tickets shouldBe contest.tickets.map { it.toResponseBodyDTO() }
+            dashboard.memberTickets shouldBe memberTickets.map { it.toResponseBodyDTO() }
         }
     })

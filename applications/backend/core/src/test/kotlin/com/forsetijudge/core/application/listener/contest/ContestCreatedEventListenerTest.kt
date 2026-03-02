@@ -3,10 +3,12 @@ package com.forsetijudge.core.application.listener.contest
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.port.driven.job.AutoFreezeJobScheduler
+import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
+import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -14,6 +16,8 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 @SpringBootTest(classes = [ContestCreatedEventListener::class])
 class ContestCreatedEventListenerTest(
+    @MockkBean(relaxed = true)
+    private val contestRepository: ContestRepository,
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
@@ -26,7 +30,8 @@ class ContestCreatedEventListenerTest(
 
         test("should handle event successfully") {
             val contest = ContestMockBuilder.build()
-            val event = ContestEvent.Created(contest)
+            val event = ContestEvent.Created(contest.id)
+            every { contestRepository.findById(contest.id) } returns contest
 
             sut.onApplicationEvent(event)
 

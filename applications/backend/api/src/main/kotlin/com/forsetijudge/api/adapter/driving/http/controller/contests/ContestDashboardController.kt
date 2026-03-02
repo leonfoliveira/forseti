@@ -13,7 +13,6 @@ import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResp
 import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.dashboard.StaffDashboardResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -40,7 +39,7 @@ class ContestDashboardController(
     ): ResponseEntity<AdminDashboardResponseBodyDTO> {
         logger.info("[GET] /v1/contests/$contestId/dashboard/admin")
         val dashboard = buildAdminDashboardUseCase.execute()
-        return ResponseEntity.ok(dashboard.toResponseBodyDTO())
+        return ResponseEntity.ok(dashboard)
     }
 
     @GetMapping("/contests/{contestId}/dashboard/contestant")
@@ -50,7 +49,7 @@ class ContestDashboardController(
     ): ResponseEntity<ContestantDashboardResponseBodyDTO> {
         logger.info("[GET] /v1/contests/$contestId/dashboard/contestant")
         val dashboard = buildContestantDashboardUseCase.execute()
-        return ResponseEntity.ok(dashboard.toResponseBodyDTO())
+        return ResponseEntity.ok(dashboard)
     }
 
     @GetMapping("/contests/{contestId}/dashboard/guest")
@@ -59,7 +58,7 @@ class ContestDashboardController(
     ): ResponseEntity<GuestDashboardResponseBodyDTO> {
         logger.info("[GET] /v1/contests/$contestId/dashboard/guest")
         val dashboard = buildGuestDashboardUseCase.execute()
-        return ResponseEntity.ok(dashboard.toResponseBodyDTO())
+        return ResponseEntity.ok(dashboard)
     }
 
     @GetMapping("/contests/{contestId}/dashboard/judge")
@@ -69,7 +68,7 @@ class ContestDashboardController(
     ): ResponseEntity<JudgeDashboardResponseBodyDTO> {
         logger.info("[GET] /v1/contests/$contestId/dashboard/judge")
         val dashboard = buildJudgeDashboardUseCase.execute()
-        return ResponseEntity.ok(dashboard.toResponseBodyDTO())
+        return ResponseEntity.ok(dashboard)
     }
 
     @GetMapping("/contests/{contestId}/dashboard/staff")
@@ -79,6 +78,6 @@ class ContestDashboardController(
     ): ResponseEntity<StaffDashboardResponseBodyDTO> {
         logger.info("[GET] /v1/contests/$contestId/dashboard/staff")
         val dashboard = buildStaffDashboardUseCase.execute()
-        return ResponseEntity.ok(dashboard.toResponseBodyDTO())
+        return ResponseEntity.ok(dashboard)
     }
 }

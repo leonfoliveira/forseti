@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.driving.usecase.external.submission
 
-import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import java.util.UUID
 
 interface ResetSubmissionUseCase {
@@ -10,7 +10,7 @@ interface ResetSubmissionUseCase {
      * @param command The command containing the submission ID to be rerun.
      * @return The result of the rerun operation, including the submission details and code.
      */
-    fun execute(command: Command): Submission
+    fun execute(command: Command): SubmissionWithCodeAndExecutionsResponseBodyDTO
 
     /**
      * Command for rerunning a submission.

@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.listener.clarification
 
-import com.forsetijudge.core.domain.entity.ClarificationMockBuilder
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.event.ClarificationEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
@@ -30,34 +30,35 @@ class ClarificationDeletedEventListenerTest(
         }
 
         test("should handle event successfully") {
-            val clarification = ClarificationMockBuilder.build()
-            val event = ClarificationEvent.Deleted(clarification = clarification)
+            val contestId = IdGenerator.getUUID()
+            val clarificationId = IdGenerator.getUUID()
+            val event = ClarificationEvent.Deleted(contestId, clarificationId)
 
             sut.onApplicationEvent(event)
 
             verify {
                 broadcastProducer.produce(
-                    AdminDashboardBroadcastRoom(clarification.contest.id).buildClarificationDeletedEvent(clarification),
+                    AdminDashboardBroadcastRoom(contestId).buildClarificationDeletedEvent(clarificationId),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    ContestantDashboardBroadcastRoom(clarification.contest.id).buildClarificationDeletedEvent(clarification),
+                    ContestantDashboardBroadcastRoom(contestId).buildClarificationDeletedEvent(clarificationId),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    GuestDashboardBroadcastRoom(clarification.contest.id).buildClarificationDeletedEvent(clarification),
+                    GuestDashboardBroadcastRoom(contestId).buildClarificationDeletedEvent(clarificationId),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    JudgeDashboardBroadcastRoom(clarification.contest.id).buildClarificationDeletedEvent(clarification),
+                    JudgeDashboardBroadcastRoom(contestId).buildClarificationDeletedEvent(clarificationId),
                 )
             }
             verify {
                 broadcastProducer.produce(
-                    StaffDashboardBroadcastRoom(clarification.contest.id).buildClarificationDeletedEvent(clarification),
+                    StaffDashboardBroadcastRoom(contestId).buildClarificationDeletedEvent(clarificationId),
                 )
             }
         }

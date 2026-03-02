@@ -17,6 +17,8 @@ import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.attachment.UploadAttachmentUseCase
+import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
+import com.forsetijudge.core.port.dto.response.attachment.toResponseBodyDTO
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -40,7 +42,7 @@ class UploadAttachmentService(
         )
 
     @Transactional
-    override fun execute(command: UploadAttachmentUseCase.Command): Pair<Attachment, ByteArray> {
+    override fun execute(command: UploadAttachmentUseCase.Command): Pair<AttachmentResponseDTO, ByteArray> {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -74,9 +76,9 @@ class UploadAttachmentService(
         logger.info("Uploading ${command.bytes.size} bytes")
         attachmentRepository.save(attachment)
         attachmentBucket.upload(attachment, command.bytes)
-        applicationEventPublisher.publishEvent(AttachmentsEvent.Uploaded(attachment))
+        applicationEventPublisher.publishEvent(AttachmentsEvent.Uploaded(attachment.id))
 
         logger.info("Attachment uploaded successfully with id = ${attachment.id}")
-        return attachment to command.bytes
+        return attachment.toResponseBodyDTO() to command.bytes
     }
 }

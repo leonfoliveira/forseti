@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.driving.usecase.external.leaderboard
 
-import com.forsetijudge.core.domain.model.Leaderboard
+import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseBodyDTO
 
 interface BuildLeaderboardUseCase {
     /**
@@ -8,7 +8,7 @@ interface BuildLeaderboardUseCase {
      *
      * @return The result of building the leaderboard, including the leaderboard data.
      */
-    fun execute(command: Command): Leaderboard
+    fun execute(command: Command): LeaderboardResponseBodyDTO
 
     /**
      * Command for building the leaderboard.

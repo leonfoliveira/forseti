@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.listener.contest
 
-import com.forsetijudge.core.domain.entity.ContestMockBuilder
+import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.port.driven.job.AutoFreezeJobScheduler
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
@@ -25,14 +25,14 @@ class ContestDeletedEventListenerTest(
         }
 
         test("should handle event successfully") {
-            val contest = ContestMockBuilder.build()
-            val event = ContestEvent.Deleted(contest)
+            val contestId = IdGenerator.getUUID()
+            val event = ContestEvent.Deleted(contestId)
 
             sut.onApplicationEvent(event)
 
             verify {
                 autoFreezeJobScheduler.cancel(
-                    contest.id,
+                    contestId,
                 )
             }
         }

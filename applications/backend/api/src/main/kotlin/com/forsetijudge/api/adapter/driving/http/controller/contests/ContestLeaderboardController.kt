@@ -7,9 +7,7 @@ import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLead
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.FreezeLeaderboardUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.UnfreezeLeaderboardUseCase
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -36,7 +34,7 @@ class ContestLeaderboardController(
             buildLeaderboardUseCase.execute(
                 BuildLeaderboardUseCase.Command(bypassFreeze = true),
             )
-        return ResponseEntity.ok(leaderboard.toResponseBodyDTO())
+        return ResponseEntity.ok(leaderboard)
     }
 
     @PutMapping("/contests/{contestId}/leaderboard:freeze")
@@ -46,7 +44,7 @@ class ContestLeaderboardController(
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
         logger.info("[PUT] /v1/contests/$contestId/leaderboard:freeze")
         val contest = freezeLeaderboardUseCase.execute()
-        return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
+        return ResponseEntity.ok(contest)
     }
 
     @PutMapping("/contests/{contestId}/leaderboard:unfreeze")
@@ -56,6 +54,6 @@ class ContestLeaderboardController(
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
         logger.info("[PUT] /v1/contests/$contestId/leaderboard:unfreeze")
         val contest = unfreezeLeaderboardUseCase.execute()
-        return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
+        return ResponseEntity.ok(contest)
     }
 }

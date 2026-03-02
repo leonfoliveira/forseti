@@ -8,7 +8,6 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.external.ticket.CreateTicketUseCase
 import com.forsetijudge.core.port.driving.usecase.external.ticket.UpdateTicketStatusUseCase
 import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -48,7 +47,7 @@ class ContestTicketController(
                     properties = body.properties,
                 ),
             )
-        return ResponseEntity.ok(ticket.toResponseBodyDTO())
+        return ResponseEntity.ok(ticket)
     }
 
     @PutMapping("/contests/{contestId}/tickets/{ticketId}:update-status")
@@ -66,6 +65,6 @@ class ContestTicketController(
                     status = body.status,
                 ),
             )
-        return ResponseEntity.ok(ticket.toResponseBodyDTO())
+        return ResponseEntity.ok(ticket)
     }
 }

@@ -2,7 +2,6 @@ package com.forsetijudge.infrastructure.adapter.driven.rabbitmq
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.application.util.SafeLogger
-import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.infrastructure.adapter.dto.rabbitmq.RabbitMQMessage
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.stereotype.Component

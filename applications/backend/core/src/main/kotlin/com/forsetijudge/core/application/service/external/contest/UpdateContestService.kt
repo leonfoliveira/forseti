@@ -19,6 +19,8 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.UpdateContestUseCase
+import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import jakarta.validation.Valid
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -43,7 +45,7 @@ class UpdateContestService(
     @Transactional
     override fun execute(
         @Valid command: UpdateContestUseCase.Command,
-    ): Contest {
+    ): ContestWithMembersAndProblemsResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -129,10 +131,10 @@ class UpdateContestService(
         contest.members = createdMembers + updatedMembers
         contest.problems = createdProblems + updatedProblems
         contestRepository.save(contest)
-        applicationEventPublisher.publishEvent(ContestEvent.Updated(contest))
+        applicationEventPublisher.publishEvent(ContestEvent.Updated(contest.id))
 
         logger.info("Contest updated successfully")
-        return contest
+        return contest.toWithMembersAndProblemsResponseBodyDTO()
     }
 
     /**

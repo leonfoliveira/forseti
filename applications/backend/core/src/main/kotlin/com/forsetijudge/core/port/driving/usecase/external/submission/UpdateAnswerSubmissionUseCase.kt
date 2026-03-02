@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.driving.usecase.external.submission
 
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import java.util.UUID
 
 interface UpdateAnswerSubmissionUseCase {
@@ -10,7 +11,7 @@ interface UpdateAnswerSubmissionUseCase {
      * @param command The command containing the submission ID and the new answer.
      * @return The updated submission with its code result.
      */
-    fun execute(command: Command): Submission
+    fun execute(command: Command): SubmissionWithCodeAndExecutionsResponseBodyDTO
 
     /**
      * Command for updating the answer of a submission.

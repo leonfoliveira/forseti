@@ -1,8 +1,8 @@
 package com.forsetijudge.core.port.dto.response.problem
 
 import com.forsetijudge.core.domain.entity.Problem
-import com.forsetijudge.core.port.dto.response.AttachmentResponseDTO
-import com.forsetijudge.core.port.dto.response.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
+import com.forsetijudge.core.port.dto.response.attachment.toResponseBodyDTO
 import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID

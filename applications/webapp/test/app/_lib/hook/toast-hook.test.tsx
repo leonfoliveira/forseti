@@ -30,7 +30,7 @@ describe("useToast", () => {
     expect(toast.info).toHaveBeenCalledWith(
       <FormattedMessage {...testMessage} />,
       {
-        position: "bottom-center",
+        position: "top-center",
         className: "!bg-blue-600 !text-white",
       },
     );
@@ -44,7 +44,7 @@ describe("useToast", () => {
     expect(toast.success).toHaveBeenCalledWith(
       <FormattedMessage {...testMessage} />,
       {
-        position: "bottom-center",
+        position: "top-center",
         className: "!bg-green-600 !text-white",
       },
     );
@@ -58,7 +58,7 @@ describe("useToast", () => {
     expect(toast.warning).toHaveBeenCalledWith(
       <FormattedMessage {...testMessage} />,
       {
-        position: "bottom-center",
+        position: "top-center",
         className: "!bg-yellow-600 !text-white",
       },
     );
@@ -72,7 +72,7 @@ describe("useToast", () => {
     expect(toast.error).toHaveBeenCalledWith(
       <FormattedMessage {...testMessage} />,
       {
-        position: "bottom-center",
+        position: "top-center",
         className: "!bg-red-600 !text-white",
       },
     );

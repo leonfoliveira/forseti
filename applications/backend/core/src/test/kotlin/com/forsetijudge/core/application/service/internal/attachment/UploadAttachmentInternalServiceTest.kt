@@ -62,7 +62,7 @@ class UploadAttachmentInternalServiceTest :
             attachment.contentType shouldBe command.contentType
             attachment.context shouldBe command.context
             verify { attachmentBucket.upload(attachment, command.bytes) }
-            verify { applicationEventPublisher.publishEvent(match<AttachmentsEvent.Uploaded> { it.attachment == attachment }) }
+            verify { applicationEventPublisher.publishEvent(match<AttachmentsEvent.Uploaded> { it.attachmentId == attachment.id }) }
         }
 
         test("upload attachment without optional fields") {
@@ -92,6 +92,6 @@ class UploadAttachmentInternalServiceTest :
             attachment.contentType shouldBe "application/octet-stream"
             attachment.context shouldBe command.context
             verify { attachmentBucket.upload(attachment, command.bytes) }
-            verify { applicationEventPublisher.publishEvent(match<AttachmentsEvent.Uploaded> { it.attachment == attachment }) }
+            verify { applicationEventPublisher.publishEvent(match<AttachmentsEvent.Uploaded> { it.attachmentId == attachment.id }) }
         }
     })

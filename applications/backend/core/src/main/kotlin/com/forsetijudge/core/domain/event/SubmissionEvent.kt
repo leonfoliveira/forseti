@@ -1,6 +1,6 @@
 package com.forsetijudge.core.domain.event
 
-import com.forsetijudge.core.domain.entity.Submission
+import java.util.UUID
 
 abstract class SubmissionEvent : BusinessEvent() {
     /**
@@ -9,7 +9,7 @@ abstract class SubmissionEvent : BusinessEvent() {
      * @param submission the created submission
      */
     class Created(
-        val submission: Submission,
+        val submissionId: UUID,
     ) : SubmissionEvent()
 
     /**
@@ -18,7 +18,7 @@ abstract class SubmissionEvent : BusinessEvent() {
      * @param submission the reset submission
      */
     class Reset(
-        val submission: Submission,
+        val submissionId: UUID,
     ) : SubmissionEvent()
 
     /**
@@ -27,6 +27,6 @@ abstract class SubmissionEvent : BusinessEvent() {
      * @param submission the updated submission
      */
     class Updated(
-        val submission: Submission,
+        val submissionId: UUID,
     ) : SubmissionEvent()
 }

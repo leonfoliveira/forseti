@@ -35,7 +35,7 @@ class ApplicationReadyEventListenerTest(
 ) : FunSpec({
 
         test("should update root password on application ready") {
-            val event = mockk<ApplicationReadyEvent>()
+            val event = mockk<ApplicationReadyEvent>(relaxed = true)
             sut.onApplicationEvent(event)
 
             verify {
@@ -49,7 +49,7 @@ class ApplicationReadyEventListenerTest(
         }
 
         test("should handle optimistic locking failure when updating root password") {
-            val event = mockk<ApplicationReadyEvent>()
+            val event = mockk<ApplicationReadyEvent>(relaxed = true)
             every {
                 updateMemberPasswordUseCase.execute(
                     UpdateMemberPasswordUseCase.Command(
@@ -73,7 +73,7 @@ class ApplicationReadyEventListenerTest(
                         attachmentBucketCleanerJobInterval,
                     ).milliseconds
 
-            val event = mockk<ApplicationReadyEvent>()
+            val event = mockk<ApplicationReadyEvent>(relaxed = true)
             sut.onApplicationEvent(event)
 
             verify {

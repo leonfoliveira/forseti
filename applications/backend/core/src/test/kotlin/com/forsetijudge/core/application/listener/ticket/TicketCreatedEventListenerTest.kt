@@ -5,10 +5,12 @@ import com.forsetijudge.core.domain.event.TicketEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
+import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -20,6 +22,8 @@ class TicketCreatedEventListenerTest(
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
+    private val ticketRepository: TicketRepository,
+    @MockkBean(relaxed = true)
     private val broadcastProducer: BroadcastProducer,
     private val sut: TicketCreatedEventListener,
 ) : FunSpec({
@@ -29,7 +33,8 @@ class TicketCreatedEventListenerTest(
 
         test("should handle event successfully") {
             val ticket = TicketMockBuilder.build<Serializable>()
-            val event = TicketEvent.Created(ticket)
+            val event = TicketEvent.Created(ticket.id)
+            every { ticketRepository.findById(ticket.id) } returns ticket
 
             sut.onApplicationEvent(event)
 

@@ -28,7 +28,7 @@ abstract class RabbitMQConsumer<TBody : Serializable> {
 
     open fun receiveMessage(message: Message) {
         val id = UUID.fromString(message.messageProperties.headers["id"] as String)
-        val contestId = (message.messageProperties.headers["contest-id"] as? String).let { UUID.fromString(it) }
+        val contestId = (message.messageProperties.headers["contest-id"] as? String)?.let { UUID.fromString(it) }
         val body = objectMapper.readValue(message.body, getBodyType())
 
         ExecutionContext.start(contestId = contestId)

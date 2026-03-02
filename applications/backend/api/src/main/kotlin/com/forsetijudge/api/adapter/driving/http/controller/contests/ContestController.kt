@@ -9,7 +9,6 @@ import com.forsetijudge.core.port.driving.usecase.external.contest.ForceStartCon
 import com.forsetijudge.core.port.driving.usecase.external.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
@@ -84,7 +83,7 @@ class ContestController(
                         },
                 ),
             )
-        return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
+        return ResponseEntity.ok(contest)
     }
 
     @PutMapping("/contests/{contestId}:force-start")
@@ -94,7 +93,7 @@ class ContestController(
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
         logger.info("[PUT] /v1/contests/$contestId:force-start")
         val contest = forceStartContestUseCase.execute()
-        return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
+        return ResponseEntity.ok(contest)
     }
 
     @PutMapping("/contests/{contestId}:force-end")
@@ -104,6 +103,6 @@ class ContestController(
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
         logger.info("[PUT] /v1/contests/$contestId:force-end")
         val contest = forceEndContestUseCase.execute()
-        return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
+        return ResponseEntity.ok(contest)
     }
 }
