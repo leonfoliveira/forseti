@@ -26,6 +26,7 @@ import {
 import { Toggle } from "@/app/_lib/component/shadcn/toggle";
 import { useContestStatusWatcher } from "@/app/_lib/hook/contest-status-watcher-hook";
 import { cn } from "@/app/_lib/util/cn";
+import { useAppSelector } from "@/app/_store/store";
 import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
 import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResponseDTO";
 import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
@@ -141,6 +142,7 @@ export function SubmissionsPage({
   canPrint,
   onPrint,
 }: Props) {
+  const session = useAppSelector((state) => state.session);
   const contestStatus = useContestStatusWatcher();
   const [isOnlyMine, setIsOnlyMine] = useState(false);
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
@@ -227,7 +229,14 @@ export function SubmissionsPage({
                   ? memberSubmissions.toReversed()
                   : mergedSubmissions.toReversed()
                 ).map((submission) => (
-                  <TableRow key={submission.id} data-testid="submission-row">
+                  <TableRow
+                    key={submission.id}
+                    className={cn(
+                      submission.member.id === session?.member.id &&
+                        "font-bold",
+                    )}
+                    data-testid="submission-row"
+                  >
                     <TableCell data-testid="submission-timestamp">
                       <FormattedDateTime timestamp={submission.createdAt} />
                     </TableCell>

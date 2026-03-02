@@ -152,7 +152,7 @@ export function LeaderboardPage({ problems, leaderboard, canReveal }: Props) {
                 <TableRow
                   key={row.memberId}
                   className={cn(
-                    row.memberId === session?.member.id && "bg-muted/50",
+                    row.memberId === session?.member.id && "font-bold",
                   )}
                   data-testid="leaderboard-member-row"
                 >
