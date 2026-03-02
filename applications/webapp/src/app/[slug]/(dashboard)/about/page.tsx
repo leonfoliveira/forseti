@@ -1,7 +1,6 @@
 "use client";
 
 import { CheckIcon, XIcon } from "lucide-react";
-import Image from "next/image";
 
 import { FormattedDateTime } from "@/app/_lib/component/i18n/formatted-datetime";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
@@ -9,7 +8,6 @@ import { Page } from "@/app/_lib/component/page/page";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
 import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
-import { Theme, useTheme } from "@/app/_lib/provider/theme-provider";
 import { useAppSelector } from "@/app/_store/store";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages, Message } from "@/i18n/message";
@@ -75,7 +73,6 @@ const messages = defineMessages({
 
 export default function DashboardAboutPage() {
   const contest = useAppSelector((state) => state.contest);
-  const { theme } = useTheme();
 
   function getSettingItem(
     isEnabled: boolean,
@@ -83,7 +80,7 @@ export default function DashboardAboutPage() {
     dataTestId: string,
   ) {
     return (
-      <li className="flex items-center gap-3">
+      <li className="flex items-center justify-center gap-3">
         <span className="bg-muted/30 inline-flex h-7 w-7 items-center justify-center rounded-full">
           {isEnabled ? (
             <CheckIcon
@@ -109,127 +106,110 @@ export default function DashboardAboutPage() {
       <div className="mx-auto my-5 w-full max-w-4xl">
         <Card>
           <CardContent>
-            <div className="flex flex-col items-center sm:flex-row sm:items-center sm:gap-6">
-              {theme === Theme.DARK ? (
-                <Image
-                  src="/icon-dark.png"
-                  alt="Logo of forseti"
-                  width={84}
-                  height={84}
-                />
-              ) : (
-                <Image
-                  src="/icon-light.png"
-                  alt="Logo of forseti"
-                  width={84}
-                  height={84}
-                />
-              )}
-
-              <div className="mt-4 text-center sm:mt-0 sm:text-left">
-                <h1
-                  className="text-2xl font-semibold sm:text-3xl"
-                  data-testid="title"
-                >
-                  {contest.title}
-                </h1>
-              </div>
-            </div>
+            <h1
+              className="text-center text-2xl font-semibold"
+              data-testid="title"
+            >
+              {contest.title}
+            </h1>
             <Separator className="my-6" />
-            <div className="grid grid-cols-3">
-              <section>
-                <p className="mb-2 font-medium">
-                  <FormattedMessage {...messages.startAt} />
-                </p>
-                <p className="text-sm" data-testid="start-at">
-                  <FormattedDateTime timestamp={contest.startAt} />
-                </p>
-              </section>
-              <section>
-                <p className="mb-2 font-medium">
-                  <FormattedMessage {...messages.endAt} />
-                </p>
-                <p className="text-sm" data-testid="end-at">
-                  <FormattedDateTime timestamp={contest.endAt} />
-                </p>
-              </section>
-              <section>
-                <p className="mb-2 font-medium">
-                  <FormattedMessage {...messages.autoFreezeAt} />
-                </p>
-                <p className="text-sm" data-testid="auto-freeze-at">
-                  {contest.autoFreezeAt ? (
-                    <FormattedDateTime timestamp={contest.autoFreezeAt} />
-                  ) : (
-                    <span className="text-red-600 dark:text-red-700">
-                      <FormattedMessage {...messages.autoFreezeDisabled} />
-                    </span>
-                  )}
-                </p>
-              </section>
-            </div>
+            <div className="flex flex-col gap-4">
+              <div className="grid [grid-template-columns:repeat(3,1fr)] gap-6 text-center">
+                <section>
+                  <p className="mb-2 font-medium">
+                    <FormattedMessage {...messages.startAt} />
+                  </p>
+                  <p className="text-sm" data-testid="start-at">
+                    <FormattedDateTime timestamp={contest.startAt} />
+                  </p>
+                </section>
+                <section>
+                  <p className="mb-2 font-medium">
+                    <FormattedMessage {...messages.endAt} />
+                  </p>
+                  <p className="text-sm" data-testid="end-at">
+                    <FormattedDateTime timestamp={contest.endAt} />
+                  </p>
+                </section>
+                <section>
+                  <p className="mb-2 font-medium">
+                    <FormattedMessage {...messages.autoFreezeAt} />
+                  </p>
+                  <p className="text-sm" data-testid="auto-freeze-at">
+                    {contest.autoFreezeAt ? (
+                      <FormattedDateTime timestamp={contest.autoFreezeAt} />
+                    ) : (
+                      <span className="text-red-600 dark:text-red-700">
+                        <FormattedMessage {...messages.autoFreezeDisabled} />
+                      </span>
+                    )}
+                  </p>
+                </section>
+              </div>
 
-            <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
-              <section>
-                <p className="mb-2 font-medium">
-                  <FormattedMessage {...messages.languages} />
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <div className="flex flex-wrap gap-2">
-                    {contest.languages.map((lang) => (
-                      <Badge
-                        key={lang}
-                        className="bg-muted text-muted-foreground rounded-full px-3 py-1 text-sm"
-                        data-testid={`language-${lang}`}
-                      >
-                        <FormattedMessage
-                          {...globalMessages.submissionLanguage[
-                            lang as keyof typeof globalMessages.submissionLanguage
-                          ]}
-                        />
-                      </Badge>
-                    ))}
+              <div className="mt-6 text-center">
+                <section>
+                  <p className="mb-2 font-medium">
+                    <FormattedMessage {...messages.languages} />
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <div className="flex flex-wrap gap-2">
+                      {contest.languages.map((lang) => (
+                        <Badge
+                          key={lang}
+                          className="bg-muted text-muted-foreground rounded-full px-3 py-1 text-sm"
+                          data-testid={`language-${lang}`}
+                        >
+                          <FormattedMessage
+                            {...globalMessages.submissionLanguage[
+                              lang as keyof typeof globalMessages.submissionLanguage
+                            ]}
+                          />
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </section>
-
-              <section>
-                <p className="mb-2 font-medium" data-testid="settings">
-                  <FormattedMessage {...messages.settings} />
-                </p>
-                <ul className="space-y-2 text-sm">
-                  {getSettingItem(
-                    contest.settings.isAutoJudgeEnabled,
-                    messages.settingIsAutoJudgeEnabled,
-                    "auto-judge",
-                  )}
-                  {getSettingItem(
-                    contest.settings.isClarificationEnabled,
-                    messages.settingIsClarificationEnabled,
-                    "clarification",
-                  )}
-                  {getSettingItem(
-                    contest.settings.isSubmissionPrintTicketEnabled,
-                    messages.settingIsSubmissionPrintTicketEnabled,
-                    "submission-print-ticket",
-                  )}
-                  {getSettingItem(
-                    contest.settings.isTechnicalSupportTicketEnabled,
-                    messages.settingIsTechnicalSupportTicketEnabled,
-                    "technical-support-ticket",
-                  )}
-                  {getSettingItem(
-                    contest.settings.isNonTechnicalSupportTicketEnabled,
-                    messages.settingIsNonTechnicalSupportTicketEnabled,
-                    "non-technical-support-ticket",
-                  )}
-                  {getSettingItem(
-                    contest.settings.isGuestEnabled,
-                    messages.settingIsGuestEnabled,
-                    "guest",
-                  )}
-                </ul>
-              </section>
+                </section>
+              </div>
+              <div className="mt-6 gap-6 text-center">
+                <section>
+                  <p className="mb-2 font-medium" data-testid="settings">
+                    <FormattedMessage {...messages.settings} />
+                  </p>
+                  <ul className="space-y-2 text-sm">
+                    {getSettingItem(
+                      contest.settings.isAutoJudgeEnabled,
+                      messages.settingIsAutoJudgeEnabled,
+                      "auto-judge",
+                    )}
+                    {getSettingItem(
+                      contest.settings.isClarificationEnabled,
+                      messages.settingIsClarificationEnabled,
+                      "clarification",
+                    )}
+                    {getSettingItem(
+                      contest.settings.isSubmissionPrintTicketEnabled,
+                      messages.settingIsSubmissionPrintTicketEnabled,
+                      "submission-print-ticket",
+                    )}
+                    {getSettingItem(
+                      contest.settings.isTechnicalSupportTicketEnabled,
+                      messages.settingIsTechnicalSupportTicketEnabled,
+                      "technical-support-ticket",
+                    )}
+                    {getSettingItem(
+                      contest.settings.isNonTechnicalSupportTicketEnabled,
+                      messages.settingIsNonTechnicalSupportTicketEnabled,
+                      "non-technical-support-ticket",
+                    )}
+                    {getSettingItem(
+                      contest.settings.isGuestEnabled,
+                      messages.settingIsGuestEnabled,
+                      "guest",
+                    )}
+                  </ul>
+                </section>
+              </div>
             </div>
           </CardContent>
         </Card>
