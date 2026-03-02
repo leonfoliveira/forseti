@@ -1,17 +1,22 @@
 import {
   ArrowDown01Icon,
   AwardIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
   LoaderIcon,
+  PauseIcon,
+  PlayIcon,
   StarIcon,
   XIcon,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState, useMemo } from "react"; // Added useState, useMemo
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/problem-letter-badge";
 import { ProblemStatusBadge } from "@/app/_lib/component/display/badge/problem-status-badge";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
 import { Button } from "@/app/_lib/component/shadcn/button";
+import { ButtonGroup } from "@/app/_lib/component/shadcn/button-group";
 import {
   Table,
   TableBody,
@@ -69,6 +74,8 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
   const toast = useToast();
 
   const [revealedCount, setRevealedCount] = useState(0);
+  const [isAutoRevealing, setIsAutoRevealing] = useState(false);
+  const autoRevealIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const contestantRows = useMemo(() => {
     return (leaderboardState.data?.rows || []).filter(
@@ -76,16 +83,63 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
     );
   }, [leaderboardState.data]);
 
+  function reveal() {
+    setRevealedCount((prev) => {
+      const newCount = Math.min(prev + 1, contestantRows.length);
+      if (newCount >= contestantRows.length && autoRevealIntervalRef.current) {
+        clearInterval(autoRevealIntervalRef.current);
+        autoRevealIntervalRef.current = null;
+        setIsAutoRevealing(false);
+      }
+      return newCount;
+    });
+  }
+
+  function hide() {
+    setRevealedCount((prev) => Math.max(prev - 1, 0));
+  }
+
+  function toggleAutoReveal() {
+    if (autoRevealIntervalRef.current) {
+      clearInterval(autoRevealIntervalRef.current);
+      autoRevealIntervalRef.current = null;
+      setIsAutoRevealing(false);
+    } else {
+      setIsAutoRevealing(true);
+      autoRevealIntervalRef.current = setInterval(() => {
+        reveal();
+      }, 1000);
+    }
+  }
+
+  function getMedal(rank: number) {
+    if (rank > 12) return rank;
+    const color = [
+      "text-yellow-400 fill-yellow-400",
+      "text-gray-300 fill-gray-300",
+      "text-yellow-600 fill-yellow-600",
+    ][Math.floor((rank - 1) / 4)];
+    return (
+      <>
+        <AwardIcon
+          className={cn("fill-foreground inline h-5", color)}
+          strokeWidth={3}
+        />
+        {rank}
+      </>
+    );
+  }
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowUp") {
         event.preventDefault();
-        setRevealedCount((prev) => Math.min(prev + 1, contestantRows.length));
+        reveal();
       }
 
       if (event.key === "ArrowDown") {
         event.preventDefault();
-        setRevealedCount((prev) => Math.max(prev - 1, 0));
+        hide();
       }
     };
 
@@ -106,24 +160,6 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
     }
     fetch();
   }, []);
-
-  function getMedal(rank: number) {
-    if (rank > 12) return rank;
-    const color = [
-      "text-yellow-400 fill-yellow-400",
-      "text-gray-300 fill-gray-300",
-      "text-yellow-600 fill-yellow-600",
-    ][Math.floor((rank - 1) / 4)];
-    return (
-      <>
-        <AwardIcon
-          className={cn("fill-foreground inline h-5", color)}
-          strokeWidth={3}
-        />
-        {rank}
-      </>
-    );
-  }
 
   return (
     <div className="bg-muted absolute top-0 left-0 h-screen w-screen overflow-x-hidden">
@@ -156,7 +192,7 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
         }}
       />
 
-      <div className="bg-card fixed top-0 z-10 grid w-screen [grid-template-columns:1fr_1fr_1fr] items-center gap-4 border-b px-6 py-2">
+      <div className="bg-card fixed top-0 z-10 grid w-screen [grid-template-columns:40px_1fr_40px] items-center gap-4 border-b px-6 py-2">
         <div className="flex gap-2">
           <div className="mr-2 flex items-center justify-center">
             <Image
@@ -167,9 +203,9 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
             />
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center truncate text-2xl font-bold">
-          <p>{contest.title}</p>
-          <p className="text-muted-foreground text-sm font-normal">
+        <div className="flex flex-col items-center justify-center truncate font-bold">
+          <p className="text-sm sm:text-2xl">{contest.title}</p>
+          <p className="text-muted-foreground text-xs font-normal sm:text-sm">
             <StarIcon className="fill-muted-foreground mr-2 inline" size={12} />
             <FormattedMessage {...messages.finalStanding} />
             <StarIcon className="fill-muted-foreground ml-2 inline" size={12} />
@@ -279,6 +315,39 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
                 })}
               </TableBody>
             </Table>
+
+            <ButtonGroup
+              className="absolute right-5 bottom-5"
+              orientation="vertical"
+            >
+              <Button
+                size="icon-lg"
+                onClick={reveal}
+                disabled={revealedCount >= contestantRows.length}
+                data-testid="reveal-button"
+              >
+                <ChevronUpIcon size={16} />
+              </Button>
+              <Button
+                size="icon-lg"
+                onClick={hide}
+                disabled={revealedCount <= 0}
+                data-testid="hide-button"
+              >
+                <ChevronDownIcon size={16} />
+              </Button>
+              <Button
+                size="icon-lg"
+                onClick={toggleAutoReveal}
+                disabled={revealedCount >= contestantRows.length}
+              >
+                {isAutoRevealing ? (
+                  <PauseIcon size={16} />
+                ) : (
+                  <PlayIcon size={16} />
+                )}
+              </Button>
+            </ButtonGroup>
           </div>
         </>
       )}
