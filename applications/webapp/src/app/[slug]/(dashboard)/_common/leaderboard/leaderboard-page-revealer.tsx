@@ -162,7 +162,10 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
   }, []);
 
   return (
-    <div className="bg-muted absolute top-0 left-0 h-screen w-screen overflow-x-hidden">
+    <div
+      className="bg-muted absolute top-0 left-0 h-screen w-screen overflow-x-hidden"
+      style={{ zIndex: Number.MAX_SAFE_INTEGER }}
+    >
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -192,7 +195,10 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
         }}
       />
 
-      <div className="bg-card fixed top-0 z-10 grid w-screen [grid-template-columns:40px_1fr_40px] items-center gap-4 border-b px-6 py-2">
+      <div
+        className="bg-card fixed top-0 grid w-screen [grid-template-columns:40px_1fr_40px] items-center gap-4 border-b px-6 py-2"
+        style={{ zIndex: 2147483646 }}
+      >
         <div className="flex gap-2">
           <div className="mr-2 flex items-center justify-center">
             <Image
