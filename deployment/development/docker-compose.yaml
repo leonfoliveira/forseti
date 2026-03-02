@@ -166,6 +166,7 @@ services:
       interval: 15s
       retries: 5
       start_period: 5s
+    image: forseti-api:latest
     networks:
       - dev-forseti-network
     ports:
@@ -228,6 +229,7 @@ services:
       interval: 15s
       retries: 5
       start_period: 5s
+    image: forseti-autojudge:latest
     networks:
       - dev-forseti-network
     ports:
@@ -259,6 +261,7 @@ services:
       interval: 15s
       retries: 5
       start_period: 5s
+    image: forseti-webapp:latest
     networks:
       - dev-forseti-network
     ports:
