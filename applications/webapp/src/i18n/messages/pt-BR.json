@@ -41,7 +41,8 @@
       "formatted-ticket-status": {
         "open": "Aberto",
         "in_progress": "Em Andamento",
-        "resolved": "Resolvido"
+        "resolved": "Resolvido",
+        "rejected": "Rejeitado"
       }
     }
   },
